@@ -1,0 +1,131 @@
+{
+  "date": "2026-07-04",
+  "week_ending": "2026-07-04",
+  "week_start": "2026-06-28",
+  "title": "The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like",
+  "dek": "Southern Theater Command described a month of joint naval and air activity around Huangyan Island as combat readiness patrols. The rest of the week showed how the PLA turns Party anniversaries into institutional instruction.",
+  "signal": "Southern Theater Command recast June activity around Scarborough Shoal as sustained joint combat readiness patrols, placing the operation above the language of a routine exercise or coast guard presence.",
+  "n_articles": 40,
+  "n_significant": 1,
+  "days_covered": 7,
+  "edition_type": "significant",
+  "edition_label": "Significant",
+  "source_trail": [
+    {
+      "title": "PLA Southern Theater Command Organizes Combat Readiness Patrol (战备警巡) over Territorial Waters, Airspace, and Surrounding Areas of China's Huangyan Island",
+      "url": "http://www.81.cn/yw_208727/16470666.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-06-30",
+      "is_significant": true
+    },
+    {
+      "title": "'Two Excellents, One Advanced' Profiles | National Outstanding Communist Party Member He Xianda: Writing Loyalty and Commitment Beneath the Launch Tower",
+      "url": "http://www.81.cn/yw_208727/16471664.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-04",
+      "is_significant": false
+    },
+    {
+      "title": "A Certain Army Aviation Brigade of the 73rd Group Army Focuses on System-Wide Training (体系练兵) and Builds a Learning and Exchange Platform",
+      "url": "http://www.81.cn/yw_208727/16470320.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-06-29",
+      "is_significant": false
+    },
+    {
+      "title": "What Are the Moving Stories Behind Two Honor Flags?",
+      "url": "http://www.81.cn/yw_208727/16471332.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-03",
+      "is_significant": false
+    },
+    {
+      "title": "Marching Toward War! A Direct Look at the People's Armed Police Field Garrison Training Site",
+      "url": "http://www.81.cn/wj_208567/16471235.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-02",
+      "is_significant": false
+    },
+    {
+      "title": "Today, Naval Vessel Formation Departs for Hong Kong to Organize Open Visiting and Exchange Activities",
+      "url": "http://www.81.cn/yw_208727/16470999.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-01",
+      "is_significant": false
+    },
+    {
+      "title": "Raising the Banner and Leading in Battle: The Time Is Right to Forge the Joint Sword",
+      "url": "http://www.81.cn/yw_208727/16470917.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-01",
+      "is_significant": false
+    },
+    {
+      "title": "A Naval Aviation Unit Drives the Combat-Oriented Transformation of Aircraft Maintenance and Support——One Second Faster in Emergency Repair, One Point More in the Odds of Victory",
+      "url": "http://www.81.cn/yw_208727/16470596.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-06-30",
+      "is_significant": false
+    },
+    {
+      "title": "Golden Horn Bay Witnesses a New Voyage of Sino-Russian Naval Friendship",
+      "url": "http://www.81.cn/yw_208727/16470176.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-06-28",
+      "is_significant": false
+    },
+    {
+      "title": "Chinese Naval Vessel Formation to Visit Vietnam",
+      "url": "http://www.81.cn/yw_208727/16471727.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-04",
+      "is_significant": false
+    },
+    {
+      "title": "A Certain Base of the Southern Theater Command Air Force Explores and Implements a New Model for Trainee Soldier Assignment",
+      "url": "http://www.81.cn/yw_208727/16471662.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-04",
+      "is_significant": false
+    },
+    {
+      "title": "One Case Reveals the Prevailing Winds; One Incident Rectifies the Soldiers' Hearts",
+      "url": "http://www.81.cn/yw_208727/16471667.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-04",
+      "is_significant": false
+    },
+    {
+      "title": "In This Round of NCO Selection and Promotion, the Mobile Detachment of the PAP Chongqing General Corps Continues to Strengthen Conduct Building",
+      "url": "http://www.81.cn/wj_208567/16471714.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-04",
+      "is_significant": false
+    }
+  ],
+  "author_name": "Benjamin Yang",
+  "author_title": "Principal Analyst, China Mil Watch",
+  "author_bio": "Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.",
+  "author_links": {
+    "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294",
+    "Email": "mailto:ben.yang@gwmail.gwu.edu",
+    "China Mil Watch": "../../index.html"
+  },
+  "media_items": [
+    {
+      "type": "image",
+      "src": "../media/2026-07-04-source-image.jpg",
+      "alt": "Source article image",
+      "caption": "Cover background image sourced from the lead source article. Included for editorial visual context only.",
+      "source_url": "http://www.81.cn/yw_208727/16471664.html",
+      "image_url": "http://www.81.cn/yw_208727/_attachment/2026/07/04/16471664_4be8d2023d6caca142423e44a3704132.jpg",
+      "source_label": "article body image",
+      "auto_selected": true
+    }
+  ],
+  "background_image_source": "source_trail_fetch",
+  "background_image_path": "output/the-pla-watch/media/2026-07-04-source-image.jpg",
+  "cover_image": "../covers/2026-07-04.png",
+  "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-07-04.png",
+  "cover_thumb": "../covers/2026-07-04-thumb.png"
+}

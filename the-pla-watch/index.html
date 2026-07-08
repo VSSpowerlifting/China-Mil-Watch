@@ -38,15 +38,15 @@
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
       --color-brand-light:    #D11C36;
-      --color-bg:             #F4EFE6;        /* warmer paper tone for the publication */
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FBF7EE;
-      --color-text-primary:   #161616;
-      --color-text-secondary: #4A4A4A;
-      --color-text-muted:     #7A7A7A;
-      --color-border:         #DCD7CC;
-      --color-border-soft:    #ECE7DC;
+      --color-bg:             #0E1520;        /* ink navy */
+      --color-bg-card:        #141D2B;        /* lifted navy surface */
+      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
+      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
+      --color-text-primary:   #EDE9E0;        /* warm off-white */
+      --color-text-secondary: #9A9590;        /* mid warm gray */
+      --color-text-muted:     #5E5A55;        /* quiet gray */
+      --color-border:         #273040;        /* dark rule */
+      --color-border-soft:    #1C2738;        /* softer dark rule */
       --color-accent:         #B3132B;
       --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -62,8 +62,8 @@
       background-image:
         repeating-linear-gradient(
           0deg,
-          rgba(22, 22, 22, 0.018) 0,
-          rgba(22, 22, 22, 0.018) 1px,
+          rgba(255, 255, 255, 0.012) 0,
+          rgba(255, 255, 255, 0.012) 1px,
           transparent 1px,
           transparent 6px
         );
@@ -297,31 +297,13 @@
   align-items: flex-start;
 }
 
-/* Big editorial nameplate */
-.cover-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-  margin-bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.cover-eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 2px;
-  background: var(--color-brand);
-}
 .cover-display {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 3.6rem;
-  line-height: 1;
-  letter-spacing: -0.022em;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
   color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
@@ -495,10 +477,10 @@
 .btn-primary:hover { background: var(--color-brand-dark); border-color: var(--color-brand-dark); }
 .btn-ghost {
   background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border: 1px solid #2F3E52;
 }
-.btn-ghost:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); }
+.btn-ghost:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); background: rgba(255,255,255,0.04); }
 
 /* ── Byline (latest-edition card) ───────────────────────────────────── */
 .issue-cover-byline {
@@ -660,7 +642,7 @@
   margin-bottom: 1rem;
 }
 .sb-card.relate {
-  border-left: 3px solid var(--color-brand);
+  background: #1F2E42;
 }
 .sb-eyebrow {
   font-family: var(--sans);
@@ -737,7 +719,7 @@
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Latest issue · 2026-06-20</span></span>
+      <span class="left"><span>Vol. I</span><span>Latest issue · 2026-07-04</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
@@ -751,9 +733,7 @@
 
   <div class="cover-main">
 
-    <div class="cover-eyebrow">A weekly publication</div>
-    <h1 class="cover-display"><span class="italic">The</span>PLA Watch</h1>
-    <p class="cover-tagline">Weekly signals from Chinese military media.</p>
+    <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
     <p class="cover-stand">The reader-facing weekly publication from China Mil Watch — a synthesis of the daily Chinese-language monitoring archive into a single editorial brief for policy readers, analysts, and journalists. Source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
 
     
@@ -761,30 +741,30 @@
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
-            Week ending 2026-06-20
-            <span class="badge">Routine</span>
+            Week ending 2026-07-04
+            <span class="badge">Significant</span>
           </div>
         </div>
-        <h2 class="issue-cover-title"><a href="posts/2026-06-20.html">The PLA Watch: The CCG Statement That Stood Apart</a></h2>
+        <h2 class="issue-cover-title"><a href="posts/2026-07-04.html">The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like</a></h2>
         
-        <a href="posts/2026-06-20.html" aria-label="Read this edition">
+        <a href="posts/2026-07-04.html" aria-label="Read this edition">
           <img class="issue-cover-thumb"
-               src="covers/2026-06-20.png"
-               alt="The PLA Watch — The PLA Watch: The CCG Statement That Stood Apart (issue cover)"
-               width="1200" height="630" loading="lazy">
+               src="covers/2026-07-04.png"
+               alt="The PLA Watch — The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like (issue cover)"
+               width="1200" height="630" fetchpriority="high">
         </a>
         
-        <p class="issue-cover-dek">One MND spokesperson statement tied CCG operations east of Taiwan to cross-strait nationalist obligation and Japan-Philippines maritime talks. The rest of the week was dense with political work, useful less for drama than for what it documents about institutional friction.</p>
+        <p class="issue-cover-dek">Southern Theater Command described a month of joint naval and air activity around Huangyan Island as combat readiness patrols. The rest of the week showed how the PLA turns Party anniversaries into institutional instruction.</p>
         
         <div class="issue-cover-byline">By <span class="byline-name">Benjamin Yang</span></div>
         
         <div class="issue-cover-meta">
-          <span class="stat"><span class="num">30</span> articles</span>
+          <span class="stat"><span class="num">40</span> articles</span>
           <span class="stat"><span class="num">1</span> significant</span>
           <span class="stat"><span class="num">7</span> days observed</span>
         </div>
         <div class="issue-cover-actions">
-          <a href="posts/2026-06-20.html" class="btn btn-primary">Read this edition</a>
+          <a href="posts/2026-07-04.html" class="btn btn-primary">Read this edition</a>
           <a href="archive.html" class="btn btn-ghost">All editions</a>
         </div>
       </div>
@@ -792,9 +772,25 @@
       
       <div class="section-heading">
         <span>Previous editions</span>
-        <span class="count">6</span>
+        <span class="count">8</span>
       </div>
       <div class="archive-list">
+        
+        <div class="archive-row">
+          <div class="archive-date">Week ending 2026-06-27</div>
+          <div class="archive-body">
+            <div class="archive-title"><a href="posts/2026-06-27.html">The PLA Watch: Carriers, Drones, and the Rocket Force's Manning Problem</a></div>
+            <div class="archive-dek">A far-sea exercise paired Liaoning with an amphibious assault ship formation. Two quieter reports, on reduced-manning missile operations and a PLA-wide drone contest, showed where the force still sees friction beneath its modernization drive.</div>
+          </div>
+        </div>
+        
+        <div class="archive-row">
+          <div class="archive-date">Week ending 2026-06-20</div>
+          <div class="archive-body">
+            <div class="archive-title"><a href="posts/2026-06-20.html">The PLA Watch: The CCG Statement That Stood Apart</a></div>
+            <div class="archive-dek">One MND spokesperson statement tied CCG operations east of Taiwan to cross-strait nationalist obligation and Japan-Philippines maritime talks. The rest of the week was dense with political work, useful less for drama than for what it documents about institutional friction.</div>
+          </div>
+        </div>
         
         <div class="archive-row">
           <div class="archive-date">Week ending 2026-06-13</div>
