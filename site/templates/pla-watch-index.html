@@ -15,31 +15,13 @@
   align-items: flex-start;
 }
 
-/* Big editorial nameplate */
-.cover-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-  margin-bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.cover-eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 2px;
-  background: var(--color-brand);
-}
 .cover-display {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 3.6rem;
-  line-height: 1;
-  letter-spacing: -0.022em;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
   color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
@@ -213,10 +195,10 @@
 .btn-primary:hover { background: var(--color-brand-dark); border-color: var(--color-brand-dark); }
 .btn-ghost {
   background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border: 1px solid #2F3E52;
 }
-.btn-ghost:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); }
+.btn-ghost:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); background: rgba(255,255,255,0.04); }
 
 /* ── Byline (latest-edition card) ───────────────────────────────────── */
 .issue-cover-byline {
@@ -378,7 +360,7 @@
   margin-bottom: 1rem;
 }
 .sb-card.relate {
-  border-left: 3px solid var(--color-brand);
+  background: #1F2E42;
 }
 .sb-eyebrow {
   font-family: var(--sans);
@@ -441,9 +423,7 @@
 
   <div class="cover-main">
 
-    <div class="cover-eyebrow">A weekly publication</div>
-    <h1 class="cover-display"><span class="italic">The</span>PLA Watch</h1>
-    <p class="cover-tagline">Weekly signals from Chinese military media.</p>
+    <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
     <p class="cover-stand">The reader-facing weekly publication from China Mil Watch — a synthesis of the daily Chinese-language monitoring archive into a single editorial brief for policy readers, analysts, and journalists. Source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
 
     {% if latest_post %}
@@ -461,7 +441,7 @@
           <img class="issue-cover-thumb"
                src="{{ latest_post.cover_image | replace('../', '') }}"
                alt="The PLA Watch — {{ latest_post.title }} (issue cover)"
-               width="1200" height="630" loading="lazy">
+               width="1200" height="630" fetchpriority="high">
         </a>
         {% endif %}
         <p class="issue-cover-dek">{{ latest_post.dek }}</p>
