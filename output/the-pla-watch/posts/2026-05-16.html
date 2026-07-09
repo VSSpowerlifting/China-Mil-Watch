@@ -38,15 +38,15 @@
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
       --color-brand-light:    #D11C36;
-      --color-bg:             #F4EFE6;        /* warmer paper tone for the publication */
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FBF7EE;
-      --color-text-primary:   #161616;
-      --color-text-secondary: #4A4A4A;
-      --color-text-muted:     #7A7A7A;
-      --color-border:         #DCD7CC;
-      --color-border-soft:    #ECE7DC;
+      --color-bg:             #0E1520;        /* ink navy */
+      --color-bg-card:        #141D2B;        /* lifted navy surface */
+      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
+      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
+      --color-text-primary:   #EDE9E0;        /* warm off-white */
+      --color-text-secondary: #9A9590;        /* mid warm gray */
+      --color-text-muted:     #5E5A55;        /* quiet gray */
+      --color-border:         #273040;        /* dark rule */
+      --color-border-soft:    #1C2738;        /* softer dark rule */
       --color-accent:         #B3132B;
       --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -62,8 +62,8 @@
       background-image:
         repeating-linear-gradient(
           0deg,
-          rgba(22, 22, 22, 0.018) 0,
-          rgba(22, 22, 22, 0.018) 1px,
+          rgba(255, 255, 255, 0.012) 0,
+          rgba(255, 255, 255, 0.012) 1px,
           transparent 1px,
           transparent 6px
         );
@@ -255,6 +255,34 @@
       font-size: 0.65rem;
     }
 
+    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    .pw-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--sans);
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .pw-badge--significant {
+      background: rgba(179, 19, 43, 0.14);
+      color: #E05A6D;
+      border: 1px solid rgba(209, 28, 54, 0.4);
+    }
+    .pw-badge--routine {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+    .pw-badge--pilot {
+      background: rgba(224, 164, 88, 0.1);
+      color: #E0A458;
+      border: 1px solid rgba(224, 164, 88, 0.35);
+    }
+
     /* ── Utilities ─────────────────────────────────────────────────────── */
     .empty-state {
       color: var(--color-text-muted);
@@ -288,7 +316,6 @@
       .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
     }
 
-    
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
@@ -469,18 +496,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.hero-edition .badge {
-  display: inline-block;
-  background: #FFF7ED;
-  color: #9A3412;
-  border: 1px solid #FED7AA;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  margin-left: 0.5rem;
-}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -771,12 +787,12 @@
 }
 .source-card-meta .sep { color: var(--color-border); }
 .source-card-meta .sig-tag {
-  color: var(--color-brand);
+  color: #E05A6D;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: rgba(179, 19, 43, 0.14);
+  border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
   border-radius: 2px;
   font-size: 0.625rem;
@@ -976,7 +992,6 @@
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
-
   </style>
 </head>
 <body>
@@ -997,74 +1012,51 @@
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Week ending 2026-05-16</span></span>
+      <span class="left"><span>Vol. I · No. 2</span><span>Week ending 16 May 2026</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
 </header>
 
 
-
 <main>
-  
 <div class="post-wrap">
 
   <article class="post-main">
 
-    
     <div class="hero">
       <div class="hero-meta-top">
         <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
-          Week ending 2026-05-16
-          
+No. 2 · Week ending 16 May 2026
         </div>
       </div>
       <h1 class="hero-title">Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure</h1>
       <div class="hero-dek">KJ-600 carrier qualification confirmed aboard Fujian. A Rocket Force unit publishes the failure that prompted its crew-hardening model. 85 articles, May 10–16, 2026.</div>
-      
       <div class="byline">
         By <span class="byline-name">Benjamin Yang</span>
-        <span class="byline-title">Founder & Principal Analyst, China Mil Watch</span>
-      </div>
-      
+<span class="byline-title">Principal Analyst, China Mil Watch</span>      </div>
       <div class="hero-meta">
         <span class="meta-item">Covers <span class="num">2026-05-10</span> → <span class="num">2026-05-16</span></span>
-        <span class="meta-item"><span class="num">7</span> days observed</span>
-        <span class="meta-item"><span class="num">85</span> articles analyzed</span>
+<span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">85</span> articles analyzed</span>
         <span class="meta-item"><span class="num">3</span> significant</span>
-        
           <span class="meta-item">PLA Daily (81.cn), China Military Online, Global Times: Defense</span>
-        
       </div>
     </div>
 
-    
-    
     <figure class="cover-figure">
       <img src="../covers/2026-05-16.png"
            alt="The PLA Watch — Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure (issue cover)"
            width="1200" height="630" loading="eager">
       <figcaption>Issue cover · The PLA Watch · 2026-05-16</figcaption>
     </figure>
-    
-    
     <div class="cover-credit-note">
       <span class="label">Cover image:</span>
-      
-      
-      <span>·</span> <a href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener nofollow">Source</a>
-      <span>· Visual context only; not evidence of the specific events discussed.</span>
+<span>·</span> <a href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
     </div>
-    
 
-    
-    
 
-    
-    
 
-    
     <div class="snapshot">
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
@@ -1089,11 +1081,9 @@
           <div class="sub">2026-05-10 → 2026-05-16</div>
         </div>
       </div>
-      
       <div class="snap-bar">
         <div class="snap-bar-label">Significant vs. routine coverage</div>
         <div class="snap-bar-track">
-          
           <div class="snap-bar-fill" style="width: 3.5%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
@@ -1102,256 +1092,142 @@
           <span><span class="swatch swatch-rest"></span>Routine (82)</span>
         </div>
       </div>
-      
     </div>
 
-    
     <div class="post-body">
 
-      
       <div class="post-section opening">
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
-          
-          <p>This week in Chinese military media was, in aggregate, mostly routine: 85 articles across PLA Daily, China Military Online, and Global Times: Defense, most of them moving through familiar institutional patterns — training updates, political work campaigns, military diplomacy, and the steady circulation of official slogans that usually mark the background rhythm of PLA coverage.</p>
-          
-          <p>Two items, however, cut through that baseline.</p>
-          
-          <p>One concerned Fujian’s air wing, and the other concerned a Rocket Force unit that appears to be deliberately training its launch crews to survive disruption, attrition, and the collapse of fixed operating arrangements. Neither item arrived with much fanfare, and neither was presented as a dramatic announcement, but both carry real analytical weight precisely because they reveal concrete movement beneath otherwise routine official language.</p>
-          
-        </div>
+<p>This week in Chinese military media was, in aggregate, mostly routine: 85 articles across PLA Daily, China Military Online, and Global Times: Defense, most of them moving through familiar institutional patterns — training updates, political work campaigns, military diplomacy, and the steady circulation of official slogans that usually mark the background rhythm of PLA coverage.</p><p>Two items, however, cut through that baseline.</p><p>One concerned Fujian’s air wing, and the other concerned a Rocket Force unit that appears to be deliberately training its launch crews to survive disruption, attrition, and the collapse of fixed operating arrangements. Neither item arrived with much fanfare, and neither was presented as a dramatic announcement, but both carry real analytical weight precisely because they reveal concrete movement beneath otherwise routine official language.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
-          
-          <p><strong>Fujian’s air wing integration.</strong> A May 10 PLA Daily anniversary retrospective on the naval carrier-based aviation force confirmed that the J-15T, J-35, and KJ-600 airborne early warning aircraft have all conducted catapult takeoff and arrested landing training aboard Fujian in 2025.</p>
-          
-          <p>The KJ-600 detail matters most, because this appears to be the first official public acknowledgment that China’s carrier-based airborne early warning aircraft has completed carrier qualification activity on Fujian. That does not mean Fujian’s air wing is combat-ready, and it should not be read as a readiness declaration disguised as an anniversary article. It is still, more narrowly and more cautiously, a qualification milestone.</p>
-          
-          <p>But it is nevertheless a meaningful one. A carrier that can launch and recover an organic airborne early warning aircraft is operationally different from one that cannot, because AEW capacity changes how a carrier group sees, coordinates, and defends itself beyond the limits of shipboard sensors. The J-15T and J-35 point toward strike and fighter integration, while the KJ-600 points toward the broader command-and-control architecture that would allow the carrier group to operate more independently and more effectively.</p>
-          
-          <p>That makes the article more concrete than a generic “progress” story. It does not simply claim that Fujian is advancing. It indicates that three aircraft types are moving through the qualification pipeline at the same time, which gives analysts a more measurable indicator than official confidence alone.</p>
-          
-          <p><strong>Rocket Force crew hardening.</strong> A May 13 PLA Daily report offered unusually specific detail about an unidentified Rocket Force unit’s “Four Randoms” training model, or 四随机. The model randomizes crew groupings, missile assignments, launch vehicles, and primary/backup launch-frame designations, apparently in order to prevent launch execution from depending too heavily on fixed personnel relationships or familiar operating routines.</p>
-          
-          <p>The reason was not abstract. According to the article, the unit had previously experienced an exercise failure in which the loss of one launch frame’s operators caused the mission to collapse. The response was strikingly practical: standardized command-word manuals, weekly unannounced drills, and monthly cross-element reorganization assessments designed to force personnel to operate across unfamiliar launch arrangements.</p>
-          
-          <p>This kind of operational detail rarely appears so clearly in Chinese military media. Here, the blur lifts slightly. The article provides a source-grounded look at how at least one Rocket Force unit is trying, systematically and visibly, to reduce single-point-of-failure risks in the human side of missile launch operations.</p>
-          
-        </div>
+<p><strong>Fujian’s air wing integration.</strong> A May 10 PLA Daily anniversary retrospective on the naval carrier-based aviation force confirmed that the J-15T, J-35, and KJ-600 airborne early warning aircraft have all conducted catapult takeoff and arrested landing training aboard Fujian in 2025.</p><p>The KJ-600 detail matters most, because this appears to be the first official public acknowledgment that China’s carrier-based airborne early warning aircraft has completed carrier qualification activity on Fujian. That does not mean Fujian’s air wing is combat-ready, and it should not be read as a readiness declaration disguised as an anniversary article. It is still, more narrowly and more cautiously, a qualification milestone.</p><p>But it is nevertheless a meaningful one. A carrier that can launch and recover an organic airborne early warning aircraft is operationally different from one that cannot, because AEW capacity changes how a carrier group sees, coordinates, and defends itself beyond the limits of shipboard sensors. The J-15T and J-35 point toward strike and fighter integration, while the KJ-600 points toward the broader command-and-control architecture that would allow the carrier group to operate more independently and more effectively.</p><p>That makes the article more concrete than a generic “progress” story. It does not simply claim that Fujian is advancing. It indicates that three aircraft types are moving through the qualification pipeline at the same time, which gives analysts a more measurable indicator than official confidence alone.</p><p><strong>Rocket Force crew hardening.</strong> A May 13 PLA Daily report offered unusually specific detail about an unidentified Rocket Force unit’s “Four Randoms” training model, or 四随机. The model randomizes crew groupings, missile assignments, launch vehicles, and primary/backup launch-frame designations, apparently in order to prevent launch execution from depending too heavily on fixed personnel relationships or familiar operating routines.</p><p>The reason was not abstract. According to the article, the unit had previously experienced an exercise failure in which the loss of one launch frame’s operators caused the mission to collapse. The response was strikingly practical: standardized command-word manuals, weekly unannounced drills, and monthly cross-element reorganization assessments designed to force personnel to operate across unfamiliar launch arrangements.</p><p>This kind of operational detail rarely appears so clearly in Chinese military media. Here, the blur lifts slightly. The article provides a source-grounded look at how at least one Rocket Force unit is trying, systematically and visibly, to reduce single-point-of-failure risks in the human side of missile launch operations.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
-          
-          <p>The Fujian item matters because it narrows the distance between capability aspiration and operational capability, even if it does not eliminate that distance. Carrier qualification is not the same as operational readiness, and there are still many steps between a successful qualification process and a mature, deployable carrier air wing: deck-cycle rhythm, sortie generation, pilot proficiency, maintenance reliability, integrated air-wing operations, and fleet-level command coordination all matter.</p>
-          
-          <p>Still, the KJ-600 confirmation closes a meaningful open-source gap. Fujian has long been discussed as China’s first catapult-equipped carrier, but the more important question has always been what kind of air wing that catapult system would actually enable. This article suggests that the answer is no longer purely theoretical. The air wing associated with Fujian’s design is being worked through publicly, aircraft by aircraft, and the presence of the KJ-600 in that process is especially significant.</p>
-          
-          <p>The Rocket Force item matters for a different reason. The “Four Randoms” model is broadly consistent with what a missile force would design if it were trying to preserve launch capability under conditions of attrition, disruption, or degraded communications. It does not prove force-wide adoption, and one published unit example should not be mistaken for doctrine.</p>
-          
-          <p>But PLA Daily chose to publish the model as something worth studying, and that choice is itself revealing. The article turns a local training fix into an institutional lesson. It shows the Rocket Force not only identifying a failure point, but also publicly framing its solution as a model of hardened, flexible, and more resilient launch execution.</p>
-          
-        </div>
+<p>The Fujian item matters because it narrows the distance between capability aspiration and operational capability, even if it does not eliminate that distance. Carrier qualification is not the same as operational readiness, and there are still many steps between a successful qualification process and a mature, deployable carrier air wing: deck-cycle rhythm, sortie generation, pilot proficiency, maintenance reliability, integrated air-wing operations, and fleet-level command coordination all matter.</p><p>Still, the KJ-600 confirmation closes a meaningful open-source gap. Fujian has long been discussed as China’s first catapult-equipped carrier, but the more important question has always been what kind of air wing that catapult system would actually enable. This article suggests that the answer is no longer purely theoretical. The air wing associated with Fujian’s design is being worked through publicly, aircraft by aircraft, and the presence of the KJ-600 in that process is especially significant.</p><p>The Rocket Force item matters for a different reason. The “Four Randoms” model is broadly consistent with what a missile force would design if it were trying to preserve launch capability under conditions of attrition, disruption, or degraded communications. It does not prove force-wide adoption, and one published unit example should not be mistaken for doctrine.</p><p>But PLA Daily chose to publish the model as something worth studying, and that choice is itself revealing. The article turns a local training fix into an institutional lesson. It shows the Rocket Force not only identifying a failure point, but also publicly framing its solution as a model of hardened, flexible, and more resilient launch execution.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
-          
-          <p>Most of the week remained inside familiar templates.</p>
-          
-          <p>Political work coverage was especially heavy: formalism correction, anti-corruption messaging extended to officers’ families, “correct outlook on political achievement” campaigns, and rectification training across services and commands. This belongs to a broader institutional push that has continued since the post-2023 Rocket Force leadership purge. The individual articles are useful as ground-level evidence of how discipline campaigns are being operationalized, but none of them, taken alone, signal a new policy line.</p>
-          
-          <p>Naval Aviation coverage of day-and-night AEW-fighter coordinated training, submarine anti-ASW exercises, and PAP disaster relief drills also followed recognizable PLA Daily patterns. The military diplomacy pieces — Ethiopia medical team rotations, South Sudan engineer detachment activity, and peacekeeping assessments — reflected established programs rather than new initiatives, even when they were presented in the language of continued international contribution.</p>
-          
-          <p>A Global Times report on a new PLA Navy terminal defense system completing type certification trials is worth filing, but the expert description of “world-class” capability should be read primarily as messaging rather than as a technical assessment. The item may matter later, particularly if it is followed by more specific reporting, but in its current form it remains closer to defense-industrial signaling than operational evidence.</p>
-          
-        </div>
+<p>Most of the week remained inside familiar templates.</p><p>Political work coverage was especially heavy: formalism correction, anti-corruption messaging extended to officers’ families, “correct outlook on political achievement” campaigns, and rectification training across services and commands. This belongs to a broader institutional push that has continued since the post-2023 Rocket Force leadership purge. The individual articles are useful as ground-level evidence of how discipline campaigns are being operationalized, but none of them, taken alone, signal a new policy line.</p><p>Naval Aviation coverage of day-and-night AEW-fighter coordinated training, submarine anti-ASW exercises, and PAP disaster relief drills also followed recognizable PLA Daily patterns. The military diplomacy pieces — Ethiopia medical team rotations, South Sudan engineer detachment activity, and peacekeeping assessments — reflected established programs rather than new initiatives, even when they were presented in the language of continued international contribution.</p><p>A Global Times report on a new PLA Navy terminal defense system completing type certification trials is worth filing, but the expert description of “world-class” capability should be read primarily as messaging rather than as a technical assessment. The item may matter later, particularly if it is followed by more specific reporting, but in its current form it remains closer to defense-industrial signaling than operational evidence.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">四随机 — Four Randoms</div>
           <div class="term-explanation">
-            
-            <p>A Rocket Force training model that randomizes crew groupings, missile assignments, launch vehicles, and primary/backup frame designations during exercises.</p>
-            
-            <p>The purpose is to prevent crews from becoming overly dependent on fixed pairings, familiar launch-frame roles, and predictable operating sequences. In this week’s PLA Daily article, the model appears as a practical answer to a specific failure: one launch frame lost its operators, and the mission collapsed.</p>
-            
-            <p>That makes the term more than a slogan. It is a rare public description of how one Rocket Force unit is trying to build redundancy, adaptability, and cross-frame interoperability into the human architecture of missile operations.</p>
-            
-          </div>
+<p>A Rocket Force training model that randomizes crew groupings, missile assignments, launch vehicles, and primary/backup frame designations during exercises.</p><p>The purpose is to prevent crews from becoming overly dependent on fixed pairings, familiar launch-frame roles, and predictable operating sequences. In this week’s PLA Daily article, the model appears as a practical answer to a specific failure: one launch frame lost its operators, and the mission collapsed.</p><p>That makes the term more than a slogan. It is a rare public description of how one Rocket Force unit is trying to build redundancy, adaptability, and cross-frame interoperability into the human architecture of missile operations.</p>          </div>
         </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
-          
-          <p><strong>Fujian’s deployment profile.</strong> Qualification milestones are useful, but they are not the endpoint. The next indicators would be dual-carrier formation coverage, more complex air-wing integration reporting, or clearer signals about Fujian’s operational deployment schedule, especially if future articles begin linking aircraft qualification to broader fleet exercises rather than anniversary retrospectives.</p>
-          
-          <p><strong>Rocket Force training templates.</strong> One article does not establish force-wide adoption. The question is whether “Four Randoms” appears again in other Rocket Force units, formal training discussions, or doctrinal publications. Repetition would matter, especially if the model starts appearing across units rather than as a single localized training innovation.</p>
-          
-          <p><strong>Formalism correction persistence.</strong> The volume of articles documenting the same institutional problems — fixed inspection briefings, collusion in performance awards, careerist behavior among junior officers — is becoming its own signal. The unresolved question is whether the campaign is actually changing behavior or merely producing another layer of performative compliance, in which officers learn to display reform without necessarily internalizing it.</p>
-          
-        </div>
+<p><strong>Fujian’s deployment profile.</strong> Qualification milestones are useful, but they are not the endpoint. The next indicators would be dual-carrier formation coverage, more complex air-wing integration reporting, or clearer signals about Fujian’s operational deployment schedule, especially if future articles begin linking aircraft qualification to broader fleet exercises rather than anniversary retrospectives.</p><p><strong>Rocket Force training templates.</strong> One article does not establish force-wide adoption. The question is whether “Four Randoms” appears again in other Rocket Force units, formal training discussions, or doctrinal publications. Repetition would matter, especially if the model starts appearing across units rather than as a single localized training innovation.</p><p><strong>Formalism correction persistence.</strong> The volume of articles documenting the same institutional problems — fixed inspection briefings, collusion in performance awards, careerist behavior among junior officers — is becoming its own signal. The unresolved question is whether the campaign is actually changing behavior or merely producing another layer of performative compliance, in which officers learn to display reform without necessarily internalizing it.</p>        </div>
       </div>
-      
 
       <div class="post-section source-trail">
         <div class="mod-heading brand">Source Trail</div>
-        
         <div class="source-cards">
-          
           <a class="source-card" href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener">
             <div class="source-card-title">Fujian air wing / KJ-600 carrier qualifications</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16459619.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460297.html" target="_blank" rel="noopener">
             <div class="source-card-title">Rocket Force “Four Randoms” training model</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460297.html</div>
           </a>
-          
           <a class="source-card" href="https://www.globaltimes.cn/page/202605/1360888.shtml" target="_blank" rel="noopener">
             <div class="source-card-title">PLA Navy terminal defense system (Global Times)</div>
             <div class="source-card-meta">
-              
               <span>Global Times: Defense</span>
-              
             </div>
             <div class="source-card-domain">www.globaltimes.cn/page/202605/1360888.shtml</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16461159.html" target="_blank" rel="noopener">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461159.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/hj_208557/16461187.html" target="_blank" rel="noopener">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15 (alternate)</div>
             <div class="source-card-meta">
-              
               <span>China Military Online</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16461187.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16461388.html" target="_blank" rel="noopener">
             <div class="source-card-title">Submarine “Four Randoms”-adjacent systems thinking exercise</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461388.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460482.html" target="_blank" rel="noopener">
             <div class="source-card-title">CMC Logistic Support Department logistics governance reforms</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460482.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460490.html" target="_blank" rel="noopener">
             <div class="source-card-title">PLA cyber doctrine article, Kong Rui / Jiao Dawei</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460490.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460298.html" target="_blank" rel="noopener">
             <div class="source-card-title">New-domain new-quality combat forces doctrine, AMS War Studies</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460298.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460401.html" target="_blank" rel="noopener">
             <div class="source-card-title">Eastern Theater Command civilian personnel recruitment</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460401.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16460498.html" target="_blank" rel="noopener">
             <div class="source-card-title">China-Japan-Philippines Balikatan framing</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (81.cn)</span>
-              
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460498.html</div>
           </a>
-          
         </div>
-        
-        
       </div>
 
       <div class="closing-note">
         I welcome comments or corrections from people working on Chinese military media, PLA studies, or U.S.-China security.
       </div>
 
-      
       <div class="author-block">
         <div class="author-block-eyebrow">Author</div>
         <div class="author-block-name">Benjamin Yang</div>
-        <div class="author-block-title">Founder & Principal Analyst, China Mil Watch</div>
-        <div class="author-block-bio">Benjamin Yang is the founder of China Mil Watch and an incoming International Affairs student at George Washington University's Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>
-        
-        <div class="author-chips">
-          <a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a>
-          <a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a>
-          <a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>
-        </div>
-        
+<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University&#39;s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
+<a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a><a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a><a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>        </div>
       </div>
-      
 
     </div>
 
@@ -1365,9 +1241,8 @@
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Standard</span></div>
-      <div class="sb-row"><span class="label">Week ending</span><span class="value">2026-05-16</span></div>
-      <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>
-      <div class="sb-row"><span class="label">Articles</span><span class="value">85</span></div>
+<div class="sb-row"><span class="label">Issue</span><span class="value">No. 2</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">16 May 2026</span></div>
+<div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">85</span></div>
       <div class="sb-row"><span class="label">Significant</span><span class="value">3</span></div>
     </div>
 
@@ -1379,7 +1254,6 @@
     </div>
   </aside>
 </div>
-
 </main>
 
 <footer class="site-footer">
@@ -1399,7 +1273,6 @@
     </div>
   </div>
 </footer>
-
 
 </body>
 </html>

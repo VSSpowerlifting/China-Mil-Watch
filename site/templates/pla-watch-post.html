@@ -11,7 +11,7 @@
 {% block og_description %}{{ dek }}{% endblock %}
 {% block og_image %}{% if cover_image_url %}{{ cover_image_url }}{% else %}https://chinamilwatch.org/og-image.png{% endif %}{% endblock %}
 
-{% block masthead_left %}<span>Vol. I</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending }}</span>{% endblock %}
+{% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% endblock %}
 
 {% block extra_styles %}
 /* ── Two-column post layout ─────────────────────────────────────────── */
@@ -194,18 +194,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.hero-edition .badge {
-  display: inline-block;
-  background: #FFF7ED;
-  color: #9A3412;
-  border: 1px solid #FED7AA;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  margin-left: 0.5rem;
-}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -496,12 +485,12 @@
 }
 .source-card-meta .sep { color: var(--color-border); }
 .source-card-meta .sig-tag {
-  color: var(--color-brand);
+  color: #E05A6D;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: rgba(179, 19, 43, 0.14);
+  border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
   border-radius: 2px;
   font-size: 0.625rem;
@@ -713,8 +702,8 @@
       <div class="hero-meta-top">
         <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
-          Week ending {{ week_ending }}
-          {% if edition_label %}<span class="badge">{{ edition_label }}</span>{% endif %}
+          {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
+          {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}
         </div>
       </div>
       <h1 class="hero-title">{{ title }}</h1>
@@ -840,7 +829,7 @@
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
           {% for para in opening_note.split('\n\n') %}
-          {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+          {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
           {% endfor %}
         </div>
       </div>
@@ -851,7 +840,7 @@
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
           {% for para in what_stood_out.split('\n\n') %}
-          {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+          {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
           {% endfor %}
         </div>
       </div>
@@ -862,7 +851,7 @@
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
           {% for para in why_it_matters.split('\n\n') %}
-          {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+          {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
           {% endfor %}
         </div>
       </div>
@@ -873,7 +862,7 @@
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
           {% for para in what_was_routine.split('\n\n') %}
-          {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+          {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
           {% endfor %}
         </div>
       </div>
@@ -886,7 +875,7 @@
           <div class="term-word">{{ term_to_know_term }}</div>
           <div class="term-explanation">
             {% for para in (term_to_know_explanation or '').split('\n\n') %}
-            {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+            {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
             {% endfor %}
           </div>
         </div>
@@ -898,7 +887,7 @@
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
           {% for para in what_im_watching_next.split('\n\n') %}
-          {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+          {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
           {% endfor %}
         </div>
       </div>
@@ -962,7 +951,8 @@
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">{{ edition_label or 'Standard' }}</span></div>
-      <div class="sb-row"><span class="label">Week ending</span><span class="value">{{ week_ending }}</span></div>
+      {% if issue_number %}<div class="sb-row"><span class="label">Issue</span><span class="value">No. {{ issue_number }}</span></div>{% endif %}
+      <div class="sb-row"><span class="label">Week ending</span><span class="value">{{ week_ending | format_date }}</span></div>
       {% if days_covered %}<div class="sb-row"><span class="label">Days observed</span><span class="value">{{ days_covered }}</span></div>{% endif %}
       <div class="sb-row"><span class="label">Articles</span><span class="value">{{ n_articles }}</span></div>
       <div class="sb-row"><span class="label">Significant</span><span class="value">{{ n_significant }}</span></div>

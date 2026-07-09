@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit — The PLA Watch</title>
+  <title>The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit — The PLA Watch</title>
   <meta name="description" content="This week’s PLA Daily signal sat below the headline layer, where a doctrinal article on low-cost loitering munitions and a granular Rocket Force training feature converged with a CCG patrol east of Taiwan tied to Japan-Philippines maritime talks.">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="https://chinamilwatch.org/the-pla-watch/">
+  <link rel="canonical" href="https://chinamilwatch.org/the-pla-watch/posts/2026-06-06.html">
 
   <!-- Open Graph -->
   <meta property="og:type"         content="article">
   <meta property="og:site_name"    content="The PLA Watch">
-  <meta property="og:url"          content="https://chinamilwatch.org/the-pla-watch/">
-  <meta property="og:title"        content="The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit">
+  <meta property="og:url"          content="https://chinamilwatch.org/the-pla-watch/posts/2026-06-06.html">
+  <meta property="og:title"        content="The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit">
   <meta property="og:description"  content="This week’s PLA Daily signal sat below the headline layer, where a doctrinal article on low-cost loitering munitions and a granular Rocket Force training feature converged with a CCG patrol east of Taiwan tied to Japan-Philippines maritime talks.">
   <meta property="og:image"        content="https://chinamilwatch.org/the-pla-watch/covers/2026-06-06.png">
   <meta property="og:image:width"  content="1200">
@@ -21,7 +21,7 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit">
+  <meta name="twitter:title"       content="The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit">
   <meta name="twitter:description" content="This week’s PLA Daily signal sat below the headline layer, where a doctrinal article on low-cost loitering munitions and a granular Rocket Force training feature converged with a CCG patrol east of Taiwan tied to Japan-Philippines maritime talks.">
   <meta name="twitter:image"       content="https://chinamilwatch.org/the-pla-watch/covers/2026-06-06.png">
 
@@ -38,15 +38,15 @@
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
       --color-brand-light:    #D11C36;
-      --color-bg:             #F4EFE6;        /* warmer paper tone for the publication */
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FBF7EE;
-      --color-text-primary:   #161616;
-      --color-text-secondary: #4A4A4A;
-      --color-text-muted:     #7A7A7A;
-      --color-border:         #DCD7CC;
-      --color-border-soft:    #ECE7DC;
+      --color-bg:             #0E1520;        /* ink navy */
+      --color-bg-card:        #141D2B;        /* lifted navy surface */
+      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
+      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
+      --color-text-primary:   #EDE9E0;        /* warm off-white */
+      --color-text-secondary: #9A9590;        /* mid warm gray */
+      --color-text-muted:     #5E5A55;        /* quiet gray */
+      --color-border:         #273040;        /* dark rule */
+      --color-border-soft:    #1C2738;        /* softer dark rule */
       --color-accent:         #B3132B;
       --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -62,8 +62,8 @@
       background-image:
         repeating-linear-gradient(
           0deg,
-          rgba(22, 22, 22, 0.018) 0,
-          rgba(22, 22, 22, 0.018) 1px,
+          rgba(255, 255, 255, 0.012) 0,
+          rgba(255, 255, 255, 0.012) 1px,
           transparent 1px,
           transparent 6px
         );
@@ -255,6 +255,34 @@
       font-size: 0.65rem;
     }
 
+    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    .pw-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--sans);
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .pw-badge--significant {
+      background: rgba(179, 19, 43, 0.14);
+      color: #E05A6D;
+      border: 1px solid rgba(209, 28, 54, 0.4);
+    }
+    .pw-badge--routine {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+    .pw-badge--pilot {
+      background: rgba(224, 164, 88, 0.1);
+      color: #E0A458;
+      border: 1px solid rgba(224, 164, 88, 0.35);
+    }
+
     /* ── Utilities ─────────────────────────────────────────────────────── */
     .empty-state {
       color: var(--color-text-muted);
@@ -288,7 +316,6 @@
       .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
     }
 
-    
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
@@ -469,18 +496,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.hero-edition .badge {
-  display: inline-block;
-  background: #FFF7ED;
-  color: #9A3412;
-  border: 1px solid #FED7AA;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  margin-left: 0.5rem;
-}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -771,12 +787,12 @@
 }
 .source-card-meta .sep { color: var(--color-border); }
 .source-card-meta .sig-tag {
-  color: var(--color-brand);
+  color: #E05A6D;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: rgba(179, 19, 43, 0.14);
+  border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
   border-radius: 2px;
   font-size: 0.625rem;
@@ -976,7 +992,6 @@
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
-
   </style>
 </head>
 <body>
@@ -997,71 +1012,54 @@
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Significant · Week ending 2026-06-06</span></span>
+      <span class="left"><span>Vol. I · No. 5</span><span>Significant · Week ending 6 June 2026</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
 </header>
 
 
-
 <main>
-  
 <div class="post-wrap">
 
   <article class="post-main">
 
-    
     <div class="hero">
       <div class="hero-meta-top">
         <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
-          Week ending 2026-06-06
-          <span class="badge">Significant</span>
-        </div>
+No. 5 · Week ending 6 June 2026
+<span class="pw-badge pw-badge--significant">Significant</span>        </div>
       </div>
-      <h1 class="hero-title">The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit</h1>
+      <h1 class="hero-title">The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit</h1>
       <div class="hero-dek">This week’s PLA Daily signal sat below the headline layer, where a doctrinal article on low-cost loitering munitions and a granular Rocket Force training feature converged with a CCG patrol east of Taiwan tied to Japan-Philippines maritime talks.</div>
-      
       <div class="byline">
         By <span class="byline-name">Benjamin Yang</span>
-        <span class="byline-title">Founder & Principal Analyst, China Mil Watch</span>
-      </div>
-      
+<span class="byline-title">Principal Analyst, China Mil Watch</span>      </div>
       <div class="hero-meta">
         <span class="meta-item">Covers <span class="num">2026-05-31</span> → <span class="num">2026-06-06</span></span>
-        <span class="meta-item"><span class="num">7</span> days observed</span>
-        <span class="meta-item"><span class="num">41</span> articles analyzed</span>
+<span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">41</span> articles analyzed</span>
         <span class="meta-item"><span class="num">4</span> significant</span>
-        
-          <span class="meta-item">PLA Daily (解放军报)</span>
-        
       </div>
     </div>
 
-    
-    
     <figure class="cover-figure">
       <img src="../covers/2026-06-06.png"
-           alt="The PLA Watch — The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit (issue cover)"
+           alt="The PLA Watch — The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit (issue cover)"
            width="1200" height="630" loading="eager">
       <figcaption>Issue cover · The PLA Watch · 2026-06-06</figcaption>
     </figure>
-    
-    
+    <div class="cover-credit-note">
+      <span class="label">Cover image:</span>
+<span>·</span> <a href="http://www.81.cn/yw_208727/16465208.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
+    </div>
 
-    
-    
 
-    
-    
       <div class="signal-card">
         <div class="signal-eyebrow">This week's signal</div>
         <div class="signal-text">The China Coast Guard publicly tied a patrol east of Taiwan to Japan-Philippines maritime delimitation talks, turning a patrol announcement into a warning about negotiations Beijing was not party to.</div>
       </div>
-    
 
-    
     <div class="snapshot">
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
@@ -1078,7 +1076,7 @@
         <div class="snap-stat">
           <div class="num">1</div>
           <div class="label">Source</div>
-          <div class="sub">PLA Daily (解放军报)</div>
+          <div class="sub">PLA Daily</div>
         </div>
         <div class="snap-stat">
           <div class="num">7</div>
@@ -1086,11 +1084,9 @@
           <div class="sub">2026-05-31 → 2026-06-06</div>
         </div>
       </div>
-      
       <div class="snap-bar">
         <div class="snap-bar-label">Significant vs. routine coverage</div>
         <div class="snap-bar-track">
-          
           <div class="snap-bar-fill" style="width: 9.8%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
@@ -1099,268 +1095,156 @@
           <span><span class="swatch swatch-rest"></span>Routine (37)</span>
         </div>
       </div>
-      
     </div>
 
-    
     <div class="post-body">
 
-      
       <div class="post-section opening">
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
-          
-          <p>This was not a dramatic week in PLA Daily. There were no announced Taiwan exercises or senior personnel changes, and no article that on its own read like an immediate escalatory signal. The useful material sat below that surface, where doctrinal commentary and training reportage kept returning to a problem the PLA has not solved in public view: how a force built around control, hierarchy, and system-of-systems integration should absorb cheap, expendable, and increasingly unmanned capabilities.</p>
-          
-          <p>The strongest article was a June 3 piece on Russian and American efforts to copy, modify, or put Iran’s Shahed-136 into service loitering munition. At first glance, it reads like foreign military analysis. Its closing language points inward. Phrases such as “taking others’ strengths and making them one’s own” and “organic unity of strategic fit within the equipment system” ask the Chinese reader to treat foreign designs as material that can be studied, absorbed, and reworked inside an existing force structure. The article does not state a PLA procurement intention, so that claim should stay off the table. Still, the analytic direction is clear enough to matter.</p>
-          
-          <p>The Rocket Force story was valuable in a different way. Its details were unusually concrete: simulator-based launch crew training, unit-built data interpretation software, and physical conditioning tied to launch operations in CBRN gear. PLA Daily often publishes training features; this one gave more than morale. A first-term conscript in a key crew role, alongside an NCO-built tool that reportedly reduced a two-hour manual process to seconds, creates a small but useful public record of how one brigade is trying to close procedural and data-processing gaps.</p>
-          
-          <p>The CCG item was less technical, but its geography and wording were more politically consequential. On June 1, spokesperson Jiang Lue framed a patrol east of Taiwan as a response to Japan-Philippines maritime delimitation talks. That phrasing matters because the patrol announcement did more than assert presence. It identified negotiations between other parties as the object being contested.</p>
-          
-        </div>
+<p>This was not a dramatic week in PLA Daily. There were no announced Taiwan exercises or senior personnel changes, and no article that on its own read like an immediate escalatory signal. The useful material sat below that surface, where doctrinal commentary and training reportage kept returning to a problem the PLA has not solved in public view: how a force built around control, hierarchy, and system-of-systems integration should absorb cheap, expendable, and increasingly unmanned capabilities.</p><p>The strongest article was a June 3 piece on Russian and American efforts to copy, modify, or put Iran’s Shahed-136 into service loitering munition. At first glance, it reads like foreign military analysis. Its closing language points inward. Phrases such as “taking others’ strengths and making them one’s own” and “organic unity of strategic fit within the equipment system” ask the Chinese reader to treat foreign designs as material that can be studied, absorbed, and reworked inside an existing force structure. The article does not state a PLA procurement intention, so that claim should stay off the table. Still, the analytic direction is clear enough to matter.</p><p>The Rocket Force story was valuable in a different way. Its details were unusually concrete: simulator-based launch crew training, unit-built data interpretation software, and physical conditioning tied to launch operations in CBRN gear. PLA Daily often publishes training features; this one gave more than morale. A first-term conscript in a key crew role, alongside an NCO-built tool that reportedly reduced a two-hour manual process to seconds, creates a small but useful public record of how one brigade is trying to close procedural and data-processing gaps.</p><p>The CCG item was less technical, but its geography and wording were more politically consequential. On June 1, spokesperson Jiang Lue framed a patrol east of Taiwan as a response to Japan-Philippines maritime delimitation talks. That phrasing matters because the patrol announcement did more than assert presence. It identified negotiations between other parties as the object being contested.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
-          
-          <p>The week’s sharpest material sat in the gap between routine format and less routine implication.</p>
-          
-          <p>The loitering-munitions piece, authored by Zhao Wei, Hu Yongjiang, and Zhu Ning, describes Russia’s Geranium-2 as an adaptation of the Shahed-136 for attrition warfare and presents U.S. work on a Shahed-derived system with Starlink integration and F-35 cooperative strike trials. The article is interesting less for the foreign systems it describes than for the standard it uses to judge adaptation. It treats imitation as successful only when a borrowed design is made to fit a country’s industrial base, operational concept, and wider equipment architecture. In PLA Daily, that is not a neutral lesson in military history. It is a disciplined way of thinking about technology transfer, reverse engineering, and force design. The article never says China will pursue a specific loitering-munition pathway, and the evidence does not support that claim. What it does support is a narrower reading: PLA media is giving serious space to the institutional logic of absorbing foreign low-cost strike technology.</p>
-          
-          <p>The CCG patrol works differently because it is a public enforcement statement rather than a doctrinal essay. Jiang Lue connected the June 1 patrol east of Taiwan to Japan and the Philippines opening maritime delimitation negotiations in that area. The linkage extends CCG messaging into a zone that is not routinely foregrounded in patrol announcements, while making third-party negotiation itself part of the trigger. In practice, the CCG is being presented as a diplomatic instrument backed by physical presence: a way to contest talks before they become agreements.</p>
-          
-          <p>The Rocket Force training article is easy to underrate because the genre looks familiar. Its content is more useful than that. Simulator-based launch training, NCO-developed decision-support software, and a first-term conscript winning a key crew position after outperforming senior NCOs all give the article a more granular texture than standard morale writing. The piece documents an institutional response to the training-combat gap at brigade level, while leaving open the more important question of whether unit-built software is being propagated across the Rocket Force or remains a local workaround.</p>
-          
-        </div>
+<p>The week’s sharpest material sat in the gap between routine format and less routine implication.</p><p>The loitering-munitions piece, authored by Zhao Wei, Hu Yongjiang, and Zhu Ning, describes Russia’s Geranium-2 as an adaptation of the Shahed-136 for attrition warfare and presents U.S. work on a Shahed-derived system with Starlink integration and F-35 cooperative strike trials. The article is interesting less for the foreign systems it describes than for the standard it uses to judge adaptation. It treats imitation as successful only when a borrowed design is made to fit a country’s industrial base, operational concept, and wider equipment architecture. In PLA Daily, that is not a neutral lesson in military history. It is a disciplined way of thinking about technology transfer, reverse engineering, and force design. The article never says China will pursue a specific loitering-munition pathway, and the evidence does not support that claim. What it does support is a narrower reading: PLA media is giving serious space to the institutional logic of absorbing foreign low-cost strike technology.</p><p>The CCG patrol works differently because it is a public enforcement statement rather than a doctrinal essay. Jiang Lue connected the June 1 patrol east of Taiwan to Japan and the Philippines opening maritime delimitation negotiations in that area. The linkage extends CCG messaging into a zone that is not routinely foregrounded in patrol announcements, while making third-party negotiation itself part of the trigger. In practice, the CCG is being presented as a diplomatic instrument backed by physical presence: a way to contest talks before they become agreements.</p><p>The Rocket Force training article is easy to underrate because the genre looks familiar. Its content is more useful than that. Simulator-based launch training, NCO-developed decision-support software, and a first-term conscript winning a key crew position after outperforming senior NCOs all give the article a more granular texture than standard morale writing. The piece documents an institutional response to the training-combat gap at brigade level, while leaving open the more important question of whether unit-built software is being propagated across the Rocket Force or remains a local workaround.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
-          
-          <p>The CCG framing matters because it shows coast guard patrol authority being used to contest diplomatic process, rather than only the physical presence of rival vessels. A patrol east of Taiwan linked to Japan-Philippines delimitation discussions pulls the East China Sea, South China Sea, and Taiwan Strait into the same enforcement grammar. That does not make one patrol a new baseline. It does, however, create a public template Beijing can reuse if it wants to challenge maritime talks between other parties through physical presence.</p>
-          
-          <p>The loitering-munitions article matters because PLA media often uses third-country wars and weapons programs to process lessons that are relevant to Chinese force development without naming the domestic implication outright. Here, the operative lesson is not that Iran, Russia, or the United States has produced a particular system. The lesson is that cheap strike systems become militarily meaningful only when a force can pull them into its own industrial and operational architecture. That is the kind of reasoning that can sit upstream of procurement, even when the article itself remains formally about foreign militaries.</p>
-          
-          <p>The Rocket Force piece matters more modestly, but in a concrete way. It adds to the public record of how one brigade is translating “training-combat integration” into daily practice. The useful details are not proof of readiness. They are evidence of the mechanisms being advertised: simulator crews, NCO innovation studios, and launch-condition physical training under protective gear. For a force that is often discussed in abstract terms, those unit-level mechanisms are worth filing.</p>
-          
-        </div>
+<p>The CCG framing matters because it shows coast guard patrol authority being used to contest diplomatic process, rather than only the physical presence of rival vessels. A patrol east of Taiwan linked to Japan-Philippines delimitation discussions pulls the East China Sea, South China Sea, and Taiwan Strait into the same enforcement grammar. That does not make one patrol a new baseline. It does, however, create a public template Beijing can reuse if it wants to challenge maritime talks between other parties through physical presence.</p><p>The loitering-munitions article matters because PLA media often uses third-country wars and weapons programs to process lessons that are relevant to Chinese force development without naming the domestic implication outright. Here, the operative lesson is not that Iran, Russia, or the United States has produced a particular system. The lesson is that cheap strike systems become militarily meaningful only when a force can pull them into its own industrial and operational architecture. That is the kind of reasoning that can sit upstream of procurement, even when the article itself remains formally about foreign militaries.</p><p>The Rocket Force piece matters more modestly, but in a concrete way. It adds to the public record of how one brigade is translating “training-combat integration” into daily practice. The useful details are not proof of readiness. They are evidence of the mechanisms being advertised: simulator crews, NCO innovation studios, and launch-condition physical training under protective gear. For a force that is often discussed in abstract terms, those unit-level mechanisms are worth filing.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
-          
-          <p>Most of the week still belonged to familiar genres, and the point of identifying them is to keep the signal from getting inflated.</p>
-          
-          <p>Anti-corruption and supervision content aimed at senior cadres appeared repeatedly, including pieces under the “Strong Military Forum” and “Great Wall Forum” banners. The line was familiar: senior officers should treat supervision as a political virtue, not an external restraint. PLA Daily has published versions of that argument for years, and the cadence usually rises after the CMC issues new oversight language. The useful reading is therefore almost the reverse of the surface message. The volume of supervision writing does not show that the problem has been solved; it records how persistent the problem remains. An institution that keeps telling senior officers to welcome oversight is also admitting, indirectly, that some of them resist it.</p>
-          
-          <p>Coverage of the China-Mongolia “Steppe Partner-2026” exercise also needs restraint. The exercise was real, and the unmanned-systems demonstration appears in the record: robotic dogs, UGVs, exoskeletons, and FPV drones. Its political function, however, fits an established pattern in which PLA exercises with smaller partners double as technology showcases. Mongolian forces observed and handled Chinese systems; the coverage does not show peer-level combined-arms integration. The exercise is useful evidence for how the PLA is normalizing unmanned ground systems in foreign military engagement, not for a sudden shift in the operational balance around Mongolia.</p>
-          
-        </div>
+<p>Most of the week still belonged to familiar genres, and the point of identifying them is to keep the signal from getting inflated.</p><p>Anti-corruption and supervision content aimed at senior cadres appeared repeatedly, including pieces under the “Strong Military Forum” and “Great Wall Forum” banners. The line was familiar: senior officers should treat supervision as a political virtue, not an external restraint. PLA Daily has published versions of that argument for years, and the cadence usually rises after the CMC issues new oversight language. The useful reading is therefore almost the reverse of the surface message. The volume of supervision writing does not show that the problem has been solved; it records how persistent the problem remains. An institution that keeps telling senior officers to welcome oversight is also admitting, indirectly, that some of them resist it.</p><p>Coverage of the China-Mongolia “Steppe Partner-2026” exercise also needs restraint. The exercise was real, and the unmanned-systems demonstration appears in the record: robotic dogs, UGVs, exoskeletons, and FPV drones. Its political function, however, fits an established pattern in which PLA exercises with smaller partners double as technology showcases. Mongolian forces observed and handled Chinese systems; the coverage does not show peer-level combined-arms integration. The exercise is useful evidence for how the PLA is normalizing unmanned ground systems in foreign military engagement, not for a sudden shift in the operational balance around Mongolia.</p>        </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">训战脱节 (Xùn-zhàn tuōjié)</div>
           <div class="term-explanation">
-            
-            <p>“Training-combat gap” names the PLA’s recurring admission that training conditions, assessment habits, and unit routines do not fully reproduce combat demands. In PLA Daily, the phrase often appears when an article needs to justify a reform: scenario-based assessment, field-tempo support, simulator work, or more realistic launch procedures. In this week’s Rocket Force article, it helps frame the move away from cable-connector practice toward simulator-based crew training. The term should be read as both diagnosis and mandate. When a unit is described as solving 训战脱节, the article is usually showing a workaround, not closing the case. The PLA has been naming this problem publicly since the 2015 reform period, and its continued appearance in 2026 is part of the story.</p>
-            
-          </div>
+<p>“Training-combat gap” names the PLA’s recurring admission that training conditions, assessment habits, and unit routines do not fully reproduce combat demands. In PLA Daily, the phrase often appears when an article needs to justify a reform: scenario-based assessment, field-tempo support, simulator work, or more realistic launch procedures. In this week’s Rocket Force article, it helps frame the move away from cable-connector practice toward simulator-based crew training. The term should be read as both diagnosis and mandate. When a unit is described as solving 训战脱节, the article is usually showing a workaround, not closing the case. The PLA has been naming this problem publicly since the 2015 reform period, and its continued appearance in 2026 is part of the story.</p>          </div>
         </div>
       </div>
-      
 
-      
       <div class="post-section">
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
-          
-          <p>I would track these as possible patterns, not conclusions.</p>
-          
-          <p>The CCG patrol east of Taiwan deserves the closest watch. If later announcements in the same area keep citing third-party negotiations rather than generic sovereignty language, that would suggest a deliberate enforcement posture is being built east of Taiwan. One patrol and one spokesperson statement cannot establish that. Repetition could.</p>
-          
-          <p>For the loitering-munitions line, the key question is whether the “absorb and adapt” frame returns in later PLA Daily coverage of low-cost expendable strike systems. If it reappears around doctrine, procurement-adjacent writing, or export-facing commentary, the June 3 article will look less like a one-off foreign military essay and more like preparatory institutional argument.</p>
-          
-          <p>For the Rocket Force, the detail to file is the NCO innovation studio producing brigade-level decision-support software. Similar stories across other Rocket Force units would suggest that bottom-up software work is being promoted as a model for solving data interpretation and crew proficiency problems outside normal centralized procurement channels.</p>
-          
-        </div>
+<p>I would track these as possible patterns, not conclusions.</p><p>The CCG patrol east of Taiwan deserves the closest watch. If later announcements in the same area keep citing third-party negotiations rather than generic sovereignty language, that would suggest a deliberate enforcement posture is being built east of Taiwan. One patrol and one spokesperson statement cannot establish that. Repetition could.</p><p>For the loitering-munitions line, the key question is whether the “absorb and adapt” frame returns in later PLA Daily coverage of low-cost expendable strike systems. If it reappears around doctrine, procurement-adjacent writing, or export-facing commentary, the June 3 article will look less like a one-off foreign military essay and more like preparatory institutional argument.</p><p>For the Rocket Force, the detail to file is the NCO innovation studio producing brigade-level decision-support software. Similar stories across other Rocket Force units would suggest that bottom-up software work is being promoted as a model for solving data interpretation and crew proficiency problems outside normal centralized procurement channels.</p>        </div>
       </div>
-      
 
       <div class="post-section source-trail">
         <div class="mod-heading brand">Source Trail</div>
-        
         <div class="source-cards">
-          
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16465208.html" target="_blank" rel="noopener">
-            <div class="source-card-title">Who Is Imitating and Copying the 'Aerial Moped'? Lessons from Russia and America Drawing on Iran's Low-Cost Loitering Munitions</div>
+            <div class="source-card-title">Who Is Imitating and Copying the &#39;Aerial Moped&#39;? Lessons from Russia and America Drawing on Iran&#39;s Low-Cost Loitering Munitions</div>
             <div class="source-card-meta">
-              <span class="sig-tag">Significant</span>
-              <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-03</span>
-            </div>
+<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-06-03</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465208.html</div>
           </a>
-          
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16465213.html" target="_blank" rel="noopener">
-            <div class="source-card-title">A Major Officer Returns to His Old Unit and Finds Some Training Events He 'Can't Make Sense Of'—What Did He Go Through?</div>
+            <div class="source-card-title">A Major Officer Returns to His Old Unit and Finds Some Training Events He &#39;Can&#39;t Make Sense Of&#39;—What Did He Go Through?</div>
             <div class="source-card-meta">
-              <span class="sig-tag">Significant</span>
-              <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-03</span>
-            </div>
+<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-06-03</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465213.html</div>
           </a>
-          
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16464811.html" target="_blank" rel="noopener">
             <div class="source-card-title">Long March 12B Yao-1 Launch Vehicle Successfully Launched</div>
             <div class="source-card-meta">
-              <span class="sig-tag">Significant</span>
-              <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-01</span>
-            </div>
+<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-06-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464811.html</div>
           </a>
-          
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16464755.html" target="_blank" rel="noopener">
-            <div class="source-card-title">China Coast Guard Conducts Law-Enforcement Patrols in Waters East of China's Taiwan Island</div>
+            <div class="source-card-title">China Coast Guard Conducts Law-Enforcement Patrols in Waters East of China&#39;s Taiwan Island</div>
             <div class="source-card-meta">
-              <span class="sig-tag">Significant</span>
-              <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-01</span>
-            </div>
+<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-06-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464755.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465401.html" target="_blank" rel="noopener">
             <div class="source-card-title">Empowering Joint Operations Planning with Intelligentization</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-04</span>
-            </div>
+<span class="sep">·</span><span>2026-06-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465401.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16464570.html" target="_blank" rel="noopener">
             <div class="source-card-title">An Air Force Unit Breaks Inertial Thinking to Innovate Combat Mode</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-05-31</span>
-            </div>
+<span class="sep">·</span><span>2026-05-31</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464570.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465864.html" target="_blank" rel="noopener">
-            <div class="source-card-title">China-Mongolia 'Steppe Partner-2026' Army Joint Training Closing Ceremony Held</div>
+            <div class="source-card-title">China-Mongolia &#39;Steppe Partner-2026&#39; Army Joint Training Closing Ceremony Held</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-06</span>
-            </div>
+<span class="sep">·</span><span>2026-06-06</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465864.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465815.html" target="_blank" rel="noopener">
             <div class="source-card-title">Jiangsu Yixing Military-Civilian Organizations Conduct Joint Water Search-and-Rescue Training</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-06</span>
-            </div>
+<span class="sep">·</span><span>2026-06-06</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465815.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465393.html" target="_blank" rel="noopener">
-            <div class="source-card-title">Simulation System Moved into a 'Postage-Stamp Range,' Born from a Sudden Flash of Inspiration among Officers and Soldiers</div>
+            <div class="source-card-title">Simulation System Moved into a &#39;Postage-Stamp Range,&#39; Born from a Sudden Flash of Inspiration among Officers and Soldiers</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-04</span>
-            </div>
+<span class="sep">·</span><span>2026-06-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465393.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465379.html" target="_blank" rel="noopener">
-            <div class="source-card-title">A Base of Naval Aviation University Conducts In-Depth Study and Implementation of Xi Jinping's Thought on Strengthening the Military</div>
+            <div class="source-card-title">A Base of Naval Aviation University Conducts In-Depth Study and Implementation of Xi Jinping&#39;s Thought on Strengthening the Military</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-04</span>
-            </div>
+<span class="sep">·</span><span>2026-06-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465379.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465194.html" target="_blank" rel="noopener">
             <div class="source-card-title">A Brigade of the 74th Group Army Strengthens Unmanned Combat Force Development</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-03</span>
-            </div>
+<span class="sep">·</span><span>2026-06-03</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465194.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16464974.html" target="_blank" rel="noopener">
             <div class="source-card-title">As the Artificial Intelligence Wave Sweeps the Military Domain, Does Strategic Wisdom Still Have a Role to Play?</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-02</span>
-            </div>
+<span class="sep">·</span><span>2026-06-02</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464974.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16465059.html" target="_blank" rel="noopener">
-            <div class="source-card-title">Encountering 'Enemy' Harassment During Movement — UAVs and Robotic Wolves Deployed!</div>
+            <div class="source-card-title">Encountering &#39;Enemy&#39; Harassment During Movement — UAVs and Robotic Wolves Deployed!</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-02</span>
-            </div>
+<span class="sep">·</span><span>2026-06-02</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16465059.html</div>
           </a>
-          
         </div>
-        
-          <div class="source-trail-cap">Showing the 13 most relevant items from this week's coverage. The full set is searchable on <a href="../../archive.html">China Mil Watch</a>.</div>
-        
-        
       </div>
 
       <div class="closing-note">
         I welcome comments or corrections from people working on Chinese military media, PLA studies, or U.S.-China security.
       </div>
 
-      
       <div class="author-block">
         <div class="author-block-eyebrow">Author</div>
         <div class="author-block-name">Benjamin Yang</div>
-        <div class="author-block-title">Founder & Principal Analyst, China Mil Watch</div>
-        <div class="author-block-bio">Benjamin Yang is the founder of China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>
-        
-        <div class="author-chips">
-          <a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a>
-          <a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a>
-          <a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>
-        </div>
-        
+<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
+<a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a><a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a><a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>        </div>
       </div>
-      
 
     </div>
 
@@ -1374,9 +1258,8 @@
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Significant</span></div>
-      <div class="sb-row"><span class="label">Week ending</span><span class="value">2026-06-06</span></div>
-      <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>
-      <div class="sb-row"><span class="label">Articles</span><span class="value">41</span></div>
+<div class="sb-row"><span class="label">Issue</span><span class="value">No. 5</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">6 June 2026</span></div>
+<div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">41</span></div>
       <div class="sb-row"><span class="label">Significant</span><span class="value">4</span></div>
     </div>
 
@@ -1388,7 +1271,6 @@
     </div>
   </aside>
 </div>
-
 </main>
 
 <footer class="site-footer">
@@ -1408,7 +1290,6 @@
     </div>
   </div>
 </footer>
-
 
 </body>
 </html>

@@ -7,12 +7,12 @@
   <meta name="description" content="One MND spokesperson statement tied CCG operations east of Taiwan to cross-strait nationalist obligation and Japan-Philippines maritime talks. The rest of the week was dense with political work, useful less for drama than for what it documents about institutional friction.">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="https://chinamilwatch.org/the-pla-watch/">
+  <link rel="canonical" href="https://chinamilwatch.org/the-pla-watch/posts/2026-06-20.html">
 
   <!-- Open Graph -->
   <meta property="og:type"         content="article">
   <meta property="og:site_name"    content="The PLA Watch">
-  <meta property="og:url"          content="https://chinamilwatch.org/the-pla-watch/">
+  <meta property="og:url"          content="https://chinamilwatch.org/the-pla-watch/posts/2026-06-20.html">
   <meta property="og:title"        content="The PLA Watch: The CCG Statement That Stood Apart">
   <meta property="og:description"  content="One MND spokesperson statement tied CCG operations east of Taiwan to cross-strait nationalist obligation and Japan-Philippines maritime talks. The rest of the week was dense with political work, useful less for drama than for what it documents about institutional friction.">
   <meta property="og:image"        content="https://chinamilwatch.org/the-pla-watch/covers/2026-06-20.png">
@@ -38,15 +38,15 @@
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
       --color-brand-light:    #D11C36;
-      --color-bg:             #F4EFE6;        /* warmer paper tone for the publication */
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FBF7EE;
-      --color-text-primary:   #161616;
-      --color-text-secondary: #4A4A4A;
-      --color-text-muted:     #7A7A7A;
-      --color-border:         #DCD7CC;
-      --color-border-soft:    #ECE7DC;
+      --color-bg:             #0E1520;        /* ink navy */
+      --color-bg-card:        #141D2B;        /* lifted navy surface */
+      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
+      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
+      --color-text-primary:   #EDE9E0;        /* warm off-white */
+      --color-text-secondary: #9A9590;        /* mid warm gray */
+      --color-text-muted:     #5E5A55;        /* quiet gray */
+      --color-border:         #273040;        /* dark rule */
+      --color-border-soft:    #1C2738;        /* softer dark rule */
       --color-accent:         #B3132B;
       --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -62,8 +62,8 @@
       background-image:
         repeating-linear-gradient(
           0deg,
-          rgba(22, 22, 22, 0.018) 0,
-          rgba(22, 22, 22, 0.018) 1px,
+          rgba(255, 255, 255, 0.012) 0,
+          rgba(255, 255, 255, 0.012) 1px,
           transparent 1px,
           transparent 6px
         );
@@ -255,6 +255,34 @@
       font-size: 0.65rem;
     }
 
+    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    .pw-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--sans);
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .pw-badge--significant {
+      background: rgba(179, 19, 43, 0.14);
+      color: #E05A6D;
+      border: 1px solid rgba(209, 28, 54, 0.4);
+    }
+    .pw-badge--routine {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+    .pw-badge--pilot {
+      background: rgba(224, 164, 88, 0.1);
+      color: #E0A458;
+      border: 1px solid rgba(224, 164, 88, 0.35);
+    }
+
     /* ── Utilities ─────────────────────────────────────────────────────── */
     .empty-state {
       color: var(--color-text-muted);
@@ -288,7 +316,6 @@
       .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
     }
 
-    
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
@@ -469,18 +496,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.hero-edition .badge {
-  display: inline-block;
-  background: #FFF7ED;
-  color: #9A3412;
-  border: 1px solid #FED7AA;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  margin-left: 0.5rem;
-}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -771,12 +787,12 @@
 }
 .source-card-meta .sep { color: var(--color-border); }
 .source-card-meta .sig-tag {
-  color: var(--color-brand);
+  color: #E05A6D;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: rgba(179, 19, 43, 0.14);
+  border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
   border-radius: 2px;
   font-size: 0.625rem;
@@ -976,7 +992,6 @@
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
-
   </style>
 </head>
 <body>
@@ -997,71 +1012,54 @@
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Routine · Week ending 2026-06-20</span></span>
+      <span class="left"><span>Vol. I · No. 7</span><span>Routine · Week ending 20 June 2026</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
 </header>
 
 
-
 <main>
-  
 <div class="post-wrap">
 
   <article class="post-main">
 
-    
     <div class="hero">
       <div class="hero-meta-top">
         <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
-          Week ending 2026-06-20
-          <span class="badge">Routine</span>
-        </div>
+No. 7 · Week ending 20 June 2026
+<span class="pw-badge pw-badge--routine">Routine</span>        </div>
       </div>
       <h1 class="hero-title">The PLA Watch: The CCG Statement That Stood Apart</h1>
       <div class="hero-dek">One MND spokesperson statement tied CCG operations east of Taiwan to cross-strait nationalist obligation and Japan-Philippines maritime talks. The rest of the week was dense with political work, useful less for drama than for what it documents about institutional friction.</div>
-      
       <div class="byline">
         By <span class="byline-name">Benjamin Yang</span>
-        <span class="byline-title">Principal Analyst, China Mil Watch</span>
-      </div>
-      
+<span class="byline-title">Principal Analyst, China Mil Watch</span>      </div>
       <div class="hero-meta">
         <span class="meta-item">Covers <span class="num">2026-06-14</span> → <span class="num">2026-06-20</span></span>
-        <span class="meta-item"><span class="num">7</span> days observed</span>
-        <span class="meta-item"><span class="num">30</span> articles analyzed</span>
+<span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">30</span> articles analyzed</span>
         <span class="meta-item"><span class="num">1</span> significant</span>
-        
-          <span class="meta-item">PLA Daily (解放军报)</span>
-        
       </div>
     </div>
 
-    
-    
     <figure class="cover-figure">
       <img src="../covers/2026-06-20.png"
            alt="The PLA Watch — The PLA Watch: The CCG Statement That Stood Apart (issue cover)"
            width="1200" height="630" loading="eager">
       <figcaption>Issue cover · The PLA Watch · 2026-06-20</figcaption>
     </figure>
-    
-    
+    <div class="cover-credit-note">
+      <span class="label">Cover image:</span>
+<span>·</span> <a href="http://www.81.cn/yw_208727/16467717.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
+    </div>
 
-    
-    
 
-    
-    
       <div class="signal-card">
         <div class="signal-eyebrow">This week's signal</div>
         <div class="signal-text">The MND spokesperson linked CCG operations east of Taiwan to a cross-strait nationalist obligation and the Japan-Philippines maritime talks in a single official statement.</div>
       </div>
-    
 
-    
     <div class="snapshot">
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
@@ -1078,7 +1076,7 @@
         <div class="snap-stat">
           <div class="num">1</div>
           <div class="label">Source</div>
-          <div class="sub">PLA Daily (解放军报)</div>
+          <div class="sub">PLA Daily</div>
         </div>
         <div class="snap-stat">
           <div class="num">7</div>
@@ -1086,11 +1084,9 @@
           <div class="sub">2026-06-14 → 2026-06-20</div>
         </div>
       </div>
-      
       <div class="snap-bar">
         <div class="snap-bar-label">Significant vs. routine coverage</div>
         <div class="snap-bar-track">
-          
           <div class="snap-bar-fill" style="width: 3.3%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
@@ -1099,37 +1095,27 @@
           <span><span class="swatch swatch-rest"></span>Routine (29)</span>
         </div>
       </div>
-      
     </div>
 
-    
     <div class="post-body">
 
       <div class="post-section opening">
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
-          <p>This week’s PLA media cycle was dominated by political work coverage. Most of it was familiar: rectification campaigns, anti-formalism pieces, institutional discipline. Then one MND spokesperson statement cut across all of it.</p>
-          <p>On June 16, MND spokesperson Senior Colonel Chen Xi defended China Coast Guard operations east of Taiwan. What made the statement notable was not the existence of the claim itself. Beijing has repeated versions of these arguments for years. What stood out was the way several separate political and territorial questions were folded together into a single official framing.</p>
-          <p>The statement defended the CCG presence through EEZ and continental shelf claims Beijing treats as non-negotiable. At the same time, it described defending sovereignty and maritime rights as the “shared inescapable duty of compatriots on both sides of the strait.” That matters because it shifts the framing away from a simple state position. The language implies a broader national obligation that Taiwan authorities are portrayed as abandoning.</p>
-        </div>
+<p>This week’s PLA media cycle was dominated by political work coverage. Most of it was familiar: rectification campaigns, anti-formalism pieces, institutional discipline. Then one MND spokesperson statement cut across all of it.</p><p>On June 16, MND spokesperson Senior Colonel Chen Xi defended China Coast Guard operations east of Taiwan. What made the statement notable was not the existence of the claim itself. Beijing has repeated versions of these arguments for years. What stood out was the way several separate political and territorial questions were folded together into a single official framing.</p><p>The statement defended the CCG presence through EEZ and continental shelf claims Beijing treats as non-negotiable. At the same time, it described defending sovereignty and maritime rights as the “shared inescapable duty of compatriots on both sides of the strait.” That matters because it shifts the framing away from a simple state position. The language implies a broader national obligation that Taiwan authorities are portrayed as abandoning.</p>        </div>
       </div>
 
       <div class="post-section">
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
-          <p>The statement also referenced Japan-Philippines maritime delimitation talks in the same breath. That linkage is important. It tied CCG operations east of Taiwan to a separate regional territorial issue and placed both inside the same political narrative. The sharp attacks on the DPP were familiar, but the convergence of all three threads in one attributed spokesperson statement was less routine.</p>
-          <p>That does not automatically signal an operational shift. It does, however, show how Beijing is choosing to publicly organize these issues at the messaging level. MND spokesperson statements become part of the official record. Once a framing enters that record, it can be repeated, expanded, and cited later.</p>
-          <p>The cross-strait language is probably the most consequential part. By presenting sovereignty defense in those waters as a duty binding on people on both sides of the strait, the statement reframes Taiwanese objections as a political and national failure rather than a sovereign dispute. That is a stronger political claim than a standard denial of provocation.</p>
-        </div>
+<p>The statement also referenced Japan-Philippines maritime delimitation talks in the same breath. That linkage is important. It tied CCG operations east of Taiwan to a separate regional territorial issue and placed both inside the same political narrative. The sharp attacks on the DPP were familiar, but the convergence of all three threads in one attributed spokesperson statement was less routine.</p><p>That does not automatically signal an operational shift. It does, however, show how Beijing is choosing to publicly organize these issues at the messaging level. MND spokesperson statements become part of the official record. Once a framing enters that record, it can be repeated, expanded, and cited later.</p><p>The cross-strait language is probably the most consequential part. By presenting sovereignty defense in those waters as a duty binding on people on both sides of the strait, the statement reframes Taiwanese objections as a political and national failure rather than a sovereign dispute. That is a stronger political claim than a standard denial of provocation.</p>        </div>
       </div>
+
 
       <div class="post-section">
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
-          <p>Outside the Taiwan-related coverage, the week was saturated with 正确政绩观 (“correct outlook on political achievement”) campaign reporting. On its own, none of these articles would be especially remarkable. PLA Daily runs these campaign waves constantly. The same institutional problems appear over and over: leadership transitions that abandon predecessor commitments, inspections optimized for appearances, research disconnected from operational need.</p>
-          <p>But reading the pieces together is useful because they show where the PLA still believes friction exists inside the system.</p>
-          <p>This week’s examples were unusually concrete. One Rocket Force brigade eliminated preset “problem quotas” tied to inspection visits. An Air Force Early Warning Academy unit restructured its research approval process. An 82nd Group Army battalion piece focused on failures in party committee cohesion. These are not dramatic revelations, but they are useful institutional snapshots. They show where pressure is being applied and what kinds of dysfunction the PLA still considers unresolved.</p>
-        </div>
+<p>Outside the Taiwan-related coverage, the week was saturated with 正确政绩观 (“correct outlook on political achievement”) campaign reporting. On its own, none of these articles would be especially remarkable. PLA Daily runs these campaign waves constantly. The same institutional problems appear over and over: leadership transitions that abandon predecessor commitments, inspections optimized for appearances, research disconnected from operational need.</p><p>But reading the pieces together is useful because they show where the PLA still believes friction exists inside the system.</p><p>This week’s examples were unusually concrete. One Rocket Force brigade eliminated preset “problem quotas” tied to inspection visits. An Air Force Early Warning Academy unit restructured its research approval process. An 82nd Group Army battalion piece focused on failures in party committee cohesion. These are not dramatic revelations, but they are useful institutional snapshots. They show where pressure is being applied and what kinds of dysfunction the PLA still considers unresolved.</p>        </div>
       </div>
 
       <div class="post-section">
@@ -1137,182 +1123,123 @@
         <div class="term-box">
           <div class="term-word">正确政绩观 (Zhèngquè Zhèngjì Guān)</div>
           <div class="term-explanation">
-            <p>A term worth watching is 正确政绩观 itself. The phrase is often translated as “correct outlook on political achievement,” but in practice it functions as a Xi-era standard for evaluating cadre behavior. The campaign pushes officers to prioritize institutional mission and long-term effectiveness over visible metrics, careerism, or showcase projects. Increasingly, the language is appearing in discussions about logistics systems, research management, and operational administration rather than purely ideological discipline. That expansion matters.</p>
-          </div>
+<p>A term worth watching is 正确政绩观 itself. The phrase is often translated as “correct outlook on political achievement,” but in practice it functions as a Xi-era standard for evaluating cadre behavior. The campaign pushes officers to prioritize institutional mission and long-term effectiveness over visible metrics, careerism, or showcase projects. Increasingly, the language is appearing in discussions about logistics systems, research management, and operational administration rather than purely ideological discipline. That expansion matters.</p>          </div>
         </div>
       </div>
 
       <div class="post-section">
-        <div class="mod-heading brand">What I’m Watching Next</div>
+        <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
-          <p>Three things stand out going forward.</p>
-          <p>First, whether the MND repeats or expands the cross-strait nationalist framing tied to CCG operations east of Taiwan. One statement establishes a position. Repetition would suggest deliberate propagation.</p>
-          <p>Second, whether 正确政绩观 pressure continues moving into procedural and operational domains. This week included several examples where political campaigns appeared to produce actual administrative changes rather than symbolic messaging alone.</p>
-          <p>Third, PLAN Task Force 83’s far-sea training voyage with the Qi Jiguang and Kunlunshan. The task force departed Qingdao carrying foreign military cadets from Brazil, Myanmar, and several other countries. The voyage is part training deployment, part military diplomacy platform. Future port calls and foreign reporting may reveal more about how the PLAN wants to develop military education relationships across the Global South.</p>
-        </div>
+<p>Three things stand out going forward.</p><p>First, whether the MND repeats or expands the cross-strait nationalist framing tied to CCG operations east of Taiwan. One statement establishes a position. Repetition would suggest deliberate propagation.</p><p>Second, whether 正确政绩观 pressure continues moving into procedural and operational domains. This week included several examples where political campaigns appeared to produce actual administrative changes rather than symbolic messaging alone.</p><p>Third, PLAN Task Force 83’s far-sea training voyage with the Qi Jiguang and Kunlunshan. The task force departed Qingdao carrying foreign military cadets from Brazil, Myanmar, and several other countries. The voyage is part training deployment, part military diplomacy platform. Future port calls and foreign reporting may reveal more about how the PLAN wants to develop military education relationships across the Global South.</p>        </div>
       </div>
 
       <div class="post-section source-trail">
         <div class="mod-heading brand">Source Trail</div>
-        
         <div class="source-cards">
-          
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16467717.html" target="_blank" rel="noopener">
             <div class="source-card-title">Defending National Sovereignty and Maritime Rights: The Shared Inescapable Duty of Compatriots on Both Sides of the Strait</div>
             <div class="source-card-meta">
-              <span class="sig-tag">Significant</span>
-              <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-16</span>
-            </div>
+<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-06-16</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467717.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16467458.html" target="_blank" rel="noopener">
             <div class="source-card-title">Eyes Turned Toward Aerospace: An Investigative Report from the Air Force Early Warning Academy</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-15</span>
-            </div>
+<span class="sep">·</span><span>2026-06-15</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467458.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16467569.html" target="_blank" rel="noopener">
-            <div class="source-card-title">From 'Each Fighting His Own Battle' to 'Covering for Each Other': The Principal and Deputy Party Secretaries Take the Lead in Emphasizing Unity and Keeping the Big Picture in Mind</div>
+            <div class="source-card-title">From &#39;Each Fighting His Own Battle&#39; to &#39;Covering for Each Other&#39;: The Principal and Deputy Party Secretaries Take the Lead in Emphasizing Unity and Keeping the Big Picture in Mind</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-16</span>
-            </div>
+<span class="sep">·</span><span>2026-06-16</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467569.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16467556.html" target="_blank" rel="noopener">
-            <div class="source-card-title">Set Sail! China's Navy Task Force 83 Departs to Execute Far-Sea Comprehensive Training and Goodwill Visit Mission</div>
+            <div class="source-card-title">Set Sail! China&#39;s Navy Task Force 83 Departs to Execute Far-Sea Comprehensive Training and Goodwill Visit Mission</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-16</span>
-            </div>
+<span class="sep">·</span><span>2026-06-16</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467556.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16467702.html" target="_blank" rel="noopener">
-            <div class="source-card-title">[Bilingual] China's Nuclear Policy Has Always Maintained a High Degree of Stability, Continuity, and Predictability</div>
+            <div class="source-card-title">[Bilingual] China&#39;s Nuclear Policy Has Always Maintained a High Degree of Stability, Continuity, and Predictability</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-16</span>
-            </div>
+<span class="sep">·</span><span>2026-06-16</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467702.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16467255.html" target="_blank" rel="noopener">
             <div class="source-card-title">Chinese Peacekeeping Quick Reaction Force Deployed to Abyei Conducts Fire Drill</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-14</span>
-            </div>
+<span class="sep">·</span><span>2026-06-14</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16467255.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468523.html" target="_blank" rel="noopener">
             <div class="source-card-title">Why Did a Temporary-Duty Officer Win Major Awards Repeatedly?</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-20</span>
-            </div>
+<span class="sep">·</span><span>2026-06-20</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468523.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468527.html" target="_blank" rel="noopener">
-            <div class="source-card-title">This Activity Allowed Officers and Soldiers to "Not Participate"</div>
+            <div class="source-card-title">This Activity Allowed Officers and Soldiers to &#34;Not Participate&#34;</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-20</span>
-            </div>
+<span class="sep">·</span><span>2026-06-20</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468527.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468525.html" target="_blank" rel="noopener">
             <div class="source-card-title">Party Committee of a Brigade Under the Information Support Force Relays Efforts to Resolve Longstanding Historical Legacy Problems</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-20</span>
-            </div>
+<span class="sep">·</span><span>2026-06-20</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468525.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/hj_208557/16468458.html" target="_blank" rel="noopener">
-            <div class="source-card-title">【Military Vision Mini Classroom】Heavy Weapon of the Deep Sea! The People's Navy Submarine Force Forges an 'Underwater Great Wall'</div>
+            <div class="source-card-title">【Military Vision Mini Classroom】Heavy Weapon of the Deep Sea! The People&#39;s Navy Submarine Force Forges an &#39;Underwater Great Wall&#39;</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-19</span>
-            </div>
+<span class="sep">·</span><span>2026-06-19</span>            </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16468458.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468410.html" target="_blank" rel="noopener">
             <div class="source-card-title">Military Units at All Levels Conduct In-Depth Study and Education on Establishing and Practicing the Correct Outlook on Political Achievement</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-19</span>
-            </div>
+<span class="sep">·</span><span>2026-06-19</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468410.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468127.html" target="_blank" rel="noopener">
             <div class="source-card-title">Conduct Thorough Exercise and Training After-Action Reviews — Never Go to the Battlefield Still Carrying Problems</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-18</span>
-            </div>
+<span class="sep">·</span><span>2026-06-18</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468127.html</div>
           </a>
-          
           <a class="source-card" href="http://www.81.cn/yw_208727/16468124.html" target="_blank" rel="noopener">
             <div class="source-card-title">PLA Daily Commentator: Drive the Centralized Rectification of the Prominent Problem of New Officials Ignoring Old Debts to Achieve Concrete Results</div>
             <div class="source-card-meta">
-              
               <span>PLA Daily (解放军报)</span>
-              <span class="sep">·</span><span>2026-06-18</span>
-            </div>
+<span class="sep">·</span><span>2026-06-18</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16468124.html</div>
           </a>
-          
         </div>
-        
-          <div class="source-trail-cap">Showing the 13 most relevant items from this week's coverage. The full set is searchable on <a href="../../archive.html">China Mil Watch</a>.</div>
-        
-        
       </div>
 
       <div class="closing-note">
         I welcome comments or corrections from people working on Chinese military media, PLA studies, or U.S.-China security.
       </div>
 
-      
       <div class="author-block">
         <div class="author-block-eyebrow">Author</div>
         <div class="author-block-name">Benjamin Yang</div>
-        <div class="author-block-title">Principal Analyst, China Mil Watch</div>
-        <div class="author-block-bio">Benjamin Yang is Principal Analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>
-        
-        <div class="author-chips">
-          <a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a>
-          <a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a>
-          <a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>
-        </div>
-        
+<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is Principal Analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
+<a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a><a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a><a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>        </div>
       </div>
-      
 
     </div>
 
@@ -1326,9 +1253,8 @@
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Routine</span></div>
-      <div class="sb-row"><span class="label">Week ending</span><span class="value">2026-06-20</span></div>
-      <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>
-      <div class="sb-row"><span class="label">Articles</span><span class="value">30</span></div>
+<div class="sb-row"><span class="label">Issue</span><span class="value">No. 7</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">20 June 2026</span></div>
+<div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">30</span></div>
       <div class="sb-row"><span class="label">Significant</span><span class="value">1</span></div>
     </div>
 
@@ -1340,7 +1266,6 @@
     </div>
   </aside>
 </div>
-
 </main>
 
 <footer class="site-footer">
@@ -1360,7 +1285,6 @@
     </div>
   </div>
 </footer>
-
 
 </body>
 </html>

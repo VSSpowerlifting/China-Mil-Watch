@@ -4,7 +4,7 @@
 
 {% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}
 
-{% block masthead_left %}<span>Vol. I</span><span>{% if latest_post and latest_post.week_ending %}Latest issue · {{ latest_post.week_ending }}{% else %}New publication{% endif %}</span>{% endblock %}
+{% block masthead_left %}<span>Vol. I</span><span>{% if latest_post and latest_post.week_ending %}Latest issue · {{ latest_post.week_ending | format_date }}{% else %}New publication{% endif %}</span>{% endblock %}
 
 {% block extra_styles %}
 /* ── Cover layout ────────────────────────────────────────────────────── */
@@ -109,17 +109,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.issue-cover-edition .badge {
-  display: inline-block;
-  background: #FFF7ED;
-  color: #9A3412;
-  border: 1px solid #FED7AA;
-  padding: 2px 8px;
-  border-radius: 2px;
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
-  margin-left: 0.5rem;
-}
+.issue-cover-edition .pw-badge { margin-left: 0.5rem; }
 .issue-cover-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -424,15 +414,15 @@
   <div class="cover-main">
 
     <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
-    <p class="cover-stand">The reader-facing weekly publication from China Mil Watch — a synthesis of the daily Chinese-language monitoring archive into a single editorial brief for policy readers, analysts, and journalists. Source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
+    <p class="cover-stand">The weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Each edition distills a week of daily monitoring into a single brief for policy readers, analysts, and journalists — source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
 
     {% if latest_post %}
       <div class="issue-cover">
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
-            Week ending {{ latest_post.week_ending }}
-            {% if latest_post.edition_label %}<span class="badge">{{ latest_post.edition_label }}</span>{% endif %}
+            {% if latest_post.issue_number %}No. {{ latest_post.issue_number }} · {% endif %}Week ending {{ latest_post.week_ending | format_date }}
+            {% if latest_post.edition_label %}{% set _lbl = latest_post.edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ latest_post.edition_label }}</span>{% endif %}
           </div>
         </div>
         <h2 class="issue-cover-title"><a href="posts/{{ latest_post.date }}.html">{{ latest_post.title }}</a></h2>
@@ -467,7 +457,7 @@
       <div class="archive-list">
         {% for post in archive_posts %}
         <div class="archive-row">
-          <div class="archive-date">Week ending {{ post.week_ending }}</div>
+          <div class="archive-date">{% if post.issue_number %}No. {{ post.issue_number }} · {% endif %}{{ post.week_ending | format_date }}</div>
           <div class="archive-body">
             <div class="archive-title"><a href="posts/{{ post.date }}.html">{{ post.title }}</a></div>
             <div class="archive-dek">{{ post.dek }}</div>

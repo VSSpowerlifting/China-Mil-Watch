@@ -255,6 +255,34 @@
       font-size: 0.65rem;
     }
 
+    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    .pw-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--sans);
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .pw-badge--significant {
+      background: rgba(179, 19, 43, 0.14);
+      color: #E05A6D;
+      border: 1px solid rgba(209, 28, 54, 0.4);
+    }
+    .pw-badge--routine {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+    .pw-badge--pilot {
+      background: rgba(224, 164, 88, 0.1);
+      color: #E0A458;
+      border: 1px solid rgba(224, 164, 88, 0.35);
+    }
+
     /* ── Utilities ─────────────────────────────────────────────────────── */
     .empty-state {
       color: var(--color-text-muted);
