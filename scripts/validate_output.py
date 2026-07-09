@@ -13,6 +13,11 @@ Checks (each failure is fatal unless noted):
   4. Every article_path referenced in articles.json exists on disk.
   5. Every non-empty `date` is a real YYYY-MM-DD (empty date → warning only).
   6. No analyzed article has a blank summary.
+  7. The PLA Watch (output/the-pla-watch/): every sidecar JSON parses, has
+     matching HTML (and vice versa), consistent dates/issue numbers/source
+     counts, body text sufficient to re-render, and a source trail whose
+     entries carry title/url/source/date. Index and archive must link every
+     edition. Missing LinkedIn .txt and cadence gaps are warnings.
 
 Usage:
     python3 scripts/validate_output.py [output_dir]   # default: ../output
@@ -128,7 +133,136 @@ def validate(output_dir: Path) -> tuple[list[str], list[str]]:
             + (" …" if len(blank_dates) > 20 else "")
         )
 
+    _validate_pla_watch(output_dir, errors, warnings)
+
     return (errors, warnings)
+
+
+# ── The PLA Watch (weekly editions) ──────────────────────────────────────────
+
+PW_REQUIRED_FIELDS = (
+    "date", "week_ending", "week_start", "title", "dek",
+    "n_articles", "n_significant", "edition_type", "source_trail",
+)
+PW_BODY_FIELDS = (
+    "opening_note", "what_stood_out", "why_it_matters",
+    "what_was_routine", "what_im_watching_next",
+)
+
+
+def _validate_pla_watch(output_dir: Path, errors: list, warnings: list) -> None:
+    pw_dir = output_dir / "the-pla-watch"
+    posts_dir = pw_dir / "posts"
+    if not posts_dir.is_dir():
+        return  # No weekly publication in this output tree.
+
+    sidecars = []
+    for json_path in sorted(posts_dir.glob("*.json")):
+        rel = f"the-pla-watch/posts/{json_path.name}"
+        try:
+            sc = json.loads(json_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:
+            errors.append(f"{rel} does not parse: {exc}")
+            continue
+
+        missing = [f for f in PW_REQUIRED_FIELDS if not sc.get(f) and sc.get(f) != 0]
+        if missing:
+            errors.append(f"{rel}: missing field(s) {', '.join(missing)}")
+
+        d, we, ws = sc.get("date", ""), sc.get("week_ending", ""), sc.get("week_start", "")
+        if json_path.stem != d:
+            errors.append(f"{rel}: filename does not match date field {d!r}")
+        if d != we:
+            errors.append(f"{rel}: date {d!r} != week_ending {we!r}")
+        try:
+            span = (date.fromisoformat(we) - date.fromisoformat(ws)).days
+            if span != 6:
+                msg = f"{rel}: week_start→week_ending spans {span} days, expected 6"
+                # Pilot editions legitimately covered a shorter window.
+                if "pilot" in (sc.get("edition_label") or "").lower():
+                    warnings.append(msg + " (pilot edition)")
+                else:
+                    errors.append(msg)
+        except ValueError:
+            errors.append(f"{rel}: malformed week_start/week_ending ({ws!r}, {we!r})")
+
+        n_articles = sc.get("n_articles") or 0
+        n_sig = sc.get("n_significant") or 0
+        trail = sc.get("source_trail") or []
+        if n_sig > n_articles:
+            errors.append(f"{rel}: n_significant ({n_sig}) > n_articles ({n_articles})")
+        if len(trail) > n_articles:
+            errors.append(f"{rel}: source_trail has {len(trail)} entries but n_articles={n_articles}")
+        undated = 0
+        for i, entry in enumerate(trail):
+            bad = [k for k in ("title", "url", "source") if not entry.get(k)]
+            if bad:
+                errors.append(f"{rel}: source_trail[{i}] missing {', '.join(bad)}")
+            if not entry.get("date"):
+                undated += 1
+        if undated:
+            # Early editions did not record per-item dates; report only.
+            warnings.append(f"{rel}: {undated}/{len(trail)} source_trail entries have no date")
+            ed = entry.get("date", "")
+            if ed and (ws and we) and not (ws <= ed <= we):
+                warnings.append(f"{rel}: source_trail[{i}] dated {ed}, outside {ws}..{we}")
+        if n_sig > 0 and trail and not any(e.get("is_significant") for e in trail):
+            warnings.append(f"{rel}: n_significant={n_sig} but no source_trail entry is marked significant")
+
+        if not any((sc.get(f) or "").strip() for f in PW_BODY_FIELDS):
+            errors.append(f"{rel}: no body text fields — sidecar cannot re-render the post")
+
+        if not json_path.with_suffix(".html").is_file():
+            errors.append(f"{rel}: rendered HTML {json_path.stem}.html is missing")
+
+        sidecars.append(sc)
+
+    # Orphan HTML (post page with no sidecar)
+    for html_path in sorted(posts_dir.glob("*.html")):
+        if not html_path.with_suffix(".json").is_file():
+            errors.append(f"the-pla-watch/posts/{html_path.name}: no sidecar JSON")
+
+    # Issue numbers: present, unique, chronological
+    numbered = [(sc.get("date", ""), sc.get("issue_number")) for sc in sidecars]
+    missing_no = [d for d, n in numbered if not n]
+    if missing_no:
+        warnings.append(f"editions without issue_number: {', '.join(missing_no)}")
+    nums = [n for _, n in numbered if n]
+    if len(set(nums)) != len(nums):
+        errors.append("duplicate issue_number values across editions")
+    if nums and nums != sorted(nums):
+        errors.append("issue_number values are not chronological")
+
+    # Index and archive must link every edition
+    for page in ("index.html", "archive.html"):
+        page_path = pw_dir / page
+        if not page_path.is_file():
+            errors.append(f"the-pla-watch/{page} is missing")
+            continue
+        text = page_path.read_text(encoding="utf-8")
+        # index.html shows the latest edition card + previous list; both pages
+        # should reference every post URL.
+        for sc in sidecars:
+            if f"posts/{sc.get('date', '')}.html" not in text:
+                errors.append(f"the-pla-watch/{page}: no link to edition {sc.get('date')}")
+
+    # LinkedIn companion files (repo-side, non-fatal: historical gaps exist)
+    linkedin_dir = output_dir.parent / "the-pla-watch" / "linkedin"
+    if linkedin_dir.is_dir():
+        for sc in sidecars:
+            d = sc.get("date", "")
+            if d and not (linkedin_dir / f"{d}.txt").is_file():
+                warnings.append(f"LinkedIn file missing for edition {d}")
+
+    # Cadence: weekly editions should be 7 days apart (report, don't block)
+    dates = sorted(d for d, _ in numbered if d)
+    for prev, cur in zip(dates, dates[1:]):
+        try:
+            gap = (date.fromisoformat(cur) - date.fromisoformat(prev)).days
+        except ValueError:
+            continue
+        if gap != 7:
+            warnings.append(f"cadence gap: {prev} → {cur} is {gap} days (expected 7)")
 
 
 def _is_real_date(s: str) -> bool:

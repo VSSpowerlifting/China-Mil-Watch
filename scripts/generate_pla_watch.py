@@ -21,18 +21,18 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import anthropic
-from jinja2 import FileSystemLoader, Environment
 
 from config import DB_PATH, ANTHROPIC_API_KEY
+from scripts.pw_env import make_pw_env
 from storage.db import get_articles_for_date_range
 
 
 # ── Author identity ──────────────────────────────────────────────────────────
 
 AUTHOR_NAME = "Benjamin Yang"
-AUTHOR_TITLE = "Founder & Principal Analyst, China Mil Watch"
+AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
 AUTHOR_BIO = (
-    "Benjamin Yang is the founder of China Mil Watch and an incoming "
+    "Benjamin Yang is the principal analyst at China Mil Watch and an incoming "
     "International Affairs student at George Washington University’s "
     "Elliott School, focused on U.S.-China relations, public diplomacy, "
     "and security affairs."
@@ -504,7 +504,7 @@ def _build_context(*sources: dict, **extra) -> dict:
 
 
 def render_post(result: dict, meta: dict) -> str:
-    env = Environment(loader=FileSystemLoader(str(ROOT / "site" / "templates")))
+    env = make_pw_env()
     template = env.get_template("pla-watch-post.html")
     # result and meta both carry a "title" key (post title vs. sidecar title).
     # Strip layout-only fields out of meta so the post-content keys from
@@ -513,6 +513,7 @@ def render_post(result: dict, meta: dict) -> str:
         "date":          meta.get("date", meta["week_ending"]),
         "week_ending":   meta["week_ending"],
         "week_start":    meta["week_start"],
+        "issue_number":  meta.get("issue_number"),
         "n_articles":    meta["n_articles"],
         "n_significant": meta["n_significant"],
         "sources_seen":  meta.get("sources_seen", []),
@@ -532,7 +533,7 @@ def render_post(result: dict, meta: dict) -> str:
 
 
 def render_index(posts_meta: list[dict]) -> str:
-    env = Environment(loader=FileSystemLoader(str(ROOT / "site" / "templates")))
+    env = make_pw_env()
     template = env.get_template("pla-watch-index.html")
     latest = posts_meta[0] if posts_meta else None
     archive = posts_meta[1:] if len(posts_meta) > 1 else []
@@ -540,7 +541,7 @@ def render_index(posts_meta: list[dict]) -> str:
 
 
 def render_archive(posts_meta: list[dict]) -> str:
-    env = Environment(loader=FileSystemLoader(str(ROOT / "site" / "templates")))
+    env = make_pw_env()
     template = env.get_template("pla-watch-archive.html")
     return template.render(posts=posts_meta, root_path="../")
 
@@ -644,15 +645,31 @@ def main():
     edition_label = derive_edition_label(result["edition_type"], days_covered)
     source_trail, trail_truncated = build_source_trail(articles)
 
+    # Issue number: 1 + editions published before this week_ending. Stable
+    # across re-runs of the same week (its own sidecar is excluded).
+    issue_number = 1 + sum(
+        1 for p in posts_dir.glob("*.json") if p.stem < week_ending_str
+    )
+
     # source_trail is included so generate_one()'s auto-fetch step can find
     # article URLs when no local image exists yet.
+    # Body fields are stored too: the sidecar must be sufficient to re-render
+    # the full post (scripts/rerender_pla_watch.py) without an API call.
     sidecar: dict = {
         "date": week_ending_str,
         "week_ending": week_ending_str,
         "week_start": week_start_str,
+        "issue_number": issue_number,
         "title": result["title"],
         "dek": result["dek"],
         "signal": result.get("signal", "") or "",
+        "opening_note": result["opening_note"],
+        "what_stood_out": result["what_stood_out"],
+        "why_it_matters": result["why_it_matters"],
+        "what_was_routine": result["what_was_routine"],
+        "term_to_know_term": result["term_to_know_term"],
+        "term_to_know_explanation": result["term_to_know_explanation"],
+        "what_im_watching_next": result["what_im_watching_next"],
         "n_articles": stats["total_articles"],
         "n_significant": stats["n_significant"],
         "days_covered": days_covered,

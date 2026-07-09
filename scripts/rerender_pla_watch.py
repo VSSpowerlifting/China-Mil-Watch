@@ -23,7 +23,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from jinja2 import Environment, FileSystemLoader
+from scripts.pw_env import make_pw_env
 
 # Reuse author identity from the generator module without calling its main().
 # Guard against the anthropic import that generate_pla_watch.py performs at
@@ -34,9 +34,9 @@ try:
     )
 except ImportError:
     AUTHOR_NAME = "Benjamin Yang"
-    AUTHOR_TITLE = "Founder & Principal Analyst, China Mil Watch"
+    AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
     AUTHOR_BIO = (
-        "Benjamin Yang is the founder of China Mil Watch and an incoming "
+        "Benjamin Yang is the principal analyst at China Mil Watch and an incoming "
         "International Affairs student at George Washington University's "
         "Elliott School, focused on U.S.-China relations, public diplomacy, "
         "and security affairs."
@@ -251,6 +251,7 @@ def _build_post_context(sidecar: dict) -> dict:
 
     return {
         # Hero / metadata
+        "issue_number":  sidecar.get("issue_number"),
         "date":          sidecar.get("date", ""),
         "title":         sidecar.get("title", ""),
         "dek":           sidecar.get("dek", ""),
@@ -299,6 +300,16 @@ def _build_post_context(sidecar: dict) -> dict:
     }
 
 
+BODY_FIELDS = (
+    "opening_note", "what_stood_out", "why_it_matters",
+    "what_was_routine", "what_im_watching_next",
+)
+
+
+def _sidecar_has_body(sidecar: dict) -> bool:
+    return any((sidecar.get(f) or "").strip() for f in BODY_FIELDS)
+
+
 def _parse_args():
     p = argparse.ArgumentParser(
         description="Re-render PLA Watch HTML and refresh issue cover PNGs from "
@@ -308,12 +319,15 @@ def _parse_args():
                    help="Skip cover-image (re)generation; only re-render HTML.")
     p.add_argument("--force-covers", action="store_true",
                    help="Overwrite existing cover PNGs even if up to date.")
+    p.add_argument("--allow-empty-body", action="store_true",
+                   help="Re-render posts even when the sidecar has no body text "
+                        "(dangerous: overwrites published prose with an empty page).")
     return p.parse_args()
 
 
 def main() -> int:
     args = _parse_args()
-    env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
+    env = make_pw_env()
     post_tmpl = env.get_template("pla-watch-post.html")
     index_tmpl = env.get_template("pla-watch-index.html")
     archive_tmpl = env.get_template("pla-watch-archive.html")
@@ -323,6 +337,7 @@ def main() -> int:
 
     # Render every post sidecar.
     sidecars = []
+    skipped: list = []
     for json_path in sorted(POSTS_DIR.glob("*.json"), reverse=True):
         sidecar = json.loads(json_path.read_text(encoding="utf-8"))
         # Ensure the in-memory sidecar carries author metadata for the
@@ -360,6 +375,15 @@ def main() -> int:
             sidecar["cover_image_url"] = abs_url
         sidecars.append(sidecar)
 
+        # Never overwrite a published post with an empty body. Sidecars that
+        # predate body-field storage would otherwise render prose-less pages.
+        if not _sidecar_has_body(sidecar) and not args.allow_empty_body:
+            print(f"ERROR: {json_path.name} has no body fields "
+                  f"(opening_note etc.) — post HTML left untouched. "
+                  f"Backfill the sidecar or pass --allow-empty-body.")
+            skipped.append(json_path.name)
+            continue
+
         ctx = _build_post_context(sidecar)
         html = post_tmpl.render(**ctx)
         out_path = POSTS_DIR / f"{sidecar['date']}.html"
@@ -386,6 +410,10 @@ def main() -> int:
     (PLA_WATCH_DIR / "archive.html").write_text(archive_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'archive.html').relative_to(ROOT)}")
 
+    if skipped:
+        print(f"\n{len(skipped)} post(s) skipped for missing body text: "
+              + ", ".join(skipped))
+        return 1
     return 0
 
 
