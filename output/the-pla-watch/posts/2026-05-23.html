@@ -80,6 +80,11 @@
 
     a { color: var(--color-brand); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    a:focus-visible {
+      outline: 2px solid var(--color-brand-light);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
 
     /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
     .pw-masthead {
@@ -590,6 +595,12 @@
   background: var(--color-brand);
 }
 .mod-heading.brand { color: var(--color-brand); }
+.mod-heading .mod-count {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
 
 /* ── This Week's Signal — pull-quote-style card ────────────────────── */
 .signal-card {
@@ -702,6 +713,16 @@
   display: flex;
   gap: 1.4rem;
 }
+.snap-note {
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+.snap-note a { color: var(--color-text-secondary); font-weight: 600; }
 .snap-bar-legend .swatch {
   display: inline-block;
   width: 10px; height: 10px;
@@ -1119,7 +1140,7 @@ No. 3 · Week ending 23 May 2026
         By <span class="byline-name">Benjamin Yang</span>
 <span class="byline-title">Principal Analyst, China Mil Watch</span>      </div>
       <div class="hero-meta">
-        <span class="meta-item">Covers <span class="num">2026-05-17</span> → <span class="num">2026-05-23</span></span>
+        <span class="meta-item">Covers <span class="num">17 May 2026</span> → <span class="num">23 May 2026</span></span>
 <span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">49</span> articles analyzed</span>
         <span class="meta-item"><span class="num">0</span> model-flagged</span>
       </div>
@@ -1177,6 +1198,7 @@ No. 3 · Week ending 23 May 2026
           <span><span class="swatch swatch-rest"></span>Routine (49)</span>
         </div>
       </div>
+      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
     <div class="post-body">
@@ -1221,28 +1243,28 @@ No. 3 · Week ending 23 May 2026
       </div>
 
       <div class="post-section source-trail">
-        <div class="mod-heading brand">Source Trail</div>
+        <div class="mod-heading brand">Source Trail<span class="mod-count">3 records</span></div>
         <div class="source-cards">
           <a class="source-card" href="http://www.81.cn/yw_208727/16461486.html" target="_blank" rel="noopener">
             <div class="source-card-title">Rockets Roar Over the Karakoram — Training images, Xinjiang MD rocket artillery subunit</div>
 <div class="source-card-zh" lang="zh-Hans">箭啸喀喇昆仑——新疆军区某团火箭炮分队训练影像</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16461486.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16461486.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461595.html" target="_blank" rel="noopener">
             <div class="source-card-title">Writing Papers on the Training Ground — ISF center guides research personnel for war</div>
 <div class="source-card-zh" lang="zh-Hans">把论文写在演兵场，信息支援部队某中心引导科研人员为战而研</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16461595.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16461595.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16462860.html" target="_blank" rel="noopener">
             <div class="source-card-title">New Pattern of Unified Management and Shared Use of Warehousing Resources Across the Entire Military</div>
 <div class="source-card-zh" lang="zh-Hans">全军仓储资源统管共用新格局加快形成</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16462860.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16462860.html ↗</div>
           </a>
         </div>
       </div>
@@ -1288,7 +1310,7 @@ No. 3 · Week ending 23 May 2026
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Chinese-language monitoring. Every claim links to the original Chinese-language source. <a href="/methodology.html">Methodology</a>
+        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links each cited item to the original Chinese-language record — the original is always the authoritative text. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
   </aside>
@@ -1301,7 +1323,7 @@ No. 3 · Week ending 23 May 2026
       <div class="footer-name">The PLA Watch</div>
       <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="/methodology.html">Methodology</a>
+        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">

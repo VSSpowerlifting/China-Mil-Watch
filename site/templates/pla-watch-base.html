@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}The PLA Watch is the reader-facing weekly publication from China Mil Watch, translating Chinese military and security media into accessible analysis.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="{{ page_url | default('https://chinamilwatch.org/the-pla-watch/') }}">
@@ -80,6 +80,11 @@
 
     a { color: var(--color-brand); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    a:focus-visible {
+      outline: 2px solid var(--color-brand-light);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
 
     /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
     .pw-masthead {
@@ -378,7 +383,7 @@
       <div class="footer-name">The PLA Watch</div>
       <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="/methodology.html">Methodology</a>
+        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">

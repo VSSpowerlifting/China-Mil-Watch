@@ -80,6 +80,11 @@
 
     a { color: var(--color-brand); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    a:focus-visible {
+      outline: 2px solid var(--color-brand-light);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
 
     /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
     .pw-masthead {
@@ -590,6 +595,12 @@
   background: var(--color-brand);
 }
 .mod-heading.brand { color: var(--color-brand); }
+.mod-heading .mod-count {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
 
 /* ── This Week's Signal — pull-quote-style card ────────────────────── */
 .signal-card {
@@ -702,6 +713,16 @@
   display: flex;
   gap: 1.4rem;
 }
+.snap-note {
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+.snap-note a { color: var(--color-text-secondary); font-weight: 600; }
 .snap-bar-legend .swatch {
   display: inline-block;
   width: 10px; height: 10px;
@@ -1119,7 +1140,7 @@ No. 6 · Week ending 13 June 2026
         By <span class="byline-name">Benjamin Yang</span>
 <span class="byline-title">Principal Analyst, China Mil Watch</span>      </div>
       <div class="hero-meta">
-        <span class="meta-item">Covers <span class="num">2026-06-07</span> → <span class="num">2026-06-13</span></span>
+        <span class="meta-item">Covers <span class="num">7 June 2026</span> → <span class="num">13 June 2026</span></span>
 <span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">53</span> articles analyzed</span>
         <span class="meta-item"><span class="num">1</span> model-flagged</span>
       </div>
@@ -1177,6 +1198,7 @@ No. 6 · Week ending 13 June 2026
           <span><span class="swatch swatch-rest"></span>Routine (52)</span>
         </div>
       </div>
+      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
     <div class="post-body">
@@ -1221,98 +1243,98 @@ No. 6 · Week ending 13 June 2026
       </div>
 
       <div class="post-section source-trail">
-        <div class="mod-heading brand">Source Trail</div>
+        <div class="mod-heading brand">Source Trail<span class="mod-count">13 records</span></div>
         <div class="source-cards">
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16466372.html" target="_blank" rel="noopener">
             <div class="source-card-title">Ministry of National Defense Routine Press Briefing, Early June 2026</div>
 <div class="source-card-zh" lang="zh-Hans">2026年6月上旬国防部例行新闻发布</div>            <div class="source-card-meta">
-<span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-09</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16466372.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16466372.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16465904.html" target="_blank" rel="noopener">
             <div class="source-card-title">Warships Ride the Waves, Forging the Sword in Distant Seas: Navy&#39;s 48th Escort Task Force Conducts Multiple Targeted Training Events</div>
 <div class="source-card-zh" lang="zh-Hans">战舰踏浪、砺剑远洋，海军第48批护航编队开展多项针对性训练</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-07</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16465904.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16465904.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16467131.html" target="_blank" rel="noopener">
             <div class="source-card-title">Military Reporter at the Grassroots | Rescuing Pilots: First Train to &#39;Pull Teeth from the Tiger&#39;s Mouth&#39;</div>
 <div class="source-card-zh" lang="zh-Hans">军报记者基层行｜抢救飞行员：先练“虎口拔牙”</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-13</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16467131.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16467131.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/bz_208549/16467178.html" target="_blank" rel="noopener">
             <div class="source-card-title">A Brigade of the Northern Theater Command Air Force Presents a New Landscape in Armed Search-and-Rescue Training</div>
 <div class="source-card-zh" lang="zh-Hans">北部战区空军某旅武装搜救训练呈现新景观</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-13</span>            </div>
-            <div class="source-card-domain">www.81.cn/bz_208549/16467178.html</div>
+            <div class="source-card-domain">www.81.cn/bz_208549/16467178.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16465983.html" target="_blank" rel="noopener">
             <div class="source-card-title">Guided by Xi Jinping&#39;s Thought on Strengthening the Military · Establishing and Practicing a Correct Outlook on Performance Achievements | The New Flight Track of the &#34;Sea-Sky Eagles&#34;</div>
 <div class="source-card-zh" lang="zh-Hans">在习近平强军思想指引下·树立和践行正确政绩观丨“海天雄鹰”的新航迹</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-08</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16465983.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16465983.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16467124.html" target="_blank" rel="noopener">
             <div class="source-card-title">China&#39;s Peacekeeping Engineer Detachment in South Sudan Earns Commendation for Completing Road Repair Mission</div>
 <div class="source-card-zh" lang="zh-Hans">我赴南苏丹维和工兵分队完成道路修复任务获赞誉</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-13</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16467124.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16467124.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16467123.html" target="_blank" rel="noopener">
             <div class="source-card-title">China, Kazakhstan, Kyrgyzstan, Russia, and Tajikistan Conduct New Round of Border Disarmament Treaty Compliance Inspections</div>
 <div class="source-card-zh" lang="zh-Hans">中哈吉俄塔开展新一轮边境裁军履约视察</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-13</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16467123.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16467123.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/kj_208559/16467005.html" target="_blank" rel="noopener">
             <div class="source-card-title">Tempering the Sword by Starlight! A Close Look at Air Force Aviation Unit Night Flight Training</div>
 <div class="source-card-zh" lang="zh-Hans">星夜砺剑！直击空军航空兵夜间飞行训练现场</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-12</span>            </div>
-            <div class="source-card-domain">www.81.cn/kj_208559/16467005.html</div>
+            <div class="source-card-domain">www.81.cn/kj_208559/16467005.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/hj_208557/16466920.html" target="_blank" rel="noopener">
             <div class="source-card-title">Charging Through the Waves! A Frigate Flotilla of the Southern Theater Command Navy Conducts Combat-Realistic Training</div>
 <div class="source-card-zh" lang="zh-Hans">踏浪出击！南部战区海军某护卫舰支队开展实战化训练</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-12</span>            </div>
-            <div class="source-card-domain">www.81.cn/hj_208557/16466920.html</div>
+            <div class="source-card-domain">www.81.cn/hj_208557/16466920.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16466913.html" target="_blank" rel="noopener">
             <div class="source-card-title">&#34;Being Processed&#34; — Processed to What Extent, Exactly?</div>
 <div class="source-card-zh" lang="zh-Hans">“正在办”，究竟办到哪儿了</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-12</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16466913.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16466913.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16466675.html" target="_blank" rel="noopener">
             <div class="source-card-title">A Glimpse at the Transformation of Military Training Organization Methods</div>
 <div class="source-card-zh" lang="zh-Hans">管窥军事训练组训方式之变</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-11</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16466675.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16466675.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16466676.html" target="_blank" rel="noopener">
             <div class="source-card-title">Enhancing Command Capability for All-Domain Operations</div>
 <div class="source-card-zh" lang="zh-Hans">面向全域作战提升指挥能力</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-11</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16466676.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16466676.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16466490.html" target="_blank" rel="noopener">
             <div class="source-card-title">Are Medium-Altitude Long-Endurance UAVs Obsolete?</div>
 <div class="source-card-zh" lang="zh-Hans">中空长航时无人机过时了吗？</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-10</span>            </div>
-            <div class="source-card-domain">www.81.cn/yw_208727/16466490.html</div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16466490.html ↗</div>
           </a>
         </div>
       </div>
@@ -1358,7 +1380,7 @@ No. 6 · Week ending 13 June 2026
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Chinese-language monitoring. Every claim links to the original Chinese-language source. <a href="/methodology.html">Methodology</a>
+        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links each cited item to the original Chinese-language record — the original is always the authoritative text. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
   </aside>
@@ -1371,7 +1393,7 @@ No. 6 · Week ending 13 June 2026
       <div class="footer-name">The PLA Watch</div>
       <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="/methodology.html">Methodology</a>
+        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">

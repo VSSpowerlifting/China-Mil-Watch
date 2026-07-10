@@ -69,15 +69,20 @@
   font-variant-numeric: tabular-nums;
   padding-top: 0.4rem;
 }
-.entry-date-col .we-large {
+.entry-date-col .entry-no {
   display: block;
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.55rem;
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.2rem;
   text-transform: none;
+  line-height: 1;
+}
+.entry-date-col .we-date {
+  display: block;
+  line-height: 1.5;
 }
 
 .entry-title {
@@ -128,6 +133,17 @@
   background: var(--color-bg-card);
 }
 
+.arch-note {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+.arch-note a { color: var(--color-text-secondary); font-weight: 600; }
+
 .empty-state-card {
   text-align: center;
   padding: 4rem 2rem;
@@ -158,8 +174,9 @@
       {% for post in posts %}
       <article class="entry">
         <div class="entry-date-col">
-          <span class="we-large">{{ post.week_ending | format_date }}</span>
-          {% if post.issue_number %}No. {{ post.issue_number }} · {% endif %}Week ending{% set _thumb = (post.cover_thumb or post.cover_image or '') | replace('../', '') %}{% if _thumb %}
+          {% if post.issue_number %}<span class="entry-no">No. {{ post.issue_number }}</span>{% endif %}
+          <span class="we-date">Week ending<br>{{ post.week_ending | format_date }}</span>
+          {% set _thumb = (post.cover_thumb or post.cover_image or '') | replace('../', '') %}{% if _thumb %}
           <a href="posts/{{ post.date }}.html" class="entry-thumb-link" tabindex="-1" aria-hidden="true">
             <img class="entry-thumb"
                  src="{{ _thumb }}"
@@ -186,6 +203,11 @@
               <span class="sep"></span>
               <span>{{ post.n_significant }} model-flagged</span>
             {% endif %}
+            {% set _srcs = (post.source_trail or []) | map(attribute='source') | select | unique | list %}
+            {% if _srcs %}
+              <span class="sep"></span>
+              <span>{{ _srcs | length }} source{{ 's' if _srcs | length != 1 }}</span>
+            {% endif %}
             {% if post.days_covered %}
               <span class="sep"></span>
               <span>{{ post.days_covered }} day{{ 's' if post.days_covered != 1 }} observed</span>
@@ -197,6 +219,10 @@
     </div>
   {% else %}
     <div class="empty-state-card">No editions published yet. Check back on Sunday.</div>
+  {% endif %}
+
+  {% if posts %}
+  <p class="arch-note">“Model-flagged” counts are automated triage cues from the daily pipeline, not editorial judgments. Early editions predate per-item dates in the source trail; missing details are left missing rather than reconstructed. <a href="{{ root_path }}methodology.html#model-flagged">Methodology</a></p>
   {% endif %}
 
 </div>
