@@ -2,6 +2,22 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-10 — Analyst rulings on historical gaps
+
+- `the-pla-watch/linkedin/2026-05-10.txt` is most likely the pilot edition's
+  LinkedIn post under its publish date. Left unrenamed.
+- Editions 1–2 trails carry no `is_significant` flags because no significant
+  articles arose those weeks. The n_significant counts (1, 3) in early
+  sidecars are pipeline auto-counts; reconciling them is the analyst's call.
+- 2026-06-20's missing "Why It Matters" section stays as published.
+
+## 2026-07-10 — Original Chinese headlines in the source trail
+
+Trail entries carry `title_zh`, sourced only from the daily-monitoring DB's
+`title_original` by exact URL match (100% coverage, all 9 editions).
+`generate_pla_watch.py` includes it for new editions; the backfill tool fills
+history. Chinese text is never composed, retranslated, or fuzzily matched.
+
 ## 2026-07-09 — Sidecar JSON is the canonical edition record
 
 Sidecars now store full body text alongside metadata and the source trail.

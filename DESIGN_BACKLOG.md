@@ -9,14 +9,7 @@ SaaS blocks, no intelligence cosplay. Done items move to the bottom.
    but a 3-bullet "If you read nothing else" readout under the hero would
    serve policy readers. Needs a new sidecar field — content must be written
    or approved by the analyst, not synthesized at render time from old issues.
-2. **Prev/next edition links on post pages.** `post-nav` only links archive +
-   home. Sidecars know the sequence; add No. N−1 / N+1 links for reader flow.
-3. **Source trail: original Chinese titles.** Trail shows English titles only.
-   The daily DB stores `title_original`; carrying it into future sidecars
-   (`title_zh`) and rendering it as a secondary line would let readers verify
-   against the original Mandarin without clicking through. Backfill for old
-   editions only where the URL matches a DB record exactly — never retranslate.
-4. **Archive year/month grouping.** At 9 editions a flat list works; past ~20
+2. **Archive year/month grouping.** At 9 editions a flat list works; past ~20
    it needs month headers. Low effort, do when count warrants.
 
 ## P2 — moderate value
@@ -39,8 +32,12 @@ SaaS blocks, no intelligence cosplay. Done items move to the bottom.
 11. Consider `prefers-color-scheme: light` handling for outbound link
     previews (site is committed dark; only if reader feedback asks).
 
-## Done (2026-07-09)
+## Done
 
+- 2026-07-10: Prev/next edition links on post pages (issue No. + date).
+- 2026-07-10: Original Chinese headlines in the source trail (`title_zh`
+  backfilled from DB records by exact URL match; generator carries it
+  forward automatically).
 - Human-readable week-ending dates in all reader-facing labels.
 - Issue numbers (Vol. I · No. N) across masthead, hero, archive, sidebar.
 - Dark-theme edition badges (significant / routine / pilot) shared in base

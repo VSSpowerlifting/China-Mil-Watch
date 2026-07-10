@@ -775,6 +775,11 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
+.source-card-zh {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
 .source-card-meta {
   font-family: var(--sans);
   font-size: 0.72rem;
@@ -980,6 +985,29 @@
 }
 
 /* ── Post nav (bottom) ─────────────────────────────────────────────── */
+.edition-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.edition-nav a { color: var(--color-text-secondary); }
+.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav .edition-nav-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+.edition-nav .next { text-align: right; margin-left: auto; }
 .post-nav {
   display: flex;
   justify-content: space-between;
@@ -989,6 +1017,11 @@
   border-top: 1px solid var(--color-border);
   font-family: var(--sans);
   font-size: 0.85rem;
+}
+.post-nav--tight {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
@@ -1140,77 +1173,77 @@ No. 2 · Week ending 16 May 2026
         <div class="source-cards">
           <a class="source-card" href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener">
             <div class="source-card-title">Fujian air wing / KJ-600 carrier qualifications</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">海军舰载航空兵部队，13岁生日快乐！</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16459619.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460297.html" target="_blank" rel="noopener">
             <div class="source-card-title">Rocket Force “Four Randoms” training model</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">“四个随机”训练模式推行后，备份号手补位打出“满堂彩”</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460297.html</div>
           </a>
           <a class="source-card" href="https://www.globaltimes.cn/page/202605/1360888.shtml" target="_blank" rel="noopener">
             <div class="source-card-title">PLA Navy terminal defense system (Global Times)</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">PLA Navy’s new terminal defense system completes type certification trials; expert cites world-class ultra-low-altitude interception capability</div>            <div class="source-card-meta">
               <span>Global Times: Defense</span>
             </div>
             <div class="source-card-domain">www.globaltimes.cn/page/202605/1360888.shtml</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461159.html" target="_blank" rel="noopener">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">海军航空兵某部跨昼夜协同训练见闻</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461159.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/hj_208557/16461187.html" target="_blank" rel="noopener">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15 (alternate)</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">云端淬剑！海军航空兵某部开展跨昼夜协同训练</div>            <div class="source-card-meta">
               <span>China Military Online</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16461187.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461388.html" target="_blank" rel="noopener">
             <div class="source-card-title">Submarine “Four Randoms”-adjacent systems thinking exercise</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">海军某潜艇支队强化体系思维打赢“翻身仗”</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461388.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460482.html" target="_blank" rel="noopener">
             <div class="source-card-title">CMC Logistic Support Department logistics governance reforms</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">我军后勤军事治理的探索实践</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460482.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460490.html" target="_blank" rel="noopener">
             <div class="source-card-title">PLA cyber doctrine article, Kong Rui / Jiao Dawei</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">研究军事、研究战争、研究打仗丨把握网络空间作战新变化</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460490.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460298.html" target="_blank" rel="noopener">
             <div class="source-card-title">New-domain new-quality combat forces doctrine, AMS War Studies</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">推进新域新质作战力量规模化实战化体系化发展</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460298.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460401.html" target="_blank" rel="noopener">
             <div class="source-card-title">Eastern Theater Command civilian personnel recruitment</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">东部战区2026年面向社会公开招考专业技能类文职人员公告</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460401.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460498.html" target="_blank" rel="noopener">
             <div class="source-card-title">China-Japan-Philippines Balikatan framing</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">国际瞭望丨日菲军事捆绑加剧地区安全风险</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460498.html</div>
@@ -1231,7 +1264,17 @@ No. 2 · Week ending 16 May 2026
 
     </div>
 
-    <div class="post-nav">
+    <div class="edition-nav">
+      <div class="prev">
+        <span class="edition-nav-label">Previous edition</span>
+        <a href="2026-05-09.html">&larr; No. 1 · 9 May 2026</a>
+      </div>
+      <div class="next">
+        <span class="edition-nav-label">Next edition</span>
+        <a href="2026-05-23.html">No. 3 · 23 May 2026 &rarr;</a>
+      </div>
+    </div>
+    <div class="post-nav post-nav--tight">
       <a href="../archive.html">&larr; Back to Archive</a>
       <a href="../../index.html">Visit China Mil Watch &rarr;</a>
     </div>

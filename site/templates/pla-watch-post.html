@@ -473,6 +473,11 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
+.source-card-zh {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
 .source-card-meta {
   font-family: var(--sans);
   font-size: 0.72rem;
@@ -678,6 +683,29 @@
 }
 
 /* ── Post nav (bottom) ─────────────────────────────────────────────── */
+.edition-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.edition-nav a { color: var(--color-text-secondary); }
+.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav .edition-nav-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+.edition-nav .next { text-align: right; margin-left: auto; }
 .post-nav {
   display: flex;
   justify-content: space-between;
@@ -687,6 +715,11 @@
   border-top: 1px solid var(--color-border);
   font-family: var(--sans);
   font-size: 0.85rem;
+}
+.post-nav--tight {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
@@ -900,6 +933,7 @@
           {% for article in articles %}
           <a class="source-card{% if article.is_significant %} is-significant{% endif %}" href="{{ article.url }}" target="_blank" rel="noopener">
             <div class="source-card-title">{{ article.title }}</div>
+            {% if article.title_zh %}<div class="source-card-zh" lang="zh-Hans">{{ article.title_zh }}</div>{% endif %}
             <div class="source-card-meta">
               {% if article.is_significant %}<span class="sig-tag">Significant</span>{% endif %}
               <span>{{ article.source }}</span>
@@ -941,7 +975,23 @@
 
     </div>
 
-    <div class="post-nav">
+    {% if prev_post or next_post %}
+    <div class="edition-nav">
+      {% if prev_post %}
+      <div class="prev">
+        <span class="edition-nav-label">Previous edition</span>
+        <a href="{{ prev_post.date }}.html">&larr; No. {{ prev_post.issue_number }} · {{ prev_post.week_ending | format_date }}</a>
+      </div>
+      {% endif %}
+      {% if next_post %}
+      <div class="next">
+        <span class="edition-nav-label">Next edition</span>
+        <a href="{{ next_post.date }}.html">No. {{ next_post.issue_number }} · {{ next_post.week_ending | format_date }} &rarr;</a>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+    <div class="post-nav{% if prev_post or next_post %} post-nav--tight{% endif %}">
       <a href="../archive.html">&larr; Back to Archive</a>
       <a href="{{ root_path }}index.html">Visit China Mil Watch &rarr;</a>
     </div>

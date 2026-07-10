@@ -775,6 +775,11 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
+.source-card-zh {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
 .source-card-meta {
   font-family: var(--sans);
   font-size: 0.72rem;
@@ -980,6 +985,29 @@
 }
 
 /* ── Post nav (bottom) ─────────────────────────────────────────────── */
+.edition-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.edition-nav a { color: var(--color-text-secondary); }
+.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav .edition-nav-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+.edition-nav .next { text-align: right; margin-left: auto; }
 .post-nav {
   display: flex;
   justify-content: space-between;
@@ -989,6 +1017,11 @@
   border-top: 1px solid var(--color-border);
   font-family: var(--sans);
   font-size: 0.85rem;
+}
+.post-nav--tight {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
@@ -1143,21 +1176,21 @@ No. 3 · Week ending 23 May 2026
         <div class="source-cards">
           <a class="source-card" href="http://www.81.cn/yw_208727/16461486.html" target="_blank" rel="noopener">
             <div class="source-card-title">Rockets Roar Over the Karakoram — Training images, Xinjiang MD rocket artillery subunit</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">箭啸喀喇昆仑——新疆军区某团火箭炮分队训练影像</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461486.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461595.html" target="_blank" rel="noopener">
             <div class="source-card-title">Writing Papers on the Training Ground — ISF center guides research personnel for war</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">把论文写在演兵场，信息支援部队某中心引导科研人员为战而研</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461595.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16462860.html" target="_blank" rel="noopener">
             <div class="source-card-title">New Pattern of Unified Management and Shared Use of Warehousing Resources Across the Entire Military</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">全军仓储资源统管共用新格局加快形成</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16462860.html</div>
@@ -1178,7 +1211,17 @@ No. 3 · Week ending 23 May 2026
 
     </div>
 
-    <div class="post-nav">
+    <div class="edition-nav">
+      <div class="prev">
+        <span class="edition-nav-label">Previous edition</span>
+        <a href="2026-05-16.html">&larr; No. 2 · 16 May 2026</a>
+      </div>
+      <div class="next">
+        <span class="edition-nav-label">Next edition</span>
+        <a href="2026-05-30.html">No. 4 · 30 May 2026 &rarr;</a>
+      </div>
+    </div>
+    <div class="post-nav post-nav--tight">
       <a href="../archive.html">&larr; Back to Archive</a>
       <a href="../../index.html">Visit China Mil Watch &rarr;</a>
     </div>

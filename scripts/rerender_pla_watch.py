@@ -118,6 +118,7 @@ def _articles_from_sidecar(sidecar: dict) -> list[dict]:
     for entry in sidecar.get("source_trail", []) or []:
         out.append({
             "title": entry.get("label") or entry.get("title") or _domain_from_url(entry.get("url", "")),
+            "title_zh": entry.get("title_zh") or "",
             "url":   entry.get("url", ""),
             "source": entry.get("source") or default_source,
             "date":   entry.get("date") or "",
@@ -375,16 +376,21 @@ def main() -> int:
             sidecar["cover_image_url"] = abs_url
         sidecars.append(sidecar)
 
+    # Second pass: render posts with prev/next neighbors resolved.
+    by_date_asc = sorted(sidecars, key=lambda s: s.get("date", ""))
+    for i, sidecar in enumerate(by_date_asc):
         # Never overwrite a published post with an empty body. Sidecars that
         # predate body-field storage would otherwise render prose-less pages.
         if not _sidecar_has_body(sidecar) and not args.allow_empty_body:
-            print(f"ERROR: {json_path.name} has no body fields "
+            print(f"ERROR: {sidecar.get('date', '?')}.json has no body fields "
                   f"(opening_note etc.) — post HTML left untouched. "
                   f"Backfill the sidecar or pass --allow-empty-body.")
-            skipped.append(json_path.name)
+            skipped.append(f"{sidecar.get('date', '?')}.json")
             continue
 
         ctx = _build_post_context(sidecar)
+        ctx["prev_post"] = by_date_asc[i - 1] if i > 0 else None
+        ctx["next_post"] = by_date_asc[i + 1] if i + 1 < len(by_date_asc) else None
         html = post_tmpl.render(**ctx)
         out_path = POSTS_DIR / f"{sidecar['date']}.html"
         out_path.write_text(html, encoding="utf-8")

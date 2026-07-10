@@ -454,6 +454,7 @@ def build_source_trail(articles, cap: int = SOURCE_TRAIL_CAP):
     entries = [
         {
             "title":          a["title_english"],
+            "title_zh":       a["title_original"] or "",
             "url":            a["url"],
             "source":         a["source_name"],
             "date":           a["published_date"],
@@ -527,6 +528,8 @@ def render_post(result: dict, meta: dict) -> str:
         "author_title":  meta.get("author_title", AUTHOR_TITLE),
         "author_bio":    meta.get("author_bio", AUTHOR_BIO),
         "author_links":  meta.get("author_links", AUTHOR_LINKS),
+        "prev_post":     meta.get("prev_post"),
+        "next_post":     meta.get("next_post"),
     }
     context = _build_context(result, layout_meta, root_path="../../")
     return template.render(**context)
@@ -714,6 +717,12 @@ def main():
         print(f"WARN: cover image generation failed ({exc!r}); "
               "post will render without a cover image")
 
+    # Previous edition (for the prev/next nav). The older post's own "next"
+    # link appears when scripts/rerender_pla_watch.py next runs.
+    prior = [p for p in load_existing_posts(posts_dir)
+             if p.get("date", "") < week_ending_str]
+    prev_post = max(prior, key=lambda p: p.get("date", ""), default=None)
+
     # Build meta from the finalised sidecar so the HTML template gets the
     # same truthful cover paths (or their absence).
     meta = {
@@ -722,6 +731,8 @@ def main():
         "sources_seen": stats["sources_seen"],
         "articles": source_trail,
         "source_trail_truncated": trail_truncated,
+        "prev_post": prev_post,
+        "next_post": None,
     }
 
     # Render and write post HTML

@@ -775,6 +775,11 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
+.source-card-zh {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
 .source-card-meta {
   font-family: var(--sans);
   font-size: 0.72rem;
@@ -980,6 +985,29 @@
 }
 
 /* ── Post nav (bottom) ─────────────────────────────────────────────── */
+.edition-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.edition-nav a { color: var(--color-text-secondary); }
+.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav .edition-nav-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+.edition-nav .next { text-align: right; margin-left: auto; }
 .post-nav {
   display: flex;
   justify-content: space-between;
@@ -989,6 +1017,11 @@
   border-top: 1px solid var(--color-border);
   font-family: var(--sans);
   font-size: 0.85rem;
+}
+.post-nav--tight {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
@@ -1143,91 +1176,91 @@ No. 4 · Week ending 30 May 2026
         <div class="source-cards">
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463889.html" target="_blank" rel="noopener">
             <div class="source-card-title">Central Military Commission Issues &#39;Several Measures on Strengthening the Education, Management, and Supervision of Senior Military Cadres&#39;</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">中央军委印发《关于加强军队高级干部教育管理监督的若干措施》</div>            <div class="source-card-meta">
 <span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463889.html</div>
           </a>
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463856.html" target="_blank" rel="noopener">
             <div class="source-card-title">Southern Theater Command Spokesperson Zhai Shichen Issues Statement on Provocative Actions by Dutch Warship</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">南部战区新闻发言人翟士臣就荷兰军舰侵权行为发表谈话</div>            <div class="source-card-meta">
 <span class="sig-tag">Significant</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-27</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463856.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463154.html" target="_blank" rel="noopener">
             <div class="source-card-title">Multi-Branch Forces Persist in Deep Research and Deep Training, Continuously Expanding the Boundaries of Military Training</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">多军兵种部队坚持深研深训不断拓展练兵边界</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-25</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463154.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/bz_208549/16464526.html" target="_blank" rel="noopener">
             <div class="source-card-title">PAP Liaoning Provincial Corps Recruit Regiment Explores Precision Training Model</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">武警辽宁总队新兵团探索精准施训模式</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-30</span>            </div>
             <div class="source-card-domain">www.81.cn/bz_208549/16464526.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16464435.html" target="_blank" rel="noopener">
             <div class="source-card-title">PLA Daily Reporter at the Grassroots | The Plateau Motor Soldiers&#39; &#39;Roadbook&#39; Has Grown Thicker</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">军报记者基层行丨高原汽车兵的“路书”变厚了</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464435.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16464198.html" target="_blank" rel="noopener">
             <div class="source-card-title">An Army Regiment Improves Oversight Mechanisms to Guide Headquarters Elements in Transforming Their Work Style</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">陆军某团完善监督机制引导机关转变作风</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464198.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16464201.html" target="_blank" rel="noopener">
             <div class="source-card-title">Maritime Rescue, Troops Descend from the Sky! A Naval Aviation Regiment Conducts Day-Night Search-and-Rescue Training</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">海上救援、天降奇兵！海军航空兵某团开展跨昼夜搜救训练</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464201.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463894.html" target="_blank" rel="noopener">
             <div class="source-card-title">An Air Force Brigade Uses Scientific and Technological Means to Solve Training Problems</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">空军某旅运用科技手段破解训练难题</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463894.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463485.html" target="_blank" rel="noopener">
             <div class="source-card-title">From Training Ground to Battlefield, They Have Given Tactical Training &#39;Wings of Science and Technology&#39;</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">从训练场到战场，他们给战术训练插上“科技翅膀”</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463485.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463476.html" target="_blank" rel="noopener">
             <div class="source-card-title">Improve the Long-Term Mechanism for Cultivating the Combat Spirit</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">健全战斗精神培育长效机制</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463476.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463487.html" target="_blank" rel="noopener">
             <div class="source-card-title">&#34;Positive and Negative Lists&#34; Appear Together on a Regular Basis — Doing Well and Doing Poorly Cannot Be Treated the Same</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">“正反向清单”定期同时亮相，干好干坏不能一个样</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463487.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463153.html" target="_blank" rel="noopener">
             <div class="source-card-title">The Ninth Army-Wide Military Modeling Competition Results Exchange Conference Held</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">第九届全军军事建模竞赛成果交流会举行</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-25</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463153.html</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16463155.html" target="_blank" rel="noopener">
             <div class="source-card-title">An Army Training Base Closely Tracks Troop Talent Demands and Optimizes Training Organization Models</div>
-            <div class="source-card-meta">
+<div class="source-card-zh" lang="zh-Hans">陆军某训练基地紧盯部队人才需求优化组训模式</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-25</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463155.html</div>
@@ -1248,7 +1281,17 @@ No. 4 · Week ending 30 May 2026
 
     </div>
 
-    <div class="post-nav">
+    <div class="edition-nav">
+      <div class="prev">
+        <span class="edition-nav-label">Previous edition</span>
+        <a href="2026-05-23.html">&larr; No. 3 · 23 May 2026</a>
+      </div>
+      <div class="next">
+        <span class="edition-nav-label">Next edition</span>
+        <a href="2026-06-06.html">No. 5 · 6 June 2026 &rarr;</a>
+      </div>
+    </div>
+    <div class="post-nav post-nav--tight">
       <a href="../archive.html">&larr; Back to Archive</a>
       <a href="../../index.html">Visit China Mil Watch &rarr;</a>
     </div>

@@ -23,6 +23,7 @@ import argparse
 import html as html_mod
 import json
 import re
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -30,6 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 POSTS_DIR = ROOT / "output" / "the-pla-watch" / "posts"
+DB_PATH = ROOT / "pla_watch.db"
 
 AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
 OLD_TITLE = "Founder & Principal Analyst, China Mil Watch"
@@ -96,6 +98,23 @@ def extract_body(html_text: str) -> dict:
     return out
 
 
+def _load_zh_titles() -> dict:
+    """url → title_original from the daily-monitoring DB (read-only)."""
+    if not DB_PATH.exists():
+        return {}
+    try:
+        conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+        rows = conn.execute(
+            "SELECT url, title_original FROM articles "
+            "WHERE title_original IS NOT NULL AND title_original != ''"
+        ).fetchall()
+        conn.close()
+        return dict(rows)
+    except sqlite3.Error as exc:
+        print(f"WARN: could not read DB for Chinese titles: {exc}")
+        return {}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true",
@@ -107,6 +126,7 @@ def main() -> int:
         print(f"No sidecars found in {POSTS_DIR}")
         return 1
 
+    zh_titles = _load_zh_titles()
     changed = 0
     for issue_number, json_path in enumerate(json_paths, start=1):
         sidecar = json.loads(json_path.read_text(encoding="utf-8"))
@@ -130,6 +150,7 @@ def main() -> int:
         #  - label → title: same string, renamed key.
         #  - missing source → sources_seen[0], only when exactly one source
         #    was seen (this is what the published page already displays).
+        #  - title_zh ← DB title_original on exact URL match only.
         # Missing dates are left missing — never invented.
         trail = sidecar.get("source_trail") or []
         sources_seen = sidecar.get("sources_seen") or []
@@ -142,6 +163,9 @@ def main() -> int:
                 trail_changed = True
             if not e.get("source") and len(sources_seen) == 1:
                 e["source"] = sources_seen[0]
+                trail_changed = True
+            if not e.get("title_zh") and zh_titles.get(e.get("url", "")):
+                e["title_zh"] = zh_titles[e["url"]]
                 trail_changed = True
             new_trail.append(e)
         if trail_changed:

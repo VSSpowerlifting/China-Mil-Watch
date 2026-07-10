@@ -14,9 +14,10 @@ mandarin-source-reviewer. Verified in browser at desktop (1280) and mobile
   edition" / "All editions"). Good.
 - **Issue → sources**: source trail links every item to the original
   81.cn/PRC URL with source name and (where recorded) date; significant items
-  are flagged. Weakness: no Chinese titles displayed (DESIGN_BACKLOG P1-3).
-- **Issue → next issue**: dead end — post-nav lacks prev/next edition links
-  (DESIGN_BACKLOG P1-2).
+  are flagged. Original Chinese headlines now shown under each English
+  title (added 2026-07-10).
+- **Issue → next issue**: prev/next edition links added to post pages
+  (2026-07-10).
 - **Daily ↔ weekly**: sidebar "How it relates" card explains the two layers
   well; daily-site pages under-promote the weekly brief (P2-5).
 
@@ -51,7 +52,7 @@ mandarin-source-reviewer. Verified in browser at desktop (1280) and mobile
 
 - Chinese terms appear inline in titles where the source used them
   (e.g. 战备警巡, 体系练兵) — preserved verbatim from records; good.
-- Trail titles are English translations only; original headline text should
-  ride along in future sidecars (never re-derived after the fact) — P1-3.
+- Trail entries now show the original Chinese headline (`title_zh`), taken
+  verbatim from the monitoring DB by exact URL match — never re-derived.
 - Cover credit notes state "visual context only; not evidence" — good norm,
   keep mandatory.

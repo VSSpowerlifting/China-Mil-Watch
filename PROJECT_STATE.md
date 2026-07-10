@@ -1,6 +1,6 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-07-09
+Updated: 2026-07-10
 
 ## Identity
 
@@ -35,14 +35,17 @@ validated (unique + chronological).
 ## Known gaps and irregularities (do not invent explanations)
 
 - **LinkedIn .txt missing** for editions 2026-05-09, 2026-05-16, 2026-05-23.
-  A `the-pla-watch/linkedin/2026-05-10.txt` exists — dated one day after the
-  05-09 pilot; relationship unconfirmed. Validator warns, does not block.
+  Analyst ruling (2026-07-10): `2026-05-10.txt` is most likely the pilot's
+  post under its publish date. File left unrenamed; validator warns, does
+  not block.
 - **Early source trails have no per-item dates** (editions 1–3). Real
   limitation of early data; left missing, warned, never invented.
-- **Editions 1–2 have no `is_significant` flags in trails** although
-  n_significant is 1 and 3. Warned; needs human review to mark, if desired.
-- **2026-06-20 has no "Why It Matters" section** in its published HTML/sidecar;
-  the other 8 editions have all sections. Structural inconsistency, unexplained.
+- **Editions 1–2 have no `is_significant` flags in trails.** Analyst ruling
+  (2026-07-10): no significant articles arose those weeks; flags are correctly
+  absent. Residual: sidecars/pages still display n_significant of 1 and 3
+  (early pipeline auto-counts) — reconcile only if the analyst chooses.
+- **2026-06-20 has no "Why It Matters" section**; analyst ruling
+  (2026-07-10): leave as is.
 - 2026-05-16 sidecar has no `edition_label`, so its pages show no edition badge.
 - 2026-05-16 body text carries literal `<strong>` emphasis; rendered via the
   `inline_markup` whitelist filter (only `<strong>`/`<em>` pass; rest escaped).
@@ -67,8 +70,12 @@ Validation currently: **passes, 9 warnings** (all historical items above).
   ranks, or claims. Repetition alone is not novelty or escalation.
 - Do not push/publish/deploy without explicit request; CI deploys on push.
 
-## Recent changes (2026-07-09)
+## Recent changes
 
-Workflow: sidecar body backfill + rerender guard + PLA Watch validation in the
-deploy gate. UI: human-readable week-ending dates, issue numbers, dark-theme
-edition badges, identity copy on the PLA Watch landing page. See DECISION_LOG.md.
+- 2026-07-10: source trail shows original Chinese headlines (title_zh from DB
+  records, exact URL match, 100% coverage across all 9 editions); prev/next
+  edition navigation on post pages. Note: a newly published edition's
+  predecessor gains its "next" link on the next rerender run.
+- 2026-07-09: sidecar body backfill + rerender guard + PLA Watch validation
+  in the deploy gate; human-readable dates, issue numbers, dark-theme badges,
+  identity copy on the landing page. See DECISION_LOG.md.
