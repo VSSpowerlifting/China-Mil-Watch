@@ -42,13 +42,23 @@ validated (unique + chronological).
   limitation of early data; left missing, warned, never invented.
 - **Editions 1–2 have no `is_significant` flags in trails.** Analyst ruling
   (2026-07-10): no significant articles arose those weeks; flags are correctly
-  absent. Residual: sidecars/pages still display n_significant of 1 and 3
-  (early pipeline auto-counts) — reconcile only if the analyst chooses.
+  absent. Resolved 2026-07-10: `n_significant` is the pipeline's model-flag
+  tally (LLM categorize step) over the week's relevance-passing articles at
+  generation time — not editorial judgment. Counts (1, 3) verified valid and
+  kept; public label renamed "significant" → "model-flagged" on all weekly
+  pages. See DECISION_LOG.md.
 - **2026-06-20 has no "Why It Matters" section**; analyst ruling
   (2026-07-10): leave as is.
 - 2026-05-16 sidecar has no `edition_label`, so its pages show no edition badge.
 - 2026-05-16 body text carries literal `<strong>` emphasis; rendered via the
   `inline_markup` whitelist filter (only `<strong>`/`<em>` pass; rest escaped).
+- `pla_watch.db` is committed to main by the daily workflow ("simpler than
+  external storage at this scale" per workflow comment). Revisit if the DB
+  grows or concurrent edits become an issue.
+- No enforced review gate between weekly-edition generation and publication;
+  `generate_pla_watch_draft.yml` is manual/artifact-only and does not commit
+  or deploy, but nothing currently blocks a hand-commit straight to main
+  (as happened with the pilot edition).
 
 ## Commands
 
@@ -72,6 +82,9 @@ Validation currently: **passes, 9 warnings** (all historical items above).
 
 ## Recent changes
 
+- 2026-07-10: weekly-page count label renamed "significant" → "model-flagged"
+  (templates `pla-watch-{post,index,archive}.html`); all weekly pages
+  rerendered from unchanged sidecars. Counts themselves untouched.
 - 2026-07-10: print stylesheet for issue pages (light palette, single
   column, full source URLs printed).
 - 2026-07-10: source trail shows original Chinese headlines (title_zh from DB
