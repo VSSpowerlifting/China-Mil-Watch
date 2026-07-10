@@ -207,6 +207,36 @@ def _make_source_statuses(articles: list[dict]) -> list[dict]:
     return statuses
 
 
+def _load_latest_pw_edition(output_dir: Path):
+    """Newest PLA Watch sidecar, reduced to the fields the homepage module
+    shows. Display-only: fields missing from the sidecar stay missing."""
+    posts_dir = Path(output_dir) / "the-pla-watch" / "posts"
+    latest = None
+    for path in sorted(posts_dir.glob("*.json"), reverse=True):
+        try:
+            latest = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            logger.warning("Unreadable PLA Watch sidecar: %s", path)
+            continue
+        break
+    if not latest or not latest.get("date"):
+        return None
+    title = (latest.get("title") or "").strip()
+    # The stored title often opens with the publication name; the module
+    # already labels itself, so drop the redundant prefix for display only.
+    for prefix in ("The PLA Watch: ", "The PLA Watch — ", "The PLA Watch – "):
+        if title.startswith(prefix):
+            title = title[len(prefix):].strip()
+            break
+    return {
+        "date":         latest.get("date"),
+        "issue_number": latest.get("issue_number"),
+        "week_ending":  latest.get("week_ending") or "",
+        "title_display": title or "The PLA Watch",
+        "dek":          (latest.get("dek") or "").strip(),
+    }
+
+
 # ── Jinja2 setup ──────────────────────────────────────────────────────────────
 
 def _make_env() -> Environment:
@@ -273,6 +303,7 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
     brief_sources = len({a["source_slug"] for a in brief_articles})
     daily_readout = _make_daily_readout(brief_articles)
     source_statuses = _make_source_statuses(brief_articles)
+    pw_latest = _load_latest_pw_edition(output_dir)
     recent_signals = [a for a in articles if a.get("is_significant") and not a.get("extraction_issue")][:3]
 
     tmpl_index = env.get_template("index.html")
@@ -288,6 +319,7 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
             daily_readout=daily_readout,
             source_statuses=source_statuses,
             recent_signals=recent_signals,
+            pw_latest=pw_latest,
             generated_at=generated_at,
         ),
         encoding="utf-8",

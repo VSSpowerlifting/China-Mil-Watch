@@ -10,12 +10,29 @@
   "@type": "WebSite",
   "name": "China Mil Watch",
   "url": "https://chinamilwatch.org/",
-  "description": "Daily-updating open-source intelligence tool that monitors Chinese-language military and security media, translates to English, and produces analytical summaries."
+  "description": "Independent Mandarin-source monitoring and analysis of Chinese military and security reporting from official and authoritative PRC sources."
 }
 </script>
 {% endblock %}
 
 {% block extra_styles %}
+/* ── Site intro — one-line identity statement for first-time readers ── */
+.site-intro {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  max-width: 860px;
+  padding-bottom: 1.35rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.site-intro strong {
+  font-family: var(--serif);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.site-intro a { font-weight: 600; }
+
 /* ── Brief layout (main + sidebar) ───────────────────────────────── */
 .brief-layout {
   display: grid;
@@ -385,6 +402,30 @@
   font-weight: 600;
   letter-spacing: 0.04em;
 }
+.sidebar-cta--pw {
+  border-top: 3px solid var(--color-ink);
+  margin-bottom: 0.5rem;
+}
+.sidebar-cta--pw .cta-title { font-size: 1.1rem; }
+.sidebar-cta .cta-issue {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.4rem;
+}
+.pw-all-link {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0 0 1rem 0.15rem;
+}
+.pw-all-link:hover { color: var(--color-brand); text-decoration: none; }
 
 .source-status-list,
 .signal-list {
@@ -545,13 +586,15 @@
 {% endblock %}
 
 {% block content %}
+<p class="site-intro"><strong>China Mil Watch</strong> is an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. The daily record is indexed here; <a href="{{ root_path }}the-pla-watch/index.html">The PLA Watch</a>, the weekly brief, is the analysis. Official Mandarin reporting is where the PLA describes itself in its own terms — much of it never appears in English-language coverage.</p>
+
 <div class="brief-layout">
 
   <div class="brief-main">
 
     <div class="brief-header">
       <div class="brief-eyebrow">Daily Brief</div>
-      <div class="brief-date">{% if brief_date_fmt %}{{ brief_date_fmt }}{% else %}Today{% endif %}</div>
+      <h1 class="brief-date">{% if brief_date_fmt %}{{ brief_date_fmt }}{% else %}Today{% endif %}</h1>
       {% if articles %}
       <div class="edition-strip">
         <div class="edition-meta">
@@ -567,7 +610,7 @@
           <span class="edition-sep">·</span>
           <span>Updated {{ generated_at }}</span>
         </div>
-        <div class="signal-posture{% if n_significant > 0 %} elevated{% endif %}">Signal&nbsp;Posture:&nbsp;{% if n_significant > 0 %}Elevated{% else %}Routine{% endif %}</div>
+        <div class="signal-posture{% if n_significant > 0 %} elevated{% endif %}">{% if n_significant > 0 %}{{ n_significant }}&nbsp;model-flagged&nbsp;today{% else %}No&nbsp;model-flagged&nbsp;items{% endif %}</div>
       </div>
       {% endif %}
     </div>
@@ -595,7 +638,7 @@
         <article class="article-card{% if a.is_significant %} significant{% endif %}">
 
           {% if a.is_significant %}
-            <div class="analytical-signal-kicker"><span class="signal-dot"></span><span class="signal-kicker-text">Analytical signal</span></div>
+            <div class="analytical-signal-kicker"><span class="signal-dot"></span><span class="signal-kicker-text">Model-flagged</span></div>
           {% endif %}
           {% if a.category_labels %}
             <div class="tags">
@@ -655,6 +698,24 @@
 
   <aside class="brief-sidebar">
 
+    {% if pw_latest %}
+    <a href="{{ root_path }}the-pla-watch/posts/{{ pw_latest.date }}.html" class="sidebar-cta sidebar-cta--pw">
+      <span class="cta-eyebrow">The PLA Watch · Weekly brief</span>
+      <span class="cta-issue">{% if pw_latest.issue_number %}No. {{ pw_latest.issue_number }} · {% endif %}Week ending {{ pw_latest.week_ending | format_date }}</span>
+      <span class="cta-title">{{ pw_latest.title_display }}</span>
+      {% if pw_latest.dek %}<span class="cta-desc">{{ pw_latest.dek }}</span>{% endif %}
+      <span class="cta-arrow">Read the latest edition →</span>
+    </a>
+    <a href="{{ root_path }}the-pla-watch/index.html" class="pw-all-link">All editions of The PLA Watch →</a>
+    {% else %}
+    <a href="{{ root_path }}the-pla-watch/index.html" class="sidebar-cta">
+      <span class="cta-eyebrow">The PLA Watch · Weekly brief</span>
+      <span class="cta-title">The PLA Watch</span>
+      <span class="cta-desc">The weekly analytical brief drawn from this daily monitoring record.</span>
+      <span class="cta-arrow">Read more →</span>
+    </a>
+    {% endif %}
+
     <div class="sidebar-card sidebar-card--primary">
       <div class="sidebar-eyebrow">Today's Brief</div>
       <div class="sidebar-stats">
@@ -662,12 +723,10 @@
           <span class="label">Articles</span>
           <span class="value">{{ articles | length if articles else 0 }}</span>
         </div>
-        {% if n_significant is defined and n_significant > 0 %}
         <div class="sidebar-stat">
-          <span class="label">Significant</span>
-          <span class="value">{{ n_significant }}</span>
+          <span class="label">Model-flagged</span>
+          <span class="value">{{ n_significant if n_significant is defined else 0 }}</span>
         </div>
-        {% endif %}
         <div class="sidebar-stat">
           <span class="label">Sources with articles</span>
           <span class="value">{{ n_sources if (n_sources is defined and n_sources > 0) else '—' }}</span>
@@ -678,13 +737,6 @@
         </div>
       </div>
     </div>
-
-    <a href="{{ root_path }}the-pla-watch/index.html" class="sidebar-cta">
-      <span class="cta-eyebrow">Companion publication</span>
-      <span class="cta-title">The PLA Watch</span>
-      <span class="cta-desc">Weekly synthesis of the daily signals — reviewed weekly synthesis.</span>
-      <span class="cta-arrow">Read more →</span>
-    </a>
 
     <div class="sidebar-card">
       <div class="sidebar-eyebrow">Source Status</div>
@@ -700,7 +752,7 @@
     </div>
 
     <div class="sidebar-card">
-      <div class="sidebar-eyebrow">Recent Analytical Signals</div>
+      <div class="sidebar-eyebrow">Recent Model-Flagged Items</div>
       {% if recent_signals %}
       <div class="signal-list">
         {% for a in recent_signals %}
@@ -711,8 +763,9 @@
         {% endfor %}
       </div>
       {% else %}
-      <div class="signal-empty">No recent analytical signals in the current archive window.</div>
+      <div class="signal-empty">No model-flagged items in the current archive window.</div>
       {% endif %}
+      <div class="sidebar-note">Model-flagged means the analysis model marked an item for closer attention during daily processing — a triage cue, not an editorial judgment. <a href="{{ root_path }}methodology.html#model-flagged">How flagging works</a></div>
     </div>
 
   </aside>

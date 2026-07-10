@@ -356,7 +356,7 @@
 
   <label class="sig-toggle">
     <input type="checkbox" id="sig-only">
-    <span>Significant only</span>
+    <span>Model-flagged only</span>
   </label>
 </div>
 
@@ -366,7 +366,7 @@
   <p class="static-archive-notice" id="static-notice">Showing the most recent {{ articles_static | length }} articles. Enable JavaScript for full search and filter.</p>
 {% for a in articles_static %}
   <div class="static-entry{% if a.is_significant %} is-significant{% endif %}">
-    <div class="static-entry-header"><a href="{{ a.article_path }}" class="static-title">{{ a.title_en or a.title_zh }}</a>{% if a.is_significant %} <span class="static-sig-badge">Significant</span>{% endif %}{% if a.extraction_issue %} <span class="extraction-issue-badge">Collection issue</span>{% endif %}</div>
+    <div class="static-entry-header"><a href="{{ a.article_path }}" class="static-title">{{ a.title_en or a.title_zh }}</a>{% if a.is_significant %} <span class="static-sig-badge">Model-flagged</span>{% endif %}{% if a.extraction_issue %} <span class="extraction-issue-badge">Collection issue</span>{% endif %}</div>
     <div class="static-entry-meta">{{ a.date_fmt }} · {{ a.source }}{% for label in a.category_labels %} · {{ label }}{% endfor %}</div>{% if a.extraction_issue %}<div class="static-entry-collection-note">Article text was incomplete, mismatched, or not suitable for normal analysis. <a href="{{ a.article_path }}">View item</a> · <a href="{{ a.url }}" target="_blank" rel="noopener">Original source ↗</a></div>{% elif a.summary %}<div class="static-entry-summary">{{ a.summary[:260] }}{% if a.summary | length > 260 %}…{% endif %}</div>{% endif %}
   </div>
 {% endfor %}
@@ -396,7 +396,7 @@ dates.sort((a, b) => b.localeCompare(a));
 
 function renderRow(a) {
   const sig = a.is_significant
-    ? '<span class="sig-dot" title="Significant"></span>'
+    ? '<span class="sig-dot" title="Model-flagged"></span>'
     : '<span class="sig-dot-placeholder"></span>';
   const issueBadge = a.extraction_issue
     ? ' <span class="extraction-issue-badge">Collection issue</span>'

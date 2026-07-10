@@ -42,6 +42,21 @@
 
 .methodology-page a { color: var(--color-brand); }
 
+.methodology-page ol.ladder {
+  margin: 0 0 1rem 1.25rem;
+  padding: 0;
+}
+.methodology-page ol.ladder li {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-text-primary);
+  margin-bottom: 0.85rem;
+  padding-left: 0.35rem;
+}
+.methodology-page ol.ladder li strong {
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .methodology-page { max-width: 100%; }
   .methodology-page h1 { font-size: 1.65rem; }
@@ -54,15 +69,26 @@
 <article class="methodology-page">
   <h1>Methodology</h1>
 
-  <p>China Mil Watch is an open-source intelligence pipeline that monitors Chinese-language military and security media on a daily schedule. This page documents how the pipeline works, what role automation plays, and what limitations readers should keep in mind.</p>
+  <p>China Mil Watch is an independent Mandarin-source monitoring and analysis project. It tracks Chinese military and security reporting from official and authoritative PRC sources on a daily schedule, and publishes The PLA Watch, a weekly analytical brief. This page documents how the pipeline works, what role automation plays, and what limitations readers should keep in mind.</p>
 
   <h2>What the pipeline does</h2>
   <p>The pipeline is configured to collect from official and state-linked sources, with current production coverage centered on PLA Daily (解放军报) while additional sources are expanded and verified. Articles are filtered for relevance to military and security topics, translated from Mandarin to English, and given a short analytical summary. Summaries are categorized across fourteen topic areas including Taiwan, the South China Sea, modernization, military diplomacy, and political work.</p>
   <p>Every article links to its original source. Readers who want to verify any claim can read the original text directly.</p>
 
+  <h2 id="model-flagged">From source record to published brief</h2>
+  <p>Readers should know which layer of the project they are looking at. There are five, and they carry different weight:</p>
+  <ol class="ladder">
+    <li><strong>Scraped source records.</strong> The raw layer: headlines and article text captured verbatim in the original Chinese from official outlets, with the source URL and publication date. These records are never edited, and the original Chinese text is the authoritative version in every case.</li>
+    <li><strong>Model processing.</strong> A language model filters each record for relevance, translates it, writes a short English summary, and assigns topic categories. This is automated triage, and it can be wrong in the ways described under Limitations.</li>
+    <li><strong>Model-flagged items.</strong> During processing, the model marks some items for closer attention. This is the count labeled “model-flagged” across the site. It is a triage cue produced by software — not a judgment that the item is important, escalatory, or new. Many model-flagged items turn out to be routine on closer reading.</li>
+    <li><strong>Analyst judgment.</strong> Which items get read closely, which patterns get weight, and what the week's coverage does and does not support saying. This layer is human and appears in the daily readout, the watchlist, and the framing of each weekly edition.</li>
+    <li><strong>The PLA Watch weekly brief.</strong> The published analytical prose. Editions are drafted with model assistance from the week's collected records, then reviewed before publication. Every edition carries a source trail linking each cited item back to the original Chinese-language record.</li>
+  </ol>
+  <p>A model flag never becomes an editorial claim by itself. If a weekly edition treats an item as meaningful, that is the analyst's call, and the source trail shows the underlying record.</p>
+
   <h2>Role of automation</h2>
-  <p>Translations and analytical summaries are produced using large language models, with a defined prompt structure that instructs the model to translate accurately, identify the analytically significant elements of each article, and assess each piece as routine reporting or as a meaningful signal.</p>
-  <p>Daily article translations and summaries are generated through a structured automated pipeline. The system uses prompts, relevance thresholds, and significance criteria to reduce overclaiming. Significant items, weekly editions, and flagged anomalies receive closer human review; corrections are made when errors are identified.</p>
+  <p>Translations and analytical summaries are produced using large language models, with a defined prompt structure that instructs the model to translate accurately, identify the analytically relevant elements of each article, and mark items that may warrant closer attention — shown across the site as “model-flagged.”</p>
+  <p>Daily article translations and summaries are generated through a structured automated pipeline. The system uses prompts, relevance thresholds, and flagging criteria designed to reduce overclaiming. Model-flagged items, weekly editions, and flagged anomalies receive closer human review; corrections are made when errors are identified.</p>
 
   <h2>What the pipeline is not</h2>
   <p>China Mil Watch is not a substitute for primary source reading. It is a triage and synthesis tool. Its purpose is to make Chinese-language military reporting accessible to English-language readers who do not have time to monitor PLA Daily directly, and to surface items that warrant closer attention. The original Chinese source is the authoritative text in every case.</p>
@@ -73,7 +99,7 @@
   <p>Translation and summarization by language models can introduce errors, including subtle mistranslation of technical terms, misattribution of speakers, and loss of rhetorical nuance. Where a summary or translation matters for serious analytical use, readers should consult the original Chinese text.</p>
   <p>Some sources may return zero articles on a given day. Xinhua Military remains in development because its listings are JavaScript/API-rendered.</p>
 
-  <h2>Corrections and limitations</h2>
+  <h2>Corrections</h2>
   <p>Readers are encouraged to report translation, attribution, or source-matching errors. Corrections may be made after publication.</p>
 
   <h2>Operator</h2>

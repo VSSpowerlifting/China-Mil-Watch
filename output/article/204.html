@@ -79,6 +79,11 @@
 
     a { color: var(--color-brand); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    a:focus-visible {
+      outline: 2px solid var(--color-brand);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
 
     /* ── Header / masthead ──────────────────────────────────────────────────── */
     .site-header {
@@ -560,7 +565,7 @@ details summary:hover { color: var(--color-text-primary); }
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
         <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Open-source intelligence · Chinese military &amp; security media</span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
     <nav class="header-nav">
@@ -628,7 +633,7 @@ details summary:hover { color: var(--color-text-primary); }
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent open-source intelligence pipeline monitoring Chinese-language military and security media. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a></div>
+    <div class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a> · <a href="../the-pla-watch/index.html">The PLA Watch</a></div>
   </div>
 </footer>
 
