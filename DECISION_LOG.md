@@ -2,6 +2,28 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-10 — n_significant means model-flagged, and is now labeled so
+
+Traced: `n_significant` is computed by `generate_pla_watch.py::compute_stats`
+as the count of `is_significant` articles among the week's relevance-passing
+DB articles at generation time; `is_significant` itself is set per article by
+the LLM categorization step (`analysis/analyzer.py::categorize`, conservative
+~1-in-20 rubric). It is a model flag over the monitored week, not editorial
+judgment and not a property of the curated source trail. Verified: edition 2's
+published count (3) exactly matches the DB's model flags for 2026-05-10→16;
+edition 1's count (1) matches the flags analyzed before the pilot was
+generated (the 2026-05-07 Wei Fenghe verdict article; three 2026-05-09
+articles were flagged at ~14:13 that day, after generation). Ruling applied:
+counts are technically valid and stay unchanged in sidecars; the public label
+"N significant" was misleading and is renamed to "N model-flagged" in
+`pla-watch-post.html` (hero meta, snapshot stat, snapshot bar + legend,
+sidebar row), `pla-watch-index.html`, and `pla-watch-archive.html`; weekly
+pages rerendered from unchanged sidecars. This coexists with the 2026-07-10
+ruling that editions 1–2 had no editorially significant articles: the trail
+carries editorial selection, the count reports the pipeline flag. Daily-site
+per-article "Significant" badges (backed by displayed model reasoning) were
+left as is — separate surface, analyst's call if they should follow.
+
 ## 2026-07-10 — Analyst rulings on historical gaps
 
 - `the-pla-watch/linkedin/2026-05-10.txt` is most likely the pilot edition's

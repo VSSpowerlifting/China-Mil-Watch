@@ -777,7 +777,7 @@
         <span class="meta-item">Covers <span class="num">{{ week_start }}</span> → <span class="num">{{ week_ending }}</span></span>
         {% if days_covered %}<span class="meta-item"><span class="num">{{ days_covered }}</span> days observed</span>{% endif %}
         <span class="meta-item"><span class="num">{{ n_articles }}</span> articles analyzed</span>
-        <span class="meta-item"><span class="num">{{ n_significant }}</span> significant</span>
+        <span class="meta-item"><span class="num">{{ n_significant }}</span> model-flagged</span>
         {% if sources_seen %}
           <span class="meta-item">{{ sources_seen | join(', ') }}</span>
         {% endif %}
@@ -850,8 +850,8 @@
         </div>
         <div class="snap-stat">
           <div class="num"><span class="accent">{{ n_significant }}</span></div>
-          <div class="label">Significant</div>
-          <div class="sub">flagged for closer reading</div>
+          <div class="label">Model-flagged</div>
+          <div class="sub">auto-flagged by the analysis model</div>
         </div>
         <div class="snap-stat">
           <div class="num">{{ sources_seen | length if sources_seen else 1 }}</div>
@@ -866,14 +866,14 @@
       </div>
       {% if n_articles %}
       <div class="snap-bar">
-        <div class="snap-bar-label">Significant vs. routine coverage</div>
+        <div class="snap-bar-label">Model-flagged vs. routine coverage</div>
         <div class="snap-bar-track">
           {% set sig_pct = ((n_significant / n_articles) * 100) | round(1) %}
           <div class="snap-bar-fill" style="width: {{ sig_pct }}%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
         <div class="snap-bar-legend">
-          <span><span class="swatch swatch-sig"></span>Significant ({{ n_significant }})</span>
+          <span><span class="swatch swatch-sig"></span>Model-flagged ({{ n_significant }})</span>
           <span><span class="swatch swatch-rest"></span>Routine ({{ n_articles - n_significant }})</span>
         </div>
       </div>
@@ -1031,7 +1031,7 @@
       <div class="sb-row"><span class="label">Week ending</span><span class="value">{{ week_ending | format_date }}</span></div>
       {% if days_covered %}<div class="sb-row"><span class="label">Days observed</span><span class="value">{{ days_covered }}</span></div>{% endif %}
       <div class="sb-row"><span class="label">Articles</span><span class="value">{{ n_articles }}</span></div>
-      <div class="sb-row"><span class="label">Significant</span><span class="value">{{ n_significant }}</span></div>
+      <div class="sb-row"><span class="label">Model-flagged</span><span class="value">{{ n_significant }}</span></div>
     </div>
 
     <div class="sb-card">
