@@ -82,6 +82,17 @@ Validation currently: **passes, 9 warnings** (all historical items above).
 
 ## Recent changes
 
+- 2026-07-10 (UI/UX pass): public identity language switched from
+  "open-source intelligence" to Mandarin-source monitoring everywhere on the
+  daily site; homepage gained an identity intro strip and a latest-PLA-Watch
+  sidebar module (generator reads newest sidecar); "model-flagged" label
+  extended to all daily-site surfaces with explainer notes; methodology got a
+  five-layer trust ladder anchored at #model-flagged (daily readout explicitly
+  labeled automatic); PLA Watch archive anchors entries on issue number with
+  distinct-source counts and an honest limitations footnote; issue pages
+  explain model-flagged under the coverage snapshot and count source-trail
+  records; mobile header no longer overflows at 375px; focus-visible outlines
+  on both surfaces. See DECISION_LOG.md (three 2026-07-10 UI/UX entries).
 - 2026-07-10: weekly-page count label renamed "significant" → "model-flagged"
   (templates `pla-watch-{post,index,archive}.html`); all weekly pages
   rerendered from unchanged sidecars. Counts themselves untouched.

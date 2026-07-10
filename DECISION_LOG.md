@@ -2,6 +2,41 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-10 — Public identity language: Mandarin-source monitoring, not OSINT
+
+The daily site's title, meta descriptions, masthead kicker, footer, and
+methodology intro described the project as an "open-source intelligence
+tool/pipeline." Replaced everywhere with the project's identity statement:
+"independent Mandarin-source monitoring and analysis project tracking Chinese
+military and security reporting from official and authoritative PRC sources."
+Rationale: matches the stated identity, avoids intelligence cosplay, and drops
+the "tool" framing. The "Signal Posture: Elevated/Routine" homepage chip
+(driven solely by model flags) was replaced with the literal flag count for
+the same reason. Reversal requires an explicit decision, not copyediting.
+
+## 2026-07-10 — "Model-flagged" label extended to the daily site
+
+The 2026-07-10 weekly-page rename ("significant" → "model-flagged") left the
+daily surface inconsistent ("Significant" stat, "Analytical signal" kickers,
+"Significant only" filter, signals-page labels, readout strings). All
+user-visible daily labels now say "model-flagged"; underlying DB fields,
+sidecar counts, and stats are untouched. Explainer copy added at each surface
+("a triage cue, not an editorial judgment") linking to
+methodology.html#model-flagged, which now documents a five-layer ladder:
+scraped record → model processing → model flag → analyst judgment → weekly
+brief. The methodology explicitly states the homepage daily readout is
+assembled automatically (pipeline output, not analyst prose).
+
+## 2026-07-10 — Homepage carries a real latest-edition module
+
+`site/generator.py` now reads the newest weekly sidecar
+(`_load_latest_pw_edition`) so the homepage sidebar shows issue number,
+week-ending date, title, and dek instead of a generic CTA. Display-only: the
+leading "The PLA Watch: " title prefix is stripped for the module; nothing
+missing from a sidecar is invented. PLA Watch archive entries anchor on the
+issue number and show a distinct-source count derived from the trail;
+month grouping deferred at 9 editions.
+
 ## 2026-07-10 — n_significant means model-flagged, and is now labeled so
 
 Traced: `n_significant` is computed by `generate_pla_watch.py::compute_stats`
