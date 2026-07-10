@@ -1,0 +1,4 @@
+# Project-local AI tooling config: settings, local overrides, memory DB, logs.
+# Not source/docs; excluded from graph indexing.
+.claude/
+.claude-flow/

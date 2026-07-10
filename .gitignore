@@ -5,6 +5,12 @@
 cache/
 pla_watch.db-shm
 pla_watch.db-wal
+graphify-out/
+
+# Claude Code / agent tooling
+.claude/
+.agents/
+tmp/
 
 # Python
 __pycache__/
