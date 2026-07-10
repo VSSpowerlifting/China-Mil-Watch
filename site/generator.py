@@ -162,9 +162,9 @@ def _make_daily_readout(articles: list[dict]) -> dict:
     elif significant:
         pattern = ", ".join(sig_categories) if sig_categories else "higher-signal coverage"
         overview = (
-            f"Today’s monitored coverage produced {len(significant)} analytical signal"
+            f"Today’s monitored coverage produced {len(significant)} model-flagged item"
             f"{'' if len(significant) == 1 else 's'}, concentrated in {pattern}. "
-            "The signal should be read as official institutional messaging, not evidence of classified activity or confirmed intent."
+            "Flagged items should be read as official institutional messaging, not evidence of classified activity or confirmed intent."
         )
         mattered = "; ".join((a.get("title_english") or a.get("title_original") or "Untitled") for a in significant[:2])
         routine_line = (
@@ -177,7 +177,7 @@ def _make_daily_readout(articles: list[dict]) -> dict:
             f"Today’s official military-media coverage appears mostly routine, centered on {pattern}. "
             "No single item indicates a major new operational development in the collected material."
         )
-        mattered = "No article was flagged as an analytical signal."
+        mattered = "No article was model-flagged."
         routine_line = f"Dominant categories: {pattern}."
 
     watch_cats = sig_categories or dominant
