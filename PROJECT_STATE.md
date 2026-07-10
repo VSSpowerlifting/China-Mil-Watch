@@ -72,6 +72,8 @@ Validation currently: **passes, 9 warnings** (all historical items above).
 
 ## Recent changes
 
+- 2026-07-10: print stylesheet for issue pages (light palette, single
+  column, full source URLs printed).
 - 2026-07-10: source trail shows original Chinese headlines (title_zh from DB
   records, exact URL match, 100% coverage across all 9 editions); prev/next
   edition navigation on post pages. Note: a newly published edition's

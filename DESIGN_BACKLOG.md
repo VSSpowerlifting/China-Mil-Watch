@@ -16,7 +16,6 @@ SaaS blocks, no intelligence cosplay. Done items move to the bottom.
 
 5. **Signals page and daily index cross-promotion of latest PLA Watch
    edition** (daily templates currently link only in nav/footer).
-6. **Print/PDF stylesheet for issue pages** — policy readers forward PDFs.
 7. **Term-to-know archive page** — terms accumulate one per week and are
    currently buried in back issues.
 8. **RSS/Atom feed for The PLA Watch** — natural for the audience; needs a
@@ -34,6 +33,9 @@ SaaS blocks, no intelligence cosplay. Done items move to the bottom.
 
 ## Done
 
+- 2026-07-10: Print stylesheet — issue pages print as a light, single-column
+  brief (chrome/sidebar/dark cover hidden, source-trail URLs printed in full,
+  cards kept unbroken across pages).
 - 2026-07-10: Prev/next edition links on post pages (issue No. + date).
 - 2026-07-10: Original Chinese headlines in the source trail (`title_zh`
   backfilled from DB records by exact URL match; generator carries it

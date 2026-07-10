@@ -723,6 +723,32 @@
 }
 .post-nav a { color: var(--color-text-secondary); }
 .post-nav a:hover { color: var(--color-brand); text-decoration: none; }
+
+/* ── Print — single column brief ───────────────────────────────────── */
+@media print {
+  .post-wrap { display: block; }
+  .post-sidebar, .edition-nav, .post-nav, .author-chips,
+  .cover-figure, .cover-credit-note, .visual-context { display: none; }
+  .hero::after { display: none; }
+  .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
+    break-inside: avoid;
+  }
+  .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
+  .signal-card::before { color: #8B0E20; }
+  .snap-bar-fill { background: #8B0E20; }
+  .snap-bar-rest, .swatch-rest { background: #dddddd; }
+  .swatch-sig { background: #8B0E20; }
+  .source-card:hover { background: transparent; }
+  /* Keep the source trail traceable on paper: print each item's URL. */
+  .source-card-domain { display: none; }
+  .source-card::after {
+    content: attr(href);
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    color: #555555;
+    word-break: break-all;
+  }
+}
 {% endblock %}
 
 {% block content %}
