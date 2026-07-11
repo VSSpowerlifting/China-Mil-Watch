@@ -16,592 +16,852 @@
 {% endblock %}
 
 {% block extra_styles %}
-/* ── Site intro — one-line identity statement for first-time readers ── */
-.site-intro {
-  font-size: 0.875rem;
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-  max-width: 860px;
-  padding-bottom: 1.35rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--color-border);
+/* ── Identity band ─────────────────────────────────────────────────── */
+.home-hero {
+  background: var(--paper-header);
+  border-bottom: 1px solid var(--line);
 }
-.site-intro strong {
+.home-hero-inner {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding: 3.25rem 2rem 3rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 3.5rem;
+  align-items: end;
+}
+.home-hero h1 {
   font-family: var(--serif);
   font-weight: 700;
-  color: var(--color-text-primary);
+  font-size: clamp(2rem, 4.4vw, 3.35rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+  text-wrap: balance;
+  margin-bottom: 1.05rem;
+  max-width: 17ch;
 }
-.site-intro a { font-weight: 600; }
+.home-hero h1 em {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--signal);
+}
+.home-hero-dek {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  max-width: 52ch;
+  margin-bottom: 1.5rem;
+}
+.home-hero-dek a { font-weight: 600; }
+.home-hero-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
 
-/* ── Brief layout (main + sidebar) ───────────────────────────────── */
+/* Today's figures — real ledger numbers */
+.hero-ledger {
+  border-left: 1px solid var(--line);
+  padding-left: 2.25rem;
+  align-self: end;
+}
+.hero-ledger-label {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: 0.9rem;
+}
+.hero-ledger-rows { display: flex; flex-direction: column; }
+.hero-ledger-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line-soft);
+}
+.hero-ledger-row:first-child { border-top: none; padding-top: 0; }
+.hero-ledger-row .k { font-size: 0.8125rem; color: var(--ink-2); }
+.hero-ledger-row .v {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.hero-ledger-row .v.signal { color: var(--signal); }
+.hero-ledger-row .v.small {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* ── Hero plate — how the record is built (animated editorial diagram) ── */
+.hero-plate {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 1.5rem;
+}
+.hero-plate-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-plate-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+.hero-plate-grid {
+  display: grid;
+  grid-template-columns: max-content minmax(56px, 0.55fr) minmax(0, 1.2fr) minmax(56px, 0.55fr) minmax(0, 1.2fr);
+  align-items: stretch;
+}
+.plate-sources { display: flex; flex-direction: column; }
+.plate-src {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+}
+.plate-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+.plate-dot.live { background: var(--signal); border-color: var(--signal); }
+.plate-src-name {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plate-link { width: 100%; height: 160px; align-self: start; display: block; }
+.plate-link path { fill: none; stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
+.plate-link--fan path { stroke: var(--line); }
+.plate-link--line path { stroke: var(--signal); stroke-width: 1.4px; }
+.plate-node {
+  align-self: center;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.95rem 1.15rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.plate-node-kicker {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.plate-node-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.008em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.plate-node-sub {
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+.plate-node--pw {
+  background: #0E1520;
+  border-color: #273040;
+}
+.plate-node--pw .plate-node-kicker { color: #9A9590; }
+.plate-node--pw .plate-node-title { color: #EDE9E0; font-style: italic; }
+.plate-node--pw .plate-node-sub { color: #9A9590; }
+.hero-plate-note {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  margin-top: 1rem;
+}
+@media (max-width: 900px) {
+  .hero-plate { padding-top: 1.35rem; }
+  .hero-plate-grid { grid-template-columns: minmax(0, 1fr); }
+  .plate-link { display: none; }
+  .plate-sources { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1.1rem; }
+  .plate-src { height: auto; padding: 0.15rem 0; }
+  .plate-node { align-self: stretch; margin-top: 1.6rem; position: relative; }
+  .plate-node::before {
+    content: "";
+    position: absolute;
+    top: -1.6rem;
+    left: 1.15rem;
+    width: 1px;
+    height: 1.6rem;
+    background: var(--line);
+  }
+  .plate-node--pw::before { background: var(--signal); }
+}
+
+/* ── Featured PLA Watch band — the flagship, in its own material ───── */
+.pw-band {
+  background: #0E1520;
+  border-bottom: 1px solid #273040;
+  color: #EDE9E0;
+}
+.pw-band-inner {
+  max-width: var(--shell);
+  margin: 0 auto;
+  padding: 2.4rem 2rem 2.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2.5rem;
+  align-items: center;
+}
+.pw-band-eyebrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.9rem;
+}
+.pw-band-name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #EDE9E0;
+  letter-spacing: -0.005em;
+}
+.pw-band-issue {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9A9590;
+  font-variant-numeric: tabular-nums;
+}
+.pw-band-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.014em;
+  margin-bottom: 0.6rem;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.pw-band-title a { color: #EDE9E0; }
+.pw-band-title a:hover { color: #E05A6D; text-decoration: none; }
+.pw-band-dek {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: #9A9590;
+  max-width: 66ch;
+}
+.pw-band-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.pw-band .btn-read {
+  display: inline-block;
+  background: #B3132B;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+.pw-band .btn-read:hover { background: #8B0E20; text-decoration: none; }
+.pw-band .btn-read:active { transform: translateY(1px); }
+.pw-band .all-editions {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #9A9590;
+}
+.pw-band .all-editions:hover { color: #EDE9E0; text-decoration: none; }
+
+/* Edition tick strip — the run of the serial, real issues only */
+.pw-band-ticks {
+  grid-column: 1 / -1;
+  border-top: 1px solid #273040;
+  padding-top: 1.05rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem 1.75rem;
+  flex-wrap: wrap;
+}
+.pw-ticks-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #746E67;
+  white-space: nowrap;
+}
+.pw-ticks { display: flex; align-items: flex-end; gap: 12px; }
+.pw-tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+}
+.pw-tick:hover { text-decoration: none; }
+.pw-tick-bar {
+  width: 3px;
+  height: 15px;
+  background: #3A4556;
+  border-radius: 1px;
+  transition: background-color 140ms ease;
+}
+.pw-tick.latest .pw-tick-bar { background: #B3132B; height: 21px; }
+.pw-tick-num {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: #746E67;
+  font-variant-numeric: tabular-nums;
+  transition: color 140ms ease;
+}
+.pw-tick:hover .pw-tick-bar { background: #E05A6D; }
+.pw-tick:hover .pw-tick-num { color: #EDE9E0; }
+.pw-tick.latest .pw-tick-num { color: #E05A6D; font-weight: 600; }
+.js:not(.no-anim) [data-reveal]:not(.in) .pw-tick-bar {
+  transform: scaleY(0);
+  transform-origin: bottom center;
+}
+.js [data-reveal].in .pw-tick-bar {
+  transform: scaleY(1);
+  transform-origin: bottom center;
+  transition: transform 0.55s var(--ease), background-color 140ms ease;
+  transition-delay: calc(var(--ti, 0) * 50ms + 200ms), 0ms;
+}
+
+/* ── Brief layout (main + sidebar) ─────────────────────────────────── */
 .brief-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 3rem;
+  gap: 3.25rem;
   align-items: flex-start;
 }
-
 .brief-main { min-width: 0; }
 
-/* ── Brief date header ───────────────────────────────────────────── */
+/* ── Brief date header ─────────────────────────────────────────────── */
 .brief-header {
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 2px solid var(--ink);
 }
 .brief-eyebrow {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal);
   margin-bottom: 0.6rem;
 }
 .brief-eyebrow::before {
   content: "";
-  width: 22px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 22px; height: 2px;
+  background: var(--signal);
 }
 .brief-date {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2.125rem;
-  color: var(--color-text-primary);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-size: 2.1rem;
+  color: var(--ink);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   margin-bottom: 0.5rem;
 }
-/* ── Edition strip / signal posture ─────────────────────────────── */
 .edition-strip {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  padding: 0.6rem 0 0.1rem;
-  margin-top: 0.65rem;
-  border-top: 1px solid var(--color-border-soft);
+  margin-top: 0.45rem;
 }
 .edition-meta {
-  font-family: var(--sans);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   font-variant-numeric: tabular-nums;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0 0.45rem;
+  gap: 0 0.5rem;
 }
-.edition-sep {
-  color: var(--color-border);
-  font-weight: 400;
-}
+.edition-sep { color: var(--line); font-weight: 400; }
 .signal-posture {
-  font-family: var(--sans);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.signal-posture.elevated {
+  color: var(--signal-ink);
+  border-color: var(--signal-line);
+  background: var(--signal-tint);
+}
+
+/* ── Posture note ──────────────────────────────────────────────────── */
+.brief-context-note {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  line-height: 1.6;
+  padding: 0 0 1.1rem;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 1.5rem;
+}
+.posture-label {
+  font-family: var(--mono);
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  padding: 2px 7px;
-  white-space: nowrap;
+  color: var(--ink-3);
+  margin-right: 0.2rem;
 }
-.signal-posture.elevated {
-  color: var(--color-brand);
-  border-color: var(--color-signal-mid);
-  background: var(--color-signal-tint);
+.posture-sep { margin: 0 0.45rem; color: var(--line); }
+.brief-context-note a {
+  color: var(--ink-3);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
 }
+.brief-context-note a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
-/* ── Article cards ───────────────────────────────────────────────── */
-.article-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.article-card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 1.5rem 1.75rem;
-  position: relative;
-  transition: border-color 140ms ease, transform 140ms ease, background-color 140ms ease;
-}
-.article-card:hover {
-  border-color: var(--color-ink);
-  transform: translateY(-2px);
-}
-.article-card.significant {
-  border-color: #D87A64;
-  background: #FEF7F4;
-}
-.article-card.significant:hover {
-  border-color: var(--color-brand);
-  background: var(--color-signal-tint);
-}
-
-.article-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1.3125rem;
-  line-height: 1.3;
-  color: var(--color-text-primary);
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.005em;
-}
-.article-title a { color: inherit; text-decoration: none; }
-.article-title a:hover { color: var(--color-brand); text-decoration: none; }
-
-.article-title-zh {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0.6rem;
-  font-style: normal;
-  letter-spacing: 0.01em;
-}
-
-.article-summary {
-  font-size: 0.875rem;
-  line-height: 1.65;
-  color: var(--color-text-secondary);
-  margin-bottom: 0;
-  padding-top: 0.65rem;
-  border-top: 1px solid var(--color-border-soft);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.article-card .tags { margin-bottom: 0.5rem; }
-
-/* .signal-badge replaced by .analytical-signal-kicker in base.html */
-
-/* ── Analyst readout ─────────────────────────────────────────────── */
+/* ── Analyst readout ───────────────────────────────────────────────── */
 .analyst-readout {
-  background: var(--color-signal-tint);
-  border: 1px solid var(--color-signal-mid);
-  border-left: 4px solid var(--color-brand);
-  border-radius: 0 6px 6px 0;
+  background: var(--signal-tint);
+  border: 1px solid var(--signal-line);
+  border-left: 3px solid var(--signal);
+  border-radius: 0 var(--radius) var(--radius) 0;
   padding: 1.35rem 1.55rem 1.25rem;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.5rem;
 }
 .readout-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-ink);
   margin-bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.readout-eyebrow::before {
-  content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
-  flex-shrink: 0;
 }
 .readout-overview {
   font-family: var(--serif);
-  font-size: 1.08rem;
+  font-size: 1.1rem;
   line-height: 1.55;
-  color: var(--color-text-primary);
-  margin-bottom: 0;
+  color: var(--ink);
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--signal-line);
 }
-.readout-lines {
-  display: grid;
-  gap: 0;
-  padding-top: 0.35rem;
-}
+.readout-lines { display: grid; padding-top: 0.35rem; }
 .readout-line {
   display: grid;
   grid-template-columns: 7.5rem minmax(0, 1fr);
   gap: 0.85rem;
   padding: 0.65rem 0;
-  border-top: 1px solid var(--color-border-soft);
+  border-top: 1px solid rgba(217, 169, 163, 0.5);
   font-size: 0.825rem;
-  line-height: 1.5;
+  line-height: 1.55;
 }
+.readout-line:first-child { border-top: none; }
 .readout-label {
-  font-size: 0.65rem;
-  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
-  padding-top: 0.15rem;
+  color: var(--ink-3);
+  padding-top: 0.2rem;
 }
-.readout-text { color: var(--color-text-primary); }
+.readout-text { color: var(--ink); }
+
+/* ── Article records ───────────────────────────────────────────────── */
+.article-list { display: flex; flex-direction: column; gap: 13px; }
+.article-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem 1.25rem;
+  position: relative;
+  transition: border-color 180ms var(--ease), transform 180ms var(--ease);
+}
+.article-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+}
+.article-card.significant { border-left: 3px solid var(--signal); padding-left: calc(1.65rem - 2px); }
+
+.article-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.3125rem;
+  line-height: 1.28;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.008em;
+}
+.article-title a { color: inherit; text-decoration: none; }
+.article-title a:hover { color: var(--signal); text-decoration: none; }
+.article-title-zh {
+  font-family: var(--zh);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  margin-bottom: 0.6rem;
+}
+.article-summary {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.article-card .tags { margin-bottom: 0.5rem; }
 
 .article-footer {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.85rem;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--color-border-soft);
-  margin-top: 1rem;
-  letter-spacing: 0.01em;
-}
-.article-footer .footer-source {
-  display: inline-flex;
   align-items: baseline;
-  gap: 0.3rem;
+  gap: 0.25rem 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-3);
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line-soft);
+  margin-top: 1rem;
 }
+.article-footer .footer-source { display: inline-flex; align-items: baseline; gap: 0.35rem; }
 .footer-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
 }
 .article-footer .source-name {
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--ink-2);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.7rem;
+  letter-spacing: 0.05em;
 }
-.article-footer a { color: var(--color-text-muted); }
-.article-footer a:hover { color: var(--color-brand); text-decoration: none; }
-.article-footer .sep::before {
-  content: "·";
-  margin-right: 0.85rem;
-  color: var(--color-border);
-}
+.article-footer a { color: var(--ink-3); }
+.article-footer a:hover { color: var(--signal); text-decoration: none; }
+.article-footer .sep::before { content: "·"; margin-right: 0.85rem; color: var(--line); }
 
-/* ── Sidebar ─────────────────────────────────────────────────────── */
-.brief-sidebar { position: sticky; top: 1.5rem; }
-
+/* ── Sidebar ───────────────────────────────────────────────────────── */
+.brief-sidebar { position: sticky; top: 3.4rem; }
 .sidebar-card {
-  background: var(--color-bg-sidebar);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 1.5rem 1.5rem 1.4rem;
+  background: var(--paper-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.35rem 1.4rem 1.3rem;
   margin-bottom: 1rem;
 }
-.sidebar-card--primary {
-  border-top: 3px solid var(--color-brand);
-}
+.sidebar-card--primary { border-top: 3px solid var(--signal); }
 .sidebar-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-ink);
   margin-bottom: 0.85rem;
-  padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
 }
-.sidebar-eyebrow::before {
-  content: "";
-  width: 14px;
-  height: 2px;
-  background: var(--color-brand);
-  flex-shrink: 0;
-}
-.sidebar-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
+.sidebar-stats { display: flex; flex-direction: column; }
 .sidebar-stat {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--color-border-soft);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line-soft);
 }
 .sidebar-stat:last-child { border-bottom: none; }
-.sidebar-stat .label {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.01em;
-}
+.sidebar-stat .label { font-size: 0.78rem; color: var(--ink-2); }
 .sidebar-stat .value {
   font-family: var(--serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 .sidebar-stat .value.muted {
-  font-family: var(--sans);
-  font-size: 0.78rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
 
-.sidebar-cta {
-  display: block;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 1.1rem 1.25rem;
-  text-decoration: none;
-  transition: border-color 140ms ease;
-}
-.sidebar-cta:hover {
-  border-color: var(--color-brand);
-  text-decoration: none;
-}
-.sidebar-cta .cta-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-  margin-bottom: 0.35rem;
-  display: block;
-}
-.sidebar-cta .cta-title {
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  line-height: 1.25;
-  display: block;
-  margin-bottom: 0.3rem;
-}
-.sidebar-cta .cta-desc {
-  font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-}
-.sidebar-cta .cta-arrow {
-  display: inline-block;
-  margin-top: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--color-brand);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.sidebar-cta--pw {
-  border-top: 3px solid var(--color-ink);
-  margin-bottom: 0.5rem;
-}
-.sidebar-cta--pw .cta-title { font-size: 1.1rem; }
-.sidebar-cta .cta-issue {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 0.4rem;
-}
-.pw-all-link {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin: 0 0 1rem 0.15rem;
-}
-.pw-all-link:hover { color: var(--color-brand); text-decoration: none; }
-
-.source-status-list,
-.signal-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
+.source-status-list, .signal-list { display: flex; flex-direction: column; gap: 0.65rem; }
 .source-status-row {
   display: flex;
   justify-content: space-between;
   gap: 0.85rem;
   padding-bottom: 0.65rem;
-  border-bottom: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--line-soft);
 }
 .source-status-row:last-child { border-bottom: none; padding-bottom: 0; }
-.source-status-name {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  font-weight: 600;
-}
+.source-status-name { font-size: 0.8rem; color: var(--ink-2); font-weight: 600; }
 .status-badge {
   align-self: flex-start;
   white-space: nowrap;
-  border: 1px solid var(--color-border);
-  border-radius: 2px;
-  padding: 0.12rem 0.35rem;
-  font-size: 0.65rem;
-  color: var(--color-text-muted);
-  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.12rem 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--ink-3);
+  background: var(--paper-raised);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .status-badge.active {
-  border-color: var(--color-signal-mid);
-  color: var(--color-brand);
-  background: var(--color-signal-tint);
+  border-color: var(--signal-line);
+  color: var(--signal-ink);
+  background: var(--signal-tint);
 }
-.sidebar-note,
-.signal-empty {
+.sidebar-note, .signal-empty {
   font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--color-text-muted);
+  line-height: 1.55;
+  color: var(--ink-3);
   margin-top: 0.85rem;
 }
-.signal-item {
-  border-bottom: 1px solid var(--color-border-soft);
-  padding-bottom: 0.65rem;
-}
+.signal-item { border-bottom: 1px solid var(--line-soft); padding-bottom: 0.65rem; }
 .signal-item:last-child { border-bottom: none; padding-bottom: 0; }
 .signal-date {
-  font-size: 0.68rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--ink-3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.25rem;
+  font-variant-numeric: tabular-nums;
 }
-.signal-title {
-  font-size: 0.82rem;
-  line-height: 1.45;
-  font-weight: 600;
-}
-.signal-title a { color: var(--color-text-secondary); text-decoration: none; }
-.signal-title a:hover { color: var(--color-brand); }
+.signal-title { font-size: 0.82rem; line-height: 1.45; font-weight: 600; }
+.signal-title a { color: var(--ink-2); text-decoration: none; }
+.signal-title a:hover { color: var(--signal); }
 
-/* ── Analytic posture strip ──────────────────────────────────────── */
-.brief-context-note {
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-  line-height: 1.55;
-  padding: 0.6rem 0 1.1rem;
-  border-bottom: 1px solid var(--color-border-soft);
-  margin-bottom: 1.5rem;
-}
-.posture-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin-right: 0.2rem;
-}
-.posture-sep {
-  margin: 0 0.45rem;
-  color: var(--color-border);
-}
-.brief-context-note a {
-  color: var(--color-text-muted);
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: var(--color-border);
-}
-.brief-context-note a:hover { color: var(--color-brand); text-decoration-color: var(--color-brand); }
-
-/* ── Extraction issues panel ─────────────────────────────────────── */
+/* ── Extraction issues panel ───────────────────────────────────────── */
 .extraction-panel {
-  background: var(--color-bg-sidebar);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  background: var(--paper-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   padding: 1rem 1.35rem 1.1rem;
   margin-top: 1.5rem;
 }
 .extraction-panel-heading {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
-.extraction-panel-heading::before {
-  content: "";
-  width: 18px; height: 2px;
-  background: var(--color-border);
-}
-.extraction-item {
-  padding: 0.75rem 0;
-  border-top: 1px solid var(--color-border-soft);
-}
+.extraction-item { padding: 0.75rem 0; border-top: 1px solid var(--line-soft); }
 .extraction-item:first-of-type { border-top: none; }
-.extraction-item-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.3rem;
-}
+.extraction-item-title { font-size: 0.875rem; font-weight: 600; color: var(--ink-2); margin-bottom: 0.3rem; }
 .extraction-item-message {
   font-size: 0.8rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   line-height: 1.55;
   margin-bottom: 0.35rem;
   font-style: italic;
 }
-.extraction-item-links {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-}
-.extraction-item-links a { color: var(--color-text-muted); }
-.extraction-item-links a:hover { color: var(--color-brand); text-decoration: none; }
+.extraction-item-links { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-3); }
+.extraction-item-links a { color: var(--ink-3); }
+.extraction-item-links a:hover { color: var(--signal); text-decoration: none; }
+.extraction-item-links .sep::before { content: "·"; margin: 0 0.5rem; color: var(--line); }
 
-/* ── Tablet / mobile ────────────────────────────────────────────── */
+/* ── Tablet / mobile ───────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .brief-layout {
+  .home-hero-inner {
     grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    gap: 1.9rem;
+    padding: 2.25rem 1.25rem 2rem;
   }
+  .hero-ledger { border-left: none; border-top: 1px solid var(--line); padding-left: 0; padding-top: 1.4rem; }
+  .pw-band-inner { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; padding: 1.9rem 1.25rem 2rem; }
+  .pw-band-cta { flex-direction: row; align-items: center; gap: 1.25rem; }
+  .brief-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
   .brief-sidebar { position: static; }
-  .brief-date { font-size: 1.625rem; }
-  .article-card {
-    padding: 1.1rem 1.1rem;
-    border-radius: 5px;
-  }
+  .brief-date { font-size: 1.6rem; }
+  .article-card { padding: 1.1rem 1.15rem 1rem; }
+  .article-card.significant { padding-left: calc(1.15rem - 2px); }
   .article-title { font-size: 1.125rem; }
 }
 {% endblock %}
 
-{% block content %}
-<p class="site-intro"><strong>China Mil Watch</strong> is an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. The daily record is indexed here; <a href="{{ root_path }}the-pla-watch/index.html">The PLA Watch</a>, the weekly brief, is the analysis. Official Mandarin reporting is where the PLA describes itself in its own terms — much of it never appears in English-language coverage.</p>
+{% block hero %}
+<section class="home-hero">
+  <div class="home-hero-inner">
+    <div data-reveal>
+      <h1>Reading China's military media <em>in the original.</em></h1>
+      <p class="home-hero-dek">China Mil Watch is an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Official reporting is where the PLA describes itself in its own terms; much of it never appears in English-language coverage. The daily record is indexed here. <a href="{{ root_path }}the-pla-watch/index.html">The PLA Watch</a>, the weekly brief, is the analysis.</p>
+      <div class="home-hero-actions">
+        <a class="btn btn-primary" href="{{ root_path }}archive.html">Browse the archive</a>
+        <a class="btn btn-secondary" href="{{ root_path }}methodology.html">How this works</a>
+      </div>
+    </div>
+    <div class="hero-ledger" data-reveal style="--ri: 2;">
+      <div class="hero-ledger-label">Today's record{% if brief_date_fmt %} · {{ brief_date_fmt }}{% endif %}</div>
+      <div class="hero-ledger-rows">
+        <div class="hero-ledger-row">
+          <span class="k">Articles analyzed</span>
+          <span class="v">{{ articles | length if articles else 0 }}</span>
+        </div>
+        <div class="hero-ledger-row">
+          <span class="k">Model-flagged</span>
+          <span class="v{% if n_significant %} signal{% endif %}">{{ n_significant if n_significant is defined else 0 }}</span>
+        </div>
+        <div class="hero-ledger-row">
+          <span class="k">Sources with articles</span>
+          <span class="v">{{ n_sources if (n_sources is defined and n_sources > 0) else '—' }}</span>
+        </div>
+        <div class="hero-ledger-row">
+          <span class="k">Updated</span>
+          <span class="v small">{{ generated_at }}</span>
+        </div>
+      </div>
+    </div>
 
+    {% if source_statuses %}
+    <div class="hero-plate" data-reveal style="--ri: 3;">
+      <div class="hero-plate-label">How the record is built</div>
+      <div class="hero-plate-grid">
+        <div class="plate-sources">
+          {% for s in source_statuses %}
+          <div class="plate-src">
+            <span class="plate-dot ink-node{% if s.count %} live pulse-dot{% endif %}" style="--ni: {{ loop.index0 }};" aria-hidden="true"></span>
+            <span class="plate-src-name">{{ s.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        <svg class="plate-link plate-link--fan" viewBox="0 0 72 160" preserveAspectRatio="none" aria-hidden="true">
+          <path class="draw-path" pathLength="1" style="--pi: 0;" d="M0 16 C 34 16, 46 80, 72 80"/>
+          <path class="draw-path" pathLength="1" style="--pi: 1;" d="M0 48 C 34 48, 46 80, 72 80"/>
+          <path class="draw-path" pathLength="1" style="--pi: 2;" d="M0 80 L 72 80"/>
+          <path class="draw-path" pathLength="1" style="--pi: 3;" d="M0 112 C 34 112, 46 80, 72 80"/>
+          <path class="draw-path" pathLength="1" style="--pi: 4;" d="M0 144 C 34 144, 46 80, 72 80"/>
+        </svg>
+        <div class="plate-node">
+          <span class="plate-node-kicker">China Mil Watch · daily</span>
+          <span class="plate-node-title">The Daily Brief</span>
+          <span class="plate-node-sub">Read in the original Mandarin, translated and indexed every day</span>
+        </div>
+        <svg class="plate-link plate-link--line" viewBox="0 0 72 160" preserveAspectRatio="none" aria-hidden="true">
+          <path class="draw-path" pathLength="1" style="--pi: 5;" d="M0 80 L 72 80"/>
+        </svg>
+        <div class="plate-node plate-node--pw">
+          <span class="plate-node-kicker">Weekly · Sundays</span>
+          <span class="plate-node-title">The PLA Watch</span>
+          <span class="plate-node-sub">The analytical brief drawn from the week's record</span>
+        </div>
+      </div>
+      <div class="hero-plate-note">{{ source_statuses | length }} official PRC outlets monitored · the daily record is the evidence; the weekly brief is the analysis</div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if pw_latest %}
+<section class="pw-band" aria-label="Latest edition of The PLA Watch">
+  <div class="pw-band-inner">
+    <div data-reveal>
+      <div class="pw-band-eyebrow">
+        <span class="pw-band-name">The PLA Watch</span>
+        <span class="pw-band-issue">{% if pw_latest.issue_number %}No. {{ pw_latest.issue_number }} · {% endif %}Week ending {{ pw_latest.week_ending | format_date }}</span>
+      </div>
+      <h2 class="pw-band-title"><a href="{{ root_path }}the-pla-watch/posts/{{ pw_latest.date }}.html">{{ pw_latest.title_display }}</a></h2>
+      {% if pw_latest.dek %}<p class="pw-band-dek">{{ pw_latest.dek }}</p>{% endif %}
+    </div>
+    <div class="pw-band-cta" data-reveal style="--ri: 1;">
+      <a class="btn-read" href="{{ root_path }}the-pla-watch/posts/{{ pw_latest.date }}.html">Read the edition</a>
+      <a class="all-editions" href="{{ root_path }}the-pla-watch/index.html">All editions →</a>
+    </div>
+    {% if pw_issues and pw_issues | length > 1 %}
+    <div class="pw-band-ticks" data-reveal style="--ri: 2;">
+      <span class="pw-ticks-label">Vol. I · {{ pw_issues | length }} weekly editions</span>
+      <div class="pw-ticks">
+        {% for t in pw_issues %}
+        <a class="pw-tick{% if loop.last %} latest{% endif %}"
+           href="{{ root_path }}the-pla-watch/posts/{{ t.date }}.html"
+           style="--ti: {{ loop.index0 }};"
+           aria-label="No. {{ t.issue_number }}{% if t.week_ending %} — week ending {{ t.week_ending | format_date }}{% endif %}"
+           title="No. {{ t.issue_number }}{% if t.week_ending %} · week ending {{ t.week_ending | format_date }}{% endif %}">
+          <span class="pw-tick-bar"></span>
+          <span class="pw-tick-num">{{ t.issue_number }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block content %}
 <div class="brief-layout">
 
   <div class="brief-main">
 
-    <div class="brief-header">
+    <div class="brief-header" data-reveal>
       <div class="brief-eyebrow">Daily Brief</div>
       <h1 class="brief-date">{% if brief_date_fmt %}{{ brief_date_fmt }}{% else %}Today{% endif %}</h1>
       {% if articles %}
       <div class="edition-strip">
         <div class="edition-meta">
-          <span>Daily Brief</span>
-          <span class="edition-sep">·</span>
-          <span>{{ brief_date_fmt }}</span>
-          <span class="edition-sep">·</span>
           <span>{{ articles | length }} article{{ 's' if articles | length != 1 }}</span>
           {% if n_sources > 0 %}
           <span class="edition-sep">·</span>
@@ -621,8 +881,8 @@
     {% set issue_articles = articles | selectattr('extraction_issue') | list %}
 
     {% if daily_readout %}
-    <section class="analyst-readout" aria-labelledby="analyst-readout-heading">
-      <div class="readout-eyebrow" id="analyst-readout-heading">ANALYST READOUT</div>
+    <section class="analyst-readout" aria-labelledby="analyst-readout-heading" data-reveal>
+      <div class="readout-eyebrow" id="analyst-readout-heading">Analyst readout</div>
       <div class="readout-overview">{{ daily_readout.overview }}</div>
       <div class="readout-lines">
         <div class="readout-line"><span class="readout-label">What mattered</span><span class="readout-text">{{ daily_readout.what_mattered }}</span></div>
@@ -635,7 +895,7 @@
     {% if normal_articles %}
       <div class="article-list">
         {% for a in normal_articles %}
-        <article class="article-card{% if a.is_significant %} significant{% endif %}">
+        <article class="article-card{% if a.is_significant %} significant{% endif %}" data-reveal>
 
           {% if a.is_significant %}
             <div class="analytical-signal-kicker"><span class="signal-dot"></span><span class="signal-kicker-text">Model-flagged</span></div>
@@ -653,7 +913,7 @@
           </h2>
 
           {% if a.title_original and a.source_language == 'zh' %}
-            <div class="article-title-zh">{{ a.title_original }}</div>
+            <div class="article-title-zh" lang="zh-Hans">{{ a.title_original }}</div>
           {% endif %}
 
           {% if a.summary_english %}
@@ -676,7 +936,7 @@
     {% endif %}
 
     {% if issue_articles %}
-    <div class="extraction-panel">
+    <div class="extraction-panel" data-reveal>
       <div class="extraction-panel-heading">Collection notes</div>
       {% for a in issue_articles %}
       <div class="extraction-item">
@@ -698,25 +958,7 @@
 
   <aside class="brief-sidebar">
 
-    {% if pw_latest %}
-    <a href="{{ root_path }}the-pla-watch/posts/{{ pw_latest.date }}.html" class="sidebar-cta sidebar-cta--pw">
-      <span class="cta-eyebrow">The PLA Watch · Weekly brief</span>
-      <span class="cta-issue">{% if pw_latest.issue_number %}No. {{ pw_latest.issue_number }} · {% endif %}Week ending {{ pw_latest.week_ending | format_date }}</span>
-      <span class="cta-title">{{ pw_latest.title_display }}</span>
-      {% if pw_latest.dek %}<span class="cta-desc">{{ pw_latest.dek }}</span>{% endif %}
-      <span class="cta-arrow">Read the latest edition →</span>
-    </a>
-    <a href="{{ root_path }}the-pla-watch/index.html" class="pw-all-link">All editions of The PLA Watch →</a>
-    {% else %}
-    <a href="{{ root_path }}the-pla-watch/index.html" class="sidebar-cta">
-      <span class="cta-eyebrow">The PLA Watch · Weekly brief</span>
-      <span class="cta-title">The PLA Watch</span>
-      <span class="cta-desc">The weekly analytical brief drawn from this daily monitoring record.</span>
-      <span class="cta-arrow">Read more →</span>
-    </a>
-    {% endif %}
-
-    <div class="sidebar-card sidebar-card--primary">
+    <div class="sidebar-card sidebar-card--primary" data-reveal>
       <div class="sidebar-eyebrow">Today's Brief</div>
       <div class="sidebar-stats">
         <div class="sidebar-stat">
@@ -738,7 +980,7 @@
       </div>
     </div>
 
-    <div class="sidebar-card">
+    <div class="sidebar-card" data-reveal>
       <div class="sidebar-eyebrow">Source Status</div>
       <div class="source-status-list">
         {% for s in source_statuses %}
@@ -751,7 +993,7 @@
       <div class="sidebar-note">Source coverage reflects articles successfully collected and analyzed for this date. Additional configured sources remain in expansion or verification.</div>
     </div>
 
-    <div class="sidebar-card">
+    <div class="sidebar-card" data-reveal>
       <div class="sidebar-eyebrow">Recent Model-Flagged Items</div>
       {% if recent_signals %}
       <div class="signal-list">

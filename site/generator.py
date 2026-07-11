@@ -237,6 +237,47 @@ def _load_latest_pw_edition(output_dir: Path):
     }
 
 
+def _load_pw_issue_ticks(output_dir: Path) -> list[dict]:
+    """All published PLA Watch editions reduced to tick-strip fields
+    (issue number, date, week ending). Display-only; skips sidecars
+    without an issue number rather than inventing one."""
+    posts_dir = Path(output_dir) / "the-pla-watch" / "posts"
+    ticks = []
+    for path in sorted(posts_dir.glob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not data.get("date") or not data.get("issue_number"):
+            continue
+        ticks.append({
+            "issue_number": data["issue_number"],
+            "date":         data["date"],
+            "week_ending":  data.get("week_ending") or "",
+        })
+    ticks.sort(key=lambda t: t["issue_number"])
+    return ticks
+
+
+def _daily_series(articles: list[dict], days: int = 30, today=None) -> list[dict]:
+    """Per-day article/flag counts for the trailing window, oldest first.
+    Days with no collected articles report zero — the strip labels this
+    honestly rather than implying a quiet news day."""
+    today = today or _latest_article_date(articles) or datetime.utcnow().date()
+    counts: dict[str, dict] = {}
+    for offset in range(days - 1, -1, -1):
+        d = today - timedelta(days=offset)
+        counts[d.isoformat()] = {"date": d.isoformat(), "total": 0, "significant": 0}
+    for a in articles:
+        day = counts.get(a.get("published_date") or "")
+        if day is None:
+            continue
+        day["total"] += 1
+        if a.get("is_significant"):
+            day["significant"] += 1
+    return list(counts.values())
+
+
 # ── Jinja2 setup ──────────────────────────────────────────────────────────────
 
 def _make_env() -> Environment:
@@ -304,6 +345,7 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
     daily_readout = _make_daily_readout(brief_articles)
     source_statuses = _make_source_statuses(brief_articles)
     pw_latest = _load_latest_pw_edition(output_dir)
+    pw_issues = _load_pw_issue_ticks(output_dir)
     recent_signals = [a for a in articles if a.get("is_significant") and not a.get("extraction_issue")][:3]
 
     tmpl_index = env.get_template("index.html")
@@ -320,6 +362,7 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
             source_statuses=source_statuses,
             recent_signals=recent_signals,
             pw_latest=pw_latest,
+            pw_issues=pw_issues,
             generated_at=generated_at,
         ),
         encoding="utf-8",
@@ -407,7 +450,7 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
         logger.info("Pruned 0 stale article pages")
 
     # ── signals.html ──────────────────────────────────────────────────────────
-    _write_signals_page(env, output_dir, articles, generated_at)
+    _write_signals_page(env, output_dir, articles, generated_at, pw_latest)
 
     # ── methodology.html ──────────────────────────────────────────────────────
     tmpl_method = env.get_template("methodology.html")
@@ -490,7 +533,7 @@ def _articles_in_window(articles: list[dict], days: int, today=None) -> list[dic
     return out
 
 
-def _write_signals_page(env, output_dir: Path, articles: list[dict], generated_at: str) -> None:
+def _write_signals_page(env, output_dir: Path, articles: list[dict], generated_at: str, pw_latest=None) -> None:
     """Render output/signals.html. Read-only — never writes to the DB."""
     in_30d = _articles_in_window(articles, 30)
 
@@ -520,9 +563,11 @@ def _write_signals_page(env, output_dir: Path, articles: list[dict], generated_a
             page_url="https://chinamilwatch.org/signals.html",
             stats_7d=_compute_window_stats(articles, 7),
             stats_30d=_compute_window_stats(articles, 30),
+            daily_series=_daily_series(articles, 30),
             top_categories=top_categories,
             source_mix=source_mix,
             latest_significant=latest_significant,
+            pw_latest=pw_latest,
             generated_at=generated_at,
         ),
         encoding="utf-8",
@@ -551,7 +596,16 @@ def _generate_sitemap_xml(output_dir: Path, articles: list[dict]) -> None:
         "https://chinamilwatch.org/signals.html",
         "https://chinamilwatch.org/methodology.html",
         "https://chinamilwatch.org/the-pla-watch/",
+        "https://chinamilwatch.org/the-pla-watch/archive.html",
+        "https://chinamilwatch.org/the-pla-watch/terms.html",
     ]
+
+    # Weekly edition pages, discovered from their canonical sidecars.
+    posts_dir = Path(output_dir) / "the-pla-watch" / "posts"
+    for sidecar_path in sorted(posts_dir.glob("*.json")):
+        urls.append(
+            f"https://chinamilwatch.org/the-pla-watch/posts/{sidecar_path.stem}.html"
+        )
 
     for article in articles:
         urls.append(f"https://chinamilwatch.org/article/{article['id']}.html")

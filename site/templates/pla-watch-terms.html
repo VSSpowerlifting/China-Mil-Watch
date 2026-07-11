@@ -1,0 +1,201 @@
+{% extends "pla-watch-base.html" %}
+{% set active_page = "terms" %}
+{% set pw_root = "" %}
+
+{% block title %}Terms to Know — The PLA Watch{% endblock %}
+{% block meta_description %}A running glossary of Chinese military-media vocabulary from The PLA Watch — one term from each weekly edition, explained in context and linked back to the edition where it appeared.{% endblock %}
+{% block og_title %}Terms to Know — The PLA Watch{% endblock %}
+{% block og_description %}A running glossary of Chinese military-media vocabulary, one term per weekly edition, explained in context.{% endblock %}
+
+{% block masthead_left %}<span>Vol. I</span><span>Terms to Know</span>{% endblock %}
+
+{% block extra_styles %}
+.terms-head { max-width: 720px; margin-bottom: 2.5rem; }
+.terms-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal-bright);
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.terms-eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--color-brand); }
+.terms-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+  letter-spacing: -0.018em;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+  margin-bottom: 0.9rem;
+}
+.terms-intro {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+/* ── Specimen plates on a series spine ──────────────────────────────── */
+.terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  max-width: 760px;
+  position: relative;
+  padding-left: 30px;
+}
+.terms-list::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 1.9rem;
+  bottom: 1.9rem;
+  width: 1px;
+  background: var(--color-border);
+}
+.term-entry {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.45rem 1.7rem 1.35rem;
+  position: relative;
+}
+.term-entry::before {
+  content: "";
+  position: absolute;
+  left: -29px;
+  top: 1.55rem;
+  width: 11px;
+  height: 11px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-brand);
+  transform: rotate(45deg);
+}
+.js:not(.no-anim) .term-entry[data-reveal]:not(.in)::before { transform: rotate(45deg) scale(0); }
+.js .term-entry[data-reveal].in::before {
+  transform: rotate(45deg) scale(1);
+  transition: transform 0.5s var(--ease) 0.25s;
+}
+.term-ghost {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--zh);
+  font-weight: 700;
+  font-size: clamp(4.5rem, 12vw, 6.5rem);
+  line-height: 1;
+  color: rgba(237, 233, 224, 0.05);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+.js:not(.no-anim) .term-entry[data-reveal]:not(.in) .term-ghost { opacity: 0; translate: 14px 0; }
+.js .term-entry[data-reveal].in .term-ghost {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.9s var(--ease) 0.3s, translate 0.9s var(--ease) 0.3s;
+}
+.term-entry > *:not(.term-ghost):not(.term-issue) { position: relative; z-index: 1; }
+.term-issue {
+  position: absolute;
+  z-index: 1;
+  top: 1.1rem;
+  right: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2px 7px;
+  font-variant-numeric: tabular-nums;
+  background: var(--color-bg-card);
+}
+.term-entry-word {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.008em;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: 0.6rem;
+  padding-right: 3.5rem;
+  text-wrap: balance;
+}
+.term-entry-expl {
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-bottom: 0.85rem;
+}
+.term-entry-expl p { margin-bottom: 0.85rem; }
+.term-entry-expl p:last-child { margin-bottom: 0; }
+.term-entry-src {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 0.7rem;
+}
+.term-entry-src a { color: var(--color-text-secondary); font-weight: 600; }
+.term-entry-src a:hover { color: var(--color-brand-light); }
+.terms-note {
+  max-width: 760px;
+  margin-top: 2.25rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+@media (max-width: 600px) {
+  .terms-list { padding-left: 22px; gap: 1.1rem; }
+  .terms-list::before { left: 4px; }
+  .term-entry { padding: 1.15rem 1.25rem 1.1rem; }
+  .term-entry::before { left: -22px; width: 9px; height: 9px; top: 1.35rem; }
+  .term-ghost { font-size: 3.6rem; }
+  .term-issue { position: static; display: inline-block; margin-bottom: 0.55rem; }
+  .term-entry-word { padding-right: 0; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="terms-head" data-reveal>
+  <div class="terms-eyebrow">Running glossary</div>
+  <h1 class="terms-title">Terms to Know</h1>
+  <p class="terms-intro">Each weekly edition of The PLA Watch explains one piece of vocabulary from that week's Chinese military-media coverage — collected here, newest first, with a link back to the edition where the term appeared in context.</p>
+</div>
+
+<div class="terms-list">
+  {% for t in terms %}
+  <article class="term-entry" data-reveal style="--ri: {{ loop.index0 % 4 }};">
+    {% set ghost = t.term | first_cjk %}
+    {% if ghost %}<span class="term-ghost" lang="zh-Hans" aria-hidden="true">{{ ghost }}</span>{% endif %}
+    {% if t.issue_number %}<span class="term-issue">No. {{ t.issue_number }}</span>{% endif %}
+    <div class="term-entry-word">{{ t.term }}</div>
+    <div class="term-entry-expl">
+      {% for para in (t.explanation or '').split('\n\n') %}
+      {% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}
+      {% endfor %}
+    </div>
+    <div class="term-entry-src">
+      From <a href="posts/{{ t.date }}.html">{% if t.issue_number %}No. {{ t.issue_number }} · {% endif %}week ending {{ t.week_ending | format_date }}</a>
+    </div>
+  </article>
+  {% else %}
+  <p class="empty-state">No terms recorded yet.</p>
+  {% endfor %}
+</div>
+
+<p class="terms-note">Terms and explanations are reproduced exactly as published in each edition; nothing here is re-derived or re-translated. The original Chinese usage in the underlying source is always the authoritative text.</p>
+{% endblock %}

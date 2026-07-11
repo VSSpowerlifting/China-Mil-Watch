@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT))
 import anthropic
 
 from config import DB_PATH, ANTHROPIC_API_KEY
-from scripts.pw_env import make_pw_env
+from scripts.pw_env import build_atom_feed, make_pw_env
 from storage.db import get_articles_for_date_range
 
 
@@ -757,6 +757,12 @@ def main():
     archive_html = render_archive(all_posts)
     (pla_watch_dir / "archive.html").write_text(archive_html, encoding="utf-8")
     print(f"Wrote archive: {pla_watch_dir / 'archive.html'}")
+
+    # Keep the Atom feed current at publish time; the terms page is
+    # refreshed by scripts/rerender_pla_watch.py (verbatim sidecar reuse).
+    (pla_watch_dir / "feed.xml").write_text(
+        build_atom_feed(all_posts), encoding="utf-8")
+    print(f"Wrote feed: {pla_watch_dir / 'feed.xml'}")
 
     print("Done.")
 

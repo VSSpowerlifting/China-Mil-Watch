@@ -13,11 +13,15 @@
 
 {% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% endblock %}
 
+{% block progress %}
+<div class="progress-rail" aria-hidden="true"><b></b></div>
+{% endblock %}
+
 {% block extra_styles %}
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 264px;
   gap: 3.5rem;
   align-items: flex-start;
 }
@@ -26,23 +30,105 @@
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 }
 
-/* ── Issue cover image (editorial PNG) ──────────────────────────────── */
-.cover-figure {
-  margin: 0 0 2rem;
+/* ── Edition header — briefing head, structured not decorated ───────── */
+.hero {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 0 1.9rem;
+  margin-bottom: 2.25rem;
 }
+.hero-meta-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hero-edition::before {
+  content: "";
+  width: 26px; height: 2px;
+  background: var(--color-brand);
+}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: 1.05rem;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.hero-dek {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.4rem;
+  max-width: 58ch;
+}
+.byline {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+}
+.byline-name { color: var(--color-text-primary); font-weight: 600; }
+.byline-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.hero-meta .meta-item { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.hero-meta .meta-item .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Issue cover image ──────────────────────────────────────────────── */
+.cover-figure { margin: 0 0 2rem; }
 .cover-figure img {
   display: block;
   width: 100%;
   height: auto;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
 }
 .cover-figure figcaption {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-top: 0.55rem;
   text-align: right;
 }
@@ -51,49 +137,33 @@
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--color-border-soft);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
   font-family: var(--sans);
   font-size: 0.76rem;
   color: var(--color-text-muted);
   line-height: 1.55;
 }
-.cover-credit-note .label {
-  font-weight: 700;
-  color: var(--color-text-secondary);
-}
+.cover-credit-note .label { font-weight: 700; color: var(--color-text-secondary); }
 .cover-credit-note a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.cover-credit-note a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
+.cover-credit-note a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
 
-/* ── Visual Context — restrained editorial image card ───────────────── */
-.visual-context {
-  margin: 0 0 2.5rem;
-}
+/* ── Visual Context ─────────────────────────────────────────────────── */
+.visual-context { margin: 0 0 2.5rem; }
 .media-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   margin-bottom: 1rem;
 }
 .media-card:last-child { margin-bottom: 0; }
-.media-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--color-bg-card);
-}
-.media-card-body {
-  padding: 0.95rem 1.15rem 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.media-card img { display: block; width: 100%; height: auto; background: var(--color-bg-card); }
+.media-card-body { padding: 0.95rem 1.15rem 1rem; border-top: 1px solid var(--color-border-soft); }
 .media-caption {
   font-family: var(--serif);
   font-size: 0.95rem;
@@ -102,25 +172,19 @@
   margin-bottom: 0.5rem;
 }
 .media-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .media-meta a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.media-meta a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
-.media-meta .sep {
-  margin: 0 0.45rem;
-  color: var(--color-border);
-}
+.media-meta a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+.media-meta .sep { margin: 0 0.45rem; color: var(--color-border); }
 .media-note {
   font-family: var(--sans);
   font-size: 0.7rem;
@@ -134,120 +198,10 @@
   .media-caption { font-size: 0.9rem; }
 }
 
-/* ── Editorial hero — large display, generous spacing, watermark ────── */
-.hero {
-  position: relative;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 2.4rem 2.4rem 2rem;
-  margin-bottom: 2.5rem;
-  overflow: hidden;
-}
-.hero::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.4rem;
-  bottom: -1.6rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 7.5rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.045;
-  pointer-events: none;
-  line-height: 1;
-}
-.hero-meta-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-}
-.hero-eyebrow::before {
-  content: "";
-  width: 26px; height: 2px;
-  background: var(--color-brand);
-}
-.hero-edition {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.hero-edition .pw-badge { margin-left: 0.5rem; }
-.hero-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 1.12;
-  letter-spacing: -0.018em;
-  color: var(--color-text-primary);
-  margin-bottom: 1.05rem;
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-}
-.hero-dek {
-  font-family: var(--serif);
-  font-size: 1.18rem;
-  color: var(--color-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.5rem;
-  max-width: 660px;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  border-top: 1px solid var(--color-border-soft);
-  padding-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta .meta-item { display: inline-flex; gap: 0.4rem; align-items: baseline; }
-.hero-meta .meta-item .num {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--color-text-primary);
-}
-@media (max-width: 768px) {
-  .hero { padding: 1.7rem 1.5rem 1.5rem; }
-  .hero-title { font-size: 1.85rem; }
-  .hero-dek { font-size: 1.05rem; }
-  .hero::after { font-size: 4.5rem; }
-}
-
-/* ── Module section heading ────────────────────────────────────────── */
+/* ── Module section heading ─────────────────────────────────────────── */
 .mod-heading {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -264,7 +218,7 @@
   width: 22px; height: 2px;
   background: var(--color-brand);
 }
-.mod-heading.brand { color: var(--color-brand); }
+.mod-heading.brand { color: var(--signal-bright); }
 .mod-heading .mod-count {
   margin-left: auto;
   color: var(--color-text-muted);
@@ -272,53 +226,53 @@
   letter-spacing: 0.1em;
 }
 
-/* ── This Week's Signal — pull-quote-style card ────────────────────── */
+/* ── This Week's Signal — the key judgment, in a drawn frame ────────── */
 .signal-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.6rem 1.85rem 1.7rem;
   margin-bottom: 2.5rem;
   position: relative;
 }
-.signal-card::before {
-  content: "“";
+.signal-frame {
   position: absolute;
-  left: 0.45rem;
-  top: -0.8rem;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 4.5rem;
-  font-weight: 700;
-  color: var(--color-brand);
-  opacity: 0.18;
-  line-height: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.signal-frame rect {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
 }
 .signal-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.7rem;
 }
 .signal-text {
   font-family: var(--serif);
   font-weight: 600;
   font-style: italic;
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   line-height: 1.5;
   color: var(--color-text-primary);
   letter-spacing: -0.005em;
 }
 
-/* ── Coverage Snapshot — stat module ───────────────────────────────── */
+/* ── Coverage Snapshot ──────────────────────────────────────────────── */
 .snapshot {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.5rem 1.65rem 1.6rem;
   margin-bottom: 2.5rem;
 }
@@ -337,10 +291,10 @@
   letter-spacing: -0.012em;
   margin-bottom: 0.4rem;
 }
-.snap-stat .num .accent { color: var(--color-brand); }
+.snap-stat .num .accent { color: var(--signal-bright); }
 .snap-stat .label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -352,14 +306,10 @@
   color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
-.snap-bar {
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.snap-bar { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-soft); }
 .snap-bar-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -407,101 +357,139 @@
   .snap-stat .num { font-size: 1.55rem; }
 }
 
-/* ── Body sections — long-form editorial flow ──────────────────────── */
-.post-body { max-width: 700px; }
-.post-section { margin-bottom: 2.5rem; }
-.post-section .mod-heading.brand { color: var(--color-brand); }
+/* ── Body sections — long-form analytical flow ──────────────────────── */
+.post-body { max-width: 680px; }
+.post-section { margin-bottom: 2.6rem; scroll-margin-top: 1.5rem; }
 
 .section-text p {
-  margin-bottom: 1.05rem;
-  line-height: 1.78;
-  font-size: 1rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   color: var(--color-text-primary);
 }
 .section-text p:last-child { margin-bottom: 0; }
-.section-text p:first-of-type::first-letter {
-  /* Editorial drop cap on the very first paragraph of the opening section */
-  /* Applied selectively below */
-}
 .opening .section-text p:first-of-type::first-letter {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 3.6rem;
   line-height: 0.85;
   float: left;
-  margin: 0.18rem 0.55rem -0.15rem 0;
-  color: var(--color-brand);
+  margin: 0.2rem 0.55rem -0.15rem 0;
+  color: var(--signal-bright);
 }
 
-/* ── Term-to-know module ───────────────────────────────────────────── */
+/* ── Term-to-know module ────────────────────────────────────────────── */
 .term-box {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 1.4rem 1.65rem 1.4rem;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem;
 }
 .term-word {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: -0.005em;
   color: var(--color-text-primary);
   margin-bottom: 0.6rem;
 }
 .term-explanation {
-  font-size: 0.95rem;
+  font-family: var(--serif);
+  font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.75;
 }
 .term-explanation p { margin-bottom: 0.85rem; }
 .term-explanation p:last-child { margin-bottom: 0; }
 
-/* ── Source Trail — vertical list ──────────────────────────────────── */
+/* ── Source Trail — the evidence register on a spine ────────────────── */
 .source-trail { margin-bottom: 2.5rem; }
-.source-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.source-cards { display: flex; flex-direction: column; position: relative; margin-left: 20px; }
+.source-cards::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--color-border);
+}
+.source-card::before {
+  content: "";
+  position: absolute;
+  left: -17.5px;
+  top: 1.1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text-muted);
+}
+.source-card.is-significant::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-cards::before {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.js [data-reveal].in .source-cards::before {
+  transform: scaleY(1);
+  transform-origin: top center;
+  transition: transform 0.9s var(--ease) 0.15s;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-card::before { transform: scale(0); }
+.js [data-reveal].in .source-card::before {
+  transform: scale(1);
+  transition: transform 0.45s var(--ease);
+  transition-delay: min(calc(var(--ni, 0) * 45ms + 250ms), 900ms);
+}
+@media (max-width: 600px) {
+  .source-cards { margin-left: 16px; }
+  .source-cards::before { left: -11px; }
+  .source-card::before { left: -14.5px; }
 }
 .source-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: none;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s;
+  transition: background 180ms var(--ease), border-color 180ms var(--ease);
   position: relative;
 }
-.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: 4px 4px 0 0; }
-.source-card:last-child { border-radius: 0 0 4px 4px; }
-.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: 4px; }
+.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: var(--radius) var(--radius) 0 0; }
+.source-card:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: var(--radius); }
 .source-card:hover { background: var(--color-bg-sidebar); text-decoration: none; }
-.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.1rem - 2px); }
+.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.15rem - 2px); }
 .source-card-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   line-height: 1.35;
   color: var(--color-text-primary);
 }
 .source-card-zh {
+  font-family: var(--zh);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .source-card-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
 }
 .source-card-meta .sep { color: var(--color-border); }
@@ -513,12 +501,12 @@
   background: rgba(179, 19, 43, 0.14);
   border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
-  border-radius: 2px;
-  font-size: 0.625rem;
+  border-radius: var(--radius);
+  font-size: 0.58rem;
 }
 .source-card-domain {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
@@ -530,13 +518,13 @@
   font-style: italic;
 }
 
-/* ── Closing note ──────────────────────────────────────────────────── */
+/* ── Closing note ───────────────────────────────────────────────────── */
 .closing-note {
   margin-top: 2.5rem;
   padding: 1.4rem 1.65rem;
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1rem;
@@ -544,41 +532,17 @@
   line-height: 1.7;
 }
 
-/* ── Byline (hero) ─────────────────────────────────────────────────── */
-.byline {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-  max-width: 660px;
-}
-.byline-name {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  letter-spacing: 0.005em;
-}
-.byline-title {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 0.2rem;
-  letter-spacing: 0.005em;
-}
-
-/* ── Author block (bottom of post) ─────────────────────────────────── */
+/* ── Author block ───────────────────────────────────────────────────── */
 .author-block {
   margin-top: 2.5rem;
   padding: 1.5rem 1.65rem 1.6rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .author-block-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -598,14 +562,12 @@
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--color-text-primary);
-  letter-spacing: -0.005em;
   margin-bottom: 0.15rem;
 }
 .author-block-title {
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.02em;
   margin-bottom: 0.85rem;
 }
 .author-block-bio {
@@ -616,14 +578,7 @@
   max-width: 640px;
   margin-bottom: 1.1rem;
 }
-
-/* ── Contact chips — restrained text pills ─────────────────────────── */
-.author-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
+.author-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .author-chip {
   display: inline-flex;
   align-items: center;
@@ -632,42 +587,33 @@
   font-family: var(--sans);
   font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius);
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
-.author-chip:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-  text-decoration: none;
-}
-.author-chip .arrow {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  transition: color 0.15s;
-}
-.author-chip:hover .arrow { color: var(--color-brand); }
+.author-chip:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); text-decoration: none; }
+.author-chip .arrow { font-size: 0.7rem; color: var(--color-text-muted); transition: color 0.15s; }
+.author-chip:hover .arrow { color: var(--color-brand-light); }
 
-/* ── Sidebar (sticky) ──────────────────────────────────────────────── */
+/* ── Sidebar (sticky) ───────────────────────────────────────────────── */
 .post-sidebar { position: sticky; top: 1.5rem; }
 .sb-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.3rem 1.4rem 1.25rem;
   margin-bottom: 1rem;
 }
 .sb-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.8rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--color-border);
@@ -688,17 +634,60 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.sb-text {
-  font-size: 0.825rem;
+.sb-text { font-size: 0.825rem; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* In-this-edition rail (scrollspy) */
+.toc-list { list-style: none; }
+.toc-list li { border-bottom: 1px solid var(--color-border-soft); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: block;
+  padding: 0.5rem 0 0.5rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  border-left: 2px solid transparent;
+  margin-left: -0.85rem;
+  transition: color 160ms ease, border-color 160ms ease;
 }
+.toc-list a:hover { color: var(--color-text-primary); text-decoration: none; }
+.toc-list a.active {
+  color: var(--color-text-primary);
+  border-left-color: var(--color-brand-light);
+}
+
+/* Citation block */
+.cite-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  margin-bottom: 0.75rem;
+}
+.cite-copy {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cite-copy:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); }
+.cite-copy:focus-visible { outline: 2px solid var(--signal-bright); outline-offset: 2px; }
+.no-clipboard .cite-copy { display: none; }
 
 @media (max-width: 900px) {
   .post-sidebar { position: static; }
+  .sb-card--toc { display: none; }
 }
 
-/* ── Post nav (bottom) ─────────────────────────────────────────────── */
+/* ── Post nav (bottom) ──────────────────────────────────────────────── */
 .edition-nav {
   display: flex;
   justify-content: space-between;
@@ -711,10 +700,11 @@
   font-size: 0.85rem;
 }
 .edition-nav a { color: var(--color-text-secondary); }
-.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 .edition-nav .edition-nav-label {
   display: block;
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -738,29 +728,30 @@
   border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
-.post-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
-/* ── Print — single column brief ───────────────────────────────────── */
+/* ── Print — single column brief ────────────────────────────────────── */
 @media print {
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-figure, .cover-credit-note, .visual-context { display: none; }
-  .hero::after { display: none; }
   .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
     break-inside: avoid;
   }
   .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
-  .signal-card::before { color: #8B0E20; }
   .snap-bar-fill { background: #8B0E20; }
   .snap-bar-rest, .swatch-rest { background: #dddddd; }
   .swatch-sig { background: #8B0E20; }
   .source-card:hover { background: transparent; }
+  .signal-frame { display: none; }
+  .source-cards { margin-left: 0; }
+  .source-cards::before, .source-card::before { content: none; }
   /* Keep the source trail traceable on paper: print each item's URL. */
   .source-card-domain { display: none; }
   .source-card::after {
     content: attr(href);
-    font-family: var(--sans);
-    font-size: 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
     color: #555555;
     word-break: break-all;
   }
@@ -772,10 +763,9 @@
 
   <article class="post-main">
 
-    {# ── Editorial hero ─────────────────────────────────────────────── #}
-    <div class="hero">
+    {# ── Edition header ─────────────────────────────────────────────── #}
+    <div class="hero" data-reveal>
       <div class="hero-meta-top">
-        <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
           {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
           {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}
@@ -795,14 +785,18 @@
         <span class="meta-item"><span class="num">{{ n_articles }}</span> articles analyzed</span>
         <span class="meta-item"><span class="num">{{ n_significant }}</span> model-flagged</span>
         {% if sources_seen %}
+          {% if sources_seen | length > 2 %}
+          <span class="meta-item" title="{{ sources_seen | join(', ') }}"><span class="num">{{ sources_seen | length }}</span> sources</span>
+          {% else %}
           <span class="meta-item">{{ sources_seen | join(', ') }}</span>
+          {% endif %}
         {% endif %}
       </div>
     </div>
 
     {# ── Issue cover image — editorial PNG, also used as OG image ──── #}
     {% if cover_image %}
-    <figure class="cover-figure">
+    <figure class="cover-figure" data-reveal>
       <img src="{{ cover_image }}"
            alt="The PLA Watch — {{ title }} (issue cover)"
            width="1200" height="630" loading="eager">
@@ -847,16 +841,19 @@
     </section>
     {% endif %}
 
-    {# ── This Week's Signal — graceful fallback if missing ─────────── #}
+    {# ── This Week's Signal ─────────────────────────────────────────── #}
     {% if signal %}
-      <div class="signal-card">
+      <div class="signal-card" id="s-signal" data-reveal>
+        <svg class="signal-frame" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+          <rect class="draw-path" pathLength="1" style="--pi: 1;" x="0.5" y="0.5" width="99" height="39"/>
+        </svg>
         <div class="signal-eyebrow">This week's signal</div>
         <div class="signal-text">{{ signal }}</div>
       </div>
     {% endif %}
 
-    {# ── Coverage Snapshot ─────────────────────────────────────────── #}
-    <div class="snapshot">
+    {# ── Coverage Snapshot ──────────────────────────────────────────── #}
+    <div class="snapshot" id="s-snapshot" data-reveal>
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
         <div class="snap-stat">
@@ -897,11 +894,11 @@
       <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="{{ root_path }}methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
-    {# ── Body sections ─────────────────────────────────────────────── #}
+    {# ── Body sections ──────────────────────────────────────────────── #}
     <div class="post-body">
 
       {% if opening_note %}
-      <div class="post-section opening">
+      <div class="post-section opening" id="s-opening" data-reveal>
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
           {% for para in opening_note.split('\n\n') %}
@@ -912,7 +909,7 @@
       {% endif %}
 
       {% if what_stood_out %}
-      <div class="post-section">
+      <div class="post-section" id="s-stood-out" data-reveal>
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
           {% for para in what_stood_out.split('\n\n') %}
@@ -923,7 +920,7 @@
       {% endif %}
 
       {% if why_it_matters %}
-      <div class="post-section">
+      <div class="post-section" id="s-why" data-reveal>
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
           {% for para in why_it_matters.split('\n\n') %}
@@ -934,7 +931,7 @@
       {% endif %}
 
       {% if what_was_routine %}
-      <div class="post-section">
+      <div class="post-section" id="s-routine" data-reveal>
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
           {% for para in what_was_routine.split('\n\n') %}
@@ -945,7 +942,7 @@
       {% endif %}
 
       {% if term_to_know_term %}
-      <div class="post-section">
+      <div class="post-section" id="s-term" data-reveal>
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">{{ term_to_know_term }}</div>
@@ -959,7 +956,7 @@
       {% endif %}
 
       {% if what_im_watching_next %}
-      <div class="post-section">
+      <div class="post-section" id="s-watching" data-reveal>
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
           {% for para in what_im_watching_next.split('\n\n') %}
@@ -969,12 +966,12 @@
       </div>
       {% endif %}
 
-      <div class="post-section source-trail">
+      <div class="post-section source-trail" id="s-sources" data-reveal>
         <div class="mod-heading brand">Source Trail{% if articles %}<span class="mod-count">{{ articles | length }} record{{ 's' if articles | length != 1 }}</span>{% endif %}</div>
         {% if articles %}
         <div class="source-cards">
           {% for article in articles %}
-          <a class="source-card{% if article.is_significant %} is-significant{% endif %}" href="{{ article.url }}" target="_blank" rel="noopener">
+          <a class="source-card{% if article.is_significant %} is-significant{% endif %}" href="{{ article.url }}" target="_blank" rel="noopener" style="--ni: {{ loop.index0 }};">
             <div class="source-card-title">{{ article.title }}</div>
             {% if article.title_zh %}<div class="source-card-zh" lang="zh-Hans">{{ article.title_zh }}</div>{% endif %}
             <div class="source-card-meta">
@@ -1041,6 +1038,21 @@
   </article>
 
   <aside class="post-sidebar">
+    <div class="sb-card sb-card--toc">
+      <div class="sb-eyebrow">In this edition</div>
+      <ul class="toc-list" id="pw-toc">
+        {% if signal %}<li><a href="#s-signal">This Week's Signal</a></li>{% endif %}
+        <li><a href="#s-snapshot">Coverage Snapshot</a></li>
+        {% if opening_note %}<li><a href="#s-opening">Opening Note</a></li>{% endif %}
+        {% if what_stood_out %}<li><a href="#s-stood-out">What Stood Out</a></li>{% endif %}
+        {% if why_it_matters %}<li><a href="#s-why">Why It Matters</a></li>{% endif %}
+        {% if what_was_routine %}<li><a href="#s-routine">Routine Baseline</a></li>{% endif %}
+        {% if term_to_know_term %}<li><a href="#s-term">Term to Know</a></li>{% endif %}
+        {% if what_im_watching_next %}<li><a href="#s-watching">What I'm Watching Next</a></li>{% endif %}
+        <li><a href="#s-sources">Source Trail</a></li>
+      </ul>
+    </div>
+
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">{{ edition_label or 'Standard' }}</span></div>
@@ -1052,6 +1064,12 @@
     </div>
 
     <div class="sb-card">
+      <div class="sb-eyebrow">Cite this edition</div>
+      <div class="cite-text" id="pw-cite">{% if author_name %}{{ author_name }}, {% endif %}“{{ title }},” <em>The PLA Watch</em>{% if issue_number %} No. {{ issue_number }}{% endif %}, China Mil Watch, {{ week_ending | format_date }}. https://chinamilwatch.org/the-pla-watch/posts/{{ date }}.html</div>
+      <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
+    </div>
+
+    <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
         Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="{{ root_path }}methodology.html">Methodology</a>
@@ -1059,4 +1077,50 @@
     </div>
   </aside>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  /* Scrollspy for the "In this edition" rail */
+  var toc = document.getElementById('pw-toc');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (current) current.classList.remove('active');
+          current = links[entry.target.id];
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
+  }
+
+  /* Copy citation */
+  var btn = document.getElementById('pw-cite-copy');
+  var cite = document.getElementById('pw-cite');
+  if (btn && cite) {
+    if (!navigator.clipboard) {
+      btn.parentElement.classList.add('no-clipboard');
+    } else {
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(cite.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = prev; }, 1800);
+        });
+      });
+    }
+  }
+})();
+</script>
 {% endblock %}

@@ -62,21 +62,6 @@
   margin-bottom: 2rem;
   overflow: hidden;
 }
-.issue-cover::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.2rem;
-  bottom: -1.4rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 7rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.05;
-  pointer-events: none;
-  line-height: 1;
-}
 .issue-cover-eyebrow {
   display: flex;
   align-items: center;
@@ -86,8 +71,8 @@
   gap: 0.75rem;
 }
 .issue-cover-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -102,10 +87,10 @@
   background: var(--color-brand);
 }
 .issue-cover-edition {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
@@ -135,8 +120,8 @@
   z-index: 1;
 }
 .issue-cover-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
@@ -170,16 +155,17 @@
 }
 .btn {
   display: inline-block;
-  padding: 0.6rem 1.2rem;
-  border-radius: 3px;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius);
   font-family: var(--sans);
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
 }
+.btn:active { transform: translateY(1px); }
 .btn:hover { text-decoration: none; }
 .btn-primary { background: var(--color-brand); color: #fff; border: 1px solid var(--color-brand); }
 .btn-primary:hover { background: var(--color-brand-dark); border-color: var(--color-brand-dark); }
@@ -226,8 +212,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -257,9 +243,9 @@
 }
 .archive-row:last-child { border-bottom: none; }
 .archive-date {
-  font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
@@ -293,24 +279,9 @@
   position: relative;
   overflow: hidden;
 }
-.coming-card::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.4rem;
-  bottom: -1.4rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 6rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.045;
-  pointer-events: none;
-  line-height: 1;
-}
 .coming-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -353,12 +324,12 @@
   background: #1F2E42;
 }
 .sb-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.85rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--color-border);
@@ -401,7 +372,6 @@
   .issue-cover { padding: 1.6rem 1.5rem 1.4rem; }
   .issue-cover-title { font-size: 1.45rem; }
   .issue-cover-dek { font-size: 0.95rem; }
-  .issue-cover::after { font-size: 4.5rem; }
 }
 @media (max-width: 480px) {
   .cover-display { font-size: 2rem; }
@@ -417,7 +387,7 @@
     <p class="cover-stand">The weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Each edition distills a week of daily monitoring into a single brief for policy readers, analysts, and journalists — source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
 
     {% if latest_post %}
-      <div class="issue-cover">
+      <div class="issue-cover" data-reveal>
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
@@ -450,13 +420,13 @@
       </div>
 
       {% if archive_posts %}
-      <div class="section-heading">
+      <div class="section-heading" data-reveal>
         <span>Previous editions</span>
         <span class="count">{{ archive_posts | length }}</span>
       </div>
       <div class="archive-list">
         {% for post in archive_posts %}
-        <div class="archive-row">
+        <div class="archive-row" data-reveal>
           <div class="archive-date">{% if post.issue_number %}No. {{ post.issue_number }} · {% endif %}{{ post.week_ending | format_date }}</div>
           <div class="archive-body">
             <div class="archive-title"><a href="posts/{{ post.date }}.html">{{ post.title }}</a></div>

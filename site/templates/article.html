@@ -14,145 +14,143 @@
 {% block meta_description %}{{ _article_desc }}{% endblock %}
 
 {% block extra_styles %}
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -162,36 +160,36 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
 {% endblock %}
 
@@ -217,11 +215,11 @@ details summary:hover { color: var(--color-text-primary); }
     </h1>
 
     {% if article.title_original and article.source_language == 'zh' %}
-      <div class="article-page-title-zh">{{ article.title_original }}</div>
+      <div class="article-page-title-zh" lang="zh-Hans">{{ article.title_original }}</div>
     {% endif %}
 
     <div class="article-page-meta">
-      <span>{{ article.source_name }}</span>
+      <span class="src">{{ article.source_name }}</span>
       <span class="sep"></span>
       <span>{{ article.published_date_fmt }}</span>
     </div>
@@ -256,7 +254,7 @@ details summary:hover { color: var(--color-text-primary); }
   {% if article.text_original %}
   <details>
     <summary>Original {{ 'Chinese' if article.source_language == 'zh' else 'text' }}</summary>
-    <div class="original-body">{{ article.text_original }}</div>
+    <div class="original-body"{% if article.source_language == 'zh' %} lang="zh-Hans"{% endif %}>{{ article.text_original }}</div>
   </details>
   {% endif %}
 

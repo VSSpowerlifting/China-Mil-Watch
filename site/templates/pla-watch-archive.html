@@ -10,8 +10,8 @@
 .archive-wrap { max-width: 820px; margin: 0 auto; }
 
 .arch-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -60,9 +60,9 @@
 .entry:first-child { border-top: 1px solid var(--color-border); padding-top: 1.65rem; }
 
 .entry-date-col {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-muted);
@@ -111,8 +111,8 @@
   margin-bottom: 0.55rem;
 }
 .entry-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
@@ -172,7 +172,7 @@
   {% if posts %}
     <div class="entry-list">
       {% for post in posts %}
-      <article class="entry">
+      <article class="entry" data-reveal>
         <div class="entry-date-col">
           {% if post.issue_number %}<span class="entry-no">No. {{ post.issue_number }}</span>{% endif %}
           <span class="we-date">Week ending<br>{{ post.week_ending | format_date }}</span>

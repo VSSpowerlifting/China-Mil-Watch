@@ -25,7 +25,8 @@
   gap: 0.35rem;
 }
 .filter-label {
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -127,9 +128,12 @@
 .date-group:first-child .date-header { border-top: none; }
 
 .date-label {
-  font-size: 0.8125rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
   cursor: pointer;
   transition: color 0.15s;
   user-select: none;
@@ -137,8 +141,10 @@
 .date-label:hover { color: var(--color-brand); }
 
 .date-count {
-  font-size: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Article rows ────────────────────────────────────────────────── */
@@ -187,7 +193,10 @@
 .row-title:hover { color: var(--color-brand); text-decoration: none; }
 
 .row-source {
-  font-size: 0.8125rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
@@ -197,14 +206,14 @@
 .archive-page-header {
   margin-bottom: 1.25rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
 .archive-eyebrow {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -227,7 +236,9 @@
   line-height: 1.15;
 }
 .archive-page-header .meta {
-  font-size: 0.8125rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }

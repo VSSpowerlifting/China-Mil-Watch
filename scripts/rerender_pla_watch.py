@@ -23,7 +23,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.pw_env import make_pw_env
+from scripts.pw_env import build_atom_feed, make_pw_env
 
 # Reuse author identity from the generator module without calling its main().
 # Guard against the anthropic import that generate_pla_watch.py performs at
@@ -415,6 +415,33 @@ def main() -> int:
     )
     (PLA_WATCH_DIR / "archive.html").write_text(archive_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'archive.html').relative_to(ROOT)}")
+
+    # Terms-to-Know running glossary — verbatim reuse of each edition's
+    # published term; nothing is re-derived at render time.
+    terms = []
+    for s in sidecars:  # newest-first
+        word, explanation = _flatten_term(s)
+        if word.strip() and s.get("date"):
+            terms.append({
+                "term": word,
+                "explanation": explanation,
+                "date": s["date"],
+                "issue_number": s.get("issue_number"),
+                "week_ending": s.get("week_ending", "") or s["date"],
+            })
+    terms_tmpl = env.get_template("pla-watch-terms.html")
+    terms_html = terms_tmpl.render(
+        terms=terms, root_path="../",
+        page_url="https://chinamilwatch.org/the-pla-watch/terms.html",
+    )
+    (PLA_WATCH_DIR / "terms.html").write_text(terms_html, encoding="utf-8")
+    print(f"Wrote {(PLA_WATCH_DIR / 'terms.html').relative_to(ROOT)} "
+          f"({len(terms)} terms)")
+
+    # Atom feed — deterministic, sidecar-dated.
+    (PLA_WATCH_DIR / "feed.xml").write_text(
+        build_atom_feed(sidecars), encoding="utf-8")
+    print(f"Wrote {(PLA_WATCH_DIR / 'feed.xml').relative_to(ROOT)}")
 
     if skipped:
         print(f"\n{len(skipped)} post(s) skipped for missing body text: "

@@ -246,6 +246,47 @@ def _validate_pla_watch(output_dir: Path, errors: list, warnings: list) -> None:
             if f"posts/{sc.get('date', '')}.html" not in text:
                 errors.append(f"the-pla-watch/{page}: no link to edition {sc.get('date')}")
 
+    # Atom feed: well-formed XML with one entry per edition
+    feed_path = pw_dir / "feed.xml"
+    if not feed_path.is_file():
+        errors.append("the-pla-watch/feed.xml is missing")
+    else:
+        import xml.etree.ElementTree as ET
+        try:
+            feed_root = ET.fromstring(feed_path.read_text(encoding="utf-8"))
+            ns = "{http://www.w3.org/2005/Atom}"
+            entries = feed_root.findall(f"{ns}entry")
+            if len(entries) != len(sidecars):
+                errors.append(
+                    f"the-pla-watch/feed.xml: {len(entries)} entries "
+                    f"but {len(sidecars)} editions")
+            feed_ids = {e.findtext(f"{ns}id") or "" for e in entries}
+            for sc in sidecars:
+                url = (f"https://chinamilwatch.org/the-pla-watch/posts/"
+                       f"{sc.get('date', '')}.html")
+                if url not in feed_ids:
+                    errors.append(
+                        f"the-pla-watch/feed.xml: no entry for edition "
+                        f"{sc.get('date')}")
+        except ET.ParseError as exc:
+            errors.append(f"the-pla-watch/feed.xml does not parse: {exc}")
+
+    # Terms page: must exist and link every edition that published a term
+    terms_path = pw_dir / "terms.html"
+    if not terms_path.is_file():
+        errors.append("the-pla-watch/terms.html is missing")
+    else:
+        terms_text = terms_path.read_text(encoding="utf-8")
+        for sc in sidecars:
+            has_term = bool(
+                (sc.get("term_to_know_term") or "").strip()
+                or (isinstance(sc.get("term_to_know"), dict)
+                    and (sc["term_to_know"].get("term") or "").strip()))
+            if has_term and f"posts/{sc.get('date', '')}.html" not in terms_text:
+                errors.append(
+                    f"the-pla-watch/terms.html: no entry for edition "
+                    f"{sc.get('date')}")
+
     # LinkedIn companion files (repo-side, non-fatal: historical gaps exist)
     linkedin_dir = output_dir.parent / "the-pla-watch" / "linkedin"
     if linkedin_dir.is_dir():

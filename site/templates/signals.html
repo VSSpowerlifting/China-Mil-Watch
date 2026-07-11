@@ -10,14 +10,14 @@
 .signals-header {
   margin-bottom: 2.25rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
 .signals-eyebrow {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -52,8 +52,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -83,8 +83,8 @@
   padding: 1.1rem 1.15rem 1rem;
 }
 .stat-card .label {
-  font-family: var(--sans);
-  font-size: 0.65rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -114,6 +114,96 @@
   margin-top: 0.45rem;
 }
 
+/* ── Temporal strip — real per-day volume, last 30 days ────────────────── */
+.tempo-module { margin-bottom: 1.5rem; }
+.tempo-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.tempo-peak {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.tempo-strip {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 104px;
+  border-bottom: 1px solid var(--color-border);
+}
+.tempo-day {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.tempo-col {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.tempo-fill { display: block; width: 100%; background: rgba(28, 43, 58, 0.26); transition: background-color 140ms ease; }
+.tempo-sig  { display: block; width: 100%; background: var(--color-brand); }
+.tempo-day:hover .tempo-fill { background: rgba(28, 43, 58, 0.5); }
+.tempo-day.is-empty .tempo-col::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--color-border-soft);
+}
+.tempo-axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  margin-top: 0.5rem;
+}
+.tempo-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.4rem;
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.8rem;
+}
+.tempo-legend .swatch {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 1px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.tempo-legend .swatch-vol { background: rgba(28, 43, 58, 0.26); }
+.tempo-legend .swatch-sig { background: var(--color-brand); }
+.tempo-note {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 0.45rem;
+  line-height: 1.55;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .tempo-col {
+  transform: scaleY(0);
+  transform-origin: bottom center;
+}
+.js [data-reveal].in .tempo-col {
+  transform: scaleY(1);
+  transform-origin: bottom center;
+  transition: transform 0.6s var(--ease);
+  transition-delay: calc(var(--i, 0) * 16ms + 120ms);
+}
+
 /* ── Two-column row: categories + sources ──────────────────────────────── */
 .split-row {
   display: grid;
@@ -129,8 +219,8 @@
   padding: 1.25rem 1.4rem 1.3rem;
 }
 .module-title {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -230,8 +320,8 @@
   letter-spacing: -0.005em;
 }
 .sig-item-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
@@ -392,19 +482,59 @@
 @media (max-width: 480px) {
   .stat-grid { grid-template-columns: minmax(0, 1fr); }
 }
+/* Latest PLA Watch edition cross-link */
+.pwx {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.pwx-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #E05A6D;
+  margin-bottom: 0.5rem;
+}
+.pwx-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.012em;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+.pwx-title a { color: #EDE9E0; }
+.pwx-title a:hover { color: #fff; }
+.pwx-sub { font-size: 0.8rem; color: #A8A29A; }
+.pwx .btn-signal {
+  color: #E05A6D;
+  border-color: rgba(209, 28, 54, 0.5);
+}
+.pwx .btn-signal:hover { background: rgba(179, 19, 43, 0.16); color: #E05A6D; }
+@media (max-width: 600px) {
+  .pwx { padding: 1.2rem 1.25rem; }
+}
 {% endblock %}
 
 {% block content %}
 <div class="signals-wrap">
 
-  <div class="signals-header">
+  <div class="signals-header" data-reveal>
     <div class="signals-eyebrow">Signals &amp; Methodology</div>
     <h1>Signals &amp; Methodology</h1>
     <p class="signals-lede">Patterns drawn from the China Mil Watch monitoring archive, the editor's current watchlist, and a plain-English account of how this platform reads Chinese-language military and security media.</p>
   </div>
 
   {# ── A. Signals Dashboard ──────────────────────────────────────────── #}
-  <div class="s-section">
+  <div class="s-section" data-reveal>
     <div class="s-section-heading">A · Signals Dashboard</div>
 
     <div class="stat-grid">
@@ -430,6 +560,35 @@
       </div>
     </div>
 
+    {% set tempo_max = (daily_series | map(attribute='total') | max) if daily_series else 0 %}
+    {% if daily_series and tempo_max > 0 %}
+    <div class="module tempo-module" data-reveal>
+      <div class="tempo-head">
+        <div class="module-title">Daily volume · last 30 days</div>
+        <span class="tempo-peak">peak {{ tempo_max }} / day</span>
+      </div>
+      <div class="tempo-strip" role="img" aria-label="Articles per day over the last 30 days, {{ daily_series[0].date | format_date }} to {{ daily_series[-1].date | format_date }}. Peak day: {{ tempo_max }} articles. Crimson segments mark model-flagged items.">
+        {% for d in daily_series %}
+        <div class="tempo-day{% if d.total == 0 %} is-empty{% endif %}" style="--i: {{ loop.index0 }};" title="{{ d.date | format_date }} · {{ d.total }} article{{ 's' if d.total != 1 }}{% if d.significant %} · {{ d.significant }} model-flagged{% endif %}{% if d.total == 0 %} collected{% endif %}">
+          <div class="tempo-col">
+            {% if d.total - d.significant > 0 %}<span class="tempo-fill" style="height: {{ (((d.total - d.significant) / tempo_max) * 100) | round(1) }}%;"></span>{% endif %}
+            {% if d.significant > 0 %}<span class="tempo-sig" style="height: {{ ((d.significant / tempo_max) * 100) | round(1) }}%;"></span>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="tempo-axis">
+        <span>{{ daily_series[0].date | format_date }}</span>
+        <span>{{ daily_series[-1].date | format_date }}</span>
+      </div>
+      <div class="tempo-legend">
+        <span><span class="swatch swatch-vol"></span>Articles analyzed</span>
+        <span><span class="swatch swatch-sig"></span>Model-flagged</span>
+      </div>
+      <p class="tempo-note">Days with no bar are days when no article was collected — a coverage gap in the pipeline, not necessarily a quiet news day.</p>
+    </div>
+    {% endif %}
+
     <div class="split-row">
       <div class="module">
         <div class="module-title">Top categories · last 30 days</div>
@@ -439,7 +598,7 @@
             <div class="cat-row">
               <span class="cat-label">{{ cat.label }}</span>
               <div class="cat-bar-track">
-                <div class="cat-bar-fill" style="width: {{ ((cat.count / max_count) * 100) | round(1) }}%;"></div>
+                <div class="cat-bar-fill" style="width: {{ ((cat.count / max_count) * 100) | round(1) }}%; --bi: {{ loop.index0 }};"></div>
               </div>
               <span class="cat-count">{{ cat.count }}</span>
             </div>
@@ -489,8 +648,22 @@
     {% endif %}
   </div>
 
+  {# ── Latest PLA Watch edition — weekly synthesis cross-link ────────── #}
+  {% if pw_latest %}
+  <div class="pwx" data-reveal>
+    <div class="pwx-body">
+      <div class="pwx-eyebrow">The PLA Watch · weekly brief{% if pw_latest.issue_number %} · No. {{ pw_latest.issue_number }}{% endif %}</div>
+      <div class="pwx-title"><a href="the-pla-watch/posts/{{ pw_latest.date }}.html">{{ pw_latest.title_display }}</a></div>
+      <div class="pwx-sub">The weekly synthesis of this monitoring — week ending {{ pw_latest.week_ending | format_date }}.</div>
+    </div>
+    <div class="pwx-cta">
+      <a class="btn btn-signal" href="the-pla-watch/posts/{{ pw_latest.date }}.html">Read the edition</a>
+    </div>
+  </div>
+  {% endif %}
+
   {# ── B. What We're Watching ────────────────────────────────────────── #}
-  <div class="s-section">
+  <div class="s-section" data-reveal>
     <div class="s-section-heading">B · What We're Watching</div>
 
     <div class="watchlist">
@@ -522,7 +695,7 @@
   </div>
 
   {# ── C. Methodology & Limitations ─────────────────────────────────── #}
-  <div class="s-section">
+  <div class="s-section" data-reveal>
     <div class="s-section-heading">C · Methodology &amp; Limitations</div>
 
     <div class="method-prose">
@@ -538,7 +711,7 @@
   </div>
 
   {# ── D. How to Read This Site ─────────────────────────────────────── #}
-  <div class="s-section">
+  <div class="s-section" data-reveal>
     <div class="s-section-heading">D · How to Read This Site</div>
 
     <div class="read-grid">
