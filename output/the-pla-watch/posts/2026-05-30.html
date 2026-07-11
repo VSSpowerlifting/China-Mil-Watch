@@ -27,66 +27,103 @@
 
   <link rel="icon" type="image/png" href="../../logo-icon.png">
   <link rel="apple-touch-icon" href="../../logo-icon.png">
+  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://chinamilwatch.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700;8..60,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system (shared with parent brand) ────────────────────────── */
+    /* ══ The PLA Watch design tokens — dark "night desk" surface ═════════ */
     :root {
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
-      --color-brand-light:    #D11C36;
-      --color-bg:             #0E1520;        /* ink navy */
-      --color-bg-card:        #141D2B;        /* lifted navy surface */
-      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
-      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
-      --color-text-primary:   #EDE9E0;        /* warm off-white */
-      --color-text-secondary: #9A9590;        /* mid warm gray */
-      --color-text-muted:     #5E5A55;        /* quiet gray */
-      --color-border:         #273040;        /* dark rule */
-      --color-border-soft:    #1C2738;        /* softer dark rule */
+      --color-brand-light:    #D8354C;       /* links / hover on dark — lifted for contrast */
+      --color-bg:             #0E1520;       /* ink navy */
+      --color-bg-card:        #131C29;       /* lifted navy surface */
+      --color-bg-header:      #0A1019;       /* masthead, slightly deeper */
+      --color-bg-sidebar:     #18222F;       /* sidebar surface */
+      --color-text-primary:   #EDE9E0;       /* warm off-white */
+      --color-text-secondary: #A8A29A;       /* mid warm gray */
+      --color-text-muted:     #746E67;       /* quiet gray */
+      --color-border:         #273040;       /* dark rule */
+      --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Shared vocabulary with the daily surface */
+      --ink:   var(--color-text-primary);
+      --ink-2: var(--color-text-secondary);
+      --ink-3: var(--color-text-muted);
+      --line:  var(--color-border);
+      --line-soft: var(--color-border-soft);
+      --signal: var(--color-brand);
+      --signal-bright: #E05A6D;
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1100px;
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
       background-color: var(--color-bg);
-      /* Editorial paper grain — vertical hairline texture rather than the dashboard grid */
-      background-image:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.012) 0,
-          rgba(255, 255, 255, 0.012) 1px,
-          transparent 1px,
-          transparent 6px
-        );
       color: var(--color-text-primary);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--color-brand-light); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand-light);
+      outline: 2px solid var(--signal-bright);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
+    /* ── Reading progress rail (scroll-driven, progressive) ────────────── */
+    .progress-rail {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      z-index: 90;
+      pointer-events: none;
+      background: transparent;
+    }
+    .progress-rail b {
+      display: block;
+      height: 100%;
+      background: var(--color-brand-light);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+    }
+    @supports (animation-timeline: scroll()) {
+      .progress-rail b {
+        animation: pw-progress linear both;
+        animation-timeline: scroll(root);
+      }
+      @keyframes pw-progress {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+    }
+
+    /* ── Masthead — editorial nameplate ─────────────────────────────────── */
     .pw-masthead {
       background: var(--color-bg-header);
       border-top: 4px solid var(--color-brand);
@@ -95,7 +132,7 @@
       position: relative;
     }
     .pw-masthead-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       padding: 1.4rem 2rem 1.1rem;
       display: flex;
@@ -118,12 +155,13 @@
     .pw-nameplate:hover { text-decoration: none; }
     .pw-nameplate .pw-mark {
       font-family: var(--serif);
-      font-weight: 800;
+      font-weight: 700;
       font-style: italic;
       font-size: 2.2rem;
       letter-spacing: -0.015em;
       color: var(--color-text-primary);
-      line-height: 1;
+      line-height: 1.1;
+      padding-bottom: 0.05em;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -138,10 +176,10 @@
       align-self: center;
     }
     .pw-nameplate .pw-tag {
-      font-family: var(--sans);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
       align-self: center;
@@ -153,67 +191,66 @@
       font-family: var(--sans);
       font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       text-decoration: none;
       padding: 4px 0;
       position: relative;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: color 150ms ease;
     }
-    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .pw-nav a.active { color: var(--color-text-primary); }
-    .pw-nav a.active::after {
+    .pw-nav a::after {
       content: "";
       position: absolute;
       left: 0; right: 0; bottom: -2px;
       height: 2px;
       background: var(--color-brand);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
     }
-    .pw-nav .nav-sep {
-      color: var(--color-border);
-      font-weight: 400;
-      letter-spacing: 0;
-    }
-    .pw-nav .pw-nav-back {
-      color: var(--color-brand);
-      font-weight: 600;
-    }
+    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
+    .pw-nav a:hover::after { transform: scaleX(1); }
+    .pw-nav a.active { color: var(--color-text-primary); }
+    .pw-nav a.active::after { transform: scaleX(1); }
+    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
+    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      font-family: var(--sans);
-      font-size: 0.68rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
     }
     .pw-masthead-rule .left,
     .pw-masthead-rule .right { display: flex; gap: 1.1rem; }
 
-    /* ── Main layout ───────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1100px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
       padding: 3rem 2rem 5rem;
     }
 
-    /* ── Footer ───────────────────────────────────────────────────────── */
+    /* ── Footer ─────────────────────────────────────────────────────────── */
     .site-footer {
       background: var(--color-bg-card);
       border-top: 1px solid var(--color-border);
       padding: 2.5rem 2rem;
     }
     .footer-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -244,33 +281,34 @@
     }
     .footer-meta {
       font-family: var(--sans);
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       color: var(--color-text-muted);
-      line-height: 1.7;
-      letter-spacing: 0.04em;
+      line-height: 1.85;
     }
     .footer-meta a { color: var(--color-text-secondary); font-weight: 600; }
+    .footer-meta a:hover { color: var(--color-text-primary); }
     .footer-meta-label {
       display: block;
+      font-family: var(--mono);
       font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--color-brand);
+      color: var(--signal-bright);
       margin-bottom: 0.5rem;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
     }
 
-    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    /* ── Edition badges — shared, dark-theme chips ──────────────────────── */
     .pw-badge {
       display: inline-block;
       vertical-align: middle;
-      font-family: var(--sans);
-      font-size: 0.625rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 2px 8px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
     .pw-badge--significant {
       background: rgba(179, 19, 43, 0.14);
@@ -288,14 +326,63 @@
       border: 1px solid rgba(224, 164, 88, 0.35);
     }
 
-    /* ── Utilities ─────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Tablet / mobile ───────────────────────────────────────────────── */
+    /* Shared motion primitives — start states only under .js inside an
+       un-revealed [data-reveal]; no-JS, print, and reduced-motion get the
+       finished artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1.1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 45ms + 200ms), 850ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .snap-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .snap-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.9s var(--ease) 250ms;
+    }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .pw-masthead-inner { padding: 1.2rem 1.25rem 0.95rem; }
       .pw-masthead-top { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
@@ -304,7 +391,7 @@
       .pw-nameplate .pw-tag { display: none; }
       .pw-nav { gap: 1rem; }
       .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
-      .pw-masthead-rule { font-size: 0.62rem; letter-spacing: 0.12em; }
+      .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
       .pw-masthead-rule .right { display: none; }
       main { padding: 2rem 1.25rem 3.5rem; }
       body { font-size: 0.9375rem; }
@@ -318,13 +405,25 @@
       .pw-nav .nav-sep { display: none; }
     }
     @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
+      .pw-nav a[href$="archive.html"]:not(.active),
+      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
     }
 
-    /* ── Print — light palette, no chrome, ink-friendly ───────────────── */
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+      .progress-rail { display: none; }
+    }
+
+    /* ── Print — light palette, no chrome, ink-friendly ────────────────── */
     @media print {
       :root {
         --color-brand:          #8B0E20;
+        --color-brand-light:    #8B0E20;
         --color-bg:             #ffffff;
         --color-bg-card:        #ffffff;
         --color-bg-header:      #ffffff;
@@ -335,8 +434,8 @@
         --color-border:         #bbbbbb;
         --color-border-soft:    #dddddd;
       }
-      body { background: #ffffff !important; background-image: none !important; }
-      .pw-nav, .site-footer { display: none; }
+      body { background: #ffffff !important; }
+      .pw-nav, .site-footer, .progress-rail { display: none; }
       .pw-masthead { border-top-width: 3px; }
       .pw-nameplate .pw-mark .the { color: #555555; }
       a { color: inherit; text-decoration: none; }
@@ -347,7 +446,7 @@
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 264px;
   gap: 3.5rem;
   align-items: flex-start;
 }
@@ -356,23 +455,105 @@
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 }
 
-/* ── Issue cover image (editorial PNG) ──────────────────────────────── */
-.cover-figure {
-  margin: 0 0 2rem;
+/* ── Edition header — briefing head, structured not decorated ───────── */
+.hero {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 0 1.9rem;
+  margin-bottom: 2.25rem;
 }
+.hero-meta-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hero-edition::before {
+  content: "";
+  width: 26px; height: 2px;
+  background: var(--color-brand);
+}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: 1.05rem;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.hero-dek {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.4rem;
+  max-width: 58ch;
+}
+.byline {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+}
+.byline-name { color: var(--color-text-primary); font-weight: 600; }
+.byline-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.hero-meta .meta-item { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.hero-meta .meta-item .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Issue cover image ──────────────────────────────────────────────── */
+.cover-figure { margin: 0 0 2rem; }
 .cover-figure img {
   display: block;
   width: 100%;
   height: auto;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
 }
 .cover-figure figcaption {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-top: 0.55rem;
   text-align: right;
 }
@@ -381,49 +562,33 @@
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--color-border-soft);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
   font-family: var(--sans);
   font-size: 0.76rem;
   color: var(--color-text-muted);
   line-height: 1.55;
 }
-.cover-credit-note .label {
-  font-weight: 700;
-  color: var(--color-text-secondary);
-}
+.cover-credit-note .label { font-weight: 700; color: var(--color-text-secondary); }
 .cover-credit-note a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.cover-credit-note a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
+.cover-credit-note a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
 
-/* ── Visual Context — restrained editorial image card ───────────────── */
-.visual-context {
-  margin: 0 0 2.5rem;
-}
+/* ── Visual Context ─────────────────────────────────────────────────── */
+.visual-context { margin: 0 0 2.5rem; }
 .media-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   margin-bottom: 1rem;
 }
 .media-card:last-child { margin-bottom: 0; }
-.media-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--color-bg-card);
-}
-.media-card-body {
-  padding: 0.95rem 1.15rem 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.media-card img { display: block; width: 100%; height: auto; background: var(--color-bg-card); }
+.media-card-body { padding: 0.95rem 1.15rem 1rem; border-top: 1px solid var(--color-border-soft); }
 .media-caption {
   font-family: var(--serif);
   font-size: 0.95rem;
@@ -432,25 +597,19 @@
   margin-bottom: 0.5rem;
 }
 .media-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .media-meta a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.media-meta a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
-.media-meta .sep {
-  margin: 0 0.45rem;
-  color: var(--color-border);
-}
+.media-meta a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+.media-meta .sep { margin: 0 0.45rem; color: var(--color-border); }
 .media-note {
   font-family: var(--sans);
   font-size: 0.7rem;
@@ -464,120 +623,10 @@
   .media-caption { font-size: 0.9rem; }
 }
 
-/* ── Editorial hero — large display, generous spacing, watermark ────── */
-.hero {
-  position: relative;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 2.4rem 2.4rem 2rem;
-  margin-bottom: 2.5rem;
-  overflow: hidden;
-}
-.hero::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.4rem;
-  bottom: -1.6rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 7.5rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.045;
-  pointer-events: none;
-  line-height: 1;
-}
-.hero-meta-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-}
-.hero-eyebrow::before {
-  content: "";
-  width: 26px; height: 2px;
-  background: var(--color-brand);
-}
-.hero-edition {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.hero-edition .pw-badge { margin-left: 0.5rem; }
-.hero-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 1.12;
-  letter-spacing: -0.018em;
-  color: var(--color-text-primary);
-  margin-bottom: 1.05rem;
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-}
-.hero-dek {
-  font-family: var(--serif);
-  font-size: 1.18rem;
-  color: var(--color-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.5rem;
-  max-width: 660px;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  border-top: 1px solid var(--color-border-soft);
-  padding-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta .meta-item { display: inline-flex; gap: 0.4rem; align-items: baseline; }
-.hero-meta .meta-item .num {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--color-text-primary);
-}
-@media (max-width: 768px) {
-  .hero { padding: 1.7rem 1.5rem 1.5rem; }
-  .hero-title { font-size: 1.85rem; }
-  .hero-dek { font-size: 1.05rem; }
-  .hero::after { font-size: 4.5rem; }
-}
-
-/* ── Module section heading ────────────────────────────────────────── */
+/* ── Module section heading ─────────────────────────────────────────── */
 .mod-heading {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -594,7 +643,7 @@
   width: 22px; height: 2px;
   background: var(--color-brand);
 }
-.mod-heading.brand { color: var(--color-brand); }
+.mod-heading.brand { color: var(--signal-bright); }
 .mod-heading .mod-count {
   margin-left: auto;
   color: var(--color-text-muted);
@@ -602,53 +651,53 @@
   letter-spacing: 0.1em;
 }
 
-/* ── This Week's Signal — pull-quote-style card ────────────────────── */
+/* ── This Week's Signal — the key judgment, in a drawn frame ────────── */
 .signal-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.6rem 1.85rem 1.7rem;
   margin-bottom: 2.5rem;
   position: relative;
 }
-.signal-card::before {
-  content: "“";
+.signal-frame {
   position: absolute;
-  left: 0.45rem;
-  top: -0.8rem;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 4.5rem;
-  font-weight: 700;
-  color: var(--color-brand);
-  opacity: 0.18;
-  line-height: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.signal-frame rect {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
 }
 .signal-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.7rem;
 }
 .signal-text {
   font-family: var(--serif);
   font-weight: 600;
   font-style: italic;
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   line-height: 1.5;
   color: var(--color-text-primary);
   letter-spacing: -0.005em;
 }
 
-/* ── Coverage Snapshot — stat module ───────────────────────────────── */
+/* ── Coverage Snapshot ──────────────────────────────────────────────── */
 .snapshot {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.5rem 1.65rem 1.6rem;
   margin-bottom: 2.5rem;
 }
@@ -667,10 +716,10 @@
   letter-spacing: -0.012em;
   margin-bottom: 0.4rem;
 }
-.snap-stat .num .accent { color: var(--color-brand); }
+.snap-stat .num .accent { color: var(--signal-bright); }
 .snap-stat .label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -682,14 +731,10 @@
   color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
-.snap-bar {
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.snap-bar { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-soft); }
 .snap-bar-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -737,101 +782,139 @@
   .snap-stat .num { font-size: 1.55rem; }
 }
 
-/* ── Body sections — long-form editorial flow ──────────────────────── */
-.post-body { max-width: 700px; }
-.post-section { margin-bottom: 2.5rem; }
-.post-section .mod-heading.brand { color: var(--color-brand); }
+/* ── Body sections — long-form analytical flow ──────────────────────── */
+.post-body { max-width: 680px; }
+.post-section { margin-bottom: 2.6rem; scroll-margin-top: 1.5rem; }
 
 .section-text p {
-  margin-bottom: 1.05rem;
-  line-height: 1.78;
-  font-size: 1rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   color: var(--color-text-primary);
 }
 .section-text p:last-child { margin-bottom: 0; }
-.section-text p:first-of-type::first-letter {
-  /* Editorial drop cap on the very first paragraph of the opening section */
-  /* Applied selectively below */
-}
 .opening .section-text p:first-of-type::first-letter {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 3.6rem;
   line-height: 0.85;
   float: left;
-  margin: 0.18rem 0.55rem -0.15rem 0;
-  color: var(--color-brand);
+  margin: 0.2rem 0.55rem -0.15rem 0;
+  color: var(--signal-bright);
 }
 
-/* ── Term-to-know module ───────────────────────────────────────────── */
+/* ── Term-to-know module ────────────────────────────────────────────── */
 .term-box {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 1.4rem 1.65rem 1.4rem;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem;
 }
 .term-word {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: -0.005em;
   color: var(--color-text-primary);
   margin-bottom: 0.6rem;
 }
 .term-explanation {
-  font-size: 0.95rem;
+  font-family: var(--serif);
+  font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.75;
 }
 .term-explanation p { margin-bottom: 0.85rem; }
 .term-explanation p:last-child { margin-bottom: 0; }
 
-/* ── Source Trail — vertical list ──────────────────────────────────── */
+/* ── Source Trail — the evidence register on a spine ────────────────── */
 .source-trail { margin-bottom: 2.5rem; }
-.source-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.source-cards { display: flex; flex-direction: column; position: relative; margin-left: 20px; }
+.source-cards::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--color-border);
+}
+.source-card::before {
+  content: "";
+  position: absolute;
+  left: -17.5px;
+  top: 1.1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text-muted);
+}
+.source-card.is-significant::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-cards::before {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.js [data-reveal].in .source-cards::before {
+  transform: scaleY(1);
+  transform-origin: top center;
+  transition: transform 0.9s var(--ease) 0.15s;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-card::before { transform: scale(0); }
+.js [data-reveal].in .source-card::before {
+  transform: scale(1);
+  transition: transform 0.45s var(--ease);
+  transition-delay: min(calc(var(--ni, 0) * 45ms + 250ms), 900ms);
+}
+@media (max-width: 600px) {
+  .source-cards { margin-left: 16px; }
+  .source-cards::before { left: -11px; }
+  .source-card::before { left: -14.5px; }
 }
 .source-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: none;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s;
+  transition: background 180ms var(--ease), border-color 180ms var(--ease);
   position: relative;
 }
-.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: 4px 4px 0 0; }
-.source-card:last-child { border-radius: 0 0 4px 4px; }
-.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: 4px; }
+.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: var(--radius) var(--radius) 0 0; }
+.source-card:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: var(--radius); }
 .source-card:hover { background: var(--color-bg-sidebar); text-decoration: none; }
-.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.1rem - 2px); }
+.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.15rem - 2px); }
 .source-card-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   line-height: 1.35;
   color: var(--color-text-primary);
 }
 .source-card-zh {
+  font-family: var(--zh);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .source-card-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
 }
 .source-card-meta .sep { color: var(--color-border); }
@@ -843,12 +926,12 @@
   background: rgba(179, 19, 43, 0.14);
   border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
-  border-radius: 2px;
-  font-size: 0.625rem;
+  border-radius: var(--radius);
+  font-size: 0.58rem;
 }
 .source-card-domain {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
@@ -860,13 +943,13 @@
   font-style: italic;
 }
 
-/* ── Closing note ──────────────────────────────────────────────────── */
+/* ── Closing note ───────────────────────────────────────────────────── */
 .closing-note {
   margin-top: 2.5rem;
   padding: 1.4rem 1.65rem;
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1rem;
@@ -874,41 +957,17 @@
   line-height: 1.7;
 }
 
-/* ── Byline (hero) ─────────────────────────────────────────────────── */
-.byline {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-  max-width: 660px;
-}
-.byline-name {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  letter-spacing: 0.005em;
-}
-.byline-title {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 0.2rem;
-  letter-spacing: 0.005em;
-}
-
-/* ── Author block (bottom of post) ─────────────────────────────────── */
+/* ── Author block ───────────────────────────────────────────────────── */
 .author-block {
   margin-top: 2.5rem;
   padding: 1.5rem 1.65rem 1.6rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .author-block-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -928,14 +987,12 @@
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--color-text-primary);
-  letter-spacing: -0.005em;
   margin-bottom: 0.15rem;
 }
 .author-block-title {
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.02em;
   margin-bottom: 0.85rem;
 }
 .author-block-bio {
@@ -946,14 +1003,7 @@
   max-width: 640px;
   margin-bottom: 1.1rem;
 }
-
-/* ── Contact chips — restrained text pills ─────────────────────────── */
-.author-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
+.author-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .author-chip {
   display: inline-flex;
   align-items: center;
@@ -962,42 +1012,33 @@
   font-family: var(--sans);
   font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius);
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
-.author-chip:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-  text-decoration: none;
-}
-.author-chip .arrow {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  transition: color 0.15s;
-}
-.author-chip:hover .arrow { color: var(--color-brand); }
+.author-chip:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); text-decoration: none; }
+.author-chip .arrow { font-size: 0.7rem; color: var(--color-text-muted); transition: color 0.15s; }
+.author-chip:hover .arrow { color: var(--color-brand-light); }
 
-/* ── Sidebar (sticky) ──────────────────────────────────────────────── */
+/* ── Sidebar (sticky) ───────────────────────────────────────────────── */
 .post-sidebar { position: sticky; top: 1.5rem; }
 .sb-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.3rem 1.4rem 1.25rem;
   margin-bottom: 1rem;
 }
 .sb-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.8rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--color-border);
@@ -1018,17 +1059,60 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.sb-text {
-  font-size: 0.825rem;
+.sb-text { font-size: 0.825rem; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* In-this-edition rail (scrollspy) */
+.toc-list { list-style: none; }
+.toc-list li { border-bottom: 1px solid var(--color-border-soft); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: block;
+  padding: 0.5rem 0 0.5rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  border-left: 2px solid transparent;
+  margin-left: -0.85rem;
+  transition: color 160ms ease, border-color 160ms ease;
 }
+.toc-list a:hover { color: var(--color-text-primary); text-decoration: none; }
+.toc-list a.active {
+  color: var(--color-text-primary);
+  border-left-color: var(--color-brand-light);
+}
+
+/* Citation block */
+.cite-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  margin-bottom: 0.75rem;
+}
+.cite-copy {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cite-copy:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); }
+.cite-copy:focus-visible { outline: 2px solid var(--signal-bright); outline-offset: 2px; }
+.no-clipboard .cite-copy { display: none; }
 
 @media (max-width: 900px) {
   .post-sidebar { position: static; }
+  .sb-card--toc { display: none; }
 }
 
-/* ── Post nav (bottom) ─────────────────────────────────────────────── */
+/* ── Post nav (bottom) ──────────────────────────────────────────────── */
 .edition-nav {
   display: flex;
   justify-content: space-between;
@@ -1041,10 +1125,11 @@
   font-size: 0.85rem;
 }
 .edition-nav a { color: var(--color-text-secondary); }
-.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 .edition-nav .edition-nav-label {
   display: block;
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1068,29 +1153,30 @@
   border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
-.post-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
-/* ── Print — single column brief ───────────────────────────────────── */
+/* ── Print — single column brief ────────────────────────────────────── */
 @media print {
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-figure, .cover-credit-note, .visual-context { display: none; }
-  .hero::after { display: none; }
   .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
     break-inside: avoid;
   }
   .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
-  .signal-card::before { color: #8B0E20; }
   .snap-bar-fill { background: #8B0E20; }
   .snap-bar-rest, .swatch-rest { background: #dddddd; }
   .swatch-sig { background: #8B0E20; }
   .source-card:hover { background: transparent; }
+  .signal-frame { display: none; }
+  .source-cards { margin-left: 0; }
+  .source-cards::before, .source-card::before { content: none; }
   /* Keep the source trail traceable on paper: print each item's URL. */
   .source-card-domain { display: none; }
   .source-card::after {
     content: attr(href);
-    font-family: var(--sans);
-    font-size: 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
     color: #555555;
     word-break: break-all;
   }
@@ -1098,6 +1184,8 @@
   </style>
 </head>
 <body>
+
+<div class="progress-rail" aria-hidden="true"><b></b></div>
 
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
@@ -1107,9 +1195,10 @@
         <span class="pw-mark-rule" aria-hidden="true"></span>
         <span class="pw-tag">A weekly publication of China Mil Watch</span>
       </a>
-      <nav class="pw-nav">
+      <nav class="pw-nav" aria-label="Publication">
         <a href="../index.html" >Latest Edition</a>
         <a href="../archive.html" >Archive</a>
+        <a href="../terms.html" >Terms</a>
         <span class="nav-sep">|</span>
         <a href="../../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
       </nav>
@@ -1127,9 +1216,8 @@
 
   <article class="post-main">
 
-    <div class="hero">
+    <div class="hero" data-reveal>
       <div class="hero-meta-top">
-        <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
 No. 4 · Week ending 30 May 2026
 <span class="pw-badge pw-badge--significant">Significant</span>        </div>
@@ -1146,7 +1234,7 @@ No. 4 · Week ending 30 May 2026
       </div>
     </div>
 
-    <figure class="cover-figure">
+    <figure class="cover-figure" data-reveal>
       <img src="../covers/2026-05-30.png"
            alt="The PLA Watch — The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week&#39;s Institutional Texture (issue cover)"
            width="1200" height="630" loading="eager">
@@ -1158,12 +1246,15 @@ No. 4 · Week ending 30 May 2026
     </div>
 
 
-      <div class="signal-card">
+      <div class="signal-card" id="s-signal" data-reveal>
+        <svg class="signal-frame" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+          <rect class="draw-path" pathLength="1" style="--pi: 1;" x="0.5" y="0.5" width="99" height="39"/>
+        </svg>
         <div class="signal-eyebrow">This week's signal</div>
         <div class="signal-text">The CMC issued a formal 26-article directive on senior cadre oversight while the Southern Theater Command publicly acknowledged jamming a NATO frigate near the Paracels.</div>
       </div>
 
-    <div class="snapshot">
+    <div class="snapshot" id="s-snapshot" data-reveal>
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
         <div class="snap-stat">
@@ -1203,31 +1294,31 @@ No. 4 · Week ending 30 May 2026
 
     <div class="post-body">
 
-      <div class="post-section opening">
+      <div class="post-section opening" id="s-opening" data-reveal>
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
 <p>Two items stood out this week in PLA Daily coverage, and they were genuinely different in kind. One was an internal governance document — the Central Military Commission&#39;s formal directive on the education, management, and supervision of senior military cadres. The other was an operational statement — the Southern Theater Command&#39;s public acknowledgment that it used electronic jamming against a Dutch Navy frigate near the Paracels. Neither was routine. Both were consequential in specific and limited ways.</p><p>The rest of the 40 articles reviewed this week — covering everything from PAP marksmanship pipelines to plateau transport route books to bayonet drills — fit established patterns. That is not dismissal. Routine coverage in PLA Daily is how you build the baseline. It is how you know when something stops being routine. This week gave us two real data points and thirty-eight more bricks of baseline.</p><p>One theme that ran through the week&#39;s less-prominent articles is worth naming: the PLA&#39;s persistent internal tension between form and substance in political campaigns. Multiple articles — the PLA Daily commentator piece on rectification, the 76th Group Army&#39;s positive-and-negative list mechanism, the regiment that catalogued unauthorized phone calls — all document the same structural problem. Mandated campaigns produce compliance behavior rather than changed behavior. The apparatus keeps inventing enforcement mechanisms to close that gap, and keeps having to invent new ones. That is not a crisis. But it is a recurring institutional signal, and this week&#39;s coverage made it unusually visible.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-stood-out" data-reveal>
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
 <p>Two items stand out, and both deserve separate treatment.</p><p>The first is the CMC&#39;s May 28 issuance of &#34;Several Measures on Strengthening the Education, Management, and Supervision of Senior Military Cadres&#34; — a named, structured, 26-article directive covering ideological remolding, Party committee collective leadership, cadre selection, and oversight of principal leaders. This is not a routine political study notice. It is a regulatory document with explicit provisions, published in PLA Daily, directed specifically at the senior officer corps. The explicit invocation of 思想整风 (ideological rectification) and 政治整训 (political consolidation training) confirms that the CMC treats the senior cadre corps as requiring active rehabilitation, not merely tighter procedures. On the same day, CMC Vice Chairman Zhang Shengmin convened a military-wide special conference on deepening ideological indoctrination with Xi Jinping&#39;s Thought on Strengthening the Military — the two items reinforce each other and document a sustained post-purge effort to formalize oversight mechanisms that visibly failed before the Rocket Force removals.</p><p>The second is the Southern Theater Command&#39;s May 27 statement on Dutch Navy frigate De Ruyter. The statement documents that PLA naval and air forces were deployed to expel the vessel after it transited the Xisha (Paracel) Islands, with the response including voice warnings and — notably — electronic jamming. The PLA&#39;s public acknowledgment of jamming as a declared enforcement tool against a NATO-member navy conducting a freedom-of-navigation operation is worth noting carefully. It is not the first time China has used electronic warfare in the South China Sea, but the explicit, named public acknowledgment of its use as a routine expulsion measure against a European vessel is an addition to the public record. The Southern Theater Command&#39;s framing treats jamming as a legal enforcement action rather than an act requiring explanation or apology.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-why" data-reveal>
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
 <p>On the CMC directive: the 2023–2024 Rocket Force purge and the broader pattern of senior officer removals revealed that existing oversight mechanisms were insufficient to catch or deter misconduct at the most senior levels of the PLA. A 26-article named directive specifically targeting senior cadre conduct is the CMC&#39;s formal institutional response to that gap. It documents — in public — that the leadership considers the problem structural enough to require a new regulatory framework, not just a renewed study campaign. The emphasis on &#34;revolutionary tempering&#34; and &#34;renewed political bearing&#34; extends that logic: the problem is framed as ideological as well as procedural, which means the fix requires both tighter rules and deeper attitudinal change. Whether this directive produces the behavioral change it demands is a separate question. What it confirms is that the CMC considers the current state of senior cadre conduct to be in need of correction.</p><p>On the De Ruyter incident: the significance is not the expulsion itself — the Southern Theater Command regularly responds to freedom-of-navigation transits near the Paracels. It is the explicit public naming of electronic jamming as part of that response. Beijing is building a public record of treating electronic warfare measures as routine, legitimate tools of maritime law enforcement in waters it claims as territorial. That framing has implications for how future incidents are characterized, and for whether European navies conducting similar transits can expect the same response. The Dutch frigate is a NATO-member vessel. The PLA&#39;s willingness to name the action publicly, without diplomatic hedging, documents a posture rather than an incident.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-routine" data-reveal>
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
 <p>Two categories of coverage this week are worth understanding as routine — not dismissing, but categorizing correctly.</p><p>The first is the week&#39;s ideological-political education content. Articles on the &#34;Iron Army&#34; lineage, Dong Cunrui&#39;s anniversary roll call, the Shenzhou-21 crew&#39;s return framed through patriotic-scientist identity, and the Jin-Cha-Ji base area production movement all fit a stable and recurring PLA Daily pattern: using revolutionary heritage narratives to address the standing problem of motivating a peacetime force. PLA Daily runs this category of content continuously, not episodically. The volume this week was normal. The framing was normal. These articles are evidence of how Chinese military political work constructs institutional identity — they are not evidence of a changed policy line or elevated operational tempo.</p><p>The second is the Fujian Coast Guard patrol near Kinmen, reported on May 26. The CCG&#39;s assertion of jurisdiction in waters adjacent to Taiwan-administered Kinmen has been a regular feature of PLA Daily and state media coverage since the February 2024 capsizing incident. The Taiwan Affairs Office&#39;s same-day endorsement follows a coordinated messaging pattern that has been visible for over a year: operational action paired with immediate political authorization, framed in protective civilian language. This week&#39;s patrol fits that established pattern precisely. It extends the baseline; it does not break from it. Readers should track cumulative frequency and escalation over time, not treat individual patrols as discrete events.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-term" data-reveal>
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">思想整风 (Sīxiǎng Zhěngfēng) — Ideological Rectification</div>
@@ -1236,100 +1327,100 @@ No. 4 · Week ending 30 May 2026
         </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-watching" data-reveal>
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
 <p>Three things are worth watching in the coming weeks, with appropriate caution about what the data will and will not show.</p><p>First, implementation follow-through on the CMC senior cadre directive. The directive&#39;s existence is documentable. Whether and how PLA Daily covers its implementation — inspection results, named enforcement actions, unit-level study campaigns — will be the more meaningful signal. Directives in PLA media often appear once and then recede. Sustained follow-up coverage would suggest the CMC is treating this as a durable enforcement priority rather than a one-time public statement.</p><p>Second, further European naval transits in the South China Sea. The De Ruyter incident establishes a public PLA baseline for how Southern Theater Command characterizes and responds to NATO-member freedom-of-navigation operations near the Paracels. Whether the PLA applies the same electronic jamming response to subsequent transits — and whether it publicizes that response in the same declaratory terms — will help establish whether this is a new standard posture or a situationally specific response.</p><p>Third, the cadence of CMC Vice Chairman Zhang Shengmin&#39;s ideological consolidation activities as the PLA&#39;s August 2027 centenary approaches. Zhang convened two related events in the same week — the special conference on May 27 and the thematic conference documented separately. That density of activity from a CMC vice chairman on a single ideological campaign is worth noting. Whether it sustains or recedes will indicate how seriously the centenary deadline is being used as an accountability lever across the force.</p>        </div>
       </div>
 
-      <div class="post-section source-trail">
+      <div class="post-section source-trail" id="s-sources" data-reveal>
         <div class="mod-heading brand">Source Trail<span class="mod-count">13 records</span></div>
         <div class="source-cards">
-          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463889.html" target="_blank" rel="noopener">
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463889.html" target="_blank" rel="noopener" style="--ni: 0;">
             <div class="source-card-title">Central Military Commission Issues &#39;Several Measures on Strengthening the Education, Management, and Supervision of Senior Military Cadres&#39;</div>
 <div class="source-card-zh" lang="zh-Hans">中央军委印发《关于加强军队高级干部教育管理监督的若干措施》</div>            <div class="source-card-meta">
 <span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463889.html ↗</div>
           </a>
-          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463856.html" target="_blank" rel="noopener">
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16463856.html" target="_blank" rel="noopener" style="--ni: 1;">
             <div class="source-card-title">Southern Theater Command Spokesperson Zhai Shichen Issues Statement on Provocative Actions by Dutch Warship</div>
 <div class="source-card-zh" lang="zh-Hans">南部战区新闻发言人翟士臣就荷兰军舰侵权行为发表谈话</div>            <div class="source-card-meta">
 <span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-27</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463856.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463154.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463154.html" target="_blank" rel="noopener" style="--ni: 2;">
             <div class="source-card-title">Multi-Branch Forces Persist in Deep Research and Deep Training, Continuously Expanding the Boundaries of Military Training</div>
 <div class="source-card-zh" lang="zh-Hans">多军兵种部队坚持深研深训不断拓展练兵边界</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-25</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463154.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/bz_208549/16464526.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/bz_208549/16464526.html" target="_blank" rel="noopener" style="--ni: 3;">
             <div class="source-card-title">PAP Liaoning Provincial Corps Recruit Regiment Explores Precision Training Model</div>
 <div class="source-card-zh" lang="zh-Hans">武警辽宁总队新兵团探索精准施训模式</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-30</span>            </div>
             <div class="source-card-domain">www.81.cn/bz_208549/16464526.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16464435.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16464435.html" target="_blank" rel="noopener" style="--ni: 4;">
             <div class="source-card-title">PLA Daily Reporter at the Grassroots | The Plateau Motor Soldiers&#39; &#39;Roadbook&#39; Has Grown Thicker</div>
 <div class="source-card-zh" lang="zh-Hans">军报记者基层行丨高原汽车兵的“路书”变厚了</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464435.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16464198.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16464198.html" target="_blank" rel="noopener" style="--ni: 5;">
             <div class="source-card-title">An Army Regiment Improves Oversight Mechanisms to Guide Headquarters Elements in Transforming Their Work Style</div>
 <div class="source-card-zh" lang="zh-Hans">陆军某团完善监督机制引导机关转变作风</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464198.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16464201.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16464201.html" target="_blank" rel="noopener" style="--ni: 6;">
             <div class="source-card-title">Maritime Rescue, Troops Descend from the Sky! A Naval Aviation Regiment Conducts Day-Night Search-and-Rescue Training</div>
 <div class="source-card-zh" lang="zh-Hans">海上救援、天降奇兵！海军航空兵某团开展跨昼夜搜救训练</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16464201.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463894.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463894.html" target="_blank" rel="noopener" style="--ni: 7;">
             <div class="source-card-title">An Air Force Brigade Uses Scientific and Technological Means to Solve Training Problems</div>
 <div class="source-card-zh" lang="zh-Hans">空军某旅运用科技手段破解训练难题</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463894.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463485.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463485.html" target="_blank" rel="noopener" style="--ni: 8;">
             <div class="source-card-title">From Training Ground to Battlefield, They Have Given Tactical Training &#39;Wings of Science and Technology&#39;</div>
 <div class="source-card-zh" lang="zh-Hans">从训练场到战场，他们给战术训练插上“科技翅膀”</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463485.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463476.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463476.html" target="_blank" rel="noopener" style="--ni: 9;">
             <div class="source-card-title">Improve the Long-Term Mechanism for Cultivating the Combat Spirit</div>
 <div class="source-card-zh" lang="zh-Hans">健全战斗精神培育长效机制</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463476.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463487.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463487.html" target="_blank" rel="noopener" style="--ni: 10;">
             <div class="source-card-title">&#34;Positive and Negative Lists&#34; Appear Together on a Regular Basis — Doing Well and Doing Poorly Cannot Be Treated the Same</div>
 <div class="source-card-zh" lang="zh-Hans">“正反向清单”定期同时亮相，干好干坏不能一个样</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-26</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463487.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463153.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463153.html" target="_blank" rel="noopener" style="--ni: 11;">
             <div class="source-card-title">The Ninth Army-Wide Military Modeling Competition Results Exchange Conference Held</div>
 <div class="source-card-zh" lang="zh-Hans">第九届全军军事建模竞赛成果交流会举行</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-05-25</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16463153.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16463155.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16463155.html" target="_blank" rel="noopener" style="--ni: 12;">
             <div class="source-card-title">An Army Training Base Closely Tracks Troop Talent Demands and Optimizes Training Organization Models</div>
 <div class="source-card-zh" lang="zh-Hans">陆军某训练基地紧盯部队人才需求优化组训模式</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
@@ -1369,12 +1460,26 @@ No. 4 · Week ending 30 May 2026
   </article>
 
   <aside class="post-sidebar">
+    <div class="sb-card sb-card--toc">
+      <div class="sb-eyebrow">In this edition</div>
+      <ul class="toc-list" id="pw-toc">
+<li><a href="#s-signal">This Week's Signal</a></li>        <li><a href="#s-snapshot">Coverage Snapshot</a></li>
+<li><a href="#s-opening">Opening Note</a></li><li><a href="#s-stood-out">What Stood Out</a></li><li><a href="#s-why">Why It Matters</a></li><li><a href="#s-routine">Routine Baseline</a></li><li><a href="#s-term">Term to Know</a></li><li><a href="#s-watching">What I'm Watching Next</a></li>        <li><a href="#s-sources">Source Trail</a></li>
+      </ul>
+    </div>
+
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Significant</span></div>
 <div class="sb-row"><span class="label">Issue</span><span class="value">No. 4</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">30 May 2026</span></div>
 <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">40</span></div>
       <div class="sb-row"><span class="label">Model-flagged</span><span class="value">2</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">Cite this edition</div>
+      <div class="cite-text" id="pw-cite">Benjamin Yang, “The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week&#39;s Institutional Texture,” <em>The PLA Watch</em> No. 4, China Mil Watch, 30 May 2026. https://chinamilwatch.org/the-pla-watch/posts/2026-05-30.html</div>
+      <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
     </div>
 
     <div class="sb-card">
@@ -1400,10 +1505,75 @@ No. 4 · Week ending 30 May 2026
       <span class="footer-meta-label">Read alongside</span>
       <a href="../../index.html">China Mil Watch — Daily Brief</a><br>
       <a href="../../archive.html">China Mil Watch — Archive</a><br>
-      <a href="../../signals.html">Signals &amp; Methodology</a>
+      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
+      <a href="../../the-pla-watch/feed.xml">Atom feed</a>
     </div>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
+<script>
+(function () {
+  /* Scrollspy for the "In this edition" rail */
+  var toc = document.getElementById('pw-toc');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (current) current.classList.remove('active');
+          current = links[entry.target.id];
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
+  }
+
+  /* Copy citation */
+  var btn = document.getElementById('pw-cite-copy');
+  var cite = document.getElementById('pw-cite');
+  if (btn && cite) {
+    if (!navigator.clipboard) {
+      btn.parentElement.classList.add('no-clipboard');
+    } else {
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(cite.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = prev; }, 1800);
+        });
+      });
+    }
+  }
+})();
+</script>
 </body>
 </html>

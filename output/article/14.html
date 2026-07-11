@@ -32,182 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand);
+      outline: 2px solid var(--signal);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
     }
-    .site-header-inner {
-      max-width: 1180px;
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -216,311 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner {
-        gap: 0.35rem 0.5rem;
-        padding: 10px 14px;
-        height: auto;
-        min-height: 64px;
-        flex-wrap: wrap;
-      }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.35rem 0.85rem; flex-wrap: wrap; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; padding: 4px 0; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 8px 12px; gap: 0.3rem 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.25rem 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -530,43 +667,43 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
@@ -574,19 +711,25 @@ details summary:hover { color: var(--color-text-primary); }
         <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -603,10 +746,10 @@ details summary:hover { color: var(--color-text-primary); }
       Leading Troops Requires Knowing How to &#39;Speak&#39; and How to &#39;Listen&#39;—So How Does One Train the Skill of &#39;Listening&#39;?
     </h1>
 
-      <div class="article-page-title-zh">带兵要会“说”也要会“听”，那“听”这门本领该怎么练？</div>
+      <div class="article-page-title-zh" lang="zh-Hans">带兵要会“说”也要会“听”，那“听”这门本领该怎么练？</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>7 May 2026</span>
     </div>
@@ -630,7 +773,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">带兵，会“说”也要会“听” ■辽宁省军区干部 苏尔璕 4月9日，军报刊发了一组报道《让战士把话说完》和《听听战士的解释》。虽然标题表述不同，但细看之下，两篇报道指出的是同一个问题——基层带兵人要学会倾听。 会“说”与会“听”，是带兵育人相辅相成的核心能力，共同构成与战士有效沟通的闭环。相较之下，会“听”似乎更容易，毕竟只要“竖起耳朵”就可以。然而，就像两篇报道中主人公的经历，或因缺乏耐心，或因先入为主，在与战士交流中都因为不会“听”而带来困扰。 我曾在基层部队工作多年，有一个切身感受：凡是带兵带得好的人，都善于倾听。那些战士服气、把连队拧成一股绳的带兵人，未必嗓门最大、经验最多，但有一个共同点——耳朵“好使”。他们能从战士的只言片语里抓住关键，从一句抱怨里摸到症结，从一次沉默里读出隐情。很多战士心里的疙瘩，不是靠命令解开的，而是靠带兵人耐心倾听化解的——听明白了，解决问题的方向就明了；听进去了，带兵人和战士的心就近了；言路通了，战士的委屈就容易得到排解。 反观那些带兵吃力的人，问题往往不是出在“愿不愿听”——相信绝大多数基层带兵人都愿意走进战士内心，赢得信任；问题出在“会不会听”，出在容易“想当然”——战士刚开口就“堵”回去，事情没问清就先定调，看上去干脆利落，实则可能把问题越捂越大，把兵越推越远。 倾听不只是态度问题，还是一种需要培养的能力、需要锤炼的本领。不会倾听的带兵人，就像电台断了天线，战士的心声听不见，搞教育也落不到战士心里，再强的能力也成了空架子。 “听”这门本领怎么练？多年的基层经历，让我慢慢品出些门道—— 要学会慢下来。有些战士说话慢、思路不清晰，考验带兵人的耐心。不催、不截、不替他说完，等他把话说透。慢下来不是浪费时间，是给战士尊重，是让自己能了解实情。 要先放下预设。带兵人经验多、情况熟，这是底气，也容易形成“路径依赖”。如果心里揣着标准答案，战士刚说两句就会被“框住”。把现成的答案先收起来，才能对症下药、不偏不倚。 要听出弦外之音。听得见的是声音，听得懂的是兵心。战士的真实想法，往往不直说，语气里的停顿、沉默里的委屈、一句轻飘飘的“没事”，全是信息。 捋清思路、破解难题、化解矛盾、凝聚人心——你愿意听战士的，战士才愿意听你的。当交流顺畅、官兵同心，战斗力自然更牢固。 军报的两篇报道，把学会倾听这个问题端到桌面上，就是想提醒基层带兵人：别把倾听不当回事。它不是软指标，是硬功夫；不是可选项，是必答题，是被无数优秀带兵人验证过的、能直接出战斗力的真本领。 （姜玉坤整理） 七嘴八舌 肖茜 绘 《让战士把话说完》一文中，有个耐人寻味的细节：朱教导员深夜查哨时与战士石飞杰交谈，气氛融洽。夜深人静为何能让沟通破冰？因为安静的环境容易让朱教导员放下急于评判的心态，开始留意对方话语背后的真实情绪。战士未曾直白说出的委屈与诉求，往往就藏在语气起伏、沉默停顿与回避躲闪之中。 完整的倾听，有时还需要在听完之后去复述确认。如果战士说完后，带兵人能快速梳理事实与感受，用“我理解的对吗”去轻声核对，既准确回应了对方情绪，也主动邀请战士补充未尽之言。 带兵人愿意倾听，战士才敢说真话、讲实情、提意见；带兵人善于倾听，才能精准掌握战士思想动态、解决实际困难、化解矛盾隐患。当“让战士把话说完”成为带兵习惯，当“听听战士的解释”成为行动自觉，官兵彼此间就会越来越信任，形成心往一处想、劲往一处使的合力。 ——武警青海总队干部 郭紫阳 我在基层连队当过主官，也曾在机关工作，与《让战士把话说完》一文中朱教导员类似的任职经历让我感同身受。机关工作讲究效率、要求直奔主题，但基层带兵面对的是一个个鲜活的战士，需要的是耐心、理解与共情。 报道中，石飞杰说话慢，安宇航性子急，两人因为性格差异产生摩擦。朱教导员恰恰也是个急性子。当带兵人用自己的表达标准去要求战士，就容易忽略战士表达习惯、思维方式存在的差异性。 当“说重点”成为习惯，“慢慢说”就变得稀缺。能否“让战士把话说完”，检验的是带兵人的群众观念、作风涵养和带兵智慧。只有俯下身子、耐住性子，让战士愿说、敢说、把话说完，才能真正走进兵心、凝聚士气，夯实基层建设的基础。 ——吉林省辽源军分区干部 于 勇 军报4月15日刊发的《带兵慎言“回头再说”》，报道的同样是一句口头禅引发的带兵问题。在战士眼里，他反映的“水房堵了”这件“小事”，是他当下最具体、最头疼的困扰，如果不解决，他心里就有个疙瘩。带兵人一句轻飘飘的“回头再说”，无异于把这个疙瘩又给系紧了。 再往深处想，战士愿意开口反映问题，常常是对带兵人的“试探”。第一次说，看你怎么回应。你重视了、解决了，他就愿意说第二次、第三次，甚至把藏在心底的话也掏出来。反之，你随口应付一次，他很可能就再也不会开口。 把战士的事“当成自己的事”，不是把“基层至上、士兵第一”挂在嘴上、贴在墙上，而是落到马上就办、办就办好的行动上。即便当时确实忙或者一时解决不了，可否换个说法“这个问题我记下了，下午训练结束就去协调”，或者“这件事大概需要几天时间解决，我这周给你答复”。一个明确的态度，一个可期待的时限，比一句“回头再说”有温度，也更管用。 ——陆军某部干部 王宏亮 如今，不少基层连队训练任务重、考核测评多，带兵骨干身处管理末端，压力层层传导，有时难免心浮气躁，沟通简单粗放。然而，越是事务繁杂，越要锤炼严实作风。好的带兵作风，体现在一言一语的沟通中，藏在一事一物的落实里，赢在真心实意的相待上。 作为基层带兵人，与战士朝夕相处，一言一行都关乎官兵情谊，关乎带兵实效。基层带兵，不是“我说你听、我令你行”的简单执行，而是言传身教、走心帮带的过程。一句口头禅的转变，改的是沟通方式，正的是带兵作风，暖的是战士的心。 ——陆军某部二级上士 贾昊天</div>
+    <div class="original-body" lang="zh-Hans">带兵，会“说”也要会“听” ■辽宁省军区干部 苏尔璕 4月9日，军报刊发了一组报道《让战士把话说完》和《听听战士的解释》。虽然标题表述不同，但细看之下，两篇报道指出的是同一个问题——基层带兵人要学会倾听。 会“说”与会“听”，是带兵育人相辅相成的核心能力，共同构成与战士有效沟通的闭环。相较之下，会“听”似乎更容易，毕竟只要“竖起耳朵”就可以。然而，就像两篇报道中主人公的经历，或因缺乏耐心，或因先入为主，在与战士交流中都因为不会“听”而带来困扰。 我曾在基层部队工作多年，有一个切身感受：凡是带兵带得好的人，都善于倾听。那些战士服气、把连队拧成一股绳的带兵人，未必嗓门最大、经验最多，但有一个共同点——耳朵“好使”。他们能从战士的只言片语里抓住关键，从一句抱怨里摸到症结，从一次沉默里读出隐情。很多战士心里的疙瘩，不是靠命令解开的，而是靠带兵人耐心倾听化解的——听明白了，解决问题的方向就明了；听进去了，带兵人和战士的心就近了；言路通了，战士的委屈就容易得到排解。 反观那些带兵吃力的人，问题往往不是出在“愿不愿听”——相信绝大多数基层带兵人都愿意走进战士内心，赢得信任；问题出在“会不会听”，出在容易“想当然”——战士刚开口就“堵”回去，事情没问清就先定调，看上去干脆利落，实则可能把问题越捂越大，把兵越推越远。 倾听不只是态度问题，还是一种需要培养的能力、需要锤炼的本领。不会倾听的带兵人，就像电台断了天线，战士的心声听不见，搞教育也落不到战士心里，再强的能力也成了空架子。 “听”这门本领怎么练？多年的基层经历，让我慢慢品出些门道—— 要学会慢下来。有些战士说话慢、思路不清晰，考验带兵人的耐心。不催、不截、不替他说完，等他把话说透。慢下来不是浪费时间，是给战士尊重，是让自己能了解实情。 要先放下预设。带兵人经验多、情况熟，这是底气，也容易形成“路径依赖”。如果心里揣着标准答案，战士刚说两句就会被“框住”。把现成的答案先收起来，才能对症下药、不偏不倚。 要听出弦外之音。听得见的是声音，听得懂的是兵心。战士的真实想法，往往不直说，语气里的停顿、沉默里的委屈、一句轻飘飘的“没事”，全是信息。 捋清思路、破解难题、化解矛盾、凝聚人心——你愿意听战士的，战士才愿意听你的。当交流顺畅、官兵同心，战斗力自然更牢固。 军报的两篇报道，把学会倾听这个问题端到桌面上，就是想提醒基层带兵人：别把倾听不当回事。它不是软指标，是硬功夫；不是可选项，是必答题，是被无数优秀带兵人验证过的、能直接出战斗力的真本领。 （姜玉坤整理） 七嘴八舌 肖茜 绘 《让战士把话说完》一文中，有个耐人寻味的细节：朱教导员深夜查哨时与战士石飞杰交谈，气氛融洽。夜深人静为何能让沟通破冰？因为安静的环境容易让朱教导员放下急于评判的心态，开始留意对方话语背后的真实情绪。战士未曾直白说出的委屈与诉求，往往就藏在语气起伏、沉默停顿与回避躲闪之中。 完整的倾听，有时还需要在听完之后去复述确认。如果战士说完后，带兵人能快速梳理事实与感受，用“我理解的对吗”去轻声核对，既准确回应了对方情绪，也主动邀请战士补充未尽之言。 带兵人愿意倾听，战士才敢说真话、讲实情、提意见；带兵人善于倾听，才能精准掌握战士思想动态、解决实际困难、化解矛盾隐患。当“让战士把话说完”成为带兵习惯，当“听听战士的解释”成为行动自觉，官兵彼此间就会越来越信任，形成心往一处想、劲往一处使的合力。 ——武警青海总队干部 郭紫阳 我在基层连队当过主官，也曾在机关工作，与《让战士把话说完》一文中朱教导员类似的任职经历让我感同身受。机关工作讲究效率、要求直奔主题，但基层带兵面对的是一个个鲜活的战士，需要的是耐心、理解与共情。 报道中，石飞杰说话慢，安宇航性子急，两人因为性格差异产生摩擦。朱教导员恰恰也是个急性子。当带兵人用自己的表达标准去要求战士，就容易忽略战士表达习惯、思维方式存在的差异性。 当“说重点”成为习惯，“慢慢说”就变得稀缺。能否“让战士把话说完”，检验的是带兵人的群众观念、作风涵养和带兵智慧。只有俯下身子、耐住性子，让战士愿说、敢说、把话说完，才能真正走进兵心、凝聚士气，夯实基层建设的基础。 ——吉林省辽源军分区干部 于 勇 军报4月15日刊发的《带兵慎言“回头再说”》，报道的同样是一句口头禅引发的带兵问题。在战士眼里，他反映的“水房堵了”这件“小事”，是他当下最具体、最头疼的困扰，如果不解决，他心里就有个疙瘩。带兵人一句轻飘飘的“回头再说”，无异于把这个疙瘩又给系紧了。 再往深处想，战士愿意开口反映问题，常常是对带兵人的“试探”。第一次说，看你怎么回应。你重视了、解决了，他就愿意说第二次、第三次，甚至把藏在心底的话也掏出来。反之，你随口应付一次，他很可能就再也不会开口。 把战士的事“当成自己的事”，不是把“基层至上、士兵第一”挂在嘴上、贴在墙上，而是落到马上就办、办就办好的行动上。即便当时确实忙或者一时解决不了，可否换个说法“这个问题我记下了，下午训练结束就去协调”，或者“这件事大概需要几天时间解决，我这周给你答复”。一个明确的态度，一个可期待的时限，比一句“回头再说”有温度，也更管用。 ——陆军某部干部 王宏亮 如今，不少基层连队训练任务重、考核测评多，带兵骨干身处管理末端，压力层层传导，有时难免心浮气躁，沟通简单粗放。然而，越是事务繁杂，越要锤炼严实作风。好的带兵作风，体现在一言一语的沟通中，藏在一事一物的落实里，赢在真心实意的相待上。 作为基层带兵人，与战士朝夕相处，一言一行都关乎官兵情谊，关乎带兵实效。基层带兵，不是“我说你听、我令你行”的简单执行，而是言传身教、走心帮带的过程。一句口头禅的转变，改的是沟通方式，正的是带兵作风，暖的是战士的心。 ——陆军某部二级上士 贾昊天</div>
   </details>
 
 
@@ -639,10 +782,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a> · <a href="../the-pla-watch/index.html">The PLA Watch</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

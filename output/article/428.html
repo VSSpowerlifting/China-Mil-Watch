@@ -32,182 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand);
+      outline: 2px solid var(--signal);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
     }
-    .site-header-inner {
-      max-width: 1180px;
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -216,311 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner {
-        gap: 0.35rem 0.5rem;
-        padding: 10px 14px;
-        height: auto;
-        min-height: 64px;
-        flex-wrap: wrap;
-      }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.35rem 0.85rem; flex-wrap: wrap; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; padding: 4px 0; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 8px 12px; gap: 0.3rem 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.25rem 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -530,43 +667,43 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
@@ -574,19 +711,25 @@ details summary:hover { color: var(--color-text-primary); }
         <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -603,10 +746,10 @@ details summary:hover { color: var(--color-text-primary); }
       Giving Full Play to the Role of Red History in Forging the Soul and Educating People, &#39;Root-Seeking Squad&#39; Travels Thousands of Li to Comprehend the Original Aspiration (悟初心)
     </h1>
 
-      <div class="article-page-title-zh">发挥红色历史铸魂育人作用，“寻根小队”跨越千里悟初心</div>
+      <div class="article-page-title-zh" lang="zh-Hans">发挥红色历史铸魂育人作用，“寻根小队”跨越千里悟初心</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>19 May 2026</span>
     </div>
@@ -630,7 +773,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">第80集团军某旅发挥红色历史铸魂育人作用‍ “寻根小队”跨越‍千里悟初心‍ 解放军报讯 刘小语、特约记者付君臣报道：近日，第80集团军某旅“寻根小队”跨越千里，来到海南省儋州市白马井镇超头村，祭奠76年前在解放海南岛战役中牺牲的傅士俊等革命先烈。活动现场，第一次参加寻根活动的“登陆先锋营”新排长杜英鑫缓步上前，将鲜花轻放在老排长傅士俊墓碑前，并向他汇报单位近年来取得的成绩。 “先辈事迹是宝贵的红色资源，也是开展思想政治教育的生动教材。”该旅领导介绍，旅队历史厚重、战功卓著，先后涌现出大批先进集体和英雄模范。为了充分发挥红色历史铸魂育人作用，近年来，他们组织官兵开展寻根活动，引导大家在缅怀英烈中坚定理想信念，在赓续传承中砥砺强军本领。 实践中，该旅遴选官兵代表组成“寻根小队”，结合清明节、“八一”等时机，实地走访烈士陵园、战斗遗址等红色场所，重温先辈事迹、感悟先辈精神。“寻根小队”通过看望慰问老战士、寻访革命先辈后代等方式，收集整理先辈战斗故事，并将其制作成图文并茂、音视频结合的教育素材，增强思想政治教育吸引力、感染力。此外，该旅还与多家红色场馆建立教育协作机制，定期组织官兵前往参观见学，围绕“传承先辈精神、争当英雄传人”等主题开展现地教学，引导官兵从红色基因中汲取奋进力量。 “战斗中，老排长腹部受伤，肠子流了出来，但他强忍疼痛将肠子塞回腹中，坚持战斗至生命最后一刻……”在傅士俊烈士墓前，干部袁志伟结合烈士的战斗事迹，讲述自己参加纪念中国人民抗日战争暨世界反法西斯战争胜利80周年阅兵式的经历。“训练场上，每当感到坚持不下去的时候，我的脑海中总会浮现出老排长英勇战斗的画面，全身又充满了力量。”他的发言引起现场官兵强烈共鸣。 该旅领导介绍，他们将“寻根小队”收集整理的宝贵历史素材，纳入旅队教育素材库，供各级教育骨干备课时选用，让寻根活动效果实现最大化。</div>
+    <div class="original-body" lang="zh-Hans">第80集团军某旅发挥红色历史铸魂育人作用‍ “寻根小队”跨越‍千里悟初心‍ 解放军报讯 刘小语、特约记者付君臣报道：近日，第80集团军某旅“寻根小队”跨越千里，来到海南省儋州市白马井镇超头村，祭奠76年前在解放海南岛战役中牺牲的傅士俊等革命先烈。活动现场，第一次参加寻根活动的“登陆先锋营”新排长杜英鑫缓步上前，将鲜花轻放在老排长傅士俊墓碑前，并向他汇报单位近年来取得的成绩。 “先辈事迹是宝贵的红色资源，也是开展思想政治教育的生动教材。”该旅领导介绍，旅队历史厚重、战功卓著，先后涌现出大批先进集体和英雄模范。为了充分发挥红色历史铸魂育人作用，近年来，他们组织官兵开展寻根活动，引导大家在缅怀英烈中坚定理想信念，在赓续传承中砥砺强军本领。 实践中，该旅遴选官兵代表组成“寻根小队”，结合清明节、“八一”等时机，实地走访烈士陵园、战斗遗址等红色场所，重温先辈事迹、感悟先辈精神。“寻根小队”通过看望慰问老战士、寻访革命先辈后代等方式，收集整理先辈战斗故事，并将其制作成图文并茂、音视频结合的教育素材，增强思想政治教育吸引力、感染力。此外，该旅还与多家红色场馆建立教育协作机制，定期组织官兵前往参观见学，围绕“传承先辈精神、争当英雄传人”等主题开展现地教学，引导官兵从红色基因中汲取奋进力量。 “战斗中，老排长腹部受伤，肠子流了出来，但他强忍疼痛将肠子塞回腹中，坚持战斗至生命最后一刻……”在傅士俊烈士墓前，干部袁志伟结合烈士的战斗事迹，讲述自己参加纪念中国人民抗日战争暨世界反法西斯战争胜利80周年阅兵式的经历。“训练场上，每当感到坚持不下去的时候，我的脑海中总会浮现出老排长英勇战斗的画面，全身又充满了力量。”他的发言引起现场官兵强烈共鸣。 该旅领导介绍，他们将“寻根小队”收集整理的宝贵历史素材，纳入旅队教育素材库，供各级教育骨干备课时选用，让寻根活动效果实现最大化。</div>
   </details>
 
 
@@ -639,10 +782,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a> · <a href="../the-pla-watch/index.html">The PLA Watch</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

@@ -32,182 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand);
+      outline: 2px solid var(--signal);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
     }
-    .site-header-inner {
-      max-width: 1180px;
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -216,311 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner {
-        gap: 0.35rem 0.5rem;
-        padding: 10px 14px;
-        height: auto;
-        min-height: 64px;
-        flex-wrap: wrap;
-      }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.35rem 0.85rem; flex-wrap: wrap; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; padding: 4px 0; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 8px 12px; gap: 0.3rem 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.25rem 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -530,43 +667,43 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
@@ -574,19 +711,25 @@ details summary:hover { color: var(--color-text-primary); }
         <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -604,10 +747,10 @@ details summary:hover { color: var(--color-text-primary); }
       How to Find the Right Way to Coexist with AI? Hear What They Have to Say
     </h1>
 
-      <div class="article-page-title-zh">如何找到与AI的正确相处之道？听听他们怎么说</div>
+      <div class="article-page-title-zh" lang="zh-Hans">如何找到与AI的正确相处之道？听听他们怎么说</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>21 May 2026</span>
     </div>
@@ -631,7 +774,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">近日，军报刊发了一组关于“AI进军营”的调研报告，不少读者来稿畅谈感受。如何找到与AI的正确相处之道？听听他们怎么说—— 浪潮来时，何以不慌 ■陆军某部干部 张来贵 开放的世界，没有封闭的军营。 AI不像智能手机，是一个看得见、摸得着的实物，可以被明确地发下去、管起来、收上来。它更像一种无影无形的“能力”，渗透在搜索框里，隐藏在各类应用程序中，官兵只要触网，便会与它“不期而遇”。 有人说，相比智能手机使用管理的日趋规范，AI应用给部队管理带来新挑战。这种担忧不无道理，却也不必因此过度焦虑。细读军报近期刊发的一组关于“AI进军营”的调研报告，我以为，关键在于把握AI替代不了的3种能力：判断力、领悟力和执行力。它们是我们面对新科技浪潮时能站稳脚跟的底气和定力。 AI能瞬间生成100种答案，但它从来不会告诉你，哪一个是“对”的。什么方法适合这支连队，什么话语能走进基层官兵的心，什么决策在此时此地最为合理稳妥，这些都需要人来进行判断。 判断的背后，是对人的理解、对现场的把控、对分寸的拿捏，需要通过实践来检验。这些往往来自日复一日和战友摸爬滚打的经历，来自那些成功过也失败过的历练沉淀。把判断力牢牢攥在手里，就不会被算法的“信息洪流”冲倒。 AI能写出文笔漂亮的心得体会，能生成逻辑严密的发言文稿，看似省心省力，但省掉的“自己琢磨”过程，恰恰是最有价值的部分。 真正属于一个人的智慧，是在思考琢磨后把模糊感觉变成清晰的认知。领悟力，是在自己的生命经验里点燃的思想火种。这个火种，谁也给不了，谁也拿不走。守住领悟力，就不会在AI带来的“便利”中荒废了自己的头脑。 AI最不能替代的，就是用双手去触碰的真实。AI可以模拟训练方案，但它不能替你流汗；AI可以分析装备原理，但它不能替你形成肌肉记忆，不能帮你在关键时刻条件反射般做出正确动作。所有虚拟的回答，最终都要落回现实世界里来检验。任务能不能完成、阵地能不能守住，不是代码跑通了就可以，要人去跑、去爬、去扛，去经历那些计划之外的突发状况。 执行，不是照章办事的机械重复，而是把意图变成实效，把方案变成战果。这个过程，是在泥里水里泡出来的，是和战友你拉我一把、我推你一下拼出来的。任何屏幕都给不了这里面长出来的力量和信赖。把执行力扛在肩上，人就能在虚拟的诱惑面前踩得实、站得稳。 判断力让人清醒，领悟力让人深刻，执行力让人踏实。这3种能力，不在别处，就在训练场上的挥汗如雨里，在学习室的苦思冥想里，在日常勤务的细碎繁琐里，在一次次真诚的谈心与扎实的行动里。 AI浪潮来临时，变的是技术的潮头，不变的是军人的追求。把握好判断力、领悟力和执行力，就能在浪潮袭来时心中不慌，脚下有力。 在“秒回”的时代慢下来 ■陆军某部干部 段雅琪 AI的风，到底在军营里吹动了什么？ 4月21日，军报刊发《“我和你面对面，你却总是问AI”》一文，揭示AI时代带给军营的挑战。小到一篇思想汇报，大到未来成长规划，以前年轻战士往往更愿意向班长求教，如今他们的第一反应往往是掏手机。要理解这种变化，不能只盯着使用AI这个行为本身。作为带兵人，我们更要去追问：为什么冷冰冰的算法，比“活生生”的班长更有吸引力？ 报道中，一位新兵说：“AI又不会嫌我烦，我问多少遍它都耐心回答，批评它100遍都不会发脾气。”这句话无疑给出了一些答案：AI可以秒回，可以很亲切，可以不评判。年轻战士渴望成长又害怕犯错，但一些带兵人往往心太急，急得忘了战士还在学走路，却拿着跑步的标准去丈量。一个问题反复被问，脸上就有了不耐烦；看到一篇心得写得不好，就觉得态度不端正。长此以往，战士的心门自然就关上了。 然而，战场上如果没网没电，AI就会瘫痪，但战友们不会离开。这份相互依靠的信任，不是靠算法生成的，是在朝夕相处、甘苦与共里“慢熬”出来的。这些AI给不了的体验和感触，我们称之为“爱”。 所以，面对AI浪潮，带兵人要做的不是堵塞，而是引导。带兵人要让战士明白：AI是帮助提升能力的工具，不是替代思考与情感的捷径。AI可以给你答案，但不对你的成长负责；AI可以陪你聊天，但不会陪你走向战场。 在这个“秒回”的时代，“慢下来”需要勇气，更需要双向的奔赴。 对带兵人而言，“慢”意味着多一点包容和耐心。战士反复提问题，不急着皱眉，试着去想他为什么没记住；战士的想法不成熟，不“一棒子打死”，试着去找到那些值得肯定的“火花”。给战士成长的空间，也是在给带兵人自己沉淀的空间。 对战士而言，“慢”意味着允许班长骨干有思考的过程。有些问题AI能秒回，但班长可能需要想一想、需要跟主官商量一下。因为他要给出的不是标准答案，而是结合单位和个人实际情况的“定制方案”。 军营的魅力，从来不在“完美”，而在那种粗粝而真实、汗泪交织的共同经历里。带兵人也会疲惫、烦躁，会有答不上来的问题，但可以坦诚跟战士说：这个问题我也没想透，咱们一起琢磨琢磨。带兵，就是用“爱”去做AI做不了的事，而那个会在关键时刻搭把手的人，比秒回的AI更值得托付。 AI的浪潮挡不住，也不必去阻挡。带兵人愿意慢下来，战士就能稳下来；带兵人愿意沉下去，战士就能更扎实地成长。 让我们把年轻战友从AI应用的对话框，带回这个滚烫的真实世界。这里有审视，更有拥抱；有批评，更有陪伴。而当最终走上战场，共同面对一切不确定因素的，不是手机里一串串代码，而是身旁生死与共的战友。 守住“芯”与“心”的边界 ■空军某部干部 张佳泉 李 江 绘 当教育方案的初稿由AI快速生成，当思想困惑的解答先求助于屏幕那头的算法，当战友间的讨论被一句“让AI看看”替代——AI正以不可阻挡之势走进军营。 不可否认，AI是基层工作的一个“帮手”。查资料、理思路、整数据，繁琐的事务性工作，交给AI能快速出成果、立竿见影提效率。这种科技赋能，是时代发展的必然，我们理应主动接纳、善加利用。但正如“AI进军营”系列调研报告提示的那样，便利不能演变成依赖，高效更不能突破底线。 《“我和你面对面，你却总是问AI”》中描绘的场景，在基层并非个例。学习中的难题、思想上的困惑、生活里的琐事，如果寄希望于算法给出标准答案，就容易让近在咫尺的战友变成“背景板”，让经验丰富的骨干成为“局外人”。 AI再智能，终究是“芯”的产物，算得出精准数据，算不出真挚战友情；给得了标准答案，给不了贴心温度。班长一句“别怕，有我”的鼓励，能驱散训练失利的阴霾；战友一个默契的眼神，能传递并肩前行的力量；危急关头一声“跟我上”，能鼓起攻坚克难的勇气。军队的战斗力，从来不止于装备技术的先进，更在于兵心的凝聚、情感的联结和血性的传承。 AI再“贴心”，本质上仍是数据运算工具，存在敏感信息留存、外泄、被窃取的隐患，一次随意的提问、一句无心的输入、一个疏忽的操作，都可能成为泄密的缺口，给部队安全带来风险。近期军报还刊发了一篇言论《面对AI，切莫“闭眼冲”》，就提示我们使用AI不能只图方便、不顾底线，什么能问、什么不能提，要牢牢记在心间、落在行动上。 AI再“聪明”，智慧也不是凭空而来，而是源于不断“喂数据”中植入的“实战思维”。正如《“人脑有多用心，AI才能有多聪明”》中理清的人机协同核心逻辑，人是AI的主导者，AI是服务战斗力的工具。我们借助AI是为了提升工作质效、破解训练难题，而非放弃独立思考、丢掉优良传统。 时代在变，技术焕新，AI进军营是大势所趋，但“芯”的智能替代不了“心”的力量，技术便利也不能突破纪律底线和情感边界。作为基层官兵，我们既要拥抱科技、善用AI，也要守住“芯”与“心”的边界。因为，战友情的温度、守纪律的态度和谋打赢的执着，才是我们最坚实的底气。</div>
+    <div class="original-body" lang="zh-Hans">近日，军报刊发了一组关于“AI进军营”的调研报告，不少读者来稿畅谈感受。如何找到与AI的正确相处之道？听听他们怎么说—— 浪潮来时，何以不慌 ■陆军某部干部 张来贵 开放的世界，没有封闭的军营。 AI不像智能手机，是一个看得见、摸得着的实物，可以被明确地发下去、管起来、收上来。它更像一种无影无形的“能力”，渗透在搜索框里，隐藏在各类应用程序中，官兵只要触网，便会与它“不期而遇”。 有人说，相比智能手机使用管理的日趋规范，AI应用给部队管理带来新挑战。这种担忧不无道理，却也不必因此过度焦虑。细读军报近期刊发的一组关于“AI进军营”的调研报告，我以为，关键在于把握AI替代不了的3种能力：判断力、领悟力和执行力。它们是我们面对新科技浪潮时能站稳脚跟的底气和定力。 AI能瞬间生成100种答案，但它从来不会告诉你，哪一个是“对”的。什么方法适合这支连队，什么话语能走进基层官兵的心，什么决策在此时此地最为合理稳妥，这些都需要人来进行判断。 判断的背后，是对人的理解、对现场的把控、对分寸的拿捏，需要通过实践来检验。这些往往来自日复一日和战友摸爬滚打的经历，来自那些成功过也失败过的历练沉淀。把判断力牢牢攥在手里，就不会被算法的“信息洪流”冲倒。 AI能写出文笔漂亮的心得体会，能生成逻辑严密的发言文稿，看似省心省力，但省掉的“自己琢磨”过程，恰恰是最有价值的部分。 真正属于一个人的智慧，是在思考琢磨后把模糊感觉变成清晰的认知。领悟力，是在自己的生命经验里点燃的思想火种。这个火种，谁也给不了，谁也拿不走。守住领悟力，就不会在AI带来的“便利”中荒废了自己的头脑。 AI最不能替代的，就是用双手去触碰的真实。AI可以模拟训练方案，但它不能替你流汗；AI可以分析装备原理，但它不能替你形成肌肉记忆，不能帮你在关键时刻条件反射般做出正确动作。所有虚拟的回答，最终都要落回现实世界里来检验。任务能不能完成、阵地能不能守住，不是代码跑通了就可以，要人去跑、去爬、去扛，去经历那些计划之外的突发状况。 执行，不是照章办事的机械重复，而是把意图变成实效，把方案变成战果。这个过程，是在泥里水里泡出来的，是和战友你拉我一把、我推你一下拼出来的。任何屏幕都给不了这里面长出来的力量和信赖。把执行力扛在肩上，人就能在虚拟的诱惑面前踩得实、站得稳。 判断力让人清醒，领悟力让人深刻，执行力让人踏实。这3种能力，不在别处，就在训练场上的挥汗如雨里，在学习室的苦思冥想里，在日常勤务的细碎繁琐里，在一次次真诚的谈心与扎实的行动里。 AI浪潮来临时，变的是技术的潮头，不变的是军人的追求。把握好判断力、领悟力和执行力，就能在浪潮袭来时心中不慌，脚下有力。 在“秒回”的时代慢下来 ■陆军某部干部 段雅琪 AI的风，到底在军营里吹动了什么？ 4月21日，军报刊发《“我和你面对面，你却总是问AI”》一文，揭示AI时代带给军营的挑战。小到一篇思想汇报，大到未来成长规划，以前年轻战士往往更愿意向班长求教，如今他们的第一反应往往是掏手机。要理解这种变化，不能只盯着使用AI这个行为本身。作为带兵人，我们更要去追问：为什么冷冰冰的算法，比“活生生”的班长更有吸引力？ 报道中，一位新兵说：“AI又不会嫌我烦，我问多少遍它都耐心回答，批评它100遍都不会发脾气。”这句话无疑给出了一些答案：AI可以秒回，可以很亲切，可以不评判。年轻战士渴望成长又害怕犯错，但一些带兵人往往心太急，急得忘了战士还在学走路，却拿着跑步的标准去丈量。一个问题反复被问，脸上就有了不耐烦；看到一篇心得写得不好，就觉得态度不端正。长此以往，战士的心门自然就关上了。 然而，战场上如果没网没电，AI就会瘫痪，但战友们不会离开。这份相互依靠的信任，不是靠算法生成的，是在朝夕相处、甘苦与共里“慢熬”出来的。这些AI给不了的体验和感触，我们称之为“爱”。 所以，面对AI浪潮，带兵人要做的不是堵塞，而是引导。带兵人要让战士明白：AI是帮助提升能力的工具，不是替代思考与情感的捷径。AI可以给你答案，但不对你的成长负责；AI可以陪你聊天，但不会陪你走向战场。 在这个“秒回”的时代，“慢下来”需要勇气，更需要双向的奔赴。 对带兵人而言，“慢”意味着多一点包容和耐心。战士反复提问题，不急着皱眉，试着去想他为什么没记住；战士的想法不成熟，不“一棒子打死”，试着去找到那些值得肯定的“火花”。给战士成长的空间，也是在给带兵人自己沉淀的空间。 对战士而言，“慢”意味着允许班长骨干有思考的过程。有些问题AI能秒回，但班长可能需要想一想、需要跟主官商量一下。因为他要给出的不是标准答案，而是结合单位和个人实际情况的“定制方案”。 军营的魅力，从来不在“完美”，而在那种粗粝而真实、汗泪交织的共同经历里。带兵人也会疲惫、烦躁，会有答不上来的问题，但可以坦诚跟战士说：这个问题我也没想透，咱们一起琢磨琢磨。带兵，就是用“爱”去做AI做不了的事，而那个会在关键时刻搭把手的人，比秒回的AI更值得托付。 AI的浪潮挡不住，也不必去阻挡。带兵人愿意慢下来，战士就能稳下来；带兵人愿意沉下去，战士就能更扎实地成长。 让我们把年轻战友从AI应用的对话框，带回这个滚烫的真实世界。这里有审视，更有拥抱；有批评，更有陪伴。而当最终走上战场，共同面对一切不确定因素的，不是手机里一串串代码，而是身旁生死与共的战友。 守住“芯”与“心”的边界 ■空军某部干部 张佳泉 李 江 绘 当教育方案的初稿由AI快速生成，当思想困惑的解答先求助于屏幕那头的算法，当战友间的讨论被一句“让AI看看”替代——AI正以不可阻挡之势走进军营。 不可否认，AI是基层工作的一个“帮手”。查资料、理思路、整数据，繁琐的事务性工作，交给AI能快速出成果、立竿见影提效率。这种科技赋能，是时代发展的必然，我们理应主动接纳、善加利用。但正如“AI进军营”系列调研报告提示的那样，便利不能演变成依赖，高效更不能突破底线。 《“我和你面对面，你却总是问AI”》中描绘的场景，在基层并非个例。学习中的难题、思想上的困惑、生活里的琐事，如果寄希望于算法给出标准答案，就容易让近在咫尺的战友变成“背景板”，让经验丰富的骨干成为“局外人”。 AI再智能，终究是“芯”的产物，算得出精准数据，算不出真挚战友情；给得了标准答案，给不了贴心温度。班长一句“别怕，有我”的鼓励，能驱散训练失利的阴霾；战友一个默契的眼神，能传递并肩前行的力量；危急关头一声“跟我上”，能鼓起攻坚克难的勇气。军队的战斗力，从来不止于装备技术的先进，更在于兵心的凝聚、情感的联结和血性的传承。 AI再“贴心”，本质上仍是数据运算工具，存在敏感信息留存、外泄、被窃取的隐患，一次随意的提问、一句无心的输入、一个疏忽的操作，都可能成为泄密的缺口，给部队安全带来风险。近期军报还刊发了一篇言论《面对AI，切莫“闭眼冲”》，就提示我们使用AI不能只图方便、不顾底线，什么能问、什么不能提，要牢牢记在心间、落在行动上。 AI再“聪明”，智慧也不是凭空而来，而是源于不断“喂数据”中植入的“实战思维”。正如《“人脑有多用心，AI才能有多聪明”》中理清的人机协同核心逻辑，人是AI的主导者，AI是服务战斗力的工具。我们借助AI是为了提升工作质效、破解训练难题，而非放弃独立思考、丢掉优良传统。 时代在变，技术焕新，AI进军营是大势所趋，但“芯”的智能替代不了“心”的力量，技术便利也不能突破纪律底线和情感边界。作为基层官兵，我们既要拥抱科技、善用AI，也要守住“芯”与“心”的边界。因为，战友情的温度、守纪律的态度和谋打赢的执着，才是我们最坚实的底气。</div>
   </details>
 
 
@@ -640,10 +783,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a> · <a href="../the-pla-watch/index.html">The PLA Watch</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

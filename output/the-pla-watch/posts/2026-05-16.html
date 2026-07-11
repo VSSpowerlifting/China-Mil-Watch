@@ -27,66 +27,103 @@
 
   <link rel="icon" type="image/png" href="../../logo-icon.png">
   <link rel="apple-touch-icon" href="../../logo-icon.png">
+  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://chinamilwatch.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700;8..60,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system (shared with parent brand) ────────────────────────── */
+    /* ══ The PLA Watch design tokens — dark "night desk" surface ═════════ */
     :root {
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
-      --color-brand-light:    #D11C36;
-      --color-bg:             #0E1520;        /* ink navy */
-      --color-bg-card:        #141D2B;        /* lifted navy surface */
-      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
-      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
-      --color-text-primary:   #EDE9E0;        /* warm off-white */
-      --color-text-secondary: #9A9590;        /* mid warm gray */
-      --color-text-muted:     #5E5A55;        /* quiet gray */
-      --color-border:         #273040;        /* dark rule */
-      --color-border-soft:    #1C2738;        /* softer dark rule */
+      --color-brand-light:    #D8354C;       /* links / hover on dark — lifted for contrast */
+      --color-bg:             #0E1520;       /* ink navy */
+      --color-bg-card:        #131C29;       /* lifted navy surface */
+      --color-bg-header:      #0A1019;       /* masthead, slightly deeper */
+      --color-bg-sidebar:     #18222F;       /* sidebar surface */
+      --color-text-primary:   #EDE9E0;       /* warm off-white */
+      --color-text-secondary: #A8A29A;       /* mid warm gray */
+      --color-text-muted:     #746E67;       /* quiet gray */
+      --color-border:         #273040;       /* dark rule */
+      --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Shared vocabulary with the daily surface */
+      --ink:   var(--color-text-primary);
+      --ink-2: var(--color-text-secondary);
+      --ink-3: var(--color-text-muted);
+      --line:  var(--color-border);
+      --line-soft: var(--color-border-soft);
+      --signal: var(--color-brand);
+      --signal-bright: #E05A6D;
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1100px;
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
       background-color: var(--color-bg);
-      /* Editorial paper grain — vertical hairline texture rather than the dashboard grid */
-      background-image:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.012) 0,
-          rgba(255, 255, 255, 0.012) 1px,
-          transparent 1px,
-          transparent 6px
-        );
       color: var(--color-text-primary);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--color-brand-light); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand-light);
+      outline: 2px solid var(--signal-bright);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
+    /* ── Reading progress rail (scroll-driven, progressive) ────────────── */
+    .progress-rail {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      z-index: 90;
+      pointer-events: none;
+      background: transparent;
+    }
+    .progress-rail b {
+      display: block;
+      height: 100%;
+      background: var(--color-brand-light);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+    }
+    @supports (animation-timeline: scroll()) {
+      .progress-rail b {
+        animation: pw-progress linear both;
+        animation-timeline: scroll(root);
+      }
+      @keyframes pw-progress {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+    }
+
+    /* ── Masthead — editorial nameplate ─────────────────────────────────── */
     .pw-masthead {
       background: var(--color-bg-header);
       border-top: 4px solid var(--color-brand);
@@ -95,7 +132,7 @@
       position: relative;
     }
     .pw-masthead-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       padding: 1.4rem 2rem 1.1rem;
       display: flex;
@@ -118,12 +155,13 @@
     .pw-nameplate:hover { text-decoration: none; }
     .pw-nameplate .pw-mark {
       font-family: var(--serif);
-      font-weight: 800;
+      font-weight: 700;
       font-style: italic;
       font-size: 2.2rem;
       letter-spacing: -0.015em;
       color: var(--color-text-primary);
-      line-height: 1;
+      line-height: 1.1;
+      padding-bottom: 0.05em;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -138,10 +176,10 @@
       align-self: center;
     }
     .pw-nameplate .pw-tag {
-      font-family: var(--sans);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
       align-self: center;
@@ -153,67 +191,66 @@
       font-family: var(--sans);
       font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       text-decoration: none;
       padding: 4px 0;
       position: relative;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: color 150ms ease;
     }
-    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .pw-nav a.active { color: var(--color-text-primary); }
-    .pw-nav a.active::after {
+    .pw-nav a::after {
       content: "";
       position: absolute;
       left: 0; right: 0; bottom: -2px;
       height: 2px;
       background: var(--color-brand);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
     }
-    .pw-nav .nav-sep {
-      color: var(--color-border);
-      font-weight: 400;
-      letter-spacing: 0;
-    }
-    .pw-nav .pw-nav-back {
-      color: var(--color-brand);
-      font-weight: 600;
-    }
+    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
+    .pw-nav a:hover::after { transform: scaleX(1); }
+    .pw-nav a.active { color: var(--color-text-primary); }
+    .pw-nav a.active::after { transform: scaleX(1); }
+    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
+    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      font-family: var(--sans);
-      font-size: 0.68rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
     }
     .pw-masthead-rule .left,
     .pw-masthead-rule .right { display: flex; gap: 1.1rem; }
 
-    /* ── Main layout ───────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1100px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
       padding: 3rem 2rem 5rem;
     }
 
-    /* ── Footer ───────────────────────────────────────────────────────── */
+    /* ── Footer ─────────────────────────────────────────────────────────── */
     .site-footer {
       background: var(--color-bg-card);
       border-top: 1px solid var(--color-border);
       padding: 2.5rem 2rem;
     }
     .footer-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -244,33 +281,34 @@
     }
     .footer-meta {
       font-family: var(--sans);
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       color: var(--color-text-muted);
-      line-height: 1.7;
-      letter-spacing: 0.04em;
+      line-height: 1.85;
     }
     .footer-meta a { color: var(--color-text-secondary); font-weight: 600; }
+    .footer-meta a:hover { color: var(--color-text-primary); }
     .footer-meta-label {
       display: block;
+      font-family: var(--mono);
       font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--color-brand);
+      color: var(--signal-bright);
       margin-bottom: 0.5rem;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
     }
 
-    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    /* ── Edition badges — shared, dark-theme chips ──────────────────────── */
     .pw-badge {
       display: inline-block;
       vertical-align: middle;
-      font-family: var(--sans);
-      font-size: 0.625rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 2px 8px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
     .pw-badge--significant {
       background: rgba(179, 19, 43, 0.14);
@@ -288,14 +326,63 @@
       border: 1px solid rgba(224, 164, 88, 0.35);
     }
 
-    /* ── Utilities ─────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Tablet / mobile ───────────────────────────────────────────────── */
+    /* Shared motion primitives — start states only under .js inside an
+       un-revealed [data-reveal]; no-JS, print, and reduced-motion get the
+       finished artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1.1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 45ms + 200ms), 850ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .snap-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .snap-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.9s var(--ease) 250ms;
+    }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .pw-masthead-inner { padding: 1.2rem 1.25rem 0.95rem; }
       .pw-masthead-top { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
@@ -304,7 +391,7 @@
       .pw-nameplate .pw-tag { display: none; }
       .pw-nav { gap: 1rem; }
       .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
-      .pw-masthead-rule { font-size: 0.62rem; letter-spacing: 0.12em; }
+      .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
       .pw-masthead-rule .right { display: none; }
       main { padding: 2rem 1.25rem 3.5rem; }
       body { font-size: 0.9375rem; }
@@ -318,13 +405,25 @@
       .pw-nav .nav-sep { display: none; }
     }
     @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
+      .pw-nav a[href$="archive.html"]:not(.active),
+      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
     }
 
-    /* ── Print — light palette, no chrome, ink-friendly ───────────────── */
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+      .progress-rail { display: none; }
+    }
+
+    /* ── Print — light palette, no chrome, ink-friendly ────────────────── */
     @media print {
       :root {
         --color-brand:          #8B0E20;
+        --color-brand-light:    #8B0E20;
         --color-bg:             #ffffff;
         --color-bg-card:        #ffffff;
         --color-bg-header:      #ffffff;
@@ -335,8 +434,8 @@
         --color-border:         #bbbbbb;
         --color-border-soft:    #dddddd;
       }
-      body { background: #ffffff !important; background-image: none !important; }
-      .pw-nav, .site-footer { display: none; }
+      body { background: #ffffff !important; }
+      .pw-nav, .site-footer, .progress-rail { display: none; }
       .pw-masthead { border-top-width: 3px; }
       .pw-nameplate .pw-mark .the { color: #555555; }
       a { color: inherit; text-decoration: none; }
@@ -347,7 +446,7 @@
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 264px;
   gap: 3.5rem;
   align-items: flex-start;
 }
@@ -356,23 +455,105 @@
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 }
 
-/* ── Issue cover image (editorial PNG) ──────────────────────────────── */
-.cover-figure {
-  margin: 0 0 2rem;
+/* ── Edition header — briefing head, structured not decorated ───────── */
+.hero {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 0 1.9rem;
+  margin-bottom: 2.25rem;
 }
+.hero-meta-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hero-edition::before {
+  content: "";
+  width: 26px; height: 2px;
+  background: var(--color-brand);
+}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: 1.05rem;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.hero-dek {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.4rem;
+  max-width: 58ch;
+}
+.byline {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+}
+.byline-name { color: var(--color-text-primary); font-weight: 600; }
+.byline-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.hero-meta .meta-item { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.hero-meta .meta-item .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Issue cover image ──────────────────────────────────────────────── */
+.cover-figure { margin: 0 0 2rem; }
 .cover-figure img {
   display: block;
   width: 100%;
   height: auto;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
 }
 .cover-figure figcaption {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-top: 0.55rem;
   text-align: right;
 }
@@ -381,49 +562,33 @@
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--color-border-soft);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
   font-family: var(--sans);
   font-size: 0.76rem;
   color: var(--color-text-muted);
   line-height: 1.55;
 }
-.cover-credit-note .label {
-  font-weight: 700;
-  color: var(--color-text-secondary);
-}
+.cover-credit-note .label { font-weight: 700; color: var(--color-text-secondary); }
 .cover-credit-note a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.cover-credit-note a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
+.cover-credit-note a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
 
-/* ── Visual Context — restrained editorial image card ───────────────── */
-.visual-context {
-  margin: 0 0 2.5rem;
-}
+/* ── Visual Context ─────────────────────────────────────────────────── */
+.visual-context { margin: 0 0 2.5rem; }
 .media-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   margin-bottom: 1rem;
 }
 .media-card:last-child { margin-bottom: 0; }
-.media-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--color-bg-card);
-}
-.media-card-body {
-  padding: 0.95rem 1.15rem 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.media-card img { display: block; width: 100%; height: auto; background: var(--color-bg-card); }
+.media-card-body { padding: 0.95rem 1.15rem 1rem; border-top: 1px solid var(--color-border-soft); }
 .media-caption {
   font-family: var(--serif);
   font-size: 0.95rem;
@@ -432,25 +597,19 @@
   margin-bottom: 0.5rem;
 }
 .media-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .media-meta a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.media-meta a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
-.media-meta .sep {
-  margin: 0 0.45rem;
-  color: var(--color-border);
-}
+.media-meta a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+.media-meta .sep { margin: 0 0.45rem; color: var(--color-border); }
 .media-note {
   font-family: var(--sans);
   font-size: 0.7rem;
@@ -464,120 +623,10 @@
   .media-caption { font-size: 0.9rem; }
 }
 
-/* ── Editorial hero — large display, generous spacing, watermark ────── */
-.hero {
-  position: relative;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 2.4rem 2.4rem 2rem;
-  margin-bottom: 2.5rem;
-  overflow: hidden;
-}
-.hero::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.4rem;
-  bottom: -1.6rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 7.5rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.045;
-  pointer-events: none;
-  line-height: 1;
-}
-.hero-meta-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-}
-.hero-eyebrow::before {
-  content: "";
-  width: 26px; height: 2px;
-  background: var(--color-brand);
-}
-.hero-edition {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.hero-edition .pw-badge { margin-left: 0.5rem; }
-.hero-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 1.12;
-  letter-spacing: -0.018em;
-  color: var(--color-text-primary);
-  margin-bottom: 1.05rem;
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-}
-.hero-dek {
-  font-family: var(--serif);
-  font-size: 1.18rem;
-  color: var(--color-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.5rem;
-  max-width: 660px;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  border-top: 1px solid var(--color-border-soft);
-  padding-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta .meta-item { display: inline-flex; gap: 0.4rem; align-items: baseline; }
-.hero-meta .meta-item .num {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--color-text-primary);
-}
-@media (max-width: 768px) {
-  .hero { padding: 1.7rem 1.5rem 1.5rem; }
-  .hero-title { font-size: 1.85rem; }
-  .hero-dek { font-size: 1.05rem; }
-  .hero::after { font-size: 4.5rem; }
-}
-
-/* ── Module section heading ────────────────────────────────────────── */
+/* ── Module section heading ─────────────────────────────────────────── */
 .mod-heading {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -594,7 +643,7 @@
   width: 22px; height: 2px;
   background: var(--color-brand);
 }
-.mod-heading.brand { color: var(--color-brand); }
+.mod-heading.brand { color: var(--signal-bright); }
 .mod-heading .mod-count {
   margin-left: auto;
   color: var(--color-text-muted);
@@ -602,53 +651,53 @@
   letter-spacing: 0.1em;
 }
 
-/* ── This Week's Signal — pull-quote-style card ────────────────────── */
+/* ── This Week's Signal — the key judgment, in a drawn frame ────────── */
 .signal-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.6rem 1.85rem 1.7rem;
   margin-bottom: 2.5rem;
   position: relative;
 }
-.signal-card::before {
-  content: "“";
+.signal-frame {
   position: absolute;
-  left: 0.45rem;
-  top: -0.8rem;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 4.5rem;
-  font-weight: 700;
-  color: var(--color-brand);
-  opacity: 0.18;
-  line-height: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.signal-frame rect {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
 }
 .signal-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.7rem;
 }
 .signal-text {
   font-family: var(--serif);
   font-weight: 600;
   font-style: italic;
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   line-height: 1.5;
   color: var(--color-text-primary);
   letter-spacing: -0.005em;
 }
 
-/* ── Coverage Snapshot — stat module ───────────────────────────────── */
+/* ── Coverage Snapshot ──────────────────────────────────────────────── */
 .snapshot {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.5rem 1.65rem 1.6rem;
   margin-bottom: 2.5rem;
 }
@@ -667,10 +716,10 @@
   letter-spacing: -0.012em;
   margin-bottom: 0.4rem;
 }
-.snap-stat .num .accent { color: var(--color-brand); }
+.snap-stat .num .accent { color: var(--signal-bright); }
 .snap-stat .label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -682,14 +731,10 @@
   color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
-.snap-bar {
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.snap-bar { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-soft); }
 .snap-bar-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -737,101 +782,139 @@
   .snap-stat .num { font-size: 1.55rem; }
 }
 
-/* ── Body sections — long-form editorial flow ──────────────────────── */
-.post-body { max-width: 700px; }
-.post-section { margin-bottom: 2.5rem; }
-.post-section .mod-heading.brand { color: var(--color-brand); }
+/* ── Body sections — long-form analytical flow ──────────────────────── */
+.post-body { max-width: 680px; }
+.post-section { margin-bottom: 2.6rem; scroll-margin-top: 1.5rem; }
 
 .section-text p {
-  margin-bottom: 1.05rem;
-  line-height: 1.78;
-  font-size: 1rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   color: var(--color-text-primary);
 }
 .section-text p:last-child { margin-bottom: 0; }
-.section-text p:first-of-type::first-letter {
-  /* Editorial drop cap on the very first paragraph of the opening section */
-  /* Applied selectively below */
-}
 .opening .section-text p:first-of-type::first-letter {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 3.6rem;
   line-height: 0.85;
   float: left;
-  margin: 0.18rem 0.55rem -0.15rem 0;
-  color: var(--color-brand);
+  margin: 0.2rem 0.55rem -0.15rem 0;
+  color: var(--signal-bright);
 }
 
-/* ── Term-to-know module ───────────────────────────────────────────── */
+/* ── Term-to-know module ────────────────────────────────────────────── */
 .term-box {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 1.4rem 1.65rem 1.4rem;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem;
 }
 .term-word {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: -0.005em;
   color: var(--color-text-primary);
   margin-bottom: 0.6rem;
 }
 .term-explanation {
-  font-size: 0.95rem;
+  font-family: var(--serif);
+  font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.75;
 }
 .term-explanation p { margin-bottom: 0.85rem; }
 .term-explanation p:last-child { margin-bottom: 0; }
 
-/* ── Source Trail — vertical list ──────────────────────────────────── */
+/* ── Source Trail — the evidence register on a spine ────────────────── */
 .source-trail { margin-bottom: 2.5rem; }
-.source-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.source-cards { display: flex; flex-direction: column; position: relative; margin-left: 20px; }
+.source-cards::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--color-border);
+}
+.source-card::before {
+  content: "";
+  position: absolute;
+  left: -17.5px;
+  top: 1.1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text-muted);
+}
+.source-card.is-significant::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-cards::before {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.js [data-reveal].in .source-cards::before {
+  transform: scaleY(1);
+  transform-origin: top center;
+  transition: transform 0.9s var(--ease) 0.15s;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-card::before { transform: scale(0); }
+.js [data-reveal].in .source-card::before {
+  transform: scale(1);
+  transition: transform 0.45s var(--ease);
+  transition-delay: min(calc(var(--ni, 0) * 45ms + 250ms), 900ms);
+}
+@media (max-width: 600px) {
+  .source-cards { margin-left: 16px; }
+  .source-cards::before { left: -11px; }
+  .source-card::before { left: -14.5px; }
 }
 .source-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: none;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s;
+  transition: background 180ms var(--ease), border-color 180ms var(--ease);
   position: relative;
 }
-.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: 4px 4px 0 0; }
-.source-card:last-child { border-radius: 0 0 4px 4px; }
-.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: 4px; }
+.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: var(--radius) var(--radius) 0 0; }
+.source-card:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: var(--radius); }
 .source-card:hover { background: var(--color-bg-sidebar); text-decoration: none; }
-.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.1rem - 2px); }
+.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.15rem - 2px); }
 .source-card-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   line-height: 1.35;
   color: var(--color-text-primary);
 }
 .source-card-zh {
+  font-family: var(--zh);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .source-card-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
 }
 .source-card-meta .sep { color: var(--color-border); }
@@ -843,12 +926,12 @@
   background: rgba(179, 19, 43, 0.14);
   border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
-  border-radius: 2px;
-  font-size: 0.625rem;
+  border-radius: var(--radius);
+  font-size: 0.58rem;
 }
 .source-card-domain {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
@@ -860,13 +943,13 @@
   font-style: italic;
 }
 
-/* ── Closing note ──────────────────────────────────────────────────── */
+/* ── Closing note ───────────────────────────────────────────────────── */
 .closing-note {
   margin-top: 2.5rem;
   padding: 1.4rem 1.65rem;
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1rem;
@@ -874,41 +957,17 @@
   line-height: 1.7;
 }
 
-/* ── Byline (hero) ─────────────────────────────────────────────────── */
-.byline {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-  max-width: 660px;
-}
-.byline-name {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  letter-spacing: 0.005em;
-}
-.byline-title {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 0.2rem;
-  letter-spacing: 0.005em;
-}
-
-/* ── Author block (bottom of post) ─────────────────────────────────── */
+/* ── Author block ───────────────────────────────────────────────────── */
 .author-block {
   margin-top: 2.5rem;
   padding: 1.5rem 1.65rem 1.6rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .author-block-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -928,14 +987,12 @@
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--color-text-primary);
-  letter-spacing: -0.005em;
   margin-bottom: 0.15rem;
 }
 .author-block-title {
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.02em;
   margin-bottom: 0.85rem;
 }
 .author-block-bio {
@@ -946,14 +1003,7 @@
   max-width: 640px;
   margin-bottom: 1.1rem;
 }
-
-/* ── Contact chips — restrained text pills ─────────────────────────── */
-.author-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
+.author-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .author-chip {
   display: inline-flex;
   align-items: center;
@@ -962,42 +1012,33 @@
   font-family: var(--sans);
   font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius);
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
-.author-chip:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-  text-decoration: none;
-}
-.author-chip .arrow {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  transition: color 0.15s;
-}
-.author-chip:hover .arrow { color: var(--color-brand); }
+.author-chip:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); text-decoration: none; }
+.author-chip .arrow { font-size: 0.7rem; color: var(--color-text-muted); transition: color 0.15s; }
+.author-chip:hover .arrow { color: var(--color-brand-light); }
 
-/* ── Sidebar (sticky) ──────────────────────────────────────────────── */
+/* ── Sidebar (sticky) ───────────────────────────────────────────────── */
 .post-sidebar { position: sticky; top: 1.5rem; }
 .sb-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.3rem 1.4rem 1.25rem;
   margin-bottom: 1rem;
 }
 .sb-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.8rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--color-border);
@@ -1018,17 +1059,60 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.sb-text {
-  font-size: 0.825rem;
+.sb-text { font-size: 0.825rem; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* In-this-edition rail (scrollspy) */
+.toc-list { list-style: none; }
+.toc-list li { border-bottom: 1px solid var(--color-border-soft); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: block;
+  padding: 0.5rem 0 0.5rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  border-left: 2px solid transparent;
+  margin-left: -0.85rem;
+  transition: color 160ms ease, border-color 160ms ease;
 }
+.toc-list a:hover { color: var(--color-text-primary); text-decoration: none; }
+.toc-list a.active {
+  color: var(--color-text-primary);
+  border-left-color: var(--color-brand-light);
+}
+
+/* Citation block */
+.cite-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  margin-bottom: 0.75rem;
+}
+.cite-copy {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cite-copy:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); }
+.cite-copy:focus-visible { outline: 2px solid var(--signal-bright); outline-offset: 2px; }
+.no-clipboard .cite-copy { display: none; }
 
 @media (max-width: 900px) {
   .post-sidebar { position: static; }
+  .sb-card--toc { display: none; }
 }
 
-/* ── Post nav (bottom) ─────────────────────────────────────────────── */
+/* ── Post nav (bottom) ──────────────────────────────────────────────── */
 .edition-nav {
   display: flex;
   justify-content: space-between;
@@ -1041,10 +1125,11 @@
   font-size: 0.85rem;
 }
 .edition-nav a { color: var(--color-text-secondary); }
-.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 .edition-nav .edition-nav-label {
   display: block;
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1068,29 +1153,30 @@
   border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
-.post-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
-/* ── Print — single column brief ───────────────────────────────────── */
+/* ── Print — single column brief ────────────────────────────────────── */
 @media print {
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-figure, .cover-credit-note, .visual-context { display: none; }
-  .hero::after { display: none; }
   .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
     break-inside: avoid;
   }
   .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
-  .signal-card::before { color: #8B0E20; }
   .snap-bar-fill { background: #8B0E20; }
   .snap-bar-rest, .swatch-rest { background: #dddddd; }
   .swatch-sig { background: #8B0E20; }
   .source-card:hover { background: transparent; }
+  .signal-frame { display: none; }
+  .source-cards { margin-left: 0; }
+  .source-cards::before, .source-card::before { content: none; }
   /* Keep the source trail traceable on paper: print each item's URL. */
   .source-card-domain { display: none; }
   .source-card::after {
     content: attr(href);
-    font-family: var(--sans);
-    font-size: 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
     color: #555555;
     word-break: break-all;
   }
@@ -1098,6 +1184,8 @@
   </style>
 </head>
 <body>
+
+<div class="progress-rail" aria-hidden="true"><b></b></div>
 
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
@@ -1107,9 +1195,10 @@
         <span class="pw-mark-rule" aria-hidden="true"></span>
         <span class="pw-tag">A weekly publication of China Mil Watch</span>
       </a>
-      <nav class="pw-nav">
+      <nav class="pw-nav" aria-label="Publication">
         <a href="../index.html" >Latest Edition</a>
         <a href="../archive.html" >Archive</a>
+        <a href="../terms.html" >Terms</a>
         <span class="nav-sep">|</span>
         <a href="../../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
       </nav>
@@ -1127,9 +1216,8 @@
 
   <article class="post-main">
 
-    <div class="hero">
+    <div class="hero" data-reveal>
       <div class="hero-meta-top">
-        <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
 No. 2 · Week ending 16 May 2026
         </div>
@@ -1143,11 +1231,11 @@ No. 2 · Week ending 16 May 2026
         <span class="meta-item">Covers <span class="num">10 May 2026</span> → <span class="num">16 May 2026</span></span>
 <span class="meta-item"><span class="num">7</span> days observed</span>        <span class="meta-item"><span class="num">85</span> articles analyzed</span>
         <span class="meta-item"><span class="num">3</span> model-flagged</span>
-          <span class="meta-item">PLA Daily (81.cn), China Military Online, Global Times: Defense</span>
+          <span class="meta-item" title="PLA Daily (81.cn), China Military Online, Global Times: Defense"><span class="num">3</span> sources</span>
       </div>
     </div>
 
-    <figure class="cover-figure">
+    <figure class="cover-figure" data-reveal>
       <img src="../covers/2026-05-16.png"
            alt="The PLA Watch — Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure (issue cover)"
            width="1200" height="630" loading="eager">
@@ -1160,7 +1248,7 @@ No. 2 · Week ending 16 May 2026
 
 
 
-    <div class="snapshot">
+    <div class="snapshot" id="s-snapshot" data-reveal>
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
         <div class="snap-stat">
@@ -1200,31 +1288,31 @@ No. 2 · Week ending 16 May 2026
 
     <div class="post-body">
 
-      <div class="post-section opening">
+      <div class="post-section opening" id="s-opening" data-reveal>
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
 <p>This week in Chinese military media was, in aggregate, mostly routine: 85 articles across PLA Daily, China Military Online, and Global Times: Defense, most of them moving through familiar institutional patterns — training updates, political work campaigns, military diplomacy, and the steady circulation of official slogans that usually mark the background rhythm of PLA coverage.</p><p>Two items, however, cut through that baseline.</p><p>One concerned Fujian’s air wing, and the other concerned a Rocket Force unit that appears to be deliberately training its launch crews to survive disruption, attrition, and the collapse of fixed operating arrangements. Neither item arrived with much fanfare, and neither was presented as a dramatic announcement, but both carry real analytical weight precisely because they reveal concrete movement beneath otherwise routine official language.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-stood-out" data-reveal>
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
 <p><strong>Fujian’s air wing integration.</strong> A May 10 PLA Daily anniversary retrospective on the naval carrier-based aviation force confirmed that the J-15T, J-35, and KJ-600 airborne early warning aircraft have all conducted catapult takeoff and arrested landing training aboard Fujian in 2025.</p><p>The KJ-600 detail matters most, because this appears to be the first official public acknowledgment that China’s carrier-based airborne early warning aircraft has completed carrier qualification activity on Fujian. That does not mean Fujian’s air wing is combat-ready, and it should not be read as a readiness declaration disguised as an anniversary article. It is still, more narrowly and more cautiously, a qualification milestone.</p><p>But it is nevertheless a meaningful one. A carrier that can launch and recover an organic airborne early warning aircraft is operationally different from one that cannot, because AEW capacity changes how a carrier group sees, coordinates, and defends itself beyond the limits of shipboard sensors. The J-15T and J-35 point toward strike and fighter integration, while the KJ-600 points toward the broader command-and-control architecture that would allow the carrier group to operate more independently and more effectively.</p><p>That makes the article more concrete than a generic “progress” story. It does not simply claim that Fujian is advancing. It indicates that three aircraft types are moving through the qualification pipeline at the same time, which gives analysts a more measurable indicator than official confidence alone.</p><p><strong>Rocket Force crew hardening.</strong> A May 13 PLA Daily report offered unusually specific detail about an unidentified Rocket Force unit’s “Four Randoms” training model, or 四随机. The model randomizes crew groupings, missile assignments, launch vehicles, and primary/backup launch-frame designations, apparently in order to prevent launch execution from depending too heavily on fixed personnel relationships or familiar operating routines.</p><p>The reason was not abstract. According to the article, the unit had previously experienced an exercise failure in which the loss of one launch frame’s operators caused the mission to collapse. The response was strikingly practical: standardized command-word manuals, weekly unannounced drills, and monthly cross-element reorganization assessments designed to force personnel to operate across unfamiliar launch arrangements.</p><p>This kind of operational detail rarely appears so clearly in Chinese military media. Here, the blur lifts slightly. The article provides a source-grounded look at how at least one Rocket Force unit is trying, systematically and visibly, to reduce single-point-of-failure risks in the human side of missile launch operations.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-why" data-reveal>
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
 <p>The Fujian item matters because it narrows the distance between capability aspiration and operational capability, even if it does not eliminate that distance. Carrier qualification is not the same as operational readiness, and there are still many steps between a successful qualification process and a mature, deployable carrier air wing: deck-cycle rhythm, sortie generation, pilot proficiency, maintenance reliability, integrated air-wing operations, and fleet-level command coordination all matter.</p><p>Still, the KJ-600 confirmation closes a meaningful open-source gap. Fujian has long been discussed as China’s first catapult-equipped carrier, but the more important question has always been what kind of air wing that catapult system would actually enable. This article suggests that the answer is no longer purely theoretical. The air wing associated with Fujian’s design is being worked through publicly, aircraft by aircraft, and the presence of the KJ-600 in that process is especially significant.</p><p>The Rocket Force item matters for a different reason. The “Four Randoms” model is broadly consistent with what a missile force would design if it were trying to preserve launch capability under conditions of attrition, disruption, or degraded communications. It does not prove force-wide adoption, and one published unit example should not be mistaken for doctrine.</p><p>But PLA Daily chose to publish the model as something worth studying, and that choice is itself revealing. The article turns a local training fix into an institutional lesson. It shows the Rocket Force not only identifying a failure point, but also publicly framing its solution as a model of hardened, flexible, and more resilient launch execution.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-routine" data-reveal>
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
 <p>Most of the week remained inside familiar templates.</p><p>Political work coverage was especially heavy: formalism correction, anti-corruption messaging extended to officers’ families, “correct outlook on political achievement” campaigns, and rectification training across services and commands. This belongs to a broader institutional push that has continued since the post-2023 Rocket Force leadership purge. The individual articles are useful as ground-level evidence of how discipline campaigns are being operationalized, but none of them, taken alone, signal a new policy line.</p><p>Naval Aviation coverage of day-and-night AEW-fighter coordinated training, submarine anti-ASW exercises, and PAP disaster relief drills also followed recognizable PLA Daily patterns. The military diplomacy pieces — Ethiopia medical team rotations, South Sudan engineer detachment activity, and peacekeeping assessments — reflected established programs rather than new initiatives, even when they were presented in the language of continued international contribution.</p><p>A Global Times report on a new PLA Navy terminal defense system completing type certification trials is worth filing, but the expert description of “world-class” capability should be read primarily as messaging rather than as a technical assessment. The item may matter later, particularly if it is followed by more specific reporting, but in its current form it remains closer to defense-industrial signaling than operational evidence.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-term" data-reveal>
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">四随机 — Four Randoms</div>
@@ -1233,86 +1321,86 @@ No. 2 · Week ending 16 May 2026
         </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-watching" data-reveal>
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
 <p><strong>Fujian’s deployment profile.</strong> Qualification milestones are useful, but they are not the endpoint. The next indicators would be dual-carrier formation coverage, more complex air-wing integration reporting, or clearer signals about Fujian’s operational deployment schedule, especially if future articles begin linking aircraft qualification to broader fleet exercises rather than anniversary retrospectives.</p><p><strong>Rocket Force training templates.</strong> One article does not establish force-wide adoption. The question is whether “Four Randoms” appears again in other Rocket Force units, formal training discussions, or doctrinal publications. Repetition would matter, especially if the model starts appearing across units rather than as a single localized training innovation.</p><p><strong>Formalism correction persistence.</strong> The volume of articles documenting the same institutional problems — fixed inspection briefings, collusion in performance awards, careerist behavior among junior officers — is becoming its own signal. The unresolved question is whether the campaign is actually changing behavior or merely producing another layer of performative compliance, in which officers learn to display reform without necessarily internalizing it.</p>        </div>
       </div>
 
-      <div class="post-section source-trail">
+      <div class="post-section source-trail" id="s-sources" data-reveal>
         <div class="mod-heading brand">Source Trail<span class="mod-count">11 records</span></div>
         <div class="source-cards">
-          <a class="source-card" href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener" style="--ni: 0;">
             <div class="source-card-title">Fujian air wing / KJ-600 carrier qualifications</div>
 <div class="source-card-zh" lang="zh-Hans">海军舰载航空兵部队，13岁生日快乐！</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16459619.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460297.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460297.html" target="_blank" rel="noopener" style="--ni: 1;">
             <div class="source-card-title">Rocket Force “Four Randoms” training model</div>
 <div class="source-card-zh" lang="zh-Hans">“四个随机”训练模式推行后，备份号手补位打出“满堂彩”</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460297.html ↗</div>
           </a>
-          <a class="source-card" href="https://www.globaltimes.cn/page/202605/1360888.shtml" target="_blank" rel="noopener">
+          <a class="source-card" href="https://www.globaltimes.cn/page/202605/1360888.shtml" target="_blank" rel="noopener" style="--ni: 2;">
             <div class="source-card-title">PLA Navy terminal defense system (Global Times)</div>
 <div class="source-card-zh" lang="zh-Hans">PLA Navy’s new terminal defense system completes type certification trials; expert cites world-class ultra-low-altitude interception capability</div>            <div class="source-card-meta">
               <span>Global Times: Defense</span>
             </div>
             <div class="source-card-domain">www.globaltimes.cn/page/202605/1360888.shtml ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16461159.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16461159.html" target="_blank" rel="noopener" style="--ni: 3;">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15</div>
 <div class="source-card-zh" lang="zh-Hans">海军航空兵某部跨昼夜协同训练见闻</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461159.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/hj_208557/16461187.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/hj_208557/16461187.html" target="_blank" rel="noopener" style="--ni: 4;">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15 (alternate)</div>
 <div class="source-card-zh" lang="zh-Hans">云端淬剑！海军航空兵某部开展跨昼夜协同训练</div>            <div class="source-card-meta">
               <span>China Military Online</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16461187.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16461388.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16461388.html" target="_blank" rel="noopener" style="--ni: 5;">
             <div class="source-card-title">Submarine “Four Randoms”-adjacent systems thinking exercise</div>
 <div class="source-card-zh" lang="zh-Hans">海军某潜艇支队强化体系思维打赢“翻身仗”</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461388.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460482.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460482.html" target="_blank" rel="noopener" style="--ni: 6;">
             <div class="source-card-title">CMC Logistic Support Department logistics governance reforms</div>
 <div class="source-card-zh" lang="zh-Hans">我军后勤军事治理的探索实践</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460482.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460490.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460490.html" target="_blank" rel="noopener" style="--ni: 7;">
             <div class="source-card-title">PLA cyber doctrine article, Kong Rui / Jiao Dawei</div>
 <div class="source-card-zh" lang="zh-Hans">研究军事、研究战争、研究打仗丨把握网络空间作战新变化</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460490.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460298.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460298.html" target="_blank" rel="noopener" style="--ni: 8;">
             <div class="source-card-title">New-domain new-quality combat forces doctrine, AMS War Studies</div>
 <div class="source-card-zh" lang="zh-Hans">推进新域新质作战力量规模化实战化体系化发展</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460298.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460401.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460401.html" target="_blank" rel="noopener" style="--ni: 9;">
             <div class="source-card-title">Eastern Theater Command civilian personnel recruitment</div>
 <div class="source-card-zh" lang="zh-Hans">东部战区2026年面向社会公开招考专业技能类文职人员公告</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460401.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16460498.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16460498.html" target="_blank" rel="noopener" style="--ni: 10;">
             <div class="source-card-title">China-Japan-Philippines Balikatan framing</div>
 <div class="source-card-zh" lang="zh-Hans">国际瞭望丨日菲军事捆绑加剧地区安全风险</div>            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
@@ -1329,7 +1417,7 @@ No. 2 · Week ending 16 May 2026
       <div class="author-block">
         <div class="author-block-eyebrow">Author</div>
         <div class="author-block-name">Benjamin Yang</div>
-<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
+<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University&#39;s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
 <a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a><a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a><a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>        </div>
       </div>
 
@@ -1352,12 +1440,26 @@ No. 2 · Week ending 16 May 2026
   </article>
 
   <aside class="post-sidebar">
+    <div class="sb-card sb-card--toc">
+      <div class="sb-eyebrow">In this edition</div>
+      <ul class="toc-list" id="pw-toc">
+        <li><a href="#s-snapshot">Coverage Snapshot</a></li>
+<li><a href="#s-opening">Opening Note</a></li><li><a href="#s-stood-out">What Stood Out</a></li><li><a href="#s-why">Why It Matters</a></li><li><a href="#s-routine">Routine Baseline</a></li><li><a href="#s-term">Term to Know</a></li><li><a href="#s-watching">What I'm Watching Next</a></li>        <li><a href="#s-sources">Source Trail</a></li>
+      </ul>
+    </div>
+
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Standard</span></div>
 <div class="sb-row"><span class="label">Issue</span><span class="value">No. 2</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">16 May 2026</span></div>
 <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">85</span></div>
       <div class="sb-row"><span class="label">Model-flagged</span><span class="value">3</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">Cite this edition</div>
+      <div class="cite-text" id="pw-cite">Benjamin Yang, “Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure,” <em>The PLA Watch</em> No. 2, China Mil Watch, 16 May 2026. https://chinamilwatch.org/the-pla-watch/posts/2026-05-16.html</div>
+      <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
     </div>
 
     <div class="sb-card">
@@ -1383,10 +1485,75 @@ No. 2 · Week ending 16 May 2026
       <span class="footer-meta-label">Read alongside</span>
       <a href="../../index.html">China Mil Watch — Daily Brief</a><br>
       <a href="../../archive.html">China Mil Watch — Archive</a><br>
-      <a href="../../signals.html">Signals &amp; Methodology</a>
+      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
+      <a href="../../the-pla-watch/feed.xml">Atom feed</a>
     </div>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
+<script>
+(function () {
+  /* Scrollspy for the "In this edition" rail */
+  var toc = document.getElementById('pw-toc');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (current) current.classList.remove('active');
+          current = links[entry.target.id];
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
+  }
+
+  /* Copy citation */
+  var btn = document.getElementById('pw-cite-copy');
+  var cite = document.getElementById('pw-cite');
+  if (btn && cite) {
+    if (!navigator.clipboard) {
+      btn.parentElement.classList.add('no-clipboard');
+    } else {
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(cite.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = prev; }, 1800);
+        });
+      });
+    }
+  }
+})();
+</script>
 </body>
 </html>

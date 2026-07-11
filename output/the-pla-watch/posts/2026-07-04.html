@@ -27,66 +27,103 @@
 
   <link rel="icon" type="image/png" href="../../logo-icon.png">
   <link rel="apple-touch-icon" href="../../logo-icon.png">
+  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://chinamilwatch.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700;8..60,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system (shared with parent brand) ────────────────────────── */
+    /* ══ The PLA Watch design tokens — dark "night desk" surface ═════════ */
     :root {
       --color-brand:          #B3132B;
       --color-brand-dark:     #8B0E20;
-      --color-brand-light:    #D11C36;
-      --color-bg:             #0E1520;        /* ink navy */
-      --color-bg-card:        #141D2B;        /* lifted navy surface */
-      --color-bg-header:      #0A1019;        /* masthead, slightly deeper */
-      --color-bg-sidebar:     #1A2535;        /* sidebar surface */
-      --color-text-primary:   #EDE9E0;        /* warm off-white */
-      --color-text-secondary: #9A9590;        /* mid warm gray */
-      --color-text-muted:     #5E5A55;        /* quiet gray */
-      --color-border:         #273040;        /* dark rule */
-      --color-border-soft:    #1C2738;        /* softer dark rule */
+      --color-brand-light:    #D8354C;       /* links / hover on dark — lifted for contrast */
+      --color-bg:             #0E1520;       /* ink navy */
+      --color-bg-card:        #131C29;       /* lifted navy surface */
+      --color-bg-header:      #0A1019;       /* masthead, slightly deeper */
+      --color-bg-sidebar:     #18222F;       /* sidebar surface */
+      --color-text-primary:   #EDE9E0;       /* warm off-white */
+      --color-text-secondary: #A8A29A;       /* mid warm gray */
+      --color-text-muted:     #746E67;       /* quiet gray */
+      --color-border:         #273040;       /* dark rule */
+      --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Shared vocabulary with the daily surface */
+      --ink:   var(--color-text-primary);
+      --ink-2: var(--color-text-secondary);
+      --ink-3: var(--color-text-muted);
+      --line:  var(--color-border);
+      --line-soft: var(--color-border-soft);
+      --signal: var(--color-brand);
+      --signal-bright: #E05A6D;
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1100px;
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
       background-color: var(--color-bg);
-      /* Editorial paper grain — vertical hairline texture rather than the dashboard grid */
-      background-image:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.012) 0,
-          rgba(255, 255, 255, 0.012) 1px,
-          transparent 1px,
-          transparent 6px
-        );
       color: var(--color-text-primary);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--color-brand-light); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
     a:focus-visible {
-      outline: 2px solid var(--color-brand-light);
+      outline: 2px solid var(--signal-bright);
       outline-offset: 2px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
 
-    /* ── Masthead — editorial nameplate, not the parent's dashboard header  */
+    /* ── Reading progress rail (scroll-driven, progressive) ────────────── */
+    .progress-rail {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      z-index: 90;
+      pointer-events: none;
+      background: transparent;
+    }
+    .progress-rail b {
+      display: block;
+      height: 100%;
+      background: var(--color-brand-light);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+    }
+    @supports (animation-timeline: scroll()) {
+      .progress-rail b {
+        animation: pw-progress linear both;
+        animation-timeline: scroll(root);
+      }
+      @keyframes pw-progress {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+    }
+
+    /* ── Masthead — editorial nameplate ─────────────────────────────────── */
     .pw-masthead {
       background: var(--color-bg-header);
       border-top: 4px solid var(--color-brand);
@@ -95,7 +132,7 @@
       position: relative;
     }
     .pw-masthead-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       padding: 1.4rem 2rem 1.1rem;
       display: flex;
@@ -118,12 +155,13 @@
     .pw-nameplate:hover { text-decoration: none; }
     .pw-nameplate .pw-mark {
       font-family: var(--serif);
-      font-weight: 800;
+      font-weight: 700;
       font-style: italic;
       font-size: 2.2rem;
       letter-spacing: -0.015em;
       color: var(--color-text-primary);
-      line-height: 1;
+      line-height: 1.1;
+      padding-bottom: 0.05em;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -138,10 +176,10 @@
       align-self: center;
     }
     .pw-nameplate .pw-tag {
-      font-family: var(--sans);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
       align-self: center;
@@ -153,67 +191,66 @@
       font-family: var(--sans);
       font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       text-decoration: none;
       padding: 4px 0;
       position: relative;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: color 150ms ease;
     }
-    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .pw-nav a.active { color: var(--color-text-primary); }
-    .pw-nav a.active::after {
+    .pw-nav a::after {
       content: "";
       position: absolute;
       left: 0; right: 0; bottom: -2px;
       height: 2px;
       background: var(--color-brand);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
     }
-    .pw-nav .nav-sep {
-      color: var(--color-border);
-      font-weight: 400;
-      letter-spacing: 0;
-    }
-    .pw-nav .pw-nav-back {
-      color: var(--color-brand);
-      font-weight: 600;
-    }
+    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
+    .pw-nav a:hover::after { transform: scaleX(1); }
+    .pw-nav a.active { color: var(--color-text-primary); }
+    .pw-nav a.active::after { transform: scaleX(1); }
+    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
+    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      font-family: var(--sans);
-      font-size: 0.68rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
     }
     .pw-masthead-rule .left,
     .pw-masthead-rule .right { display: flex; gap: 1.1rem; }
 
-    /* ── Main layout ───────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1100px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
       padding: 3rem 2rem 5rem;
     }
 
-    /* ── Footer ───────────────────────────────────────────────────────── */
+    /* ── Footer ─────────────────────────────────────────────────────────── */
     .site-footer {
       background: var(--color-bg-card);
       border-top: 1px solid var(--color-border);
       padding: 2.5rem 2rem;
     }
     .footer-inner {
-      max-width: 1100px;
+      max-width: var(--shell);
       margin: 0 auto;
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -244,33 +281,34 @@
     }
     .footer-meta {
       font-family: var(--sans);
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       color: var(--color-text-muted);
-      line-height: 1.7;
-      letter-spacing: 0.04em;
+      line-height: 1.85;
     }
     .footer-meta a { color: var(--color-text-secondary); font-weight: 600; }
+    .footer-meta a:hover { color: var(--color-text-primary); }
     .footer-meta-label {
       display: block;
+      font-family: var(--mono);
       font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--color-brand);
+      color: var(--signal-bright);
       margin-bottom: 0.5rem;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
     }
 
-    /* ── Edition badges — shared, dark-theme chips ─────────────────────── */
+    /* ── Edition badges — shared, dark-theme chips ──────────────────────── */
     .pw-badge {
       display: inline-block;
       vertical-align: middle;
-      font-family: var(--sans);
-      font-size: 0.625rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 2px 8px;
-      border-radius: 2px;
+      border-radius: var(--radius);
     }
     .pw-badge--significant {
       background: rgba(179, 19, 43, 0.14);
@@ -288,14 +326,63 @@
       border: 1px solid rgba(224, 164, 88, 0.35);
     }
 
-    /* ── Utilities ─────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Tablet / mobile ───────────────────────────────────────────────── */
+    /* Shared motion primitives — start states only under .js inside an
+       un-revealed [data-reveal]; no-JS, print, and reduced-motion get the
+       finished artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1.1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 45ms + 200ms), 850ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .snap-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .snap-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.9s var(--ease) 250ms;
+    }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .pw-masthead-inner { padding: 1.2rem 1.25rem 0.95rem; }
       .pw-masthead-top { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
@@ -304,7 +391,7 @@
       .pw-nameplate .pw-tag { display: none; }
       .pw-nav { gap: 1rem; }
       .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
-      .pw-masthead-rule { font-size: 0.62rem; letter-spacing: 0.12em; }
+      .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
       .pw-masthead-rule .right { display: none; }
       main { padding: 2rem 1.25rem 3.5rem; }
       body { font-size: 0.9375rem; }
@@ -318,13 +405,25 @@
       .pw-nav .nav-sep { display: none; }
     }
     @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active) { display: none; }
+      .pw-nav a[href$="archive.html"]:not(.active),
+      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
     }
 
-    /* ── Print — light palette, no chrome, ink-friendly ───────────────── */
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+      .progress-rail { display: none; }
+    }
+
+    /* ── Print — light palette, no chrome, ink-friendly ────────────────── */
     @media print {
       :root {
         --color-brand:          #8B0E20;
+        --color-brand-light:    #8B0E20;
         --color-bg:             #ffffff;
         --color-bg-card:        #ffffff;
         --color-bg-header:      #ffffff;
@@ -335,8 +434,8 @@
         --color-border:         #bbbbbb;
         --color-border-soft:    #dddddd;
       }
-      body { background: #ffffff !important; background-image: none !important; }
-      .pw-nav, .site-footer { display: none; }
+      body { background: #ffffff !important; }
+      .pw-nav, .site-footer, .progress-rail { display: none; }
       .pw-masthead { border-top-width: 3px; }
       .pw-nameplate .pw-mark .the { color: #555555; }
       a { color: inherit; text-decoration: none; }
@@ -347,7 +446,7 @@
 /* ── Two-column post layout ─────────────────────────────────────────── */
 .post-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr) 264px;
   gap: 3.5rem;
   align-items: flex-start;
 }
@@ -356,23 +455,105 @@
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 }
 
-/* ── Issue cover image (editorial PNG) ──────────────────────────────── */
-.cover-figure {
-  margin: 0 0 2rem;
+/* ── Edition header — briefing head, structured not decorated ───────── */
+.hero {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 0 1.9rem;
+  margin-bottom: 2.25rem;
 }
+.hero-meta-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hero-edition::before {
+  content: "";
+  width: 26px; height: 2px;
+  background: var(--color-brand);
+}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: 1.05rem;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.hero-dek {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.4rem;
+  max-width: 58ch;
+}
+.byline {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+}
+.byline-name { color: var(--color-text-primary); font-weight: 600; }
+.byline-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.hero-meta .meta-item { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.hero-meta .meta-item .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Issue cover image ──────────────────────────────────────────────── */
+.cover-figure { margin: 0 0 2rem; }
 .cover-figure img {
   display: block;
   width: 100%;
   height: auto;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
 }
 .cover-figure figcaption {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-top: 0.55rem;
   text-align: right;
 }
@@ -381,49 +562,33 @@
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--color-border-soft);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
   font-family: var(--sans);
   font-size: 0.76rem;
   color: var(--color-text-muted);
   line-height: 1.55;
 }
-.cover-credit-note .label {
-  font-weight: 700;
-  color: var(--color-text-secondary);
-}
+.cover-credit-note .label { font-weight: 700; color: var(--color-text-secondary); }
 .cover-credit-note a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.cover-credit-note a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
+.cover-credit-note a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
 
-/* ── Visual Context — restrained editorial image card ───────────────── */
-.visual-context {
-  margin: 0 0 2.5rem;
-}
+/* ── Visual Context ─────────────────────────────────────────────────── */
+.visual-context { margin: 0 0 2.5rem; }
 .media-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   margin-bottom: 1rem;
 }
 .media-card:last-child { margin-bottom: 0; }
-.media-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--color-bg-card);
-}
-.media-card-body {
-  padding: 0.95rem 1.15rem 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.media-card img { display: block; width: 100%; height: auto; background: var(--color-bg-card); }
+.media-card-body { padding: 0.95rem 1.15rem 1rem; border-top: 1px solid var(--color-border-soft); }
 .media-caption {
   font-family: var(--serif);
   font-size: 0.95rem;
@@ -432,25 +597,19 @@
   margin-bottom: 0.5rem;
 }
 .media-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .media-meta a {
   color: var(--color-text-muted);
   text-decoration: underline;
   text-decoration-color: var(--color-border);
 }
-.media-meta a:hover {
-  color: var(--color-brand);
-  text-decoration-color: var(--color-brand);
-}
-.media-meta .sep {
-  margin: 0 0.45rem;
-  color: var(--color-border);
-}
+.media-meta a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+.media-meta .sep { margin: 0 0.45rem; color: var(--color-border); }
 .media-note {
   font-family: var(--sans);
   font-size: 0.7rem;
@@ -464,120 +623,10 @@
   .media-caption { font-size: 0.9rem; }
 }
 
-/* ── Editorial hero — large display, generous spacing, watermark ────── */
-.hero {
-  position: relative;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 2.4rem 2.4rem 2rem;
-  margin-bottom: 2.5rem;
-  overflow: hidden;
-}
-.hero::after {
-  content: "PLA WATCH";
-  position: absolute;
-  right: -0.4rem;
-  bottom: -1.6rem;
-  font-family: var(--serif);
-  font-weight: 800;
-  font-style: italic;
-  font-size: 7.5rem;
-  letter-spacing: -0.025em;
-  color: var(--color-brand);
-  opacity: 0.045;
-  pointer-events: none;
-  line-height: 1;
-}
-.hero-meta-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-brand);
-}
-.hero-eyebrow::before {
-  content: "";
-  width: 26px; height: 2px;
-  background: var(--color-brand);
-}
-.hero-edition {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.hero-edition .pw-badge { margin-left: 0.5rem; }
-.hero-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 1.12;
-  letter-spacing: -0.018em;
-  color: var(--color-text-primary);
-  margin-bottom: 1.05rem;
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-}
-.hero-dek {
-  font-family: var(--serif);
-  font-size: 1.18rem;
-  color: var(--color-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.5rem;
-  max-width: 660px;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-  border-top: 1px solid var(--color-border-soft);
-  padding-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-.hero-meta .meta-item { display: inline-flex; gap: 0.4rem; align-items: baseline; }
-.hero-meta .meta-item .num {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--color-text-primary);
-}
-@media (max-width: 768px) {
-  .hero { padding: 1.7rem 1.5rem 1.5rem; }
-  .hero-title { font-size: 1.85rem; }
-  .hero-dek { font-size: 1.05rem; }
-  .hero::after { font-size: 4.5rem; }
-}
-
-/* ── Module section heading ────────────────────────────────────────── */
+/* ── Module section heading ─────────────────────────────────────────── */
 .mod-heading {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -594,7 +643,7 @@
   width: 22px; height: 2px;
   background: var(--color-brand);
 }
-.mod-heading.brand { color: var(--color-brand); }
+.mod-heading.brand { color: var(--signal-bright); }
 .mod-heading .mod-count {
   margin-left: auto;
   color: var(--color-text-muted);
@@ -602,53 +651,53 @@
   letter-spacing: 0.1em;
 }
 
-/* ── This Week's Signal — pull-quote-style card ────────────────────── */
+/* ── This Week's Signal — the key judgment, in a drawn frame ────────── */
 .signal-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.6rem 1.85rem 1.7rem;
   margin-bottom: 2.5rem;
   position: relative;
 }
-.signal-card::before {
-  content: "“";
+.signal-frame {
   position: absolute;
-  left: 0.45rem;
-  top: -0.8rem;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 4.5rem;
-  font-weight: 700;
-  color: var(--color-brand);
-  opacity: 0.18;
-  line-height: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.signal-frame rect {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
 }
 .signal-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.7rem;
 }
 .signal-text {
   font-family: var(--serif);
   font-weight: 600;
   font-style: italic;
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   line-height: 1.5;
   color: var(--color-text-primary);
   letter-spacing: -0.005em;
 }
 
-/* ── Coverage Snapshot — stat module ───────────────────────────────── */
+/* ── Coverage Snapshot ──────────────────────────────────────────────── */
 .snapshot {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.5rem 1.65rem 1.6rem;
   margin-bottom: 2.5rem;
 }
@@ -667,10 +716,10 @@
   letter-spacing: -0.012em;
   margin-bottom: 0.4rem;
 }
-.snap-stat .num .accent { color: var(--color-brand); }
+.snap-stat .num .accent { color: var(--signal-bright); }
 .snap-stat .label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -682,14 +731,10 @@
   color: var(--color-text-secondary);
   margin-top: 0.25rem;
 }
-.snap-bar {
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border-soft);
-}
+.snap-bar { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-soft); }
 .snap-bar-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -737,101 +782,139 @@
   .snap-stat .num { font-size: 1.55rem; }
 }
 
-/* ── Body sections — long-form editorial flow ──────────────────────── */
-.post-body { max-width: 700px; }
-.post-section { margin-bottom: 2.5rem; }
-.post-section .mod-heading.brand { color: var(--color-brand); }
+/* ── Body sections — long-form analytical flow ──────────────────────── */
+.post-body { max-width: 680px; }
+.post-section { margin-bottom: 2.6rem; scroll-margin-top: 1.5rem; }
 
 .section-text p {
-  margin-bottom: 1.05rem;
-  line-height: 1.78;
-  font-size: 1rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   color: var(--color-text-primary);
 }
 .section-text p:last-child { margin-bottom: 0; }
-.section-text p:first-of-type::first-letter {
-  /* Editorial drop cap on the very first paragraph of the opening section */
-  /* Applied selectively below */
-}
 .opening .section-text p:first-of-type::first-letter {
   font-family: var(--serif);
   font-weight: 700;
   font-size: 3.6rem;
   line-height: 0.85;
   float: left;
-  margin: 0.18rem 0.55rem -0.15rem 0;
-  color: var(--color-brand);
+  margin: 0.2rem 0.55rem -0.15rem 0;
+  color: var(--signal-bright);
 }
 
-/* ── Term-to-know module ───────────────────────────────────────────── */
+/* ── Term-to-know module ────────────────────────────────────────────── */
 .term-box {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-brand);
-  border-radius: 4px;
-  padding: 1.4rem 1.65rem 1.4rem;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem;
 }
 .term-word {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: -0.005em;
   color: var(--color-text-primary);
   margin-bottom: 0.6rem;
 }
 .term-explanation {
-  font-size: 0.95rem;
+  font-family: var(--serif);
+  font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.75;
 }
 .term-explanation p { margin-bottom: 0.85rem; }
 .term-explanation p:last-child { margin-bottom: 0; }
 
-/* ── Source Trail — vertical list ──────────────────────────────────── */
+/* ── Source Trail — the evidence register on a spine ────────────────── */
 .source-trail { margin-bottom: 2.5rem; }
-.source-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.source-cards { display: flex; flex-direction: column; position: relative; margin-left: 20px; }
+.source-cards::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--color-border);
+}
+.source-card::before {
+  content: "";
+  position: absolute;
+  left: -17.5px;
+  top: 1.1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text-muted);
+}
+.source-card.is-significant::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-cards::before {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.js [data-reveal].in .source-cards::before {
+  transform: scaleY(1);
+  transform-origin: top center;
+  transition: transform 0.9s var(--ease) 0.15s;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-card::before { transform: scale(0); }
+.js [data-reveal].in .source-card::before {
+  transform: scale(1);
+  transition: transform 0.45s var(--ease);
+  transition-delay: min(calc(var(--ni, 0) * 45ms + 250ms), 900ms);
+}
+@media (max-width: 600px) {
+  .source-cards { margin-left: 16px; }
+  .source-cards::before { left: -11px; }
+  .source-card::before { left: -14.5px; }
 }
 .source-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: none;
-  padding: 0.85rem 1.1rem;
+  padding: 0.9rem 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s;
+  transition: background 180ms var(--ease), border-color 180ms var(--ease);
   position: relative;
 }
-.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: 4px 4px 0 0; }
-.source-card:last-child { border-radius: 0 0 4px 4px; }
-.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: 4px; }
+.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: var(--radius) var(--radius) 0 0; }
+.source-card:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: var(--radius); }
 .source-card:hover { background: var(--color-bg-sidebar); text-decoration: none; }
-.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.1rem - 2px); }
+.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.15rem - 2px); }
 .source-card-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   line-height: 1.35;
   color: var(--color-text-primary);
 }
 .source-card-zh {
+  font-family: var(--zh);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .source-card-meta {
-  font-family: var(--sans);
-  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
 }
 .source-card-meta .sep { color: var(--color-border); }
@@ -843,12 +926,12 @@
   background: rgba(179, 19, 43, 0.14);
   border: 1px solid rgba(209, 28, 54, 0.4);
   padding: 1px 6px;
-  border-radius: 2px;
-  font-size: 0.625rem;
+  border-radius: var(--radius);
+  font-size: 0.58rem;
 }
 .source-card-domain {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
 }
@@ -860,13 +943,13 @@
   font-style: italic;
 }
 
-/* ── Closing note ──────────────────────────────────────────────────── */
+/* ── Closing note ───────────────────────────────────────────────────── */
 .closing-note {
   margin-top: 2.5rem;
   padding: 1.4rem 1.65rem;
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1rem;
@@ -874,41 +957,17 @@
   line-height: 1.7;
 }
 
-/* ── Byline (hero) ─────────────────────────────────────────────────── */
-.byline {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  margin-bottom: 1.4rem;
-  position: relative;
-  z-index: 1;
-  max-width: 660px;
-}
-.byline-name {
-  color: var(--color-text-primary);
-  font-weight: 600;
-  letter-spacing: 0.005em;
-}
-.byline-title {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  margin-top: 0.2rem;
-  letter-spacing: 0.005em;
-}
-
-/* ── Author block (bottom of post) ─────────────────────────────────── */
+/* ── Author block ───────────────────────────────────────────────────── */
 .author-block {
   margin-top: 2.5rem;
   padding: 1.5rem 1.65rem 1.6rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .author-block-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -928,14 +987,12 @@
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--color-text-primary);
-  letter-spacing: -0.005em;
   margin-bottom: 0.15rem;
 }
 .author-block-title {
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  letter-spacing: 0.02em;
   margin-bottom: 0.85rem;
 }
 .author-block-bio {
@@ -946,14 +1003,7 @@
   max-width: 640px;
   margin-bottom: 1.1rem;
 }
-
-/* ── Contact chips — restrained text pills ─────────────────────────── */
-.author-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
+.author-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .author-chip {
   display: inline-flex;
   align-items: center;
@@ -962,42 +1012,33 @@
   font-family: var(--sans);
   font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius);
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
-.author-chip:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-  text-decoration: none;
-}
-.author-chip .arrow {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  transition: color 0.15s;
-}
-.author-chip:hover .arrow { color: var(--color-brand); }
+.author-chip:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); text-decoration: none; }
+.author-chip .arrow { font-size: 0.7rem; color: var(--color-text-muted); transition: color 0.15s; }
+.author-chip:hover .arrow { color: var(--color-brand-light); }
 
-/* ── Sidebar (sticky) ──────────────────────────────────────────────── */
+/* ── Sidebar (sticky) ───────────────────────────────────────────────── */
 .post-sidebar { position: sticky; top: 1.5rem; }
 .sb-card {
   background: var(--color-bg-sidebar);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.3rem 1.4rem 1.25rem;
   margin-bottom: 1rem;
 }
 .sb-eyebrow {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.8rem;
   padding-bottom: 0.55rem;
   border-bottom: 1px solid var(--color-border);
@@ -1018,17 +1059,60 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-.sb-text {
-  font-size: 0.825rem;
+.sb-text { font-size: 0.825rem; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* In-this-edition rail (scrollspy) */
+.toc-list { list-style: none; }
+.toc-list li { border-bottom: 1px solid var(--color-border-soft); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: block;
+  padding: 0.5rem 0 0.5rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  border-left: 2px solid transparent;
+  margin-left: -0.85rem;
+  transition: color 160ms ease, border-color 160ms ease;
 }
+.toc-list a:hover { color: var(--color-text-primary); text-decoration: none; }
+.toc-list a.active {
+  color: var(--color-text-primary);
+  border-left-color: var(--color-brand-light);
+}
+
+/* Citation block */
+.cite-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  margin-bottom: 0.75rem;
+}
+.cite-copy {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cite-copy:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); }
+.cite-copy:focus-visible { outline: 2px solid var(--signal-bright); outline-offset: 2px; }
+.no-clipboard .cite-copy { display: none; }
 
 @media (max-width: 900px) {
   .post-sidebar { position: static; }
+  .sb-card--toc { display: none; }
 }
 
-/* ── Post nav (bottom) ─────────────────────────────────────────────── */
+/* ── Post nav (bottom) ──────────────────────────────────────────────── */
 .edition-nav {
   display: flex;
   justify-content: space-between;
@@ -1041,10 +1125,11 @@
   font-size: 0.85rem;
 }
 .edition-nav a { color: var(--color-text-secondary); }
-.edition-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.edition-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 .edition-nav .edition-nav-label {
   display: block;
-  font-size: 0.68rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1068,29 +1153,30 @@
   border-top: 1px solid var(--color-border-soft);
 }
 .post-nav a { color: var(--color-text-secondary); }
-.post-nav a:hover { color: var(--color-brand); text-decoration: none; }
+.post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
-/* ── Print — single column brief ───────────────────────────────────── */
+/* ── Print — single column brief ────────────────────────────────────── */
 @media print {
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-figure, .cover-credit-note, .visual-context { display: none; }
-  .hero::after { display: none; }
   .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
     break-inside: avoid;
   }
   .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
-  .signal-card::before { color: #8B0E20; }
   .snap-bar-fill { background: #8B0E20; }
   .snap-bar-rest, .swatch-rest { background: #dddddd; }
   .swatch-sig { background: #8B0E20; }
   .source-card:hover { background: transparent; }
+  .signal-frame { display: none; }
+  .source-cards { margin-left: 0; }
+  .source-cards::before, .source-card::before { content: none; }
   /* Keep the source trail traceable on paper: print each item's URL. */
   .source-card-domain { display: none; }
   .source-card::after {
     content: attr(href);
-    font-family: var(--sans);
-    font-size: 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
     color: #555555;
     word-break: break-all;
   }
@@ -1098,6 +1184,8 @@
   </style>
 </head>
 <body>
+
+<div class="progress-rail" aria-hidden="true"><b></b></div>
 
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
@@ -1107,9 +1195,10 @@
         <span class="pw-mark-rule" aria-hidden="true"></span>
         <span class="pw-tag">A weekly publication of China Mil Watch</span>
       </a>
-      <nav class="pw-nav">
+      <nav class="pw-nav" aria-label="Publication">
         <a href="../index.html" >Latest Edition</a>
         <a href="../archive.html" >Archive</a>
+        <a href="../terms.html" >Terms</a>
         <span class="nav-sep">|</span>
         <a href="../../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
       </nav>
@@ -1127,9 +1216,8 @@
 
   <article class="post-main">
 
-    <div class="hero">
+    <div class="hero" data-reveal>
       <div class="hero-meta-top">
-        <div class="hero-eyebrow">The PLA Watch</div>
         <div class="hero-edition">
 No. 9 · Week ending 4 July 2026
 <span class="pw-badge pw-badge--significant">Significant</span>        </div>
@@ -1146,7 +1234,7 @@ No. 9 · Week ending 4 July 2026
       </div>
     </div>
 
-    <figure class="cover-figure">
+    <figure class="cover-figure" data-reveal>
       <img src="../covers/2026-07-04.png"
            alt="The PLA Watch — The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like (issue cover)"
            width="1200" height="630" loading="eager">
@@ -1158,12 +1246,15 @@ No. 9 · Week ending 4 July 2026
     </div>
 
 
-      <div class="signal-card">
+      <div class="signal-card" id="s-signal" data-reveal>
+        <svg class="signal-frame" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+          <rect class="draw-path" pathLength="1" style="--pi: 1;" x="0.5" y="0.5" width="99" height="39"/>
+        </svg>
         <div class="signal-eyebrow">This week's signal</div>
         <div class="signal-text">Southern Theater Command recast June activity around Scarborough Shoal as sustained joint combat readiness patrols, placing the operation above the language of a routine exercise or coast guard presence.</div>
       </div>
 
-    <div class="snapshot">
+    <div class="snapshot" id="s-snapshot" data-reveal>
       <div class="mod-heading brand">Coverage Snapshot</div>
       <div class="snapshot-grid">
         <div class="snap-stat">
@@ -1203,31 +1294,31 @@ No. 9 · Week ending 4 July 2026
 
     <div class="post-body">
 
-      <div class="post-section opening">
+      <div class="post-section opening" id="s-opening" data-reveal>
         <div class="mod-heading brand">Opening Note</div>
         <div class="section-text">
 <p>One article broke from an otherwise predictable week. On June 30, PLA Daily carried a Southern Theater Command statement on Huangyan Island, better known as Scarborough Shoal. The command said naval and air forces had conducted 战备警巡, or combat readiness patrols, around the feature and had strengthened those operations throughout June. The statement was brief. Its wording was not.</p><p>Most of the remaining coverage followed the calendar. July 1 marked the CCP&#39;s 105th anniversary, and PLA Daily filled its pages with model soldiers, Red Army discipline, unit history, political loyalty, and choreographed public visits. Calling that routine does not make it meaningless. Routine coverage shows what the institution chooses to repeat, which virtues it rewards, and which problems it wants officers and troops to recognize.</p><p>Buried inside the anniversary volume were useful admissions. A 71st Group Army article described units training for rankings and year-end commendations rather than combat needs. A 73rd Group Army aviation brigade used internal lectures to teach pilots about neighboring services because formal joint training had not closed basic knowledge gaps. Other pieces revisited promotion corruption and Rocket Force cross-training. None of this amounted to a new campaign. Together, they offered a clear view of the frictions the PLA still considers worth correcting.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-stood-out" data-reveal>
         <div class="mod-heading brand">What Stood Out</div>
         <div class="section-text">
 <p>The June 30 statement did more than announce another patrol. It placed activity around Scarborough Shoal in a combat-readiness category. In PLA usage, 战备警巡 carries a stronger operational register than a routine patrol or scheduled exercise. It presents the force as responding to an active security condition.</p><p>The timing matters too. Southern Theater Command was not advertising a single event. It was looking backward across June and describing a sustained pattern of joint naval and air activity. That retrospective framing helps establish continuity: Beijing was presenting its presence around the shoal as an ongoing military responsibility, not a temporary reaction.</p><p>The statement blamed “infringement and provocation” without naming the Philippines. That ambiguity is familiar. It allows Beijing to connect the operation to Philippine activity while preserving room to define the trigger later.</p><p>PLA Daily is an official outlet, not an independent record of what happened each day. The statement therefore tells us most clearly how Southern Theater Command wanted the month understood. That is still useful. Public language is part of the operation.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-why" data-reveal>
         <div class="mod-heading brand">Why It Matters</div>
         <div class="section-text">
 <p>Scarborough Shoal sits inside one of the most sensitive intersections in the South China Sea: China&#39;s territorial claims, Philippine resistance, and the U.S.-Philippines alliance. China has effectively controlled access to the feature since 2012, while the Philippines regards it as lying within its exclusive economic zone.</p><p>Much of Beijing&#39;s pressure in these disputes is usually described through coast guard and maritime law-enforcement language. This statement used PLA naval and air forces and called their activity combat readiness patrols in Chinese “territorial waters” and airspace. The wording moves the public register from policing toward military preparedness. It does not, by itself, prove a sharp operational escalation. It does show how Beijing is normalizing the PLA&#39;s role around the shoal and how it wants that role described.</p><p>This creates a baseline. Future statements can now be compared against a month that Southern Theater Command publicly characterized as sustained, joint, and operationally ready.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-routine" data-reveal>
         <div class="mod-heading brand">Routine Baseline</div>
         <div class="section-text">
 <p>July 1 coverage is designed to make loyalty feel historical. Model-soldier profiles, Gutian Conference references, honor flags, and “forge the military soul” essays all place present-day obedience inside a longer revolutionary inheritance. The message is less about announcing a new ideological line than about renewing an old one on schedule.</p><p>That schedule can make the material easy to dismiss. It should not. Repetition is one of the PLA&#39;s methods of institutional maintenance. The people chosen as models, the episodes selected from history, and the failures condemned in print reveal what the organization wants reproduced.</p><p>This week&#39;s political rectification coverage was especially concrete. Articles on promotion corruption, formalism during temporary duty, and company-level political education did not reveal new pathologies. They showed the campaign in working form: identify a failure, attach it to a moral lesson, and circulate an approved remedy. The training pieces did something similar in operational terms. They admitted that metrics can distort behavior and that jointness still requires improvised local fixes. Routine reporting becomes most valuable at exactly this level, where institutional aspiration meets stubborn practice.</p>        </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-term" data-reveal>
         <div class="mod-heading brand">Term to Know</div>
         <div class="term-box">
           <div class="term-word">战备警巡 (Zhànbèi Jǐngxún): Combat Readiness Patrol</div>
@@ -1236,100 +1327,100 @@ No. 9 · Week ending 4 July 2026
         </div>
       </div>
 
-      <div class="post-section">
+      <div class="post-section" id="s-watching" data-reveal>
         <div class="mod-heading brand">What I'm Watching Next</div>
         <div class="section-text">
 <p>Scarborough Shoal remains the main thread. The next question is whether July brings another formal statement, sharper language, or silence. Each outcome would clarify whether June&#39;s wording marked a durable public posture or a temporary response. I will also be watching for whether Southern Theater Command continues to cite generic “infringement and provocation” or begins naming specific Philippine actions.</p><p>The Qi Jiguang and Kunlunshan formation is a secondary thread. The ships moved from a Vladivostok visit to an announced stop in Ho Chi Minh City, pairing a training vessel with a Type 071 amphibious transport dock across back-to-back diplomatic calls. The visits themselves are routine. The composition of the formation is more interesting, especially if it draws a regional response.</p><p>Finally, the political rectification cycle is entering the stage where official media may begin declaring results. A shift from diagnosing problems to celebrating their resolution would not prove those problems are solved. It would show that the campaign&#39;s public narrative has moved on.</p>        </div>
       </div>
 
-      <div class="post-section source-trail">
+      <div class="post-section source-trail" id="s-sources" data-reveal>
         <div class="mod-heading brand">Source Trail<span class="mod-count">13 records</span></div>
         <div class="source-cards">
-          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16470666.html" target="_blank" rel="noopener">
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16470666.html" target="_blank" rel="noopener" style="--ni: 0;">
             <div class="source-card-title">PLA Southern Theater Command Organizes Combat Readiness Patrol (战备警巡) over Territorial Waters, Airspace, and Surrounding Areas of China&#39;s Huangyan Island</div>
 <div class="source-card-zh" lang="zh-Hans">中国人民解放军南部战区位中国黄岩岛领海领空及周边区域组织战备警巡</div>            <div class="source-card-meta">
 <span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470666.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16471664.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16471664.html" target="_blank" rel="noopener" style="--ni: 1;">
             <div class="source-card-title">&#39;Two Excellents, One Advanced&#39; Profiles | National Outstanding Communist Party Member He Xianda: Writing Loyalty and Commitment Beneath the Launch Tower</div>
 <div class="source-card-zh" lang="zh-Hans">“两优一先”风采录丨全国优秀共产党员何贤达：发射架下书写忠诚担当</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471664.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16470320.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16470320.html" target="_blank" rel="noopener" style="--ni: 2;">
             <div class="source-card-title">A Certain Army Aviation Brigade of the 73rd Group Army Focuses on System-Wide Training (体系练兵) and Builds a Learning and Exchange Platform</div>
 <div class="source-card-zh" lang="zh-Hans">第73集团军某陆航旅聚焦体系练兵搭建学习交流平台</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470320.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16471332.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16471332.html" target="_blank" rel="noopener" style="--ni: 3;">
             <div class="source-card-title">What Are the Moving Stories Behind Two Honor Flags?</div>
 <div class="source-card-zh" lang="zh-Hans">两面荣誉旗帜的背后，有怎样的动人故事？</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-03</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471332.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/wj_208567/16471235.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/wj_208567/16471235.html" target="_blank" rel="noopener" style="--ni: 4;">
             <div class="source-card-title">Marching Toward War! A Direct Look at the People&#39;s Armed Police Field Garrison Training Site</div>
 <div class="source-card-zh" lang="zh-Hans">向战而行！直击武警野外驻训现场</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-02</span>            </div>
             <div class="source-card-domain">www.81.cn/wj_208567/16471235.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16470999.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16470999.html" target="_blank" rel="noopener" style="--ni: 5;">
             <div class="source-card-title">Today, Naval Vessel Formation Departs for Hong Kong to Organize Open Visiting and Exchange Activities</div>
 <div class="source-card-zh" lang="zh-Hans">今日，海军舰艇编队起航赴香港组织开放参观交流活动</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470999.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16470917.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16470917.html" target="_blank" rel="noopener" style="--ni: 6;">
             <div class="source-card-title">Raising the Banner and Leading in Battle: The Time Is Right to Forge the Joint Sword</div>
 <div class="source-card-zh" lang="zh-Hans">擎旗领战，联合砺剑正当时</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470917.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16470596.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16470596.html" target="_blank" rel="noopener" style="--ni: 7;">
             <div class="source-card-title">A Naval Aviation Unit Drives the Combat-Oriented Transformation of Aircraft Maintenance and Support——One Second Faster in Emergency Repair, One Point More in the Odds of Victory</div>
 <div class="source-card-zh" lang="zh-Hans">海军航空兵某部推动战机维修保障向战转型</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470596.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16470176.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16470176.html" target="_blank" rel="noopener" style="--ni: 8;">
             <div class="source-card-title">Golden Horn Bay Witnesses a New Voyage of Sino-Russian Naval Friendship</div>
 <div class="source-card-zh" lang="zh-Hans">金角湾见证中俄海军友谊新航程</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470176.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16471727.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16471727.html" target="_blank" rel="noopener" style="--ni: 9;">
             <div class="source-card-title">Chinese Naval Vessel Formation to Visit Vietnam</div>
 <div class="source-card-zh" lang="zh-Hans">中国海军舰艇编队将访问越南</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471727.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16471662.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16471662.html" target="_blank" rel="noopener" style="--ni: 10;">
             <div class="source-card-title">A Certain Base of the Southern Theater Command Air Force Explores and Implements a New Model for Trainee Soldier Assignment</div>
 <div class="source-card-zh" lang="zh-Hans">南部战区空军某基地探索推行学兵分配新模式</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471662.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/yw_208727/16471667.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/yw_208727/16471667.html" target="_blank" rel="noopener" style="--ni: 11;">
             <div class="source-card-title">One Case Reveals the Prevailing Winds; One Incident Rectifies the Soldiers&#39; Hearts</div>
 <div class="source-card-zh" lang="zh-Hans">一案鉴风向，一事正兵心</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471667.html ↗</div>
           </a>
-          <a class="source-card" href="http://www.81.cn/wj_208567/16471714.html" target="_blank" rel="noopener">
+          <a class="source-card" href="http://www.81.cn/wj_208567/16471714.html" target="_blank" rel="noopener" style="--ni: 12;">
             <div class="source-card-title">In This Round of NCO Selection and Promotion, the Mobile Detachment of the PAP Chongqing General Corps Continues to Strengthen Conduct Building</div>
 <div class="source-card-zh" lang="zh-Hans">这次警士选晋，武警重庆总队机动支队持续强化风气建设</div>            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
@@ -1365,12 +1456,26 @@ No. 9 · Week ending 4 July 2026
   </article>
 
   <aside class="post-sidebar">
+    <div class="sb-card sb-card--toc">
+      <div class="sb-eyebrow">In this edition</div>
+      <ul class="toc-list" id="pw-toc">
+<li><a href="#s-signal">This Week's Signal</a></li>        <li><a href="#s-snapshot">Coverage Snapshot</a></li>
+<li><a href="#s-opening">Opening Note</a></li><li><a href="#s-stood-out">What Stood Out</a></li><li><a href="#s-why">Why It Matters</a></li><li><a href="#s-routine">Routine Baseline</a></li><li><a href="#s-term">Term to Know</a></li><li><a href="#s-watching">What I'm Watching Next</a></li>        <li><a href="#s-sources">Source Trail</a></li>
+      </ul>
+    </div>
+
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">Significant</span></div>
 <div class="sb-row"><span class="label">Issue</span><span class="value">No. 9</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">4 July 2026</span></div>
 <div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">40</span></div>
       <div class="sb-row"><span class="label">Model-flagged</span><span class="value">1</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">Cite this edition</div>
+      <div class="cite-text" id="pw-cite">Benjamin Yang, “The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like,” <em>The PLA Watch</em> No. 9, China Mil Watch, 4 July 2026. https://chinamilwatch.org/the-pla-watch/posts/2026-07-04.html</div>
+      <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
     </div>
 
     <div class="sb-card">
@@ -1396,10 +1501,75 @@ No. 9 · Week ending 4 July 2026
       <span class="footer-meta-label">Read alongside</span>
       <a href="../../index.html">China Mil Watch — Daily Brief</a><br>
       <a href="../../archive.html">China Mil Watch — Archive</a><br>
-      <a href="../../signals.html">Signals &amp; Methodology</a>
+      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
+      <a href="../../the-pla-watch/feed.xml">Atom feed</a>
     </div>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
+<script>
+(function () {
+  /* Scrollspy for the "In this edition" rail */
+  var toc = document.getElementById('pw-toc');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (current) current.classList.remove('active');
+          current = links[entry.target.id];
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
+  }
+
+  /* Copy citation */
+  var btn = document.getElementById('pw-cite-copy');
+  var cite = document.getElementById('pw-cite');
+  if (btn && cite) {
+    if (!navigator.clipboard) {
+      btn.parentElement.classList.add('no-clipboard');
+    } else {
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(cite.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = prev; }, 1800);
+        });
+      });
+    }
+  }
+})();
+</script>
 </body>
 </html>
