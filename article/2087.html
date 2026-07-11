@@ -32,177 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
     }
-    .site-header-inner {
-      max-width: 1180px;
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -211,305 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner { gap: 0.5rem; padding: 10px 14px; height: 64px; }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.85rem; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 10px 12px; gap: 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -519,63 +667,69 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
         <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Open-source intelligence · Chinese military &amp; security media</span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -594,10 +748,10 @@ details summary:hover { color: var(--color-text-primary); }
       One Case Reveals the Prevailing Winds; One Incident Rectifies the Soldiers&#39; Hearts
     </h1>
 
-      <div class="article-page-title-zh">一案鉴风向，一事正兵心</div>
+      <div class="article-page-title-zh" lang="zh-Hans">一案鉴风向，一事正兵心</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>4 July 2026</span>
     </div>
@@ -621,7 +775,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">这次警士选晋，武警重庆总队机动支队持续强化风气建设—— 能力素质是最好的“路” ■石 路 汤 珂 侯俊杰 李昆昱绘 初夏时节，一场步兵专业职业技能鉴定考核如期开考。武警重庆总队机动支队考场内秩序井然，只能听见笔尖答题的沙沙声。在这场比拼专业素养、检验履职本领的较量中，警勤中队中士小周端坐在考桌前，审题、思考、作答，一气呵成。 考试结束，他第一时间给父亲打去电话：“爸，我这次发挥正常，检验出了真实水平。不管结果如何，我都问心无愧。”电话那头，父亲连声说好，反复叮嘱小周安心服役、踏实干事。 这看似平常的一幕，背后藏着一段纪律与家风的故事。 几个月前，该支队春季警士选晋工作如期展开。由于名额有限、竞争激烈，当时还是下士的小周认真备战各项考核，内心也承受着不小的压力。 远在老家的父亲了解到儿子的备考状态后，满心担忧，想帮忙却又不知该怎么做。 思考许久，他拨通了儿子的电话。“晋升靠人脉、进步靠走动。”电话里，他建议小周在认真备考的同时，也要想办法“打点”一番，为选晋多“铺铺路”。深知部队纪律规矩的小周多次耐心解释：“选晋讲的是制度，凭的是实绩，不是人情，能力素质是最好的‘路’。” 父亲始终放心不下，见劝说无果，直接向小周的银行卡转了一笔钱，让他专门用于人情往来。 一边是家人的殷切期许，一边是不容逾越的纪律红线，小周一时有些犹豫。 关键时刻，他想到了自己基层风气监督员的身份。“平日里，我负责监督别人，现在自己遇到这种情况，更不能有一丝一毫含糊。”权衡再三，他主动向中队党支部汇报了此事。 了解情况后，中队党支部意识到，一些官兵家人仍存在误区，基层热点敏感问题还有潜在的违规违纪隐患，必须及时发现及时解决。 很快，指导员主动联系小周父亲，为他逐条讲解警士选晋流程和评分标准，讲清相关纪律要求。起初，小周父亲仍心存疑虑，在中队干部耐心细致、情理兼具的反复沟通下，他了解到部队选晋全程公开透明并接受各级监督，大家只看实绩不看关系，就此彻底打消了偏见和疑虑。 随后，中队干部骨干聚焦小周个人成长，坚持严管厚爱，对他进行精准帮带、查漏补缺。小周也卸下了思想包袱，把钱款退回给父亲后，摒弃杂念，全心全意投身备考。 经过一段时间的刻苦训练，小周的各项成绩均有明显提升。 考核中，他全力以赴、奋勇争先，最终取得优异成绩；民主测评环节，凭着一贯踏实肯干的作风和良好的群众口碑，获得战友一致认可。 最终，小周以综合排名靠前的成绩成功晋升中士，为自己的努力交上一份满意的答卷，更用实打实的成绩打消了家人顾虑。 一案鉴风向，一事正兵心。小周的这段经历也引发了身边战友的热议。“警士选晋就应该这样，拿成绩说话，让进步者硬气、落选者服气。”上等兵小刘明年也面临选晋，公平透明的制度让他更有信心。 靠“捷径”早已行不通，而且根基不牢；凭实干纵然过程辛苦，但必定行稳致远。该支队党委也意识到，部分官兵家属对部队法规不熟悉，对军营选人育人机制缺乏了解，仍存在一些世俗片面的认知，这对官兵成长进步不利。于是，他们持续深化家风教育，开展“与家属面对面”“致官兵家属的一封信”等活动，常态普及各类法规政策，引导官兵家属当好“廉内助”，筑牢家风“防火墙”。 一名战士的母亲在来队期间积极参与家风教育，她学习廉洁行为规范后感叹：“部队规矩明、风气正，孩子在这里成长进步，我们很放心！” 倡廉于有形，润物于无声。近年来，该支队持续强化风气建设，针对警士选晋、评功评奖、入党考学等敏感事项，严格落实政策公开、流程公开、结果公开制度，坚决杜绝人情干扰、暗箱操作。前不久，支队组织党员发展理论考核，全程公开题库、细化考核标准、完善监督渠道，全体官兵同台比拼、公平竞争，凭借能力素质争取进步机会。 官兵守廉 家庭共廉 ■石 路 部队风气关乎军心士气，关乎战斗力建设。近年来，随着持续深化政治整训，部队风气不断向上向好，官兵深切感受到，各类敏感事项越来越公开透明，为官兵营造出公平公正的成长进步环境。武警重庆总队机动支队中士小周在选晋过程中面对纪律规矩和家人期盼时，有过怎样的思想斗争？是什么支持他作出正确决定，确保自己的成长进步之路干净清爽？近日，笔者对小周进行面对面访谈，听一听他的心里话。 问：面对家人想通过花钱来疏通关系、为你留队“铺路”的做法，你当时是怎么想的？ 答：为人子女，我能够理解父母望子成龙的心情。他们心疼我，担心我在成长进步的关键时候吃亏。但穿上军装，我就是一名军人，平时的教育让我深知，遵规守纪是最基本的原则。同时，作为基层风气监督员，我在履职过程中更加清楚部队的规矩底线。如果我用父母转来的这笔钱打点人情关系，看似是为自己争取机会，实则触碰了纪律红线，是对自己军旅生涯的不负责。所以，我下定决心，必须守住底线，靠自己的努力争取留队资格。 问：有了这次经历，你对部队风气有哪些更深的感悟认识？ 答：我感到，如今，部队环境风清气正，每名官兵都拥有公平竞争的舞台。成长进步的道路上，拼的是能力、比的是实绩、靠的是口碑，过去那些“走关系、靠门路”的思维已经行不通了，各项法规制度也立起凭素质立身、靠实绩进步的鲜明导向。这让我深刻感到，军人最大的底气是过硬本领，任何歪门邪道、投机取巧都站不住脚，唯有坚守廉洁底线、踏实履职尽责，才能在军营站稳脚跟、稳步成长。 问：个别军人家属还存在靠金钱、人情疏通关系的念头，身为军人，我们应该怎么做？ 答：有的家属对部队纪律理解不深、政策了解不足、参与家风建设的积极性不高，容易产生人情世故方面的认知偏差。针对这些堵点，我们支队多次开展家风教育，邀请家属打卡廉洁墙、共上廉洁课、书写廉洁语，引导官兵家属转变固有认识，营造官兵守廉、家庭共廉的浓厚氛围。就个人而言，我也要多与家人沟通，动之以情、晓之以理，帮助家人强化认识，得到他们的理解与支持。只有这样，才能共同营造遵规守纪、清正廉洁的良好环境，我们坚守底线、踏实履职的底气才会更足。 问：成功选晋后，你对接下来的个人成长有怎样的规划？ 答：此次顺利选晋，是组织和战友们对我的认可，更是一种鞭策和激励。作为一名新晋中士，我清楚自身还有不少短板不足。下一步，我会紧盯专业短板，精进军事技能，立足岗位扎实履职，用过硬本领回报组织培养，踏踏实实走好每一步军旅路。</div>
+    <div class="original-body" lang="zh-Hans">这次警士选晋，武警重庆总队机动支队持续强化风气建设—— 能力素质是最好的“路” ■石 路 汤 珂 侯俊杰 李昆昱绘 初夏时节，一场步兵专业职业技能鉴定考核如期开考。武警重庆总队机动支队考场内秩序井然，只能听见笔尖答题的沙沙声。在这场比拼专业素养、检验履职本领的较量中，警勤中队中士小周端坐在考桌前，审题、思考、作答，一气呵成。 考试结束，他第一时间给父亲打去电话：“爸，我这次发挥正常，检验出了真实水平。不管结果如何，我都问心无愧。”电话那头，父亲连声说好，反复叮嘱小周安心服役、踏实干事。 这看似平常的一幕，背后藏着一段纪律与家风的故事。 几个月前，该支队春季警士选晋工作如期展开。由于名额有限、竞争激烈，当时还是下士的小周认真备战各项考核，内心也承受着不小的压力。 远在老家的父亲了解到儿子的备考状态后，满心担忧，想帮忙却又不知该怎么做。 思考许久，他拨通了儿子的电话。“晋升靠人脉、进步靠走动。”电话里，他建议小周在认真备考的同时，也要想办法“打点”一番，为选晋多“铺铺路”。深知部队纪律规矩的小周多次耐心解释：“选晋讲的是制度，凭的是实绩，不是人情，能力素质是最好的‘路’。” 父亲始终放心不下，见劝说无果，直接向小周的银行卡转了一笔钱，让他专门用于人情往来。 一边是家人的殷切期许，一边是不容逾越的纪律红线，小周一时有些犹豫。 关键时刻，他想到了自己基层风气监督员的身份。“平日里，我负责监督别人，现在自己遇到这种情况，更不能有一丝一毫含糊。”权衡再三，他主动向中队党支部汇报了此事。 了解情况后，中队党支部意识到，一些官兵家人仍存在误区，基层热点敏感问题还有潜在的违规违纪隐患，必须及时发现及时解决。 很快，指导员主动联系小周父亲，为他逐条讲解警士选晋流程和评分标准，讲清相关纪律要求。起初，小周父亲仍心存疑虑，在中队干部耐心细致、情理兼具的反复沟通下，他了解到部队选晋全程公开透明并接受各级监督，大家只看实绩不看关系，就此彻底打消了偏见和疑虑。 随后，中队干部骨干聚焦小周个人成长，坚持严管厚爱，对他进行精准帮带、查漏补缺。小周也卸下了思想包袱，把钱款退回给父亲后，摒弃杂念，全心全意投身备考。 经过一段时间的刻苦训练，小周的各项成绩均有明显提升。 考核中，他全力以赴、奋勇争先，最终取得优异成绩；民主测评环节，凭着一贯踏实肯干的作风和良好的群众口碑，获得战友一致认可。 最终，小周以综合排名靠前的成绩成功晋升中士，为自己的努力交上一份满意的答卷，更用实打实的成绩打消了家人顾虑。 一案鉴风向，一事正兵心。小周的这段经历也引发了身边战友的热议。“警士选晋就应该这样，拿成绩说话，让进步者硬气、落选者服气。”上等兵小刘明年也面临选晋，公平透明的制度让他更有信心。 靠“捷径”早已行不通，而且根基不牢；凭实干纵然过程辛苦，但必定行稳致远。该支队党委也意识到，部分官兵家属对部队法规不熟悉，对军营选人育人机制缺乏了解，仍存在一些世俗片面的认知，这对官兵成长进步不利。于是，他们持续深化家风教育，开展“与家属面对面”“致官兵家属的一封信”等活动，常态普及各类法规政策，引导官兵家属当好“廉内助”，筑牢家风“防火墙”。 一名战士的母亲在来队期间积极参与家风教育，她学习廉洁行为规范后感叹：“部队规矩明、风气正，孩子在这里成长进步，我们很放心！” 倡廉于有形，润物于无声。近年来，该支队持续强化风气建设，针对警士选晋、评功评奖、入党考学等敏感事项，严格落实政策公开、流程公开、结果公开制度，坚决杜绝人情干扰、暗箱操作。前不久，支队组织党员发展理论考核，全程公开题库、细化考核标准、完善监督渠道，全体官兵同台比拼、公平竞争，凭借能力素质争取进步机会。 官兵守廉 家庭共廉 ■石 路 部队风气关乎军心士气，关乎战斗力建设。近年来，随着持续深化政治整训，部队风气不断向上向好，官兵深切感受到，各类敏感事项越来越公开透明，为官兵营造出公平公正的成长进步环境。武警重庆总队机动支队中士小周在选晋过程中面对纪律规矩和家人期盼时，有过怎样的思想斗争？是什么支持他作出正确决定，确保自己的成长进步之路干净清爽？近日，笔者对小周进行面对面访谈，听一听他的心里话。 问：面对家人想通过花钱来疏通关系、为你留队“铺路”的做法，你当时是怎么想的？ 答：为人子女，我能够理解父母望子成龙的心情。他们心疼我，担心我在成长进步的关键时候吃亏。但穿上军装，我就是一名军人，平时的教育让我深知，遵规守纪是最基本的原则。同时，作为基层风气监督员，我在履职过程中更加清楚部队的规矩底线。如果我用父母转来的这笔钱打点人情关系，看似是为自己争取机会，实则触碰了纪律红线，是对自己军旅生涯的不负责。所以，我下定决心，必须守住底线，靠自己的努力争取留队资格。 问：有了这次经历，你对部队风气有哪些更深的感悟认识？ 答：我感到，如今，部队环境风清气正，每名官兵都拥有公平竞争的舞台。成长进步的道路上，拼的是能力、比的是实绩、靠的是口碑，过去那些“走关系、靠门路”的思维已经行不通了，各项法规制度也立起凭素质立身、靠实绩进步的鲜明导向。这让我深刻感到，军人最大的底气是过硬本领，任何歪门邪道、投机取巧都站不住脚，唯有坚守廉洁底线、踏实履职尽责，才能在军营站稳脚跟、稳步成长。 问：个别军人家属还存在靠金钱、人情疏通关系的念头，身为军人，我们应该怎么做？ 答：有的家属对部队纪律理解不深、政策了解不足、参与家风建设的积极性不高，容易产生人情世故方面的认知偏差。针对这些堵点，我们支队多次开展家风教育，邀请家属打卡廉洁墙、共上廉洁课、书写廉洁语，引导官兵家属转变固有认识，营造官兵守廉、家庭共廉的浓厚氛围。就个人而言，我也要多与家人沟通，动之以情、晓之以理，帮助家人强化认识，得到他们的理解与支持。只有这样，才能共同营造遵规守纪、清正廉洁的良好环境，我们坚守底线、踏实履职的底气才会更足。 问：成功选晋后，你对接下来的个人成长有怎样的规划？ 答：此次顺利选晋，是组织和战友们对我的认可，更是一种鞭策和激励。作为一名新晋中士，我清楚自身还有不少短板不足。下一步，我会紧盯专业短板，精进军事技能，立足岗位扎实履职，用过硬本领回报组织培养，踏踏实实走好每一步军旅路。</div>
   </details>
 
 
@@ -630,10 +784,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent open-source intelligence pipeline monitoring Chinese-language military and security media. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

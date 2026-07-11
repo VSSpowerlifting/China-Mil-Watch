@@ -32,177 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
     }
-    .site-header-inner {
-      max-width: 1180px;
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -211,305 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner { gap: 0.5rem; padding: 10px 14px; height: 64px; }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.85rem; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 10px 12px; gap: 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -519,63 +667,69 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
         <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Open-source intelligence · Chinese military &amp; security media</span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -592,10 +746,10 @@ details summary:hover { color: var(--color-text-primary); }
       The Green Little Island, Our Home
     </h1>
 
-      <div class="article-page-title-zh">绿色的小岛，我们的家</div>
+      <div class="article-page-title-zh" lang="zh-Hans">绿色的小岛，我们的家</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>6 June 2026</span>
     </div>
@@ -619,7 +773,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">绿色的小岛，我们的家 ■周进一 解放军报特约记者 廖晓彬 特约通讯员 陈鸿斌 海岛一景。 小船在碧海中悠悠前行，劈开一道白色的浪痕。视线中的小岛愈来愈近，远远望去，仿若海天之间的一颗绿宝石。 初夏，记者乘船来到陆军某旅“海岛钢四连”驻守的青屿岛。沿着码头一路向前，只见四处树木林立、植株茂盛，园子里的花卉开得正艳，田地中的瓜果蔬菜长势喜人。 依山坡而建的营房与哨楼，掩映在郁郁葱葱的绿意之中。夏日的骄阳炙烤着大地，可站在浓密的树荫下，记者分明感受到一丝清爽的空气自鼻尖漫进肺里，本来因为晕船而昏沉沉的脑子，瞬间就透亮了。 “欢迎来到绿色的小岛！”连队官兵自豪地告诉记者，几十年来，代表着希望、坚守和奉献的绿，在这座荒芜的海岛上一点一点生长，直至连成一片。 大海碧波中的青屿。 “青屿，青屿，还没有离开你，就已开始思念你” “很难想象吧，这里曾经寸草不生。”连队陈指导员感慨，过去，青屿不青，绿是罕见的颜色。这座仅有0.06平方公里的小岛遍地都是石渣，附近百姓都说此地“鸟不歇脚船不靠”。 连队官兵担负起改造自然环境、建设宜守宜居小岛的任务，从大陆运来泥土和种子。可是，无情的海风整日席卷，第一批种在稀薄土壤里的上百棵相思树和木麻黄，没活几株。 缺水也是一大难题。为此，官兵连续奋战10个多月，挖建了一个近1000立方米的大型水池，储存灌溉和生活用水。 过程何其艰难。面对坚硬的花岗岩，大家凭借简单工具凿出乱石400多立方米，很多大锤被砸扁了，锹镐被磨成了尖，两三米长的钢钎打得只剩几十厘米。 连队荣誉室的黑白照片重现了当年的时光——海风拍打脸颊，烈日炙烤皮肤，官兵挥镐抡锹，豆大的汗水止不住流淌。然而，没有一个兵想过放弃，大家相信，只要能活一棵树，就有希望把绿色种满整个小岛。 陈指导员对先辈的故事如数家珍：老指导员张解放扎根青屿17年，被誉为“海岛一劲松”，婚后的第一个十年，他只和家属见过5次面，把最好的青春年华都奉献给了这座岛；老连长张良泰身患多种“海岛病”，为了他的身体，上级调他离岛，可他三番五次请求回岛，前后在青屿奋斗15年；老兵曹院生退伍后，实在割舍不下这片绿色，选择扎根在附近一座居民岛上，守望着这座让他深深眷恋的海岛…… 大榕树下，战士分享守岛故事。 这样动人的故事还有许多，陈指导员早就将它们刻在心里，每逢新兵上岛，他会第一时间说给大家听。这些故事中，也包括很多新一代官兵的亲身经历。 2020年台风“米克拉”登陆，暴雨和强风引发多处塌方，照明与电力设施也严重受损，最令人心疼的是，13棵大树被狂风折断。面对满目疮痍的小岛，连队官兵昼夜轮班修复塌方路段、抢修电力设备，扶起倒伏植株。为了防止大树再次被风雨吹倒，大家及时支撑加固、补土压实，守护着好不容易得来的绿色。 如今，青屿的植物覆盖率已超过85%，榕树、三角梅、石栗、佛肚竹、银桦、马尾松……这些耐盐碱、抗海风的绿植在一代代官兵手里种下，被岁月浇灌成林。 多年前，官兵创作连歌，取名《绿色的小岛》：“绿色的小岛，绿色的兵，青春融入大海，男儿志在军营……”潮起潮落，岁月荏苒，珍贵的绿意，在小岛上一寸寸绵延，美丽的青屿，也成了每个人心中的家。一位老兵在即将离开时深情写道：“青屿，青屿，还没有离开你，就已开始思念你。” 描红石刻。 “在海岛上站成一棵树，根扎得越深，越能经得起风雨洗礼” 相比半年前，列兵朱与帅从容了许多。 那时，朱与帅刚刚上岛，初来乍到的他常常在海风和潮声中思念家乡的烟火。同班的一级上士陈浪看出他的心事，一次巡逻结束，陈浪特意带朱与帅爬上一处山坡。 那里，灿如红霞的三角梅爬满石壁。陈浪说：“这花在咱们家乡随处可见，想家了，我就会来这里多看几眼。”两人都来自贵州，相似的乡音让彼此的心拉得更近。 陈浪告诉朱与帅，在这座周长仅800米的小岛，训练条件有限，连队官兵因地制宜，建起微型靶场、缩小版的障碍场和环形跑道等训练设施。“无论身处什么环境，我们都要保持本色，就如同这三角梅，越是风吹雨打，越要热烈绽放。”他说。 后来，朱与帅得知，陈浪多次参加旅队射击比武夺冠，还作为教练员，指导2名军士在比武场上斩获佳绩。“我也要当‘神枪手’！”慢慢坚定信心的朱与帅为自己定下目标。 陈指导员发现，和朱与帅一样，许多新兵不适应岛上环境，难免出现心理波动。他觉得，这里绿植众多，对于不同的人有不同的意义。不如让大家选择一株草木，作为专属负责人进行照看：“认养一株绿，守护一座岛。” 官兵纷纷行动起来，他们走遍海岛各处，仔细比对每一棵树木花草的形态特征与生长习性。很快，各个班有了自己的养护区，每名官兵也有了自己喜爱的专属植株。 这天，一场特殊的游园会热闹起来，大家在精心呵护的绿植前畅谈心声。 上等兵曹昌冉一边讲解木麻黄的特性，一边和大家分享自己的故事。2020年，他第一次入伍，成为西藏某部一名雷达兵。2年后，他退伍完成大学学业。毕业后，他再次报名参军。征兵人员问他想去哪里，他说：“之前守的是边防，这次我要去海防。”最终，他如愿来到青屿岛。 然而，上岛不久，曹昌冉在训练中意外扭伤脚踝，跟腱严重拉伤。看着同年兵一个个训练成绩突飞猛进，他心里急得不行。作为班长，二级上士张润志为他拟制康复训练计划，常常找他谈心。曹昌冉奋起直追，很快赶上了大家的训练进度。 坚强的木麻黄不惧风吹日晒，在岛上长得层层叠叠。这让曹昌冉想起在西藏当兵时，见过一种植物叫膜果麻黄，它在多砂石的盐碱土里也能长得极好、连成一片。“在海岛上站成一棵树，根扎得越深，越能经得起风雨洗礼。”曹昌冉的一席话让大家振奋不已。 上等兵王超努力训练，多项体能技能课目从及格线边缘达到了良好标准，他看顾的铁树愈发苍翠挺拔；上等兵李永泽原本一个单杠都拉不上去，近日成功突破百余个卷身上，他照料多日的火龙果也开了花……海风依旧，绿意更浓，官兵的守岛故事成了这片蔚蓝海域中动人的回响。 岸滩巡逻。 “绿色小岛是你的阵地，是我心上的远方，也是我们共同的家” 如果不是儿子当兵守防，青屿对二级上士周林威的母亲来说，就是一个遥远的小岛。 可如今，岛上菜园中的青苗，比自家田垄里的庄稼还让小周的母亲惦记。夏季一到，小岛面临持续高温，她焦急地给儿子打去电话：“多给菜苗浇浇水。” 此前，得知小岛上的绿色来之不易，母亲趁着春节上岛探亲，特意带来一袋袋种子：“有黄瓜、番茄、西瓜，都是耐热耐湿的品种。” 她将洗净沥干的种子用湿纱布包好，放在一个小碗中催芽。一晚过后，种子露白了。她又覆土盖膜，等待种子破土。“接下来就是移栽了。”转眼到了离开的日子，她放心不下，特地嘱咐周林威注意出苗的温度和光照。 后来，菜园中的蔬菜瓜果成了母子俩电话中常常聊到的话题。母亲盼着小岛一天比一天好，儿子和战友们安心守岛。 点点青绿，串起小家和大国。 战士为菜园浇水。 不久前，邱连长的妻子周灵也来到心心念念的小岛。看着这里的一草一木，她想起两人彼此守护的日子。 因为聚少离多，平日里，两人通过互道彼此的生活日常表达牵挂和思念。前几年，毕业后的周灵如愿成为一名中学语文老师。刚开始，面对工作中的困难与挑战，些许压力悄然涌上她的心头。 为了安慰周灵，训练工作之余，邱连长将身边的草花树木拍摄下来同她分享。礁石缝中的野草，营房墙角的爬藤，强风后依然挺拔的黑弹树、南洋杉，满园的牵牛花、龙舌兰和黄花夹竹桃……小岛孤悬海上，每一抹绿意都是坚守的象征。邱连长鼓励周灵：“你也可以像它们一样，迎风而立，顽强生长。” 电话里，周灵不时赞叹小岛上的三角梅开得耀眼夺目，邱连长便为她寄去种子。前段时间，邱连长参加上级组织的骨干比武，获得第二名，他第一时间向家中道喜，周灵开心地说，真巧，家里的三角梅也开花了。 后来，周灵所在中学专门邀请邱连长担任校外辅导员，参加学校的爱国教育活动，邱连长热情讲述了守岛官兵的植绿故事和奋斗经历，在场师生被深深打动。 这次探亲，周灵特地带来一本相册。她在里面贴满岛上各种植株的照片，还在每一页写上一句想对邱连长说的话，鼓励他为祖国站好哨、守好岛。其中一句这样写道：“绿色小岛是你的阵地，是我心上的远方，也是我们共同的家。” 陆军某旅“海岛钢四连”战士站哨执勤。 摄影：丁兴军 版式设计：何昌明</div>
+    <div class="original-body" lang="zh-Hans">绿色的小岛，我们的家 ■周进一 解放军报特约记者 廖晓彬 特约通讯员 陈鸿斌 海岛一景。 小船在碧海中悠悠前行，劈开一道白色的浪痕。视线中的小岛愈来愈近，远远望去，仿若海天之间的一颗绿宝石。 初夏，记者乘船来到陆军某旅“海岛钢四连”驻守的青屿岛。沿着码头一路向前，只见四处树木林立、植株茂盛，园子里的花卉开得正艳，田地中的瓜果蔬菜长势喜人。 依山坡而建的营房与哨楼，掩映在郁郁葱葱的绿意之中。夏日的骄阳炙烤着大地，可站在浓密的树荫下，记者分明感受到一丝清爽的空气自鼻尖漫进肺里，本来因为晕船而昏沉沉的脑子，瞬间就透亮了。 “欢迎来到绿色的小岛！”连队官兵自豪地告诉记者，几十年来，代表着希望、坚守和奉献的绿，在这座荒芜的海岛上一点一点生长，直至连成一片。 大海碧波中的青屿。 “青屿，青屿，还没有离开你，就已开始思念你” “很难想象吧，这里曾经寸草不生。”连队陈指导员感慨，过去，青屿不青，绿是罕见的颜色。这座仅有0.06平方公里的小岛遍地都是石渣，附近百姓都说此地“鸟不歇脚船不靠”。 连队官兵担负起改造自然环境、建设宜守宜居小岛的任务，从大陆运来泥土和种子。可是，无情的海风整日席卷，第一批种在稀薄土壤里的上百棵相思树和木麻黄，没活几株。 缺水也是一大难题。为此，官兵连续奋战10个多月，挖建了一个近1000立方米的大型水池，储存灌溉和生活用水。 过程何其艰难。面对坚硬的花岗岩，大家凭借简单工具凿出乱石400多立方米，很多大锤被砸扁了，锹镐被磨成了尖，两三米长的钢钎打得只剩几十厘米。 连队荣誉室的黑白照片重现了当年的时光——海风拍打脸颊，烈日炙烤皮肤，官兵挥镐抡锹，豆大的汗水止不住流淌。然而，没有一个兵想过放弃，大家相信，只要能活一棵树，就有希望把绿色种满整个小岛。 陈指导员对先辈的故事如数家珍：老指导员张解放扎根青屿17年，被誉为“海岛一劲松”，婚后的第一个十年，他只和家属见过5次面，把最好的青春年华都奉献给了这座岛；老连长张良泰身患多种“海岛病”，为了他的身体，上级调他离岛，可他三番五次请求回岛，前后在青屿奋斗15年；老兵曹院生退伍后，实在割舍不下这片绿色，选择扎根在附近一座居民岛上，守望着这座让他深深眷恋的海岛…… 大榕树下，战士分享守岛故事。 这样动人的故事还有许多，陈指导员早就将它们刻在心里，每逢新兵上岛，他会第一时间说给大家听。这些故事中，也包括很多新一代官兵的亲身经历。 2020年台风“米克拉”登陆，暴雨和强风引发多处塌方，照明与电力设施也严重受损，最令人心疼的是，13棵大树被狂风折断。面对满目疮痍的小岛，连队官兵昼夜轮班修复塌方路段、抢修电力设备，扶起倒伏植株。为了防止大树再次被风雨吹倒，大家及时支撑加固、补土压实，守护着好不容易得来的绿色。 如今，青屿的植物覆盖率已超过85%，榕树、三角梅、石栗、佛肚竹、银桦、马尾松……这些耐盐碱、抗海风的绿植在一代代官兵手里种下，被岁月浇灌成林。 多年前，官兵创作连歌，取名《绿色的小岛》：“绿色的小岛，绿色的兵，青春融入大海，男儿志在军营……”潮起潮落，岁月荏苒，珍贵的绿意，在小岛上一寸寸绵延，美丽的青屿，也成了每个人心中的家。一位老兵在即将离开时深情写道：“青屿，青屿，还没有离开你，就已开始思念你。” 描红石刻。 “在海岛上站成一棵树，根扎得越深，越能经得起风雨洗礼” 相比半年前，列兵朱与帅从容了许多。 那时，朱与帅刚刚上岛，初来乍到的他常常在海风和潮声中思念家乡的烟火。同班的一级上士陈浪看出他的心事，一次巡逻结束，陈浪特意带朱与帅爬上一处山坡。 那里，灿如红霞的三角梅爬满石壁。陈浪说：“这花在咱们家乡随处可见，想家了，我就会来这里多看几眼。”两人都来自贵州，相似的乡音让彼此的心拉得更近。 陈浪告诉朱与帅，在这座周长仅800米的小岛，训练条件有限，连队官兵因地制宜，建起微型靶场、缩小版的障碍场和环形跑道等训练设施。“无论身处什么环境，我们都要保持本色，就如同这三角梅，越是风吹雨打，越要热烈绽放。”他说。 后来，朱与帅得知，陈浪多次参加旅队射击比武夺冠，还作为教练员，指导2名军士在比武场上斩获佳绩。“我也要当‘神枪手’！”慢慢坚定信心的朱与帅为自己定下目标。 陈指导员发现，和朱与帅一样，许多新兵不适应岛上环境，难免出现心理波动。他觉得，这里绿植众多，对于不同的人有不同的意义。不如让大家选择一株草木，作为专属负责人进行照看：“认养一株绿，守护一座岛。” 官兵纷纷行动起来，他们走遍海岛各处，仔细比对每一棵树木花草的形态特征与生长习性。很快，各个班有了自己的养护区，每名官兵也有了自己喜爱的专属植株。 这天，一场特殊的游园会热闹起来，大家在精心呵护的绿植前畅谈心声。 上等兵曹昌冉一边讲解木麻黄的特性，一边和大家分享自己的故事。2020年，他第一次入伍，成为西藏某部一名雷达兵。2年后，他退伍完成大学学业。毕业后，他再次报名参军。征兵人员问他想去哪里，他说：“之前守的是边防，这次我要去海防。”最终，他如愿来到青屿岛。 然而，上岛不久，曹昌冉在训练中意外扭伤脚踝，跟腱严重拉伤。看着同年兵一个个训练成绩突飞猛进，他心里急得不行。作为班长，二级上士张润志为他拟制康复训练计划，常常找他谈心。曹昌冉奋起直追，很快赶上了大家的训练进度。 坚强的木麻黄不惧风吹日晒，在岛上长得层层叠叠。这让曹昌冉想起在西藏当兵时，见过一种植物叫膜果麻黄，它在多砂石的盐碱土里也能长得极好、连成一片。“在海岛上站成一棵树，根扎得越深，越能经得起风雨洗礼。”曹昌冉的一席话让大家振奋不已。 上等兵王超努力训练，多项体能技能课目从及格线边缘达到了良好标准，他看顾的铁树愈发苍翠挺拔；上等兵李永泽原本一个单杠都拉不上去，近日成功突破百余个卷身上，他照料多日的火龙果也开了花……海风依旧，绿意更浓，官兵的守岛故事成了这片蔚蓝海域中动人的回响。 岸滩巡逻。 “绿色小岛是你的阵地，是我心上的远方，也是我们共同的家” 如果不是儿子当兵守防，青屿对二级上士周林威的母亲来说，就是一个遥远的小岛。 可如今，岛上菜园中的青苗，比自家田垄里的庄稼还让小周的母亲惦记。夏季一到，小岛面临持续高温，她焦急地给儿子打去电话：“多给菜苗浇浇水。” 此前，得知小岛上的绿色来之不易，母亲趁着春节上岛探亲，特意带来一袋袋种子：“有黄瓜、番茄、西瓜，都是耐热耐湿的品种。” 她将洗净沥干的种子用湿纱布包好，放在一个小碗中催芽。一晚过后，种子露白了。她又覆土盖膜，等待种子破土。“接下来就是移栽了。”转眼到了离开的日子，她放心不下，特地嘱咐周林威注意出苗的温度和光照。 后来，菜园中的蔬菜瓜果成了母子俩电话中常常聊到的话题。母亲盼着小岛一天比一天好，儿子和战友们安心守岛。 点点青绿，串起小家和大国。 战士为菜园浇水。 不久前，邱连长的妻子周灵也来到心心念念的小岛。看着这里的一草一木，她想起两人彼此守护的日子。 因为聚少离多，平日里，两人通过互道彼此的生活日常表达牵挂和思念。前几年，毕业后的周灵如愿成为一名中学语文老师。刚开始，面对工作中的困难与挑战，些许压力悄然涌上她的心头。 为了安慰周灵，训练工作之余，邱连长将身边的草花树木拍摄下来同她分享。礁石缝中的野草，营房墙角的爬藤，强风后依然挺拔的黑弹树、南洋杉，满园的牵牛花、龙舌兰和黄花夹竹桃……小岛孤悬海上，每一抹绿意都是坚守的象征。邱连长鼓励周灵：“你也可以像它们一样，迎风而立，顽强生长。” 电话里，周灵不时赞叹小岛上的三角梅开得耀眼夺目，邱连长便为她寄去种子。前段时间，邱连长参加上级组织的骨干比武，获得第二名，他第一时间向家中道喜，周灵开心地说，真巧，家里的三角梅也开花了。 后来，周灵所在中学专门邀请邱连长担任校外辅导员，参加学校的爱国教育活动，邱连长热情讲述了守岛官兵的植绿故事和奋斗经历，在场师生被深深打动。 这次探亲，周灵特地带来一本相册。她在里面贴满岛上各种植株的照片，还在每一页写上一句想对邱连长说的话，鼓励他为祖国站好哨、守好岛。其中一句这样写道：“绿色小岛是你的阵地，是我心上的远方，也是我们共同的家。” 陆军某旅“海岛钢四连”战士站哨执勤。 摄影：丁兴军 版式设计：何昌明</div>
   </details>
 
 
@@ -628,10 +782,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent open-source intelligence pipeline monitoring Chinese-language military and security media. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

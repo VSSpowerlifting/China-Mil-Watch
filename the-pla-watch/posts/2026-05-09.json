@@ -29,56 +29,82 @@
   "closing_note": "I welcome comments or corrections from people working on Chinese military media, PLA studies, or U.S.-China security.",
   "source_trail": [
     {
-      "label": "Wei Fenghe / Li Shangfu verdicts",
-      "url": "http://www.81.cn/yw_208727/16459190.html"
+      "url": "http://www.81.cn/yw_208727/16459190.html",
+      "title": "Wei Fenghe / Li Shangfu verdicts",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "魏凤和案、李尚福案一审宣判"
     },
     {
-      "label": "NDU political rectification article",
-      "url": "http://www.81.cn/yw_208727/16459257.html"
+      "url": "http://www.81.cn/yw_208727/16459257.html",
+      "title": "NDU political rectification article",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "思想战线丨以彻底的自我革命精神持续深化政治整训"
     },
     {
-      "label": "Xiangshan Forum preparatory meeting",
-      "url": "http://www.81.cn/yw_208727/16459472.html"
+      "url": "http://www.81.cn/yw_208727/16459472.html",
+      "title": "Xiangshan Forum preparatory meeting",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "2026年北京香山论坛先导会在京举行"
     },
     {
-      "label": "73rd Group Army unmanned systems coordination",
-      "url": "http://www.81.cn/yw_208727/16459090.html"
+      "url": "http://www.81.cn/yw_208727/16459090.html",
+      "title": "73rd Group Army unmanned systems coordination",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "\"老飞手\"重修无人装备课，让“单装精通”成为“体系联动”"
     },
     {
-      "label": "83rd Group Army joint pre-assignment training",
-      "url": "http://www.81.cn/yw_208727/16459465.html"
+      "url": "http://www.81.cn/yw_208727/16459465.html",
+      "title": "83rd Group Army joint pre-assignment training",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "第83集团军某旅组织新毕业军官岗前融合集训"
     },
     {
-      "label": "Army brigade simulation training upgrade (PLA Daily)",
-      "url": "http://www.81.cn/yw_208727/16459261.html"
+      "url": "http://www.81.cn/yw_208727/16459261.html",
+      "title": "Army brigade simulation training upgrade (PLA Daily)",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "陆军某旅推动模拟训练系统从“单平台”向“成体系”转变"
     },
     {
-      "label": "Japan \"new militarism\" framing (AMS researchers)",
-      "url": "http://www.81.cn/yw_208727/16459471.html"
+      "url": "http://www.81.cn/yw_208727/16459471.html",
+      "title": "Japan \"new militarism\" framing (AMS researchers)",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "称谓“复古”，意在“还魂”——警惕日本“新型军国主义”的现实威胁⑪"
     },
     {
-      "label": "Japan \"new militarism\" framing (Party School researcher)",
-      "url": "http://www.81.cn/yw_208727/16459269.html"
+      "url": "http://www.81.cn/yw_208727/16459269.html",
+      "title": "Japan \"new militarism\" framing (Party School researcher)",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "国际观察丨警惕日本“再军事化”新动向"
     },
     {
-      "label": "China Coast Guard Diaoyu Islands patrol",
-      "url": "http://www.81.cn/yw_208727/16459188.html"
+      "url": "http://www.81.cn/yw_208727/16459188.html",
+      "title": "China Coast Guard Diaoyu Islands patrol",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "中国海警舰艇编队5月7日在我钓鱼岛领海巡航"
     },
     {
-      "label": "CCG spokesperson / South China Sea",
-      "url": "http://www.81.cn/yw_208727/16459230.html"
+      "url": "http://www.81.cn/yw_208727/16459230.html",
+      "title": "CCG spokesperson / South China Sea",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "中国海警局新闻发言人发表谈话"
     },
     {
-      "label": "Rocket Force \"Golden Idea\" suggestion system",
-      "url": "http://www.81.cn/yw_208727/16459467.html"
+      "url": "http://www.81.cn/yw_208727/16459467.html",
+      "title": "Rocket Force \"Golden Idea\" suggestion system",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "火箭军某部集兵智聚兵心破解发展难题"
     },
     {
-      "label": "National defense mobilization doctrine article",
-      "url": "http://www.81.cn/yw_208727/16459103.html"
+      "url": "http://www.81.cn/yw_208727/16459103.html",
+      "title": "National defense mobilization doctrine article",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "军事论坛丨把握加快国防动员能力建设着力点"
     },
     {
-      "label": "JLSF No. 910 Hospital medical support reform",
-      "url": "http://www.81.cn/yw_208727/16459495.html"
+      "url": "http://www.81.cn/yw_208727/16459495.html",
+      "title": "JLSF No. 910 Hospital medical support reform",
+      "source": "PLA Daily (81.cn)",
+      "title_zh": "联勤保障部队第910医院践行“基层军医的舞台在一线”现实课题"
     }
   ],
   "media_items": [
@@ -94,5 +120,8 @@
       "selection_note": "Selected because: institutional/contextual subject (National Defense University-PLA tour 120625-M-BN443-040); license verified: Public domain; 5184×3456 px; landscape orientation.",
       "auto_selected": true
     }
-  ]
+  ],
+  "issue_number": 1,
+  "term_to_know_term": "政治整训 — Political Rectification Training",
+  "term_to_know_explanation": "Political rectification training is a structured, CMC-directed campaign requiring PLA units and officers to undergo intensive ideological review, self-criticism, and loyalty reaffirmation. It is distinct from routine political education: rectification is launched in response to a specific perceived failure — in this case, the corruption scandals inside the Rocket Force and defense procurement establishment that became public in 2023.\n\nThe goal, as framed in official PLA sources, is to purge erroneous thinking, reinforce the principle that the Party commands the gun, and reassert CMC authority over the force. A May 8 NDU article describes the campaign as ongoing and links it to the PLA's 2027 centenary founding goal. In this edition's limited dataset, the term matters less as a new concept than as a sign that rectification remains an active institutional frame."
 }

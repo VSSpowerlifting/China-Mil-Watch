@@ -32,177 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
     }
-    .site-header-inner {
-      max-width: 1180px;
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -211,305 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner { gap: 0.5rem; padding: 10px 14px; height: 64px; }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.85rem; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 10px 12px; gap: 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -519,63 +667,69 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
         <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Open-source intelligence · Chinese military &amp; security media</span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -593,10 +747,10 @@ details summary:hover { color: var(--color-text-primary); }
       Fusing the Oath of Youth into the Vast Universe: A Close Look at the Border Defense Officers and Soldiers Who Toil Under Stars and Moon for the Motherland
     </h1>
 
-      <div class="article-page-title-zh">把青春誓言融入浩瀚宇宙，走近这群为祖国披星戴月的边防官兵</div>
+      <div class="article-page-title-zh" lang="zh-Hans">把青春誓言融入浩瀚宇宙，走近这群为祖国披星戴月的边防官兵</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>16 May 2026</span>
     </div>
@@ -620,7 +774,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">夜空闪耀“守边星” ■蒋利葵 闫冰洁 王奕博 “下哨后的我总爱数星星，数着数着就湿了眼睛，数星星啊数星星，星星最懂战士的心，不知哪一颗星星，照耀着老家的窗棂……我守着边关满天星，也守护着远方明亮的灯。”一首动人的军旅歌曲，唱出了戍边人的心声。 新疆军区明铁盖边防连驻守在帕米尔高原，特殊的地理和气候条件让这里成为绝佳的观星地。一年中超过一半的日子，官兵可以看到璀璨而深邃的星空，大家也将这里称作是“伸手可以摸到星星的地方”。 星空之下，哨位之上。下哨后观星、闲暇时拍星……连队官兵将青春誓言、人生信念融入浩瀚宇宙和灿烂星河。今天，让我们一起走近这群为祖国披星戴月的边防官兵。 ——编 者 图①：新疆军区明铁盖边防连官兵踏雪巡逻。 图②：连队战士正在喂马。 图③：一名战士与星空同框。 图④：打理菜园。 图⑤：坚守哨位。 图⑥：战士拍摄的星轨。 这里离家乡很远，离星空却很近 天渐渐黑了，当无垠的苍穹变成巨大的夜幕，头顶的星空亮得愈发璀璨。 遥望夜空，哨位上的新疆军区明铁盖边防连二级上士余意脑海中浮现起多年前看到的一幕。那时，电视上播放着一段拍摄于边防高原的星空影像，虽然只有短短几十秒，但每一帧都美如画卷的镜头，让屏幕前的余意对遥远的边防心生向往。 那年春天，余意报名参军，并毫不犹豫地选择奔赴艰苦地区部队。在火车上颠簸了三天两夜，他亲眼看着车窗外的风景从郁郁青山慢慢变成苍茫戈壁和皑皑雪峰。最终，他站上了距离家乡4000多公里的帕米尔高原。 然而，最先迎接余意的不是熠熠星光，而是稀薄的氧气和肆虐的狂风。“别说和战友们冲坡了，跑上几步就喘得上气不接下气。”在这个一年中有200多天刮8级以上大风的地方，余意总是想起家乡的秀美山水。可每当父母打来问候电话，他都咬着牙说一切都好。 这里离家乡很远，离星空却很近。心间涌起乡愁的时候，余意喜欢凝望星夜。点点繁星或簇拥成堆、或零零散散，闪着澄澈的眸子，好像在与他对话。一天夜里，指导员查铺时发现站哨归来的余意正在院子里观星，便上前与他交谈。知晓余意的心事后，指导员鼓励他，人生何尝不是这浩渺星辰呢，每个人都可以在梦想的舞台上闪烁属于自己的光芒。望着天上闪耀的繁星，余意原本黯淡的目光忽而明亮起来，茫然的心境也跟着豁然开朗。 余意当兵第二年，恰逢连队的军马饲养员退伍，指导员推荐他去参加上级组织的军马饲养员集训。这位入伍前从没摸过马的小伙在集训队扎下身子勤学苦练，归来时习得一身过硬的驭马本领。 “黑豹”是陪伴余意最久的一匹军马，奔跑起来风驰电掣。“别看我们现在默契十足，以前‘黑豹’可是十几匹军马里最顽皮的。”余意说，一次他带马儿们出去觅食，收拢队伍时却始终找不见“黑豹”的踪影，后来发现，吃饱喝足的它早就跑回了马厩。 在连队管段区域内，位于卡前乃达坂的点位海拔超过4900米，官兵采用乘车、乘马、徒步等相结合的方式前出巡逻。一些地带满是碎石，爬一步滑半步，余意和“黑豹”坚持走在前方开路。每每巡逻归来，余意都会为“黑豹”准备它最爱吃的玉米和苜蓿作为奖励，“黑豹”也渐渐成为余意可靠的“无言战友”。 这些年，余意和“黑豹”一起跨过冰河、闯过雪山，也在广阔的戈壁上追风奔跑、在宁静的夜空下沐浴星光。对余意来说，身边的战友和始终相伴的“黑豹”早就成了“亲人”。他常说，自己会坚守在“第二故乡”，如同广袤夜空的一颗星，照亮祖国的万家灯火。 谈到家乡，一级上士王永宁说起儿时记忆里的一片星空。 盛夏之夜，他常和爷爷坐在村头的一棵老树下，看星星、说故事。爷爷指着天边最亮的那颗星，告诉他那也叫作“守家星”，它守着村里的烟火、田里的庄稼，更照亮回家的路。 可是，王永宁没能成为亲人的“守家星”。他的两个叔叔都是曾在艰苦地区服役的老兵，在他们的影响下，王永宁踏入军营远赴边疆，成了高原上的“守边星”。虽然与爷爷聚少离多，可爷爷为他感到骄傲，总是鼓励他在边防好好干，不要担心家里。 那天，王永宁带领新兵执行夜间潜伏训练任务。高原的星空比家乡的更亮、更近、更壮阔，灿烂的星光照亮了新兵略显稚嫩的脸庞。王永宁看到他们趴在雪窝里瑟瑟发抖，但仍然紧握钢枪，没有半分懈怠。 日月变换，斗转星移。入伍14年的王永宁在巡逻路上走了不知多少趟。他告诉自己，既要当好“守边星”，又要当好新兵的“领路星”。 追“星”者的戍边青春，比繁星更加闪亮 交错的星轨流光溢彩、壮美的银河纹理层叠……宿舍走廊里，一面贴满星空照的墙，常常吸引大家驻足观看。 “这里的星空太美了，不少官兵喜欢将它们拍摄下来。”指导员做了一面“星空墙”，大家可以随时张贴拍到的“大片”。 一级上士尚本栓是最早追“星”的人。“刚刚当兵的时候，这里信号不好，通话不便。”尚本栓和父母靠着一封封信笺互诉牵挂。 一次，尚本栓在信中向家人描绘深夜站哨时看到的星河。那是一个夏天，晚上的高原仍旧寒风刺骨。夜空由藏青慢慢变得墨一般黑，衬得冷白色的银河又宽又密，他感到整个苍穹仿佛慢慢向下垂落，最终紧紧包裹住自己。激动的他，感到热血在身体里沸腾。 父母在回信中说：“真想和你一起欣赏美丽的星空！”后来，尚本栓常常在信里夹上一张星空照，有他拍到的银河，也有他在星空下站哨的样子，或是坐在山顶遥望星空的身影。这些记录着尚本栓军旅青春的照片，至今仍被他的父母珍藏。 不同季节的星空形态各异。为定格这份浪漫，去年冬天，尚本栓和追“星”的战友们约定——由他带队集齐四季星海，记录大家的戍边春秋。 下士蓝天玉也是一个妥妥的追“星”族。闲暇时间，他喜欢操作无人机升空，以另一种视角定格高原上的璀璨星河。 新兵时期，连长注意到蓝天玉喜欢琢磨电器等物件，便鼓励他担任无人机操作手。地处高原，想要飞好无人机并不容易。“无人机在极寒天气中掉电快、续航差，充电也比较慢。”每次训练之前，蓝天玉都会细心地做好各种飞行准备。 可即便如此，高海拔区域的稀薄空气仍旧导致无人机螺旋桨转动效率下降，甚至出现动力不足、飞行不稳等现象，这给了蓝天玉不小打击。 一天，战友们无意间看到蓝天玉用无人机拍摄的星空，纷纷向他请教拍摄技巧。此后，他拍摄的视频常在宿舍楼大厅的屏幕上滚动播放，还吸引了不少官兵加入追“星”行列。 这让蓝天玉重拾信心，他一次次抱着无人机苦练飞行技能。如今，蓝天玉已成长为一名出色的无人机操作手。去年参加上级组织的无人机比武，他荣获第三名。 在连队官兵看来，这些“星空照”既是壮美的影像，也是青春和热血的底片。那天，蓝天玉在他拍下的一张星空照背后，写下这样一句话：“当一群追‘星’的人汇聚在一起时，他们的青春比繁星更加闪亮。” 一片星空，照亮前行的路 融融夜色，闪闪繁星。仰望星空之时，二级上士赵甲银常常想，昔日在明铁盖艰苦奋斗的先辈，是否也曾深深凝望头顶上的壮美银河。 “一顶帐篷挡风雪，三块石头支起锅。”记得新兵下连第一天，赵甲银在荣誉室听指导员讲起，60多年前，驻疆空军某部的18名官兵仅用14天时间，就在这片“生命禁区”成功开辟出一条航线，后来这条航线被誉为“空中丝绸之路”。 “为了让装备快速启动，当年的官兵给机器裹棉被、生火炉。一次大雪封山、设备停转，大伙轮流手摇发电机7个小时，最后胳膊都抬不起来……面对简陋的设备器件，他们在气象导航的空白之地担负起各项保障任务。”赵甲银还记得指导员鼓励大家，“现在的保障条件可比当年好太多了，我们更要牢牢坚守边防，不能丢了先辈的光荣传统！” 然而，那时的赵甲银体能成绩在全连垫底。他曾有过退缩的念头，可想到先辈就是在同一片星空下顽强战斗，又振作起来。 后来，赵甲银抓住一切机会训练体能。练长跑时，他把沙袋绑在腿上；无氧训练时，他在盛满水的脸盆里练憋气；负重训练时，他沿着先辈走过的达坂陡坡、碎石山路拉练，上坡时放缓脚步稳住呼吸，下坡时重心下沉控制节奏，在崎岖地形里比韧劲、练耐力…… 功夫不负有心人。赵甲银成了连队的“军体达人”，探索出了一套有效的高原训练方法，战友们无不称赞。 一片星空，照亮前行的路。像赵甲银一样脚踏实地、砥砺前行的戍边人还有许多。作为连队主官，刘连长在困难面前沉着冷静，一次巡逻遇到结冰路面，车辆难以通行，他坚持带队徒步数公里走向界碑；一级上士袁龙飞是连队“四小工”，为保障连队日常生活秩序，他总是拎着装满工具的“百宝箱”蹲在地面作业、爬上爬下排查隐患……在明铁盖这片天地，大家都想做一颗耀眼的“星”。 图片由袁 野、李 贺摄 版式设计：何昌明</div>
+    <div class="original-body" lang="zh-Hans">夜空闪耀“守边星” ■蒋利葵 闫冰洁 王奕博 “下哨后的我总爱数星星，数着数着就湿了眼睛，数星星啊数星星，星星最懂战士的心，不知哪一颗星星，照耀着老家的窗棂……我守着边关满天星，也守护着远方明亮的灯。”一首动人的军旅歌曲，唱出了戍边人的心声。 新疆军区明铁盖边防连驻守在帕米尔高原，特殊的地理和气候条件让这里成为绝佳的观星地。一年中超过一半的日子，官兵可以看到璀璨而深邃的星空，大家也将这里称作是“伸手可以摸到星星的地方”。 星空之下，哨位之上。下哨后观星、闲暇时拍星……连队官兵将青春誓言、人生信念融入浩瀚宇宙和灿烂星河。今天，让我们一起走近这群为祖国披星戴月的边防官兵。 ——编 者 图①：新疆军区明铁盖边防连官兵踏雪巡逻。 图②：连队战士正在喂马。 图③：一名战士与星空同框。 图④：打理菜园。 图⑤：坚守哨位。 图⑥：战士拍摄的星轨。 这里离家乡很远，离星空却很近 天渐渐黑了，当无垠的苍穹变成巨大的夜幕，头顶的星空亮得愈发璀璨。 遥望夜空，哨位上的新疆军区明铁盖边防连二级上士余意脑海中浮现起多年前看到的一幕。那时，电视上播放着一段拍摄于边防高原的星空影像，虽然只有短短几十秒，但每一帧都美如画卷的镜头，让屏幕前的余意对遥远的边防心生向往。 那年春天，余意报名参军，并毫不犹豫地选择奔赴艰苦地区部队。在火车上颠簸了三天两夜，他亲眼看着车窗外的风景从郁郁青山慢慢变成苍茫戈壁和皑皑雪峰。最终，他站上了距离家乡4000多公里的帕米尔高原。 然而，最先迎接余意的不是熠熠星光，而是稀薄的氧气和肆虐的狂风。“别说和战友们冲坡了，跑上几步就喘得上气不接下气。”在这个一年中有200多天刮8级以上大风的地方，余意总是想起家乡的秀美山水。可每当父母打来问候电话，他都咬着牙说一切都好。 这里离家乡很远，离星空却很近。心间涌起乡愁的时候，余意喜欢凝望星夜。点点繁星或簇拥成堆、或零零散散，闪着澄澈的眸子，好像在与他对话。一天夜里，指导员查铺时发现站哨归来的余意正在院子里观星，便上前与他交谈。知晓余意的心事后，指导员鼓励他，人生何尝不是这浩渺星辰呢，每个人都可以在梦想的舞台上闪烁属于自己的光芒。望着天上闪耀的繁星，余意原本黯淡的目光忽而明亮起来，茫然的心境也跟着豁然开朗。 余意当兵第二年，恰逢连队的军马饲养员退伍，指导员推荐他去参加上级组织的军马饲养员集训。这位入伍前从没摸过马的小伙在集训队扎下身子勤学苦练，归来时习得一身过硬的驭马本领。 “黑豹”是陪伴余意最久的一匹军马，奔跑起来风驰电掣。“别看我们现在默契十足，以前‘黑豹’可是十几匹军马里最顽皮的。”余意说，一次他带马儿们出去觅食，收拢队伍时却始终找不见“黑豹”的踪影，后来发现，吃饱喝足的它早就跑回了马厩。 在连队管段区域内，位于卡前乃达坂的点位海拔超过4900米，官兵采用乘车、乘马、徒步等相结合的方式前出巡逻。一些地带满是碎石，爬一步滑半步，余意和“黑豹”坚持走在前方开路。每每巡逻归来，余意都会为“黑豹”准备它最爱吃的玉米和苜蓿作为奖励，“黑豹”也渐渐成为余意可靠的“无言战友”。 这些年，余意和“黑豹”一起跨过冰河、闯过雪山，也在广阔的戈壁上追风奔跑、在宁静的夜空下沐浴星光。对余意来说，身边的战友和始终相伴的“黑豹”早就成了“亲人”。他常说，自己会坚守在“第二故乡”，如同广袤夜空的一颗星，照亮祖国的万家灯火。 谈到家乡，一级上士王永宁说起儿时记忆里的一片星空。 盛夏之夜，他常和爷爷坐在村头的一棵老树下，看星星、说故事。爷爷指着天边最亮的那颗星，告诉他那也叫作“守家星”，它守着村里的烟火、田里的庄稼，更照亮回家的路。 可是，王永宁没能成为亲人的“守家星”。他的两个叔叔都是曾在艰苦地区服役的老兵，在他们的影响下，王永宁踏入军营远赴边疆，成了高原上的“守边星”。虽然与爷爷聚少离多，可爷爷为他感到骄傲，总是鼓励他在边防好好干，不要担心家里。 那天，王永宁带领新兵执行夜间潜伏训练任务。高原的星空比家乡的更亮、更近、更壮阔，灿烂的星光照亮了新兵略显稚嫩的脸庞。王永宁看到他们趴在雪窝里瑟瑟发抖，但仍然紧握钢枪，没有半分懈怠。 日月变换，斗转星移。入伍14年的王永宁在巡逻路上走了不知多少趟。他告诉自己，既要当好“守边星”，又要当好新兵的“领路星”。 追“星”者的戍边青春，比繁星更加闪亮 交错的星轨流光溢彩、壮美的银河纹理层叠……宿舍走廊里，一面贴满星空照的墙，常常吸引大家驻足观看。 “这里的星空太美了，不少官兵喜欢将它们拍摄下来。”指导员做了一面“星空墙”，大家可以随时张贴拍到的“大片”。 一级上士尚本栓是最早追“星”的人。“刚刚当兵的时候，这里信号不好，通话不便。”尚本栓和父母靠着一封封信笺互诉牵挂。 一次，尚本栓在信中向家人描绘深夜站哨时看到的星河。那是一个夏天，晚上的高原仍旧寒风刺骨。夜空由藏青慢慢变得墨一般黑，衬得冷白色的银河又宽又密，他感到整个苍穹仿佛慢慢向下垂落，最终紧紧包裹住自己。激动的他，感到热血在身体里沸腾。 父母在回信中说：“真想和你一起欣赏美丽的星空！”后来，尚本栓常常在信里夹上一张星空照，有他拍到的银河，也有他在星空下站哨的样子，或是坐在山顶遥望星空的身影。这些记录着尚本栓军旅青春的照片，至今仍被他的父母珍藏。 不同季节的星空形态各异。为定格这份浪漫，去年冬天，尚本栓和追“星”的战友们约定——由他带队集齐四季星海，记录大家的戍边春秋。 下士蓝天玉也是一个妥妥的追“星”族。闲暇时间，他喜欢操作无人机升空，以另一种视角定格高原上的璀璨星河。 新兵时期，连长注意到蓝天玉喜欢琢磨电器等物件，便鼓励他担任无人机操作手。地处高原，想要飞好无人机并不容易。“无人机在极寒天气中掉电快、续航差，充电也比较慢。”每次训练之前，蓝天玉都会细心地做好各种飞行准备。 可即便如此，高海拔区域的稀薄空气仍旧导致无人机螺旋桨转动效率下降，甚至出现动力不足、飞行不稳等现象，这给了蓝天玉不小打击。 一天，战友们无意间看到蓝天玉用无人机拍摄的星空，纷纷向他请教拍摄技巧。此后，他拍摄的视频常在宿舍楼大厅的屏幕上滚动播放，还吸引了不少官兵加入追“星”行列。 这让蓝天玉重拾信心，他一次次抱着无人机苦练飞行技能。如今，蓝天玉已成长为一名出色的无人机操作手。去年参加上级组织的无人机比武，他荣获第三名。 在连队官兵看来，这些“星空照”既是壮美的影像，也是青春和热血的底片。那天，蓝天玉在他拍下的一张星空照背后，写下这样一句话：“当一群追‘星’的人汇聚在一起时，他们的青春比繁星更加闪亮。” 一片星空，照亮前行的路 融融夜色，闪闪繁星。仰望星空之时，二级上士赵甲银常常想，昔日在明铁盖艰苦奋斗的先辈，是否也曾深深凝望头顶上的壮美银河。 “一顶帐篷挡风雪，三块石头支起锅。”记得新兵下连第一天，赵甲银在荣誉室听指导员讲起，60多年前，驻疆空军某部的18名官兵仅用14天时间，就在这片“生命禁区”成功开辟出一条航线，后来这条航线被誉为“空中丝绸之路”。 “为了让装备快速启动，当年的官兵给机器裹棉被、生火炉。一次大雪封山、设备停转，大伙轮流手摇发电机7个小时，最后胳膊都抬不起来……面对简陋的设备器件，他们在气象导航的空白之地担负起各项保障任务。”赵甲银还记得指导员鼓励大家，“现在的保障条件可比当年好太多了，我们更要牢牢坚守边防，不能丢了先辈的光荣传统！” 然而，那时的赵甲银体能成绩在全连垫底。他曾有过退缩的念头，可想到先辈就是在同一片星空下顽强战斗，又振作起来。 后来，赵甲银抓住一切机会训练体能。练长跑时，他把沙袋绑在腿上；无氧训练时，他在盛满水的脸盆里练憋气；负重训练时，他沿着先辈走过的达坂陡坡、碎石山路拉练，上坡时放缓脚步稳住呼吸，下坡时重心下沉控制节奏，在崎岖地形里比韧劲、练耐力…… 功夫不负有心人。赵甲银成了连队的“军体达人”，探索出了一套有效的高原训练方法，战友们无不称赞。 一片星空，照亮前行的路。像赵甲银一样脚踏实地、砥砺前行的戍边人还有许多。作为连队主官，刘连长在困难面前沉着冷静，一次巡逻遇到结冰路面，车辆难以通行，他坚持带队徒步数公里走向界碑；一级上士袁龙飞是连队“四小工”，为保障连队日常生活秩序，他总是拎着装满工具的“百宝箱”蹲在地面作业、爬上爬下排查隐患……在明铁盖这片天地，大家都想做一颗耀眼的“星”。 图片由袁 野、李 贺摄 版式设计：何昌明</div>
   </details>
 
 
@@ -629,10 +783,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent open-source intelligence pipeline monitoring Chinese-language military and security media. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

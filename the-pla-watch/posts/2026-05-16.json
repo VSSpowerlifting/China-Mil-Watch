@@ -30,59 +30,70 @@
   "what_im_watching_next": "<strong>Fujian’s deployment profile.</strong> Qualification milestones are useful, but they are not the endpoint. The next indicators would be dual-carrier formation coverage, more complex air-wing integration reporting, or clearer signals about Fujian’s operational deployment schedule, especially if future articles begin linking aircraft qualification to broader fleet exercises rather than anniversary retrospectives.\n\n<strong>Rocket Force training templates.</strong> One article does not establish force-wide adoption. The question is whether “Four Randoms” appears again in other Rocket Force units, formal training discussions, or doctrinal publications. Repetition would matter, especially if the model starts appearing across units rather than as a single localized training innovation.\n\n<strong>Formalism correction persistence.</strong> The volume of articles documenting the same institutional problems — fixed inspection briefings, collusion in performance awards, careerist behavior among junior officers — is becoming its own signal. The unresolved question is whether the campaign is actually changing behavior or merely producing another layer of performative compliance, in which officers learn to display reform without necessarily internalizing it.",
   "source_trail": [
     {
-      "label": "Fujian air wing / KJ-600 carrier qualifications",
       "url": "http://www.81.cn/hj_208557/16459619.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "Fujian air wing / KJ-600 carrier qualifications",
+      "title_zh": "海军舰载航空兵部队，13岁生日快乐！"
     },
     {
-      "label": "Rocket Force “Four Randoms” training model",
       "url": "http://www.81.cn/yw_208727/16460297.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "Rocket Force “Four Randoms” training model",
+      "title_zh": "“四个随机”训练模式推行后，备份号手补位打出“满堂彩”"
     },
     {
-      "label": "PLA Navy terminal defense system (Global Times)",
       "url": "https://www.globaltimes.cn/page/202605/1360888.shtml",
-      "source": "Global Times: Defense"
+      "source": "Global Times: Defense",
+      "title": "PLA Navy terminal defense system (Global Times)",
+      "title_zh": "PLA Navy’s new terminal defense system completes type certification trials; expert cites world-class ultra-low-altitude interception capability"
     },
     {
-      "label": "Naval Aviation AEW-fighter coordinated training, May 15",
       "url": "http://www.81.cn/yw_208727/16461159.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "Naval Aviation AEW-fighter coordinated training, May 15",
+      "title_zh": "海军航空兵某部跨昼夜协同训练见闻"
     },
     {
-      "label": "Naval Aviation AEW-fighter coordinated training, May 15 (alternate)",
       "url": "http://www.81.cn/hj_208557/16461187.html",
-      "source": "China Military Online"
+      "source": "China Military Online",
+      "title": "Naval Aviation AEW-fighter coordinated training, May 15 (alternate)",
+      "title_zh": "云端淬剑！海军航空兵某部开展跨昼夜协同训练"
     },
     {
-      "label": "Submarine “Four Randoms”-adjacent systems thinking exercise",
       "url": "http://www.81.cn/yw_208727/16461388.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "Submarine “Four Randoms”-adjacent systems thinking exercise",
+      "title_zh": "海军某潜艇支队强化体系思维打赢“翻身仗”"
     },
     {
-      "label": "CMC Logistic Support Department logistics governance reforms",
       "url": "http://www.81.cn/yw_208727/16460482.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "CMC Logistic Support Department logistics governance reforms",
+      "title_zh": "我军后勤军事治理的探索实践"
     },
     {
-      "label": "PLA cyber doctrine article, Kong Rui / Jiao Dawei",
       "url": "http://www.81.cn/yw_208727/16460490.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "PLA cyber doctrine article, Kong Rui / Jiao Dawei",
+      "title_zh": "研究军事、研究战争、研究打仗丨把握网络空间作战新变化"
     },
     {
-      "label": "New-domain new-quality combat forces doctrine, AMS War Studies",
       "url": "http://www.81.cn/yw_208727/16460298.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "New-domain new-quality combat forces doctrine, AMS War Studies",
+      "title_zh": "推进新域新质作战力量规模化实战化体系化发展"
     },
     {
-      "label": "Eastern Theater Command civilian personnel recruitment",
       "url": "http://www.81.cn/yw_208727/16460401.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "Eastern Theater Command civilian personnel recruitment",
+      "title_zh": "东部战区2026年面向社会公开招考专业技能类文职人员公告"
     },
     {
-      "label": "China-Japan-Philippines Balikatan framing",
       "url": "http://www.81.cn/yw_208727/16460498.html",
-      "source": "PLA Daily (81.cn)"
+      "source": "PLA Daily (81.cn)",
+      "title": "China-Japan-Philippines Balikatan framing",
+      "title_zh": "国际瞭望丨日菲军事捆绑加剧地区安全风险"
     }
   ],
   "media_items": [
@@ -96,5 +107,8 @@
       "source_label": "article body image",
       "auto_selected": true
     }
-  ]
+  ],
+  "issue_number": 2,
+  "term_to_know_term": "四随机 — Four Randoms",
+  "term_to_know_explanation": "A Rocket Force training model that randomizes crew groupings, missile assignments, launch vehicles, and primary/backup frame designations during exercises.\n\nThe purpose is to prevent crews from becoming overly dependent on fixed pairings, familiar launch-frame roles, and predictable operating sequences. In this week’s PLA Daily article, the model appears as a practical answer to a specific failure: one launch frame lost its operators, and the mission collapsed.\n\nThat makes the term more than a slogan. It is a rare public description of how one Rocket Force unit is trying to build redundancy, adaptability, and cross-frame interoperability into the human architecture of missile operations."
 }

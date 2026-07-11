@@ -16,91 +16,104 @@
       "url": "http://www.81.cn/yw_208727/16467717.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-16",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "捍卫国家主权和海洋权益 两岸同胞义不容辞"
     },
     {
       "title": "Eyes Turned Toward Aerospace: An Investigative Report from the Air Force Early Warning Academy",
       "url": "http://www.81.cn/yw_208727/16467458.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-15",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "投向空天的目光——来自空军预警学院的调查报告"
     },
     {
       "title": "From 'Each Fighting His Own Battle' to 'Covering for Each Other': The Principal and Deputy Party Secretaries Take the Lead in Emphasizing Unity and Keeping the Big Picture in Mind",
       "url": "http://www.81.cn/yw_208727/16467569.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-16",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "从“各自为战”到“相互补台”，正副书记带头讲团结顾大局"
     },
     {
       "title": "Set Sail! China's Navy Task Force 83 Departs to Execute Far-Sea Comprehensive Training and Goodwill Visit Mission",
       "url": "http://www.81.cn/yw_208727/16467556.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-16",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "起航！中国海军83舰编队执行远海综合实习访问任务"
     },
     {
       "title": "[Bilingual] China's Nuclear Policy Has Always Maintained a High Degree of Stability, Continuity, and Predictability",
       "url": "http://www.81.cn/yw_208727/16467702.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-16",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "【双语】中国核政策始终保持高度稳定性、连续性和可预见性"
     },
     {
       "title": "Chinese Peacekeeping Quick Reaction Force Deployed to Abyei Conducts Fire Drill",
       "url": "http://www.81.cn/yw_208727/16467255.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-14",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "中国赴阿卜耶伊维和快反分队开展消防演练"
     },
     {
       "title": "Why Did a Temporary-Duty Officer Win Major Awards Repeatedly?",
       "url": "http://www.81.cn/yw_208727/16468523.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-20",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "代职军官为何连获大奖"
     },
     {
       "title": "This Activity Allowed Officers and Soldiers to \"Not Participate\"",
       "url": "http://www.81.cn/yw_208727/16468527.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-20",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "这次活动，允许官兵“不参加”"
     },
     {
       "title": "Party Committee of a Brigade Under the Information Support Force Relays Efforts to Resolve Longstanding Historical Legacy Problems",
       "url": "http://www.81.cn/yw_208727/16468525.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-20",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "信息支援部队某旅党委接力解决历史遗留问题"
     },
     {
       "title": "【Military Vision Mini Classroom】Heavy Weapon of the Deep Sea! The People's Navy Submarine Force Forges an 'Underwater Great Wall'",
       "url": "http://www.81.cn/hj_208557/16468458.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-19",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "【军视小课堂】深海重器！人民海军潜艇部队铸就“水下长城”"
     },
     {
       "title": "Military Units at All Levels Conduct In-Depth Study and Education on Establishing and Practicing the Correct Outlook on Political Achievement",
       "url": "http://www.81.cn/yw_208727/16468410.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-19",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "军队各级深入开展树立和践行正确政绩观学习教育"
     },
     {
       "title": "Conduct Thorough Exercise and Training After-Action Reviews — Never Go to the Battlefield Still Carrying Problems",
       "url": "http://www.81.cn/yw_208727/16468127.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-18",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "做好演训复盘，决不带着问题上战场"
     },
     {
       "title": "PLA Daily Commentator: Drive the Centralized Rectification of the Prominent Problem of New Officials Ignoring Old Debts to Achieve Concrete Results",
       "url": "http://www.81.cn/yw_208727/16468124.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-18",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "解放军报评论员：推动集中整治新官不理旧账突出问题取得实效"
     }
   ],
   "author_name": "Benjamin Yang",
@@ -127,5 +140,12 @@
   "background_image_path": "output/the-pla-watch/media/2026-06-20-source-image.jpg",
   "cover_image": "../covers/2026-06-20.png",
   "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-06-20.png",
-  "cover_thumb": "../covers/2026-06-20-thumb.png"
+  "cover_thumb": "../covers/2026-06-20-thumb.png",
+  "issue_number": 7,
+  "opening_note": "This week’s PLA media cycle was dominated by political work coverage. Most of it was familiar: rectification campaigns, anti-formalism pieces, institutional discipline. Then one MND spokesperson statement cut across all of it.\n\nOn June 16, MND spokesperson Senior Colonel Chen Xi defended China Coast Guard operations east of Taiwan. What made the statement notable was not the existence of the claim itself. Beijing has repeated versions of these arguments for years. What stood out was the way several separate political and territorial questions were folded together into a single official framing.\n\nThe statement defended the CCG presence through EEZ and continental shelf claims Beijing treats as non-negotiable. At the same time, it described defending sovereignty and maritime rights as the “shared inescapable duty of compatriots on both sides of the strait.” That matters because it shifts the framing away from a simple state position. The language implies a broader national obligation that Taiwan authorities are portrayed as abandoning.",
+  "what_stood_out": "The statement also referenced Japan-Philippines maritime delimitation talks in the same breath. That linkage is important. It tied CCG operations east of Taiwan to a separate regional territorial issue and placed both inside the same political narrative. The sharp attacks on the DPP were familiar, but the convergence of all three threads in one attributed spokesperson statement was less routine.\n\nThat does not automatically signal an operational shift. It does, however, show how Beijing is choosing to publicly organize these issues at the messaging level. MND spokesperson statements become part of the official record. Once a framing enters that record, it can be repeated, expanded, and cited later.\n\nThe cross-strait language is probably the most consequential part. By presenting sovereignty defense in those waters as a duty binding on people on both sides of the strait, the statement reframes Taiwanese objections as a political and national failure rather than a sovereign dispute. That is a stronger political claim than a standard denial of provocation.",
+  "what_was_routine": "Outside the Taiwan-related coverage, the week was saturated with 正确政绩观 (“correct outlook on political achievement”) campaign reporting. On its own, none of these articles would be especially remarkable. PLA Daily runs these campaign waves constantly. The same institutional problems appear over and over: leadership transitions that abandon predecessor commitments, inspections optimized for appearances, research disconnected from operational need.\n\nBut reading the pieces together is useful because they show where the PLA still believes friction exists inside the system.\n\nThis week’s examples were unusually concrete. One Rocket Force brigade eliminated preset “problem quotas” tied to inspection visits. An Air Force Early Warning Academy unit restructured its research approval process. An 82nd Group Army battalion piece focused on failures in party committee cohesion. These are not dramatic revelations, but they are useful institutional snapshots. They show where pressure is being applied and what kinds of dysfunction the PLA still considers unresolved.",
+  "what_im_watching_next": "Three things stand out going forward.\n\nFirst, whether the MND repeats or expands the cross-strait nationalist framing tied to CCG operations east of Taiwan. One statement establishes a position. Repetition would suggest deliberate propagation.\n\nSecond, whether 正确政绩观 pressure continues moving into procedural and operational domains. This week included several examples where political campaigns appeared to produce actual administrative changes rather than symbolic messaging alone.\n\nThird, PLAN Task Force 83’s far-sea training voyage with the Qi Jiguang and Kunlunshan. The task force departed Qingdao carrying foreign military cadets from Brazil, Myanmar, and several other countries. The voyage is part training deployment, part military diplomacy platform. Future port calls and foreign reporting may reveal more about how the PLAN wants to develop military education relationships across the Global South.",
+  "term_to_know_term": "正确政绩观 (Zhèngquè Zhèngjì Guān)",
+  "term_to_know_explanation": "A term worth watching is 正确政绩观 itself. The phrase is often translated as “correct outlook on political achievement,” but in practice it functions as a Xi-era standard for evaluating cadre behavior. The campaign pushes officers to prioritize institutional mission and long-term effectiveness over visible metrics, careerism, or showcase projects. Increasingly, the language is appearing in discussions about logistics systems, research management, and operational administration rather than purely ideological discipline. That expansion matters."
 }

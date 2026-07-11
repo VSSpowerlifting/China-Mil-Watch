@@ -32,177 +32,294 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── Color system ───────────────────────────────────────────────────────── */
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
     :root {
-      --color-ink:            #1A2C3D;
-      --color-brand:          #B5513C;
-      --color-signal-mid:     #D87A64;
-      --color-signal-tint:    #FAECE7;
-      --color-surface:        #EDE8DF;
-      --color-bg:             #F7F4EF;
-      --color-bg-card:        #FFFFFF;
-      --color-bg-header:      #FFFFFF;
-      --color-bg-sidebar:     #FAF7F2;
-      --color-text-primary:   #1A2C3D;
-      --color-text-secondary: #4A4440;
-      --color-text-muted:     #7A726A;
-      --color-border:         #C9BFB4;
-      --color-border-soft:    rgba(201, 191, 180, 0.55);
-      --color-accent:         #B5513C;
-      --serif: 'Source Serif 4', 'Playfair Display', Georgia, 'Times New Roman', serif;
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
       --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
     }
 
-    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      background-color: var(--color-bg);
-      background-image:
-        linear-gradient(rgba(26, 44, 61, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26, 44, 61, 0.025) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: var(--color-text-primary);
+      background-color: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    a { color: var(--color-brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
 
-    /* ── Header / masthead ──────────────────────────────────────────────────── */
-    .site-header {
-      background: var(--color-bg-header);
-      border-bottom: 1px solid var(--color-border);
-      flex-shrink: 0;
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
     }
-    .site-header-inner {
-      max-width: 1180px;
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
       margin: 0 auto;
-      padding: 14px 32px;
-      height: 80px;
+      padding: 1.35rem 2rem 1.1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     .header-brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
       color: inherit;
       text-decoration: none;
+      min-width: 0;
     }
     .header-brand:hover { text-decoration: none; }
     .header-brand img {
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
       display: block;
-      border-radius: 3px;
+      border-radius: var(--radius);
       flex-shrink: 0;
     }
-    .header-wordmark {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
     .header-wordmark .title {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--color-text-primary);
-      letter-spacing: -0.005em;
-      line-height: 1.05;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
       white-space: nowrap;
     }
-    .wordmark-signal { color: var(--color-brand); }
+    .wordmark-signal { color: var(--signal); }
     .header-wordmark .kicker {
-      font-family: var(--sans);
-      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
       font-weight: 500;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
-      margin-top: 5px;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    .header-nav { display: flex; gap: 1.75rem; align-items: center; }
-    .header-nav .nav-short { display: none; }
-    .header-nav a {
-      color: var(--color-text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
       text-decoration: none;
-      padding: 6px 0;
+      padding: 11px 0 10px;
       position: relative;
       white-space: nowrap;
       transition: color 140ms ease;
     }
-    .header-nav a::after {
+    .nav-rail a::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
+      left: 0; right: 0; bottom: -1px;
       height: 2px;
-      background: var(--color-brand);
+      background: var(--signal);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 160ms ease;
+      transition: transform 200ms var(--ease);
     }
-    .header-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
-    .header-nav a:hover::after { transform: scaleX(1); }
-    .header-nav a.active { color: var(--color-text-primary); }
-    .header-nav a.active::after { transform: scaleX(1); }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
 
-    /* ── Main layout ─────────────────────────────────────────────────────────── */
+    /* ── Main layout ────────────────────────────────────────────────────── */
     main {
       flex: 1;
-      max-width: 1180px;
+      max-width: var(--shell);
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
+      padding: 2.5rem 2rem 4.5rem;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────────────────── */
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
     .site-footer {
-      background: var(--color-bg-card);
-      border-top: 1px solid var(--color-border);
-      padding: 2.25rem 2rem;
-      text-align: center;
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
     }
     .footer-inner {
-      max-width: 1180px;
+      max-width: var(--shell);
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
     }
     .footer-name {
       font-family: var(--serif);
       font-weight: 700;
-      font-size: 1rem;
-      color: var(--color-text-primary);
-      margin-bottom: 0.25rem;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
     }
     .footer-desc {
       font-size: 0.8125rem;
-      color: var(--color-text-muted);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
     }
 
-    /* ── Tags / chips ────────────────────────────────────────────────────────── */
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -211,305 +328,336 @@
     }
     .tag {
       display: inline-block;
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: #444441;
-      background: #F1EFE8;
-      border: none;
-      border-radius: 3px;
-      padding: 4px 9px;
-      line-height: 1.4;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
     }
-    .tag[data-label="Taiwan"]                { background: #FCEBEB; color: #A32D2D; }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
     .tag[data-label="East China Sea"],
     .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E6F1FB; color: #185FA5; }
-    .tag[data-label*="Personnel"]             { background: #FAEEDA; color: #633806; }
-    .tag[data-label="Exercises"]              { background: #EAF3DE; color: #3B6D11; }
-    .tag[data-label="Military Diplomacy"]     { background: #EEEDFE; color: #3C3489; }
-    .tag[data-label="Internal Security"]      { background: #F1EFE8; color: #444441; }
-    .tag[data-label="Modernization"]          { background: #E1F5EE; color: #0F6E56; }
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
 
-    /* ── Analytical signal indicator ─────────────────────────────────────────── */
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
     .analytical-signal-kicker {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 0.5rem;
     }
     .signal-dot {
-      width: 7px;
-      height: 7px;
+      width: 7px; height: 7px;
       border-radius: 50%;
-      background: #B5513C;
+      background: var(--signal);
       flex-shrink: 0;
       display: inline-block;
     }
     .signal-kicker-text {
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: #B5513C;
+      color: var(--signal);
     }
 
-    /* ── Button tiers ────────────────────────────────────────────────────────── */
+    /* ── Buttons ────────────────────────────────────────────────────────── */
     .btn {
       display: inline-block;
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
       border: none;
       cursor: pointer;
       text-decoration: none;
-      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
     }
-    .btn:focus-visible {
-      outline: 2px solid var(--color-signal-mid);
-      outline-offset: 2px;
-    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
     .btn:active { transform: translateY(1px); }
-    .btn-primary {
-      background: #1A2C3D;
-      color: #E8EFF5;
-      border: none;
-    }
-    .btn-primary:hover { background: #14202D; color: #E8EFF5; text-decoration: none; }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
     .btn-secondary {
       background: transparent;
-      color: var(--color-text-primary);
-      border: 1px solid var(--color-border);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
-    .btn-secondary:hover { background: var(--color-surface); text-decoration: none; }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
     .btn-signal {
       background: transparent;
-      color: #B5513C;
-      border: 1px solid #D87A64;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
     }
-    .btn-signal:hover { background: #FAECE7; color: #B5513C; text-decoration: none; }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
 
-    /* ── Significant badge ───────────────────────────────────────────────────── */
-    .significant-badge {
-      display: inline-block;
-      background: #FAC775;
-      color: #633806;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 4px;
-    }
-
-    /* ── Utilities ───────────────────────────────────────────────────────────── */
-    .empty-state {
-      color: var(--color-text-muted);
-      font-style: italic;
-      padding: 2rem 0;
-    }
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
     .section-rule {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-family: var(--sans);
-      font-size: 0.6875rem;
+      font-family: var(--mono);
+      font-size: 0.66rem;
       font-weight: 600;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--ink-3);
       margin-bottom: 1.25rem;
     }
     .section-rule::before {
       content: "";
-      width: 18px;
-      height: 2px;
-      background: var(--color-brand);
+      width: 18px; height: 2px;
+      background: var(--signal);
       flex-shrink: 0;
     }
 
-    /* ── Tablet / mobile ────────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .site-header-inner { padding: 12px 18px; height: 72px; }
-      .header-brand img { height: 42px; width: 42px; }
-      .header-wordmark .title { font-size: 1.2rem; }
-      .header-wordmark .kicker { display: none; }
-      .header-nav { gap: 1rem; }
-      .header-nav a { font-size: 0.6875rem; letter-spacing: 0.06em; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2rem 1.25rem; }
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
     }
-    @media (max-width: 720px) {
-      .header-nav .nav-full { display: none; }
-      .header-nav .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .site-header-inner { gap: 0.5rem; padding: 10px 14px; height: 64px; }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 36px; width: 36px; }
-      .header-wordmark .title { font-size: 1rem; }
-      .header-nav { gap: 0.85rem; }
-      .header-nav a { font-size: 0.625rem; letter-spacing: 0.04em; }
-    }
-    @media (max-width: 460px) {
-      .site-header-inner { padding: 10px 12px; gap: 0.4rem; }
-      .header-brand { gap: 8px; }
-      .header-brand img { height: 32px; width: 32px; }
-      .header-wordmark .title { font-size: 0.92rem; }
-      .header-nav { gap: 0.6rem; }
-      .header-nav a { font-size: 0.575rem; letter-spacing: 0.03em; }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
     }
 
-    /* ── Reduced motion ─────────────────────────────────────────────────────── */
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
         transition: none !important;
         animation: none !important;
       }
     }
 
-.article-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
+.article-page { max-width: 720px; margin: 0 auto; }
 
 .back-link {
   display: inline-block;
-  font-family: var(--sans);
-  font-size: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 1.75rem;
 }
-.back-link:hover { color: var(--color-brand); text-decoration: none; }
+.back-link:hover { color: var(--signal); text-decoration: none; }
 
-/* ── Article header ──────────────────────────────────────────────── */
+/* ── Record header ─────────────────────────────────────────────────── */
 .article-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--ink);
 }
-
 .article-page-title {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
-  margin-top: 0.85rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
 }
-
 .article-page-title-zh {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  font-style: normal;
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
   margin-bottom: 1rem;
+  line-height: 1.6;
 }
-
 .article-page-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
   margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
 }
-.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; }
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
 
 .btn-source {
   display: inline-block;
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--color-brand);
-  border: 1px solid var(--color-signal-mid);
-  border-radius: 5px;
-  padding: 6px 16px;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
   margin-top: 1.1rem;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 .btn-source:hover {
-  background: var(--color-signal-tint);
-  border-color: var(--color-brand);
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
   text-decoration: none;
 }
-.btn-source:focus-visible {
-  outline: 2px solid var(--color-signal-mid);
-  outline-offset: 2px;
-}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-/* ── Section label ───────────────────────────────────────────────── */
+/* ── Section label ─────────────────────────────────────────────────── */
 .section-label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   margin-bottom: 0.75rem;
 }
 .section-label::before {
   content: "";
-  width: 16px;
-  height: 2px;
-  background: var(--color-brand);
+  width: 16px; height: 2px;
+  background: var(--signal);
 }
 
-/* ── Summary block ───────────────────────────────────────────────── */
+/* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-border);
-  border-radius: 0 4px 4px 0;
-  padding: 1.1rem 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
   margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.summary-block.significant {
-  border-left-color: var(--color-brand);
-}
+.summary-block.significant { border-left-color: var(--signal); }
 .sig-reasoning {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-brand);
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
   line-height: 1.6;
 }
 
-/* ── Translation body ────────────────────────────────────────────── */
+/* ── Translation body — the primary reading surface ────────────────── */
 .translation-body {
-  font-size: 0.9375rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--color-text-primary);
+  color: var(--ink);
   margin-bottom: 2rem;
 }
-.translation-body p { margin-bottom: 0.9rem; }
+.translation-body p { margin-bottom: 1rem; }
 .translation-body p:last-child { margin-bottom: 0; }
 
-/* ── Collapsible original ────────────────────────────────────────── */
+/* ── Collapsible original ──────────────────────────────────────────── */
 details {
   margin-bottom: 2rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
 }
 details summary {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  padding: 0.65rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
   cursor: pointer;
   user-select: none;
   list-style: none;
@@ -519,63 +667,69 @@ details summary {
 }
 details summary::-webkit-details-marker { display: none; }
 details summary::before {
-  content: "▶";
-  font-size: 0.6rem;
-  transition: transform 0.15s;
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
   display: inline-block;
 }
 details[open] summary::before { transform: rotate(90deg); }
-details summary:hover { color: var(--color-text-primary); }
+details summary:hover { color: var(--ink); }
 .original-body {
-  padding: 1rem;
-  border-top: 1px solid var(--color-border);
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
   font-size: 0.9375rem;
-  line-height: 1.85;
-  color: var(--color-text-secondary);
+  line-height: 1.9;
+  color: var(--ink-2);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* ── About-this-analysis link ────────────────────────────────────── */
+/* ── About-this-analysis link ──────────────────────────────────────── */
 .about-analysis {
   display: inline-block;
   margin-top: 0.85rem;
   font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--ink-3);
 }
-.about-analysis a { color: var(--color-text-muted); text-decoration: underline; }
-.about-analysis a:hover { color: var(--color-brand); }
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
 
 @media (max-width: 900px) {
   .article-page { max-width: 100%; }
-  .article-page-title { font-size: 1.5rem; }
 }
   </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="site-header-inner">
+<header class="masthead">
+  <div class="masthead-name-row">
     <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
       <img src="../logo-icon.png" alt="">
       <span class="header-wordmark">
         <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Open-source intelligence · Chinese military &amp; security media</span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
       </span>
     </a>
-    <nav class="header-nav">
-      <a href="../index.html" >
-        <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-      </a>
-      <a href="../archive.html" >Archive</a>
-      <a href="../signals.html" >Signals</a>
-      <a href="../the-pla-watch/index.html" >
-        <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-      </a>
-      <a href="../methodology.html" >Methodology</a>
-    </nav>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
   </div>
 </header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
 
 
 <main>
@@ -593,10 +747,10 @@ details summary:hover { color: var(--color-text-primary); }
       Ideological Front | Ensuring Political Steadfastness Through Theoretical Clarity
     </h1>
 
-      <div class="article-page-title-zh">思想战线丨以理论上的清醒保证政治上的坚定</div>
+      <div class="article-page-title-zh" lang="zh-Hans">思想战线丨以理论上的清醒保证政治上的坚定</div>
 
     <div class="article-page-meta">
-      <span>PLA Daily (解放军报)</span>
+      <span class="src">PLA Daily (解放军报)</span>
       <span class="sep"></span>
       <span>11 May 2026</span>
     </div>
@@ -620,7 +774,7 @@ details summary:hover { color: var(--color-text-primary); }
 
   <details>
     <summary>Original Chinese</summary>
-    <div class="original-body">编者按 前不久，习主席在全军高级干部培训班开班式上深刻指出，“要认真学习党的创新理论，掌握贯穿其中的马克思主义立场观点方法，以理论上的清醒保证政治上的坚定”。这一重要论断是对思想建党、政治建军规律的科学凝练总结，深刻阐明了理论清醒与政治坚定的辩证关系。军队党员干部特别是高级干部必须深刻领会习主席重要讲话的精神实质，自觉强化党的创新理论武装，不断推动强军事业发展前进。 以理论上的清醒保证政治上的坚定 ——学习贯彻习主席在全军高级干部培训班开班式上的重要讲话精神 ■习近平强军思想研究中心 政治上的坚定，源于理论上的清醒；理论上的成熟，决定政治上的成熟。对于党员干部而言，理论清醒是立身之本、成事之基，是站稳政治立场、把准政治方向、坚守政治信仰、严守政治纪律的根本前提。当前，在纷繁复杂的国内外形势下，面对各种风险挑战与不良思想侵蚀，只有始终保持理论上的高度清醒，筑牢信仰之基、补足精神之钙、把稳思想之舵，才能以坚如磐石的政治定力践行初心使命、勇担时代重任。 一 以理论上的清醒保证政治上的坚定，是立足世情、国情、党情、军情深刻变化，传承建军治军历史经验作出的科学论断，具有深邃历史底蕴与重大现实意义。 当前，中华民族伟大复兴战略全局和世界百年未有之大变局历史性交汇。从国际看，全球动荡变革期特征明显，大国博弈复杂激烈，西方敌对势力对我国全方位遏制、围堵、打压的图谋从未改变，铸魂与蛀魂、固根与毁根的较量一刻也没有停歇。从国内看，我国发展进入战略机遇和风险挑战并存、不确定难预料因素增多时期，人民军队正处于实现建军一百年奋斗目标的关键时期，改革发展稳定任务之重、矛盾风险挑战之多，都是前所未有的。面对严峻形势与矛盾问题，如果缺乏理论清醒，就会缺失“任凭风浪起，稳坐钓鱼船”的政治定力，就很容易在重大原则问题上迷失方向、动摇立场，就很可能在纷繁复杂的矛盾中看不清本质、抓不住要害，最终影响党和人民事业的顺利推进。 回望党的百余年奋斗史，以理论创新引领实践探索贯穿始终。大革命失败后，党从血的教训中深刻认识到必须把马克思主义基本原理同中国具体实际相结合，开辟“农村包围城市、武装夺取政权”的正确道路，推动革命的星火渐成燎原之势。延安整风运动更是一次全党大范围的马克思主义教育运动，通过系统地学理论，清算了主观主义、宗派主义和党八股，实现了全党思想上、政治上、组织上的空前团结统一，为夺取抗日战争和解放战争胜利奠定了坚实的思想政治基础。新时代以来，我们党开展的数次主题教育，无一不是以学理论为先导，用统一思想来凝聚意志、整齐步伐。成功实践昭示，坚持不懈用科学理论武装全党，是我们党不断战胜困难、修正错误、从胜利走向胜利的宝贵经验，是保持党的先进性、纯洁性和战斗力的根本途径。 对于人民军队而言，实行进步的思想贯注，坚持用科学理论武装，是我们这支武装力量的先进性所在。设想，如果我军在理论上不清醒，就好比在战场上失去了指引，战士们往哪儿冲都不知道，又如何能够取胜？作为习近平新时代中国特色社会主义思想的重要组成部分，习近平强军思想是党的军事指导理论最新成果，是坚持走中国特色强军之路、全面推进国防和军队现代化的行动纲领。深入学习贯彻这一思想，对我军来说就是最大的理论清醒。只有学深悟透其核心要义、精神实质、丰富内涵和实践要求，才能深刻理解我们这支人民军队的初心使命、光荣传统和制胜法宝，才能在纷繁复杂的科技之变、战争之变、对手之变中看清本质、把握规律，练就强军胜战的过硬本领。 二 以理论上的清醒保证政治上的坚定，包含丰富哲理，蕴含深刻规律，从不同维度揭示出理论与政治的内在关联。 彰显政治能力提升规律。面对重大问题、处在关键时刻，是旗帜鲜明还是态度暧昧，是立场坚定还是摇摆不定，说到底考验的是政治能力。这种能力养成绝非一日之功，根基在于深厚的理论素养。若缺乏理论思维的深度，就很容易被一些表象所迷惑，从而做出错误判断。只有系统掌握马克思主义立场观点方法，才能透过现象看本质、从政治上看问题，炼就一双“火眼金睛”。革命战争年代的很多俘虏兵，“昨天在白军不勇敢，今天在红军很勇敢”，就生动地说明了理论上真正觉醒了，政治上、情感上才能产生认同，进而才会转变成政治坚定。因此，理论上的清醒往往是提升政治判断力、政治领悟力、政治执行力的内生动力，是能将科学的理论转化为改造世界的强大物质力量。 彰显党性修养规律。理想信念作为共产党人、革命军人的政治灵魂和精神支柱，是我们安身立命的根本。我党我军是用理想信念凝聚起来的，许多革命前辈为什么能够为理想信念而奋斗终身，甚至不惜牺牲生命？就在于他们通过深入的理论学习，坚信自己所追求的事业是正义的、是符合历史发展方向的。毛泽东同志曾说：“主义譬如一面旗子，旗子立起了，大家才有所指望，才知所趋赴。”这个“主义”就是信仰。如果对马克思主义不真学真懂真信真用，那么理想信念就成了无源之水、无本之木，一遇到艰难险阻就可能发生动摇。只有通过系统学习辩证唯物主义和历史唯物主义，掌握了洞察世界的望远镜、显微镜，才能在风浪考验面前站稳脚跟，在诱惑围猎面前稳住心神，在复杂严峻斗争中保持本色，矢志不渝为中国特色社会主义共同理想而奋斗。 彰显整风整训规律。我党我军每逢重要历史关头，总是以整风整训解决党内存在的突出问题，确保队伍团结统一、纯洁光荣。延安整风运动成功的关键，就是把理论学习放在首位。运动之初，党中央明确规定了必读的马列主义经典著作和中央文件，要求全党特别是高级干部下大功夫学习。正是理论上先学一步，大家才有了一把衡量是非的共同“尺子”。随后开展的批评和自我批评，则是以理论为指导、以事实为依据的思想交锋。通过这种方式，大家分清了什么是马克思主义、什么是主观主义，什么是无产阶级思想、什么是非无产阶级思想，从而达到了“惩前毖后、治病救人”、团结同志、统一思想的目的。这一规律在新中国成立后的历次整党整风和党内集中教育活动中，也得到了反复验证。这充分说明，理论清醒不仅是党员个体政治坚定的前提，也是整个组织保持政治统一和行动一致的“净化器”。 三 实现以理论上的清醒保证政治上的坚定，重在以理论认知为根基，坚持学思用贯通、知信行统一，以思想意志的高度统一凝聚起强军兴军的磅礴力量。 注重以真学求深知。实现理论清醒并无捷径，非得下一番真功夫学。对于军队党员干部而言，必须把理论学习作为一种政治责任、一种精神追求、一种生活方式，做到往深里学、往心里学、往实里学。要坚持读原著、学原文、悟原理，发扬“挤”和“钻”的精神，静下心来反复研读，在如琢如磨中把握思想体系与核心要义。要坚持全面系统学，注重把握理论的体系性整体性，防止只见树木不见森林。要始终坚持问题导向，结合工作实际学，善于从党的创新理论中找寻破解问题的思路、方法和答案。 注重以自省促自新。实现理论上的清醒，决不能止步于掌握一些零散的观点和结论，而必须真正掌握蕴含其中的道理学理哲理，并用以不断促进自我净化、自我完善、自我革新、自我提高。要经常性地用党的创新理论来审视和观照个人的内心世界，自觉用于剖析入党干什么、当兵干什么、为将干什么的反躬自省，坚持在学习中改造思想、在思考中提升境界、在运用中增强本领，不断提高履职能力。要深入贯彻“两个结合”，将学习马克思主义基本原理同学习中华优秀传统军事文化贯通起来，在更广阔的大历史视野中不断提升强军胜战的智慧和本领。 注重以笃行强担当。判断理论上是否清醒、政治上是否坚定的根本标准，要看能否在实践中勇担当、促发展。只有在强国强军实践的大熔炉中反复淬炼，理论认识才能升华为坚定的政治信念和顽强的斗争精神。当前，我们正在进行的伟大斗争是长期的、复杂的、严峻的，要求党员干部务必敢于在风浪中经受考验，在急难险重任务面前挺身而出，在维护国家主权、安全、发展利益上立场坚定。军队党员干部必须坚持用党的创新理论固本培元，树立和践行正确政绩观，聚焦攻坚建军一百年奋斗目标和高质量推进国防和军队现代化，察实情、出实招、求实效，面对改革转型中的矛盾难题、建设发展中的风险挑战和各项急难险重任务，敢于迎难而上、冲锋在前，奋力谱写出国防和军队现代化的新篇章。 （执笔：周俊杰）</div>
+    <div class="original-body" lang="zh-Hans">编者按 前不久，习主席在全军高级干部培训班开班式上深刻指出，“要认真学习党的创新理论，掌握贯穿其中的马克思主义立场观点方法，以理论上的清醒保证政治上的坚定”。这一重要论断是对思想建党、政治建军规律的科学凝练总结，深刻阐明了理论清醒与政治坚定的辩证关系。军队党员干部特别是高级干部必须深刻领会习主席重要讲话的精神实质，自觉强化党的创新理论武装，不断推动强军事业发展前进。 以理论上的清醒保证政治上的坚定 ——学习贯彻习主席在全军高级干部培训班开班式上的重要讲话精神 ■习近平强军思想研究中心 政治上的坚定，源于理论上的清醒；理论上的成熟，决定政治上的成熟。对于党员干部而言，理论清醒是立身之本、成事之基，是站稳政治立场、把准政治方向、坚守政治信仰、严守政治纪律的根本前提。当前，在纷繁复杂的国内外形势下，面对各种风险挑战与不良思想侵蚀，只有始终保持理论上的高度清醒，筑牢信仰之基、补足精神之钙、把稳思想之舵，才能以坚如磐石的政治定力践行初心使命、勇担时代重任。 一 以理论上的清醒保证政治上的坚定，是立足世情、国情、党情、军情深刻变化，传承建军治军历史经验作出的科学论断，具有深邃历史底蕴与重大现实意义。 当前，中华民族伟大复兴战略全局和世界百年未有之大变局历史性交汇。从国际看，全球动荡变革期特征明显，大国博弈复杂激烈，西方敌对势力对我国全方位遏制、围堵、打压的图谋从未改变，铸魂与蛀魂、固根与毁根的较量一刻也没有停歇。从国内看，我国发展进入战略机遇和风险挑战并存、不确定难预料因素增多时期，人民军队正处于实现建军一百年奋斗目标的关键时期，改革发展稳定任务之重、矛盾风险挑战之多，都是前所未有的。面对严峻形势与矛盾问题，如果缺乏理论清醒，就会缺失“任凭风浪起，稳坐钓鱼船”的政治定力，就很容易在重大原则问题上迷失方向、动摇立场，就很可能在纷繁复杂的矛盾中看不清本质、抓不住要害，最终影响党和人民事业的顺利推进。 回望党的百余年奋斗史，以理论创新引领实践探索贯穿始终。大革命失败后，党从血的教训中深刻认识到必须把马克思主义基本原理同中国具体实际相结合，开辟“农村包围城市、武装夺取政权”的正确道路，推动革命的星火渐成燎原之势。延安整风运动更是一次全党大范围的马克思主义教育运动，通过系统地学理论，清算了主观主义、宗派主义和党八股，实现了全党思想上、政治上、组织上的空前团结统一，为夺取抗日战争和解放战争胜利奠定了坚实的思想政治基础。新时代以来，我们党开展的数次主题教育，无一不是以学理论为先导，用统一思想来凝聚意志、整齐步伐。成功实践昭示，坚持不懈用科学理论武装全党，是我们党不断战胜困难、修正错误、从胜利走向胜利的宝贵经验，是保持党的先进性、纯洁性和战斗力的根本途径。 对于人民军队而言，实行进步的思想贯注，坚持用科学理论武装，是我们这支武装力量的先进性所在。设想，如果我军在理论上不清醒，就好比在战场上失去了指引，战士们往哪儿冲都不知道，又如何能够取胜？作为习近平新时代中国特色社会主义思想的重要组成部分，习近平强军思想是党的军事指导理论最新成果，是坚持走中国特色强军之路、全面推进国防和军队现代化的行动纲领。深入学习贯彻这一思想，对我军来说就是最大的理论清醒。只有学深悟透其核心要义、精神实质、丰富内涵和实践要求，才能深刻理解我们这支人民军队的初心使命、光荣传统和制胜法宝，才能在纷繁复杂的科技之变、战争之变、对手之变中看清本质、把握规律，练就强军胜战的过硬本领。 二 以理论上的清醒保证政治上的坚定，包含丰富哲理，蕴含深刻规律，从不同维度揭示出理论与政治的内在关联。 彰显政治能力提升规律。面对重大问题、处在关键时刻，是旗帜鲜明还是态度暧昧，是立场坚定还是摇摆不定，说到底考验的是政治能力。这种能力养成绝非一日之功，根基在于深厚的理论素养。若缺乏理论思维的深度，就很容易被一些表象所迷惑，从而做出错误判断。只有系统掌握马克思主义立场观点方法，才能透过现象看本质、从政治上看问题，炼就一双“火眼金睛”。革命战争年代的很多俘虏兵，“昨天在白军不勇敢，今天在红军很勇敢”，就生动地说明了理论上真正觉醒了，政治上、情感上才能产生认同，进而才会转变成政治坚定。因此，理论上的清醒往往是提升政治判断力、政治领悟力、政治执行力的内生动力，是能将科学的理论转化为改造世界的强大物质力量。 彰显党性修养规律。理想信念作为共产党人、革命军人的政治灵魂和精神支柱，是我们安身立命的根本。我党我军是用理想信念凝聚起来的，许多革命前辈为什么能够为理想信念而奋斗终身，甚至不惜牺牲生命？就在于他们通过深入的理论学习，坚信自己所追求的事业是正义的、是符合历史发展方向的。毛泽东同志曾说：“主义譬如一面旗子，旗子立起了，大家才有所指望，才知所趋赴。”这个“主义”就是信仰。如果对马克思主义不真学真懂真信真用，那么理想信念就成了无源之水、无本之木，一遇到艰难险阻就可能发生动摇。只有通过系统学习辩证唯物主义和历史唯物主义，掌握了洞察世界的望远镜、显微镜，才能在风浪考验面前站稳脚跟，在诱惑围猎面前稳住心神，在复杂严峻斗争中保持本色，矢志不渝为中国特色社会主义共同理想而奋斗。 彰显整风整训规律。我党我军每逢重要历史关头，总是以整风整训解决党内存在的突出问题，确保队伍团结统一、纯洁光荣。延安整风运动成功的关键，就是把理论学习放在首位。运动之初，党中央明确规定了必读的马列主义经典著作和中央文件，要求全党特别是高级干部下大功夫学习。正是理论上先学一步，大家才有了一把衡量是非的共同“尺子”。随后开展的批评和自我批评，则是以理论为指导、以事实为依据的思想交锋。通过这种方式，大家分清了什么是马克思主义、什么是主观主义，什么是无产阶级思想、什么是非无产阶级思想，从而达到了“惩前毖后、治病救人”、团结同志、统一思想的目的。这一规律在新中国成立后的历次整党整风和党内集中教育活动中，也得到了反复验证。这充分说明，理论清醒不仅是党员个体政治坚定的前提，也是整个组织保持政治统一和行动一致的“净化器”。 三 实现以理论上的清醒保证政治上的坚定，重在以理论认知为根基，坚持学思用贯通、知信行统一，以思想意志的高度统一凝聚起强军兴军的磅礴力量。 注重以真学求深知。实现理论清醒并无捷径，非得下一番真功夫学。对于军队党员干部而言，必须把理论学习作为一种政治责任、一种精神追求、一种生活方式，做到往深里学、往心里学、往实里学。要坚持读原著、学原文、悟原理，发扬“挤”和“钻”的精神，静下心来反复研读，在如琢如磨中把握思想体系与核心要义。要坚持全面系统学，注重把握理论的体系性整体性，防止只见树木不见森林。要始终坚持问题导向，结合工作实际学，善于从党的创新理论中找寻破解问题的思路、方法和答案。 注重以自省促自新。实现理论上的清醒，决不能止步于掌握一些零散的观点和结论，而必须真正掌握蕴含其中的道理学理哲理，并用以不断促进自我净化、自我完善、自我革新、自我提高。要经常性地用党的创新理论来审视和观照个人的内心世界，自觉用于剖析入党干什么、当兵干什么、为将干什么的反躬自省，坚持在学习中改造思想、在思考中提升境界、在运用中增强本领，不断提高履职能力。要深入贯彻“两个结合”，将学习马克思主义基本原理同学习中华优秀传统军事文化贯通起来，在更广阔的大历史视野中不断提升强军胜战的智慧和本领。 注重以笃行强担当。判断理论上是否清醒、政治上是否坚定的根本标准，要看能否在实践中勇担当、促发展。只有在强国强军实践的大熔炉中反复淬炼，理论认识才能升华为坚定的政治信念和顽强的斗争精神。当前，我们正在进行的伟大斗争是长期的、复杂的、严峻的，要求党员干部务必敢于在风浪中经受考验，在急难险重任务面前挺身而出，在维护国家主权、安全、发展利益上立场坚定。军队党员干部必须坚持用党的创新理论固本培元，树立和践行正确政绩观，聚焦攻坚建军一百年奋斗目标和高质量推进国防和军队现代化，察实情、出实招、求实效，面对改革转型中的矛盾难题、建设发展中的风险挑战和各项急难险重任务，敢于迎难而上、冲锋在前，奋力谱写出国防和军队现代化的新篇章。 （执笔：周俊杰）</div>
   </details>
 
 
@@ -629,10 +783,53 @@ details summary:hover { color: var(--color-text-primary); }
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-name">China Mil Watch</div>
-    <div class="footer-desc">An independent open-source intelligence pipeline monitoring Chinese-language military and security media. <a href="../methodology.html">Methodology</a> · <a href="../archive.html">Archive</a></div>
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
   </div>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

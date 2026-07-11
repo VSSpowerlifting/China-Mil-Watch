@@ -16,91 +16,104 @@
       "url": "http://www.81.cn/yw_208727/16470666.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-30",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "中国人民解放军南部战区位中国黄岩岛领海领空及周边区域组织战备警巡"
     },
     {
       "title": "'Two Excellents, One Advanced' Profiles | National Outstanding Communist Party Member He Xianda: Writing Loyalty and Commitment Beneath the Launch Tower",
       "url": "http://www.81.cn/yw_208727/16471664.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "“两优一先”风采录丨全国优秀共产党员何贤达：发射架下书写忠诚担当"
     },
     {
       "title": "A Certain Army Aviation Brigade of the 73rd Group Army Focuses on System-Wide Training (体系练兵) and Builds a Learning and Exchange Platform",
       "url": "http://www.81.cn/yw_208727/16470320.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-29",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "第73集团军某陆航旅聚焦体系练兵搭建学习交流平台"
     },
     {
       "title": "What Are the Moving Stories Behind Two Honor Flags?",
       "url": "http://www.81.cn/yw_208727/16471332.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-03",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "两面荣誉旗帜的背后，有怎样的动人故事？"
     },
     {
       "title": "Marching Toward War! A Direct Look at the People's Armed Police Field Garrison Training Site",
       "url": "http://www.81.cn/wj_208567/16471235.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-02",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "向战而行！直击武警野外驻训现场"
     },
     {
       "title": "Today, Naval Vessel Formation Departs for Hong Kong to Organize Open Visiting and Exchange Activities",
       "url": "http://www.81.cn/yw_208727/16470999.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-01",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "今日，海军舰艇编队起航赴香港组织开放参观交流活动"
     },
     {
       "title": "Raising the Banner and Leading in Battle: The Time Is Right to Forge the Joint Sword",
       "url": "http://www.81.cn/yw_208727/16470917.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-01",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "擎旗领战，联合砺剑正当时"
     },
     {
       "title": "A Naval Aviation Unit Drives the Combat-Oriented Transformation of Aircraft Maintenance and Support——One Second Faster in Emergency Repair, One Point More in the Odds of Victory",
       "url": "http://www.81.cn/yw_208727/16470596.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-30",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "海军航空兵某部推动战机维修保障向战转型"
     },
     {
       "title": "Golden Horn Bay Witnesses a New Voyage of Sino-Russian Naval Friendship",
       "url": "http://www.81.cn/yw_208727/16470176.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-28",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "金角湾见证中俄海军友谊新航程"
     },
     {
       "title": "Chinese Naval Vessel Formation to Visit Vietnam",
       "url": "http://www.81.cn/yw_208727/16471727.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "中国海军舰艇编队将访问越南"
     },
     {
       "title": "A Certain Base of the Southern Theater Command Air Force Explores and Implements a New Model for Trainee Soldier Assignment",
       "url": "http://www.81.cn/yw_208727/16471662.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "南部战区空军某基地探索推行学兵分配新模式"
     },
     {
       "title": "One Case Reveals the Prevailing Winds; One Incident Rectifies the Soldiers' Hearts",
       "url": "http://www.81.cn/yw_208727/16471667.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "一案鉴风向，一事正兵心"
     },
     {
       "title": "In This Round of NCO Selection and Promotion, the Mobile Detachment of the PAP Chongqing General Corps Continues to Strengthen Conduct Building",
       "url": "http://www.81.cn/wj_208567/16471714.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-07-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "这次警士选晋，武警重庆总队机动支队持续强化风气建设"
     }
   ],
   "author_name": "Benjamin Yang",
@@ -127,5 +140,13 @@
   "background_image_path": "output/the-pla-watch/media/2026-07-04-source-image.jpg",
   "cover_image": "../covers/2026-07-04.png",
   "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-07-04.png",
-  "cover_thumb": "../covers/2026-07-04-thumb.png"
+  "cover_thumb": "../covers/2026-07-04-thumb.png",
+  "issue_number": 9,
+  "opening_note": "One article broke from an otherwise predictable week. On June 30, PLA Daily carried a Southern Theater Command statement on Huangyan Island, better known as Scarborough Shoal. The command said naval and air forces had conducted 战备警巡, or combat readiness patrols, around the feature and had strengthened those operations throughout June. The statement was brief. Its wording was not.\n\nMost of the remaining coverage followed the calendar. July 1 marked the CCP's 105th anniversary, and PLA Daily filled its pages with model soldiers, Red Army discipline, unit history, political loyalty, and choreographed public visits. Calling that routine does not make it meaningless. Routine coverage shows what the institution chooses to repeat, which virtues it rewards, and which problems it wants officers and troops to recognize.\n\nBuried inside the anniversary volume were useful admissions. A 71st Group Army article described units training for rankings and year-end commendations rather than combat needs. A 73rd Group Army aviation brigade used internal lectures to teach pilots about neighboring services because formal joint training had not closed basic knowledge gaps. Other pieces revisited promotion corruption and Rocket Force cross-training. None of this amounted to a new campaign. Together, they offered a clear view of the frictions the PLA still considers worth correcting.",
+  "what_stood_out": "The June 30 statement did more than announce another patrol. It placed activity around Scarborough Shoal in a combat-readiness category. In PLA usage, 战备警巡 carries a stronger operational register than a routine patrol or scheduled exercise. It presents the force as responding to an active security condition.\n\nThe timing matters too. Southern Theater Command was not advertising a single event. It was looking backward across June and describing a sustained pattern of joint naval and air activity. That retrospective framing helps establish continuity: Beijing was presenting its presence around the shoal as an ongoing military responsibility, not a temporary reaction.\n\nThe statement blamed “infringement and provocation” without naming the Philippines. That ambiguity is familiar. It allows Beijing to connect the operation to Philippine activity while preserving room to define the trigger later.\n\nPLA Daily is an official outlet, not an independent record of what happened each day. The statement therefore tells us most clearly how Southern Theater Command wanted the month understood. That is still useful. Public language is part of the operation.",
+  "why_it_matters": "Scarborough Shoal sits inside one of the most sensitive intersections in the South China Sea: China's territorial claims, Philippine resistance, and the U.S.-Philippines alliance. China has effectively controlled access to the feature since 2012, while the Philippines regards it as lying within its exclusive economic zone.\n\nMuch of Beijing's pressure in these disputes is usually described through coast guard and maritime law-enforcement language. This statement used PLA naval and air forces and called their activity combat readiness patrols in Chinese “territorial waters” and airspace. The wording moves the public register from policing toward military preparedness. It does not, by itself, prove a sharp operational escalation. It does show how Beijing is normalizing the PLA's role around the shoal and how it wants that role described.\n\nThis creates a baseline. Future statements can now be compared against a month that Southern Theater Command publicly characterized as sustained, joint, and operationally ready.",
+  "what_was_routine": "July 1 coverage is designed to make loyalty feel historical. Model-soldier profiles, Gutian Conference references, honor flags, and “forge the military soul” essays all place present-day obedience inside a longer revolutionary inheritance. The message is less about announcing a new ideological line than about renewing an old one on schedule.\n\nThat schedule can make the material easy to dismiss. It should not. Repetition is one of the PLA's methods of institutional maintenance. The people chosen as models, the episodes selected from history, and the failures condemned in print reveal what the organization wants reproduced.\n\nThis week's political rectification coverage was especially concrete. Articles on promotion corruption, formalism during temporary duty, and company-level political education did not reveal new pathologies. They showed the campaign in working form: identify a failure, attach it to a moral lesson, and circulate an approved remedy. The training pieces did something similar in operational terms. They admitted that metrics can distort behavior and that jointness still requires improvised local fixes. Routine reporting becomes most valuable at exactly this level, where institutional aspiration meets stubborn practice.",
+  "what_im_watching_next": "Scarborough Shoal remains the main thread. The next question is whether July brings another formal statement, sharper language, or silence. Each outcome would clarify whether June's wording marked a durable public posture or a temporary response. I will also be watching for whether Southern Theater Command continues to cite generic “infringement and provocation” or begins naming specific Philippine actions.\n\nThe Qi Jiguang and Kunlunshan formation is a secondary thread. The ships moved from a Vladivostok visit to an announced stop in Ho Chi Minh City, pairing a training vessel with a Type 071 amphibious transport dock across back-to-back diplomatic calls. The visits themselves are routine. The composition of the formation is more interesting, especially if it draws a regional response.\n\nFinally, the political rectification cycle is entering the stage where official media may begin declaring results. A shift from diagnosing problems to celebrating their resolution would not prove those problems are solved. It would show that the campaign's public narrative has moved on.",
+  "term_to_know_term": "战备警巡 (Zhànbèi Jǐngxún): Combat Readiness Patrol",
+  "term_to_know_explanation": "战备警巡 combines 战备, combat readiness or war preparedness, with 警巡, patrol-and-alert operations. In official PLA usage, the phrase marks an operation as a readiness posture rather than ordinary patrolling or training. It signals that the force is acting in response to a real or asserted security condition.\n\nThat distinction matters at Scarborough Shoal. Southern Theater Command did not describe the June activity as 巡逻, routine patrols, or 演习, exercises. It used language tied to territorial defense and operational readiness. The term does not prove the scale or frequency of the activity, but it does reveal the category Beijing chose for it."
 }

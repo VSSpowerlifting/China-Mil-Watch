@@ -16,96 +16,109 @@
       "url": "http://www.81.cn/yw_208727/16465208.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-03",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "谁在模仿复制\"空中小摩托\"?俄美借鉴伊朗低成本巡飞弹的启示"
     },
     {
       "title": "A Major Officer Returns to His Old Unit and Finds Some Training Events He 'Can't Make Sense Of'—What Did He Go Through?",
       "url": "http://www.81.cn/yw_208727/16465213.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-03",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "少校军官重返老部队竟有些许“看不懂”训练课目，他都经历了啥？"
     },
     {
       "title": "Long March 12B Yao-1 Launch Vehicle Successfully Launched",
       "url": "http://www.81.cn/yw_208727/16464811.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-01",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "长征十二号乙遥一运载火箭发射成功"
     },
     {
       "title": "China Coast Guard Conducts Law-Enforcement Patrols in Waters East of China's Taiwan Island",
       "url": "http://www.81.cn/yw_208727/16464755.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-01",
-      "is_significant": true
+      "is_significant": true,
+      "title_zh": "中国海警位中国台湾岛以东海域开展执法巡查"
     },
     {
       "title": "Empowering Joint Operations Planning with Intelligentization",
       "url": "http://www.81.cn/yw_208727/16465401.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "以智能化赋能联合作战筹划"
     },
     {
       "title": "An Air Force Unit Breaks Inertial Thinking to Innovate Combat Mode",
       "url": "http://www.81.cn/yw_208727/16464570.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-05-31",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "空军某部破除惯性思维创新作战模式"
     },
     {
       "title": "China-Mongolia 'Steppe Partner-2026' Army Joint Training Closing Ceremony Held",
       "url": "http://www.81.cn/yw_208727/16465864.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-06",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "中蒙“草原伙伴-2026”陆军联合训练举行结束仪式"
     },
     {
       "title": "Jiangsu Yixing Military-Civilian Organizations Conduct Joint Water Search-and-Rescue Training",
       "url": "http://www.81.cn/yw_208727/16465815.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-06",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "江苏宜兴军地组织水上联合搜救训练"
     },
     {
       "title": "Simulation System Moved into a 'Postage-Stamp Range,' Born from a Sudden Flash of Inspiration among Officers and Soldiers",
       "url": "http://www.81.cn/yw_208727/16465393.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "模拟系统搬进“方寸靶场”，源于官兵的一次“突发奇想”"
     },
     {
       "title": "A Base of Naval Aviation University Conducts In-Depth Study and Implementation of Xi Jinping's Thought on Strengthening the Military",
       "url": "http://www.81.cn/yw_208727/16465379.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-04",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "海军航空大学某基地深入学习贯彻习近平强军思想"
     },
     {
       "title": "A Brigade of the 74th Group Army Strengthens Unmanned Combat Force Development",
       "url": "http://www.81.cn/yw_208727/16465194.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-03",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "第七十四集团军某旅加强无人作战力量建设"
     },
     {
       "title": "As the Artificial Intelligence Wave Sweeps the Military Domain, Does Strategic Wisdom Still Have a Role to Play?",
       "url": "http://www.81.cn/yw_208727/16464974.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-02",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "当人工智能浪潮席卷军事领域，谋略智慧是否仍有用武之地?"
     },
     {
       "title": "Encountering 'Enemy' Harassment During Movement — UAVs and Robotic Wolves Deployed!",
       "url": "http://www.81.cn/yw_208727/16465059.html",
       "source": "PLA Daily (解放军报)",
       "date": "2026-06-02",
-      "is_significant": false
+      "is_significant": false,
+      "title_zh": "机动途中遇“敌”袭扰，无人机、机器狼出动！"
     }
   ],
   "author_name": "Benjamin Yang",
-  "author_title": "Founder & Principal Analyst, China Mil Watch",
-  "author_bio": "Benjamin Yang is the founder of China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.",
+  "author_title": "Principal Analyst, China Mil Watch",
+  "author_bio": "Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.",
   "author_links": {
     "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294",
     "Email": "mailto:ben.yang@gwmail.gwu.edu",
@@ -127,5 +140,13 @@
   "background_image_path": "output/the-pla-watch/media/2026-06-06-source-image.jpg",
   "cover_image": "../covers/2026-06-06.png",
   "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-06-06.png",
-  "cover_thumb": "../covers/2026-06-06-thumb.png"
+  "cover_thumb": "../covers/2026-06-06-thumb.png",
+  "issue_number": 5,
+  "opening_note": "This was not a dramatic week in PLA Daily. There were no announced Taiwan exercises or senior personnel changes, and no article that on its own read like an immediate escalatory signal. The useful material sat below that surface, where doctrinal commentary and training reportage kept returning to a problem the PLA has not solved in public view: how a force built around control, hierarchy, and system-of-systems integration should absorb cheap, expendable, and increasingly unmanned capabilities.\n\nThe strongest article was a June 3 piece on Russian and American efforts to copy, modify, or put Iran’s Shahed-136 into service loitering munition. At first glance, it reads like foreign military analysis. Its closing language points inward. Phrases such as “taking others’ strengths and making them one’s own” and “organic unity of strategic fit within the equipment system” ask the Chinese reader to treat foreign designs as material that can be studied, absorbed, and reworked inside an existing force structure. The article does not state a PLA procurement intention, so that claim should stay off the table. Still, the analytic direction is clear enough to matter.\n\nThe Rocket Force story was valuable in a different way. Its details were unusually concrete: simulator-based launch crew training, unit-built data interpretation software, and physical conditioning tied to launch operations in CBRN gear. PLA Daily often publishes training features; this one gave more than morale. A first-term conscript in a key crew role, alongside an NCO-built tool that reportedly reduced a two-hour manual process to seconds, creates a small but useful public record of how one brigade is trying to close procedural and data-processing gaps.\n\nThe CCG item was less technical, but its geography and wording were more politically consequential. On June 1, spokesperson Jiang Lue framed a patrol east of Taiwan as a response to Japan-Philippines maritime delimitation talks. That phrasing matters because the patrol announcement did more than assert presence. It identified negotiations between other parties as the object being contested.",
+  "what_stood_out": "The week’s sharpest material sat in the gap between routine format and less routine implication.\n\nThe loitering-munitions piece, authored by Zhao Wei, Hu Yongjiang, and Zhu Ning, describes Russia’s Geranium-2 as an adaptation of the Shahed-136 for attrition warfare and presents U.S. work on a Shahed-derived system with Starlink integration and F-35 cooperative strike trials. The article is interesting less for the foreign systems it describes than for the standard it uses to judge adaptation. It treats imitation as successful only when a borrowed design is made to fit a country’s industrial base, operational concept, and wider equipment architecture. In PLA Daily, that is not a neutral lesson in military history. It is a disciplined way of thinking about technology transfer, reverse engineering, and force design. The article never says China will pursue a specific loitering-munition pathway, and the evidence does not support that claim. What it does support is a narrower reading: PLA media is giving serious space to the institutional logic of absorbing foreign low-cost strike technology.\n\nThe CCG patrol works differently because it is a public enforcement statement rather than a doctrinal essay. Jiang Lue connected the June 1 patrol east of Taiwan to Japan and the Philippines opening maritime delimitation negotiations in that area. The linkage extends CCG messaging into a zone that is not routinely foregrounded in patrol announcements, while making third-party negotiation itself part of the trigger. In practice, the CCG is being presented as a diplomatic instrument backed by physical presence: a way to contest talks before they become agreements.\n\nThe Rocket Force training article is easy to underrate because the genre looks familiar. Its content is more useful than that. Simulator-based launch training, NCO-developed decision-support software, and a first-term conscript winning a key crew position after outperforming senior NCOs all give the article a more granular texture than standard morale writing. The piece documents an institutional response to the training-combat gap at brigade level, while leaving open the more important question of whether unit-built software is being propagated across the Rocket Force or remains a local workaround.",
+  "why_it_matters": "The CCG framing matters because it shows coast guard patrol authority being used to contest diplomatic process, rather than only the physical presence of rival vessels. A patrol east of Taiwan linked to Japan-Philippines delimitation discussions pulls the East China Sea, South China Sea, and Taiwan Strait into the same enforcement grammar. That does not make one patrol a new baseline. It does, however, create a public template Beijing can reuse if it wants to challenge maritime talks between other parties through physical presence.\n\nThe loitering-munitions article matters because PLA media often uses third-country wars and weapons programs to process lessons that are relevant to Chinese force development without naming the domestic implication outright. Here, the operative lesson is not that Iran, Russia, or the United States has produced a particular system. The lesson is that cheap strike systems become militarily meaningful only when a force can pull them into its own industrial and operational architecture. That is the kind of reasoning that can sit upstream of procurement, even when the article itself remains formally about foreign militaries.\n\nThe Rocket Force piece matters more modestly, but in a concrete way. It adds to the public record of how one brigade is translating “training-combat integration” into daily practice. The useful details are not proof of readiness. They are evidence of the mechanisms being advertised: simulator crews, NCO innovation studios, and launch-condition physical training under protective gear. For a force that is often discussed in abstract terms, those unit-level mechanisms are worth filing.",
+  "what_was_routine": "Most of the week still belonged to familiar genres, and the point of identifying them is to keep the signal from getting inflated.\n\nAnti-corruption and supervision content aimed at senior cadres appeared repeatedly, including pieces under the “Strong Military Forum” and “Great Wall Forum” banners. The line was familiar: senior officers should treat supervision as a political virtue, not an external restraint. PLA Daily has published versions of that argument for years, and the cadence usually rises after the CMC issues new oversight language. The useful reading is therefore almost the reverse of the surface message. The volume of supervision writing does not show that the problem has been solved; it records how persistent the problem remains. An institution that keeps telling senior officers to welcome oversight is also admitting, indirectly, that some of them resist it.\n\nCoverage of the China-Mongolia “Steppe Partner-2026” exercise also needs restraint. The exercise was real, and the unmanned-systems demonstration appears in the record: robotic dogs, UGVs, exoskeletons, and FPV drones. Its political function, however, fits an established pattern in which PLA exercises with smaller partners double as technology showcases. Mongolian forces observed and handled Chinese systems; the coverage does not show peer-level combined-arms integration. The exercise is useful evidence for how the PLA is normalizing unmanned ground systems in foreign military engagement, not for a sudden shift in the operational balance around Mongolia.",
+  "what_im_watching_next": "I would track these as possible patterns, not conclusions.\n\nThe CCG patrol east of Taiwan deserves the closest watch. If later announcements in the same area keep citing third-party negotiations rather than generic sovereignty language, that would suggest a deliberate enforcement posture is being built east of Taiwan. One patrol and one spokesperson statement cannot establish that. Repetition could.\n\nFor the loitering-munitions line, the key question is whether the “absorb and adapt” frame returns in later PLA Daily coverage of low-cost expendable strike systems. If it reappears around doctrine, procurement-adjacent writing, or export-facing commentary, the June 3 article will look less like a one-off foreign military essay and more like preparatory institutional argument.\n\nFor the Rocket Force, the detail to file is the NCO innovation studio producing brigade-level decision-support software. Similar stories across other Rocket Force units would suggest that bottom-up software work is being promoted as a model for solving data interpretation and crew proficiency problems outside normal centralized procurement channels.",
+  "term_to_know_term": "训战脱节 (Xùn-zhàn tuōjié)",
+  "term_to_know_explanation": "“Training-combat gap” names the PLA’s recurring admission that training conditions, assessment habits, and unit routines do not fully reproduce combat demands. In PLA Daily, the phrase often appears when an article needs to justify a reform: scenario-based assessment, field-tempo support, simulator work, or more realistic launch procedures. In this week’s Rocket Force article, it helps frame the move away from cable-connector practice toward simulator-based crew training. The term should be read as both diagnosis and mandate. When a unit is described as solving 训战脱节, the article is usually showing a workaround, not closing the case. The PLA has been naming this problem publicly since the 2015 reform period, and its continued appearance in 2026 is part of the story."
 }
