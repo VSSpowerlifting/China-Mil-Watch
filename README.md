@@ -1,9 +1,9 @@
 # PLA Watch
 
-An open-source intelligence tool that monitors Chinese military and security
-developments from Chinese-language state media sources, translates and
-summarizes daily reporting, and publishes a structured brief to a static
-website updated on a 24-hour cycle.
+An independent Mandarin-source monitoring and analysis project that tracks
+Chinese military and security reporting from official and authoritative PRC
+sources, translates and summarizes daily reporting, and publishes a
+structured brief to a static website updated on a 24-hour cycle.
 
 This is an academic portfolio project.  It does not use or claim access to any
 classified information.  All source material is publicly available.
@@ -16,7 +16,7 @@ China Mil Watch currently monitors PLA Daily and is configured for expansion
 across additional official and state-linked sources including MND, China Military
 Online, Global Times Military, and Xinhua Military. It filters content for
 relevance, translates Chinese-language articles to English, generates analytic
-summaries, and flags items of unusual significance.
+summaries, and marks model-flagged items (a software triage cue, not an editorial judgment).
 Results are stored in a local SQLite database and published as a static site
 suitable for hosting on GitHub Pages. Some sources may return zero articles on
 a given day; Xinhua Military remains in development because its listings are
@@ -57,8 +57,8 @@ Everything is stored; thresholds are tunable.
 
 ## Limitations
 
-- **OSINT only.**  This tool does not surface anything the PLA has not chosen
-  to publicize.
+- **Public sources only.**  This project does not surface anything the PLA
+  has not chosen to publicize.
 - **Machine translation.**  Chinese military and doctrinal terminology does not
   always translate cleanly.  Original text is preserved; treat translations
   as assistive, not authoritative.

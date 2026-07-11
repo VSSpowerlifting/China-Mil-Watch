@@ -8,7 +8,11 @@ pla_watch.db-wal
 graphify-out/
 
 # Claude Code / agent tooling
-.claude/
+# Ignore all local/runtime .claude state, but version the project-owned
+# agent and command definitions.
+.claude/*
+!.claude/agents/
+!.claude/commands/
 .agents/
 tmp/
 

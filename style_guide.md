@@ -4,7 +4,7 @@
 
 The PLA Watch is the reader-facing weekly publication from China Mil Watch.
 
-China Mil Watch is the automated OSINT and policy-analysis platform. The PLA Watch turns weekly China Mil Watch outputs into accessible analysis of Chinese military media, PLA politics, and U.S.-China security signals.
+China Mil Watch is the automated Mandarin-source monitoring and analysis platform. The PLA Watch turns weekly China Mil Watch outputs into accessible analysis of Chinese military media, PLA politics, and U.S.-China security signals.
 
 The goal is not to sound like a generic think tank newsletter. The goal is to sound like a serious, human, reader-facing foreign policy briefing: clear, curated, analytical, and engaging.
 

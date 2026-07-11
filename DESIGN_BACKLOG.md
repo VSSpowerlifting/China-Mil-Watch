@@ -1,41 +1,36 @@
-# DESIGN_BACKLOG — The PLA Watch / China Mil Watch
+# DESIGN_BACKLOG — superseded
 
-Prioritized. Preserve the navy/crimson editorial-brief identity; no generic
-SaaS blocks, no intelligence cosplay. Done items move to the bottom.
+**Open items moved to `docs/ROADMAP.md` (2026-07-11).** Add new work there
+using its ticket format. This file remains only as the done-item record for
+the 2026-07-09 → 2026-07-11 design pushes.
 
-## P1 — high value, low risk
-
-1. **Executive-summary block on issue pages.** "This week's signal" exists,
-   but a 3-bullet "If you read nothing else" readout under the hero would
-   serve policy readers. Needs a new sidecar field — content must be written
-   or approved by the analyst, not synthesized at render time from old issues.
-2. **Archive year/month grouping.** At 9 editions a flat list works; past ~20
-   it needs month headers. Low effort, do when count warrants.
-
-## P2 — moderate value
-
-5. **Signals page and daily index cross-promotion of latest PLA Watch
-   edition** (daily templates currently link only in nav/footer).
-7. **Term-to-know archive page** — terms accumulate one per week and are
-   currently buried in back issues.
-8. **RSS/Atom feed for The PLA Watch** — natural for the audience; needs a
-   small generator addition plus validation.
-
-## P3 — polish
-
-9. Cover PNG typography: regenerate historical covers with the current
-   template for visual consistency in the archive thumbs (needs
-   `--force-covers` run + eyeball pass; PNGs are committed artifacts).
-10. `sources_seen` in the hero meta can wrap awkwardly on mid widths with
-    3 long source names; consider truncating to count + tooltip-style list.
-11. Consider `prefers-color-scheme: light` handling for outbound link
-    previews (site is committed dark; only if reader feedback asks).
+Mapping of the last open items: executive-summary block → ROADMAP T5;
+archive month grouping → T1 (daily) and R4 (weekly); cover-PNG regeneration
+→ ROADMAP deferred (P3); `prefers-color-scheme` for outbound link previews
+→ ROADMAP deferred (P3, only on reader feedback).
 
 ## Done
 
+- 2026-07-11: Atom feed for The PLA Watch (`the-pla-watch/feed.xml`) —
+  deterministic, sidecar-dated, written by both weekly renderers via shared
+  `pw_env.build_atom_feed`; autodiscovery link in the weekly head; validated
+  in the deploy gate (well-formed, one entry per edition).
+- 2026-07-11: Terms-to-Know running glossary (`the-pla-watch/terms.html`) —
+  verbatim reuse of each edition's published term, linked back to its
+  edition; nav + footer links; deploy gate checks every term-bearing edition
+  appears.
+- 2026-07-11: Signals page cross-promotes the latest PLA Watch edition
+  (dark band between sections A and B; generator passes `pw_latest`).
+- 2026-07-11: sources_seen in the post hero truncates to a count (with
+  title-attribute list) when >2 sources; full names stay in the snapshot.
+- 2026-07-11: sitemap.xml now covers weekly edition pages, the PLA Watch
+  archive, and the terms page.
+- 2026-07-11: visual refinement pass — homepage pipeline plate, edition
+  tick strip, Signals 30-day volume strip, Terms specimen plates, source
+  trail evidence spine, shared motion primitives (see PROJECT_STATE).
 - 2026-07-10: Print stylesheet — issue pages print as a light, single-column
-  brief (chrome/sidebar/dark cover hidden, source-trail URLs printed in full,
-  cards kept unbroken across pages).
+  brief (chrome/sidebar/dark cover hidden, source-trail URLs printed in
+  full, cards kept unbroken across pages).
 - 2026-07-10: Prev/next edition links on post pages (issue No. + date).
 - 2026-07-10: Original Chinese headlines in the source trail (`title_zh`
   backfilled from DB records by exact URL match; generator carries it

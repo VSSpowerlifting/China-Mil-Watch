@@ -164,7 +164,7 @@ is an assistive tool, not a substitute for analyst review.
 
 | Limitation | Implication |
 |-----------|-------------|
-| OSINT only | Activities not publicized by Chinese state media are not captured |
+| Public sources only | Activities not publicized by Chinese state media are not captured |
 | State media bias | All sources have editorial lines aligned with CCP and CMC interests |
 | No classified sources | This tool cannot supplement or verify classified assessments |
 | Translation artifacts | Technical and doctrinal terms may be imprecisely rendered |
@@ -182,7 +182,7 @@ is an assistive tool, not a substitute for analyst review.
 - Identifying surface-level patterns in PLA exercise frequency, geographic
   focus, or capability emphasis
 - Learning to read Chinese military media with analytic scaffolding
-- Portfolio demonstration of OSINT methodology and data pipeline design
+- Portfolio demonstration of source-monitoring methodology and data pipeline design
 
 ## 8. What This Tool Is Not Appropriate For
 

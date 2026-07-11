@@ -2,6 +2,51 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-11 — Analyst decisions: metadata fields, labeling, commit sequence
+
+1. **`executive_readout` adopted** beginning with Edition No. 10: optional
+   sidecar field, 2–4 bullets, manually authored by the analyst at publish
+   time. It must never be synthesized automatically — not from the week's
+   records, not from prior editions. Render-if-present; historical editions
+   stay unchanged. (Implements ROADMAP T5.)
+2. **`recurring_threads` adopted** for Continuity Strip Phase 2: optional
+   sidecar field carrying slugs from the controlled vocabulary in
+   docs/VISUAL_AND_MOTION_SYSTEM.md §4. Assign a slug only when the edition
+   *materially analyzes* the thread (a standing section engages it) — never
+   for passing mentions; typical count 0–3 per edition, and editions with
+   none stay empty. New slugs require a DECISION_LOG entry. Historical
+   backfill only by re-reading published edition text, never from memory.
+3. **"Model-flagged" ratified as the only reader-facing label for automated
+   classifications**, with the standing concise explainer ("a triage cue
+   produced by software, not an editorial judgment"). Verified 2026-07-11:
+   every automated surface already renders "Model-flagged" (daily article
+   kicker, archive badge/filter, signals dashboard, weekly counts). The
+   analyst-assigned *edition* badge (Significant / Routine / Pilot) is
+   editorial, not automated, and is exempt — it keeps its name. Internal
+   identifiers (`is_significant`, `n_significant`, CSS class names) are not
+   reader-facing and stay unchanged.
+4. **Commit sequence approved** for the current working tree: (a) docs +
+   Claude operating system → (b) frontend source/templates/scripts →
+   (c) regenerated output → (d) validation/cleanup fixes where needed.
+   Nothing committed until the analyst reviews the staged plan.
+
+## 2026-07-11 — Project operating system established
+
+Durable doctrine now lives in six docs (product/editorial, design system,
+visual & motion, architecture & publishing, agent workflows, roadmap);
+CLAUDE.md is a compact pointer file; PROJECT_STATE.md is state-only.
+Constraining rulings made in this pass: the dual-surface identity (Paper
+Ledger / Night Desk) is confirmed doctrine, with per-surface crimson values
+kept deliberately distinct; crimson is reserved for analytical signal;
+IBM Plex Mono is capped at one-line metadata; photo-overlay cover PNGs are
+demoted to og:image duty in favor of generated SVG Edition Plates (ROADMAP
+T2); docs/ROADMAP.md supersedes DESIGN_BACKLOG.md; the skillui-extracted
+design skills were retired in place as inaccurate (docs/DESIGN_SYSTEM.md is
+authoritative); README/METHODOLOGY/style_guide OSINT phrasing was aligned
+with the 2026-07-10 identity decision. New sidecar fields may only be
+optional and render-if-present (executive_readout, recurring_threads —
+pending analyst adoption).
+
 ## 2026-07-10 — Public identity language: Mandarin-source monitoring, not OSINT
 
 The daily site's title, meta descriptions, masthead kicker, footer, and
