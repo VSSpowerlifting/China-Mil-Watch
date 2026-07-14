@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driving a Leap in Intelligentized Command and Control Capabilities — China Mil Watch</title>
+  <meta name="description" content="A PLA doctrinal article, unattributed to a specific unit or author, lays out a framework for intelligentized command and control (智能化指挥控制) organized around three operational transitions—situational aw">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2452.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2452.html">
+  <meta property="og:title"        content="Driving a Leap in Intelligentized Command and Control Capabilities">
+  <meta property="og:description"  content="A PLA doctrinal article, unattributed to a specific unit or author, lays out a framework for intelligentized command and control (智能化指挥控制) organized around three operational transitions—situational aw">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Driving a Leap in Intelligentized Command and Control Capabilities">
+  <meta name="twitter:description" content="A PLA doctrinal article, unattributed to a specific unit or author, lays out a framework for intelligentized command and control (智能化指挥控制) organized around three operational transitions—situational aw">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+
+  <div class="article-header">
+
+      <div class="tags">
+          <span class="tag" data-label="Doctrine">Doctrine</span>
+          <span class="tag" data-label="Cyber &amp; Info">Cyber &amp; Info</span>
+      </div>
+
+    <h1 class="article-page-title">
+      Driving a Leap in Intelligentized Command and Control Capabilities
+    </h1>
+
+      <div class="article-page-title-zh" lang="zh-Hans">推动智能化指挥控制能力跃升</div>
+
+    <div class="article-page-meta">
+      <span class="src">PLA Daily (解放军报)</span>
+      <span class="sep"></span>
+      <span>14 July 2026</span>
+    </div>
+
+    <a href="http://www.81.cn/yw_208727/16473545.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+    <div class="about-analysis">
+      <a href="../methodology.html">About this analysis</a>
+    </div>
+
+  </div>
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A PLA doctrinal article, unattributed to a specific unit or author, lays out a framework for intelligentized command and control (智能化指挥控制) organized around three operational transitions—situational awareness toward &#39;cognitive alignment,&#39; action regulation toward &#39;capability crowdsourcing,&#39; and assessment toward &#39;feedforward pre-positioning&#39;—and three enabling priorities: data mastery, human-machine integration, and algorithm confrontation (算法对抗). The article documents the current state of PLA thinking on how to restructure C2 architecture for intelligentized warfare, including explicit acknowledgment of unsolved problems—data excess and contradiction, incomplete information under time pressure, and algorithm vulnerability to input perturbations—that the PLA has not yet resolved. The framing of &#39;dominance of intelligence&#39; (制智权) as a warfighting objective alongside the call to formalize legal and regulatory standards for intelligent systems confirms that the PLA is still in an institutionalization phase, building doctrine and training pipelines rather than fielding mature intelligentized C2 at scale.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>On the battlefield, command and control has always occupied a critical position within the operational system, influencing and determining the outcome of war. With the arrival of the intelligent age, the battlefield situation has become intricately complex and the contest unprecedentedly fierce, profoundly reshaping the face of warfare and calling for intelligentized command and control (智能化指挥控制) commensurate with it. To this end, it is necessary to continuously deepen understanding and enhance capabilities through the integration of theory and practice—enabling through ingenuity and advancing through systems—so as to achieve a leapfrog improvement in command and control effectiveness and better master the future battlefield.</p><p>At present, empowered by intelligent technology, command and control is evolving in the direction of &#34;knowledge-driven cognition&#34; (知识驱动认知), accelerating the intelligentized transition of operational perception, action, assessment, and other links, and presenting an entirely new developmental trajectory.</p><p>Situational awareness is evolving from &#34;passive conduct&#34; to &#34;cognitive alignment&#34; (认知对齐). Traditional situational awareness was dominated by the commander&#39;s subjective will, and the situational understanding capabilities of each operational unit were constrained by information loss through hierarchical transmission, making it prone to action deviations and missed operational opportunities. In the intelligent age, communications technology and intelligent technology enable the nodes of each element within the operational system to be vertically and horizontally connected and mutually interactive; the command and control system is developing toward edge agility and resilience, and distributed situational awareness networks achieve full-domain coverage and real-time updates. At the same time, the autonomous capabilities of each operational unit are enhanced, shifting from passive perception in the past to actively capturing battlefield details, enabling better comprehension of higher-level intent and the submission of countermeasure recommendations, realizing battlefield &#34;cognitive alignment&#34; among operational nodes, and releasing a perceptual effectiveness of &#34;1+1&gt;2.&#34;</p><p>Action regulation is evolving from &#34;resource integration&#34; to &#34;capability crowdsourcing&#34; (能力众筹). Past operational action regulation was primarily carried out through commanders&#39; unified coordination and scheduling, enabling participating forces to act in a coordinated manner under a unified plan to jointly advance operational objectives, but its flexibility and adaptability in resource allocation were insufficient and its efficiency was relatively low. In the intelligent age, based on a dynamic battlefield support network, it is possible to monitor resource flows, directions, and volumes in real time, achieving intelligentized and real-time action regulation. On a dynamically changing battlefield, each operational force publishes resource demands on an as-needed, ad hoc basis, and other friendly neighboring nodes, combining their own missions and current status, rapidly provide relevant support through a &#34;capability crowdsourcing&#34; mode of &#34;single-point request—collective intelligence response&#34; (单点提出—群智响应), thereby achieving rapid integration and precise matching of operational forces and operational resources.</p><p>Assessment and feedback is evolving from &#34;post-hoc error correction&#34; to &#34;feedforward pre-positioning&#34; (前馈预置). Past assessments of operational effectiveness were typically conducted after operational actions had been implemented, and their temporal and spatial lag limited the effectiveness of error correction. Under intelligentized conditions, feedforward pre-positioned assessment holds greater advantages: before action commences, technologies such as digital twins and big data modeling are used to simulate and deduce, optimize plans, predict enemy action intentions through enemy situation prediction models, and pre-position operational forces in a targeted manner; after action commences, precise calculations are made in accordance with the development of the battle situation, acting in accordance with circumstances, guiding friendly actions to unfold in a coordinated and synchronized manner across the full domain and multiple dimensions. This mode achieves intelligentization of the entire assessment and feedback process, transforming post-hoc error correction into pre-action prediction and in-action regulation, enhancing the initiative and foresight of command and control, and ensuring that one comes prepared and acts with ample room to maneuver.</p><p>The organizational forms and operational modes of command and control have continuously been enriched and developed alongside the changes of the era and advances in science and technology, presenting new characteristics and patterns under intelligentized conditions that require us to deeply investigate and grasp their internal mechanisms.</p><p>Data mastery capability has become the key to command and control. Data can be regarded as the &#34;oil&#34; of the intelligent age; the scale of data possessed and controlled, as well as the capability to employ data, has become an important indicator of a military&#39;s competitive strength. Intelligentized command and control requires predicting the battle situation through automatic fusion and analysis of intelligence data, regulating actions through real-time generation and transmission of command data, and improving effectiveness through continuous iterative training using historical data. However, data both reflects facts and conceals truth; the explosive surge of battlefield data brings bottleneck problems of data excess, flooding, and mutual contradiction to battle situation assessment. Only by eliminating the false and retaining the true to accurately grasp data, and by discarding the crude and extracting the refined to effectively utilize data, can one discern the key information behind the data and find the key to resolving contradictions. Therefore, data quality will directly affect the release of command and control effectiveness; it is necessary to establish a sound mechanism for data collection, processing, analysis, and utilization, and to continuously improve battlefield data mastery capability, so as to ensure the authenticity, integrity, and timeliness of data.</p><p>The degree of human-machine integration bears on command and control effectiveness. As operational domains multiply, operational means diversify, and military technology develops, warfare has become increasingly uncertain. This requires commanders to be adept at conducting command and control based on incomplete information under conditions of time pressure, limited resources, and an unclear battle situation. A command and control mode of close collaboration between &#34;human ingenuity and machine intelligence&#34; (人智+机智) can achieve scientific analysis of battlefield data, precise planning of action paths, and efficient optimization and comparison of contingency plans, realizing deep human-machine integration and complementary advantages. Machines autonomously conduct actions while humans intervene and regulate at appropriate times, both preserving human strategic judgment capability and leveraging the machine&#39;s precise computational advantages, expanding the boundaries of command and control capability and achieving a qualitative leap in efficiency and level. The evolution of human-machine interaction from weak physical coupling to strong intelligent fusion drives a leapfrog development of command and control capabilities, enabling commanders to find viable strategies by combining experiential judgment with scientific analysis to cope with increasingly complex battlefield situations.</p><p>The outcome of algorithm confrontation (算法对抗) affects command and control capability. As the form of warfare rapidly evolves toward intelligentization, algorithms are gradually becoming the key internal driving force supporting the operation of the warfare system; operational action concepts need to be realized through algorithms, and command and control also follows algorithm design rules. Algorithms are deeply involved in each operational link of &#34;observe, orient, decide, act,&#34; assisting commanders in specific tasks such as intelligence collection and organization, situation analysis and assessment, resource planning and scheduling, and action supervision and error correction, enabling commanders to free themselves from a multitude of complex specific affairs and focus their main energy on key links bearing on the overall situation, thereby actively shaping the situation and seizing the operational initiative on a battlefield full of uncertainty. Algorithm confrontation has become the main focal point and point of effort in system-of-systems confrontation, and the outcome of the confrontation will directly influence and determine the outcome of war. It is necessary to reduce the sensitivity of algorithms to input perturbations, maintain the stability of intelligentized command and control systems to the maximum extent, and thereby maintain an advantage in the contest for &#34;dominance of intelligence&#34; (制智权).</p><p>Driving a leap in intelligentized command and control capabilities is a systems engineering project that requires coordinated effort from multiple aspects to build a command and control ecosystem adapted to intelligentized warfare.</p><p>Talent cultivation is the key support. The contest on the battlefield is, at bottom, a contest of talent; talent is the key factor in winning military competition and seizing the initiative in future warfare. It is necessary to keep a close eye on changes in science and technology, changes in warfare, and changes in adversaries, accurately grasp the intrinsic requirements of talent cultivation, emphasize the effective transformation of knowledge into capability, and build a new model of command talent cultivation adapted to intelligentized warfare. First, focus on enhancing intelligent literacy (智能素养) to forge talent. Adhere to the principle of orienting toward and fighting for war; firmly grasp the characteristics and patterns of intelligentized warfare; rely on full-domain perception networks to collect multi-domain battlefield data in real time; employ intelligent algorithms to conduct deep mining and correlation analysis of massive data; vigorously improve intelligent application literacy; and realize the transformation of operational command and control from &#34;experience dependence&#34; to &#34;data-intelligence-driven&#34; (数智驱动). Second, expand military-civilian cooperation channels to cultivate talent. Fully integrate the theoretical research advantages of academic institutions and the practical combat experience advantages of troops; establish a normalized talent cultivation linkage mechanism; share cutting-edge technology resources and practical teaching conditions; and cultivate composite talent with both military quality and technical expertise. Third, rely on realistic combat training to temper talent. Set up realistic combat training scenarios involving multi-domain linkage, dynamic gaming, and extreme confrontation; set training topics around intelligentized swarm operations (智能集群作战), manned-unmanned teaming (有人无人协同), algorithm confrontation, and other content; and forge solid practical combat capabilities for winning intelligentized warfare.</p><p>Mechanism improvement is an important guarantee. Intelligentized command and control requires a sound institutional system to regulate and guarantee its operation. First, optimize the command system architecture. Rely on the internet, the internet of things, and other networks to form an elastic force structure of &#34;mission-driven, aggregating and dispersing on demand&#34; (任务驱动、按需聚散); employ highly intelligentized command and control means to shorten the command decision-making process; support and enhance capabilities such as synchronized battlefield situational awareness, rapid response in command decision-making, and distributed collaborative intelligent autonomy; and achieve deep situational awareness and dynamic command regulation. Second, improve the legal and regulatory system. Formulate regulations related to intelligentized command and control; clarify the research and development standards, access thresholds, usage boundaries, and security requirements for intelligent systems; standardize the full-process management of operational data collection, storage, transmission, and use; clarify the responsibilities and authorities of commanders at all levels and of intelligent systems; provide rigid institutional constraints for intelligentized command and control; and ensure that intelligent command and control systems are safe, controllable, and operate in a standardized manner. Third, improve operational institutional norms. Institutionalize and standardize command procedures, coordination methods, and rules of action under intelligentized conditions; clarify the standard processes for human-machine collaborative command and control, the application scenarios for intelligent-assisted decision-making, and the operational modes for distributed command and control; and provide operational guidelines for intelligentized command and control.</p><p>Atmosphere shaping is the deep-level driver. Vigorously shaping the atmosphere and environment is an important aspect of the combat effectiveness generation model (战斗力生成模式); it subtly and imperceptibly influences commanders&#39; ways of thinking and behavioral choices, and is the deep-level driving force for military theory to take root in practice. Driving a leap in intelligentized command and control capabilities requires shaping a commensurate atmosphere. On one hand, it is necessary to shape an atmosphere that strengthens data-intelligence driving (数智驱动). Data is an important resource for intelligentized command and control; it is imperative to firmly establish an operational concept of data dominance and intelligent empowerment, achieve data-intelligence empowerment across the entire operational chain, and simultaneously build a digital twin battlefield to conduct immersive simulation and verification of operational plans, engaging in forward-looking planning, actively seeking change, and proactively exploring, so as to provide precise support for intelligentized command and control. On the other hand, it is necessary to shape an atmosphere that promotes human-machine collaboration. Human-machine collaboration is the basic form of intelligentized command and control; it is imperative to vigorously build a command and control mode of human-machine mutual trust and efficient collaboration; through normalized human-machine adversarial exercises and collaborative training, become familiar with the decision-making logic, capability boundaries, and operational methods of intelligent systems; master the methods and techniques of human-machine collaboration; establish a reliable human-machine trust relationship; and achieve close cooperation and efficient coordination between humans and machines.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">在战场上，指挥控制始终处于作战体系的关键位置、影响改变战争的胜负走向。随着智能时代的到来，战场局势错综复杂、博弈空前激烈，正深刻重塑着战争面貌，也呼唤与之相适应的智能化指挥控制。为此，需要在理论与实践的结合中不断深化认识、提升能力，机智赋能、体系推进，从而实现指挥控制效能的跨越式提升，以更好驾驭未来战场。 当前，在智能技术的赋能下，指挥控制朝着“知识驱动认知”的方向演化，促使作战感知、行动、评估等环节加速向智能化跃迁，呈现出全新的发展态势。 态势感知从“被动开展”向“认知对齐”演进。传统态势感知以指挥员主观意志为主导，各作战单元的态势理解能力受限于层级传递的信息损耗，容易出现行动偏差和延误战机等情况。智能时代，通信技术和智能技术使作战体系各要素节点纵贯横联、交互影响，指控体系向边缘敏捷弹性方向发展，分布式态势感知网络实现全域覆盖和实时更新。与此同时，各作战单元自主能力增强，从过去被动感知变为主动捕捉战场细节，能够更好领会上级意图、提出对策建议，实现各作战节点之间的战场“认知对齐”，释放出“1+1＞2”的感知效能。 行动调控从“资源整合”向“能力众筹”演化。过去的作战行动调控，主要通过指挥员进行统筹调度，使各参战力量在统一计划下协调行动，共同推动实现作战目的，但其资源配置灵活性、变通性不足且效率较低。智能时代，基于战场动态保障网络，能够实时掌控资源流动、流向、流量，实现行动调控智能化、实时化。在动态变化的战场上，各作战力量按需临机发布资源需求，其他友邻节点结合自身任务与现状，通过“单点提出—群智响应”的“能力众筹”方式快速提供相关支持，从而实现作战力量与作战资源快速整合和精准适配。 评估反馈从“事后纠偏”向“前馈预置”演变。以往的作战效果评估，通常在作战行动实施后进行，存在时空滞后性，导致纠偏效能受限。智能化条件下，前馈预置式评估更具优势：行动开始前，利用数字孪生、大数据建模等技术模拟推演、优化方案，通过敌情预测模型预判敌人行动企图，并有针对性预置作战力量；行动开始后，根据战局发展精准计算、顺势而为，指引己方行动在全域多维空间协调同步展开。这种模式实现了评估反馈全流程智能化，将事后纠偏转变为事前预判和事中调控，增强了指挥控制的主动性和预见性，做到有备而来、措置裕如。 指挥控制的组织形式和运行方式，伴随着时代的变迁和科技的进步不断丰富发展，在智能化条件下呈现出新的特点和规律，需要我们深入探究并把握其内在机理。 数据掌控能力成为指挥控制关键。数据可以被看作智能时代的“石油”，拥有和控制数据的规模以及运用数据的能力，已成为衡量一支军队竞争力强弱的重要标志。智能化指挥控制需要通过情报数据自动融合分析来预判战局，利用指令数据实时生成传递来调控行动，借助历史数据持续迭代训练来提升效能。然而，数据既反映事实又隐瞒真相，战场数据的井喷式爆发给战局研判带来数据过剩、泛滥以及相互矛盾等瓶颈问题。唯有去伪存真准确掌握数据、去粗取精有效利用数据，才能洞悉数据背后的关键信息，找到破解矛盾的关键锁钥。因此，数据质量好坏将直接影响指挥控制效能的释放，需要建立完善的数据采集、处理、分析和运用机制，不断提高战场数据掌控能力，以确保数据的真实性、完整性和时效性。 人机融合程度关乎指挥控制效能。随着作战领域增多、作战手段丰富和军事技术发展，战争变得更加具有不确定性。这就要求指挥员善于在时间紧迫、资源有限和战局不明朗的情况下，基于不完全信息进行指挥控制。“人智+机智”紧密协作的指控模式，能够实现科学分析战场数据、精准规划行动路径、高效优化对比预案，达成人机深度融合、优势互补。机器自主开展行动，人类适时干预调控，既保持了人类的战略判断能力，又发挥了机器的精准计算优势，使指控能力边界得到拓展、效率和水平发生质的飞跃。人机从物理弱结合向智慧强融合的方向演变，推动指挥控制能力跨越式发展，使指挥员能够通过经验判断与科学分析相结合找到可行策略，应对更加复杂的战场态势。 算法对抗结果影响指挥控制能力。随着战争形态向智能化快速演进，算法正逐渐成为支撑战争体系运行的关键内驱力，作战行动构想需要通过算法实现，而指挥控制也遵循算法设计规则。算法在“观察、判断、决策、行动”各作战环节深度介入，辅助指挥员进行情报收集整理、情况分析研判、资源规划调度、行动督导纠偏等具体工作，使指挥员得以从纷繁复杂的具体事务中解脱出来，将主要精力放在事关全局的关键环节上，从而在充满不确定性的战场上主动谋局造势、把握作战主动权。算法对抗变成体系对抗的主要聚焦点和着力点，对抗结果将直接影响和决定战争的胜负走向。要降低算法对输入扰动的敏感性，最大限度保持智能化指控系统的稳定性，从而在“制智权”争夺中保持优势。 推动智能化指挥控制能力跃升，是一项系统工程，需要从多个方面协同发力，构建适应智能化战争的指挥控制生态体系。 人才培养是关键支撑。战场上的较量，说到底是人才的较量，人才是赢得军事竞争和未来战争主动的关键因素。要紧盯科技之变、战争之变、对手之变，把准人才培养的内在要求，突出知识向能力的有效转化，构建与智能化战争相适应的新型指挥人才培养模式。一是聚焦智能素养提升锻造人才。坚持向战为战原则，牢牢把握智能化战争特点规律，依托全域感知网络实时采集多域战场数据，运用智能算法对海量数据进行深度挖掘和关联分析，着力提升智能运用素养，实现作战指控从“经验依赖”向“数智驱动”的转型。二是拓展军地协作渠道培养人才。充分整合院校的理论研究优势和部队的实战经验优势，建立常态化人才培养联动机制，共享前沿技术资源和实践教学条件，培育兼具军事素养与技术专长的复合型人才。三是依托实战化训练磨砺人才。设置多域联动、动态博弈、极限对抗等实战化训练场景，围绕智能集群作战、有人无人协同、算法对抗等内容设置训练课题，为制胜智能化战争锻造过硬实战能力。 机制完善是重要保障。智能化指挥控制需要以健全的制度体系来规范和保障其运行。一是优化指挥体系架构。依托互联网、物联网等，形成“任务驱动、按需聚散”的弹性力量结构，运用高度智能化的指挥控制手段，缩短指挥决策流程，支撑提升战场态势同步认知、指挥决策快速响应、分布协同智能自主等能力，实现深度态势感知和动态指挥调控。二是健全法规制度体系。制定智能化指挥控制相关法规，明确智能系统的研发标准、准入门槛、使用边界和安全要求，规范作战数据采集、存储、传输、使用的全流程管理，厘清各级指挥员与智能系统的职责权限，为智能化指挥控制提供刚性制度约束，确保智能指控系统安全可控、规范运行。三是完善作战制度规范。将智能化条件下的指挥程序、协同方法、行动规则等制度化规范化，明确人机协同指挥控制的标准流程、智能辅助决策的应用场景和分布式指挥控制的运行模式，为智能化指挥控制提供操作指南。 氛围塑造是深层驱动。着力塑造氛围环境，是战斗力生成模式的重要方面，潜移默化影响着指挥员的思维方式与行为选择，是推动军事理论落地生根的深层动力。推动智能化指挥控制能力跃升，需要塑造与之相适应的氛围。一方面，要塑造氛围加强数智驱动。数据是智能化指挥控制的重要资源，必须牢固树立数据主导、智能赋能的作战理念，实现对作战全链路的数智赋能，同时，构建数字孪生战场，对作战方案进行沉浸式推演验证，前瞻谋划、主动求变、积极探索，为智能化指控提供精准支撑。另一方面，要塑造氛围促进人机协同。人机协同是智能化指挥控制的基本形态，必须着力构建人机互信、协同高效的指挥控制模式，通过常态化的人机对抗演练和协同训练，熟悉智能系统的决策逻辑、能力边界和操作方式，掌握人机协同的方法技巧，建立可靠的人机信任关系，实现人机之间密切协作、高效配合。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches || !('IntersectionObserver' in window)) {
+    root.classList.add('no-anim');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>
