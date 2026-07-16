@@ -23,7 +23,14 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from scripts.pw_env import build_atom_feed, make_pw_env
+from scripts.pw_env import (
+    build_atom_feed,
+    copy_editorial_assets,
+    editorial_items_for_edition,
+    editorial_veil_for_edition,
+    ensure_editorial_derivatives,
+    make_pw_env,
+)
 
 # Reuse author identity from the generator module without calling its main().
 # Guard against the anthropic import that generate_pla_watch.py performs at
@@ -232,6 +239,8 @@ def _split_media_items(sidecar: dict):
 def _build_post_context(sidecar: dict) -> dict:
     term_word, term_explanation = _flatten_term(sidecar)
     body_media_items, cover_media_item = _split_media_items(sidecar)
+    sidecar_date = sidecar.get("date", "")
+    pw_veil = editorial_veil_for_edition(sidecar_date)
     cover_image = sidecar.get("cover_image") or ""
     cover_thumb = sidecar.get("cover_thumb") or ""
     cover_image_url = sidecar.get("cover_image_url") or ""
@@ -243,12 +252,16 @@ def _build_post_context(sidecar: dict) -> dict:
     # If the PNG isn't on disk, blank both so the template falls back
     # to the sitewide og-image.png and skips the in-page figure.
     if cover_image:
-        sidecar_date = sidecar.get("date", "")
         png_path = COVERS_DIR / f"{sidecar_date}.png"
         if not png_path.exists():
             cover_image = ""
             cover_thumb = ""
             cover_image_url = ""
+    # The Signal Veil replaces the in-page cover figure when it renders
+    # (og:image still uses cover_image_url, which stays untouched).
+    if pw_veil:
+        cover_image = ""
+        cover_thumb = ""
 
     return {
         # Hero / metadata
@@ -283,9 +296,16 @@ def _build_post_context(sidecar: dict) -> dict:
         "articles": _articles_from_sidecar(sidecar),
         "source_trail_truncated": sidecar.get("source_trail_truncated", False),
 
-        # Visual context (license-verified outside images, if any)
-        "media_items": body_media_items,
+        # Visual context (license-verified outside images, if any).
+        # Sidecar media first, then render-time editorial-manifest items
+        # matched to this edition — sidecars stay canonical and untouched.
+        # exclude_id keeps the Signal Veil image from also repeating as a
+        # Visual Context media card.
+        "media_items": body_media_items
+            + editorial_items_for_edition(
+                sidecar_date, exclude_id=(pw_veil or {}).get("id")),
         "cover_media_item": cover_media_item,
+        "pw_veil": pw_veil,
 
         # Author identity (graceful fallbacks: missing keys → chip omitted)
         "author_name":  sidecar.get("author_name",  AUTHOR_NAME),
@@ -335,6 +355,8 @@ def main() -> int:
 
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     COVERS_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_editorial_derivatives()
+    copy_editorial_assets(ROOT / "output")
 
     # Render every post sidecar.
     sidecars = []
@@ -402,9 +424,16 @@ def main() -> int:
     latest = sidecars[0] if sidecars else None
     archive_posts = sidecars[1:] if len(sidecars) > 1 else []
 
+    # index.html sits at the-pla-watch/index.html, one level shallower than
+    # a post page, so the editorial-asset prefix drops one "../".
+    latest_veil = (
+        editorial_veil_for_edition(latest["date"], src_prefix="../assets/editorial/")
+        if latest else None
+    )
     index_html = index_tmpl.render(
         latest_post=latest, archive_posts=archive_posts, root_path="../",
         page_url="https://chinamilwatch.org/the-pla-watch/",
+        latest_veil=latest_veil,
     )
     (PLA_WATCH_DIR / "index.html").write_text(index_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'index.html').relative_to(ROOT)}")

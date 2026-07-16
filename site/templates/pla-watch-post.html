@@ -114,29 +114,20 @@
   color: var(--color-text-primary);
 }
 
-/* ── Issue cover image ──────────────────────────────────────────────── */
-.cover-figure { margin: 0 0 2rem; }
-.cover-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-bg-card);
+/* ── Signal Veil band inner — protected text column over the veil ──── */
+.nd-band-inner { max-width: var(--shell); margin: 0 auto; padding: 2.6rem 2rem 2.3rem; position: relative; z-index: 1; }
+.nd-band-inner .hero-title { max-width: 24ch; }
+.nd-band-inner .hero-dek { max-width: 46ch; }
+@media (max-width: 900px) {
+  .nd-band-inner { padding: 1.6rem 1.25rem; }
 }
-.cover-figure figcaption {
-  font-family: var(--mono);
-  font-size: 0.64rem;
-  color: var(--color-text-muted);
-  letter-spacing: 0.06em;
-  margin-top: 0.55rem;
-  text-align: right;
-}
+
+/* ── Cover attribution — the cover PNG serves og:image duty only
+     (DECISION_LOG 2026-07-11); no in-page cover figure renders. ─────── */
 .cover-credit-note {
-  margin: -1.25rem 0 2.25rem;
+  margin: 0 0 2.25rem;
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--color-border-soft);
-  border-left: 3px solid var(--color-brand);
   border-radius: var(--radius);
   background: var(--color-bg-card);
   font-family: var(--sans);
@@ -734,7 +725,7 @@
 @media print {
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
-  .cover-figure, .cover-credit-note, .visual-context { display: none; }
+  .cover-credit-note, .visual-context { display: none; }
   .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
     break-inside: avoid;
   }
@@ -758,60 +749,96 @@
 }
 {% endblock %}
 
+{# Display-only: the nameplate above already says "The PLA Watch", so the
+   stored title's publication prefix is dropped from the hero h1. Sidecars,
+   <title>, og:title, and the citation keep the stored title verbatim. #}
+{% set _t = namespace(display=title) %}
+{% for _pfx in ["The PLA Watch: ", "The PLA Watch — ", "The PLA Watch – "] %}
+  {% if _t.display.startswith(_pfx) %}{% set _t.display = _t.display[(_pfx | length):] %}{% endif %}
+{% endfor %}
+
+{% macro edition_head() %}
+<div class="hero-meta-top">
+  <div class="hero-edition">
+    {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
+    {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}
+  </div>
+</div>
+<h1 class="hero-title">{{ _t.display }}</h1>
+<div class="hero-dek">{{ dek }}</div>
+{% if author_name %}
+<div class="byline">
+  By <span class="byline-name">{{ author_name }}</span>
+  {% if author_title %}<span class="byline-title">{{ author_title }}</span>{% endif %}
+</div>
+{% endif %}
+<div class="hero-meta">
+  <span class="meta-item">Covers <span class="num">{{ week_start | format_date }}</span> → <span class="num">{{ week_ending | format_date }}</span></span>
+  {% if days_covered %}<span class="meta-item"><span class="num">{{ days_covered }}</span> days observed</span>{% endif %}
+  <span class="meta-item"><span class="num">{{ n_articles }}</span> articles analyzed</span>
+  <span class="meta-item"><span class="num">{{ n_significant }}</span> model-flagged</span>
+  {% if sources_seen %}
+    {% if sources_seen | length > 2 %}
+    <span class="meta-item" title="{{ sources_seen | join(', ') }}"><span class="num">{{ sources_seen | length }}</span> sources</span>
+    {% else %}
+    <span class="meta-item">{{ sources_seen | join(', ') }}</span>
+    {% endif %}
+  {% endif %}
+</div>
+{% if articles %}
+<div class="nd-tickrow" aria-hidden="true">
+  {% for a in articles %}<i{% if a.is_significant %} class="sig"{% endif %}></i>{% endfor %}
+</div>
+<div class="nd-tickrow-label">Source trail · {{ articles | length }} record{{ 's' if articles | length != 1 }}{% if n_significant %} · <b>{{ n_significant }} model-flagged</b>{% endif %} · part of the monitored weekly record{% if source_trail_truncated or (n_articles and articles | length < n_articles) %} · of {{ n_articles }} articles analyzed{% endif %}</div>
+{% endif %}
+{% endmacro %}
+
+{% block hero %}
+{% if pw_veil %}
+<section class="nd-veil-band">
+  <div class="nd-veil" role="img" aria-label="{{ pw_veil.alt }}" data-editorial-id="{{ pw_veil.id }}"
+       style="background-image:url('{{ pw_veil.duo }}'); background-position:{{ pw_veil.mask_focus }};"></div>
+  <div class="nd-src-bracket">
+    <span class="bracket"></span>
+    <div class="src-lines">
+      IMG · <a href="{{ pw_veil.source_page }}" target="_blank" rel="noopener nofollow">{{ pw_veil.source_id }}</a><br>
+      {% if pw_veil.subject %}{{ pw_veil.subject }}<br>{% endif %}
+      CONTEXT, NOT EVIDENCE
+    </div>
+  </div>
+  <div class="nd-band-inner">
+    <div class="nd-src-inline">IMG <a href="{{ pw_veil.source_page }}" target="_blank" rel="noopener nofollow">{{ pw_veil.source_id }}</a>{% if pw_veil.subject %} · {{ pw_veil.subject }}{% endif %} · Context, not evidence.</div>
+    {{ edition_head() }}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="post-wrap">
 
   <article class="post-main">
 
-    {# ── Edition header ─────────────────────────────────────────────── #}
-    <div class="hero" data-reveal>
-      <div class="hero-meta-top">
-        <div class="hero-edition">
-          {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
-          {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}
-        </div>
-      </div>
-      <h1 class="hero-title">{{ title }}</h1>
-      <div class="hero-dek">{{ dek }}</div>
-      {% if author_name %}
-      <div class="byline">
-        By <span class="byline-name">{{ author_name }}</span>
-        {% if author_title %}<span class="byline-title">{{ author_title }}</span>{% endif %}
-      </div>
-      {% endif %}
-      <div class="hero-meta">
-        <span class="meta-item">Covers <span class="num">{{ week_start | format_date }}</span> → <span class="num">{{ week_ending | format_date }}</span></span>
-        {% if days_covered %}<span class="meta-item"><span class="num">{{ days_covered }}</span> days observed</span>{% endif %}
-        <span class="meta-item"><span class="num">{{ n_articles }}</span> articles analyzed</span>
-        <span class="meta-item"><span class="num">{{ n_significant }}</span> model-flagged</span>
-        {% if sources_seen %}
-          {% if sources_seen | length > 2 %}
-          <span class="meta-item" title="{{ sources_seen | join(', ') }}"><span class="num">{{ sources_seen | length }}</span> sources</span>
-          {% else %}
-          <span class="meta-item">{{ sources_seen | join(', ') }}</span>
-          {% endif %}
-        {% endif %}
-      </div>
+    {# ── Edition header — text-led fallback when no Signal Veil ────── #}
+    {% if not pw_veil %}
+    <div class="hero">
+      {{ edition_head() }}
     </div>
-
-    {# ── Issue cover image — editorial PNG, also used as OG image ──── #}
-    {% if cover_image %}
-    <figure class="cover-figure" data-reveal>
-      <img src="{{ cover_image }}"
-           alt="The PLA Watch — {{ title }} (issue cover)"
-           width="1200" height="630" loading="eager">
-      <figcaption>Issue cover · The PLA Watch · {{ week_ending }}</figcaption>
-    </figure>
     {% endif %}
+
+    {# ── Cover attribution — the cover PNG is og:image-only (DECISION_LOG
+         2026-07-11 demotion); the note keeps its photo credited. ────── #}
     {% if cover_media_item %}
     <div class="cover-credit-note">
-      <span class="label">Cover image:</span>
-      {% if cover_media_item.credit %}<span>{{ cover_media_item.credit }}</span>{% endif %}
+      <span class="label">Edition cover (link-preview image):</span>
+      {% set _has_credit = cover_media_item.credit %}
+      {% if _has_credit %}<span>{{ cover_media_item.credit }}</span>{% endif %}
       {% if cover_media_item.license and not (cover_media_item.credit and cover_media_item.license in cover_media_item.credit) %}
-        <span>·</span>
+        {% if _has_credit %}<span>·</span>{% endif %}
         <span>{% if cover_media_item.license_url %}<a href="{{ cover_media_item.license_url }}" target="_blank" rel="noopener nofollow">{{ cover_media_item.license }}</a>{% else %}{{ cover_media_item.license }}{% endif %}</span>
+        {% set _has_credit = true %}
       {% endif %}
-      {% if cover_media_item.source_url %}<span>·</span> <a href="{{ cover_media_item.source_url }}" target="_blank" rel="noopener nofollow">Source</a>{% endif %}
+      {% if cover_media_item.source_url %}{% if _has_credit %}<span>·</span>{% endif %} <a href="{{ cover_media_item.source_url }}" target="_blank" rel="noopener nofollow">Source</a>{% endif %}
       <span>· Visual context only; not evidence of the specific events discussed.</span>
     </div>
     {% endif %}
@@ -824,7 +851,8 @@
       <figure class="media-card">
         <img src="{{ m.src }}"
              alt="{{ m.alt or 'Visual context image' }}"
-             loading="lazy">
+             {% if m.width and m.height %}width="{{ m.width }}" height="{{ m.height }}"
+             {% endif %}loading="lazy">
         <figcaption class="media-card-body">
           {% if m.caption %}<div class="media-caption">{{ m.caption }}</div>{% endif %}
           <div class="media-meta">

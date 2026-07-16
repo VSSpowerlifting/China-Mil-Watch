@@ -10,6 +10,7 @@ with structured tool_use output, and writes HTML + LinkedIn .txt files.
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from datetime import date, timedelta
@@ -23,7 +24,12 @@ sys.path.insert(0, str(ROOT))
 import anthropic
 
 from config import DB_PATH, ANTHROPIC_API_KEY
-from scripts.pw_env import build_atom_feed, make_pw_env
+from scripts.pw_env import (
+    build_atom_feed,
+    editorial_items_for_edition,
+    editorial_veil_for_edition,
+    make_pw_env,
+)
 from storage.db import get_articles_for_date_range
 
 
@@ -140,6 +146,33 @@ abstract noun pileups / dramatic conclusions unsupported by the source
 SENTENCE RHYTHM
 Vary sentence length. Longer analytical sentences should often be followed by a shorter one.
 Good: "Most of this week's coverage was routine. That does not make it useless."
+Short forceful pivots are allowed: "It did not." / "That changed on Thursday."
+
+PROSE MECHANICS (strict)
+- Never use em dashes (—) or double hyphens (--) in the prose. Restructure into separate
+  sentences, commas, colons, or parentheses.
+- Avoid mechanical triads: three-item rhetorical lists used for cadence rather than
+  content. One strong example beats three decorative ones. Use a three-part list only
+  when the three items are themselves the point.
+- Do not lean on "not X but Y" as a rhetorical frame. At most once per edition.
+- Avoid the stock two-sentence move where the first sentence denies a simple reading and
+  the second announces the real meaning ("This was not about readiness. It was about
+  loyalty."). Make the point directly, then bound it.
+- Do not use the transitions "moreover," "furthermore," "additionally," or "ultimately."
+  If a paragraph seems to need one, the join is the problem; restructure.
+- Lead with the concrete detail, then the structure it sits in, then what it means.
+- Do not imitate a generic think-tank report: no executive-summary cadence, no numbered
+  findings, no detached "assessments" voice. This is an authored newsletter with a byline.
+
+SYNTHESIS (the weekly is not a digest)
+- Do not concatenate or paraphrase the daily summaries one after another, and do not walk
+  the week chronologically by default.
+- The opening note must identify the week's real analytical problem: the question a
+  careful reader of this week's record actually faces.
+- what_stood_out, why_it_matters, and what_was_routine should read as one argument about
+  the week, each doing different work, never three parallel lists.
+- Somewhere in the edition, say plainly what readers should not overread, and what
+  observable evidence would confirm or weaken this week's interpretation.
 
 CONCRETE ACTORS
 Always tie abstract claims to visible actors: PLA Daily, Central Military Commission,
@@ -223,7 +256,10 @@ TOOL_SCHEMA = {
             },
             "dek": {
                 "type": "string",
-                "description": "1-2 sentence subtitle summarizing the edition.",
+                "description": (
+                    "1-2 sentence subtitle. Specific, not generic: name the actual "
+                    "subject and stakes of this edition rather than promising analysis."
+                ),
             },
             "signal": {
                 "type": "string",
@@ -236,7 +272,11 @@ TOOL_SCHEMA = {
             },
             "opening_note": {
                 "type": "string",
-                "description": "2-4 paragraphs. Human, direct opening. Paragraphs separated by double newline.",
+                "description": (
+                    "2-4 paragraphs. Human, direct opening that identifies the week's "
+                    "real analytical problem: the question a careful reader of this "
+                    "week's record actually faces. Paragraphs separated by double newline."
+                ),
             },
             "what_stood_out": {
                 "type": "string",
@@ -267,7 +307,13 @@ TOOL_SCHEMA = {
             },
             "what_im_watching_next": {
                 "type": "string",
-                "description": "Forward-looking but cautious section.",
+                "description": (
+                    "Forward-looking but cautious section built on concrete, falsifiable "
+                    "indicators: what observable development would confirm this week's "
+                    "interpretation and what would weaken it (recurrence across sources, "
+                    "senior placement, named units, geographic expansion, new exercise "
+                    "phases, follow-on official statements). No predictions."
+                ),
             },
             "edition_type": {
                 "type": "string",
@@ -348,6 +394,9 @@ def call_claude(article_block: str, stats: dict, week_ending: str, week_start: s
                 "'historic,' 'largest,' 'first,' or 'major turning point' unless the article data directly "
                 "supports them. Default to careful framing: 'unusually significant,' 'notable,' "
                 "'one of the clearest signals this week,' 'a consequential public disciplinary signal.'\n"
+                "- No em dashes anywhere in any field, and none of the transitions 'moreover,' "
+                "'furthermore,' 'additionally,' 'ultimately.' Follow the PROSE MECHANICS rules "
+                "in the style extract.\n"
                 f"- The current dataset spans {len(stats['dates_covered'])} distinct day(s) of the 7-day window. "
                 f"{'Treat this as a thin/early edition. The title and dek must not promise a full weekly readout. ' if len(stats['dates_covered']) < 4 else ''}"
                 "Do not write 'the rest of the week was routine' or 'everything else was quiet' if you have not "
@@ -396,6 +445,33 @@ def validate_result(result: dict) -> list[str]:
     if result.get("edition_type") not in ("significant", "routine"):
         errors.append(f"Invalid edition_type: {result.get('edition_type')!r}")
     return errors
+
+
+_PROSE_FIELDS = (
+    "title", "dek", "signal", "opening_note", "what_stood_out",
+    "why_it_matters", "what_was_routine", "term_to_know_explanation",
+    "what_im_watching_next",
+)
+_BANNED_TRANSITIONS = ("moreover", "furthermore", "additionally", "ultimately")
+
+
+def prose_warnings(result: dict) -> list[str]:
+    """Non-blocking prose-mechanics checks for the human reviewer. The draft
+    is never auto-published, so these warn rather than fail: they point the
+    review at exactly the sentences the style rules say to fix."""
+    warnings = []
+    for field in _PROSE_FIELDS:
+        text = str(result.get(field) or "")
+        if "—" in text or "--" in text:
+            warnings.append(f"{field}: contains an em dash / double hyphen")
+        low = text.lower()
+        for t in _BANNED_TRANSITIONS:
+            if re.search(rf"\b{t}\b", low):
+                warnings.append(f"{field}: uses banned transition {t!r}")
+        n_notbut = len(re.findall(r"\bnot\b[^.!?]{3,80}?\bbut\b", low))
+        if n_notbut >= 2:
+            warnings.append(f"{field}: {n_notbut} 'not X but Y' constructions")
+    return warnings
 
 
 def generate_linkedin_fallback(result: dict, week_ending: str) -> str:
@@ -507,6 +583,8 @@ def _build_context(*sources: dict, **extra) -> dict:
 def render_post(result: dict, meta: dict) -> str:
     env = make_pw_env()
     template = env.get_template("pla-watch-post.html")
+    post_date = meta.get("date", meta["week_ending"])
+    pw_veil = editorial_veil_for_edition(post_date)
     # result and meta both carry a "title" key (post title vs. sidecar title).
     # Strip layout-only fields out of meta so the post-content keys from
     # `result` win cleanly. _build_context raises on any remaining collision.
@@ -530,6 +608,13 @@ def render_post(result: dict, meta: dict) -> str:
         "author_links":  meta.get("author_links", AUTHOR_LINKS),
         "prev_post":     meta.get("prev_post"),
         "next_post":     meta.get("next_post"),
+        # Render-time editorial-manifest context images (sidecar media_items
+        # are added later by the fetch tools + re-render; this keeps a fresh
+        # publish consistent with the re-render path). exclude_id keeps the
+        # Signal Veil image from also repeating as a Visual Context card.
+        "media_items":   editorial_items_for_edition(
+            post_date, exclude_id=(pw_veil or {}).get("id")),
+        "pw_veil":       pw_veil,
     }
     context = _build_context(result, layout_meta, root_path="../../")
     return template.render(**context)
@@ -540,7 +625,14 @@ def render_index(posts_meta: list[dict]) -> str:
     template = env.get_template("pla-watch-index.html")
     latest = posts_meta[0] if posts_meta else None
     archive = posts_meta[1:] if len(posts_meta) > 1 else []
-    return template.render(latest_post=latest, archive_posts=archive, root_path="../")
+    # index.html sits at the-pla-watch/index.html, one level shallower than
+    # a post page, so the editorial-asset prefix drops one "../".
+    latest_veil = (
+        editorial_veil_for_edition(latest["date"], src_prefix="../assets/editorial/")
+        if latest else None
+    )
+    return template.render(latest_post=latest, archive_posts=archive, root_path="../",
+                            latest_veil=latest_veil)
 
 
 def render_archive(posts_meta: list[dict]) -> str:
@@ -605,6 +697,9 @@ def main():
     if not str(result.get("linkedin_version", "")).strip():
         print("WARN: linkedin_version missing; generated fallback")
         result["linkedin_version"] = generate_linkedin_fallback(result, week_ending_str)
+
+    for w in prose_warnings(result):
+        print(f"PROSE WARN: {w}")
 
     if args.dry_run:
         print("\n" + "=" * 72)

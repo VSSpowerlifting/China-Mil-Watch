@@ -158,19 +158,33 @@ SUMMARY_SCHEMA: dict[str, Any] = {
 def build_summary_messages(title_en: str, body_en: str) -> list[dict]:
     """Generate a two-to-three sentence analytic summary for a policy audience."""
     user_content = f"""\
-Write a two to three sentence analytic summary for a U.S. national security analyst \
-tracking Chinese military media. The prose should be direct and specific, not \
-institutional in register.
+Write a two to three sentence analytic summary for readers who already follow China \
+and security affairs and cannot read the Mandarin original. The prose should be \
+direct, specific, and human, not institutional in register.
 
-The first sentence reports what the article says: who did what, when, where, and at \
-what scale. Be concrete and specific. Use named units, named officials, and named \
-locations where the article provides them.
+The first sentence reports the concrete development: who did what, when, where, and \
+at what scale. Use the named units, formations, officials, platforms, exercise names, \
+and locations the article provides. Keep designators exact (e.g., "a brigade of the \
+76th Group Army," not "an army unit"). Where a specific Chinese term carries the \
+analytical weight, keep it with a brief gloss — but only terms that appear in the \
+article; never invent, re-translate, or embellish Chinese text. The summary renders \
+directly under the headline, so do not restate the headline; add what the headline \
+does not say. This first sentence must stand on its own: on index cards only the \
+opening of the summary is shown.
 
 The second (and optional third) sentence answers: what concrete institutional or \
 military problem does this article make visible? What specific pattern does it fit, \
 break, or document? Name the problem before naming the pattern. Prefer specific verbs \
-over generic ones: records, documents, demonstrates, shows, confirms, reveals, fits, \
-breaks, extends, complicates, raises the question of. Do not default to "signals."
+over generic ones: records, documents, demonstrates, shows, confirms, fits, breaks, \
+extends, complicates, raises the question of. Do not default to "signals."
+
+Keep the article's facts and your inference distinct. State what the source reports \
+as fact plainly and confidently. Mark interpretation as interpretation ("the \
+placement suggests," "the framing points to"), and remember official military media \
+is evidence of messaging, not intent: write "the framing suggests," never "Beijing \
+intends." When the source cannot support a stronger conclusion, say specifically \
+what remains unknown (unit, scale, location, timing) in one short clause rather than \
+softening the whole summary.
 
 If the article is genuinely routine, name the specific category of routine and its \
 narrow use — e.g., "This is a quarterly readiness assessment; it documents the \
@@ -178,21 +192,25 @@ detachment's training cycle but does not indicate changed posture." or "This is 
 standard political work content; its value is as a record of how the institution \
 frames loyalty to junior officers, not as evidence of a new policy line." Do not use \
 the phrase "contains no new information." Say specifically what kind of baseline the \
-article provides.
+article provides. A routine training report is not evidence of a capability shift; \
+do not inflate it into one, and do not use "unprecedented," "historic," or "first" \
+unless the article itself establishes the claim.
 
 Voice and style:
 
 Declarative. Make claims the evidence supports rather than gesturing at possibilities.
 Precise. Prefer specific nouns and verbs over general ones.
-Avoid hedging language ("it appears," "it could be argued," "this may suggest," \
-"potentially") unless the underlying uncertainty is genuine and material.
-Avoid meta-language. Do not begin with "This article reports" or "The piece discusses." \
-Start with the substance.
+Avoid empty hedging ("it appears," "it could be argued," "potentially") when the \
+article is clear; reserve caution for genuinely uncertain inference.
+Avoid meta-language. Do not begin with "This article reports," "The piece discusses," \
+or "This development underscores." Start with the substance.
+Avoid generic policy filler ("strategic significance," "comprehensive capabilities," \
+"new era") unless quoting the article's own framing as an object of analysis.
 Do not use "signals" or "reflects continued" as default second-sentence openers — they \
 are overused across this corpus and flatten distinct articles into the same register. \
 Find the more specific verb.
 
-Length: two to three sentences. Do not exceed three.
+Length: two to three sentences, at most about 90 words. Do not exceed three sentences.
 Return only the raw JSON object with one field: "summary" (string). Do not wrap the \
 response in markdown code fences or any other formatting.
 

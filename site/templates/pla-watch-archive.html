@@ -119,20 +119,6 @@
 }
 .entry-meta .sep::before { content: " · "; }
 
-/* ── Entry thumbnail ──────────────────────────────────────────────── */
-.entry-thumb-link {
-  display: block;
-  margin-top: 0.6rem;
-}
-.entry-thumb {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--color-border);
-  border-radius: 2px;
-  background: var(--color-bg-card);
-}
-
 .arch-note {
   font-family: var(--sans);
   font-size: 0.78rem;
@@ -172,18 +158,12 @@
   {% if posts %}
     <div class="entry-list">
       {% for post in posts %}
-      <article class="entry" data-reveal>
+      <article class="entry"{% if loop.index0 > 1 %} data-reveal{% endif %}>
         <div class="entry-date-col">
           {% if post.issue_number %}<span class="entry-no">No. {{ post.issue_number }}</span>{% endif %}
           <span class="we-date">Week ending<br>{{ post.week_ending | format_date }}</span>
-          {% set _thumb = (post.cover_thumb or post.cover_image or '') | replace('../', '') %}{% if _thumb %}
-          <a href="posts/{{ post.date }}.html" class="entry-thumb-link" tabindex="-1" aria-hidden="true">
-            <img class="entry-thumb"
-                 src="{{ _thumb }}"
-                 alt=""
-                 width="150" height="79"
-                 loading="lazy">
-          </a>{% endif %}
+          {# Cover thumbs retired with the cover demotion (og:image only);
+             the Edition Plate (ROADMAP T2) takes this slot when built. #}
         </div>
         <div class="entry-body">
           <h2 class="entry-title">

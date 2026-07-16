@@ -135,7 +135,129 @@ def validate(output_dir: Path) -> tuple[list[str], list[str]]:
 
     _validate_pla_watch(output_dir, errors, warnings)
 
+    _validate_editorial_images(output_dir, errors, warnings)
+
     return (errors, warnings)
+
+
+# ── Editorial imagery (Source-Derived Signal Graphics) ──────────────────────
+
+# Path token as rendered into HTML (src/href/url(...) values), including any
+# leading ../ segments so it can be resolved against the page's directory.
+EDITORIAL_REF_RE = re.compile(r"[^\"'()\s]*assets/editorial/[^\"'()\s]+")
+EDITORIAL_ID_TAG_RE = re.compile(r"<[^>]*data-editorial-id=\"([^\"]+)\"[^>]*>")
+ARIA_LABEL_RE = re.compile(r"aria-label=\"[^\"]+\"")
+
+# Retired conventional-figure patterns: the veil system replaced these
+# blocks; their reappearance means a template regression.
+RETIRED_FIGURE_PATTERNS = ('class="lead-figure"', "hero-figure", "issue-cover-thumb",
+                           'class="cover-figure"', "entry-thumb")
+
+
+def _required_editorial_derivatives(entry: dict) -> set:
+    """Derivative filenames this manifest entry's routes+treatment require
+    (§0 naming contract — kept in sync with scripts/pw_env.py, duplicated
+    here so this validator stays stdlib-only)."""
+    match = entry.get("match") or {}
+    routes = match.get("routes") or []
+    treatment = entry.get("treatment") or "veil"
+    eid = entry.get("id") or ""
+    names = set()
+    if "home" in routes or "article" in routes:
+        if treatment == "dither":
+            names.add(f"{eid}-dither-ink.png")
+        else:
+            names.add(f"{eid}-duo-paper.jpg")
+    if "pw-post" in routes:
+        names.add(f"{eid}-duo-navy.jpg")
+    return names
+
+
+def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -> None:
+    site_editorial = Path(__file__).resolve().parent.parent / "site" / "assets" / "editorial"
+    manifest_path = site_editorial / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        # Imagery is optional; a missing manifest just means no images.
+        warnings.append(f"editorial manifest unreadable ({exc}); image checks skipped")
+        return
+    if not isinstance(manifest, list):
+        warnings.append("editorial manifest is not a JSON list; image checks skipped")
+        return
+
+    by_id = {e.get("id"): e for e in manifest if isinstance(e, dict) and e.get("id")}
+    site_deriv = site_editorial / "derivatives"
+    out_editorial = output_dir / "assets" / "editorial"
+    out_deriv = out_editorial / "derivatives"
+
+    # 2. Required derivatives exist on both sides; sources copied to output.
+    for entry in manifest:
+        if not isinstance(entry, dict):
+            continue
+        eid = entry.get("id", "?")
+        routes = (entry.get("match") or {}).get("routes") or []
+        for name in sorted(_required_editorial_derivatives(entry)):
+            if not (site_deriv / name).is_file():
+                errors.append(f"editorial: required derivative missing on site side: "
+                              f"site/assets/editorial/derivatives/{name} (entry {eid})")
+            if not (out_deriv / name).is_file():
+                errors.append(f"editorial: required derivative missing in output: "
+                              f"assets/editorial/derivatives/{name} (entry {eid})")
+        if routes and entry.get("file"):
+            if not (out_editorial / entry["file"]).is_file():
+                errors.append(f"editorial: source image missing in output: "
+                              f"assets/editorial/{entry['file']} (entry {eid})")
+
+    # 3–6. Rendered-page checks.
+    for html in sorted(output_dir.rglob("*.html")):
+        try:
+            text = html.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue  # unreadable files already reported by the marker check
+        rel = html.relative_to(output_dir)
+
+        # 3. Every editorial asset reference must resolve to a real file.
+        for ref in set(EDITORIAL_REF_RE.findall(text)):
+            target = (html.parent / ref).resolve()
+            if not target.is_file():
+                errors.append(f"{rel}: rendered reference points at missing asset: {ref}")
+
+        # 4. Every veil/ghost element: known id, credit link, aria-label,
+        #    and the standing "not evidence" language on the page.
+        for m in EDITORIAL_ID_TAG_RE.finditer(text):
+            eid = m.group(1)
+            entry = by_id.get(eid)
+            if entry is None:
+                errors.append(f"{rel}: data-editorial-id={eid!r} not in manifest")
+                continue
+            if entry.get("source_page") and entry["source_page"] not in text:
+                errors.append(f"{rel}: editorial element {eid!r} has no credit link "
+                              f"to {entry['source_page']}")
+            if not ARIA_LABEL_RE.search(m.group(0)):
+                errors.append(f"{rel}: editorial element {eid!r} missing a non-empty aria-label")
+            if "not evidence" not in text.lower():
+                errors.append(f"{rel}: page renders editorial imagery ({eid!r}) without "
+                              f"'not evidence' context language")
+
+        # 5. Article pages: exact-URL match must be visible on the page
+        #    (the "View original source" href).
+        if rel.parts[0] == "article":
+            for m in EDITORIAL_ID_TAG_RE.finditer(text):
+                eid = m.group(1)
+                entry = by_id.get(eid)
+                if entry is None:
+                    continue  # already reported above
+                urls = (entry.get("match") or {}).get("article_urls") or []
+                if urls and not any(u in text for u in urls):
+                    errors.append(f"{rel}: editorial image {eid!r} rendered but none of "
+                                  f"its match.article_urls appear on the page")
+
+        # 6. Retired conventional-figure patterns must not reappear.
+        for pattern in RETIRED_FIGURE_PATTERNS:
+            if pattern in text:
+                errors.append(f"{rel}: retired pattern {pattern!r} found — conventional "
+                              f"figure block where the veil system should render")
 
 
 # ── The PLA Watch (weekly editions) ──────────────────────────────────────────

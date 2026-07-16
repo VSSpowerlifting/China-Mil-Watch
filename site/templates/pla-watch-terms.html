@@ -170,7 +170,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="terms-head" data-reveal>
+<div class="terms-head">
   <div class="terms-eyebrow">Running glossary</div>
   <h1 class="terms-title">Terms to Know</h1>
   <p class="terms-intro">Each weekly edition of The PLA Watch explains one piece of vocabulary from that week's Chinese military-media coverage — collected here, newest first, with a link back to the edition where the term appeared in context.</p>
@@ -178,7 +178,7 @@
 
 <div class="terms-list">
   {% for t in terms %}
-  <article class="term-entry" data-reveal style="--ri: {{ loop.index0 % 4 }};">
+  <article class="term-entry"{% if not loop.first %} data-reveal style="--ri: {{ loop.index0 % 4 }};"{% endif %}>
     {% set ghost = t.term | first_cjk %}
     {% if ghost %}<span class="term-ghost" lang="zh-Hans" aria-hidden="true">{{ ghost }}</span>{% endif %}
     {% if t.issue_number %}<span class="term-issue">No. {{ t.issue_number }}</span>{% endif %}

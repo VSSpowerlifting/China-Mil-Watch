@@ -261,8 +261,8 @@
 }
 .cat-bar-fill {
   height: 100%;
-  background: var(--color-brand);
-  opacity: 0.85;
+  background: var(--ink); /* quantitative volume is evidence, not signal — crimson stays reserved for model-flagged marks */
+  opacity: 0.5;
 }
 .cat-row .cat-count {
   text-align: right;
@@ -527,14 +527,14 @@
 {% block content %}
 <div class="signals-wrap">
 
-  <div class="signals-header" data-reveal>
+  <div class="signals-header">
     <div class="signals-eyebrow">Signals &amp; Methodology</div>
     <h1>Signals &amp; Methodology</h1>
     <p class="signals-lede">Patterns drawn from the China Mil Watch monitoring archive, the editor's current watchlist, and a plain-English account of how this platform reads Chinese-language military and security media.</p>
   </div>
 
   {# ── A. Signals Dashboard ──────────────────────────────────────────── #}
-  <div class="s-section" data-reveal>
+  <div class="s-section">
     <div class="s-section-heading">A · Signals Dashboard</div>
 
     <div class="stat-grid">
