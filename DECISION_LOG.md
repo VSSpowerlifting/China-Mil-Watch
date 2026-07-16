@@ -2,6 +2,26 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-17 — No. 10 final text: revised package adopted, edition badge ruling
+
+1. **The revised draft package (`pla-watch-draft-2026-07-11-revised.zip`,
+   Jul 12) is the final approved text of No. 10**, superseding the earlier
+   package published first. All seven prose fields (dek, signal, opening
+   note, what stood out, why it matters, routine baseline, term explanation,
+   watching next) replaced verbatim via the established extraction path;
+   round-trip verified against the package. Title, dates, window,
+   issue_number, byline, term name, source trail (13/13), media, and covers
+   unchanged. No public correction banner: same facts and sources,
+   editorial revision only.
+2. **The revised package's `edition_label: "Model-flagged"` is rejected.**
+   "Model-flagged" is an article-level mechanical triage state;
+   the edition classification ("Significant") is the analyst's human
+   editorial judgment and stays. The visible model-flagged article count
+   remains a separate surface.
+3. **The earlier LinkedIn file (article body pasted in error) is replaced**
+   by the revised package's 15-line post. Local file only; never posted
+   externally by an agent.
+
 ## 2026-07-17 — Session recovery, reconciliation onto origin/main, and No. 10 publication
 
 1. **Recovery mechanics.** The 2026-07-12/13/16 uncommitted passes were

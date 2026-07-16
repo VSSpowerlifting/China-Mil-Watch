@@ -20,8 +20,10 @@ was intentionally left untouched in `~/pla-watch`.
 10 editions, No. 1–10, weekly without cadence gaps: 2026-05-09 (pilot,
 2-day window) through 2026-07-11 ("Beijing's Public SLBM Test and What It
 Was Designed to Do", Significant, 39 articles / 2 model-flagged, Jin-class
-SSBN veil). Issue numbers stored in sidecars, validated unique +
-chronological. Next edition: No. 11, week ending 2026-07-18.
+SSBN veil; final text = the revised draft package per DECISION_LOG
+2026-07-17 badge/revision ruling). Issue numbers stored in sidecars,
+validated unique + chronological. Next edition: No. 11, week ending
+2026-07-18.
 
 ## Validation status
 
