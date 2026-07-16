@@ -31,6 +31,14 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from config import OUTPUT_DIR
+from scripts.pw_env import (
+    EDITORIAL_DERIV_DIR,
+    copy_editorial_assets,
+    derivative_name,
+    editorial_visual_fields,
+    ensure_editorial_derivatives,
+    load_editorial_manifest,
+)
 from storage.db import get_all_analyzed_articles
 
 logger = logging.getLogger(__name__)
@@ -134,6 +142,146 @@ def _homepage_excerpt(text: str, limit: int = 300) -> str:
     return f"{cut}..."
 
 
+# ── Editorial imagery (manifest-driven, always optional) ─────────────────────
+#
+# Images come only from the curated manifest at site/assets/editorial/
+# (see scripts/fetch_editorial_image.py). Association is by exact article
+# URL so an image can never drift onto the wrong story across regenerations.
+# The manifest's category/thread fields exist for curation context; they are
+# deliberately NOT used for automatic matching. No match → no figure — the
+# text-led layout is the designed fallback, not an error state.
+
+def _editorial_entry_for_url(manifest: list, url: str, route: str):
+    url = (url or "").strip()
+    if not url:
+        return None
+    for entry in manifest:
+        match = entry.get("match") or {}
+        if route in (match.get("routes") or []) and url in (match.get("article_urls") or []):
+            return entry
+    return None
+
+
+def _select_home_editorial(manifest: list, articles: list, brief_date: str):
+    """
+    Homepage editorial figure: the most recent model-flagged article within
+    7 days of the brief date that has an exact-URL manifest entry for the
+    'home' route. Returns a flat render dict or None. Falls through to the
+    next candidate (and eventually None) if the entry's required derivative
+    doesn't exist on the site side — the veil system never points at a
+    missing generated file.
+    """
+    if not manifest or not brief_date:
+        return None
+    try:
+        cutoff = (datetime.strptime(brief_date, "%Y-%m-%d")
+                  - timedelta(days=7)).strftime("%Y-%m-%d")
+    except ValueError:
+        return None
+    flagged = [
+        a for a in articles
+        if a.get("is_significant") and not a.get("extraction_issue")
+        and cutoff <= (a.get("published_date") or "") <= brief_date
+    ]
+    flagged.sort(key=lambda a: a.get("published_date") or "", reverse=True)
+    for a in flagged:
+        entry = _editorial_entry_for_url(manifest, a.get("url"), "home")
+        if not entry:
+            continue
+        fields = editorial_visual_fields(entry)
+        kind = "dither-ink" if fields["treatment"] == "dither" else "duo-paper"
+        deriv_name = derivative_name(entry, kind)
+        if not (EDITORIAL_DERIV_DIR / deriv_name).exists():
+            continue
+        return {
+            "file":            entry["file"],
+            "alt":             entry.get("alt", ""),
+            "width":           entry.get("width"),
+            "height":          entry.get("height"),
+            "focal":           entry.get("focal", "50% 50%"),
+            "caption":         entry.get("caption", ""),
+            "credit":          entry.get("credit", ""),
+            "source_page":     entry.get("source_page", ""),
+            "article_id":      a["id"],
+            "article_title":   a.get("title_english") or "",
+            "article_date_fmt": a.get("published_date_fmt") or "",
+            "treatment":       fields["treatment"],
+            "mask_focus":      fields["mask_focus"],
+            "source_id":       fields["source_id"],
+            "subject":         fields["subject"],
+            "license":         fields["license"],
+            "deriv":           f"assets/editorial/derivatives/{deriv_name}",
+            "editorial_id":    entry.get("id"),
+        }
+    return None
+
+
+def _select_home_atmosphere(manifest: list):
+    """
+    Homepage atmospheric veil: the manifest entry explicitly marked
+    "placement": "homepage-atmosphere". A publication-identity visual,
+    curated by hand and never chosen by the daily model, article matching,
+    or flag status — that separation is what keeps the veil from implying
+    it depicts the model-flagged story in the signal card next to it.
+    Returns a flat render dict (no article fields) or None; None means the
+    text-led hero, which is the designed fallback. First marked entry with
+    its required derivative on disk wins.
+    """
+    for entry in manifest or []:
+        if entry.get("placement") != "homepage-atmosphere":
+            continue
+        fields = editorial_visual_fields(entry)
+        kind = "dither-ink" if fields["treatment"] == "dither" else "duo-paper"
+        deriv_name = derivative_name(entry, kind)
+        if not (EDITORIAL_DERIV_DIR / deriv_name).exists():
+            continue
+        return {
+            "alt":          fields["alt"],
+            "treatment":    fields["treatment"],
+            "mask_focus":   fields["mask_focus"],
+            "source_id":    fields["source_id"],
+            "subject":      fields["subject"],
+            "source_page":  fields["source_page"],
+            "deriv":        f"assets/editorial/derivatives/{deriv_name}",
+            "editorial_id": entry.get("id"),
+        }
+    return None
+
+
+def _editorial_render_item(entry):
+    """
+    Flatten a manifest entry matched for the article-page 'article' route
+    into the dict article.html needs: veil/dither fields plus file/width/
+    height/caption for fallback provenance. Returns None when there's no
+    match or the required derivative is missing on the site side (the
+    text-led fallback is always safe).
+    """
+    if not entry:
+        return None
+    fields = editorial_visual_fields(entry)
+    kind = "dither-ink" if fields["treatment"] == "dither" else "duo-paper"
+    deriv_name = derivative_name(entry, kind)
+    if not (EDITORIAL_DERIV_DIR / deriv_name).exists():
+        return None
+    return {
+        "file":         entry.get("file", ""),
+        "width":        entry.get("width"),
+        "height":       entry.get("height"),
+        "caption":      entry.get("caption", ""),
+        "credit":       entry.get("credit", ""),
+        "focal":        entry.get("focal", "50% 50%"),
+        "alt":          fields["alt"],
+        "treatment":    fields["treatment"],
+        "mask_focus":   fields["mask_focus"],
+        "source_id":    fields["source_id"],
+        "subject":      fields["subject"],
+        "license":      fields["license"],
+        "source_page":  fields["source_page"],
+        "deriv":        f"assets/editorial/derivatives/{deriv_name}",
+        "editorial_id": entry.get("id"),
+    }
+
+
 def _dominant_category_labels(articles: list[dict], max_items: int = 3) -> list[str]:
     counter: Counter = Counter()
     for a in articles:
@@ -144,13 +292,103 @@ def _dominant_category_labels(articles: list[dict], max_items: int = 3) -> list[
     return [CATEGORY_LABELS.get(slug, slug) for slug, _ in counter.most_common(max_items)]
 
 
+# Falsifiable watch indicators keyed by category slug. Deterministic reader
+# guidance grounded in the day's actual composition — recurrence, seniority,
+# named units, geography, exercise phases, follow-on statements — never a
+# prediction and never invented activity.
+_WATCH_BY_CATEGORY: dict[str, str] = {
+    "taiwan": (
+        "Watch for follow-on MND or senior-level statements repeating today's "
+        "formulation, or an operational item pairing the language with named units."
+    ),
+    "south_china_sea": (
+        "Watch whether maritime reporting names new features or shifts from "
+        "summary claims to event-level items with dates and named vessels."
+    ),
+    "east_china_sea": (
+        "Watch whether maritime reporting names new locations or escalates from "
+        "law-enforcement framing to military-unit involvement."
+    ),
+    "coast_guard": (
+        "Watch whether CCG reporting expands geographically or begins pairing "
+        "operations with PLA Navy units by name."
+    ),
+    "exercises": (
+        "Watch for a named follow-on exercise phase, additional participating "
+        "units, or new geography; recurrence across outlets would separate a "
+        "campaign from a one-off report."
+    ),
+    "nuclear": (
+        "Watch for official confirmation naming the platform or unit, or "
+        "repetition at higher seniority; a single report does not establish a pattern."
+    ),
+    "modernization": (
+        "Watch for follow-on reporting that names the platform, unit, or "
+        "procurement step; capability claims without designators stay unconfirmed."
+    ),
+    "political_work": (
+        "Watch whether the same campaign language recurs with named senior "
+        "officers or moves from commentary pages to directive-level items."
+    ),
+    "personnel": (
+        "Watch for named appointments or removals that follow today's item, "
+        "especially at theater-command level or above."
+    ),
+    "military_diplomacy": (
+        "Watch for reciprocal visits or follow-on port calls that extend "
+        "today's engagement beyond ceremony."
+    ),
+    "internal_security": (
+        "Watch whether deployment reporting expands to new provinces or brings "
+        "in PLA main-force units beyond the People's Armed Police."
+    ),
+    "us_china_military": (
+        "Watch for a matching statement from the other side or follow-on "
+        "operational reporting that names units and locations."
+    ),
+}
+_WATCH_DEFAULT = (
+    "Watch whether today's dominant themes recur across more than one outlet "
+    "or gain senior-level placement."
+)
+
+
+def _short_title(article: dict, limit: int = 110) -> str:
+    title = (article.get("title_english") or article.get("title_original")
+             or "Untitled").strip()
+    if len(title) <= limit:
+        return title
+    return title[:limit].rsplit(" ", 1)[0].rstrip(",;: ") + "…"
+
+
+def _lead_category(article: dict) -> str:
+    cats = article.get("categories") or []
+    return min(cats, key=lambda c: _CATEGORY_PRIORITY.get(c, 99), default="")
+
+
+def _coverage_clause(articles: list[dict]) -> str:
+    names = sorted({a.get("source_name") for a in articles if a.get("source_name")})
+    if len(names) == 1:
+        return (f" Today's clean items come from {names[0]} alone, so absence "
+                "of corroboration is a collection limit, not evidence.")
+    return ""
+
+
 def _make_daily_readout(articles: list[dict]) -> dict:
+    """Assemble the homepage Analyst Readout. Deterministic pipeline output
+    built only from DB fields — labeled as automated on the page and in
+    methodology; it must never read as analyst prose or invent activity."""
     normal = [a for a in articles if not a.get("extraction_issue")]
     significant = [a for a in normal if a.get("is_significant")]
     routine = [a for a in normal if not a.get("is_significant")]
     dominant = _dominant_category_labels(normal)
     sig_categories = _dominant_category_labels(significant)
     routine_categories = _dominant_category_labels(routine)
+    coverage = _coverage_clause(normal)
+
+    # normal is pre-sorted by _article_sort_key (flag, category priority,
+    # relevance), so its head is the day's mechanically top-ranked item.
+    lead = significant[0] if significant else (normal[0] if normal else None)
 
     if not normal:
         overview = (
@@ -164,28 +402,37 @@ def _make_daily_readout(articles: list[dict]) -> dict:
         overview = (
             f"Today’s monitored coverage produced {len(significant)} model-flagged item"
             f"{'' if len(significant) == 1 else 's'}, concentrated in {pattern}. "
-            "Flagged items should be read as official institutional messaging, not evidence of classified activity or confirmed intent."
+            "Flagged items should be read as official institutional messaging, "
+            "not evidence of classified activity or confirmed intent."
+            f"{coverage}"
         )
-        mattered = "; ".join((a.get("title_english") or a.get("title_original") or "Untitled") for a in significant[:2])
+        mattered = "; ".join(_short_title(a) for a in significant[:2])
         routine_line = (
             f"Most other clean items centered on {', '.join(routine_categories)}."
             if routine_categories else "Other clean items were lower-signal or routine."
         )
     else:
         pattern = ", ".join(dominant) if dominant else "routine official military-media themes"
+        lead_labels = ", ".join(lead.get("category_labels") or []) if lead else ""
         overview = (
-            f"Today’s official military-media coverage appears mostly routine, centered on {pattern}. "
-            "No single item indicates a major new operational development in the collected material."
+            f"No item in today’s record was model-flagged, and the coverage reads as "
+            f"baseline output centered on {pattern}, the register official military "
+            "media returns to when nothing is being emphasized. Routine days set the "
+            "baseline that makes genuine departures visible; they should not be read "
+            "as quiet in the field, only as quiet in the record."
+            f"{coverage}"
         )
-        mattered = "No article was model-flagged."
+        mattered = (
+            (f"{_short_title(lead)}. The record’s top-ranked item"
+             f"{f' ({lead_labels})' if lead_labels else ''} by category priority "
+             "and relevance; not model-flagged.")
+            if lead else "No article was model-flagged."
+        )
         routine_line = f"Dominant categories: {pattern}."
 
-    watch_cats = sig_categories or dominant
-    watch = (
-        f"Watch whether {', '.join(watch_cats[:2])} themes recur across multiple sources or senior-level placements."
-        if watch_cats else
-        "Watch for repeated themes across multiple sources or senior-level placements."
-    )
+    lead_slug = _lead_category(lead) if lead else ""
+    watch = _WATCH_BY_CATEGORY.get(lead_slug, _WATCH_DEFAULT)
+
     return {
         "overview": overview,
         "what_mattered": mattered,
@@ -311,6 +558,13 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
         if src.exists():
             shutil.copy2(src, output_dir / asset)
 
+    # Editorial imagery: curated manifest + local assets. Both are optional;
+    # a missing or malformed manifest simply means no editorial figures.
+    editorial_manifest = load_editorial_manifest()
+    ensure_editorial_derivatives()
+    if editorial_manifest:
+        copy_editorial_assets(output_dir)
+
     env = _make_env()
 
     # ── Load all articles ─────────────────────────────────────────────────────
@@ -347,6 +601,8 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
     pw_latest = _load_latest_pw_edition(output_dir)
     pw_issues = _load_pw_issue_ticks(output_dir)
     recent_signals = [a for a in articles if a.get("is_significant") and not a.get("extraction_issue")][:3]
+    home_editorial = _select_home_editorial(editorial_manifest, articles, brief_date)
+    home_atmosphere = _select_home_atmosphere(editorial_manifest)
 
     tmpl_index = env.get_template("index.html")
     (output_dir / "index.html").write_text(
@@ -363,6 +619,8 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
             recent_signals=recent_signals,
             pw_latest=pw_latest,
             pw_issues=pw_issues,
+            home_editorial=home_editorial,
+            home_atmosphere=home_atmosphere,
             generated_at=generated_at,
         ),
         encoding="utf-8",
@@ -423,6 +681,8 @@ def generate_site(output_dir: Path = OUTPUT_DIR) -> None:
                 root_path="../",
                 page_url=f"https://chinamilwatch.org/article/{a['id']}.html",
                 article=a,
+                editorial_image=_editorial_render_item(_editorial_entry_for_url(
+                    editorial_manifest, a.get("url"), "article")),
                 generated_at=generated_at,
             ),
             encoding="utf-8",

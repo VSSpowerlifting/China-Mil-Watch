@@ -1,0 +1,190 @@
+[
+  {
+    "id": "chengdu-j20",
+    "file": "chengdu-j20.jpg",
+    "width": 1600,
+    "height": 1086,
+    "alt": "A Chengdu J-20 stealth fighter banking in flight with its weapon bays open, seen from below against a pale overcast sky",
+    "caption": "A Chengdu J-20 stealth fighter in flight with its ventral weapon bays open.",
+    "display_label": "Visual context",
+    "credit": "emperornie · CC BY-SA 2.0 · via Wikimedia Commons",
+    "creator": "emperornie",
+    "institution": "J-20 fighter",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:J-20_fighter_(44040541250)_(cropped).jpg",
+    "commons_title": "File:J-20 fighter (44040541250) (cropped).jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/J-20_fighter_%2844040541250%29_%28cropped%29.jpg",
+    "downloaded_at": "2026-07-16T05:12:41Z",
+    "focal": "62% 40%",
+    "note": "Homepage atmospheric visual (publication identity), not tied to any article or record item; replaces the Jin-class SSBN as the homepage veil (2026-07-16). Original: Flickr photo 44040541250 by emperornie, via Wikimedia Commons, CC BY-SA 2.0. The duo-paper veil derivative is a modified (downscaled, cropped, duotone) adaptation and remains subject to CC BY-SA 2.0, including ShareAlike.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": [
+        "home"
+      ]
+    },
+    "treatment": "veil",
+    "mask_focus": "10% 8%",
+    "source_id": "EMPERORNIE · FLICKR · CC BY-SA 2.0",
+    "subject": "J-20 · CHENGDU AIRCRAFT",
+    "placement": "homepage-atmosphere"
+  },
+  {
+    "id": "jin-class-type-094-ssbn",
+    "file": "jin-class-type-094-ssbn.jpg",
+    "width": 1000,
+    "height": 600,
+    "alt": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy underway on the surface",
+    "caption": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy.",
+    "display_label": "Visual context",
+    "credit": "U.S. government photo, via CRS report RL33153 (R. O'Rourke) · Public domain · via Wikimedia Commons",
+    "creator": "CSR Report RL33153 China Naval Modernization: Implications for U.S. Navy Capabilities—Background and Issues for Congress by Ronald O'Rourke dated February 28, 2014",
+    "institution": "United States Naval Institute News Blog",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Jin_(Type_094)_Class_Ballistic_Missile_Submarine.JPG",
+    "commons_title": "File:Jin (Type 094) Class Ballistic Missile Submarine.JPG",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Jin_%28Type_094%29_Class_Ballistic_Missile_Submarine.JPG",
+    "downloaded_at": "2026-07-11T16:44:49Z",
+    "focal": "50% 50%",
+    "treatment": "veil",
+    "mask_focus": "60% 30%",
+    "source_id": "U.S. GOV · CRS RL33153 · PD",
+    "subject": "JIN-CLASS (TYPE 094) SSBN",
+    "note": "U.S. government (ONI via CRS report RL33153) public-domain photo. Tied to the 2026-07-06/07 model-flagged PLA Daily report of a submarine-launched strategic missile test; the report did not identify the boat or location.",
+    "match": {
+      "article_urls": [
+        "http://www.81.cn/yw_208727/16472012.html",
+        "http://www.81.cn/yw_208727/16472265.html"
+      ],
+      "categories": [
+        "nuclear",
+        "modernization"
+      ],
+      "threads": [],
+      "editions": [],
+      "routes": [
+        "home",
+        "article"
+      ]
+    }
+  },
+  {
+    "id": "liaoning-j15-recovery",
+    "file": "liaoning-j15-recovery.jpg",
+    "width": 1600,
+    "height": 958,
+    "alt": "A J-15 carrier-based fighter on final approach to the aircraft carrier Liaoning, landing gear and arresting hook down, seen from astern",
+    "caption": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022.",
+    "display_label": "Visual context",
+    "credit": "Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons",
+    "creator": "日本防衛省・統合幕僚監部",
+    "institution": "https://www.mod.go.jp/js/Press/press2022/press_pdf/p20220504_01.pdf",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+    "commons_title": "File:A PLAN Shenyang J-15 carrier-based fighter aircraft is preparing to land on Chinese aircraft carrier PLANS Liaoning (CV-16) 20220504.jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_%28CV-16%29_20220504.jpg",
+    "downloaded_at": "2026-07-11T16:45:15Z",
+    "focal": "50% 50%",
+    "treatment": "veil",
+    "mask_focus": "50% 45%",
+    "source_id": "JAPAN MOD · JOINT STAFF · CC BY 4.0",
+    "subject": "LIAONING (CV-16) · J-15 RECOVERY",
+    "note": "Japan Ministry of Defense / Joint Staff release via Wikimedia Commons. Tied to Edition No. 8 (week ending 2026-06-27), whose lead analysis covers a Liaoning far-sea exercise.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [
+        "carrier-operations"
+      ],
+      "editions": [
+        "2026-06-27"
+      ],
+      "routes": [
+        "pw-post"
+      ]
+    }
+  },
+  {
+    "id": "plan-destroyer-xian",
+    "file": "plan-destroyer-xian.jpg",
+    "width": 1600,
+    "height": 1065,
+    "alt": "The PLA Navy guided-missile destroyer Xi'an underway off Hawaii, seen from the port bow",
+    "caption": "The PLA Navy destroyer Xi'an (Type 052C) departs Pearl Harbor at the close of RIMPAC 2016.",
+    "display_label": "Visual context",
+    "credit": "U.S. Navy photo, PO1 Rebecca Wolfbrandt · Public domain · via Wikimedia Commons",
+    "creator": "Petty Officer 1st Class Rebecca Wolfbrandt",
+    "institution": "https://www.dvidshub.net/image/2772870/chinese-navy-guided-missile-destroyer-xian-153-departs-joint-base-pearl-harbor-hickam-following-conclusion-rimpac-2016",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Chinese_Navy_Guided-Missile_Destroyer_Xian_(153)_Departs_Joint_Base_Pearl_Harbor-Hickam_Following_the_Conclusion_of_RIMPAC_2016_160804-N-IU636-106.jpg",
+    "commons_title": "File:Chinese Navy Guided-Missile Destroyer Xian (153) Departs Joint Base Pearl Harbor-Hickam Following the Conclusion of RIMPAC 2016 160804-N-IU636-106.jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chinese_Navy_Guided-Missile_Destroyer_Xian_%28153%29_Departs_Joint_Base_Pearl_Harbor-Hickam_Following_the_Conclusion_of_RIMPAC_2016_160804-N-IU636-106.jpg",
+    "downloaded_at": "2026-07-11T16:45:31Z",
+    "focal": "50% 50%",
+    "treatment": "dither",
+    "source_id": "U.S. NAVY · RIMPAC 2016 · PD",
+    "subject": "XI'AN (153) · TYPE 052C",
+    "note": "U.S. Navy public-domain photograph. Category-tied context for PLA Navy surface-combatant exercise coverage, including the China-Russia Joint Sea-2026 reports.",
+    "match": {
+      "article_urls": [
+        "http://www.81.cn/yw_208727/16472650.html",
+        "https://www.globaltimes.cn/page/202607/1365501.shtml"
+      ],
+      "categories": [
+        "exercises",
+        "military_diplomacy",
+        "us_china_military"
+      ],
+      "threads": [],
+      "editions": [],
+      "routes": [
+        "home",
+        "article"
+      ]
+    }
+  },
+  {
+    "id": "scarborough-shoal-iss",
+    "file": "scarborough-shoal-iss.jpg",
+    "width": 1600,
+    "height": 1065,
+    "alt": "Scarborough Shoal seen from the International Space Station: a triangular coral ring enclosing a turquoise lagoon in the South China Sea",
+    "caption": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45.",
+    "display_label": "Visual context",
+    "credit": "NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons",
+    "creator": "Earth Science and Remote Sensing Unit , Lyndon B. Johnson Space Center",
+    "institution": "JSC Gateway to Astronaut Photography of Earth",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+    "commons_title": "File:ISS045-E-77332 - View of Scarborough Shoal.jpg",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/5/58/ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+    "downloaded_at": "2026-07-11T16:45:12Z",
+    "focal": "50% 50%",
+    "treatment": "veil",
+    "mask_focus": "52% 46%",
+    "source_id": "ISS045-E-77332 · NASA · PD",
+    "subject": "SCARBOROUGH SHOAL (HUANGYAN)",
+    "note": "NASA public-domain astronaut photograph. Tied to Edition No. 9 (week ending 2026-07-04), whose lead analysis covers Southern Theater Command combat-readiness patrols around Huangyan Island.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [
+        "scarborough-shoal"
+      ],
+      "editions": [
+        "2026-07-04"
+      ],
+      "routes": [
+        "pw-post"
+      ]
+    }
+  }
+]

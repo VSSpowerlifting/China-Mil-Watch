@@ -18,6 +18,8 @@
 {% block extra_styles %}
 /* ── Identity band ─────────────────────────────────────────────────── */
 .home-hero {
+  position: relative;
+  overflow: hidden;
   background: var(--paper-header);
   border-bottom: 1px solid var(--line);
 }
@@ -30,6 +32,11 @@
   gap: 3.5rem;
   align-items: end;
 }
+/* When the Signal Veil's recent-signal block makes the right rail taller,
+   center the text column against it instead of leaving dead space above
+   the headline. Text column stays above the veil layer. */
+.home-hero-inner.has-veil > div:first-child { align-self: center; }
+.home-hero-inner > div:first-child { position: relative; z-index: 1; }
 .home-hero h1 {
   font-family: var(--serif);
   font-weight: 700;
@@ -56,11 +63,72 @@
 .home-hero-dek a { font-weight: 600; }
 .home-hero-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
 
-/* Today's figures — real ledger numbers */
-.hero-ledger {
+/* Right rail: optional recent-signal block + today's ledger numbers.
+   position:relative + z-index:1 keep both above the veil layer. */
+.hero-side {
+  position: relative;
+  z-index: 1;
   border-left: 1px solid var(--line);
   padding-left: 2.25rem;
   align-self: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1.6rem;
+}
+
+/* Recent signal — rendered only when a manifest image is tied by exact
+   URL to the current record's lead model-flagged item (text-led fallback
+   otherwise). Points at that flagged article. The veil layer behind the
+   hero is a separate concern: an atmospheric publication visual selected
+   by manifest placement, never an illustration of this card's story. The
+   ledger below carries today's actual record, so the dates never blur. */
+.hero-signal { position: relative; padding-left: 1.1rem; }
+/* Same paper whisper the ledger gets: the atmospheric veil's darkest mass
+   (J-20 tailplane) passes behind this card, so its text never sits
+   directly on the image. */
+.hero-signal::after {
+  content: "";
+  position: absolute; inset: -.8rem -1.2rem -.7rem -.4rem; z-index: -1;
+  background: radial-gradient(120% 110% at 40% 50%, rgba(251,249,244,.82) 40%, transparent 82%);
+}
+.hero-signal::before {
+  content: "";
+  position: absolute; left: 0; top: .15rem; bottom: .2rem; width: 1px;
+  background: linear-gradient(to bottom, var(--signal) 0 40%, var(--line) 40%);
+}
+.flag-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--signal);
+  text-decoration: none;
+  margin-bottom: 0.55rem;
+}
+.flag-kicker:hover { color: var(--signal-ink); text-decoration: none; }
+.hero-signal-title {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+  text-decoration: none;
+  max-width: 30ch;
+}
+.hero-signal-title:hover { color: var(--signal); text-decoration: none; }
+
+/* Today's figures — real ledger numbers. A whisper of paper behind the
+   rows so numerals never sit directly on the veil image. */
+.hero-ledger { position: relative; }
+.hero-ledger::before {
+  content: "";
+  position: absolute; inset: -.7rem -1rem -0.4rem -1.2rem; z-index: -1;
+  background: radial-gradient(130% 105% at 45% 55%, rgba(251,249,244,.78) 34%, transparent 80%);
 }
 .hero-ledger-label {
   font-family: var(--mono);
@@ -97,6 +165,13 @@
   font-weight: 500;
   color: var(--ink-3);
 }
+
+/* Homepage veil crop (desktop): the atmospheric image is upscaled a step
+   past cover so the fixed-slack cover crop gains positioning room; with
+   the manifest mask_focus this seats the J-20 in the lower-right field
+   and keeps its tailplane out of the headline column. Mobile (≤900px)
+   resets to cover — the mobile mask does the shaping there. */
+.home-hero .pl-veil { background-size: 118% auto; }
 
 /* ── Hero plate — how the record is built (animated editorial diagram) ── */
 .hero-plate {
@@ -730,7 +805,7 @@
     gap: 1.9rem;
     padding: 2.25rem 1.25rem 2rem;
   }
-  .hero-ledger { border-left: none; border-top: 1px solid var(--line); padding-left: 0; padding-top: 1.4rem; }
+  .hero-side { border-left: none; border-top: 1px solid var(--line); padding-left: 0; padding-top: 1.4rem; }
   .pw-band-inner { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; padding: 1.9rem 1.25rem 2rem; }
   .pw-band-cta { flex-direction: row; align-items: center; gap: 1.25rem; }
   .brief-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
@@ -739,13 +814,52 @@
   .article-card { padding: 1.1rem 1.15rem 1rem; }
   .article-card.significant { padding-left: calc(1.15rem - 2px); }
   .article-title { font-size: 1.125rem; }
+  /* Signal Veil must not wash the whole hero on mobile: the image enters
+     from the LOWER portion, under/behind the ledger side, so the title +
+     dek at top stay on clean paper. */
+  /* Dense zone hugs the ledger (≈60% band height), fading out before the
+     "How the record is built" plate so its caption sits on near-paper. */
+  /* Mobile keeps its own crop: the manifest mask_focus is tuned for the
+     desktop 118% crop above, so it is overridden here (it arrives as an
+     inline style, hence the !important) to center the airframe in the
+     mask's dense zone. */
+  .pl-veil { width: 100%; opacity: .95; background-size: cover;
+    background-position: 62% 42% !important;
+    -webkit-mask-image: radial-gradient(105% 44% at 88% 58%, rgba(0,0,0,.9) 16%, rgba(0,0,0,.45) 52%, transparent 76%);
+    mask-image: radial-gradient(105% 44% at 88% 58%, rgba(0,0,0,.9) 16%, rgba(0,0,0,.45) 52%, transparent 76%);
+  }
+  .pl-ghost { width: 110%; right: -10%;
+    -webkit-mask-image: linear-gradient(to top, #000 30%, transparent 86%);
+    mask-image: linear-gradient(to top, #000 30%, transparent 86%);
+  }
 }
 {% endblock %}
 
 {% block hero %}
 <section class="home-hero">
-  <div class="home-hero-inner">
-    <div data-reveal>
+  {# Atmospheric layer — publication-identity visual selected explicitly by
+     manifest placement ("homepage-atmosphere"), independent of the
+     model-flagged signal card below: the image is general visual context,
+     never an illustration of the flagged story. #}
+  {% if home_atmosphere %}
+  {% if home_atmosphere.treatment == 'dither' %}
+  <div class="pl-ghost" role="img" aria-label="{{ home_atmosphere.alt }}" data-editorial-id="{{ home_atmosphere.editorial_id }}"
+       style="background-image:url('{{ root_path }}{{ home_atmosphere.deriv }}');"></div>
+  {% else %}
+  <div class="pl-veil" role="img" aria-label="{{ home_atmosphere.alt }}" data-editorial-id="{{ home_atmosphere.editorial_id }}"
+       style="background-image:url('{{ root_path }}{{ home_atmosphere.deriv }}'); background-position:{{ home_atmosphere.mask_focus or '60% 30%' }};"></div>
+  {% endif %}
+  <div class="src-bracket" style="right:2rem; top:2.4rem;">
+    <span class="bracket"></span>
+    <div class="src-lines">
+      IMG · <a href="{{ home_atmosphere.source_page }}" target="_blank" rel="noopener nofollow">{{ home_atmosphere.source_id }}</a><br>
+      {% if home_atmosphere.subject %}{{ home_atmosphere.subject }}<br>{% endif %}
+      CONTEXT, NOT EVIDENCE
+    </div>
+  </div>
+  {% endif %}
+  <div class="home-hero-inner{% if home_atmosphere %} has-veil{% endif %}">
+    <div>
       <h1>Reading China's military media <em>in the original.</em></h1>
       <p class="home-hero-dek">China Mil Watch is an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Official reporting is where the PLA describes itself in its own terms; much of it never appears in English-language coverage. The daily record is indexed here. <a href="{{ root_path }}the-pla-watch/index.html">The PLA Watch</a>, the weekly brief, is the analysis.</p>
       <div class="home-hero-actions">
@@ -753,7 +867,14 @@
         <a class="btn btn-secondary" href="{{ root_path }}methodology.html">How this works</a>
       </div>
     </div>
-    <div class="hero-ledger" data-reveal style="--ri: 2;">
+    <div class="hero-side">
+      {% if home_editorial %}
+      <div class="hero-signal">
+        <a class="flag-kicker" href="{{ root_path }}article/{{ home_editorial.article_id }}.html"><span class="signal-dot"></span>Model-flagged · from the {{ home_editorial.article_date_fmt }} record</a>
+        <a class="hero-signal-title" href="{{ root_path }}article/{{ home_editorial.article_id }}.html">{{ home_editorial.article_title }}</a>
+      </div>
+      {% endif %}
+      <div class="hero-ledger">
       <div class="hero-ledger-label">Today's record{% if brief_date_fmt %} · {{ brief_date_fmt }}{% endif %}</div>
       <div class="hero-ledger-rows">
         <div class="hero-ledger-row">
@@ -773,10 +894,14 @@
           <span class="v small">{{ generated_at }}</span>
         </div>
       </div>
+      {% if home_atmosphere %}
+      <div class="src-inline">IMG <a href="{{ home_atmosphere.source_page }}" target="_blank" rel="noopener nofollow">{{ home_atmosphere.source_id }}</a>{% if home_atmosphere.subject %} · {{ home_atmosphere.subject }}{% endif %} · Context, not evidence.</div>
+      {% endif %}
+      </div>
     </div>
 
     {% if source_statuses %}
-    <div class="hero-plate" data-reveal style="--ri: 3;">
+    <div class="hero-plate" data-reveal="art">
       <div class="hero-plate-label">How the record is built</div>
       <div class="hero-plate-grid">
         <div class="plate-sources">
@@ -858,7 +983,7 @@
 
     <div class="brief-header" data-reveal>
       <div class="brief-eyebrow">Daily Brief</div>
-      <h1 class="brief-date">{% if brief_date_fmt %}{{ brief_date_fmt }}{% else %}Today{% endif %}</h1>
+      <h2 class="brief-date">{% if brief_date_fmt %}{{ brief_date_fmt }}{% else %}Today{% endif %}</h2>
       {% if articles %}
       <div class="edition-strip">
         <div class="edition-meta">

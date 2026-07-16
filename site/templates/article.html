@@ -103,6 +103,26 @@
   background: var(--signal);
 }
 
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
 /* ── Summary block ─────────────────────────────────────────────────── */
 .summary-block {
   background: var(--paper-raised);
@@ -193,44 +213,76 @@ details summary:hover { color: var(--ink); }
 }
 {% endblock %}
 
+{% macro article_head() %}
+<div class="article-header">
+
+  {% if article.is_significant %}
+    <div class="analytical-signal-kicker"><span class="signal-dot"></span><span class="signal-kicker-text">Model-flagged</span></div>
+  {% endif %}
+  {% if article.category_labels %}
+    <div class="tags">
+      {% for label in article.category_labels %}
+        <span class="tag" data-label="{{ label }}">{{ label }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <h1 class="article-page-title">
+    {{ article.title_english or article.title_original }}
+  </h1>
+
+  {% if article.title_original and article.source_language == 'zh' %}
+    <div class="article-page-title-zh" lang="zh-Hans">{{ article.title_original }}</div>
+  {% endif %}
+
+  <div class="article-page-meta">
+    <span class="src">{{ article.source_name }}</span>
+    <span class="sep"></span>
+    <span>{{ article.published_date_fmt }}</span>
+  </div>
+
+  <a href="{{ article.url }}" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="{{ root_path }}methodology.html">About this analysis</a>
+  </div>
+
+</div>
+{% endmacro %}
+
+{% block hero %}
+{% if editorial_image %}
+<section class="article-band">
+  {% if editorial_image.treatment == 'dither' %}
+  <div class="pl-ghost article-ghost" role="img" aria-label="{{ editorial_image.alt }}" data-editorial-id="{{ editorial_image.editorial_id }}"
+       style="background-image:url('{{ root_path }}{{ editorial_image.deriv }}');"></div>
+  {% else %}
+  <div class="pl-veil article-veil" role="img" aria-label="{{ editorial_image.alt }}" data-editorial-id="{{ editorial_image.editorial_id }}"
+       style="background-image:url('{{ root_path }}{{ editorial_image.deriv }}'); background-position:{{ editorial_image.mask_focus or '74% 30%' }};"></div>
+  {% endif %}
+  <div class="src-bracket" style="right:2rem; bottom:1.6rem; top:auto;">
+    <span class="bracket"></span>
+    <div class="src-lines">
+      IMG · <a href="{{ editorial_image.source_page }}" target="_blank" rel="noopener nofollow">{{ editorial_image.source_id }}</a><br>
+      {% if editorial_image.subject %}{{ editorial_image.subject }}<br>{% endif %}
+      CONTEXT, NOT EVIDENCE
+    </div>
+  </div>
+  <div class="article-band-inner">
+    <a href="{{ root_path }}index.html" class="back-link">← Daily Brief</a>
+    {{ article_head() }}
+    <div class="src-inline">IMG <a href="{{ editorial_image.source_page }}" target="_blank" rel="noopener nofollow">{{ editorial_image.source_id }}</a>{% if editorial_image.subject %} · {{ editorial_image.subject }}{% endif %} · Context, not evidence.</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="article-page">
+  {% if not editorial_image %}
   <a href="{{ root_path }}index.html" class="back-link">← Daily Brief</a>
-
-  <div class="article-header">
-
-    {% if article.is_significant %}
-      <div class="analytical-signal-kicker"><span class="signal-dot"></span><span class="signal-kicker-text">Model-flagged</span></div>
-    {% endif %}
-    {% if article.category_labels %}
-      <div class="tags">
-        {% for label in article.category_labels %}
-          <span class="tag" data-label="{{ label }}">{{ label }}</span>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <h1 class="article-page-title">
-      {{ article.title_english or article.title_original }}
-    </h1>
-
-    {% if article.title_original and article.source_language == 'zh' %}
-      <div class="article-page-title-zh" lang="zh-Hans">{{ article.title_original }}</div>
-    {% endif %}
-
-    <div class="article-page-meta">
-      <span class="src">{{ article.source_name }}</span>
-      <span class="sep"></span>
-      <span>{{ article.published_date_fmt }}</span>
-    </div>
-
-    <a href="{{ article.url }}" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
-
-    <div class="about-analysis">
-      <a href="{{ root_path }}methodology.html">About this analysis</a>
-    </div>
-
-  </div>
+  {{ article_head() }}
+  {% endif %}
 
   {% if article.summary_english %}
   <div class="section-label">Summary</div>

@@ -2,6 +2,111 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-16 — Homepage atmospheric image decoupled from the model-flagged story
+
+1. **The homepage veil is an atmospheric publication visual, selected only
+   by the explicit manifest field `"placement": "homepage-atmosphere"`** —
+   never by the daily model, article matching, or flag status. This
+   supersedes the veil half of the 2026-07-12 §3 ruling: the model-flagged
+   signal card in the hero's right rail still ties to the most recent
+   flagged item by exact URL (`_select_home_editorial`, unchanged), but
+   the image behind the hero no longer illustrates that story. The two are
+   separate layers; the card carries no image, and the image credit never
+   carries flag language. Missing/invalid atmospheric entry or derivative
+   → text-led hero, card unaffected (`_select_home_atmosphere`).
+2. **The homepage atmospheric image is the Chengdu J-20 photograph by
+   emperornie** (Flickr photo 44040541250 via Wikimedia Commons, CC BY-SA
+   2.0; manifest id `chengdu-j20`), replacing the Jin-class SSBN in that
+   role. The Jin-class entry keeps its `home`+`article` routes for the
+   signal-card selection and the article-page figure. The duo-paper veil
+   derivative is a modified adaptation and remains subject to CC BY-SA
+   2.0 including ShareAlike, recorded in the manifest note.
+3. **Homepage-only crop mechanics:** `.home-hero .pl-veil` upscales the
+   atmospheric image one step past cover (118%) so the manifest
+   `mask_focus` (10% 8%) can seat the airframe in the lower-right field;
+   mobile (≤900px) resets to cover with its own position (62% 42%,
+   `!important` over the inline style). The signal card gains the same
+   paper-whisper backing the ledger already had, so its text never sits
+   directly on the image. No new motion: the shared veil-in settle is the
+   only animation, and reduced-motion/no-JS receive the settled state.
+
+## 2026-07-12 — Production-completion pass: first paint, editorial imagery, prompt hardening
+
+1. **Above-the-fold content never starts at opacity 0.** The reveal system
+   keeps `[data-reveal]` for below-fold sections, adds a `data-reveal="art"`
+   variant (container always visible; only inner draw-path/ink-node/rule
+   primitives animate), and above-fold identity blocks (homepage hero +
+   ledger, PW post hero + cover figure, PW index latest-edition module,
+   signals header/dashboard, terms head, first archive entries) render
+   statically. The observer JS is wrapped in try/catch (failure → `.no-anim`)
+   with a post-load in-viewport sweep so no content can stay hidden on
+   short pages. Every new component must follow this rule.
+2. **Editorial imagery is manifest-only and exact-URL matched.** All
+   editorial images come from `site/assets/editorial/manifest.json`
+   (curated via `scripts/fetch_editorial_image.py`, which enforces the
+   PD/CC0/CC BY/CC BY-SA allowlist from fetch_pla_watch_media). Association
+   to stories is by exact article URL or edition date; the manifest's
+   category/thread fields are curation context and are deliberately not
+   used for automatic matching, so an image can never drift onto the wrong
+   story. No match → text-led layout (the designed fallback). Sidecars stay
+   canonical: weekly editorial images merge at render time only.
+   Every placement carries credit + license + "visual context, not
+   evidence" language.
+3. **Homepage figure ties only to a model-flagged item** within 7 days of
+   the brief date, labeled with the standing "Model-flagged" kicker; the
+   ranking language in the Analyst Readout states its mechanical basis
+   ("by category priority and relevance; not model-flagged") so automated
+   triage is never dressed as editorial judgment.
+4. **Byline correction.** Earlier in this 2026-07-12 pass the fallback
+   author title in both renderers was changed to "Founder & Principal
+   Analyst, China Mil Watch." That change was not analyst-approved and has
+   been reverted in `scripts/generate_pla_watch.py` and
+   `scripts/rerender_pla_watch.py` before any edition published with it.
+   The 2026-07-09 ruling stands: the byline is "Benjamin Yang — Principal
+   Analyst, China Mil Watch." The two editions whose sidecars carry no
+   `author_title` (2026-05-09, 2026-05-16) render the approved title via
+   the fallback constant; no historical sidecar was touched.
+5. **Weekly prose mechanics are enforced at draft time, not by rewriting
+   history.** PROSE MECHANICS/SYNTHESIS rules added to STYLE_EXTRACT and
+   the tool schema; `prose_warnings()` prints non-blocking findings (em
+   dashes, banned transitions, stacked "not X but Y") for the human
+   reviewer. Editions 1–6 contain 32 such violations and stay as published.
+6. **Homepage brief-date demoted to h2** (one h1 per page). The daily
+   Analyst Readout now names the record's top-ranked item on no-flag days,
+   makes single-source coverage limits explicit, and draws its watch line
+   from a fixed per-category table of falsifiable indicators.
+
+## 2026-07-12 — Production visual system: Source-Derived Signal Graphics
+
+Concept A ("Signal Veil") is adopted as the production imagery system on
+both surfaces: a duotone crop of the manifest photograph, keyed to the
+ground it sits on (paper duotone on Paper Ledger, navy duotone on Night
+Desk), shaped by a soft radial mask union so no hard rectangle ever reads
+as a conventional photo card. Concept C's Floyd–Steinberg dither is kept as
+a secondary "Paper Ledger" fallback, selected per image via the new
+optional manifest field `treatment` (`"veil"` default, or `"dither"`).
+Concept C's bracketed analyst-mark provenance is used on desktop
+(`.src-bracket` / `.nd-src-bracket`); Concept A's compact inline credit
+line covers mobile and dense cards. Concept B's tick row (one tick per
+Source Trail record, red = model-flagged, with a textual explanation and a
+small-screen numeric-only fallback) is retained, but only on Night Desk
+surfaces (weekly post hero, index latest-edition module) — Concept B's
+photographic strips and ghost edition numeral are rejected as too
+decorative for either surface. No conventional photo figure or captioned
+image card renders on the homepage hero, article header, weekly hero, or
+index module; all four are replaced by the veil/dither system with a
+text-led fallback when an image, manifest entry, or derivative is missing.
+Derivatives (`{id}-duo-paper.jpg`, `{id}-duo-navy.jpg`, `{id}-dither-ink.png`)
+are generated deterministically at build time from the manifest's source
+images (Pillow: grayscale + autocontrast, duotone colorize or Floyd–Steinberg
+dither; same input produces identical output bytes) via
+`scripts/generate_editorial_derivatives.py`, committed to
+`site/assets/editorial/derivatives/` and copied to the output tree
+alongside the source images. The manifest remains the sole source of
+editorial-image metadata; sidecars are untouched. A missing image,
+manifest entry, or derivative always falls back to the existing text-led
+layout, never a broken reference.
+
 ## 2026-07-11 — Analyst decisions: metadata fields, labeling, commit sequence
 
 1. **`executive_readout` adopted** beginning with Edition No. 10: optional
