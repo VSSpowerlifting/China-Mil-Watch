@@ -2,6 +2,38 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-17 — Session recovery, reconciliation onto origin/main, and No. 10 publication
+
+1. **Recovery mechanics.** The 2026-07-12/13/16 uncommitted passes were
+   snapshotted onto local-only branch `rescue/unfinished-pla-watch-2026-07-16`
+   (three separated WIP commits; `.claude-flow` excluded) and re-applied onto
+   `origin/main` in a clean worktree (branch
+   `reconcile/unfinished-pla-watch-2026-07-16`). Local `1f0917c` was verified
+   by identical patch-id to be the same change as remote `5e92dc4`
+   (cherry-picked); it was not merged. Local `main` was left untouched.
+   Output was regenerated fresh from the latest remote DB, never carried
+   over from the stale snapshot. Rescue WIP commits are safety history only.
+2. **No. 10 (week ending 2026-07-11) integrated from the approved draft
+   package** (`pla-watch-draft-29148303565.zip`) via
+   `backfill_sidecar_bodies.py`: body fields extracted verbatim from the
+   analyst-approved HTML (round-trip verified), issue_number 10 assigned,
+   author fields normalized from the package's stale
+   "Founder & Principal Analyst" to the ruled public identity, trail
+   `title_zh` filled by exact URL match (13/13). No prose was composed.
+   The edition ships without `executive_readout` / `recurring_threads`
+   by analyst instruction, superseding for this edition the earlier
+   adopt-from-No. 10 plan.
+3. **No. 10 Night Desk veil = `jin-class-type-094-ssbn`**, routed to
+   `pw-post` for edition 2026-07-11 only. Grounded: the manifest entry was
+   fetched 2026-07-11 and already tied by exact URL to this edition's lead
+   SLBM article (81.cn/16472265); PD (U.S. gov via CRS RL33153); duo-navy
+   derivative generated deterministically. Its existing home/article
+   routes are unchanged; the J-20 homepage atmosphere is unaffected.
+4. **`edition_label: "Significant"` kept for No. 10** as the
+   analyst-approved edition classification carried by the approved package,
+   consistent with Nos. 5, 6, 8, 9. Reader-facing automated counts remain
+   "model-flagged" everywhere.
+
 ## 2026-07-16 — Homepage atmospheric image decoupled from the model-flagged story
 
 1. **The homepage veil is an atmospheric publication visual, selected only
