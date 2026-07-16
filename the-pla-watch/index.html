@@ -329,8 +329,11 @@
     /* ── Utilities ──────────────────────────────────────────────────────── */
     .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
 
-    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
-    .js [data-reveal] {
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives animate. Above-the-fold text must
+       never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
       opacity: 0;
       transform: translateY(14px);
       transition:
@@ -393,6 +396,9 @@
       .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
       .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
       .pw-masthead-rule .right { display: none; }
+      /* wrap between spans, never inside one ("No. 9" must not split) */
+      .pw-masthead-rule .left { flex-wrap: wrap; gap: 0.15rem 1.1rem; }
+      .pw-masthead-rule .left span { white-space: nowrap; }
       main { padding: 2rem 1.25rem 3.5rem; }
       body { font-size: 0.9375rem; }
       .site-footer { padding: 2rem 1.25rem; }
@@ -436,11 +442,80 @@
       }
       body { background: #ffffff !important; }
       .pw-nav, .site-footer, .progress-rail { display: none; }
+      .nd-veil, .nd-src-bracket, .nd-src-inline, .nd-tickrow { display: none; }
       .pw-masthead { border-top-width: 3px; }
       .pw-nameplate .pw-mark .the { color: #555555; }
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+    }
+
+    /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
+       Same Source-Derived Signal Graphics system as the Paper Ledger
+       (.pl-veil in base.html), keyed to the navy ground instead. */
+    .nd-veil-band { position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border); background: var(--color-bg); }
+    .nd-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 92%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .nd-veil { opacity: .45; }
+      .nd-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--color-bg) 8%, transparent 56%),
+                    linear-gradient(to top, var(--color-bg) 5%, transparent 42%);
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
+    }
+    /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
+    .nd-src-bracket { position: absolute; right: 2rem; top: 2rem; text-align: right; max-width: 260px; z-index: 1; }
+    .nd-src-bracket .bracket {
+      display: inline-block; width: 56px; height: 22px;
+      border-right: 2px solid var(--signal-bright); border-top: 2px solid var(--signal-bright);
+      margin-bottom: .5rem;
+    }
+    .nd-src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); line-height: 1.8;
+    }
+    .nd-src-bracket .src-lines a { color: var(--color-text-secondary); border-bottom: 1px solid rgba(224,90,109,.4); text-decoration: none; }
+    .nd-src-bracket .src-lines a:hover { color: var(--signal-bright); }
+    .nd-src-inline { display: none; font-size: .68rem; color: var(--color-text-muted); line-height: 1.6; }
+    .nd-src-inline a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
+    @media (max-width: 900px) {
+      .nd-src-bracket { display: none; }
+      .nd-src-inline { display: block; }
+    }
+    /* tick row — weekly record register (Night Desk only), one tick per
+       Source Trail record; red = model-flagged. The label is the
+       accessible text; ticks are aria-hidden decoration. */
+    .nd-tickrow { display: flex; align-items: flex-end; gap: 6px; height: 18px; margin-top: 1.1rem; }
+    .nd-tickrow i { width: 2px; height: 12px; background: #3A4556; }
+    .nd-tickrow i.sig { background: var(--signal-bright); height: 18px; }
+    .nd-tickrow-label {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); margin-top: .45rem;
+    }
+    .nd-tickrow-label b { color: var(--signal-bright); font-weight: 600; }
+    @media (max-width: 480px) { .nd-tickrow { display: none; } } /* label (numeric text) remains */
+    /* mobile veil geometry: the veil emerges from the LOWER portion so
+       the title/dek at top sit on clean navy. */
+    @media (max-width: 700px) {
+      /* alpha capped at .85 so byline/meta over the dense zone keep navy
+         behind them; the image never reaches full opacity on mobile */
+      .nd-veil { width: 100%;
+        -webkit-mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+        mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+      }
     }
 
 /* ── Cover layout ────────────────────────────────────────────────────── */
@@ -626,21 +701,36 @@
   font-weight: 600;
 }
 
-/* ── Thumbnail strip on latest-edition card ─────────────────────────── */
-.issue-cover-thumb {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  background: var(--color-bg-card);
-  margin: 0 0 1.4rem;
+/* ── Signal Veil on the latest-edition card (cover PNGs are og-image
+     duty only, per DECISION_LOG 2026-07-11) ──────────────────────────── */
+.card-veil {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 58%;
+  background-size: cover; opacity: .85; pointer-events: none;
+  -webkit-mask-image: radial-gradient(110% 150% at 92% 40%, #000 18%, transparent 68%);
+  mask-image: radial-gradient(110% 150% at 92% 40%, #000 18%, transparent 68%);
+}
+@supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+  .card-veil { opacity: .3; }
+}
+@media (max-width: 700px) {
+  .card-veil { width: 85%; opacity: .5;
+    -webkit-mask-image: radial-gradient(120% 120% at 95% 100%, #000 12%, transparent 62%);
+    mask-image: radial-gradient(120% 120% at 95% 100%, #000 12%, transparent 62%);
+  }
+}
+.issue-cover-eyebrow { position: relative; z-index: 1; }
+.card-veil-credit {
+  font-family: var(--mono);
+  font-size: .58rem;
+  letter-spacing: .06em;
+  color: var(--color-text-muted);
+  margin-top: 1rem;
   position: relative;
   z-index: 1;
 }
-@media (max-width: 600px) {
-  .issue-cover-thumb { margin-bottom: 1.1rem; }
-}
+.card-veil-credit a { color: var(--color-text-muted); text-decoration: underline; text-decoration-color: var(--color-border); }
+.card-veil-credit a:hover { color: var(--color-brand-light); }
+.issue-cover .nd-tickrow, .issue-cover .nd-tickrow-label { position: relative; z-index: 1; }
 
 /* ── Section heading ─────────────────────────────────────────────────── */
 .section-heading {
@@ -834,7 +924,7 @@
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Latest issue · 4 July 2026</span></span>
+      <span class="left"><span>Vol. I</span><span>Latest issue · 11 July 2026</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
@@ -849,37 +939,43 @@
     <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
     <p class="cover-stand">The weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Each edition distills a week of daily monitoring into a single brief for policy readers, analysts, and journalists — source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
 
-      <div class="issue-cover" data-reveal>
+      <div class="issue-cover">
+        <div class="card-veil" role="img" aria-label="A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy underway on the surface" data-editorial-id="jin-class-type-094-ssbn"
+             style="background-image:url('../assets/editorial/derivatives/jin-class-type-094-ssbn-duo-navy.jpg'); background-position:60% 30%;"></div>
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
-No. 9 · Week ending 4 July 2026
+No. 10 · Week ending 11 July 2026
 <span class="pw-badge pw-badge--significant">Significant</span>          </div>
         </div>
-        <h2 class="issue-cover-title"><a href="posts/2026-07-04.html">The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like</a></h2>
-        <a href="posts/2026-07-04.html" aria-label="Read this edition">
-          <img class="issue-cover-thumb"
-               src="covers/2026-07-04.png"
-               alt="The PLA Watch — The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like (issue cover)"
-               width="1200" height="630" fetchpriority="high">
-        </a>
-        <p class="issue-cover-dek">Southern Theater Command described a month of joint naval and air activity around Huangyan Island as combat readiness patrols. The rest of the week showed how the PLA turns Party anniversaries into institutional instruction.</p>
+        <h2 class="issue-cover-title"><a href="posts/2026-07-11.html">Beijing&#39;s Public SLBM Test and What It Was Designed to Do</a></h2>
+        <p class="issue-cover-dek">China publicly announced a submarine-launched ballistic missile test into the Pacific — a rare disclosure that says more about strategic messaging than training transparency. The rest of the week&#39;s coverage was dominated by flood relief operations and the ongoing China-Russia Joint Sea-2026 exercise.</p>
         <div class="issue-cover-byline">By <span class="byline-name">Benjamin Yang</span></div>
         <div class="issue-cover-meta">
-          <span class="stat"><span class="num">40</span> articles</span>
-          <span class="stat"><span class="num">1</span> model-flagged</span>
-<span class="stat"><span class="num">7</span> days observed</span>        </div>
+          <span class="stat"><span class="num">39</span> articles</span>
+          <span class="stat"><span class="num">2</span> model-flagged</span>
+<span class="stat"><span class="num">6</span> days observed</span>        </div>
+        <div class="nd-tickrow" aria-hidden="true"><i class="sig"></i><i class="sig"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="nd-tickrow-label">Source trail · 13 records · <b>2 model-flagged</b> · part of the monitored weekly record · of 39 articles analyzed</div>
         <div class="issue-cover-actions">
-          <a href="posts/2026-07-04.html" class="btn btn-primary">Read this edition</a>
+          <a href="posts/2026-07-11.html" class="btn btn-primary">Read this edition</a>
           <a href="archive.html" class="btn btn-ghost">All editions</a>
         </div>
+        <div class="card-veil-credit">IMG · <a href="https://commons.wikimedia.org/wiki/File:Jin_(Type_094)_Class_Ballistic_Missile_Submarine.JPG" target="_blank" rel="noopener nofollow">U.S. GOV · CRS RL33153 · PD</a> · JIN-CLASS (TYPE 094) SSBN · Context, not evidence</div>
       </div>
 
       <div class="section-heading" data-reveal>
         <span>Previous editions</span>
-        <span class="count">8</span>
+        <span class="count">9</span>
       </div>
       <div class="archive-list">
+        <div class="archive-row" data-reveal>
+          <div class="archive-date">No. 9 · 4 July 2026</div>
+          <div class="archive-body">
+            <div class="archive-title"><a href="posts/2026-07-04.html">The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like</a></div>
+            <div class="archive-dek">Southern Theater Command described a month of joint naval and air activity around Huangyan Island as combat readiness patrols. The rest of the week showed how the PLA turns Party anniversaries into institutional instruction.</div>
+          </div>
+        </div>
         <div class="archive-row" data-reveal>
           <div class="archive-date">No. 8 · 27 June 2026</div>
           <div class="archive-body">
@@ -995,21 +1091,39 @@ No. 9 · Week ending 4 July 2026
 <script>
 (function () {
   var root = document.documentElement;
-  root.classList.add('js');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduce.matches || !('IntersectionObserver' in window)) {
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
     root.classList.add('no-anim');
-    return;
   }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
 })();
 </script>
 </body>

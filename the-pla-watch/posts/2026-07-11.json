@@ -1,0 +1,152 @@
+{
+  "date": "2026-07-11",
+  "week_ending": "2026-07-11",
+  "week_start": "2026-07-05",
+  "title": "The PLA Watch: Beijing's Public SLBM Test and What It Was Designed to Do",
+  "dek": "China publicly announced a submarine-launched ballistic missile test into the Pacific — a rare disclosure that says more about strategic messaging than training transparency. The rest of the week's coverage was dominated by flood relief operations and the ongoing China-Russia Joint Sea-2026 exercise.",
+  "signal": "China publicly announced an SLBM test launch into the Pacific with advance government notification — a rare disclosure that fits deliberate second-strike credibility signaling more than routine training transparency.",
+  "n_articles": 39,
+  "n_significant": 2,
+  "days_covered": 6,
+  "edition_type": "significant",
+  "edition_label": "Significant",
+  "source_trail": [
+    {
+      "title": "Chinese Navy Successfully Organizes Test Launch of Submarine-Launched Strategic Missile",
+      "url": "http://www.81.cn/yw_208727/16472265.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-07",
+      "is_significant": true,
+      "title_zh": "中国海军成功组织潜射战略导弹试射"
+    },
+    {
+      "title": "Chinese Navy Successfully Organizes Test Launch of Submarine-Launched Strategic Missile",
+      "url": "http://www.81.cn/yw_208727/16472012.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-06",
+      "is_significant": true,
+      "title_zh": "中国海军成功组织潜射战略导弹试射"
+    },
+    {
+      "title": "China-Russia 'Joint Sea-2026' Joint Exercise Enters Maritime Exercise Phase",
+      "url": "http://www.81.cn/yw_208727/16472650.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-09",
+      "is_significant": false,
+      "title_zh": "中俄“海上联合-2026”联合演习进入海上演练阶段"
+    },
+    {
+      "title": "A Brigade of the 74th Group Army Conducts Cross-Domain Joint Training with Multiple Air Force Units",
+      "url": "http://www.81.cn/yw_208727/16471769.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-05",
+      "is_significant": false,
+      "title_zh": "第74集团军某旅携手多支空军部队开展跨域联训"
+    },
+    {
+      "title": "A Rocket Force Unit Explores and Innovates Training Organization Methods: Mutual Evaluation and Examination Among Same-Formation Subunits",
+      "url": "http://www.81.cn/yw_208727/16471943.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-06",
+      "is_significant": false,
+      "title_zh": "火箭军某部探索创新组训方式：同建制分队互评互考"
+    },
+    {
+      "title": "China-Russia \"Maritime Joint-2026\" Joint Exercise Opens",
+      "url": "http://www.81.cn/yw_208727/16472014.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-06",
+      "is_significant": false,
+      "title_zh": "中俄“海上联合-2026”联合演习开幕"
+    },
+    {
+      "title": "Chinese Navy Ship Formation 83 Concludes Friendly Visit to Vietnam",
+      "url": "http://www.81.cn/yw_208727/16472832.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-10",
+      "is_significant": false,
+      "title_zh": "中国海军83舰编队结束对越南友好访问"
+    },
+    {
+      "title": "PLA and People's Armed Police Officers and Soldiers, Militia Continue Fighting on the Rescue Front Line",
+      "url": "http://www.81.cn/yw_208727/16472822.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-10",
+      "is_significant": false,
+      "title_zh": "解放军和武警部队官兵、民兵持续奋战救援一线"
+    },
+    {
+      "title": "Firepower Resources Available for Coordination Grow Increasingly Rich; Tactical Controllers' Vision No Longer Confined to Land",
+      "url": "http://www.81.cn/yw_208727/16472568.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-09",
+      "is_significant": false,
+      "title_zh": "能调度的火力资源日益丰富，战术引导员视野不再局限于陆地"
+    },
+    {
+      "title": "A Brigade of the 76th Group Army: Air-Ground Coordination Opens a 'Lifeline'",
+      "url": "http://www.81.cn/yw_208727/16472579.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-09",
+      "is_significant": false,
+      "title_zh": "第76集团军某旅：空地协同打通“生命通道”"
+    },
+    {
+      "title": "PLA and People's Armed Police Officers and Soldiers, Militia Carry Out Emergency Rescue Operations at Full Strength",
+      "url": "http://www.81.cn/yw_208727/16472398.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-08",
+      "is_significant": false,
+      "title_zh": "解放军和武警部队官兵、民兵全力开展抢险救援"
+    },
+    {
+      "title": "Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "url": "https://www.globaltimes.cn/page/202607/1365501.shtml",
+      "source": "Global Times — Defense",
+      "date": "2026-07-08",
+      "is_significant": false,
+      "title_zh": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise"
+    },
+    {
+      "title": "China Coast Guard Lawfully Expels Japanese Vessel That Illegally Entered China's Territorial Sea Around Chiwei Yu",
+      "url": "http://www.81.cn/yw_208727/16472249.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-07-07",
+      "is_significant": false,
+      "title_zh": "中国海警依法驱离日非法进入我赤尾屿领海船只"
+    }
+  ],
+  "author_name": "Benjamin Yang",
+  "author_title": "Principal Analyst, China Mil Watch",
+  "author_bio": "Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.",
+  "author_links": {
+    "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294",
+    "Email": "mailto:ben.yang@gwmail.gwu.edu",
+    "China Mil Watch": "../../index.html"
+  },
+  "media_items": [
+    {
+      "type": "image",
+      "src": "../media/2026-07-11-source-image.jpg",
+      "alt": "Source article image",
+      "caption": "Cover background image sourced from the lead source article. Included for editorial visual context only.",
+      "source_url": "http://www.81.cn/yw_208727/16472265.html",
+      "image_url": "http://www.81.cn/yw_208727/_attachment/2026/07/07/16472265_b1eb1cb26819ce220af2632fc21cd984.jpg",
+      "source_label": "article body image",
+      "auto_selected": true
+    }
+  ],
+  "background_image_source": "source_trail_fetch",
+  "background_image_path": "output/the-pla-watch/media/2026-07-11-source-image.jpg",
+  "cover_image": "../covers/2026-07-11.png",
+  "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-07-11.png",
+  "cover_thumb": "../covers/2026-07-11-thumb.png",
+  "issue_number": 10,
+  "opening_note": "The part that stood out this week was not that China tested a submarine-launched ballistic missile. It was that they told you about it.\n\nOn July 6, PLA Daily published a named-correspondent report announcing that a PLA Navy strategic nuclear submarine had launched an SLBM with a training simulation warhead into the Pacific at 12:01 that day. The reentry vehicle landed in the designated impact area. China framed this as routine annual training. The statement noted advance notification to unnamed countries. That combination — public announcement, named launch time, Pacific impact area, prior notification — is not what routine training disclosure looks like. It is what deliberate credibility signaling looks like.\n\nBeyond that one item, the week's Chinese military media coverage in the data available was largely absorbed by two recurring institutional categories: disaster response and bilateral exercises. Typhoon Maysak drove an unusually large volume of flood-relief reporting, with the Southern Theater Command, PAP, and Guangxi Military District all featured across multiple articles. The China-Russia Joint Sea-2026 exercise opened July 6 in Qingdao and entered its maritime phase July 9, generating steady coverage across both PLA Daily and Global Times Defense. Neither category produced anything unexpected within its own baseline.\n\nThe edition covers six of seven days in the window — July 5 through July 10. One day remains unobserved. Nothing in the available data suggests that gap changes the week's analytical picture, but readers should note the dataset is not complete.",
+  "what_stood_out": "The SLBM test announcement is the clearest signal in this week's coverage. PLA Daily published the report on July 6 (and again on July 7 under a second byline), naming the launch time — 12:01 — and confirming the missile landed in a designated Pacific impact area. The article attributed the test to routine annual training and noted that relevant countries had been notified in advance.\n\nWhat makes this stand out is not the test itself but the disclosure architecture around it. China does not routinely publicize SSBN test launches. The combination of named correspondents, a specific timestamp, a Pacific impact area, and pre-notification to unnamed governments reflects a deliberate set of choices about what to make public and what that publicity is meant to accomplish. The article does not explain who was notified or why the Pacific was the designated impact area rather than a closer range. Those omissions are themselves informative.\n\nThe framing as \"routine annual training\" is worth taking seriously as an institutional claim — it is the language Beijing uses when it wants to normalize a capability posture rather than present it as an escalatory act. The question the disclosure raises is which audience the normalization is aimed at: domestic military audiences being reminded of second-strike capability, regional governments being given a visible demonstration of credibility, or a broader international audience being asked to update their assessments of PLAN SSBN operational readiness. The article does not answer that question. It documents the act of disclosure and provides the institutional framing. The interpretive work belongs to the reader.",
+  "why_it_matters": "China's SSBN program has historically operated under a posture of deliberate opacity. Public acknowledgment of test launches — with specific timing, named impact zones, and advance notification — is not the norm. When Beijing chooses to publicize a capability event at this level of detail, the disclosure is itself a policy act.\n\nSecond-strike credibility depends partly on an adversary believing the capability is real, survivable, and ready. A public test announcement with a Pacific impact area communicates all three of those things simultaneously, in a format that any government with an intelligence interest in Chinese nuclear forces will read carefully. The advance notification to unnamed countries adds a procedural layer that frames the test as responsible state behavior while ensuring those governments had to formally receive and log the communication.\n\nNone of this proves a specific intent. The \"routine annual training\" framing may reflect genuine institutionalization of SLBM testing — a maturing SSBN force that tests on a regularized schedule. It may also reflect a deliberate decision to make a previously quiet capability visible at a particular moment. The article data does not resolve that question. What it documents is that Beijing made an active choice to be transparent about something it has historically kept quiet, and that choice warrants attention from anyone tracking Chinese nuclear posture.",
+  "what_was_routine": "The flood relief coverage deserves a specific note on why it is routine rather than just a label that it is. Across six articles spanning July 7–10, PLA Daily and PAP-affiliated reporting documented the response to Typhoon Maysak's rainfall across Guangxi, Hubei, and Gansu. The coverage followed a consistent template: name the unit, count the personnel, describe the rescue task, foreground a named Party-member NCO or officer invoking their Party identity as the motivation for risk-taking.\n\nThis is a well-established PLA Daily genre — disaster relief as civil-military legitimacy content. The articles are not evidence of a change in PLA posture or capability. They document the post-2016 division of labor between Theater Command Army forces (acute infrastructure threats), PAP mobile and garrison detachments (search-and-rescue and population movement), and Military District militia (bulk labor for silt-clearing and embankment work) operating in parallel chains of command during a provincial-level emergency. That division is consistent with how these events have been covered since the PAP was separated from PLA command authority after the 2016 reforms. The scale figures — 5,800-plus personnel in Guangxi, 4,200-plus militia from Guangxi Military District alone — are useful as baseline data for how quickly the reserve mobilization apparatus generates manpower for a domestic emergency. They are not evidence of anything unusual.\n\nThe Joint Sea-2026 coverage is similarly routine within its category. The exercise series has run for over a decade. This iteration's inclusion of joint air defense, anti-missile operations, and live-fire training extends an established pattern of incremental deepening rather than marking a departure from it. The crew exchanges between the Type 052D Kaifeng and Russia's Slava-class cruiser Varyag document the interpersonal dimension of PLA-Russian naval interoperability, which is worth tracking for what it reveals about platform familiarity and command culture — but the exercise itself fits squarely within the bilateral baseline.",
+  "what_im_watching_next": "The SLBM disclosure raises a question that the available data does not answer: whether this is the beginning of a more regularized pattern of publicizing SSBN test launches, or a one-time disclosure timed to a specific strategic moment. If PLA Daily publishes similar announcements following future SLBM tests — with comparable detail on timing, impact area, and advance notification — that would suggest institutionalization rather than a one-off message. If this week's announcement stands alone for an extended period, the timing matters more than the format.\n\nOn Joint Sea-2026, the exercise entered its maritime phase on July 9 with live-fire tasks and submarine rescue activities at the Naval Submarine Academy noted as a named subject. The undersea warfare component is worth watching in subsequent reporting — not because a single exercise proves capability transfer, but because submarine rescue as an explicit bilateral training topic extends a documented pattern of PLA-Russian technical engagement on undersea operations that goes beyond the symbolic interoperability function the exercise series originally served.\n\nThe 73rd Group Army cross-service tactical controller article from July 9 documents a brigade-level fix for a systemic joint coordination problem — Army controllers misapplying non-Army munitions parameters and defaulting to organic artillery. Whether that remediation has been adopted more broadly across the Eastern Theater is an open question the available data does not resolve, but it is the kind of ground-level integration friction that is worth tracking across future PLA Daily unit-level training coverage.",
+  "term_to_know_term": "远海训练 (Yuǎn Hǎi Xùnliàn) — Far-Seas Training",
+  "term_to_know_explanation": "Far-seas training (远海训练) is the PLA Navy's institutional category for blue-water operational deployments conducted beyond China's near-seas environment — typically the first and second island chains — for the explicit purpose of building open-ocean operational competence. The term appears regularly in MND spokesperson statements and PLA Daily reporting when a PLAN task group is operating in waters that draw attention from neighboring governments, as happened this week when Japan's Ministry of Defense flagged a roughly ten-vessel PLAN formation operating in waters surrounding Japan. Beijing's standard response — that far-seas training is a planned annual activity consistent with international law and not directed at any specific country — is formulaic, but the formula itself is informative: it frames the deployments as normalized routine rather than reactive posture, which is the point. Tracking when and where the MND uses this term, and how neighboring governments respond to specific iterations, is one useful way to monitor how the PLAN is expanding its operational footprint without requiring visibility into classified deployment orders."
+}
