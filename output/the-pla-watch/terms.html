@@ -329,8 +329,11 @@
     /* ── Utilities ──────────────────────────────────────────────────────── */
     .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
 
-    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ─────── */
-    .js [data-reveal] {
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives animate. Above-the-fold text must
+       never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
       opacity: 0;
       transform: translateY(14px);
       transition:
@@ -393,6 +396,9 @@
       .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
       .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
       .pw-masthead-rule .right { display: none; }
+      /* wrap between spans, never inside one ("No. 9" must not split) */
+      .pw-masthead-rule .left { flex-wrap: wrap; gap: 0.15rem 1.1rem; }
+      .pw-masthead-rule .left span { white-space: nowrap; }
       main { padding: 2rem 1.25rem 3.5rem; }
       body { font-size: 0.9375rem; }
       .site-footer { padding: 2rem 1.25rem; }
@@ -436,11 +442,80 @@
       }
       body { background: #ffffff !important; }
       .pw-nav, .site-footer, .progress-rail { display: none; }
+      .nd-veil, .nd-src-bracket, .nd-src-inline, .nd-tickrow { display: none; }
       .pw-masthead { border-top-width: 3px; }
       .pw-nameplate .pw-mark .the { color: #555555; }
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+    }
+
+    /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
+       Same Source-Derived Signal Graphics system as the Paper Ledger
+       (.pl-veil in base.html), keyed to the navy ground instead. */
+    .nd-veil-band { position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border); background: var(--color-bg); }
+    .nd-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 92%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .nd-veil { opacity: .45; }
+      .nd-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--color-bg) 8%, transparent 56%),
+                    linear-gradient(to top, var(--color-bg) 5%, transparent 42%);
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
+    }
+    /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
+    .nd-src-bracket { position: absolute; right: 2rem; top: 2rem; text-align: right; max-width: 260px; z-index: 1; }
+    .nd-src-bracket .bracket {
+      display: inline-block; width: 56px; height: 22px;
+      border-right: 2px solid var(--signal-bright); border-top: 2px solid var(--signal-bright);
+      margin-bottom: .5rem;
+    }
+    .nd-src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); line-height: 1.8;
+    }
+    .nd-src-bracket .src-lines a { color: var(--color-text-secondary); border-bottom: 1px solid rgba(224,90,109,.4); text-decoration: none; }
+    .nd-src-bracket .src-lines a:hover { color: var(--signal-bright); }
+    .nd-src-inline { display: none; font-size: .68rem; color: var(--color-text-muted); line-height: 1.6; }
+    .nd-src-inline a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
+    @media (max-width: 900px) {
+      .nd-src-bracket { display: none; }
+      .nd-src-inline { display: block; }
+    }
+    /* tick row — weekly record register (Night Desk only), one tick per
+       Source Trail record; red = model-flagged. The label is the
+       accessible text; ticks are aria-hidden decoration. */
+    .nd-tickrow { display: flex; align-items: flex-end; gap: 6px; height: 18px; margin-top: 1.1rem; }
+    .nd-tickrow i { width: 2px; height: 12px; background: #3A4556; }
+    .nd-tickrow i.sig { background: var(--signal-bright); height: 18px; }
+    .nd-tickrow-label {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); margin-top: .45rem;
+    }
+    .nd-tickrow-label b { color: var(--signal-bright); font-weight: 600; }
+    @media (max-width: 480px) { .nd-tickrow { display: none; } } /* label (numeric text) remains */
+    /* mobile veil geometry: the veil emerges from the LOWER portion so
+       the title/dek at top sit on clean navy. */
+    @media (max-width: 700px) {
+      /* alpha capped at .85 so byline/meta over the dense zone keep navy
+         behind them; the image never reaches full opacity on mobile */
+      .nd-veil { width: 100%;
+        -webkit-mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+        mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+      }
     }
 
 .terms-head { max-width: 720px; margin-bottom: 2.5rem; }
@@ -630,14 +705,22 @@
 
 
 <main>
-<div class="terms-head" data-reveal>
+<div class="terms-head">
   <div class="terms-eyebrow">Running glossary</div>
   <h1 class="terms-title">Terms to Know</h1>
   <p class="terms-intro">Each weekly edition of The PLA Watch explains one piece of vocabulary from that week's Chinese military-media coverage — collected here, newest first, with a link back to the edition where the term appeared in context.</p>
 </div>
 
 <div class="terms-list">
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry">
+<span class="term-ghost" lang="zh-Hans" aria-hidden="true">远海</span><span class="term-issue">No. 10</span>    <div class="term-entry-word">远海训练 (Yuǎn Hǎi Xùnliàn) — Far-Seas Training</div>
+    <div class="term-entry-expl">
+<p>Far-seas training (远海训练) is the PLA Navy&#39;s institutional category for blue-water operational deployments conducted beyond China&#39;s near-seas environment — typically the first and second island chains — for the explicit purpose of building open-ocean operational competence. The term appears regularly in MND spokesperson statements and PLA Daily reporting when a PLAN task group is operating in waters that draw attention from neighboring governments, as happened this week when Japan&#39;s Ministry of Defense flagged a roughly ten-vessel PLAN formation operating in waters surrounding Japan. Beijing&#39;s standard response — that far-seas training is a planned annual activity consistent with international law and not directed at any specific country — is formulaic, but the formula itself is informative: it frames the deployments as normalized routine rather than reactive posture, which is the point. Tracking when and where the MND uses this term, and how neighboring governments respond to specific iterations, is one useful way to monitor how the PLAN is expanding its operational footprint without requiring visibility into classified deployment orders.</p>    </div>
+    <div class="term-entry-src">
+      From <a href="posts/2026-07-11.html">No. 10 · week ending 11 July 2026</a>
+    </div>
+  </article>
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">战备</span><span class="term-issue">No. 9</span>    <div class="term-entry-word">战备警巡 (Zhànbèi Jǐngxún): Combat Readiness Patrol</div>
     <div class="term-entry-expl">
 <p>战备警巡 combines 战备, combat readiness or war preparedness, with 警巡, patrol-and-alert operations. In official PLA usage, the phrase marks an operation as a readiness posture rather than ordinary patrolling or training. It signals that the force is acting in response to a real or asserted security condition.</p><p>That distinction matters at Scarborough Shoal. Southern Theater Command did not describe the June activity as 巡逻, routine patrols, or 演习, exercises. It used language tied to territorial defense and operational readiness. The term does not prove the scale or frequency of the activity, but it does reveal the category Beijing chose for it.</p>    </div>
@@ -645,7 +728,7 @@
       From <a href="posts/2026-07-04.html">No. 9 · week ending 4 July 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 1;">
+  <article class="term-entry" data-reveal style="--ri: 2;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">系统</span><span class="term-issue">No. 8</span>    <div class="term-entry-word">系统对抗 (Xìtǒng Duìkàng): System-of-Systems Confrontation</div>
     <div class="term-entry-expl">
 <p>系统对抗 describes combat between integrated military systems rather than isolated platforms. In this frame, a carrier’s value depends on the wider network around it: sensors, communications, aircraft, escorts, land-based support, electronic warfare, and command nodes. When PLA Daily says Liaoning conducted “shore-sea joint system-of-systems confrontation drills,” the emphasis is on whether those parts can share information and act as one force while an opposing system tries to disrupt them. The term appears often because the PLA evaluates readiness at the level of the network, not only the ship, aircraft, or missile.</p>    </div>
@@ -653,7 +736,7 @@
       From <a href="posts/2026-06-27.html">No. 8 · week ending 27 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 2;">
+  <article class="term-entry" data-reveal style="--ri: 3;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">正确</span><span class="term-issue">No. 7</span>    <div class="term-entry-word">正确政绩观 (Zhèngquè Zhèngjì Guān)</div>
     <div class="term-entry-expl">
 <p>A term worth watching is 正确政绩观 itself. The phrase is often translated as “correct outlook on political achievement,” but in practice it functions as a Xi-era standard for evaluating cadre behavior. The campaign pushes officers to prioritize institutional mission and long-term effectiveness over visible metrics, careerism, or showcase projects. Increasingly, the language is appearing in discussions about logistics systems, research management, and operational administration rather than purely ideological discipline. That expansion matters.</p>    </div>
@@ -661,7 +744,7 @@
       From <a href="posts/2026-06-20.html">No. 7 · week ending 20 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 3;">
+  <article class="term-entry" data-reveal style="--ri: 0;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">远海</span><span class="term-issue">No. 6</span>    <div class="term-entry-word">远海训练 (Yuǎn Hǎi Xùnliàn)</div>
     <div class="term-entry-expl">
 <p>Literally &#34;far-seas training,&#34; this is the official PLA framing for carrier strike group and naval formation deployments beyond China&#39;s near-seas operating areas — typically into the Western Pacific, the Indian Ocean, or other waters well outside the first island chain. The phrase does two things simultaneously. Operationally, it describes a real training objective: PLA Navy formations genuinely use these deployments to accumulate blue-water experience in open-ocean navigation, logistics, communications, and multi-domain coordination that cannot be replicated in littoral exercises. Diplomatically, it functions as a deflection label — by characterizing a deployment as &#34;training,&#34; Beijing positions any foreign monitoring of the formation as an overreaction to a routine activity. When MND spokesperson Zhang Xiaogang used 远海训练 to describe the Liaoning strike group&#39;s current Western Pacific operations, he was invoking both functions at once: confirming the deployment is real while framing concern about it as politically motivated. The phrase is worth tracking because its use in official statements marks the threshold at which the PLA decides a deployment is significant enough to require public justification.</p>    </div>
@@ -669,7 +752,7 @@
       From <a href="posts/2026-06-13.html">No. 6 · week ending 13 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">训战</span><span class="term-issue">No. 5</span>    <div class="term-entry-word">训战脱节 (Xùn-zhàn tuōjié)</div>
     <div class="term-entry-expl">
 <p>“Training-combat gap” names the PLA’s recurring admission that training conditions, assessment habits, and unit routines do not fully reproduce combat demands. In PLA Daily, the phrase often appears when an article needs to justify a reform: scenario-based assessment, field-tempo support, simulator work, or more realistic launch procedures. In this week’s Rocket Force article, it helps frame the move away from cable-connector practice toward simulator-based crew training. The term should be read as both diagnosis and mandate. When a unit is described as solving 训战脱节, the article is usually showing a workaround, not closing the case. The PLA has been naming this problem publicly since the 2015 reform period, and its continued appearance in 2026 is part of the story.</p>    </div>
@@ -677,7 +760,7 @@
       From <a href="posts/2026-06-06.html">No. 5 · week ending 6 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 1;">
+  <article class="term-entry" data-reveal style="--ri: 2;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">思想</span><span class="term-issue">No. 4</span>    <div class="term-entry-word">思想整风 (Sīxiǎng Zhěngfēng) — Ideological Rectification</div>
     <div class="term-entry-expl">
 <p>思想整风 translates literally as &#34;rectification of thought&#34; or &#34;ideological rectification.&#34; It refers to a structured campaign within the CCP or PLA apparatus to correct ideological deviation, reinforce political loyalty, and bring cadre thinking into alignment with the Party&#39;s current line. The term carries historical weight: its most famous use was Mao Zedong&#39;s 1942–1944 Yan&#39;an Rectification Movement, which used criticism and self-criticism sessions to consolidate CCP authority over the Party apparatus. In the current PLA context, 思想整风 does not mean show trials or purges — it refers to mandatory study campaigns, self-criticism meetings, and supervision mechanisms aimed at senior officers. The CMC&#39;s May 28 directive invokes this term specifically in relation to the senior cadre corps, framing the post-purge response as requiring not just tighter procedures but a genuine change in how senior officers think about loyalty, discipline, and Party command. When you see this term in PLA Daily, it is a signal that the leadership considers the problem ideological in nature — not merely bureaucratic or procedural.</p>    </div>
@@ -685,7 +768,7 @@
       From <a href="posts/2026-05-30.html">No. 4 · week ending 30 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 2;">
+  <article class="term-entry" data-reveal style="--ri: 3;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">正确</span><span class="term-issue">No. 3</span>    <div class="term-entry-word">正确政绩观 (Zhèngquè Zhèngjì Guān) — &#34;Correct Outlook on Political Achievement&#34;</div>
     <div class="term-entry-expl">
 <p>This phrase names the PLA&#39;s campaign-level effort to redefine what counts as meritorious performance for officers and units. In practice, it targets a structural problem: incentive systems that reward visible, measurable outputs — meeting quotas, filing reports, producing training statistics — over harder-to-quantify results like combat readiness, soldier welfare or genuine institutional improvement. The campaign argues that real achievement means solving problems, not performing effort. It has appeared across the force since at least 2022, in contexts ranging from logistics administration to curriculum reform and grassroots Party branch management. This week it appeared in at least six separate articles. When the phrase appears in PLA Daily, the article is usually diagnosing a gap between formal compliance and substantive execution, then presenting a unit-level attempt to close it. Its frequency is a rough indicator of how seriously the institution thinks the underlying problem has resisted resolution.</p>    </div>
@@ -693,7 +776,7 @@
       From <a href="posts/2026-05-23.html">No. 3 · week ending 23 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 3;">
+  <article class="term-entry" data-reveal style="--ri: 0;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">四随</span><span class="term-issue">No. 2</span>    <div class="term-entry-word">四随机 — Four Randoms</div>
     <div class="term-entry-expl">
 <p>A Rocket Force training model that randomizes crew groupings, missile assignments, launch vehicles, and primary/backup frame designations during exercises.</p><p>The purpose is to prevent crews from becoming overly dependent on fixed pairings, familiar launch-frame roles, and predictable operating sequences. In this week’s PLA Daily article, the model appears as a practical answer to a specific failure: one launch frame lost its operators, and the mission collapsed.</p><p>That makes the term more than a slogan. It is a rare public description of how one Rocket Force unit is trying to build redundancy, adaptability, and cross-frame interoperability into the human architecture of missile operations.</p>    </div>
@@ -701,7 +784,7 @@
       From <a href="posts/2026-05-16.html">No. 2 · week ending 16 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">政治</span><span class="term-issue">No. 1</span>    <div class="term-entry-word">政治整训 — Political Rectification Training</div>
     <div class="term-entry-expl">
 <p>Political rectification training is a structured, CMC-directed campaign requiring PLA units and officers to undergo intensive ideological review, self-criticism, and loyalty reaffirmation. It is distinct from routine political education: rectification is launched in response to a specific perceived failure — in this case, the corruption scandals inside the Rocket Force and defense procurement establishment that became public in 2023.</p><p>The goal, as framed in official PLA sources, is to purge erroneous thinking, reinforce the principle that the Party commands the gun, and reassert CMC authority over the force. A May 8 NDU article describes the campaign as ongoing and links it to the PLA&#39;s 2027 centenary founding goal. In this edition&#39;s limited dataset, the term matters less as a new concept than as a sign that rectification remains an active institutional frame.</p>    </div>
@@ -737,21 +820,39 @@
 <script>
 (function () {
   var root = document.documentElement;
-  root.classList.add('js');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (reduce.matches || !('IntersectionObserver' in window)) {
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
     root.classList.add('no-anim');
-    return;
   }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-  document.querySelectorAll('[data-reveal]').forEach(function (el) { io.observe(el); });
 })();
 </script>
 </body>
