@@ -66,10 +66,13 @@
         "modernization"
       ],
       "threads": [],
-      "editions": [],
+      "editions": [
+        "2026-07-11"
+      ],
       "routes": [
         "home",
-        "article"
+        "article",
+        "pw-post"
       ]
     }
   },
