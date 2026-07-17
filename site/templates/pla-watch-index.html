@@ -7,48 +7,51 @@
 {% block masthead_left %}<span>Vol. I</span><span>{% if latest_post and latest_post.week_ending %}Latest issue · {{ latest_post.week_ending | format_date }}{% else %}New publication{% endif %}</span>{% endblock %}
 
 {% block extra_styles %}
-/* ── Cover layout ────────────────────────────────────────────────────── */
+/* Page-scoped: draw the lede up a touch so the latest edition clears the
+   1440×900 fold. Only the index carries this block, so base main padding
+   (shared across PW pages) is untouched. */
+main { padding-top: 2rem; }
+
+/* ── Lede layout — compact introduction + slim publication rail ──────────
+   The intro is deliberately restrained so the latest edition (below, in the
+   main column) becomes the dominant object within the opening viewport. */
 .cover-wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 3.5rem;
-  align-items: flex-start;
+  grid-template-columns: minmax(0, 1fr) 248px;
+  gap: 3rem;
+  align-items: start;
 }
 
 .cover-display {
   font-family: var(--serif);
   font-weight: 700;
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  /* ~40px mobile → ~62px desktop; ~35% smaller than the former monument */
+  font-size: clamp(2.5rem, 5.4vw, 3.9rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
+  /* the ~760px main column resolves this to a deliberate two lines; balance
+     evens them so no single word is orphaned */
+  margin-bottom: 0.6rem;
 }
 .cover-display .italic {
   font-style: italic;
   font-weight: 600;
-  color: var(--color-text-muted);
-  margin-right: 0.18em;
+  /* restrained italic preserved, but brought closer to the headline ink so
+     it no longer reads as a separate, greyed-out word */
+  color: #C4BDB1;
+  margin-right: 0.1em;
   letter-spacing: -0.01em;
-}
-.cover-tagline {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.2rem;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-  max-width: 540px;
-  margin-bottom: 1.25rem;
 }
 .cover-stand {
   font-size: 0.95rem;
   color: var(--color-text-secondary);
-  line-height: 1.65;
-  max-width: 580px;
+  line-height: 1.6;
+  max-width: 33rem;           /* narrower, more readable measure */
   border-top: 1px solid var(--color-border-soft);
-  padding-top: 1rem;
-  margin-bottom: 2.5rem;
+  padding-top: 0.9rem;
+  margin-bottom: 0.55rem;
 }
 
 /* ── Latest issue card — magazine-style cover treatment ─────────────── */
@@ -58,7 +61,7 @@
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--color-brand);
   border-radius: 4px;
-  padding: 2rem 2.25rem 1.85rem;
+  padding: 1.05rem 2.25rem 1.55rem;
   margin-bottom: 2rem;
   overflow: hidden;
 }
@@ -66,7 +69,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
@@ -102,7 +105,7 @@
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.65rem;
   position: relative;
   z-index: 1;
   max-width: 640px;
@@ -114,7 +117,7 @@
   font-size: 1.05rem;
   color: var(--color-text-secondary);
   line-height: 1.55;
-  margin-bottom: 1.4rem;
+  margin-bottom: 0.9rem;
   max-width: 620px;
   position: relative;
   z-index: 1;
@@ -126,8 +129,8 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   border-top: 1px solid var(--color-border-soft);
-  padding-top: 0.95rem;
-  margin-bottom: 1.25rem;
+  padding-top: 0.65rem;
+  margin-bottom: 0.75rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1.1rem;
@@ -181,7 +184,7 @@
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--color-text-secondary);
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.65rem;
   position: relative;
   z-index: 1;
 }
@@ -220,6 +223,10 @@
 .card-veil-credit a { color: var(--color-text-muted); text-decoration: underline; text-decoration-color: var(--color-border); }
 .card-veil-credit a:hover { color: var(--color-brand-light); }
 .issue-cover .nd-tickrow, .issue-cover .nd-tickrow-label { position: relative; z-index: 1; }
+/* tighten the source-trail strip within the compact card so the primary
+   action clears the desktop fold (base .nd-tickrow spacing is post-hero) */
+.issue-cover .nd-tickrow { margin-top: 0.55rem; }
+.issue-cover .nd-tickrow-label { margin-top: 0.35rem; margin-bottom: 0.7rem; }
 
 /* ── Section heading ─────────────────────────────────────────────────── */
 .section-heading {
@@ -326,70 +333,114 @@
 }
 .coming-body p + p { margin-top: 0.85rem; }
 
-/* ── Sidebar — “How it relates” + publication facts ────────────────── */
-.cover-sidebar { position: sticky; top: 1.5rem; }
-.sb-card {
-  background: var(--color-bg-sidebar);
+/* ── Publication note — one compact metadata rail (replaces the former
+     three stacked documentation boxes) ───────────────────────────────── */
+.lede-rail { position: sticky; top: 1.5rem; }
+.pub-note {
   border: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-brand);
   border-radius: 4px;
-  padding: 1.4rem 1.5rem 1.35rem;
-  margin-bottom: 1rem;
+  padding: 1.15rem 1.3rem 1.2rem;
+  background: var(--color-bg-card);
 }
-.sb-card.relate {
-  background: #1F2E42;
-}
-.sb-eyebrow {
+.pub-note-eyebrow {
   font-family: var(--mono);
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--signal-bright);
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-.sb-text {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  line-height: 1.65;
-}
-.sb-text p + p { margin-top: 0.75rem; }
-.sb-text .accent-name {
-  font-family: var(--serif);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  font-style: italic;
+  color: var(--color-text-muted);
+  margin-bottom: 0.35rem;
 }
 .sb-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 0.55rem 0;
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--color-border-soft);
   font-family: var(--sans);
-  font-size: 0.825rem;
+  font-size: 0.8rem;
 }
-.sb-row:last-child { border-bottom: none; }
+.sb-row:last-of-type { border-bottom: none; }
 .sb-row .label { color: var(--color-text-secondary); }
 .sb-row .value {
   color: var(--color-text-primary);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+.pub-note-foot {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--color-border-soft);
+  margin-top: 0.65rem;
+  padding-top: 0.7rem;
+}
+.pub-note-foot a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
+.pub-note-foot a:hover { color: var(--color-brand-light); }
+
+/* ── Relationship band — the longer explanation, below the latest edition
+     and previous editions; editorial rule, not a documentation box ────── */
+.relate-band {
+  border-top: 1px solid var(--color-border);
+  margin-top: 2.75rem;
+  padding-top: 1.4rem;
+}
+.relate-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.relate-eyebrow::before {
+  content: "";
+  width: 22px; height: 2px;
+  background: var(--color-brand);
+  flex-shrink: 0;
+}
+.relate-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem;
+  max-width: 820px;
+}
+.relate-cols p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+.relate-cols .accent-name {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--color-text-primary);
+}
+.relate-kicker {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--color-text-secondary);
+  margin-top: 1.1rem;
+}
 
 @media (max-width: 900px) {
   .cover-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
-  .cover-sidebar { position: static; }
-  .cover-display { font-size: 2.5rem; }
-  .cover-tagline { font-size: 1.05rem; }
+  .lede-rail { position: static; }
+  .cover-display { max-width: 20ch; }
   .archive-row { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
-  .issue-cover { padding: 1.6rem 1.5rem 1.4rem; }
+  .issue-cover { padding: 1.5rem 1.5rem 1.4rem; }
   .issue-cover-title { font-size: 1.45rem; }
   .issue-cover-dek { font-size: 0.95rem; }
+  .relate-cols { grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
 }
 @media (max-width: 480px) {
-  .cover-display { font-size: 2rem; }
+  .cover-display { max-width: none; }
 }
 {% endblock %}
 
@@ -399,7 +450,7 @@
   <div class="cover-main">
 
     <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
-    <p class="cover-stand">The weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources. Each edition distills a week of daily monitoring into a single brief for policy readers, analysts, and journalists — source-grounded, restrained, and aware of what official messaging does and does not reveal.</p>
+    <p class="cover-stand">The weekly analytical brief from China Mil Watch — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
 
     {% if latest_post %}
       <div class="issue-cover">
@@ -473,33 +524,25 @@
 
   </div>
 
-  <aside class="cover-sidebar">
-
-    <div class="sb-card relate">
-      <div class="sb-eyebrow">How it relates to China Mil Watch</div>
-      <div class="sb-text">
-        <p><span class="accent-name">China Mil Watch</span> is the daily monitoring layer — every analyzed article from PRC military and security media, indexed and searchable.</p>
-        <p><span class="accent-name">The PLA Watch</span> is the weekly reader-facing layer — a single editorial brief that picks out what stood out, what was routine, and what readers should not overread, drawing directly from that archive.</p>
-        <p>Same source corpus, different reading altitude.</p>
-      </div>
-    </div>
-
-    <div class="sb-card">
-      <div class="sb-eyebrow">Publication</div>
+  <aside class="lede-rail">
+    <div class="pub-note">
+      <div class="pub-note-eyebrow">Publication</div>
       <div class="sb-row"><span class="label">Cadence</span><span class="value">Weekly</span></div>
-      <div class="sb-row"><span class="label">Publishes</span><span class="value">Sundays</span></div>
+      <div class="sb-row"><span class="label">Published</span><span class="value">Sundays</span></div>
       <div class="sb-row"><span class="label">Format</span><span class="value">Editorial brief</span></div>
       <div class="sb-row"><span class="label">Drawn from</span><span class="value">China Mil Watch</span></div>
+      <p class="pub-note-foot">Every edition carries a source trail linking cited items to the original Chinese-language records. <a href="{{ root_path }}methodology.html">Methodology</a></p>
     </div>
-
-    <div class="sb-card">
-      <div class="sb-eyebrow">About this publication</div>
-      <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. Each edition carries a source trail linking cited items to the original Chinese-language records. <a href="{{ root_path }}methodology.html">Methodology</a>
-      </div>
-    </div>
-
   </aside>
 
 </div>
+
+<section class="relate-band" data-reveal>
+  <div class="relate-eyebrow">China Mil Watch &amp; The PLA Watch</div>
+  <div class="relate-cols">
+    <p><span class="accent-name">China Mil Watch</span> is the daily monitoring layer — every analyzed article from PRC military and security media, indexed and searchable.</p>
+    <p><span class="accent-name">The PLA Watch</span> is the weekly reader-facing layer — a single editorial brief that picks out what stood out, what was routine, and what readers should not overread, drawing directly from that archive.</p>
+  </div>
+  <p class="relate-kicker">Same source corpus, different reading altitude.</p>
+</section>
 {% endblock %}
