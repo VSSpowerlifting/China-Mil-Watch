@@ -2,6 +2,30 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-25 — No. 11 (2026-07-18) editorial corrections before publish
+
+Pre-publish QA (editorial-integrity role) failed the edition; corrected
+verbatim-from-source and shipped (analyst-approved). Three findings:
+
+1. **Date: "April 2025" → "April 2026" (CRITICAL).** The Y-20B's first
+   international flight is dated by the source (PLA Daily, 81.cn/16473227,
+   published 2026-07-12) as "今年4月" — this year, April — i.e. 2026, not
+   2025. Corrected across dek/signal/opening_note/what_stood_out/
+   what_im_watching_next in the sidecar and the four mirrored spots in the
+   LinkedIn file. Standing rule reaffirmed: relative time expressions
+   ("今年") resolve against the source's publication date, never guessed.
+2. **Engine "WS-20": source-"confirmed" → "widely identified as the WS-20"
+   (MAJOR).** The source says only "新型国产发动机" (a new domestically
+   produced engine) and never names it. The WS-20 identification is
+   analyst/open-source attribution and must be framed as such, not
+   attributed to the PLA Daily article.
+3. **Routine-Baseline named units now traceable (MAJOR).** The frugality
+   essay, 80th GA party-branch compliance piece, and Rocket Force
+   governance article named in `what_was_routine` were added to
+   `source_trail` (16473917 / 16473559 / 16473317, verbatim DB titles,
+   is_significant=false). Rule: any named unit/article in edition prose
+   must have a source_trail entry, not merely an untraced DB row.
+
 ## 2026-07-25 — Committed editorial derivatives are authoritative; no mtime-based regeneration
 
 1. **`site/assets/editorial/derivatives/*` committed files are the build

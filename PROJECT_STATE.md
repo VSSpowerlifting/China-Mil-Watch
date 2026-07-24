@@ -17,25 +17,22 @@ was intentionally left untouched in `~/pla-watch`.
 
 ## Publication state
 
-10 editions published, No. 1–10, weekly without cadence gaps: 2026-05-09
-(pilot, 2-day window) through 2026-07-11. Issue numbers stored in
-sidecars, validated unique + chronological.
+11 editions published, No. 1–11, weekly without cadence gaps: 2026-05-09
+(pilot, 2-day window) through 2026-07-18 ("Joint Sea-2026, the Y-20B
+Abroad, and the Week's Quieter Signals", Significant, 34 articles /
+3 model-flagged). Issue numbers stored in sidecars, validated unique +
+chronological. Next edition: No. 12, week ending 2026-07-25.
 
-**No. 11 (2026-07-18, "Joint Sea-2026, the Y-20B Abroad, and the Week's
-Quieter Signals") is PREPARED BUT HELD — not published.** The humanized
-package was ingested and re-rendered (sidecar/cover/media/LinkedIn present
-in working tree; aggregates regenerated locally, uncommitted), validator
-passes and release-QA is GO, but the editorial-integrity gate FAILED on a
-verified CRITICAL: the prose dates the Y-20B's first international flight
-to "April 2025" while its cited source (81.cn/16473227, published
-2026-07-12) says "今年4月" = **April 2026**. Repeated across dek/signal/
-opening_note/what_stood_out/what_im_watching_next + the LinkedIn post.
-Two MAJORs also open (engine "WS-20" stated as source-"confirmed" but the
-source says only "新型国产发动机"; three "Routine Baseline" named units —
-80th GA party-branch, Strong Military Forum frugality essay, RF governance
-piece — have no source_trail entry). Awaiting analyst decision on the
-correction before publish. Next edition after No. 11: No. 12, week ending
-2026-07-25.
+No. 11 shipped after correcting three editorial-integrity findings caught
+by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
+Y-20B first-international-flight date "April 2025" → **April 2026** (the
+cited source 81.cn/16473227, published 2026-07-12, says "今年4月");
+engine "WS-20" downgraded from source-"confirmed" to "widely identified
+as" (source says only "新型国产发动机"); and three Routine-Baseline
+articles (Strong Military Forum frugality 16473917, 80th GA compliance
+16473559, RF governance 16473317) added to the source trail so the named
+units trace. Trail now 16 entries; validator green at the 9 historical
+warnings.
 
 ## Validation status
 
