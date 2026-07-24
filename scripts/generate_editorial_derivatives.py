@@ -4,17 +4,22 @@ Graphics system (production).
 
 Reads the manifest (scripts/pw_env.py::load_editorial_manifest) and, for
 each entry, computes the set of derivative files its routes + treatment
-require (see docs §0 naming contract), writing any that are missing or
-stale (source mtime newer than the derivative) into
-site/assets/editorial/derivatives/. Never modifies a source image.
+require (see docs §0 naming contract), writing any that are missing into
+site/assets/editorial/derivatives/. Committed derivatives are
+authoritative: existing files are never rewritten unless --force is given.
+(mtime-based staleness was removed 2026-07-25 — git checkouts do not
+preserve mtimes, so CI regenerated committed derivatives with different
+JPEG bytes, dirtied the tracked tree, and broke the daily workflow's
+`git pull --rebase`.) Never modifies a source image.
 
 Recipe reused from tmp/visual-concepts-2026-07-12/make_derivatives.py
 (duotone + Floyd-Steinberg dither parts only — edges/warm variants are not
 part of the production system).
 
 Usage:
-    python scripts/generate_editorial_derivatives.py            # write
+    python scripts/generate_editorial_derivatives.py            # write missing
     python scripts/generate_editorial_derivatives.py --check    # verify only
+    python scripts/generate_editorial_derivatives.py --force    # rewrite all
 """
 
 import sys
@@ -90,8 +95,10 @@ def _write_dither(gray: Image.Image, out_path: Path) -> None:
     rgba.save(out_path, "PNG")
 
 
-def _missing_or_stale(entry: dict) -> list:
-    """[(kind, out_path), ...] this entry needs written right now."""
+def _missing(entry: dict, force: bool = False) -> list:
+    """[(kind, out_path), ...] this entry needs written right now.
+    Existing files are current by definition (committed derivatives are
+    authoritative); force=True rewrites every required derivative."""
     fname = entry.get("file")
     eid = entry.get("id")
     if not fname or not eid:
@@ -99,22 +106,21 @@ def _missing_or_stale(entry: dict) -> list:
     src_path = EDITORIAL_DIR / fname
     if not src_path.exists():
         return []
-    src_mtime = src_path.stat().st_mtime
     todo = []
     for kind in sorted(_required_kinds(entry)):
         out_path = EDITORIAL_DERIV_DIR / derivative_name(entry, kind)
-        if not out_path.exists() or out_path.stat().st_mtime < src_mtime:
+        if force or not out_path.exists():
             todo.append((kind, out_path))
     return todo
 
 
-def ensure_derivatives(verbose: bool = True) -> list:
-    """Write every missing/stale required derivative. Returns the list of
-    relative paths written (empty list = everything already current)."""
+def ensure_derivatives(verbose: bool = True, force: bool = False) -> list:
+    """Write every missing required derivative (all of them when force=True).
+    Returns the list of relative paths written (empty = everything present)."""
     written = []
     EDITORIAL_DERIV_DIR.mkdir(parents=True, exist_ok=True)
     for entry in load_editorial_manifest():
-        todo = _missing_or_stale(entry)
+        todo = _missing(entry, force=force)
         if not todo:
             continue
         src_path = EDITORIAL_DIR / entry["file"]
@@ -137,21 +143,21 @@ def _check() -> int:
     """--check mode: list missing derivatives, write nothing, exit 1 if any."""
     missing = []
     for entry in load_editorial_manifest():
-        for kind, out_path in _missing_or_stale(entry):
+        for kind, out_path in _missing(entry):
             missing.append(str(out_path.relative_to(ROOT)))
     if missing:
-        print("Missing/stale derivatives:")
+        print("Missing derivatives:")
         for m in missing:
             print(f"  {m}")
         return 1
-    print("All required derivatives present and current.")
+    print("All required derivatives present.")
     return 0
 
 
 def main() -> int:
     if "--check" in sys.argv[1:]:
         return _check()
-    written = ensure_derivatives(verbose=True)
+    written = ensure_derivatives(verbose=True, force="--force" in sys.argv[1:])
     if not written:
         print("All derivatives already up to date.")
     return 0

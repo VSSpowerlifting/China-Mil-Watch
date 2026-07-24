@@ -140,7 +140,7 @@ jobs:
           if [ -f "$MARKER" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git pull --rebase origin main
+            git pull --rebase --autostash origin main
             git add "$MARKER"
             if git diff --cached --quiet; then
               echo "Billing-failure marker already committed."
@@ -163,7 +163,7 @@ jobs:
             echo "Nothing to commit — no new articles today."
           else
             git commit -m "Daily update: $(date -u +%Y-%m-%d)"
-            git pull --rebase origin main
+            git pull --rebase --autostash origin main
             git push
           fi
 
@@ -192,7 +192,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
           mkdir -p .github/state
           echo "$TODAY_NY" > .github/state/last_daily_run_date.txt
           git add .github/state/last_daily_run_date.txt

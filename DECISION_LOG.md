@@ -2,6 +2,22 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-25 — Committed editorial derivatives are authoritative; no mtime-based regeneration
+
+1. **`site/assets/editorial/derivatives/*` committed files are the build
+   truth.** `generate_editorial_derivatives.py` writes a derivative only
+   when the file is missing; intentional regeneration requires `--force`.
+   Rationale: mtime staleness is meaningless in fresh git checkouts (git
+   does not preserve mtimes), and platform-dependent JPEG encoding meant
+   CI rewrites never byte-matched the committed files — which dirtied the
+   tracked tree and broke every scheduled daily run 2026-07-18→07-24 at
+   the `git pull --rebase` in "Commit updated database and site output."
+2. **Workflow rebases use `--autostash`** (`daily_update.yml`, all three
+   `git pull --rebase` calls) so a stray tracked-file modification degrades
+   to a stash round-trip instead of killing the run.
+3. If a source image changes, regenerate its derivatives locally with
+   `--force` and commit the new bytes in the same change.
+
 ## 2026-07-17 — No. 10 final text: revised package adopted, edition badge ruling
 
 1. **The revised draft package (`pla-watch-draft-2026-07-11-revised.zip`,

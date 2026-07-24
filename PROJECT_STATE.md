@@ -1,6 +1,6 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-07-17 (recovery/reconciliation + No. 10 publication). State
+Updated: 2026-07-25 (daily-workflow CI fix + No. 11 publication). State
 only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md table).
 
 ## Working tree (as of this update)
@@ -17,13 +17,25 @@ was intentionally left untouched in `~/pla-watch`.
 
 ## Publication state
 
-10 editions, No. 1–10, weekly without cadence gaps: 2026-05-09 (pilot,
-2-day window) through 2026-07-11 ("Beijing's Public SLBM Test and What It
-Was Designed to Do", Significant, 39 articles / 2 model-flagged, Jin-class
-SSBN veil; final text = the revised draft package per DECISION_LOG
-2026-07-17 badge/revision ruling). Issue numbers stored in sidecars,
-validated unique + chronological. Next edition: No. 11, week ending
-2026-07-18.
+10 editions published, No. 1–10, weekly without cadence gaps: 2026-05-09
+(pilot, 2-day window) through 2026-07-11. Issue numbers stored in
+sidecars, validated unique + chronological.
+
+**No. 11 (2026-07-18, "Joint Sea-2026, the Y-20B Abroad, and the Week's
+Quieter Signals") is PREPARED BUT HELD — not published.** The humanized
+package was ingested and re-rendered (sidecar/cover/media/LinkedIn present
+in working tree; aggregates regenerated locally, uncommitted), validator
+passes and release-QA is GO, but the editorial-integrity gate FAILED on a
+verified CRITICAL: the prose dates the Y-20B's first international flight
+to "April 2025" while its cited source (81.cn/16473227, published
+2026-07-12) says "今年4月" = **April 2026**. Repeated across dek/signal/
+opening_note/what_stood_out/what_im_watching_next + the LinkedIn post.
+Two MAJORs also open (engine "WS-20" stated as source-"confirmed" but the
+source says only "新型国产发动机"; three "Routine Baseline" named units —
+80th GA party-branch, Strong Military Forum frugality essay, RF governance
+piece — have no source_trail entry). Awaiting analyst decision on the
+correction before publish. Next edition after No. 11: No. 12, week ending
+2026-07-25.
 
 ## Validation status
 
@@ -69,6 +81,19 @@ Plate v1; Signal Field v1; asset hygiene; executive readout). Fable reviews
 rendered results of T2/T3 before regenerated output is committed.
 
 ## Recent completed work (compressed; details in DECISION_LOG.md)
+
+- 2026-07-25: daily workflow outage diagnosed and fixed. Every scheduled
+  run 2026-07-18→07-24 failed at "Commit updated database and site
+  output": `ensure_editorial_derivatives()` used mtime staleness, but git
+  checkouts don't preserve mtimes, so CI regenerated the five committed
+  `site/assets/editorial/derivatives/*` files (different Pillow/platform
+  bytes), dirtying tracked files and aborting `git pull --rebase`
+  ("You have unstaged changes"). Fix: derivatives regenerate only when
+  missing (`--force` to rewrite; committed files authoritative) and all
+  workflow rebases use `--autostash`. First failing window was the first
+  scheduled run after the 2026-07-17 reconciliation committed the
+  derivatives. CI fix committed to main; No. 11 edition held separately
+  (see Publication state).
 
 - 2026-07-11: frontend pass (feed, Terms, Signals cross-promo, sitemap) and
   visual refinement pass (see Working tree above) — validation green, same
