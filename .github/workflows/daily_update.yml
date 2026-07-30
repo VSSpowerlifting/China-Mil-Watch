@@ -126,7 +126,37 @@ jobs:
         if: steps.timecheck.outputs.should_run == 'true'
         run: python scripts/validate_output.py
 
-      # ── 6a. Commit billing-failure marker (scheduled runs only) ──────────
+      # ── 6a. Persist scraped articles even when the pipeline failed ────────
+      # Collection and analysis are SEPARATE stages: pipeline.py stores scraped
+      # articles before it makes any LLM call, so an analysis or billing failure
+      # still leaves that day's articles sitting in the runner's database. The
+      # commit step below requires success(), so without this step the runner is
+      # destroyed with those articles inside — which is exactly how 2026-07-17→24
+      # was lost, and how 2026-07-30 would have been lost to a spend limit
+      # (DECISION_LOG 2026-07-30).
+      #
+      # Commits pla_watch.db ONLY. output/ is deliberately excluded: the whole
+      # point of gating the normal commit on success() is that a broken or stale
+      # render must never reach production, and this step must not become a way
+      # around that. Unanalyzed articles keep passed_relevance NULL, so they
+      # re-enter the queue as backlog and drain via BACKLOG_RESERVE_FRACTION.
+      - name: Persist scraped articles (if pipeline failed)
+        if: >
+          failure() &&
+          steps.timecheck.outputs.should_run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pla_watch.db
+          if git diff --cached --quiet; then
+            echo "No newly scraped articles to persist."
+          else
+            git commit -m "Persist collection: $(date -u +%Y-%m-%d) (analysis incomplete)"
+            git pull --rebase --autostash origin main
+            git push origin main
+          fi
+
+      # ── 6b. Commit billing-failure marker (scheduled runs only) ──────────
       # Runs even when the pipeline step fails so the marker reaches origin/main
       # and the scheduling guard can block later cron windows the same day.
       # workflow_dispatch skips this so a manual retry is always allowed.

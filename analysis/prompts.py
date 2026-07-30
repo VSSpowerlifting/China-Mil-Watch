@@ -134,8 +134,8 @@ uses heightened language ("决不", "坚决", "绝不容忍"), preserve that reg
 
 Do not add explanatory content that is not in the original. Translation only.
 
-Return only the raw JSON object with two fields: "title_en" (string) and "body_en" \
-(string). Do not wrap the response in markdown code fences or any other formatting.
+Return the result by calling the `emit_translation` tool. Put the translated \
+headline in `title_en` and the full translated body in `body_en`.
 
 Title: {title}
 

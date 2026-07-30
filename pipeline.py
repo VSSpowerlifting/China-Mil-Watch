@@ -34,7 +34,10 @@ import sys
 from datetime import date, datetime
 from typing import Optional
 
-from config import ANTHROPIC_API_KEY, CACHE_DIR, DAILY_ANALYSIS_CAP, DB_PATH, OUTPUT_DIR, ANALYSIS_MODEL, RELEVANCE_MODEL
+from config import (
+    ANTHROPIC_API_KEY, BACKLOG_RESERVE_FRACTION, CACHE_DIR, DAILY_ANALYSIS_CAP,
+    DB_PATH, OUTPUT_DIR, ANALYSIS_MODEL, RELEVANCE_MODEL,
+)
 from processing.dedup import dedup_articles
 from processing.deduplicator import deduplicate
 from processing.metadata import normalize_article
@@ -77,10 +80,16 @@ def run(
     sources:         list[str],
     target_date:     date,
     dry_run:         bool = False,
+    no_analysis:     bool = False,
 ) -> None:
     start_time = datetime.now()
     logger.info("=== PLA Watch pipeline — %s ===", target_date.isoformat())
     logger.info("Sources: %s | dry-run: %s", sources, dry_run)
+    if no_analysis:
+        logger.warning(
+            "--no-analysis: scraping and storing only. Articles keep "
+            "passed_relevance NULL and drain as backlog on a later run."
+        )
     logger.info(
         "Models: relevance=%s  analysis=%s  | cap=%d",
         RELEVANCE_MODEL, ANALYSIS_MODEL, DAILY_ANALYSIS_CAP,
@@ -156,8 +165,12 @@ def run(
     #   2. pending  — passed relevance in a prior run but analysis never finished
     #   3. unscored — stored by a prior run that never reached relevance scoring,
     #                 INCLUDING articles truncated by the cap on an earlier day
-    # Backlog (2 + 3) drains every run to fill capacity under DAILY_ANALYSIS_CAP,
-    # so cap-overflow and prior-outage articles can't stay invisible forever.
+    # Backlog (2 + 3) gets a reserved share of DAILY_ANALYSIS_CAP so a full day
+    # of fresh scrapes cannot crowd it out. This comment previously claimed the
+    # backlog "drains every run to fill capacity"; before the 2026-07-30 fix
+    # that was false — the queue was concatenated and truncated to the cap, and
+    # since every run scrapes more than the cap, the backlog got zero slots and
+    # never drained at all (DECISION_LOG 2026-07-30).
     # Format: (article_id, title_zh, body_zh, url)
     new_queue: list[tuple[int, str, str, str]] = [
         (aid,
@@ -190,25 +203,49 @@ def run(
         if r["id"] not in queued_ids
     ]
 
-    backlog_total = len(pending) + len(unscored)
-    queue = new_queue + pending + unscored
+    backlog       = pending + unscored
+    backlog_total = len(backlog)
 
-    pre_cap = len(queue)
+    # Reserve a share of the cap for the backlog. A plain
+    # `(new + backlog)[:cap]` starves it completely whenever a single run
+    # scrapes more than the cap — which is every run — so the reservation is
+    # what makes the "can't stay invisible forever" claim above actually true.
+    backlog_slots = 0
+    if backlog:
+        backlog_slots = min(
+            len(backlog),
+            max(1, round(DAILY_ANALYSIS_CAP * BACKLOG_RESERVE_FRACTION)),
+        )
+    new_take = new_queue[: DAILY_ANALYSIS_CAP - backlog_slots]
+    # Slots the fresh scrapes didn't need spill back to the backlog.
+    backlog_take = backlog[: DAILY_ANALYSIS_CAP - len(new_take)]
+    queue = new_take + backlog_take
+
+    pre_cap = len(new_queue) + backlog_total
     if pre_cap > DAILY_ANALYSIS_CAP:
         logger.warning(
-            "Queue has %d articles; capping to %d (DAILY_ANALYSIS_CAP). "
-            "Set env var DAILY_ANALYSIS_CAP=N to raise the per-run ceiling.",
-            pre_cap, DAILY_ANALYSIS_CAP,
+            "Queue has %d articles (%d new + %d backlog); capping to %d "
+            "(DAILY_ANALYSIS_CAP). Set env var DAILY_ANALYSIS_CAP=N to raise it.",
+            pre_cap, len(new_queue), backlog_total, DAILY_ANALYSIS_CAP,
         )
-        queue = queue[:DAILY_ANALYSIS_CAP]
 
-    # Backlog that won't be touched this run because the cap filled first.
-    backlog_in_queue  = max(0, len(queue) - len(new_queue))
-    backlog_remaining = backlog_total - backlog_in_queue
+    deferred_new      = len(new_queue) - len(new_take)
+    backlog_remaining = backlog_total - len(backlog_take)
     logger.info(
-        "Analysis queue: %d new + %d/%d backlog draining this run (cap=%d)",
-        len(new_queue), backlog_in_queue, backlog_total, DAILY_ANALYSIS_CAP,
+        "Analysis queue: %d/%d new + %d/%d backlog this run (cap=%d, reserve=%.0f%%)",
+        len(new_take), len(new_queue), len(backlog_take), backlog_total,
+        DAILY_ANALYSIS_CAP, BACKLOG_RESERVE_FRACTION * 100,
     )
+    if deferred_new > 0:
+        # Deferred new articles keep passed_relevance NULL and re-enter as
+        # `unscored` on a later run. If this is nonzero every day, the cap is
+        # below the scrape rate and the backlog grows without bound.
+        logger.warning(
+            "%d newly scraped article(s) deferred by the cap — they become "
+            "backlog. Sustained deferral means DAILY_ANALYSIS_CAP (%d) is below "
+            "the daily scrape rate.",
+            deferred_new, DAILY_ANALYSIS_CAP,
+        )
     if backlog_remaining > 0:
         logger.warning(
             "%d backlog article(s) still unprocessed after today's cap — they will "
@@ -216,7 +253,12 @@ def run(
             backlog_remaining,
         )
 
-    if not ANTHROPIC_API_KEY:
+    if no_analysis:
+        logger.info(
+            "Skipping LLM analysis (--no-analysis). %d article(s) stored and "
+            "left for a later run.", len(queue),
+        )
+    elif not ANTHROPIC_API_KEY:
         logger.warning(
             "ANTHROPIC_API_KEY is not set — skipping LLM analysis.\n"
             "Set the key in .env and re-run to complete analysis."
@@ -284,7 +326,10 @@ def run(
                 errors.append(msg)
 
     # ── Stage 13: Close run record ────────────────────────────────────────────
-    analysis_attempted = bool(len(queue) > 0 and ANTHROPIC_API_KEY)
+    # --no-analysis is a deliberate skip, not a failure: it must not trip the
+    # billing-failure guard or exit non-zero, or the site-generation stage and
+    # the CI commit are skipped and the day's collection is discarded anyway.
+    analysis_attempted = bool(len(queue) > 0 and ANTHROPIC_API_KEY and not no_analysis)
 
     # Relevance scoring itself failed for every queued article (analyze() returned
     # None) → likely API/billing outage. Preserved exactly as the original check
@@ -448,6 +493,18 @@ if __name__ == "__main__":
         action="store_true",
         help="Run pipeline without writing to DB or calling LLM APIs",
     )
+    parser.add_argument(
+        "--no-analysis",
+        action="store_true",
+        help=(
+            "Scrape and store articles, but skip all LLM analysis. Stored "
+            "articles keep passed_relevance NULL and drain as backlog on a "
+            "later run. Use when the API is unavailable (spend limit, outage) "
+            "so a day's collection is still captured rather than lost. Note "
+            "that ANTHROPIC_API_KEY='' does NOT do this — config.py treats an "
+            "empty value as unset and falls back to .env."
+        ),
+    )
     args = parser.parse_args()
 
     target   = args.date or date.today()
@@ -457,4 +514,5 @@ if __name__ == "__main__":
         sources=sources,
         target_date=target,
         dry_run=args.dry_run,
+        no_analysis=args.no_analysis,
     )

@@ -50,7 +50,33 @@ ANALYSIS_MODEL: str = os.environ.get("ANALYSIS_MODEL", "claude-sonnet-4-6")
 # Hard cap on LLM-analyzed articles per daily run.
 # Prevents runaway costs from large scrape days or backlog catch-up.
 # Override via env var: DAILY_ANALYSIS_CAP=20 python pipeline.py
-DAILY_ANALYSIS_CAP: int = int(os.environ.get("DAILY_ANALYSIS_CAP", "15"))
+# DAILY_ANALYSIS_CAP: per-run ceiling on articles sent to the LLM. Raised 15→40
+# on 2026-07-30 (analyst-approved). At 15 the cap sat *below* the ~30/day scrape
+# rate, so every run deferred ~18 articles into a backlog that could only grow;
+# 1,119 articles accumulated over 66 days without ever being relevance-screened
+# (DECISION_LOG 2026-07-30). The cap must stay above the scrape rate or the
+# backlog resumes growing — watch the "newly scraped article(s) deferred by the
+# cap" warning in pipeline logs, which fires when it doesn't.
+DAILY_ANALYSIS_CAP: int = int(os.environ.get("DAILY_ANALYSIS_CAP", "40"))
+
+# BACKLOG_RESERVE_FRACTION: share of DAILY_ANALYSIS_CAP held for backlog articles
+# (relevance-pending or never-scored) so a full day of fresh scrapes cannot crowd
+# them out. Until 2026-07-30 the queue was `new + pending + unscored` truncated to
+# the cap; since a run inserts ~30 articles and the cap is 15, the slice never
+# reached the backlog and it drained at exactly zero per run — permanently
+# (DECISION_LOG 2026-07-30). Unused new-article slots still spill to the backlog.
+# NOTE: this guarantees the backlog *drains*, not that it *shrinks*. While
+# DAILY_ANALYSIS_CAP is below the ~30/day inflow, the backlog still grows.
+BACKLOG_RESERVE_FRACTION: float = float(os.environ.get("BACKLOG_RESERVE_FRACTION", "0.3"))
+
+# TRANSLATION_MAX_TOKENS: output ceiling for the Chinese→English translation call.
+# Was 4000 until 2026-07-30, which silently truncated every long article: the
+# response was cut mid-JSON, parsing failed, and the article was never written
+# (163 of 697 relevant articles, 100% of those over 5000 Chinese characters —
+# see DECISION_LOG 2026-07-30). ANALYSIS_MODEL allows 128K output; 32K covers
+# the longest article observed (18,148 chars) with wide margin. Calls at this
+# size must stream, or the SDK hits an HTTP timeout.
+TRANSLATION_MAX_TOKENS: int = int(os.environ.get("TRANSLATION_MAX_TOKENS", "32000"))
 
 PROMPT_VERSION: str = "v1"
 

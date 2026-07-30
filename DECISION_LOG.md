@@ -2,6 +2,199 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-30 — No edition for week ending 2026-07-25; the collection gap is recorded, not filled
+
+**Ruling (analyst-approved 2026-07-30): no edition is published for the week
+ending 2026-07-25.** The next edition is **No. 12, week ending 2026-08-01**,
+on a full seven-day window. Issue numbering stays sequential; the cadence
+breaks, and the break is the honest record.
+
+1. **The window has one observed day of seven.** `scrape_runs` jumps from
+   run 90 (2026-07-16) straight to run 91 (2026-07-25) — there are no run
+   rows at all for 2026-07-17→07-24. The No. 12 window (07-19→07-25) holds
+   only 2026-07-25: 29 articles, 8 relevant, 0 model-flagged.
+2. **Correction to the 2026-07-25 entry below.** That entry describes the
+   outage as scheduled runs failing at "Commit updated database and site
+   output." True as far as it goes, but the consequence was understated:
+   the runs' DB writes were never persisted either, so the articles for
+   those eight days were never captured. The loss is permanent, not merely
+   uncommitted.
+3. **Backfill was tested and rejected as unsound.** `pipeline.py --date
+   <d> --dry-run` retro-scrapes only what the listing pages still surface,
+   and recall decays with age. Control: 2026-07-16 was captured live at
+   **33 articles**; retro-scraped on 2026-07-30 it yields **3**. Gap dates
+   yield 7 (07-20) and 11 (07-24) against a ~35/day live baseline.
+   Recovering a recency-biased 10–30% of each day and presenting it as the
+   week's observed record would misstate coverage. Standing rule: the
+   scraper is listing-bound and **retro-scrape output is never a
+   substitute for live collection** in an edition's evidence base.
+4. **The cadence-gap warning from `validate_output.py` is expected and
+   correct.** Do not suppress it. It is the artifact that records the
+   outage; a future reader must be able to see that the week was
+   unobserved rather than uneventful.
+
+## 2026-07-30 — API spend limit reached mid-backfill; collection must survive analysis failure
+
+The backfills exhausted the account's configured API usage limit (access
+returns 2026-08-01 00:00 UTC). 131 articles were recovered before it hit;
+60 translations and 1,057 screenings remain. Three durable lessons, two of
+them fixes.
+
+1. **Cause, recorded plainly.** The backfill was authorized on a ~$50
+   estimate that was never checked against the account's *remaining*
+   headroom on its monthly cap, and the two backfills were run
+   concurrently rather than in sequence, doubling the draw. Estimate the
+   spend *and* verify headroom before starting a bulk run; run bulk jobs
+   one at a time.
+2. **CI discarded collection on any pipeline failure — now fixed.**
+   `pipeline.py` stores scraped articles before its first LLM call, then
+   `sys.exit(2)` on total analysis failure. The "Commit updated database
+   and site output" step carries an `if:` with no status function, so
+   GitHub implicitly requires `success()` and skipped it — destroying the
+   runner with that day's articles still inside. **This is the same
+   mechanism that lost 2026-07-17→24**, reached from a different trigger:
+   the earlier fix addressed the rebase and derivative churn, not the
+   underlying "analysis failure forfeits collection" behavior. New step
+   `Persist scraped articles (if pipeline failed)` commits `pla_watch.db`
+   **only** — `output/` is deliberately excluded so this cannot become a
+   route around the validator gate that keeps a broken render out of
+   production. Unanalyzed articles keep `passed_relevance` NULL and drain
+   as backlog.
+   **Standing rule: collection and analysis are separate stages, and a
+   failure in the second must never forfeit the first.**
+3. **`pipeline.py --no-analysis`** scrapes and stores without any LLM call,
+   for use during an outage or spend block. Note `ANTHROPIC_API_KEY=""`
+   does *not* achieve this — `config.py` pops an empty value and falls
+   back to `.env`, so the run attempts analysis anyway. 2026-07-30 was
+   captured (40 articles) before this flag existed, via a run that failed
+   every analysis call.
+4. **A blank summary must block the write, not the deploy.** The first
+   backfill run kept translations when `summarize()` failed, on the theory
+   that a translation is the expensive part. That produced 14 records that
+   read as complete but tripped `validate_output.py` rule 6 ("no analyzed
+   article has a blank summary") and **failed the deploy gate**. Both
+   backfill scripts now treat a missing summary as a reason not to write
+   at all, leaving `analyzed_at` NULL for a clean retry. The 14 were
+   repaired by clearing `analyzed_at` (translations preserved), which
+   removed them from generated output and re-queued them; validator back
+   to green at the 9 historical warnings. Rule: never write a record that
+   satisfies a script's notion of "good enough" but violates the deploy
+   gate's — the gate is the contract.
+
+## 2026-07-30 — The analysis cap sat below the scrape rate; 41% of the corpus was never screened
+
+**The largest of the three 2026-07-30 findings.** 1,119 of 2,720 articles
+(41%) had `passed_relevance IS NULL` — never evaluated for relevance at all,
+so invisible to every edition and to every count of what the corpus contains.
+
+1. **Mechanism: a starved queue, not a slow one.** `pipeline.py` built
+   `queue = new_queue + pending + unscored` and truncated it to
+   `DAILY_ANALYSIS_CAP` (15). Every run inserts ~28–35 fresh articles, so
+   `new_queue` alone always overflowed the cap and **the slice never reached
+   the backlog** — it received exactly zero slots per run, permanently. The
+   comment above that code claimed the backlog "drains every run to fill
+   capacity… can't stay invisible forever." That claim was false for the
+   entire life of the project, and its presence is why the behavior went
+   unexamined. Corrected in place.
+2. **Two compounding consequences.** (a) The 163 translation failures were
+   never retried even once — `pending` was starved by the same slice, which
+   is why article id 3 sat unretried for 83 days despite a retry path that
+   looked correct on inspection. (b) The unscored pile grew by
+   `inserted − cap` ≈ 17–18/day: 1,119 over 66 days, matching the arithmetic
+   almost exactly.
+3. **Scale of the editorial gap.** At the historical relevance pass rate of
+   **44%** (697 of 1,601 scored), the unscreened 1,119 contain an estimated
+   **~487 relevant articles** — against 697 relevant articles known. Taken
+   with the translation losses, editions No. 1–11 drew on roughly 60% of the
+   relevant material actually scraped. No published claim about weekly
+   coverage completeness survives this unqualified.
+4. **Fixes (analyst-approved 2026-07-30).**
+   - `BACKLOG_RESERVE_FRACTION` (0.3): the backlog now gets a guaranteed
+     share of the cap instead of zero, and unused new-article slots spill
+     to it. This makes the "can't stay invisible forever" claim true.
+   - `DAILY_ANALYSIS_CAP` **15 → 40**, above the ~30/day scrape rate. A cap
+     below the scrape rate guarantees unbounded backlog growth regardless of
+     any reservation — the reservation controls *who* is starved, not
+     *whether*.
+   - New warning when the cap defers freshly scraped articles. Sustained
+     firing means the cap has fallen below the scrape rate again; treat it
+     as a capacity alarm, not noise.
+   - `scripts/backfill_unscored.py` clears the 1,119. Unlike
+     `backfill_translations.py` it **does** run relevance scoring, since
+     these articles have no prior score to preserve.
+5. **Standing rule: `DAILY_ANALYSIS_CAP` must exceed the daily scrape rate.**
+   It is a cost ceiling, and setting a cost ceiling below the intake rate
+   silently converts it into a permanent data-loss mechanism. If cost
+   requires a lower cap, reduce intake (narrow sources or the keyword
+   filter) rather than letting unprocessed articles accumulate unbounded.
+
+## 2026-07-30 — Translation fix: two independent failures, not one
+
+Correction to the diagnosis entry below, which named only the token cap.
+Clearing the backlog surfaced a **second, unrelated** failure; both are now
+fixed and the entry below stands as the record of the first.
+
+1. **Unescaped inner quotes (genuine formatting drift).** The translation
+   prompt instructs the model to preserve quoted rhetorical language
+   ("决不", 「」), and a literal `"` inside a JSON string value terminates
+   the string early. Example (article 2624): `the border soldier's "pure
+   love."` — parse failed at position 1455 of a **complete, untruncated**
+   31,132-character response. This is a different bug from the token cap
+   and would have persisted after fixing it alone.
+2. **Fix: forced tool use for translation.** `Analyzer.translate()` now
+   calls `_call_tool()` with an `emit_translation` tool
+   (`title_en` / `body_en`) and `tool_choice` pinned to it. Tool inputs are
+   serialized and escaped by the API and arrive pre-parsed, so the entire
+   class of escaping failure is gone. The translation prompt no longer
+   asks for raw JSON. `_parse_json` now serves only the three short-output
+   tasks (relevance, summary, categories), whose outputs rarely carry
+   embedded quotes.
+3. **The pre-existing `_parse_json` TODO was half right, and credit is
+   due.** It correctly identified drift on long translations and correctly
+   prescribed tool use. What it got wrong: it treated drift as the *whole*
+   problem (truncation caused roughly two-thirds of the losses and is
+   deterministic, not intermittent), and its alternative suggestion —
+   `output_config.format` structured outputs — is not available on
+   `claude-sonnet-4-6` and would have required a model change.
+4. **Ruling: the translation contract is the tool schema, not prose.** Do
+   not reintroduce "return raw JSON" instructions to the translation
+   prompt, and do not loosen `_parse_json` to accommodate translation
+   output. If a future task emits long free prose, give it a tool.
+5. **`stop_reason` is checked before parsing** in both `_call` and
+   `_call_tool`. Truncation now raises a message naming the ceiling
+   instead of surfacing as a generic parse error — the misdirection that
+   hid the token cap for 83 days.
+
+## 2026-07-30 — Translation token cap has silently excluded every long article since launch
+
+**Diagnosis only; no fix applied.** 163 of 697 relevant articles (23%)
+passed the relevance gate but were never translated, and so were invisible
+to all 11 published editions.
+
+1. **Root cause: `Analyzer.translate()` calls with `max_tokens=4000`**
+   (`analysis/analyzer.py:173`) and asks for both `title_en` and `body_en`
+   in one JSON object. A long Chinese body cannot render into English
+   inside that ceiling, the response truncates mid-JSON, `_parse_json`
+   raises, and `analyze()` returns without `title_english`, so
+   `pipeline.py:256` skips the write.
+2. **The failure is length-determined**, not random. Failure rate by
+   Chinese body length: <1000 chars 7% · 1000–2000 17% · 2000–3000 37% ·
+   3000–3800 32% · **3800–5000 95% · 5000+ 100%**. No successfully
+   translated article anywhere in the DB exceeds 3807 characters.
+3. **The retry path is a no-op for these articles.** `analyzed_at` stays
+   NULL, so they re-enter the queue via `get_articles_pending_analysis()`
+   every run and fail identically with unchanged parameters. Article id 3
+   (scraped 2026-05-08) has been retried on every run since launch. The
+   comment at `pipeline.py:277` ("a later run retries it") is true but
+   misleading — retry without changed parameters cannot succeed.
+4. **Editorial consequence, which is the part that matters.** The excluded
+   set is not random noise: it is the *longest* PLA Daily pieces — the
+   军营观察 features and long-form policy essays that carry the most
+   analytical content. Every edition to date has drawn on a corpus
+   systematically truncated against its most substantial material. Any
+   claim about weekly coverage completeness made before this is fixed
+   should be read with that in mind.
+
 ## 2026-07-25 — No. 11 (2026-07-18) editorial corrections before publish
 
 Pre-publish QA (editorial-integrity role) failed the edition; corrected

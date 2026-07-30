@@ -11,7 +11,7 @@ Steps 3 and 4 run in parallel after translation completes.
 
 Token budgets and temperatures per task:
   Relevance:   max_tokens=500,  temperature=0.0  (deterministic classification)
-  Translation: max_tokens=4000, temperature=0.3  (fluent, close rendering)
+  Translation: TRANSLATION_MAX_TOKENS (32K default), temperature=0.3, streamed
   Summary:     max_tokens=1000, temperature=0.3  (analytic writing, slight variation)
   Categories:  max_tokens=500,  temperature=0.0  (deterministic classification)
 """
@@ -33,7 +33,13 @@ from analysis.prompts import (
     build_summary_messages,
     build_translation_messages,
 )
-from config import ANALYSIS_MODEL, ANTHROPIC_API_KEY, RELEVANCE_MODEL, RELEVANCE_THRESHOLD
+from config import (
+    ANALYSIS_MODEL,
+    ANTHROPIC_API_KEY,
+    RELEVANCE_MODEL,
+    RELEVANCE_THRESHOLD,
+    TRANSLATION_MAX_TOKENS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,17 +84,34 @@ class Analyzer:
         max_tokens: int,
         temperature: float,
         model: Optional[str] = None,
+        stream: bool = False,
     ) -> str:
-        """Single API call. Returns raw text. Raises AnalysisError on failure."""
+        """
+        Single API call. Returns raw text. Raises AnalysisError on failure.
+
+        `stream=True` is required for large `max_tokens` — the SDK raises on
+        non-streaming requests it estimates will exceed the HTTP timeout.
+
+        A response that stops at the token ceiling raises AnalysisError naming
+        the truncation. Before 2026-07-30 this fell through to `_parse_json`,
+        which reported a generic parse failure and hid a systematic length
+        limit for months (DECISION_LOG 2026-07-30).
+        """
         used_model = model or ANALYSIS_MODEL
+        kwargs = dict(
+            model=used_model,
+            system=self._SYSTEM_WITH_CACHE,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+        )
         try:
-            response = self._client.messages.create(
-                model=used_model,
-                system=self._SYSTEM_WITH_CACHE,
-                messages=messages,
-                max_tokens=max_tokens,
-                temperature=temperature,
-            )
+            if stream:
+                with self._client.messages.stream(**kwargs) as s:
+                    response = s.get_final_message()
+            else:
+                response = self._client.messages.create(**kwargs)
+
             usage = getattr(response, "usage", None)
             if usage:
                 logger.debug(
@@ -99,11 +122,94 @@ class Analyzer:
                     getattr(usage, "cache_read_input_tokens", 0),
                     getattr(usage, "cache_creation_input_tokens", 0),
                 )
+
+            if response.stop_reason == "max_tokens":
+                raise AnalysisError(
+                    f"Response truncated at the {max_tokens}-token ceiling "
+                    f"(stop_reason=max_tokens, model={used_model}). The output is "
+                    f"incomplete, not malformed — raise the ceiling rather than "
+                    f"loosening the parser."
+                )
+            if not response.content:
+                raise AnalysisError(
+                    f"Empty response content (stop_reason={response.stop_reason})"
+                )
             return response.content[0].text
         except anthropic.APIStatusError as exc:
             raise AnalysisError(f"API status error ({exc.status_code}): {exc.message}") from exc
         except anthropic.APIConnectionError as exc:
             raise AnalysisError(f"API connection error: {exc}") from exc
+
+    # The translation is the one task whose output contains long free prose, and
+    # prose is exactly where hand-rolled JSON breaks: the prompt asks the model
+    # to preserve quoted rhetorical language ("决不"), and an unescaped inner
+    # quote terminates the JSON string early. Tool inputs are serialized and
+    # escaped by the API, so the whole class of failure disappears. Sonnet 4.6
+    # supports tool use (it does NOT support the `output_config.format`
+    # structured-outputs path — that would require a different model).
+    _TRANSLATION_TOOL: dict = {
+        "name": "emit_translation",
+        "description": "Return the English translation of the article's title and body.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "title_en": {
+                    "type": "string",
+                    "description": "English translation of the headline.",
+                },
+                "body_en": {
+                    "type": "string",
+                    "description": (
+                        "English translation of the complete article body, "
+                        "preserving the original paragraph breaks."
+                    ),
+                },
+            },
+            "required": ["title_en", "body_en"],
+        },
+    }
+
+    def _call_tool(
+        self,
+        messages: list[dict],
+        tool: dict,
+        max_tokens: int,
+        temperature: float,
+    ) -> dict:
+        """
+        Forced-tool call. Returns the tool input already parsed by the SDK.
+
+        Streams, because the callers that need a tool are the ones producing
+        long output. Raises AnalysisError on truncation or a missing tool block.
+        """
+        try:
+            with self._client.messages.stream(
+                model=ANALYSIS_MODEL,
+                system=self._SYSTEM_WITH_CACHE,
+                messages=messages,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                tools=[tool],
+                tool_choice={"type": "tool", "name": tool["name"]},
+            ) as s:
+                response = s.get_final_message()
+        except anthropic.APIStatusError as exc:
+            raise AnalysisError(f"API status error ({exc.status_code}): {exc.message}") from exc
+        except anthropic.APIConnectionError as exc:
+            raise AnalysisError(f"API connection error: {exc}") from exc
+
+        if response.stop_reason == "max_tokens":
+            raise AnalysisError(
+                f"Response truncated at the {max_tokens}-token ceiling "
+                f"(stop_reason=max_tokens). Output is incomplete — raise the ceiling."
+            )
+        for block in response.content:
+            if block.type == "tool_use" and block.name == tool["name"]:
+                return dict(block.input)
+        raise AnalysisError(
+            f"Model returned no `{tool['name']}` tool call "
+            f"(stop_reason={response.stop_reason})"
+        )
 
     @staticmethod
     def _parse_json(raw: str) -> dict:
@@ -132,23 +238,26 @@ class Analyzer:
         try:
             return json.loads(cleaned, strict=False)
         except json.JSONDecodeError as exc:
-            # TODO (v2): Replace this regex approach with the Anthropic API's
-            # native structured output / tool-use mode, which enforces a JSON
-            # schema at the API level and eliminates formatting drift entirely.
+            # Resolved 2026-07-30. The prior note here identified real drift
+            # but conflated two independent failures, and only one was drift:
             #
-            # Observed failure mode: long doctrinal and historical-essay
-            # translations (3000+ character responses) intermittently produce
-            # formatting drift that isn't caught by the fence-stripping regex
-            # above — e.g., nested code fences, prose introductions, or
-            # mid-response formatting breaks in the body_en field.  We've seen
-            # this specifically on ancient military history essays (Battle of
-            # Changping) and long PLA doctrinal pieces.
+            #   1. Truncation (the dominant cause, ~2/3 of losses).
+            #      `translate()` was capped at max_tokens=4000, so long
+            #      articles were cut mid-JSON and arrived here as fragments —
+            #      deterministic above 5000 Chinese chars, not intermittent.
+            #      Fixed by raising the ceiling and detecting
+            #      stop_reason=max_tokens before parsing.
+            #   2. Unescaped inner quotes (genuine drift). The translation
+            #      prompt asks the model to preserve quoted rhetorical
+            #      language, and a literal `"` inside a JSON string value
+            #      terminates it early. The old note's prescription — forced
+            #      tool use — was correct for this, and `translate()` now
+            #      uses it. (Its other suggestion, `output_config.format`
+            #      structured outputs, is not available on Sonnet 4.6.)
             #
-            # Escalating the regex is the wrong direction.  The clean fix is:
-            #   client.messages.create(..., tools=[translation_tool_schema],
-            #                          tool_choice={"type": "tool", ...})
-            # which returns structured data rather than free-text JSON.
-            # That work is scoped to a future session.
+            # This parser now only serves the three short-output tasks
+            # (relevance, summary, categories), whose outputs are brief and
+            # rarely carry embedded quotes.
             raise AnalysisError(
                 f"JSON parse failed. Raw output was:\n{raw[:400]}"
             ) from exc
@@ -168,11 +277,25 @@ class Analyzer:
         return score, str(data.get("reasoning", ""))
 
     def translate(self, title: str, body: str) -> tuple[str, str]:
-        """Returns (title_en, body_en)."""
+        """
+        Returns (title_en, body_en).
+
+        Streams: TRANSLATION_MAX_TOKENS is far above the ~16K non-streaming
+        threshold, and this is the only call that renders a full article body.
+        """
         messages = build_translation_messages(title, body)
-        raw  = self._call(messages, max_tokens=4000, temperature=0.3)
-        data = self._parse_json(raw)
-        return str(data["title_en"]), str(data["body_en"])
+        data = self._call_tool(
+            messages,
+            self._TRANSLATION_TOOL,
+            max_tokens=TRANSLATION_MAX_TOKENS,
+            temperature=0.3,
+        )
+        title_en, body_en = str(data.get("title_en", "")), str(data.get("body_en", ""))
+        if not title_en or not body_en:
+            raise AnalysisError(
+                "Translation tool returned an empty title_en or body_en"
+            )
+        return title_en, body_en
 
     def summarize(self, title_en: str, body_en: str) -> str:
         messages = build_summary_messages(title_en, body_en)

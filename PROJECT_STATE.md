@@ -1,11 +1,18 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-07-25 (daily-workflow CI fix + No. 11 publication). State
-only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md table).
+Updated: 2026-07-30 (collection-gap ruling + translation-cap diagnosis).
+State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
+table).
 
 ## Working tree (as of this update)
 
-Clean. The previously uncommitted 2026-07-12 production-completion pass,
+Local `main` fast-forwarded to `origin/main` (`32c16f5`, "State: mark daily
+run 2026-07-29") on 2026-07-30 — it had been 10 CI commits behind. Working
+tree clean apart from this update and the two 2026-07-30 DECISION_LOG
+entries. Daily CI is healthy: runs 91–95 (07-25→07-29) all completed, so
+the 2026-07-25 `--autostash` / derivative fix held.
+
+Historical note, still accurate: the previously uncommitted 2026-07-12 production-completion pass,
 2026-07-13 Signal Veil pass, and 2026-07-16 J-20 atmospheric pass (see
 DECISION_LOG entries of those dates) were reconciled onto `origin/main`
 and committed on branch `reconcile/unfinished-pla-watch-2026-07-16`
@@ -21,7 +28,17 @@ was intentionally left untouched in `~/pla-watch`.
 (pilot, 2-day window) through 2026-07-18 ("Joint Sea-2026, the Y-20B
 Abroad, and the Week's Quieter Signals", Significant, 34 articles /
 3 model-flagged). Issue numbers stored in sidecars, validated unique +
-chronological. Next edition: No. 12, week ending 2026-07-25.
+chronological.
+
+**Next edition: No. 12, week ending 2026-08-01.** There is no edition for
+the week ending 2026-07-25 — analyst-ruled 2026-07-30, DECISION_LOG. The
+2026-07-17→07-24 collection outage left that window with one observed day
+of seven (07-25 only: 29 articles, 8 relevant, 0 model-flagged), and
+retro-scraping was tested and rejected as unsound (07-16 control: 33
+articles captured live, 3 recoverable). Expect and keep a **cadence-gap
+warning** from the validator for this break; it is the record of the
+outage, not a defect to suppress. The No. 12 window is collecting cleanly
+so far (07-26→07-29 present).
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
@@ -41,8 +58,73 @@ warnings.
 entries; related notes). Do not fix by invention; explain any NEW warning
 here.
 
+## Blocked until 2026-08-01 00:00 UTC — API spend limit
+
+The account's configured API usage limit was reached on 2026-07-30 during
+the backfills; all LLM calls return 400 until access resets. Consequences
+and current state:
+
+- **Recovered before the block:** 131 articles translated. **Remaining:**
+  60 untranslated, 1,057 never-screened. Both backfill scripts are
+  re-runnable and resume where they stopped.
+- **2026-07-30 collection is captured** (40 articles, stored unanalyzed).
+  **2026-07-31 still needs capturing** — run
+  `.venv/bin/python pipeline.py --no-analysis` before the day rolls off the
+  source listings. Do NOT rely on `ANTHROPIC_API_KEY=""`; see DECISION_LOG.
+- **CI will fail its analysis stage until 08-01** but now persists whatever
+  it scraped (new workflow step), so no further collection is lost.
+- **No. 12 (week ending 2026-08-01)** needs 07-30/07-31/08-01 analyzed
+  before it can be written. 07-30 and 07-31 will be unanalyzed backlog
+  until access returns; the backlog reserve drains them, but check the
+  window is complete before drafting.
+- **14 articles sit with a translation but no summary** (`analyzed_at`
+  cleared, so excluded from output and re-queued). They will be redone by
+  the normal backlog drain after 08-01, re-translating in the process.
+
 ## Known issues / gaps (recorded, not explained away)
 
+- **Analysis cap starved the backlog (fixed 2026-07-30; backfill running).**
+  `DAILY_ANALYSIS_CAP` was 15 while runs scrape ~30/day, and the queue was
+  `new + pending + unscored` truncated to the cap — so the slice never
+  reached the backlog and it drained at **zero per run, permanently**.
+  Result: **1,119 of 2,720 articles (41%) were never relevance-screened**,
+  growing ~18/day for 66 days, and the 163 translation failures were never
+  retried once. At the historical 44% pass rate the unscreened pile holds
+  an estimated **~487 relevant articles** — so editions No. 1–11 drew on
+  roughly 60% of the relevant material actually scraped. Fixed by
+  `BACKLOG_RESERVE_FRACTION` (0.3) plus raising the cap to 40, above the
+  scrape rate; `scripts/backfill_unscored.py` is clearing the pile.
+  **Standing rule: the cap must stay above the daily scrape rate** — below
+  it, a cost ceiling becomes a silent data-loss mechanism. Watch for the
+  "newly scraped article(s) deferred by the cap" warning.
+
+- **Translation losses (fixed 2026-07-30; backfill run).** 163 of 697
+  relevant articles (23%) passed the relevance gate but were never
+  translated, spanning 70 days since launch, and so were invisible to all
+  11 published editions. **Two independent causes**, both fixed — see the
+  two DECISION_LOG entries of 2026-07-30:
+  1. *Token cap.* `translate()` was capped at `max_tokens=4000`; long
+     bodies truncated mid-JSON. Length-determined: 95% failure above 3800
+     Chinese chars, **100% above 5000**. Now `TRANSLATION_MAX_TOKENS`
+     (32K, streamed), with `stop_reason=max_tokens` checked before parsing.
+  2. *Unescaped inner quotes.* Preserved rhetorical quotation marks
+     terminated JSON strings early in complete, untruncated responses.
+     `translate()` now uses a forced `emit_translation` tool call, so the
+     API handles escaping. Do not reintroduce raw-JSON instructions to the
+     translation prompt.
+  Editorial consequence, now remediated but true of editions No. 1–11:
+  the excluded set was the longest, most analytically substantial PLA
+  Daily material — it included the full China–Russia joint statement on
+  comprehensive strategic coordination (article 476, 18,148 chars), which
+  no edition ever saw.
+  Backfill: `scripts/backfill_translations.py` (re-runnable; deliberately
+  does **not** re-score relevance, preserving the audit record).
+- **2026-07-17→07-24 collection outage (permanent).** No `scrape_runs`
+  rows exist for those eight days; the failed CI runs never persisted
+  their DB writes. Not recoverable — see the backfill ruling in
+  DECISION_LOG 2026-07-30.
+- Public-surface disclosure of the 07-17→07-24 outage is **not yet
+  written** — archive/methodology still imply continuous collection.
 - `output/archive.html` is 804 KB flat list (446 articles) — ROADMAP T1.
 - Cover PNGs ~8.2 MB total; photo-overlay covers duplicate titles — ROADMAP
   T2 (Edition Plate) + T4 (asset hygiene).

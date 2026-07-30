@@ -57,7 +57,7 @@ def parse_args():
     parser.add_argument(
         "--week-ending",
         metavar="YYYY-MM-DD",
-        help="Sunday end date for the edition (default: Sunday of current week)",
+        help="Saturday end date for the edition (default: Saturday of current week)",
     )
     parser.add_argument(
         "--dry-run",
