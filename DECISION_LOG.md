@@ -2,6 +2,82 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-02 — The backlog is drained live-window-first, not FIFO
+
+1. **Plain FIFO buries exactly the articles an edition still needs.** Both
+   backlog queries in `storage/db.py` ordered by `id`, so a deferred article
+   joined the back of a ~1,180-deep queue draining ~18/run. Measured on the
+   reconciled database: the recovered 07-30/07-31 articles sat at queue
+   position 1,178 — **66 runs**, roughly two months — so they could not be
+   screened in time for edition No. 12, the edition covering their own week.
+   Meanwhile the whole 30% backlog reserve was spent on May and June material
+   that no unwritten edition can use. **Standing rule: recency-critical
+   material is screened before archive material.**
+
+2. **`LIVE_BACKLOG_DAYS` (default 14) splits the unscored queue.** Articles
+   scraped within the window go first, oldest-first among themselves so a week
+   fills chronologically; everything older keeps FIFO behind them. Same
+   measurement after the change: position 168, **10 runs**. The archive is
+   deferred, never starved — once the live tier drains, FIFO resumes as before.
+   14 days covers the current edition window plus a week of slack for a late
+   draft.
+
+3. **`pending` (passed relevance, analysis unfinished) keeps absolute
+   priority.** It is small — 74 rows — and those articles have already paid for
+   a relevance call, so finishing them is the cheapest analytical output
+   available. The live/archive split applies only to `unscored`.
+
+4. **The ordering fix does not rescue edition No. 12 by itself.** Ten runs is
+   still ten days. 156 articles in the No. 12 window remain unscreened; a
+   one-off catch-up run costs ~$2.82 (screen all 156 at Haiku ~$0.30, analyze
+   the ~68 expected to pass at Sonnet ~$2.52). **Structural fixes prevent the
+   next occurrence; they do not repair the current one.**
+
+## 2026-08-02 — git cannot merge `pla_watch.db`; reconcile by url, with origin authoritative for identity
+
+1. **A diverged `pla_watch.db` must never be resolved by git.** CI writes the
+   database to `main` on a schedule while humans work on local branches, so
+   both sides routinely advance from one base. Git sees a binary file and can
+   only offer "take mine or take theirs" — and either choice silently destroys
+   a day of collection. On 07-30→31 both sides had independently allocated
+   article ids from 2727, so origin's article 2731 and the branch's 2731 were
+   **different articles**; nothing in `git status` shows that, and either
+   resolution loses 40 or 80 articles. **Standing rule: reconcile by `url`
+   (the table's UNIQUE key), never by id, and never with a merge driver.**
+   `scripts/reconcile_db.py --from-git` does this and re-derives its inputs
+   from refs, so it stays correct after CI advances `origin/main` again.
+
+2. **Origin is authoritative for identity; local rows are the ones that move.**
+   Origin's ids are already published as `output/article/<id>.html` and
+   referenced by the sitemap and feed, so renumbering them breaks live URLs.
+   Local capture rows have never been rendered — `--no-analysis` does not
+   generate the site (07-31 ruling 1) — so they are the safe side to
+   renumber. The merge is therefore deliberately asymmetric, and the
+   no-id-drift gate enforces it.
+
+3. **A reconciliation is not landed until its gates pass.** The script exits
+   non-zero unless foreign keys, integrity, duplicate urls, id drift, and url
+   loss *from both sides* all check out. A merged database that loses a row
+   from either parent is a failed merge, not a compromise.
+
+4. **The 07-31 coverage disclosure overstated edition completeness.**
+   `methodology.html` told readers editions No. 1–11 drew on "about
+   three-fifths" of the relevant material. By the method the passage itself
+   states — applying the historical relevance-pass rate to what was never
+   screened — the figure is 534 analyzed against ~1,184 estimated relevant
+   (697 known + 43.5% of 1,119 unscreened), i.e. **a little under half**.
+   Three-fifths would require the unscreened backlog to pass relevance at
+   ~17% against 43.5% observed. Corrected, and the method is now stated
+   explicitly rather than gestured at. **Standing rule: a published
+   completeness figure carries its derivation.**
+
+5. **This is the fourth divergence of this shape**, after the 07-12→16
+   uncommitted passes, the 07-17 reconcile, and local `main` drifting 10 CI
+   commits behind on 07-30. The recurrence is structural, not careless: a
+   mutable binary committed to git and written by two authors cannot be
+   made safe by discipline alone. Recorded here as a known cost, not yet an
+   agreed fix.
+
 ## 2026-07-31 — An uncommitted template is not a publish guard; account-level API failure is not an article-level one
 
 Four rulings from hardening the pipeline after the 07-30 spend incident.

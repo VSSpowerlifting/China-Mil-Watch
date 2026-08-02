@@ -1,16 +1,33 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-07-31 (07-31 captured; cap→55; fatal-API breaker; spend guard).
+Updated: 2026-08-02 (reconciliation built, unmerged; origin/main missing 07-30→07-31).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
 ## Working tree (as of this update)
 
-Local `main` fast-forwarded to `origin/main` (`32c16f5`, "State: mark daily
-run 2026-07-29") on 2026-07-30 — it had been 10 CI commits behind. Working
-tree clean apart from this update and the two 2026-07-30 DECISION_LOG
-entries. Daily CI is healthy: runs 91–95 (07-25→07-29) all completed, so
-the 2026-07-25 `--autostash` / derivative fix held.
+**Unpushed work holds the only copy of 80 articles.** HEAD is
+`fix/pipeline-data-loss-2026-07-30` (`25cdb7f`), 2 ahead / 4 behind
+`origin/main`. Local `main` is stale at `32c16f5`.
+
+`origin/main` advanced independently while the branch sat local: billing
+markers for 07-30 and 07-31, then "Daily update: 2026-08-01" (`1f0444a`)
+and its run marker (`3c57e7f`). CI recovered unaided — consistent with the
+monthly spend cap resetting on 08-01, not with any repair.
+
+Production therefore holds **no articles for 07-30 or 07-31** (40 each,
+local-branch only). `pla_watch.db` diverged on both sides from the same
+base and both allocated article ids from 2727, so the two new sets collide
+by id: git sees a binary conflict, and a plain merge silently drops one
+side.
+
+Reconciled by row-level merge, not by git — origin authoritative for
+identity (its ids 2727–2753 are already published in `output/article/*.html`
+and the sitemap), branch rows renumbered from 2754, 3 scrape_runs remapped,
+117 analyses backfilled onto rows still pending in origin. Result: 2827
+rows / 658 analyzed, continuous 07-29→08-01 coverage, and gates pass for
+fk, integrity, duplicate urls, id drift, and url loss from either side.
+**Not merged or pushed — awaiting analyst approval.**
 
 Historical note, still accurate: the previously uncommitted 2026-07-12 production-completion pass,
 2026-07-13 Signal Veil pass, and 2026-07-16 J-20 atmospheric pass (see
@@ -37,8 +54,17 @@ of seven (07-25 only: 29 articles, 8 relevant, 0 model-flagged), and
 retro-scraping was tested and rejected as unsound (07-16 control: 33
 articles captured live, 3 recoverable). Expect and keep a **cadence-gap
 warning** from the validator for this break; it is the record of the
-outage, not a defect to suppress. The No. 12 window is collecting cleanly
-so far (07-26→07-29 present).
+outage, not a defect to suppress.
+
+**No. 12 is not safe to write from `origin/main`.** Its window holds five
+of seven days in production (07-26→07-29, 08-01 = 173 articles); 07-30 and
+07-31 are absent and live only on the unpushed branch. Reconciled, the
+window is 253 articles. The relevant-article count reads 42 either way only
+because the 80 recovered rows are still unscreened — at the 43.5%
+historical pass rate they should yield roughly 35 more. Unlike the
+No. 11-week gap, nothing flags this: the cadence sequence is unbroken and
+the validator stays quiet, so the edition would rest on two-thirds of its
+week without any warning. Land the reconciliation before drafting No. 12.
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the

@@ -77,6 +77,24 @@ DAILY_ANALYSIS_CAP: int = int(os.environ.get("DAILY_ANALYSIS_CAP", "55"))
 # DAILY_ANALYSIS_CAP is below the ~30/day inflow, the backlog still grows.
 BACKLOG_RESERVE_FRACTION: float = float(os.environ.get("BACKLOG_RESERVE_FRACTION", "0.3"))
 
+# LIVE_BACKLOG_DAYS: how recently an unscreened article must have been scraped
+# to be treated as *editorially live* — i.e. still able to reach an edition that
+# has not been written yet. Live articles are screened before older ones; the
+# rest keep FIFO order for archive completeness.
+#
+# Why this is not plain FIFO (DECISION_LOG 2026-08-02): the backlog is drained
+# oldest-first, so a deferred article joins the BACK of a queue ~1,180 deep.
+# On 2026-08-02 the recovered 07-30/07-31 articles sat behind 1,106 older
+# unscreened rows — roughly two months at ~16-20 slots/run — so they could not
+# be screened in time for edition No. 12, the edition covering their own week.
+# Pure FIFO spends the entire backlog reserve on material too old to affect any
+# unwritten edition, while burying the material that still can.
+#
+# 14 days covers the current edition window plus one week of slack for a late
+# draft. Raising it enlarges the priority tier and slows archive drain; the
+# archive is never starved outright, only deferred behind the live tier.
+LIVE_BACKLOG_DAYS: int = int(os.environ.get("LIVE_BACKLOG_DAYS", "14"))
+
 # TRANSLATION_MAX_TOKENS: output ceiling for the Chinese→English translation call.
 # Was 4000 until 2026-07-30, which silently truncated every long article: the
 # response was cut mid-JSON, parsing failed, and the article was never written

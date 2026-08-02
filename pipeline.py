@@ -31,12 +31,12 @@ Usage:
 import argparse
 import logging
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from config import (
     ANTHROPIC_API_KEY, BACKLOG_RESERVE_FRACTION, CACHE_DIR, DAILY_ANALYSIS_CAP,
-    DB_PATH, OUTPUT_DIR, ANALYSIS_MODEL, RELEVANCE_MODEL,
+    DB_PATH, LIVE_BACKLOG_DAYS, OUTPUT_DIR, ANALYSIS_MODEL, RELEVANCE_MODEL,
 )
 from processing.dedup import dedup_articles
 from processing.deduplicator import deduplicate
@@ -196,18 +196,42 @@ def run(
     ]
 
     queued_ids = inserted_ids | {aid for aid, *_ in pending}
-    unscored_rows = db.get_articles_unscored()
+    unscored_rows = [
+        r for r in db.get_articles_unscored() if r["id"] not in queued_ids
+    ]
+
+    # Unscored articles are NOT drained in plain FIFO order. Oldest-first buries
+    # whatever is recency-critical: on 2026-08-02 the recovered 07-30/07-31
+    # articles sat behind 1,106 older unscored rows — ~2 months of draining — so
+    # they could not be screened in time for edition No. 12, which covers their
+    # own week. Pure FIFO spends the whole backlog reserve on material too old to
+    # reach any unwritten edition (DECISION_LOG 2026-08-02).
+    #
+    # Live articles (scraped within LIVE_BACKLOG_DAYS) go first, oldest-first
+    # among themselves so a week fills chronologically. Everything older keeps
+    # FIFO behind them, so the archive is deferred but never starved.
+    # scraped_at is written by SQLite's datetime('now'), which is UTC.
+    live_cutoff = (
+        datetime.now(timezone.utc) - timedelta(days=LIVE_BACKLOG_DAYS)
+    ).strftime("%Y-%m-%d")
+    live_rows    = [r for r in unscored_rows if (r["scraped_at"] or "")[:10] >= live_cutoff]
+    archive_rows = [r for r in unscored_rows if (r["scraped_at"] or "")[:10] <  live_cutoff]
+
     unscored: list[tuple[int, str, str, str]] = [
         (r["id"],
          r["title_original"] or "",
          r["text_original"]  or "",
          r["url"]            or "?")
-        for r in unscored_rows
-        if r["id"] not in queued_ids
+        for r in live_rows + archive_rows
     ]
 
     backlog       = pending + unscored
     backlog_total = len(backlog)
+
+    logger.info(
+        "Unscored backlog: %d live (scraped since %s), %d archive — live first",
+        len(live_rows), live_cutoff, len(archive_rows),
+    )
 
     # Reserve a share of the cap for the backlog. A plain
     # `(new + backlog)[:cap]` starves it completely whenever a single run

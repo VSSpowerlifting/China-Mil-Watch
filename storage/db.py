@@ -239,11 +239,15 @@ def get_articles_unscored() -> list[sqlite3.Row]:
     Return articles inserted by a prior run that never reached LLM relevance
     scoring (passed_relevance IS NULL).  This happens when the API was
     unavailable during the run that scraped them.
+
+    `scraped_at` is selected so the caller can order this queue by editorial
+    liveness rather than plain FIFO — see the live-window split in pipeline.py
+    (DECISION_LOG 2026-08-02).
     """
     with get_conn() as conn:
         return conn.execute(
             """
-            SELECT id, url, title_original, text_original
+            SELECT id, url, title_original, text_original, scraped_at
               FROM articles
              WHERE passed_relevance IS NULL
              ORDER BY id
