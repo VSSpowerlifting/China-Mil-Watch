@@ -48,6 +48,51 @@ class AnalysisError(Exception):
     """Raised when an API call fails or returns unparseable output."""
 
 
+class FatalAPIError(AnalysisError):
+    """
+    Raised when a call fails for an *account-level* reason that retrying cannot
+    fix: spend limit reached, credit exhausted, or bad/revoked credentials.
+
+    Distinguished from AnalysisError because the correct response is opposite.
+    A normal AnalysisError is per-article — skip it and continue the queue. An
+    account-level failure applies to every remaining call, so continuing just
+    burns the queue against a wall. On 2026-07-31 the spend limit was reached
+    mid-run and the pipeline made 40 further doomed calls, and the translation
+    backfill made 60, because nothing distinguished the two cases
+    (DECISION_LOG 2026-07-31). Callers should abort the run on this.
+    """
+
+
+# Substrings identifying account-level failures in an API error message.
+# Matched case-insensitively against the message body.
+_FATAL_MESSAGE_MARKERS = (
+    "reached your specified api usage limits",
+    "credit balance is too low",
+    "billing",
+    "quota",
+)
+
+# Status codes that are always account-level, never per-article.
+_FATAL_STATUS_CODES = frozenset({401, 402, 403})
+
+
+def _classify_status_error(exc: "anthropic.APIStatusError") -> AnalysisError:
+    """
+    Map an APIStatusError to FatalAPIError (abort the run) or AnalysisError
+    (skip this article). Keeps the message format identical either way so
+    existing log-scraping and the billing-marker check still behave the same.
+    """
+    message = str(getattr(exc, "message", "") or exc)
+    detail = f"API status error ({exc.status_code}): {message}"
+
+    if exc.status_code in _FATAL_STATUS_CODES:
+        return FatalAPIError(detail)
+    lowered = message.lower()
+    if any(marker in lowered for marker in _FATAL_MESSAGE_MARKERS):
+        return FatalAPIError(detail)
+    return AnalysisError(detail)
+
+
 class Analyzer:
     """
     Runs all four LLM analysis tasks.
@@ -136,7 +181,7 @@ class Analyzer:
                 )
             return response.content[0].text
         except anthropic.APIStatusError as exc:
-            raise AnalysisError(f"API status error ({exc.status_code}): {exc.message}") from exc
+            raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
             raise AnalysisError(f"API connection error: {exc}") from exc
 
@@ -194,7 +239,7 @@ class Analyzer:
             ) as s:
                 response = s.get_final_message()
         except anthropic.APIStatusError as exc:
-            raise AnalysisError(f"API status error ({exc.status_code}): {exc.message}") from exc
+            raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
             raise AnalysisError(f"API connection error: {exc}") from exc
 
@@ -338,8 +383,13 @@ class Analyzer:
             model_id, prompt_version
         """
         # ── Step 1: Relevance ─────────────────────────────────────────────────
+        # FatalAPIError propagates out of every stage below: it means the whole
+        # account is blocked, so the caller must abort the run rather than
+        # advance to the next article.
         try:
             score, reasoning = self.score_relevance(title_zh, body_zh)
+        except FatalAPIError:
+            raise
         except AnalysisError as exc:
             logger.error("Relevance scoring failed: %s", exc)
             return None
@@ -359,6 +409,8 @@ class Analyzer:
         # ── Step 2: Translation ───────────────────────────────────────────────
         try:
             title_en, body_en = self.translate(title_zh, body_zh)
+        except FatalAPIError:
+            raise
         except AnalysisError as exc:
             logger.error("Translation failed: %s", exc)
             # Return partial result so relevance data isn't lost
@@ -380,15 +432,30 @@ class Analyzer:
             f_summary    = pool.submit(self.summarize,  title_en, body_en)
             f_categories = pool.submit(self.categorize, title_en, body_en)
 
+            fatal: Optional[FatalAPIError] = None
+
             try:
                 summary = f_summary.result()
+            except FatalAPIError as exc:
+                fatal = exc
             except AnalysisError as exc:
                 logger.error("Summary generation failed: %s", exc)
 
             try:
                 categories, is_significant, significance_reason = f_categories.result()
+            except FatalAPIError as exc:
+                fatal = fatal or exc
             except AnalysisError as exc:
                 logger.error("Categorization failed: %s", exc)
+
+        # Both futures are resolved before raising, so neither thread is
+        # abandoned mid-flight. The paid translation is discarded rather than
+        # stored without a summary: a record with analyzed_at set but a blank
+        # summary satisfies this function's notion of "done" while violating
+        # the deploy gate, which is what produced the 14 damaged rows on
+        # 2026-07-31. Leaving the article unanalyzed keeps it retryable.
+        if fatal is not None:
+            raise fatal
 
         return {
             "relevance_score":        score,

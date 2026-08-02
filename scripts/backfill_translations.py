@@ -28,9 +28,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from analysis.analyzer import AnalysisError, Analyzer  # noqa: E402
+from analysis.analyzer import AnalysisError, Analyzer, FatalAPIError  # noqa: E402
 from analysis.prompts import PROMPT_VERSION  # noqa: E402
 from config import ANALYSIS_MODEL, DB_PATH  # noqa: E402
+from scripts.spend_guard import preflight  # noqa: E402
 from storage import db  # noqa: E402
 
 logging.basicConfig(
@@ -63,10 +64,14 @@ def fetch_stuck(limit=None):
 def process(analyzer, row):
     """Translate + summarize + categorize one article. Returns (id, ok, detail)."""
     aid = row["id"]
+    # FatalAPIError propagates: it means the account is blocked, so the caller
+    # must stop the whole batch rather than record this as one failed article.
     try:
         title_en, body_en = analyzer.translate(
             row["title_original"] or "", row["text_original"] or ""
         )
+    except FatalAPIError:
+        raise
     except AnalysisError as exc:
         return aid, False, f"translation: {exc}"
 
@@ -79,6 +84,8 @@ def process(analyzer, row):
     # the translation is re-derived rather than half-written.
     try:
         summary = analyzer.summarize(title_en, body_en)
+    except FatalAPIError:
+        raise
     except AnalysisError as exc:
         return aid, False, f"summary: {exc}"
     if not summary:
@@ -112,6 +119,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, help="Process only the N longest stuck articles")
     ap.add_argument("--workers", type=int, default=3, help="Parallel articles (default 3)")
     ap.add_argument("--dry-run", action="store_true", help="List what would run; no API calls")
+    ap.add_argument("--confirm-spend", action="store_true",
+                    help="Acknowledge the estimated cost (required above the threshold)")
     args = ap.parse_args()
 
     rows = fetch_stuck(args.limit)
@@ -125,8 +134,22 @@ def main() -> int:
             logger.info("  DRY RUN id=%-5d %6d chars  %.50s", r["id"], r["n"], r["title_original"])
         return 0
 
+    # Gate the spend BEFORE spawning workers (DECISION_LOG 2026-07-31).
+    total_chars = sum(r["n"] or 0 for r in rows)
+    if not preflight(
+        # Translate + summarize + categorize all run on the analysis model, and
+        # every article here has already passed relevance — so unlike screening
+        # this is a single-stage cost. The 1.6 ratio covers the summary and
+        # category calls on top of the translation itself.
+        stages=[("translate+summarize", total_chars, ANALYSIS_MODEL, 1.6)],
+        article_count=len(rows),
+        confirmed=args.confirm_spend,
+    ):
+        return 2
+
     analyzer = Analyzer()
     ok, failed = 0, []
+    aborted = None
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {pool.submit(process, analyzer, r): r for r in rows}
@@ -134,6 +157,14 @@ def main() -> int:
             row = futures[fut]
             try:
                 aid, success, detail = fut.result()
+            except FatalAPIError as exc:
+                # Account-level block: every remaining article would fail the
+                # same way. Cancel the rest instead of burning the queue.
+                aborted = str(exc)
+                logger.error("[%d/%d] ACCOUNT BLOCKED — %s", i, len(rows), exc)
+                for pending in futures:
+                    pending.cancel()
+                break
             except Exception as exc:  # noqa: BLE001 — one bad article must not kill the run
                 failed.append((row["id"], f"unexpected: {exc}"))
                 logger.error("[%d/%d] id=%d UNEXPECTED: %s", i, len(rows), row["id"], exc)
@@ -146,6 +177,15 @@ def main() -> int:
                 logger.error("[%d/%d] id=%-5d FAILED — %s", i, len(rows), aid, detail)
 
     logger.info("─" * 52)
+    if aborted:
+        logger.error("Backfill ABORTED on an account-level API block: %s", aborted)
+        logger.error(
+            "%d article(s) completed and are committed; the rest were not "
+            "attempted and remain in the backlog. Re-run once access is "
+            "restored — completed articles are skipped automatically.", ok,
+        )
+        return 2
+
     logger.info("Backfill complete: %d succeeded, %d failed", ok, len(failed))
     for aid, detail in failed:
         logger.info("  still stuck: id=%d — %s", aid, detail)

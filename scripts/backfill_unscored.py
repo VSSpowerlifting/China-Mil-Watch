@@ -32,9 +32,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from analysis.analyzer import Analyzer  # noqa: E402
-from config import DB_PATH  # noqa: E402
+from analysis.analyzer import Analyzer, FatalAPIError  # noqa: E402
+from config import ANALYSIS_MODEL, DB_PATH, RELEVANCE_MODEL  # noqa: E402
+from scripts.spend_guard import preflight  # noqa: E402
 from storage import db  # noqa: E402
+
+# Share of articles that historically pass relevance and therefore incur the
+# expensive analysis-model calls. Measured across the corpus (DECISION_LOG
+# 2026-07-30); only this fraction costs more than a cheap relevance call.
+HISTORICAL_PASS_RATE = 0.44
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,7 +50,8 @@ logging.basicConfig(
 logger = logging.getLogger("backfill-unscored")
 
 UNSCORED_QUERY = """
-    SELECT id, url, title_original, text_original
+    SELECT id, url, title_original, text_original,
+           length(text_original) AS n
       FROM articles
      WHERE passed_relevance IS NULL
      ORDER BY id
@@ -115,6 +122,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, help="Process only the first N (by id)")
     ap.add_argument("--workers", type=int, default=4, help="Parallel articles (default 4)")
     ap.add_argument("--dry-run", action="store_true", help="Count only; no API calls")
+    ap.add_argument("--confirm-spend", action="store_true",
+                    help="Acknowledge the estimated cost (required above the threshold)")
     args = ap.parse_args()
 
     rows = fetch_unscored(args.limit)
@@ -127,11 +136,29 @@ def main() -> int:
         logger.info("  DRY RUN — id range %d..%d", rows[0]["id"], rows[-1]["id"])
         return 0
 
+    # Gate the spend BEFORE spawning workers (DECISION_LOG 2026-07-31). Two
+    # stages: every article pays a cheap relevance call; only the ~44% that
+    # pass go on to the expensive analysis model.
+    total_chars = sum(r["n"] or 0 for r in rows)
+    if not preflight(
+        stages=[
+            # Relevance returns a score and a sentence of reasoning — output is
+            # negligible next to the article it reads.
+            ("relevance (all)", total_chars, RELEVANCE_MODEL, 0.02),
+            ("analysis (passers)", int(total_chars * HISTORICAL_PASS_RATE),
+             ANALYSIS_MODEL, 1.6),
+        ],
+        article_count=len(rows),
+        confirmed=args.confirm_spend,
+    ):
+        return 2
+
     analyzer = Analyzer()
     tally = {
         "analyzed": 0, "rejected": 0,
         "translate_failed": 0, "summary_failed": 0, "error": 0,
     }
+    aborted = None
 
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {pool.submit(process, analyzer, r): r for r in rows}
@@ -139,6 +166,14 @@ def main() -> int:
             row = futures[fut]
             try:
                 aid, status, detail = fut.result()
+            except FatalAPIError as exc:
+                # Account-level block: cancel the batch rather than issue one
+                # doomed call per remaining article.
+                aborted = str(exc)
+                logger.error("[%d/%d] ACCOUNT BLOCKED — %s", i, len(rows), exc)
+                for pending in futures:
+                    pending.cancel()
+                break
             except Exception as exc:  # noqa: BLE001 — one bad article must not kill the run
                 tally["error"] += 1
                 logger.error("[%d/%d] id=%d UNEXPECTED: %s", i, len(rows), row["id"], exc)
@@ -150,6 +185,16 @@ def main() -> int:
                 logger.info("  ... progress: %s", tally)
 
     logger.info("─" * 56)
+    if aborted:
+        logger.error("Screening ABORTED on an account-level API block: %s", aborted)
+        logger.error(
+            "%d article(s) were scored and committed; the rest were not "
+            "attempted and stay unscored. Re-run once access is restored — "
+            "scored articles drop out of the queue automatically.",
+            tally["analyzed"] + tally["rejected"],
+        )
+        return 2
+
     logger.info(
         "Screening complete: %d analyzed, %d rejected, %d translation-failed, "
         "%d summary-failed, %d errors",

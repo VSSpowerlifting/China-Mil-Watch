@@ -51,13 +51,21 @@ ANALYSIS_MODEL: str = os.environ.get("ANALYSIS_MODEL", "claude-sonnet-4-6")
 # Prevents runaway costs from large scrape days or backlog catch-up.
 # Override via env var: DAILY_ANALYSIS_CAP=20 python pipeline.py
 # DAILY_ANALYSIS_CAP: per-run ceiling on articles sent to the LLM. Raised 15→40
-# on 2026-07-30 (analyst-approved). At 15 the cap sat *below* the ~30/day scrape
-# rate, so every run deferred ~18 articles into a backlog that could only grow;
-# 1,119 articles accumulated over 66 days without ever being relevance-screened
-# (DECISION_LOG 2026-07-30). The cap must stay above the scrape rate or the
-# backlog resumes growing — watch the "newly scraped article(s) deferred by the
-# cap" warning in pipeline logs, which fires when it doesn't.
-DAILY_ANALYSIS_CAP: int = int(os.environ.get("DAILY_ANALYSIS_CAP", "40"))
+# on 2026-07-30, then 40→55 on 2026-07-31 (analyst-approved). At 15 the cap sat
+# *below* the ~30/day scrape rate, so every run deferred ~18 articles into a
+# backlog that could only grow; 1,119 articles accumulated over 66 days without
+# ever being relevance-screened (DECISION_LOG 2026-07-30).
+#
+# Sizing rule: fresh scrapes receive (1 - BACKLOG_RESERVE_FRACTION) * cap slots,
+# so break-even against a scrape rate S requires cap >= S / (1 - reserve).
+# Measured intake is 32–40/day (avg ~37) over 2026-07-26..07-31, so at a 0.3
+# reserve the break-even cap is 37 / 0.7 ≈ 53. 40 was still below it: the
+# 2026-07-30 run deferred 9 fresh articles. 55 clears break-even with ~1 day of
+# margin and leaves ~17 slots/run draining the backlog.
+# The cap must stay above the scrape rate or the backlog resumes growing — watch
+# the "newly scraped article(s) deferred by the cap" warning in pipeline logs,
+# which fires when it doesn't.
+DAILY_ANALYSIS_CAP: int = int(os.environ.get("DAILY_ANALYSIS_CAP", "55"))
 
 # BACKLOG_RESERVE_FRACTION: share of DAILY_ANALYSIS_CAP held for backlog articles
 # (relevance-pending or never-scored) so a full day of fresh scrapes cannot crowd

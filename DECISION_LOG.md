@@ -2,6 +2,61 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-07-31 — An uncommitted template is not a publish guard; account-level API failure is not an article-level one
+
+Four rulings from hardening the pipeline after the 07-30 spend incident.
+
+1. **Leaving a template uncommitted does NOT prevent it from publishing.**
+   The 07-30 session left the methodology coverage disclosure as an
+   uncommitted working-tree diff, reasoning that an uncommitted file cannot
+   reach production. That reasoning is wrong. `site/generator.py` renders
+   from the **working tree**, and CI commits `output/`. A scrape-only
+   capture run on 07-31 rendered the unreviewed draft straight into
+   `output/methodology.html`; had that run been CI, the draft would have
+   published. **Standing rule: the only thing that keeps unreviewed copy
+   off the site is not rendering it.** `--no-analysis` now skips site
+   generation entirely, for this reason and because regenerating from a
+   knowingly-incomplete DB rewrites the public record from a partial view.
+
+2. **`DAILY_ANALYSIS_CAP` 40 → 55 (analyst-approved).** The sizing rule is
+   now explicit: fresh scrapes get `(1 - BACKLOG_RESERVE_FRACTION) × cap`
+   slots, so break-even against a scrape rate S requires
+   `cap ≥ S / (1 - reserve)`. Measured intake is 32–40/day (avg ~37) over
+   07-26→07-31, so at a 0.3 reserve break-even is 37 / 0.7 ≈ 53. **40 was
+   still below it** — the 07-30 run deferred 9 fresh articles. At 55 the
+   deferral warning goes silent at typical intake and ~18 slots/run drain
+   the backlog (~63 days for the current 1,130).
+
+3. **An account-level API failure must abort the run, not iterate.** When
+   the spend limit hit on 07-30, nothing distinguished "this article
+   failed" from "the account is blocked", so the pipeline made 40 further
+   doomed calls and the translation backfill made 60. `FatalAPIError` now
+   marks account-level failures (401/402/403, or a message naming a usage
+   limit, credit balance, billing, or quota) and every caller aborts the
+   batch on it. **429 is deliberately NOT fatal** — rate limits are
+   transient, and aborting on them would be a regression. The billing
+   marker now keys off this definitive signal rather than inferring
+   credit exhaustion from "everything failed".
+
+4. **Never write a record that satisfies the writer but violates the gate.**
+   The 07-30 session fixed the blank-summary bug in the backfill scripts
+   only; `pipeline.py` still wrote `analyzed_at` on any article with a
+   translation, regardless of summary. That is the same defect that
+   produced 14 damaged rows. The pipeline now requires a non-empty summary
+   before marking an article analyzed; without one it stays pending and
+   retries.
+
+**Spend pre-flight (`scripts/spend_guard.py`).** Both backfills now
+estimate cost from token arithmetic and current published prices, probe
+API access with one cheap call before spawning workers, and require
+`--confirm-spend` above $5. **The honest limit: the API exposes no
+remaining-balance endpoint, so this checks cost, never headroom.** Only
+the Console can answer "can I afford this?" — the guard's job is to make
+the number visible and acknowledged instead of felt. Verified live against
+the active block: the probe caught it and aborted at zero article calls.
+Remaining work is estimated at **~$25** (60 translations ≈ $1.88;
+1,130 screenings ≈ $23.47), against the ~$50 that was guessed on 07-30.
+
 ## 2026-07-30 — No edition for week ending 2026-07-25; the collection gap is recorded, not filled
 
 **Ruling (analyst-approved 2026-07-30): no edition is published for the week

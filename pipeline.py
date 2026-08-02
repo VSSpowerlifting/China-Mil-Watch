@@ -159,6 +159,9 @@ def run(
     # ── Stages 9–12: LLM analysis ────────────────────────────────────────────
     articles_analyzed      = 0
     passed_relevance_count = 0   # articles that passed relevance this run
+    # Set when the run aborts on an account-level API failure (spend limit,
+    # exhausted credit, bad credentials) rather than a per-article one.
+    account_blocked: Optional[str] = None
 
     # Build the analysis queue, newest-first so fresh scrapes are never starved:
     #   1. inserted — scraped this run (passed_relevance NULL)
@@ -266,7 +269,7 @@ def run(
     elif not queue:
         logger.info("No articles to analyze — all up to date.")
     else:
-        from analysis.analyzer import Analyzer
+        from analysis.analyzer import Analyzer, FatalAPIError
         analyzer = Analyzer()
 
         for i, (aid, title_zh, body_zh, url) in enumerate(queue, 1):
@@ -275,7 +278,23 @@ def run(
                 i, len(queue), title_zh[:70],
             )
 
-            result = analyzer.analyze(title_zh, body_zh)
+            try:
+                result = analyzer.analyze(title_zh, body_zh)
+            except FatalAPIError as exc:
+                # Account-level failure: every remaining call would fail the
+                # same way. On 2026-07-31 the spend limit was reached mid-run
+                # and the loop made 40 further doomed calls before finishing.
+                account_blocked = str(exc)
+                logger.error(
+                    "ABORTING analysis at %d/%d — account-level API failure, not "
+                    "an article-level one: %s\n"
+                    "The %d remaining queued article(s) were NOT attempted; they "
+                    "stay unscored and re-enter the backlog on a later run. "
+                    "Articles scraped this run are already stored.",
+                    i, len(queue), account_blocked, len(queue) - i,
+                )
+                errors.append(f"Analysis aborted: {account_blocked}")
+                break
 
             if result is None:
                 msg = f"Analysis failed entirely for article {aid} ({url})"
@@ -294,8 +313,17 @@ def run(
             if result["passed_relevance"]:
                 passed_relevance_count += 1
 
-            # Write full analysis only for articles that passed relevance
-            if result["passed_relevance"] and result.get("title_english"):
+            # Write full analysis only for articles that passed relevance AND
+            # produced a summary. Writing on title_english alone sets
+            # analyzed_at on a record with a blank summary, which reads as
+            # complete here but fails validate_output.py and blocks the deploy
+            # (DECISION_LOG 2026-07-31). Without the summary the article stays
+            # pending and a later run retries it.
+            if (
+                result["passed_relevance"]
+                and result.get("title_english")
+                and (result.get("summary_english") or "").strip()
+            ):
                 db.update_analysis(
                     article_id             = aid,
                     title_english          = result.get("title_english",          ""),
@@ -318,9 +346,14 @@ def run(
                 # Passed relevance but translation/summary failed → no publishable
                 # output. analyzed_at stays NULL so this becomes pending backlog
                 # and a later run retries it.
+                missing = (
+                    "no English translation"
+                    if not result.get("title_english")
+                    else "a translation but no summary"
+                )
                 msg = (
                     f"Post-relevance analysis incomplete for article {aid} ({url}): "
-                    "passed relevance but produced no English translation"
+                    f"passed relevance but produced {missing}"
                 )
                 logger.error(msg)
                 errors.append(msg)
@@ -349,7 +382,29 @@ def run(
         and passed_relevance_count > 0
         and not relevance_total_failure
     )
-    total_analysis_failed = relevance_total_failure or post_relevance_total_failure
+    # An account-level block is only a *run* failure if it stopped everything.
+    # If some articles were analyzed before the block, that work is publishable
+    # and the run should still generate the site and exit 0 — the marker below
+    # is what prevents later cron windows from retrying against a dead account.
+    account_block_total_failure = account_blocked is not None and articles_analyzed == 0
+
+    total_analysis_failed = (
+        relevance_total_failure
+        or post_relevance_total_failure
+        or account_block_total_failure
+    )
+
+    # Write the billing marker whenever the account is confirmed blocked, even
+    # on a partial success: every later window today would hit the same wall.
+    # This is a definitive signal from the API, unlike relevance_total_failure,
+    # which infers billing trouble from "everything failed".
+    if account_blocked is not None and not dry_run:
+        logger.error(
+            "Account-level API block detected (%s). Writing billing-failure "
+            "marker so later cron windows today skip their paid retries.",
+            account_blocked,
+        )
+        _write_billing_failure_marker(target_date)
 
     if run_id is not None:
         db.complete_scrape_run(
@@ -367,14 +422,23 @@ def run(
                    pre_cap=pre_cap, backlog_remaining=backlog_remaining)
 
     if total_analysis_failed:
-        if relevance_total_failure:
+        if account_block_total_failure:
+            logger.error(
+                "FATAL: analysis aborted on an account-level API block before any "
+                "article completed (%s). The billing-failure marker is already "
+                "written. Scraped articles are stored and the workflow's persist "
+                "step commits them; nothing new is publishable, so the site is "
+                "not regenerated.",
+                account_blocked,
+            )
+        elif relevance_total_failure:
             logger.error(
                 "FATAL: %d article(s) queued for analysis but zero succeeded — "
                 "API or billing failure. Writing billing-failure marker to prevent "
                 "repeated paid retries from later cron windows today.",
                 len(queue),
             )
-            if not dry_run:
+            if not dry_run and account_blocked is None:
                 _write_billing_failure_marker(target_date)
         else:
             logger.error(
@@ -388,7 +452,15 @@ def run(
         sys.exit(2)
 
     # ── Stage 14: Generate site ───────────────────────────────────────────────
-    if not dry_run:
+    # --no-analysis is an outage-capture mode: store the day's articles and stop.
+    # It must not regenerate output/, for two reasons found on 2026-07-31.
+    # First, the generator renders from the working tree, so an uncommitted
+    # template edit gets baked into output/ — and CI commits output/. A capture
+    # run published a methodology draft that was deliberately left uncommitted
+    # for review. An unreviewed template is not protected by being uncommitted.
+    # Second, regenerating from a DB whose analysis is knowingly incomplete
+    # rewrites the published site from a partial record.
+    if not dry_run and not no_analysis:
         try:
             import importlib.util
             from pathlib import Path as _Path

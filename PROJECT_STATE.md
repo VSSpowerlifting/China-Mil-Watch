@@ -1,6 +1,6 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-07-30 (collection-gap ruling + translation-cap diagnosis).
+Updated: 2026-07-31 (07-31 captured; cap→55; fatal-API breaker; spend guard).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
@@ -67,10 +67,15 @@ and current state:
 - **Recovered before the block:** 131 articles translated. **Remaining:**
   60 untranslated, 1,057 never-screened. Both backfill scripts are
   re-runnable and resume where they stopped.
-- **2026-07-30 collection is captured** (40 articles, stored unanalyzed).
-  **2026-07-31 still needs capturing** — run
-  `.venv/bin/python pipeline.py --no-analysis` before the day rolls off the
-  source listings. Do NOT rely on `ANTHROPIC_API_KEY=""`; see DECISION_LOG.
+- **2026-07-30 and 2026-07-31 collection are both captured** (40 articles
+  each, stored unanalyzed). 07-31 was taken at 21:58 UTC on 07-31 via
+  `.venv/bin/python pipeline.py --no-analysis`, closing the last window in
+  which permanent loss was still possible. Do NOT rely on
+  `ANTHROPIC_API_KEY=""`; see DECISION_LOG.
+- **`--no-analysis` no longer regenerates `output/`** (DECISION_LOG
+  2026-07-31 §1). The 07-31 capture, under the old behaviour, rendered the
+  unreviewed methodology draft into `output/` — that regeneration was
+  reverted and the behaviour fixed.
 - **CI will fail its analysis stage until 08-01** but now persists whatever
   it scraped (new workflow step), so no further collection is lost.
 - **No. 12 (week ending 2026-08-01)** needs 07-30/07-31/08-01 analyzed
@@ -155,9 +160,23 @@ edition when the analyst authors one.
 
 ## Next tasks
 
-Sonnet tickets T1–T5 in docs/ROADMAP.md (archive month grouping; Edition
-Plate v1; Signal Field v1; asset hygiene; executive readout). Fable reviews
-rendered results of T2/T3 before regenerated output is committed.
+**After 2026-08-01 00:00 UTC, in this order:**
+
+1. Check remaining headroom in the Console — the guard estimates cost, not
+   headroom, and cannot do this step for you.
+2. Resume the backfills **sequentially, not concurrently** (running both at
+   once doubled the draw on 07-30):
+   `.venv/bin/python scripts/backfill_translations.py --confirm-spend`
+   (60 articles, est. $1.88), then
+   `.venv/bin/python scripts/backfill_unscored.py --confirm-spend`
+   (1,130 articles, est. $23.47). Both abort immediately on an
+   account-level block and resume cleanly on re-run.
+3. Confirm the No. 12 window (07-26→08-01) is fully analyzed before
+   drafting.
+
+Then Sonnet tickets T1–T5 in docs/ROADMAP.md (archive month grouping;
+Edition Plate v1; Signal Field v1; asset hygiene; executive readout). Fable
+reviews rendered results of T2/T3 before regenerated output is committed.
 
 ## Recent completed work (compressed; details in DECISION_LOG.md)
 
