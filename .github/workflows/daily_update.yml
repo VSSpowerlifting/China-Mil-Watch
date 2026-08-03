@@ -2,9 +2,17 @@ name: Daily PLA Watch Update
 
 on:
   schedule:
-    # Five retry windows covering 08:23–10:23 NY time (EDT, UTC-4).
-    # Off-peak minutes (:23/:53) reduce GitHub scheduler queueing delays.
+    # Five retry windows. NOMINALLY 08:23–10:23 NY (EDT, UTC-4) — but measured
+    # start times run 60–100 min late, every window, so real execution is closer
+    # to 09:45–11:30 NY. Aug 1 and Aug 2 2026 both show the same pattern (cron
+    # 12:23 UTC -> actual 14:04 and 14:02). The off-peak :23/:53 minutes do NOT
+    # appear to buy anything; they are kept only because changing them has not
+    # been tested. Do not rely on these times when timing a manual push — check
+    # the Actions API for what is actually running:
+    #   curl -s .../actions/runs?per_page=5
     # The scheduling guard ensures at most one successful run per NY calendar day.
+    # NOTE: a run whose guard says should_run=false skips every step and still
+    # reports "success", so a green run does NOT mean the pipeline executed.
     - cron: '23 12 * * *'
     - cron: '53 12 * * *'
     - cron: '23 13 * * *'
