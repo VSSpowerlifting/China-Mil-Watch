@@ -102,6 +102,19 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
 
+      # ── 3b. Register the pla_watch.db merge driver ────────────────────────
+      # `.gitattributes` names the driver but cannot define it, so an
+      # unregistered runner silently falls back to a raw binary conflict. Every
+      # push-back step below runs `git pull --rebase`, and CI is exactly where
+      # an unattended conflict is most expensive: the rebase fails, the commit
+      # step fails, and `failure()` then drives the persist step into the same
+      # conflict — losing the day's collection (DECISION_LOG 2026-08-02).
+      # reconcile_db.py imports only the standard library, so this is safe to
+      # run before dependencies are installed.
+      - name: Register DB merge driver
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python scripts/reconcile_db.py --install-driver
+
       # ── 4. Dependencies ────────────────────────────────────────────────────
       - name: Install dependencies
         if: steps.timecheck.outputs.should_run == 'true'

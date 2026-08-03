@@ -26,8 +26,18 @@ identity (its ids 2727–2753 are already published in `output/article/*.html`
 and the sitemap), branch rows renumbered from 2754, 3 scrape_runs remapped,
 117 analyses backfilled onto rows still pending in origin. Result: 2827
 rows / 658 analyzed, continuous 07-29→08-01 coverage, and gates pass for
-fk, integrity, duplicate urls, id drift, and url loss from either side.
-**Not merged or pushed — awaiting analyst approval.**
+fk, integrity, duplicate urls, id drift, and url loss from either side. The
+same inputs have produced digest `b80e813b` on three independent runs.
+
+`origin/main` is now **merged into the branch** (`46b4a0a`), the binary
+conflict resolved with that reconciliation; branch is 4 ahead / 0 behind and
+the validator passes at the 9-warning baseline. **Not pushed.** The push was
+held because 09:10 fell inside the 08:23–10:23 cron window and `gh` is not
+installed here, so no one could see whether a run was in flight — pushing
+mid-run drives CI's `git pull --rebase` into the same binary conflict and
+`failure()` then takes the day's collection with it. Land with
+`git checkout main && git merge --ff-only fix/pipeline-data-loss-2026-07-30`
+once Actions shows the window clear.
 
 Historical note, still accurate: the previously uncommitted 2026-07-12 production-completion pass,
 2026-07-13 Signal Veil pass, and 2026-07-16 J-20 atmospheric pass (see

@@ -1,0 +1,16 @@
+# pla_watch.db is a binary SQLite file that CI writes to main on a schedule
+# while humans work on branches, so both sides routinely advance from one base.
+# Git's default binary handling can only offer "take mine or take theirs", and
+# either choice silently destroys a day of collection — this happened four times
+# between 2026-07-12 and 2026-08-02 (DECISION_LOG 2026-08-02).
+#
+# The driver merges by url with the published side keeping its ids, and refuses
+# (leaving a normal conflict) if it cannot establish which side is published.
+#
+# `.gitattributes` can only NAME a driver; it cannot define one. Every clone and
+# every CI runner must register it once, or this line silently falls back to a
+# binary conflict:
+#
+#     .venv/bin/python scripts/reconcile_db.py --install-driver
+#
+pla_watch.db merge=reconcile-db

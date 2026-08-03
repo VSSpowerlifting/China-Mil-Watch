@@ -47,6 +47,7 @@ after CI advances `origin/main` again without editing anything.
 
 import argparse
 import logging
+import os
 import shutil
 import sqlite3
 import subprocess
@@ -78,6 +79,113 @@ def _git(*args) -> bytes:
     return subprocess.run(
         ["git", *args], check=True, capture_output=True
     ).stdout
+
+
+def _published_side(path_a: str, path_b: str):
+    """
+    Return whichever of the two files is the published side, or None.
+
+    The merge is asymmetric — origin keeps its ids because they are already
+    live as `output/article/<id>.html` — but git hands a merge driver "ours"
+    and "theirs", which say nothing about which side is published. Merging
+    origin/main INTO a branch makes origin *theirs*; merging a branch into
+    main makes it *ours*. Reading identity off that position would, half the
+    time, renumber the published side and silently repoint every article URL.
+
+    So identify it by content instead: hash both candidates and compare against
+    the blob at `origin/main`. This is position-independent, which also makes it
+    correct under rebase, where ours/theirs are inverted again.
+    """
+    try:
+        want = _git("rev-parse", f"origin/main:{DB_PATH}").decode().strip()
+    except subprocess.CalledProcessError:
+        return None
+    for path in (path_a, path_b):
+        if _git("hash-object", path).decode().strip() == want:
+            return path
+    return None
+
+
+def _cleanup_sqlite_sidecars(*paths: str) -> None:
+    """
+    Remove the -shm/-wal files SQLite leaves beside every database it opens.
+
+    In driver mode all four paths are git's own `.merge_file_*` temporaries, so
+    their sidecars are pure litter — without this they accumulate as untracked
+    files in the repo root on every merge.
+    """
+    for path in paths:
+        for suffix in ("-shm", "-wal"):
+            try:
+                os.remove(path + suffix)
+            except OSError:
+                pass
+
+
+def merge_driver(ancestor: str, current: str, other: str) -> int:
+    """
+    git merge driver entry point (%O %A %B). The result must land in `current`.
+
+    Refuses rather than guesses: if neither side is the blob at origin/main,
+    identity cannot be established and a real conflict is the safe outcome.
+    A non-zero exit leaves the conflict for a human, which is correct — this
+    driver exists to remove a routine hazard, not to force every merge through.
+    """
+    published = _published_side(current, other)
+    if published is None:
+        logger.error(
+            "reconcile-db: neither side matches origin/main:%s, so the published "
+            "side cannot be identified. Refusing to guess — resolve by hand with "
+            "`scripts/reconcile_db.py --base/--origin/--local`.", DB_PATH,
+        )
+        return 1
+
+    origin_path = published
+    local_path = other if published == current else current
+    logger.info("reconcile-db: published side is %s",
+                "ours (%A)" if published == current else "theirs (%B)")
+
+    tmp = current + ".reconciled"
+    try:
+        con, report = reconcile(ancestor, origin_path, local_path, tmp)
+        problems = gates(con, origin_path, local_path, tmp)
+        con.close()
+    except Exception as exc:  # noqa: BLE001 — any failure must become a conflict
+        logger.error("reconcile-db: %s: %s", type(exc).__name__, exc)
+        return 1
+    finally:
+        _cleanup_sqlite_sidecars(ancestor, current, other, tmp)
+
+    if problems:
+        for p in problems:
+            logger.error("reconcile-db FAIL: %s", p)
+        return 1
+
+    shutil.move(tmp, current)
+    logger.info("reconcile-db: merged %s new article(s), backfilled %s analysis row(s)",
+                report["articles_inserted"], report["analysis_backfilled"])
+    return 0
+
+
+def install_driver() -> int:
+    """
+    Register the driver in .git/config.
+
+    Merge drivers cannot be configured from a committed file — `.gitattributes`
+    only names the driver, so every clone (and every CI runner) must run this
+    once or the attribute silently falls back to a binary conflict.
+
+    The interpreter is taken from `sys.executable` rather than hardcoded: local
+    checkouts run this under `.venv/bin/python`, but CI installs deps against the
+    runner's own python and has no `.venv` at all, so a fixed path would leave CI
+    silently unprotected — precisely where an unattended conflict is most costly.
+    """
+    _git("config", "merge.reconcile-db.name",
+         "row-level pla_watch.db reconciliation")
+    _git("config", "merge.reconcile-db.driver",
+         f"{sys.executable} scripts/reconcile_db.py --merge-driver %O %A %B")
+    logger.info("registered merge.reconcile-db driver (%s)", sys.executable)
+    return 0
 
 
 def extract_from_git(workdir: str):
@@ -251,13 +359,26 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--from-git", action="store_true",
                     help="derive base/origin/local from merge-base, origin/main, HEAD")
+    ap.add_argument("--merge-driver", nargs=3, metavar=("ANCESTOR", "CURRENT", "OTHER"),
+                    help="git merge driver mode (%%O %%A %%B); result is written to CURRENT")
+    ap.add_argument("--install-driver", action="store_true",
+                    help="register the driver in .git/config (needed once per clone)")
     ap.add_argument("--base")
     ap.add_argument("--origin")
     ap.add_argument("--local")
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out")
     ap.add_argument("--workdir", default="/tmp",
                     help="where --from-git writes its extracted copies")
     args = ap.parse_args()
+
+    if args.install_driver:
+        raise SystemExit(install_driver())
+
+    if args.merge_driver:
+        raise SystemExit(merge_driver(*args.merge_driver))
+
+    if not args.out:
+        ap.error("--out is required unless using --merge-driver or --install-driver")
 
     if args.from_git:
         base, origin, local = extract_from_git(args.workdir)

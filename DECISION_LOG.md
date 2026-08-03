@@ -75,8 +75,33 @@ Newest first. Record decisions that constrain future work.
    uncommitted passes, the 07-17 reconcile, and local `main` drifting 10 CI
    commits behind on 07-30. The recurrence is structural, not careless: a
    mutable binary committed to git and written by two authors cannot be
-   made safe by discipline alone. Recorded here as a known cost, not yet an
-   agreed fix.
+   made safe by discipline alone. **Resolved by ruling 6 rather than by
+   asking people to remember.**
+
+6. **The reconciliation runs as a git merge driver.** `.gitattributes` maps
+   `pla_watch.db merge=reconcile-db`, and `reconcile_db.py --merge-driver`
+   implements it, so `git merge` performs the row-level reconciliation instead
+   of raising a binary conflict. Verified by replaying the 07-30→31 merge: the
+   driver resolved it unaided, 0 conflicts, and produced digest `b80e813b` —
+   identical to the hand-resolved result.
+
+7. **The published side is identified by content, never by ours/theirs.** The
+   merge is asymmetric, but git's ours/theirs says nothing about which side is
+   published: merging `origin/main` into a branch makes origin *theirs*, and
+   merging a branch into `main` makes it *ours*. Reading identity off position
+   would, half the time, renumber the published side and silently repoint every
+   `output/article/<id>.html`. The driver hashes both candidates against the
+   blob at `origin/main` instead — which is also correct under rebase, where
+   ours/theirs invert again. **If neither side matches, the driver refuses and
+   leaves a normal conflict.** Guessing at identity is worse than conflicting.
+
+8. **`.gitattributes` names a driver but cannot define one**, so every clone and
+   every CI runner must run `--install-driver` once or the mapping silently
+   degrades to a binary conflict. The daily workflow registers it after Python
+   setup (the script imports only the standard library, so it needs no
+   dependencies). The interpreter comes from `sys.executable`, not a hardcoded
+   `.venv/bin/python` — CI has no `.venv`, and a fixed path would leave the
+   unattended case, where a conflict is most expensive, unprotected.
 
 ## 2026-07-31 — An uncommitted template is not a publish guard; account-level API failure is not an article-level one
 
