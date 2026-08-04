@@ -18,6 +18,9 @@ Checks (each failure is fatal unless noted):
      counts, body text sufficient to re-render, and a source trail whose
      entries carry title/url/source/date. Index and archive must link every
      edition. Missing LinkedIn .txt and cadence gaps are warnings.
+  8. Every analyzed article in pla_watch.db has a rendered page (orphaned
+     pages are a warning). Only runs against the repo's own output/ when the
+     DB is present, so validating a copied tree still works.
 
 Usage:
     python3 scripts/validate_output.py [output_dir]   # default: ../output
@@ -25,6 +28,7 @@ Usage:
 
 import json
 import re
+import sqlite3
 import sys
 from datetime import date
 from pathlib import Path
@@ -137,7 +141,71 @@ def validate(output_dir: Path) -> tuple[list[str], list[str]]:
 
     _validate_editorial_images(output_dir, errors, warnings)
 
+    _validate_db_coverage(output_dir, errors, warnings)
+
     return (errors, warnings)
+
+
+# ── DB ↔ output coverage ────────────────────────────────────────────────────
+
+def _validate_db_coverage(output_dir: Path, errors: list, warnings: list) -> None:
+    """
+    Every analyzed article must have a rendered page.
+
+    Why this exists (2026-08-03): the 07-30 translation backfill wrote 117
+    analyzed articles to the DB, a reconcile merge carried them onto main, and
+    nothing re-rendered. Checks 1-7 all read output/ in isolation, so a site
+    missing a sixth of its analyzed corpus passed the gate through four
+    consecutive deploys. Any path that writes the DB without re-rendering —
+    backfills, reconciles, merges — reproduces this, so the gate has to compare
+    the two rather than trust either alone.
+
+    Skipped when the DB is absent or a non-default output dir was passed, so
+    validating a copied or deployed tree still works.
+    """
+    repo_root = Path(__file__).resolve().parent.parent
+    db_path = repo_root / "pla_watch.db"
+    if not db_path.is_file() or output_dir != (repo_root / "output").resolve():
+        return
+
+    article_dir = output_dir / "article"
+    if not article_dir.is_dir():
+        errors.append("output/article/ is missing — no article pages rendered")
+        return
+
+    try:
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        try:
+            db_ids = {
+                str(r[0]) for r in conn.execute(
+                    "SELECT id FROM articles "
+                    " WHERE analyzed_at IS NOT NULL AND passed_relevance = 1"
+                )
+            }
+        finally:
+            conn.close()
+    except sqlite3.Error as exc:
+        warnings.append(f"could not read pla_watch.db for coverage check: {exc}")
+        return
+
+    page_ids = {p.stem for p in article_dir.glob("*.html")}
+
+    unrendered = sorted(db_ids - page_ids, key=lambda s: int(s) if s.isdigit() else 0)
+    if unrendered:
+        errors.append(
+            f"{len(unrendered)} analyzed article(s) in pla_watch.db have no "
+            "rendered page — run `site/generator.py`: ids "
+            + ", ".join(unrendered[:20])
+            + (" …" if len(unrendered) > 20 else "")
+        )
+
+    orphans = sorted(page_ids - db_ids, key=lambda s: int(s) if s.isdigit() else 0)
+    if orphans:
+        warnings.append(
+            f"{len(orphans)} rendered page(s) have no analyzed article in the DB: ids "
+            + ", ".join(orphans[:20])
+            + (" …" if len(orphans) > 20 else "")
+        )
 
 
 # ── Editorial imagery (Source-Derived Signal Graphics) ──────────────────────
