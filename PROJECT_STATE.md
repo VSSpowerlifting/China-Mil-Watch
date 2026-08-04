@@ -73,16 +73,22 @@ articles captured live, 3 recoverable). Expect and keep a **cadence-gap
 warning** from the validator for this break; it is the record of the
 outage, not a defect to suppress.
 
-**No. 12 is not yet draftable — its window is 62% unscreened.** With the
-reconciliation landed, the 07-26→08-01 window holds all seven days and 253
-articles (32 / 38 / 39 / 37 / 40 / 40 / 27). But only **36 are analyzed and
-156 are still unscreened**, including 37 of 40 on 07-30 and 36 of 40 on
-07-31. Relevant-so-far reads 42; at the ~44% measured pass rate the
-unscreened remainder should yield roughly 68 more. Unlike the No. 11-week
-gap, nothing flags this: the cadence sequence is unbroken and the validator
-stays quiet, so an edition drafted now would silently rest on a third of
-its week's screened material. Drain the window before drafting No. 12 —
-the backlog reserve alone will not clear it in time (see Next tasks).
+**No. 12's window is now fully screened (2026-08-03).** The 07-26→08-01
+window holds all seven days and 253 articles (32 / 38 / 39 / 37 / 40 / 40 /
+27). Its 156 unscreened articles were cleared by a scoped
+`backfill_unscored.py --since 2026-07-26 --until 2026-08-01` run: 110
+analyzed, 43 rejected, 1 translation-failed, 2 summary-failed, 0 errors.
+Window now reads **0 unscreened, 155 passed relevance, 146 fully analyzed,
+24 model-flagged, 9 relevant-but-untranslated**. The observed pass rate was
+**72%, not the historical 44%** — the estimate assumed 44%, so actual spend
+was ~$4.55 against a $2.86 pre-flight. Treat 44% as a floor for recent
+windows when estimating.
+
+Before drafting No. 12: clear the 9 untranslated (they carry no English
+title/summary, so no edition can cite them) via
+`scripts/backfill_translations.py`, then re-render and run the deploy gate.
+Note the window is screened but `output/` has **not** been regenerated —
+the DB is ahead of the site.
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
@@ -109,10 +115,19 @@ backfills; all LLM calls returned 400 until the monthly reset. The block has
 lifted and daily collection ran normally on 08-01, 08-02 and 08-03. Current
 state and durable consequences:
 
-- **Corpus as measured 2026-08-03:** 2880 articles, **1199 never screened**
-  (42%), 752 passed relevance, **80 relevant but untranslated**, 0
-  translated-without-summary — the 14 noted on 08-02 have cleared. Both
-  backfill scripts are re-runnable and resume where they stopped.
+- **Corpus as measured 2026-08-03 (after the No. 12-window backfill):** 2880
+  articles, **1043 never screened** (36%), **83 relevant but untranslated**,
+  0 translated-without-summary. The No. 12 window accounts for the drop from
+  1199; the untranslated count rose by 3 because the scoped run produced 1
+  translation-failure and 2 summary-failures, which stay unwritten by design
+  and re-queue. Both backfill scripts are re-runnable and resume where they
+  stopped — the DB is the checkpoint (`passed_relevance IS NULL`), there is
+  no checkpoint file.
+- **`backfill_unscored.py` now takes `--since` / `--until`** (inclusive,
+  `published_date`, YYYY-MM-DD). `--limit` alone could not scope a run to a
+  current edition: it slices oldest-id-first, and the No. 12 window sat at
+  positions 1024–1199 of the 1199-item queue, so reaching it meant paying for
+  the entire backlog. Default behaviour without the flags is unchanged.
 - **2026-07-30 and 2026-07-31 collection are both captured** (40 articles
   each, still unanalyzed). 07-31 was taken at 21:58 UTC on 07-31 via
   `.venv/bin/python pipeline.py --no-analysis`, closing the last window in
