@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Making the Classroom Truly Connect with the &#34;Winds and Waves&#34; of the Battlefield: How One Model Course Ventured into the &#34;Deep Water&#34; — China Mil Watch</title>
+  <meta name="description" content="The Naval University of Engineering&#39;s *Submarine Maneuvering* course, led by Professor Peng Likun, won selection in a military-wide model course competition after a multi-year overhaul that replaced s">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/1426.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/1426.html">
+  <meta property="og:title"        content="Making the Classroom Truly Connect with the &#34;Winds and Waves&#34; of the Battlefield: How One Model Course Ventured into the &#34;Deep Water&#34;">
+  <meta property="og:description"  content="The Naval University of Engineering&#39;s *Submarine Maneuvering* course, led by Professor Peng Likun, won selection in a military-wide model course competition after a multi-year overhaul that replaced s">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Making the Classroom Truly Connect with the &#34;Winds and Waves&#34; of the Battlefield: How One Model Course Ventured into the &#34;Deep Water&#34;">
+  <meta name="twitter:description" content="The Naval University of Engineering&#39;s *Submarine Maneuvering* course, led by Professor Peng Likun, won selection in a military-wide model course competition after a multi-year overhaul that replaced s">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Making the Classroom Truly Connect with the &#34;Winds and Waves&#34; of the Battlefield: How One Model Course Ventured into the &#34;Deep Water&#34;
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">让课堂真正对接战场的&#34;风浪&#34;,看一门精品课如何潜入&#34;深水区&#34;</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>15 June 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16467359.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>The Naval University of Engineering&#39;s *Submarine Maneuvering* course, led by Professor Peng Likun, won selection in a military-wide model course competition after a multi-year overhaul that replaced single-station simulator drills with a 1:1 replica compartment system, a &#39;battle station rotation and role exchange&#39; model, and mission-based assessments replacing procedural ones — changes the article credits with cutting the time new graduates need to pass the &#39;post qualification certificate&#39; (岗位合格证) by roughly half. The article documents the PLA Navy&#39;s institutional response to 教战脱节 (&#39;disconnection between teaching and combat&#39;), a problem the Naval University of Engineering identified through unit visits, and records that the reformed course model has already been extended to multiple submarine units and incorporated into Navy-wide guidance on military academy teaching reform. The framing of 战教耦合 (&#39;combat-teaching coupling&#39;) as a &#39;strategic fulcrum&#39; points to pressure from above to close the classroom-to-fleet gap across specializations, not just submarine machinery — though which other courses or academies are under similar mandates remains unspecified.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>**News Sample | Classroom Connects to Battlefield | Ready for Duty upon Graduation**</p><p>■ Chen Jia, Tan Silin</p><p>The sea surface was calm, but powerful undercurrents surged beneath. During a maritime exercise, an alarm suddenly blared inside the compartment of a submarine. &#34;Suspicious sonar signal detected! Emergency dive!&#34; Deputy Chief of Machinery Li Zhengyuan moved the instant the order came, his fingertips racing across the control panel, his commands ringing clearly throughout the entire vessel.</p><p>The submarine dove rapidly, the hull trembling slightly. Several minutes later, the hull hovered steadily at the designated depth. In the command compartment, Li Zhengyuan fixed his gaze on the display screen, calmly issuing follow-on adjustment orders, precisely monitoring every parameter change to ensure the vessel maintained a stable attitude.</p><p>A year ago, Li Zhengyuan was still a fourth-year officer cadet at the Naval University of Engineering. Today, he has grown into a deputy chief of machinery capable of handling responsibilities independently. Speaking of Li Zhengyuan, the submarine&#39;s leadership offered praise: &#34;In previous years, graduates from the machinery specialization needed a long time to adapt to their posts. But now, cadets like Li Zhengyuan can hit the ground running the moment they arrive — the change is very pronounced.&#34;</p><p>This remarkable transformation is inseparable from the bold teaching reforms the Naval University of Engineering has been driving. Years ago, Professor Peng Likun and his team conducted in-depth research at frontline submarine units and discovered a gap between what was taught in the classroom and the actual demands of posts in the force — cadets were unable to rapidly develop combat effectiveness.</p><p>&#34;Wherever the battlefield&#39;s demands lie, that is where the target of talent cultivation must be aimed.&#34; Peng Likun&#39;s team anchored itself to the principle of &#34;demand-driven, combat-oriented&#34; (需求牵引、实战导向), going deep into units to analyze the core capability requirements of each post. With the university&#39;s support, they subsequently restructured and rebuilt the curriculum system. They innovated teaching models, extending the classroom to the front lines of exercises and training; substantially increased the proportion of practical instruction; built a tiered, progressive, combat-realistic hands-on training system that tempers cadets&#39; solid skills in simulated battlefield environments; and simultaneously reformed the assessment and evaluation mechanism, incorporating key indicators such as battlefield adaptability and military command competence into evaluation standards.</p><p>The results of the curriculum reform appeared rapidly on the exercise and training ground. Graduate cadet Zuo Jingsheng completed emergency sortie preparations in the shortest time during a major exercise; graduate cadet Deng Xiaohu successfully accomplished a cross-region mobile emergency mission on his first attempt, relying on his solid capabilities… Today, the experience from this curriculum development has been incorporated into the Navy&#39;s guidance outline for teaching reform at military academies, providing a replicable &#34;model&#34; for resolving the problem of &#34;disconnection between teaching and combat&#34; (教战脱节).</p><p>In the military-wide model course competition, the *Submarine Maneuvering* course, reformed under the leadership of Professor Peng Likun, was successfully selected. This is not only an affirmation of the curriculum reform&#39;s achievements, but also a vivid embodiment of military academy talent cultivation precisely aligned with battlefield demands.</p><p>From the military academy classroom to the deep-sea battlefield, batch after batch of outstanding cadets like Li Zhengyuan are rapidly growing into the backbone of combat capability building in the force, relying on their solid professional competence and proven combat abilities. The synchronized resonance between academies and units is making talent cultivation ever more &#34;on the right track&#34; (对路子), injecting inexhaustible momentum into the Navy&#39;s mission of forging swords in the deep sea and striving for maritime strength.</p><p>*Naval University of Engineering cadets engage in post-class discussion.*</p><p>---</p><p>**Reporter&#39;s Investigation | Advancing Toward Combat: How One Model Course Ventured into the &#34;Deep Water&#34;**</p><p>■ Wang Sisi, PLA Daily Reporter Wang Yue, Special Correspondent Zhang Jiahao</p><p>Red and blue dots flickered like sparks on an electronic nautical chart; a deep buzzer alarm suddenly sounded inside a simulation compartment; several undergraduate cadets in the submarine machinery command specialization quickly gathered around the command screen as a combat-realistic course assessment got underway…</p><p>Confronted with a complex sea area and multiple special situations, cadets frankly said &#34;the exam questions and methods are completely different now.&#34; This assessment, conducted from the perspective of future warfare, vividly embodies the Naval University of Engineering&#39;s teaching philosophy of &#34;combat-teaching coupling&#34; (战教耦合).</p><p>In the military-wide model course competition, the university&#39;s newly upgraded *Submarine Maneuvering* course stood out with its innovative concept of &#34;precisely aligning with battlefield demands and empowering combat research and teaching through science and technology.&#34; Course director Peng Likun reflected: &#34;Curriculum reform must dare to venture into the &#39;deep water.&#39; The transformation from classroom to battlefield, from theory to practice, is the inevitable choice in the development of military education, and the correct navigational bearing toward victory.&#34;</p><p>*Naval University of Engineering instructors explain theoretical knowledge to cadets.*</p><p>**Self-Revolution — Daring to Renovate and Reshape a Course That Was Once Universally Acclaimed**</p><p>Inside a simulation training center at the Naval University of Engineering, indicator lights flickered on and off, and the low, continuous hum of electromechanical equipment resembled the silent breathing of the deep sea. A simulated &#34;enemy&#34; vessel tracking exercise was quietly unfolding.</p><p>&#34;Suspected location in an underwater cliff zone!&#34; After receiving the navigator&#39;s report, cadet Li Yi, serving as the submarine&#39;s chief of machinery, fixed his gaze on his battle station&#39;s operating interface and data readouts, tensely performing trim calculations — but at a critical juncture, he overlooked a sudden change in the sea area&#39;s water density. When buoyancy dropped sharply and the hull began an uncontrolled rapid descent, the order &#34;emergency surface&#34; from the command compartment broke the silence of the training room, and the exercise was called to an end.</p><p>&#34;As a commander, you were only watching your own screen. You paid no attention to the helmsman&#39;s operating process, and you gave no thought to the motion state of the entire vessel.&#34; At the after-action review, Professor Peng Likun cut straight to the point.</p><p>Watching Li Yi&#39;s failure, Peng Likun felt a complex mix of emotions. This veteran instructor, who had won teaching achievement awards on multiple occasions, keenly detected the cognitive limitations of the cadets: they were accustomed to fragmented operations in front of virtual screens and struggled to build a complete battlefield cognitive framework. This mindset of &#34;seeing only the screen, not the battlefield&#34; (只见屏幕不见战场) exposed the &#34;last mile&#34; that urgently needed to be bridged between teaching practice and battlefield demands.</p><p>The *Submarine Maneuvering* course that Peng Likun oversees has now traversed more than 60 years of history, sending batch after batch of outstanding backbone personnel to frontline submarine units, and bearing witness to the submarine force&#39;s leapfrog development from nothing to something, from weak to strong.</p><p>Over more than 60 years, the course&#39;s iterative upgrades have never ceased: the equipment taught has evolved from introduced and reverse-engineered submarines to domestically produced conventional submarines and nuclear-powered submarines; the textbooks used have evolved from self-compiled, mimeographed materials to quality textbooks publicly published by the National Defense Industry Press; the training equipment has been upgraded from a certain type of submarine maneuvering trainer to a new-generation simulation training system… Generation after generation of instructors have passed the torch and cultivated the field without pause, pouring countless efforts into this course and forging its solid reputation as a &#34;gold course&#34; (金课).</p><p>Yet the glory of that &#34;gold course&#34; weighed ever more heavily on Peng Likun&#39;s heart. Confronted with the tide of compound teaching reform emphasizing &#34;integration of theory and practice, unification of command and technical skills, and integration of research and training&#34; (理实融合、指技合一、研训一体), Peng Likun clearly recognized that resting on history&#39;s &#34;book of merits&#34; and accepting the status quo would only turn that glory into &#34;shackles&#34; constraining innovation. Determined to help cadets build a complete battlefield cognitive framework, Peng Likun resolved to launch a comprehensive reform of the course.</p><p>The first step in reform was to identify the problems. Peng Likun and the teaching and research team turned their problem-solving gaze toward the cadets below the lectern — those young people about to head to frontline units.</p><p>A faculty-student forum was promptly convened. &#34;Four people share one simulator, each getting only 20 minutes of training time per session — just as you start to get a feel for it, it&#39;s over; there are far too few hands-on opportunities.&#34; &#34;Lesson plan updates lag behind equipment iteration; new submarine maneuvering systems lack supporting practical modules&#34;… At the forum, cadets spoke bluntly, &#34;venting&#34; their frustrations; every pain point struck precisely at a teaching shortcoming, and each became a core target for curriculum reform.</p><p>After this collision of ideas, a problem-oriented reshaping of instruction began: building a &#34;trinity&#34; (三位一体) teaching system that organically couples theoretical instruction, virtual simulation, and live-equipment operation; developing a multi-dimensional battlefield deduction system to temper cadets&#39; decision-making ability in dynamic adversarial exercises; innovating a &#34;battle station rotation + role exchange&#34; model to ensure every cadet can experience the system-linkage effect from different battle stations…</p><p>&#34;Curriculum development and reform are always on the road. We must dare to renovate and reshape courses that were once universally acclaimed.&#34; At a special teaching situation analysis conference, Peng Likun issued this call to his colleagues. This teaching transformation — still waters running deep — is injecting new combat-capability genes into the submarine force.</p><p>**Virtual-Real Integration — Completing the Leap from Single-Station Operation to Coordinated Training in a Simulated Environment**</p><p>*Naval University of Engineering cadets train using the simulation training system.*</p><p>Change was imperative; transformation was urgent. After the special teaching situation analysis conference, Peng Likun and the teaching and research team members immediately threw themselves into curriculum reform research with the courage to turn the blade inward.</p><p>Over several months, their footprints covered multiple submarine units. Limited shore and harbor training posts for submarine maneuvering, insufficient immersive experience replicating the atmosphere of an actual vessel, lagging digitalized, informatized, and intelligentized means… More than ten special symposiums, over a hundred candid recommendations, combined with in-depth discussions with military and civilian academies, gradually sketched a clear outline for reform. Between the classroom and the battlefield, what was missing was a bridge capable of converting theory into combat capability — a simulation apparatus that could authentically replicate the submarine&#39;s operating environment and system-linkage mechanisms.</p><p>With the direction set, the team buckled down to tackle the challenge, aiming squarely at &#34;building an integrated platform for training and teaching.&#34; Before long, a new-generation submarine maneuvering simulation training system — &#34;data-driven, virtual-real integrated&#34; — was announced complete.</p><p>A 1:1 replica of the compartment layout and control console authentically reproduces the submarine&#39;s internal environment and operating procedures. Beyond that, the system also includes a portable vessel-operation research and training kit and a support-system virtual maneuvering research and training kit; their portability, customizability, and support for independent research and training allow crew members of various specializations to flexibly conduct specialized, customized, refined, and even immersive battle station research and training.</p><p>&#34;Bow and stern ballast tanks flooded, ready to dive!&#34; As training began, cadet Zhou Ming, responsible for the controls, fixed his gaze on the jumping parameters on the control panel, his fingertips moving deftly among rows of red and yellow buttons. Battle station orders rang out in succession; instructor Pan Wei moved among the control consoles with a laser pointer, periodically bending down to correct cadets&#39; actions: &#34;The sea valve must be fully opened&#34;; &#34;After flooding, immediately check longitudinal and transverse trim and compartment watertightness to prevent loss of control or flooding&#34;…</p><p>&#34;Pulling the control lever yourself — the feeling is immediately different.&#34; Cadet Zhou Ming reflected: &#34;This course, which everyone calls a &#39;post rehearsal&#39; (岗位预演), not only links together multiple specialized courses such as *Submarine Systems and Equipment* and *Electromechanical Equipment Maintenance*, but also allows us to complete the leap from single-station operation to coordinated training in a simulated environment, and thereby genuinely understand the training-and-teaching philosophy of &#39;a hundred people operating one weapon together&#39; (百人同操一杆枪).&#34;</p><p>Tested through practice and refined repeatedly, this course with its deep accumulated foundations successfully built a new paradigm for submarine maneuvering instruction: &#34;virtual-real integrated, three-dimensional and multi-dimensional&#34; (虚实融合、立体多元). After being showcased at relevant Navy conferences, the course model was successfully approved as a project and rapidly extended to multiple submarine units. According to unit feedback, after the course&#39;s teaching equipment was trialed by units, more than a thousand cadet training instances were completed, the adaptation period for newly graduated cadets joining vessels was significantly shortened, and battle station coordination efficiency improved markedly.</p><p>**Accelerating Conversion — The Results of Curriculum Innovation Are Extending to Frontline Battle Stations**</p><p>*Naval University of Engineering instructors (second from right) explain submarine structure to cadets.*</p><p>During a comprehensive exercise, Li Yi was on watch in the submarine&#39;s command compartment. The submarine was proceeding silently submerged, all systems running smoothly. Suddenly, he keenly detected a subtle abnormal fluctuation in the current parameters of the main propulsion system.</p><p>In the past, this minor deviation might have been overlooked. But at that moment, Li Yi&#39;s mind rapidly connected what he had learned in class — this could be a sign of propeller shaft bearing wear. He decisively picked up the communicator: &#34;Engine room, please immediately check the status of the main propulsion bearing.&#34; The inspection confirmed his judgment.</p><p>&#34;There is indeed slight wear — how did you spot it?&#34; Hearing the instructor&#39;s question, Li Yi replied: &#34;I identified a problem in the propulsion system from the current fluctuation, and a problem in the propulsion system affects the submarine&#39;s concealment, which in turn affects our tactical choices.&#34; A moment later, the instructor on the other end of the communicator silently gave a thumbs-up.</p><p>When the exercise ended, Li Yi stood in the center of the command compartment and looked around, moved by a sense of reflection: these screens and instruments were no longer merely independent operating interfaces, but the nerve endings of a vast system. Through them, he could sense the state of every corner of the submarine. And he was gradually learning how to become the commander of that whole.</p><p>The results of curriculum innovation are extending to frontline battle stations. In recent years, the average time for graduates of the university&#39;s submarine machinery command specialization to pass the &#34;post qualification certificate&#34; (岗位合格证) assessment has been substantially shortened; the most outstanding need only half a year to meet battle station requirements.</p><p>&#34;Seamless connection&#34; (无缝衔接) is the cadets&#39; firsthand experience. Graduate cadet Yang Kai shared a deep impression during an exchange with his unit: &#34;Standing in the position of chief of machinery, I can be familiar with the function of every valve without consulting a manual — because in the classroom at school, I had already &#39;touched&#39; them thousands of times!&#34;</p><p>The battlefield changes in an instant and tolerates not a moment&#39;s hesitation. Graduate cadet Wu Fan clearly remembers the heart-pounding experience of his first participation in a deployment exercise. That night, the submarine was suspected of being locked on by an &#34;enemy&#34; vessel&#39;s sonar in a certain sea area. The commanding officer immediately issued the order &#34;emergency silence,&#34; requiring him to shut down all non-essential equipment within a specified time.</p><p>&#34;My hands were shaking, but my body&#39;s instinctive reaction was faster than my thinking!&#34; Thanks to the rigorous training of thousands of repetitions on the simulator, Wu Fan completed the operation with precise accuracy. He reflected: &#34;The newly upgraded course allowed us to expose problems and correct errors in the classroom, bringing that invaluable experience to the battlefield.&#34;</p><p>As one of the military-wide &#34;model courses,&#34; the reform and exploration of *Submarine Maneuvering* continues. The reporter observed in the teaching and research office that a brand-new upgrade plan has already taken initial shape: it plans to deeply embed advanced voice recognition and intelligent assessment modules into the simulation training system, using &#34;technology empowerment&#34; as a foundation to continuously deepen the course&#39;s development toward &#34;combat orientation, higher-order thinking, and innovation&#34; (向战性、高阶性、创新性), driving instruction toward an even higher level.</p><p>---</p><p>**Firsthand Account | Calibrating the Direction of Teaching in the &#34;Winds and Waves&#34;**</p><p>■ Peng Likun</p><p>Years ago, an experience of lowering a rescue boat to carry out a mission left a deep impression on me. The moment the small craft cast off its lines, a surge of waves knocked it broadside. In just a few hundred meters, I truly understood the weight of the word &#34;maneuvering&#34; — the small boat cleaved through the waves; approaching a wave crest, you had to give rudder in advance, or the next second you would plunge into the trough; when the hull rolled too far, you had to use the throttle in coordination with the rudder angle, using power to counter the sea… Every second was anticipation; every moment was correction.</p><p>Years later, overseeing the *Submarine Maneuvering* course at the Naval University of Engineering, I gained a far deeper understanding of real-time anticipation and dynamic correction. Advancing into the deep blue, combat methods are changing, weapons and equipment are being updated. The old methods in the classroom are like an outdated nautical chart — they cannot keep up with the winds and waves of the new course. What cadets learn are procedural actions, yet they find it difficult to experience that real state of needing to sense in real time, judge rapidly, and adjust flexibly under complex, high-pressure conditions. How can the classroom truly connect with the &#34;winds and waves&#34; of the battlefield? Reform must be like maneuvering a vessel — constantly anticipating battlefield demands and continuously correcting the direction of teaching.</p><p>The key to reform is to teach cadets to adapt in a &#34;dynamic battlefield.&#34; The team independently developed simulation training facilities, converting theoretical knowledge of vessel maneuvering into practical verification. Cadets can move directly from hearing theory to hands-on operation, experiencing, correcting errors, and adjusting in simulated &#34;winds and waves.&#34; At the same time, we broke down the barriers between posts, integrating the various machinery specializations into a single &#34;cockpit&#34; — here, the slightest deviation in any cadet&#39;s operation spreads like ripples, affecting the state of the entire vessel; they must learn to sense in real time and correct in coordination.</p><p>Assessment standards also shifted toward combat realism. In the past, the main focus was on whether actions met the standard and whether time requirements were met. But the battlefield has no standard answers. The new standard has just one criterion: can the mission be accomplished? The entire training ground is like a dynamic &#34;reactor,&#34; allowing cadets to forge the skill of anticipation and correction — from unfamiliar to second nature — under pressure and change that approximates actual combat.</p><p>Back then on the waves, it was anticipation and correction that steadied the small boat. Today, on the voyage of curriculum reform, the same capacity is needed — to constantly sense demands and continuously adjust methods. From strengthening dynamic hands-on operation, to integrating coordinated training, to focusing on mission-based assessment, each reform is a response to a &#34;new surge of waves.&#34;</p><p>---</p><p>**Sharp Perspective | Combat-Teaching Coupling Builds a Strategic Fulcrum for Strengthening the Military Through Talent Cultivation**</p><p>■ Xiong Feng</p><p>As the form of warfare accelerates its evolution, military academies, as the main front of talent cultivation, must take combat-teaching coupling (战教耦合) as a strategic fulcrum, build a cultivation system precisely aligned with the future battlefield, open up the combat-training chain, and ensure that academy education remains anchored to the target of combat capability.</p><p>**Anchor to the target of &#34;combat.&#34;** The battlefield is the ultimate examination ground for talent. Academies must keep a close watch on future combat patterns and core post demands, converting battlefield standards into teaching standards and integrating combat requirements into the curriculum system. Teaching content and priorities must revolve around &#34;teach what fighting requires, supplement what the force lacks,&#34; ensuring that talent cultivation resonates in sync with the battlefield.</p><p>**Innovate the means of &#34;teaching.&#34;** The key to resolving the problem of disconnection between &#34;teaching&#34; and &#34;combat&#34; lies in advancing combat-realistic instruction. The &#34;trinity&#34; cultivation system must be improved; the proportion of combat case and tactics instruction must be increased; real scenarios must be brought into the classroom. Joint exercises and combat-realistic training must be strengthened; simulated battlefield environments must be constructed; laboratories and exercise grounds must be linked, and classrooms and battlefields must be interconnected, so that cadets can forge their capabilities through immersive instruction and convert what they have learned into combat capability.</p><p>**Deepen the integration of &#34;action.&#34;** Military practice is the bond of combat-teaching coupling. It is necessary to persist in science and technology empowerment, integrating &#34;technology+&#34; into teaching and training; to rely on informatization and intelligentization to build practical platforms and promote the matching of personnel and equipment; to open up resource sharing between academies and units; to drive the conversion of laboratory theory into training ground practice; to bring exercise and training results back into the classroom, forming a virtuous cycle of &#34;teaching supporting practice, practice feeding back into teaching,&#34; so that cadets grow, through the unity of knowledge and action (知行合一), into high-quality, specialized new-type military personnel capable of winning future conflicts.</p><p>*(Photography by Tian Yuxin, Sun Yuheng, and Cai Xiongjian)*</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">新闻样本 课堂通战场 毕业即上岗 ■陈 佳 谭斯林 海面风平浪静，水下暗流汹涌。一场海上演练中，某潜艇舱内警报骤然响起。“发现可疑声呐信号！紧急下潜！”副机电长李政原闻令即动，指尖在操控面板上快速操作，口令清晰传遍全艇。 潜艇急速下潜，艇体微微震颤。数分钟后，艇体稳稳悬停在预定深度。指挥舱内，李政原紧盯显示屏，沉稳发出后续的调整指令，精准把控每一项参数变化，确保艇体姿态稳定。 一年前，李政原还是海军工程大学的大四学员。如今，他已成长为能独当一面的副机电长。谈及李政原，艇领导赞许道：“往年机电专业毕业生到岗，需较长时间适应岗位。但现在，像李政原这样的学员，到岗就能上手，变化非常明显。” 这一显著转变，离不开海军工程大学锐意推进的教学改革。多年前，该大学彭利坤教授及其团队深入潜艇部队一线调研，发现院校课堂所学与部队实际岗位需求存在差距，学员难以快速形成战斗力。 “战场需求在哪里，人才培养的靶心就要对准哪里。”彭利坤团队锚定“需求牵引、实战导向”原则，深入部队逐岗剖析核心能力需求。此后，在大学支持下，他们对课程体系进行重塑再造。创新教学模式，将课堂延伸到演训一线；大幅提升实践教学比重，构建起分层递进、紧贴实战的实操训练体系，让学员在模拟战场环境中淬炼过硬本领；同步改革考核评价机制，将战场临机应变能力、军事指挥素养等关键指标纳入评价标准。 课程改革的成效在演训场迅速显现。毕业学员左景升在大项演训中，以最短用时完成紧急出航准备；毕业学员邓小虎首次执行跨区机动应急任务，便凭借过硬素质圆满完成任务……如今，这套课程建设经验已纳入海军院校教学改革指导纲要，为解决“教战脱节”问题提供了可复制的“样板”。 在全军精品课程评比中，彭利坤教授牵头革新的《潜艇操纵》课程成功入选。这不仅是对课程改革成果的肯定，更是军校人才培养精准对接战场需求的生动体现。 从军校课堂到深海战场，一批批像李政原这样的优秀学员，正凭借扎实的专业素养和过硬的实战能力，快速成长为部队战斗力建设的中坚力量。院校与部队的同频共振，让人才培养愈发“对路子”，为海军深海砺剑、向海图强注入不竭动力。 海军工程大学学员进行课后研讨。 记者调查 向战而新：一门精品课潜入“深水区” ■王思思 解放军报记者 王 越 特约记者 张佳豪 电子海图上红蓝光点如星火闪烁，低沉的蜂鸣器警报声在模拟舱内骤然响起，几名潜艇机电指挥专业本科学员迅速围拢在指挥屏前，一场实战化课程考核随即展开…… 面对复杂海区与多重特情，学员直言“考题考法都不一样了”。这场以未来战争为视角的考核，生动体现了海军工程大学“战教耦合”的教学理念。 全军精品课程评比中，该大学再次升级的《潜艇操纵》课程，以“精准对接战场需求，科技赋能教战研战”的创新理念脱颖而出。课程负责人彭利坤感慨地说：“课程改革要敢于踏足‘深水区’，从课堂到战场、理论到实践的转型，是军事教育发展的必然抉择，更是通向打赢的正确航标。” 海军工程大学教员为学员讲解理论知识。 自我革命—— 敢于将过去有口皆碑的课程翻新重塑 海军工程大学某模拟训练中心内，指示灯忽明忽暗，机电设备的嗡鸣低沉而持续，像极了深海之下的静默呼吸。一场“敌”舰跟踪模拟训练，正悄然上演。 “疑似处于海底断崖区域！”接到航海长报告后，担任潜艇机电长的学员李义紧盯本战位操作界面及数据信息，紧张地进行均衡计算，却在关键节点忽视了海区密度的突变。当浮力骤减，艇体非受控急速下沉时，指挥舱内“紧急上浮”的指令打破了训练室的寂静，这场对抗训练随之宣告结束。 “作为一名指挥员，你只顾着盯自己的屏幕，没有关注舵手的操作过程，更没有考虑整艘艇的运动状态。”复盘总结会上，彭利坤教授一语中的。 看着李义的失利，彭利坤的心里五味杂陈。这位多次荣获教学成果奖的资深教员，敏锐捕捉到学员们的认知局限：他们习惯于在虚拟屏幕前进行碎片化操作，难以构建起完整的战场认知体系。这种“只见屏幕不见战场”的思维定式，暴露出教学实践与战场需求之间亟待打通的“最后一公里”。 彭利坤所负责的《潜艇操纵》课程，如今已经走过60多年的历程，为基层潜艇部队输送了一批批优秀骨干，也见证了潜艇部队从无到有、由弱到强的跨越式发展。 60多年来，这门课程的迭代升级从未停歇：讲授的装备，从引进的研仿潜艇，到国产常规潜艇和核动力潜艇；使用的教材，从自编自印的油印教材到国防工业出版社公开发行的精品教材；训练的器材，从某型潜操仪，升级为新型模拟训练系统……一代代教员薪火相传、深耕不辍，为这门课程倾注无数心血，铸就了其“金课”的坚实口碑。 可这份“金课”的荣耀，在彭利坤心中，却越来越沉。面对“理实融合、指技合一、研训一体”的复合化教学改革大潮，彭利坤清醒地认识到，躺在历史的“功劳簿”上安于现状，只会让这份荣耀变成束缚创新的“枷锁”。为了助力学员构建完整的战场认知体系，彭利坤下定决心，启动课程的全面改革。 改革第一步，是找准问题。彭利坤和教研团队把求解的目光投向了讲台下的学员——这些即将奔赴一线部队的年轻人。 一场师生恳谈会随即召开。“四人用一台模拟器，每人每次训练时间只有20分钟，刚找到感觉就结束了，实操机会太少”“教案更新滞后于装备迭代，新型潜艇操纵系统缺少配套实践模块”……恳谈会上，学员们直言不讳地“吐槽”，每一个痛点都精准击中教学短板，也成为课程改革的核心靶点。 在思维碰撞后，一场以问题为导向的教学重塑，就此拉开序幕：构建“三位一体”教学体系，将理论讲授、虚拟仿真与实装操作有机耦合；开发多维度战场推演系统，让学员在动态对抗中锤炼决策能力；创新“战位轮训+角色互换”模式，确保每名学员都能在不同战位上感受系统联动效应…… “课程建设改革永远在路上。我们要敢于将过去有口皆碑的课程翻新重塑。”在召开专题教学形势分析会时，彭利坤向战友们发起倡议。这场静水流深的教学变革，正在为潜艇部队注入新的战斗力基因。 虚实融合—— 在模拟环境中完成从单一操作到协同训练的跨越 海军工程大学学员利用模拟训练系统进行训练。 变革，势在必行；转型，迫在眉睫。专题教学形势分析会后，彭利坤和教研团队成员以刀刃向内的勇气立即投身课程改革的研究中。 几个月里，他们的足迹遍布多支潜艇部队。潜艇操纵岸港训练岗位有限、实艇氛围及沉浸体验欠缺、数字化信息化智能化手段滞后……十余场专题座谈，百余条坦诚建议，连同与军地院校的深度研讨，逐渐勾勒出清晰的改革轮廓。课堂与战场之间，缺一座能将理论转化为实战能力的桥梁——一套能真实还原潜艇操作环境与联动机理的模拟装置。 方向既定，团队铆足了劲攻坚克难，目标直指“打造训教融合一体式平台”。不久后，“数据驱动、虚实一体”的新型潜艇操纵模拟训练系统宣告诞生。 1∶1复刻的舱室布局和操纵台，真实还原了潜艇内部环境与操作流程。不仅如此，这套系统还包含便携式操艇研训箱和保障系统虚拟操纵研训箱，其便携、可定制以及支持自主研训的特点，让各专业艇员可以灵活开展专题定制化、精细化甚至沉浸式的战位研训。 “首尾组水舱注水完毕，准备下潜！”训练开始，负责操控的学员周明紧盯操控面板上跳动的参数，指尖在一排排红黄交错的按钮间娴熟穿梭。战位指令此起彼伏，教员潘炜手持激光笔穿梭在各操纵台间，不时俯身纠正学员的动作：“通海阀必须完全开启”“注水后立即检查纵横倾与舱室水密，防止潜艇失控或失事进水”…… “亲手拉一次操纵杆，感受立刻不一样了。”学员周明感慨地说，“这门被大家称为‘岗位预演’的课程，既串联了《潜艇装置与系统》《机电设备维护》等多门专业课程，还能让我们在模拟环境中完成从单一操作到协同训练的跨越，进而切实理解‘百人同操一杆枪’的训教理念。” 经过实践的检验与反复打磨，这门拥有深厚积淀的课程，成功构建起“虚实融合、立体多元”的潜艇操纵教学新范式。在海军相关会议上展示后，该课程模式顺利立项，并迅速推广至多家潜艇部队。根据部队反馈显示，该课程教学设备经部队试用后，受训学员达千余人次，新毕业学员上艇适应周期明显缩短，战位协同效率显著提升。 加速转化—— 课程革新的成效，正在向一线战位延伸 海军工程大学教员（右二）为学员讲解潜艇构造。 一次综合演练中，李义在潜艇指挥舱值班。潜艇静默潜航，各系统运行平稳。突然，他敏锐捕捉到，主推进系统电流参数出现了细微的异常波动。 在过去，这个微小的偏差或许会被忽略。但此刻，李义脑海中迅速关联课堂所学——这可能是螺旋桨轴承磨损的征兆。他果断拿起通讯器：“轮机舱，请立即检查主推进器轴承状态。”检查结果印证了他的判断。 “确实有轻微磨损，你是怎么看出来的？”听到教员的提问，李义回答说：“是从电流波动看出推进系统有问题的，而推进系统的问题会影响潜艇的隐蔽性，进而影响我们的战术选择。”片刻过后，通讯器那头的教员默默竖起大拇指。 演练结束，李义站在指挥舱中央环顾四周，心生感慨：这些屏幕和仪表已不再只是独立的操作界面，而是一个庞大系统的神经末梢。通过它们，他能感知到潜艇每一个角落的状态。而他，正逐渐学会如何成为这个整体的指挥者。 课程革新的成效，正在向一线战位延伸。近年来，该大学潜艇机电指挥专业的毕业生通过“岗位合格证”考核的平均时间大幅缩短，佼佼者仅需半年便能胜任战位要求。 “无缝衔接”是学员们的切身感受。毕业学员杨凯在部队交流时深有体会：“站在机电长的位置，我无需翻阅手册就能熟悉每个阀门的功能。因为在学校的课堂上，我早已‘触摸’它们千百遍！” 战场瞬息万变，容不得半分迟疑。毕业学员吴凡清晰记得首次参与部署操演时的惊心动魄。那晚，潜艇在某海域疑似遭“敌”舰声呐锁定。艇长立即下达“紧急静默”指令，要求他在规定时间内关闭所有非必要设备。 “当时手在抖，但身体的本能反应快于思考！”得益于模拟器上千百次的严苛训练，吴凡精准无误地完成了操作。他感慨道：“新升级的课程让我们在课堂中暴露问题、修正错误，将宝贵经验带到战场。” 作为全军的“精品课程”之一，《潜艇操纵》的改革探索仍在继续。记者在教研室看到，一份全新的升级方案已初具雏形：计划将先进的语音识别、智能评判模块深度嵌入模拟训练系统，以“科技加持”为支撑，持续深化课程“向战性、高阶性、创新性”建设，推动教学向更高水平迈进。 亲历者说 在“风浪”中校准教学方向 ■彭利坤 多年前，一次吊放救生艇执行任务的经历让我印象深刻。小艇刚解缆绳，就被一股涌浪猛地打横。短短几百米，让我真正读懂了“操纵”二字的分量——小艇劈浪前行，遇到波峰时要提前给舵，否则下一秒栽进浪窝；艇身横摇稍大，要靠油门配合舵角，用动力去对抗海浪……每一秒都在预判、每一刻都在修正。 多年后，在海军工程大学负责《潜艇操纵》课程，我对实时预判和动态修正有了更深刻的认识。向深蓝挺进，作战方式在变化，武器装备在更新。课堂上的老方法，就像一张旧海图，跟不上新航线的风浪。学员们学的是规程动作，却难以体会在复杂高压环境下，那种必须实时感知、快速判断、灵活调整的真实状态。如何让课堂真正对接战场的“风浪”？改革，必须像操艇一样，不断预判战场需求，持续修正教学方向。 改革的关键，是让学员在“动态战场”中学会应变。团队自主开发了模拟训练设施，将操艇理论知识转化为实践验证。让学员听完理论就可以上手操作，在模拟“风浪”中体验、纠错、调整；同时打破岗位隔阂，将机电各专业整合进一个“驾驶舱”——在这里，学员每一个操作的微小偏差，都会像浪花扩散般影响全艇状态，他们必须学会实时感知、协同修正。 考核标准也向实战转变。过去主要考动作标不标准、时间达不达标。但战场没有标准答案。新标准就一条：任务能否完成。整个训练场就像一个动态的“反应炉”，让学员在贴近实战的压力和变化中，把预判与修正的本领，从生疏练成自然。 当年在风浪中，是预判与修正让小艇稳住；如今在课程改革的航程中，同样需要这种时时感知需求、不断调整方法的能力。从强化动态实操到整合协同训练再到聚焦任务考核，每一次改革都是对“新涌浪”的回应。 锐视点 战教耦合筑牢强军育人战略支点 ■熊 峰 当前战争形态加速演变，军队院校作为人才培养主阵地，必须以战教耦合为战略支点，构建与未来战场精准对接的培养体系，打通战训链路，确保院校教育始终锚定战斗力靶向。 锚定“战”的靶心。战场是检验人才的最终考场。院校需紧盯未来作战样式和岗位核心需求，将战场标准转化为教学标准，把作战要求融入课程体系。教学内容与重点必须围绕“打仗需要什么就教什么、部队缺少什么就补什么”，确保人才培养与战场同频共振。 创新“教”的手段。破解“教”“战”脱节难题，关键在于推进实战化教学。要完善“三位一体”培养体系，加大战例战法教学比重，将真实场景引入课堂；强化联合演习、实战化演训，搭建模拟战场环境，推动实验室与演训场联动、教室与战场互通，让学员在沉浸式教学中练强本领，将所学知识转化为实战能力。 深化“行”的融合。军事实践是战教耦合的纽带。需坚持科技赋能，将“科技+”融入教学训练，依托信息化、智能化搭建实践平台，促进人装适配；打通院校与部队之间的资源共享，推动实验室理论向训练场实践转化，将演训成果引入课堂，形成“教学支撑实践、实践反哺教学”的良性循环，让学员在知行合一中成长为制胜未来的高素质、专业化新型军事人才。 （田玉鑫、孙语恒、蔡雄健摄）</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

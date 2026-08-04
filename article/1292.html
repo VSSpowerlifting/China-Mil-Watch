@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Military Forum | Analyzing the Mechanisms Behind Leaps in Combat System Effectiveness in Future Wars — China Mil Watch</title>
+  <meta name="description" content="A PLA military theory forum article lays out a three-part conceptual framework—autonomy, coordination, and learning capacity—for achieving what it calls 体系效能动态聚优 (dynamic optimization of system effect">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/1292.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/1292.html">
+  <meta property="og:title"        content="Military Forum | Analyzing the Mechanisms Behind Leaps in Combat System Effectiveness in Future Wars">
+  <meta property="og:description"  content="A PLA military theory forum article lays out a three-part conceptual framework—autonomy, coordination, and learning capacity—for achieving what it calls 体系效能动态聚优 (dynamic optimization of system effect">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Military Forum | Analyzing the Mechanisms Behind Leaps in Combat System Effectiveness in Future Wars">
+  <meta name="twitter:description" content="A PLA military theory forum article lays out a three-part conceptual framework—autonomy, coordination, and learning capacity—for achieving what it calls 体系效能动态聚优 (dynamic optimization of system effect">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Military Forum | Analyzing the Mechanisms Behind Leaps in Combat System Effectiveness in Future Wars
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军事论坛丨探析未来战争作战体系效能跃升机理</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>11 June 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16466670.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A PLA military theory forum article lays out a three-part conceptual framework—autonomy, coordination, and learning capacity—for achieving what it calls 体系效能动态聚优 (dynamic optimization of system effectiveness) in intelligentized warfare, arguing that distributed autonomous units must convert local action and accumulated experience into system-level advantage. The article documents the current state of PLA doctrinal development around embodied intelligence (具身智能) and multi-agent coordination, showing how the institution is working through the command-and-control problems created by autonomous systems operating under incomplete information and adversarial interference. The framing points to an unresolved tension the article itself names: stronger autonomy requires stronger constraint mechanisms, and the piece offers conceptual vocabulary rather than operational solutions—leaving open how these principles translate to specific formations, platforms, or exercise validation.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>At present, as advanced technologies such as embodied intelligence (具身智能) accelerate in development, the level of intelligentization (智能化) of combat units continues to rise. These units are capable of autonomously completing combat tasks such as reconnaissance and strike, achieving dynamic optimization of system effectiveness (体系效能动态聚优), and making combat systems more lethal. The key to a leap in combat system effectiveness lies in converting distributed intelligent forces into an integrated combined force, embedding local actions into the combat process, channeling single-point advantages into system-level advantages, and sedimenting operational experience into sustained adaptive capability. The autonomy, coordination, and learning capacity of a combat system constitute the action foundation, organizational hub, and endogenous driving force of an effectiveness leap. The three are mutually interconnected and progressively layered, driving future war combat systems to achieve leaps in effectiveness.</p><p>Autonomy is the starting point for generating combat system effectiveness. No matter how complex a combat system may be, it must ultimately be realized through the judgments and actions of individual combat units in specific scenarios. The value of autonomy lies in enabling combat units to maintain credible, controllable, and continuous action capability in environments of incomplete information and strong interference, providing a solid foundation for force aggregation and system development.</p><p>Cognizing the situation through local perception and reasoning. The battlefield has never been fully transparent. Target concealment and maneuver, dynamic environmental change, communication suppression, and incomplete or distorted sensor information together constitute a fog of war that cannot be entirely dispelled. Intelligentized technology can expand the boundaries of perception and improve cognitive efficiency, but under the combined effects of system-level confrontation, algorithmic competition, and electromagnetic interference, it also generates new uncertainties. The cognitive starting point for autonomous action lies in relying on locally visible states—integrating sensor inputs, historical observations, mission context, and environmental changes—to extract effective cues from incomplete, discontinuous, and uncertain information, and to conduct inferential completion and dynamic assessment of target location, threat level, resource status, and action windows. This enables combat units to &#34;judge as accurately as possible&#34; even when they &#34;cannot see the full picture,&#34; to form situational judgments that guide action from local observations, and to maintain action continuity under conditions of strong interference.</p><p>Shaping controllable action through constraint-based decision-making (约束决策). The tempo of future battlefield action is fast and risk propagation is strong. Once a combat unit departs from mission intent and coordination boundaries, locally optimal choices may translate into risks of system disorder, generating problems such as excessive exposure and resource overextension. Autonomy is not unbounded free decision-making; it is the formation of a controllable optimal choice within established objectives, rules, and conditions. Combat units must pursue the gains of actions such as reconnaissance, jamming, and strike, while also controlling energy consumption, probability of detection, and the cost of mission failure; they must proactively seize battlefield opportunities based on the situation, while also subordinating themselves to mission and coordination requirements. The stronger the autonomous capability, the greater the need to simultaneously strengthen constraint mechanisms. Factors such as risk cost, resource consumption, and boundary deviation must be incorporated into decision-making trade-offs, so that combat units seek the best effect within a feasible range, ensuring that autonomous action remains at all times on a credible, controllable, and explainable track, and providing a stable and reliable action foundation for system coordination.</p><p>Accumulating experience samples by sedimenting action feedback. The value of autonomous action by combat units lies not only in completing the immediate task, but also in converting risk exposure, resource consumption, mission gains, and constraint triggers into reusable local experience. Combat units must simultaneously record local judgments, resource usage, coordination responses, and mission results during action, and generate experience samples that can be aggregated and analyzed. This feedback can not only support combat system capability assessment, role assignment, and relationship adjustment, but can also be used to summarize mission patterns, correct rule parameters, and optimize organizational methods. In this way, combat units are not merely the terminal end of action execution but also the source of experience generation; each reliable action accumulates transferable and explainable experiential material, driving autonomous action to extend toward system coordination.</p><p>Coordination is the hub for amplifying combat system effectiveness. Only when the reliable actions of combat units enter into mission relationships, coordination structures, and action chains can local capability be converted into overall effectiveness. The value of coordination lies in organizing dispersed intelligent forces into a coherent whole with unified objectives, complementary functions, and continuous action, moving them from &#34;individual initiative&#34; to &#34;system-level linkage&#34; (体系联动), and aggregating single-point advantages into system-level gains—becoming the critical link connecting autonomous action to effectiveness leaps.</p><p>Mission traction unifying the direction of coordination. When distributed combat forces participate jointly in an operation, individual nodes hold local information and bear local tasks. The function of mission traction is to convert the overall combat intent into a unified action framework within the system that is executable, connectable, and adjustable, enabling each combat node to clarify its objective direction, action relationships, and coordination priorities. Within this framework, reconnaissance, jamming, penetration, strike, assessment, and support elements are organized into mutually supporting mission chains according to mission objectives, phase requirements, capability differences, and battlefield situation. Different nodes assume corresponding roles based on their own capabilities, positions, resource status, and risk levels, and dynamically adjust the division of labor, sequencing, and support relationships as the mission advances, driving dispersed nodes from simple interconnection toward structured coordination and enabling local actions to be embedded in an orderly manner into the system process.</p><p>Link coupling generating coordination structure. The coordination structure among combat nodes is essentially an operational relationship network formed by the mutual coupling of information links, functional dependencies, and resource constraints; it determines who supports whom, who depends on whom, and who bears the supporting role at critical phases. Distributed combat forces must dynamically establish and adjust coordination relationships based on mission phase, capability differences, spatial position, communication conditions, resource status, and threat changes. Reconnaissance nodes must transmit target information to strike nodes; support nodes must ensure the stability of critical links; backup nodes must promptly fill in when critical nodes are damaged. Through this relational configuration, information flow, mission flow, and command-and-control flow can operate in an orderly manner within the system, and the coordination structure can be dynamically reconstructed as the battlefield changes, thereby enhancing mission continuity and structural stability.</p><p>Dynamic reorganization maintaining coordination resilience. System coordination pursues not only organizational efficiency under stable conditions but also the capacity for structural recovery under non-steady-state conditions. Future battlefields are subject to frequent disruption; communication interference, node damage, and sudden mission changes can all weaken existing links, break existing divisions of labor, and alter established coordination relationships. Distributed combat forces should continuously assess coordination structure damage, role assignment imbalance, and mission relationship deviation based on node status, link quality, and other factors, and accordingly reassign roles, select alternative links, adjust action priorities, and reconstruct mission connections. Dynamic reorganization is not simple node replacement; it is a re-organization of nodes, links, and mission relationships around the continuity of overall function—simultaneously absorbing disruption, adjusting, and acting—to prevent local failures from rapidly amplifying, shorten structural recovery time, maintain stable operational tempo, and drive system coordination from static cooperation toward continuous organization in complex and disruptive environments.</p><p>Learning capacity is the driving force behind leaps in combat system effectiveness. In future operations, facing the sustained competition of intertwined mission changes, environmental disruptions, and adversary adjustments, a single effective coordination does not mean that long-term advantage is secure. The value of learning capacity lies in converting action results, coordination states, and mission outcomes into system experience that is accumulable, transferable, and adaptable, and in forming an optimization closed loop through feedback induction, rule correction, and organizational adjustment.</p><p>Experience induction distilling evolutionary patterns. System intelligence is not a natural accumulation of massive data; it originates from sustained induction of multidimensional feedback. If the data collected by combat units is only recorded in slices and stored statically, it can only answer &#34;what happened&#34; and cannot reveal &#34;why it worked&#34; or &#34;what caused failure.&#34; Data becomes experience only when it is inductively explained; experience becomes cognition only when it is summarized and grasped. Multi-source data must be collected and aggregated, abstractly compared, and relationally identified, so as to grasp the intrinsic connections among action preferences, coordination structures, and mission outcomes. Through the accumulation of multiple rounds of confrontation, more robust rule boundaries in complex environments, more readily recoverable coordination structures, and more transferable organizational methods can be identified. Discrete action results are thereby distilled into reusable evolutionary patterns, laying the foundation for cross-mission learning and leaps in system cognition.</p><p>Rule learning enhancing adaptive capability. The future battlefield does not unfold according to a fixed script. Sudden changes in mission objectives, disruption of communication links, and the evolution of adversary strategies determine that combat systems cannot rely on static templates to sustain continuous advantage. The key to system intelligence is not memorizing specific actions or pursuing single-instance optimization, but rather forming, through repeated competition, a generalized cognition of &#34;which rules fit which situations.&#34; Combat systems must convert abstract patterns into transferable rule boundaries, constraint preferences, and regulatory parameters, enabling the system to enhance multi-point coordination coverage when objectives are dispersed, and to strengthen critical role empowerment and action tempo control when time windows are compressed. In this way, combat systems can rapidly form adaptive solutions based on experience, driving combat systems from lagged response toward proactive regulation, and from single-scenario adaptation toward cross-mission transfer.</p><p>Feedback adaptation driving effectiveness regeneration. System intelligence cannot remain at the level of pattern summarization and rule deduction; it must convert high-dimensional cognition into sustained influence on underlying action, coordination structure, and resource allocation. Faced with high-frequency fluctuations in the adversarial situation, the closed-loop mechanism of &#34;result feedback—pattern distillation—rule correction—effectiveness regeneration&#34; must be relied upon to inductively transmit bottom-level experience upward and to calibrate high-level rules downward. Combat units report local judgments, risk exposure, resource consumption, and mission gains; coordination organizations feed back structural status, critical links, and role effectiveness; the combat system, by adjusting mission preferences, risk boundaries, resource constraints, and coordination relationships, reversely shapes node decision-making, role division, and mission continuity. In this way, system capability can be rapidly calibrated amid mission switching, environmental disruption, and structural damage, driving local adaptation to be converted into system-level advantage.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">当前，随着具身智能等先进技术加速发展，作战单元智能化程度不断提高，能够自主完成侦察、打击等作战任务，达成体系效能动态聚优，使作战体系更具杀伤力。作战体系效能跃升，关键在于把分布式智能力量转化为整体合力，使局部行动嵌入作战进程、单点优势汇入体系优势、行动经验沉淀为持续适应能力。作战体系的自主性、协同性、学习性，构成效能跃升的行动基础、组织枢纽和内生动力，三者相互贯通、逐层递进，推动未来战争作战体系实现效能跃升。 自主性是作战体系效能生成的起点。作战体系再复杂，最终都要落实为各个作战单元在具体场景中的判断和行动。自主性的价值，在于使作战单元能够在不完整信息和强扰动环境中保持可信、可控、可接续的行动能力，为力量聚合和体系发展提供坚实支撑。 依托局部感知推理认知态势。战场从来不是完全透明的，目标隐蔽机动、环境动态变化、通信遭受压制、传感信息残缺失真等，各类复杂因素共同构成难以彻底驱散的战争迷雾。智能化技术能够拓展感知边界、提高认知效率，但在体系对抗、算法博弈和电磁干扰交织作用下，也会生成新的不确定性。自主行动的认知起点，在于依托局部可见状态，综合传感输入、历史观测、任务背景和环境变化，从不完整、不连续、不确定的信息中提取有效线索，对目标方位、威胁程度、资源状态和行动窗口等进行推理补全与动态评估，使作战单元在“看不全”中尽可能“判得准”，在局部观测中形成指导行动的态势判断，在强扰动条件下保持行动连续。 立足约束决策塑造可控行动。未来战场行动节奏快、风险传导强，作战单元一旦脱离任务意图和协同边界，局部最优选择就可能转化为体系失序风险，产生过度暴露、资源透支等问题。自主不是无边界的自由决策，而是在既定目标、规则和条件下形成可控最优选择。作战单元既要追求侦察、干扰、打击等行动收益，也要控制能量消耗、被探测概率以及任务失败代价；既要根据态势主动捕捉战机，也要服从任务与协同要求。自主能力越强，越需要同步强化约束机制，应将风险代价、资源消耗、边界偏离等因素纳入决策权衡，使作战单元在可行范围内寻求最佳效果，确保自主行动始终处于可信、可控、可解释的轨道之中，为体系协同提供稳定可靠的行动基础。 沉淀行动反馈积累经验样本。作战单元自主行动的价值不仅在于完成当下任务，更在于将风险暴露、资源消耗、任务收益与约束触发转化为可复用的局部经验。作战单元需要在行动中同步记录局部判断、资源使用、协同响应和任务结果，并生成可汇聚、可分析的经验样本。这些反馈不仅能够支撑作战体系能力评估、角色分配、关系调整，而且可以用于归纳任务规律、修正规则参数、优化组织方式。由此，作战单元不只是行动执行末端，也是经验生成源头，每一次可靠行动都在积累可迁移、可解释的经验素材，推动自主行动向体系协同延伸。 协同性是作战体系效能放大的枢纽。作战单元的可靠行动只有进入任务关系、协同结构和行动链路，才能由局部能力转化为整体效能。协同性的价值，在于把分散部署的智能力量组织为目标一致、功能互补、行动接续的整体，使其由“各自能动”走向“体系联动”，由单点优势汇聚为体系增益，成为连接自主行动与效能跃升的关键环节。 任务牵引统一协同指向。分布式作战力量共同参与行动时，单个节点掌握局部信息、承担局部任务。任务牵引的作用，就在于把总体作战意图转化为体系内部可执行、可衔接、可调整的统一行动框架，使各作战节点明确目标方向、行动关系和协同重点。在这一框架下，依据任务目标、阶段要求、能力差异和战场态势，将侦察、干扰、突防、打击、评估、支援等环节组织为相互支撑的任务链条。不同节点根据自身能力、所处位置、资源状态和风险水平承担相应角色，并随任务推进动态调整分工、顺序和支撑关系，推动分散节点由简单互联转向结构化协同，使局部行动有序嵌入体系进程。 链路耦合生成协同结构。作战节点之间的协同结构，本质上是信息链路、功能依赖、资源约束等相互耦合形成的作战关系网络，它决定谁支援谁、谁依赖谁、谁在关键阶段承担支撑作用。分布式作战力量需要依据任务阶段、能力差异、空间位置、通信条件、资源状态和威胁变化，动态建立和调整协同关系。侦察节点需将目标信息传递给打击节点，支援节点需保障关键链路稳定，备份节点需在关键节点受损时及时补位。通过这种关系配置，信息流、任务流和指控流才能在体系内部有序运行，协同结构才能随战场变化动态重构，进而增强任务接续性和结构稳定性。 动态重组保持协同韧性。体系协同不仅追求稳定条件下的组织效率，更要具备非稳态条件下的结构恢复能力。未来战场扰动频繁，通信受扰、节点受损、任务突变都可能削弱既有链路、打破原有分工，使既有协同关系发生变化。分布式作战力量应依据节点状态、链路质量等，持续研判协同结构损伤、角色分工失衡和任务关系偏移，并据此重新分配角色、选择替代链路、调整行动优先级、重构任务连接。动态重组不是简单的节点替换，而是围绕整体功能连续性，对节点、链路和任务关系进行再组织，在边受扰、边调整、边行动中避免局部失效快速放大，缩短结构恢复时间，保持作战节奏稳定，推动体系协同由静态配合转变为复杂扰动环境下的持续组织。 学习性是作战体系效能跃升的动力源。未来作战中，面对任务变化、环境扰动和对手调整交织的持续博弈，单次协同有效并不意味着长期优势稳固。学习性的价值，在于把行动结果、协同状态和任务成效转化为可积累、可迁移、可调适的体系经验，并通过反馈归纳、规则修正和组织调整形成优化闭环。 经验归纳提炼演化规律。体系智能不是海量数据的自然堆砌，而源于对多维反馈的持续归纳。若作战单元收集的数据仅被切片式记录、静态化存储，便只能回答“发生了什么”，难以揭示“为何生效”与“因何致败”。数据只有被归纳解释才能成为经验，经验只有被总结把握才能成为认知。必须对多源数据进行收集汇聚、抽象比对和关联识别，从中把握行动偏好、协同结构与任务结果之间的内在联系。通过多轮对抗累积，识别复杂环境中更稳健的规则边界、更易恢复的协同结构和更具迁移性的组织方式。离散行动结果由此被提炼为可复用的演化规律，为跨任务学习和体系认知跃升奠定基础。 规则学习增强适应能力。未来战场不是按照固定脚本展开的。任务目标突变、通信链路受扰、对手策略演进等决定了作战体系无法依托静态模板维系持续优势。体系智能的关键，并非记忆特定动作或追求单次最优，而是在反复博弈中形成“何种规则适配何种情境”的泛化认知。作战体系需要把抽象的规律转化为可迁移的规则边界、约束偏好和调节参数，使其能够在目标分散时增强多点协同覆盖，在时间窗口压缩时强化关键角色赋权和行动节奏控制。由此，作战体系能够基于经验迅速形成适配方案，推动作战体系由滞后响应转向主动调节、由单场景适应转向跨任务迁移。 反馈调适驱动效能再生。体系智能不能停留于规律总结和规则推演，而要把高维认知转化为对底层行动、协同结构和资源配置的持续作用。面对高频波动的对抗态势，必须依托“结果反馈—规律提炼—规则修正—效能再生”的闭环机制，将底层经验上行归纳、将高层规则下行校准。作战单元上报局部判断、风险暴露、资源消耗和任务收益，协同组织反馈结构状态、关键链路和角色效能，作战体系通过调整任务偏好、风险边界、资源约束和协同关系，反向塑造节点决策、角色分工和任务接续。由此，体系能力得以在任务切换、环境扰动和结构受损的情况下快速校准，推动局部适应转化为体系优势。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

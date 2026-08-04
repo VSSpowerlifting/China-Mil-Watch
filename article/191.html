@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>When Flight Cadets Got a Standardized Teaching Manual... — China Mil Watch</title>
+  <meta name="description" content="A unit of the Air Force Aviation University developed and deployed a Standardized Teaching Manual (《标准化教学手册》) to unify instructional procedures, terminology, evaluation criteria, and combat-oriented c">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/191.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/191.html">
+  <meta property="og:title"        content="When Flight Cadets Got a Standardized Teaching Manual...">
+  <meta property="og:description"  content="A unit of the Air Force Aviation University developed and deployed a Standardized Teaching Manual (《标准化教学手册》) to unify instructional procedures, terminology, evaluation criteria, and combat-oriented c">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="When Flight Cadets Got a Standardized Teaching Manual...">
+  <meta name="twitter:description" content="A unit of the Air Force Aviation University developed and deployed a Standardized Teaching Manual (《标准化教学手册》) to unify instructional procedures, terminology, evaluation criteria, and combat-oriented c">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    When Flight Cadets Got a Standardized Teaching Manual...
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">当飞行学员有了《标准化教学手册》……</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>12 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16460055.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A unit of the Air Force Aviation University developed and deployed a Standardized Teaching Manual (《标准化教学手册》) to unify instructional procedures, terminology, evaluation criteria, and combat-oriented content across its flight cadet training program, with the manual now in its third iteration and supplemented by over 60,000 characters of instructor-compiled mind maps. The article documents a concrete institutional response to a persistent problem in PLA aviation education: experience-based, instructor-idiosyncratic teaching that produced inconsistent cadet qualification rates and weak combat orientation. The framing—emphasizing the shift from 知其然 to 知其所以然 and the integration of frontline unit instructors—fits the broader PLA effort to close the gap between academy training and operational requirements, though the article does not specify qualification rate figures or how the unit&#39;s output compares to other Air Force Aviation University formations.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Flight Cadets Get a Standardized Teaching Manual</p><p>■ PLA Daily Reporter Liu Baorui, Special Correspondents Wang Wenbo and Huang Yuxuan</p><p>A unit of the Air Force Aviation University conducts flight training. Photo by Liu Zeming.</p><p>Warplanes arrayed in formation, pointing straight toward the sky.</p><p>Not long ago, a unit of the Air Force Aviation University organized a cohort of flight cadets to conduct night-flight training. This was the first time that cohort of cadets—after completing standardized instruction—flew a certain type of combat aircraft toward a target airspace at night.</p><p>Over the earphones came the commander&#39;s takeoff order. Flight cadet Wang Zixuan pushed the throttle to maximum. As the airspeed indicator needle turned to the prescribed value, he swiftly pulled back on the stick, and the aircraft accelerated into the air with a roar. After completing the designated training content, Wang Zixuan landed the aircraft successfully and achieved outstanding results.</p><p>A combat aircraft&#39;s takeoff depends on enormous thrust. A cadet&#39;s transformation into a qualified combatant who can fly well and fly with precision likewise depends on the support of a teaching and training model.</p><p>In recent years, confronting practical problems such as insufficient clarity in instructional objectives, a unit of the Air Force Aviation University has continuously reformed its teaching and training model. It organized a dedicated working group to compile a Standardized Teaching Manual (《标准化教学手册》) on the basis of training syllabi and flight manuals, with the aim of overcoming various shortcomings inherent in the existing teaching model—including unclear standards, unscientific instruction, and insufficient orientation toward combat.</p><p>Like a ruler with extremely precise gradations, the Standardized Teaching Manual has given instructors clearer and more accurate teaching objectives. It is understood that since the unit introduced standardized instruction, the qualification rate of flight cadets has risen steadily. Today, let us examine how this unit&#39;s standardized instruction is helping &#34;fledgling eagles&#34; accelerate their flight.</p><p>Working Together to Forge a Ruler with Precise Gradations</p><p>When recalling the experience of exploring a standardized teaching model, flight instructor Wang Boquan of a unit of the Air Force Aviation University still remembers an intense debate he had with his comrades.</p><p>Two years ago, flight instructors from that unit and from units responsible for follow-on training, together with flight backbone personnel from frontline units, formed a dedicated working group for reforming the standardized teaching model. They jointly explored reform plans for transitioning from experience-based instruction to standardized instruction.</p><p>During the meeting, Wang Boquan used the example of flight cadets&#39; control of the glide slope during aircraft landing to raise the importance of shifting instruction toward standardization. He drew two different arcs on the whiteboard: &#34;Some cadets select a relatively high glide slope and, after entering the runway, land by manipulating the stick; other cadets select a relatively low glide slope and, during the descent, use coordinated throttle and stick-and-rudder inputs to land...&#34;</p><p>Long teaching experience had led Wang Boquan to realize that cadets&#39; spatial awareness is still insufficient and their attention distribution is not yet well balanced, requiring them to process a large amount of information during the landing process: &#34;In practice, selecting a lower glide slope can effectively reduce control workload, allowing them to devote more attention to monitoring flight attitude—this better matches the current capability level of flight cadets.&#34;</p><p>However, some flight instructors held the opposite view. Although selecting a higher glide slope demands more of a pilot&#39;s flying skill, they believed it was conducive to rapid improvement in cadets&#39; capability. Others held that both approaches were viable, and that flight instructors could teach entirely according to their own operating habits and level of proficiency.</p><p>&#34;Without rules, nothing can be accomplished.&#34; Through round after round of intense discussion, everyone gradually clarified the importance of adopting a standardized teaching model for improving overall instructional quality and effectiveness, and continuously worked through questions such as &#34;which instructional content requires unified standards, and in what direction should those standards be set.&#34;</p><p>After months of concentrated effort, the dedicated working group compiled a Standardized Teaching Manual, establishing unified norms for instructional procedures, mission objectives, assessment content, evaluation criteria, and answers to common instructional problems. One could say that everyone worked together to forge a ruler with precise gradations, providing instructional reference standards that better conform to the laws governing cadets&#39; capability development.</p><p>Instructor Chen Jige devoted considerable effort to the standards for instructional language used in the manual. &#34;Previously, everyone had their own way of using certain terms, which often created a gap between &#39;teaching&#39; and &#39;learning&#39;—instructors and cadets needed a period of adjustment before they could reach a mutual understanding.&#34; To ensure that ideas and thinking could be conveyed clearly and effectively during instruction, Chen Jige—with more than 30 years of flying experience—led several flight instructors in carefully sorting through and standardizing more than a hundred instructional terms and their corresponding actions.</p><p>Wang Boquan reflected deeply on this. The first time he led a cadet through training on a certain flight maneuver, he gave the reminder: &#34;Keep the flight path smooth (圆滑)...&#34; To his surprise, the training results were unsatisfactory. Wang Boquan later learned that the cadet had not fully understood the precise meaning of &#34;smooth (圆滑).&#34;</p><p>Today, the Standardized Teaching Manual has standardized the instructional language for guiding that flight maneuver: &#34;Maintain consistent propeller RPM, observe flight attitude, and avoid deviating from the flight path.&#34; Wang Boquan reflected that the standardized use of instructional language has made cadets&#39; understanding of instructional content clearer and more thorough, greatly improving communication efficiency between instructors and cadets. It has also helped instructors and cadets achieve rapid alignment during cross-instructor teaching, avoiding waste of instructional resources.</p><p>Instructor Zhao Guanshan showed the reporter a cadet&#39;s grade record in the flight training information management system, which showed that the cadet&#39;s scores had previously fluctuated significantly up and down: &#34;Previously, due to differences in flight experience and teaching experience, different instructors focused on different aspects when monitoring the quality of cadets&#39; development, and subjective and impressionistic judgments easily led to evaluations that were insufficiently comprehensive and objective.&#34;</p><p>Zhao Guanshan told the reporter that the Standardized Teaching Manual has also improved the instructional evaluation system, assigning weighted coefficients to each training subject according to flight maneuver, and adopting a combined approach of instructor evaluation and system evaluation to scientifically assess each cadet, pointing the way for the next steps in both instructors&#39; teaching priorities and cadets&#39; learning priorities. Since standardized instruction was implemented, many cadets&#39; training score curves have changed from a wave line with large fluctuations to a smoothly rising arc.</p><p>Dynamic Adjustment and Optimization: Standards Become More Precise</p><p>Another flight day.</p><p>In the faint light of dawn, flight cadet Tang Xin and his comrades took off one after another in their aircraft. After simulating the completion of a &#34;zoom-climb dive attack (跃升俯冲攻击)&#34; maneuver, he executed a beautiful turn and tilted his head 45 degrees to look back and observe the &#34;enemy&#39;s&#34; situation.</p><p>Wang Boquan told the reporter that the seemingly ordinary &#34;pilot&#39;s 45-degree look-back&#34; maneuver conceals important tactical significance—monitoring the state of the strike against the enemy and making timely responsive actions. However, during earlier flight training, Wang Boquan found that this maneuver had not received adequate attention from cadets; many cadets executed it only mechanically, without being fully prepared to respond promptly to changes in the &#34;enemy&#39;s&#34; posture. The reason was that the Standardized Teaching Manual had only standardized the operating procedure for the &#34;pilot&#39;s 45-degree look-back&#34; maneuver, without elaborating in detail on its important combat background and tactical significance.</p><p>&#34;The Standardized Teaching Manual has a great many detailed provisions, but however many standards there are, they should all point toward combat effectiveness (战斗力)—the one and only fundamental standard. In the teaching process, we must not only let cadets &#39;know what&#39; (知其然), but also let them &#39;know why&#39; (知其所以然).&#34; At one teaching reform advancement meeting, the question Wang Boquan raised sparked discussion among those present. Everyone agreed that cultivating and reinforcing cadets&#39; combat thinking was extremely important. To that end, the unit organized relevant training departments to regularly collect firsthand experience from flight instructors in teaching practice, and revised the Standardized Teaching Manual in multiple rounds, further improving and refining instructional content that did not meet combat standards, striving to train cadets to develop strong decision-making capabilities and thinking patterns suited to the battlefield.</p><p>The reporter learned that because the primary trainer aircraft is relatively light, in earlier instruction many instructors required cadets to &#34;add throttle and apply left rudder&#34; during takeoff to maintain the primary trainer&#39;s balance. But this fixed procedure clearly cannot meet the demands of various aircraft types and flight scenarios.</p><p>Opening the latest version of the Standardized Teaching Manual, the reporter found that the requirement for the takeoff maneuver had been standardized to &#34;closely monitor aircraft attitude.&#34; Wang Boquan explained: &#34;We have proactively broken free from the shackles of rigid thinking, having cadets closely monitor aircraft attitude and make flight control decisions based on their own flight feel. This is far more effective at developing cadets&#39; thinking and ability to analyze and solve problems than mechanically executing instructions. When transitioning to new aircraft types later on, cadets can also quickly enter a combat rhythm.&#34;</p><p>Since the standardized teaching reform was implemented, this unit&#39;s teaching staff has never stopped exploring how to conduct instruction in close alignment with the combat effectiveness standard.</p><p>Previously, some flight instructors had insufficient awareness, causing teaching and training to be insufficiently close to combat. To promote seamless connection between the classroom and the battlefield, in recent years the unit has organized instructors to travel in batches to units for exchange visits, while also actively selecting outstanding combatants to teach at the academy, allowing an ever-growing stream of &#34;fresh water&#34; from frontline units to flow into the teaching staff. Their frontline perspective and combat experience are injecting new substance into standardized instruction.</p><p>&#34;In addition to laterally monitoring your own altitude and airspace, you must also longitudinally understand the positions of other comrades—this is crucial for situational awareness (态势感知)...&#34; Walking into a regiment&#39;s flight preparation room, the reporter saw instructor Wang Canming patiently explaining flight essentials to cadets.</p><p>As a flight instructor with many years of teaching experience, Wang Canming has served in turn at frontline units, flight academies, and other organizations, accumulating rich experience in combat-realistic training and instruction. Two years ago, he came to this unit as a flight instructor and took the lead in carrying out the regiment&#39;s standardized instruction work.</p><p>On Wang Canming&#39;s office computer, a series of mind maps caught the reporter&#39;s attention. &#34;As mission areas, training objectives, and other conditions change, instructional standards should also be continuously refined,&#34; Wang Canming said. Focused on combat standards, he leads the teaching team in regularly conducting experience summaries, organizing instructional content that needs timely revision and supplementation into a large number of mind maps. Today, the Standardized Teaching Manual has been updated and iterated to version 3.0, and the mind maps compiled by Wang Canming&#39;s teaching team have expanded to more than ten, totaling over 60,000 characters in aggregate, and have become an important reference for further adjustment and optimization of the Standardized Teaching Manual.</p><p>Instruction Can Neither Lack Standards Nor Be Governed by Standards Alone</p><p>After the Standardized Teaching Manual became available, flight instructor Zhang Quanda found his instructional work more effective and comfortable. However, he gradually discovered that cadets vary in their foundational capabilities: the instructional standards apply to the developmental patterns of the vast majority, but some individuals with weaker learning ability find them &#34;too much to handle,&#34; while others who absorb material quickly find them &#34;not enough to satisfy.&#34;</p><p>The eminent modern educator Tao Xingzhi once said that cultivating and educating people is like growing flowers and trees—one must first understand the characteristics of the flowers and trees, and provide fertilizer, water, and cultivation according to differing circumstances. As standardized instruction developed, everyone came to realize that instruction can neither lack standards nor be governed by standards alone, nor can it apply a &#34;one-size-fits-all (一刀切)&#34; approach.</p><p>To improve the quality and effectiveness of instructional training, the reform working group encouraged flight instructors to teach in accordance with individual aptitude (因材施教) on the basis of standardized instruction, achieving mutual growth between teaching and learning through flexible command of instructional methods.</p><p>&#34;Cadets differ in talent, temperament, and learning ability, and the traits and problems they exhibit in flight training also vary to a certain degree,&#34; Zhang Quanda said. &#34;Some cadets are quick to react in flight operations but have insufficiently strong psychological resilience; some cadets perform outstandingly in theoretical study but are somewhat lacking in actual operations.&#34;</p><p>Using instructional standards as a foundation, Zhang Quanda organizes training tailored to each cadet&#39;s strengths and weaknesses.</p><p>Cadet Feng Yichao has a lively personality and is willing to ask questions, but his concentration is insufficient; during flight training, Zhang Quanda deliberately raises his voice at key content to help him form conditioned reflexes for the relevant operations and develop muscle memory. Cadet Fan Junchen is meticulous but lacks confidence, sometimes becoming mired in a single mistake and unable to move on; Zhang Quanda&#39;s approach with him is primarily encouragement. Cadet Zhou Peixi has strong comprehension and receptive ability and rarely makes the same mistake twice; Zhang Quanda points out problems concisely during flight guidance and leaves him ample time and space for independent thinking... Over a period of time, the several cadets Zhang Quanda has instructed have shown marked improvement, and the number of sorties required to achieve the training objective for the same subject is noticeably fewer than for cadets from previous cohorts.</p><p>Flipping through one cadet&#39;s flight training schedule, the reporter noticed that the remarks column for some subjects contained the notation &#34;supplementary sorties&#34;—instructors providing extra practice for individual cadets in certain subjects based on their training situation. After each flight training session, cadets first conduct a self-debrief combining flight parameter data with problems encountered during flight, and instructors then score everyone according to the Standardized Teaching Manual. For cadets who have already surpassed the objective ahead of schedule, the number of sorties for that subject can be appropriately reduced and they can advance early to the next subject&#39;s training; for cadets with a somewhat weaker foundation who have not achieved the objective within the designated number of sorties, supplementary sorties are used to close the capability gap.</p><p>The unit&#39;s leadership introduced that in form, the Standardized Teaching Manual takes the instructor as its starting point, but in essence, helping every cadet find a learning pace and development path suited to themselves is the fundamental purpose of standardized instruction.</p><p>Eyewitness Account</p><p>United in Heart and Effort, Working Together to Overcome Difficulties</p><p>■ Flight Instructor Li Chaojie, a unit of the Air Force Aviation University</p><p>As a member of the standardized teaching model reform working group, my comrades and I went through countless passionate clashes and sleepless nights of concentrated effort in order to draft the Standardized Teaching Manual.</p><p>Confronting the reality of instructional standards with &#34;no fixed method&#34; and teaching approaches &#34;passed down by word of mouth,&#34; we needed to quickly explore a new path for cultivating personnel that is oriented toward and for combat, and that is scientific and efficient.</p><p>During that period, in order to determine what capabilities cadets should develop and what standards they should reach at each instructional phase, mission cycle, and flight sortie, everyone deliberated over the plan point by point, often working deep into the night.</p><p>After the standardized teaching model was introduced, instructors took the Standardized Teaching Manual and studied and reflected on it as they went. Some instructors treated the manual as a &#34;treasured guide&#34; to carry with them at all times, taking it out to read and memorize whenever they could. Other instructors, in the course of teaching practice, continuously summarized lessons learned and drove the manual&#39;s improvement and updating in close alignment with actual mission requirements.</p><p>This makes me feel that the development and progress of education requires every instructor to be united in heart and effort, working together to overcome difficulties. Running the relay race one baton at a time, working generation after generation, we will certainly achieve real results and real accomplishments.</p><p>Transforming Concepts, Continuously Improving</p><p>■ Flight Instructor Hou Xiaojiang, a unit of the Air Force Aviation University</p><p>In recent years, the difficulty of our unit&#39;s training tasks has increased, placing higher demands on instructional quality and effectiveness, and driving us to transform our concepts and continuously improve.</p><p>From something as small as the operation of a single switch to something as large as the conduct of an entire subject, our teaching methods have continuously upgraded and our instructional concepts have continuously renewed. Since the Standardized Teaching Manual was introduced, exchange and mutual learning among instructors has increased; it is common to see senior instructors consulting younger instructors about the execution of a maneuver or procedure—and some of those younger instructors are even former cadets whom the senior instructors once taught.</p><p>Sometimes, walking past the study room after a meal, one can see many instructors bent over the Standardized Teaching Manual in concentrated study. The multicolored annotations and markings in everyone&#39;s manuals have grown ever more numerous, the page corners have gradually curled, and instructional results have followed—cadets&#39; performance in subject assessments has become increasingly impressive.</p><p>The road of instructional reform has no end. &#34;What kind of flight cadets to cultivate&#34; and &#34;how to cultivate flight cadets&#34; are mission questions that perpetually occupy the minds of every flight instructor. We will quicken our pace of advancement, helping more and more &#34;fledgling eagles&#34; fill out their wings and successfully obtain their &#34;blue-sky clearance.&#34;</p><p>(Compiled from interviews by PLA Daily Special Correspondent Wang Wenbo)</p><p>Sharp Perspective</p><p>Be a Runner on the Road of Reform</p><p>■ Yu Xiang</p><p>The predecessor of the Air Force Aviation University was the Northeast Democratic Allied Army Aviation School—the old Northeast Aviation School. In 1946, the old aviation school rose from the ground through enormous hardship. Writer Guo Xiaoye noted in a book that the old aviation school was established on the ruins of war, and that instruction was like breaking new ground on uncultivated soil.</p><p>At that time, the standard instructional sequence for flight training worldwide was to first study theory and then gradually move to practical operations. The then-commandant Chang Qiankun wrote formulas on a rough blackboard, but the pairs of young eyes below the lectern were filled with bewilderment. Although they aspired to fly, the cadets—with their weak knowledge foundations—could not understand the abstruse theory.</p><p>Confronting this situation, the instructors of the old aviation school broke with convention and boldly innovated, pioneering an object-based teaching method (实物教学法) that brought flight instruments, components, and other equipment into the classroom, disassembling them while teaching. The &#34;fog&#34; in the cadets&#39; minds quickly cleared, and instructional effectiveness increased greatly.</p><p>In the new era and on the new journey, we face new tasks and new challenges. As heirs of the old Northeast Aviation School, the faculty and students of the Air Force Aviation University bear the mission of history, carry forward the spirit of their predecessors, and always act as runners on the road of reform.</p><p>One could say that the process of change and innovation is arduous. It is like night flight: limited visibility conditions and fewer reference points place high demands on pilots&#39; technique and psychology. Reform is the same—there are no ready-made reference points, and the outcome cannot be foreseen; the many challenges test everyone&#39;s confidence and resolve.</p><p>In practice, the more experienced and longer-tenured a flight instructor, the harder it is to change teaching concepts and habits formed over many years. Having gone through the arduous process of sweeping away entrenched ways of thinking (思维沉疴), a Standardized Teaching Manual embodying collective wisdom and painstaking effort was finally born. Everyone worked hard to complete the breakthrough from zero to one, achieving a reshaping of instructional concepts.</p><p>In a recent follow-up survey on the quality of personnel cultivation, the unit received a succession of feedback from frontline units—flight cadets&#39; capacity for initiative and innovation is continuously growing, and their capabilities and qualities are increasingly suited to battlefield needs. This has also made everyone more firmly committed to the current educational principles and cultivation direction.</p><p>An educator once said: &#34;If we teach today&#39;s students with yesterday&#39;s thinking, we are robbing them of their future.&#34; Reform, too, is a journey of constant renewal with no endpoint. Looking toward the future, instructors must always maintain the awareness to think about and plan for war (思战谋战) and to proactively seek change, so that more cadets can leave brilliant flight paths across the sky.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">飞行学员有了《标准化教学手册》 ■解放军报记者 刘宝瑞 特约通讯员 王文博 黄语轩 空军航空大学某部展开飞行训练。刘则明摄 战机列阵，直指苍穹。 前不久，空军航空大学某部组织某期班飞行学员开展夜航训练。这是该期班飞行学员经过标准化教学培养后，首次驾驶某型战机在夜间飞向目标空域。 耳机里传来指挥员的起飞命令，飞行学员王子轩将油门推到最大。随着速度表指针转动到规定数值，他迅速拉杆，战机在轰鸣声中加速起飞。完成既定训练内容后，王子轩驾驶战机顺利降落，取得优异成绩。 一架战机的起飞，依托于巨大的推力。一名学员蜕变为善飞、精飞的合格战斗员，同样有赖于教学训练模式的托举。 近年来，面对教学指向不够清晰等现实问题，空军航空大学某部持续改革教学训练模式，组织专班人员在训练大纲、飞行手册等基础上编写《标准化教学手册》，旨在克服固有教学模式中标准不清晰、施教不科学、向战不鲜明等种种弊端。 如同一把刻度十分精细的“尺子”，《标准化教学手册》让施教者有了更为清晰准确的教学目标。据了解，该部推行标准化教学以来，飞行学员成才率稳步上升。今天，让我们一同观察该部标准化教学如何助推“雏鹰”加速奋飞。 合力锻造出一把刻度精细的“尺子” 提起探索标准化教学模式的经历，空军航空大学某部飞行教员王渤权仍然记得他和战友们的一场激烈讨论。 前年，该部以及承担后续培训任务的单位的飞行教员，和来自一线部队的飞行骨干组成标准化教学模式改革专班，共同探讨推动经验式教学向标准化教学转化的改革方案。 会议中，王渤权以飞行学员对飞机着陆时下滑曲线的控制为例，提出教学转向标准化的重要性。他在白板上画出两道不同的弧线：“有的学员选取下滑曲线比较高，进跑道后通过操纵拉杆进行着陆；有的学员选取下滑曲线比较低，下落过程中使用油门和杆舵相互配合进行着陆……” 长期的教学过程使王渤权意识到，学员空间感尚不足、注意力分配也不够均衡，着陆过程中需要研判大量信息：“实际上，选取较低的下滑曲线能有效减轻操纵压力，让他们将更多精力放到对飞行姿态的关注上，这样更匹配飞行学员的能力现状。” 然而，一些飞行教员对此持有相反意见。尽管选取高的下滑曲线更考验飞行技术，但他们认为这样有利于学员能力水平的快速提升。还有人认为两种操作都具有可行性，飞行教员完全可以根据个人的操作习惯和熟练程度来教学。 “没有规矩，不成方圆。”在一次次激烈的探讨中，大家逐渐明确了采取标准化教学模式对于提高整体教学质效的重要意义，并不断辨析“哪些教学内容需要统一标准，标准应该朝着什么方向来确定”等问题。 经过数月攻关，标准化教学模式改革专班编写了一本《标准化教学手册》，对教学流程、任务目标、考核内容、评价标准、常见教学问题的解答等都进行了统一规范。可以说，大家合力锻造出一把刻度精细的“尺子”，为教学提供了更多符合学员能力生成规律的参考标准。 教员陈继革对手册中教学用语的使用标准付出了许多心血。“以往，对于一些词汇的使用，大家各有各的方式，这常常导致‘教’和‘学’之间出现隔阂，教员和学员之间需要一段时间的磨合才能达成默契。”为了保证教学过程中彼此的想法和思路能够清晰有效地传递，有着30多年飞行经验的陈继革带领几名飞行教员仔细梳理并规范了上百种教学用语和对应动作。 王渤权对此感慨颇深。第一次带教一名学员训练某飞行动作时，他作出提醒：“保持飞行轨迹圆滑……”令他意外的是，训练效果并不理想。事后王渤权得知，该名学员并没有完全理解“圆滑”的详细含义。 如今，《标准化教学手册》规范了教员指导该飞行动作的教学用语：“螺旋桨转速保持一致，观察飞行姿态，避免偏离轨迹。”王渤权感慨，教学用语的规范使用让学员对教学内容的理解更加清晰透彻，大大提升了师生之间的沟通效率。同时帮助师生在交叉带教时实现快速对接，避免教学资源的浪费。 教员赵关山向记者展示了飞行训练信息管理系统中一名学员的成绩单，可以看到此前他的成绩上下浮动较大：“以往，受到飞行经历、教学经验等影响，不同教员监控学员成长质量时的关注面有所不同，主观和感性的判断容易导致评价不够全面客观。” 赵关山告诉记者，《标准化教学手册》同样完善了教学评价体系，将各个训练课目按照飞行动作赋值权重系数，并采取教员评和系统评相结合的方式，科学评价每一名学员，为下一步教员的教学重心和学员的学习重心指明方向。实施标准化教学以来，不少学员的训练成绩曲线已从起伏较大的波浪线变为一条平稳上升的弧线。 动态调整优化，标准更加精准 又是一个飞行日。 迎着熹微的晨光，飞行学员唐鑫和战友驾驶战机次第起飞。模拟完成“跃升俯冲攻击”动作后，他驾机做出一个漂亮的回旋，并将头偏45°角向身后望去观察“敌方”情况。 王渤权告诉记者，看似普通的“飞行员45°回头看”动作，背后隐藏着重要的战术意义——关注对敌打击状态，及时做出应对动作。然而，在前期的飞行训练中，王渤权发现，这个动作并未引起学员的重视，不少学员只是机械地执行动作，并未充分做好根据“敌方”态势及时变化的准备。原因在于《标准化教学手册》仅规范了“飞行员45°回头看”动作的操作流程，并未详细阐述其重要的实战背景和战术意义。 “《标准化教学手册》的细则非常之多，但再多的标准都应该指向战斗力这个唯一的根本的标准。教学过程中，我们不仅要让学员‘知其然’，更要让他们‘知其所以然’。”一次教学改革推进会上，王渤权提出的问题引发与会者讨论。大家一致认为，对学员实战思维的培养和强化非常重要。为此，该部组织相关训练部门定期收集飞行教员在教学实践中的一手经验，多波次修订《标准化教学手册》，进一步改进完善不符合实战标准的教学内容，力求让学员练强适应战场的决策能力和思维模式。 记者了解到，由于初教机机型较轻，在前期教学中，不少教员要求学员在起飞时通过“加油门、蹬左舵”，达到维持初教机机身平衡的目的。但这个固定操作显然不能满足各种机型和飞行场景。 翻开最新版本的《标准化教学手册》，记者发现其中将起飞动作的要求规范为“密切关注机身态势”。王渤权解释说：“我们主动打破僵化思维的桎梏，让学员密切关注机身态势，根据自己的飞行感受决策飞行操作，这样远比机械地执行指令更能提升学员分析解决问题的思维和能力。在后期改装新机型时，学员也能快速进入实战节奏。” 标准化教学改革实施以来，该部教学队伍对于如何紧扣战斗力标准开展教学的探索从未止步。 此前，部分飞行教员认知不足，导致教学训练贴战不紧。为促进课堂与战场无缝衔接，近年来，该部组织教员分批赴部队交流见学，同时积极选拔优秀战斗员到院校任教，让越来越多来自一线部队的“活水”涌入教学队伍。大家的一线视野和战斗经验，正为标准化教学注入新的内涵。 “除了横向关注自身高度空域，也要纵向了解其他战友的方位，这对态势感知至关重要……”走进某团飞行准备室，记者看到教员汪灿明正耐心向学员讲解飞行要领。 作为一名拥有多年教龄的飞行教员，汪灿明先后辗转一线部队、飞行学院等单位，具有丰富的实战化训练和教学经验。前年，他来到该部担任飞行教员，并牵头开展该团标准化教学工作。 汪灿明的办公电脑上，一张张思维导图引起记者注意。“根据任务地域、训练目标等情况的变化，教学标准也应不断完善。”汪灿明说，聚焦实战标准，他带领教学团队定期开展经验总结，将需要及时修订和补充的教学内容整理为大量的思维导图。如今，《标准化教学手册》已经更新迭代至3.0版本，而汪灿明所在教学团队整理出的思维导图已经拓展至10余张，累计6万余字，成为《标准化教学手册》进一步调整优化的重要参考。 教学既不能没有标准，也不能唯标准论 有了《标准化教学手册》后，飞行教员张泉达的教学工作更加得心应手。不过，他渐渐发现，学员的能力基础存在差异，教学标准适用于绝大多数人的成长规律，但个别人因为学习能力较弱“吃不了”，也有人因为吸收快“吃不饱”。 近代著名教育学家陶行知先生曾说，培养教育人和种花木一样，首先要认识花木的特点，区别不同情况给以施肥、浇水和培养教育。随着标准化教学的开展，大家意识到，教学既不能没有标准，也不能唯标准论、搞“一刀切”。 为了提升教学训练的质量和效益，改革专班鼓励飞行教员在标准化教学的基础上因材施教，通过灵活掌握教学方法实现教学相长。 “学员在天赋、性格和学习能力等方面各不相同，在飞行训练中表现出的特质和问题也有一定差异。”张泉达说，“有的学员在飞行操作上反应敏捷，但心理素质不够过硬；有的学员在理论学习上表现出色，但实际操作略显不足。” 张泉达以教学标准为基础，根据每位学员的强项和短板，因人施教组训。 学员冯一超性格活泼，敢于提问，但注意力不够集中，飞行训练中，张泉达会在重点内容上有意提高音量，帮助他对相关操作形成条件反射，养成肌肉记忆；学员樊俊辰心思缜密，但缺乏自信，有时沉溺于一个失误中难以自拔，张泉达对他以鼓励为主；学员周培玺理解和接受能力强，同样的失误很少犯第二次，张泉达会在飞行指导时言简意赅地点出问题，给他留足自主思考的时间和空间……一段时间下来，张泉达带教的几名学员进步明显，达到同一课目训练目标所飞行的架次比往届学员明显减少。 翻看某学员的飞行训练计划表，记者注意到一些课目的备注栏里写着“补充架次”，这是教员针对不同学员的训练情况，在部分课目中为他们“开小灶”。每次飞行训练结束后，学员都会结合飞参数据和飞行中遇到的问题率先进行自我讲评，教员再根据《标准化教学手册》为大家打分。对已经超前达到目标的学员，可以适当减少该课目飞行架次，提前转入下一课目训练，对基础稍弱、在既定架次的飞行中没有达到目标的学员，通过补充架次的方式，弥补能力差距。 该部领导介绍，从形式上看，《标准化教学手册》是以施教者为出发点，但究其本质，让每一名学员找到适合自己的学习节奏和发展路径，才是标准化教学的根本目的。 亲历者说 合心合力 团结攻坚 ■空军航空大学某部飞行教员 李超杰 作为标准化教学模式改革专班的一员，为拟制《标准化教学手册》，我和战友们不知经历了多少次激情澎湃的交锋和废寝忘食的攻关。 面对教学标准“招无定法”、施教方法“口口相传”的现状，我们要尽快探索出一条向战为战、科学高效的育人新路径。 那段时间，为了确定每个教学阶段、任务周期、飞行架次中，要让学员生成什么能力、达到什么标准，大家对着方案一处处斟酌推敲，常常忙碌到深夜。 标准化教学模式推行后，教员们拿着《标准化教学手册》边研边悟。一些教员把手册当作随身携带的“宝典”，随时拿出来看一看、记一记。还有一些教员在教学实践的过程中，不断总结经验教训，紧贴任务实际推动手册完善更新。 这让我感到，教育事业的发展进步需要每一个施教者合心合力，团结攻坚。我们一棒接着一棒跑下去，一代接着一代干下去，一定能干出实绩、干出成果。 转变理念 持续改进 ■空军航空大学某部飞行教员 侯孝江 近年来，单位的承训任务难度加大，对教学质效提出更高要求，也驱动着我们转变理念、持续改进。 小到一个电门的操作，大到一个课目的实施，我们的教学方法不断升级、教学理念持续更新。《标准化教学手册》出台后，教员之间的交流互鉴更多了，常常有老教员向年轻教员请教一个动作或程序的实施，一些年轻教员甚至是老教员曾经带过的学员。 有时吃完饭路过学习室，能看到不少教员正埋头钻研《标准化教学手册》。大家手册上的各色笔迹和标注不断增多，纸页渐渐卷起页角，教学成果随之显现，学员在课目考核中的表现愈发亮眼。 教学改革之路没有止境，“培养怎样的飞行学员”和“怎样培养飞行学员”始终是萦绕在每名飞行教员心头的使命追问。我们会加快奋进的步伐，助力越来越多的“雏鹰”丰满羽翼，成功拿下“蓝天通行证”。 （解放军报特约通讯员 王文博采访整理） 锐视点 做改革路上的奔跑者 ■于 翔 空军航空大学的前身是东北民主联军航空学校，即东北老航校。1946年，老航校历经万难拔地而起。作家郭晓晔在书中提到，老航校是在战争的废墟上建立的，教学则是在未经耕耘的生土上垦荒。 当时，世界上飞行训练的常规教学步骤，都是先学理论再逐步实操。时任校长常乾坤在粗糙的黑板上写下公式，然而，讲台下一双双年轻的眼睛透着迷茫。尽管志在飞天，但知识功底薄弱的学员们无法理解深奥的理论。 面对这种情况，老航校的教员们打破常规，勇于革新，开创了实物教学法，将飞行仪表、机件等器材搬进了教室，边拆解边授课，学员们头脑中的“迷雾”很快不见，教学成效大增。 新时代、新征程，我们面临着新任务、新挑战。作为东北老航校的传人，空军航空大学的师生担负历史的使命，传承前人的精神，始终做改革路上的奔跑者。 可以说，变化与革新的过程是艰难的。就像是夜航，有限的可视条件和较少的参照物对飞行员的技术和心理提出较高要求。改革同样如此，没有现成的参照物，也无法预知结果如何，诸多挑战考验着大家的信心和决心。 实际上，越是经验丰富、教龄较长的飞行教员，改变多年形成的教学理念和教学习惯越不容易。经历了扫去思维沉疴的艰辛历程，一本凝聚着智慧与心血的《标准化教学手册》终于诞生，大家努力完成了从0到1的突破，实现了教学观念的重塑。 在近期的人才培养质量跟踪调查中，单位接连收到来自一线部队的反馈——飞行学员的开拓意识不断增强，能力素养更加契合战场需要。这也让大家更加坚定了当前的教育准则和培养方向。 一位教育家曾说：“如果用昨天的思维来教今天的学生，我们就是在剥夺他们的未来。”改革，也是一个时时求新、没有终点的旅程。面向未来，施教者必须始终保持思战谋战、主动求变的意识，才能让更多学员在天空上留下闪亮的航迹。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

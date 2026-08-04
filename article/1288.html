@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | The Growth Story of the &#34;Mountain Peak&#34; Duo — China Mil Watch</title>
+  <meta name="description" content="Staff Sergeant Third Class Zhang Qingshan and Corporal Feng Xuefeng, a master-and-apprentice NCO pair from an unnamed Navy center on Bohai Bay, won top honors at separate national and military-wide co">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/1288.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/1288.html">
+  <meta property="og:title"        content="Barracks Observation | The Growth Story of the &#34;Mountain Peak&#34; Duo">
+  <meta property="og:description"  content="Staff Sergeant Third Class Zhang Qingshan and Corporal Feng Xuefeng, a master-and-apprentice NCO pair from an unnamed Navy center on Bohai Bay, won top honors at separate national and military-wide co">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | The Growth Story of the &#34;Mountain Peak&#34; Duo">
+  <meta name="twitter:description" content="Staff Sergeant Third Class Zhang Qingshan and Corporal Feng Xuefeng, a master-and-apprentice NCO pair from an unnamed Navy center on Bohai Bay, won top honors at separate national and military-wide co">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | The Growth Story of the &#34;Mountain Peak&#34; Duo
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨“山峰”组合成长记</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>11 June 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16466668.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>Staff Sergeant Third Class Zhang Qingshan and Corporal Feng Xuefeng, a master-and-apprentice NCO pair from an unnamed Navy center on Bohai Bay, won top honors at separate national and military-wide competitions in 2024 and 2025 respectively — Zhang at a national industry skills competition for his 模块化分解法 (modular disassembly method) for shipboard equipment, and Feng at the inaugural PLA &#39;Strong Equipment Cup&#39; for a portable light-and-flag communications training device — both receiving second-class merit citations. The article documents the center&#39;s 人才特区 (talent special zone) institutional framework, which removes rank and seniority barriers to R&amp;D participation and provides dedicated funding, training rotations, and protected innovation time; the framing points to a deliberate effort by PLA Navy shore-based support units to institutionalize grassroots technical innovation rather than treat individual NCO ingenuity as exceptional. The specific unit, vessel type, and command affiliation are withheld, limiting any assessment of how broadly this model is being applied across the fleet.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Two &#34;master and apprentice&#34; noncommissioned officers from a Navy center claim top honors at major competitions in two consecutive years——</p><p>The Growth Story of the &#34;Mountain Peak&#34; Duo</p><p>■ Zheng Yucheng, Xie Zishuai, PLA Daily Correspondent Qi Yunting</p><p>A vessel of a certain Navy unit conducts maritime training. Photo by Wu Kunlong</p><p>In early summer, a sea breeze blows along the shores of Bohai Bay. Inside the NCO Skills Master Workshop of a certain Navy center, Staff Sergeant Third Class Zhang Qingshan and several comrades are repeatedly refining an equipment maintenance and innovation plan. Zhang Qingshan&#39;s apprentice, Corporal Feng Xuefeng, stares intently at the screen, adjusting module parameters bit by bit.</p><p>Zhang Qingshan and Feng Xuefeng are affectionately called the &#34;Mountain Peak&#34; duo by their comrades. In 2024, Zhang Qingshan won first place in his specialty at a national industry skills competition and was awarded a second-class merit citation. In 2025, Feng Xuefeng won the gold award at the military&#39;s inaugural &#34;Strong Equipment Cup&#34; Equipment Management and Application Innovation Competition and was likewise awarded a second-class merit citation that same year.</p><p>In two consecutive years, this master-and-apprentice pair successively mounted the awards podium at national and military-wide skills competitions. What is the secret to their success?</p><p>ORIGINAL INTENT</p><p>Every innovation is tightly focused on the real training pain points of officers and soldiers</p><p>Zhang Qingshan (right) and Feng Xuefeng check circuit parameters.</p><p>&#34;Working hard on research and development is not about winning awards—it&#39;s about solving the difficulties and pain points our comrades face in training.&#34; This plain statement from Feng Xuefeng captures the original intent (初心) of all grassroots innovators at the center.</p><p>Six years ago, Feng Xuefeng had just been assigned to the signals post when he encountered difficulties during light-and-flag training. This type of training requires two or more participants. What troubled him even more was the absence of a verification tool: whether a message was sent correctly depended entirely on the experience of the senior squad leader, causing error and omission rates to remain persistently high. These problems were a source of frustration for many signals soldiers.</p><p>&#34;It would be great if there were a training device one person could use alone,&#34; Feng Xuefeng found himself thinking.</p><p>He acted on the thought immediately. He compiled and organized his comrades&#39; complaints about training into a notebook and distilled their core needs. When new soldiers said the operation was too complicated, he thought about simplifying the buttons. When veterans said the low-light mode was hard to see at night, he planned to add a screen brightness adjustment function. When someone raised the problem of message verification being too cumbersome, he repeatedly consulted reference materials and explored the development of an intelligent verification module. After repeated assembly, disassembly, and testing, the first prototype was finally born.</p><p>The road to development is always full of setbacks. During the first lighting test of the prototype, the lights that had been properly calibrated began to flicker as soon as they were exposed to the low-temperature maritime environment. Several comrades standing nearby couldn&#39;t help muttering quietly: &#34;This is too hard to fix—maybe we should just forget it.&#34; Feng Xuefeng said nothing. He re-examined every circuit segment and every parameter and finally discovered that the temperature tolerance of the components was insufficient. First thing the next morning, he took his revised plan to the support department to coordinate replacement parts and recalibrate.</p><p>During that period, he collected feedback during training by day and stayed up late optimizing the design by night, ultimately developing a practical &#34;portable light-and-flag communications training device.&#34;</p><p>Zhang Qingshan&#39;s path to innovation likewise began with a &#34;head-scratcher&#34; in the engine room. After nearly twenty years of working at the front line of shipboard equipment maintenance, he understood the drawbacks of traditional disassembly and reassembly methods: the procedures were cumbersome, the steps were scattered, and when a complex fault arose, personnel often had to disassemble and reassemble repeatedly, spending half a day without necessarily identifying the problem—sometimes directly slowing training progress.</p><p>&#34;Could disassembly and reassembly be made simpler and more efficient?&#34; To crack this hard nut, Zhang Qingshan simply moved his &#34;workstation&#34; into the engine room. In the harsh environment of high temperatures, noise, and the smell of oil and fumes, he explored more practical disassembly and reassembly methods. He ultimately refined a highly efficient and practical &#34;modular disassembly method&#34; (模块化分解法), dramatically reducing the time required to disassemble and reassemble equipment.</p><p>On one occasion, a certain type of equipment suffered a sudden fault. Using the old method, troubleshooting would have taken at least four hours. With the training mission pressing, Zhang Qingshan bore the pressure and tried disassembling with his new method, ultimately completing the localization and disassembly within one hour. That experience further steeled his resolve to optimize disassembly and reassembly methods.</p><p>Every grassroots innovation is tightly focused on the real training and combat-readiness pain points of officers and soldiers. From Feng Xuefeng&#39;s &#34;portable light-and-flag communications training device,&#34; iterated through multiple versions, to Zhang Qingshan&#39;s &#34;modular disassembly method&#34;—each one speaks to soldiers&#39; hearts and solves soldiers&#39; difficulties. This is the most solid foundation of grassroots innovation.</p><p>SUPPORT</p><p>Innovative seeds that break through the soil need most of all the fertile ground of the organization</p><p>&#34;Having ideas alone is useless—if the unit hadn&#39;t given us its full support, our ideas would never have gotten off the ground.&#34; When speaking of their growth experiences, the &#34;Mountain Peak&#34; master-and-apprentice pair said this in unison.</p><p>The innovative enthusiasm of grassroots officers and soldiers needs most of all to be nurtured; innovative seeds that break through the soil need most of all the fertile ground of the organization. The center has specifically built a &#34;talent special zone&#34; (人才特区), breaking down barriers of rank, position, and years of service. As long as someone has ideas and potential, new soldiers and veterans are treated equally and all are brought into the cultivation program.</p><p>Dedicated research and development space, professional instruments and equipment, and grassroots innovation support funds are all fully in place. The unit has also specifically carved out &#34;innovation time&#34; so that everyone can focus on research without distraction. To address the shortfall in professional expertise, the unit sends officers and soldiers to military and civilian academies for training and to equipment manufacturers for observation, and invites experts to provide on-site guidance, effectively resolving the difficulties of &#34;lacking equipment, lacking parts, lacking technical knowledge.&#34;</p><p>Feng Xuefeng still remembers the most difficult period of his research and development work. Because his foundation in electronic programming was shaky, circuit designs repeatedly went wrong, and prototype after prototype failed. He fell into despondency.</p><p>When the center&#39;s support department learned of the situation, it arranged for him to attend an electronic programming intensive training course and invited civilian experts to provide remote guidance via video link. When components ran short, the department allocated funds from the innovation support budget to purchase them; when testing conditions were inadequate, it coordinated with professional platforms to open access.</p><p>In just three years, the &#34;training device&#34; Feng Xuefeng developed completed four iterations and upgrades with the unit&#39;s support, transforming from a rough prototype into a mature piece of equipment ready for large-scale promotion.</p><p>Zhang Qingshan&#39;s path to promoting his innovation likewise benefited from the support of the &#34;talent special zone.&#34;</p><p>When he first worked out the &#34;modular disassembly method,&#34; many people harbored doubts: the old method had been used for so many years—could the new one really be trusted? Unit leaders did not simply render a verdict; instead, they organized technical backbone personnel to assist him in experiments and collected hands-on feedback from different officers and soldiers. Once the method had matured, they had him take the stage to teach it and lead the drafting of a manual, transforming a &#34;personal trick&#34; into a &#34;universal method.&#34;</p><p>Catalyzed by the &#34;talent special zone,&#34; one grassroots idea after another has taken root. A series of practical innovations—including a &#34;meteorological message translator,&#34; a &#34;wireless transceiver megaphone,&#34; and a &#34;steplessly adjustable low-light night-vision lamp&#34;—have appeared in succession. From deep cultivation in one&#39;s own post to cross-specialty and cross-domain exploration, a wave of innovation surging from the hearts of soldiers continues to flow.</p><p>COMBINED EFFORT</p><p>From &#34;one person&#39;s solitary research&#34; to &#34;master and apprentice side by side,&#34; from &#34;individual specialty&#34; to &#34;shared achievement&#34;</p><p>At the center, the &#34;Mountain Peak&#34; duo has long transcended an ordinary master-and-apprentice relationship, becoming a vivid embodiment of the transmission of spirit and the relay of technical skill.</p><p>When Feng Xuefeng first &#34;took on a master,&#34; his mind was full of thoughts about &#34;producing something new and impressive,&#34; and he became for a time absorbed in complex designs. Zhang Qingshan did not criticize him; instead, he took him into the training ground to experience firsthand the real needs of front-line training. He told Feng Xuefeng: &#34;Our innovation is not about putting on a show or creating something to look at—we must keep our eyes on actual combat use and keep improving around the needs of officers and soldiers. Being genuinely useful is the hard truth.&#34;</p><p>When development of the &#34;portable light-and-flag communications training device&#34; hit obstacles and repeated experiments failed, Feng Xuefeng&#39;s spirits sank and he repeatedly thought about giving up. Zhang Qingshan stayed with him in the workshop through the night to troubleshoot, going through the drawings point by point to sort out the problems. Zhang Qingshan passed on the full store of his nearly twenty years of fault-diagnosis experience: &#34;Working on technology is like a ship navigating—no matter how big the waves, the rudder must not drift and the heart must not panic. Stay calm and there is no obstacle that cannot be overcome.&#34;</p><p>The transmission of skills, move by move and step by step, settled over day after day into an influence on conduct and character. Under Zhang Qingshan&#39;s influence, Feng Xuefeng settled his mind and threw himself into the work, no longer chasing speed or flashiness but focusing single-mindedly on real needs and refining repeatedly. The master&#39;s spirit of being exacting, pragmatic, and willing to tackle hard problems gradually became the source of confidence from which he drew strength to overcome difficulties.</p><p>In Zhang Qingshan&#39;s eyes, meanwhile, his young apprentice brought vitality. Feng Xuefeng is quick to absorb new things and is familiar with intelligent technology; he often explains new knowledge such as programming and simulation design to his master, helping him combine traditional maintenance experience with modern technology so that the &#34;modular disassembly method&#34; continues to iterate and upgrade and better accommodates new types of equipment.</p><p>Scenes like this play out frequently in the workshop. The master holds equipment components and explains principles, difficulties, and maintenance experience; the apprentice sits at the computer and teaches software, algorithms, and new technology. Difficult problems are tackled together, ideas spark off each other, success brings no arrogance, and setbacks bring no discouragement.</p><p>From &#34;one person&#39;s solitary research&#34; to &#34;master and apprentice side by side,&#34; from &#34;individual specialty&#34; to &#34;shared achievement&#34;—this atmosphere of master and apprentice working in concert has also spread to every post throughout the center. Veterans lead new soldiers, backbone personnel lead promising newcomers; technical skills are mutually taught, experience is mutually learned, and difficult problems are solved together.</p><p>From keeping a close eye on the urgent difficulties and concerns of officers and soldiers to find the right direction, to the unit providing all-around platforms and pathways to break through bottlenecks, to the relay of master and apprentice and the continuation of a torch of spirit to consolidate strength—the growth of the &#34;Mountain Peak&#34; duo is not an isolated case, and the wave of grassroots innovation is no accident.</p><p>The sea breeze blows on, and the &#34;Mountain Peak&#34; duo continues to cultivate their posts without pause. One innovative seed after another takes root in the fertile soil of soldiers&#39; hearts, grows under the support of the organization, and blooms through the transmission of spirit. Countless &#34;golden ideas&#34; from the grassroots are converging into the mighty driving force of strengthening and revitalizing the military, writing a new chapter of sailors in the new era who stand at their posts, innovate, and achieve victory.</p><p>REPORTER&#39;S NOTES</p><p>Where Does the Source of Innovation Lie?</p><p>■ PLA Daily Correspondent Qi Yunting</p><p>On the way to the interview, I kept turning over one question in my mind: where exactly does the source of grassroots innovation lie? The answer was found in that NCO Skills Master Workshop.</p><p>When I arrived that day, the door was ajar, and things were already lively inside. Zhang Qingshan and Feng Xuefeng, master and apprentice, were discussing a technical parameter; nearby, someone was soldering a circuit board, someone was adjusting a model, and someone else was staring at a screen doing 3D modeling. I learned later that they were &#34;permanent members&#34; of the workshop, drawn from different posts including cooking, rigging, and electronic countermeasures—all attracted by the &#34;talent special zone.&#34;</p><p>After three days following them around, the source of innovation gradually came into focus. Feng Xuefeng developed the &#34;training device&#34; because he was &#34;forced&#34; into it by his comrades&#39; complaints—specialty training couldn&#39;t be done solo, messages couldn&#39;t be verified, and nothing could be seen at night. Zhang Qingshan&#39;s &#34;modular disassembly method&#34; was &#34;ground out&#34; through repeated disassembly and reassembly in the engine room: &#34;It was just too slow—I couldn&#39;t stand it myself.&#34; The soldier Ma Zhuang, who does 3D modeling, told me he simply felt the existing teaching aids weren&#39;t intuitive enough, so he taught himself modeling—and has been at it for two or three years.</p><p>Their starting points were not grand at all—every one of them came from those moments during training when something made you think &#34;I can&#39;t stand this&#34; or &#34;if only there were a way.&#34; But what turned those moments into reality was a different kind of force.</p><p>Each of these people has a quality of sinking in and seeing things through to completion. Feng Xuefeng would plant himself in the workshop for an entire day over the problem of light flickering; if Zhang Qingshan&#39;s angle when disassembling a component was off by even a little, he would start over. The others in the workshop were the same—those learning programming, those practicing modeling—all starting from zero, busy with their primary duties by day and grinding through reference materials at night, teaching each other and pushing each other forward.</p><p>Another key to grassroots innovation is organizational support. The workshop has dedicated special funds; when personnel doing research and development need components, they submit a report and it gets approved. When technical difficulties arise, the unit steps in to coordinate remote guidance from university experts. When training tasks are heavy, dedicated &#34;innovation time&#34; is carved out so everyone can focus on their breakthroughs in peace. I asked Feng Xuefeng: what is the hardest thing about innovation? He said: &#34;It&#39;s not the technology—it&#39;s that at the beginning, very few people believed in you…&#34; Someone nearby chimed in: &#34;That was before. It&#39;s not like that now. Once you produce something, everyone is willing to help you test it.&#34;</p><p>On the last evening of the interview, the technical problem that had been troubling the master-and-apprentice pair finally broke through. Feng Xuefeng called out &#34;it&#39;s through!&#34; and Zhang Qingshan immediately ran over to test and check the data. Looking at that brightly lit workshop, I suddenly felt that the so-called source of innovation is perhaps hidden in those pain points that make people say &#34;I can&#39;t stand this,&#34; hidden in the persistence of officers and soldiers who settle their minds to solve them, and also hidden in the organization&#39;s commitment to underwriting that persistence.</p><p>FIRSTHAND ACCOUNT</p><p>The &#34;Training Device&#34; That Actually Works</p><p>■ Private First Class Diao Maolin</p><p>Signals soldiers conduct solo flag communications training. Photo by Wu Kunlong</p><p>When I was assigned to the signals specialty as a new soldier, I watched the squad leaders holding communications flags and signal lamps, sending commands instantly to distant points, and thought: this specialty is really cool. But when I actually got my hands on it, I found that training was nowhere near as dashing as it looked.</p><p>Flag and light training requires two or more participants—one sends the message, one receives the signal, and afterward both verify the message together. If a comrade was on duty, on a work detail, or on leave, training simply could not proceed. What was even more troubling was the absence of a verification tool: whether a message was received correctly depended entirely on feel. Several times I thought I had received it smoothly, only to find a pile of errors and omissions when it came to the assessment. During my first night training exercise, the wind on the deck was so strong that I simply could not make out the signal rhythm. The training was a complete mess, and that sense of defeat was deeply discouraging.</p><p>Last year, Squad Leader Feng Xuefeng brought the newly developed &#34;portable light-and-flag communications training device&#34; to the training ground and had us all try it. Honestly, I didn&#39;t hold out much hope at first—could a new device the size of a palm really solve the training problems signals soldiers had struggled with for so many years?</p><p>After using it, I discovered that this &#34;portable light-and-flag communications training device&#34; can be used by a single person—no more waiting for a partner to train together. After training ends, the device automatically generates the correct message text. What surprised me most was that during training, the screen brightness of the device can be adjusted just like a phone—whether day or night, brightness can be adjusted as needed, and the problem of not being able to see clearly is gone entirely.</p><p>From that point on, this &#34;training device&#34; became my closest &#34;comrade-in-arms.&#34; Whenever I had free time I would grab it and put in extra practice, channeling all the time I used to spend finding a partner, waiting for a slot, and guessing at correctness into improving my skills, and seeing my own shortcomings more clearly. In several consecutive assessments, my error rate dropped again and again, and my scores gradually worked their way to the top.</p><p>During last month&#39;s mission, the squad leader had me receive the messages, and I made zero errors throughout. When the mission ended, my comrade Zhang Yanhang clapped me on the shoulder and said: &#34;You&#39;ve got it, kid!&#34; I smiled, but in my heart I knew clearly: it was this machine that gave me the opportunity to grow faster.</p><p>I later heard from the squad leader that Squad Leader Feng had &#34;fussed over&#34; this training device for several years, with one generation of prototypes after another. I think he took all those difficulties during training that we couldn&#39;t quite put into words and turned them, bit by bit, into this machine. That is probably what it means for signals soldiers to truly understand each other.</p><p>(Compiled by Xie Zishuai)</p><p>The &#34;New Method&#34; That Actually Works</p><p>■ Staff Sergeant First Class Zhu Kexin</p><p>When Zhang Qingshan worked out that &#34;modular disassembly method,&#34; I said nothing outwardly, but inwardly I had my doubts.</p><p>I had been working in the engine room for more than ten years. The traditional disassembly and reassembly procedure was long since carved into my muscle memory—which bolt to loosen at which step, which node was prone to problems—I could feel my way through it with my eyes closed. Zhang Qingshan&#39;s &#34;new method&#34; skipped several repetitive disassembly steps and went straight to the core fault point. It sounded like a time-saver, but I always felt uneasy. In combat, equipment cannot afford the slightest error—could skipping those steps truly guarantee that nothing would be missed?</p><p>I wasn&#39;t the only one who thought so. When Zhang Qingshan laid out the plan at a squad meeting, several people shook their heads. Some said the old method had been used for more than ten years and was reliable; others worried that if the &#34;new method&#34; missed a hidden problem, who would bear the responsibility. Zhang Qingshan only said: &#34;Let&#39;s find an opportunity to try it.&#34;</p><p>Before long, the unit organized a fault repair drill under a simulated combat scenario. Zhang Qingshan and I each led a group, troubleshooting the fault using different methods. I followed the old procedure step by step, disassembling layer after layer. By the time I was halfway through, Zhang Qingshan had already located the core fault point. When the last screw was opened, the faulty component appeared before everyone without obstruction. The engine room went quiet for several seconds. I looked down at the work still in my hands and had to admit it inwardly: he was more than twice as fast as me.</p><p>But what truly changed my mind completely was a maritime training exercise. A certain type of equipment on the vessel suffered a sudden fault; using the old method, troubleshooting would have taken at least two hours, and such a long repair time risked delaying training progress. Zhang Qingshan went in with his new method and completed the disassembly in under forty minutes. When the repair was done, he crawled out from the bottom of the compartment, soaked through. I handed him a bottle of water and said: &#34;Old Zhang, your method really works!&#34;</p><p>From that point on, I not only learned it myself but actively helped promote it. When younger comrades in the squad had reservations, I told them about my own experience. Someone asked: how did you change your mind so quickly? I said: after more than ten years in the engine room, I recognize only one principle—in combat, whoever can restore equipment to fighting capability faster has the better method.</p><p>This &#34;modular disassembly method&#34; has now been incorporated into the unit&#39;s repair manual, and sister units have come to learn from it. From doubt to conviction, and then to helping promote it—this experience taught me one truth: for grassroots innovation results to take root at the combat post, you need someone bold enough to be the first to try something new, and you also need the rest of us to set aside our preconceptions and give new things the chance to prove themselves.</p><p>(Compiled by Qi Yunting)</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">海军某中心两名“师徒”军士连续两年先后登顶大赛领奖台—— “山峰”组合成长记 ■郑玉成 谢子帅 解放军报特约记者 戚韵婷 海军某舰开展海上训练。吴坤龙摄 初夏时节，渤海湾畔海风习习。海军某中心军士技能大师工作室内，三级军士长张庆山带着几名战友反复推敲装备维修革新方案，张庆山的徒弟、中士冯雪锋紧盯屏幕，一点点调试模块参数。 张庆山和冯雪锋被战友们亲切地称为“山峰”组合。2024年，张庆山在全国行业技能大赛喜获专业第一，并荣立二等功。2025年，冯雪锋在全军首届“强装杯”装备管理运用创新大赛中获金奖，同年荣立二等功。 连续两年，这对师徒先后站上全国、全军技能比武的领奖台。成功的秘诀在哪里？ 初 心 每一项创新，都紧扣官兵真实的训练痛点 张庆山（右）和冯雪锋检测线路参数。 “努力搞研发，不是为了拿奖，就是想解决战友训练时的难点痛点。”冯雪锋这句朴素的话，道出了该中心所有基层创新者的初心。 6年前，刚分到信号岗位的冯雪锋，就在灯光手旗训练时遇到了困难。这项训练必须两人或两人以上进行。更让他头疼的是没有校对工具，报文发得对不对全凭老班长的经验，导致错漏率居高不下。而这些问题，也是许多信号兵的困扰。 “要是能有一台单人就能练的训练仪就好了。”冯雪锋不由冒出来这样的念头。 说干就干。冯雪锋将战友们对训练的“吐槽”整理归纳在本子上，总结出大家的核心需求。新兵反映操作太复杂，他就琢磨着简化按钮；老兵说夜间微光模式看不清楚，他就计划添加上屏幕参数调节功能；有人提出报文校对太麻烦，他就反复查阅资料，探索研发智能校对模块。经过反复组装、拆解、测试，最初的样机终于诞生了。 研发之路总是波折的。第一次进行样机的灯光试验，原本调试好的灯光一到海上低温环境就出现频闪现象。几个战友围在一旁，忍不住小声嘀咕：“这么难搞，要不就算了吧。”冯雪锋没说话，他把每一段线路、每一个参数重新排查，终于发现是元器件耐温性不足。第二天一早，他就抱着改进方案找保障部门协调零件重新调试。 那段时间，他白天跟着训练收集反馈意见，晚上熬夜加班优化设计，终于研发出了好用的“便携式灯光手旗通信训练仪”。 张庆山的创新之路，同样始于机舱里的“挠头事”。在舰艇装备维修一线摸爬滚打近20年，他清楚传统拆装方式的弊端：工序麻烦、步骤零散，遇上复杂故障，官兵们往往要拆了装、装了拆，耗费大半天还未必能找准问题，有时甚至直接拖慢训练进度。 “能不能让拆装更简单、更高效？”为了啃下这块硬骨头，张庆山干脆把“工位”搬进了机舱。在充满高温、噪声、油气味的恶劣环境中，他探索着更加好用的拆装方法。最终，他打磨出高效实用的“模块化分解法”，把装备拆装时间大幅压缩。 一次，某型装备突发故障，按老方法排查至少要4小时。训练任务迫在眉睫，张庆山顶着压力用自己摸索的新方法试拆，最终硬是在1小时内完成定位拆解。这次经历让他更加坚定了优化拆装方法的决心。 基层的每一项创新，都紧扣官兵真实的训练备战痛点。从冯雪锋迭代数次的“便携式灯光手旗通信训练仪”，到张庆山的“模块化分解法”，件件贴兵心、解兵难，这正是基层创新最扎实的根基。 托 举 破土而出的创新种子，最需要组织的沃土 “光有想法没用，要是没有单位全力托举，我们的点子根本落不了地。”说起成长经历，“山峰”师徒异口同声。 基层官兵的创新热情，最需要呵护；破土而出的创新种子，最需要组织的沃土。该中心专门打造“人才特区”，打破军衔、岗位、兵龄限制，只要有想法、有潜力，新兵老兵一视同仁，全部纳入培养范围。 专用研发场地、专业器材设备、基层创新保障资金一应俱全，单位还专门划出“创新时间”，让大家心无旁骛搞研究。针对专业力量不足的短板，单位选送官兵赴军地院校培训、到装备厂家见学，并邀请专家现地指导，有效破解了“缺设备、缺零件、缺技术”的难题。 冯雪锋至今记得搞研发最艰难的那段时间。因为自己电子编程基础不牢靠，电路设计屡屡出错，样机做一台坏一台，他一度沮丧不已。 该中心保障部得知情况后，安排他参加电子编程集训，还邀请地方专家远程连线指导。元器件不够，该部从创新保障资金里拨款采购；测试条件不足，就协调专业平台开放权限。 短短3年，冯雪锋研发的“训练仪”在单位的支持下完成4次迭代升级，从粗糙样机变成了可批量推广的成熟装备。 张庆山的创新推广之路，同样受益于“人才特区”的托举。 他刚摸索出“模块化分解法”时，不少人心存疑虑：老方法用了这么多年，新法子真靠谱吗？单位领导没有简单下结论，而是组织技术骨干配合他试验，收集不同官兵的实操意见。等到方法成熟后，让他登台授课、牵头编写手册，把“个人招”变成“通用法”。 在“人才特区”的催化下，一个个来自基层的金点子纷纷落地。“气象报翻译器”“无线收发喊话器”“无极调节微光夜视灯”等一批实用创新成果接连出现。从本职岗位深耕到跨专业跨界探索，一股源自兵心的创新热潮持续奔涌。 合 力 从“一人钻研”到“师徒并肩”，从“个人绝活”到“共同成果” 在该中心，“山峰”组合早已超越普通的师徒关系，成为精神传承、技术接力的生动缩影。 刚“拜师”那会儿，冯雪锋满脑子想着“出新出彩”，一度沉迷于复杂设计。张庆山没有批评，而是带着他走进训练场，亲身感受一线训练的真实需求。他告诉冯雪锋：“咱们搞创新，不是做样子、摆看点，必须盯着实战用、围着官兵改，顶用管用才是硬道理。” “便携式灯光手旗通信训练仪”研发遇阻、多次试验失败时，冯雪锋情绪低落，几次想打退堂鼓。张庆山陪着他在工作室熬夜排查，拿着图纸一点点梳理问题。张庆山把自己近20年的故障排查经验倾囊相授：“搞技术跟舰艇航行一样，风浪再大，舵不能偏、心不能慌，沉住气就没有跨不过的坎。” 一招一式的技艺传授，在日复一日中沉淀为一言一行的作风熏陶。在张庆山的影响下，冯雪锋沉下心、扑下身，不再追求速度与花哨，而是一门心思盯着切实需求反复打磨。师傅身上那股较真、务实、敢啃硬骨头的劲头，渐渐成了他攻坚克难的底气。 而在张庆山眼中，年轻徒弟也带来了活力。冯雪锋接受新事物快、熟悉智能技术，常常把编程、仿真设计等新知识讲给师傅听，帮他把传统维修经验与现代技术结合，让“模块化分解法”不断迭代升级，更好适配新型装备。 工作室里，这样的场景时常上演。师傅拿着装备部件讲原理、讲难点、讲保障经验；徒弟坐在电脑前教软件、教算法、教新技术。难题一起攻，灵感互相碰，成功不骄傲，受挫不气馁。 从“一人钻研”到“师徒并肩”，从“个人绝活”到“共同成果”，这种师徒同心合力的氛围，也在该中心各个岗位蔓延开来。老兵带新兵、骨干带苗子，技术互教、经验互学、难题共解。 从紧盯官兵急难愁盼找准方向，到单位全方位搭台铺路破解瓶颈，再到师徒接力、薪火赓续凝聚力量，“山峰”组合的成长并非个例，基层创新热潮更不是偶然。 海风阵阵，“山峰”组合依旧在岗位上深耕不辍。一颗颗创新种子在兵心沃土扎根、在组织托举中成长、在精神传承中绽放。无数来自基层的“金点子”，正汇聚成强军兴军的磅礴动能，书写着新时代水兵立足岗位、创新制胜的崭新篇章。 采访手记 创新的源头在哪里 ■解放军报特约记者 戚韵婷 去采访的路上，我一直在想一个问题：基层创新的源头到底在哪里？答案，是在那间军士技能大师工作室找到的。 那天我到的时候，门虚掩着，里面已经热闹起来。张庆山和冯雪锋师徒正在讨论一个技术参数，旁边有人焊电路板，有人调整模型，还有人盯着屏幕做3D建模。我后来才知道，他们是工作室的“常驻成员”，来自炊事、帆缆、电子对抗等不同岗位，都是被“人才特区”吸引过来的。 跟了3天，创新的源头渐渐清晰。冯雪锋搞“训练仪”，是被战友的抱怨“逼”出来的——专业训练单人练不了、报文没法校、夜间看不清。张庆山的“模块化分解法”，是在机舱里一遍遍拆装“磨”出来的，“实在太慢了，自己受不了”。搞3D建模的战士马壮告诉我，他就是觉得现有的教具不够直观，于是自学建模，一做就是两三年。 他们的起点都不宏大，全是来自那些训练中让人“受不了”和“要是能”的瞬间。但把这些瞬间变成现实的，是另一股力量。 这些人身上都有一种沉下去把事做透的劲头。冯雪锋为灯光频闪的问题在工作室一蹲就是一整天，张庆山拆装部件的角度差一点就要重来。工作室其他人也一样，学编程的、练建模的，都是从零起步，白天忙本职，晚上啃资料，互相教、互相催着往前走。 基层创新的另一个关键，是组织的托举。工作室有专项经费保障，官兵搞研发需要元器件，打报告就能批；遇到技术难题，单位出面协调院校专家远程指导；训练任务重，专门划出“创新时间”让大家安心攻关。我问冯雪锋，创新最难的是什么？他说：“不是技术，是刚开始很少有人信……”旁边有人接了一句：“那是以前，现在不会。你一做出东西，大家都愿意帮你试。” 采访结束那天晚上，困扰师徒俩的技术难题终于突破了。冯雪锋喊了一声“通了”，张庆山立马跑过来测试看数据。看着这间灯火通明的工作室，我忽然觉得，所谓创新的源头，或许就藏在那些让人“受不了”的痛点里，藏在官兵沉下心去解决它的坚持里，也藏在组织为这种坚持托底的担当中。 亲历者说 好用的“训练仪” ■上等兵 刁茂林 信号兵进行单人手旗通信训练。吴坤龙摄 新兵下连分到信号专业时，我看着班长们手持通信旗、信号灯，指令瞬间传到远方，觉得这专业真酷。可真正上手才发现，训练远没有看上去那么潇洒。 手旗和灯光训练必须两人或两人以上参训，一人发报、一人进行接收信号，结束后两人一起进行报文校对。赶上战友执勤、出公差或者休假，训练就不能进行。更头疼的是没有校对工具，报文收得准不准全凭感觉。好几次我觉得自己收得挺顺，结果考核时错漏一堆。第一次夜训，甲板上风特别大，我根本没办法看清信号节奏。训练搞得一塌糊涂，那种挫败感特别打击人。 去年，冯雪锋班长把新研发的“便携式灯光手旗通信训练仪”搬到训练场，让我们都去试试。说实话，我起初没抱什么希望，一个巴掌大的新设备，就能解决这么多年信号兵训练上的问题？ 用了以后我才发现，这款“便携式灯光手旗通信训练仪”单人就能使用，再也不用等搭档一起训练。训练结束后，“训练仪”会自动生成正确的报文。最让我惊喜的是在训练过程中，“训练仪”的屏幕亮度可以像手机那样调节，不管是白天还是夜晚，都可以按需调节亮度，再也不会出现看不清的问题。 从那以后，这款“训练仪”成了我最亲密的“战友”。一有空我就抱着它加练，把过去找搭档、等时间、猜对错的时间全用在了提升技能上，也让我更加清楚地看到自己的短板。连续几次考核，我的错误率一降再降，成绩也慢慢挤进了前列。 上个月的任务，班长让我来收报，我全程零差错。任务结束，战友张砚航拍着我肩膀说：“你小子可以啊！”我笑了笑，心里却清楚，是这台机器给了我更快成长的机会。 后来听班长说，冯班长为这台训练设备“折腾”了好几年，样机更新了一代又一代。我想，他把我们训练时那些说都说不清的难处，一点一点变成了这台机器。这大概就是信号兵彼此之间的“懂得”吧。 （谢子帅整理） 管用的“新法子” ■一级上士 朱可新 张庆山摸索出那套“模块化分解法”的时候，我嘴上没说什么，心里其实是犯嘀咕的。 我在机舱里干了十几年，传统拆装流程早就刻进肌肉记忆里了，哪一步该松哪个螺丝，哪个节点容易出问题，闭着眼都能摸清楚。张庆山的“新法子”跳过了几步重复拆解环节，直奔核心故障点，听着是省时间，可我总觉得不太放心。战场上装备出不得半点差错，省掉那些步骤，真能保证万无一失？ 不光我一个人这么想。班务会上张庆山把方案一亮，好几个人都摇头。有人说老方法用了十来年，稳当；有人担心“新法子”万一漏掉隐患，责任谁担。张庆山只说了句：“找个机会试试看。” 很快，单位组织了一次实战背景下的故障抢修演练。我和张庆山各带一组，用不同方法排查故障。我按照老流程一步步来，拆了一层又一层。当我拆到一半时，张庆山已经定位到核心故障点了。最后一个螺丝拧开，故障部位毫无遮挡地出现在大家面前，舱里安静了好几秒。我低头看看自己手里的活儿，心里不得不服，他比我快了一倍不止。 但真正让我彻底转变想法的，是一次海上试训任务。舰上某型装备突发故障，按老方法排查至少得2个小时，抢修时间太长可能会耽误训练进度。张庆山带着他的新方法上去，不到40分钟就完成拆解。抢修结束，他从舱底爬出来，浑身湿透，我递过去一瓶水，说：“老张，你这法子真行！” 从那以后，我不光学，还主动帮着推广。班里年轻同志有顾虑，我就拿自己的经历跟他们讲。有人问，你怎么转变这么快？我说，在机舱里待了十几年，我只认一个理：战场上谁能让装备更快恢复战斗力，谁的办法就是好办法。 现在这套“模块化分解法”已经编入单位抢修手册，兄弟单位也来取经。从怀疑到信服，再到帮着推广，这段经历让我明白一个道理：基层创新成果要在战位扎下根，既需要敢于第一个吃螃蟹的人，也需要我们放下成见，给新事物一个证明自己的机会。 （戚韵婷整理）</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

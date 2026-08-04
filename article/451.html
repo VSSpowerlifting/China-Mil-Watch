@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The War Cost Game: The Shaping Logic of Asymmetric Advantage — China Mil Watch</title>
+  <meta name="description" content="PLA author Liu Jianming, writing in what appears to be a professional military journal, lays out a systematic framework for &#39;war cost gaming&#39; (战争费用博弈 is implied, though the article uses the phrase as ">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/451.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/451.html">
+  <meta property="og:title"        content="The War Cost Game: The Shaping Logic of Asymmetric Advantage">
+  <meta property="og:description"  content="PLA author Liu Jianming, writing in what appears to be a professional military journal, lays out a systematic framework for &#39;war cost gaming&#39; (战争费用博弈 is implied, though the article uses the phrase as ">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="The War Cost Game: The Shaping Logic of Asymmetric Advantage">
+  <meta name="twitter:description" content="PLA author Liu Jianming, writing in what appears to be a professional military journal, lays out a systematic framework for &#39;war cost gaming&#39; (战争费用博弈 is implied, though the article uses the phrase as ">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    The War Cost Game: The Shaping Logic of Asymmetric Advantage
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">战争成本博弈：非对称优势的塑造逻辑</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>19 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16462000.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>PLA author Liu Jianming, writing in what appears to be a professional military journal, lays out a systematic framework for &#39;war cost gaming&#39; (战争费用博弈 is implied, though the article uses the phrase as a conceptual anchor) covering five dimensions: the material-cognitive balance, attrition versus stratagem, stock versus variable forces, absolute versus relative cost thresholds, and the subordination of battlefield victory to national long-term interests. The article draws on Korean War and Stalingrad examples to argue that cognitive operations—manufacturing &#39;cost illusions&#39; through 示形 (military deception), opinion shaping, and information control—are as structurally essential as firepower, and explicitly frames international public opinion competition, counter-sanctions struggle, and civil-military integration (军民融合) as threshold-management tools. The framing points to an audience of mid-to-senior operational planners being socialized into a cost-attrition calculus that treats adversary morale collapse points, logistics interruption, and internal contradiction triggers as targetable nodes—a doctrinal register consistent with PLA writings on system-of-systems warfare but notable here for the explicitness with which it integrates political, economic, and cognitive levers into a unified cost-gaming logic.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>The War Cost Game: The Shaping Logic of Asymmetric Advantage</p><p>■ Liu Jianming</p><p>Introduction</p><p>War is the ultimate contest of comprehensive national power, and also an intellectual competition in cost gaming. Shaping asymmetric advantage on the battlefield is the iron law of defeating the enemy. The war cost game is both the core essence of war planning and a critical link in creating asymmetric postures and laying the foundation for victory. Only by deeply perceiving the underlying logic of cost gaming, and seizing the strategic initiative across the multidimensional contests of politics, military affairs, economics, society, and resources, can one firmly grasp the way to win wars and remain undefeated.</p><p>Dimensions of the Game: The Dialectical Unity of Material Hard Power and Cognitive Soft Power</p><p>War is the apex of violent confrontation—a comprehensive contest of manpower, materiel, and financial resources backed by national power. &#34;War capital&#34; such as strong military strength, a robust economic foundation, and a solid industrial system constitutes the firm bedrock of cost gaming, provides multiple options for shaping asymmetric advantage, and makes &#34;the strong defeating the weak, the many defeating the few, the refined defeating the crude, and the fast defeating the slow&#34; into universal laws of victory. Victorious wars throughout history have mostly relied on material cost advantages formed at the overall or local level, ultimately converting into asymmetric battlefield superiority. Therefore, great importance must be attached to material factors such as weapons and equipment, striving to achieve maximum battlefield results in &#34;materiel-on-materiel confrontation.&#34;</p><p>Yet the outcome of war is not determined by steel alone. Comrade Mao Zedong, in summarizing the experience of the War to Resist U.S. Aggression and Aid Korea, profoundly pointed out that the enemy had more steel but less spirit, while we had less steel but more spirit. The Chinese People&#39;s Volunteers defeated a powerful enemy with inferior equipment by relying on high fighting will and the conviction of certain victory. In modern warfare, cost gaming must simultaneously exert force in new domains and new-quality (新域新质) fields such as informatized, intelligentized (智能化), and unmanned warfare, while broadly conducting cognitive contests. First, expand the cost space: make skillful use of historical narratives, international rules, and legal bases to &#34;make those who support us as numerous as possible and those who oppose us as few as possible,&#34; compete for favorable international public opinion, and achieve &#34;increasing sources while reducing expenditure&#34; in cost space. Second, solidify cost resilience: leverage institutional advantages, carry forward the spirit of struggle, consolidate the great power of the people, use tenacious will to reduce &#34;cost pressure,&#34; use military-political and military-civilian unity to reduce &#34;cost internal friction,&#34; and ensure that war costs are more resilient, robust, and enduring. Third, manufacture cost illusions: comprehensively employ military deception (示形), opinion shaping, and information control to create battlefield information asymmetries at critical junctures, inducing the enemy to misjudge one&#39;s own cost scale, space, and resilience, thereby influencing its strategic decisions and cost inputs, and achieving the objectives of deterring war, stopping war, controlling the situation, and winning the war.</p><p>Methods of the Game: The Organic Combination of Rigid Attrition and Intelligent Strategy</p><p>Hard attrition is the most rigid and irreplaceable basic means in war cost gaming, playing the core roles of validating strength, exchanging costs, providing strategic guarantees, and supporting strategy. No war can do without &#34;hard-on-hard&#34; contests. In the Battle of Stalingrad, the Soviet army, by absolutely holding core objectives and conducting tenacious attrition, ended the German strategic offensive and achieved a turning point in the war. This proves that the blood and courage to dare to fight hard is the foundation of strength and an important trump card in cost gaming.</p><p>Strategy is the &#34;force multiplier&#34; for reducing attrition, controlling costs, and transforming the situation; it is the core engine for the strong to remain strong and the weak to seek strength; it is the key chip for winning asymmetric advantage. In modern warfare, the widespread use of &#34;high-precision-cutting-edge&#34; weapons and &#34;small-but-smart&#34; (智无小) equipment has both driven up war costs and opened new pathways for controlling the situation through strategy and winning through strategy. First, scheme for time differentials to change the cost structure: through asymmetric design of decision cycles, operational tempo, and battlefield situational awareness, conduct exquisite calculations on fast versus slow, striking versus pausing, and quick decision versus protracted operations to seize the initiative in time. Precisely direct one&#39;s own costs toward critical objectives, decisive nodes, and campaign phases, forcing the adversary into a cost predicament of high investment, low redundancy, and inability to sustain. Second, scheme for space differentials to expand cost leverage: flexibly employ stratagems of orthodox and unorthodox (奇正), empty and solid (虚实), form and momentum (形势), division and combination (分合), and movement and stillness (动静), maneuvering skillfully across the dimensions of interior and exterior, near and far, circuitous and direct, high and low, and dangerous and easy, striving to impose one&#39;s will on the adversary in space rather than being imposed upon. Force the adversary to pay high costs in more directions, broader areas, and longer front lines. Third, scheme for attrition differentials to win cost advantage: broadly employ small-scale operations, low-cost consumables, and unmanned weapons; flexibly adopt tactics of luring and harassing (诱扰), raiding and harassing (袭扰), and acupuncture strikes (点穴); exchange these for the adversary&#39;s high-cost responses, expensive platform losses, and decision-system overload; realize asymmetric cost exchange; and achieve the effect of &#34;using the smallest cost to lever the enemy&#39;s greatest attrition.&#34;</p><p>Focus of the Game: The Coordinated Force of Existing-Stock Foundations and Variable Decisive Moves</p><p>Stock-on-stock competition is the most primitive and direct form of cost gaming—a contest of &#34;mass&#34; and &#34;endurance&#34; that often decides victory through the &#34;subtraction&#34; of stocks; positional warfare and war of attrition are its typical manifestations. The Battle of Triangle Hill (上甘岭) is a classic example of brutal stock gaming in the history of war. In a confined space, the Chinese People&#39;s Volunteers, through the extreme use of their stocks of manpower, logistics, and will, defeated the enemy&#39;s advantages in firepower and industrial stocks, laying the military foundation for armistice negotiations. This shows that in specific periods and special scenarios, daring and being skilled at stock gaming, supplemented by &#34;battle of wits and courage,&#34; still carries major practical significance.</p><p>However, stock is the foundation; variables determine victory or defeat. The essence of all battlefield actions lies in doing everything possible to increase the adversary&#39;s decrements, expand one&#39;s own increments, and change the balance of forces through the ebb and flow of variables to win asymmetric advantage. The &#34;hybrid&#34; characteristics of modern warfare provide broad space for activating stocks, controlling decrements, and expanding increments. First, actively use stocks to improve efficiency: adhere to &#34;you fight your way, I fight my way,&#34; implement flexible and mobile strategy and tactics to maximize stock effectiveness; make good use of new-domain and new-quality forces, leverage the advantages of system-of-systems operations (体系作战), and catalyze the &#34;emergence effect&#34; (涌现效应) of combat power; skillfully use public opinion to define the war, give operations a &#34;just cause&#34; (师出有名), and make international public opinion and popular morale a &#34;ballast&#34; and &#34;multiplier&#34; for stocks. Second, control decrements to preserve strength: implement decentralized command and distributed deployment to enhance system stability and stock security; precisely grasp battlefield tempo, optimize phased objectives, flexibly employ strike means, and effectively control attrition; scientifically arrange cost redundancy, and enhance operational resilience and battlefield vitality through &#34;backups&#34; and &#34;reserve moves&#34; (后手). Third, expand increments to add new strength: stabilize national defense resources and the defense industrial sector to guarantee sustained battlefield force supply; deepen national defense mobilization and civil-military integration (军民融合) to efficiently convert social productive forces and scientific and technological power into new-quality combat capabilities (新质战斗力); be adept at &#34;foraging from the enemy and sustaining war through war&#34; (因粮于敌、以战养战), effectively converting the adversary&#39;s decrements into one&#39;s own increments.</p><p>Thresholds of the Game: Precise Control of Absolute Attrition and Relative Bearing Capacity</p><p>The essence of cost gaming lies not in balance on paper, but in the comparison of absolute attrition and its limits of tolerance. One must both avoid abandoning confrontation out of fear of absolute attrition, and guard against ignoring bearing capacity and falling into a &#34;cost trap.&#34; Only by anchoring to the baseline of absolute attrition and balancing cost inputs with attrition control can strategic initiative be maintained. Historically, the long wars between the Han dynasty and the Xiongnu teach us that even with frequent tactical victories, the national power drain caused by long-term large-scale expeditions can shake the foundations. In its later period, the Han dynasty, through recuperation, divide-and-conquer, and the strategy of using barbarians to control barbarians (以夷制夷), ultimately caused the Xiongnu to collapse in the contest of absolute attrition. It is clear that the endpoint of cost gaming depends both on who fights more &#34;cost-effectively&#34; and, more importantly, on who first &#34;can no longer afford to sustain it&#34; (耗不起).</p><p>All nations&#39; militaries have a critical point they &#34;cannot sustain&#34;—the cost attrition threshold. This threshold is constrained by multiple factors including national and political system, governance capacity, and strategic resources; it is not simply equivalent to national or military power; and it dynamically adjusts with changes in operational time, battlefield situation, social public opinion, and the international environment, exhibiting a distinctly relative character. Therefore, cost gaming should focus on relative thresholds, ensuring that one&#39;s own side always remains in the safe zone while forcing the enemy to &#34;redline.&#34; First, link internal and external factors to empower the threshold: compete for international public opinion, trade and economic, and military aid support to raise one&#39;s own threshold curve; resolutely conduct counter-sanctions, counter-blockade, and counter-supply-cutoff struggles to hold the threshold baseline; deeply tap social potential, stimulate economic vitality, bring into play the power of people&#39;s war, and enhance the resilience and room for maneuver in threshold gaming. Second, dynamically regulate attrition intensity: precisely grasp operational time and tempo, regulate the intensity and ratio of cost attrition at each phase; focus on key directions and objectives to achieve precise delivery of cost resources; keep an eye on decrements and increments, and flexibly adjust cost attrition pathways. Third, intervene at nodes to break the deadlock and achieve victory: closely watch the adversary&#39;s threshold inflection nodes—logistics supply interruption points, troop casualty tolerance points, morale collapse inflection points, public opinion explosion critical points, and internal contradiction trigger points—apply comprehensive measures and precise pressure to cause its sunk costs to solidify and its relative threshold to drop sharply, trapping it in a dual political-military predicament.</p><p>Objectives of the Game: Strategic Coordination of Battlefield Victory and the Nation&#39;s Long-Term Development</p><p>The fundamental purpose of war cost gaming is to win victory. One must adhere to political strategy guiding military strategy, and military strategy guiding tactics; plan local attrition through holistic and systematic cost gaming; play the &#34;whole nation as one game of chess&#34; (全国一盘棋); and calculate the &#34;total war account&#34; (战争总账). One must pursue victory without fighting or victory with minimal fighting, and avoid falling into the abyss of fighting much but winning little, or fighting long without resolution. One must possess the strategic wisdom to sacrifice the part for the whole and to give up immediate gains for ultimate victory, without being constrained by gains and losses of &#34;one city or one place&#34; or the pros and cons of &#34;one moment or one corner.&#34;</p><p>&#34;Cast them into a place of death and they will survive; plunge them into a place of destruction and they will live&#34; (投之亡地然后存，陷之死地然后生). In the ultimate contest concerning national survival, one must both carefully calculate costs and strictly control attrition to win battlefield victory through asymmetric advantage, and also dare to match costs head-on and be willing to pay the price—exchanging short-term enormous war costs for the fundamental interests of the nation&#39;s long-term survival and development. At present, although the form of warfare is undergoing profound transformation, the political nature, fundamental laws, and gaming logic of war have not changed. One must focus on the nation&#39;s overall interests and conduct cost gaming using strategic thinking. First, adhere to cost baselines: with the premise of the nation&#39;s perpetual survival and the nation&#39;s core interests as the boundary. Costs that touch the baseline, however small, must not be paid; costs that protect the baseline, however great, must absolutely be borne. Second, precisely weigh values: distinguish priorities and urgency, clarify what is primary and secondary, and make scientific cost judgments and trade-offs regarding the value of the overall versus the local, and strategy versus tactics. Third, conduct forward-looking strategic planning: stand on a long-term footing, look to the future, use an international perspective to anticipate risks, challenges, and development trends, and make advance arrangements for cost inputs. &#34;Strike one fist to avoid a hundred fists&#34; (打得一拳开，免得百拳来)—use necessary war costs to win enduring space for security and development.</p><p>War cost gaming is a profound strategic art—the dialectical unity of material and spirit, attrition and strategy, stock and variable, absolute and relative. Only by deeply grasping its inherent laws and improving the capability for war cost gaming can one enhance the resilience of the war system under extremely complex conditions, thereby winning the ultimate victory in war.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">战争成本博弈：非对称优势的塑造逻辑 ■刘建铭 引 言 战争是综合国力的终极较量，亦是成本博弈的智慧比拼。在战场上塑造非对称优势，乃克敌制胜之铁律。战争成本博弈，既是战争筹划的核心要义，更是创造非对称态势、奠定胜势的关键一环。唯有深刻洞察成本博弈的底层逻辑，并在政治、军事、经济、社会、资源等多维博弈中占据战略主动，方能牢牢掌握战争制胜之道，立于不败之地。 博弈维度：物质硬实力与认知软实力的辩证统一 战争是暴力对抗的顶峰，是国家力量支撑下人力、物力、财力的综合角逐。强大的军事实力、雄厚的经济基础、坚实的工业体系等“战争本钱”，构成成本博弈的坚实基石，为塑造非对称优势提供多元选项，使“强胜弱、多胜少、精胜粗、快胜慢”成为普遍制胜法则。古今胜战，多依托整体或局部形成的物质成本优势，最终转化为战场非对称胜势。因此，必须高度重视武器装备等物质要素，力求在“物物对抗”中获取最大战果。 然而战争胜负并非仅取决于钢铁。毛泽东同志在总结抗美援朝战争经验时深刻指出，敌人是钢多气少，我们是钢少气多。志愿军以劣势装备战胜强敌，靠的是高昂的战斗意志和必胜信念。现代战争，成本博弈更需在信息化、智能化、无人化等新域新质领域发力的同时，广泛展开认知较量。一是拓展成本空间：善用历史叙事、国际规则、法理依据，“把拥护我们的人搞得多多的，把反对我们的人搞得少少的”，争取有利国际舆论，实现成本空间的“开源节流”。二是强固成本韧性：发挥制度优势，发扬斗争精神，凝聚人民伟力，以顽强意志降低“成本压力”，以军政军民团结减少“成本内耗”，确保战争成本更具韧性、稳健性和持久性。三是制造成本幻觉：综合运用军事示形、舆论造势、信息管控，在关键节点制造战场信息差，诱使敌方对己方成本规模、空间、韧性产生误判，从而影响其战略决策与成本投入，达成慑战止战、控局胜战之目的。 博弈方式：刚性消耗与智慧谋略的有机结合 硬拼消耗是战争成本博弈中最具刚性、不可替代的基础手段，具有实力验证、成本置换、战略保底、支撑谋略的核心作用。任何战争都离不开“硬碰硬”的较量。斯大林格勒战役中，苏军依托对核心目标的绝对坚守与顽强消耗，终结了德军的战略攻势，实现战争转折。这证明，敢于硬拼的血性胆魄，是成本博弈的实力根基与重要底牌。 谋略则是降低消耗、控制成本、转化态势的“力量倍增器”，是强者恒强、弱者图强的核心引擎，是赢得非对称优势的关键筹码。现代战争中，“高精尖”武器与“智无小”装备的广泛运用，既推高了战争成本，也为以谋控局、以谋制胜开辟了新路径。一是谋时间差，改变成本结构：通过对决策周期、行动节奏、战场态势认知的不对称设计，在快慢、打停、速决与持久上精妙运筹，掌握时间主动权。将己方成本精准投向关键目标、制胜节点、战役阶段，迫使对手陷入高投入、低冗余、难持久的成本困境。二是谋空间差，扩充成本杠杆：灵活运用奇正、虚实、形势、分合、动静等谋略，在内外、远近、迂直、高低、险易等维度巧妙周旋，力求在空间上致人而不致于人。迫使对手在更多方向、更广地域、更长战线付出高昂成本。三是谋消耗差，赢得成本优势：广泛运用小规模行动、低成本耗材、无人化武器，灵活采取诱扰、袭扰、点穴等战术，换取对手高额成本响应、昂贵平台损耗、决策体系过载，实现不对称成本交换，达成“以最小代价撬动敌最大消耗”之效。 博弈焦点：存量基础与变量胜负手的协同发力 存量互拼是成本博弈最原始、最直接的形式，是“体量”与“耐力”的较量，常通过存量的“减法运算”决胜负，阵地战、消耗战是其典型体现。上甘岭战役是战争史上惨烈的存量博弈典范，志愿军在狭小空间内，凭借对兵力、后勤、意志存量的极限运用，战胜了敌方火力、工业存量优势，为停战谈判奠定了军事基础。这表明，特定时期、特殊场景下，敢于并善于进行存量博弈，辅以“斗智斗勇”，仍具有重大现实意义。 然而，存量是基础，变量定胜负。战场一切行动的本质，在于千方百计增加对手的减量，扩大己方的增量，通过变量的此消彼长改变力量对比，赢得非对称优势。现代战争的“混合性”特征，为盘活存量、控制减量、扩大增量提供了广阔空间。一是活用存量提效率：坚持“你打你的，我打我的”，实施灵活机动战略战术，最大化存量效能；用好新域新质力量，发挥体系作战优势，催生战斗力“涌现效应”；善用舆论定义战争，使行动“师出有名”，让国际舆论与民心士气成为存量的“压舱石”与“倍增器”。二是控制减量保实力：实施去中心化指挥与分布式部署，提升体系稳定性与存量安全性；精准把握战场节奏，优化阶段目标，灵活打击手段，有效控制损耗；科学安排成本冗余，通过“备份”“后手”等增强作战韧性与战场活力。三是扩大增量添新力：稳定国防资源与军工产业，保障战场持续力量供给；深化国防动员与军民融合，将社会生产力、科技力高效转化为新质战斗力；善于“因粮于敌、以战养战”，将对手的减量有效转化为己方的增量。 博弈阈值：绝对消耗与相对承受力的精准把控 成本博弈的本质，不在于账面平衡，而在于绝对消耗的对比及其承受极限。既要避免因畏惧绝对消耗而放弃对抗，也要防止忽视承受力陷入“成本陷阱”。唯有锚定绝对消耗底线，统筹成本投入与消耗控制，方能保持战略主动。历史上，汉朝与匈奴的长期战争启示我们，即便战术胜利频仍，长期大规模远征带来的国力透支亦会动摇根基。后期汉朝通过休养生息、分化瓦解、以夷制夷策略，最终在绝对消耗的比拼中使匈奴崩溃。可见，成本博弈的终点，既要看谁打得更“划算”，更要看谁先“耗不起”。 各国军队都存在“耗不起”的临界点——成本消耗阈值。该阈值受国体政体、治理能力、战略资源等多重因素制约，与国力军力并非简单等同，且随作战时间、战场态势、社会舆论、国际环境变化而动态调整，具有鲜明相对性。因此，成本博弈应聚焦相对阈值，确保己方始终处于安全区，并力促敌方“爆表”。一是内外联动赋能阈值：争取国际舆论、经贸、军援支持，抬升己方阈值曲线；坚决开展反制裁、反封锁、反断供斗争，守住阈值底线；深度挖掘社会潜力，激发经济活力，发挥人民战争伟力，增强阈值博弈韧性与回旋空间。二是动态调控消耗强度：精准把握作战时间与节奏，调控各阶段成本消耗强度与比率；聚焦重点方向与目标，实现成本资源精准投送；着眼减量与增量，灵活调节成本消耗路径。三是节点干预破局制胜：紧盯敌方后勤补给中断点、兵力伤亡耐受点、士气崩溃折拐点、民意爆发临界点、内部矛盾触发点等阈值突变节点，综合施策、精准施压，迫使其固有成本沉没、相对阈值陡降，陷入政治军事双重困境。 博弈目标：战场决胜与国家长远发展的战略统筹 战争成本博弈的根本目的是赢得胜利。必须坚持政略指导战略、战略指导战术，以全局性、系统性成本博弈筹划局部消耗，下好“全国一盘棋”，算清“战争总账”；追求不战而胜、少战即胜，避免陷入多战少胜、久战不决的深渊；具备为整体利益牺牲局部、为最终胜利舍弃眼前的战略智慧，不拘泥于“一城一地”得失、“一时一隅”利弊。 “投之亡地然后存，陷之死地然后生。”在关乎国家存亡的终极博弈中，既要精算成本、严控消耗，以非对称优势赢取战场胜利；更要敢于互拼成本、舍得付出，以短期巨大战争代价，换取国家长远生存发展的根本利益。当前，尽管战争形态深刻演变，但战争的政治本质、根本规律与博弈逻辑未变。必须着眼国家整体利益，运用战略思维进行成本博弈。一是恪守成本底线：以民族永续生存为前提，国家核心利益为边界。触及底线的成本，再小不付；守护底线的成本，再大必担。二是精准价值权衡：区分轻重缓急，辨明主次先后，对全局与局部、战略与战术价值进行科学成本判断与取舍。三是前瞻战略运筹：立足长远，放眼未来，以国际视野预判风险挑战与发展大势，超前布局成本投入。“打得一拳开，免得百拳来”，以必要的战争成本，赢得持久的安全与发展空间。 战争成本博弈是一门深邃的战略艺术，是物质与精神、消耗与谋略、存量与变量、绝对与相对的辩证统一。深刻把握其内在的规律，提升战争成本博弈的能力，才能增强极端复杂条件下战争体系的韧性，从而赢得战争最终胜利。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
