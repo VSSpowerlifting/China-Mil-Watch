@@ -25,6 +25,7 @@ Usage:
 
 import argparse
 import logging
+import re
 import sqlite3
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -53,16 +54,37 @@ UNSCORED_QUERY = """
     SELECT id, url, title_original, text_original,
            length(text_original) AS n
       FROM articles
-     WHERE passed_relevance IS NULL
+     WHERE {where}
      ORDER BY id
 """
 
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
-def fetch_unscored(limit=None):
+
+def fetch_unscored(limit=None, since=None, until=None):
+    """
+    Never-scored articles, oldest id first.
+
+    `since`/`until` bound `published_date` (YYYY-MM-DD, inclusive) so one
+    edition window can be screened without paying for the whole backlog.
+    `--limit` alone cannot do that: it slices from the oldest id, and a current
+    edition's articles sit at the *end* of that queue.
+    """
+    where = ["passed_relevance IS NULL"]
+    params = []
+    if since:
+        where.append("published_date >= ?")
+        params.append(since)
+    if until:
+        where.append("published_date <= ?")
+        params.append(until)
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     try:
-        rows = conn.execute(UNSCORED_QUERY).fetchall()
+        rows = conn.execute(
+            UNSCORED_QUERY.format(where=" AND ".join(where)), params
+        ).fetchall()
     finally:
         conn.close()
     return rows[:limit] if limit else rows
@@ -120,18 +142,32 @@ def process(analyzer, row):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--limit", type=int, help="Process only the first N (by id)")
+    ap.add_argument("--since", help="Only articles published on/after this date (YYYY-MM-DD)")
+    ap.add_argument("--until", help="Only articles published on/before this date (YYYY-MM-DD)")
     ap.add_argument("--workers", type=int, default=4, help="Parallel articles (default 4)")
     ap.add_argument("--dry-run", action="store_true", help="Count only; no API calls")
     ap.add_argument("--confirm-spend", action="store_true",
                     help="Acknowledge the estimated cost (required above the threshold)")
     args = ap.parse_args()
 
-    rows = fetch_unscored(args.limit)
+    # A malformed date would silently select nothing and read as "backlog clear",
+    # which is the one wrong answer this script must never give.
+    for label, value in (("--since", args.since), ("--until", args.until)):
+        if value and not DATE_RE.match(value):
+            logger.error("%s must be YYYY-MM-DD, got %r", label, value)
+            return 2
+
+    window = ""
+    if args.since or args.until:
+        window = f" in window {args.since or '…'}→{args.until or '…'}"
+
+    rows = fetch_unscored(args.limit, args.since, args.until)
     if not rows:
-        logger.info("No unscored articles. Backlog is clear.")
+        logger.info("No unscored articles%s. Nothing to do.", window)
         return 0
 
-    logger.info("%d never-scored article(s) to process (oldest id first)", len(rows))
+    logger.info("%d never-scored article(s)%s to process (oldest id first)",
+                len(rows), window)
     if args.dry_run:
         logger.info("  DRY RUN — id range %d..%d", rows[0]["id"], rows[-1]["id"])
         return 0
