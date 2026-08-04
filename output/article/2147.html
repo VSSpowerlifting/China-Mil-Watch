@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>When an 18-Year-Old Post Meets 18-Year-Old Soldiers: This Is Their Answer to Youth — China Mil Watch</title>
+  <meta name="description" content="A Northern Theater Command Army border defense company garrisoning Heixiazi Island — the Eastern Extremity Post (东极哨所), established 18 years ago — is profiled through the first-year experiences of sev">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2147.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2147.html">
+  <meta property="og:title"        content="When an 18-Year-Old Post Meets 18-Year-Old Soldiers: This Is Their Answer to Youth">
+  <meta property="og:description"  content="A Northern Theater Command Army border defense company garrisoning Heixiazi Island — the Eastern Extremity Post (东极哨所), established 18 years ago — is profiled through the first-year experiences of sev">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="When an 18-Year-Old Post Meets 18-Year-Old Soldiers: This Is Their Answer to Youth">
+  <meta name="twitter:description" content="A Northern Theater Command Army border defense company garrisoning Heixiazi Island — the Eastern Extremity Post (东极哨所), established 18 years ago — is profiled through the first-year experiences of sev">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    When an 18-Year-Old Post Meets 18-Year-Old Soldiers: This Is Their Answer to Youth
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">当18岁的哨所遇上18岁的兵，这是他们的青春回答</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>6 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16471948.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A Northern Theater Command Army border defense company garrisoning Heixiazi Island — the Eastern Extremity Post (东极哨所), established 18 years ago — is profiled through the first-year experiences of several 18-year-old conscripts, including Private Xu Chuandong and Private Tian Chongzhan, who deferred university enrollment to enlist, alongside Staff Sergeant First Class Lei Hui, who has served since the post&#39;s founding. This is standard political work content in the PLA&#39;s &#39;hometown and country&#39; (家国) genre; its value is as a record of how the institution frames voluntary sacrifice, retention, and ideological formation for junior enlisted soldiers at a symbolically charged remote post, not as evidence of changed force posture or recruitment policy.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>An 18-Year-Old Post, 18-Year-Old Soldiers</p><p>■ Mei Shixiong</p><p>At around 3 a.m. on May 21, I climbed onto Heixiazi Island for the third time.</p><p>This is the easternmost piece of land on the Chinese mainland. The officers and soldiers of the Eastern Extremity Post (东极哨所), a border defense company under the Northern Theater Command Army, greet the sun into the motherland every single day. At that moment, a faint glow had already spread across the horizon; in a few more minutes, the first ray of sunlight would leap from the surface of the river. The light in the watchtower shone like a star in the darkness, keeping watch over this land that greets the dawn before anywhere else.</p><p>The soldiers told me: the post turns 18 this year.</p><p>Eighteen years — enough for a Mongolian oak sapling to grow into a tree of full, spreading branches, and enough for a barren island to become an impregnable post. And when an 18-year-old post meets 18-year-old soldiers, that encounter across time is itself inscribed with answers about growth, about choice, about home and country.</p><p>Private Xu Chuandong will never forget the scene of his first guard duty.</p><p>It was in the early hours of a morning earlier this year. Heixiazi Island was still sleeping in boundless darkness, the temperature down to minus 35 degrees Celsius. Before he went on post, his squad leader checked his clothing several times over — cotton jacket, cotton trousers, cold-weather face mask, cotton gloves, cotton boots; not one item could be missing. But when he pushed open the door of the watchtower, he still felt a bone-piercing cold. He tried hard to straighten his back, wanting to stand as ramrod-straight as the veterans, but his body betrayed him with a faint trembling, his teeth chattering.</p><p>Time seemed to freeze. He kept checking his watch, but the hands seemed stuck in place. All he could do was quietly force his toes to move back and forth inside his boots to keep the blood circulating.</p><p>The sky shifted from pitch black to deep blue, then from deep blue to pale grey. A faint rose-red appeared on the eastern horizon. Xu Chuandong&#39;s heart suddenly beat faster. He knew: the sun was coming.</p><p>That rose-red grew brighter and brighter, as if someone had lit a lamp at the edge of the sky. At last, the first ray of sunlight leapt above the horizon, passed through the glass window of the watchtower, and fell on Xu Chuandong&#39;s face.</p><p>Xu Chuandong stood motionless at his post, but his eyes grew hot. In that moment, he stood at the easternmost point of the motherland, facing the first ray of sunlight, guarding the ten thousand lights of home behind him.</p><p>Xu Chuandong&#39;s first patrol coincided with the heaviest snowfall Heixiazi Island had seen since the onset of winter. The moment the unit stepped out of the garrison area, the wind hurled snowflakes straight into their faces. He stumbled along at the back of the column, each step requiring him to wrench his leg out of the snow before plunging it into the next drift. Suddenly his foot slipped and he pitched headlong into a snowbank, struggling several times without being able to get up. The squad leader turned back and grabbed his pack straps: &#34;Get up!&#34; He gritted his teeth and finally hauled himself out.</p><p>&#34;How much farther?&#34; he asked, gasping.</p><p>&#34;Not far now,&#34; said the squad leader.</p><p>After nearly another hour of walking, the column finally halted. The squad leader crouched down and brushed the snow from a stone marker with his glove. The two vivid red characters — &#34;中国&#34; (China) — were revealed.</p><p>The squad leader handed him a brush soaked in red paint. He traced each stroke carefully, feeling as though the brush in his hand weighed a thousand jin. In that moment, all the cold and exhaustion were replaced by a solemnity he had never felt before.</p><p>Tian Chongzhan, two months younger than Xu Chuandong, is equally unable to forget his own first patrol. This young man from Shandong, who was admitted to Qingdao University of Technology in 2025, chose to defer his enrollment and enlist. He said: &#34;If I waited until after university, I was afraid I wouldn&#39;t have the courage anymore.&#34;</p><p>In the blizzard, he brought up the rear of the column, nearly blown off his feet by the wind several times. The squad leader called from up ahead: &#34;Keep up!&#34; He gritted his teeth and inched forward, one step at a time. When he finally caught sight of that splash of red on the boundary marker, he suddenly felt that every hardship had been worth it.</p><p>Physical hardship was nothing, Tian Chongzhan felt; the trials of the spirit were the hardest to endure. On last year&#39;s Lunar New Year&#39;s Eve, the company organized a fireworks display. Multicolored light bloomed in the night sky, its reflection on the snow especially beautiful. Comrades laughed and joked; someone called out &#34;Happy New Year,&#34; someone else recorded a video on their phone to send to family. Tian Chongzhan stood among them, watching the fireworks fill the sky, and suddenly felt a sting in his nose. In years past at this time, the whole family would sit together making dumplings, the house full of laughter. Now, around him were comrades he had only recently met, while his parents kept a cold and quiet home — they must be feeling it too. At that thought, his tears nearly spilled over.</p><p>Suddenly, a hand rested lightly on his shoulder. The squad leader had come to stand beside him without his noticing. He hastily wiped his eyes with the back of his hand. To his surprise, the squad leader said not a single word — he simply stood with him in silence, watching the fireworks bloom one after another in the night sky. That evening, when he returned to the dormitory, he found a bowl of steaming dumplings on his bedside table, with a small note beside it: &#34;Chongzhan, we made pork and green onion dumplings — see if they taste like Shandong.&#34;</p><p>He took a bite. A little like his mother&#39;s, but not quite. Yet he felt these were the best dumplings he had ever eaten.</p><p>Beyond Xu Chuandong and Tian Chongzhan, many more 18-year-old youths are quietly blooming on this island.</p><p>Wang Zhenhao, a young man from Sichuan, set himself a countdown when he first arrived — &#34;get through these two years and get out fast.&#34; He himself cannot say exactly when his thinking changed. In a letter to his parents, he wrote: &#34;When personal growth and the peace of the motherland are bound together so closely, I feel an incomparable honor.&#34; And so &#34;staying on&#34; became his natural choice.</p><p>The moment he was assigned the designation &#34;Eastern Extremity Guardian (东极卫士) No. 600,&#34; Ruan Chengkai from Fujian felt his heart pounding like a drum: &#34;This number will be carried on forever, but No. 600 will always be mine.&#34;</p><p>Xie Feiyang used to love playing video games before enlisting; it was the light in the company&#39;s study room burning late into the night every evening that gradually settled his mind. Today, he has become a theoretical backbone (理论骨干) of the company.</p><p>These young people come from every corner of the country, but at the Eastern Extremity Post, they share a common name — Eastern Extremity Sentinels (东极哨兵).</p><p>On May 21, sunrise on Heixiazi Island came at 3:15 a.m. Beijing time. The moment the first line of rose-red appeared on the horizon, the entire company was already standing in neat formation. As the first ray of sunlight leapt from the surface of the river, the Five-Starred Red Flag rose slowly to the strains of the national anthem.</p><p>The most senior soldier at the post — Staff Sergeant First Class (一级上士) Lei Hui — stood in the front rank of the formation. Eighteen years ago, he stood in that same position and took part in the island&#39;s first flag-raising ceremony. Today, a group of 18-year-old young people stands at his side. Sunlight fell on the faces of the veteran and the new soldiers alike — on the veteran&#39;s face, 18 years of wind and frost had carved a steadfast resolve; on the new soldiers&#39; faces bloomed the vitality unique to 18-year-old youth.</p><p>To the west of the post stands a lush grove of Mongolian oaks. It is the company&#39;s &#34;Talent Grove&#34; (人才林), where outstanding soldiers may plant a tree of their own. The tree Lei Hui planted back then has long since grown into full, spreading branches. The new soldiers do not yet have trees of their own, but they know that one day, they too will plant one here.</p><p>Tian Chongzhan says that when his service is complete, he will return to university to continue his studies — and when he finishes, he will come back to serve again. Xu Chuandong says he wants to become a squad leader and bring along the next crop of new soldiers. Wang Zhenhao says he wants to become a technical expert like Squad Leader Lei. Ruan Chengkai says he wants to be worthy of the designation &#34;No. 600&#34;…</p><p>Some say the frontier is an examination question for youth. Standing in the first ray of sunlight on Heixiazi Island, these 18-year-old young people have written their answers through their choices —</p><p>To guard the nation and the border is also to guard home; when the nation is at peace and home is at peace, the heart too is at peace.</p><p>This is the answer of the Eastern Extremity Sentinels.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">18岁的哨所18岁的兵 ■梅世雄 5月21日凌晨3时许，我第三次登上了黑瞎子岛。 这是祖国陆地版图最东端的一片土地。驻守于此的北部战区陆军某边防连东极哨所官兵，每天把太阳迎进祖国。此刻，天边已泛出微光，再过几分钟，第一缕阳光就将跃出江面。哨楼上的灯光在夜色中像一颗星星，守望着这片最早迎来光明的土地。 战士们告诉我，哨所今年18岁了。 18年，足够一棵柞树从幼苗变得枝繁叶茂，也足够一座荒岛变成坚不可摧的哨所。而当18岁的哨所遇上18岁的兵，这场跨越时间的相遇，本身就写满了关于成长、关于选择、关于家国的答案。 列兵许传栋永远忘不了第一次站岗的情景。 那是今年初的一个凌晨。黑瞎子岛还沉睡在无边的墨色里，气温低至零下35摄氏度。上岗前，班长帮许传栋检查了好几遍着装——棉衣、棉裤、防寒面罩、棉手套、棉鞋，一样都不能少。可当他推开哨楼的门，还是感觉到一股刺骨的冷。他努力挺直腰板，想像老兵那样站得笔直，可身体不争气地微微发抖，牙齿“嗒嗒”直响。 时间像被冻住了一样。他不停地看表，可指针仿佛黏在了那里。他只能暗暗使劲，让脚趾在鞋里来回活动，保持血液循环。 天色从漆黑变成深蓝，又从深蓝变成浅灰。东方的天际出现了一丝微弱的玫瑰红。许传栋的心跳忽然快了起来。他知道，太阳要出来了。 那抹玫瑰红越来越亮，像有人在天边点了一盏灯。终于，第一缕阳光跃出地平线，穿过哨楼的玻璃窗，照在许传栋的脸上。 许传栋站在哨位上，一动不动，眼眶却热了。这一刻，他站在祖国的最东端，迎着第一缕阳光，守护着身后的万家灯火。 许传栋的第一次巡逻，赶上了黑瞎子岛入冬以来最大的一场雪。队伍刚走出营区，风就卷着雪片迎面扑来。他深一脚浅一脚地跟在队伍后面，每走一步都要把腿从雪里拔出来，再踩进下一个雪坑。突然，他脚下一滑，整个人栽进了雪窝里，挣扎了好几下都没爬起来。班长回头一把拽住他的背包带：“起来！”他咬着牙，终于从雪窝里爬了出来。 “还有多远？”他喘着粗气问。“不远了。”班长说。又走了将近一个小时，队伍终于停下来了。班长蹲下身子，用手套拂去一块石碑上的积雪，“中国”两个鲜红的大字露了出来。 班长把蘸满红漆的毛笔递到他手里。他一笔一画地认真描红，感到手中的笔仿佛有千斤重。那一刻，所有的寒冷、疲惫，都被一种从未有过的庄严感取代了。 比许传栋还小2个月的田崇战，同样对自己的第一次巡逻刻骨铭心。这个2025年考上青岛理工大学的山东小伙，选择保留学籍参军入伍。他说：“如果读完大学再去，我怕自己就没这个勇气了。” 暴风雪中，他跟在队伍最后面，好几次被风吹得站不稳。班长在前面喊：“跟上！”他咬着牙，一步一步往前挪。当终于看到界碑上那抹鲜红时，他忽然觉得，所有辛苦都值得了。 筋骨上的磨砺不算什么，田崇战觉得，心灵上的考验才最难熬。去年除夕，连队组织放烟花。五彩的光在夜空中绽放，映在雪地上格外好看。战友们笑着、闹着，有人喊“春节快乐”，有人用手机录视频发给家人。田崇战站在人群里，看着漫天的烟花，忽然鼻子一酸。往年这个时候，一家人围坐在一起包饺子，满屋子都是欢声笑语。如今，自己身边都是刚认识不久的战友，而爸妈守着冷冷清清的家，心里肯定也不好受。想到这里，他的眼泪差点儿就涌了出来。 忽然，一只手轻轻搭在了他的肩头。班长不知何时走到他身边，他慌忙用手背抹了一下眼睛。令他意外的是，班长一句话也没有说，只是默默地陪他，望着夜空中一朵朵绽放的烟花。那天晚上回到宿舍，他看见自己床头放了一碗热气腾腾的饺子，旁边还有一张小纸条：“崇战，我们包了猪肉大葱馅的饺子，你尝尝是不是山东味儿。” 他咬了一口。有点像妈妈包的，又不完全像。但他觉得，这是他吃过的最好吃的一碗饺子。 在许传栋和田崇战之外，还有更多18岁的青春正在这座岛上悄然绽放。 四川小伙王桢豪刚来时，给自己定了倒计时——“熬过这两年赶紧走”。他自己也说不清，从哪天起想法发生了改变。他在写给父母的信中这样说：“当个人成长和祖国安宁如此紧密地连在一起，我感到无上光荣。”于是，“留下来”成了他自然而然的选择。 当被授予“东极卫士”编号那一刻，来自福建的阮承凯心跳如鼓：“这个编号会一直延续下去，但第600号永远是我。” 谢飞扬入伍前喜欢打游戏，是连队学习室每晚亮到深夜的灯光让他慢慢静下了心。如今，他已经成为连队的理论骨干。 这群年轻人来自天南海北，但在东极哨所，他们有了一个共同的名字——东极哨兵。 5月21日，黑瞎子岛的日出时间是北京时间3时15分。天边刚露出一线玫瑰红，全连官兵已整齐列队。第一缕阳光跃出江面时，五星红旗在国歌声中冉冉升起。 哨所资历最老的兵——一级上士雷辉站在队列的第一排。18年前，他就是站在同样的位置，参加了岛上第一次升旗仪式。如今，他的身边站着一群18岁的年轻人。阳光照在老兵和新兵的脸上——老兵的脸上沉淀着18年风霜刻下的坚毅，新兵的脸上则绽放着18岁青春特有的朝气。 哨所西面，是一片郁郁葱葱的柞树林。那是连队的“人才林”，优秀士兵可以在里面种下一棵属于自己的柞树。雷辉当年种下的那棵树，如今已是枝繁叶茂。新兵们还没有属于自己的树，但他们知道，总有一天，他们也会在这里种下一棵。 田崇战说，自己服役期满后，将回大学继续读书，读完书还要来当兵。许传栋说，他想当班长，去带下一茬新兵。王桢豪说，他想成为雷班长那样的技术尖子。阮承凯说，他要对得起“600号”这个编号…… 有人说，边关是青春的一道考题。站在黑瞎子岛的第一缕阳光下，这群18岁的年轻人，用他们的选择写下了自己的答案—— 守国守边亦守家，国安家安亦心安。 这就是东极哨兵的回答。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

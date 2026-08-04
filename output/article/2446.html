@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | Deck Seamanship Sailors: Tying Their Dreams to the Warship — China Mil Watch</title>
+  <meta name="description" content="PLA Daily ran a feature on deck seamanship sailors (帆缆兵) assigned to an unnamed naval center, documenting their roles in underway lateral replenishment, towing exercises, fog-navigation berthing, and ">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2446.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2446.html">
+  <meta property="og:title"        content="Barracks Observation | Deck Seamanship Sailors: Tying Their Dreams to the Warship">
+  <meta property="og:description"  content="PLA Daily ran a feature on deck seamanship sailors (帆缆兵) assigned to an unnamed naval center, documenting their roles in underway lateral replenishment, towing exercises, fog-navigation berthing, and ">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | Deck Seamanship Sailors: Tying Their Dreams to the Warship">
+  <meta name="twitter:description" content="PLA Daily ran a feature on deck seamanship sailors (帆缆兵) assigned to an unnamed naval center, documenting their roles in underway lateral replenishment, towing exercises, fog-navigation berthing, and ">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | Deck Seamanship Sailors: Tying Their Dreams to the Warship
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨帆缆兵：将梦想系在战舰上</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>14 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16473542.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>PLA Daily ran a feature on deck seamanship sailors (帆缆兵) assigned to an unnamed naval center, documenting their roles in underway lateral replenishment, towing exercises, fog-navigation berthing, and storm-damage repair — illustrated through named enlisted personnel including Staff Sergeant First Class Li Lifeng, Corporal Li Han, and recruits Zhang Peng, Wu Chang, and Zhou Jiaping. The piece is standard political-work content tied to the 105th CPC founding anniversary and the broader 强军征程 (journey to strengthen the military) campaign; its value is as a record of how the PLA Navy frames unglamorous technical specialties — line-handling, anchoring, hull maintenance — as sites of ideological formation and combat readiness for junior enlisted, not as evidence of a capability or posture change. The specific vignettes (brake-pad replacement on an anchor windlass during a typhoon, radar-blind fog berthing guided solely by a sailor&#39;s verbal distance calls) document the operational dependence of surface vessels on this specialty and the conditions under which it is tested, but unit identity, vessel class, and sea area are withheld throughout.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Singing the Song of Youth on the Journey to Strengthen the Military (强军征程)</p><p>■ Luo Jiale</p><p>A nation&#39;s future lies in its youth; an army&#39;s future rests on the choices young people make and the responsibilities youth shoulders.</p><p>At the rally celebrating the 105th anniversary of the founding of the Communist Party of China, Chairman Xi emphasized that the Chinese youth of the new era must unwaveringly listen to the Party and follow the Party, establish lofty aspirations, courageously shoulder the responsibilities of the times, integrate personal pursuits into the cause of the Party and the nation, seize every moment and not squander their prime years, run well the historical relay race on the new journey, pave the road with youth, and let ideals shine! These earnest expectations are heartfelt and weighty; these sincere exhortations urge one to forge ahead.</p><p>The choices of youth have always been intimately bound up with the fate of the nation. &#34;That was an era when people accomplished great things at a young age, and lost their lives at a young age.&#34; At Nanhu in Jiaxing, 13 Marxist believers with an average age of only 28 created an epoch-making event in Chinese history; on the Long March, countless young Red Army soldiers fought bloody battles and turned the tide of the Chinese revolution from peril to safety; since the founding of New China, generation after generation of outstanding young people have steadfastly followed the Party, allowing the Party&#39;s cause to continue unbroken and pass the torch from one generation to the next.</p><p>Waves surge, waves swell. In the long river of history, the waves of youth rush ever forward. &#34;Today, the Chinese youth of the new era are living in the finest period of the Chinese nation&#39;s development. They face both a rare life opportunity to render meritorious service and establish achievements, and the era&#39;s mission of &#39;heaven is about to place a great burden upon this person.&#39;&#34;</p><p>&#34;This prosperous age is as you wished.&#34; The People&#39;s Army is forever composed of youth as its main body and its vanguard. Standing on the embankment of the new era&#39;s long river, facing a brand-new age of soaring clouds and surging waves, can the young officers and soldiers of the new era shoulder their mission and responsibilities? History has already told the future; the waves that follow are now offering comfort to the waves that came before.</p><p>Take root downward, cultivate deeply at the grassroots to let youth bloom (向下扎根，深耕基层绽芳华). &#34;Seedlings that are hardened in the ground can sink their roots deeper and stand more firmly, resisting lodging in wind and rain.&#34; Young men with long whips and great ambitions; military uniforms that do not fail the homeland. Midsummer arrives, graduation comes. In recent days, countless military academy graduates have made their choices about where to go: to the frontiers, to the grassroots, to wherever the motherland needs them most. Practice has proven that when young officers and soldiers merge the small self into the greater self, and merge their combat posts into the goal of strengthening the military, the flower of youth will inevitably bloom in full splendor.</p><p>Charge at difficulties, stand at the forefront and scale the heights (向难攻坚，勇立潮头攀高峰). In his time, Li Dazhao expressed this hope for youth: &#34;In the dictionary of youth, there is no word &#39;difficulty&#39;; on the lips of youth, there is no phrase &#39;obstacle.&#39;&#34; A soldier&#39;s shoulders carry a burden of enormous weight. To fight and win the battle to achieve the centenary goal of the People&#39;s Liberation Army, young officers and soldiers must be willing to carry the heaviest loads, gnaw on the hardest bones, and take the hottest potatoes, injecting into the cause of military strengthening a ceaseless supply of youthful energy through the spirit of overcoming difficulties.</p><p>Press forward with steadfast resolve, pass the torch and create the future (向远笃行，薪火传承创未来). Across ten thousand rivers and mountains, never forget the road you came from; though a tree grows a thousand feet tall, its roots lie deep in fertile soil. With faith in one&#39;s heart, there is strength beneath one&#39;s feet. &#34;The aspirations of youth are fulfilled through steadfast practice (青衿之志，履践致远).&#34; When every young officer and soldier illuminates youthful dreams with scientific theory, fuses red genes into the bloodstream of youth, lets the banner of faith fly high, relies on solid capabilities to shoulder the mission, uses the engine of innovation to soar, and charges toward the future with a spirit of hard struggle, they will surely write a blazing chapter of youth on the new journey.</p><p>It is believed that every young officer and soldier will firmly remember their original aspiration and mission, courageously shoulder the responsibilities of the times, write an extraordinary youth on an ordinary combat post, and sing the song of youth on the journey to strengthen the military: &#34;Listen — the bugle of the new journey sounds, the goal of a strong military beckons ahead, the nation must be strong and we must bear the responsibility, the battle flag is inscribed with the glory of iron and blood… Unafraid of powerful enemies, daring to contend, to win decisive victory for the motherland on the battlefield…&#34; This is the heartfelt declaration of young officers and soldiers to the Party and the people, and also a powerful answer to the &#34;question of victory in war (胜战之问).&#34;</p><p>Deck Seamanship Sailors: Tying Their Dreams to the Warship</p><p>■ Rong Junyun</p><p>PLA Daily Correspondents Xu Yiyang, Hu Danqing, Qi Yunting</p><p>[Photo caption: A certain naval center conducts underway replenishment training. Photo by Ma Ying.]</p><p>[Photo caption: Li Han, a corporal at a certain naval center, heaving a heaving line. Photo by Wu Kunlong.]</p><p>The night is ink-black. Between wave crests and troughs, two vessels of a certain naval center sail abreast, preparing to conduct underway lateral replenishment training. On the bridge, navigation lights trace a streak of light across the pitch-dark sea.</p><p>&#34;Heave the line!&#34; At the commander&#39;s order, on the bow of one vessel, a soldier swings a heaving line with a monkey&#39;s fist attached, whirling it into a circle two meters in diameter above his head. Seizing the moment when the two ships are relatively stable, he releases it sharply. The line head lands precisely on the forward deck of the other vessel twenty meters away.</p><p>In the Navy, this action is called &#34;heaving the line&#34; (撇缆), and the person who performs this series of actions is a deck seamanship sailor (帆缆兵).</p><p>In daily life, few people pay attention to this group. They stand at the bow, upright on the deck, closest to the wind and waves. What they operate is not missiles, not torpedoes, but lengths of rope that appear ordinary.</p><p>The mooring line is the &#34;rein&#34; by which a warship leaves and approaches the pier, the &#34;link&#34; during at-sea replenishment, and the last resort in moments of crisis.</p><p>Tie your dreams to the warship, and even an ordinary youth will shine through shouldering responsibility with pride. Our reporters approached this group of deck seamanship sailors to record the time they spend alongside their lines, and to record the stories of struggle that have been tempered by those lines.</p><p>To master the wind and waves, you must first tame this line</p><p>When interviewing deck seamanship sailors, their memories of seeing a mooring line for the first time are all the same: a brown-yellow line coiled on the deck, like a sleeping giant python curled up there.</p><p>&#34;From now on you&#39;ll deal with it every day. To master the wind and waves, you must first tame this line.&#34; Deck seamanship sailor Zhang Peng still remembers: in the early summer of 2021, after completing recruit training he was assigned to serve aboard a certain vessel — that was his first encounter with a mooring line. Not paying close enough attention, he was tripped up by it and nearly stumbled. The squad leader bent down, straightened the line, and gave him a gentle pat on the shoulder.</p><p>All naval officers and soldiers know that being a deck seamanship sailor is no easy matter. Deck seamanship work requires both the physical strength to swing a heaving line and the delicate skill (绣花功夫) to coil a line neatly.</p><p>New recruits first encounter the heaving line. After countless training repetitions on land they can heave the line far and accurately, but once aboard a vessel, the rolling hull and the rising bow cause the heaved line to veer off course.</p><p>Zhang Peng recalls his first at-sea heaving experience. That year, after completing a certain at-sea mission, the vessel came in to shore for replenishment. He stood at the bow, facing the approaching pier, his heart both excited and apprehensive. When he imitated the veterans and swung the line overhead and flung it hard, the line traced an imperfect arc through the air and plunged straight into the sea. In that moment, Zhang Peng&#39;s face burned red with embarrassment.</p><p>&#34;Let me do it!&#34; Staff Sergeant First Class Li Lifeng, standing nearby, swung the line, gave it two easy rotations, and tossed it — the line head landed precisely on the pier.</p><p>That evening, Zhang Peng came alone to the stern deck to practice extra. A light drizzle that had begun at dusk soaked his dark-blue combat uniform; the sea breeze carried a thread of chill. The sound of the line cutting through the air as it swung rang out with particular clarity in the quiet night.</p><p>&#34;Twist your waist and push your hips, find the right moment to release, use smart force to heave it far and true.&#34; At some point, Li Lifeng had appeared behind Zhang Peng.</p><p>That night, Zhang Peng understood one truth: more tempering is what it takes to walk the military path well.</p><p>Nearly all deck seamanship sailors have had similar experiences — palms rubbed raw by the line, knuckle joints worn into blisters by rope knots, pain even when lifting a bowl to eat.</p><p>Someone asked Zhang Peng why he pushed himself so hard. His answer was direct: &#34;Being the first one called to heave the line — that is my comrades&#39; trust in me. I must give my utmost effort to make sure every heave is accurate and steady.&#34;</p><p>Facing setback and failure again and again, and rising again each time, through years of grueling daily training, Zhang Peng grew into an outstanding deck seamanship sailor.</p><p>Once you&#39;ve locked horns with training, you cannot let go</p><p>If leaving and approaching the pier is the deck seamanship sailor&#39;s basic skill, then the at-sea two-vessel towing exercise demonstrates hard capability.</p><p>That year, a certain naval center launched a realistic combat-scenario training exercise in a certain sea area. Suddenly, lightning flashed and thunder rolled, and a torrential downpour fell. A certain vessel entered the designated sea area and, as planned, conducted towing training with the tug Beituo 736.</p><p>Deck seamanship sailor Wu Chang stood at the bow. Rainwater flowed from the brim of his cap into his eyes; he dared not blink, fixing his gaze on the position of Beituo 736. The helmsman held the course and speed steady; Wu Chang had to make a comprehensive judgment of the impact the heavy rain was having on the heaving operation and rapidly adjust the firing angle of the line-throwing gun.</p><p>&#34;Fire the messenger line!&#34; At the commander&#39;s order, Wu Chang pressed the firing button. The messenger line, trailing the mooring line, pierced through the curtain of rain and landed precisely on the receiving platform of the opposite vessel.</p><p>Splicing the steel cable is grueling work — no machinery, all manpower. The six-strand steel cable is stiff, covered in grease, slippery and tough; splicing it together must be airtight, achievable only through the hard skill built from hundreds and thousands of repetitions of bitter practice. To develop precision, the skin on his hands was worn away layer after layer; he put on gloves and kept practicing.</p><p>&#34;Once you&#39;ve locked horns with training, you cannot let go,&#34; Wu Chang said.</p><p>What truly completes the deck seamanship sailor&#39;s transformation is those sudden moments of crisis. One autumn, a typhoon struck. To avoid the brunt of the wind, the vessel needed to reach the anchorage ahead of time to drop anchor and ride out the storm.</p><p>&#34;Report to the commander: the brake pad on the starboard anchor windlass is broken and needs to be replaced.&#34; If this kind of malfunction occurs during gravity anchoring while a vessel is underway at sea, it will cause the braking system to fail. The anchor — a three-ton &#34;behemoth&#34; — could break free of the windlass and sink to the seabed. Once the anchor cannot be fixed, the vessel will drift out of control.</p><p>There was little time left before the vessel was to depart port. In flashes of lightning and rolls of thunder, Li Lifeng led several deck seamanship sailors straight to the anchor windlass.</p><p>The hull lurched violently in the wind and rain. Li Lifeng went down on one knee and, with the help of his comrades, using the faint light of a flashlight, braced hard against the 40-kilogram brake pad. It took more than half an hour to remove over 60 fixing nuts.</p><p>By then, his combat uniform had long been soaked through with rain and seawater. With everyone working together, Li Lifeng completed the replacement of the anchor windlass brake pad. To ensure the brake pad would not fail in use, Li Lifeng dropped anchor on the spot to test it. After the test succeeded, he reported to the commander at the first opportunity, and the vessel immediately proceeded to the designated anchorage to drop anchor.</p><p>&#34;A sailor must grow in wind and rain.&#34; That night, Li Lifeng understood: the line in a deck seamanship sailor&#39;s hands is tied not only to the vessel itself, but also to the lives and safety of every comrade aboard.</p><p>Doing the &#34;fine work within rough work&#34; requires a tenacious spirit</p><p>The deck seamanship specialty appears to have &#34;no technical content,&#34; yet it is a discipline of &#34;fine work within rough work&#34; (粗活里的细活).</p><p>Today, Li Lifeng — who has grown into a specialist — has worked with deck seamanship for 20 years. He has distilled his experience into a training method of &#34;looking from the small details, starting from the practical.&#34; Most of the soldiers aboard have been trained by him into specialist hands.</p><p>When asked what his secret is, he spreads open his callus-covered hands: doing the &#34;fine work within rough work&#34; requires a tenacious spirit.</p><p>Last year, several new recruits reported for duty. At the first heaving-line training session, recruit Zhou Jiaping, due to improper technique, got himself thoroughly wrapped up in the line he had just heaved and sat down hard on the ground.</p><p>Li Lifeng walked over, said nothing, squatted down, and helped him re-coil the line.</p><p>&#34;Squad leader, am I too stupid?&#34; Zhou Jiaping asked, red-faced.</p><p>Li Lifeng shook his head and said: &#34;The first time I heaved a line, the line wrapped around my neck several times. Which one of us deck seamanship sailors hasn&#39;t been hog-tied by a line at some point?&#34;</p><p>That evening, Li Lifeng took the new recruits to the deck for extra practice. The sea breeze blew gently, the vessel rocked softly, and the sounds of lines cutting through the air rose and fell one after another. He suddenly thought of that night years ago when he had practiced alone in silence.</p><p>After training ended, Li Lifeng wrote in his diary: &#34;This line is like a bond, tying us deck seamanship sailors tightly together with the sea, the warship, and those days of battling wind and waves.&#34;</p><p>In truth, what this bond holds is far more than just one man.</p><p>In the order of battle of the People&#39;s Navy, the deck seamanship sailor is a specialty post that is often overlooked. When equipment trials succeed, they are not mentioned; when aircraft take off and land safely, they are not mentioned; when a mission is completed and the ship returns in triumph, they are not mentioned either.</p><p>But when every warship leaves or approaches the pier, they are the ones standing at the very front; when every at-sea replenishment operation begins, they are the ones standing in the most dangerous positions; when every storm strikes, they are still the ones charging to the front.</p><p>The lines in their hands — one end tied to the warship, the other tied to the home port; one end tied to the officers and soldiers, the other tied to safety.</p><p>Not long ago, the vessel organized a night departure and approach training exercise. Zhou Jiaping stood at the bow once again. The night was deep, sea conditions complex. He drew a deep breath and swung the line into a circle.</p><p>That heave cut through the darkness and landed precisely on the designated position.</p><p>The warship pressed forward through the waves. And that line, crossing wind and waves, will continue to be heaved this way by generation after generation of deck seamanship sailors — precise and powerful. The deck seamanship sailors of the new era stand at the crest of the tide in the currents of the times, writing with their youthful selves and their striving selves a chapter of the era that does not fail the times and does not squander their prime years.</p><p>The Warship&#39;s Other Pair of Eyes</p><p>■ PLA Daily Correspondent Hu Danqing</p><p>Five-thirty in the morning. Fog rises from the sea. On the forward deck of a certain naval vessel, Staff Sergeant First Class Li Lifeng stands quietly, his gaze directed into the depths of the fog.</p><p>At first it was only a thin mist. Before long, only the blurred outline of the bow anchor windlass could be seen.</p><p>&#34;Much thinner than that fog seven years ago,&#34; Li Lifeng said to the reporter accompanying him.</p><p>That year, the vessel was returning from a training mission. Midway through the voyage, thick fog rose from the sea. Visibility dropped from 100 meters to 10 meters; the forward deck became a blur.</p><p>&#34;Radar approach to berth.&#34; The vessel&#39;s commander, Liu Yunhua, assessed the situation comprehensively and issued the order.</p><p>At that moment, although the radar waves could pick up the reflective surface of the pier, they could not precisely feed back the distance between the vessel and the pier. The vessel&#39;s approach to berth depended entirely on the eyes of the deck seamanship sailors on the forward deck.</p><p>Liu Yunhua gripped the intercom and looked toward the bow — in truth he could see nothing; he was only listening.</p><p>The vessel moved slowly forward on its momentum. The engines had been shut down; the entire ship was silent except for the sound of waves slapping the hull. No one knew how much time had passed when Li Lifeng, standing at the bow, made out a dark shape through the thick fog. It was the pier. Relying on his pair of &#34;eagle eyes&#34; (火眼金睛), he rapidly assessed the distance.</p><p>&#34;Distance 10 meters, 9 meters, 8 meters… Heave the line!&#34; Li Lifeng&#39;s voice came over the intercom. A yellow-green fluorescent glow flickered and flew precisely toward the pier. That was the monkey&#39;s fist — the head of the heaving line. Immediately after, the sailors ashore hauled the thick mooring line over inch by inch.</p><p>The warship came alongside steadily. Liu Yunhua recalled that those were the longest two minutes of his military career. He stood at the ship&#39;s side, unable to do anything, only listening. Listening to the voice of a deck seamanship sailor to judge how far the warship was from the pier. &#34;Deck seamanship sailors don&#39;t simply heave and retrieve lines — they must also report the vessel&#39;s position at any time. They are the warship&#39;s other pair of eyes,&#34; Liu Yunhua said.</p><p>Liu Yunhua shared another experience with the reporter — one night last August, the moon was bright and the stars sparse. The vessel was anchored in a certain sea area, and the officers and soldiers were sleeping soundly with the waves as their pillow.</p><p>&#34;Drift net spotted on the sea surface.&#34; At midnight, the watch officer&#39;s report suddenly came over the intercom. Liu Yunhua led several deck seamanship sailors rushing to the forward deck.</p><p>&#34;The tide rises at night, and the drift net moves with the current. If it gets tangled in the propeller, we&#39;ll have a serious problem,&#34; Li Lifeng said anxiously.</p><p>On the sea surface, a large mass of faintly glowing floating material was slowly drifting toward the warship with the tide. By visual estimate, it covered an area the size of two basketball courts.</p><p>For the next hour or more, the officers and soldiers used poles and hooks to slowly push that enormous drift net away from the vessel. By the time the last piece of netting drifted past the stern, the sky was beginning to lighten, and the vessel received orders to get underway.</p><p>One story after another. In the course of the conversation, Liu Yunhua had already led the reporter to the observation platform atop the bridge. On the scene, several deck seamanship sailors could be seen on the forward deck, bent over coiling lines. Lines thicker than a fist were being coiled by them into neat, even circles.</p><p>Deck seamanship sailor Zhang Peng stood to one side, binoculars in hand, looking in the direction the warship was heading.</p><p>&#34;What are you looking at?&#34; the reporter asked.</p><p>&#34;Everything,&#34; he said. &#34;Fishing boats, buoys, unidentified floating objects… The captain said we are the warship&#39;s other pair of eyes.&#34; He lowered the binoculars and smiled at the reporter. The sunlight fell on his dark face; his eyes were clear and bright.</p><p>In the distance, the deep-blue sea stretched to the horizon without end.</p><p>They Are Outside the Camera Frame</p><p>■ PLA Daily Correspondent Xu Yiyang</p><p>The vessel got underway, and a mooring line caught the reporter&#39;s eye. Above the rising bow, several soldiers in combat uniforms retrieved the line, coiled it, and secured it — the whole sequence of movements fluid and practiced.</p><p>The soldiers smiled and greeted me; their palms were rough as sandpaper. Deputy Political Commissar Tong of a certain vessel said to me: &#34;They are deck seamanship sailors.&#34;</p><p>Aboard the ship, they stand at the very forefront of the deck. Before a vessel leaves or approaches berth, you generally see the line fly out before you see the men; during underway lateral replenishment training, you see the taut line between the two vessels before you see them leaning over the side adjusting it.</p><p>They are not the stars of this vessel, but every departure and every homecoming cannot do without them.</p><p>Recruit Zhou Jiaping has been aboard for less than a year, yet his fingers are already calloused — worn there by day after day of heaving lines.</p><p>Splicing steel cable: the deck seamanship sailor must straighten and braid the steel wire tightly; one moment of inattention and the sharp wire will cut the hand. Heaving the line: swinging, flinging, and releasing over and over, practicing until the arm swells and the palm is rubbed raw, before that line can trace a perfect arc through the air. Flat knot, clove hitch, Luban knot (鲁班结)… every knot must be practiced until it can be tied with eyes closed.</p><p>As Deputy Political Commissar Tong said this, a deck seamanship sailor was squatting on the deck splicing a broken steel cable. His hands were very steady; the marlinspike threaded between the steel wires like a tailor sewing a garment.</p><p>I asked that deck seamanship sailor: &#34;What is the hardest part of deck seamanship work?&#34; He thought for a moment and answered: &#34;When coming alongside at sea, the swells pull the two vessels apart and the line goes taut like a drawn bow. At that moment, you absolutely cannot let go.&#34;</p><p>Aboard the vessel, I watched deck seamanship sailors do routine maintenance work. They carefully inspected every line for broken strands, checked every spot of rust, and inventoried every piece of life-saving equipment.</p><p>&#34;The deck seamanship sailor, who seems unremarkable in ordinary times, holds an indispensable post for the safe navigation of the warship,&#34; Deputy Political Commissar Tong said.</p><p>Later, when I looked it up, I learned that deck seamanship sailors have existed since the age of sail. Back then they climbed masts and handled sail lines — the sharpest soldiers on the ship. Today&#39;s vessels no longer use sails, but the specialty has been retained — heaving lines, anchoring, small-boat operations, hull maintenance… all of it is their business.</p><p>On the afternoon of the day I left the vessel, the sun was setting in the west. The warship lay quietly in the naval port; a mooring line hung down from the bow, casting a long shadow on the water.</p><p>Two young deck seamanship sailors were practicing heaving the line, their movements still a little unpolished. The setting sun lit up the sweat stains on their combat uniforms.</p><p>What the line holds is not just one vessel — it is the confidence to sail far and the steadiness of the return. The deck seamanship sailors standing on the forward deck are always outside the camera frame, but every safe homecoming is their moment in the spotlight. With solid skills and forceful action, they vividly embody the mission and sense of responsibility of the young officers and soldiers of the new era.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">在强军征程上唱响青春之歌 ■罗嘉乐 一个国家的未来，在青年；一支军队的未来，寄望于青年的选择、青春的担当。 习主席在庆祝中国共产党成立105周年大会上强调，新时代中国青年要坚定不移听党话、跟党走，树立远大志向，勇担时代重任，把个人追求融入党和国家事业，只争朝夕、不负韶华，在新征程上跑好历史接力赛，用青春铺路、让理想闪光！殷殷期许，语重心长；谆谆嘱托，催人奋进。 青年的选择，从来都与民族命运紧密相连。“那是一个年纪轻轻就干大事、年纪轻轻就丢性命的时代。”嘉兴南湖，13位平均年龄只有28岁的马克思主义信仰者，创造了中国历史上开天辟地的大事件；长征路上，无数年轻的红军将士浴血奋战，实现了中国革命的转危为安；新中国成立以来，一代代优秀青年对党坚定追随，让党的事业绵绵相继、薪火相传。 浪奔，浪涌。历史的长河，青春的浪花奔涌向前。“今天，新时代中国青年处在中华民族发展的最好时期，既面临着难得的建功立业的人生际遇，也面临着‘天将降大任于斯人’的时代使命。” “这盛世，如你所愿。”人民军队，永远以青年为主体、为先锋。站在新时代的长河堤岸，面对云飞浪卷的崭新时代，新时代青年官兵能否担当起使命责任？历史已经告诉未来，后浪正在告慰前浪。 向下扎根，深耕基层绽芳华。“禾苗在地里墩一墩，才能吃土更深、扎根更实，在风雨中抗倒伏、立得住。”手持长缨少年志，戎装不负家国情。盛夏临，毕业至。连日来，无数军校毕业学员在毕业去向上作出选择：到边疆、到基层、到祖国最需要的地方。实践证明，当青年官兵把小我融入大我，把战位融入强军目标，青春之花必然绚烂绽放。 向难攻坚，勇立潮头攀高峰。当年，李大钊这样寄望青年：“青年之字典，无‘困难’之字；青年之口头，无‘障碍’之语。”军人的肩膀，扛着千钧重任。打好实现建军一百年奋斗目标攻坚战，青年官兵要勇于挑最重的担子，啃最硬的骨头，接最烫手的山芋，将以攻坚克难的锐气，为强军事业注入源源不断的青春动能。 向远笃行，薪火传承创未来。万水千山，不忘来时路；树高千尺，根深在沃土。心中有信仰，脚下有力量。“青衿之志，履践致远。”当每名青年官兵用科学理论点亮青春梦想，将红色基因融入青春血脉，让信仰旗帜高高飘扬，靠过硬本领扛起使命、用创新引擎振翅翱翔、以奋斗姿态奔向未来，就一定能在新征程上写下滚烫的青春华章。 相信每名青年官兵会牢记初心使命、勇担时代重任，在平凡战位上书写非凡青春，在强军征程上唱响青春之歌：“听吧，新征程号角吹响，强军目标召唤在前方，国要强我们就要担当，战旗上写满铁血荣光……不惧强敌敢较量，为祖国决胜疆场……”这是青年官兵对党和人民的深情告白，也是对“胜战之问”的有力回答。 帆缆兵：将梦想系在战舰上 ■荣俊运 解放军报特约记者 徐艺洋 胡丹青 戚韵婷 海军某中心开展航行横向补给训练。马 莹摄 海军某中心中士李涵正在撇缆。吴坤龙摄 夜色如墨，波峰浪谷间，海军某中心两舰并列航行，准备开展航行横向补给训练。舰桥上，航行灯在漆黑的海面上划出一道光痕。 “撇缆！”随着指挥员一声令下，某舰舰艏，一名战士抡起系着撇缆球的缆绳，在头顶抡成直径2米的圆环，瞅准两舰相对平稳的瞬间猛然松手，缆头精准落在20米外另一艘舰的前甲板上。 在海军，这个动作被称为“撇缆”，完成这一系列动作的人是帆缆兵。 日常，很少有人会关注到这个群体。他们站在舰艏，挺立于甲板之上，离风浪最近。他们手中操作的不是导弹，不是鱼雷，而是一根根看似寻常的缆绳。 缆绳，是战舰离靠码头的“缰绳”，是海上补给时的“纽带”，更是危急时刻最后的依靠。 将梦想系在战舰上，平凡的青春也会在挺膺担当中闪光。记者走近这群帆缆兵，记录下他们与缆绳相伴的时光，记录下那些被缆绳磨砺过的奋斗故事。 想要驾驭风浪，先得驯服这条缆绳 在采访帆缆兵时，他们对于第一次见到缆绳的记忆都是统一的：一根盘在甲板上的棕黄色缆绳，像一条沉睡的巨蟒蜷卧在甲板上。 “以后你会天天和它打交道，想要驾驭风浪，先得驯服这条缆绳。”帆缆兵张鹏至今记得，2021年初夏，新兵连结业后他被分配到某舰服役，那是他第一次与缆绳相遇。稍不注意，就被它绊了个趔趄。班长弯腰把缆绳摆正，轻轻拍了拍他的肩膀。 海军官兵都知道，帆缆兵不好当。帆缆作业，既要有一身能抡动撇缆球的力气，又要有将缆绳捋顺的绣花功夫。 新兵最初接触的是撇缆。陆地上经过无数次训练后，他们能把缆绳撇得又远又准，可一上舰艇，晃动的舰体和上扬的舰艏，让撇出去的缆绳变了方向。 张鹏回忆起第一次海上撇缆的经历。那年，某舰完成海上某任务后靠岸补给，他站在舰艏，面对越来越近的靠泊码头，心中既兴奋又忐忑。当他学着老兵的模样将缆绳抡过头顶用力一甩，缆绳在空中划出一道并不完美的弧线，径直砸入海水里。那一刻，张鹏的脸红得发烫。 “我来吧！”站在不远处的三级军士长李立峰抡起缆绳，轻松甩了两圈一抛，缆头精准落在码头上。 那天晚上，张鹏独自来到舰艉甲板上加练。傍晚下起的蒙蒙细雨，浸湿了深蓝色的作训服，海风里带着丝丝凉意。缆绳甩动时划破空气的声响，在寂静的夜色中格外清晰。 “扭腰送胯，找准时机出手，用巧劲才能撇得又远又准。”不知何时，李立峰出现在张鹏的身后。 那一夜，张鹏明白了一个道理：多一点磨砺，才能走好军旅路。 几乎所有帆缆兵都有过类似的经历——手掌被缆绳磨破皮，手指关节被绳扣磨出血泡，吃饭时端碗都疼。 有人问张鹏为何这么拼命，他的回答很干脆：“让我第一个撇缆，那是战友们对我的信任。我必须用最大的努力，争取每次都能撇得又准又稳。” 面对一次次挫折与失败，又一次次振作起来，在年复一年、日复一日的艰苦训练中，张鹏成长为一名优秀的帆缆兵。 和训练较上劲了，就不能松手 如果说离靠码头是帆缆兵的基本功，那么海上两舰拖带训练体现的是硬实力。 那年，海军某中心一场实战化课目训练在某海域拉开帷幕。突然，天空电闪雷鸣，一场滂沱大雨倾盆而下。某舰进入预定海域，按计划与北拖736船开展拖带训练。 帆缆兵伍畅站在舰艏，雨水顺着帽檐流进眼睛里，他不敢眨眼，死死盯着北拖736船的舰位。操舵兵稳住航向航速，他必须综合判断大雨对撇缆作业造成的影响，快速调整抛投器的发射角度。 “发射引缆！”随着指挥员一声令下，伍畅按下击发按钮。引缆拖着缆绳穿过雨幕，精准落到对面舰船接收平台。 插接钢缆是个苦差事，没有机械、全靠人力，六股钢缆硬邦邦的，满是油脂，又滑又韧，插接到一起必须严丝合缝，只能靠成百上千次苦练的硬功夫。为了练就精准度，手上的皮磨破了一层又一层，他戴上手套继续练。 “和训练较上劲了，就不能松手。”伍畅说。 真正让帆缆兵完成蜕变的，是那些突如其来的危急时刻。那年秋天，台风来袭，为了避开风口，舰艇需要提前赶往锚地抛锚防风。 “报告指挥员，右侧锚机刹车片断裂，需要更换处理。”舰艇在海上航行，如果在重力抛锚时出现这种故障，会导致刹车系统失灵，船锚这个3吨重的“大家伙”可能直接挣脱锚机沉入海底，一旦船锚无法固定，舰艇就会漂流失控。 距离舰艇离港的时间已经不多了。电闪雷鸣间，李立峰带领数名帆缆兵直奔锚机。 舰体在风雨中剧烈晃动，李立峰单膝跪地，在战友们的协助下，借助手电筒微弱的灯光，死死顶住40公斤重的刹车片，60多个固定螺母卸了半个多小时。 彼时，他的作训服早已被雨水和海水浸透。在众人的合力下，李立峰完成对锚机刹车片的更换工作。为确保锚机刹车片在使用时不出现险情，李立峰在原地抛锚进行试验，试验成功后第一时间报告指挥员，舰艇随即驶向指定锚地抛锚。 “水兵，就要在风雨中成长。”那一夜，李立峰明白，帆缆兵手里的这根绳，系着的不仅仅是舰艇本身，还有全舰战友的生命安危。 干好“粗活里的细活”，需要一股韧劲 帆缆专业看似“没有技术含量”，却是一门“粗活里的细活”。 如今，已成长为专业能手的李立峰，与帆缆打了20年交道。他把自己的经验总结成“从小处着眼、从实处着手”的训练方法。舰上大多数士兵，都被他带成了专业能手。 有人问他有什么秘诀，他摊开布满厚茧的双手：干好“粗活里的细活”，需要一股韧劲。 去年，几名新兵报到。第一次撇缆训练，新兵周家平因动作不规范，被自己撇出的缆绳结结实实地缠在身上，一屁股坐在地上。 李立峰走过去，没说话，蹲下来重新帮他盘好缆绳。 “班长，我是不是太笨了？”周家平红着脸问。 李立峰摇摇头说：“我第一次撇缆时，缆绳在我的脖子上缠了好几圈。咱们帆缆兵，谁还没被缆绳五花大绑过？” 那天晚上，李立峰带着这几名新兵在甲板上加练。海风习习，舰艇轻轻摇晃，缆绳划破空气的声音此起彼伏。他忽然想起多年前自己默默加练的那个夜晚。 训练结束，李立峰在日记里写道：“这缆绳像一条纽带，把我们这群帆缆兵和大海、战舰，以及那些战风斗浪的日子，紧紧地系在了一起。” 其实，这条纽带系住的，又何止是他一个人。 在人民海军的序列里，帆缆兵是一个常常被忽视的专业岗位。装备试验成功，不会提到他们；战机顺利起降，不会提到他们；完成任务凯旋，也不会提到他们。 但是，每艘战舰离靠码头时，站在最前面的是他们；每次海上补给展开时，站在最危险位置的是他们；每次风浪来袭时，冲在最前面的还是他们。 他们手中的缆绳，一头系着战舰，一头系着母港；一头系着官兵，一头系着安全。 前不久，舰艇组织夜间离靠码头训练，周家平再次站到舰艏。夜色深沉，海况复杂，他深吸一口气，将缆绳抡成圆环。 那一撇，划破黑暗，精准落向指定位置。 军舰破浪前行。而那根穿越风浪的缆绳，还会由一代代帆缆兵这样撇下去，精准有力。新时代帆缆兵在时代洪流中挺立潮头，用青春之我、奋斗之我书写不负时代、不负韶华的时代篇章。 舰艇的另一双眼睛 ■解放军报特约记者 胡丹青 凌晨五点半，雾从海面升起。海军某舰前甲板上，三级军士长李立峰静静伫立，目光投向雾的深处。 一开始只是一层薄雾。没过多久，只能看到舰艏锚机的模糊轮廓。 “比7年前那场雾小多了。”李立峰对同行的记者说。 那年，该舰完成训练任务返航。行至中途，海面升起浓雾，能见度从100米下降至10米，前甲板变得模糊一片。 “雷达靠岸。”舰艇指挥员刘运华综合判断情况后，下达指令。 彼时，雷达波虽然能捕捉到码头的反射面，却无法精准反馈舰艇与码头的距离，舰艇靠岸全凭前甲板上帆缆兵的一双眼睛。 刘运华攥着对讲机，向舰艏方向望去——其实什么也看不到，他只是在听。 舰艇靠着惯性慢慢往前移动。发动机已经关了，全舰静得只剩下海浪拍打船舷的声音。也不知过了多久，站在舰艏的李立峰透过浓雾隐约看到一个黑色的轮廓。是码头，他凭借一双“火眼金睛”，迅速判定距离。 “距离10米、9米、8米……撇缆！”对讲机里传来李立峰的声音。一道黄绿色的荧光若隐若现，精准飞向码头。那是撇缆球，缆绳的头部。紧接着，岸上的官兵把粗大的缆绳一点点拖过去。 军舰稳稳靠岸。刘运华回忆说，那是他军旅生涯中最漫长的两分钟。他站在船舷上，什么都做不了，只能听。听一名帆缆兵的声音，判断军舰离码头还有多远。“帆缆兵并不是简单的撇缆收缆，还要随时报告舰艇位置，他们是舰艇的另一双眼睛。”刘运华说。 刘运华向记者分享了另一段经历——去年8月的一个夜晚，月朗星稀。舰艇在某海域锚泊，官兵们头枕波涛睡得正香。 “海面发现流网。”子夜，对讲机里突然传来值更官的报告声。刘运华带着数名帆缆兵冲上前甲板。 “夜里涨潮，流网会跟着潮水走。要是缠上螺旋桨，麻烦就大了。”李立峰焦急地说。 海面上，一大片泛着微光的漂浮物，随着潮水慢慢向军舰漂来。目测有两个篮球场那么大的面积。 接下来的一个多小时，官兵们用撑杆、钩子，慢慢地将那片巨大的流网推离舰艇。等最后一片网从舰艉漂过，天色渐明，该舰奉命起航。 故事一个接一个，言谈间，刘运华已带着记者来到舰桥顶部观察平台。现场，只见前甲板上几名帆缆兵弯着腰盘缆。比拳头还粗的缆绳，被他们一圈一圈盘得整整齐齐。 帆缆兵张鹏站在一旁，手持望远镜，往军舰航行的方向望去。 “你在看什么？”记者问。 “什么都看。”他说，“渔船、浮标、不明漂浮物……舰长说了，我们是舰艇的另一双眼睛。”他放下望远镜，冲记者一笑。阳光打在他黝黑的脸上，眼睛清澈又明亮。 远处，深蓝的海面一望无际。 他们，在镜头之外 ■解放军报特约记者 徐艺洋 舰艇起航，一根缆绳闯入记者视野。扬起的舰艏之上，几名身着作训服的战士收缆、盘缆、固定……整套动作行云流水。 战士们笑着跟我打招呼，手掌粗糙得像砂纸。某舰佟副政委对我说：“他们是帆缆兵。” 在舰上，他们站在甲板最前沿。离靠岸前，一般是先看见缆绳飞出，才看见他们的人；海上舰艇航行横向补给训练，先看见两舰之间绷紧的缆绳，才看见他们趴在舷边调整缆绳。 他们不是这艘舰的主角，但每一次起航、归港，都离不开他们。 新兵周家平上舰未满一年，手指上却磨出了老茧，那是日复一日撇缆磨出来的。 插接钢缆，帆缆兵要将钢丝捋顺、编紧，稍不留神手会被锋利的钢丝划破。撇缆，一遍遍地抡、甩、送，练到手臂肿了、手掌磨破皮，才能让那根缆绳在空中划出完美弧线。平结、丁香结、鲁班结……每一种结都要练到闭着眼也能打出来。 佟副政委说这话时，一名帆缆兵正蹲在甲板上插接一根断裂的钢缆。他的手很稳，铁笔在钢丝间穿梭，像裁缝在缝一件衣服。 我问那名帆缆兵：“帆缆作业最难的是什么？”他想了一会儿回答：“海上并靠时，涌浪会将两艘舰拉开，缆绳绷得像拉满的弓，这时候绝对不能松手。” 在舰上，我见过帆缆兵做日常保养工作。他们仔细检查每一根缆绳有没有断丝，检查每一处锈迹，清点每一件救生器材。 “平时不起眼的帆缆兵，却是战舰航行安全必不可少的一个岗位。”佟副政委说。 后来我查资料才知道，帆缆兵从风帆时代就有了。那时候他们爬桅杆、操帆索，是船上的尖兵。如今舰艇不用帆了，但这个专业保留了下来——撇缆绳、锚泊、小艇作业、舰体保养……全是他们的事。 离开舰艇的那天下午，夕阳西下，军舰在军港静卧，舰艏垂下一根缆绳，在水面上映出长长的影子。 两名年轻的帆缆兵正在练习撇缆，动作还有些生疏。夕阳把他们作训服上的汗渍照得发亮。 缆绳系住的不只是一艘舰，是远航的底气、归来的安稳。站在前甲板上的帆缆兵，一直在镜头之外，但每一次平安靠港，都是他们的高光时刻。他们用扎实的本领、有力的行动，生动诠释了新时代青年官兵的使命与担当。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

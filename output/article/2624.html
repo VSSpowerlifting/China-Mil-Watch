@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Issue on Building the Military Through Politics · Forged in Fire: Pure Love, Only for China — China Mil Watch</title>
+  <meta name="description" content="A political work essay in the PLA&#39;s &#39;Building the Military Through Politics&#39; series draws a continuous line of sacrifice from the Nanchang Uprising through the Galwan Valley clash of 2020, centering o">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2624.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2624.html">
+  <meta property="og:title"        content="Special Issue on Building the Military Through Politics · Forged in Fire: Pure Love, Only for China">
+  <meta property="og:description"  content="A political work essay in the PLA&#39;s &#39;Building the Military Through Politics&#39; series draws a continuous line of sacrifice from the Nanchang Uprising through the Galwan Valley clash of 2020, centering o">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Special Issue on Building the Military Through Politics · Forged in Fire: Pure Love, Only for China">
+  <meta name="twitter:description" content="A political work essay in the PLA&#39;s &#39;Building the Military Through Politics&#39; series draws a continuous line of sacrifice from the Nanchang Uprising through the Galwan Valley clash of 2020, centering o">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Special Issue on Building the Military Through Politics · Forged in Fire: Pure Love, Only for China
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">政治建军专刊·淬火要论丨清澈的爱，只为中国</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>27 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16475961.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A political work essay in the PLA&#39;s &#39;Building the Military Through Politics&#39; series draws a continuous line of sacrifice from the Nanchang Uprising through the Galwan Valley clash of 2020, centering on the four martyrs—Chen Hongjun, Chen Xiangrong, Xiao Siyuan, and Wang Zhuoran—whose names were given to bridges on National Highway 219 by the Xinjiang Military Region Party Committee in October 2022, and invoking the September 3, 2025 parade as evidence that today&#39;s force carries that tradition forward. The piece is standard political work content: its value is as a record of how the institution frames the willingness to die—grounding it in Party loyalty, transcendence of self-interest, and service to the people—as a present-day &#39;strategic requirement&#39; rather than a historical virtue, directed at junior officers and soldiers ahead of a major public military display. The explicit framing of sacrifice as serving &#39;national rejuvenation&#39; in a period of &#39;spreading security risks&#39; and &#39;iterating warfare&#39; points to an institutional effort to sustain combat motivation under peacetime conditions, though the essay provides no evidence of changed doctrine or unit posture.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Pure Love, Only for China</p><p>■ Yang Yue</p><p>Above the plateau, the sky is crystalline blue, and the snowline stretches endlessly. Traveling south along National Highway 219, the Xinzang Road, a succession of blue road signs has branded this barren land with names that stir the heart—</p><p>Xiangrong Bridge, Pingnan Bridge, Siyuan Bridge, Yanjin Bridge, Zhuoran Bridge, Luohe Bridge, Red Army Bridge, Liangdang Bridge…</p><p>In October 2022, under the coordination and promotion of the Xinjiang Military Region Party Committee, 11 bridges officially completed construction—each named after a martyr who died defending the border or after the martyr&#39;s hometown—becoming a striking new landmark on the Karakoram Plateau. In the Kangxiwa Martyrs&#39; Cemetery along the Xinzang Line, beside more than a hundred martyrs who gave their lives on the high-altitude frontier, four graves bearing the names Chen Hongjun, Chen Xiangrong, Xiao Siyuan, and Wang Zhuoran have written a new footnote to the People&#39;s Army&#39;s unbroken tradition of sacrifice.</p><p>Before them lies the battlefield; behind them lies the motherland. In the Galwan River Valley—sheer cliffs hewn as if by blade and axe, river water cold enough to cut to the bone—a figure standing with arms spread wide, unyielding as a monument, speaks volumes of the border soldier&#39;s &#34;pure love.&#34;</p><p>A military victory has never been won without sacrifice. Since the era of revolutionary war, more than 20 million martyrs have fallen, and the vast majority cannot even be identified by name. For the motherland, for the people, for victory—the People&#39;s Army has carved the fine tradition of fearless sacrifice and selfless dedication into its very genes, fused it into its bloodline.</p><p>At the gathering celebrating the 90th anniversary of the founding of the People&#39;s Liberation Army, Chairman Xi profoundly observed: &#34;Without indomitable will, without the quality of daring to sacrifice, even the finest weapons and equipment cannot guarantee victory. Generation after generation of revolutionary soldiers have relied precisely on the heroic resolve to advance toward death in order to live—and from this they forged the great spirit of overwhelming all enemies while absolutely refusing to be subjugated by them.&#34;</p><p>From the wartime willingness to face a hail of bullets and consecrate one&#39;s life to the nation, to the peacetime solitary perseverance far from the bustle of civilization and the silent, unheralded toil, to the readiness on the new journey of military strengthening to step forward and shoulder the mission in the face of risks and challenges—the years turn, but the spiritual character of the People&#39;s Army has never changed. &#34;Pure love, only for China&#34; has long since transcended a single oath and become the spiritual coordinates embedded in the soul of every Chinese soldier.</p><p>I</p><p>How much hot blood must be shed to write a soldier&#39;s poem of sacrifice?</p><p>Looking back from the oath &#34;pure love, only for China&#34; to the birth of the People&#39;s Army, this kind of sacrifice has never been a stranger—once it was called &#34;giving one&#39;s head and spilling one&#39;s blood,&#34; once it was called &#34;more spirit than steel,&#34; and once it was called &#34;fear neither hardship nor death (一不怕苦，二不怕死).&#34; To press forward without hesitation for the sake of victory—this is the truest face of the People&#39;s Army, forged in the fires of war.</p><p>American veteran Mac Callahan has never forgotten the image of one Chinese soldier.</p><p>More than 70 years ago, during the Battle of Triangle Hill (上甘岭), 23-year-old Mac Callahan was advancing with his unit when he saw that across the entire Chinese People&#39;s Volunteer Army position, only this one soldier remained alive—&#34;He had his back against a tree trunk riddled with shell fragments and bullets, his eyes filled with hatred, his mouth shouting ceaselessly in words no one could understand.&#34;</p><p>Suddenly, someone in the American ranks noticed: &#34;He&#39;s carrying a radio!&#34; At that moment, a torrent of artillery shells poured down onto the position, and everyone present was blown away in an instant. Mac Callahan lost a leg but survived. Fifty-six years later, when he recounted this story to a visiting Chinese business delegation, a Chinese journalist in the group finally answered the question that had puzzled him for half a lifetime.</p><p>&#34;He was saying, &#39;Commanders and comrades, open fire on me! For victory, open fire on me!&#39;&#34; Mac Callahan asked, bewildered: &#34;How do you know?&#34; &#34;Not only do I know—all of the Chinese people know.&#34; At that moment, every Chinese person present had tears in their eyes.</p><p>Just like Wang Cheng in the film Heroes&#39; Sons and Daughters (《英雄儿女》), who shouts &#34;Open fire on me!&#34;—such heroes were by no means rare on the battlefield of the War to Resist U.S. Aggression and Aid Korea. According to statistics, among the 50 first-class combat heroes of the Chinese People&#39;s Volunteer Army, more than 10 died together with the enemy.</p><p>&#34;Why is the battle flag so beautiful as a painting? It was dyed red by the blood of heroes…&#34; The nameless hill in that film quietly overlaps with the many geographic coordinates branded into the memory of the nation; Wang Cheng&#39;s figure, fearless in the face of death, slowly merges with one familiar face after another—</p><p>That is the bone-piercing cold of minus 40 degrees Celsius at the Chosin Reservoir; it is Qiu Shaoyun enduring the raging flames of an incendiary bomb at more than 300 degrees Celsius; it is the unrelenting rain of fire on Songgu Peak, and the smell of blood rushing like a wind into one&#39;s face… Medic Wang Qingzhen remembered the scene after Huang Jiguang&#39;s death: &#34;His blood had all drained out, sticking to his clothes; the back of his spine had been shot through.&#34;</p><p>&#34;Do you know what it means to be blown to pieces?&#34; Years later, Lü Pin—who had served as deputy political commissar of the 447th Regiment, 149th Division, 50th Army of the Chinese People&#39;s Volunteer Army—still could not forget: &#34;Our 5th Company&#39;s deputy company commander, Dai Xueyou, was killed by a heavy bomb. The soldiers wanted to find his body, but they couldn&#39;t find a piece of flesh even the size of a fist…&#34;</p><p>According to historical records, among the Volunteer Army martyrs honored with special meritorious service or above, there were 44 &#34;Yang Gensi-type&#34; heroes who &#34;fell together with the enemy, burned together with the enemy,&#34; and 6 &#34;Huang Jiguang-type&#34; heroes who used their bodies to block enemy gun emplacements. General Van Fleet—the American commander who expended the &#34;Van Fleet load&#34; of ammunition at Triangle Hill—assessed the Volunteer Army officers and soldiers he faced in these terms: &#34;They had no flak jackets, no steel helmets… they carried a few crudely made grenades… but they always fought forward, with utter disregard for their lives.&#34;</p><p>Wading through rivers sealed under ice and snow, advancing into the blaze of guns and artillery, stepping over the bodies of fallen comrades. Bugle calls that stirred the fighting spirit sent chills through the enemy; battle flags riddled with bullet holes flew over the positions… On the battlefield, one eternal moment after another, tempered in blood and fire, ultimately became indelible memories in the history of the People&#39;s Army.</p><p>When Chairman Xi discussed the War to Resist U.S. Aggression and Aid Korea with Kissinger, Kissinger marveled: China&#39;s forces lacked logistical support and air cover, their equipment was so inferior, and yet they somehow did not &#34;lose.&#34; Chairman Xi replied: &#34;What we relied on was a kind of revolutionary fighting spirit. Our soldiers were not afraid of you. No matter what weapons you had, they dared to fight you.&#34;</p><p>The red bloodline of the People&#39;s Army was forged by the blood of sacrifice; the invincibility of the People&#39;s Army was upheld by the blood of sacrifice—</p><p>&#34;When victory comes, please do not forget us.&#34; In 1930, Qiu Guhuai—who had set out from Jiangxi on an expedition to the East River region of Guangdong after the Nanchang Uprising—wrote these words as his final testament before his execution.</p><p>During the Long March of the Red Army, on the stretch from the Yajiaxue Mountains to Heishui alone, nearly ten thousand soldiers of the First and Fourth Front Armies perished; &#34;their burial mounds were quickly covered by snow.&#34;</p><p>To resist the Japanese invaders, the soldiers of the Northeast Anti-Japanese United Army trudged through frozen rivers and snow-covered wilderness in cotton-padded uniforms torn to rags by tree branches. Some soldiers simply leaned against a tree to rest for a moment, cradling their rifles, and never opened their eyes again.</p><p>In 1948, new recruit Wang Yanyun took part in the Jinan Campaign and was ordered to deliver more than 160 steamed buns to the front line, only to find that the entire company had fewer than a dozen men left. The head cook could not help but crouch on the ground and weep: &#34;Our comrades all went hungry!&#34;</p><p>Pressing into the zone forbidden to life, the advance detachment entering Tibet planted the national flag on a snow-covered peak where no human foot had trodden. Among them, some stopped breathing in the middle of a song; some buried their comrades only to collapse on the return journey. On the worst single day, the company held funerals for 11 comrades.</p><p>The heavy frost is all the blood of the heart, scattered across a thousand peaks to dye the autumn leaves red. From the Xiang River stained crimson, to the iron-burning battle of Liulaozhuang; from Pingxingguan, where &#34;when the platoon leader fell the squad leader took over, when the squad leader fell the soldiers took command,&#34; to the Karakoram, where &#34;the battalion commander saved the regimental commander, the soldiers saved the battalion commander, the squad leader saved the soldiers&#34;—time and the mountains and rivers bear witness: it is precisely these earth-shaking acts of sacrifice that have shaped the People&#39;s Army&#39;s &#34;invincible strength.&#34;</p><p>When we put the question to history—where, ultimately, does this courage to advance toward death in order to live come from?—the answer lies hidden in these mountains and rivers watched over in common devotion, hidden in this deeply beloved land.</p><p>&#34;The great achievements they established for the nation and the people will be recorded in history forever! Their noble spirit will forever be inscribed in the hearts of hundreds of millions of people!&#34; On July 1, Chairman Xi delivered an important speech at the gathering celebrating the 105th anniversary of the founding of the Communist Party of China, expressing deep remembrance for the revolutionary martyrs and patriots who gave their lives one after another for national independence, the liberation of the people, national prosperity, and the happiness of the people.</p><p>Refined through the passage of years, the spirit of sacrifice flowing through the bloodline of the People&#39;s Army has remained clear and unwavering from the very beginning.</p><p>II</p><p>&#34;Behind you lies a magnificent land, you said not an inch would be yielded / Even if you could only spread open two hands, you would build a wall / Behind you lies the great motherland, it is she who gave you steadfast conviction, it is she who gave you boundless strength…&#34;</p><p>When we gaze upon the silhouette of the hero and contemplate the source of that pure love&#39;s power, the answer has already been written on the surface: every sacrifice and act of dedication is for the beloved motherland.</p><p>Soviet woman writer Kozhukhova said: &#34;A soldier&#39;s strength lies not only within himself… but also in the ancient land where he grew up, in the history formed over many years that he inherited from his forebears.&#34; The resolute choice to cast aside life and death, to set aside personal gain and loss, ultimately originates in the ultimate question of &#34;for whom do we sacrifice&#34; and &#34;for whom do we fight.&#34;</p><p>— This sacrifice originates in the original aspiration of ideals and convictions.</p><p>As Chairman Xi has said: &#34;Revolutionary victory never fell from the sky, nor was it handed over by others; it was won through bloodshed and sacrifice.&#34; From the gunshots that pierced the dark night above Nanchang, to the red flags unfurling across the open fields of the Autumn Harvest Uprising; from the prairie fire ignited on Jinggang Mountain, to the unyielding military soul defined at the Gutian Conference—the People&#39;s Army, personally founded by the Communist Party of China, from the day of its birth raised the lofty ideal of &#34;smashing the old world and building a new China.&#34; The loyal character of heeding the Party and following the Party forged the bedrock of faith for the sacrifice and dedication of revolutionary soldiers.</p><p>During the Long March, her father died of illness, her elder brother was killed in battle, and her younger sister died in infancy. Thirteen-year-old Deng Xiuying strapped her six-year-old brother on her back and gritted her teeth to keep pace with the troops. In Tongjiang County, Bazhong, Sichuan, no fewer than twenty thousand people followed the Red Army as entire families. A captured Nationalist officer once marveled: &#34;You truly have a doctrine! If you had no fixed goal of serving the nation and the people, why would these old men, children, and women follow you for more than twenty thousand li? Could it be that Xu Teli, Lin Zuhan, Deng Yingchao, Cai Chang, and the others came along because they had nothing to eat?&#34;</p><p>During the War of Resistance Against Japan, squad leader Ma Baoyu of the &#34;Five Heroes of Langya Mountain,&#34; just before leaping from the cliff, took out a small notebook, placed it on his knee, and hastily wrote letters of introduction to the Party for three comrades who had not yet joined.</p><p>Before the Battle of Liulaozhuang, one soldier wrote an application to join the Party under fire: &#34;At the moment the Party needs me most, I will dedicate my life to the Party and the people. I will absolutely not disgrace our Party, absolutely not disgrace the Chinese nation!&#34;</p><p>General Zuo Quan wrote in a letter to his uncle: &#34;I have sacrificed all my personal happiness to struggle for my cause. Please believe that this road is bright and great.&#34;</p><p>Because they carried faith in their hearts, they dared to sacrifice. When Chairman Xi visited the Memorial Garden of the Red Army&#39;s Long March Battle of the Xiang River, he said: &#34;Revolutionary ideals are higher than heaven; once the fire of ideals and convictions is lit, it produces an enormous spiritual force.&#34; According to research, the earliest Party membership oath with extant physical evidence contains only 24 characters, beginning with &#34;sacrifice the individual (牺牲个人).&#34; To this day, we still write &#34;be ready at all times to sacrifice everything for the Party and the people&#34; in the oath of Party membership.</p><p>American journalist Harrison Salisbury wrote in The Long March: The Untold Story: &#34;This legendary sacrifice and indomitable spirit is the foundation on which the Chinese revolution succeeded. The Chinese revolution will draw inexhaustible strength from these legendary stories of struggle and sacrifice.&#34; Following the Party&#39;s footsteps, the People&#39;s Army exchanged sacrifice for liberation, hot blood for new life, and laid a solid foundation for revolutionary victory.</p><p>Absolute loyalty to the Party is the founding principle and the soul of military strengthening for the People&#39;s Army, and it is also the source of confidence that enables revolutionary soldiers to willingly sacrifice and selflessly dedicate themselves. As new-era revolutionary soldiers, only by holding firm convictions and maintaining a pure original aspiration, and by seeing clearly the fundamental question of &#34;for whom do we serve, for whom do we dedicate ourselves, for whom do we sacrifice,&#34; can we avoid retreating in the face of hardship and difficulty, and avoid losing our way when confronted with choices of advance or retreat.</p><p>— This sacrifice originates in a value choice that transcends the individual self.</p><p>Not falling behind when facing a dangerous pass, not retreating when facing artillery fire, not surrendering when facing a desperate situation… For ordinary people, each of these choices runs counter to an instinct innate to human beings. But there is a group of people who have turned these &#34;counter-instinctive&#34; choices into instinct. Li Dazhao once said: &#34;The purpose of life is to develop one&#39;s own life, but there are also times when life must be sacrificed in order to develop life. Because ordinary development sometimes cannot extend the resonance and radiance of life as much as a magnificent sacrifice.&#34;</p><p>In 1928, revolutionary martyrs Chen Jue and Zhao Yunxiao, husband and wife, were separately arrested by the enemy. At the time, Zhao Yunxiao was four months pregnant. In his farewell letter to his wife, Chen Jue wrote: &#34;Yun! Who has no father or mother, who has no sons or daughters, who has no loved ones! We are sacrificing everything precisely in order to rescue the fathers and mothers, wives and children of all the Chinese people. Though we die, our unfulfilled aspirations will be carried forward by comrades who have not died.&#34; Shortly thereafter, Chen Jue died heroically, at the age of 25.</p><p>Because she was pregnant, Zhao Yunxiao&#39;s execution was postponed. On a day in February of the following year, she gave birth to a daughter in prison and named her &#34;Qiming&#34; (启明, meaning &#34;dawn star&#34;). In March of that year, Zhao Yunxiao went calmly to her death, at the age of only 23.</p><p>The writer Lessing once assessed heroes in these terms: &#34;In their actions they are extraordinary people; in their emotions they are truly human.&#34; This weighing of life against righteousness runs through the finite lives of Chinese Communists and Chinese soldiers, and has forged the People&#39;s Army into something incomparably strong.</p><p>In the years of war and fire, they abandoned the small self to achieve the greater self, exchanging the most magnificent sacrifice for a land at peace and a nation secure. As the times changed and the smoke of battle cleared, new-era Chinese soldiers still guard the spiritual flame of self-sacrifice for the nation, passing the heroic spirit of sacrifice and dedication from generation to generation.</p><p>This past April marked the tenth anniversary of the death of carrier-based aircraft pilot Zhang Chao. Because of the choice he made in the final moment of his life, Zhang Chao became a hero in the eyes of the world. But his wife Zhang Ya has always remembered that when she asked him whether he feared death, Zhang Chao answered her: &#34;Who doesn&#39;t fear death? But people like us are people who are ready at every moment to sacrifice for the motherland.&#34;</p><p>Someone once said that a person&#39;s greatest contribution is to transform individual action into national action, and ultimately into historical action. Once, in the hearts of Zhang Chao and his comrades, they were just a group of ordinary pilots, ordinary soldiers. Later, this &#34;ordinary&#34; person, by throwing himself into a great cause and making a great choice, achieved the extraordinary of a soldier. And generation after generation of &#34;ordinary&#34; Chinese soldiers, by virtue of this spirit of sacrifice that time has never altered, have achieved the greatness of an army.</p><p>— This sacrifice originates in the fundamental purpose of putting the people first.</p><p>When the heroic deeds on the Karakoram spread across the mountains and rivers of the motherland along with the words &#34;pure love, only for China,&#34; a comment left by one internet user moved many Chinese people: &#34;I eat white rice and drink soda, and I cannot understand why these strong and healthy officers and soldiers would die. I woke up in the middle of the night and suddenly realized: they died for me.&#34;</p><p>For whom does this army charge forward? For whom does it cast aside life and death?</p><p>White-haired Korean War veteran Ling Xingzheng, his voice choked with emotion, gave the answer: &#34;For whom did I come to fight, for whom did I shoulder the gun? For fathers, for mothers, for the liberation of the people. When the people are liberated, I am liberated.&#34;</p><p>There has never been an army in the world that has thrown itself into fire and water for the interests of the people in this way.</p><p>The documentary From Victory to Victory (《从胜利走向胜利》) contains this detail: the renowned commander Dong Zhentang led the Red Fifth Army Corps in the rearguard action during the Long March. Once, when the unit had completed its blocking mission and was preparing to withdraw, word came that a woman in the women&#39;s detachment was in labor and hoped the unit could hold on a little longer. Someone worried this would cost more lives; Dong Zhentang gave the decisive order: &#34;Keep fighting, hold the enemy!&#34; He said: &#34;What are we fighting this revolution for? Isn&#39;t it for the children, for tomorrow?!&#34;</p><p>In November 1942, more than 300 officers and soldiers of the Eighth Route Army, in order to cover the breakout of the Shandong Military Region headquarters and some civilians, fought a bloody battle against more than 8,000 Japanese troops at Duigu Mountain in Yishui County, repelling more than 10 enemy attacks. More than 300 officers and soldiers mostly died heroically; the remaining 14 warriors, out of ammunition and food, refused to be taken prisoner, and under the leadership of Battalion Commander Yan Yulin, destroyed their weapons and leapt together from the cliff.</p><p>Serving the people wholeheartedly is the fundamental purpose of the People&#39;s Army and the underlying logic of soldiers&#39; sacrifice and dedication. Our army has always been bound to the people by flesh and blood, sharing life and death; for the people it can be incomparably strong, and for the people it can sacrifice everything.</p><p>From the revolutionary era to the years of peace, the People&#39;s Army has always upheld the conviction of &#34;I will efface myself and not fail the people (我将无我，不负人民),&#34; carving the names of the people&#39;s sons and daughters deep into the mountains and rivers of the motherland.</p><p>Who can forget: amid the surging muddy waves of the Yangtze River, 20-year-old &#34;flood-fighting hero&#34; Li Xiangqun cast his young life into the flood-control levee. Who can forget: above the rubble of collapsed Wenchuan, 15 paratroopers had already written their wills and launched a blind jump of uncertain life or death. Fighting ice and snow, battling typhoons, fighting flood crests, combating the epidemic… Over the past several decades, no matter what disaster has struck, the words &#34;when the PLA comes, the people&#39;s hearts are settled&#34; have always been the expectation and call of the people, and also the unflinching responsibility and commitment of the People&#39;s Army.</p><p>Being rooted in the people, serving the people, and protecting the people—this is the warmest and most enduring source of strength for new-era revolutionary soldiers as they carry forward the spirit of sacrifice and dedication.</p><p>III</p><p>A strong nation must have a strong military; only with a strong military can the nation be secure. National security is the foundation of national rejuvenation, and the sacrifice and dedication of soldiers is the shield of national security.</p><p>Although nearly a hundred years have passed, new-era Chinese soldiers still use their bodies as stones to build the barrier that defends the nation and the people—that is the levee built of flesh and blood by flood-fighting officers and soldiers in the surging Yangtze; it is the track of Wang Wei piloting &#34;81192&#34; forward without hesitation across the vast sea and sky; it is the love of the border guards, purer even than the snow of the Karakoram Mountains…</p><p>On the eve of the September 3rd parade in 2025, a new-media video titled Never Forget (《永不忘》) turned its lens on the parade training ground of the Army formation, letting us see the solemn oath of today&#39;s People&#39;s Army as it carries forward the spirit of sacrifice of its forebears—</p><p>&#34;Liulaozhuang Company,&#34; &#34;Yanmenguan Ambush Battle Hero Company,&#34; &#34;Diamond Drill,&#34; &#34;Tiger Regiment&#34;… As the names of one heroic unit after another were called out in the ranks standing in neat formation, today&#39;s heirs of the heroes stood tall and answered the call. With the loudest voices they could produce, they responded to the hot blood of the anti-Japanese war martyrs that stained the pages of history, writing a new-era chapter in the People&#39;s Army&#39;s tradition of sacrifice and dedication.</p><p>Chairman Xi has pointed out: &#34;The military is meant to fight wars; to fight wars one must look the part, and that means fearing neither hardship nor death. The spirit of &#39;two fears not (两不怕)&#39; was, is, and will forever be our precious spiritual wealth.&#34; To this day, we still do not lack people willing to give their lives for the motherland and the people—</p><p>Twenty-two-year-old Liu Jingtai, to fight Typhoon &#34;Nepartak&#34; and rescue the people, cast his life into the merciless rushing floodwaters; twenty-two-year-old Cheng Junhui died heroically while carrying out a border demining mission—at the moment of his death, he was still gripping the mine fuze he had just removed; twenty-nine-year-old Shen Liangliang remained forever in a distant foreign land, on the peacekeeping battlefield for which he had struggled, exchanging the last 37 seconds of his life for the safety of his comrades…</p><p>Just this past January, 26-year-old veteran Jin Chenglong, to rescue people who had fallen into the water, leapt into the bone-chilling icy water and never came back up. This young man, in his final charge after taking off his uniform, fulfilled a soldier&#39;s solemn promise to the people, and was posthumously awarded the 2026 China Youth May Fourth Medal.</p><p>The martyrs, looking back, should smile with relief—those who carry the banner forward are already here.</p><p>In his important speech at the gathering commemorating the 80th anniversary of the victory of the Chinese People&#39;s War of Resistance Against Japanese Aggression and the World Anti-Fascist War, Chairman Xi pointed out: &#34;The People&#39;s Liberation Army is always a heroic force that the Party and the people can completely trust and rely upon.&#34;</p><p>Different eras confer different missions and tasks upon soldiers, and also confer different era-specific connotations upon sacrifice and dedication. In the era of war and fire, the core of sacrifice and dedication was to stop war with war, to save the nation from extinction, to exchange lives for national independence; in the period of peaceful construction, the core was to guard the territory and secure the nation, to safeguard peace, to use steadfast perseverance to defend national stability; in the new era of national and military strengthening, the global order is undergoing profound adjustment, security risks are spreading across all domains, and the form of warfare is iterating and upgrading—the connotation of soldiers&#39; sacrifice and dedication continues to expand, with the emphasis on escorting national rejuvenation, defending national sovereignty, protecting the happiness of the people, and supporting the great cause of military strengthening.</p><p>The tranquility of peaceful days cannot be separated from those who carry heavy burdens and press forward. In peacetime, there are no brutal battles shrouded in gunsmoke, rarely the magnificent choices of a single life-or-death instant, yet there is the silent perseverance, day after day. Border defense officers and soldiers brave wind and snow to guard the nation&#39;s frontiers; naval vessels conduct far-sea patrols to defend the blue national territory and overseas interests; Air Force eagles temper their swords in the long sky to build a security barrier in the air and space domains; Rocket Force officers and soldiers lie in wait deep in the mountains, forging the great nation&#39;s shield…</p><p>A veteran soldier with more than 30 years of service, who spent half his life rooted in the mountains, devoted himself body and soul to the cause of national defense, working selflessly. When others asked him: &#34;After all these years, you&#39;re still just a soldier—do you have any regrets?&#34; he answered calmly: &#34;As long as the unit needs me, I am willing to be a soldier for the rest of my life.&#34;</p><p>From obeying the overall situation in unit relocations, organizational restructuring, and position reassignments, to painstaking breakthroughs in new equipment research and testing, new tactics research and training, and exploration of new domains; from the constant perseverance of high-intensity combat-realistic training and round-the-clock combat readiness duty, to the self-revolution of discarding the accumulated ills of peacetime and breaking through fixed patterns of thinking—every advance and every breakthrough in the new-era cause of military strengthening is inseparable from the quiet dedication and selfless contribution of the broad ranks of officers and soldiers. Countless officers and soldiers are rooted at the grassroots level, holding fast to their combat positions, and training hard to build their capabilities; through individual sacrifice and dedication, they are driving the transformation and development of the force and the iterative upgrading of combat power, injecting inexhaustible momentum into the timely achievement of the goal of the centenary of the founding of the army.</p><p>Chairman Xi has pointed out: &#34;At present, the once-in-a-century changes in the world are accelerating, the great rejuvenation of the Chinese nation has entered a critical period, the risks and challenges we face have increased markedly, and it is unrealistic to always want to live peaceful days and be unwilling to struggle. We must discard illusions, be courageous in struggle, yield not an inch on matters of principle, yield not an inch of territory, and with a strength of will unprecedented in history, safeguard national sovereignty, security, and development interests.&#34; Today, strategic opportunities and risks and challenges coexist, and uncertain and hard-to-predict factors are multiplying; the sacrifice and dedication of soldiers is no longer merely an individual moral choice, but a strategic requirement for serving the national interest and supporting national rejuvenation. The more this is the case, the more we need to step forward with courage and commitment, and the more we need to preserve that heroic fighting spirit (英雄血性).</p><p>The tombstones of the Kangxiwa Martyrs&#39; Cemetery stand silent; the mountains and rivers of the Galwan River Valley bear witness. Standing before Xiao Siyuan&#39;s tombstone, soldiers of the &#34;Xiao Siyuan Squad&#34; once said to him: &#34;Squad leader, every ridge you walked I have walked; I have already followed every footstep you left. Your comrades and I are here—rest easy.&#34;</p><p>As batch after batch of new soldiers sing of &#34;pure love&#34; and rush toward the plateau, we are absolutely certain: this indomitable spirit of daring to sacrifice, this patriotic devotion of a son of the motherland (赤子情怀) with a heart set wholly on serving the nation—will forever be transmitted through the red bloodline of the People&#39;s Army.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">清澈的爱，只为中国 ■杨 悦 高原之上，碧空澄澈，雪线绵延。沿新藏公路219国道向南行进，一座座蓝色路标，在这片荒芜之地烙印下一个个动人心弦的名字—— 祥榕桥、屏南桥，思远桥、延津桥，焯冉桥、漯河桥，红军桥、两当桥…… 2022年10月，在新疆军区党委协调推动下，11座以卫国戍边烈士及烈士家乡名字命名的桥梁正式竣工，成为喀喇昆仑高原一道崭新的风景线。新藏线上的康西瓦烈士陵园中，百余位牺牲在高原边关的烈士身旁，属于陈红军、陈祥榕、肖思远、王焯冉的4座坟茔，为人民军队一如既往的牺牲壮志写下新的注脚。 身前是战场，身后是祖国。加勒万河谷，刀劈斧凿的峭壁，冰寒刺骨的河水，那决然张开双臂的身影屹立如碑，道尽了边防战士“清澈的爱”。 一支军队的胜利，从来饱含着牺牲。革命战争年代以来，2000多万名牺牲的烈士，绝大多数连姓名都无从考证。为了祖国、为了人民、为了胜利，人民军队将无畏牺牲、无私奉献的优良传统刻进基因、融于血脉。 在庆祝中国人民解放军建军90周年大会上，习主席深刻指出：“没有顽强的意志，没有敢于牺牲的品质，再好的武器装备也不能保证胜利。一代一代革命军人正是靠着向死而生的英勇决绝，形成了压倒一切敌人而决不被敌人所屈服的伟大气概。” 从战争年代面对枪林弹雨的向死而生、以身许国，到和平时期远离繁华的孤寂坚守、默然耕耘，再到强军新征程直面风险挑战的挺身而出、担当使命……岁月流转，人民军队的精神底色从未改变。“清澈的爱，只为中国”早已超越一句誓言，成为每一名中国军人灵魂深处的精神坐标。 一 一名战士的牺牲诗行，该要多少热血写就？ 从“清澈的爱，只为中国”这句誓言回望，自人民军队诞生以来，这样的牺牲从不陌生——曾经，它被叫作“抛头颅，洒热血”，被叫作“钢少气多”，也被叫作“一不怕苦，二不怕死”。为了胜利，一往无前，这是从战火中走来的人民军队最真实的模样。 美国老兵麦·卡拉汉始终记得一位中国士兵的身影。 70多年前的上甘岭战役中，23岁的麦·卡拉汉跟随部队前进，却看见整个志愿军阵地，只剩下这一名存活的士兵——“他背靠一截布满弹片和弹头的树干，两眼充满仇恨，嘴里不停地叫喊着，谁也听不懂。” 突然间，美军中有人发现：“他背着台步话机！”就在此时，骤雨般的炮弹向阵地倾泻而下，在场的众人瞬间被炮火炸飞。麦·卡拉汉失去一条腿，但幸存了下来。56年后，当他向访美的中国工商界代表团讲起这个故事时，一名随行的中国记者终于为他解答了这个困惑半生的疑问。 “他是在说，‘首长和同志们，请向我开炮！为了胜利，向我开炮！’”麦·卡拉汉不解地问：“你是怎么知道的？”“不仅我知道，中国人民全知道。”这一刻，在场的中方人员无不泪湿眼眶。 正如电影《英雄儿女》中高喊着“向我开炮”的王成，这样的英雄，在抗美援朝战场上并不罕见。据统计，50名志愿军一级战斗英雄中，有10余名是与敌人同归于尽的。 “为什么战旗美如画，英雄的鲜血染红了它……”电影中那座无名高地，与许多烙印于民族记忆的地理坐标悄然交叠；王成那视死如归的身影，与一个个令人熟知的身影慢慢重合—— 那是长津湖零下40摄氏度的彻骨之寒；是邱少云挺过燃烧弹300多摄氏度的熊熊烈焰；是松骨峰上连绵成雨的弹火，与扑面成风的血腥……卫生员王清珍记得黄继光牺牲后的场景：“他的血流干了，粘在衣服上面，后面的脊椎被打穿了。” “知道什么是粉身碎骨吗？”时隔多年，曾任志愿军50军149师447团副政委的吕品仍然忘不了，“我们五连副连长代学友，被重磅炸弹炸死了，战士们想去找他的尸体，但连拳头大的肉都找不到……” 据战史记载，荣获特等功以上荣誉的志愿军烈士中，有44名与敌人“倒在一起、烧在一起”的“杨根思式”英雄，6名用身体堵敌人枪眼的“黄继光式”英雄。在上甘岭打出了“范弗里特弹药量”的美军将领范弗里特这样评价他所遇到的志愿军官兵——“他们没有防弹背心，没有钢盔……携带数枚制造粗劣的手榴弹……但是他们永远向前作战，奋不顾身。” 涉过冰雪封盖的河流，迎着漫天的枪炮火光，越过战友倒下的身躯。一把把激昂士气的军号吹得敌人胆寒，一面面布满弹孔的战旗在阵地飘扬……战场上，一个个在血与火中淬炼的永恒瞬间，最终成为人民军队不可磨灭的历史记忆。 习主席与基辛格讨论抗美援朝战争时，基辛格曾感叹：中国军队缺乏后勤保障、空中支援，装备如此之差，居然没有“打输”。习主席这样回答：“我们靠的是一种革命的战斗精神，我们的战士是不怕你们的，无论拿什么武器，都敢与你们较量。” 人民军队的红色血脉，由牺牲的鲜血铸就；人民军队的所向披靡，由牺牲的鲜血托举—— “胜利的时候，请你们不要忘记我们。”1930年，南昌起义后自江西远征广东东江的裘古怀，在就义前写下这样的遗言。 红军长征途中，仅雅克夏雪山至黑水途中，红一、红四方面军就有近万名战士牺牲，“他们的坟包很快就被雪掩埋了”。 为抵抗日本侵略者，东北抗联的将士们穿着被树枝划得破烂不堪的棉衣，跋涉冰河雪野。有的战士只是抱着枪背靠大树休息片刻，就再也没能睁开双眼。 1948年，新兵王燕云参加济南战役，奉命把160多个包子送到前线，却看到全连只剩下十几个人。炊事班长忍不住蹲在地上大哭：“战友们都饿着肚子啊！” 挺进生命禁区，进藏先遣连将国旗插上无人踏足的雪山绝境。他们中有人唱着唱着歌便没了呼吸，有人埋葬了战友却在返程时倒下。最多的一天，该连官兵为11名战友举行了葬礼。 繁霜尽是心头血，洒向千峰秋叶丹。从被猩红染彻的湘江水，到钢铁燃烧的刘老庄；从“排长牺牲了班长接替，班长牺牲了战士指挥”的平型关，到“营长救团长、战士救营长、班长救战士”的喀喇昆仑——时光与山河见证，正是这一场场感天动地的牺牲，塑造出人民军队“不可战胜的力量”。 当我们向历史叩问，这份向死而生的勇气，源头究竟何在？答案，就藏在这同心守望的山河之间，藏在这片爱得深沉的热土当中。 “他们为国家和民族建立的丰功伟绩永载史册！他们的崇高精神永远铭记在亿万人民心中！”7月1日，习主席在庆祝中国共产党成立105周年大会上发表重要讲话，深切怀念为民族独立、人民解放和国家富强、人民幸福前仆后继、牺牲奉献的革命先烈、仁人志士。 历经岁月淘漉，那份流淌于人民军队血脉的牺牲壮志，始终清澈如洗、坚定如初。 二 “你的身后就是大好河山，你说过寸土不让/哪怕只能伸开两只手，你也要筑起一堵墙/你的身后就是伟大的祖国，是她给了你坚定的信念，是她给了你无穷的力量……” 当我们凝望英雄的背影，思考那份清澈之爱的力量源泉时，答案早已写在题面上：一切牺牲奉献，都是为了挚爱的祖国。 苏联女作家科茹霍娃说：“士兵的力量不仅仅在他自己身上……还在于他生长的古老土地上，在于他从祖辈继承下来的多年形成的历史之中。”将生死抛诸脑后、将个人得失置之度外的坚定抉择，归根结底源起于“为谁牺牲”“为谁打仗”的终极追问。 ——这牺牲，源自理想信念的初心原点。 正如习主席所说：“革命胜利从来不是天上掉下来的，不是别人拱手相让的，而是用流血牺牲换来的。”从南昌城头划破暗夜的枪声，到秋收起义漫卷长野的红旗，从井冈山上燃起的燎原星火，到古田会议确立定型的铮铮军魂，中国共产党亲手缔造的人民军队自诞生之日起，就立起了“砸碎旧世界、建立新中国”的崇高理想。听党话、跟党走的忠诚底色，为革命军人的牺牲奉献铸就了信仰根基。 长征途中，父亲病逝，大哥牺牲，幼妹夭折，13岁的邓秀英背上6岁的弟弟，咬牙跟着队伍向前走。在四川巴中的通江县，举家跟着红军走的，不下两万人。一名被俘的国民党军官曾感叹：“你们真是有主义的呀！假如你们没有一个固定的为国为民的目标，为什么这些老头儿、小孩子、妇女们跟你们跑两万多里？难道徐特立、林祖涵先生，邓颖超、蔡畅女士等都是因为没有饭吃才来的吗？” 抗战期间，“狼牙山五壮士”中的班长马宝玉在跳崖之前，掏出了一个小本子放在膝盖上，为3位没有入党的战友匆匆写下入党介绍信。 刘老庄战斗前，一名战士火线写下入党申请书：“在党最需要的时候，我将把自己的生命献给党和人民，决不给我们党丢脸，决不给中华民族丢脸！” 左权将军在给叔父的家书中写道：“我牺牲了我的一切幸福，为我的事业奋斗。请你相信这一道路是光明的、伟大的。” 因为怀揣信仰，所以敢于牺牲。习主席在参观红军长征湘江战役纪念园时曾说：“革命理想高于天，理想信念之火一经点燃就会产生巨大的精神力量。”据考证，最早有实物可查的党员入党誓词仅有24个字，开头就是“牺牲个人”。如今，我们依然把“随时准备为党和人民牺牲一切”写在入党誓词中。 美国记者索尔兹伯里在《长征——前所未闻的故事》中评价道：“这种传奇式的牺牲和坚韧不拔的精神是中国革命赖以成功的基础。中国革命将从这些奋斗牺牲的传奇故事中汲取无尽的力量。”跟随党的脚步，人民军队以牺牲换解放，以热血换新生，为革命胜利铺就了坚强的基石。 对党绝对忠诚，是人民军队的建军之本、强军之魂，也是革命军人甘愿牺牲、无私奉献的底气来源。作为新时代革命军人，只有信仰坚定、初心纯粹，看清“为谁当兵、为谁奉献、为谁牺牲”的根本问题，才能在艰难困苦面前不退缩、在进退取舍面前不迷茫。 ——这牺牲，源自超越小我的价值选择。 面对险关不掉队，面对炮火不撤退，面对绝境不投降……对于普通人来说，这些选择，每一个都与人类与生俱来的本能相悖。但有一群人，将这些“反本能”变成了“本能”。李大钊曾说：“人生的目的，在于发展自己的生命，可是也有为发展生命必须牺牲生命的时候。因为平凡的发展，有时不如壮烈的牺牲足以延长生命的音响和光华。” 1928年，革命烈士陈觉与赵云霄夫妻二人分别被敌人逮捕。此时，赵云霄已怀有4个月身孕。在给妻子赵云霄的诀别信中，陈觉写道：“云！谁无父母，谁无儿女，谁无情人！我们正是为了救助全中国人民的父母和妻儿，所以牺牲了自己的一切。我们虽然是死了，但我们的遗志自有未死的同志来完成。”而后不久，陈觉英勇就义，时年25岁。 赵云霄因怀有身孕推迟行刑，于翌年2月的一天在狱中生下女儿，为她取名为“启明”。当年3月，赵云霄从容赴死，年仅23岁。 作家莱辛曾这样评价英雄：“在行动上他们是超凡的人，在感情上他们是真正的人。”这份生与义的取舍，贯穿了中国共产党人和中国军人有限的生命，也将人民军队锻造得无比坚强。 烽火岁月里，他们舍弃小我、成就大我，用最壮烈的牺牲换来山河无恙、家国安宁。当时代变迁，硝烟散去，新时代中国军人仍然守着舍己为国的精神火种，将牺牲奉献的英雄精神代代相传。 今年4月，是舰载机飞行员张超牺牲10周年的日子。因为在生命最后一刻作出的那个抉择，张超成为世人眼中的英雄。但妻子张亚始终记得，当自己问他怕不怕死时，张超对她的回答：“谁不怕死呢？但我们这样的人，就是时刻准备着为祖国而牺牲的。” 有人说，一个人最大的贡献，就是把个人行为变成国家行为，最后再变成历史行为。曾经，在张超和战友们心中，他们就是一群平凡的飞行员、平凡的军人。后来，这个“平凡”的人，因为投身伟大的事业，因为一个伟大的选择，成就了一名军人的不凡。而一代代“平凡”的中国军人，因为这份从未被时间改变的牺牲精神，成就了一支军队的伟大。 ——这牺牲，源自人民至上的根本宗旨。 当喀喇昆仑之上的英雄事迹，随着那句“清澈的爱，只为中国”传遍祖国山河，一名网友留下的评论，让许多国人为之动容：“我吃着白米饭，喝着‘快乐水’，想不通这些身强体壮的官兵为什么会死。我在深夜惊醒，突然想起，他们是为我而死。” 这支军队为谁冲锋向前，因谁抛却生死？ 白发苍苍的抗美援朝老兵凌行正，哽咽着道出答案：“我为谁人来打仗，我为谁人扛起枪。为了爹，为了娘，为了人民解放。人民解放我解放。” 世界上从来没有哪一支军队，为了人民利益如此赴汤蹈火。 纪录片《从胜利走向胜利》中有这样一个细节：著名战将董振堂指挥红五军团担负长征的殿后任务，一次部队完成阻击任务准备撤离时，传来妇女队有位同志正在分娩，希望部队再坚持一会儿的消息。有人担心这样会付出更多牺牲，董振堂却果断命令“继续战斗，顶住敌人！”他说：“我们打仗干革命为了什么？不就是为了孩子，为了明天吗？！” 1942年11月，八路军300多名官兵为掩护山东军区机关和部分群众突围，在沂水县对崮山与8000余日军展开浴血奋战，击退敌军10余次进攻，300余名官兵大多壮烈牺牲，剩余14名弹尽粮绝的勇士宁死不当俘虏，在营长严雨霖的带领下砸毁武器，集体跳下山崖。 全心全意为人民服务，这是人民军队的根本宗旨，也是军人牺牲奉献的底层逻辑。我们的军队始终与人民血肉相连、生死相依，为了人民可以无比坚强，亦可以牺牲一切。 从革命年代到和平岁月，人民军队始终秉持着“我将无我，不负人民”的信念，将人民子弟兵的姓名，深深镌刻于祖国山河。 曾记否，长江汹涌的浊浪之间，20岁的“抗洪英雄”李向群将青春的生命铸入抗洪大堤。曾记否，汶川坍塌的废墟上空，空降兵15勇士提前写好了遗书，展开一场生死未卜的盲跳。抗击冰雪、搏击台风、决战洪峰、抗击疫情……几十年间，无论面临什么样的灾害，“解放军来了人心定”这句话，始终是人民群众的期待与召唤，也是人民军队义无反顾的责任与担当。 植根人民、服务人民、守护人民，正是新时代革命军人传承牺牲奉献精神最温暖、最恒久的力量源泉。 三 强国必须强军，军强才能国安。国家安全是民族复兴的根基，军人的牺牲奉献则是国家安全的屏障。 尽管跨越了近百年春秋，新时代的中国军人依然以身为石，构筑着捍卫国家人民的屏障——那是长江洪流中抗洪官兵以血肉之躯筑就的堤坝，是茫茫海天中王伟驾驶“81192”一往无前的航迹，是戍边卫士比喀喇昆仑的雪山更加清澈的爱意…… 2025年的九三阅兵前夕，一条名为《永不忘》的新媒体视频将镜头对准了陆军方队的阅兵训练现场，让我们看到今天人民军队传承先辈牺牲精神的铮铮誓言—— “刘老庄连”“雁门关伏击战英雄连”“金刚钻”“老虎团”……整齐列队的方阵里，伴随着一支支英雄部队的名字被喊出，今日的英雄传人身姿挺拔，举手答到。他们用自己能发出的最响亮声音，回应着抗战先烈们染红史册的热血，为人民军队的牺牲奉献续写着新时代的篇章。 习主席曾指出：“军队是要打仗的，打仗就要有打仗的样子，就要一不怕苦、二不怕死。‘两不怕’精神过去是、现在是、将来永远是我们的宝贵精神财富。”时至今日，我们仍然不缺少为了祖国和人民献出生命的人—— 22岁的刘景泰，为抗击“尼伯特”台风、抢救人民群众，将生命投入无情的滚滚洪流中；22岁的程俊辉，为执行边境排雷任务壮烈牺牲，当时他手上还紧握着那枚刚刚排除的地雷引信；29岁的申亮亮，永远地留在了遥远的异国他乡，留在那片他为之奋斗的维和战场，用生命的最后37秒换回战友的平安…… 就在今年1月，26岁的退役士兵金城龙为救落水群众，纵身跃入刺骨的冰水中，再也没能上来。这个年轻人，用脱下军装后的最后一次冲锋，践行了一名军人对人民的庄严承诺，被追授2026年度中国青年五四奖章。 先烈回眸应笑慰，擎旗自有后来人。 习主席在纪念中国人民抗日战争暨世界反法西斯战争胜利80周年大会上的重要讲话中指出：“中国人民解放军始终是党和人民完全可以信赖的英雄部队。” 不同的时代，赋予军人不同的使命任务，也赋予牺牲奉献不同的时代内涵。战火纷飞的年代，牺牲奉献的核心是以战止战、救亡图存，用生命换取民族独立；和平建设时期，牺牲奉献的核心是守土安邦、守护和平，用坚守捍卫国家稳定；强国强军新时代，世界格局深刻调整、安全风险全域蔓延、战争形态迭代升级，军人牺牲奉献的内涵持续拓展，重点是护航民族复兴、捍卫国家主权、守护人民幸福、支撑强军伟业。 岁月静好，离不开那些负重前行的身影。和平年代，没有硝烟弥漫的惨烈战斗，鲜有生死一瞬的壮烈抉择，却有日复一日的默默坚守。边防官兵顶风冒雪，守护祖国疆域；海军舰艇远洋巡航，捍卫蓝色国土与海外利益；空军战鹰长空砺剑，构筑空天安全屏障；火箭军官兵深山蛰伏，铸就大国盾牌…… 一名入伍30余年的老兵，半生扎根深山，为了国防事业鞠躬尽瘁、忘我工作。别人问他：“这么多年，你还是一个兵，不后悔吗？”他坦然地回答：“只要部队需要，我愿意当一辈子兵。” 从部队移防调整、编制优化、岗位分流的服从大局，到新装备研发试验、新战法研练、新领域探索的潜心攻坚；从高强度实战化训练、全天候战备值班的常态坚守，到摒弃和平积弊、破除思维定式的自我革命，新时代强军事业的每一点进步、每一次突破，都离不开广大官兵的默默付出、无私奉献。许许多多官兵扎根基层、坚守战位、苦练本领，以个人的牺牲奉献，推动部队转型发展、战斗力迭代升级，为如期实现建军一百年奋斗目标注入不竭动力。 习主席曾指出：“当前，世界百年未有之大变局加速演进，中华民族伟大复兴进入关键时期，我们面临的风险挑战明显增多，总想过太平日子、不想斗争是不切实际的。要丢掉幻想、勇于斗争，在原则问题上寸步不让、寸土不让，以前所未有的意志品质维护国家主权、安全、发展利益。”今天，战略机遇和风险挑战并存、不确定难预料因素增多，军人的牺牲奉献已经不是个人的道德选择，而是服务国家大局、支撑民族复兴的战略要求。越是这个时候，越需要挺膺担当，越需要保持那股英雄血性。 康西瓦烈士陵园的墓碑无言，加勒万河谷的山河为证。站在肖思远的墓碑前，“肖思远班”的战士曾对他说：“班长，你去过的山岗我都去过，你的足迹我已踏遍，这里有我和战友，你就放心吧。” 当一茬茬新兵歌唱着“清澈的爱”奔向高原，我们无比确定，这份敢于牺牲的不屈壮志、这份一心报国的赤子情怀，永远在人民军队的红色血脉中传递。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
