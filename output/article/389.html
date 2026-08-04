@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | Paying Attention to Problems &#34;Hidden in the Bunk&#34; — China Mil Watch</title>
+  <meta name="description" content="The PAP Hubei General Command launched a systemwide sleep-assurance initiative—branded a 暖心行动 (warm-hearted action)—after senior leaders identified bunk length, noise, vessel motion, and psychological">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/389.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/389.html">
+  <meta property="og:title"        content="Barracks Observation | Paying Attention to Problems &#34;Hidden in the Bunk&#34;">
+  <meta property="og:description"  content="The PAP Hubei General Command launched a systemwide sleep-assurance initiative—branded a 暖心行动 (warm-hearted action)—after senior leaders identified bunk length, noise, vessel motion, and psychological">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | Paying Attention to Problems &#34;Hidden in the Bunk&#34;">
+  <meta name="twitter:description" content="The PAP Hubei General Command launched a systemwide sleep-assurance initiative—branded a 暖心行动 (warm-hearted action)—after senior leaders identified bunk length, noise, vessel motion, and psychological">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Internal Security">Internal Security</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | Paying Attention to Problems &#34;Hidden in the Bunk&#34;
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨关注“藏在床铺上”的问题</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>18 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16461599.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>The PAP Hubei General Command launched a systemwide sleep-assurance initiative—branded a 暖心行动 (warm-hearted action)—after senior leaders identified bunk length, noise, vessel motion, and psychological stress as measurable drains on recruit and soldier readiness, with a Political Work Office survey finding 5.8 percent of officers and soldiers in the recruit regiment reporting sleep disorders and 25 percent of new recruits standing 180 cm or taller. The command responded with custom 2.1-meter extended bunks, modular pontoon-vessel cabin renovations including soundproofing and civilian-designed motion-dampening adjustments, field-tent mattress procurement, and a &#39;guard-call buffer system&#39; replacing abrupt radio wake-ups—while explicitly framing the shortfalls as institutional failures requiring 顶层设计 (top-level design) rather than unit-level workarounds. The article documents a formal PLA-adjacent effort to quantify and remediate non-combat attrition (非战斗减员) from poor sleep, linking bunk standards directly to the 战斗力生成链条 (combat effectiveness generation chain)—a framing that extends the ongoing push to treat logistics and living conditions as combat-readiness variables, not administrative afterthoughts.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Why Does the &#34;Big Guy&#34; Soldier Sleep Curled Up?</p><p>■ Tian Jian</p><p>At two in the morning, the flashlight beam of Li Ao—political instructor of a company under the recruit regiment at the People&#39;s Armed Police (PAP) Hubei General Command Training Base—froze on recruit Qiu Xinkai. Qiu, who stands 1.92 meters tall, was curled up on a 1.9-meter bunk, his feet dangling off the end.</p><p>&#34;Xiao Qiu, can your body really recover sleeping like that? Tomorrow&#39;s training intensity is no joke.&#34; Li Ao asked quietly. Xiao Qiu sat up in a daze: &#34;Instructor, the bunk is too short. When I lie flat, I have to bend my legs. After a while my lower back and legs go numb, and during the day when we drill formations my legs have no strength.&#34;</p><p>Qiu Xinkai&#39;s predicament is not an isolated case. Tall recruits like him are becoming more and more common at this training base. Tong Jinghua, an officer from the Political Work Office, conducted a survey and found that among recruits enlisting this year, 25 percent stand 180 centimeters or taller, and more than 5 percent exceed 190 centimeters.</p><p>As the overall physical condition of officers and soldiers in the new era has improved, the bunk length that the unit has used for many years remains 1.9 meters. For soldiers whose height exceeds the length of the bunk, knees easily slip off the side when turning over; some are forced to sleep diagonally, others have no choice but to keep their legs bent all night. After prolonged &#34;making do,&#34; many tall recruits have developed lumbar and back muscle strain and compressive numbness in the legs, directly affecting their concentration and movement execution during daytime training, and increasing errors on the training ground.</p><p>Insufficient bunk length is only one of the problems. With the base leadership&#39;s approval, Tong Jinghua conducted a survey of the sleep conditions of all officers and soldiers in the recruit regiment. The results were troubling: many reported poor sleep quality, and 5.8 percent of officers and soldiers had varying degrees of sleep disorders—difficulty falling asleep, waking easily during the night, and being unable to fall back asleep after early waking.</p><p>Recruit Xiao Chen is one of that 5.8 percent. Because of strained family relations, his mother would nag every time she called. &#34;During the day I don&#39;t dare let my mind wander during training, but the moment I lie down at night, my head is full of it.&#34; Xiao Chen said, his eyes red. He often tossed and turned until the early hours before drifting off, and sometimes when he woke in the night he could not close his eyes again. This persistent sleep deprivation caused him to react sluggishly and suffer impaired judgment during high-demand training events such as apparatus exercises. Squad cadres noticed him zoning out on multiple occasions; once he nearly fell off the apparatus.</p><p>Recruit Xiao Zhang&#39;s problem is training pressure. He had been physically weak since childhood, and his physical fitness assessment scores have consistently ranked at the bottom since enlisting. &#34;Every time I see my squadmates all passing and I&#39;m the only one dragging everyone down, I get so anxious I can&#39;t sleep. Lying in the bunk at night, I go over the key movement points again and again in my head, and the more I think the more awake I become.&#34; Xiao Zhang said that on several occasions he woke at two or three in the morning and could not get back to sleep, lying awake until the morning exercise bugle sounded. This severely hampered the pace of his training progress.</p><p>Recruit Meng Fanhao stands 1.88 meters tall—the bunk length was already barely adequate for him—and occasional bouts of homesickness compounded the problem, leaving him with poor sleep since entering the barracks. &#34;Sometimes I&#39;ve just dozed off and the sound of footsteps from the changing of the guard wakes me up again. Once awake, I can&#39;t get back to sleep, and I toss and turn until dawn.&#34; Chronic insufficient rest left him recovering slowly after high-intensity training, with fatigue accumulating.</p><p>Cadres and senior soldiers observed a clear chain reaction: recruits who slept poorly showed noticeably slower reactions during training, distorted tactical movements, declining physical endurance, and more volatile emotions. One squad leader said: &#34;One soldier, because of prolonged poor sleep, saw his training scores slide and his temper become especially irritable. This affected not only him personally but also the atmosphere and training efficiency of the whole squad. It made me extremely anxious!&#34;</p><p>&#34;We cannot only see soldiers&#39; bodies curled up—we must also see their &#39;curled-up&#39; hearts, and see the potential drain on training readiness and combat effectiveness behind all of this.&#34; Li Ao said candidly at one meeting: &#34;The short bunk is the surface manifestation; the heavy burden of personal worries is the underlying cause; stress and other factors are all sources of interference. Ensuring effective sleep is an indispensable foundational link in the chain of combat effectiveness generation (战斗力生成链条).&#34;</p><p>The survey results drew close attention from the base Party committee. &#34;Sleep problems directly affect recruits&#39; physical and mental health and training quality and efficiency—they are problems that must be urgently resolved.&#34; They have compiled the situation and reported it up to the General Command headquarters, and have begun making targeted adjustments within existing conditions: attempting to temporarily extend bunks by splicing them together for individual soldiers of extreme height; requiring senior soldiers to strengthen nighttime rounds and promptly conduct heart-to-heart talks with those found tossing and turning; coordinating psychological service personnel to enter the barracks and provide counseling; and optimizing nighttime inspection rounds and guard-relief handover procedures to minimize disturbances to the maximum extent and protect officers&#39; and soldiers&#39; rest and recovery time.</p><p>&#34;These are stopgap measures; resolving the root problem requires top-level design (顶层设计).&#34; A headquarters officer noted after conducting research: &#34;For example, do bunk standards need to be scientifically adjusted in response to changes in officers&#39; and soldiers&#39; physiques? How can psychological service resources be delivered more precisely to the soldiers whose training readiness is affected? How should standards for sleep environment assurance in field encampments and aboard vessel units be established? These questions require systematic, combat-oriented consideration at the level of institutional mechanisms.&#34;</p><p>Once again it is late at night, and Li Ao walks through the silent barracks. In the faint beam of his flashlight, there are still soldiers tossing and turning. Enabling these young soldiers to sleep soundly is the responsibility of those who lead troops. Clearly identifying the crux of what affects combat effectiveness, and beginning to think and act for the effective recovery of officers and soldiers—this itself is an &#34;awakening&#34; (觉醒) that concerns the efficient conversion of support capability (保障力) into combat effectiveness.</p><p>Paying Attention to Problems &#34;Hidden in the Bunk&#34;</p><p>■ Tian Jian   Qi Wuhui</p><p>Officers and soldiers of a company of the PAP Hubei General Command tidying up their quarters after rising. Photo by Xie Ding&#39;an.</p><p>A unit of the PAP Hubei General Command conducting live-fire shooting. Photo by Xie Ding&#39;an.</p><p>Deep in the night, when the lights-out bugle sounds, the night of the barracks returns to stillness. That stillness is the starting point for recuperating strength and gathering momentum (养精蓄锐、蓄势待发).</p><p>Not long ago, senior leaders of the PAP Hubei General Command, while conducting in-depth grassroots research, keenly identified the real-world difficulties &#34;hidden in the bunk.&#34; These seemingly minor inconveniences, accumulated over time, continuously drain officers&#39; and soldiers&#39; energy, lower training standards, and increase safety hazards, becoming &#34;wear points&#34; (磨损点) in combat effectiveness generation.</p><p>This combat effectiveness investigation report on &#34;sleep&#34; sent ripples spreading without end. Combined with the ongoing study and education campaign on establishing and practicing a correct view of political achievements (正确政绩观), a discussion unfolded around the questions of &#34;for whom political achievements are built, what kind of political achievements to build, and how to build political achievements.&#34; &#34;Officers&#39; and soldiers&#39; bodies able to stretch out fully, efficient recovery, and a vigorous state of participation in training are the cornerstone supporting the ability to fight and win wars&#34;; &#34;The political achievements of leading cadres must ultimately be reflected in the improvement of the unit&#39;s combat effectiveness, and ensuring that officers and soldiers &#39;sleep well&#39; and recover effectively is an important link in improving combat effectiveness&#34;…</p><p>Starting from this small bunk, the General Command launched across its subordinate units a warm-hearted action (暖心行动) for scientific sleep assurance that strikes directly at grassroots pain points, aligns with actual combat needs, and is aimed at the orientation of winning battles.</p><p>In the Prefabricated Barracks</p><p>The &#34;Lengthened&#34; Bunk, Connected to Officers&#39; and Soldiers&#39; Well-Being</p><p>At six in the morning, thin mist hangs like gauze over the Three Gorges Dam. In the barracks of a company of the PAP Hubei General Command Yichang Detachment, before the reveille bugle has even sounded, Sergeant Gao Xingyong has already woken naturally from sleep. He stretches his arms wide, extends his legs straight, and his feet rest easily on the surface of the bunk—his whole body radiating the looseness of full relaxation.</p><p>Just over three months ago, sleep was not easy for Gao Xingyong, who stands 1.88 meters tall. The company is stationed in the core guard zone of the Three Gorges Dam. The three white-walled, red-roofed prefabricated buildings where they live are barracks left over from the Three Gorges Project construction workers, and officers and soldiers have lived in them for nearly 20 years. Space in the prefabricated buildings is limited and the dormitory layout is compact; the old-style single wooden beds inside measure 1.9 meters long and 0.9 meters wide. This standard size, which was adequate in the past, has gradually revealed its shortcomings in providing for the post-2000 generation of officers and soldiers, who are well-nourished and tall.</p><p>Gao Xingyong is the company&#39;s famously large soldier. When he lay down on the old-style bunk, the soles of his feet would press against the footboard with no room to spare, and he would frequently be jolted awake in the middle of the night by numbness, soreness, and unbearable swelling in his legs and feet. &#34;Back then, my body couldn&#39;t stretch out while sleeping, and my muscles were actually more tense after resting.&#34; Gao Xingyong said, running his hand over the brand-new bunk, recalling the past.</p><p>A bunk that doesn&#39;t &#34;fit&#34; not only fails to allow officers and soldiers to effectively recover their physical strength during rest—it actually aggravates physical wear and tear, eroding the unit&#39;s combat effectiveness day by day. These easily overlooked details were precisely identified when General Command leaders conducted their research. The Party committee reached consensus: absolutely not (绝不) allow objectively existing support shortfalls to affect officers&#39; and soldiers&#39; physical recovery; absolutely not (绝不) allow sleep problems to become a stumbling block to combat effectiveness.</p><p>Soon, custom-made 2.1-meter extended bunks, precisely calculated according to officers&#39; and soldiers&#39; heights, were delivered in succession to grassroots units, and the bed boards were also upgraded. But a new problem emerged: the existing mattresses and pads did not match the new bunks in size—they came up short when spread on the new bunks, and officers and soldiers still could not get adequate rest.</p><p>Upon discovering this detail, each unit again contacted manufacturers to simultaneously order mattresses and pads fully matched to the extended bunk dimensions, confirming every detail from fabric thickness to stitching workmanship, to ensure that every detail served the effective recovery of officers and soldiers.</p><p>&#34;My feet can stretch out straight, my body can fully relax, my concentration on guard duty the next day is sharper, my posture is more upright, and my observation is more acute!&#34; Gao Xingyong patted the &#34;lengthened&#34; bunk, his eyes bright. He said that standing guard at the Three Gorges Dam post, he represents the image of the PAP, and only with sufficient rest and recovery can he guard this &#34;great national asset&#34; (大国重器) in his best condition.</p><p>In response to the special duty schedule of guard detachments—day-night reversal and fragmented rest—the company also simultaneously created a &#34;blackout sleep zone,&#34; installing thickened blackout curtains on dormitory windows and setting up red-and-blue dual-color low-light guide lamps, so that officers and soldiers can be in a quiet, dark environment even at midday and obtain more efficient deep sleep.</p><p>At the same time, a &#34;guard-call buffer system&#34; (叫哨缓冲系统) was fully implemented throughout the barracks, replacing the abrupt method of direct radio calls. The duty room first illuminates a soft bedside light, giving officers and soldiers a 3-minute buffer to wake gradually, before a sentinel gently taps them awake. This completely eliminates the heart rate disruption and discomfort caused by being suddenly jolted out of deep sleep, ensuring that every precious period of rest maximally restores physical and mental energy.</p><p>On the Waves</p><p>&#34;Anchoring&#34; Deep Sleep, Stabilizing Combat Effectiveness on the Water</p><p>Leaving the Three Gorges dam area and traveling downstream along the Yangtze, one reaches a vessel detachment of the PAP Hubei General Command Wuhan Detachment. Officers and soldiers here are stationed year-round on the Yangtze River, carrying out missions including waterborne patrol and control, emergency rescue and relief, and protection of important targets. The vessels are both their battle stations and their home day and night. The bunks of vessel detachments are perpetually rocking and swaying with the river currents. Ensuring effective sleep in this special environment is critical to maintaining sustained waterborne combat capability.</p><p>Mechanical engineer soldier Chen Yulong still clearly remembers the embarrassment and ordeal of his first night after joining the unit as a new recruit. His dormitory was located in the forward section of the pontoon vessel; the interior space was cramped, and when Chen Yulong lay down on the bunk he could only press tightly on his side with his legs curled up. River waves slapped the hull one after another, the vessel swayed from side to side, and his head would periodically bang against the bulkhead, waves of dizziness and pressure washing over him. That night he vomited three times in succession; the oppressive feeling of the confined space and the discomfort of the vessel&#39;s violent rocking intertwined, making effective rest completely impossible.</p><p>&#34;Sleeping on a vessel is really like fighting a battle that never ends.&#34; Political Instructor Tang Wei led the author, ducking, into the ship&#39;s cabin. The narrow passageway allowed only one person to pass; pipes and cables crisscrossed overhead; the roar of machinery from the vessel alongside was deafening.</p><p>After the vessel&#39;s main engines start, noise inside the pontoon can reach above 90 decibels. The frames of the old-style bunks were not tightly connected to the hull; when the vessel rocked, the bunks would emit creaking friction sounds, which soldiers jokingly called the &#34;wave lullaby&#34; (浪花摇篮曲).</p><p>Falling asleep on the waves is not romantic. Extreme spatial compression, continuous noise interference, and irregular vessel motion—the three factors combined severely constrained the rest and recovery efficiency of vessel unit officers and soldiers, affecting their readiness for waterborne missions.</p><p>How to carve out, within a pitching and rolling ship&#39;s cabin, a &#34;pressure-stabilizing compartment&#34; (稳压舱) where officers and soldiers could sleep soundly and efficiently recover their physical strength became the key assault task of this warm-hearted support initiative.</p><p>Facing spatial limitations, the detachment took the lead in conducting modular renovation of the pontoon vessel, maximally expanding the interior activity space; scientifically extending bunk length to resolve the problem of tall officers and soldiers being unable to stretch out; installing soundproofing doors in some berthing compartments and affixing new composite damping soundproofing felt to portions of compartment walls.</p><p>Walking into the renovated compartment and gently closing the soundproofing door, the roar from outside is instantly blocked out, leaving only the vessel&#39;s faint low-frequency vibration. At the same time, officers and soldiers were uniformly equipped with dedicated sleep-assist headsets at their bunks, building a silent barrier protecting deep sleep.</p><p>Countering vessel motion is the most central challenge of the vessel sleep reform. The General Command specially invited civilian ergonomics experts to board the vessel for on-site research, and combined with the characteristics of vessel motion patterns in Yangtze River waters, applied professional techniques to adjust the orientation of the pontoon vessel. When the hull sways with the river currents, it can rapidly absorb lateral thrust, providing stable, conforming support for officers and soldiers sleeping in the compartments.</p><p>Chen Yulong lay down on the retrofitted bunk; even though the vessel still rocked, his body could remain basically stable. &#34;Before, it took a long time to recover after coming off night watch. Now, with adequate rest, I react faster and feel more confident when responding to sudden waterborne tasks.&#34; He said.</p><p>In the Tents</p><p>Precision Support—Refusing &#34;Needless Attrition&#34; in the Field</p><p>The night is ink-black; insects chirp softly in the grass. On a field training ground in a hilly area near the garrison of the PAP Hubei General Command Huanggang Detachment, several camouflage tents are scattered in staggered formation, connected in the night into a neat square array. The seemingly tranquil encampment conceals the challenges that mobile detachment officers and soldiers face in ensuring effective rest under realistic combat conditions.</p><p>Soldier Xie Yanjie pointed at the squad field tent in front of him and said helplessly: &#34;The ground outside is uneven; the folding field cots set up on it wobble and shake. After getting up, my lower back aches, which directly affects tactical movements and cross-country endurance during the day.&#34;</p><p>Even harder to bear is the need to keep one&#39;s combat-readiness nerves constantly taut. In mobile detachments, field training is the norm. Even when lying down to rest, officers&#39; and soldiers&#39; nerves remain in a state of semi-tension, making it difficult to enter deep sleep for efficient recovery.</p><p>The General Command Party committee discovered during research that the phenomena of &#34;non-combat attrition&#34; (非战斗减员) among field training units—lumbar muscle strain, decreased immunity, and sluggish reactions caused by insufficient rest and poor sleep quality—cannot be ignored, and have become an &#34;invisible killer&#34; (隐形杀手) weakening detachments&#39; sustained combat capability.</p><p>As modern military missions become increasingly complex and diverse, officers&#39; and soldiers&#39; sustained combat capability in special battlefield environments cannot be separated from scientific and efficient physical and mental recovery support. The Party committee further unified its thinking: resolving objectively existing support shortfalls does not negate the &#34;spirit of enduring hardship&#34; (吃苦精神)—it refuses &#34;needless attrition&#34; (无谓的消耗). It is not the pursuit of comfort, but the assurance of efficient recovery. This is an inherent requirement of scientific troop leadership and precision support, and a practical measure for concentrating limited energy on the critical links of training troops and preparing for war.</p><p>As the warm-hearted support initiative advanced, the author saw centrally procured and distributed mattresses whose length and width matched the folding cots. Spread on the folding cot before sleep, they both reduce pressure on the lumbar spine caused by an overly soft sleeping surface and effectively block ground cold and dampness, reducing non-combat attrition from soldiers falling ill due to cold exposure—a measure that has been universally welcomed by officers and soldiers.</p><p>&#34;The command post members of the training site proactively moved into tents and left the camping vehicles for us.&#34; Xie Yanjie pointed to the camping vehicle system beside the tent, explaining that the detachment makes rational use of the camping vehicle bunks to ensure that officers and soldiers with special rest needs—those of extreme height or with physical ailments—all receive an appropriate berth.</p><p>Xie Yanjie demonstrated on the spot the assembly and adjustment of the camping vehicle system bunk; in just a few minutes, a spacious sleeping surface was set up. &#34;The bed frame is rock-steady, and my lower back and back feel much more comfortable! With adequate rest, the 5-kilometer armed cross-country run and special operations training events feel like I have more physical reserves and can give everything I&#39;ve got.&#34; He said.</p><p>In response to gradually intensifying heat, high temperatures during field training, and rampant insects, higher-level authorities distributed high-density mosquito nets to officers and soldiers; some units also received shade netting canopies; and long-acting, environmentally friendly insect repellent is regularly sprayed around the encampment perimeter, creating a rest environment conducive to recovery.</p><p>Hardware upgrades laid the foundation for sleep; building a sense of psychological security allowed field sleep to truly become settled and peaceful. Each evening before lights out, the encampment sets aside a half-hour psychological buffer period during which officers and soldiers can listen to soothing music, write training diaries or duty reflections, and allow taut nerves to gradually relax in a controlled environment.</p><p>One by one, sleep-assistance measures focused on actual combat needs have effectively alleviated the accumulation of fatigue during field training. Soldiers lying on stable, spacious bunks relax their bodies, obtain more adequate rest, and ensure they can throw themselves into high-intensity training tasks the next day with a fuller state of readiness and more abundant physical strength.</p><p>Layout design: Fang Han</p><p>Expanding on the Optimization of a Single Bunk</p><p>■ Zhang Hongwei</p><p>The optimization of a bunk, the upgrade of a support measure, is a breakthrough move (破题之举) responding to the bottlenecks constraining combat effectiveness generation, and an vivid practice of establishing and implementing a correct view of political achievements (正确政绩观). A warm-hearted sleep assurance action that strikes directly at soldiers&#39; hearts, with the quiet power of nourishing things imperceptibly (润物无声), resolves the urgent, difficult, worrying, and long-awaited problems of grassroots officers and soldiers, and delivers organizational care to the finest details.</p><p>Adequate sleep and efficient recovery are important guarantees for soldiers to maintain optimal physiological condition, sustain sharp cognitive ability, and improve adaptability in complex environments. Grassroots officers and soldiers sleep with their weapons at the ready (枕戈待旦) and move at the sound of orders, constantly operating at the high-intensity tempo of combat readiness duty, training, and exercises. Fully and efficiently resting is by no means a trivial personal matter of no consequence—it is a key element in sustaining physical and mental health, ensuring training quality and efficiency, and supporting the fulfillment of the mission.</p><p>The PAP Hubei General Command, through precise identification and scientific policy measures to optimize officers&#39; and soldiers&#39; sleep conditions, has effectively eliminated these unnecessary losses, enabling officers and soldiers to restore physical strength, adjust their mental state, and accumulate energy through adequate rest, and to invest in combat readiness training with a better state and higher efficiency—achieving the efficiency conversion of &#34;support capability reaching directly to combat effectiveness&#34; (保障力直达战斗力).</p><p>At present, the entire military is intensively pushing realistic combat training, with training intensity, difficulty, and risk continuously increasing. Against this backdrop, using refined support to eliminate non-combat attrition and enable officers and soldiers to invest in training troops and preparing for war in their optimal physical and mental condition is a concrete embodiment of extracting combat effectiveness from training and extracting combat effectiveness from management. From &#34;sleeping well&#34; to winning wars, the war-winning logic of the deep integration of support capability and combat effectiveness in the modern military enlightens us: only when grassroots support more precisely interfaces with actual combat needs and more effectively serves combat effectiveness generation can the &#34;string&#34; of officers and soldiers sleeping with their weapons at the ready (枕戈待旦) be drawn tighter, and the &#34;arrow&#34; poised to be released fly farther.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">“大个子”战士为啥“蜷着”睡觉 ■田 健 凌晨两点，武警湖北总队训练基地新兵团某中队指导员李傲查铺的手电光，定格在新兵邱新楷身上。身高1米92的小邱，蜷缩在1.9米的床铺上，脚却悬在床外。 “小邱，这样睡身体能恢复过来吗？明天训练强度可不小。”李傲轻声问。小邱迷迷糊糊坐起来：“指导员，这床太短，我躺平后，只能蜷着腿。时间长了腰腿发麻，白天练队列腿都使不上劲。” 邱新楷的无奈，并非个例。像小邱这样的大个子新兵，在这座训练基地里越来越多。政治工作处干部同警华做过统计，今年入伍的新兵中，身高180厘米以上的占25%，190厘米以上的超过5%。 伴随新时代官兵体质整体提升，该部沿用多年的床铺长度仍是1.9米，对于部分身高超过床铺长度的战士来说，翻身时膝盖容易伸出床外，有人不得不斜对角睡，有人只能整夜蜷着腿。长期“将就”下来，不少大个子新兵出现了腰背肌肉劳损、腿部神经压迫性麻木等问题，直接影响了白天的训练专注力和动作完成度，训练场上的失误也随之增多。 床铺长度不够，只是困扰之一。在征得基地领导同意后，同警华对新兵团所有官兵进行了一次睡眠状况摸排，结果令人揪心：不少官兵反映睡眠质量欠佳，5.8%的官兵存在不同程度的睡眠障碍——入睡困难、夜间易醒、早醒后无法再睡。 新兵小陈就是那5.8%中的一个。因家庭关系紧张，他的母亲一打电话就会念叨念叨。“我白天训练不敢分心，可一到晚上躺下，脑子里全是这事。”小陈红着眼眶说。他经常翻来覆去到凌晨才能迷糊着，有时夜间醒来就再也合不上眼。这种持续的睡眠匮乏，导致他在器械训练等高要求课目时反应迟钝、判断力下降。中队干部发现他多次走神，有一次差点从器械上摔下来。 新兵小张则是训练压力大。他从小体质偏弱，入伍后体能考核成绩一直排在后列。“每次看到班里战友都及格了，就我一个拖后腿，我就急得睡不着。晚上躺在床上，脑子里一遍遍过动作要领，越想越清醒。”小张说，有几次他凌晨两三点醒来再也睡不实，直到出操号响。这严重拖累了他的训练进步速度。 新兵孟凡灏身高1米88，床铺长度本就勉强，加上偶尔涌起的想家情绪，入营以来他睡眠欠佳。“有时候刚迷糊着，换岗的脚步声一响，又醒了。醒了就再也睡不着，翻来覆去等到天亮。”长期休息不足，让他在高强度训练后恢复缓慢，疲惫感累积。 干部骨干们观察到清晰的连锁反应：那些睡眠差的新兵，训练时反应明显变慢，战术动作变形，体能耐力下降，情绪也更容易波动。一名班长说：“有个战士因为长期睡不好，训练成绩下滑，情绪也变得特别急躁。这不仅影响他个人，也影响班里的氛围和训练效率。这让我非常着急！” “不能只看到战士蜷着身体，更要看到他们‘蜷着’的心、看到这背后对训练状态和战斗力的潜在消耗。” 李傲在一次会上坦言，“床铺短是表象，心事重是内因，压力等都是干扰源。保障有效睡眠，是战斗力生成链条上不可或缺的基础环节。” 摸排结果引起了基地党委的高度重视。“睡眠问题直接影响新兵身心健康和训练质效，是亟待解决的问题。”他们已将情况整理上报总队机关，并着手在现有条件下进行针对性微调：尝试为个别身高极高战士临时拼接加长床位；要求骨干加强夜间巡查，发现辗转反侧者及时谈心；协调心理服务人员入营开展疏导；优化夜间查哨、岗哨交接流程，最大限度减少干扰，保障官兵休息恢复时间。 “这些是权宜之计，根子上的解决需要顶层设计。”一位机关干部在调研后指出，“比如，床铺标准是否需要根据官兵体形变化科学调整？心理服务资源如何更精准投送到影响训练状态的战士身边？野外驻训、船艇部队的特殊睡眠环境保障规范如何建立？这需要从制度机制层面进行系统化、实战化的考量。” 又是一个深夜，李傲走过寂静的营房。微弱的手电光下，依然有战士辗转反侧。让这些年轻的战士能安然入眠，是带兵人的责任。清晰地看到影响战斗力的症结所在，并开始为官兵的有效恢复而思、而行，这本身就是一场关乎保障力向战斗力高效转化的“觉醒”。 关注“藏在床铺上”的问题 ■田 健 祁武辉 武警湖北总队某中队官兵起床后整理内务。谢定安摄 武警湖北总队某部组织实弹射击。谢定安摄 夜深人静，当熄灯号响起，军营的夜，归于宁静。这宁静，是养精蓄锐、蓄势待发的起点。 前不久，武警湖北总队主要领导在深入基层一线调研时，敏锐地捕捉到“藏在床铺上”的现实难题。这些看似细微的不便，长期累积便会持续消耗官兵精力、降低训练标准、增加安全隐患，成为战斗力生成的“磨损点”。 这份关于“睡眠”的战斗力调查报告，荡起无尽涟漪，结合正在开展的树立和践行正确政绩观学习教育，一场围绕“政绩为谁而树、树什么样的政绩、靠什么树政绩”的讨论随之展开。“官兵舒展的身体、高效的恢复、昂扬的参训状态，就是支撑能打仗、打胜仗的基石”“领导干部的政绩，最终要体现在部队战斗力的提升上，而保障官兵‘睡好觉’有效恢复，正是提升战斗力的重要一环”…… 从这一方小小的床铺出发，该总队在所属部队掀起了一场直击基层痛点、贴合实战需求、瞄准胜战导向的科学保障睡眠暖心行动。 板房里 “长”长的床铺，连着官兵冷暖 清晨6点，薄雾如纱笼罩着三峡大坝。武警湖北总队宜昌支队某中队的营区里，起床号还未吹响，中士高兴勇已经从睡梦中自然苏醒。他舒展双臂，双腿笔直伸展，双脚轻松落在床面之上，浑身的筋骨透着充分放松后的舒展感。 就在3个多月前，睡觉对于身高1.88米的高兴勇而言并不轻松。中队驻守在三峡大坝核心执勤区域，居住的3栋白墙红顶板房，是三峡工程建设者遗留的营房，官兵一住便是近20年。板房空间有限，宿舍布局紧凑，室内摆放的老式木制单人床长1.9米、宽0.9米。这一在过去足够使用的标准尺寸，面对营养充足、身形挺拔的00后官兵，逐渐显露出保障上的短板。 高兴勇是中队出了名的大个子，往老式床铺上一躺，脚掌便会抵在床尾的栏板上，丝毫没有多余空间，半夜常常因为腿脚发麻、酸胀难忍从梦中惊醒。“那时候睡觉身体无法舒展，休息后肌肉反而更紧张。”高兴勇摸着崭新的床铺，说起过往的经历。 一张“不合身”的床铺，不仅无法让官兵在休息中有效恢复体能，反而会加重身体的劳损，日积月累地损耗着部队的战斗力。这些容易被忽视的细节，在总队领导调研时被精准捕捉。党委一班人形成共识：绝不能让客观存在的保障短板影响官兵恢复体力，绝不能让睡眠问题成为战斗力的绊脚石。 很快，根据官兵身高精准测算后定制的2.1米加长床铺，陆续运抵各基层单位，床板也完成了升级改造。但新的问题又出现了：原有褥子和床垫的尺寸与新床不匹配，铺在新床上短了一截，依然无法让官兵得到充分休息。 发现这一细节后，各单位又对接厂家，同步定制与加长床尺寸完全适配的褥垫，从面料厚度到缝线工艺都逐一确认，确保每一处细节都服务于官兵的有效恢复。 “脚能伸直了，身体能充分放松了，第二天上哨的精神更加集中，站姿更挺拔，观察更敏锐！”高兴勇拍了拍“长”长的床铺，眼神明亮。他说，站在三峡大坝的哨位上，自己代表的是武警的形象，休息恢复充分了，才能以最佳状态守好这方“大国重器”。 针对执勤分队昼夜颠倒、碎片化休息的特殊作息，中队还同步打造了“暗室睡眠区”，在宿舍窗户加装加厚遮光窗帘，设置红蓝双色微光引导灯，让官兵中午也能置身于静谧的黑夜环境，获得更高效的深度睡眠。 同时，营房内全面启用“叫哨缓冲系统”，摒弃以往对讲机直接呼叫的突兀方式，先由值班室点亮床头柔和的微光，给官兵3分钟的苏醒缓冲，再由哨兵轻拍唤醒，彻底避免了从深度睡眠中被猛然惊醒导致的心率紊乱和不适，让每一次宝贵的休息时间，都能最大化恢复体力精力。 浪花里 “锚定”深度睡眠，稳住水上战力 离开三峡坝区，顺江而下，便是该总队武汉支队某船艇大队。这里的官兵常年驻守在长江之上，担负着水上巡逻管控、应急抢险救援、重要目标守护等任务。船艇既是他们冲锋陷阵的战位，也是他们日夜生活的家园。船艇分队的床铺，始终伴随着江水起伏、摇晃不定。在特殊环境里保障有效睡眠，对维持水上持续作战能力至关重要。 机电兵陈玉龙至今清晰记得，新兵下连第一晚的窘迫与煎熬。他所在的宿舍位于趸船前部，舱内空间狭小，陈玉龙躺上床铺，只能紧紧侧着身子、蜷起双腿。江浪一波波拍打船身，船体随之左右摇晃，他的脑袋时不时还会撞在壁板上，晕胀感阵阵袭来。那一夜，他接连呕吐3次，狭小空间带来的压抑感、船体剧烈摇晃带来的不适感交织，让他根本无法获得有效休息。 “在船上睡觉，真的像在打一场持续不断的仗。”教导员唐伟带着笔者弯腰钻进船舱。狭窄的通道仅容一人通过，头顶的管线纵横交错，旁边船艇上机器的运转轰鸣声震耳欲聋。 船艇主机启动后，趸船内噪音能达到90分贝以上。老式床铺的框架与船体连接不紧密，船身一摇晃，床铺便会发出吱呀作响的摩擦声，战士们戏称这是“浪花摇篮曲”。 浪花里入眠，并不浪漫。空间极度压缩、噪音持续干扰、船体不规则摇摆，三重因素叠加，严重制约了船艇官兵的休息恢复效率，影响着水上任务状态。 如何在颠簸摇晃的船舱之内，开辟出一方能让官兵安心入眠、高效恢复体能的“稳压舱”，成了此次暖心保障的重点攻坚任务。 面对空间局限，大队率先对趸船进行模块化改造，最大限度拓宽舱内活动空间；科学拓展床铺长度，解决高个子官兵身体舒展问题；为部分住舱加装隔音门，在舱室部分墙面贴附新型复合阻尼隔音毡。 走进改造完成的舱室，轻轻关上隔音门，外界的轰鸣声瞬间被阻隔在外，只剩下船体轻微的低频震动。同时，官兵床头统一配备了专属助眠耳麦，筑起一道守护深度睡眠的无声屏障。 对抗船体摇晃，是船艇睡眠改革最核心的难题。总队专门邀请地方人体工学专家登船实地调研，结合长江水域船艇摇晃的规律特点，运用专业技术调整趸船的方位。当船体随着江浪摇摆时，能快速吸收侧向推力，给在舱室内睡觉的官兵提供稳定、贴合的支撑。 陈玉龙躺在改装过的床铺上，即便船身依旧摇晃，身体却能保持基本平稳。“以前下夜岗后很久缓不过劲，现在休息充分，应对突发水上任务反应更快、更有把握。”他说。 帐篷里 精准保障，野外拒绝“无谓的消耗” 夜色如墨，鸣虫在草丛中低吟，该总队黄冈支队驻地某丘陵地域的野外驻训场上，数顶迷彩帐篷错落排布，在夜色中连成一片整齐的方阵。看似静谧的营地，藏着机动分队官兵在实战化条件下保障有效休息的挑战。 战士谢琰杰指着眼前的班用野战帐篷，无奈地说：“野外地面不平，折叠行军床架在上面摇摇晃晃，起床后腰背酸痛，直接影响了白天的战术动作和越野耐力。” 更难熬的是要时刻紧绷战备神经。在机动分队，野外驻训是常态。即便躺下休息，官兵的神经也始终处于半紧绷状态，难以进入深度睡眠进行高效恢复。 总队党委在调研中发现，野外驻训部队因休息不足、睡眠质量差引发的腰肌劳损、免疫力下降、反应迟缓等“非战斗减员”现象不容忽视，成为削弱分队持续作战能力的“隐形杀手”。 现代军事任务日益复杂多元，官兵在特殊战场环境下的持续作战能力，离不开科学高效的身心恢复保障。党委一班人进一步统一思想：解决客观存在的保障短板，不是否定“吃苦精神”，而是拒绝“无谓的消耗”；不是追求安逸，而是保障高效的恢复。这是科学带兵、精准保障的必然要求，是将有限精力集中于练兵备战关键环节的务实之举。 随着暖心保障的推进，笔者见到了集中采购配发的床垫，长宽与折叠床一致，睡前铺开放在折叠床上，既能减轻因床铺偏软对腰椎的压力，又能有效隔绝地气寒气，减少官兵因受凉生病导致的非战斗减员，受到官兵普遍欢迎。 “驻训点指挥部成员主动搬进帐篷，把宿营车留给我们了。”谢琰杰指着帐篷旁边的宿营车系统说，分队合理利用宿营车床铺，确保身高过高、身体不适等有特殊休息需求的官兵，都能分到合适的铺位。 谢琰杰现场演示了宿营车系统床铺的组装与调节，短短几分钟，一张宽敞的床铺便搭建完成。“床体稳稳当当，腰背舒服多了！休息充分了，五公里武装越野、特战课目训练，感觉体能储备更足，更能拼尽全力。”他说。 针对天气逐渐炎热、野外驻训高温、蚊虫肆虐等因素，上级为官兵配发了高密度防蚊蚊帐，有些单位还配发了遮阳网棚，定期在宿营地周边喷洒长效环保驱虫剂，为官兵创造有利于恢复的休息环境。 硬件升级筑牢了睡眠的基础，心理安全感的构建，则让野战睡眠真正踏实安心。每晚就寝前，营地会留出半小时的心理缓冲时间，官兵可以听听舒缓的音乐，写写训练日记、执勤心得，让紧绷的神经在可控环境下逐步放松。 一项项聚焦实战需求的助眠举措，有效缓解了官兵野外驻训的疲劳累积。战士们躺在平稳舒展的床铺上，身躯放松下来，获得更充分的休息，确保第二天能以更加饱满的状态和充沛的体力，投入高强度的驻训任务中。 版式设计：方 汉 从一张床铺的优化说开去 ■张红卫 一张床铺的优化、一项保障的升级，是回应影响战斗力生成瓶颈的破题之举，更是树立和践行正确政绩观的生动实践。一场直击兵心的保障睡眠暖心行动，以润物无声的力量，破解基层官兵急难愁盼问题，把组织关怀落到细微之处。 充足的睡眠和高效的恢复，是军人保持最佳生理状态、维持敏锐认知能力、提升复杂环境下应变能力的重要保障。基层官兵枕戈待旦、闻令而动，时刻处于战备执勤、训练演练的高强度节奏中。充分高效地休息，绝非无关紧要的个人小事，而是维系身心健康、保障训练质效、支撑履行使命的关键要素。 武警湖北总队通过精准识别、科学施策优化官兵睡眠条件，有效消除了这些非必要的损耗，让官兵能在充分休息中恢复体能、调适精神、积蓄力量，以更佳状态、更高效率投入战备训练，实现了“保障力直达战斗力”的效能转化。 当前全军大抓实战化训练，训练强度、难度、险度不断提升。在此背景下，通过精细保障消除非战斗损耗，让官兵以最佳身心状态投入练兵备战，正是向训练要战斗力、向管理要战斗力的具体体现。从“睡好觉”到打胜仗，现代军队保障力与战斗力深度融合的胜战逻辑，启示我们：当基层保障更精准地对接实战需求、更有效地服务于战斗力生成，官兵枕戈待旦的“弦”才能绷得更紧，引而待发的“箭”才能射得更远。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

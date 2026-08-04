@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ideological Front | Forging the Political Soul of Loyalty to the Party — China Mil Watch</title>
+  <meta name="description" content="The Army Party Innovation Theory Research Center published a doctrinal essay calling on military Party member cadres to treat loyalty to the Party as a concrete, assessable political requirement — not">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/383.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/383.html">
+  <meta property="og:title"        content="Ideological Front | Forging the Political Soul of Loyalty to the Party">
+  <meta property="og:description"  content="The Army Party Innovation Theory Research Center published a doctrinal essay calling on military Party member cadres to treat loyalty to the Party as a concrete, assessable political requirement — not">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Ideological Front | Forging the Political Soul of Loyalty to the Party">
+  <meta name="twitter:description" content="The Army Party Innovation Theory Research Center published a doctrinal essay calling on military Party member cadres to treat loyalty to the Party as a concrete, assessable political requirement — not">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Ideological Front | Forging the Political Soul of Loyalty to the Party
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">思想战线丨锻造对党忠诚的政治灵魂</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>18 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16461601.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>The Army Party Innovation Theory Research Center published a doctrinal essay calling on military Party member cadres to treat loyalty to the Party as a concrete, assessable political requirement — not an abstract slogan — and to verify it through combat readiness performance, cadre promotion criteria, and routine &#39;political check-ups&#39; (政治体检). The piece extends a well-documented pattern of PLA political work that ties ideological compliance to institutional advancement, but the specific framing here — that combat capability is the &#39;touchstone&#39; for loyalty, and that &#39;two-faced persons&#39; (两面人) warrant a one-vote veto in promotion — documents how the institution is attempting to operationalize loyalty assessment rather than leave it at the level of exhortation. This is standard political work content; its value is as a record of how the PLA frames the relationship between political reliability and warfighting readiness for cadres, not as evidence of a new policy line.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Forging the Political Soul of Loyalty to the Party</p><p>■ Army Party Innovation Theory Research Center</p><p>Editor&#39;s Note: Of all the supreme virtues under heaven, none is greater than loyalty. Loyalty has forged the people&#39;s army&#39;s wholehearted devotion to the Party, forged the fish-and-water bond between the people&#39;s army and the people, and forged the people&#39;s army&#39;s resolute will to charge into battle for the Party and the people. All along the way, it is precisely by upholding loyalty to the Party and unswervingly heeding and following the Party that our military has been able to overcome one &#34;Loushan Pass&#34; and &#34;Lazikou&#34; after another, win victory after victory, and unite under the Party&#39;s banner into &#34;a solid piece of steel.&#34; At present, in the face of sharp and complex struggles in the ideological domain, only by resolutely heeding the Party&#39;s command and forging the political soul of loyalty to the Party can one ensure that, at any time and under any circumstances, one&#39;s heart does not waver, one&#39;s will does not shift, and one&#39;s integrity is not destroyed.</p><p>Our military is a people&#39;s army created and led by the Communist Party of China. Loyalty to the Party is the Party&#39;s foremost political requirement of the people&#39;s army, and is the true character and soul of the revolutionary soldier. Chairman Xi has emphasized the need to &#34;forge a high-quality officer corps that is loyal, clean, and responsible, and capable of shouldering the weighty mission of strengthening the military.&#34; Among these qualities, &#34;loyalty&#34; comes first and occupies the primary position. In advancing along the road of military strengthening and fighting the hard battles ahead, military Party member cadres must temper their political character, forge their political integrity, and build their political soul through the spirit of self-revolution; they must put love for the Party, concern for the Party, dedication to the Party&#39;s flourishing, and protection of the Party into practice in every aspect of work and life, and continuously write new chapters in the people&#39;s army&#39;s loyalty to the Party.</p><p>I</p><p>The history of our military&#39;s growth and development has repeatedly proven that the quality of loyalty is the fundamental guarantee that the barrel of the gun will forever heed the Party&#39;s command. Military Party member cadres, as the backbone force for strengthening and revitalizing the military, have a degree of loyalty to the Party and a purity of political soul that bear directly on the rise or fall, success or failure, of the cause of military strengthening.</p><p>The fundamental guarantee for casting the military soul (铸牢军魂). The Party&#39;s absolute leadership over the military is the military soul of our army that will never change. Chairman Xi has pointed out that upholding the Party&#39;s absolute leadership over the military requires, first and foremost, that the entire military be absolutely loyal to the Party. To cast the military soul, military Party member cadres must be absolutely reliable politically and absolutely pure ideologically. Only by steadfastly guarding the political soul and forever preserving the true character of loyalty can one put into practice the series of fundamental principles and systems by which the Party leads the military, ensure that the people&#39;s army always acts and fights under the Party&#39;s banner, and resolutely obey the command of the Party Central Committee, the Central Military Commission, and Chairman Xi.</p><p>The stabilizing anchor (定海神针) for resisting risks. Chairman Xi has pointed out: &#34;Without loyalty to the Party as the political &#39;stabilizing anchor,&#39; one is very likely to be defeated in the face of various tests.&#34; At present, the world situation, national conditions, Party conditions, and military conditions are all undergoing complex and profound changes; the political tests our military faces are intricate and complex, and the many factors that affect the Party&#39;s absolute leadership over the military and erode the political character of the people&#39;s army are a present reality. Only by forging the political soul of loyalty to the Party and continuously improving political judgment (政治判断力), political comprehension (政治领悟力), and political execution (政治执行力) can military Party member cadres take a clear-cut stand on major questions of right and wrong, be fearless in the face of trials and storms, stand firm in the face of all manner of temptations, and achieve absolute loyalty, absolute purity, and absolute reliability.</p><p>The key to strengthening and revitalizing the military. Strengthening the military requires being strong politically first; being strong politically is the most fundamental form of strength. Chairman Xi has pointed out: &#34;Without revolutionary tempering (革命性锻造) in the political sphere, there can be no great transformation of the people&#39;s army in the new era.&#34; If one is politically unreliable and spiritually disloyal, the higher the position, the greater the harm caused. Military Party member cadres, especially senior cadres, bear enormous burdens on their shoulders and have thousands of troops behind them. Only by persisting in leading by example and setting a model, achieving consistency between inner conviction and outward conduct and unity of knowledge and action on the question of loyalty, and demonstrating the courage to take responsibility through the quality of loyalty, can one motivate all military officers and soldiers to wholeheartedly turn toward the Party and follow its orders, transform political advantages into advantages in winning, and drive the cause of military strengthening continuously forward.</p><p>II</p><p>Loyalty to the Party is not an abstract slogan or an empty declaration; it is a concrete political yardstick and a rigid political requirement. Chairman Xi pointed out at the opening ceremony of the senior cadre training course for the entire military that our Party and our military are held together by ideals and convictions; to join this Party and this military is to firmly believe in Marxism, to be loyal to the Party&#39;s faith, the Party&#39;s organization, and the Party&#39;s cause. Chairman Xi&#39;s important remarks profoundly expound on the directional and fundamental questions of loyalty to the Party; they must be deeply understood and comprehensively grasped, and loyalty to the Party must be practiced through concrete action.</p><p>Loyalty to the Party&#39;s faith. Loyalty originates from faith; without faith, loyalty is a tree without roots, a river without a source. &#34;Only when faith in Marxism is firm, and conviction in socialism with Chinese characteristics is firm, can loyalty to the Party have a solid foundation, and can one achieve &#39;remaining strong through ten thousand blows, no matter which way the wind blows.&#39;&#34; Military Party member cadres must further strengthen their faith in Marxism, their conviction in socialism with Chinese characteristics, and their confidence in realizing the great rejuvenation of the Chinese nation — the Chinese Dream — and consciously become firm believers in and faithful practitioners of the lofty ideal of communism and the common ideal of socialism with Chinese characteristics. In the contest between soul-forging and soul-corroding (铸魂与蛀魂), between root-strengthening and root-destroying (固根与毁根), they must guard the spiritual homeland of Communists, and use purity and firmness of faith to ensure political purity and reliability.</p><p>Loyalty to the Party&#39;s organization. A strong and powerful Party organization is the source of our military&#39;s advantage and strength, and is the fundamental guarantee for passing through wind and rain and advancing from victory to victory. Divorced from the organization, loyalty can only become empty talk. Military Party member cadres must always reinforce Party consciousness and organizational concepts, consciously identify with the organization ideologically, rely on the organization politically, submit to the organization in work, and trust the organization emotionally, always remaining aligned and in resonance with the organization; they must strictly observe Party organizational discipline, never deceive the organization or violate its decisions, and always place themselves under the organization&#39;s education, management, and supervision.</p><p>Loyalty to the Party&#39;s cause. Loyalty to the Party lies in the unity of knowledge and action and is weighted toward taking responsibility and acting; it cannot remain at the level of words but must be practiced in concrete work. Military Party member cadres&#39; loyalty to the Party is manifested primarily in the fulfillment of specific mission tasks such as training for war, troop management, and emergency response; it is manifested in resolute action — tackling difficulties while focusing on primary responsibilities and duties, daring to grasp and manage problems when confronting contradictions, and stepping forward when facing risks and challenges. One must establish and practice a correct view of political achievement (政绩观), resolutely rectify such problems as quick declarations but slow implementation, many deployments but little follow-through, and emphasis on form over substance; one must be aware of and bear heavy responsibilities, think about and fulfill one&#39;s duties, verify political loyalty through solid work and solid results, and interpret the political soul through responsibility and dedication.</p><p>III</p><p>Forging the political soul of loyalty to the Party is not the work of a single morning or something achieved in one stroke; it must be accomplished through revolutionary tempering (革命性锻造) that consolidates the foundation and cultivates vitality, tempers steel through fire, and causes loyalty to the Party to be internalized in the heart and externalized in action.</p><p>Building the foundation through strengthening theoretical arming. Political firmness originates from theoretical clarity. Forging the political soul of loyalty to the Party requires treating the arming of cadres with the Party&#39;s innovative theory as the foremost task of soul-forging and personnel cultivation, and using scientific theory to nourish the original aspiration and saturate the heart. One must take the lead in strengthening theoretical study. Persistently use Xi Jinping Thought on Socialism with Chinese Characteristics for a New Era to forge unity of mind and soul; thoroughly implement Xi Jinping&#39;s thought on strengthening the military; earnestly read the original works, study the original texts, and comprehend the original principles; fully and accurately grasp the positions, viewpoints, and methods, the reasoning, theoretical logic, and philosophical principles contained therein; eliminate perfunctory study and superficial comprehension; achieve deep study and thorough comprehension, integrated understanding, and genuine internalization; and transform the fruits of theoretical study into firm conviction in heeding the Party&#39;s command. In study, one must persist in self-examination and reflection. Drawing on typical cases of Party member cadres who have violated discipline and law, one must deeply excavate the root causes of lapses in loyalty, collapse of faith, and corruption of the soul; maintain constant vigilance and self-examination; and truly, in the course of study, uproot erroneous ideological foundations and establish correct values.</p><p>Refining through rigorous political tempering (政治历练). Political tempering is the basic path for improving political capability and honing political character. Military Party member cadres must strengthen political tempering, deeply comprehend the decisive significance of the &#34;Two Establishments&#34; (两个确立), strengthen the &#34;Four Consciousnesses&#34; (四个意识), firm up the &#34;Four Confidences&#34; (四个自信), achieve the &#34;Two Upholds&#34; (两个维护), implement the system of CMC Chairman responsibility (军委主席负责制), and always maintain a high degree of alignment with the Party Central Committee with Comrade Xi Jinping at its core in thought, politics, and action. One must continuously enhance political acuity and political discernment; when facing ideological clashes, erosion by erroneous currents of thought, and political risks and challenges, one must take a clear-cut attitude, dare to draw one&#39;s sword, and resolutely struggle, always standing firm in one&#39;s political position and keeping a firm grasp on political direction. One must consciously accept the tempering of intra-Party political life, take the lead in conducting criticism and self-criticism, proactively examine one&#39;s own deviations in political stance and political consciousness, and continuously purify the political soul.</p><p>Verifying through advancing combat readiness and warfighting. Fighting and preparing to fight are the soldier&#39;s sacred duty; in this sense, the effectiveness of combat capability building is the &#34;touchstone&#34; for verifying the quality of a soldier&#39;s loyalty. One must absolutely eliminate the tendency to verify loyalty only by looking at verbal declarations rather than actual actions; incorporate performance in executing missions, ability to command in battle, and level of on-the-spot decision-making into the content of cadre assessment; and use actual combat performance to verify the quality of loyalty. Military Party member cadres must take the lead in studying military affairs, studying war, and studying combat; resolutely rectify the chronic ailments of peacetime and break through the empty formalism of combat readiness; single-mindedly deliberate on war, wholeheartedly study war, and ceaselessly train for war; and interpret loyalty by genuinely thinking about the problem of fighting, genuinely deliberating on the affairs of fighting, and genuinely grasping preparations for fighting, with undivided attention.</p><p>Consolidating through strengthening supervision and assessment. Forging the political soul of loyalty to the Party relies on both inner self-discipline and external supervision. Political assessment must be strengthened, treating loyalty to the Party as the primary indicator in cadre assessment and the foremost criterion for promotion and appointment; those who are politically unqualified, especially &#34;two-faced persons&#34; (两面人), must be subject to a one-vote veto and resolutely kept out. Political supervision must be strengthened, with emphasis on the supervision and inspection of military Party member cadres&#39; political loyalty, political steadfastness (政治定力), political responsibility, political capability, and political self-discipline; political check-ups (政治体检), ideological examinations, and Party character analyses must be conducted on a routine basis; prominent problems such as ideological laxity, positional drift, and floating work style must be vigorously rectified; and effective supervision must be used to ensure that the political character of loyalty to the Party is always maintained.</p><p>(Written by: Zhou Liang, Chen Zhen, Jing Bo)</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">锻造对党忠诚的政治灵魂 ■陆军党的创新理论研究中心 编者按 天下至德，莫大乎忠。忠诚，造就了人民军队对党的赤胆忠心，造就了人民军队和人民的鱼水情意，造就了人民军队为党和人民冲锋陷阵的坚定意志。一路走来，正是秉持着对党忠诚，矢志不渝听党话、跟党走，我军才能攻克一个个“娄山关”“腊子口”，赢得一个个胜利，在党的旗帜下团结成“一块坚硬的钢铁”。当前，面对尖锐复杂的意识形态领域斗争，只有坚决听党指挥，锻造对党忠诚的政治灵魂，才能做到在任何时候任何情况下都不改其心、不移其志、不毁其节。 我军是中国共产党缔造和领导的人民军队，对党忠诚是党对人民军队第一位的政治要求，是革命军人的本色和灵魂。习主席强调，要“锻造忠诚干净担当、堪当强军重任的高素质干部队伍”。其中，“忠诚”是打头的、居于第一位的。奋进强军路、打好攻坚战，军队党员干部必须以自我革命精神淬炼政治本色、锤炼政治品格、锻造政治灵魂，把爱党、忧党、兴党、护党落实在工作生活各个环节，不断续写人民军队忠于党的崭新篇章。 一 我军发展壮大的历史反复证明，忠诚品质是枪杆子永远听党指挥的根本保证。军队党员干部作为强军兴军的中坚力量，其对党忠诚度高不高、政治灵魂纯不纯，关乎强军事业的兴衰成败。 铸牢军魂的根本保证。党对军队的绝对领导是我军永远不变的军魂。习主席指出，坚持党对军队绝对领导，首先全军对党要绝对忠诚。铸牢军魂，军队党员干部必须做到政治上绝对可靠、思想上绝对纯粹。只有始终坚守政治灵魂、永葆忠诚本色，才能把党领导军队的一系列根本原则和制度落到实处，确保人民军队始终在党的旗帜下行动和战斗，坚决听从党中央、中央军委和习主席指挥。 抵御风险的定海神针。习主席指出：“如果没有对党忠诚作为政治上的‘定海神针’，就很可能在各种考验面前败下阵来。”当前，世情、国情、党情、军情都在发生复杂深刻变化，我军在政治上面临的考验错综复杂，影响党对军队绝对领导、侵蚀人民军队政治本色的诸多因素现实存在。军队党员干部只有锻造对党忠诚的政治灵魂，不断提高政治判断力、政治领悟力、政治执行力，才能在大是大非面前旗帜鲜明，在风浪考验面前无所畏惧，在各种诱惑面前立场坚定，做到绝对忠诚、绝对纯洁、绝对可靠。 强军兴军的关键所在。强军首先要在政治上强，政治上强是最根本的强。习主席指出：“如果没有政治上的革命性锻造，就不可能有新时代人民军队伟大变革。”如果政治上不可靠、灵魂上不忠诚，越是职位高，造成的危害就越大。军队党员干部特别是高级干部肩上有千钧重担，身后有千军万马，只有坚持以上率下、示范引领，在忠诚问题上做到表里如一、知行合一，以忠诚品质勇于担当，才能带动全军官兵铁心向党、听令景从，把政治优势转化为制胜优势，推动强军事业不断向前发展。 二 对党忠诚，不是抽象的口号、空洞的表态，而是具体政治标尺、刚性政治要求。习主席在全军高级干部培训班开班式上指出，我党我军是用理想信念凝聚起来的，加入这个党、这支军队，就要笃信马克思主义，就要忠诚于党的信仰、党的组织、党的事业。习主席的重要讲话，深刻阐述了对党忠诚的方向性根本性问题，必须深刻理解、全面把握，以实际行动践行对党忠诚。 忠诚于党的信仰。忠诚源于信仰，没有信仰，忠诚便是无本之木、无源之水。“只有对马克思主义信仰坚定了，对中国特色社会主义信念坚定了，对党忠诚才能有牢靠的基础，才能做到‘千磨万击还坚劲，任尔东西南北风’。”军队党员干部要进一步坚定对马克思主义的信仰、对中国特色社会主义的信念、对实现中华民族伟大复兴中国梦的信心，自觉做共产主义远大理想和中国特色社会主义共同理想的坚定信仰者和忠实实践者，在铸魂与蛀魂、固根与毁根的较量中坚守共产党人的精神家园，以信仰上的纯粹坚定确保政治上的纯洁可靠。 忠诚于党的组织。坚强有力的党组织，是我军的优势所在、力量所在，是穿越风雨、从胜利走向胜利的根本保证。背离组织，忠诚只会沦为空谈。军队党员干部要始终强化党的意识和组织观念，自觉做到思想上认同组织、政治上依靠组织、工作上服从组织、感情上信赖组织，始终与组织同心同向、同频共振；严守党的组织纪律，不欺骗组织、不违背组织决定，始终把自己置于组织的教育管理监督之中。 忠诚于党的事业。对党忠诚贵在知行合一、重在担当作为，不能停留在口头上，而应践行于具体工作中。军队党员干部对党忠诚，主要体现在练兵备战、部队管理、应急处突等具体使命任务的落实中，体现在聚焦主责主业攻坚克难、直面矛盾问题敢抓敢管、应对风险挑战挺身而出的坚决行动上。要树立和践行正确政绩观，坚决纠治表态快落实慢、部署多落地少、重形式轻实效等问题，知重负重、思责尽责，以实干实绩检验政治忠诚，以担当尽责诠释政治灵魂。 三 锻造对党忠诚的政治灵魂，不是一朝一夕之功、一蹴而就之事，必须在革命性锻造中固本培元、淬火成钢，使对党忠诚内化于心、外化于行。 在强化理论武装中筑基。政治上的坚定源自理论上的清醒。锻造对党忠诚的政治灵魂，必须把党的创新理论武装作为铸魂育人的首要任务，以科学理论滋养初心、浸润心田。要带头加强理论学习。坚持不懈用习近平新时代中国特色社会主义思想凝心铸魂，深入贯彻习近平强军思想，认认真真读原著学原文悟原理，全面准确把握蕴含其中的立场观点方法、道理学理哲理，杜绝应付式学习、表面化领悟，做到学深悟透、融会贯通、入脑入心，把理论学习成果转化为听党指挥的坚定信念。要在学习中坚持对照反思。结合党员干部违纪违法典型案例，深挖忠诚失节、信仰坍塌、灵魂变质根源，做到警钟长鸣、自省自警，真正在学习过程中把错误思想根子拔除掉、把正确价值观念立起来。 在严格政治历练中提纯。政治历练是提高政治能力、砥砺政治品格的基本途径。军队党员干部必须强化政治历练，深刻领悟“两个确立”的决定性意义，增强“四个意识”、坚定“四个自信”、做到“两个维护”，贯彻军委主席负责制，始终在思想上政治上行动上同以习近平同志为核心的党中央保持高度一致。要不断增强政治敏锐性和政治鉴别力，面对意识形态交锋、错误思潮侵蚀、政治风险挑战，做到态度鲜明、敢于亮剑、坚决斗争，始终站稳政治立场、把准政治方向。要自觉接受党内政治生活锻炼，带头开展批评和自我批评，主动检视自身在政治立场、政治意识上的偏差，持续净化政治灵魂。 在推进备战打仗中检验。打仗和准备打仗是军人的天职，从这个意义上讲，战斗力建设的成效，是检验军人忠诚成色的“试金石”。必须杜绝检验忠诚只看口头表态、不看实际行动的倾向，把遂行任务表现、指挥打仗能力、临机决断水平纳入干部考核内容，用实战实绩检验忠诚成色。军队党员干部要带头研究军事、研究战争、研究打仗，坚决纠治和平积弊、破除备战虚功，一门心思谋战、一心一意研战、一刻不停练战，在心无旁骛真想打仗问题、真谋打仗之事、真抓打仗准备中诠释忠诚。 在强化监督考核中巩固。锻造对党忠诚的政治灵魂，既靠内在自觉，也靠外在监督。要加强政治考核，把对党忠诚作为干部考核第一指标、晋升任用首要标准，对那些政治上不合格的人特别是“两面人”实行一票否决，坚决挡在门外。要强化政治监督，突出对军队党员干部政治忠诚、政治定力、政治担当、政治能力、政治自律的监督检查，常态化开展政治体检、思想检视、党性剖析，着力纠治思想松懈、立场偏移、作风漂浮等突出问题，以有效监督确保始终保持对党忠诚的政治本色。 （执笔：周亮、陈阵、荆博）</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

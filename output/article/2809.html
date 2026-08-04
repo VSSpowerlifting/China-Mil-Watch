@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | &#34;You Love This Place, and This Place Loves You Back&#34; — China Mil Watch</title>
+  <meta name="description" content="The training detachment of a certain regiment of the Xinjiang Military Region overhauled its internal commendation and evaluation system after a political instructor&#39;s informal story session exposed a">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2809.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2809.html">
+  <meta property="og:title"        content="Barracks Observation | &#34;You Love This Place, and This Place Loves You Back&#34;">
+  <meta property="og:description"  content="The training detachment of a certain regiment of the Xinjiang Military Region overhauled its internal commendation and evaluation system after a political instructor&#39;s informal story session exposed a">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | &#34;You Love This Place, and This Place Loves You Back&#34;">
+  <meta name="twitter:description" content="The training detachment of a certain regiment of the Xinjiang Military Region overhauled its internal commendation and evaluation system after a political instructor&#39;s informal story session exposed a">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Internal Security">Internal Security</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | &#34;You Love This Place, and This Place Loves You Back&#34;
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨“你爱这里，这里也爱你”</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>30 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16476607.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>The training detachment of a certain regiment of the Xinjiang Military Region overhauled its internal commendation and evaluation system after a political instructor&#39;s informal story session exposed a structural gap: soldiers whose contributions fell outside primary mission metrics—vehicle fault-repair notebooks, self-developed teaching evaluation rubrics, cross-specialty instructional support, highland cooking research—were systematically excluded from awards consideration despite documented impact on unit readiness. The detachment&#39;s Party committee responded by introducing a &#39;strengths-contribution point system&#39; (特长贡献积分制) with defined point values by contribution category, joint scoring by a detachment leader and two backbone representatives, monthly public disclosure, and a three-day appeal window. The article documents a grassroots institutional reform within the PLA&#39;s political work apparatus, specifically the tension between standardized performance metrics tied to higher-level assessments and the informal labor that sustains specialist training units; the &#39;diverse growth files&#39; (多元成长档案) and &#39;strengths-based evaluation&#39; (长板评价) framing point to a broader PLA concern about retention and motivation in technical and instructor posts where conventional merit pathways are thin.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>&#34;Old Self&#34; (老己), Tell Your Story</p><p>■ Li Xingyou, Cui Haohao</p><p>[Photo caption: A certain regiment of the Xinjiang Military Region conducts live-fire shooting in unfamiliar terrain. Photo by Cui Haohao]</p><p>Summer. The barracks of the training detachment of a certain regiment of the Xinjiang Military Region. No lectern, no slides—the political instructor simply grabbed a stool and sat down in the middle of the soldiers. Dozens of people sat in an irregular circle around him; some cross-legged on the ground, some leaning against training equipment. The atmosphere was relaxed and easy.</p><p>&#34;&#39;Love your old self&#39; (爱你老己) roughly means treating yourself as a dear old friend—with kindness and care.&#34; The political instructor got straight to the point. &#34;Today we&#39;re not here for a class. Let&#39;s just talk about these four words—talk about something you think you&#39;ve done particularly well.&#34;</p><p>After a brief silence, Sergeant Cui Peng&#39;an spoke first: &#34;I train during the day and stay up at night editing videos. I feel it&#39;s really meaningful to document my comrades&#39; stories.&#34;</p><p>Staff Sergeant Second Class Zhao Kun pulled a notebook from his pocket, held it up, and gave it a wave. &#34;Eight years. Every time I crawled under a vehicle to fix it, I wrote down the type of fault, the basis for my diagnosis, and the repair result. Every time I fixed a fault and the armored vehicle roared back to life, I felt completely at ease.&#34;</p><p>Staff Sergeant First Class Xiong Can has worked in the cooking squad since he enlisted. Researching new dishes, adjusting flavors over and over—he never minds the trouble. &#34;The stove is my battle station. When I see everyone clean their plates, I&#39;m really happy.&#34; His voice was soft, his cheeks faintly flushed.</p><p>Staff Sergeant Second Class Chen Cheng picked up the thread: &#34;I like studying field survival subjects. In the last exercise, the group I led was the first to find a water source. I felt like my skills had actually come in handy.&#34;</p><p>Sergeant Xie Feifan said: &#34;I use my rest time to study new equipment and have written several sets of reflections. I want to sharpen my skills and do more for the unit. Every time I figure out a new operating technique, I feel a real sense of accomplishment.&#34;</p><p>More than a dozen soldiers spoke in turn—some impassioned, some speaking quietly. The political instructor listened carefully, occasionally jotting a few notes. He noticed one detail: almost every soldier, while speaking, would unconsciously glance at the comrades beside them, as if checking whether they would be laughed at.</p><p>The political instructor asked everyone to anonymously write down one sentence: &#34;The one thing I most want to be recognized for.&#34; The slips that came back were all over the map: &#34;I sewed buttons back on for a new recruit three times.&#34; &#34;I compiled years of real-world experience into a tactical pocket guide.&#34; &#34;When a comrade was troubled, I took the initiative to go over and offer comfort, to ease the bad mood.&#34; …</p><p>The story session ended. The political instructor&#39;s notebook was filled with several pages—a list packed with the soldiers&#39; contributions: the repair notebook kept under vehicles, highland recipes, self-composed instructional mnemonics, explorations in cross-specialty training… Every single item represented genuine, concrete effort.</p><p>But the more the political instructor looked, the more unsettled he felt. He held the list in his hands and thought back over the unit&#39;s current criteria for commendations and awards, and kept feeling that something didn&#39;t line up. The soldiers&#39; contributions were real and tangible, yet in the system&#39;s forms, it seemed no space had been left for these contributions.</p><p>A glance at the commendation and award lists from the past two years reveals the problem. Heavy machine gun specialist instructor Staff Sergeant First Class Zhang Xiaokang, on top of his teaching duties, took the initiative to study image and video production software. The instructional courseware he produced was commended by the detachment on multiple occasions—yet these &#34;extra&#34; contributions had no corresponding entry in the evaluation criteria and were rarely mentioned when it came time for awards. Staff Sergeant First Class Bai Chang is an automatic rifle specialist instructor who also enjoys studying military physical education instruction and regularly uses his rest time to research scientific training organization methods. When the military physical education specialist instructor was away for study or leave, he stepped in voluntarily and earned unanimous praise from officers and soldiers alike—but at the year-end summary, all of this was glossed over in a single stroke.</p><p>The political instructor read through the slips one by one, then said to the detachment leadership beside him: &#34;Which one of our soldiers isn&#39;t outstanding? They&#39;ve honed their strengths to the utmost and actively contributed to the collective. The question is: does our evaluation system actually see these strengths?&#34;</p><p>That night, the Party committee members held a meeting that ran until the early hours of the morning. An idea began to take root: let every soldier who &#34;loves themselves&#34; (爱自己) be seen.</p><p>---</p><p>&#34;You Love This Place, and This Place Loves You Back&#34;</p><p>■ Wang Jing, Li Xingyou, Cui Haohao</p><p>[Photo caption: The training detachment of a certain regiment of the Xinjiang Military Region conducts heart-to-heart talks during breaks at a highland training site. Photo by Cui Peng&#39;an]</p><p>Why Are &#34;Hidden Contributions&#34; Overlooked?</p><p>Staff Sergeant Second Class Zhao Kun&#39;s story is representative. Over eight years of repairing vehicles, his notebook holds hundreds of fault records—every one of them hard-won, hands-on operational experience.</p><p>&#34;He&#39;s not putting on a show. He genuinely loves to think things through and dig deep.&#34; Deputy Detachment Commander Liu of the training detachment of a certain regiment of the Xinjiang Military Region said: &#34;Once, a piece of equipment broke down and the technicians all shook their heads. He took the equipment apart and checked the wiring one line at a time. In the end he successfully identified the hidden fault and repaired the equipment.&#34;</p><p>Yet because vehicle repair is not the training detachment&#39;s primary mission, Zhao Kun&#39;s &#34;extra&#34; contributions were rarely mentioned in past commendation and award processes.</p><p>The confusion felt by reconnaissance specialist instructor Staff Sergeant First Class Li Gang is even more widespread. As the detachment&#39;s &#34;teaching ace,&#34; he trained more than a hundred students during his four years in the post and developed a &#34;mountain squad tactics teaching method&#34; that was promoted across the entire regiment. A soldier he trained earned a third-class merit citation, and a comrade joked with him: &#34;The soldiers you trained have all earned citations—when are you going to earn one?&#34;</p><p>Li Gang smiled and said nothing, but the remark set him thinking further: training tasks are certainly important, but he had used his spare time to innovate teaching methods and independently write instructional materials—could that effort be reflected somewhere on the ledger of contributions?</p><p>As a &#34;field military school&#34; (随营军校), the training detachment primarily undertakes specialized tasks such as pre-promotion command sergeant training courses, specialist backbone rotation training, and new equipment trial training. &#34;These &#39;hard tasks&#39; receive attention from higher levels and are tied to performance metrics, so the detachment Party committee&#39;s energy is naturally focused there. But there are also people who use their rest time to develop new teaching methods and independently tackle equipment innovation… Do these &#39;extra&#39; contributions count as contributions?&#34; A company-level political instructor gave voice to what everyone was thinking.</p><p>&#34;Their passion and effort need to find a landing point in the &#39;score&#39; of evaluation,&#34; the political instructor said. &#34;This isn&#39;t about being mercenary—it&#39;s the simplest form of recognition.&#34;</p><p>In the view of the detachment Party committee, the training detachment&#39;s long-standing evaluation system has been somewhat one-dimensional—it seemed as though only winning competitions and achieving excellent marks on training assessments counted as accomplishments, while &#34;hidden contributions&#34; in certain posts were easily overlooked.</p><p>Over time, many people found that the hundreds of painstaking entries in their maintenance notebooks had no corresponding entry on the evaluation form; the new teaching methods they had developed in their spare time attracted little attention…</p><p>The political instructor said something at the detachment Party committee meeting that was recorded verbatim in the meeting minutes: &#34;Every person carries a fire inside them. We are not here to judge whether that fire should burn—we are here to find ways to help it burn brighter. The evaluation system is the &#39;accelerant&#39; (助燃剂).&#34;</p><p>Letting &#34;Diverse Growth&#34; Be Seen</p><p>Consensus reached—but how to change things? The detachment Party committee decided to start with a baseline survey. They sorted and categorized the soldiers&#39; individual strengths: those tackling equipment maintenance, those developing innovative teaching methods, those providing cross-specialty instructional support, those exploring new equipment operations… A thick &#34;baseline ledger&#34; gave the Party committee its first comprehensive view of the highlights hidden beneath the &#34;average score.&#34;</p><p>&#34;We cannot measure everyone with a single ruler.&#34; The detachment Party committee held multiple consecutive discussion sessions and ultimately resolved to reform the evaluation model, introducing a &#34;strengths-contribution point system&#34; (特长贡献积分制)—bringing contributions directly linked to combat effectiveness, such as instructional research and development, technical innovation, competition coaching, cross-specialty mentoring, and new equipment instructional breakthroughs undertaken by officers and soldiers on their own initiative, into a quantified evaluation system, to serve as a reference basis for commendations and awards, sergeant selection and promotion, and Party membership and academic study consideration.</p><p>Each item carries a defined point value, scored jointly by one detachment leader and two backbone representatives, and posted monthly on the detachment affairs public notice board. What everyone did and how much they did is visible to all.</p><p>The digitized instructional tutorial on new equipment operations that Sergeant Cui Peng&#39;an produced was warmly received during its trial use in the training detachment and was recommended for study across the entire regiment. That same month, his name appeared on the points rankings board. The day the rankings were posted, Cui Peng&#39;an shared a message on his social media: &#34;Those late nights weren&#39;t wasted…&#34;</p><p>The recipe formulas and research notes written by Staff Sergeant First Class Xiong Can were compiled into materials and promoted across the entire unit. Last month, he was recommended for the &#34;Outstanding Cook&#34; commendation. Xiong Can told his comrades afterward: &#34;Never thought the little things at the stove could make the list—feels good!&#34;</p><p>After the story session, Staff Sergeant Second Class Zhao Kun ran up to the political instructor clutching his well-worn record book and said: &#34;Political instructor, these are all my fault-repair notes—can you recommend them to everyone?&#34; After deliberation and discussion, his notes were soon photocopied and bound into volumes, formally incorporated into the training detachment&#39;s teaching archives, and distributed to all officers and soldiers in the detachment.</p><p>The detachment also introduced &#34;diverse growth files&#34; (多元成长档案), dividing officers&#39; and soldiers&#39; growth paths into three directions: command and management, specialist technical skills, and strengths contributions. Zhao Kun&#39;s &#34;number of faults cleared,&#34; &#34;technical innovation results,&#34; and &#34;number of personnel mentored&#34; were written into his &#34;diverse growth file,&#34; carrying equal weight with his troop-leading experience.</p><p>Recently, a &#34;chassis rapid diagnostic tool&#34; developed by Zhao Kun was awarded the regiment&#39;s &#34;Outstanding Innovation Award,&#34; worth 8 points. Combined with his fault-clearing count and mentoring results, his total score ranked near the top. Due to his outstanding performance, he was rated &#34;Good&#34; in this quarter&#39;s &#34;Four Haves&#34; (四有) outstanding soldier evaluation.</p><p>Learning to Apply &#34;Strengths-Based Evaluation&#34; (长板评价)</p><p>&#34;The incentives now are reflected not only on the honor board, but in the overall positive and upward atmosphere.&#34; The political instructor said that after the system had been in place for some time, certain changes had quietly taken shape.</p><p>In the most prominent position in the training detachment&#39;s corridor hangs a &#34;Strengths Contributions Board&#34; (特长贡献榜), listing officers and soldiers who have contributed to the detachment&#39;s specialist instruction, technical breakthroughs, and combat-effectiveness building over the past six months. Beside each person&#39;s photo are written their strengths and contributions.</p><p>The multiple instructional improvement projects Li Gang led and the training aids he independently developed earned him multiple rounds of added points, placing him near the top of the quarterly point evaluations on multiple occasions. &#34;Instructional innovation contributions&#34; have been incorporated as an important reference in the annual commendation and awards process.</p><p>Instructor Yang Changsiu drew on years of training organization experience to compile a complete &#34;quantifiable teaching evaluation system&#34; (可量化教学评估体系), which not only enables newly promoted instructors to get up to speed quickly but also provides the detachment with a tool for assessing the quality and effectiveness of instructors&#39; teaching. This set of standards has been formally adopted by the detachment as a reference benchmark for evaluating instructors.</p><p>Company Commander Wang developed a &#34;training data auxiliary analysis system&#34; (训练数据辅助分析系统) that enables one-click chart generation on the existing training statistics platform, providing support for training situation analysis and lesson plan adjustments. This system has recently been upgraded into a smart office assistant promoted across the entire regiment.</p><p>Tactics instructor Staff Sergeant First Class Xu Jingdong led a cross-specialty joint teaching reform and developed an &#34;arms branch teaching cross-training method&#34; (兵种教学交叉培训法)—introducing multi-specialty knowledge modules covering maintenance, communications, and reconnaissance into pre-promotion command sergeant training courses, strengthening future command backbone personnel&#39;s integrated thinking and multi-skill awareness of the overall situation. After trial training, this teaching method produced significant results, and the experience has been reported to higher-level authorities.</p><p>A specialist backbone soldier mentored by Zhao Kun recently placed second in the repair specialty at a higher-level professional competition. When that soldier stepped up to receive the award, he said: &#34;The person I&#39;m most grateful to is Instructor Zhao Kun from the training detachment. There&#39;s one thing he said that I&#39;ve never forgotten—the deeper you dig, the farther the armored vehicle runs.&#34;</p><p>The political instructor told this reporter that they conducted an anonymous questionnaire survey with the question: &#34;Has the team seen my contributions?&#34; Before the &#34;strengths-based evaluation&#34; (长板评价) was implemented, the agreement rate was just over 40 percent; after the system had been in place for some time, that figure rose to over 80 percent. Another question—&#34;Am I willing to develop long-term in my current post?&#34;—saw its agreement rate rise from just over 50 percent to around 80 percent as well.</p><p>From individual soldiers willing to use their remaining energy to temper themselves and illuminate others, to an institutional innovation that gives every strength a chance to be displayed—this is an achievement of mutual pursuit. The political instructor said: &#34;Young people are willing to keep refining themselves in their own posts. Can that passion be seen by this collective? We have tried to respond through institutional means—as long as it contributes to combat effectiveness, we will walk alongside you on the road to leveraging your own strengths, helping you plant your feet firmly and stand your ground.&#34;</p><p>As the interview was drawing to a close, the latest edition of the &#34;Strengths Contributions Board&#34; had just been updated. Beside Cui Peng&#39;an&#39;s photo, a special notation read &#34;Quarterly Strengths Star.&#34; Zhao Kun had also made the board; beside his photo was a line of text: &#34;Staff Sergeant Second Class. Has cleared hundreds of faults in total. Has mentored five technical backbone personnel.&#34; After Xiong Can&#39;s name was the notation: &#34;Developer of highland special-supply recipes. Officer and soldier satisfaction rate 98%. Rated the unit&#39;s sole &#39;Stove Vanguard&#39; (灶台尖兵).&#34;</p><p>In the lower right corner of the &#34;Strengths Contributions Board,&#34; someone had written lightly in chalk—no one knows who: &#34;You love this place, and this place loves you back.&#34;</p><p>This simple sentence is perhaps the most direct response the training detachment&#39;s officers and soldiers have given to &#34;love your old self&#34; (爱你老己).</p><p>---</p><p>I Made the &#34;Strengths Contributions Board&#34;</p><p>■ Staff Sergeant Second Class Yang Changsiu</p><p>When I was mentoring new instructors, watching them agonize over their lesson plans, I always felt anxious for them. The truth is, I went through the same thing myself: veteran instructors would say &#34;listen more, practice more,&#34; but after listening I still didn&#39;t know where my gaps were; they&#39;d say a class was &#34;well taught,&#34; but I didn&#39;t know what made it good; they&#39;d say &#34;it still needs work,&#34; but I didn&#39;t know where to start.</p><p>Over time I realized that the teaching tradition of the training detachment cannot rely solely on &#34;word of mouth.&#34; How veteran instructors teach, how new instructors learn—everyone has their own &#34;approach.&#34; This creates a problem: &#34;the good can&#39;t be explained clearly, and the bad can&#39;t be articulated clearly.&#34; Good experience doesn&#39;t get preserved, and it doesn&#39;t travel far.</p><p>I thought about how to &#34;make sense of the teaching business.&#34; For a single class: was the preparation thorough enough? Was the delivery clear? Did the students understand? Did they take something away afterward? … List out these stages one by one, assign an evaluation point to each stage, and new instructors can look at it and know where their weaknesses are, while veteran instructors mentoring students have something to reference.</p><p>During that period, I led training during the day and worked overtime at night to compile the teaching process. I&#39;d finish one draft, feel it was wrong the next day, and start over from scratch. For the single stage of &#34;classroom management&#34; alone, I revised it more than ten times—when to follow up with a question, when to demonstrate, how to judge whether students have understood—every detail had to be thought through completely. Sometimes at night I&#39;d be lying in bed and suddenly have a new idea, and I&#39;d get up and write it in my notebook.</p><p>My thinking in doing this was simple: if this knowledge stays only in my head, and one day I get transferred or demobilized, the people who come after will have to start from scratch all over again.</p><p>After the detachment introduced the &#34;strengths-contribution point system,&#34; my set of materials was formally adopted as a reference benchmark for evaluating instructors. Seeing my name posted on the corridor&#39;s &#34;Strengths Contributions Board,&#34; I felt completely at ease. Not because I made the board, but because I felt that all the time I&#39;d spent thinking through these things—the detachment found them useful, and they can help the new instructors who come in.</p><p>Now, when I mentor new instructors, I no longer rely purely on experience. Instead, I go through that set of standards item by item—how is classroom management? How is the teaching effect?—it&#39;s all immediately clear. New instructors are progressing faster, and I feel more confident too.</p><p>---</p><p>PLA Daily, Page Five Editor in Dialogue with the Political Instructor of the Training Detachment of a Certain Regiment of the Xinjiang Military Region——</p><p>There Is a Science to &#34;Scoring&#34; Soldiers</p><p>Editor: How were the point values for the &#34;strengths-based evaluation&#34; determined?</p><p>Political Instructor: These standards were not decided by our leaders on a whim—they were sorted out one by one from the soldiers&#39; own lists of contributions. We divided their &#34;strengths&#34; into several categories: one category is instructional research and development, such as the teaching evaluation method Yang Changsiu compiled; one is technical innovation, like the chassis diagnostic tool Zhao Kun developed; one is mentoring and skills transmission, such as who has mentored someone to the point of independent competency. Then we assigned points accordingly—for example, an instructional video promoted at the regimental level is worth 5 points, a technical innovation result is worth 8 points, and mentoring one person to competency is worth 4 points. How were the point values set? We held several discussion sessions. The general view was that these things genuinely took thought and effort, and the point values should reflect the relative size of the contribution to the collective. Put plainly: give every strength a &#34;price tag,&#34; and that &#34;price tag&#34; is one everyone puts on together.</p><p>Editor: How do you ensure the scoring is fair?</p><p>Political Instructor: There is a science to &#34;scoring&#34; soldiers. Fairness cannot rest on words alone—it requires institutional safeguards against loopholes. We implemented &#34;three disclosures and one oversight&#34; (三公开一监督): First, the point-value standards are posted on the notice board at the start of each month—everyone knows from the outset what contributions can earn points that month and how many; Second, when scoring any given contribution, it is not decided by any single person—one detachment leader and two backbone representatives score together under their real names, with the scores tallied on the spot; Third, the monthly point ledger is fully disclosed—what everyone did, how many points they earned, who gave what score and why—all of it is visible to everyone. In addition, after posting there is a three-day objection period: if you think a score is too high or too low, you can appeal, and the detachment will re-verify. Doing it this way effectively places the scoring authority under everyone&#39;s eyes—the organization is subject to oversight, and officers and soldiers accept it. At the start, some people suspected it was going through the motions, but after the first posting, when someone raised a question, we immediately pulled out the records and verified and explained on the spot. No one has questioned it since.</p><p>Editor: How do officers and soldiers evaluate this system?</p><p>Political Instructor: We used an anonymous questionnaire to take stock, and the rising agreement rates speak to everyone&#39;s attitude. But more telling than the numbers are the genuine thoughts of the officers and soldiers themselves—Xiong Can put his head down and worked at the stove for more than ten years; after making the &#34;Strengths Contributions Board&#34; this time, he told his comrades, &#34;feels good&#34;; Zhao Kun&#39;s notebook was incorporated into the archives, and he tells everyone he meets, &#34;never thought the detachment would actually treat it as a treasure.&#34; The soldiers themselves summed it up in one sentence: &#34;You love this place, and this place loves you back.&#34; I think that is the best evaluation of the system.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">“老己”，说出你的故事 ■李兴友 崔浩浩 新疆军区某团在陌生地域开展实弹射击。崔浩浩 摄 夏日，新疆军区某团教导队营区。没有讲台，没有课件，教导员只是搬了个凳子，往战士中间一坐。几十个人围坐成一个不规则的圆圈，有人盘腿坐在地上，有人靠在训练器材上，气氛轻松自然。 “‘爱你老己’大意是把自己当作一位老友来善待和关怀。”教导员开门见山，“今天咱们不讲课，就聊聊这4个字，聊聊认为自己哪里做得特别好。” 短暂的沉默后，中士崔鹏安第一个开口：“我白天训练，晚上加班剪辑视频。我觉得把战友们的故事记录下来，特别有意义。” 二级上士赵坤从口袋里掏出一个笔记本，举起来晃了晃：“8年，我每次钻进车底修车，都会把故障类型、判断依据、维修结果记下来。每次把故障排除了，战车重新轰隆隆跑起来，我心里就很踏实。” 一级上士熊灿，入伍以来一直在炊事班工作。研究新菜品，一遍遍调整味道，他从不怕麻烦。“灶台就是战位，看到大家把我做的菜吃得干干净净，心里特别高兴。”他说话声音不大，脸颊微微泛红。 二级上士陈程接过话茬：“我喜欢研究野外生存课目，上次演练我带的小组第一个找到水源，我觉得自己的本事派上了用场。” 中士谢非凡说：“我利用休息时间钻研新装备，写了好几篇心得。我想把本事练强，为单位多做点事。每次搞明白一个新的操作要领，我心里就特别有成就感。” 先后有十几名战士发言，有的慷慨激昂，有的低声倾诉。教导员认真地听着，偶尔在本子上记几笔。他注意到一个细节：几乎每个人在发言时，都会下意识看一眼身边的战友，好像在确认自己会不会被笑话。 教导员让大家匿名写下一句话：“我最希望被看见的一件事情。”写回的纸条五花八门：“我帮新兵缝了3次扣子”“我把多年实战经验总结成了一本战术口袋书”“有战友遇到烦心事，我主动上前安慰，缓解糟糕情绪”…… 故事会结束。教导员的本子记了好几页，清单上写满了战士们的贡献——钻车底的本子、高原菜谱、自编的教学口诀、跨专业训练的探索……这些事，件件都是实打实的付出。 可教导员越看越不是滋味。他拿着手里的清单，又回想起队里现行的评优评先标准，总觉得哪里对不上。战士们的付出实实在在，可制度的表格里，好像没有给这些贡献留下位置。 翻翻近两年的评优评先名单就能看出端倪。重机枪专业教练员、一级上士张小康，负责教学任务之余，主动研究图片、视频制作软件。他制作的教学课件多次被队里通报表扬，可这些“额外”的付出在考评标准里没有对应项，评功评奖时很少被提及。一级上士白昌是自动步枪专业教练员，平时还爱琢磨军体教学，经常利用休息时间钻研科学组训方法。军体专业教练员外出学习或休假时，他主动顶上，得到了官兵的一致好评，但在年底总结时这些却被一笔带过。 教导员把纸条一张张看完，对身边的队领导说：“咱们的战士，哪个不是好样的？他们把自己的长板打磨到极致，积极为集体作贡献。问题是，我们的评价体系，看见这些长板了吗？” 当晚，党委一班人开会到凌晨。一个想法开始萌芽：让每一个“爱自己”的战士，都被看见。 “你爱这里，这里也爱你” ■王 净 李兴友 崔浩浩 新疆军区某团教导队在高原驻训场利用训练间隙开展谈心交心活动。崔鹏安 摄 “隐性付出”缘何被忽略 二级上士赵坤的故事很有代表性——8年修车生涯，他的笔记本里“躺着”几百条故障记录，每一条都是扳手拧出来的实战经验。 “他不是在装样子，是真的爱琢磨、爱钻研。”新疆军区某团教导队刘副队长说，“有一次一台设备坏了，技术人员都摇头，他把设备拆开，对着线路一根根地查。最后成功找出隐患，修好了设备。” 然而，因为修车不是教导队的主要任务，赵坤的这些“额外”付出，在过往的评优评先中鲜少被提及。 侦察专业教练员、一级上士李刚的困惑则更为普遍。作为队里的“教学大拿”，他在岗4年间带出了上百名学员，研制的“山地班组战术教学法”被全团推广。他带出来的兵立了三等功，有战友跟他打趣：“你带的兵都立功了，你啥时候也立一个？” 李刚笑笑没说话，但这句话还是让他想到了更多——培训任务固然重要，可他利用业余时间创新教学法和自主编写教材，这些心血在功劳簿上能不能有所体现？ 作为“随营军校”，教导队主要承担预提指挥军士集训、专业骨干轮训、新装备试训等专项任务。“这些‘硬任务’上级关注、与绩效挂钩，队党委的精力自然都拴在这上面。可还有一些人，他们利用休息时间钻研新教法、自主攻关装备革新……这些‘额外’的付出，算不算贡献？”某中队指导员道出了大家的心声。 “他们的热爱与付出，需要在评价的‘分数’上找到落点。”教导员说，“这不是功利，而是一种最简单的认可。” 在队党委看来，教导队一直以来的评价体系有些单一——似乎只有比武夺名次、训练考核优秀才算成绩，一些岗位上的“隐性付出”容易被忽略。 时间一长，不少人发现，自己维修笔记本上的几百条心血，在考评表上找不到对应项；利用业余时间钻研的新教法，没太多人关注…… 教导员在队党委会上说了一句话，被原原本本记入会议记录：“每个人心里都有一团火。我们不是去评判这团火该不该烧，而是想办法帮它烧得更旺。评价体系，就是那个‘助燃剂’。” 让“多元成长”被看见 共识有了，怎么改？教导队党委一班人决定先从摸底做起。他们把战士们的特长分类梳理出来：攻关装备维修的、钻研创新教法的、跨专业教学辅导的、探索新装备操作的……一份厚厚的“摸底台账”，让队党委第一次全面看到了隐藏在“平均分”下面的高光。 “我们不能用一把尺子量所有人。”队党委班子连续开了多次研讨会，最终定下决心改革评价模式，推出“特长贡献积分制”——把官兵自主承担的教学研发、技术革新、比武辅导、跨专业带教、新装备教学攻关等与战斗力直接挂钩的贡献纳入量化考评体系，作为评优评先、军士选晋和入党考学的参考依据。 每个项目都有明确的分值，由一名队领导和两名骨干代表共同打分，每月在队务公开栏公示。谁干了什么、干了多少，大家都看得见。 中士崔鹏安搞出来的新装备操作数字化教程，在教导队试用反响热烈，被推荐到全团学习。当月，他的名字就上了积分榜。揭榜那天，崔鹏安发了一条朋友圈：“夜没白熬……” 一级上士熊灿写的食谱配方和研究笔记被整理成材料，在全单位推广。上个月，他被推荐参评“优秀炊事员”。熊灿事后对战友讲：“没想到灶台上这点事也能上榜，舒坦！” 故事会后，二级上士赵坤拿着翻烂了的记录本跑到教导员跟前说：“教导员，这是我所有的故障笔记，能推荐给大家吗？”经研究讨论，很快，他的笔记被复印成册，正式纳入教导队教学档案，分发给全队官兵。 队里还推出了“多元成长档案”，把官兵的成长路径分为指挥管理、专业技术、特长贡献3个方向。赵坤的“排障数量”“技术革新成果”“带教人数”被写进“多元成长档案”，跟带兵经历享有同等权重。 前阵子，赵坤研发的一项“底盘快速诊断工具”，被团授予“创新优秀奖”，计8分。加上排障数量和带徒成绩，他的总分位列前茅。因为表现突出，他在本季度“四有”优秀士兵评比中被评为“好”。 学会使用“长板评价” “现在的激励不仅仅体现在荣誉榜上，更在整体积极向上的氛围里。”教导员说，制度推行一段时间后，一些变化已经悄然发生。 在教导队走廊最显眼的位置，贴着一张“特长贡献榜”，上面是近半年为教导队专业教学、技术攻关和战斗力建设添砖加瓦的官兵。上榜者照片旁边写着特长和贡献。 李刚主持开展的多项教学改进项目和自主研发的训练教具，获得多轮加分，在本季度的积分评估中多次名列前茅。“教学创新贡献”被纳入年度评功评奖的重要参考。 教练员杨长秋结合多年组训经验编写出一套完整的“可量化教学评估体系”，不仅让新晋教练员得以快速上手，也为队里评估教练员的施教质效提供了工具。这套规范已被队里正式采用，作为考核教练员的标准参照。 王中队长开发出一款“训练数据辅助分析系统”，可在现有训练统计平台上实现一键成图，为训练形势分析和教案调整带来助力。这套系统近期已升级为全团推广的智慧化办公助手。 战术教练员、一级上士徐经栋牵头跨专业联合教学改革，探索出“兵种教学交叉培训法”——在预提指挥军士集训中引入修理、通信、侦察等多专业知识模块，强化未来指挥骨干的整合理念和认识全局的多种技能。这一教法经试训后效果显著，该经验已上报至上级机关。 赵坤带的一名业务骨干最近在参加上级专业比武中拿了修理专业第二。该骨干上台领奖时说：“我最感谢的是教导队的赵坤班长。他说过一句话我始终难忘——你钻得越深，战车跑得越远。” 教导员告诉笔者，他们做过一次不记名问卷调查，题目是：“我的付出被团队看见了吗”。推行“长板评价”之前，认同率只有4成出头；推行一段时间后，这个数字提升到了8成以上。另一个问题是“我愿意长期在目前岗位发展吗”，认同率也从5成多提升到了8成左右。 从一个个愿意利用余力自我锤炼、照亮别人的战士，到一项让每一块长板都有机会展示的制度创新，这是一种双向奔赴的成就。教导员说：“年轻人愿意在自己岗位上精进不辍，这份热爱能被这个集体看到吗？我们尝试用制度来回应——只要它有利于战斗力，我们就会在你发挥自身优势的路上陪你扎好马步、站稳脚跟。” 采访快结束时，新一期“特长贡献榜”刚更新。崔鹏安的照片旁特意标出了“季度特长之星”。赵坤也上榜了，照片旁边写着一行字：“二级上士，累计排除故障数百起，带出技术骨干5人。”熊灿的名字后面标注：“高原特供餐研发人，官兵满意率98%，被评为全队唯一‘灶台尖兵’。” “特长贡献榜”的右下角，不知道是谁用粉笔轻轻写道：“你爱这里，这里也爱你。” 这句朴素的话，或许就是教导队官兵对“爱你老己”最直接的回应。 我上了“特长贡献榜” ■二级上士 杨长秋 带新教练员的时候，看他们对着教案发愁，我心里总是很着急。其实我自己当年也是这样过来的：老教练员说“多听多练”，可听完了还是不知道自己的差距在哪里；说这堂课“讲得好”，也不知道好在哪里；说“还得改”，但不知道从哪里下手。 时间长了我发现，教导队的教学传承，不能只靠“口口相传”。老教练员怎么教，新教练员怎么学，每个人的“套路”都不一样。这就出现了一个问题——“好的说不透，差的说不清”。好的经验留不下来，也传不远。 我琢磨着，“怎么把教学的事弄明白”。一堂课，准备得充不充分、讲得清不清楚、学员听不听得懂、课后有没有收获……把这些环节一条条列出来，每个环节对应一个评价要点，新教练员对照着看，就能知道自己的短板在哪里，老教练员带徒弟也有个参照。 那段时间，我白天带队训练，晚上加班归纳教学流程。写好了一版，第二天觉得不对，就推倒重来。光“课堂把控”这一个环节，我反复改了十几版——什么时候该追问、什么时候该示范、怎么判断学员听懂了没有，每一个细节都要想透。有时候夜里我躺在被窝里突然有了新想法，就爬起来记在本子上。 我做这个的想法很简单：这些东西装在我脑子里，万一我哪天调走或者退伍了，后面来的人又得从头摸索。 队里推出“特长贡献积分制”后，我这套东西被正式采用，作为考核教练员的标准参照。看到自己的名字贴在走廊的“特长贡献榜”上，我心里很踏实。不是因为上了榜，而是觉得自己花了那么多时间琢磨的这些东西，队里觉得有用，能帮到新来的教练员。 现在，我带新教练员的时候，不再光凭经验说了，而是拿那套标准一项一项对照着看——课堂把控怎么样、教学效果好不好，一目了然。新教员进步快了，我心里也有底了。 解放军报第五版编辑对话新疆军区某团教导队教导员—— 给战士“打分”有学问 编辑：“长板评价”的赋分标准是如何确定的？ 教导员：这个标准不是我们领导拍脑门定的，是从官兵自己的发言清单里一条一条梳理出来的。我们把他们的“长板”分成了几类：一类是教学研发，比如杨长秋总结的教学评估方法；一类是技术革新，像赵坤革新的底盘诊断工具；一类是带徒传艺，比如谁带出了能独立上岗的徒弟。然后对应着给分，比如一个团级推广的教学视频计5分，一项技术革新成果计8分，带出一个徒弟计4分。分值怎么定？我们开了好几次座谈会，大家觉得，这些事确实花了心思、费了工夫，分值高低要能体现出对集体的贡献大小。说白了，就是让每块长板都有个“价签”，这个“价签”是大家一起贴上去的。 编辑：如何确保赋分公平？ 教导员：给战士“打分”有学问。公平不能光靠嘴上说，得靠制度堵漏洞。我们搞了“三公开一监督”：第一，赋分标准月初就贴在公示栏上，这个月哪些事能加分、加多少，大家一开始就知道；第二，每次给某项贡献打分，不是哪个人说了算，而是一个队领导和两名骨干代表三个人一起实名制打分，打完当场汇总；第三，月底积分台账全公开，谁干了什么、得了多少分，谁打的分、为什么打这个分，所有人都能看。另外，公示后留三天异议期，你觉得哪个分打高了或者打低了，可以申诉，队里重新核实。这么做，等于把评分权放到大家眼皮底下，组织受监督，官兵也服气。开始也有人怀疑是不是走形式，但第一次公示后有人提出疑问，我们马上调出记录当场核对解释，后来再没人质疑过。 编辑：官兵对这项制度评价如何？ 教导员：我们用匿名问卷调查摸底，上涨的认同率就能说明大家的态度。但比数字更能说明问题的是官兵们的真实思想反映——熊灿在灶台上闷头干了十几年，这次上了“特长贡献榜”后跟战友说“舒坦了”；赵坤的笔记本被收进档案，他逢人就说“没想到队里真当个宝了”。战士们自己总结了一句话，“你爱这里，这里也爱你。”我觉得，这就是对制度最好的评价。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

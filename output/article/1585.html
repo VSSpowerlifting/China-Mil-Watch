@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | Revelations of the &#34;Spotlight Effect&#34; — China Mil Watch</title>
+  <meta name="description" content="A certain detachment of the People&#39;s Armed Police Zhejiang General Corps used its annual basic training assessment awards cycle as the occasion for a sustained institutional experiment in honor cultur">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/1585.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/1585.html">
+  <meta property="og:title"        content="Barracks Observation | Revelations of the &#34;Spotlight Effect&#34;">
+  <meta property="og:description"  content="A certain detachment of the People&#39;s Armed Police Zhejiang General Corps used its annual basic training assessment awards cycle as the occasion for a sustained institutional experiment in honor cultur">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | Revelations of the &#34;Spotlight Effect&#34;">
+  <meta name="twitter:description" content="A certain detachment of the People&#39;s Armed Police Zhejiang General Corps used its annual basic training assessment awards cycle as the occasion for a sustained institutional experiment in honor cultur">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Internal Security">Internal Security</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | Revelations of the &#34;Spotlight Effect&#34;
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨“聚光灯效应”启示录</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>19 June 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16468411.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A certain detachment of the People&#39;s Armed Police Zhejiang General Corps used its annual basic training assessment awards cycle as the occasion for a sustained institutional experiment in honor culture reform, documented across multiple companies and a battalion, involving mess section personnel, guard squads, clerks, and a battalion-level cadre meeting that produced formal procedures including monthly honor &#34;resets (清零)&#34; and a dedicated &#34;failure ledger (败绩清单).&#34; The article documents a grassroots-level problem the PAP is actively managing: that conventional commendation practice concentrates recognition on competition winners and assessment performers while leaving support-role soldiers—and soldiers burdened by a unit&#39;s prior reputation—either invisible or psychologically immobilized. The political commissar&#39;s framing explicitly ties the reform to the newly revised PLA Discipline Regulations&#39; &#34;tolerance for mistakes and exemption from accountability (容错免责)&#34; provisions, which the article presents as the institutional foundation enabling units to experiment; this is standard political work content, but its value is as a record of how the PAP is operationalizing those regulatory changes at the company and battalion level.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>**News Sample: After the Medal Comes Home**</p><p>■ Yang Yang</p><p>The bus turned into the garrison as dusk settled deep. Through the windshield, Instructor Xu of a certain company of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps—returning from a military skills competition—could make out two rows of figures standing in the shadows at the end of the road.</p><p>The bus stopped. Instructor Xu and Private First Class Li Xiaofeng stepped off one after the other. The duty officer&#39;s shout of &#34;Warmly welcome our meritorious soldiers back to the ranks!&#34; rang out loud, but the applause was sparse.</p><p>The next day, when Instructor Xu chatted with Private First Class Jiang Yuean, he asked: &#34;What did you think of yesterday&#39;s welcome ceremony?&#34; This young college-educated soldier was the type who worked without complaint but had something going on behind his eyes. He lowered his head and rubbed his hands together, saying quietly: &#34;It wasn&#39;t easy for you to go out and compete, and even harder to win an award. But honestly, I didn&#39;t feel much. I didn&#39;t see and don&#39;t know how hard you fought.&#34; He paused. &#34;I&#39;m more worried about whether I&#39;ll pass my physical fitness assessment next week.&#34;</p><p>As he was leaving, Jiang Yuean hesitated, then turned back around: &#34;It&#39;s really not that I don&#39;t respect you…&#34;</p><p>The door closed. Instructor Xu sat in his chair and didn&#39;t move for a long time. He thought of a cold joke: someone eats a meal on your behalf, comes back and tells you it was delicious, but your stomach is still empty.</p><p>Invisible, intangible—a crack, real and solid, lay right there. More frightening than not placing in the competition was this: the award had been won, but hearts had not been rallied.</p><p>Two days later, a table appeared outside the company office. On it stood the medal, alongside a notebook and a pen. On the notebook&#39;s title page, someone had written: how the medal was earned is written inside. Read if you want, write if you want.</p><p>For the first two days, no one touched it. The wind blew the notebook open a few pages; passersby closed it again. On the fourth day, a single line finally appeared: &#34;Xiaofeng&#39;s required knowledge and skills aren&#39;t as good as mine.&#34;</p><p>A week later, the notebook gradually came alive. Someone wrote: &#34;Not easy—you worked hard!&#34; Someone else wrote: &#34;I shaved another minute off my armed cross-country. Nobody knows. I know.&#34; That last sentence was circled by someone in red pen, like a rising sun.</p><p>At evening roll call, Instructor Xu stepped one pace forward and said: &#34;Every person&#39;s effort deserves to be seen.&#34; He paused, his gaze sweeping from one end of the formation to the other, as if taking in every face: &#34;The notebook outside the company office isn&#39;t just for me and Li Xiaofeng—everyone can write down what they&#39;ve done. The company&#39;s honor doesn&#39;t belong to a few people; it belongs to everyone. We need to see one another…&#34;</p><p>Below the line with the red circle, someone later added a reply: Did you break 24 minutes?</p><p>Instructor Xu recognized the handwriting. He gently closed the notebook. Honor isn&#39;t finished the moment it&#39;s &#34;brought back&#34;—everything is only just beginning……</p><p>*Soldiers of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps proceed to the auditorium for an awards ceremony. Photo by Yao Zhixiang.*</p><p>---</p><p>**Front-Line Investigation: Revelations of the &#34;Spotlight Effect&#34;**</p><p>*— Observations and Reflections on a Certain Detachment of the People&#39;s Armed Police Zhejiang General Corps Strengthening the Motivating Role of Honor*</p><p>■ Yang Yang　Zhou Yiren　Wang Da</p><p>**The spotlight of honor must illuminate not only the &#34;frontrunners&#34; but also the &#34;pacers&#34;**</p><p>During the rehearsal for the annual basic training assessment awards ceremony in the auditorium of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps, twelve soldiers from a certain company stood in a row in their service dress uniforms, the medals on their chests gleaming under the lights.</p><p>Company Instructor Zang&#39;s gaze moved past the straight-backed figures on the stage toward the back of the auditorium. There sat the rest of the company—soldiers whose names had not appeared on the commendation list. Mess Section Leader Liu Tao sat in the last row, right next to the door, hands placed properly on his knees, eyes directed toward the stage, but his gaze not landing on anyone in particular—suspended at the boundary between light and shadow.</p><p>Liu Tao had served sixteen years, fourteen of them as mess section leader. During this assessment period, he had led the mess section in lighting the stoves before dawn, delivering hot food to assessment personnel, with not a single repeated meal. Under the blazing sun, just like the comrades taking part in the assessments, his camouflage uniform soaked through and dried again.</p><p>Coming out of the auditorium, the company&#39;s soldiers naturally split into two groups—those who had received awards on stage walked in front, talking rapidly about something; those who had applauded from below walked behind, their steps a little sluggish.</p><p>Instructor Zang quickened his pace, fell in beside Liu Tao, and said: &#34;Old Liu, you&#39;ve worked hard.&#34; Liu Tao turned his head and smiled: &#34;Instructor, it&#39;s nothing—we&#39;re all working for the company.&#34; Section Leader Liu appeared perfectly calm, but Instructor Zang felt a tightening in his chest.</p><p>Instructor Zang did not return to the dormitory. He turned and walked straight to the headquarters building. The door to the office of Director Lu of the detachment&#39;s Political Work Section was slightly ajar. Instructor Zang knocked and entered: &#34;Director, on the day of the formal ceremony, I&#39;d like to add a segment to bring the rest of the company&#39;s soldiers in.&#34;</p><p>&#34;What about the other companies?&#34; &#34;The honor was earned by everyone together, so everyone should get to taste it. The spotlight can&#39;t only shine on the frontrunners—it has to reach the pacers too. Not just our company: when other companies win awards in the future, the same principle should apply.&#34;</p><p>Director Lu said nothing, rose, and paced back and forth in the room. After a long while, he said: &#34;Your suggestion has merit. I&#39;ll go request instructions from the detachment leadership…&#34;</p><p>On the day of the formal ceremony, the same auditorium, every seat filled. When the program concluded, Instructor Zang did not leave the stage. He stepped forward, took the microphone, and pulled a sheet of paper from his pocket.</p><p>&#34;Liu Tao.&#34; Instructor Zang read out the first name, his voice carrying through the speakers with a barely perceptible tremor. &#34;Mess section leader. During the assessment period, he led the mess section in rising at 4 a.m. for five consecutive days to prepare hot food, ensuring soldiers were fed. Together with his section brothers, he carried sixty-jin insulated buckets back and forth, delivering cool tea sixteen times.&#34;</p><p>The auditorium suddenly went quiet. He continued reading, one name after another. He read the name of a sentry—during the assessment period, the guard squad had voluntarily taken on all sentry duties for the entire company. He read the name of the company clerk—the administrative squad had worked overtime making number placards and printing rosters…</p><p>Each time a comrade&#39;s name was called, a soldier on stage walked down, removed the medal from his own chest, and hung it around that comrade&#39;s neck. Three medals ended up hanging from Liu Tao&#39;s neck, heavy enough to pull his collar straight down. Below the stage, the applause lasted a long time.</p><p>Private Lu Chenxu, seated in the third-to-last row, stood up. Looking at the old soldier not far away—hung with three medals, grinning like a child—Lu Chenxu suddenly felt something stir in his chest, like a &#34;seed&#34; shifting beneath the soil……</p><p>Afterward, someone asked Instructor Zang: &#34;Why did you do this?&#34; Instructor Zang thought for a moment and said: &#34;In the past we always emphasized &#39;different assignments in the revolutionary cause.&#39; But reasoning alone isn&#39;t enough. Soldiers of the new era need not just to be &#39;assigned&#39; but to be &#39;seen.&#39; Only when a person understands &#39;why I matter&#39; will they care about &#39;why we are excellent.&#39;&#34;</p><p>**The spotlight of honor is not a &#34;momentary flash&#34; but a &#34;permanent light source&#34;**</p><p>Instructor Wang of a certain company had pushed open the door of the honor room more times than he could count. That day, he stood before a wall full of medals for nearly half an hour. The next day&#39;s education class was themed &#34;Old Traditions and New Honor&#34;; he had run through the lesson plan in his head several times, yet the sentences always felt like they were wrapped in a layer of plastic film.</p><p>The honor room&#39;s lighting was warm yellow, like aged tea spilled across the floor. The door opened and Clerk Zhao Huanyu leaned in halfway: &#34;I saw the light still on, so I came to check.&#34;</p><p>&#34;Looking at this wall—what do you feel?&#34; &#34;Impressive. Admirable. These honors were fought for by our predecessors. I always feel there&#39;s a layer between them and me—I&#39;m nowhere near reaching them.&#34;</p><p>You couldn&#39;t blame the soldiers. Stare upward long enough and your neck aches, your heart drifts. Instructor Wang understood: he needed a bridge—a bridge that could carry today&#39;s soldiers to the other side of honor. He needed to find a beam of light that could make honor a &#34;permanent light source&#34; rather than a &#34;momentary flash.&#34; He dug out a yellowed copy of the Unit History Chronicle and turned through it page by page; his finger stopped on one page. A corner was stained with water that had spread and dried, but it was still legible: August 10, 2019. A powerful typhoon made landfall in Zhejiang. Our detachment responded to the order and rushed to the rescue through the night…</p><p>The next day in class, Instructor Wang brought no lesson plan—only that copy of the Unit History Chronicle. He turned to that page, spread it open before the soldiers, and said: &#34;Comrades, this class won&#39;t lecture on grand principles. I&#39;m going to read you a few diary entries.&#34;</p><p>The first diary entry came from a veteran who had personally taken part in that rescue operation: The water had already risen to the second floor. Several hundred people were trapped in one residential compound—the rubber boats couldn&#39;t get in, so we had to get in the water and push them through… After one woman got out safely, she leaned out from a second-floor window and called down to us: &#34;Which unit are you from?&#34; None of us answered. The squad leader said, hurry up and save people, get to the next place. Right up until the mission ended, that woman never knew who we were.</p><p>The study room was very quiet; many soldiers listened intently. Instructor Wang turned a few pages and read another passage. The diary writer was a soldier who had been in the service just one year—it was his first disaster-relief operation during that typhoon: My college classmates ask me what I&#39;m getting out of being a soldier. I don&#39;t know how to answer. Today, I stood in waist-deep water and lifted a six- or seven-year-old girl onto a rubber boat. She said &#34;thank you, uncle.&#34; I thought of when I was little and a flood hit my hometown—a group of people in camouflage uniforms came and rescued my whole family. What I&#39;m getting out of this is probably that.</p><p>Instructor Wang closed the notebook and looked at the young faces before him: &#34;Honor is not about getting your name on a wall, not about having someone remember your name—it&#39;s about being able to step up at the critical moment and fight to win. What you carry in your heart is what you will give everything for.&#34;</p><p>The ripple effects of that class were far greater than Instructor Wang had anticipated. The detachment continued exploring along this path and found one key entry point: returning to soldiers the &#34;right to interpret (阐释权)&#34; honor.</p><p>One company assigned the task of narrating the honor room to young soldiers, letting them tell the unit&#39;s traditions &#34;in their own words.&#34; When Private Zheng Hao gave his narration, he used none of the standard formulations like &#34;heroic and fearless&#34; or &#34;sacrificing one&#39;s life without hesitation.&#34; Instead, pointing to an old photograph on the wall, he said: &#34;What our predecessors did in combat is harder than any online game I&#39;ve ever played. The key difference is: in a game you can reload a save and start over. They couldn&#39;t.&#34;</p><p>**The spotlight of honor is not meant to create a &#34;halo&#34; but to kindle a &#34;spark&#34;**</p><p>Battalion Instructor Chen of a certain battalion in the detachment had a persistent worry: the battalion had been rated as an advanced unit in military training by the detachment for multiple consecutive years. Every year when new recruits joined their companies, their first stop was a visit to the honor room. This was tradition—and a source of confidence. But in last year&#39;s year-end assessment, the battalion&#39;s overall ranking slipped from first place.</p><p>Objectively speaking, fluctuations in training performance are entirely normal. But on the evening the news spread, a sergeant knocked on Instructor Chen&#39;s door and said: &#34;Instructor, I feel I&#39;ve let the battalion down.&#34; The young man&#39;s voice was very low, his eyes fixed on the tips of his own shoes. &#34;Those medals in the honor room are hanging over my head, pressing down on me so hard I can&#39;t breathe.&#34;</p><p>Instructor Chen was silent for a long time. He realized a problem: for years the battalion had been talking about glorious traditions and brilliant combat history—necessary, of course—but perhaps it had only written &#34;the first half of the essay.&#34;</p><p>He then convened a meeting of company-level cadres, with a single-sentence agenda: don&#39;t let honor become a burden on soldiers.</p><p>At the meeting, Company Commander Jiang of a certain company described a specific detail. The company had a squad leader with outstanding military skills who had won merit citations and awards in multiple competitions. But for a period, this squad leader began suffering from insomnia night after night; every time he stepped onto the training ground, he felt all eyes tracking him. After one tactical movement error, he faintly heard someone muttering behind him: &#34;So that&#39;s all he&#39;s got.&#34; From then on, he became timid and hesitant, afraid to try more effective training methods, because new methods meant uncertainty—meant the possibility of failure.</p><p>When the story ended, the room fell completely silent; every cadre&#39;s brow was furrowed.</p><p>After the meeting, the battalion produced a plan. The core logic was simple: turn honor from a finish line into a starting line. Step one—&#34;reset (清零).&#34; Once a month, company cadres publicly &#34;reset&#34; squad and platoon honors, making it plainly clear to everyone: this page has been turned; next month&#39;s honor has to be earned anew. Step two—&#34;after-action review (复盘).&#34; After every major mission, the battalion established a dedicated &#34;failure ledger (败绩清单),&#34; encouraging everyone to surface failures and work through them together.</p><p>Several months later, the battalion participated in a detachment assessment and its overall ranking returned to the top. On the day of the awards ceremony, Instructor Chen said only one thing: &#34;Shed the &#39;burden mentality (包袱心态)&#39; that comes with a record of past achievements, and new honors can certainly be seized.&#34; In the formation, several soldiers smiled until the corners of their eyes turned red.</p><p>&#34;A runner in a relay race can&#39;t keep staring at the baton in hand—you have to look at the road ahead.&#34; Instructor Chen felt this deeply. He acknowledged candidly that the provisions on &#34;tolerance for mistakes and exemption from accountability (容错免责)&#34; in the newly revised Discipline Regulations of the Chinese People&#39;s Liberation Army had genuinely given the grassroots the institutional confidence to dare to explore. &#34;At bottom, regulations are the baseline. What truly lets soldiers shed their burdens and sprint forward is the culture this unit has gradually built over the years—allowing mistakes, tolerating failure, encouraging trial and error.&#34;</p><p>This culture is changing the way soldiers view honor. Staff Sergeant First Class Mao Kaining looked at the gleaming gold medals in the honor room and spoke plainly: &#34;In the past, facing this &#39;legacy left by our predecessors,&#39; I felt like a criminal if even a chip of paint fell off. Now I don&#39;t think that way anymore. Honor can&#39;t be carried as a burden—it has to be a spark, kindling more torches. In the honors our predecessors won, I am not the protagonist, and I have no halo, but in the future I am willing to pass this torch on!&#34;</p><p>Not long ago, the battalion organized a &#34;honor retrospective (荣誉回溯)&#34; activity. Squad Leader Duan Yuqi, who had been awarded a third-class merit citation, stood before the entire company. He did not speak about his achievements—he spoke about one of his own mistakes: &#34;During an exercise, I was nervous and called out a tactical command incorrectly. At the after-action review, I wrote this up as a lesson plan for the whole company to learn from. Someone asked me why I would expose my own shortcomings. I said: when I&#39;m no longer afraid of people knowing my weaknesses, that&#39;s when I truly own this honor.&#34;</p><p>The medals in the honor room reflected a gentle light under the lamps, falling evenly on every soldier. Further away, Instructor Zang still remembered the echo of that awards ceremony in the auditorium—like summer thunder rolling from one end to the other, rolling into the hearts of generation after generation of soldiers.</p><p>*Soldiers of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps conducting training. Photo by Yao Zhixiang.*</p><p>---</p><p>**Editor&#39;s Connection**</p><p>*Barracks Observation section editor in dialogue with the political commissar of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps——*</p><p>**Activating the New Driving Force of &#34;Fighting for Honor&#34;**</p><p>Honor is a soldier&#39;s second life. In the course of our military&#39;s struggle, countless crimson battle flags and golden medals have shone with brilliant radiance like stars. In an era of strong individual consciousness and pluralistic values, how do we keep pace with the times and activate the new driving force of &#34;fighting for honor (为荣誉而战)&#34;? How do we find the optimal balance between &#34;the individual&#34; and &#34;the collective&#34;? This section&#39;s editor engaged in a dialogue with the political commissar of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps on these questions.</p><p>**Editor:** Between individual value and collective honor, how can each fulfill the other?</p><p>**Political Commissar:** Between individual value and collective honor, the relationship is fundamentally one of mutual fulfillment. In the past we had a habitual way of thinking: talking about the collective meant talking less about the individual; talking about the individual risked diluting the collective. In fact, the key to &#34;mutual fulfillment (彼此成就)&#34; lies in the word &#34;mutual (彼此)&#34;—it implies a two-way commitment. True collective honor should allow soldiers to simultaneously confirm two things: my effort has been seen by the collective, and my growth cannot be separated from the collective&#39;s support.</p><p>**Editor:** Your detachment has explored many innovative methods and approaches to inspire a sense of honor among soldiers. In this process, how do you prevent the substance from becoming hollow?</p><p>**Political Commissar:** The vitality of honor lies in practice. Building honor must emphasize real results and prize innovation. The Regulations on Military Meritorious Service, Honor, and Commendation (《军队功勋荣誉表彰条例》) states clearly: &#34;Return military honor to its true essence of fighting (使军人荣誉回归打仗本真).&#34; No matter how much innovation in form, the fundamental principle never changes—one must never forget that honor was born for war. Honor serves the goal of winning, not the decoration of appearances. Any innovation must withstand &#34;three questions (三个叩问)&#34;: Does it point toward the future battlefield? Does it powerfully inspire fighting spirit (血性)? Does it serve the enhancement of combat capability? As long as the answers are affirmative, forms may flourish in a hundred ways, but the orientation must remain consistent.</p><p>**Editor:** Grassroots units in the new era face some new challenges in building a culture of honor. How should these be effectively addressed?</p><p>**Political Commissar:** Building a culture of honor is fundamentally a &#34;soul-forging project (铸魂工程).&#34; First, while upholding the core values of loyalty and dedication, we must innovate the content of honor, its modes of expression, its educational vehicles, and its incentive mechanisms, so that they resonate with the new generation of soldiers and vibrate in harmony with new-quality combat capabilities (新质战斗力). Second, we must improve scientific, transparent, and widely recognized evaluation and incentive mechanisms, ensuring there are rules to follow and regulations to abide by. Third, targeting the characteristics of different soldier groups, we must explore establishing honor awards suited to the characteristics of the era and the features of different posts, implement tiered and categorized honor education and guidance, and strengthen emotional bonds and identity. Fourth, we must actively tell &#34;team stories,&#34; expand the reach of honor, and cultivate a healthy external environment.</p><p>---</p><p>**A Participant Speaks**</p><p>**The Cookstove Is Not Far from Honor**</p><p>■ Staff Sergeant First Class Liu Tao</p><p>That day, after the awards ceremony ended, I tossed and turned and couldn&#39;t sleep. My mind played like a film, running through all fourteen years of being a mess section leader.</p><p>I remembered one winter during a cold-weather field march exercise—we set up a field stove outdoors to cook, our hands red and numb from the cold, barely able to grip a knife to cut vegetables. A new soldier asked me: &#34;Section Leader, are we cooks really soldiers?&#34; I said &#34;of course we are,&#34; but honestly, I didn&#39;t feel confident saying it.</p><p>I also remembered one time when the company had a brilliant performance in an assessment, and the comrades were celebrating in the mess hall. I carried out the last dish and quietly stood at the kitchen doorway. Watching them happy, I was happy too. Inside the door was their celebration; outside the door was my cookstove. Over the years I&#39;ve tasted this feeling many times—it would be a lie to say there was no sense of loss.</p><p>That day in the auditorium, when my comrades hung the medals around my neck, I suddenly felt a &#34;door&#34; open. In all my years of service, I had heard countless rounds of applause, but not one of them had been specifically for me. That day, I heard it. It turned out that every step I had walked, someone had been watching.</p><p>Afterward, every time a new cook was assigned to the section, I told them what happened that day. I said: every dish we make is connected to the scores on the training ground. One new soldier didn&#39;t believe me. I said: when you taste that feeling yourself, you&#39;ll believe it. He asked me again: &#34;Section Leader, after all these years of cooking, what honor do you still want?&#34; I said: making sure every soldier in the company eats well at every meal—that is my honor.</p><p>I know that honor is not someone handing you a plaque. It&#39;s knowing that what you do is &#34;connected&#34; to something larger—our cookstove, and the training ground, and the center of the target, are all connected.</p><p>*(Compiled by Zhou Yiren)*</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">新闻样本 奖牌拿回来之后 ■杨 杨 大巴车拐进营区时，暮色已沉。隔着挡风玻璃，参加比武归来的武警浙江总队某支队某中队徐指导员，看见道路尽头影影绰绰立着两排人。 车停了，徐指导员和上等兵李小锋前后脚下车。值班员那声“热烈欢迎功臣归队”喊得很响，掌声却稀稀落落。 第二天，徐指导员跟上等兵姜粤岩聊天时问起：“昨天的欢迎仪式怎么样？”这位年轻的大学生士兵，平时干活不吭声，但眼里有东西。他低头搓了搓手，轻声说：“你们出去比武不容易，拿奖更不容易。可说实话，我没什么感觉。你们怎么拼的，我没看见也不知道。”他顿了顿说，“我更关心自己下周的体能考核能不能过。” 临走时，姜粤岩犹豫了一下，又转过身来说：“真不是不尊重你们……” 门关上了。徐指导员坐在椅子上，许久没有动弹。他想起一个冷笑话：有人替你吃了一顿饭，回来告诉你特别香，但你肚子还是空的。 看不见、摸不着，一道裂纹，实实在在横在那里。比没拿名次更可怕的是，奖拿了，人心却没有聚起。 两天后，队部门口多了一张桌子。桌上立着那块奖牌，搁了一本笔记本、一支笔。本子扉页上，写了一段话：奖牌是怎么得来的，写在了后面。大家想看就看，想写就写。 头两天，没人动。风把本子吹开几页，又被路过的人合上了。第4天，上面终于多出一行字：“小锋的应知应会还没我掌握得好。” 一周后，本子上渐渐热闹起来。有人写：“不容易，辛苦了！”有人写：“我武装越野又快了一分钟。没人知道，我自己知道。”这句话句尾被人用红笔圈了一下，像一轮初升的太阳。 晚点名时，徐指导员往队列前跨了一步说：“每个人的付出，都应该被人看见。”他顿了一下，目光从队列这头扫到那头，像是在看清每一张脸：“队部门口的本子，不光写我和李小锋，大家每个人干了什么，都可以往上写。中队的荣誉不是哪几个人的，是所有人的。我们要看见彼此……” 那行有“红圈”的字下面，后来又有人跟了一句回复：跑进24分钟没？ 这个字迹，徐指导员认得。他把本子轻轻合上。荣誉不是“拿”回来就完了，一切才刚刚开始…… 武警浙江总队某支队官兵前往礼堂参加颁奖典礼。姚志翔摄 一线调查 “聚光灯效应”启示录 ——武警浙江总队某支队强化荣誉激励作用的观察与思考 ■杨 杨 周益人 王 达 荣誉的聚光灯既要照亮“领跑者”，也要照亮“陪跑人” 武警浙江总队某支队礼堂里，年度基础训练考核颁奖典礼彩排时，某中队12名身着常服的官兵站成一排，胸前的奖牌在灯光照耀下熠熠生辉。 中队臧指导员的目光越过台上那些绷紧的腰杆，投向了礼堂后方。那里坐着中队其他人——没有出现在表彰名单上的官兵。炊事班长刘涛坐在最后一排，紧挨着门，手规规矩矩搭在膝盖上，眼睛望着舞台的方向，但那目光的落点并不在任何一个人身上，悬在光与暗的交界处。 刘涛当兵16年，炊事班长干了14年。这次考核期间，他带着炊事班凌晨起灶，给考核人员送热食，没有一顿重样。烈日当空，和参加考核的那些战友一样，他的迷彩服湿了又干。 从礼堂出来，中队官兵很自然分成了两拨——台上领奖的那拨人走在前面，语速很快地谈论着什么；台下鼓掌的那拨人走在后面，脚步有些拖沓。 臧指导员快走几步，跟刘涛并肩说：“老刘，辛苦了。”刘涛侧过头，笑了笑说：“指导员，这有啥，都是为中队干活。”刘班长看起来很平静，臧指导员却心里一紧。 臧指导员没有回宿舍，他拐了个弯，径直往机关楼走去。支队政治工作处卢主任办公室的门虚掩着，臧指导员打报告进去：“主任，正式颁奖那天，我想补个环节，让中队其余官兵也参与进来。” “那其他中队怎么办？”“荣誉是大家一起挣来的，就得让大家一起尝那个味儿。聚光灯不能只照领跑的人，也要照到陪跑的人。不光我们中队，以后其他中队拿了奖，也该是这个理儿。” 卢主任没接话，起身在房间里来回踱步，许久，他说：“你的建议有道理，支队首长那边我去请示一下……” 正式颁奖那天，同样的礼堂，同样座无虚席。流程走完，臧指导员没下场，他上前一步，拿过话筒，从口袋里掏出一张纸。 “刘涛。”臧指导员念出了第一个名字，声音通过音箱传开，带着一丝不易察觉的颤动，“炊事班长，考核期间带炊事班连续5天凌晨4点起床制作热食，保障官兵饮食，和班里兄弟拎着60斤的保温桶，往返送了16趟凉茶。” 礼堂忽然安静了。他一个接一个念下去。他念了哨兵的名字——在考核期间，警卫班主动承包全中队的哨；他念了文书的名字——公勤班加班加点制作号码牌，打印花名册…… 每念到一个战友的名字，台上就有官兵走下来，摘下自己胸前的奖牌，挂到台下那名战友的脖子上。刘涛的脖子上足足挂了3块奖牌，沉甸甸的，坠得他衣服领口直往下掉。台下，掌声响了很久。 坐在倒数第三排的列兵陆晨旭站了起来。望见不远处那个挂着3块奖牌、笑得像个孩子的老兵，陆晨旭忽然觉得胸腔里有什么东西拱了一下，犹如一颗“种子”在土下动了动…… 事后，有人问臧指导员：“为什么要这么做？”臧指导员想了想说：“过去我们总强调‘革命分工不同’。但光讲道理不够，新时代官兵需要的不只是‘被安排’，更是‘被看见’。当一个人知道‘我为什么重要’，才会在乎‘我们为什么优秀’。” 荣誉的聚光灯不是“瞬时闪光”，而是“长明光源” 荣誉室那扇门，某中队王指导员推开了不知多少回。那天，他在满墙的奖牌前站了快半小时。翌日的教育课主题是“老传统与新荣誉”，教案在脑子里过了几遍，他却总觉得那些句子像是隔着一层保鲜膜。 荣誉室灯光暖黄，像陈年的茶汤泼了一地。门开了，文书赵环宇探进半个身子：“我看灯还亮着，就进来看看。” “你看这面墙，什么感觉？”“很厉害，很佩服。这些荣誉都是前辈拼出来的，我总觉得跟我隔着一层，自己远远够不上。” 不怪战士。仰望久了，脖子会酸、心会远。王指导员明白，他需要一座桥，一座能让今天的官兵走到荣誉那头的桥。他要找到一束光，能让荣誉成为“长明光源”而非“瞬时闪光”。他翻出那本泛黄的《队史大事记》，一页一页地翻，手指在某一页停住了，那一角有水洇开的痕迹，但仍可辨认：2019年8月10日，超强台风登陆浙江。我支队闻令而动，星夜驰援…… 第二天授课，王指导员没带教案，只带了那本《队史大事记》。他翻到那一页，摊开在官兵面前说：“同志们，这堂课不讲大道理。我给大家念几段日记。” 第一段日记，来自一位亲历那场救援的老兵——水已经淹到二楼。有一个小区困了好几百人，橡皮艇开不进去，只能下水往里推……有个大嫂脱险后，从二楼窗户探出头朝我们喊“你们是哪支部队的”。我们没有人回答。班长说，快点救人，快去下一个地方。一直到任务结束，那个大嫂也不知道我们是谁。 学习室里很安静，许多战士听得入神。王指导员翻过几页，又念了一段。写日记的是一名入伍刚满一年的士兵，那场台风中他第一次参加抢险救援——大学同学问我，当兵图什么，我不知道怎么答。今天，我站在齐腰深的水里，把一个六七岁的小女孩扛上橡皮艇，她说“谢谢叔叔”。我想起小时候老家发大水，也是一群穿着迷彩服的人，把我们全家救出去的。我图的，大概就是这个。 王指导员合上本子，看着面前一张张年轻的脸庞说：“荣誉不是为了名字上墙，不是为了让谁记住你的名字，而是关键时刻顶得上去、打得赢。你心里装着什么，就会为之付出什么。” 这堂课的余波，远比王指导员预想的要大。支队沿着这条路继续探索，他们找到的一个关键切口：把荣誉的“阐释权”还给官兵。 有个中队把荣誉室的解说任务交给了年轻的战士，让他们用“自己的话”来讲传统。列兵郑浩解说时，没用一些“英勇无畏”“舍生忘死”的标准表述，而是指着墙上那张老照片说：“前辈们在战斗中做的这些事，比我玩过的任何网络游戏都难。关键是，游戏能读档重来，他们不能。” 荣誉的聚光灯不是要造成“光环”，更要点燃“火种” 支队某大队陈教导员有一桩心病：大队连续多年被评为支队军事训练先进单位。每年新兵下连，第一站就是参观荣誉室。这是传统，也是底气。可去年的年终考核，大队综合成绩从第一滑了下来。 平心而论，训练有起伏再正常不过。但消息传开那天晚上，一名中士敲开了陈教导员的门说：“教导员，我觉得对不起大队。”小伙子声音很低，眼睛盯着自己的鞋尖，“荣誉室那些奖牌就在我头顶悬着，压得我喘不过气来。” 陈教导员沉默了很久。他意识到一个问题：这些年大队一直都在讲光荣传统、讲辉煌战史，当然必要，但可能只做了“上半篇文章”。 随后，他召集各中队干部开了一次会，主题只有一句话：别让荣誉变成官兵的包袱。 会上，某中队姜中队长讲了一个细节。中队有名班长，军事素质突出，多次在比武竞赛中立功授奖。可有段时间，这名班长开始整宿失眠，每次走上训练场，总觉得所有人的目光都追着他。一次战术动作失误后，他隐约听到身后有人小声嘀咕：“也就那样。”从此，他变得畏首畏尾，不敢尝试更高效的训练方法，因为新方法意味着不确定性，意味着可能失败。 故事讲完，会场鸦雀无声，每名干部都眉头紧皱。 会后，大队拿出了一套方案。核心逻辑很朴素：把荣誉从终点变成起点。第一步——“清零”。每月一次，中队干部公开“清零”班排荣誉，明明白白告诉所有人：这一页翻过去了，下个月的荣誉，要靠自己接着干出来。第二步——“复盘”。大队每次执行重大任务后，专门设了一张“败绩清单”，鼓励大家把失败拎出来，一起改。 几个月后，大队参加支队考核，综合排名重回榜首。颁奖那天，陈教导员只说了一句话：“卸下功劳簿带来的‘包袱心态’，新的荣誉一定能夺下。”队列里，几名战士笑着笑着，眼角就红了。 “奔跑的人不能总盯着手里的接力棒，要望着前方的路。”陈教导员感触很深。他坦言，新修订的《中国人民解放军纪律条令》中关于“容错免责”的规定，确实给了基层敢于探索的制度底气。“说到底，制度是底线。真正让官兵卸下包袱、撒开腿往前冲的，还是单位这些年慢慢形成的风气——允许失误、宽容失败、鼓励试错。” 这种风气，正在改变官兵看待荣誉的方式。一级上士毛凯宁望着荣誉室里那些金灿灿的奖牌，说了一番实在话：“以往面对这些‘前辈留下来的基业’，掉一点漆就觉得自己是罪人。现在，我不这么想了。荣誉，不能当包袱背着，得当火种，点燃更多火把。在前辈们获得的荣誉里，我不是主角，也没有光环，但未来我愿意把这火把传递下去！” 前不久，大队组织了一场“荣誉回溯”活动。荣立三等功的班长段玉奇站到全中队面前，他没有讲成绩，只讲了自己的一次失误：“演习中，我因为紧张，把一个战术口令喊错了。复盘会上，我把这件事写成教案，让全中队引以为戒。有人问我，为什么要自曝其短。我说，当我不害怕被人知道我的短板时，我才真正拥有了这份荣誉。” 荣誉室里的奖牌，在灯下反射出温和的光，均匀地照在每名官兵的身上。更远的地方，臧指导员依然记得礼堂里那场颁奖仪式的回响，像夏天的雷，从这头滚到那头，也滚进了一茬茬官兵心底。 武警浙江总队某支队官兵进行训练。姚志翔摄 编辑连线 军营观察版编辑对话武警浙江总队某支队政委—— 激活“为荣誉而战”的新动能 荣誉是军人的第二生命。在我军的奋斗历程中，无数鲜红的战旗、金色的勋章，如繁星般闪耀着璀璨的光辉。在个体意识强烈、价值观念多元的今天，如何与时俱进，激活“为荣誉而战”的新动能？如何在“个人”和“集体”之间找到最佳平衡点？本版编辑与武警浙江总队某支队政委就此进行了连线交流。 编辑：个人价值和集体荣誉之间，如何彼此成就？ 政委：个人价值和集体荣誉之间，本质上是相互成就的。过去我们有个惯性思维：讲集体就该少讲个人，讲个人就容易冲淡集体。其实，“彼此成就”的关键在“彼此”二字——它意味着双向奔赴。真正的集体荣誉，应该让官兵同时确认两件事：我的努力被集体看见，我的成长离不开集体托举。 编辑：您所在支队探索出不少创新方式方法激发广大官兵的荣誉感。这个过程中，如何防止内容虚化？ 政委：荣誉的生命力在于实践。荣誉建设重在实效，贵在创新。《军队功勋荣誉表彰条例》鲜明指出：“使军人荣誉回归打仗本真。”形式创新万变不离其宗——不能忘记荣誉为战而生的本真。荣誉服务于打赢，而非装点门面。任何创新，必须经得起“三个叩问”：它是否指向未来战场？是否有力激发血性？是否服务战斗力提升？只要答案肯定，形式可以百花齐放，但导向必须一以贯之。 编辑：新时代基层部队荣誉建设面临一些新的挑战，该如何有效应对？ 政委：荣誉建设本质是“铸魂工程”。一要在坚守忠诚、奉献的核心价值基础上创新荣誉内涵、表达方式、教育载体和激励手段，使其与新生代官兵同频，与新质战斗力共振；二要完善科学、透明、公认的评价激励机制，确保有法可依、有章可循；三要针对不同官兵群体特点，探索设立符合时代特点和岗位特色的荣誉奖项，实施分层分类的荣誉教育引导，强化情感联结和身份认同；四要积极讲好“团队故事”，拓展荣誉辐射范围，营造良好外部生态。 亲历者说 灶台离荣誉并不远 ■一级上士 刘 涛 那天颁奖典礼结束，我翻来覆去睡不着。脑子里像放电影一样，把当炊事班长这14年过了一遍。 我想起，有一年冬天进行冬季野营拉练，我们在野外支锅做饭，手冻得通红，切菜都使不上劲。有个新兵问我：“班长，咱们当炊事员，到底算不算当兵？”我嘴上说“怎么不算”，可心里其实也没底气。 我还想起有一回，中队考核打了个漂亮仗，战友们在食堂里庆祝。我端上最后一道菜，悄悄站在厨房门口。看着他们高兴的样子，我也高兴。门里，是他们的热闹；门外，是我的灶台。这些年来，这样的滋味我尝过不少，说不失落是假的。 那天在礼堂里，战友们把奖牌挂到我脖子上，我忽然觉得有扇“门”打开了。当兵这么多年，我听过无数掌声，可没有一次掌声是专门给我的。那天，我听到了。原来我走过的每一步路，都有人在看着。 后来，每次新炊事员分到班里，我都把那天的事讲给他们听。我说，我们做的每一道菜，都跟训练场上的成绩有关系。有个新兵不信，我说，等你尝到那个滋味，你就信了。他又问我：“班长，你做了这么多年饭，还想拿什么荣誉？”我说，让中队每名战士都吃好每一顿饭，这就是我的荣誉。 我知道，荣誉不是别人发给你一块牌子，而是你知道自己做的事，跟一个更大的东西“连”在了一起——我们的灶台，和训练场、靶心，都连着。 （周益人整理）</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

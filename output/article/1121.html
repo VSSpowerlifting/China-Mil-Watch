@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One Procurement Case Leads to a Lesson in Regulations: Ensuring Every Expenditure Is Used Strictly in Accordance with Rules — China Mil Watch</title>
+  <meta name="description" content="A station under Naval Aviation University misclassified a barracks shower renovation as materiel procurement rather than engineering procurement—a distinction that determines approval depth, cost over">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/1121.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/1121.html">
+  <meta property="og:title"        content="One Procurement Case Leads to a Lesson in Regulations: Ensuring Every Expenditure Is Used Strictly in Accordance with Rules">
+  <meta property="og:description"  content="A station under Naval Aviation University misclassified a barracks shower renovation as materiel procurement rather than engineering procurement—a distinction that determines approval depth, cost over">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="One Procurement Case Leads to a Lesson in Regulations: Ensuring Every Expenditure Is Used Strictly in Accordance with Rules">
+  <meta name="twitter:description" content="A station under Naval Aviation University misclassified a barracks shower renovation as materiel procurement rather than engineering procurement—a distinction that determines approval depth, cost over">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    One Procurement Case Leads to a Lesson in Regulations: Ensuring Every Expenditure Is Used Strictly in Accordance with Rules
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">一次采购引出一堂法规课，让每一笔经费都严格依规使用</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>6 June 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16465820.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A station under Naval Aviation University misclassified a barracks shower renovation as materiel procurement rather than engineering procurement—a distinction that determines approval depth, cost oversight, and acceptance standards—prompting leadership to convene a Party committee meeting, invite outside experts for regulatory training, and post dual procurement flowcharts in functional offices; a parallel case from an unidentified Army unit documents a procurement clerk bypassing the mandatory three-source price comparison by reusing a comrade&#39;s shopping-platform link, receiving substandard fire shovels, and triggering a law-and-discipline warning class. Both cases fit a documented PLA institutional problem: grassroots procurement personnel treating procedural shortcuts as acceptable efficiency measures rather than integrity violations, a tendency the articles attribute to the ingrained habit of prioritizing task completion over regulatory compliance (重事务、轻法纪). The framing—published alongside editorial commentary tying the cases to 深化政治整训 (deepening political rectification training)—points to a current campaign push to harden procurement compliance at the unit level, though the articles do not establish how widespread the underlying violations are.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>The wind begins at the tip of the duckweed; the wave forms amid the faintest ripple. Hidden problems and risks often breed in inconspicuous small matters and minor details. Procurement and tendering work is highly specialized and sensitive, making it all the more necessary for officers and soldiers to start with every small thing and every post, ensuring that every expenditure is used strictly in accordance with disciplinary regulations. At every level, standards must be tightened further, full-process controls must be strengthened, any behavior that violates procurement norms must be rejected without exception, every cent must be spent in the open and used where it counts most, and absolutely no hidden risks must be left in procurement work.</p><p>——The Editors     Illustrated by Xie Yan</p><p>One Procurement Case Leads to a Lesson in Regulations</p><p>——An Account of a Certain Station Under Naval Aviation University Standardizing Procurement Work in Accordance with Law</p><p>■ Zhang Yidong     Liu Renfeng</p><p>&#34;This application does not meet the requirements of procurement regulations. Please revise and resubmit.&#34; Recently, Staff Officer Li, who is responsible for procurement work at a certain station under Naval Aviation University, returned a procurement request with a stern tone.</p><p>It turned out that, in order to improve the quality of life for officers and soldiers, the station had planned to renovate the shower facilities in the barracks. When submitting the procurement application, Section Chief Tian, who was in charge of the project, felt that the expenditure for this procurement was concentrated mainly on purchasing construction materials such as aluminum snap-in ceiling panels and metal framing used in the renovation. He therefore submitted the procurement request following the materiel procurement process, and planned to apply for labor costs separately when the construction contractor arrived to install the materials.</p><p>&#34;I conducted price comparisons and market research in advance. The supplier&#39;s materials are reasonably priced and of acceptable quality—why doesn&#39;t it meet the requirements?&#34; Section Chief Tian was full of confusion when his procurement request was not approved.</p><p>&#34;We need to be clear about the difference between materiel procurement and engineering procurement.&#34; Staff Officer Li provided a detailed and careful explanation. It turned out that relevant regulations draw a clear distinction between the applicable circumstances for materiel procurement and engineering procurement: materiel procurement focuses primarily on the specifications, quality, price, and supply assurance of materials; engineering procurement requires that quality and safety standards, construction schedules, cost controls, and completion acceptance requirements be made explicit at the procurement stage, and full-process oversight must be implemented throughout the procurement process.</p><p>&#34;This bathroom renovation project is not simply a matter of purchasing various materials and finding someone to install them. It also requires comprehensive consideration of overall construction, acceptance, and other stages. In this process, different construction units have different plans and non-uniform cost standards. Applying the materiel procurement procedure can easily produce problems of unreasonable cost composition and unscientific pricing, causing budget costs to spiral out of control. At the same time, the absence of supervision over the construction process and completion acceptance can easily give rise to quality and safety problems…&#34;</p><p>After hearing the explanation, Section Chief Tian immediately recognized that substituting &#34;materiel procurement&#34; for &#34;engineering procurement&#34; would cause this renovation to bypass the rigorous approval process and oversight stages, embedding risks of integrity violations in budget execution. &#34;We did not understand the procurement regulations thoroughly and comprehensively enough. We will go back and rectify this immediately.&#34;</p><p>The project was small, but the problems it exposed were not. This experience was subsequently brought before the leadership office meeting. During the discussion, several other officers also indicated that they were unfamiliar with certain detailed requirements of the regulations governing procurement work. The station&#39;s Party committee felt that the emergence of such problems was due not only to unfamiliarity with the business, but also to some comrades&#39; distorted understanding of procurement regulations and an ingrained tendency to prioritize tasks over rules and discipline (重事务、轻法纪).</p><p>Not the slightest deviation can be tolerated in any procurement; every cent of funding must be spent in the open and used where it counts most. The station invited experts from academic institutions and superior-level organs to deliver special lectures, enabling officers and soldiers to understand why, even though both involve spending money, a particular case must be classified as &#34;engineering procurement,&#34; at which additional steps the approval process is more extensive, and where acceptance is more stringent. After several sessions, everyone&#39;s notebooks were filled with key points.</p><p>During the classes, Section Chief Tian listened with particular attentiveness. He reflected: &#34;In the past, I only thought it was enough to get the job done well. Now I understand that a weak grasp of regulations will inevitably lead to confusion over work procedures, and hidden dangers of great magnitude can be buried without one even realizing it.&#34;</p><p>A few days later, two clear procurement flowcharts were hung in the offices of the relevant functional sections—&#34;Engineering Procurement&#34; on the left and &#34;Materiel Procurement&#34; on the right. The charts detailed the differences between the two in terms of project classification, procurement method, and other aspects, allowing the officers and soldiers responsible for the relevant work to conveniently &#34;follow the rules as they work.&#34;</p><p>Not long ago, when the station undertook a renovation and refurbishment of its cultural activity center, the responsible person, upon receiving the task, did not blindly begin price comparisons. Instead, he consulted the two flowcharts on the wall and accurately determined that the project should proceed according to the engineering procurement process. From approval and project initiation to tendering, construction, and acceptance, every step was tightly fitted together. When superior-level functional departments conducted an inspection, they affirmed the station&#39;s procurement work for its standardization and quality and effectiveness.</p><p>A station leader told this reporter that, in conjunction with deepening political rectification training (深化政治整训), they had, under the leadership of the Party committee, established a special rectification team with joint participation from the operations and support, discipline inspection, finance, and barracks management departments. The team conducted a comprehensive investigation of similar problems in procurement work in recent years and revised and improved the station&#39;s procurement management implementation rules. &#34;Now that all work has regulatory &#39;navigation,&#39; it proceeds more smoothly and in an orderly manner.&#34;</p><p>Reflections on Duty Performance</p><p>Rigid Implementation Admits No Ambiguity</p><p>■ Wang Zunzheng, Officer at a Certain Base Under Naval Aviation University</p><p>What do the regulatory processes of procurement management keep in check? Having worked in procurement management for many years, I believe that these seemingly complex procurement procedures have never been &#34;shackles&#34; that bind one&#39;s hands and feet. They are, rather, &#34;safety ropes&#34; that guide officers and soldiers to hold the line and ensure that work operates in a standardized manner. Regulations are the distillation of lessons learned from experience. It is precisely because detailed and rigorous provisions have been made for every stage of procurement that various hidden problems and risks can be avoided. In the course of performing one&#39;s duties, if regulations are treated like a rubber band and procedures are regarded as a burden, it becomes easy to grow fuzzy about boundary recognition, weak in procedural awareness, and hollow in institutional implementation, ultimately embedding risks of integrity violations.</p><p>How can procurement regulations move off the page and truly become the code of conduct that officers and soldiers consciously observe? First, one must study the law. Only by thoroughly understanding the regulations can specific work have a basis to rely on, and every step taken in advancing the work be taken on solid ground. Second, rules must be established. Procurement work requires tightening the institutional cage—just like the chart mentioned above that hangs on the wall. It specifies the step-by-step standards for each stage and process of procurement work, so that no procurement is conducted on the basis of experience or habit, and process compliance and operational legality are truly achieved. A multi-department joint verification mechanism should be established, &#34;look-back&#34; reviews of procurement projects should be conducted on a routine basis, problems discovered should be rectified in a timely manner, and institutional rigidity must be made to take root.</p><p>Ultimately, every checkpoint we strictly hold and every detail we insist upon in the procurement process serves to consolidate the rule-of-law foundation for force building and training and preparation for war, and to build the most solid barrier of the rule of law—worthy of the trust placed in us by officers and soldiers. When the spirit of the rule of law is integrated into every stage of procurement work, the practical matters that benefit officers and soldiers can truly be carried out in a way that resonates with everyone.</p><p>Extended Coverage</p><p>The Lesson of &#34;Convenience-Oriented&#34; (便利化) Procurement</p><p>■ Yu Yaya     Feng Junfa</p><p>On this day, at a law and discipline warning education class held by a certain Army unit, a leader walked to the podium holding a bent fire shovel.</p><p>At the sight of this, the officers and soldiers below were filled with curiosity, while procurement clerk Xiao Xie quietly lowered his head.</p><p>It turned out that, not long before, the unit had planned to equip a newly built storage facility with fire-fighting equipment. Xiao Xie learned from a comrade that a sister unit had previously procured similar equipment. To save trouble, he bypassed the price comparison process, obtained a product link from a network shopping platform from his comrade, and purchased a batch of fire shovels through the same channel.</p><p>The supplier soon shipped the order. On the day the goods arrived, Xiao Xie opened the package, casually pulled out one shovel, and jabbed it into the ground. Unexpectedly, with only a slight application of force, the fire shovel bent on the spot. Xiao Xie immediately recorded a video of the product, contacted the supplier to inquire, and filed a complaint about the quality problem on the shopping platform. It was subsequently determined that the supplier had engaged in the practice of passing off inferior goods as quality products. In the end, the supplier refunded the full purchase amount.</p><p>The refund issue was resolved, and it appeared that no losses had been incurred. Yet the process exposed the problem of weak rule-of-law awareness and distorted understanding of procurement regulations among the relevant personnel. After Xiao Xie proactively reported the situation and acknowledged his mistake, the leader decided to use this as a typical case and organize a law and discipline warning education class.</p><p>&#34;According to the relevant requirements, procurement should involve comparing prices from at least three sources and selecting the best option. I skipped the price comparison procedure, got a link from a comrade, and placed the order directly, which violated procurement process standards.&#34; During the discussion and exchange session, Xiao Xie was the first to reflect.</p><p>&#34;The product quality problem is an external cause; the root cause is the failure to strictly implement regulations.&#34; The leader added: &#34;In carrying out all work, we must clearly calculate the &#39;rule-of-law and discipline account,&#39; the &#39;safety account,&#39; and the &#39;life account.&#39; If procurement is not conducted according to the prescribed process and substandard products enter service, when a real fire breaks out, a fire shovel like this will not be able to dig into sand and soil at all, and losses that cannot be undone will inevitably result.&#34;</p><p>The leader&#39;s words made a deep impression on the officers and soldiers present. One soldier reflected that regulations and discipline are not abstract—they are embodied in every instance of operating by the rules and every instance of holding firm under pressure.</p><p>Over a period of time, the unit organized officers and soldiers to continue studying procurement-related regulations in depth, ensuring that everyone clearly understood &#34;which behaviors are violations, what the consequences of violations are, and what responsibilities must be borne.&#34; In light of actual work conditions, they re-standardized the procurement acceptance process. They explicitly required that the procurement stage be &#34;de-convenience-oriented&#34; (去便利化), strictly prohibiting the direct use of others&#39; procurement links, and mandating that all procurement go through the price inquiry and quality comparison stage. To strengthen the standardization of the procurement process, the unit also required that grassroots atmosphere supervisors (基层风气监督员) conduct strict acceptance inspections, uploading and archiving all photographs of major materiel acceptance inspections and signed records, so that every procurement must be verified, every item entering storage must be checked, and every signature must carry accountability.</p><p>Today, that bent fire shovel is displayed in the unit&#39;s law and discipline education exhibition cabinet. It serves as a mirror, reflecting the lesson of failing to act in accordance with regulations. Recently, after a procurement clerk received a task to procure a batch of saplings, he proactively studied knowledge about nursery stock, conducted a careful comparison of saplings from different suppliers, and successfully completed the task. He said: acting in accordance with law and regulations is what it means to be responsible to one&#39;s work and responsible to the force.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">风起于青萍之末，浪成于微澜之间。问题隐患往往滋生于不起眼的小事小节，招标采购工作专业性强、敏感程度高，更需要官兵从每件小事着手、每个战位做起，让每一笔经费都严格依照纪律规定使用。各级应进一步从严标准，加强全流程管控，对任何有违采购规范的行为一律否决，把每一分钱花在阳光下、用在刀刃上，决不让采购工作留下任何隐患。 ——编 者 谢 岩绘 一次采购引出一堂法规课 ——海军航空大学某场站依法规范采购工作的一段经历 ■张依栋 刘任丰 “这个申请不符合采购法规要求，请修改后重新提交。”近日，海军航空大学某场站机关负责采购工作的李参谋语气严肃地打回了一份采购请示。 原来，为了提升官兵生活质量，该场站计划对官兵宿舍浴室进行改造。提交采购申请时，负责该项目的田股长感到，此次采购的花费主要集中在购买装修使用的铝扣板、龙骨等建筑材料上。于是，他按照物资采购流程提交了采购请示，并计划在后续施工方进场安装材料时，再申请人工费。 “我提前进行了比价和市场调研，这个商家的材料价格合理、质量过关，为什么不符合要求？”采购请示没通过，田股长满是疑惑。 “咱们得明确物资采购和工程采购的区别。”李参谋作出了详细认真的解答。原来，相关法规对物资采购和工程采购的适用情况有着明确划分：物资采购重点关注物资的规格、质量、价格及供货保障；工程采购需在采购环节中明确工程质量安全、施工进度、造价控制、竣工验收等要求，还需在采购过程中实行全程管控。 “这次浴室改造项目不单是采购各类物资材料后找人安装这么简单，还需综合考量整体施工、验收等环节。在此过程中，不同施工单位的方案不同、费用标准不统一，套用物资采购程序易产生组价不合理、定价不科学的问题，导致预算成本失控。同时，缺乏施工过程监管与竣工验收，还易引发质量安全问题……” 听完解释，田股长当即认识到，用“物资采购”代替“工程采购”，会导致这次改造绕过严格的审批流程和监管环节，为预算执行埋下廉政风险隐患。“我们对采购法规了解得不够细致全面，现在回去立刻整改。” 项目虽小，暴露的问题却不小。这段经历随后被搬上了首长办公会。讨论过程中，还有几名干部也表示对采购工作相关法规的细节要求存在一些不熟悉的情况。场站党委感到，出现这样的问题，除对业务不熟悉之外，一些同志对采购法规的理解也有偏差，存在“重事务、轻法纪”的惯性思维。 每一次采购都容不得半点偏差，每一分经费都必须花在阳光下、用在刀刃上。该场站请来院校专家和上级机关进行专题授课，让官兵明白同样是花钱，为什么这个必须是“工程采购”，审批多在哪几步，验收严在什么地方。几堂课下来，大家的笔记本上记满了要点。 课上，田股长听得尤其认真，他感慨道：“过去只觉得把活干好就行，现在才明白，法规掌握不牢必然导致工作程序混淆，不知不觉就可能埋下大隐患。” 几天后，两张清晰的采购流程图挂进了相关业务股室的办公室——左边是“工程采购”，右边是“物资采购”，图上详细标明两者在项目属性、采购方式等方面的区别，负责相关工作的官兵可以方便地“照章作业”。 前不久，该场站对文化活动中心进行翻新修缮，相关负责人受领任务后，没有盲目展开比价，而是对照墙上那两张流程图，准确判定该项目应该按照工程采购流程进行。从审批、立项到招标、施工、验收，每一步都严丝合缝。上级业务部门检查时，对该场站采购工作的规范和质效给予了肯定。 场站一名领导告诉笔者，结合深化政治整训，他们由党委牵头，战勤、纪检、财务、营房多部门联动成立专项整改小组，逐项清查近年来采购工作中的类似问题，修订完善场站采购管理实施细则。“如今，各项工作有了法规‘导航’，开展起来更加平稳有序”。 履职感言 刚性落实别含糊 ■海军航空大学某基地干部 王尊正 采购管理工作的法规流程，框住的是什么？从事采购管理工作多年，我认为，这些看似复杂的采购规程，从来不是束缚手脚的“枷锁”，而是引导官兵守住底线、确保工作规范运行的“安全绳”。法规是经验教训的总结，正是对采购各环节作出了详细严密的规定，才能让各类问题隐患得以避免。履职过程中，若把法规当成橡皮筋，把程序视为负担，就容易在边界认知上模糊、在程序意识上淡薄、在制度执行上虚化，最终埋下廉政风险隐患。 如何让采购法规从纸上走出来，真正成为官兵自觉遵守的行事准则？首先要学法，只有把法规学明白，才能让具体工作有据可依，推进工作的每一步都走得踏踏实实。其次是要立规。采购工作需要扎紧制度的笼子，就像上文提到的那幅挂在墙上的图表，它明确了采购工作各环节各流程的步骤标准，让每一项采购不再凭经验、靠惯性，真正做到流程合规、操作合法。应建立多部门联动核查机制，常态化开展采购项目“回头看”，发现问题及时整改，让制度刚性落地。 说到底，我们在采购规程上严守的每一道关口、坚持的每一个细节，都是为部队建设和练兵备战夯实法治根基，筑牢最坚实的法治屏障，不负官兵的信任。当法治精神融入采购工作的每一个环节，那些惠及官兵的实事，就能真正办到大家心坎上。 镜头延伸 “便利化”采购的教训 ■於娅娅 冯俊发 这天，陆军某部一堂法纪警示教育课上，一名领导拿着一把弯折的消防锹走上了讲台。 见此，台下官兵眼中满是好奇，采购员小谢却默默低下了头。 原来，前不久，该部计划为新建库房配备消防器材。小谢从战友那儿得知，有兄弟单位之前采购过同类器材。为图省事，他没有经过比价流程，而是找战友要来某网络购物平台的商品链接，通过相同渠道购进了一批消防锹。 很快，商家按订单发了货。到货当天，小谢拆开快递，随手抽出一把，在地面上杵了杵。谁知，他只是稍微用力，消防锹竟当场弯折。小谢立刻拍摄了商品视频，向商家询问，并在购物平台对货物质量问题进行投诉。后经了解得知，该商家存在以次充好行为。最终，商家退回了全部购物款。 退款问题解决了，看似没有造成任何损失，过程中却暴露出相关人员法治意识淡薄、对采购法规存在认知偏差的问题。在小谢主动报告情况并承认错误后，这名领导决定以此为典型案例，组织一次法纪警示教育课。 “依据相关要求，采购本应货比三家、择优确定，我跳过比价程序，找战友要来链接直接下单，违反了采购流程规范。”讨论交流环节，小谢首先反思。 “商品质量问题是外因，法规落实不严才是根本。”这名领导补充道，“开展各项工作，我们要算清‘法纪账’‘安全账’‘生命账’。如果不按照规定流程进行采购，导致不合格产品流入，在火灾真正来临时，这样的消防锹根本刨不动沙土，必然造成无法挽回的损失。” 领导的一番话，让在场官兵很受触动。一名战士感言，法规纪律并不抽象，其实就体现在每一次按规操作、每一次较真碰硬中。 一段时间以来，该部组织官兵持续深入学习采购相关法规，让大家清晰知道“哪些行为违规、违规后果是什么、需要承担哪些责任”。结合工作实际，他们对采购验收流程进行重新规范。明确要求采购环节“去便利化”，严禁直接套用他人采购链接，所有采购必须经过询价比质环节。为强化采购流程的规范性，该部还要求基层风气监督员严格验收，将大项物资验收照片、签字记录全部上传存档，实现采购必核验、入库必把关、签字必负责。 如今，那把弯折的消防锹陈列在该部法纪教育展柜里，它如同一面镜子，照出不按法规办事的教训。近日，一名采购员在受领一批树苗采购任务后，主动学习苗木知识，对不同商家的树苗进行细致比较，最终顺利完成任务。他说，依法依规办事才是对工作负责、对部队负责。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

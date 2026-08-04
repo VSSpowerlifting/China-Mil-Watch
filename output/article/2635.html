@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Above the Ruins, the Military Flag Flies High — China Mil Watch</title>
+  <meta name="description" content="Qiu Jichen, a former propaganda section head in the &#39;Taiyuan Campaign City-Scaling Vanguard Regiment&#39; (589th Regiment, 66th Army), recounts his unit&#39;s earthquake relief operations in Tangshan from Jul">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2635.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2635.html">
+  <meta property="og:title"        content="Above the Ruins, the Military Flag Flies High">
+  <meta property="og:description"  content="Qiu Jichen, a former propaganda section head in the &#39;Taiyuan Campaign City-Scaling Vanguard Regiment&#39; (589th Regiment, 66th Army), recounts his unit&#39;s earthquake relief operations in Tangshan from Jul">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Above the Ruins, the Military Flag Flies High">
+  <meta name="twitter:description" content="Qiu Jichen, a former propaganda section head in the &#39;Taiyuan Campaign City-Scaling Vanguard Regiment&#39; (589th Regiment, 66th Army), recounts his unit&#39;s earthquake relief operations in Tangshan from Jul">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Above the Ruins, the Military Flag Flies High
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">废墟之上，军旗高高飘扬</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>27 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16475968.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>Qiu Jichen, a former propaganda section head in the &#39;Taiyuan Campaign City-Scaling Vanguard Regiment&#39; (589th Regiment, 66th Army), recounts his unit&#39;s earthquake relief operations in Tangshan from July 28, 1976 onward, including self-rescue under nine buried regimental leaders, the rescue of 819 civilians on the first day, body clearance of 3,681 remains, and construction of Tangshan&#39;s first post-earthquake commercial building and 1,816 rooms of winter housing. Published to mark the 50th anniversary of the earthquake, this is commemorative institutional memoir — its value is as a record of how the PLA frames civil-military relations and disaster-relief heroism for a contemporary audience, not as evidence of current doctrine or posture. The article documents the regiment&#39;s award of a collective second-class merit citation from the Central Military Commission and an honorary banner from the 66th Army, preserving unit-level detail that is otherwise difficult to recover from open sources.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Above the Ruins, the Military Flag Flies High</p><p>■ Qiu Jichen</p><p>Weathering the Storm Together (oil painting, collection of the Tangshan Earthquake Memorial Museum) — by Ma Yuan, Zhao Hongwei, Zhu Xuebin, and Zhang Wenbin</p><p>Fifty years have passed in the snap of a finger. To mark the 50th anniversary of the Tangshan earthquake relief effort, I made a special trip from Beijing to Tangshan. Walking through the military barracks and the urban and rural landscape where I had worked for eighteen years, I felt both a sense of strangeness and freshness, and an overwhelming surge of emotion.</p><p>Tangshan — this heroic city that rose from the ruins of the great earthquake — has now lifted its head and set out on a new journey of development. It is a nationally designated strategic industrial pillar, a comprehensive manufacturing hub, and a national-level logistics gateway for opening to the outside world; it is the economic leader of the Bohai Rim economic circle and a model city for integrated land-sea development; it also ranks first in per-capita economic output in Hebei Province and is Hebei&#39;s only city with a GDP exceeding one trillion yuan. Were it not for the towering earthquake memorial monument and the solemnly standing earthquake memorial museum at the center of Tangshan, along with a few preserved earthquake ruins, many people would never connect this thriving modern metropolis with the devastating earthquake that struck fifty years ago.</p><p>At the time of the 1976 Tangshan earthquake, my unit — the &#34;Taiyuan Campaign City-Scaling Vanguard Regiment&#34; — was a field army unit garrisoned in the urban district of Tangshan. As the head of the propaganda section, I was at once a survivor who had escaped death, a firsthand witness who participated in the entire earthquake relief effort, a propaganda reporter covering the disaster relief work, and a builder of the new Tangshan. Coming to Tangshan now, I did my best to search out the former sites of the regimental command post and the various battalion and company garrisons. The vivid scenes of earthquake relief work gradually came alive in my memory, and the regiment&#39;s blazing red military flag seemed to flutter before my eyes once more.</p><p>I had lingered in the regimental history museum rebuilt after the earthquake, gazing fixedly at those flags that bore the record of glory and history. Two of them captivated me most: one was the honorary banner &#34;Taiyuan Campaign City-Scaling Vanguard Regiment,&#34; awarded by the 20th Army Corps — on April 24, 1949, during the assault on Taiyuan, our regiment was the first among more than one hundred participating regiments to plant the red flag atop the city walls; the other was the honorary banner &#34;Earthquake Relief Self-Rescue and Rescue Vanguard Regiment,&#34; awarded by the 66th Army — during the 1976 Tangshan earthquake, our unit, situated in the most severely devastated area and itself badly damaged, threw itself actively into the rescue and relief effort, and stood out among nearly one hundred regimental-level units participating in the disaster relief.</p><p>Memories surged forth, and the sound of that military flag — the one that had once brought hope to the disaster area — snapping in the wind echoed in my ears once more. The immense power it embodied, the power to overcome disaster and rebuild homes, transcended time and space and struck straight to the heart.</p><p>I</p><p>At 3:42 a.m. on July 28, 1976, a devastating earthquake suddenly struck Tangshan. In a matter of seconds, the earth split open: roads collapsed, bridges broke, the city was destroyed. The regimental headquarters office building, where we were stationed in the heart of the disaster zone, was instantly leveled to the ground. I clawed my way out of the rubble and ran toward the film team of our propaganda section, which was quartered in the main auditorium. I quickly joined the political department secretary Sun Xuejiang and others to rescue the film team leader Guo Huiguang and projectionist Li Yancheng, then rushed back to the office building to continue the rescue work.</p><p>At that moment, all nine regimental leaders had been buried. One deputy regimental commander perished. As soon as the regimental leaders were freed, they gathered without prior arrangement at the flagpole in front of the office building. Political Commissar Jia Chunxiang, injured in the waist, lay in a wheelbarrow; Regimental Commander Shan Huashan, his head wrapped in bandages, sat in a jeep. They convened the first emergency enlarged Party committee meeting after the earthquake, established a rescue and relief command post, and rapidly deployed earthquake relief operations. Chief of Staff Wang Shichang, acting on the meeting&#39;s directives, quickly issued a series of orders: dispatch one company to report to the East Mining District Party committee and district government; dispatch one company to guard the treasury; dispatch one company to provide security for eighteen key sites including banks, shops, and grain warehouses in the East Mining District; all remaining companies to deploy immediately and rescue civilians on the spot.</p><p>From that day forward, the Five-Starred Red Flag — which had previously been raised and lowered daily — flew continuously atop the tall flagpole in front of the headquarters office building, becoming the &#34;backbone&#34; (主心骨) guiding officers and soldiers forward and a witness to the unit&#39;s earthquake relief work.</p><p>Our unit had been garrisoned in the Tangshan-Qinhuangdao area since returning from the War to Resist U.S. Aggression and Aid Korea, and had long enjoyed the care and affection of the local people. Now that the people of our garrison area had been struck by the earthquake, the officers and soldiers saw it and felt it in their hearts. The entire regiment mobilized urgently. From villages to towns, from the nearest Nanchang Brigade and Shuiyu Commune, to the Kailuan Zhaogezhang and Tangjia­zhuang mining areas, from Guye railway station to the district Party committee seat at Linxi — throughout the streets and lanes of an area spanning more than fifty square kilometers, the figures of soldiers risking their lives to rescue civilians were everywhere. On the day of the earthquake alone, the regiment rescued 819 civilians and did everything possible to resolve the food and shelter needs of more than 2,300 displaced residents.</p><p>On the parade ground of the barracks after the earthquake, injured civilians in need of treatment lay everywhere. Medical team leader Xu Mingquan&#39;s foot, crushed and bleeding, went untreated — he would not spare even a drop of mercurochrome for himself. Medic Liu Daxu three times risked his life crawling into the collapsed medicine warehouse to retrieve supplies, all of which were used to treat injured civilians. Food had become a dire problem. The regimental command post directed each company&#39;s kitchen squad to set up large cooking pots and prepare meals for civilians using rice and flour salvaged from the rubble. The kitchen squads of the 2nd Battalion&#39;s machine-gun and artillery company, the guard and communications company, and the regimental artillery company cooked meal after meal throughout the day — yet the officers and soldiers did not eat a single bite themselves, giving everything to the injured civilians. The local people praised them: &#34;In times of peril you see true character — the People&#39;s soldiers are the ones you can count on!&#34;</p><p>II</p><p>On the night of the 29th, our regiment received instructions from higher command: except for a small number of personnel left to guard the barracks, all companies were to urgently move from the East Mining District to the central urban area of Tangshan, taking responsibility for earthquake relief operations in the area bounded by Fenghuang Mountain to the east, Weiguo Road to the west, Airport Road to the north, and Xinhua Road to the south. Early on the morning of the 30th, the entire regiment moved into its designated positions. The newly established command post was in reality nothing more than a few military tents, pitched on a stretch of rubble that had been the Tangshan Coal Mining Medical College. The first thing Regimental Commander Shan did after the command post was set up was to have headquarters personnel plant a military flag at the most conspicuous point of the broken walls and ruined buildings, so that officers, soldiers, and disaster victims coming to attend meetings or conduct business could see the command post from a great distance.</p><p>News of the Tangshan earthquake spread like a silent order. Four officers and eighteen soldiers from the regiment who were away on home leave all returned to their units ahead of schedule, without any prior arrangement. Tang Jinsheng, a soldier from Hubei Province in the 2nd Battalion&#39;s machine-gun and artillery company, had just arrived home on leave on the 28th. Early on the morning of the 29th, he heard that a massive earthquake had struck Tangshan. He persuaded his parents and immediately set out to return to his unit. Unable to buy tickets along the way, he took trains when he could and caught rides on buses when available. When he reached Tianjin and found no transport, he walked more than one hundred kilometers back to his unit, eating only three meals in five days. Not knowing where his company was, he headed toward wherever he saw a military flag flying. On the day he returned, he threw himself into earthquake relief without a moment&#39;s rest.</p><p>After entering the central urban area of Tangshan, rescuing lives still surviving in the rubble became the top priority for the relief troops. The regiment arranged for officers and soldiers to use the limited listening equipment available, going deep into dangerous collapsed buildings to search for survivors; other officers and soldiers called out loudly across the rubble, pressing their ears to the ground to listen carefully, and the moment any sign of life was detected they threw themselves into the rescue without regard for their own safety. Dou Yongping, a new soldier and Party member in the 2nd Company, crawled into a collapsed building three times to rescue veteran worker Li Haishen and his family of seven. The first time, he pried open a window and rescued Li Haishen&#39;s four sons. The second time, he broke open a hole through the roof and crawled in, pulling Li Haishen out. When he learned that Li Haishen&#39;s wife and granddaughter were still buried, and was about to crawl back inside, an aftershock struck. Li Haishen grabbed his hand and said: &#34;You&#39;ve already saved five of my family — don&#39;t throw yourself in too!&#34; Dou Yongping broke free from Li Haishen&#39;s grip, crawled back into the building, and rescued the old woman and the child, holding up a patch of clear sky for people in peril with his own flesh and blood.</p><p>Most unforgettable of all was the 1st Company&#39;s race-against-death rescue of the child Bai Haiming. Early in the morning of August 3rd, just after 6 o&#39;clock, a soldier heard the faint cries of a child from beneath a dormitory building of the Coal Mining Medical College. The 1st Company immediately assembled and rushed to the scene, launching the rescue under the command of Company Commander Zhang Junyou. Fearing they might injure the child further, the soldiers dared not use shovels and switched to digging with their hands. At that moment, a concrete prefabricated slab began to tilt and slide downward; Squad Leader Liu Dong braced it with his shoulder and held on with all his strength. A brick pile weighing several hundred jin began to shift, creaking and groaning, liable to tumble down at any moment. Soldier Jin Guoqiang threw his body against the brick pile to hold it back. After more than fifty minutes of intense effort, Bai Haiming — who had been trapped for 147 hours — was finally rescued.</p><p>Throughout the days of earthquake relief, wherever rescue troops were present, military flags flew — even at the most grueling and exhausting sites where bodies were being cleared and buried.</p><p>After the Tangshan earthquake, temperatures remained persistently high, and the bodies of the victims decomposed rapidly; a suffocating odor pervaded the entire city. Acting on orders from the earthquake relief command, each company of the relief troops was assigned responsibility for specific streets, with the task of completing the clearance and burial of bodies within two days. This was an extraordinarily arduous and unusual mission. Due to the constraints of the situation, only a very small number of people could wear gas masks; most officers and soldiers wore face masks soaked in liquor, and some had no masks at all, and could only seal their sleeves and trouser legs with plastic sheeting before jumping into the burial pits. In just seven days, our regiment alone completed the transfer and burial of 3,681 victims&#39; remains. This act of valor, bearing immense grief and extraordinary courage, is now preserved in photographs in the Tangshan Earthquake Memorial Museum, deeply embedded in the collective memory of the earthquake relief effort.</p><p>In the early period after the earthquake, Tangshan&#39;s grassroots organizations had collapsed. Basic daily necessities such as grain, flour, cooking oil, and vegetables for the civilian population were distributed under a &#34;rationing system&#34; (供给制), issued uniformly by the troops. From morning to night every day, crowds of people collecting supplies pressed around the newly erected military tents. In the temporary encampments cordoned off by the companies, some elderly people and children even slept close to the relief troops at night. The people of the disaster area all said: in Tangshan, as long as we can see the military flag, our hearts are at ease — it gives us a sense of security.</p><p>The earthquake had destroyed many everyday items. Radios and televisions were unusable; broken bicycles piled up throughout the streets and lanes; people had nowhere to go even for a haircut. The &#34;1st Company of Great Merit&#34; (大功一连), with its glorious history, responded urgently to the people&#39;s needs and took the lead in opening Tangshan&#39;s first post-earthquake community service center on Jianshe Road, complete with a barbershop, a repair station, and a drinking water point. One elderly widow in her sixties had all her household utensils destroyed. Without cooking implements, even when grain and vegetables were issued to her, she could not prepare food. After members of the repair team learned of her situation, they visited her home twice to repair her cooking utensils. The old woman said with deep feeling: &#34;The People&#39;s soldiers are truly good — I will never forget the beloved Liberation Army.&#34; According to incomplete statistics, the regiment provided haircuts to 3,975 people, repaired 1,857 bicycles, and repaired 4,931 cooking utensils.</p><p>III</p><p>After the Tangshan earthquake, under the firm leadership and unified deployment of the Party Central Committee, &#34;whatever Tangshan needs, the whole country will provide&#34; — supplies flowed continuously into the disaster area. However, as earthquake relief deepened and some production in the disaster area partially resumed, the previous &#34;rationing system&#34; model — which had relied primarily on relief troops to distribute daily necessities — could no longer meet the living needs of the population. At the same time, some of Tangshan&#39;s grassroots organizational structures were gradually being rebuilt. Against this backdrop, bringing the commercial system into play and getting goods into market circulation channels as quickly as possible became another urgent task for ensuring the livelihoods of disaster-area residents — following the resolution of the most pressing problems of food, drinking water, and medical care.</p><p>The concerns and needs of the people were the responsibility of the relief troops. In our regiment, the first to keenly perceive this problem and put it on the agenda was Yang Xiucheng, director of the regimental political department. On August 5th, Director Yang led me and staff officer Chen Bohe to the 3rd Battalion, which was stationed at the Tangshan Department Store, to conduct an investigation. The person then presiding over the 3rd Battalion&#39;s earthquake relief work was Deputy Battalion Commander Zhang Xiande, who had already been designated for demobilization. After the earthquake, with the battalion&#39;s political instructor dead and the battalion commander injured, he had stepped forward to organize the unit&#39;s self-rescue and the rescue of civilians in the garrison area. On the morning of the second day after the earthquake, someone came from his home village — only six kilometers from the barracks — to tell him that four of his family members had perished. But he resolutely sent the visitor home, volunteered to lead his troops to Tangshan&#39;s urban area for disaster relief, and when the route passed by his own village, he did not stop to go home even for a moment. While conducting rescue operations at the department store in Tangshan&#39;s new urban district, his sister&#39;s home was nearby, yet he had no time to look in on her. When he learned that his deceased sister was about to be buried, the regimental leadership told him to go and take a look; he said, &#34;Right now saving the living is what matters,&#34; and never left his combat post.</p><p>In conversation with Deputy Battalion Commander Zhang Xiande and Deputy Political Instructor Wang Wenkui, Director Yang raised the question: what would it be like if a simple department store were built and opened for business right now? After everyone discussed it back and forth, they unanimously agreed that disaster victims urgently needed daily necessities and that a store should open as soon as possible to ensure supply. They then worked together to study a plan for constructing a simple commercial building; Deputy Battalion Commander Zhang also made detailed arrangements for building materials, merchandise, and the use of manpower. Director Yang asked when it could open. Deputy Battalion Commander Zhang thumped his chest and said: one week! Director Yang said: I&#39;ll give you four days at most. That afternoon, Director Yang returned to the regimental headquarters and reported the situation to the regimental commander and other leaders, receiving unanimous support.</p><p>The 3rd Battalion&#39;s officers and soldiers worked in three shifts, fighting continuously for four days and nights, and finally built Tangshan&#39;s first post-earthquake simple commercial building, which was immediately handed over to local authorities for operation. The regiment inscribed a plaque for the store reading: &#34;What fear have we of earth shaking and mountains trembling — even with Mount Tai pressing down, we will not bend our backs&#34; (地动山摇何所惧，泰山压顶不弯腰). A Five-Starred Red Flag was specially planted atop the store.</p><p>News that the first store was about to open spread quickly throughout all of Tangshan. On August 10th, the store officially opened. The shelves were fully stocked with everyday necessities of every kind, and people rushed to come, filling the store inside and out. Many people looked up at the Five-Starred Red Flag fluttering in the wind and shed tears of excitement. That day, former Beijing Military Region Deputy Commander Xiao Xuanjin, who was in Tangshan directing earthquake relief operations, happened to drive past and joined the crowd gathered around the store. He said to the staff members beside him: this is a truly wonderful thing — like sweet rain falling in a great drought — and asked which unit had built it. Upon learning it was the 589th Regiment of the 66th Army, he offered repeated praise: &#34;Good, good!&#34;</p><p>IV</p><p>Not long afterward, the earthquake relief command issued orders requiring relief troops at all levels to mobilize urgently to solve the problem of winter housing for the civilian population. Time was short and the task was heavy. Relief troops worked around the clock, racing against time to build simple housing, ensuring that disaster-area residents could move in before the cold set in at the end of November and have a good first winter after the earthquake.</p><p>But how would our soldiers know how to build houses? Yet the needs of the people in the disaster area were orders. Each company hired a number of local technical personnel and set up on-site teaching and training classes. Soon the battle to build simple housing was underway; red flags flew above the construction sites, presenting a scene of intense activity. After more than a month of effort, rows of simple houses stood along the streets of Tangshan. Our regiment alone built 1,816 rooms and constructed more than 7,400 square meters of buildings for units including the Tangshan New Urban District Department Store, the hardware and local products retail outlet, and the workers&#39; hospital.</p><p>The military loves the people; the people support the military. The contributions made by our unit — garrisoned in Tangshan&#39;s urban district — during the earthquake relief effort received the highest recognition from the Party and the people. The Central Military Commission awarded the regiment a collective second-class merit citation; the 66th Army awarded the regiment an honorary banner; the former Beijing Military Region awarded the 1st Company the honorary title &#34;Model Company in Earthquake Relief&#34; (抗震救灾模范连). Across the regiment, one company and five platoons were awarded collective second-class merit citations; two battalions, three companies, six platoons, and fourteen squads were awarded collective third-class merit citations; fourteen individuals were awarded second-class merit citations, seventy-two were awarded third-class merit citations, and 384 received commendations.</p><p>On October 29th, we victoriously completed the earthquake relief mission and returned to barracks. A decorated float, fashioned from a Liberation-brand truck, led the convoy. The float flew the brilliant &#34;Earthquake Relief Self-Rescue and Rescue Vanguard Regiment&#34; banner; each company followed behind, all of them flying their merit-citation flags high on their military vehicles. Civilians who had heard the news rushed to gather, surrounding the military vehicles so tightly that passage was impossible. We had no choice but to stop and start repeatedly. That scene, that genuine emotion, moved people to tears.</p><p>Fifty springs and autumns have passed since the Tangshan earthquake. Walking through the streets of Tangshan today, gazing at the bustling prosperity throughout the city, I feel boundless comfort and satisfaction. When we participated in the earthquake relief back then, was it not precisely so that the people of Tangshan could have a happy today? The days and nights of earthquake relief have become the past; the great earthquake-resistant spirit (抗震精神) created by the soldiers and civilians of Tangshan has settled into a precious spiritual legacy.</p><p>Standing before the memorial wall for victims of the Tangshan earthquake, my gaze moved across the densely packed names, searching for the officers and soldiers of our unit who had perished and the heroes who had given their lives in the earthquake relief effort. After a long while, I bowed deeply toward the memorial wall. Stepping into the Tangshan Earthquake Memorial Museum, I studied intently each photograph and each artifact. And among the thousands upon thousands of exhibits, what still seized my gaze most firmly was that brilliant red military flag. Facing this flag steeped in hot blood, I raised my hand and solemnly rendered a military salute.</p><p>That earthquake relief struggle, which stirred the mountains and rivers with its heroic spirit, has been written into history. The Party and the military will not forget it; the mountains and rivers of this land will remember it forever; and the people of Tangshan, who lived through the disaster, have long since woven this memory into their bloodlines, to be passed down from generation to generation.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">废墟之上，军旗高高飘扬 ■邱继臣 风雨同舟（油画，唐山抗震纪念馆藏）马 元、赵宏伟、朱学斌、张文斌作 弹指50载，岁月一挥间。为纪念唐山抗震救灾50周年，我专程从北京赶到唐山。走进曾经工作过18个年头的军营和城乡大地，我既感陌生与新鲜，更涌起万千感慨。 唐山，这座在大地震废墟中挺立重生的英雄城市，如今已昂首迈上发展新征程。它是国家级工业战略支柱、综合制造高地、国家级对外开放物流枢纽；是环渤海经济圈经济龙头、陆海统筹示范城；又是人均经济居河北省首位、河北唯一的万亿城市。如果不是唐山市中心那座巍峨挺拔的抗震纪念碑和肃穆静立的抗震纪念馆，以及留存下的几处地震遗址，很多人怎么也不会把这座欣欣向荣的现代化都市，与50年前曾发生过的毁灭性大地震联系在一起。 1976年唐山大地震时，我所在的“太原战役登城先锋团”，是驻守在唐山市区的野战部队。作为宣传股股长，我既是死里逃生的幸存者、参加抢险救灾全过程的亲历者，又是抗震救灾的宣传报道者，还是新唐山的建设者。如今来到唐山，我尽力搜寻着当年团指挥所和各营连的驻地旧址，记忆中抗震救灾的火热场面逐渐鲜活起来，当年部队火红的军旗仿佛飘扬在眼前。 我曾流连于部队震后重建的团史馆，目不转睛地凝视着那一面面记载着荣光和历史的军旗。其中，最让我出神的有两面：一面是1949年4月24日攻打太原时，在参战的100多个团中，我团第一个把红旗插上太原城头，后被第20兵团授予的“太原战役登城先锋团”锦旗；另一面就是1976年唐山大地震时，我们地处重灾区的部队在自身受损严重的情况下积极投入抢险救灾，在参加救灾的近百个编制团中贡献突出，被第66军授予的“抗震救灾自救抢救先锋团”锦旗。 记忆翻涌而来，那面曾为灾区带去希望的军旗迎风猎猎的声响，又一次在耳畔回荡。它凝聚的战胜灾难、重建家园的磅礴力量，穿越时空，直抵心间。 一 1976年7月28日3时42分，一场毁灭性的大地震突然降临唐山。短短几十秒间天崩地裂，路塌、桥断、城毁。我们地处重灾区的团部机关办公楼，瞬间被夷为平地。我拼命爬出废墟，朝着我们宣传股驻在大礼堂的电影组跑去，很快就和政治处书记孙学江等一起，救出电影组组长郭惠光和放映员李彦成，然后又急匆匆跑回办公楼救灾。 当时，9名团领导全部被埋压，一名副团长不幸遇难。团领导一经脱险，便不约而同地聚集到办公楼前的旗杆下。腰部受伤的政委贾春祥躺在手推车里，头缠绷带的团长单华山坐在吉普车上，召开震后第一次党委临时扩大会，成立抢险救灾指挥所，迅速部署抗震救灾工作。参谋长王世昌根据会议要求，很快发出一道道命令：派一个连队赶到东矿区委、区政府报到；派一个连队守护金库；派一个连队担负东矿区银行、商店、粮库等18个重点目标的警戒，其余连队全部出动就地抢救群众。 也就是从这一天起，本来每天升降的五星红旗，就一直飘扬在机关办公楼前那高耸的旗杆上，成为引领官兵前行的“主心骨”和部队抗震救灾的见证。 我们这支部队自抗美援朝回国后就驻守在唐秦地区，一直受到当地群众的关心和爱戴。如今，驻地群众遭遇地震，官兵看在眼里，痛在心上。全团官兵紧急出动。从农村到城镇，从离营房最近的南场大队、水峪公社，到开滦赵各庄、唐家庄矿区，从古冶火车站到区委驻地林西，方圆50多平方公里的大街小巷，到处活跃着子弟兵奋不顾身抢救人民群众的身影。仅地震当天，全团就抢救群众819人，并千方百计解决了2300多名驻地群众的食宿问题。 震后的营区大操场上，躺满需要救治的受伤群众。卫生队队长徐明权被砸伤的脚流着血，可他连一滴红药水都舍不得抹。卫生员刘大叙3次冒着生命危险钻进倒塌的药品仓库抢出药品，全部用来救治受伤群众。此时，吃饭成了大难题。团指挥所要求各连炊事班支起大锅，用从废墟里扒出来的一些米面为群众做饭。二营机炮连、警通连、团炮连炊事班一天不知做了多少次饭，可官兵一口也没舍得吃，全部让给受伤的群众。当地老百姓赞誉：危难之际见本色，还是人民子弟兵靠得住！ 二 29日夜间，我团接到上级指示，除留少量人员警卫营区外，所有连队紧急从东矿区开到唐山市中心区，负责东起凤凰山、西到卫国道、北到机场路、南到新华道地域的抢险救灾。30日一大早，全团进入指定位置。新开设的指挥所实际上就是几顶军用帐篷，立于唐山煤矿医学院的一片废墟之上。单团长在指挥所设立后做的第一件事，就是让机关人员把一面军旗，插到断壁残楼的最显眼处，让前来开会、办事的官兵和受灾群众，老远就能看到指挥所。 唐山大地震的消息像一道无声的号令，全团探家休假的4名干部、18名战士，不约而同地提前归队。二营机炮连湖北籍战士唐金生，28日休假刚到家，29日一大早就听说唐山发生大地震，他说服父母立即返队。途中买不上票，他能坐火车就坐，能搭汽车就搭。到天津实在没车可乘，他就步行100多公里赶回部队，5天仅吃了3顿饭。他不知道自己所在的连队在哪里，就朝插有军旗的地方奔去。归队当天，他就一刻不停地投入抗震救灾。 进入唐山市中心区以后，抢救废墟中尚存的生命，成为救灾部队的头等大事。团里安排官兵使用仅有的侦听器材，深入危楼断壁中搜寻幸存者；还有的官兵则在废墟上大声呼喊，把耳朵贴在地面仔细倾听，一旦发现生命的迹象便奋不顾身进行抢救。二连新战士、党员窦永平3次钻进倒塌的房子里，救出老工人李海深一家7口。第一次，他撬开窗户救出李海深的4个儿子；第二次，他从房顶上砸开一个洞口钻进去，把李海深托了出来。当得知李海深的老伴和外孙女还被埋压，他正要钻进屋里时，余震发生了。李海深拉着他的手说：“你已经救了我家5口了，别把你也搭进去啊！”窦永平毅然挣脱李海深的手，再次钻进屋里救出老人和孩子，用血肉之躯给危难中的群众撑起一片晴空。 最让人难忘的还是一连官兵对儿童白海明那场争分夺秒的生死救援。8月3日清晨6点多，有战士听到煤矿医学院宿舍楼下有儿童微弱的呼救声。于是，一连官兵立即紧急集合跑到现场，在连长张俊友指挥下展开救人。战士们怕再次伤着孩子，不敢用铁锹挖而改用手扒。这时，水泥预制板倾斜下坠，班长刘冬用肩膀死死扛住。一个几百斤重的砖垛子松动发出“吱吱呀呀”的声响，随时都有滚落下来的可能。战士金国强拼命用身体挡住砖垛。经过50多分钟的紧张战斗，被困147个小时的白海明终于被救出。 在抗震救灾的日子里，凡是有救援部队的地方就有军旗飘扬，就连最苦最累的清运掩埋遗体现场，也是如此。 唐山大地震后持续高温，遇难者的遗体很快腐烂，整个市区弥漫着令人窒息的气味。根据抗震救灾指挥部的命令，救灾部队每个连队分工包街，务必在两天之内完成清运掩埋遗体任务。这是一项十分艰苦而特殊的任务。由于条件限制，当时只有极少数人能戴上防毒面具，多数官兵都是戴着喷洒了白酒的口罩上阵，而有的甚至连口罩也没有，只好用塑料布扎好袖口裤腿跳到埋尸坑里。短短7天，我们这一个团就完成了3681具遇难者遗体的转移与掩埋。这种承载着巨大悲痛与非凡勇气的壮举，如今定格在唐山抗震纪念馆的照片里，深嵌于抗震救灾的集体记忆之中。 地震初期，唐山市的基层组织瘫痪，老百姓所需的米面油菜等基本生活用品实行“供给制”，由部队统一发放。每天从早到晚，在新搭起的军用帐篷周边挤满了领取物品的群众。在连队临时圈出的宿营地，一些老人和儿童就连晚上睡觉也要挨着救灾部队。灾区群众都说，在唐山，我们只要看到军旗，心里就踏实，就多了一分安全感。 地震毁坏了很多日常生活用品，收音机、电视机不能使用，砸坏的自行车堆满大街小巷，群众想理个发也没有去处。有着光辉历史的“大功一连”急群众之所急，率先在唐山建设路开办起震后第一个便民服务处，理发点、修理处、饮水站一应俱全。一位60多岁的孤寡老大娘，家中生活用具全被砸坏。因为没有炊具，即使发给她粮食和蔬菜，也做不了饭。修理组的同志了解情况后，两次到她家修理炊具。老大娘感动地说：“人民子弟兵就是好，我永远忘不了亲人解放军。”据不完全统计，全团为群众理发3975人次，修理自行车1857辆，修理炊具4931件。 三 唐山大地震发生后，在党中央的坚强领导和统一部署下，“唐山需要什么，全国就支援什么”，物资源源不断运抵灾区。然而，随着抗震救灾的深入和灾区生产部分恢复，此前主要依靠救灾部队统一发放生活用品的“供给制”模式，已难以满足群众的生活需求。与此同时，唐山市一些基层组织机构逐步重建。在此背景下，发挥商贸系统作用，让商品尽快进入市场流通渠道，成为继解决吃饭、饮水、医疗等急迫问题之后，保障灾区群众生活的又一项紧迫任务。 群众的关切和需求，就是救灾部队的责任所系。在我团，首先敏锐察觉这一问题并将其提上日程的，是团政治处主任杨秀成。8月5日，杨主任带领我和干事陈伯和前往驻扎在唐山百货商场的三营进行调研。当时主持三营抗震救灾工作的，是已经确定转业的三营副营长张宪德。地震后，他在教导员遇难、营长负伤的情况下挺身而出，组织部队自救和抢救驻地群众。地震第二天上午，离营房仅有6公里的老家来人，告诉他家里有4位亲人遇难。但他毅然劝回了家人，主动请缨带领部队赶赴唐山市区救灾。当途经自家村口时，他也没顾上回家看一眼。在唐山新市区百货商场抢险救灾时，妹妹的家就在附近，他无暇过问。当得知遇难的妹妹就要被掩埋时，团领导让他过去看看，他说“现在救活人要紧”，始终没有离开战斗岗位。 杨主任在和副营长张宪德、副教导员王文奎交谈中提出，如果现在建一座简易百货商场开业售货，会是一种什么样的状况？大家你一言我一语探讨后，一致认为震后群众急需生活用品，商场应尽快开业保障供给。于是，他们一起研究了修建简易商场的方案，张副营长还对建筑材料、商品货物和兵力使用，作了详细安排。杨主任问什么时间能够开业？张副营长拍着胸脯说，一个星期！杨主任说，我最多给你们4天时间。下午，杨主任回到团部，把情况向团长等几位领导作了汇报，获得一致支持。 三营官兵实行三班倒，连续奋战4个昼夜，终于建起唐山震后第一座简易商场，随即移交地方营业。团里为商场题写了“地动山摇何所惧，泰山压顶不弯腰”匾额，还特地把一面五星红旗插上商场顶部。 第一座商场即将开业的喜讯，很快传遍整个唐山城。8月10日，商场正式开业。货架上，日常生活用品一应俱全，琳琅满目，人们争先恐后赶来，里里外外全是人。不少人仰望那面迎风飘扬的五星红旗，流下了激动的热泪。当天，正在唐山指挥抗震救灾的原北京军区副司令员肖选进乘车路过，也随着人流围观商场。他对身边的工作人员说，这可是一件大旱降甘霖的大好事，并询问这是哪支部队建的。当得知是第66军第589团时，他连声称赞：“好，好！” 四 不久后，抗震救灾指挥部下达命令，要求救灾部队从上到下紧急动员起来，解决群众过冬住房问题。时间紧，任务重，救灾部队连轴转，争分夺秒修建简易房，确保在11月底天冷之前，让灾区群众能够入住，过好震后第一个冬天。 然而，我们的战士哪里会盖房子？但灾区人民的需要就是命令。各连队纷纷从当地聘请一批技术人员，开办现场教学培训班。很快，修建简易住房战斗打响了，工地上空红旗飘扬，呈现出热火朝天的景象。经过1个多月的努力，一排排简易住房矗立唐山街头。仅我们一个团就修建1816间，并为唐山新市区百货商场、五金土产门市部、工人医院等单位，修盖房屋7400多平方米。 军爱民，民拥军。我们这支驻守唐山市区的部队在抗震救灾中作出的贡献，得到了党和人民的高度肯定。中央军委为我团记了集体二等功、第66军为我团授了锦旗；原北京军区授予一连“抗震救灾模范连”荣誉称号。全团有1个连队、5个排荣立集体二等功；2个营和3个连、6个排、14个班荣立集体三等功；14人荣立二等功，72人荣立三等功，384人受到嘉奖。 10月29日，我们胜利完成抗震救灾任务回营。由一辆解放牌大卡车装饰而成的彩车在车队前面引路。彩车上飘扬着鲜艳的“抗震救灾自救抢救先锋团”旗帜，各个连队紧随其后，也都把立功的旗帜高高悬挂在军车上。闻知消息的群众纷纷赶来，把军车围得水泄不通。我们只好停停走走，那种场景、那份真情催人泪下。 唐山大地震已经过去50个春秋。如今漫步在唐山街头，望着满城的烟火繁华，我感到无比欣慰和满足。当年我们参加抗震救灾，不就是为了唐山人民有一个幸福的今天吗？抗震救灾的日日夜夜已成过往，唐山军民创造的伟大抗震精神，沉淀为弥足珍贵的精神财富。 伫立在唐山大地震罹难者纪念墙前，我的目光抚过密密麻麻的姓名，寻找着我们部队遇难的官兵和为抗震救灾献身的英雄。良久，我向着纪念墙深深地鞠了一躬。步入唐山抗震纪念馆，我凝神端详那一幅幅照片、一件件实物。而在万千展品之中，最能紧紧抓住我目光的，依然是那面鲜红的军旗。我面向这面浸染着热血的旗帜，庄重地敬上一个军礼。 当年那场气壮山河的抗震救灾斗争已载入史册。党和军队不会忘记，山河大地永远记得，而亲历灾难的唐山人民，早已将这份记忆融入血脉世代相传。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

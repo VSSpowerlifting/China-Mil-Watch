@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | Decoding the &#34;Integration Cipher&#34; of a New Squadron — China Mil Watch</title>
+  <meta name="description" content="In spring 2025, a Central Theater Command Air Force unit merged two aviation maintenance squadrons—each maintaining a different aircraft type—into a single new formation, and PLA Daily&#39;s embedded repo">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2146.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2146.html">
+  <meta property="og:title"        content="Barracks Observation | Decoding the &#34;Integration Cipher&#34; of a New Squadron">
+  <meta property="og:description"  content="In spring 2025, a Central Theater Command Air Force unit merged two aviation maintenance squadrons—each maintaining a different aircraft type—into a single new formation, and PLA Daily&#39;s embedded repo">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | Decoding the &#34;Integration Cipher&#34; of a New Squadron">
+  <meta name="twitter:description" content="In spring 2025, a Central Theater Command Air Force unit merged two aviation maintenance squadrons—each maintaining a different aircraft type—into a single new formation, and PLA Daily&#39;s embedded repo">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Exercises">Exercises</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | Decoding the &#34;Integration Cipher&#34; of a New Squadron
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察｜解析一个新中队的“融合密码”</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>6 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16471954.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>In spring 2025, a Central Theater Command Air Force unit merged two aviation maintenance squadrons—each maintaining a different aircraft type—into a single new formation, and PLA Daily&#39;s embedded reporting documents the integration process over roughly one year, through a skills competition win and a brigade-level &#39;Four-Iron&#39; (四铁) advanced unit rating. The article records the specific friction points the squadron Party branch identified: physical separation of aircraft at opposite ends of the airfield, overlapping specialist billets with mismatched skill sets, and persistent informal segregation by original unit during off-duty hours. Political instructor Wang Muyuan&#39;s candid acknowledgment that coordinated maintenance under high-tempo operations and cross-type aircraft pairing remain unresolved extends the article&#39;s value beyond standard unit-building propaganda into a baseline record of how the PLA manages cohesion problems in force-structure consolidations at the squadron level.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Decoding the &#34;Integration Cipher&#34; of a New Squadron</p><p>■ PLA Daily Special Correspondent Xu Yiyang</p><p>Personnel of an aviation maintenance squadron of a unit under the Central Theater Command Air Force return from a skills competition with awards, receiving a warm welcome from their comrades. Photo by Sun Mengfei</p><p>Step inside the aviation maintenance squadron of a unit under the Central Theater Command Air Force, and a scene of vitality unfolds—</p><p>The &#34;maintenance culture&#34; (机务文化) corridor painted by the hands of officers and soldiers on the outer walls of the barracks is vivid with color; in a corner of the honors room, various models of self-developed tools are on display; inside the makers&#39; studio (创客工作室), several backbone personnel are bent over a discussion about an innovation project… None of this was mandated from above. It quietly sketches the distinctive character of this &#34;newborn&#34; squadron.</p><p>In the spring of 2025, a single order merged two squadrons that had each maintained different aircraft types into one new collective. How could two teams with entirely different traditions cohere, in a short period of time, into a &#34;family&#34; capable of fighting hard battles? This maintenance squadron chose to use cultural immersion and similar bonds as its connective tissue, letting integration take root in the details of every day, in every instance of working side by side, and in every act of shared creation.</p><p>In just over a year since the merger, this new squadron has seized first place at a skills competition, been rated as an advanced unit in overall development, and is steadily turning the test of &#34;combining two into one&#34; into the achievement of &#34;one plus one greater than two.&#34; This integration journey, only just begun, is providing a vivid footnote for the autonomous development and construction of grassroots companies in the new era.</p><p>Two rivers must find a common riverbed before they can truly merge into a surging new stream</p><p>In early spring of last year, a single order merged two aviation maintenance squadrons—each maintaining a different aircraft type—into one body, and a brand-new unit designation was born.</p><p>Squadron political instructor Wang Muyuan clearly remembers the scene at the first all-personnel military assembly: officers and soldiers sat divided by their original units, the boundary unmistakable, introductions stiff and awkward. After the assembly, Wang Muyuan overheard soldiers murmuring: &#34;We don&#39;t even maintain the same aircraft type—one group is at the east end of the airfield, the other at the west end. We barely saw each other before. How are we supposed to coordinate maintenance support going forward?&#34;</p><p>The words fell lightly but struck Wang Muyuan hard. He understood: merging unit designations takes only one order, but merging two hearts requires crossing many invisible divides.</p><p>On one side was the &#34;veteran&#34; squadron maintaining one aircraft type—meticulous in work style, deep in tradition, holding a long and honorable record of ensuring flight safety. On the other was the &#34;fist&#34; squadron maintaining another aircraft type—sharp in style, bold and aggressive, repeatedly distinguishing itself in major missions. After the merger, the personnel of the new squadron carried two entirely different &#34;atmospheres.&#34;</p><p>Where was the breakthrough point for integration? The squadron Party branch committee met deep into the night. Wang Muyuan summed it up: &#34;The unit designation is just a form. We need everyone&#39;s memories to overlap—only then will hearts find a place to settle.&#34; The next day, a &#34;root-seeking&#34; initiative was launched: dusty certificates of honor and old photographs were brought out, and in the veterans&#39; quarters, stories of years past gradually awakened in conversation.</p><p>Reviewing archives and listening to accounts, they found that although the two squadrons had different histories, both shone with the same light of &#34;ensuring flight safety.&#34; &#34;The honors do not belong separately to two teams—they are our common wealth,&#34; Wang Muyuan told the soldiers.</p><p>A proposal to build a new honors room won the response of the entire squadron. Officers and soldiers carefully polished medals, pennants, and certificates and displayed them together. On the five-meter-long unit history wall, the two glorious lineages were designed as intertwining lines, like tributaries flowing into a main river.</p><p>On the day the new honors room opened, officers and soldiers walked silently past the display cases. The honors that had once stood apart were shown together, and everyone felt that this was not a simple merger but two rivers surging forward on a shared riverbed.</p><p>The cohesion of the spirit requires a material carrier to sustain it. The squadron seized on the brigade Party committee&#39;s &#34;Four Questions on Troop Conditions&#34; (兵情四问) initiative, proactively reported its development ideas, and with the support of higher authorities, officers and soldiers used their spare time to paint walls and repair facilities, launching an all-hands &#34;new home construction campaign&#34; (新家建设大会战).</p><p>Change appeared first at the dining table. &#34;Taking good care of the food is the fundamental attitude toward officers and soldiers; doing the work well is the return for the organization&#39;s care.&#34; The squadron Party branch collected the taste preferences of officers and soldiers, added new cooking equipment, and introduced nutritionally customized menus. Hand-grabbed flatbreads, lamb pao mo, and other dishes appeared in succession; laughter in the mess hall increased, and a sense of &#34;home&#34; belonging spread from the tips of tongues.</p><p>Two rivers must find a common riverbed before they can truly merge into a surging new stream. After repeated deliberation by the squadron&#39;s backbone personnel, sixteen characters—&#34;centralized and unified, mutually respectful, closely coordinated, united in cooperation&#34; (集中统一、互相尊重、密切配合、团结协作)—were cast into a red steel plaque and erected beside the main road, becoming the visible &#34;squadron soul&#34; (队魂).</p><p>Specialist Du Shuaishuai was once discussing a troubleshooting method with a comrade when the two disagreed and voices began to rise. As the air grew tense, Du Shuaishuai caught a glimpse of the four red characters &#34;united in cooperation&#34; (团结协作) outside the window. He took a deep breath: &#34;I was too hasty just now. Your method is faster, mine is more reliable—wouldn&#39;t combining them be better?&#34; The other soldier paused, then nodded.</p><p>After the work was done, Du Shuaishuai said to new soldier Sun Mengcheng: &#34;Those red characters aren&#39;t there just to look at. Every time there&#39;s a conflict, I think about those sixteen characters. We&#39;re one family—our strength has to go in the same direction.&#34;</p><p>Old trees must put out new branches; new seedlings must put down deep roots—only then can they together hold up a broad canopy of shade</p><p>The home was taking shape; the ethos was taking root.</p><p>In the merged maintenance squadron, those with twelve or more years of service account for more than one-third of the total. They are experienced and technically skilled—a precious asset for generating combat capability. But in the early days of the merger, some veterans had become &#34;bystanders.&#34;</p><p>Some felt out of place in the new environment and were unwilling to take the initiative to integrate; some were wary of the differences in aircraft types and hesitant to give full play to their abilities; some veterans even felt the new collective was somewhat &#34;unfamiliar&#34; and showed little enthusiasm for their work.</p><p>How to turn these veterans from &#34;bystanders&#34; into &#34;the main force of development&#34; became the second examination question in the squadron&#39;s development.</p><p>Members of the squadron Party branch committee fanned out, holding individual heart-to-heart talks with veterans—making no demands, only listening to their thoughts, collecting problems and conveying trust through sincere communication.</p><p>Master Sergeant First Class Zhang Jun is a universally recognized &#34;old workhorse&#34;—solid in work style, meticulous in attention to detail. When the squadron&#39;s study room was first consolidated, equipment was arranged in disorder and no one managed its use. While the instructor was fretting over this, Zhang Jun came forward on his own initiative: &#34;Instructor, leave this to me—I&#39;ll make sure it&#39;s done right.&#34;</p><p>He not only put the study room in perfect order but also, at a &#34;Strivers Speak&#34; (奋斗者说) storytelling session, used plain language to recount his decades of dedication, deeply moving his younger comrades.</p><p>To let the veterans&#39; experience shine, the squadron added a &#34;Barracks Lu Ban Wall&#34; (军营鲁班墙) to the honors room and arranged &#34;Three Small Innovations&#34; (三小革新) display boards in the corridor, showcasing their &#34;small inventions, small creations, and small innovations&#34; (小发明、小创造、小革新). Regular technical exchanges were organized, with veterans explaining principles on the spot, making technical innovations &#34;visible and tangible.&#34;</p><p>Trust and a platform ignited enthusiasm. The squadron proposed establishing a &#34;makers&#39; studio,&#34; and Cui Chen, universally recognized as the &#34;technical ace,&#34; was the first to sign up. He set his sights on the problem of low efficiency and high risk in troubleshooting the temperature-limiting system of a certain fighter aircraft, led a team in two months of intensive work, and successfully developed a portable detection device that compressed troubleshooting time from several hours to a matter of tens of minutes.</p><p>Veterans willing to pass on knowledge, new soldiers bold enough to forge ahead—the squadron&#39;s &#34;mentor-apprentice pairing&#34; (师徒结对帮带) program put talent development into a virtuous cycle.</p><p>Staff Sergeant Second Class Wang Yulin and college-graduate soldier Shao Zhenyu became a &#34;friendship across generations&#34; (忘年交), a celebrated story in the squadron. Wang Yulin passed on in full the &#34;fault intuition&#34; and &#34;safety boundary&#34; awareness accumulated over decades; Shao Zhenyu, in turn, used systematic thinking and clear mind-mapping to organize and summarize the veteran squad leader&#39;s invaluable experience into standardized procedures.</p><p>&#34;Before, I was reluctant to pass on my skills. Now, watching my apprentice grow, I feel a tremendous sense of accomplishment,&#34; Old Wang reflected. Young Shao also admitted: &#34;The squad leader&#39;s experience is a treasure. Being able to learn from him is my good fortune.&#34; In the mutual advancement of teaching and learning, skill and spirit are passed down from generation to generation.</p><p>Change accumulated in small increments. Where people once said &#34;our original squadron,&#34; they now mostly say &#34;our unit&#34;; professional discussions no longer divide by &#34;your aircraft type, our aircraft type,&#34; but instead ask &#34;how do we solve this fault of ours?&#34; The squadron guided this trend, establishing a &#34;backbone assault group&#34; (骨干攻坚组) to let veterans take the lead and shoulder the main burden in training, innovation, and mentoring.</p><p>Late one night, Wang Muyuan passed the makers&#39; studio during his bunk check and saw Cui Chen adjusting new equipment with two young officers. He gently pulled the door shut without disturbing them. Moonlight like water fell on the sixteen-character &#34;squadron soul&#34; plaque; the four characters &#34;closely coordinated&#34; (密切配合) were especially clear.</p><p>Old trees must put out new branches; new seedlings must put down deep roots—only then can they together hold up a broad canopy of shade. Wang Muyuan knew that these veterans, once feared to become &#34;bystanders,&#34; were now firmly &#34;riveted&#34; to the positions where the squadron needed them most. The core force of the squadron&#39;s development had been fully activated.</p><p>Bearing a shared mission, the flight path extends toward a deeper and more distant sky</p><p>The cohesion of the spirit and the activation of strength must ultimately be tested in actual combat conditions. In late autumn of last year, a notification caused the entire squadron to snap to attention: the annual aviation maintenance position-based training competition (机务岗位练兵比武) was about to begin. This time it was different from before—it tested not only individual skills but also crew coordination, multi-specialty cooperation, and the squadron&#39;s overall maintenance effectiveness.</p><p>For a new squadron whose integration was not yet a year old, this was unquestionably a comprehensive &#34;major examination.&#34;</p><p>When the news arrived, the atmosphere in the squadron was somewhat charged. Some were eager and ready; others muttered privately: &#34;We&#39;ve only been merged for so long—can we really compete with those &#39;veteran&#39; squadrons?&#34; &#34;If we do badly, doesn&#39;t that prove the merger failed?&#34;</p><p>The squadron Party branch keenly sensed this mood and quickly convened a combat and training deliberation meeting to unify thinking: &#34;This is the best stage to display the fruits of integration and test the effectiveness of autonomous development—treat it as a &#39;whetstone&#39; for improving overall maintenance capability!&#34; Squadron commander Qiu Zifeng took the lead, independently breaking down tasks against the competition guidelines and formulating a detailed preparation plan.</p><p>From that point on, the squadron entered an intense &#34;competition period.&#34; The apron, the study room, corners of the corridors—all became training grounds where every minute counted. Regulation manuals were thumbed until their edges curled; the sound of keyboards and low-voiced discussions often continued past midnight.</p><p>Technical backbone personnel poured out their deepest reserves of experience, taking young soldiers through repeated &#34;sifting&#34; drills and coordination practice; young officers and soldiers dug in with determination, vowing to &#34;absolutely win honor for the new squadron.&#34;</p><p>On competition day, the examination hall was a battlefield. The good news came on the final day: the new squadron won first place in the overall team score and took top honors in multiple individual events. Officers and soldiers began to understand that honor has no &#34;yours or mine&#34;—this was &#34;their shared victory.&#34; That weighty laurel, won with their sweat, was the most meaningful proof of all.</p><p>At the end of last year, the results of the &#34;Four-Iron&#34; (四铁) advanced unit selection were announced. This new squadron, on the strength of its solid development achievements and its concrete integration results over the past year, earned recognition from the brigade Party committee.</p><p>Shortly afterward, the &#34;Four-Iron&#34; advanced unit citation was placed in the honors room, complementing the unit history wall. Sunlight fell and illuminated the sixteen-character steel plaque; the red characters shone ever more brilliantly.</p><p>Today, whenever a new group of comrades joins the squadron, they always first pause before that row of steel plaques. They carefully study the inspiring &#34;flight paths&#34; (航迹) of their predecessors recorded on the unit history wall, go to the honors room to examine closely the tool models designed by the squadron, and with reverence carefully polish every medal and trophy.</p><p>Personnel of an aviation maintenance squadron of a unit under the Central Theater Command Air Force jointly maintain the camp environment. Photo by Sun Mengfei</p><p>From the confluence of two rivers to the surging of a new stream, this new collective has walked its way to warmth and to strength.</p><p>At the end of the runway, the battle eagles roar into the sky. This newborn collective, just like the battle eagles it guards, is solid and reliable, steadily bearing a shared mission, its flight path extending toward a deeper and more distant sky.</p><p>Reporter&#39;s Notes</p><p>Tearing Down the &#34;Wall&#34; in the Heart</p><p>■ PLA Daily Special Correspondent Xu Yiyang</p><p>During a break in the interviews, I stood beside the airfield runway watching the sun slowly set beyond the western edge of the apron. Beside me, Corporal Luo Xin pointed into the distance and said: &#34;Before, even though we had merged into one squadron, some of the aircraft were at the west end of the airfield and some at the east end. Only about a kilometer apart, but we didn&#39;t run into each other much.&#34;</p><p>One kilometer—no more than three minutes by car, ten minutes on foot. Yet for a long stretch of time, that one kilometer was like an invisible wall.</p><p>This was my second visit to this maintenance squadron. The first time was in early summer of last year, just after the two squadrons had merged. What I saw then were faces that looked slightly guarded; in the mess hall, officers and soldiers from the two original squadrons habitually sat in two separate sections; even during rest time, everyone naturally divided into two circles.</p><p>Returning to this squadron a year later, I deliberately did not ask any squadron officers to accompany me. I walked alone into the honors room, the mess hall, and the barracks, wanting to see whether that &#34;wall&#34; was still there.</p><p>In the honors room, the medals from both former squadrons were displayed together—no hierarchy, no distinction between them. Every one had been polished clean, quietly recounting past glories. It was clear that the integration of this new collective had never been about erasing the past, but about letting two glorious histories converge into a brand-new river of the spirit.</p><p>In the hangar, I saw two soldiers crouching in front of an aircraft, discussing something. The slightly older soldier was explaining and gesturing; the younger one nodded from time to time and occasionally asked a follow-up question. The one speaking was fully engaged; the one listening was fully attentive.</p><p>I quietly asked someone nearby and learned that this was a mentor-apprentice pair who had originally belonged to different squadrons. I asked how long they had been working together. The young soldier looked up, his face still smudged with grease, and said with a smile: &#34;About two months, I guess. Anyway, now we&#39;re in the same unit—no distinction between yours and mine.&#34;</p><p>In that moment I suddenly understood: what is called integration is actually hidden in these everyday moments—hidden in every interaction, every instance of coordination, every act of accommodation.</p><p>At the close of the interviews, reflecting again on what the instructor had said about the journey from &#34;merger&#34; to &#34;integration,&#34; I came to a deeper understanding: the hardest part of a combined unit is combining hearts. Skills can be trained, internal affairs can be standardized, but the cohesion of hearts has never depended on any one person&#39;s effort—it requires every single person to be willing to extend a hand and together build a &#34;bridge of the heart&#34; (心桥) for communication.</p><p>Walking out of the camp, the setting sun was falling on the entrance of the barracks building, casting long shadows of the officers and soldiers standing in formation. I knew that this brand-new collective was using sincerity, bit by bit, to tear down the &#34;wall&#34; in its heart. The merger is only the starting point. When they truly think with one mind and exert strength in one direction, they will surely cohere into a stronger combat capability and advance steadily on the road of guarding the battle eagles.</p><p>Reporter&#39;s Dialogue with the Instructor of an Aviation Maintenance Squadron of a Unit Under the Central Theater Command Air Force—</p><p>Think with One Mind, Twist into One Rope</p><p>During the interview, the reporter exchanged views with Instructor Wang Muyuan on the subject of organizational development and integration pathways following the squadron&#39;s merger. Through his account, we can clearly see how a strong Party organization leads a unit from &#34;merger&#34; to &#34;integration.&#34;</p><p>Reporter: Since the merger, what have been the main changes in the squadron?</p><p>Wang Muyuan: Over the past year since the merger, we have moved from the initial stage of &#34;physical addition&#34; to the stage of &#34;chemical integration.&#34; The most tangible progress shows up in two ways things have become &#34;smooth.&#34; One is that hearts are aligned and morale is smoother. The branch has been consistently conducting heart-to-heart talks, and various activities are held regularly. Gradually, people have shifted from &#34;you are you and I am me&#34; to &#34;we,&#34; and the sense of belonging to the squadron has grown considerably. The other is that the work flows more smoothly. Aircraft maintenance and support coordination is more in sync than before; the earlier situation of unclear responsibilities, inconsistent standards, and mutual buck-passing has basically disappeared.</p><p>Reporter: During the integration process, what were some of the more thorny conflicts or sources of resistance you encountered?</p><p>Wang Muyuan: The resistance was mainly hidden. First, there was the &#34;wall&#34; in people&#39;s heads. The two original units each had their own way of doing things and their own rhythm. At the start, people would always mutter to themselves, &#34;our old way was better&#34;—and once that thinking took hold, it was easy for rifts to form. Second, there was the problem of how to use backbone personnel: after the two squadrons&#39; specialists merged, positions overlapped but capabilities and characteristics differed. Who to use, who not to use, how to pair people—all of it required careful weighing and consideration. Third, during leisure time, people still &#34;each went back to their own room.&#34; Day-to-day communication was insufficient; they couldn&#39;t enjoy themselves together. These problems cannot be solved by issuing orders—the organization has to patiently and methodically untangle them one by one.</p><p>Reporter: To address these conflicts, what specific methods did the Party branch use to break through them?</p><p>Wang Muyuan: We consistently used the &#34;joint development and creation of the three major organizations&#34; (三大组织联建联创)—the Party branch, the Youth League branch, and the Servicemembers&#39; Committee—as our handle, treating the difficulties of integration as the target of branch work. When there were ideological knots, we relied on the Party branch and Youth League branch to reorganize Party small groups and League small groups so that people sat together for organizational life activities, earnestly conducted ideological reporting and criticism and self-criticism (批评和自我批评), spoke openly—and the psychological distance gradually closed. On the use of backbone personnel, the branch did not resort to seniority-based arrangements; instead, we first rotated key positions and let people compete in major tasks to see who was truly more suitable. To address the problem of people failing to come together during leisure time, the Servicemembers&#39; Committee played a particularly important role—frequently planning simple collective activities, such as holiday evening parties and collective birthday celebrations. Participation was not compelled, but we put heart into creating an atmosphere of &#34;warmth the moment you arrive,&#34; and gradually dissolved that sense of awkwardness.</p><p>Reporter: What problems remain not fully resolved at present? Where will the focus of the next push be?</p><p>Wang Muyuan: I must be candid: deep integration is a long-term process. There are still two relatively prominent problems at the moment. One is that there are still gaps in refined coordinated maintenance support. This year we further advanced the integration of personnel across aircraft types, but under high-intensity, fast-tempo operations, the pairing on certain positions still needs to be worked in; sometimes people unconsciously over-rely on old partners and have insufficient rapport with new ones. The other is that the all-round development of officers and soldiers still needs to go deeper. For instance, some comrades are unclear in their own minds about how they will grow and develop in the future, and this directly affects their work motivation. In the next phase, the branch is determined to focus its efforts on &#34;extending organizational strength to the nerve endings of combat capability&#34; (组织力向战斗力末梢延伸)—embedding the joint development and creation of the three major organizations directly into crews and into the smallest combat units—while also intensifying heart-to-heart mentoring, so that every soldier not only knows how to do the work but also clearly understands for whom they are doing it and where they are headed, and so that the cohesion we have built is truly converted into combat capability.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">解析一个新中队的“融合密码” ■解放军报特约记者 徐艺洋 中部战区空军某部机务中队官兵比武得奖归来，受到战友热烈欢迎。孙孟飞摄 走进中部战区空军某部机务中队，一派生机勃勃景象—— 营房外墙上官兵亲手绘制的“机务文化”长廊色彩鲜明；荣誉室一角，陈列着各式自研工具模型；创客工作室内，几名骨干正围绕一项革新埋头讨论……这些并非上级布置的“规定动作”，悄然勾勒出这个“新生”中队独特的气质。 2025年春天，随着一纸命令，两个保障不同机型的中队合编为一个新的集体。底蕴各异的两支队伍，在短时间内如何凝聚成能打硬仗的“一家人”？这个机务中队选择以文化浸润等为纽带，让融合扎根于每一天的细节、每一次的并肩、每一份共同投入的创造。 合并短短一年多时间里，这支新中队在比武赛场上一举夺魁，在全面建设中获评先进，正一步一个脚印把“合二为一”的考验化作“一加一大于二”的成绩。这段刚刚启程的融合之路，正为新时代基层连队的自主建设与发展，提供着一份鲜活的注脚。 两条河流需要找到共同的河床，才能真正汇成一道奔涌的新川 去年初春，一纸命令将两个保障不同机型的机务中队合为一体，一个崭新的番号就此诞生。 该中队政治指导员王牧原清楚记得首次召开全体军人大会的场景，官兵按原单位分坐，界线分明，自我介绍拘谨生硬。散会后，王牧原听见有官兵低声议论：“连维护的机型都不一样，一个在机场东头、一个在机场西头，平时都见不了几面，这往后协同保障可咋办？” 这句话轻轻落下，却重重敲在王牧原的心上。他明白，番号的合并只需一纸命令，但两颗心的融合，却需要跨越许多看不见的沟壑。 一边，是保障某机型的“老牌”中队，作风缜密、底蕴深厚，保持着长期保障飞行安全的光荣纪录；另一边，是保障某机型的“拳头”中队，作风凌厉、敢打敢冲，屡次在重大任务中表现出色。合编后新中队的官兵，却带着两种截然不同的“气场”。 融合的突破口在哪？中队党支部会议开到深夜，王牧原总结说：“番号只是形式，得让大伙儿的记忆有交集，心才有着落。”次日，“寻根”行动铺开，尘封的荣誉证书、老照片被取出，老兵宿舍里，岁月故事在话语间逐渐苏醒。 查阅档案、聆听讲述，他们发现两个中队历史虽异，却同样闪耀着“保障飞行安全”的光芒。“荣誉不是分属两队的私有物，而是我们共同的财富。”王牧原对官兵说。 建设新荣誉室的提议得到全中队响应，官兵精心擦拭奖牌、锦旗、证书，统一陈列。5米长的队史墙上，两条辉煌历程被设计成交融的脉络图，如支流般汇入主干。 新荣誉室开放那天，官兵们默默走过展柜。曾经分隔两处的荣誉一同展示，所有人都感受到，这不是简单的合并，而是两条河流在共同的河床上，奔涌向前。 精神的凝聚需要载体的支撑。中队抓住旅党委开展“兵情四问”活动的契机，主动汇报建设思路，在上级支持下，官兵们利用业余时间粉刷墙面、整修设施，发动了一场全员参与的“新家建设大会战”。 变化先出现在餐桌上。“抓好伙食是对官兵的根本态度，干好工作是对组织关心的回报。”中队党支部收集官兵口味偏好，添置新式炊事设备，推出营养定制食谱。手抓饼、羊肉泡馍等相继亮相，食堂笑语多了，“家”的归属感在舌尖蔓延。 两条河流需要找到共同的河床，才能真正汇成一道奔涌的新川。经中队骨干们反复研讨，“集中统一、互相尊重、密切配合、团结协作”16个字被铸成红色钢牌，立在主干道旁，成为看得见的“队魂”。 特设员杜帅帅一次和战友讨论排除故障方法，二人各执己见，声调渐高。空气凝固之际，杜帅帅瞥见窗外“团结协作”4个红字。他深吸一口气：“刚才我太急，你的方法快，我的方法稳，结合起来是不是更好？”对方一怔，随即点头。 工作结束后，杜帅帅对新兵孙梦成说：“那些红字不是摆着看的。每次有矛盾，我就想想这16个字，咱们是一家人，劲儿得往一处使。” 老树需要发出新枝，新苗需要扎下深根，才能共同撑起一片浓荫 家园初成，家风扎根。 合编后的机务中队，兵龄12年以上的占比超过三分之一，他们经验丰富、技术精湛，是战斗力生成的宝贵财富。但合并初期，部分老兵却成了“旁观者”。 有的觉得新环境不适应，不愿主动融入；有的顾虑机型差异，不敢放手施展；有些老兵甚至一度觉得新集体有些“陌生”，工作劲头不高。 如何让这些老兵从“旁观者”变成“建设主力军”，成为中队建设的第二道考题。 中队支委分头行动，与老兵逐个谈心，不提要求、只听想法，在真诚沟通中收集问题、传递信任。 一级军士长张军是公认的“老黄牛”，作风扎实，心细如发。中队学习室刚整合时，设备摆放无序，使用无人管理。指导员正头疼时，张军主动找上门：“指导员，这事儿交给我吧，保证弄好。” 他不仅把学习室打理得井井有条，还在“奋斗者说”故事会上，用朴实的语言讲述自己数十年的坚守，深深打动了年轻战友。 为让老兵经验发光，中队在荣誉室增设“军营鲁班墙”，走廊布置“三小革新”展板，展示他们的“小发明、小创造、小革新”，定期组织技术交流，让老兵们现场讲解原理，让技术革新“看得见、摸得着”。 信任与平台点燃热情。中队倡议组建“创客工作室”，大家公认的“技术大拿”崔晨第一个报名。他瞄准某型战机限温系统排故效率低、风险高的难题，带领团队攻关两个月，成功研制便携式检测设备，将排故时间从数小时压缩至几十分钟。 老兵肯传，新兵敢闯，中队推行的“师徒结对帮带”计划，让人才成长形成了良性循环。 二级军士长王玉林与大学生士兵邵振宇结成“忘年交”，成为中队里的美谈。王玉林把几十年积累的“故障直觉”和“安全边界”意识倾囊相授，邵振宇则用系统化的思维和清晰的导图，把老班长的宝贵经验梳理总结成标准流程。 “以前不愿传手艺，如今看着徒弟成长，成就感十足。”老王感慨。小邵也坦言：“班长的经验是宝藏，能跟他学是我的幸运。”教学相长间，技艺与精神代代相传。 变化在点滴中累积。过去常说“我们原来中队”，如今多是“咱们队”；专业研讨不再分“你们机型、我们机型”，而是“咱们这个故障怎么解决”。中队因势利导，成立“骨干攻坚组”，让老兵在训练、革新、传帮带中当主角、挑大梁。 一天深夜，王牧原查铺路过创客工作室，看到崔晨正和两名年轻干部调试新设备，他轻轻掩上门，没有打扰。月色如水洒在16字“队魂”牌上，“密切配合”4个字格外清晰。 老树需要发出新枝，新苗需要扎下深根，才能共同撑起一片浓荫。王牧原知道，这些曾被担心会成为“旁观者”的老兵，如今已牢牢“铆”在了中队最需要的位置上。中队建设的核心力量，就此被全面激活。 托举着共同的使命，航迹向着更深远的天空延伸 精神的凝聚、力量的激活，最终要接受实战检验。去年深秋，一纸通知让全中队的精神骤然绷紧，年度机务岗位练兵比武即将展开，这次不同以往，不仅比个人技能，更突出机组协同、多专业配合和中队整体保障效能。 对于融合尚不满一年的新中队，这无疑是一次全方位的“大考”。 消息传来，中队氛围有些微妙。有人摩拳擦掌，也有人私下嘀咕：“咱们才合并多久，能跟那些‘老牌’中队比吗？”“万一比砸了，不是证明合并失败？” 中队党支部敏锐察觉到这股情绪，迅速召开议战议训会，统一思想：“这是展示融合成果、检验自主抓建成效的最好舞台，要把它当成提升整体保障能力的‘磨刀石’！”中队长邱子丰牵头，对照比武细则自主分解任务，制订详尽的备战计划。 自此，中队进入了紧张的“比武时间”，停机坪、学习室、走廊角落，都成了争分夺秒的练兵场。法规手册被翻得卷了边，键盘敲击声和低声研讨常常持续到后半夜。 技师骨干们把压箱底的经验倾囊相授，带着年轻人一遍遍“过筛子”、练配合；年轻官兵则铆足了劲，誓言“一定要为新中队争口气”。 比武之日，考场即战场。捷报在最后一天传来，新中队夺得团体总分第一，多个单项课目拔得头筹。官兵们开始明白，荣誉没有“你我之分”，这是属于他们“共同的胜利”。这顶沉甸甸的桂冠，是他们用汗水赢取的、最具分量的证明。 去年底，“四铁”先进单位评选结果揭晓。这个新中队，凭借一年来过硬的建设成绩和扎扎实实的融合成效，得到了旅党委的认可。 不久后，“四铁”先进单位奖状摆进荣誉室，与队史墙相映成辉。阳光洒落，照亮16字的钢牌，红字愈发熠熠生辉。 如今，每当新一批战友加入中队时，他们都会首先在那排钢牌前驻足。他们会认真观看队史墙上记录的前辈们振奋人心的奋斗“航迹”，会去荣誉室仔细端详中队设计的工具模型，会怀着敬意仔细擦拭每一座奖牌奖杯。 中部战区空军某部机务中队人员共同维护营区环境。孙孟飞摄 从两条河流的汇合，到一道新川的奔涌，这个新集体走出了温度，走出了力量。 跑道尽头，战鹰呼啸起飞。这个新生集体，正如它守护的战鹰一样，坚实、可靠，稳稳托举着共同的使命，航迹向着更深远的天空延伸。 记者手记 拆去心中那堵“墙” ■解放军报特约记者 徐艺洋 采访间隙，我站在机场跑道侧方，看着夕阳从停机坪西边缓缓落下。身旁，中士罗鑫指着不远处说：“以前我们虽然合并成了一个中队，但是一部分飞机在机场西头，一部分在机场东头。隔着也就一公里，碰面机会却不多。” 一公里，开车不过3分钟，走路也就10分钟。可在很长一段时间里，这一公里像一堵无形的墙。 这是我第二次来到这个机务中队。上一次是去年初夏，那时两个中队刚刚合并，我看到的是一张张略显拘谨的脸，食堂里原属两个不同中队的官兵习惯性分坐两片区域，就连休息时间，大家也自然分成两个圈子。 时隔一年再次来到这个中队，我特意没有让中队干部陪同，一个人走进荣誉室、食堂、宿舍，想看看这堵“墙”还在不在。 荣誉室里，两个中队曾经的奖牌一块陈列，没有主次，不分彼此。每一面都被擦拭得干干净净，静静诉说着昔日的荣光。看得出来，这支新集体的融合，从来不是抹去过往，而是让两段光荣的历史，汇聚成一条崭新的精神长河。 在机棚，我看到两名战士正蹲在一架飞机前讨论着什么。年纪稍长的战士边讲边比划，年轻的战士时不时点头，偶尔追问一句。讲的人很投入，听的人很认真。 我悄悄问旁边的人，才知道这是一对师徒，原来分属不同的中队。我问他们搭档多久了，年轻的战士抬起头，脸上还带着油污，笑着说：“也就两个月吧，反正现在是一个队的，不分你我。” 那一刻我突然明白，所谓的融合，其实就藏在这些日常的瞬间里，藏在每一次相处、每一次配合、每一份包容里。 采访尾声，再回想指导员谈及的从“合并”到“融合”的话题，我有了更深的体会：合编最难的是合心。技术可以培训，内务可以规范，但人心的凝聚，从来不是靠某一个人的努力，而是每一个人都愿意伸出手，共同搭建起一座沟通的“心桥”。 走出营区时，夕阳正洒在宿舍楼门口，官兵列队的身影被拉得很长。我知道，这个崭新的集体，正在用真心一点点拆掉那堵心中的“墙”。合编只是起点，当他们真正心往一处想、劲往一处使，必将凝聚起更强的战斗力，在守护战鹰的道路上，稳步前行。 记者对话中部战区空军某部机务中队指导员—— 心往一处使 拧成一股绳 采访中，记者围绕机务中队合并后的组织建设与融合路径，与指导员王牧原进行了交流。透过他的讲述，我们能清晰看到坚强的党组织如何引领队伍从“合并”走向“融合”。 记者：合并到现在，中队主要有哪些变化？ 王牧原：合并一年来，我们已经从最初的“物理相加”进入了“化学融合”阶段。最直观的进展体现在两个“顺”上。一个是人心齐了、气更顺了。支部一直在开展谈心谈话，各种活动也经常搞，大家慢慢从“你是你、我是我”变成了“咱们”，对中队的归属感强了很多。再一个是干活儿顺了。飞机维修保障配合起来比之前默契，以前那种责任不清、标准不一、互相推诿的情况基本不见了。 记者：融合过程中，遇到过哪些比较棘手的矛盾或阻力？ 王牧原：阻力主要是隐性的。首先是大家脑子里的“墙”。原来两个单位各有各的干法、各有各的节奏，刚开始总会有人心里嘀咕“还是我们原来那套好”，这种想法一来，就容易起隔阂。第二个是骨干使用上的问题，两个中队专业骨干合并后，岗位重叠，能力特点却不同，用谁不用谁、怎么搭配，都需要仔细权衡考虑。第三就是闲暇时间，大家还是“各回各屋”，平时交流不够，玩不到一块儿，这些问题靠下命令是解决不了的，得靠组织用耐心和办法一点点解开。 记者：针对这些矛盾，党支部通过哪些具体办法来破解？ 王牧原：我们始终以党支部、团支部和军人委员会“三大组织联建联创”为抓手，把融合难题当作支部工作的靶心。思想上有疙瘩，我们就依托党支部、团支部，把党小组、团小组重新编排，大家坐在一起过组织生活，扎扎实实搞思想汇报、开展批评和自我批评，敞开了聊，心理距离就慢慢拉近了。骨干使用上，支部不搞论资排辈那一套，让关键岗位先流动起来，在大项任务里比一比，到底谁更合适。解决业余时间融不到一起的问题，军人委员会尤为重要，经常策划一些不复杂的集体活动，比如假日晚会、集体生日，不强制要求，但用心营造一种“来了就有温度”的气氛，慢慢地把那股生分劲儿消解掉。 记者：目前还存在哪些没有完全解决的问题？下一步攻坚的重点在哪里？ 王牧原：必须坦诚地说，深度融合是一个长期过程。眼下比较突出的问题还有两个。一个是精细协同保障上还存在差距。今年我们进一步推动了跨机型人员融合，但在高强度、快节奏作业下，个别战位的搭档还需磨合，有时不自觉地过度依赖老搭档，与新搭档的默契度不够。另一个是官兵的全面发展还得往深里走，比方说有些同志对自己以后如何成长、怎么发展，心里是迷茫的，这直接影响了工作劲头。下一步，支部决心在“组织力向战斗力末梢延伸”上重点发力，把三大组织联建联创直接扎到机组、嵌入最小作战单元，同时加大谈心帮带力度，让每名战士不仅知道怎么干，更清楚为谁干、往哪儿走，把凝聚起来的这股劲真正转化成战斗力。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

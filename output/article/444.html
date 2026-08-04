@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>&#34;Terminal Commanders&#34; Step into the &#34;Command Tent&#34;: A Corps of Squad-Leader Commanders — China Mil Watch</title>
+  <meta name="description" content="A brigade of the 76th Group Army, garrisoned on the plateau, has institutionalized squad-leader participation in battalion command-group exercises, cross-specialty rotational assignments across tank, ">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/444.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/444.html">
+  <meta property="og:title"        content="&#34;Terminal Commanders&#34; Step into the &#34;Command Tent&#34;: A Corps of Squad-Leader Commanders">
+  <meta property="og:description"  content="A brigade of the 76th Group Army, garrisoned on the plateau, has institutionalized squad-leader participation in battalion command-group exercises, cross-specialty rotational assignments across tank, ">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="&#34;Terminal Commanders&#34; Step into the &#34;Command Tent&#34;: A Corps of Squad-Leader Commanders">
+  <meta name="twitter:description" content="A brigade of the 76th Group Army, garrisoned on the plateau, has institutionalized squad-leader participation in battalion command-group exercises, cross-specialty rotational assignments across tank, ">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Exercises">Exercises</span>
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    &#34;Terminal Commanders&#34; Step into the &#34;Command Tent&#34;: A Corps of Squad-Leader Commanders
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">“末端指挥员”迈入“中军帐”，这里有一支班长指挥员队伍</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>19 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16461996.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A brigade of the 76th Group Army, garrisoned on the plateau, has institutionalized squad-leader participation in battalion command-group exercises, cross-specialty rotational assignments across tank, armored infantry, and reconnaissance elements, and live-force opposing exercises in which squad leaders independently command small elements—producing over 30 adopted tactical recommendations since the start of this year. The program originated from a specific after-action failure in which a squad leader who assumed command after his platoon leader was assessed as a combat loss ordered a rash assault and had his element &#39;encircled and annihilated&#39; (包了饺子). The article documents a deliberate brigade-level effort to close the command-competency gap at the squad level before it surfaces in high-stakes combined arms exercises, fitting a broader PLA pattern of pushing tactical decision-making authority downward while simultaneously raising the baseline command literacy of noncommissioned officers.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Squad Leaders Share Tactical &#34;Golden Ideas&#34;</p><p>■ PLA Daily Special Correspondent Zhou Yun</p><p>In early summer, warmth gradually returns to the snow-capped plateau. At a command-group exercise site of a certain battalion of a certain brigade under the 76th Group Army, the command positions were occupied not only by battalion and company commanders, but also by several noncommissioned officer squad leaders in full combat gear. On the scene, Fan Hailong—a squad leader and Staff Sergeant Second Class from a certain company—gripped a command pointer, leaned over the terrain model, and shared his tactical concept with the battalion and company commanders.</p><p>&#34;Squad Leader Fan, give us your analysis and assessment of the offensive tactics for this operation.&#34; The moment Battalion Commander Ma finished speaking, Fan Hailong&#39;s pointer moved to a mountain valley pass on the sand table. &#34;The terrain here is a narrow corridor—the &#39;enemy&#39;s&#39; heavy fires cannot be effectively deployed—but the high ground on both flanks is ideal for an ambush. I recommend splitting into two routes…&#34;</p><p>&#34;That&#39;s an excellent tactical &#39;golden idea&#39;—worth adopting.&#34; Fan Hailong&#39;s presentation was logically clear, and it immediately caught the attention of the commanders present.</p><p>&#34;Why are frontline squad leaders taking part in a command-group exercise?&#34; Faced with this reporter&#39;s question, Battalion Commander Ma explained: &#34;These squad leaders are not here as temporary observers. They are an indispensable &#39;brain trust&#39; within the command group. From tactical war-gaming to plan development, they participate throughout—they are essential.&#34;</p><p>The origins of this corps of squad-leader commanders lie in a sobering lesson from a live-fire training exercise. That year, when higher headquarters organized an opposing-force exercise, a penetration element from the battalion was approaching the &#34;enemy&#39;s&#34; forward positions when the vehicle crew of a certain company&#39;s Third Platoon leader was struck and assessed as a &#34;combat loss.&#34; The squad leader who took over command fought bravely, but lacking command skills, he misjudged the location of the &#34;enemy&#34; ambush and rashly ordered an assault, ultimately resulting in the element being &#34;encircled and annihilated&#34; (包了饺子).</p><p>&#34;The squad leader is a critical link in the combat command chain. If that link breaks, even the best tactics cannot be successfully executed.&#34; At the after-action review, the brigade leadership made the point directly. The newly revised Regulations on Internal Affairs of the Chinese People&#39;s Liberation Army explicitly defines the squad leader&#39;s responsibilities: to lead the entire squad in combat preparation, to cultivate tenacious combat spirit (战斗精神), combat style (战斗作风), and combat will (战斗意志), and to command the entire squad in accomplishing combat tasks.</p><p>On the future battlefield, for squad leaders to fulfill their role as &#34;the head of the soldiers and the tail of the officers&#34; (兵头将尾), they must possess solid command capabilities. To that end, the brigade broke with conventional thinking and routinely incorporated squad-leader cadres into command-group exercises, while simultaneously rolling out talent-development measures such as cross-specialty rotational assignments and adversarial tempering, enabling squad leaders to practice command and strengthen their capabilities through realistic training.</p><p>&#34;Squad leaders understand the equipment, understand the soldiers, and understand the actual conditions at the terminal end of the battlefield,&#34; said Chief of Training Section Lai of the brigade. Since the beginning of this year, squad leaders have put forward more than 30 training &#34;golden ideas,&#34; which after adoption have been successfully converted into solutions to difficult problems in tactical training.</p><p>When the command-group exercise concluded, Fan Hailong wiped the sweat from his brow, his gaze more resolute than before: &#34;In the past, I always thought that leading my squad well and mastering my specialty was what made a qualified squad leader. Now I understand: being able to think about tactics and methods from an overall perspective, and to command in combat at the critical moment—that is the squad leader the battlefield needs.&#34;</p><p>A Certain Brigade of the 76th Group Army Innovates Its Talent-Development Model to Elevate Squad Leaders&#39; Command Capabilities—</p><p>&#34;Terminal Commanders&#34; Confidently Step into the &#34;Command Tent&#34;</p><p>■ Ke Jintao, PLA Daily Special Correspondent Zhou Yun</p><p>[Photo caption: A certain brigade of the 76th Group Army organizes squad-leader training instruction. Photo by Gao Qi.]</p><p>&#34;Rapidly seize favorable terrain!&#34; On a summer day at a certain location on the plateau, a small-element tactical training exercise of a certain brigade of the 76th Group Army was in full swing. Infantry elements and tank elements coordinated closely to launch an attack against the &#34;enemy.&#34; After the tank element cleared a path and struck the &#34;enemy&#39;s&#34; bunkers, the infantry element followed up and hit targets with anti-tank rockets.</p><p>Before the smoke had cleared, the combat element quickly assembled. Fan Hailong, a squad leader from a certain company serving as the element commander, immediately led everyone in an after-action review focused on problems that had emerged during the combined arms infantry-tank coordination training.</p><p>&#34;Today&#39;s squad-leader cadres are no longer merely &#39;skills specialists&#39; who only know how to train in their own specialty. Many have grown into terminal commanders who can command and coordinate.&#34; Speaking about the changes in the squad-leader cadre force, the brigade chief of staff said with satisfaction: &#34;In the past, we thought it was enough for squad leaders to manage training within the squad and oversee their assigned personnel—tactical command was the business of battalion and company officers. Today, as the brigade explores and innovates its talent-development model, the growth cycle of the squad-leader force has progressively shortened and their command capabilities have improved markedly.&#34;</p><p>Cross-Specialty Rotational Assignments—</p><p>Squad Leaders Cross Boundaries to Recharge; Coordination No Longer Stalls</p><p>&#34;Combined arms operations are not just about combining equipment and capabilities—more importantly, they require combining mindsets (思维合成).&#34; These words from a certain battalion&#39;s senior staff officer captured the goal and direction of talent development for combined arms training. In the past, whenever a major exercise or training task arose, he would find himself in a bind: tank-specialty squad leaders did not understand infantry tactics; infantry-specialty squad leaders did not understand tank capabilities; during battalion-level combined tactical exercises, each specialty element &#34;sang its own tune and walked its own road,&#34; and coordination was far from smooth.</p><p>Wang Jincheng, a Master Sergeant Third Class in a certain tank company, vividly remembers one exercise defeat. That year, when higher headquarters organized a live-force opposing exercise, he led a tank platoon attached with two infantry fighting vehicles to conduct a right-flank assault. Because he was unfamiliar with the assault tempo of armored infantry, he ordered the infantry to dismount too early, exposing the infantry elements to &#34;enemy&#34; fire coverage, ultimately resulting in heavy casualties. Walking off the exercise ground, Wang Jincheng was consumed by self-reproach: &#34;In the past, training was about infantry supporting tank operations. The moment the relationship was reversed, my shortcomings in coordination and command were immediately exposed.&#34;</p><p>&#34;In combined arms operations, every link connects to the next. Without the coordination of any single specialty, you cannot form the combined fist (攥指成拳) of combat power.&#34; Company Commander Wang of a certain armored infantry company—originally a tank company platoon leader who only fully grasped this after transferring to an armored infantry company—said that relying solely on a few combined exercises during the battalion tactical training phase cannot produce a high level of coordinated proficiency. The threshold for combined arms integration must be moved forward to squad and platoon training, and moved earlier into the capability development of squad-leader cadres.</p><p>To that end, the brigade broke down specialty barriers and implemented a cross-specialty rotational assignment mechanism for squad leaders, organizing squad leaders from different specialties—tanks, armored infantry, reconnaissance, and others—to undergo full-process, full-element follow-on learning covering everything from basic command communications and battle-formation transitions to deeper tactical logic and command competencies.</p><p>As one of the first rotation cadres, Wang Jincheng gradually came to understand the combat characteristics of infantry squads during his time with an armored infantry company. &#34;If you lay a solid foundation for coordination during the basic training phase, then during battalion combined tactical exercises and live-force opposing exercises, you can achieve a &#39;1+1&gt;2&#39; effect.&#34; Staff Sergeant Second Class Yi Yuankui of a certain tank company benefited greatly as well. During his rotation, he proactively sought out an infantry squad leader as his teacher, repeatedly studying and war-gaming infantry-tank coordination tactics. During one tactical training exercise, he led his tank crew attached to an infantry squad on a penetration mission; guided by a UAV operated by the infantry, he rapidly locked onto and destroyed an &#34;enemy&#34; infantry fighting vehicle concealed on a reverse slope, successfully resolving the crisis.</p><p>&#34;In the past, squad leaders from different specialties were like gears of different sizes—each could spin on its own, but when put together they always jammed,&#34; summarized Chief of Training Section Lai. &#34;Today, through cross-specialty rotational assignments, squad leaders have stepped outside their own specialty circles. By swapping roles, they have come to understand one another and coordinate closely, and their command perspective has broadened from a single squad and a single specialty to the entire combat system.&#34;</p><p>Soldier Seats Established in the &#34;Command Tent&#34;—</p><p>Full Participation in Tactical War-Gaming Continuously Broadens the Command Perspective</p><p>In front of the map, the laser pointer&#39;s dot traced the contour lines. Who would have imagined that the person speaking confidently, analyzing the &#34;enemy&#34; situation and offering tactical recommendations, was not a battalion or company commander, but an ordinary noncommissioned officer squad leader?</p><p>A command-group exercise centered on a highland mountain offensive was underway in a certain battalion. Squad Leader Chuan Rui of a certain company calmly offered recommendations while facing the operational map. Below the platform, battalion and company commanders and squad-leader cadres listened attentively, nodding and taking notes.</p><p>That a noncommissioned officer squad leader could deliver such a mature analytical assessment in a battalion command-group exercise is the result of the brigade&#39;s routine practice of guiding squad leaders into the &#34;command tent&#34; (中军帐) to be tempered. In the view of the brigade leadership, the level of tactical competence of squad leaders—as &#34;terminal commanders&#34;—directly determines whether combat orders can be effectively executed.</p><p>&#34;In the past, we always treated squad leaders as &#39;executors,&#39; overlooking the fact that they are also an important link in the command chain. Only by letting squad leaders enter the &#39;command tent&#39; to participate in tactical war-gaming can we broaden their command perspective and elevate their tactical competence.&#34; The brigade leadership made an explicit requirement: battalion command-group exercises and tactical method discussions must incorporate squad leaders from relevant specialties throughout the entire process, allowing squad leaders to participate as commanders in analyzing and assessing the situation, making combat decisions, and organizing combat coordination—compelling squad-leader cadres to transition from &#34;only knowing how to train&#34; to &#34;being able to think and plan.&#34;</p><p>Staff Sergeant Second Class Kong Qiqi is the brigade&#39;s well-known &#34;sharp-blade squad leader&#34; (尖刀班长)—the brigade record-holder in the armed five-kilometer cross-country competition, a recipient of the Theater Army &#34;Gold Medal Sniper&#34; designation, and the mentor of numerous top-performing trainees. Yet when he first encountered command-group exercises, this &#34;sharp-blade squad leader&#34; repeatedly struggled. The first time he was called to speak, he labored for a long while and squeezed out only one sentence: &#34;As long as the order is given, our squad guarantees we&#39;ll be the first to charge forward and resolutely complete the mission!&#34; The senior staff officer responsible for organizing the training immediately pointed out: &#34;What we need is command thinking and tactical methods—not a pledge of determination.&#34; That embarrassing moment made Kong Qiqi recognize his own capability shortcomings.</p><p>From that point on, Kong Qiqi started from the basics of tactical theory, repeatedly practicing situation analysis, assessment, and response skills using maps and sand tables, and actively speaking up at every command-group exercise. Today, he can not only offer mature tactical recommendations but also command small elements in tactical training tailored to plateau conditions.</p><p>Like Kong Qiqi, Chen Xiubo—squad leader and head of a certain battalion&#39;s &#34;unmanned reconnaissance and combat&#34; research team—also achieved a rapid leap in combat command capability. After receiving the tactical research task, it was precisely his experience of routinely participating in command-group exercises that helped him fill the gap in his ability to employ unmanned systems in a systematic tactical manner. Today, the research team he leads has not only mastered the operational skills for multiple types of UAVs but has also developed practical tactics for manned-unmanned cooperative reconnaissance in plateau environments.</p><p>&#34;Letting squad leaders into the &#39;command tent&#39; is not about filling seats or creating an audience—it is about placing burdens on them and building a stage for them.&#34; The brigade leadership told this reporter that through the tempering of command-group exercises, many squad-leader cadres have developed the ability to independently command small-element tactics and to participate in battalion and company tactical war-gaming.</p><p>Adversarial Element Training to Reinforce Combined Arms Thinking—</p><p>Squad Leaders Lead Elements in Opposing Exercises, Accelerating Their Growth</p><p>&#34;Red Force entirely eliminated!&#34; When the exercise controller&#39;s voice came through, Squad Leader Xiao Yanhui of a certain company instantly flushed red. It was his first time participating in a live-force opposing exercise as a small-element commander—and it ended in a crushing defeat.</p><p>From the start of the training, Xiao Yanhui rapidly allocated forces, commanding the Red Force tanks to seize forward key terrain and initially gaining the upper hand. Eager to exploit his advantage, he ordered the element to push straight ahead without conducting a comprehensive assessment of the Blue Force&#39;s disposition, unknowingly falling into a Blue Force pre-planned ambush. The Blue Force, exploiting favorable terrain, covertly positioned anti-tank fires and launched a surprise attack once the Red Force entered the engagement zone, catching Xiao Yanhui completely off guard. In less than one exchange, the entire Red Force was assessed as &#34;eliminated,&#34; and Xiao Yanhui&#39;s first combat command ended in defeat.</p><p>&#34;You didn&#39;t lose on military skills—you lost on command thinking,&#34; Company Commander Zhang cut to the heart of the matter. &#34;Live-force opposing training is like battlefield gaming. You cannot focus only on your own attack plan; you must constantly monitor Blue Force movements and assess changes in the battlefield situation. Without an overall perspective and without the ability to respond to contingencies, you will pay a heavy price on the battlefield.&#34;</p><p>&#34;In the past, when we organized squad tactical training, it was mostly process-driven training. Squad leaders grew accustomed to training along fixed routes and preset scripts. Over time, problems of weakened enemy-situation awareness and insufficient contingency command capability gradually became prominent.&#34; Company Commander Zhang acknowledged candidly that live-force opposing training can directly test a squad leader&#39;s tactical assessment and on-the-spot decision-making.</p><p>&#34;The future battlefield situation changes in an instant. Squad-leader cadres must, through all manner of complex adversarial training, forge the hard capability to assess the battlefield and command flexibly.&#34; To that end, each battalion in the brigade established Blue Force small elements based on actual conditions and routinely conducted opposing exercises, with an explicit requirement that squad leaders serving as Red Force small-element commanders independently allocate forces, assess the battlefield situation, and make command decisions throughout—compelling them to break out of the &#34;process-driven training&#34; mindset and temper their command capabilities through hard-fought adversarial training.</p><p>One week later, a new round of element opposing training commenced. This time, Xiao Yanhui drew on the lessons learned: rather than acting rashly at the outset, he first dispatched reconnaissance forces to fully determine the Blue Force&#39;s disposition before planning his offensive tactics. During the training, multiple Blue Force UAVs launched a surprise attack; Xiao Yanhui remained calm under pressure and commanded counter-UAV forces in defense. He then flexibly adjusted tactics, leading his tank crew in a flanking maneuver to harass the Blue Force and disrupt their combat tempo, while the infantry squad made a covert approach to the &#34;enemy.&#34; In the end, the objective was successfully seized and the outcome was reversed.</p><p>Walking off the training ground, Xiao Yanhui reflected: &#34;As a squad leader, you must not only be the &#39;sharp blade&#39; in the commander&#39;s hand—you must also develop a keen &#39;combat brain.&#39; In past training, we focused on how to complete the process. Now, participating in element opposing training, I think more about how to assess the situation and make flexible decisions. Every command action, every tactical step, requires thinking.&#34;</p><p>Like Xiao Yanhui, there are many squad-leader cadres in the brigade who have achieved capability leaps through live-force opposing training. Through element opposing training, the brigade has progressively broken the shackles of scripted training, integrating combined arms combat elements into element opposing training, which has become the &#34;whetstone&#34; for tempering squad leaders&#39; command capabilities.</p><p>&#34;Every squad-leader cadre bears on combat power and is a critical link in the command chain.&#34; The brigade leadership told this reporter that as training modes such as live-force opposing exercises and war-game simulations (兵棋推演) continue to deepen, the tactical assessment level and comprehensive command capability of squad-leader cadres continue to improve. A corps of squad-leader commanders who can command and excel at coordination is growing into the backbone force for winning on the future battlefield.</p><p>&#34;That Time I Served as an Element Opposing Exercise Commander&#34;</p><p>■ Staff Sergeant First Class Huang Hailong</p><p>[Photo caption: Huang Hailong (center) and comrades gather around the sand table to assess the &#34;enemy&#34; situation. Photo by Shi Jian.]</p><p>The experience of garrison training on the snow-capped plateau is an unforgettable memory from my military career. To this day, a precious photograph is preserved on the unit&#39;s computer. It captures the moment I stood before a makeshift sand table, assessing the &#34;enemy&#34; situation with my combat element members. That time, I served as the element opposing exercise commander, independently commanding an element opposing training exercise.</p><p>&#34;Enemy ambush position detected ahead.&#34; The intelligence relayed by comrades who had gone forward on reconnaissance instantly made the atmosphere tense. Faced with the sudden development, I took a deep breath, immediately steadied myself, rapidly assembled my comrades around the sand table, and assessed the &#34;enemy&#34; situation against the on-site terrain. Taking into account the characteristics of the plateau terrain, I quickly determined: the &#34;enemy&#34; ambush position had a complete fire system to the front, but there was a defensive blind spot on the right side of the mountain, and there was a flanking route suitable for a covert penetration.</p><p>&#34;First element, use the existing terrain to launch a frontal feint and draw the &#39;enemy&#39;s&#39; fires. Second element, follow me along the right side of the mountain in a covert maneuver, driving straight into the &#39;enemy&#39;s&#39; flank and rear.&#34; I calmly issued the combat order, and my comrades moved on command. After reaching the designated position, I gave the order, and the second element launched its surprise attack, coordinating seamlessly with the first element&#39;s frontal feint, catching the &#34;enemy&#34; completely off guard. Before long, we successfully destroyed the &#34;enemy&#34; ambush position.</p><p>This photograph captures a defining moment of me as an element opposing exercise commander, and also records my transformation from a frontline assault soldier to a qualified terminal commander. Having this experience in my military career means having a story of transformation and growth. On the road ahead in my military service, I will certainly train hard and strive to achieve new merit on the training ground.</p><p>&#34;Infantry-Tank Coordination: We Fought a Beautiful Battle&#34;</p><p>■ Master Sergeant Third Class Wang Jincheng</p><p>[Photo caption: Wang Jincheng calmly issues combat orders. Photo by Tian Junjun.]</p><p>This photograph captures a moment of mine on the training ground—during a battalion tactical training exercise that year, I flexibly applied infantry-tank coordination tactics and commanded my crew to successfully defeat the &#34;enemy.&#34; In the frame, I press the intercom, my expression resolute, calmly issuing combat orders.</p><p>&#34;Left-flank infantry fighting vehicle suppressed by &#39;enemy&#39; concealed bunker fire—infantry unable to dismount.&#34; The urgent voice came over the radio. In the past, I would certainly have ordered the driver to floor it, sending the tank charging straight in to slug it out with firepower—only to have the tank rush ahead too fast, leaving the infantry behind, and our isolated advance would have made us a sitting target for the &#34;enemy&#39;s&#34; anti-tank fires.</p><p>But this time, commanding on the spot, I was exceptionally calm, issuing orders in measured succession: &#34;Gunner, lock onto the bunker position—fire smoke rounds to obscure their line of sight.&#34; &#34;Infantry fighting vehicle, move to cover behind the left earthen slope and stand by to attack on opportunity.&#34;…</p><p>Thick smoke instantly enveloped the training ground, forming a natural screen. I keenly seized the tactical opportunity, commanding the tank to use favorable terrain to rapidly maneuver around the flank and precisely seize an advantageous firing position on the bunker&#39;s flank. Just as the smoke was about to dissipate, I decisively ordered fire—the &#34;enemy&#34; bunker was instantly destroyed. Simultaneously, the infantry fighting vehicle concealed behind the earthen slope rapidly pushed forward; the infantry comrades quickly dismounted and deployed into combat formation, forming a front-and-rear encirclement together with the tank. In less than ten minutes, we had successfully breached the &#34;enemy&#34; defensive line and accomplished the task of defeating the &#34;enemy.&#34;</p><p>When training ended, Infantry Squad Leader Li Yiling gave me a thumbs-up: &#34;Old Wang, infantry-tank coordination—we fought a beautiful battle!&#34; At that moment, I smiled with genuine joy.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">班长分享战术“金点子” ■解放军报特约通讯员 周 韵 初夏时节，雪域高原渐渐迎来暖意。第76集团军某旅某营指挥编组作业现场，指挥席位上，除了营连指挥员，还有数名身着战斗装具的军士班长。现场，只见某连班长、二级上士樊海龙手握指挥杆，俯身指向地形脉络，向营连指挥员分享他的战术构想。 “樊班长，谈谈你对这次进攻战术的分析判断。”该营马营长话音刚落，樊海龙的指挥杆指向沙盘上一处山谷隘口。“此处地形通道狭窄，‘敌’重火力难以展开，但两侧高地易设伏兵。我建议兵分两路……” “这个战术‘金点子’真不错，值得采纳。”樊海龙的陈述逻辑清晰，让现场指挥员们眼前一亮。 “指挥编组作业怎么还有来自一线的班长？”面对笔者的疑问，马营长解答：“这些班长可不是临时旁听的，而是指挥编组里举足轻重的‘智囊团’，从战术推演到方案制订，全程参与、不可或缺。” 这支班长指挥员队伍的由来，是一次实战化训练带来的深刻教训。那年上级组织对抗演习，该营一支穿插分队在抵近“敌”前沿阵地时，某连三排排长所在车组遭袭“战损”，接替指挥的班长虽然作战英勇，但因缺乏指挥技能，误判了“敌”伏击圈位置，贸然下令进攻，最终导致分队被“包了饺子”。 “班长是作战指挥链条的关键一环，如果这一环断了，再好的战术也难以成功运用。”复盘会上，该旅领导一语中的。新修订的《中国人民解放军内务条令》对班长职责明确规定：带领全班做好战斗准备，培育顽强的战斗精神、战斗作风和战斗意志，指挥全班完成战斗任务。 未来战场，班长要当好“兵头将尾”，必须具备过硬的指挥能力。为此，该旅打破固有思维，将班长骨干常态化纳入指挥编组作业，同步推开交叉轮岗、对抗淬炼等人才培养举措，让班长在实战化训练中练指挥、强本领。 “班长懂装备、懂士兵、懂战场末端的实际情况。”该旅作训科赖科长说，今年以来，班长们提出30多条练兵“金点子”，被采纳后顺利转化为破解战术训练难题的成果。 指挥编组作业结束，樊海龙擦了擦额头上的汗水，眼神更加坚定：“过去总觉得，把班里的兵带好、把专业练精就是合格班长。现在我才明白，能站在全局思考战术战法、在关键时刻指挥打仗，才是战场需要的班长。” 第七十六集团军某旅创新人才培养模式提升班长指挥能力素养—— “末端指挥员”自信迈入“中军帐” ■柯锦涛 解放军报特约通讯员 周 韵 第76集团军某旅组织班长训练教学。高 琦摄 “迅速抢占有利地形！”夏日，高原某地，第76集团军某旅一场小编组战术训练火热展开，步兵分队与坦克分队密切协同向“敌”发起攻击。坦克分队开辟通路后，迅速对“敌”地堡实施打击，步兵分队随后使用反坦克火箭击中目标。 硝烟未散，战斗编组迅速集合，担任指挥员的某连班长樊海龙，立即引导大家围绕步坦协同训练中出现的问题开展复盘。 “现在的班长骨干，早已不是只会练专业的‘技能尖兵’，不少人已成长为能指挥、会协同的末端指挥员。”谈及班长骨干队伍的变化，该旅参谋长欣喜地说，以往我们觉得，班长抓好班内训练、管好所属人员就行，战术指挥是营连干部的事。如今，随着旅队探索创新人才培养模式，班长队伍的成长周期逐步缩短，指挥能力素养得到显著提升。 跨专业交叉轮岗—— 班长跨界充电，协同不再卡壳 “合成作战不仅是装备和能力合成，更重要的是思维合成。”某营首席参谋的这句话，道出了合成训练人才培养的目标方向。过去每逢大项演训任务，他总会犯难：坦克专业的班长不懂步兵战术，步兵专业的班长不懂坦克性能，营战术合练时各专业班组“各唱各的调、各走各的道”，协同配合并不顺畅。 某坦克连三级军士长王金成对一次演习失利记忆犹新。那年上级组织实兵对抗训练，他带领坦克排配属2台步战车担负右翼进攻任务。由于不熟悉装甲步兵的进攻节奏，他过早下令步兵下车战斗，导致步兵班组暴露在“敌”火力覆盖范围内，最终伤亡惨重。走下演习场，王金成陷入自责：“过去训练的是步兵配合坦克行动，一旦关系反过来，我在协同指挥上的能力短板马上就暴露出来了。” “合成作战，一环扣一环，少了任何一个专业的配合，都形成不了攥指成拳的合力。”某装甲步兵连王连长说，他原本是坦克连排长，转岗到装甲步兵连后才深刻意识到，光靠营战术训练阶段的几次合练，练不出高水平的协同默契，必须把合成的关口前置到班排训练、前移到班长骨干的能力培养中。 为此，该旅打破专业壁垒，推行班长跨专业交叉轮岗机制，组织坦克、装步、侦察等不同专业的班长，从基础的指挥通信联络、战斗队形变换，到深层次的战术逻辑、指挥素养，全流程、全要素跟班学习。 作为首批轮岗骨干，王金成在装甲步兵连学习期间，逐渐摸透了步兵班的作战特点。“基础训练阶段把协同的底子打牢，到营战术合练、实兵对抗时，就能打出‘1+1&gt;2’的效果。”某坦克连二级上士易远奎同样受益良多。轮岗时，他主动拜步兵班班长为师，反复研讨推演步坦协同战法。一次战术训练，他带领坦克车组配属步兵班执行穿插任务，在步兵操纵的无人机引导下，快速锁定并摧毁了依托反斜面隐蔽的“敌”步战车，成功化解危机。 “过去，不同专业的班长就像不同规格的齿轮，虽然各自都能转，但合在一起总卡壳。”该旅作训科赖科长总结道，如今通过交叉轮岗，班长们跳出了自己的专业圈子，在角色互换中读懂彼此、密切协同，指挥视野也从一个班、一个专业，拓宽到了整个作战体系。 “中军帐”里设置兵席位—— 全程参与战术推演，指挥视野不断拓宽 地图前，激光笔的光点在等高线间游走。谁能想到，此刻侃侃而谈分析“敌”情、提出战法建议的人，不是营连指挥员，而是一名普通的军士班长？ 一场围绕高原山地进攻战斗的指挥编组作业正在某营紧张进行，某连班长传睿对着想定图从容提出建议。台下，营连指挥员和班长骨干认真聆听，不时点头记录。 一名军士班长能在营指挥编组作业中给出如此成熟的分析研判，是该旅常态化引导班长走进“中军帐”淬火历练的结果。在该旅领导看来，班长作为“末端指挥员”，其战术素养的高低，直接决定了作战命令能否落地见效。 “过去我们总把班长当成‘执行者’，却忽略了他们也是指挥链条的重要一环。只有让班长走进‘中军帐’参与战术推演，才能拓宽指挥视野，提升战术素养。”该旅领导明确要求，营指挥编组作业、战法研讨必须吸纳相关专业的班长全程参与，让班长以指挥员身份参与分析研判情况、定下战斗决心、组织战斗协同等流程，倒逼班长骨干从“只会练”向“会思考、懂谋划”转型。 二级上士孔启启是旅里有名的“尖刀班长”，武装5公里越野比武全旅纪录保持者、获评过战区陆军“金牌狙击手”，还带出不少训练尖子。可刚接触指挥编组作业时，这名“尖刀班长”屡屡犯难。第一次发言，他憋了半天只挤出一句话：“只要命令下达，我们班保证冲在最前面，坚决完成任务！”负责组训的首席参谋当场指出：“我们要的是指挥思路、战术战法，不是表决心。”那次尴尬让孔启启认清了自身能力短板。 从那以后，孔启启从基础战术理论学起，对着地图、沙盘反复练习分析研判和处置情况技能，每次指挥编组作业都积极发言。如今的他，不仅能提出成熟的战法建议，还能结合高原特点指挥小编组开展战术训练。 和孔启启一样，某营“无人侦察作战”攻关小组负责人、班长陈修波的作战指挥能力也实现快速跃升。受领战法攻关任务后，正是常态化参与指挥编组作业的经历，帮助他补上了无人力量体系化战术运用的能力短板。如今，他带领的攻关小组不仅熟练掌握了多款无人机的操作技能，还探索出高原环境下有人无人协同侦察的实用战法。 “让班长走进‘中军帐’，不是让他们凑人数、当听众，而是给他们压担子、搭台子。”该旅领导告诉笔者，通过指挥编组作业淬火，不少班长骨干具备独立指挥小编组战术、参与营连战术推演的能力。 编组对抗强化合成思维—— 班长带队打对抗，跑出成长加速度 “红方全部阵亡！”当导调员的声音传来，某连班长肖彦辉的脸瞬间涨得通红。这是他第一次以小编组指挥员身份参加实兵对抗训练，却以这样一场惨败收场。 训练一开始，肖彦辉便快速调配兵力，指挥红方坦克抢占前沿要地，开局一度占据上风。急于扩大战果的他，未对蓝方兵力部署进行全面研判，便指挥编组正面突进，殊不知已落入蓝方预设的伏击圈。蓝方借助有利地形，隐蔽部署反坦克火力，待红方进入打击范围后发起突袭，打得肖彦辉措手不及。不到一个回合，红方全部被判“阵亡”，肖彦辉的首次作战指挥以失利告终。 “你不是输在军事技能上，而是输在指挥思维上。”该连张连长直指要害，“实兵对抗训练如同战场博弈，你眼里不能只有自己的进攻计划，要时刻盯着蓝方动向、研判战场态势变化。缺乏全局观念、不会临机处置，到了战场会吃大亏。” “过去我们组织班战术训练，多以流程化训练为主，班长习惯了按既定路线、预设脚本施训，久而久之，敌情意识弱化、临机指挥能力不足的问题逐渐凸显。”张连长坦言，实兵对抗训练能直观检验班长的战术研判和临机决策水平。 “未来战场态势瞬息万变，班长骨干必须在各类复杂对抗中，练就研判战场、灵活指挥的硬本领。”为此，该旅各营立足实际组建蓝军小编组，常态化开展对抗训练，明确要求担任红方小编组指挥员的班长，全程自主调配兵力、研判战场态势、作出指挥决策，倒逼他们跳出“流程化训练”的思维定式，在硬碰硬的对抗中锤炼指挥本领。 一周后，新一轮编组对抗训练再次打响。这一次，肖彦辉汲取经验教训，开局后没有贸然行动，而是先派出侦察力量，全面摸清蓝方兵力部署后再谋划进攻战术。训练中，蓝方多架无人机突袭，肖彦辉临危不乱，指挥反无人力量进行防御。随后，他灵活调整战术，带领坦克车组迂回侧翼袭扰，打乱蓝方作战节奏，步兵班则隐蔽接“敌”，最终成功夺取目标、实现“翻盘”。 走下训练场，肖彦辉感慨地说：“作为班长，不仅要成为指挥员手中的‘利刃’，更要练就敏锐的‘作战大脑’。以往训练，我们关注如何把流程走完。现在参与编组对抗训练，思考更多的是怎么研判态势、灵活决策，每一次指挥、每一步战术，都要用脑子去思考。”像肖彦辉一样，在实兵对抗训练中实现能力跃升的班长骨干，在该旅还有不少。通过编组对抗训练，该旅逐步打破了脚本化训练的桎梏，将合成作战要素融入编组对抗训练，成为锤炼班长指挥能力的“磨刀石”。 “每名班长骨干都关乎战斗力，是指挥链条上的关键一环。”该旅领导告诉笔者，随着实兵对抗、兵棋推演等训练模式的持续深化，班长骨干的战术研判水平、综合指挥能力不断提升，一支能指挥、善协同的班长指挥员队伍正成长为未来战场打赢的中坚力量。 “那一次，我担任编组对抗指挥员” ■一级上士 黄海龙 黄海龙（中）与战友围拢沙盘研判“敌”情。 石 健摄 在雪域高原驻训的经历，是我军旅生涯中一段难忘记忆。至今，有这么一张珍贵照片留存在单位电脑里。这张照片拍摄的是我在简易沙盘前，与战斗编组成员研判“敌”情的瞬间。那一次，我担任编组对抗指挥员，独立指挥一场编组对抗训练。 “前方发现‘敌’伏击阵地。”前出侦察的战友传回的情报，瞬间让气氛变得紧张起来。面对突发情况，我深吸一口气立刻镇定下来，迅速召集战友围拢沙盘，对照现场地形研判“敌”情。结合高原地形特点，我很快判断：“敌”伏击阵地正面火力配系完善，但右侧山体存在防御盲区，且有可供隐蔽穿插的迂回路线。 “一组依托现有地形发起正面佯攻，吸引‘敌’火力。二组随我沿右侧山体隐蔽机动，直插‘敌’侧后。”我沉着下达作战指令，战友闻令而动。抵达预定点位后，我一声令下，二组发起突袭，与正面佯攻的一组默契配合，打了“敌”一个措手不及。没过多久，我们成功端掉“敌”伏击阵地。 这张照片，定格了我作为编组对抗指挥员的精彩瞬间，也记录了我从冲锋排头兵到合格末端指挥员的蜕变。军旅生涯有了这段经历，意味着有了一段转型成长故事。在未来军旅路上，我一定苦练本领，争取在训练场上再立新功。 “步坦协同，我们打了一场漂亮仗” ■三级军士长 王金成 王金成沉着下达战斗指令。 田俊君摄 这张照片，定格了我在训练场上的一个瞬间——那年营战术训练，我灵活运用步坦协同战术，指挥车组成功破“敌”。镜头里，我手按通话器，神情坚毅，沉着下达战斗指令。 “左翼步战车遭‘敌’暗堡火力压制，步兵无法下车。”急促的通话声响起。这要是在以前，我肯定会指挥驾驶员猛踩油门，让坦克硬冲上去拼火力，结果是坦克冲得太快，步兵被甩在后面，孤军深入的我们有可能成为“敌”反坦克火力的“活靶子”。 但这次现场指挥，我格外冷静，从容下达指令：“炮手锁定暗堡位置，发射烟幕弹遮蔽视野”“步战车向左侧土坡隐蔽待命，伺机进攻”…… 浓烟瞬间笼罩训练场，形成一道天然屏障。我敏锐地捕捉到战机，指挥坦克依托有利地形快速迂回，精准抢占暗堡侧翼有利射击位置。就在烟幕即将散尽之际，我果断下令开火，“敌”暗堡瞬间被摧毁。与此同时，隐蔽在土坡后的步战车迅速突进，步兵战友快速下车展开战斗队形，与坦克形成前后夹击之势。不到10分钟，我们就成功撕开了“敌”防线，圆满完成破“敌”任务。 训练结束，步兵班班长李以灵朝我竖起大拇指：“老王，步坦协同，我们打了一场漂亮仗！”那一刻，我开心地笑了。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
