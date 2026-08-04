@@ -1,43 +1,50 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-02 (reconciliation built, unmerged; origin/main missing 07-30→07-31).
+Updated: 2026-08-03 (reconciliation landed on local `main`; unpushed).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
 ## Working tree (as of this update)
 
-**Unpushed work holds the only copy of 80 articles.** HEAD is
-`fix/pipeline-data-loss-2026-07-30` (`25cdb7f`), 2 ahead / 4 behind
-`origin/main`. Local `main` is stale at `32c16f5`.
+**The reconciliation is landed and pushed.** `origin/main` is at `0f963fa`
+as of 2026-08-04; local `main` is in sync and the working tree is clean.
+`fix/pipeline-data-loss-2026-07-30` points at the same commit and is safe to
+delete. The 80 recovered articles (07-30, 07-31) are **no longer
+single-copy** — verified on the remote after the push: 2880 rows / 2880
+distinct urls / 672 analyzed, 40 articles on each of the two days.
 
-`origin/main` advanced independently while the branch sat local: billing
-markers for 07-30 and 07-31, then "Daily update: 2026-08-01" (`1f0444a`)
-and its run marker (`3c57e7f`). CI recovered unaided — consistent with the
-monthly spend cap resetting on 08-01, not with any repair.
+History: `origin/main` advanced independently while the branch sat local —
+billing markers for 07-30/07-31, then daily updates for 08-01, 08-02 and
+08-03. CI recovered unaided on 08-01, consistent with the monthly spend cap
+resetting, not with any repair. Production never held 07-30 or 07-31.
 
-Production therefore holds **no articles for 07-30 or 07-31** (40 each,
-local-branch only). `pla_watch.db` diverged on both sides from the same
-base and both allocated article ids from 2727, so the two new sets collide
-by id: git sees a binary conflict, and a plain merge silently drops one
-side.
+`pla_watch.db` cannot be merged by git: both sides advance from the same
+base and allocate ids from the same counter, so the two sets collide and a
+plain merge silently drops one side. This is now handled automatically by a
+**row-level merge driver** (`scripts/reconcile_db.py --merge-driver`, named
+in `.gitattributes`, installed by CI before every `git pull --rebase`).
+Origin is authoritative for identity; local-only rows are renumbered above
+origin's maximum. The 2026-08-03 merge of origin's 08-03 collection ran
+through this driver with no conflict: 80 new articles merged, 117 analysis
+rows backfilled.
 
-Reconciled by row-level merge, not by git — origin authoritative for
-identity (its ids 2727–2753 are already published in `output/article/*.html`
-and the sitemap), branch rows renumbered from 2754, 3 scrape_runs remapped,
-117 analyses backfilled onto rows still pending in origin. Result: 2827
-rows / 658 analyzed, continuous 07-29→08-01 coverage, and gates pass for
-fk, integrity, duplicate urls, id drift, and url loss from either side. The
-same inputs have produced digest `b80e813b` on three independent runs.
+Reconciled state (measured 2026-08-03): **2880 rows / 2880 distinct urls /
+672 analyzed**, continuous 07-26→08-03 coverage. All gates pass — 0 urls
+lost from either side, **0 id drift on rows origin already had** (origin's
+ids run to 2806, and those already rendered are live in
+`output/article/*.html` and the sitemap, so renumbering them would break
+published links), 0 duplicate urls, `foreign_key_check` and
+`integrity_check` clean. `validate_output.py` green
+at the 9-warning baseline.
 
-`origin/main` is now **merged into the branch** (`46b4a0a`), the binary
-conflict resolved with that reconciliation; branch is 4 ahead / 0 behind and
-the validator passes at the 9-warning baseline. **Not pushed.** The push was
-held because 09:10 fell inside the 08:23–10:23 cron window and `gh` is not
-installed here, so no one could see whether a run was in flight — pushing
-mid-run drives CI's `git pull --rebase` into the same binary conflict and
-`failure()` then takes the day's collection with it. Land with
-`git checkout main && git merge --ff-only fix/pipeline-data-loss-2026-07-30`
-once Actions shows the window clear.
+`output/` is byte-identical to `origin/main` — the branch never regenerated
+it — so landing this changes no rendered page. The next scheduled run
+regenerates once the recovered articles are analyzed.
+
+Pushed 2026-08-04 01:32 UTC, deliberately outside the drifted execution
+window (last run 08-03 16:42 UTC; next cron 08-04 12:23 UTC). Time any
+future manual push the same way — query the Actions API, never the cron
+comments. See CI schedule drift under Known issues.
 
 Historical note, still accurate: the previously uncommitted 2026-07-12 production-completion pass,
 2026-07-13 Signal Veil pass, and 2026-07-16 J-20 atmospheric pass (see
@@ -66,15 +73,16 @@ articles captured live, 3 recoverable). Expect and keep a **cadence-gap
 warning** from the validator for this break; it is the record of the
 outage, not a defect to suppress.
 
-**No. 12 is not safe to write from `origin/main`.** Its window holds five
-of seven days in production (07-26→07-29, 08-01 = 173 articles); 07-30 and
-07-31 are absent and live only on the unpushed branch. Reconciled, the
-window is 253 articles. The relevant-article count reads 42 either way only
-because the 80 recovered rows are still unscreened — at the 43.5%
-historical pass rate they should yield roughly 35 more. Unlike the
-No. 11-week gap, nothing flags this: the cadence sequence is unbroken and
-the validator stays quiet, so the edition would rest on two-thirds of its
-week without any warning. Land the reconciliation before drafting No. 12.
+**No. 12 is not yet draftable — its window is 62% unscreened.** With the
+reconciliation landed, the 07-26→08-01 window holds all seven days and 253
+articles (32 / 38 / 39 / 37 / 40 / 40 / 27). But only **36 are analyzed and
+156 are still unscreened**, including 37 of 40 on 07-30 and 36 of 40 on
+07-31. Relevant-so-far reads 42; at the ~44% measured pass rate the
+unscreened remainder should yield roughly 68 more. Unlike the No. 11-week
+gap, nothing flags this: the cadence sequence is unbroken and the validator
+stays quiet, so an edition drafted now would silently rest on a third of
+its week's screened material. Drain the window before drafting No. 12 —
+the backlog reserve alone will not clear it in time (see Next tasks).
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
@@ -94,17 +102,19 @@ warnings.
 entries; related notes). Do not fix by invention; explain any NEW warning
 here.
 
-## Blocked until 2026-08-01 00:00 UTC — API spend limit
+## API spend limit — block lifted 2026-08-01
 
-The account's configured API usage limit was reached on 2026-07-30 during
-the backfills; all LLM calls return 400 until access resets. Consequences
-and current state:
+The account's configured API usage limit was reached 2026-07-30 during the
+backfills; all LLM calls returned 400 until the monthly reset. The block has
+lifted and daily collection ran normally on 08-01, 08-02 and 08-03. Current
+state and durable consequences:
 
-- **Recovered before the block:** 131 articles translated. **Remaining:**
-  60 untranslated, 1,057 never-screened. Both backfill scripts are
-  re-runnable and resume where they stopped.
+- **Corpus as measured 2026-08-03:** 2880 articles, **1199 never screened**
+  (42%), 752 passed relevance, **80 relevant but untranslated**, 0
+  translated-without-summary — the 14 noted on 08-02 have cleared. Both
+  backfill scripts are re-runnable and resume where they stopped.
 - **2026-07-30 and 2026-07-31 collection are both captured** (40 articles
-  each, stored unanalyzed). 07-31 was taken at 21:58 UTC on 07-31 via
+  each, still unanalyzed). 07-31 was taken at 21:58 UTC on 07-31 via
   `.venv/bin/python pipeline.py --no-analysis`, closing the last window in
   which permanent loss was still possible. Do NOT rely on
   `ANTHROPIC_API_KEY=""`; see DECISION_LOG.
@@ -112,19 +122,13 @@ and current state:
   2026-07-31 §1). The 07-31 capture, under the old behaviour, rendered the
   unreviewed methodology draft into `output/` — that regeneration was
   reverted and the behaviour fixed.
-- **CI will fail its analysis stage until 08-01** but now persists whatever
-  it scraped (new workflow step), so no further collection is lost.
-- **No. 12 (week ending 2026-08-01)** needs 07-30/07-31/08-01 analyzed
-  before it can be written. 07-30 and 07-31 will be unanalyzed backlog
-  until access returns; the backlog reserve drains them, but check the
-  window is complete before drafting.
-- **14 articles sit with a translation but no summary** (`analyzed_at`
-  cleared, so excluded from output and re-queued). They will be redone by
-  the normal backlog drain after 08-01, re-translating in the process.
+- **CI persists whatever it scraped even when the analysis stage fails**
+  (workflow step added 07-30), so an account-level block no longer costs
+  collection.
 
 ## Known issues / gaps (recorded, not explained away)
 
-- **Analysis cap starved the backlog (fixed 2026-07-30; backfill running).**
+- **Analysis cap starved the backlog (fixed 2026-07-30; pile still draining).**
   `DAILY_ANALYSIS_CAP` was 15 while runs scrape ~30/day, and the queue was
   `new + pending + unscored` truncated to the cap — so the slice never
   reached the backlog and it drained at **zero per run, permanently**.
@@ -133,11 +137,34 @@ and current state:
   retried once. At the historical 44% pass rate the unscreened pile holds
   an estimated **~487 relevant articles** — so editions No. 1–11 drew on
   roughly 60% of the relevant material actually scraped. Fixed by
-  `BACKLOG_RESERVE_FRACTION` (0.3) plus raising the cap to 40, above the
-  scrape rate; `scripts/backfill_unscored.py` is clearing the pile.
+  `BACKLOG_RESERVE_FRACTION` (0.3) plus raising the cap to **55**, above the
+  scrape rate; `scripts/backfill_unscored.py` clears the pile faster.
   **Standing rule: the cap must stay above the daily scrape rate** — below
   it, a cost ceiling becomes a silent data-loss mechanism. Watch for the
   "newly scraped article(s) deferred by the cap" warning.
+  **Passive drain is too slow to rely on:** at cap 55 × 0.3 the reserve is
+  ~16 backlog slots, and the scheduling guard allows one real run per NY
+  day, so ~16/day against a 1199 pile is ~75 days. The pile shrinks only if
+  the backfill script is run deliberately.
+
+- **CI schedule drift, and green runs that did nothing.**
+  Scheduled runs start well after their cron time, every window, and the lag
+  is **not stable from day to day**. On 08-01 and 08-02 it was 60–100 min
+  (cron 12:23 UTC executing 14:02 and 14:04). On **08-03 it was far worse**:
+  the five runs started 15:21, 15:32, 15:58, 16:11 and 16:42 UTC against
+  crons 12:23–14:23 — roughly **138–178 min late**. So the 08:23–10:23 NY in
+  the old workflow comment is wrong, and the ~13:23–16:03 UTC replacement
+  first recorded on 08-03 is itself too narrow. Treat the window as
+  unpredictable: **always query the runs API before a manual push** instead
+  of trusting any recorded range, including this one. The off-peak
+  `:23`/`:53` minutes do not measurably help. Separately, a run whose
+  scheduling guard returns
+  `should_run=false` skips every step and still reports **success** — five
+  green runs a day is the designed shape (one real, four no-ops), so a green
+  check is **not** evidence the pipeline executed. Time any manual push
+  against the runs API, which answers unauthenticated because the repo is
+  public (`gh` is not installed here):
+  `curl -s "https://api.github.com/repos/VSSpowerlifting/PLA-Watch/actions/runs?per_page=8"`
 
 - **Translation losses (fixed 2026-07-30; backfill run).** 163 of 697
   relevant articles (23%) passed the relevance gate but were never
@@ -196,25 +223,33 @@ edition when the analyst authors one.
 
 ## Next tasks
 
-**After 2026-08-01 00:00 UTC, in this order:**
+**In this order:**
 
 1. Check remaining headroom in the Console — the guard estimates cost, not
    headroom, and cannot do this step for you.
-2. Resume the backfills **sequentially, not concurrently** (running both at
+2. Run the backfills **sequentially, not concurrently** (running both at
    once doubled the draw on 07-30):
    `.venv/bin/python scripts/backfill_translations.py --confirm-spend`
-   (60 articles, est. $1.88), then
+   (80 relevant-untranslated), then
    `.venv/bin/python scripts/backfill_unscored.py --confirm-spend`
-   (1,130 articles, est. $23.47). Both abort immediately on an
-   account-level block and resume cleanly on re-run.
-3. Confirm the No. 12 window (07-26→08-01) is fully analyzed before
-   drafting.
+   (1199 unscreened). Each prints its own spend estimate before proceeding;
+   both abort immediately on an account-level block and resume cleanly on
+   re-run. If spend is constrained, screen the No. 12 window first — 156 of
+   the 1199 sit inside 07-26→08-01.
+3. Confirm the No. 12 window is fully screened and analyzed before drafting.
 
 Then Sonnet tickets T1–T5 in docs/ROADMAP.md (archive month grouping;
 Edition Plate v1; Signal Field v1; asset hygiene; executive readout). Fable
 reviews rendered results of T2/T3 before regenerated output is committed.
 
 ## Recent completed work (compressed; details in DECISION_LOG.md)
+
+- 2026-08-02/03: three data-loss defects fixed and 131 stranded articles
+  recovered; 07-31 captured before its loss window closed; backlog drain
+  reordered live-window-first; `scripts/reconcile_db.py` added and wired as
+  a git merge driver so `pla_watch.db` reconciles by url instead of
+  conflicting; CI schedule drift and no-op green runs measured and recorded.
+  Landed and pushed as `0f963fa` on 2026-08-04.
 
 - 2026-07-25: daily workflow outage diagnosed and fixed. Every scheduled
   run 2026-07-18→07-24 failed at "Commit updated database and site
