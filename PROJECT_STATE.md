@@ -87,8 +87,9 @@ windows when estimating.
 Before drafting No. 12: clear the 9 untranslated (they carry no English
 title/summary, so no edition can cite them) via
 `scripts/backfill_translations.py`, then re-render and run the deploy gate.
-Note the window is screened but `output/` has **not** been regenerated —
-the DB is ahead of the site.
+The site has been re-rendered — `output/` and the DB are in sync at 782
+analyzed articles, 0 unrendered, 0 orphans, gate green at the 9-warning
+baseline.
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
@@ -123,6 +124,13 @@ state and durable consequences:
   and re-queue. Both backfill scripts are re-runnable and resume where they
   stopped — the DB is the checkpoint (`passed_relevance IS NULL`), there is
   no checkpoint file.
+- **Output silently lagged the DB by 117 articles for four deploys
+  (found and fixed 2026-08-03).** The 07-30 backfill's articles reached `main`
+  via the reconcile merge driver and were never rendered; the deploy gate read
+  `output/` in isolation and could not see it. Re-rendered (227 pages written,
+  including this session's 110), and `validate_output.py` **check 8** now fails
+  the gate on any analyzed-but-unrendered article. See DECISION_LOG 2026-08-03.
+  **Any DB-writing path must re-render before it counts as done.**
 - **`backfill_unscored.py` now takes `--since` / `--until`** (inclusive,
   `published_date`, YYYY-MM-DD). `--limit` alone could not scope a run to a
   current edition: it slices oldest-id-first, and the No. 12 window sat at

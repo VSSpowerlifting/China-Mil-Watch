@@ -2,6 +2,36 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-03 — The deploy gate compares the DB to output/, not output/ alone
+
+1. **A site missing a sixth of its analyzed corpus passed the gate four times.**
+   The 07-30 translation backfill wrote 117 analyzed articles to
+   `pla_watch.db`; the reconcile merge driver carried them onto `main`; nothing
+   re-rendered. `validate_output.py` checks 1–7 all read `output/` in
+   isolation, so the shortfall was invisible to it and to CI, and 117 articles
+   stayed unpublished through every deploy from 07-30 to 08-03. Measured
+   2026-08-03: 672 analyzed in the DB, 555 rendered pages, gap constant at 117
+   across `a1fff19`, `778d597`, `0f963fa` and `ffb5bf1`.
+
+2. **The gap is structural, not a one-off.** Any path that writes the DB
+   without re-rendering reproduces it: the two backfill scripts, a reconcile
+   merge, or a hand-merge of two DB lineages. The daily pipeline is not the
+   guard — it renders correctly from whatever DB its own runner holds (verified
+   in sync at `db71841`: 555 analyzed, 555 pages), so rows arriving by any
+   other route are simply never drawn.
+
+3. **Standing rule: a validator that reads only generated output cannot
+   certify that output is complete.** `validate_output.py` check 8 now compares
+   analyzed articles in the DB against rendered pages. Analyzed-but-unrendered
+   is **fatal** (it is always a defect, and `site/generator.py` fixes it in one
+   command); rendered-but-not-in-DB is a warning (the generator prunes stale
+   pages itself). The check skips when the DB is absent or a non-default output
+   dir is passed, so validating a copied or deployed tree still works.
+
+4. **Corollary for backfills: re-render before calling one done.** A backfill
+   that only writes the DB has published nothing. Run `site/generator.py` and
+   the gate afterwards, in that order.
+
 ## 2026-08-02 — The backlog is drained live-window-first, not FIFO
 
 1. **Plain FIFO buries exactly the articles an edition still needs.** Both
