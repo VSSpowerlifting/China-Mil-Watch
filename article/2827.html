@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wang Ji: A Life of &#34;Racing&#34; from a Wheelchair — China Mil Watch</title>
+  <meta name="description" content="Wang Ji, a researcher and doctoral supervisor at the National University of Defense Technology&#39;s College of Computer Science, has spent more than a decade developing highly trustworthy software techno">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/2827.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/2827.html">
+  <meta property="og:title"        content="Wang Ji: A Life of &#34;Racing&#34; from a Wheelchair">
+  <meta property="og:description"  content="Wang Ji, a researcher and doctoral supervisor at the National University of Defense Technology&#39;s College of Computer Science, has spent more than a decade developing highly trustworthy software techno">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Wang Ji: A Life of &#34;Racing&#34; from a Wheelchair">
+  <meta name="twitter:description" content="Wang Ji, a researcher and doctoral supervisor at the National University of Defense Technology&#39;s College of Computer Science, has spent more than a decade developing highly trustworthy software techno">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Wang Ji: A Life of &#34;Racing&#34; from a Wheelchair
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">王戟：轮椅上的“飞驰”人生</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>30 July 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16476657.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>Wang Ji, a researcher and doctoral supervisor at the National University of Defense Technology&#39;s College of Computer Science, has spent more than a decade developing highly trustworthy software technology (高可信软件技术) for critical defense systems while managing bilateral leg amputations and renal failure requiring thrice-weekly dialysis; in early 2025, his team&#39;s work on a national defense 973 project received the First Prize of the Military Science and Technology Progress Award (军事科学技术进步奖一等奖). The article is a human-interest profile in official military media; its value is as a record of how the PLA frames individual sacrifice and mission-driven research culture for its scientific and technical workforce, not as evidence of a new capability or program. The specific institutional problem it documents is retention and motivation of defense researchers under severe personal hardship — the framing points to an effort to hold up Wang Ji as a model precisely because the institution needs researchers to prioritize weapons-system software reliability over more internationally visible work.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Wang Ji: A Life of &#34;Racing&#34; from a Wheelchair ⬛ China Military Net reporters Zhang Yimiao, Tian Wensa, Zhang Wang; correspondent Zhou Yuhua</p><p>Sunlight passes through the glass window, falls on the edge of the computer desk, and then inch by inch moves onto a pair of hands striking the keyboard at high speed.</p><p>They are ordinary hands. The knuckles are clearly defined; between the rise and fall of fingertips, they tap out a steady, crisp rhythm.</p><p>Yet the owner of these hands is anything but ordinary. Where the cursor leaps and blinks on the computer screen, he is building a precise and reliable security barrier for the &#34;brain&#34; of the nation&#39;s most critical weapons.</p><p>When people encounter a difficult problem and need to think deeply, most pace back and forth. His &#34;pacing,&#34; however, is to push his wheelchair with both hands, glide a meter or two, and then turn back……</p><p>The wheelchair is slow; the mind races. Between fast and slow, Wang Ji — researcher and doctoral supervisor at the College of Computer Science, National University of Defense Technology — charges across the &#34;battlefield&#34; of his choosing in his own &#34;war chariot,&#34; tracing a life trajectory that will not stop until the objective is reached.</p><p>Wang Ji rides his wheelchair across campus.</p><p>The Direction of the Race</p><p>&#34;The nation&#39;s needs are my choice&#34;</p><p>In the dialysis room, the low hum of machines lingers in the air. A dialysis tube connects to the brown scar on Wang Ji&#39;s arm, left by years of repeated punctures.</p><p>In the winter of 2013, Wang Ji suffered a sudden aortic dissection. His life was saved through emergency rescue, but both legs had to be amputated at a high level due to prolonged ischemic necrosis. Eight years later, he required hemodialysis for renal failure. Three times a week, four hours each session — that has been the unvarying rhythm of treatment for the past several years.</p><p>Fate has been so cruel. Is there nothing to do but lament heaven&#39;s injustice?</p><p>Yu Fang, the orthopedic surgeon at Xiangya Hospital who personally performed his amputation and has since become a close acquaintance, describes Wang Ji this way: like the ocean — having weathered many storms, yet appearing utterly calm.</p><p>At this moment, Wang Ji reclines calmly against the head of the bed, leafing through papers from time to time. The medical equipment beside him runs at a steady pace; his mind runs at full power.</p><p>Beneath the calm, a surging, vigorous force — bestowed by the era — flows on.</p><p>A group photo of Wang Ji (first row, third from right) with his graduate school classmates.</p><p>China in 1983 was gathering strength to catch up with the world——</p><p>That year, in a laboratory at the National University of Defense Technology, the &#34;Galaxy-I&#34; (银河-I) supercomputer was born, making China the third country — after the United States and Japan — capable of independently developing a supercomputer.</p><p>That year, a cartoon used as the college entrance examination essay prompt provoked deep reflection across the nation: a well-digger repeatedly stops just as he nears water, digging one hole here and another there, sinking many wells but never striking water. A single exam question posed a challenge to the entire era: in the choices of life, should one dabble and then switch tracks in time, or persevere, lock onto a target, and fight to the end?</p><p>That year, Wang Ji was admitted to the Department of Computer Science at what was then the National University of Defense Science and Technology with outstanding scores, becoming the youngest undergraduate student in the entire school. The college entrance essay question about &#34;digging a deep well&#34; — he continued to answer it on the examination ground of life.</p><p>During his studies, Wang Ji studied under Academician Chen Huowang, who led the design of the software system for the &#34;Galaxy-I&#34; supercomputer, and remained at the university after completing his doctorate. Had he continued along his mentor&#39;s path, a broad and smooth road would have stretched before him — a stage provided by major national engineering projects, a mature pathway laid out by predecessors to follow, and achievements and honors within easy reach just ahead……Yet Wang Ji turned away from that wide, open road and chose a harder one: research into highly trustworthy software technology (高可信软件技术).</p><p>At the time, this field was virtually untouched in China. From the articulation of concepts to basic research, and then to engineering application, every step was &#34;crossing the river by feeling for the stones.&#34; It was difficult — not ordinarily difficult. Yet: &#34;The nation&#39;s needs are my choice.&#34; Wang Ji described his decision at the time this way: software is the &#34;brain&#34; of the nation&#39;s most critical weapons; if the brain is unreliable, no matter how strong the limbs are, it is of no use.</p><p>And so, on the eve of the full arrival of the information age, Wang Ji plunged headlong into the frontier of highly trustworthy software technology research — a field of critical importance to national defense security in the information age.</p><p>&#34;Those who dig wells begin from a pit of three inches and work their way to a depth of ten thousand ren (凿井者，起于三寸之坎，以就万仞之深).&#34; Admitted to the National University of Defense Technology before the age of 14, promoted to full professor at 33……life raced forward at full speed, until fate slammed the brakes on Wang Ji, again and again.</p><p>Wang Ji conducting research in his office.</p><p>On a snowy winter night in 2017, Dr. Yu Fang received a phone call from Wang Ji. They had not been in contact for more than three years. As a senior orthopedic surgeon at Xiangya Hospital, she knew all too well what a &#34;sudden call from an old patient&#34; meant.</p><p>By the time Wang Ji arrived at the hospital, Yu Fang found that the amputation site on his leg had become red and swollen, continuously weeping fluid — clearly the result of prolonged pressure from sitting. Wang Ji told her: &#34;The project has been at a critical stage recently. There have been a lot of business trips and meetings, and some meetings go on for several hours……&#34;</p><p>Yu Fang was stunned: &#34;What? You&#39;re still working?&#34;</p><p>Wang Ji smiled: &#34;I&#39;ve been working for several years now.&#34;</p><p>For a moment, Yu Fang&#39;s heart was filled with a tangle of emotions. Wang Ji, however, smiled and said: &#34;I can&#39;t stop.&#34;</p><p>When Wang Ji returned to his unit after surgery, the same intensity of work returned with him. &#34;The people who come to find Wang Ji are always those who have run into a tough &#39;hard bone&#39; (硬骨头),&#34; said Mao Xiaoguang, a professor at the College of Computer Science, National University of Defense Technology. &#34;The wheelchair is his &#39;war chariot.&#39;&#34;</p><p>After a certain national defense 973 project for which Wang Ji served as chief technical expert successfully passed its acceptance review, one sentence in the comprehensive evaluation report stood out with particular prominence: &#34;The overall technical level is at the international forefront and leads domestically; certain comparable indicators are at the international leading level.&#34; The results of this project were abundant. It is a &#34;toolbox&#34; — equivalent to opening a &#34;software hospital&#34; that specializes in treating the &#34;difficult and complex conditions&#34; of all kinds of equipment software systems. In early 2025, this research achievement was awarded the First Prize of the Military Science and Technology Progress Award (军事科学技术进步奖一等奖).</p><p>The confidence with which great national weapons break through waves and soar into the sky owes no small debt to this wheelchair-bound soldier&#39;s perseverance over more than a decade. The annotated papers sent from hospital beds and wheelchairs, the phone calls made to provide guidance — these are the answers he has written, line by line, with his second life: beside the well he identified, digging ten thousand ren into the earth, with no regrets even unto death (虽九死其犹未悔).</p><p>Wang Ji (second from right) discussing problems with his students.</p><p>The Speed of the Race</p><p>&#34;The slowest person on campus, the fastest runner on the road of scientific research&#34;</p><p>In the height of summer, the sound of cicadas drifts across campus, and graduation season quietly arrives.</p><p>In the corridor of the teaching building, the soft sound of a wheelchair gliding approaches. Wang Ji passes by students clutching their materials, rushing to their thesis defenses. The students cast admiring glances at him; he responds with a smile.</p><p>One faculty member on the team has never forgotten something from long ago. When he had just begun his master&#39;s program, the first task Wang Ji gave him was: spend one year reading an internationally published academic monograph that had just come out, draw nourishment from it, and build a solid foundation. At the time, the book&#39;s author was still unknown. Ten years later, that author stood on the stage to receive the Turing Award. Wang Ji&#39;s student from that time is now a backbone member of the team, and speaks of it with admiration every time it comes up: &#34;How did Professor Wang see it then? That kind of academic insight — even now I find it incredible.&#34;</p><p>Beyond a pair of eyes that can see far enough ahead, Wang Ji also possesses a sense of urgency etched into his very bones. Especially after falling ill, he has said on many occasions: &#34;The time for building a strong military through science and technology is very tight, and the time I have left to work is far from enough……&#34;</p><p>In 2015, just after the Spring Festival, a wheelchair rolled over the threshold of the university&#39;s teaching building.</p><p>Looking at the tall steps in front of the building, Wang Ji simply moved the classroom to a conference room accessible by wheelchair. Even without a nameplate, even though it was not inside the teaching building — the room held only a conference table, a whiteboard, and a few chairs — Wang Ji said: &#34;Knowledge has no fixed venue. Wherever the students are, that is where the classroom is.&#34;</p><p>Years later, the students who walked out of that &#34;dedicated classroom&#34; have two sets of images firmly fixed in their memories——</p><p>One is the table-slapping &#34;arguments.&#34; The whiteboard is covered in derivation formulas; everyone often argues until their faces are red over algorithm paths and technical solutions. Wang Ji never uses &#34;authority&#34; to suppress others. Whether a longtime colleague of twenty years or a young student newly joined to the team, anyone can &#34;argue until their face turns red&#34; with him. In Wang Ji&#39;s view, this kind of &#34;argument&#34; is precisely the soil that innovation needs most. After one discussion session, he said to those around him: &#34;Maybe inspiration comes in the middle of the argument, and the problem just opens up.&#34;</p><p>The other is a warm, gentle smile. When taking the group photo that hangs on the honor wall in the corridor of the Galaxy Building (银河楼), Wang Ji gave the &#34;center position&#34; (C位) to the students and stood at the far right himself. On important papers published at international Class-A conferences, the student&#39;s name appears first; Wang Ji&#39;s name, as supervisor, comes after. On business trips and research visits, no matter how small the expense — even a few dozen yuan — Wang Ji insists on transferring the money to the students, unwilling to let them bear even a fraction of the cost. When doing these things, Wang Ji always wears a brilliant, warm smile.</p><p>The easygoing and open-minded Wang Ji also has moments when he will not negotiate——</p><p>In 2017, an internationally organized &#34;software verification competition&#34; entered the view of Wang Ji&#39;s team. In their first appearance, they took first place. In 2018, they won again. In 2019, they reached the top for the third time. The unprecedented &#34;three consecutive championships&#34; made international peers sit up and take notice. When everyone was hoping they would continue to claim glory, Wang Ji decided to stop competing.</p><p>&#34;Our mission is not to win championships,&#34; Wang Ji told the team. The standardized tools of this competition cannot be directly adapted to domestic military software; what we research must translate into combat capability (战斗力) — only then will we have fulfilled our mission.</p><p>From &#34;competing for championships&#34; to &#34;not competing for championships&#34; — this seemingly contradictory choice reflects Wang Ji&#39;s consistent philosophy of scientific research. The words of his mentor, Academician Chen Huowang — &#34;reach the heavens and stand on the earth&#34; (顶天立地) — are the scientific research founding aspiration (初心) Wang Ji has long upheld, and the bedrock of who he is as a person.</p><p>In 2014, Wang Ji watches the World Cup during his rehabilitation at a Beijing hospital and receives a football sent by a colleague.</p><p>The Driving Force of the Race</p><p>&#34;As long as you don&#39;t give up, everyone will help you&#34;</p><p>During the interview, a photograph caught everyone&#39;s attention——</p><p>In a hospital room, Wang Ji holds a football high above his head while lying in his hospital bed, his face radiant with a sunlit smile. The football was a gift from colleague Wang Ting. It was the height of summer; the fever of the Brazil World Cup had swept the nation.</p><p>&#34;I didn&#39;t feel it was presumptuous, and I never thought he wouldn&#39;t be able to work again. I just wanted him to return to the group as soon as possible,&#34; said Wang Ting. In his eyes, even without his legs, Wang Ji has always been the one who can run the fastest.</p><p>This simple trust is a seed that Wang Ji, through his optimism in the daily accumulation of years, has sown in the hearts of the colleagues around him. When the storms of life come crashing in, that seed blooms in the hearts of those nearby.</p><p>His wife, Huang Chun, is the gentlest harbor in Wang Ji&#39;s life, and also his most tacitly understanding companion on the road of scientific research.</p><p>In 1990, Wang Ji met Huang Chun, a junior schoolmate who harbored the same dreams. &#34;I felt I could never find anyone better than her.&#34; On the day they registered their marriage, the two passed by a small restaurant; a simple lunch was the entirety of their wedding.</p><p>The buildings where they each work are visible to one another at a glance. Late at night, two facing windows are always lit — those are their respective offices. The best love is not being inseparable at every moment, but two adjacent buildings, lit by the same light.</p><p>In those darkest days, the light that illuminated each other came from more than one source.</p><p>Liu Wanwei, once a student and now a colleague, has never forgotten one detail——</p><p>When Wang Ji was being rescued in the hospital, everyone spontaneously organized shifts, taking turns keeping watch in the emergency room. Each person would record in a small notebook the condition of Professor Wang that day. Wang Ji was still unconscious at the time. On the day it was Liu Wanwei&#39;s turn to keep watch, he saw that the previous classmate had written in the notebook: &#34;Professor Wang is safe through the night.&#34;</p><p>At such a moment, when life hung by a thread, the weight of the words &#34;safe through the night&#34; was immense. They were no longer an ordinary greeting or wish, but a precious moment won through everyone&#39;s day-and-night vigil and silent prayers. More than a decade has passed, and he has never forgotten that line of writing, nor the smile on Professor Wang&#39;s face as he sat in his wheelchair. Liu Wanwei said: &#34;When I encounter obstacles in work or life that I can&#39;t get past, I think of Professor Wang, and I immediately find my way through.&#34;</p><p>Wang Ji never troubles others. As soon as his health improved slightly, he insisted on traveling alone on business trips, leaving at five in the morning to catch the earliest flight and make it to a morning meeting. During project acceptance reviews, he might fly three or four times in a single month. He always says: &#34;Whatever I can do myself, I do myself. Everyone works hard on scientific research — there&#39;s no need to waste time picking me up and dropping me off.&#34;</p><p>Heaven helps those who help themselves (自助者，天助之).</p><p>No one remembers when it started, or who initiated it first. Colleagues began arriving punctually every day, parking their cars downstairs from Wang Ji&#39;s building to take him to and from work. One trip, two trips; one day, two days……Wang Ting has been doing this for eight years, in the blink of an eye.</p><p>Gradually, a ramp quietly appeared at the entrance to the cafeteria. The threshold in front of the teaching building was worn smooth at some point, no one quite knows when. The people around him no longer think there is anything special about him being in a wheelchair. When the college holds its sports meet, he is invited to watch in person just the same.</p><p>Wang Ji&#39;s mother has difficulty getting around; the community has quietly delivered meals to her for ten years. His daughter has become a &#34;permanent resident&#34; at the home of a neighbor, Sister Liang. Last year, Wang Ji&#39;s eighty-year-old mother pushed her walking frame to handle some business at the community office. A staff member offered to help; the old woman waved her hand: &#34;I want to walk back on my own, just like my son.&#34;</p><p>Wang Ji at the National University of Defense Technology.</p><p>As night falls, one light after another comes on in the Tianhe Building (天河楼) — older faces, younger faces, familiar faces, faces seen for the first time……each one, bearing reverence and tenacity, busy in the play of light and shadow.</p><p>Wherever Wang Ji has passed, there are the tracks of a wheelchair, and the footprints of even more people. More and more people have quickened their pace to follow, layering their own efforts one upon another, converging into a road of hard-fought advance.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">王戟：轮椅上的“飞驰”人生 ⬛中国军网记者 张艺藐 田雯飒 张旺 通讯员 周雨花 阳光透过玻璃窗，落在电脑桌的边沿，然后一寸一寸，挪到一双飞速敲击键盘的手上。 这是一双普通的手。骨节分明，指尖起落间，敲出沉稳利落的节奏。 然而，这双手的主人并不普通。电脑屏幕上，光标跃动闪烁处，在为国之重器的“大脑”搭建一道精密可靠的安全屏障。 人们遇到难题需要深度思考时，大多会来回踱步。而他的“踱步”，却是用双手摇动轮椅，滑行一两米，然后折返…… 轮椅是缓慢的，思想是飞驰的。快慢之间，国防科技大学计算机学院研究员、博士生导师王戟，在自己专属的“战车”上，驰骋于自己选定的“战场”，留下一道不达目的绝不罢休的人生轨迹。 王戟坐着轮椅行驶在校园中。 飞驰的方向 “国家的需要就是我的选择” 透析室里，仪器的嗡鸣声低低萦绕，一根透析管连接着王戟手臂上常年穿刺留下的褐色瘢痕。 2013年冬天，王戟突发主动脉夹层，经紧急抢救，命是保住了，双腿却因长时间缺血坏死，不得不高位截肢。8年后，他又因肾衰竭需要进行血液透析。每周三次、每次四小时，是这几年来雷打不动的治疗节奏。 命运如此多舛，惟有怨叹老天不公吗？ 当年亲手为他实施截肢手术、如今早已相知相交的湘雅医院骨科医生俞芳这样评价王戟：像大海一样，经历很多风浪，但看起来非常平静。 此时的王戟，平静地半靠在床头，时不时翻看着论文。身旁的医疗仪器匀速运转，他的大脑在满功率运行。 平静之下，涌动着时代赋予的昂扬力量。 王戟（一排右三）与研究生同学们的合影。 1983年的中国，正在蓄力追赶世界—— 那一年，在国防科技大学的实验室里，“银河-I”巨型计算机问世，我国成为继美、日之后第三个能独立研制巨型计算机的国家。 那一年，高考作文题给出的一幅漫画引发全民深思：挖井人每次临近水源便中途停手，东一个西一个挖了不少井，却始终打不出水来。一道考题叩问整个时代：人生的选择，究竟是该浅尝辄止，及时更换赛道，还是持之以恒，认准目标就要苦战到底？ 那一年，王戟以优异成绩考入原国防科学技术大学计算机系，成为全校年龄最小的大学生。“打深井”这道高考作文题，他在人生的考场上继续作答。 求学深造时，王戟师从主导设计“银河-I”巨型机软件系统的陈火旺院士，博士毕业后留校。如果沿着老师的路走下去，王戟面前将是一条康庄大道——有国家重大工程作舞台，有前辈梳理形成的成熟路径可循，还有不远处一眼就能看见的成果和唾手可得的荣誉……然而，王戟却在这条宽阔坦途前转了身，选择了一条更难的路——进行高可信软件技术研究。 这个领域当时在国内几乎无人涉足，从概念提出到基础研究，再到工程应用，每一步都是“摸着石头过河”。难，不是一般的难！然而，“国家的需要就是我的选择。”王戟这样描述自己当初的决定：软件是国之重器的“大脑”，大脑不可靠，四肢再强健也无济于事。 就这样，在信息化时代全面到来的前夜，王戟一头扎进了高可信软件技术研究这个对信息化时代国防安全至关重要的前沿阵地。 “凿井者，起于三寸之坎，以就万仞之深。”不满14岁考上国防科技大学、33岁评上教授……人生一路飞驰，直至命运给王戟踩了一脚又一脚急刹车。 王戟在办公室开展研究。 2017年一个飘雪的冬夜，俞芳医生接到了王戟打来的电话。三年多没联系了，作为湘雅医院骨科的资深医生，她太清楚这通“老病人的突然来电”意味着什么。 等王戟赶到医院，俞芳发现，他的腿部截肢处出现红肿，不断往外渗液，一看就是久坐挤压导致的。王戟告诉她：“最近项目关键期，出差开会比较多，有的会议一开就是几个小时……” 俞芳愣住了：“怎么？你还在工作？” 王戟笑道：“我都工作好几年了。” 一时间，俞芳的心里五味杂陈，王戟却笑着说：“我停不下来。” 王戟手术后回归单位的同时，曾经的工作强度也一并回归。“来找王戟的，都是遇上了难啃的‘硬骨头’，”国防科技大学计算机学院教授毛晓光这样评价王戟，“轮椅就是他的‘战车’。” 王戟担任技术首席专家的某国防973项目顺利通过验收后，综合评价报告里有一句话格外醒目：“整体技术水平处于国际前列、国内领先，部分可比指标处于国际领先。”这项成果，是丰硕的。它是一个“工具箱”，相当于开了一家“软件医院”，专治各类装备软件系统的“疑难杂症”。2025年初，这项科研成果荣获军事科学技术进步奖一等奖。 大国重器破浪飞天的底气，也少不了这位轮椅之上的军人十数年的坚守。那些从病床上、轮椅上发出的论文批注，打出的电话指导，都是他用第二次生命写下的一行行答案——在认定的那口井旁，掘地万仞，虽九死其犹未悔。 王戟（右二）和学生一起讨论问题。 飞驰的速度 “校园里走得最慢的人，科研路上跑得最快的人” 盛夏，蝉声漫过校园，毕业季悄然而至。 教学楼长廊里，轮椅滑动的轻响传来，王戟与怀抱材料、奔赴答辩的学员擦肩而过。学员向他投来钦佩的目光，他则以微笑回应。 团队里一位教员至今难忘一件往事。当年他刚读硕士，王戟交给他的第一个任务是：用一年时间，读完一本刚出版不久的国际学术专著，从中汲取营养，打好基础。那时这本书的作者还寂寂无名，10年后站上了图灵奖的领奖台。而王戟当年的学生现在已是团队骨干，每每提起都敬佩不已：“王老师当时是怎么看出来的？这种学术洞察力，我到现在都觉得不可思议。” 除了一双看得足够远的眼睛，王戟还有着刻入骨髓的紧迫感。特别是患病之后，他多次说过：“科技强军的时间很紧，而我能够工作的时间远远不够……” 2015年，春节刚过，轮椅碾过学校教学楼的门槛。 望着教学楼前高高的台阶，王戟索性把课堂搬到方便轮椅进出的会议室。即便没有门牌，也不在教学楼里，室内只有一张会议桌、一块白板和几把椅子，但是王戟说：“知识不分场地，学生在哪里，课堂就在哪里。” 多年以后，从这间“专属教室”走出来的学生，记忆里牢牢定格着两组画面—— 一组是拍桌“吵架”。白板上写满推演公式，大家常为算法路径、技术方案争得面红耳赤。王戟从不拿“权威”压人，无论是共事20年的老同事、还是刚入团队的青年学子都能跟他“吵红了脸”。在王戟看来，这种“吵”，恰恰是创新最需要的土壤。他曾在一次讨论会后对身边人说：“吵着吵着，也许就来了灵感，问题就通了。” 一组是和煦微笑。拍摄挂在银河楼走廊荣誉墙上的合照时，王戟把“C位”让给了学生，自己站在最右边。发表在国际A类会议的重要论文署名，学生的名字排第一，作为导师的王戟名字排在后面。出差调研的一路开销，哪怕十几块的小钱，王戟也坚持转给学生，半点不愿让学生多承担。做这些事情时，王戟总是挂着灿烂又暖心的笑容。 随和、开明的王戟，也有不容商量的时候—— 2017年，一项国际上组织的“软件验证比赛”进入了王戟团队的视野。第一次登场，他们拿下冠军。2018年，再次夺冠。2019年，第三次登顶。史无前例的“三连冠”，让国际同行刮目相看。当所有人都盼着他们继续获得荣耀时，王戟却决定停止参赛。 “我们的使命不是拿冠军，”王戟告诉团队，这一赛事的标准化工具无法直接适配国内军用软件，我们研究出的东西要形成战斗力，才是履行了使命。 从“争冠军”到“不争冠军”，这看似矛盾的选择，折射出王戟一以贯之的科研哲学。恩师陈火旺先生那句“顶天立地”，是王戟长久以来恪守的科研初心，更是他做人的底色。 2014年，王戟在北京医院康复期间观看世界杯比赛，收到同事送的足球。 飞驰的动力 “只要你不放弃，所有人都会帮你” 采访中，一张照片吸引了大家的目光—— 病房里，王戟在病床上高高举起一颗足球，笑出了满脸阳光。足球是同事王挺送的。彼时盛夏，巴西世界杯热潮席卷全国。 “没觉得冒犯，也没想过他不能工作了，就是想他尽快回归集体。”王挺说。在他眼里，即便王戟双腿已不在，却始终是那个最能奔跑的人。 这份朴素的信任，是王戟在经年累月的日常中，用他的达观撒在身边同事心中的一颗种子。当生活的狂风暴雨袭来，这颗种子就在周围人的心田里开出花来。 爱人黄春，是王戟生命里最温柔的港湾，也是他科研路上最默契的同行者。 1990年，王戟遇见了怀揣同样梦想的小师妹黄春，“我觉得再也找不到比她更好的了”。领证结婚那天，二人途经一间小饭馆，一顿简单午餐，便是婚礼的全部。 两人办公的楼栋互相抬头可见，夜深时分，两面相对的窗户总亮着——那是他们各自的办公室。最好的爱情，不是寸步不离，而是挨着的两栋楼，亮着同一片光。 那段最暗的日子里，彼此照亮的光不只一盏。 昔日的学生、如今的同事刘万伟始终记得一个细节—— 王戟在医院抢救时，大家自发排班，轮流在急救室看护，每个人都会在小本子上记录王老师当天情况。那时王戟还在昏迷中，这天轮到刘万伟值班，他看到前一位同学在本子上写下“王老师今夜平安”。 在这样一个命悬一线的时刻，“平安”二字的分量千钧重。它不再是寻常的问候与期盼，而是所有人日夜守护、默默祈祷换来的珍贵片刻。十几年过去，他始终忘不了这行字，也忘不了王老师坐着轮椅时的笑容。刘万伟说：“自己在工作上、生活上遇到过不去的坎儿，想想王老师，马上就想通了。” 王戟从不麻烦人。身体稍有好转，就坚持独自出差，凌晨五点出门搭最早班飞机，可以赶上上午的会议。遇上项目验收，一个月要飞三四趟。他总说：“能自己做的尽量自己做，大家做科研辛苦，不用浪费时间接送我。” 自助者，天助之。 不记得从什么时候开始，也忘了是谁先发起的，同事们每天准时把车停在王戟楼下，接送他上下班。一趟，两趟，一天，两天……王挺做这件事，一转眼就是8年。 慢慢地，食堂门口默默多了个坡道，教学楼前的门槛不知什么时候被磨平了。身边人也不觉得他坐轮椅有什么特殊的，学院开运动会，一样邀请他现场观赛。 王戟的母亲行动不便，社区默默送了十年饭。他的女儿成了邻居梁姐家的“常驻人口”。去年，王戟80岁的母亲推着助行车去社区办事，工作人员想帮忙，老太太摆摆手：“我要像我儿子一样自己走回去。” 王戟在国防科技大学。 入夜，天河楼亮起了一盏又一盏灯，年长的、年轻的、熟悉的、初见的……一张张面孔，都带着虔敬与执着，在光影里忙碌着。 王戟走过的地方，有轮椅的辙印，也有更多人的足迹。越来越多的人快步跟了上来，把各自的努力叠加在一起，汇成了一条攻坚之路。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
