@@ -1,13 +1,14 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-03 (reconciliation landed on local `main`; unpushed).
+Updated: 2026-08-04 (No. 12 window screened; CI 08-04 merged; pushed).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
 ## Working tree (as of this update)
 
-**The reconciliation is landed and pushed.** `origin/main` is at `0f963fa`
-as of 2026-08-04; local `main` is in sync and the working tree is clean.
+**The No. 12 screening and CI's 08-04 run are merged and pushed.** Local
+`main` is in sync with `origin/main` and the working tree is clean. The
+reconciliation described below landed earlier and remains accurate history.
 `fix/pipeline-data-loss-2026-07-30` points at the same commit and is safe to
 delete. The 80 recovered articles (07-30, 07-31) are **no longer
 single-copy** — verified on the remote after the push: 2880 rows / 2880
@@ -37,9 +38,9 @@ published links), 0 duplicate urls, `foreign_key_check` and
 `integrity_check` clean. `validate_output.py` green
 at the 9-warning baseline.
 
-`output/` is byte-identical to `origin/main` — the branch never regenerated
-it — so landing this changes no rendered page. The next scheduled run
-regenerates once the recovered articles are analyzed.
+`output/` was byte-identical to `origin/main` at that point — the branch
+never regenerated it. That is no longer true: see the output/DB divergence
+under Known issues, found and fixed 2026-08-03.
 
 Pushed 2026-08-04 01:32 UTC, deliberately outside the drifted execution
 window (last run 08-03 16:42 UTC; next cron 08-04 12:23 UTC). Time any
@@ -87,9 +88,9 @@ windows when estimating.
 Before drafting No. 12: clear the 9 untranslated (they carry no English
 title/summary, so no edition can cite them) via
 `scripts/backfill_translations.py`, then re-render and run the deploy gate.
-The site has been re-rendered — `output/` and the DB are in sync at 782
-analyzed articles, 0 unrendered, 0 orphans, gate green at the 9-warning
-baseline.
+The site has been re-rendered and merged with CI's 08-04 run — `output/`
+and the DB are in sync at 825 analyzed articles, 0 unrendered, 0 orphans,
+gate green at the 9-warning baseline.
 
 No. 11 shipped after correcting three editorial-integrity findings caught
 by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
@@ -116,14 +117,29 @@ backfills; all LLM calls returned 400 until the monthly reset. The block has
 lifted and daily collection ran normally on 08-01, 08-02 and 08-03. Current
 state and durable consequences:
 
-- **Corpus as measured 2026-08-03 (after the No. 12-window backfill):** 2880
-  articles, **1043 never screened** (36%), **83 relevant but untranslated**,
+- **Corpus as measured 2026-08-04 (after merging CI 08-04):** 2914
+  articles, **1043 never screened** (36%), **61 relevant but untranslated**,
   0 translated-without-summary. The No. 12 window accounts for the drop from
   1199; the untranslated count rose by 3 because the scoped run produced 1
   translation-failure and 2 summary-failures, which stay unwritten by design
   and re-queue. Both backfill scripts are re-runnable and resume where they
   stopped — the DB is the checkpoint (`passed_relevance IS NULL`), there is
   no checkpoint file.
+- **The unscored backlog drains at zero while translations are stuck
+  (measured 2026-08-04).** `backlog = pending + unscored` puts every
+  relevant-but-untranslated article ahead of every unscored one, so with 80
+  pending against a ~21-slot reserve the 08-04 CI run screened 34 new articles,
+  cleared 22 pending, and drained **0** of the 1,199 — the unscored count did
+  not move. Self-clearing, not permanent: pending fell 80 → 58 in one run and
+  empties in ~3 more, after which the reserve reaches the backlog at ~16-21/day.
+  Running `backfill_translations.py` clears pending immediately and is the
+  cheapest way to restart the drain — it also unblocks the No. 12 window.
+- **The DB reconciler discarded 46 relevance decisions (fixed 2026-08-04).**
+  Rejections and translation/summary failures leave `analyzed_at` NULL, and the
+  backfill predicate tested that column instead of `passed_relevance`. Fixed,
+  plus a new gate that fails the merge when either side's decision is missing.
+  See DECISION_LOG 2026-08-04. **Check `passed_relevance IS NULL` counts before
+  and after any DB merge.**
 - **Output silently lagged the DB by 117 articles for four deploys
   (found and fixed 2026-08-03).** The 07-30 backfill's articles reached `main`
   via the reconcile merge driver and were never rendered; the deploy gate read

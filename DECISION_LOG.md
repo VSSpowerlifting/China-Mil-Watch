@@ -2,6 +2,31 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-04 — A screening decision is data, and the reconciler must carry it
+
+1. **The DB reconciler silently discarded 46 relevance decisions.** Its
+   analysis backfill fired only on `l.analyzed_at IS NOT NULL`, but a relevance
+   *rejection* writes `passed_relevance` and leaves `analyzed_at` NULL — as do
+   translation and summary failures. Merging `origin/main` into a branch that
+   had just screened the No. 12 window returned 43 rejections and 3 failures to
+   the unscored pool. Caught only because the window was measured immediately
+   after the merge and read 46 unscreened where it should have read 0.
+
+2. **Every gate passed while it happened.** The merge kept every article, every
+   URL and every id — the existing gates check exactly those. A reverted row is
+   byte-indistinguishable from one that was never screened, so nothing could
+   see it. **Standing rule: a decision that cost a paid call is data, and the
+   reconciler must be gated on decisions, not just on rows and ids.**
+
+3. **Two costs, both silent.** The scores and reasonings are the audit record
+   the project preserves verbatim (see `backfill_translations.py`), and the
+   articles return to the queue to be screened and paid for a second time, with
+   no guarantee the second answer matches the first.
+
+4. **Corollary: verify the domain invariant after any DB merge**, not just that
+   the merge exited clean. `passed_relevance IS NULL` counts before and after
+   are the cheap check.
+
 ## 2026-08-03 — The deploy gate compares the DB to output/, not output/ alone
 
 1. **A site missing a sixth of its analyzed corpus passed the gate four times.**
