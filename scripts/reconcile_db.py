@@ -281,11 +281,22 @@ def reconcile(base_path, origin_path, local_path, out_path):
     report["categories_for_new_rows"] = ac_new
 
     # ── 4. analysis backfill onto shared rows ─────────────────────────────
+    # Gating this on analyzed_at alone loses every screening decision that did
+    # not end in a full analysis (found 2026-08-04): a relevance *rejection*
+    # writes passed_relevance and leaves analyzed_at NULL, as do translation and
+    # summary failures. Merging origin into a branch that had screened 156
+    # articles silently returned 46 of them — 43 rejections + 3 failures — to
+    # the unscored pool, discarding their scores and reasonings, which are the
+    # audit record, and queueing them to be screened (and paid for) again.
+    # passed_relevance is the decision column, so it is what the predicate must
+    # test. Rows where origin already holds a decision are left alone, exactly
+    # as before.
     set_clause = ",".join(f"{c}=?" for c in ANALYSIS_COLS)
     pending_shared = con.execute(
         f"SELECT l.id AS lid, l.url AS url, {','.join('l.' + c for c in ANALYSIS_COLS)} "
         "FROM loc.articles l JOIN main.articles m ON m.url = l.url "
-        "WHERE l.analyzed_at IS NOT NULL AND m.analyzed_at IS NULL"
+        "WHERE (l.analyzed_at IS NOT NULL AND m.analyzed_at IS NULL) "
+        "   OR (l.passed_relevance IS NOT NULL AND m.passed_relevance IS NULL)"
     ).fetchall()
     for r in pending_shared:
         con.execute(
@@ -350,6 +361,24 @@ def gates(con, origin_path, local_path, out_path):
         probe.close()
         if lost:
             problems.append(f"{lost} {label} urls missing from the merge")
+
+    # Nor may either side lose a screening *decision*. Counting rows and ids is
+    # not enough: the 2026-08-04 defect kept every article and every id, and
+    # still discarded 46 relevance decisions, because a reverted row looks
+    # exactly like an unscreened one. A decision is expensive (a paid call) and
+    # is the audit record, so its loss has to be an error, not a diff nobody reads.
+    for label, path in (("origin", origin_path), ("local", local_path)):
+        probe = sqlite3.connect(out_path)
+        probe.execute("ATTACH ? AS s", (path,))
+        dropped = probe.execute(
+            "SELECT COUNT(*) FROM s.articles s2 JOIN main.articles m USING(url) "
+            " WHERE s2.passed_relevance IS NOT NULL AND m.passed_relevance IS NULL"
+        ).fetchone()[0]
+        probe.close()
+        if dropped:
+            problems.append(
+                f"{dropped} {label} relevance decision(s) lost in the merge"
+            )
 
     return problems
 
