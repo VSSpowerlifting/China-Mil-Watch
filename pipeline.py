@@ -120,6 +120,19 @@ def run(
             logger.error(msg)
             errors.append(msg)
 
+        # A source can return zero articles two ways: it published nothing
+        # today (normal), or it could not reach its listing pages at all
+        # (a defect). Only the second leaves failed fetches behind. Recording
+        # them makes the difference legible in scrape_runs.errors instead of
+        # dying in the runner's log.
+        if scraper.failed_fetches:
+            msg = (
+                f"{slug}: {len(scraper.failed_fetches)} fetch(es) exhausted all "
+                f"retries — e.g. {scraper.failed_fetches[0]}"
+            )
+            logger.error(msg)
+            errors.append(msg)
+
     logger.info("Scraped (raw): %d", len(all_scraped))
 
     # ── Stages 4–6: Normalize, dedup, keyword filter ──────────────────────────
@@ -430,6 +443,23 @@ def run(
         )
         _write_billing_failure_marker(target_date)
 
+    # Close the run with an honest status. Until 2026-08-09 this call omitted
+    # `status`, so it always defaulted to 'completed' — including 2026-08-07,
+    # which hit the credit wall after 24 of 36 articles. That run looked
+    # identical to a clean day in the audit log and the outage went unnoticed
+    # for two days.
+    #
+    # Only an account-level block downgrades a partial run. Per-article
+    # "post-relevance analysis incomplete" errors are routine and self-healing
+    # (the article stays pending and a later run retries it); downgrading on
+    # those would mark most runs 'degraded' and make the field meaningless.
+    if total_analysis_failed:
+        run_status = "failed"
+    elif account_blocked is not None:
+        run_status = "degraded"
+    else:
+        run_status = "completed"
+
     if run_id is not None:
         db.complete_scrape_run(
             run_id,
@@ -437,6 +467,7 @@ def run(
             articles_new      = len(inserted),
             articles_analyzed = articles_analyzed,
             errors            = errors,
+            status            = run_status,
         )
 
     elapsed = (datetime.now() - start_time).total_seconds()

@@ -2,6 +2,76 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-09 — A run that keeps publishing must still be able to raise an alarm
+
+1. **The 2026-08-07 credit exhaustion published as a clean day.** Run 105 hit
+   `invalid_request_error: credit balance is too low` after analyzing 24 of 36
+   articles. Because some work landed, `account_block_total_failure` was False,
+   the pipeline exited 0, the site deployed, and step 8 committed *"State: mark
+   daily run 2026-08-07"*. Nothing in the repo said otherwise until run 106 the
+   next day analyzed zero articles and tripped the total-failure path. The
+   outage was two days old when found.
+
+2. **Three independent mechanisms each did the right thing and the day still
+   went unnoticed.** `pipeline.py` wrote the billing marker (it fires on any
+   account block, partial or not). The workflow's marker-commit step was gated
+   on `failure()`, so it never ran. Step 6 stages only `pla_watch.db output/`,
+   so the marker died with the runner. Each piece was locally correct; the seam
+   between them leaked.
+
+3. **Standing rule: partial degradation must be recorded in a place that
+   survives the runner, and must be loud.** Publishing through a partial
+   failure is correct and stays. But "kept publishing" is not "was fine," and
+   the audit trail has to distinguish them. Concretely: `scrape_runs.status`
+   gains `'degraded'` and `complete_scrape_run()` is always passed an explicit
+   status; the marker-commit step runs on `always()`, guarded by a working-tree
+   diff so it is a no-op on clean days.
+
+4. **The alarm runs last, and only notifies.** A new Health gate step sits
+   after deploy and after the success marker, so it can never block a publish
+   that was otherwise fine. Its sole purpose is to fail the run so GitHub's
+   notification reaches a human. Anything that wants to stop a deploy belongs
+   in `validate_output.py`, not here.
+
+5. **Corollary: a green run is evidence of nothing unless something is checking
+   liveness.** MOD China last produced on 2026-07-10 and was silent for four
+   weeks without a single failed run, because PLA Daily supplies ~87% of
+   articles and the totals never moved. `scripts/check_source_liveness.py` now
+   fails the gate on any active, non-inert source silent past a threshold.
+   Acknowledging silence means adding the slug to `KNOWN_INERT` **with a
+   reason** — a deliberate, reviewable act, not a config toggle.
+
+6. **An empty scrape had two meanings and recorded neither.** `get_article_urls()`
+   catches listing-page fetch failures per section, logs a warning and
+   continues, so "published nothing today" and "could not reach the site"
+   both produced `[]`. `BaseScraper.failed_fetches` now records URLs whose
+   retries were exhausted and the pipeline appends them to
+   `scrape_runs.errors`. **Standing rule: when a stage can return empty for
+   both a normal and a defective reason, it must record which.**
+
+7. **The DB reconciler merges rows, not schema — a migration does not survive
+   a merge from origin.** Found the hard way while landing this work: after
+   `scripts/migrate_status_degraded.py` relaxed the `scrape_runs.status` CHECK
+   and the change was committed, rebasing onto `origin/main` reverted it. The
+   driver reconciles article and run *rows* and takes the published side's
+   file, so origin's older schema came back wholesale with no conflict, no
+   warning, and a correct-looking row count. Had it gone unnoticed, CI's first
+   `'degraded'` write would have thrown `IntegrityError`.
+
+   **Standing rule: a schema migration must be re-applied and re-verified
+   AFTER the final rebase, immediately before pushing — never only before.**
+   The check is one line:
+   `sqlite3 pla_watch.db "SELECT sql FROM sqlite_master WHERE name='<table>';"`
+   Migration scripts must be idempotent so this is always safe to repeat.
+
+8. **Liveness thresholds are per-source, and set from the source's own
+   publishing rate.** A flat 7-day rule marks a source that genuinely
+   publishes twice a month as dead every other week, and an alarm that cries
+   wolf is worse than no alarm. `SILENCE_THRESHOLD_DAYS` overrides the
+   default per slug; MOD China sits at 21d, measured from 28 distinct publish
+   dates across three months on its own listings — deliberately measured from
+   the *source*, never from our collection, which is the thing under test.
+
 ## 2026-08-04 — A screening decision is data, and the reconciler must carry it
 
 1. **The DB reconciler silently discarded 46 relevance decisions.** Its

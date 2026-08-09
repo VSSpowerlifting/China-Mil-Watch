@@ -74,6 +74,16 @@ class BaseScraper(ABC):
         self.target_date = target_date or date.today()
         self.logger = logging.getLogger(f"scraper.{source_slug}")
 
+        # URLs whose retries were all exhausted this run. Listing-page fetch
+        # failures used to be logged and dropped: get_article_urls() catches
+        # them per-section and continues, so a source that could not reach its
+        # listing at all returned [] and was indistinguishable from a source
+        # that simply published nothing that day. MOD China went 30 days
+        # (2026-07-10 → 08-09) without a single article while its listings
+        # scraped fine by hand — with no record of which it was. The pipeline
+        # surfaces this into scrape_runs.errors.
+        self.failed_fetches: list[str] = []
+
         self._session = requests.Session()
         self._session.headers.update({
             "User-Agent": _USER_AGENT,
@@ -132,6 +142,7 @@ class BaseScraper(ABC):
                     time.sleep(2 ** attempt)  # Exponential backoff: 2s, 4s
 
         self.logger.error("All retries exhausted for %s", url)
+        self.failed_fetches.append(url)
         return None
 
     @staticmethod

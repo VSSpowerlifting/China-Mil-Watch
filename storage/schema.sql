@@ -42,8 +42,13 @@ CREATE TABLE IF NOT EXISTS scrape_runs (
     articles_new      INTEGER NOT NULL DEFAULT 0,
     articles_analyzed INTEGER NOT NULL DEFAULT 0,
     errors            TEXT,   -- JSON array of error strings
+    -- 'degraded' = the run produced publishable work but analysis did not finish
+    -- (account-level API block mid-run, or per-article analysis failures). Added
+    -- 2026-08-09: every run was closing as 'completed', so the 08-07 credit
+    -- exhaustion was indistinguishable from a clean day in the audit log.
     status            TEXT    NOT NULL DEFAULT 'running'
-                              CHECK (status IN ('running', 'completed', 'failed'))
+                              CHECK (status IN ('running', 'completed',
+                                                'degraded', 'failed'))
 );
 
 -- ── Articles ─────────────────────────────────────────────────────────────────

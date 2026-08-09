@@ -1,6 +1,6 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-04 (No. 12 window screened; CI 08-04 merged; pushed).
+Updated: 2026-08-09 (credit exhausted since 08-07; silent-degradation fixes).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
@@ -110,7 +110,44 @@ warnings.
 entries; related notes). Do not fix by invention; explain any NEW warning
 here.
 
-## API spend limit — block lifted 2026-08-01
+## API credit exhausted — ACTIVE as of 2026-08-09
+
+**The account is blocked again, and has been since 08-07.** This is a credit
+balance exhaustion (`invalid_request_error: "Your credit balance is too low to
+access the Anthropic API"`), not the 07-30 configured usage limit — a monthly
+reset will not clear it. Restoring credit in the Console is a manual step
+nothing in the repo can do.
+
+| run | date | new | analyzed | recorded as |
+|---|---|---|---|---|
+| 105 | 08-07 | 36 | 24 | `completed` + "mark daily run" — **wrong, see below** |
+| 106 | 08-08 | 23 | 0 | `completed` + billing marker |
+| 107 | 08-09 | 29 | 0 | `completed` + billing marker |
+
+Run 105 exhausted credit mid-run and still exited 0, so 08-07 published as a
+clean day and the marker never reached `origin/main`. Fixed 2026-08-09
+(DECISION_LOG); the audit trail for 105 stays wrong as history.
+
+**Verified still blocked 2026-08-09 14:5x UTC** via
+`spend_guard.probe_api_access()` — same `invalid_request_error`, fresh
+request_id. The key authenticates (a bad key returns 401
+`authentication_error`, not this), so the credit has not reached the org or
+workspace this key belongs to. **Note CI uses a repo secret, not `.env`** —
+if those are different keys, funding one does not fix the other.
+
+Re-test, free, no tokens billed:
+```
+.venv/bin/python -c "import sys; sys.path.insert(0,'.'); \
+from scripts.spend_guard import probe_api_access; \
+ok,msg=probe_api_access(); print('OK' if ok else 'BLOCKED'); print(msg)"
+```
+
+**To recover:** restore credit, then re-run the workflow via
+`workflow_dispatch` — a manual run deliberately bypasses the marker guard.
+The 52 articles collected across 08-08 and 08-09 are stored and unscreened;
+they re-enter the queue as backlog.
+
+## API spend limit — block lifted 2026-08-01 (superseded by the above)
 
 The account's configured API usage limit was reached 2026-07-30 during the
 backfills; all LLM calls returned 400 until the monthly reset. The block has
@@ -264,18 +301,41 @@ edition when the analyst authors one.
 
 **In this order:**
 
+0. **Restore API credit in the Console.** Every step below is blocked on it,
+   and so is the daily run. See "API credit exhausted" above.
 1. Check remaining headroom in the Console — the guard estimates cost, not
    headroom, and cannot do this step for you.
 2. Run the backfills **sequentially, not concurrently** (running both at
    once doubled the draw on 07-30):
    `.venv/bin/python scripts/backfill_translations.py --confirm-spend`
-   (80 relevant-untranslated), then
+   (**22** relevant-untranslated), then
    `.venv/bin/python scripts/backfill_unscored.py --confirm-spend`
-   (1199 unscreened). Each prints its own spend estimate before proceeding;
+   (**1095** unscreened). Each prints its own spend estimate before proceeding;
    both abort immediately on an account-level block and resume cleanly on
-   re-run. If spend is constrained, screen the No. 12 window first — 156 of
-   the 1199 sit inside 07-26→08-01.
+   re-run. If spend is constrained, screen the No. 12 window first.
+   *Counts re-measured 2026-08-09; the daily runs through 08-06 drained the
+   1199/80 figures previously recorded here. Re-measure before estimating —
+   these move every run.*
 3. Confirm the No. 12 window is fully screened and analyzed before drafting.
+4. **MOD China (国防部) — collection is failing, the scraper is not.**
+   Investigated 2026-08-09. Run by hand it works perfectly: `target_date`
+   2026-07-26 returns 3 URLs, 2026-08-08 returns 1, all six sections fetch
+   (~48KB each), `parse_article` yields correct titles, dates and bodies.
+   **None of those articles are in the DB at all** — not even as
+   keyword-rejected rows, which are stored with `passed_relevance=0`. So CI's
+   scrape returned nothing on days when the articles were live and reachable.
+   Not total: CI collected MOD successfully 11 times through 2026-07-10.
+   Cause still unknown — candidates are transient reachability from Actions
+   runners to a plain-`http://` host, or listing-CDN lag against the
+   exact-date match. **Do not add it to `KNOWN_INERT`: the source is alive.**
+   `failed_fetches` instrumentation now records exhausted retries into
+   `scrape_runs.errors`, so the next CI run answers this directly. Check
+   there first before changing scraper logic.
+
+   If it turns out to be CDN lag, the fix is a lookback window (match
+   `target_date` **and** the day before) rather than exact-date-only. That was
+   deliberately **not** done now: it raises collection volume, and volume is
+   spend. Diagnose first, then widen.
 
 Then Sonnet tickets T1–T5 in docs/ROADMAP.md (archive month grouping;
 Edition Plate v1; Signal Field v1; asset hygiene; executive readout). Fable

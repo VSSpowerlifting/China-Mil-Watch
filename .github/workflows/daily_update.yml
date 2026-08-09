@@ -181,26 +181,45 @@ jobs:
       # Runs even when the pipeline step fails so the marker reaches origin/main
       # and the scheduling guard can block later cron windows the same day.
       # workflow_dispatch skips this so a manual retry is always allowed.
-      - name: Commit billing-failure marker (if pipeline failed)
+      #
+      # always(), NOT failure() (fixed 2026-08-09). pipeline.py writes the marker
+      # whenever the API reports an account block, including a PARTIAL block that
+      # still analyzed some articles and exited 0. This step used to be gated on
+      # failure(), and step 6 below only stages `pla_watch.db output/`, so on a
+      # partial block the marker was written into the runner and then destroyed
+      # with it. That is exactly what happened on 2026-08-07: credit ran out
+      # after 24 of 36 articles, the run exited 0, no marker reached origin, and
+      # the day was recorded as clean. The `git diff --cached --quiet` check
+      # below makes this a no-op on days when pipeline.py did not rewrite it.
+      - name: Commit billing-failure marker (if the account was blocked)
         if: >
-          failure() &&
+          always() &&
           steps.timecheck.outputs.should_run == 'true' &&
           github.event_name != 'workflow_dispatch'
         run: |
           MARKER=".github/state/last_billing_failure_date.txt"
-          if [ -f "$MARKER" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git pull --rebase --autostash origin main
-            git add "$MARKER"
-            if git diff --cached --quiet; then
-              echo "Billing-failure marker already committed."
-            else
-              git commit -m "State: billing failure ${{ steps.timecheck.outputs.today_ny }}"
-              git push origin main
-            fi
-          else
+          if [ ! -f "$MARKER" ]; then
             echo "No billing-failure marker file found — skipping commit."
+            exit 0
+          fi
+          # Check for a pipeline-written change BEFORE touching git remotes. This
+          # step now runs on every scheduled run, and the rebase below stashes and
+          # restores pla_watch.db through the reconciler merge driver — not work
+          # worth doing on the majority of days when the marker is untouched.
+          if git diff --quiet -- "$MARKER"; then
+            echo "Marker unchanged — the account was not blocked this run."
+            exit 0
+          fi
+          echo "::warning title=Billing block::pipeline.py recorded an account-level API block; committing the marker."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --autostash origin main
+          git add "$MARKER"
+          if git diff --cached --quiet; then
+            echo "Billing-failure marker already committed."
+          else
+            git commit -m "State: billing failure ${{ steps.timecheck.outputs.today_ny }}"
+            git push origin main
           fi
 
       # ── 6. Commit DB + site output back to main ───────────────────────────
@@ -253,3 +272,50 @@ jobs:
             git commit -m "State: mark daily run ${TODAY_NY}"
             git push origin main
           fi
+
+      # ── 9. Health gate — make silent degradation loud ─────────────────────
+      # Added 2026-08-09. Everything above is designed to keep publishing when
+      # part of the run fails, which is correct — but it also means a run can
+      # go green while something is materially wrong. Two failures reached
+      # production unnoticed that way: the 2026-08-07 credit exhaustion (green,
+      # 12 articles unanalyzed) and MOD China going silent on 2026-07-10 (green
+      # every day for four weeks).
+      #
+      # This step runs LAST, after publish and after the success marker, so it
+      # never blocks a deploy that was otherwise fine. Its only job is to turn
+      # the run red so GitHub's failure notification actually reaches a human.
+      - name: Health gate
+        if: steps.timecheck.outputs.should_run == 'true'
+        env:
+          TODAY_NY: ${{ steps.timecheck.outputs.today_ny }}
+        run: |
+          set -uo pipefail
+          PROBLEMS=0
+
+          # ── Billing: did pipeline.py record an account block today? ────────
+          MARKER=".github/state/last_billing_failure_date.txt"
+          if [ -f "$MARKER" ] && [ "$(cat "$MARKER")" = "$TODAY_NY" ]; then
+            echo "::error title=API account blocked::The Anthropic account was blocked during today's run (${TODAY_NY}). Articles were collected but analysis is incomplete. Restore credit, then re-run this workflow manually — workflow_dispatch bypasses the marker guard."
+            {
+              echo "### ❌ API account blocked"
+              echo
+              echo "Collection succeeded; analysis is incomplete for ${TODAY_NY}."
+              echo "Unanalyzed articles stay pending and drain via the backlog reserve."
+            } >> "$GITHUB_STEP_SUMMARY"
+            PROBLEMS=$((PROBLEMS + 1))
+          fi
+
+          # ── Sources: has any non-inert source gone quiet? ──────────────────
+          # Writes its own annotations and step summary. Acknowledge a source
+          # whose silence is understood by adding it to KNOWN_INERT in the
+          # script, with the reason — that is a deliberate, reviewable act.
+          if ! python scripts/check_source_liveness.py; then
+            echo "::error title=Source silent::A source has stopped producing articles. Fix the scraper, or add it to KNOWN_INERT in scripts/check_source_liveness.py with a documented reason."
+            PROBLEMS=$((PROBLEMS + 1))
+          fi
+
+          if [ "$PROBLEMS" -gt 0 ]; then
+            echo "Health gate: ${PROBLEMS} problem(s). Today's output was published; this failure is a notification, not a publish failure."
+            exit 1
+          fi
+          echo "Health gate: clean."
