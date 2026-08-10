@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Issue on Building the Military Through Politics · Forging Essentials | Revolutionary Ideals Transcend All — China Mil Watch</title>
+  <meta name="description" content="A political education article in a special issue on 军队政治建设 (building the military through politics) draws a continuous ideological line from CCP martyrs of the 1927 White Terror and the Long March thr">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/3091.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/3091.html">
+  <meta property="og:title"        content="Special Issue on Building the Military Through Politics · Forging Essentials | Revolutionary Ideals Transcend All">
+  <meta property="og:description"  content="A political education article in a special issue on 军队政治建设 (building the military through politics) draws a continuous ideological line from CCP martyrs of the 1927 White Terror and the Long March thr">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Special Issue on Building the Military Through Politics · Forging Essentials | Revolutionary Ideals Transcend All">
+  <meta name="twitter:description" content="A political education article in a special issue on 军队政治建设 (building the military through politics) draws a continuous ideological line from CCP martyrs of the 1927 White Terror and the Long March thr">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Special Issue on Building the Military Through Politics · Forging Essentials | Revolutionary Ideals Transcend All
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">政治建军专刊·淬火要论丨革命理想高于天</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>10 August 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16478577.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A political education article in a special issue on 军队政治建设 (building the military through politics) draws a continuous ideological line from CCP martyrs of the 1927 White Terror and the Long March through the Korean War battles of Chosin Reservoir and Triangle Hill (上甘岭) to present-day named exemplars—border defender Qi Fabao, naval aviator Zhang Chao, and the crew of Submarine 372—framing ideals and convictions (理想信念) as the irreducible source of combat power across all eras. The article closes by invoking Xi Jinping&#39;s Gutian Conference directive and the six key tasks of building the military through politics, positioning political rectification (政治整训) as the mechanism for sustaining that conviction as material capabilities grow. This is standard political work content for the centenary period; its value is as a record of how the institution frames the relationship between ideological commitment and warfighting effectiveness for officers and soldiers, not as evidence of a new policy line or changed force posture.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>From the gunshots atop the city walls of Nanchang to the advancing footsteps of strengthening and revitalizing the military in the new era, looking back on the magnificent historical journey of our military, Chairman Xi profoundly observed at the rally commemorating the 90th anniversary of the founding of the People&#39;s Liberation Army: &#34;The people&#39;s military has moved from victory to victory, demonstrating the great power of ideals and convictions. Lofty ideals and firm convictions are the political soul of Chinese Communist Party members and the spiritual pillar of the people&#39;s military.&#34; &#34;Revolutionary ideals transcend all. Without a large number of Chinese sons and daughters with firm communist ideals, there would be no Chinese Communist Party, no New China, and certainly no development and progress in our country today. To develop our country better, we cannot do without the power of ideals and convictions.&#34; As the centenary of the founding of the military draws near, we revisit the spirit of Chairman Xi&#39;s important speeches and look back at the sky of history, feeling ever more deeply that, for the people&#39;s military, building a solid foundation of ideals and convictions has never been a mere slogan—it is a fundamental proposition that concerns the direction of military building and determines victory or defeat, survival or extinction.</p><p>That year, the Great Revolution failed, and more than 310,000 Communist Party members and revolutionary martyrs fell under the enemy&#39;s blades.</p><p>——Around 2 p.m. on April 28, 1927, the execution ground of the Beijing Metropolitan Detention Center on Xijiaominxiang, Beijing.</p><p>Dressed in a worn gray cotton robe, Li Dazhao walked to the execution ground with composure. The commanding executioner asked Li Dazhao whether he had any final words for his family. Li Dazhao replied: &#34;I am a believer in communism. I know only my principles, not my family. To die for one&#39;s principles is one&#39;s proper lot—what regret could there be?&#34;</p><p>Only 38 years old, Li Dazhao, utterly fearless and perfectly calm, was the first to mount the gallows, shouting &#34;Sacrifice for the cause!&#34; and died a heroic martyr&#39;s death.</p><p>Chen Yannian, then Secretary of the CCP Jiangsu Provincial Committee, walked to the execution ground. The executioner ordered him to kneel. Chen Yannian absolutely refused. Facing the enemy&#39;s blade, he cried out: &#34;Revolutionaries are open and aboveboard and look upon death as a return home. We die only standing—we will never kneel!&#34;</p><p>Countless revolutionary forebears left behind solemn vows that shook the mountains and rivers, written in their lives and blood across the sky of history.</p><p>Xia Minghan, then a standing committee member of the CCP Hubei Provincial Committee and only 28 years old, was arrested after being betrayed by a traitor. Facing the enemy&#39;s torture and gun barrels, he refused to yield even unto death. After being escorted to the execution ground, when the executioner asked Xia Minghan if he had any last words, he took up pen and paper and wrote the poem of righteous martyrdom that has resounded through the ages: &#34;Losing my head is no matter, so long as the cause is true. Kill Xia Minghan, and those who come after will carry on.&#34;</p><p>Fang Zhimin, who had the misfortune of being arrested in January of that year, firmly rejected the enemy&#39;s offers of high office and generous rewards while in prison. In his cell, he wrote words that shook the mountains and rivers: &#34;The enemy can only cut off our heads—they can never shake our convictions!&#34;</p><p>On the day of his execution, the 36-year-old Fang Zhimin stood silently by the Gan River for several minutes, then suddenly turned around and said calmly: &#34;Come then!&#34; He then died a heroic martyr&#39;s death in a volley of gunfire.</p><p>Under the White Terror, before the enemy&#39;s blades, Communist Party members were fearless and looked upon death as a return home. Their courage and resolve sprang from their faith in and pursuit of communism within their hearts. In the dark old China where the people had no means of livelihood, it was precisely because they firmly believed they were engaged in the magnificent cause of &#34;seeking benefits for the overwhelming majority of people&#34; and opening up a new world that they resolutely merged their personal fates with the fate of the nation and people, placed personal life and death, honor and disgrace outside themselves, and forged with blood and life the firm conviction and far-reaching ideal of &#34;dying for communism is dying in a worthy cause.&#34;</p><p>Countless revolutionary martyrs, through their acts of sacrificing their heads and shedding their blood, tell us: ideals and convictions are a special quality formed when faith is fused into the soul. They can provide light in the darkest moments, bestow courage in choices between life and death, preserve integrity before material temptation, and perceive eternity beyond personal sacrifice. They connect the small individual life to a great cause, thereby attaining value that transcends time and space. It is precisely this heroic spirit of &#34;with so many sacrifices come such great aspirations, daring to make the sun and moon shine anew,&#34; this ideal and conviction of struggling for communism throughout one&#39;s life, that has forged the spiritual monument of the Chinese nation and consolidated the most solid foundation of the Chinese Communist Party&#39;s ideals and convictions.</p><p>&#34;Ideals and convictions are the foundation for establishing and developing the Party, and also the bedrock of Party members and cadres.&#34; Ideals and convictions are a spiritual starlight that traverses time and space and never fades. For the century-old great Party, they are like a taproot sunk deep into the historical bedrock, drawing nourishment from the sweet spring of truth, supporting every growth ring of a towering tree; for the tens of thousands of Party members, they are like source code flowing through the bloodstream, defining the value hierarchy of life and calibrating the entire course of one&#39;s journey. This faith is the light in Li Dazhao&#39;s eyes when he prophesied a &#34;golden world,&#34; the fire in Xia Minghan&#39;s chest when he wrote &#34;those who come after will carry on,&#34; and the silent vow of countless Communist Party members who embedded their burning original aspirations into the warp and weft of the era.</p><p>The &#34;bedrock&#34; of ideals and convictions, upon which one establishes oneself, endows life with a weight that transcends worldly measures. It keeps integrity from being eroded by wind and rain, and keeps one&#39;s steps from wandering at crossroads. The foundation for establishing and developing the Party is thereby consolidated; the key to remaining evergreen through a century is hidden therein. When generation after generation of Communist Party members gather the starlight of their ideals into a river, it becomes the most magnificent galaxy illuminating the nation&#39;s future, and fulfills what Fang Zhimin wrote in his book Beloved China: &#34;By then, everywhere will be vibrant creation, everywhere will be daily renewal and progress; songs of joy will replace laments, smiling faces will replace tearful ones, abundance will replace poverty, health will replace suffering, wisdom will replace ignorance, love will replace hatred and killing, the joy of life will replace the sorrow of death, and radiant gardens will replace desolate wastelands!&#34;</p><p>In the 1930s, across the vast land of China, a force spent two years crossing glaciers and snow-capped mountains, high mountains and deep gorges, rivers and treacherous shoals, swamps and grasslands… and forged a path that determined the fate of the Chinese nation—the 25,000-li Long March.</p><p>How difficult was this path? Rudolf Bosshardt, a Swiss-born British missionary who traveled with the Red Army on the Long March for more than ten months, described this bitter and frigid road in his book The Restraining Hand in vivid terms: &#34;The road, in China, is defined somewhat differently than in Britain. The road traveled with the Red Army was sometimes little more than a track left by those who had gone before—it could hardly be called a road… Walking on mountain paths was very slippery; thousands of men and horses trudging along with heavy steps made an already slippery road utterly muddy. Falling was a daily occurrence; the mud on one&#39;s clothes would dry in one place only for a new wet patch to appear in another.&#34; After completing the Long March, someone made a rough calculation: the Red Army covered more than 10,000 kilometers, traversed 12 provinces, crossed 18 mountain ranges—five of which were perpetually covered in snow and ice—and forded 24 major rivers…</p><p>There was no road to begin with; the Red Army forged one with their own two legs—a road that astonished the world and will shine forever in history. In the eyes of these foreign nationals who could receive a degree of special consideration, the Long March was a challenge to the limits of human endurance; but for ordinary Red Army officers and soldiers who faced the test of life and death at every moment, the Long March was even more a proof of human spiritual power, achieved through will and conviction—</p><p>On the Long March road through wind and snow, an old soldier wearing a tattered single-layer garment leaned against a bare tree trunk, sitting in peaceful repose, motionless, like a frozen statue… The commanding officer sent a messenger to summon the head of the quartermaster department, wanting to ask why he had not issued a padded jacket to this comrade who had frozen to death; comrades in the column told him through tears that the comrade who had frozen to death was the head of the quartermaster department himself. When a sudden rainstorm struck the Songpan grasslands, the physically exhausted young cadre Zheng Jinyu, realizing he could not make it out of the grasslands, pulled from under his arm, before he died, seven matches wrapped in oilcloth and kept warm by his body heat—they became the last tinder to save his comrades and lead them out of the swampy grasslands. When the Red Army crossed the grasslands, short of clothing and food, soldiers had no choice but to boil and eat belts, saddles, and everything else made of leather to stave off hunger. When they came to eat the last half of a belt belonging to Red Army soldier Zhou Guangcai, he said to his comrades through tears: &#34;Comrades, let us keep it as a memento, carry it to northern Shaanxi, find the Party Central Committee, and see Chairman Mao!&#34; This proposal won the agreement of all his squad comrades, and everyone, filled with boundless longing for revolutionary victory, preserved that half-belt and ultimately arrived victoriously in Yan&#39;an…</p><p>Facing the challenges of hunger, cold, wounds and illness, and extreme natural conditions such as snow mountains and swamps, on a journey deemed &#34;impossible to complete,&#34; Red Army officers and soldiers created the miracle of pressing forward despite &#34;one person sacrificing for every 300 meters.&#34; &#34;The head of the quartermaster department,&#34; &#34;seven matches,&#34; &#34;half a belt&#34;… are concrete portraits of Red Army officers and soldiers overcoming hardship and difficulty, proving to the world the &#34;Goldbach&#39;s Conjecture of conviction (信念的哥德巴赫猜想)&#34; in world history—that human spiritual power can break through the absolute limits of material conditions. This is precisely the most precious revelation the Long March left to posterity: when a group of people are completely selfless and fearless in pursuit of a common ideal, what they can create is not only a military miracle, but an immortal monument in the history of the human spirit.</p><p>Napoleon, who once swept across Europe by force of arms and was ultimately defeated and exiled to Saint Helena, left the world this famous saying in his remaining years on that lonely island: there are two great powers in the world—the sword and the spirit. In the long run, the spirit always conquers the sword.</p><p>Why can the spirit overcome the material? To interpret this great expedition of the Chinese Workers&#39; and Peasants&#39; Red Army and find the secret of victory in the 25,000-li Long March, three famous foreign journalists came to China one after another to investigate and report, each completing a book: Snow, in Red Star Over China, regarded the Long March as &#34;an incomparable epic in human history&#34;; Smedley, in The Great Road, called the Long March &#34;a great epic in the history of revolutionary warfare&#34;; Salisbury, in The Long March: The Untold Story, considered the Long March &#34;the crucible of the Chinese revolution&#34; and &#34;a monument to human steadfastness and courage&#34;… Their works differ in style and perspective, but the conclusions they reached are strikingly similar: they all regard the Long March as an extraordinary manifestation of the human spirit, will, and conviction—a shared spiritual heritage of all humanity and an eternal symbol of courage, sacrifice, and conviction.</p><p>To test jade requires three full days of burning; to distinguish timber requires waiting seven years. The true strength of a force often lies in its ability both to withstand the test of the most critical moments and to endure the tempering of long and arduous years. The Long March is celebrated as &#34;the red ribbon on the earth&#34; because it was dyed red by the blood of countless Red Army soldiers. The two different dimensions of tempering—&#34;the test of life-and-death moments&#34; and &#34;the tempering of prolonged suffering&#34;—together constitute the most complete and thorough forging of the spirit and will of Communist Party members.</p><p>Deng Xiaoping, who &#34;followed along&#34; during the Long March, had earlier presided over the founding of the Red Star newspaper in the Central Soviet Area. On the Long March road, this hand-carved mimeographed tabloid continued to be printed and distributed, providing soldiers with &#34;spiritual nourishment.&#34; In summing up the long and arduous course of the Chinese revolution, Deng Xiaoping put forward: &#34;Why were we able to struggle through in extremely difficult circumstances in the past, overcome thousands of hardships and dangers, and achieve revolutionary victory? It was because we had ideals, we had Marxist convictions, we had communist convictions.&#34;</p><p>Wind and rain soak our clothes but make our bones harder still; wild vegetables fill our stomachs but make our will more resolute; officers and soldiers share the same hardships; revolutionary ideals transcend all. At the rally commemorating the 80th anniversary of the victory of the Red Army&#39;s Long March, Chairman Xi&#39;s voice resounded throughout the world: the victory of the Long March was the victory of the ideals of Chinese Communist Party members, the victory of the convictions of Chinese Communist Party members… The victory of the Long March depended on the heroic spirit and revolutionary mettle of Red Army officers and soldiers who could overwhelm all enemies without being overwhelmed by any enemy, and who could conquer all difficulties without being conquered by any difficulty.</p><p>In the history of the people&#39;s military&#39;s development, there are recorded historical moments that made the enemy &#34;tremble with fear.&#34;</p><p>——On February 23, 1940, surrounded on all sides by Japanese forces, General Yang Jingyu responded to the enemy&#39;s calls to surrender with bullets. In the end, he was struck by multiple bullets and died a heroic martyr&#39;s death. To unravel the mystery of Yang Jingyu&#39;s continued fighting in desperate circumstances, the Japanese military cruelly dissected his remains and found not a single grain of food in his stomach—only undigested grass roots, tree bark, and cotton wadding.岸谷隆一郎 (岸谷隆一郎), the chief of the puppet Tonghua Provincial Police Department responsible for the encirclement and suppression operation, could not help but &#34;sigh with admiration at his heroism.&#34;</p><p>——On March 18, 1943, the 4th Company of a certain unit of the New Fourth Army fought a desperate battle against Japanese and puppet forces at Liulaozhuang in Huaiyin, Jiangsu. Facing a powerful adversary, all 82 soldiers of the company were utterly fearless, fighting fiercely against several thousand Japanese and puppet troops for 12 hours, successfully covering the withdrawal of the Huaihai District Party and government organs and the masses. In the end, all soldiers of the company died heroic martyr&#39;s deaths. After the battle ended, word came from the puppet side that the Japanese military expressed deep admiration for the spirit of sacrifice shown by our forces in dying heroically for their country.</p><p>——In the Battle of Chosin Reservoir, Chinese People&#39;s Volunteer Army officers and soldiers, wearing only single-layer clothing in temperatures of minus 30 to 40 degrees Celsius, held their positions and were frozen into &#34;ice sculptures&#34; while maintaining their combat postures. American soldiers who witnessed this scene felt it was &#34;unbelievable&#34; and &#34;awe-inspiring,&#34; and some were still writing in their memoirs years later, marveling that &#34;they were not corpses—they were frozen sentinels.&#34; This battle was called &#34;the coldest winter&#34; by the U.S. military, while the spirit displayed by the Volunteer Army was regarded as &#34;the enigmatic spirit of the East.&#34;</p><p>——In the Battle of Triangle Hill (上甘岭), the U.S. military, obsessed with firepower, poured 1.9 million artillery shells from more than 300 heavy guns, along with more than 5,000 aerial bombs, onto Triangle Hill, an area of only 3.7 square kilometers, shaving the hilltop down by a full two meters… After suffering enormous casualties, Triangle Hill was still in the hands of the Volunteer Army! From then on, Triangle Hill became the U.S. military&#39;s &#34;Heartbreak Ridge.&#34; Many foreign military researchers have marveled: the Soviet Union showed the world through World War II what an &#34;iron torrent&#34; looks like; China showed the world through the War to Resist U.S. Aggression and Aid Korea what &#34;soldiers of steel&#34; look like.</p><p>The people&#39;s military led by the Chinese Communist Party, whether in the War of Resistance Against Japan or in the War to Resist U.S. Aggression and Aid Korea, used the fighting spirit of &#34;fearing neither hardship nor death (一不怕苦，二不怕死)&#34; to repel the most ferocious and powerful enemies in the world, and elevated the philosophy of war in which &#34;more spirit with less steel&#34; defeats &#34;more steel with less spirit (钢少气多战胜钢多气少).&#34; Yang Jingyu, the Five Heroes of Langya Mountain, the Liulaozhuang Company, Huang Jiguang, Qiu Shaoyun, the Huangcaolin Hero Company… they proved with their blood and lives that on the scales of victory and defeat in war, the human factor, the spiritual factor, and the factor of conviction are key variables that can transcend material conditions.</p><p>&#34;Be resolute, fear no sacrifice, surmount every difficulty, and strive for victory.&#34; In the most arduous warfare, the spirit of fearing no sacrifice and daring to dedicate oneself, and the firm conviction of believing in victory and winning honor, were the ultimate weapons with which the people&#39;s military defeated powerful enemies in an era of extreme material scarcity—the key to going from weakness to strength, from small to large, from victory to victory. It is precisely by relying on this spirit and conviction that the people&#39;s military, at the historical level, reshaped the national spirit, laid the foundation and backbone for the nation&#39;s independence and self-reliance, and enabled the Chinese people—whose backs had been bent by hundreds of unequal treaties over more than a hundred years—to stand tall before the world with chests unbowed by humiliation, establishing a lofty military honor universally recognized by the world. This spiritual legacy, forged by the lives of countless martyrs, has also compelled our adversaries to stand in reverence; its value has long since transcended the outcome of battles on the battlefield, becoming an eternal source of strength for the Chinese nation on its journey toward great rejuvenation—to resist all risks and challenges and overcome all hardships and difficulties.</p><p>On the morning of March 23, 1949, Xibaipo, Pingshan County, Hebei Province. The CCP Central Committee organs were about to leave this place for Beiping.</p><p>Climbing into a jeep and looking back at Xibaipo with deep feeling, Comrade Mao Zedong said meaningfully to those around him: &#34;We are going to Beijing to sit the imperial examination (进京赶考)!&#34;</p><p>Mao Zedong&#39;s metaphor of entering the city to govern as &#34;going to Beijing to sit the imperial examination&#34; was intended to warn the entire Party: seizing nationwide victory was only the first step of the Long March of ten thousand li; the road of governance ahead was a more severe test, and one must absolutely not repeat the mistake of Li Zicheng, who rapidly became corrupt and failed after entering the city.</p><p>The leader&#39;s concern was not excessive. As events proved, the Communist Party members&#39; high degree of clarity and self-awareness at this major historical turning point laid a solid ideological foundation for Party building and development after the founding of New China. During the revolutionary war years, some people had withstood the test of life and death and the tempering of suffering, yet could not resist the temptation of a life of luxury and debauchery, and fell to &#34;sugar-coated bullets (糖衣炮弹).&#34; As senior cadres who had been &#34;little red soldiers&#34; tested by war, Liu Qingshan and Zhang Zishan became the first &#34;failing examinees&#34; on the road of &#34;sitting the examination.&#34;</p><p>For a force that had undergone the test of life and death and the tempering of hardship, &#34;sitting the examination&#34; was a test of both material conditions and ideals and convictions. &#34;The Good 8th Company on Nanjing Road&#34; and &#34;the Steel 8th Company, Vanguard of the South Sea&#34; are two landmark spiritual reference points in our military&#39;s history of &#34;sitting the examination.&#34;</p><p>In May 1949, Shanghai was liberated. The officers and soldiers of the 8th Company of a certain unit of the East China Military Region stepped through the smoke and fire of battle and into the heart of China&#39;s most prosperous metropolis in a single stride. Nanjing Road was Shanghai&#39;s &#34;ten-mile foreign concession (十里洋场)&#34;; faced with neon lights and wafting perfume, some soldiers developed the thought that &#34;the revolution has won—it&#39;s time to enjoy ourselves.&#34; Hostile forces also boasted: &#34;Shanghai is a great vat of dye; the Communists will enter red and come out black.&#34;</p><p>Decades passed, and the 8th Company, at the very front line of the &#34;examination hall&#34; where &#34;sugar-coated bullets&#34; were most concentrated, delivered an answer sheet satisfactory to the Party and the people. The Ministry of National Defense awarded the company the honorary title &#34;The Good 8th Company on Nanjing Road.&#34; Mao Zedong gladly took up his brush and wrote &#34;Ode to the 8th Company (八连颂)&#34;: &#34;The good 8th Company, known throughout the land. Why so? Their will is firm. Serving the people, for decades on end. Resisting corruption, never to be tainted…&#34;</p><p>Hengqin Island—the southern sea frontier of the motherland, a brilliant pearl in the South China Sea, separated from Macao by only a narrow strip of water. Garrisoned on the island is the 8th Company of a certain unit of the Zhuhai Garrison.</p><p>The 8th Company is a heroic collective with outstanding battle achievements, having successively experienced the War of Resistance Against Japan and the War of Liberation, participated in the Liaoshen and Pingjin campaigns and bandit suppression operations in southern Henan, western Hunan, and Guangxi, traversed 11 provinces and municipalities, fought across more than 30,000 li, engaged in nearly a hundred battles large and small, annihilated more than 2,300 enemy troops, and was awarded the honorary title &#34;Model Company for Consolidating the March South&#34; in 1949 for its outstanding battle achievements.</p><p>After moving to garrison Hengqin Island, the 8th Company faced both the test of a harsh natural environment and the predatory assault of &#34;sugar-coated bullets.&#34; In the face of this dual test, the 8th Company developed the fine tradition of arduous struggle and resistance to corruption and degeneration, maintaining the character of &#34;steel&#34; at all times in a special and complex environment. On April 27, 1964, the Ministry of National Defense awarded the 8th Company the honorary title &#34;The Steel 8th Company, Vanguard of the South Sea.&#34;</p><p>&#34;The Good 8th Company on Nanjing Road&#34; and &#34;The Steel 8th Company of the South Sea Vanguard&#34; were both awarded their titles by the Ministry of National Defense in the early 1960s, together constituting two banners of our military&#39;s spirit of &#34;resisting corruption, never to be tainted (拒腐蚀、永不沾).&#34; Through decades of steadfast commitment and practice, they tell us that a military&#39;s &#34;examination&#34; is never-ending. The greatest challenge is often not surviving in hardship and difficulty, but holding firm in a superior environment; the most dangerous enemy is not the hail of bullets in plain sight, but the &#34;sugar-coated bullets&#34; lurking in the shadows. Firm ideals and convictions are forever the most powerful weapon with which the people&#39;s military overcomes all temptations and tests and moves from victory to victory.</p><p>After visiting the Xibaipo Memorial Hall, Mao Zedong&#39;s former residence, the former site of the Central Military Commission operations room, and the former site of the Seventh Plenary Session of the Sixth Central Committee, Chairman Xi said with deep feeling: &#34;When the Party Central Committee left Xibaipo back then, Comrade Mao Zedong said it was &#39;going to sit the imperial examination.&#39; More than 60 years have passed, and we have made tremendous progress—the Chinese people have stood up and grown prosperous—but the challenges and problems we face remain severe and complex. It should be said that the Party&#39;s &#39;examination&#39; is far from over.&#34;</p><p>The convoy that set out from Xibaipo to &#34;sit the examination&#34; was imbued with surging new momentum more than 60 years later on that same road. For the people&#39;s military, this examination has never been about any single moment or matter, but about the political character passed down from generation to generation; the answer sheet is not submitted by any one individual, but is the shared commitment of every generation of officers and soldiers. On the new journey of striving to build the military for its centenary and advancing toward a first-class military, the spirit of &#34;sitting the examination&#34; is the root and soul of the people&#39;s military&#39;s ideological and political work—the deeper the root is planted, the more firmly the soul is guarded, and the more this military will be able to stand invincible in any storm.</p><p>Having traversed nearly a century of history, the people&#39;s military has placed &#34;millet plus rifles (小米加步枪)&#34; in museums and welcomed a modern iron torrent composed of aircraft carriers, hypersonic missiles, fifth-generation fighter aircraft, nuclear submarines, and more. At the same time, &#34;sugar-coated bullets&#34; have been given new meaning in the context of &#34;sitting the examination&#34; in the new era, and we face more intricate and complex new tests. Today&#39;s world is undergoing great changes unseen in a century, and national development also faces unprecedented challenges and opportunities. As national strength grows and lives become more prosperous, people have higher demands for national security and greater expectations for the cause of military strengthening. World conditions, national conditions, Party conditions, and military conditions are all undergoing complex and profound changes; the struggle in the ideological sphere is sharp; various social currents of thought are eroding ideas and concepts; and various material temptations are distorting value orientations. How to consolidate the foundation and cultivate the source (固本培元)? Chairman Xi has emphatically stated: &#34;We must firmly grasp the era&#39;s requirements for building the military through politics, advance the building of the military through politics without pause for a single moment, and ensure that the people&#39;s military forever preserves its nature and purpose, always dares to fight and is certain to win, always unites and strives together, always produces talented people in abundance, always remains pure and honorable, and always maintains strict discipline under law and regulations.&#34; The six key areas of work to be grasped in advancing the building of the military through politics on the new journey are the six major examination questions for the people&#39;s military in the new era.</p><p>Political rectification (政治整训) is a &#34;tempering and purification (淬炼提纯)&#34; of ideals and convictions. Without the &#34;ballast stone&#34; of ideals and convictions, political rectification will lose its way in wind and rain; without the &#34;great furnace&#34; of political rectification, ideals and convictions will rust and degenerate in comfort and ease. Chairman Xi emphasized at the Gutian All-Army Political Work Conference: &#34;In strengthening and improving our military&#39;s political work under new circumstances, the most urgent task at present is to firmly establish four things of a fundamental nature throughout the military: firmly establish ideals and convictions throughout the military, firmly establish the principle of Party spirit throughout the military, firmly establish the standard of combat effectiveness throughout the military, and firmly establish the authority of political work throughout the military&#34;—issuing to the entire military a clarion call for military strengthening, led by the strategy of building the military through politics and striving toward the goal of a strong military, and pointing the direction for efforts to build a world-class military.</p><p>Strong winds reveal sturdy grass; fierce fire reveals true gold. During this period of reform, transformation, development, and construction, our military&#39;s officers and soldiers bear in mind Chairman Xi&#39;s instruction that &#34;our military has always fought on spirit (精气神); in the past we had more spirit and less steel, now we have more steel, and our spirit must be even greater, our bones must be even harder,&#34; carry forward the fine revolutionary traditions, and steadfastly fuse ideals and convictions into the &#34;iron torrent,&#34; forging an integrated Great Wall of steel: from the transformation and reshaping of &#34;the Hard-Bone 6th Company (硬骨头六连),&#34; to the heroic fighting of the new-era heroes defending the nation&#39;s borders—Qi Fabao, Chen Xiangrong, and others—on the Karakoram; from Zhang Chao, the &#34;vanguard of military strengthening who chased dreams across sea and sky,&#34; whose hot blood illuminated the sea and sky, to the officers and soldiers of Submarine 372, who remained calm in the face of danger and successfully handled a major sudden emergency, creating a world miracle… The &#34;spirit (气)&#34; of the people&#39;s military in the new era soars high in the wind, and the &#34;bones&#34; grow harder with the times. This &#34;spirit&#34; is the loyal spirit of following the Party&#39;s command, the fighting spirit of being able to win battles, and the upright spirit of maintaining an excellent work style; these &#34;hard bones&#34; are the bones of loyalty forged by conviction, the bones of victory in battle supported by capability, and the bones of work style tempered by will. This is precisely the most powerful and vivid practice of tempering a battle-winning force on the journey of strengthening and revitalizing the military.</p><p>Establishing lofty ideals and firming up revolutionary convictions is absolutely not an empty slogan, but a long-term cultivation process that employs multiple simultaneous approaches and comprehensive measures—theoretical arming, historical enlightenment, cultural cultivation, practical tempering, and institutional constraints—and a multi-dimensional, integrated process of forging the soul and cultivating people, tempering through actual combat, and shaping work style. Only by continuously replenishing the &#34;calcium of the spirit (精神之钙)&#34; and consolidating the spiritual pillar can we ensure that, as our military&#39;s officers and soldiers have ever more &#34;steel,&#34; their &#34;spirit&#34; remains ever full and their &#34;bones&#34; remain forever hard, thereby gathering the magnificent spiritual force to strive ceaselessly for the realization of the Party&#39;s goal of a strong military in the new era and the building of the people&#39;s military into a world-class military. This is both the inevitable requirement of carrying forward the bloodline, and the winning formula for meeting all future risks and challenges and achieving victory in the future.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">从南昌城头的枪响，到新时代强军兴军的足音，回顾我军波澜壮阔的历史征程，习主席在庆祝中国人民解放军建军90周年大会上深刻指出：“人民军队从胜利走向胜利，彰显了理想信念的伟大力量。崇高的理想，坚定的信念，是中国共产党人的政治灵魂，是人民军队的精神支柱。” “革命理想高于天。没有一大批具有坚定共产主义理想的中华儿女，就没有中国共产党，也就没有新中国，更没有今天我国的发展进步。要把我国发展得更好，离不开理想信念的力量。”在建军一百周年即将到来的日子里，我们重温习主席的重要讲话精神，回望历史的天空，越发深刻体会到，对人民军队而言，筑牢理想信念之基从来不是一句口号，而是关乎建军方向、决定胜败存亡的根本命题。 这一年，大革命失败，31万多共产党人和革命志士倒在了敌人的屠刀之下。 ——1927年4月28日下午2时许，北京西交民巷京师看守所刑场。 身着灰布棉袍，神色自若的李大钊走上刑场。指挥行刑官询问李大钊对家人还有什么要交代的？李大钊回答：“我是崇信共产主义者，知有主义不知有家，为主义而死分也，何憾为？” 年仅38岁的李大钊，毫无畏惧，从容镇定地第一个走上绞刑台，高呼“为主义而牺牲”，英勇就义。 时任中共江苏省委书记陈延年走上刑场。刽子手喝令他跪下，陈延年坚决不从，面对敌人的屠刀，他高声呼喊：“革命者光明磊落、视死如归，只有站着死，决不跪下！” 无数的革命先辈，用生命和鲜血在历史的天空留下了气壮山河的誓言。 时任中共湖北省委常委、年仅28岁的夏明翰因叛徒出卖被捕。面对敌人的酷刑和枪口，他宁死不屈。被押往刑场后，当执刑官问夏明翰还有什么话要说时，他用纸笔写下了那首大义凛然的就义诗：“砍头不要紧，只要主义真。杀了夏明翰，还有后来人。” 在这年1月不幸被捕的方志敏，在狱中面对敌人的高官厚禄诱降，严词拒绝。在狱中，他写下气壮山河的话语：“敌人只能砍下我们的头颅，决不能动摇我们的信仰！” 行刑那天，时年36岁的方志敏在赣江边默默站立几分钟，然后猛地转身，坦然说道：“来吧！”随后在枪声中英勇就义。 在白色恐怖之下，在敌人的屠刀面前，共产党人无惧无畏，视死如归。他们的底气和勇气，源自心中对共产主义的信仰和追求。在民不聊生的黑暗旧中国，正是他们坚信自己从事的是“为绝大多数人谋利益”、开辟新世界的壮丽事业，义无反顾地将个人命运融入国家民族命运，置个人生死、荣辱于身外，用鲜血和生命铸就了“为共产主义牺牲，死得其所”的坚定信念和远大理想。 无数革命先烈用抛头颅洒热血的行动告诉我们：理想信念是信仰融入灵魂所形成的特殊品质。它能在至暗时刻提供光明，在生死抉择中赋予勇气，在物质诱惑前守住清白，在个人牺牲外看到永恒。它让渺小的个体生命，与伟大的事业相连，从而获得超越时空的价值。正是这种“为有牺牲多壮志，敢教日月换新天”的英雄气概、为共产主义奋斗终身的理想信念，铸就了中华民族的精神丰碑，夯实了中国共产党理想信念最为坚实的底座。 “理想信念是立党兴党之基，也是党员干部安身立命之本。”理想信念，是穿越时空永不褪色的精神星芒。于百年大党，它如深扎历史岩层的主根，汲取真理甘泉，撑起参天巨木的每一圈年轮；对万千党员，它似流淌在血脉中的源代码，定义着生命的价值序列，校准着人生的全部航程。这信仰，是李大钊预言“黄金世界”时眼中的光，是夏明翰写下“还有后来人”时胸中的火，更是无数共产党人将滚烫初心嵌入时代经纬的无声誓言。 理想信念这一安身立命的“本”，赋予生命以超越世俗尺度的重量。它让骨气不被风雨侵蚀，让脚步不在岔路徘徊。立党兴党之基，由此夯筑；百年长青之钥，于斯深藏。当一代又一代共产党人将理想星光汇聚成河，便是照亮民族未来最磅礴的银河，也成就了方志敏在《可爱的中国》一书中写下的那段话：“到那时，到处都是活跃跃的创造，到处都是日新月异的进步，欢歌将代替了悲叹，笑脸将代替了哭脸，富裕将代替了贫穷，康健将代替了疾苦，智慧将代替了愚昧，友爱将代替了仇杀，生之快乐将代替了死之悲哀，明媚的花园将代替了凄凉的荒地！” 二十世纪三十年代，在广袤的中国大地上，一支队伍用了两年的时间，穿越冰山雪岭、高山峡谷、河流险滩、沼泽草地……走出了一条决定中华民族命运的道路——二万五千里长征。 走这条路有多难？跟随红军在长征路上走了10多个月的瑞士籍英国传教士薄复礼，在他的《神灵之手》一书中，是这样直观描述这条苦寒之路的：“路，在中国的定义与英国略有不同。随红军所走的路，有时几乎只是前边的人踏出的一条痕迹，说不上路……在山间的路上行走，滑得很，数千人马迈着沉重的脚步走在这条道上，把本来就很滑的路弄得泥泞不堪。跌倒是家常便饭，衣服上的泥浆常常是这块干了，那里又新添了块湿的。”有人在走完长征后，做了一个粗略的统计：红军行程1万多公里，横贯12个省，翻过18座大山，其中有5座终年覆盖着冰雪，渡过24条大河…… 世上本来就没有路，红军硬是用自己的两腿蹚出了一条震惊世界、彪炳史册的路。在这些尚能得到一定特殊照顾的外籍人士眼里，长征是对人类极限的挑战，但对时刻面对生死考验的普通红军官兵来说，长征更是用意志和信念，对人类精神力量的一次求证—— 风雪长征路上，一位穿着破旧单衣的老战士，倚靠着一棵光秃的树干，神态安详地坐着，一动不动，好似一尊凝固的塑像……指挥员让通讯员把军需处长叫来，想问问他为什么不给这个被冻死的同志发棉衣，队伍里的同志含泪告诉他，被冻死的这个同志就是军需处长；一场暴雨突袭松潘草地，身体力竭的青年干部郑金煜，意识到自己走不出草地，他在牺牲前，从腋下掏出了用油布包着、用体温保护的七根火柴，成为拯救战友走出草地沼泽最后的火种；红军过草地时，缺衣少食，战士们不得不煮食皮带、马鞍等一切含皮质的东西充饥，当吃到红军战士周广才剩下的最后半截皮带时，他含泪对战友说：“同志们，我们留着它做个纪念吧，带着它到陕北，去找党中央，去见毛主席！”这个提议得到了全班战友的赞同，大家怀着对革命胜利的无限向往，将这半截皮带保存了下来，并最终胜利抵达了延安…… 面对饥饿、寒冷、伤病以及雪山、沼泽等极端自然条件的挑战，在“不可能完成”的征途上，红军官兵创造了“平均每300米就有一人牺牲”却依然前进的奇迹。“军需处长”“七根火柴”“半截皮带”……是红军官兵战胜艰难困苦的具体写照，向世人求证了世界历史上“信念的哥德巴赫猜想”——人类精神力量可以突破物质条件的绝对限制。这正是长征留给后世最珍贵的启示：当一群人为了共同理想而彻底无私无畏时，他们所能创造的，不仅是军事奇迹，更是人类精神史上的不朽丰碑。 曾用武力横扫欧洲，最终战败被流放在圣赫勒拿岛的拿破仑，用余生在孤岛上给世界留下这么一句名言：世界上有两种伟大的力量，即利剑和精神。从长远看，精神总能征服利剑。 精神为何能战胜物质？为了解读中国工农红军的这次伟大远征，寻找二万五千里长征的胜利密码，三位外国著名记者先后来到中国展开调查采访，并各自完成一本著作：斯诺在《红星照耀中国》中，将长征视为“人类历史上一次无与伦比的壮举”；史沫特莱在《伟大的道路》一书中，称长征是“革命战争史上伟大的史诗”；索尔兹伯里在《长征：前所未闻的故事》中，认为长征是“中国革命的熔炉”“人类坚定无畏的丰碑”……他们的著作写作风格不同，视角各异，但得出的结论却惊人的相似，那就是将长征视为人类精神、意志与信念的非凡展现，是全人类共有的精神遗产和勇气、牺牲与信念的永恒象征。 试玉要烧三日满，辨材须待七年期。一支队伍的真正强大，往往在于既能经得起千钧一发的考验，也能耐得住漫长艰难岁月的历练。长征之所以被誉为“地球上的红飘带”，是无数红军的鲜血染成的。“生死瞬间的考验”与“漫长苦难的历练”两种不同维度的淬炼，共同构成了对共产党人精神与意志最为完整和彻底的锤炼。 在长征中“跟着走”的邓小平同志，早在中央苏区时主持创办《红星》报。长征路上，这份手刻油印的小报继续印发，为战士们提供“精神食粮”。在总结漫长艰难的中国革命历程时，邓小平提出：“为什么我们过去能在非常困难的情况下奋斗出来，战胜千难万险使革命胜利呢？就是因为我们有理想，有马克思主义信念，有共产主义信念。” 风雨侵衣骨更硬，野菜充饥志越坚；官兵一致同甘苦，革命理想高于天。在纪念红军长征胜利80周年大会上，习主席的声音传遍寰宇：长征的胜利，是中国共产党人理想的胜利，是中国共产党人信念的胜利……长征的胜利，靠的是红军将士压倒一切敌人而不被任何敌人所压倒、征服一切困难而不被任何困难所征服的英雄气概和革命精神。 人民军队的发展史上，铭记着这样一个个令敌人“心惊胆寒”的历史瞬间。 ——1940年2月23日，面对日军的重重包围，杨靖宇将军用子弹回应敌人的劝降。最终，他身中数弹，壮烈殉国。日军为解开杨靖宇在绝境中坚持战斗之谜，残忍地剖开了他的遗体，发现他的胃里没有一粒粮食，只有未能消化的草根、树皮和棉絮。负责围剿的伪通化省警务厅厅长岸谷隆一郎，也不禁“睹其壮烈亦为之感叹”。 ——1943年3月18日，新四军某部4连在江苏淮阴刘老庄与日伪军展开了一场殊死搏斗。面对强大的对手，全连82名战士毫不畏惧，与数千名日伪军激战12个小时，成功掩护淮海区党政机关和群众转移。最后，全连战士壮烈牺牲。战斗结束后，伪方传出消息，日军对于我军壮烈殉国之牺牲精神，深致敬佩。 ——在长津湖战役中，志愿军官兵在零下三四十摄氏度的严寒中，身着单衣，坚守阵地被冻成“冰雕”仍保持战斗姿态。目睹此景的美军士兵感到“不可思议”和“敬畏”，有的甚至在多年之后仍在回忆录中慨叹“他们不是尸体，是凝固的哨兵”。这场战役被美军称为“最寒冷的冬天”，而志愿军所展现的精神则被视为“谜一样的东方精神”。 ——在上甘岭战役中，迷恋弹药量的美军用300多门重炮，将190万发炮弹连同5000多枚航空炸弹，倾泻在仅有3.7平方公里的上甘岭上，把山头整整削低了两米……美军在付出巨大的伤亡后，上甘岭竟然还在志愿军手中！此后，上甘岭便成为美军的“伤心岭”。不少外军研究者感慨：苏联通过二战让全世界看到什么叫“钢铁洪流”，中国则通过抗美援朝让世界见识了什么叫“钢铁战士”。 中国共产党领导的人民军队，无论是在抗日战争中，还是在抗美援朝战争中，用“一不怕苦，二不怕死”的血性，击退了世界最为凶残和强大的敌人，升华了“钢少气多”战胜“钢多气少”的战争哲学。杨靖宇、狼牙山五壮士、刘老庄连、黄继光、邱少云、黄草岭英雄连……他们用鲜血和生命，证明了在战争胜负的天平上，人的因素、精神的因素、信仰的因素，是可以超越物质条件的关键变量。 “下定决心，不怕牺牲，排除万难，去争取胜利。”在艰苦卓绝的战争中，不怕牺牲和勇于奉献的精神，坚信胜利和赢得荣誉的坚定信仰，是人民军队在物质极端匮乏年代战胜强敌的终极武器，是从弱到强、从小到大、从胜利走向胜利的关键所在。正是依靠这种精神和信仰，人民军队在历史层面重塑了民族精神，奠定了国家独立自主的底气和根基，使一百多年来被几百个不平等条约压弯了脊梁的中国人，在世人面前挺起了不甘屈辱的胸膛，建立了举世公认的崇高军队荣誉！这份由无数先烈用生命铸就的精神遗产，也让我们的对手不得不肃然起敬，其价值早已超越战场胜负本身，成为中华民族迈向伟大复兴征程中，抵御一切风险挑战、克服一切艰难困苦的永恒力量和源泉。 1949年3月23日上午，河北省平山县西柏坡。中共中央机关要离开这里，前往北平。 登上吉普车，深情回望西柏坡，毛泽东同志意味深长地对众人说道：“进京赶考去！” 毛泽东将进城执政比喻为“进京赶考”，旨在警示全党：夺取全国胜利只是万里长征走完了第一步，未来的执政之路是更严峻的考验，决不能重蹈李自成进城后迅速腐化失败的覆辙。 领袖的忧患并非多余。事实证明，共产党人在重大历史转折关头高度清醒和自觉，为新中国成立后党的建设和发展奠定了坚实的思想基础。在革命战争年代，有的人经受了生死考验和苦难磨砺，却抵不住纸醉金迷的诱惑，倒在了“糖衣炮弹”中。作为经历过战争考验的“红小鬼”，高级干部刘青山、张子善，成了“赶考”路上第一批“不及格”的考生。 一支经历了生死考验和艰苦磨难的队伍，“赶考”既是物质条件的，更是理想信念的。“南京路上好八连”和“南海前哨钢八连”是我军“赶考”史上两个标志性的精神地标。 1949年5月，上海解放。华东军区某部八连官兵穿越战火纷飞的战场，一步踏入了中国最繁华的都市中心。南京路是上海的“十里洋场”，面对霓虹闪烁、香风阵阵，一些战士产生了“革命胜利，该享受一下”的思想。敌对势力也扬言：“上海是个大染缸，共产党红着进来，黑着出去。” 几十年过去了，八连在“糖衣炮弹”最密集的“考场”最前沿，交出了一份令党和人民满意的答卷。国防部授予该连“南京路上好八连”荣誉称号。毛泽东欣然命笔，写下了《八连颂》：“好八连，天下传。为什么？意志坚。为人民，几十年。拒腐蚀，永不沾……” 横琴岛，祖国的南海前哨，南中国海上的一颗璀璨明珠，与澳门仅一水之隔。驻守在岛上的是珠海警备区某部八连。 八连是一支战功卓著的英雄集体，先后经历了抗日战争、解放战争，参加过辽沈、平津战役和豫南、湘西、广西剿匪等，纵横11省（市），转战3万余里，历经大小战斗近百次，歼敌2300余人，1949年因战功突出被授予“南下巩固模范连”荣誉称号。 进驻横琴岛后，八连既面临着艰苦自然环境的考验，也经受着“糖衣炮弹”的围猎。在双重考验面前，八连形成了艰苦奋斗、拒腐防变的优良传统，在特殊复杂环境下始终保持“钢”的本色。1964年4月27日，国防部授予八连“南海前哨钢八连”荣誉称号。 南京路上的“好八连”与南海前哨的“钢八连”，同在二十世纪六十年代初期被国防部授称，共同构成了我军“拒腐蚀、永不沾”精神的两面旗帜。他们用数十年的坚守和实践告诉我们，一支军队的“赶考”永无止境。最大的挑战往往不是在艰难困苦中生存，而是在优越环境中坚守；最危险的敌人不是明处的枪林弹雨，而是暗处的“糖衣炮弹”。坚定的理想信念，永远是人民军队战胜一切诱惑和考验、从胜利走向胜利最强大的武器。 在参观了西柏坡纪念馆、毛泽东旧居、中央军委作战室旧址、党的七届二中全会旧址后，习主席深情地说：“当年党中央离开西柏坡时，毛泽东同志说是‘进京赶考’。60多年过去了，我们取得了巨大进步，中国人民站起来了，富起来了，但我们面临的挑战和问题依然严峻复杂，应该说，党面临的‘赶考’远未结束。” 当年从西柏坡出发的“赶考”车队，60多年后在同一条路上又被重新赋予澎湃动力。对于人民军队而言，这场考试考的从来不是一时一事，而是代代相传的政治本色；交卷的不是某一个人，而是每一代官兵的共同坚守。在攻坚建军百年、奋进强军一流的新征程上，“赶考”精神就是人民军队思想政治建设的根与魂——根扎得越深，魂守得越牢，这支军队就越能在任何风浪中立于不败之地。 走过近百年的历史，人民军队把“小米加步枪”请进了博物馆，迎来航母、高超音速导弹、五代战机、核潜艇等组成的现代化钢铁洪流。与此同时，“糖衣炮弹”也在新时代“赶考”语境下被赋予新的内涵，我们面前迎来了更多错综复杂的新考验。当今世界正经历百年未有之大变局，国家发展亦面临前所未有的挑战与机遇。随着国力强盛、生活富足，人们对国家安全要求更高，对强军事业期待更甚。世情、国情、党情、军情都在发生复杂深刻变化，意识形态领域斗争尖锐，各种社会思潮侵蚀思想观念，各种利益诱惑扭曲价值取向。如何固本培元？习主席强调指出：“要牢牢把握政治建军时代要求，一刻不停推进政治建军，确保人民军队永葆性质宗旨、始终敢打必胜、始终团结奋斗、始终人才辈出、始终纯洁光荣、始终法纪严明。”新征程上推进政治建军要抓好的六个方面重点工作，就是新时代人民军队“赶考”的六大考题。 政治整训是对理想信念的一次“淬炼提纯”。没有理想信念的“压舱石”，政治整训就会在风雨中迷失方向；没有政治整训的“大熔炉”，理想信念就会在安逸中锈蚀蜕化。习主席在古田全军政治工作会议上强调指出，“加强和改进新形势下我军政治工作，当前最紧要的是把4个带根本性的东西立起来：把理想信念在全军牢固立起来，把党性原则在全军牢固立起来，把战斗力标准在全军牢固立起来，把政治工作威信在全军牢固立起来”，向全军发出了以政治建军方略为引领，向着实现强军目标勠力前行的强军号令，指明了建设世界一流军队努力奋斗的方向。 疾风知劲草，烈火见真金。在改革转型的发展建设时期，我军官兵牢记习主席“我军历来是打精气神的，过去钢少气多，现在钢多了，气要更多，骨头要更硬”的嘱托，赓续革命优良传统，将理想信念扎扎实实地融入到“钢铁洪流”之中，铸就浑然一体的钢铁长城：从“硬骨头六连”的转型重塑，到祁发宝、陈祥榕等新时代卫国戍边英雄群体在喀喇昆仑的英勇战斗；从“逐梦海天的强军先锋”张超热血映海天，到372潜艇官兵临危不乱成功处置重大突发险情创造世界奇迹……新时代人民军队的“气”迎风高昂，“骨头”与时俱进变得更硬。这“气”是听党指挥的忠诚之气、是能打胜仗的血性之气、是作风优良的浩然之气；这“硬骨头”是信仰铸就的忠诚之骨、是本领支撑的胜战之骨、是意志锤炼的作风之骨。这正是强军兴军征程上，锤炼胜战之师最有力、最生动的践行。 树立远大理想，坚定革命信仰，绝非空洞口号，而是一个通过理论武装、历史启迪、文化熏陶、实践磨砺、制度约束等多管齐下、综合施策的长期培育过程，是一个铸魂育人、实战磨砺、作风锻造等多维一体推进的过程。唯有不断补足精神之钙、筑牢精神支柱，才能确保我军官兵在“钢”越来越多的同时，“气”始终充盈，“骨头”永远坚硬，从而凝聚起为实现党在新时代的强军目标、把人民军队建成世界一流军队而不懈奋斗的磅礴精神力量。这既是赓续血脉的必然要求，更是应对未来一切风险挑战、决胜未来的制胜密码。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
