@@ -2,6 +2,39 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-11 — Sidecar prose may be edited for style, never for substance
+
+Analyst directed an em-dash cleanup and a humanizer pass on No. 13 before
+publication. That required editing `output/the-pla-watch/posts/2026-08-08.json`
+directly, against the standing "no casual edits, ever" rule for sidecars. The
+rule stands; this is the narrow exception and its conditions:
+
+1. **Only on explicit analyst instruction.** Never as cleanup an agent decides
+   to do on its own initiative.
+2. **Authored prose fields only** — `dek`, `signal`, `opening_note`,
+   `what_stood_out`, `why_it_matters`, `what_was_routine`,
+   `term_to_know_explanation`, `what_im_watching_next`. **`source_trail` is
+   off-limits.** Its em dashes sit inside outlet names and article titles,
+   including Chinese, which are source-derived text under the no-invention
+   rule. The 08-08 pass left all 8 trail entries byte-identical, deliberately.
+3. **Punctuation and sentence boundaries only.** No claim, number, name, date,
+   unit, or quoted official language may change. The 08-08 pass preserved
+   `"null and void"`, `"Model of the Era"`, `"Most Beautiful Soldiers"` and the
+   Junsheng attribution verbatim.
+4. **Mechanically verified, not eyeballed.** Every replacement asserts its
+   target matches exactly once and aborts otherwise; a sentence-level diff
+   against a pre-edit copy confirms only intended fields moved. A partial
+   string match silently corrupting the canonical record is the failure mode
+   being defended against.
+5. **Re-render, then re-run the gate.** The sidecar is the record; the HTML is
+   derived and must be regenerated from it.
+
+Method note: fixing em dashes *first* and running the humanizer *second*
+introduced a defect the second pass then caught — an em-dash replacement
+created the staccato fragment "That caveat matters.", which is itself a
+flagged pattern (§31). Run the style passes together, or expect the second to
+clean up after the first.
+
 ## 2026-08-09 — A run that keeps publishing must still be able to raise an alarm
 
 1. **The 2026-08-07 credit exhaustion published as a clean day.** Run 105 hit

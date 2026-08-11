@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week — The PLA Watch</title>
+  <meta name="description" content="The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/the-pla-watch/posts/2026-08-08.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="The PLA Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/the-pla-watch/posts/2026-08-08.html">
+  <meta property="og:title"        content="The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week">
+  <meta property="og:description"  content="The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.">
+  <meta property="og:image"        content="https://chinamilwatch.org/the-pla-watch/covers/2026-08-08.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week">
+  <meta name="twitter:description" content="The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/the-pla-watch/covers/2026-08-08.png">
+
+  <link rel="icon" type="image/png" href="../../logo-icon.png">
+  <link rel="apple-touch-icon" href="../../logo-icon.png">
+  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://chinamilwatch.org/the-pla-watch/feed.xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ The PLA Watch design tokens — dark "night desk" surface ═════════ */
+    :root {
+      --color-brand:          #B3132B;
+      --color-brand-dark:     #8B0E20;
+      --color-brand-light:    #D8354C;       /* links / hover on dark — lifted for contrast */
+      --color-bg:             #0E1520;       /* ink navy */
+      --color-bg-card:        #131C29;       /* lifted navy surface */
+      --color-bg-header:      #0A1019;       /* masthead, slightly deeper */
+      --color-bg-sidebar:     #18222F;       /* sidebar surface */
+      --color-text-primary:   #EDE9E0;       /* warm off-white */
+      --color-text-secondary: #A8A29A;       /* mid warm gray */
+      --color-text-muted:     #746E67;       /* quiet gray */
+      --color-border:         #273040;       /* dark rule */
+      --color-border-soft:    #1C2534;       /* softer dark rule */
+      --color-accent:         #B3132B;
+      /* Shared vocabulary with the daily surface */
+      --ink:   var(--color-text-primary);
+      --ink-2: var(--color-text-secondary);
+      --ink-3: var(--color-text-muted);
+      --line:  var(--color-border);
+      --line-soft: var(--color-border-soft);
+      --signal: var(--color-brand);
+      --signal-bright: #E05A6D;
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1100px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--color-brand-light); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal-bright);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Reading progress rail (scroll-driven, progressive) ────────────── */
+    .progress-rail {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      z-index: 90;
+      pointer-events: none;
+      background: transparent;
+    }
+    .progress-rail b {
+      display: block;
+      height: 100%;
+      background: var(--color-brand-light);
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+    }
+    @supports (animation-timeline: scroll()) {
+      .progress-rail b {
+        animation: pw-progress linear both;
+        animation-timeline: scroll(root);
+      }
+      @keyframes pw-progress {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+    }
+
+    /* ── Masthead — editorial nameplate ─────────────────────────────────── */
+    .pw-masthead {
+      background: var(--color-bg-header);
+      border-top: 4px solid var(--color-brand);
+      border-bottom: 1px solid var(--color-border);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .pw-masthead-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.4rem 2rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .pw-masthead-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .pw-nameplate {
+      display: flex;
+      align-items: baseline;
+      gap: 0.85rem;
+      color: inherit;
+      text-decoration: none;
+    }
+    .pw-nameplate:hover { text-decoration: none; }
+    .pw-nameplate .pw-mark {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-style: italic;
+      font-size: 2.2rem;
+      letter-spacing: -0.015em;
+      color: var(--color-text-primary);
+      line-height: 1.1;
+      padding-bottom: 0.05em;
+    }
+    .pw-nameplate .pw-mark .the {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      margin-right: 0.15em;
+    }
+    .pw-nameplate .pw-mark-rule {
+      width: 36px;
+      height: 1px;
+      background: var(--color-brand);
+      align-self: center;
+    }
+    .pw-nameplate .pw-tag {
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      align-self: center;
+    }
+
+    .pw-nav { display: flex; gap: 1.25rem; align-items: center; }
+    .pw-nav a {
+      color: var(--color-text-secondary);
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 4px 0;
+      position: relative;
+      white-space: nowrap;
+      transition: color 150ms ease;
+    }
+    .pw-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -2px;
+      height: 2px;
+      background: var(--color-brand);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .pw-nav a:hover { color: var(--color-text-primary); text-decoration: none; }
+    .pw-nav a:hover::after { transform: scaleX(1); }
+    .pw-nav a.active { color: var(--color-text-primary); }
+    .pw-nav a.active::after { transform: scaleX(1); }
+    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
+    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
+
+    .pw-masthead-rule {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
+      border-top: 1px solid var(--color-border-soft);
+      padding-top: 0.65rem;
+    }
+    .pw-masthead-rule .left,
+    .pw-masthead-rule .right { display: flex; gap: 1.1rem; }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+    .site-footer {
+      background: var(--color-bg-card);
+      border-top: 1px solid var(--color-border);
+      padding: 2.5rem 2rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--color-text-primary);
+      margin-bottom: 0.4rem;
+    }
+    .footer-desc {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      line-height: 1.65;
+      max-width: 520px;
+    }
+    .footer-transparency {
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      line-height: 1.65;
+      border-top: 1px solid var(--color-border-soft);
+      padding-top: 0.85rem;
+      margin-top: 0.85rem;
+    }
+    .footer-meta {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      line-height: 1.85;
+    }
+    .footer-meta a { color: var(--color-text-secondary); font-weight: 600; }
+    .footer-meta a:hover { color: var(--color-text-primary); }
+    .footer-meta-label {
+      display: block;
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal-bright);
+      margin-bottom: 0.5rem;
+      font-size: 0.62rem;
+    }
+
+    /* ── Edition badges — shared, dark-theme chips ──────────────────────── */
+    .pw-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: var(--radius);
+    }
+    .pw-badge--significant {
+      background: rgba(179, 19, 43, 0.14);
+      color: #E05A6D;
+      border: 1px solid rgba(209, 28, 54, 0.4);
+    }
+    .pw-badge--routine {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+    .pw-badge--pilot {
+      background: rgba(224, 164, 88, 0.1);
+      color: #E0A458;
+      border: 1px solid rgba(224, 164, 88, 0.35);
+    }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives animate. Above-the-fold text must
+       never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — start states only under .js inside an
+       un-revealed [data-reveal]; no-JS, print, and reduced-motion get the
+       finished artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1.1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 45ms + 200ms), 850ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.mod-heading, .hero-edition, .terms-eyebrow, .author-block-eyebrow)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .snap-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .snap-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.9s var(--ease) 250ms;
+    }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .pw-masthead-inner { padding: 1.2rem 1.25rem 0.95rem; }
+      .pw-masthead-top { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+      .pw-nameplate .pw-mark { font-size: 1.8rem; }
+      .pw-nameplate .pw-mark-rule { display: none; }
+      .pw-nameplate .pw-tag { display: none; }
+      .pw-nav { gap: 1rem; }
+      .pw-nav a { font-size: 0.66rem; letter-spacing: 0.1em; }
+      .pw-masthead-rule { font-size: 0.58rem; letter-spacing: 0.12em; }
+      .pw-masthead-rule .right { display: none; }
+      /* wrap between spans, never inside one ("No. 9" must not split) */
+      .pw-masthead-rule .left { flex-wrap: wrap; gap: 0.15rem 1.1rem; }
+      .pw-masthead-rule .left span { white-space: nowrap; }
+      main { padding: 2rem 1.25rem 3.5rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2rem 1.25rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .pw-nameplate .pw-mark { font-size: 1.55rem; }
+      .pw-nav { gap: 0.85rem; }
+      .pw-nav a { font-size: 0.6rem; }
+      .pw-nav .nav-sep { display: none; }
+    }
+    @media (max-width: 460px) {
+      .pw-nav a[href$="archive.html"]:not(.active),
+      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+      .progress-rail { display: none; }
+    }
+
+    /* ── Print — light palette, no chrome, ink-friendly ────────────────── */
+    @media print {
+      :root {
+        --color-brand:          #8B0E20;
+        --color-brand-light:    #8B0E20;
+        --color-bg:             #ffffff;
+        --color-bg-card:        #ffffff;
+        --color-bg-header:      #ffffff;
+        --color-bg-sidebar:     #ffffff;
+        --color-text-primary:   #111111;
+        --color-text-secondary: #333333;
+        --color-text-muted:     #555555;
+        --color-border:         #bbbbbb;
+        --color-border-soft:    #dddddd;
+      }
+      body { background: #ffffff !important; }
+      .pw-nav, .site-footer, .progress-rail { display: none; }
+      .nd-veil, .nd-src-bracket, .nd-src-inline, .nd-tickrow { display: none; }
+      .pw-masthead { border-top-width: 3px; }
+      .pw-nameplate .pw-mark .the { color: #555555; }
+      a { color: inherit; text-decoration: none; }
+      .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
+      .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+    }
+
+    /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
+       Same Source-Derived Signal Graphics system as the Paper Ledger
+       (.pl-veil in base.html), keyed to the navy ground instead. */
+    .nd-veil-band { position: relative; overflow: hidden; border-bottom: 1px solid var(--color-border); background: var(--color-bg); }
+    .nd-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 92%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
+        radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .nd-veil { opacity: .45; }
+      .nd-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--color-bg) 8%, transparent 56%),
+                    linear-gradient(to top, var(--color-bg) 5%, transparent 42%);
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
+    }
+    /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
+    .nd-src-bracket { position: absolute; right: 2rem; top: 2rem; text-align: right; max-width: 260px; z-index: 1; }
+    .nd-src-bracket .bracket {
+      display: inline-block; width: 56px; height: 22px;
+      border-right: 2px solid var(--signal-bright); border-top: 2px solid var(--signal-bright);
+      margin-bottom: .5rem;
+    }
+    .nd-src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); line-height: 1.8;
+    }
+    .nd-src-bracket .src-lines a { color: var(--color-text-secondary); border-bottom: 1px solid rgba(224,90,109,.4); text-decoration: none; }
+    .nd-src-bracket .src-lines a:hover { color: var(--signal-bright); }
+    .nd-src-inline { display: none; font-size: .68rem; color: var(--color-text-muted); line-height: 1.6; }
+    .nd-src-inline a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
+    @media (max-width: 900px) {
+      .nd-src-bracket { display: none; }
+      .nd-src-inline { display: block; }
+    }
+    /* tick row — weekly record register (Night Desk only), one tick per
+       Source Trail record; red = model-flagged. The label is the
+       accessible text; ticks are aria-hidden decoration. */
+    .nd-tickrow { display: flex; align-items: flex-end; gap: 6px; height: 18px; margin-top: 1.1rem; }
+    .nd-tickrow i { width: 2px; height: 12px; background: #3A4556; }
+    .nd-tickrow i.sig { background: var(--signal-bright); height: 18px; }
+    .nd-tickrow-label {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--color-text-muted); margin-top: .45rem;
+    }
+    .nd-tickrow-label b { color: var(--signal-bright); font-weight: 600; }
+    @media (max-width: 480px) { .nd-tickrow { display: none; } } /* label (numeric text) remains */
+    /* mobile veil geometry: the veil emerges from the LOWER portion so
+       the title/dek at top sit on clean navy. */
+    @media (max-width: 700px) {
+      /* alpha capped at .85 so byline/meta over the dense zone keep navy
+         behind them; the image never reaches full opacity on mobile */
+      .nd-veil { width: 100%;
+        -webkit-mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+        mask-image: radial-gradient(130% 95% at 80% 100%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.42) 46%, transparent 72%);
+      }
+    }
+
+/* ── Two-column post layout ─────────────────────────────────────────── */
+.post-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: 3.5rem;
+  align-items: flex-start;
+}
+.post-main { min-width: 0; }
+@media (max-width: 900px) {
+  .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+}
+
+/* ── Edition header — briefing head, structured not decorated ───────── */
+.hero {
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5rem 0 1.9rem;
+  margin-bottom: 2.25rem;
+}
+.hero-meta-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hero-edition::before {
+  content: "";
+  width: 26px; height: 2px;
+  background: var(--color-brand);
+}
+.hero-edition .pw-badge { margin-left: 0.5rem; }
+.hero-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: 1.05rem;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+.hero-dek {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.4rem;
+  max-width: 58ch;
+}
+.byline {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+}
+.byline-name { color: var(--color-text-primary); font-weight: 600; }
+.byline-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+.hero-meta {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+.hero-meta .meta-item { display: inline-flex; gap: 0.45rem; align-items: baseline; }
+.hero-meta .meta-item .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+}
+
+/* ── Signal Veil band inner — protected text column over the veil ──── */
+.nd-band-inner { max-width: var(--shell); margin: 0 auto; padding: 2.6rem 2rem 2.3rem; position: relative; z-index: 1; }
+.nd-band-inner .hero-title { max-width: 24ch; }
+.nd-band-inner .hero-dek { max-width: 46ch; }
+@media (max-width: 900px) {
+  .nd-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Cover attribution — the cover PNG serves og:image duty only
+     (DECISION_LOG 2026-07-11); no in-page cover figure renders. ─────── */
+.cover-credit-note {
+  margin: 0 0 2.25rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius);
+  background: var(--color-bg-card);
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+.cover-credit-note .label { font-weight: 700; color: var(--color-text-secondary); }
+.cover-credit-note a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+}
+.cover-credit-note a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+
+/* ── Visual Context ─────────────────────────────────────────────────── */
+.visual-context { margin: 0 0 2.5rem; }
+.media-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.media-card:last-child { margin-bottom: 0; }
+.media-card img { display: block; width: 100%; height: auto; background: var(--color-bg-card); }
+.media-card-body { padding: 0.95rem 1.15rem 1rem; border-top: 1px solid var(--color-border-soft); }
+.media-caption {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+.media-meta {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+.media-meta a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+}
+.media-meta a:hover { color: var(--color-brand-light); text-decoration-color: var(--color-brand-light); }
+.media-meta .sep { margin: 0 0.45rem; color: var(--color-border); }
+.media-note {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-top: 0.45rem;
+  line-height: 1.5;
+}
+@media (max-width: 600px) {
+  .media-card-body { padding: 0.85rem 1rem 0.95rem; }
+  .media-caption { font-size: 0.9rem; }
+}
+
+/* ── Module section heading ─────────────────────────────────────────── */
+.mod-heading {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.95rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mod-heading::before {
+  content: "";
+  width: 22px; height: 2px;
+  background: var(--color-brand);
+}
+.mod-heading.brand { color: var(--signal-bright); }
+.mod-heading .mod-count {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+/* ── This Week's Signal — the key judgment, in a drawn frame ────────── */
+.signal-card {
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-brand);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.85rem 1.7rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.signal-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.signal-frame rect {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
+}
+.signal-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal-bright);
+  margin-bottom: 0.7rem;
+}
+.signal-text {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1.22rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  letter-spacing: -0.005em;
+}
+
+/* ── Coverage Snapshot ──────────────────────────────────────────────── */
+.snapshot {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.65rem 1.6rem;
+  margin-bottom: 2.5rem;
+}
+.snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.snap-stat .num {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.95rem;
+  line-height: 1;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.012em;
+  margin-bottom: 0.4rem;
+}
+.snap-stat .num .accent { color: var(--signal-bright); }
+.snap-stat .label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.snap-stat .sub {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+}
+.snap-bar { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-soft); }
+.snap-bar-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+.snap-bar-track {
+  height: 8px;
+  background: var(--color-border-soft);
+  border-radius: 1px;
+  overflow: hidden;
+  display: flex;
+}
+.snap-bar-fill { background: var(--color-brand); height: 100%; }
+.snap-bar-rest { background: var(--color-border); height: 100%; flex: 1; }
+.snap-bar-legend {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.55rem;
+  display: flex;
+  gap: 1.4rem;
+}
+.snap-note {
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+.snap-note a { color: var(--color-text-secondary); font-weight: 600; }
+.snap-bar-legend .swatch {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 1px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.swatch-sig { background: var(--color-brand); }
+.swatch-rest { background: var(--color-border); }
+@media (max-width: 600px) {
+  .snapshot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .snap-stat .num { font-size: 1.55rem; }
+}
+
+/* ── Body sections — long-form analytical flow ──────────────────────── */
+.post-body { max-width: 680px; }
+.post-section { margin-bottom: 2.6rem; scroll-margin-top: 1.5rem; }
+
+.section-text p {
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  color: var(--color-text-primary);
+}
+.section-text p:last-child { margin-bottom: 0; }
+.opening .section-text p:first-of-type::first-letter {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 3.6rem;
+  line-height: 0.85;
+  float: left;
+  margin: 0.2rem 0.55rem -0.15rem 0;
+  color: var(--signal-bright);
+}
+
+/* ── Term-to-know module ────────────────────────────────────────────── */
+.term-box {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-brand);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.65rem;
+}
+.term-word {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.005em;
+  color: var(--color-text-primary);
+  margin-bottom: 0.6rem;
+}
+.term-explanation {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+}
+.term-explanation p { margin-bottom: 0.85rem; }
+.term-explanation p:last-child { margin-bottom: 0; }
+
+/* ── Source Trail — the evidence register on a spine ────────────────── */
+.source-trail { margin-bottom: 2.5rem; }
+.source-cards { display: flex; flex-direction: column; position: relative; margin-left: 20px; }
+.source-cards::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 16px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--color-border);
+}
+.source-card::before {
+  content: "";
+  position: absolute;
+  left: -17.5px;
+  top: 1.1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text-muted);
+}
+.source-card.is-significant::before {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-cards::before {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.js [data-reveal].in .source-cards::before {
+  transform: scaleY(1);
+  transform-origin: top center;
+  transition: transform 0.9s var(--ease) 0.15s;
+}
+.js:not(.no-anim) [data-reveal]:not(.in) .source-card::before { transform: scale(0); }
+.js [data-reveal].in .source-card::before {
+  transform: scale(1);
+  transition: transform 0.45s var(--ease);
+  transition-delay: min(calc(var(--ni, 0) * 45ms + 250ms), 900ms);
+}
+@media (max-width: 600px) {
+  .source-cards { margin-left: 16px; }
+  .source-cards::before { left: -11px; }
+  .source-card::before { left: -14.5px; }
+}
+.source-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 180ms var(--ease), border-color 180ms var(--ease);
+  position: relative;
+}
+.source-card:first-child { border-top: 1px solid var(--color-border); border-radius: var(--radius) var(--radius) 0 0; }
+.source-card:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.source-card:only-child { border-top: 1px solid var(--color-border); border-radius: var(--radius); }
+.source-card:hover { background: var(--color-bg-sidebar); text-decoration: none; }
+.source-card.is-significant { border-left: 3px solid var(--color-brand); padding-left: calc(1.15rem - 2px); }
+.source-card-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--color-text-primary);
+}
+.source-card-zh {
+  font-family: var(--zh);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+.source-card-meta {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.source-card-meta .sep { color: var(--color-border); }
+.source-card-meta .sig-tag {
+  color: #E05A6D;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(179, 19, 43, 0.14);
+  border: 1px solid rgba(209, 28, 54, 0.4);
+  padding: 1px 6px;
+  border-radius: var(--radius);
+  font-size: 0.58rem;
+}
+.source-card-domain {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+.source-trail-cap {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.85rem;
+  font-style: italic;
+}
+
+/* ── Closing note ───────────────────────────────────────────────────── */
+.closing-note {
+  margin-top: 2.5rem;
+  padding: 1.4rem 1.65rem;
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+/* ── Author block ───────────────────────────────────────────────────── */
+.author-block {
+  margin-top: 2.5rem;
+  padding: 1.5rem 1.65rem 1.6rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.author-block-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.author-block-eyebrow::before {
+  content: "";
+  width: 22px; height: 2px;
+  background: var(--color-brand);
+}
+.author-block-name {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.15rem;
+}
+.author-block-title {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.85rem;
+}
+.author-block-bio {
+  font-family: var(--serif);
+  font-size: 0.97rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  max-width: 640px;
+  margin-bottom: 1.1rem;
+}
+.author-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+.author-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+.author-chip:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); text-decoration: none; }
+.author-chip .arrow { font-size: 0.7rem; color: var(--color-text-muted); transition: color 0.15s; }
+.author-chip:hover .arrow { color: var(--color-brand-light); }
+
+/* ── Sidebar (sticky) ───────────────────────────────────────────────── */
+.post-sidebar { position: sticky; top: 1.5rem; }
+.sb-card {
+  background: var(--color-bg-sidebar);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.sb-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--signal-bright);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.sb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border-soft);
+  font-family: var(--sans);
+  font-size: 0.825rem;
+}
+.sb-row:last-child { border-bottom: none; }
+.sb-row .label { color: var(--color-text-secondary); }
+.sb-row .value {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.sb-text { font-size: 0.825rem; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* In-this-edition rail (scrollspy) */
+.toc-list { list-style: none; }
+.toc-list li { border-bottom: 1px solid var(--color-border-soft); }
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  display: block;
+  padding: 0.5rem 0 0.5rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-left: 2px solid transparent;
+  margin-left: -0.85rem;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.toc-list a:hover { color: var(--color-text-primary); text-decoration: none; }
+.toc-list a.active {
+  color: var(--color-text-primary);
+  border-left-color: var(--color-brand-light);
+}
+
+/* Citation block */
+.cite-text {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  margin-bottom: 0.75rem;
+}
+.cite-copy {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cite-copy:hover { border-color: var(--color-brand-light); color: var(--color-brand-light); }
+.cite-copy:focus-visible { outline: 2px solid var(--signal-bright); outline-offset: 2px; }
+.no-clipboard .cite-copy { display: none; }
+
+@media (max-width: 900px) {
+  .post-sidebar { position: static; }
+  .sb-card--toc { display: none; }
+}
+
+/* ── Post nav (bottom) ──────────────────────────────────────────────── */
+.edition-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.edition-nav a { color: var(--color-text-secondary); }
+.edition-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
+.edition-nav .edition-nav-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+.edition-nav .next { text-align: right; margin-left: auto; }
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.post-nav--tight {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+.post-nav a { color: var(--color-text-secondary); }
+.post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
+
+/* ── Print — single column brief ────────────────────────────────────── */
+@media print {
+  .post-wrap { display: block; }
+  .post-sidebar, .edition-nav, .post-nav, .author-chips,
+  .cover-credit-note, .visual-context { display: none; }
+  .hero, .signal-card, .snapshot, .term-box, .author-block, .source-card {
+    break-inside: avoid;
+  }
+  .opening .section-text p:first-of-type::first-letter { color: #8B0E20; }
+  .snap-bar-fill { background: #8B0E20; }
+  .snap-bar-rest, .swatch-rest { background: #dddddd; }
+  .swatch-sig { background: #8B0E20; }
+  .source-card:hover { background: transparent; }
+  .signal-frame { display: none; }
+  .source-cards { margin-left: 0; }
+  .source-cards::before, .source-card::before { content: none; }
+  /* Keep the source trail traceable on paper: print each item's URL. */
+  .source-card-domain { display: none; }
+  .source-card::after {
+    content: attr(href);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: #555555;
+    word-break: break-all;
+  }
+}
+  </style>
+</head>
+<body>
+
+<div class="progress-rail" aria-hidden="true"><b></b></div>
+
+<header class="pw-masthead">
+  <div class="pw-masthead-inner">
+    <div class="pw-masthead-top">
+      <a href="../index.html" class="pw-nameplate" aria-label="The PLA Watch home">
+        <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
+        <span class="pw-mark-rule" aria-hidden="true"></span>
+        <span class="pw-tag">A weekly publication of China Mil Watch</span>
+      </a>
+      <nav class="pw-nav" aria-label="Publication">
+        <a href="../index.html" >Latest Edition</a>
+        <a href="../archive.html" >Archive</a>
+        <a href="../terms.html" >Terms</a>
+        <span class="nav-sep">|</span>
+        <a href="../../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
+      </nav>
+    </div>
+    <div class="pw-masthead-rule">
+      <span class="left"><span>Vol. I · No. 13</span><span>Significant · Week ending 8 August 2026</span></span>
+      <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
+    </div>
+  </div>
+</header>
+
+
+<main>
+<div class="post-wrap">
+
+  <article class="post-main">
+
+    <div class="hero">
+      <div class="hero-meta-top">
+  <div class="hero-edition">
+No. 13 · Week ending 8 August 2026
+<span class="pw-badge pw-badge--significant">Significant</span>  </div>
+</div>
+<h1 class="hero-title">Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week</h1>
+<div class="hero-dek">The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.</div>
+<div class="byline">
+  By <span class="byline-name">Benjamin Yang</span>
+<span class="byline-title">Principal Analyst, China Mil Watch</span></div>
+<div class="hero-meta">
+  <span class="meta-item">Covers <span class="num">2 August 2026</span> → <span class="num">8 August 2026</span></span>
+<span class="meta-item"><span class="num">7</span> days observed</span>  <span class="meta-item"><span class="num">134</span> articles analyzed</span>
+  <span class="meta-item"><span class="num">11</span> model-flagged</span>
+</div>
+<div class="nd-tickrow" aria-hidden="true">
+<i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i></i><i></i></div>
+<div class="nd-tickrow-label">Source trail · 13 records · <b>11 model-flagged</b> · part of the monitored weekly record · of 134 articles analyzed</div>
+
+    </div>
+
+    <div class="cover-credit-note">
+      <span class="label">Edition cover (link-preview image):</span>
+ <a href="http://www.81.cn/yw_208727/16478287.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
+    </div>
+
+
+      <div class="signal-card" id="s-signal" data-reveal>
+        <svg class="signal-frame" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+          <rect class="draw-path" pathLength="1" style="--pi: 1;" x="0.5" y="0.5" width="99" height="39"/>
+        </svg>
+        <div class="signal-eyebrow">This week's signal</div>
+        <div class="signal-text">The PLA Southern Theater Command conducted a named, scenario-specific exercise at Huangyan Island tied explicitly to a Philippine UN chart filing: a documented operational response to a legal act.</div>
+      </div>
+
+    <div class="snapshot" id="s-snapshot" data-reveal>
+      <div class="mod-heading brand">Coverage Snapshot</div>
+      <div class="snapshot-grid">
+        <div class="snap-stat">
+          <div class="num">134</div>
+          <div class="label">Articles</div>
+          <div class="sub">analyzed in this edition</div>
+        </div>
+        <div class="snap-stat">
+          <div class="num"><span class="accent">11</span></div>
+          <div class="label">Model-flagged</div>
+          <div class="sub">auto-flagged by the analysis model</div>
+        </div>
+        <div class="snap-stat">
+          <div class="num">1</div>
+          <div class="label">Source</div>
+          <div class="sub">PLA Daily</div>
+        </div>
+        <div class="snap-stat">
+          <div class="num">7</div>
+          <div class="label">Days</div>
+          <div class="sub">2026-08-02 → 2026-08-08</div>
+        </div>
+      </div>
+      <div class="snap-bar">
+        <div class="snap-bar-label">Model-flagged vs. routine coverage</div>
+        <div class="snap-bar-track">
+          <div class="snap-bar-fill" style="width: 8.2%;"></div>
+          <div class="snap-bar-rest"></div>
+        </div>
+        <div class="snap-bar-legend">
+          <span><span class="swatch swatch-sig"></span>Model-flagged (11)</span>
+          <span><span class="swatch swatch-rest"></span>Routine (123)</span>
+        </div>
+      </div>
+      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
+    </div>
+
+    <div class="post-body">
+
+      <div class="post-section opening" id="s-opening" data-reveal>
+        <div class="mod-heading brand">Opening Note</div>
+        <div class="section-text">
+<p>The week of August 1 is never a quiet week in Chinese military media. The PLA&#39;s founding anniversary reliably produces a surge in platform footage, model-soldier profiles, and doctrinal restatements, and this year&#39;s 99th anniversary followed that pattern faithfully. The analytical problem is not volume. It is sorting: which items reflect deliberate strategic messaging, which are artifacts of the annual media cycle, and which document something genuinely new about how the PLA is developing and operating.</p><p>Three clusters stand out and deserve separate treatment. The first is the Huangyan Island exercise series, which began on August 1 and generated official commentary and press briefing language across the full week. The second is a set of platform disclosures (the Y-20B engine confirmation, H-6N weapons footage, GJ-3A drone debut, and DF-17 formation footage) released through official documentaries and state media around the anniversary. The third is a wave of political work content centered on NUDT researcher Wang Ji, designated a &#34;Model of the Era,&#34; which dominated PLA Daily&#39;s August 2-8 run and is best understood as an institutional campaign rather than a news event.</p><p>All three are real, and none of them are straightforward to interpret. The Huangyan Island exercises were explicitly linked to a specific Philippine legal act, the submission of nautical charts to the United Nations. That makes them more operationally significant than routine South China Sea patrol coverage. The platform disclosures are notable, but they arrived through curated documentary and anniversary footage, which is a format the PLA uses to control what is visible and what is not. And the Wang Ji campaign is extensive enough, running across at least a dozen distinct articles in the week&#39;s dataset, to represent a deliberate force-wide messaging effort rather than a profile piece that happened to run large.</p><p>The week was genuinely significant by the standards of recent PLA media coverage. That is worth stating plainly. It is also worth stating that most of the significant content was either anniversary-cycle framing or a continued pattern of PLA-CCG coordinated coercion in the South China Sea, neither of which is new, even if specific details this week were.</p>        </div>
+      </div>
+
+      <div class="post-section" id="s-stood-out" data-reveal>
+        <div class="mod-heading brand">What Stood Out</div>
+        <div class="section-text">
+<p>The Huangyan Island exercise on August 1, and the sustained official commentary through August 7, stands out as the week&#39;s clearest operationally grounded signal.</p><p>The Southern Theater Command conducted a maritime and air joint exercise around Huangyan Island explicitly in response to the Philippines drawing territorial sea baselines and separately depositing nautical charts of the feature with the United Nations. PLA Daily reported on August 2 that the exercise included named vessels (the Zhanjiang and Qilianshan), a bomber formation operating from multiple Southern Theater Air Force bases under airborne early warning aircraft control, and a vessel-boarding and hostage-rescue drill simulating the forcible recovery of &#34;detained vessels.&#34; That last element extends the documented scope of Southern Theater exercises at Huangyan Island beyond the air and naval strike subjects that have dominated prior coverage.</p><p>The MND press briefing on August 7 then layered additional framing onto the same event: spokesperson Senior Colonel Chen Xi described the exercises as a &#34;stern warning&#34; against Philippine &#34;sovereignty-infringing and provocative actions,&#34; and the China Coast Guard ran parallel rights-protection enforcement drills in the same waters. The pairing of PLA exercises with CCG law-enforcement framing at the same location on the same timeline is now an established instrument. What is analytically notable this week is the explicit linkage to a specific Philippine legal act, a UN chart filing, as the stated trigger. The PLA is documenting, in its own official record, that it treats Philippine legal and administrative actions at Huangyan Island as actionable provocations requiring an operational response.</p><p>A secondary item that stands out: the August 4 Global Times report confirming the GJ-3A drone&#39;s public debut alongside a named three-drone intelligent strike-planning system, with footage described as showing cross-service intelligence distribution to the Army, Navy, and Rocket Force. The framing of Air Force unmanned platforms as a sensor layer feeding other services&#39; strike assets documents a joint fires architecture claim that goes beyond what has previously appeared in open reporting. The footage alone cannot confirm operational integration, a caveat that matters here, but the deliberate official disclosure is itself a data point.</p>        </div>
+      </div>
+
+      <div class="post-section" id="s-why" data-reveal>
+        <div class="mod-heading brand">Why It Matters</div>
+        <div class="section-text">
+<p>The Huangyan Island exercise pattern matters for a reason that goes beyond the exercises themselves. Beijing is building a public record, in its own official media, that specific Philippine administrative and legal actions constitute provocations warranting military responses. The August 1 exercise was framed as a response to baseline declarations. The August 7 press statement was framed as a response to a UN chart deposit. Each response is documented with official language, a named spokesperson, and coordinated PLA-CCG activity.</p><p>This cumulative record is useful to Beijing in two ways. First, it sets a precedent in its own public justification architecture: future responses to Philippine moves at Huangyan Island can point back to an established response pattern rather than requiring fresh justification each time. Second, it reinforces the claim that China alone may define the feature&#39;s legal status: the MND statement described the Philippine chart as &#34;null and void&#34; and asserted that only China has the right to draw Huangyan Island&#39;s territorial sea baselines.</p><p>For the vessel-boarding drill specifically: the inclusion of a simulated forcible recovery of &#34;detained vessels&#34; in the August 1 exercise is worth holding as a data point. It does not prove planning for an actual boarding operation. But it documents that the Southern Theater is rehearsing that scenario in the context of Huangyan Island exercises, which is distinct from air defense or surface strike subjects.</p><p>On the platform disclosures: the Y-20B&#39;s first confirmed operational use with a domestic WS-20 engine matters because it documents progress on a recognized dependency. The original Y-20 fleet relied on Russian D-30KP2 engines; the WS-20 transition has been long anticipated but not previously confirmed in official operational use. The H-6N weapons footage and the DF-17 formation release fit the anniversary deterrence-messaging pattern rather than constituting new capability claims, but they extend the public evidentiary record on both platforms.</p>        </div>
+      </div>
+
+      <div class="post-section" id="s-routine" data-reveal>
+        <div class="mod-heading brand">Routine Baseline</div>
+        <div class="section-text">
+<p>Two categories of this week&#39;s coverage are worth naming as routine, not because they are unimportant institutionally, but because reading them as operational signals would be a mistake.</p><p>The first is the Wang Ji campaign. PLA Daily ran at least a dozen distinct articles across the week profiling Wang Ji, a wheelchair-bound NUDT computer scientist designated a &#34;Model of the Era&#34; by the Central Propaganda Department. The articles range from reporter&#39;s notes to political commentaries to unit study-response roundups. The volume is deliberate and coordinated: this is a force-wide ideological campaign, not organic coverage of a researcher. Its analytical value is specific: it documents that the PLA&#39;s current political work apparatus is using the figure of the self-sacrificing defense scientist to reinforce messaging around indigenous software development and &#34;chokepoint&#34; technology self-reliance. That is a real institutional signal about what the CMC is emphasizing in this period. What it does not tell you is anything about what Wang Ji&#39;s software actually does, which programs it supports, or whether the campaign reflects a new policy direction or a continuation of existing messaging in a new format.</p><p>The second category is the anniversary political work surge more broadly: the &#34;Most Beautiful Revolutionary Soldiers&#34; profiles, the Long March commemorative features, the model-NCO and grassroots Party branch stories. These follow patterns that PLA Daily runs on and around August 1 every year. They are useful as a baseline record of what the institution is framing as exemplary. Technical competence in cyber and space domains has displaced pure ideological virtue in the &#34;Most Beautiful Soldiers&#34; selection criteria this year, which is a real shift worth noting. But the individual profiles, the historical narratives, and the 双拥 anniversary content are not evidence of operational change. They are evidence of what the institution wants junior officers and soldiers to value, which is a different and narrower kind of evidence.</p>        </div>
+      </div>
+
+      <div class="post-section" id="s-term" data-reveal>
+        <div class="mod-heading brand">Term to Know</div>
+        <div class="term-box">
+          <div class="term-word">有理有力有节 (Yǒu lǐ yǒu lì yǒu jié)</div>
+          <div class="term-explanation">
+<p>&#34;Justified, forceful, and measured.&#34; This three-part formulation appears in authoritative PLA commentary, this week in the &#34;Junsheng&#34; bylined piece on the Huangyan Island exercise, to frame coercive military action as legally grounded, credible, and calibrated rather than impulsive or escalatory. The phrase has a long history in Chinese political and military discourse, used to describe how the PRC should handle disputes without appearing either weak or reckless. When it appears in PLA Daily commentary alongside a named exercise, it functions as a public signal that the action was deliberate and sanctioned at a high level, and that Beijing is positioning the response within a rule-of-law narrative rather than acknowledging it as coercive pressure. Reading it as a legal argument would be a mistake; it is a rhetorical claim. But its presence documents that the institution considered the framing important enough to state explicitly.</p>          </div>
+        </div>
+      </div>
+
+      <div class="post-section" id="s-watching" data-reveal>
+        <div class="mod-heading brand">What I'm Watching Next</div>
+        <div class="section-text">
+<p>On Huangyan Island: the key indicator to watch is whether the next Philippine administrative or legal move (another UN filing, a new baseline declaration, a fisheries enforcement action) produces a similarly named, similarly scaled exercise response. If it does, the pattern of treating specific legal acts as operational triggers is confirmed. If the PLA response is smaller, delayed, or absent, that would complicate the picture and suggest the August 1 exercise was more about the anniversary context than about the Philippine legal action specifically. The presence or absence of CCG parallel activity alongside any future PLA exercise is a secondary indicator: coordinated dual-track responses have been the format this week, and deviation from that format would be analytically notable.</p><p>On the platform disclosures: the Y-20B engine confirmation is the one item where a follow-on signal is observable. Watch for further official acknowledgment of WS-20-equipped aircraft in non-ceremonial operational roles: airlift missions, exercises, or escort duties. If the next public appearance of the Y-20B is again in a political-work framing, that would suggest the engine milestone is real but the aircraft is not yet in wide operational service. Named unit assignments or theater-command exercise appearances would be the stronger confirmation.</p><p>On the GJ-3A and intelligent strike-planning system: these disclosures arrived through documentary footage and Global Times expert commentary. The next meaningful signal would be named unit assignments, or appearance of these systems in PLA Daily&#39;s exercise reporting rather than in curated documentary releases. Official framing in a documentary context is not the same as exercise-validated operational integration, and treating it as such would be the most common error to avoid here.</p>        </div>
+      </div>
+
+      <div class="post-section source-trail" id="s-sources" data-reveal>
+        <div class="mod-heading brand">Source Trail<span class="mod-count">13 records</span></div>
+        <div class="source-cards">
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16478287.html" target="_blank" rel="noopener" style="--ni: 0;">
+            <div class="source-card-title">Ministry of National Defense Routine Press Briefing, Early August 2026</div>
+<div class="source-card-zh" lang="zh-Hans">2026年8月上旬国防部例行新闻发布</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-07</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16478287.html ↗</div>
+          </a>
+          <a class="source-card is-significant" href="https://www.globaltimes.cn/page/202608/1367662.shtml" target="_blank" rel="noopener" style="--ni: 1;">
+            <div class="source-card-title">Y-20B can switch between transport, tanker, other combat roles, PLA documentary reveals</div>
+<div class="source-card-zh" lang="zh-Hans">Y-20B can switch between transport, tanker, other combat roles, PLA documentary reveals</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>Global Times — Defense</span>
+<span class="sep">·</span><span>2026-08-06</span>            </div>
+            <div class="source-card-domain">www.globaltimes.cn/page/202608/1367662.shtml ↗</div>
+          </a>
+          <a class="source-card is-significant" href="https://www.globaltimes.cn/page/202608/1367510.shtml" target="_blank" rel="noopener" style="--ni: 2;">
+            <div class="source-card-title">PLA Air Force unveils three-drone system with GJ-3A debut, providing intel to Army, Navy, Rocket Force</div>
+<div class="source-card-zh" lang="zh-Hans">PLA Air Force unveils three-drone system with GJ-3A debut, providing intel to Army, Navy, Rocket Force</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>Global Times — Defense</span>
+<span class="sep">·</span><span>2026-08-04</span>            </div>
+            <div class="source-card-domain">www.globaltimes.cn/page/202608/1367510.shtml ↗</div>
+          </a>
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16477562.html" target="_blank" rel="noopener" style="--ni: 3;">
+            <div class="source-card-title">Most Beautiful Revolutionary Servicemembers of the New Era | Navy Fujian Ship Deputy Commanding Officer Wang Tao: Tempering the Sword in the Open Sky, Contending for Supremacy Across the Ocean</div>
+<div class="source-card-zh" lang="zh-Hans">最美新时代革命军人风采丨海军福建舰副舰长王涛：长空砺剑 大洋争锋</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-04</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16477562.html ↗</div>
+          </a>
+          <a class="source-card is-significant" href="https://www.globaltimes.cn/page/202608/1367509.shtml" target="_blank" rel="noopener" style="--ni: 4;">
+            <div class="source-card-title">PLA documentary debuts H-6N bomber carrying single large missile; weapon capable of anti-ship and ground strikes: expert</div>
+<div class="source-card-zh" lang="zh-Hans">PLA documentary debuts H-6N bomber carrying single large missile; weapon capable of anti-ship and ground strikes: expert</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>Global Times — Defense</span>
+<span class="sep">·</span><span>2026-08-04</span>            </div>
+            <div class="source-card-domain">www.globaltimes.cn/page/202608/1367509.shtml ↗</div>
+          </a>
+          <a class="source-card is-significant" href="https://www.globaltimes.cn/page/202608/1367431.shtml" target="_blank" rel="noopener" style="--ni: 5;">
+            <div class="source-card-title">Official Chinese media releases rare footage of multiple DF-17 hypersonic missiles in formation, signaling full combat readiness: expert</div>
+<div class="source-card-zh" lang="zh-Hans">Official Chinese media releases rare footage of multiple DF-17 hypersonic missiles in formation, signaling full combat readiness: expert</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>Global Times — Defense</span>
+<span class="sep">·</span><span>2026-08-03</span>            </div>
+            <div class="source-card-domain">www.globaltimes.cn/page/202608/1367431.shtml ↗</div>
+          </a>
+          <a class="source-card is-significant" href="https://www.globaltimes.cn/page/202608/1367381.shtml" target="_blank" rel="noopener" style="--ni: 6;">
+            <div class="source-card-title">Official documentary reveals PLA Air Force intelligent strike-planning system; experts say it sharpens coordinated combat, shortens strike cycle</div>
+<div class="source-card-zh" lang="zh-Hans">Official documentary reveals PLA Air Force intelligent strike-planning system; experts say it sharpens coordinated combat, shortens strike cycle</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>Global Times — Defense</span>
+<span class="sep">·</span><span>2026-08-03</span>            </div>
+            <div class="source-card-domain">www.globaltimes.cn/page/202608/1367381.shtml ↗</div>
+          </a>
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16477375.html" target="_blank" rel="noopener" style="--ni: 7;">
+            <div class="source-card-title">Junsheng | China&#39;s Resolve to Safeguard Sovereignty and Maritime Rights over Huangyan Island Is Unwavering</div>
+<div class="source-card-zh" lang="zh-Hans">钧声丨中方维护黄岩岛主权和海洋权益的决心坚定不移</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-03</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16477375.html ↗</div>
+          </a>
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16477283.html" target="_blank" rel="noopener" style="--ni: 8;">
+            <div class="source-card-title">Southern Theater Command Conducts Maritime-Air Joint Exercise and Training Near Huangyan Island</div>
+<div class="source-card-zh" lang="zh-Hans">南部战区位黄岩岛开展海空联合演训</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-02</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16477283.html ↗</div>
+          </a>
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16477259.html" target="_blank" rel="noopener" style="--ni: 9;">
+            <div class="source-card-title">A Record of the Air Force Deploying Y-20s to Transport Newly Enrolled Flight Cadets to Report for Duty</div>
+<div class="source-card-zh" lang="zh-Hans">空军出动运-20运送新录取飞行学员报到侧记</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-02</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16477259.html ↗</div>
+          </a>
+          <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16477265.html" target="_blank" rel="noopener" style="--ni: 10;">
+            <div class="source-card-title">From &#39;Each Managing Its Own Segment&#39; to &#39;Cloud-Network Integration&#39;: The Barriers to Data Fusion Have Been Broken</div>
+<div class="source-card-zh" lang="zh-Hans">从“各管一段”到“云网一体”，数据融合的壁垒打破了</div>            <div class="source-card-meta">
+<span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-02</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16477265.html ↗</div>
+          </a>
+          <a class="source-card" href="http://www.81.cn/yw_208727/16478186.html" target="_blank" rel="noopener" style="--ni: 11;">
+            <div class="source-card-title">The Victory Answer Sheet of the &#34;Underground Dragon Palace&#34; — An Observation Report from a Rocket Force Brigade</div>
+<div class="source-card-zh" lang="zh-Hans">“地下龙宫”的胜战答卷——来自火箭军某旅的观察报告</div>            <div class="source-card-meta">
+              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-07</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16478186.html ↗</div>
+          </a>
+          <a class="source-card" href="http://www.81.cn/yw_208727/16478282.html" target="_blank" rel="noopener" style="--ni: 12;">
+            <div class="source-card-title">[Bilingual] Ministry of National Defense: The Chinese Military Will Resolutely Counter Any Provocative Attempts to Stir Up Trouble at Sea</div>
+<div class="source-card-zh" lang="zh-Hans">【双语】国防部：中国军队坚决反制任何闹海挑衅图谋</div>            <div class="source-card-meta">
+              <span>PLA Daily (解放军报)</span>
+<span class="sep">·</span><span>2026-08-07</span>            </div>
+            <div class="source-card-domain">www.81.cn/yw_208727/16478282.html ↗</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="closing-note">
+        I welcome comments or corrections from people working on Chinese military media, PLA studies, or U.S.-China security.
+      </div>
+
+      <div class="author-block">
+        <div class="author-block-eyebrow">Author</div>
+        <div class="author-block-name">Benjamin Yang</div>
+<div class="author-block-title">Principal Analyst, China Mil Watch</div><div class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</div>        <div class="author-chips">
+<a class="author-chip" href="https://www.linkedin.com/in/benjamin-yang-42b525294" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a><a class="author-chip" href="mailto:ben.yang@gwmail.gwu.edu">Email <span class="arrow">→</span></a><a class="author-chip" href="../../index.html">China Mil Watch <span class="arrow">→</span></a>        </div>
+      </div>
+
+    </div>
+
+    <div class="edition-nav">
+      <div class="prev">
+        <span class="edition-nav-label">Previous edition</span>
+        <a href="2026-08-01.html">&larr; No. 12 · 1 August 2026</a>
+      </div>
+    </div>
+    <div class="post-nav post-nav--tight">
+      <a href="../archive.html">&larr; Back to Archive</a>
+      <a href="../../index.html">Visit China Mil Watch &rarr;</a>
+    </div>
+  </article>
+
+  <aside class="post-sidebar">
+    <div class="sb-card sb-card--toc">
+      <div class="sb-eyebrow">In this edition</div>
+      <ul class="toc-list" id="pw-toc">
+<li><a href="#s-signal">This Week's Signal</a></li>        <li><a href="#s-snapshot">Coverage Snapshot</a></li>
+<li><a href="#s-opening">Opening Note</a></li><li><a href="#s-stood-out">What Stood Out</a></li><li><a href="#s-why">Why It Matters</a></li><li><a href="#s-routine">Routine Baseline</a></li><li><a href="#s-term">Term to Know</a></li><li><a href="#s-watching">What I'm Watching Next</a></li>        <li><a href="#s-sources">Source Trail</a></li>
+      </ul>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">Edition</div>
+      <div class="sb-row"><span class="label">Type</span><span class="value">Significant</span></div>
+<div class="sb-row"><span class="label">Issue</span><span class="value">No. 13</span></div>      <div class="sb-row"><span class="label">Week ending</span><span class="value">8 August 2026</span></div>
+<div class="sb-row"><span class="label">Days observed</span><span class="value">7</span></div>      <div class="sb-row"><span class="label">Articles</span><span class="value">134</span></div>
+      <div class="sb-row"><span class="label">Model-flagged</span><span class="value">11</span></div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">Cite this edition</div>
+      <div class="cite-text" id="pw-cite">Benjamin Yang, “The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week,” <em>The PLA Watch</em> No. 13, China Mil Watch, 8 August 2026. https://chinamilwatch.org/the-pla-watch/posts/2026-08-08.html</div>
+      <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-eyebrow">About this edition</div>
+      <div class="sb-text">
+        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="../../methodology.html">Methodology</a>
+      </div>
+    </div>
+  </aside>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">The PLA Watch</div>
+      <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-transparency">
+        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <span class="footer-meta-label">Read alongside</span>
+      <a href="../../index.html">China Mil Watch — Daily Brief</a><br>
+      <a href="../../archive.html">China Mil Watch — Archive</a><br>
+      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
+      <a href="../../the-pla-watch/feed.xml">Atom feed</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+<script>
+(function () {
+  /* Scrollspy for the "In this edition" rail */
+  var toc = document.getElementById('pw-toc');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          if (current) current.classList.remove('active');
+          current = links[entry.target.id];
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
+  }
+
+  /* Copy citation */
+  var btn = document.getElementById('pw-cite-copy');
+  var cite = document.getElementById('pw-cite');
+  if (btn && cite) {
+    if (!navigator.clipboard) {
+      btn.parentElement.classList.add('no-clipboard');
+    } else {
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(cite.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = prev; }, 1800);
+        });
+      });
+    }
+  }
+})();
+</script>
+</body>
+</html>

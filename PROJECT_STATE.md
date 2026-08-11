@@ -1,6 +1,6 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-09 (credit exhausted since 08-07; silent-degradation fixes).
+Updated: 2026-08-11 (credit restored; No. 12 and No. 13 generated and published).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
@@ -59,13 +59,35 @@ was intentionally left untouched in `~/pla-watch`.
 
 ## Publication state
 
-11 editions published, No. 1–11, weekly without cadence gaps: 2026-05-09
-(pilot, 2-day window) through 2026-07-18 ("Joint Sea-2026, the Y-20B
-Abroad, and the Week's Quieter Signals", Significant, 34 articles /
-3 model-flagged). Issue numbers stored in sidecars, validated unique +
-chronological.
+13 editions published, No. 1–13: 2026-05-09 (pilot, 2-day window) through
+2026-08-08. Issue numbers stored in sidecars, validated unique +
+chronological. One cadence gap, by ruling — see below.
 
-**Next edition: No. 12, week ending 2026-08-01.** There is no edition for
+**No. 12 and No. 13 generated and published 2026-08-11**, clearing the
+catch-up backlog that opened when credit ran out on 08-07:
+- **No. 12**, w/e 2026-08-01, "Army Day, Scarborough Shoal, and a Week of
+  Deliberate Disclosure", Significant, 7/7 days, 154 articles / 25
+  model-flagged.
+- **No. 13**, w/e 2026-08-08, "Scarborough Shoal, Platform Disclosures, and
+  the Limits of Anniversary Week", Significant, 7/7 days, 134 articles / 11
+  model-flagged.
+
+Prerequisites cleared the same day: a scoped
+`backfill_unscored.py --since 2026-08-02 --until 2026-08-08` run (43
+processed: 24 analyzed, 19 rejected, 0 errors) and a full
+`backfill_translations.py` pass (21 of 22 cleared; two JSON-parse failures
+succeeded on re-run). The global 1095-article unscreened backlog was
+**deliberately not** drained — it is ~$32 of screening for articles no
+edition cites. Scope backfills to the publication window.
+
+**Both editions were published without the EDITORIAL_QA_CHECKLIST
+source-to-claim trace and without a rendered-page visual review.** Analyst
+directed publication; recorded here so the gap is visible, not implied.
+No. 12's `linkedin/2026-08-01.txt` is the mechanical fallback (the model
+returned no `linkedin_version`), so it is template-assembled, not authored
+prose. Rewrite before posting.
+
+**Next edition: No. 14, week ending 2026-08-15.** There is no edition for
 the week ending 2026-07-25 — analyst-ruled 2026-07-30, DECISION_LOG. The
 2026-07-17→07-24 collection outage left that window with one observed day
 of seven (07-25 only: 29 articles, 8 relevant, 0 model-flagged), and
@@ -74,20 +96,17 @@ articles captured live, 3 recoverable). Expect and keep a **cadence-gap
 warning** from the validator for this break; it is the record of the
 outage, not a defect to suppress.
 
-**No. 12's window is now fully screened (2026-08-03).** The 07-26→08-01
-window holds all seven days and 253 articles (32 / 38 / 39 / 37 / 40 / 40 /
-27). Its 156 unscreened articles were cleared by a scoped
-`backfill_unscored.py --since 2026-07-26 --until 2026-08-01` run: 110
-analyzed, 43 rejected, 1 translation-failed, 2 summary-failed, 0 errors.
-Window now reads **0 unscreened, 155 passed relevance, 146 fully analyzed,
-24 model-flagged, 9 relevant-but-untranslated**. The observed pass rate was
-**72%, not the historical 44%** — the estimate assumed 44%, so actual spend
-was ~$4.55 against a $2.86 pre-flight. Treat 44% as a floor for recent
-windows when estimating.
+Both published windows read **0 unscreened** at generation time. The
+07-26→08-01 window observed a **72% pass rate, not the historical 44%** —
+the estimate assumed 44%, so actual spend was ~$4.55 against a $2.86
+pre-flight. Treat 44% as a floor for recent windows when estimating.
 
-Before drafting No. 12: clear the 9 untranslated (they carry no English
-title/summary, so no edition can cite them) via
-`scripts/backfill_translations.py`, then re-render and run the deploy gate.
+**`id=2678` (Sichuan-ship layout piece, 07-28, relevance 0.85) is
+permanently untranslatable.** Its `text_original` is 0 chars: the body was
+never captured at scrape time, so this is a collection defect, not a
+translation failure, and re-running the backfill will never clear it. It
+also means the article passed relevance screening on its title alone —
+worth investigating as a scoring-path question.
 The site has been re-rendered and merged with CI's 08-04 run — `output/`
 and the DB are in sync at 825 analyzed articles, 0 unrendered, 0 orphans,
 gate green at the 9-warning baseline.
@@ -110,13 +129,19 @@ warnings.
 entries; related notes). Do not fix by invention; explain any NEW warning
 here.
 
-## API credit exhausted — ACTIVE as of 2026-08-09
+## API credit exhausted — RESOLVED 2026-08-11
 
-**The account is blocked again, and has been since 08-07.** This is a credit
-balance exhaustion (`invalid_request_error: "Your credit balance is too low to
+**Credit was restored in the Console on 08-11**; the backfills and both
+edition generations ran clean with no account-level block. The 08-08 and
+08-09 collections that CI recorded as billing failures were screened
+retroactively as part of the No. 13 window. History below is kept as the
+outage record.
+
+The block ran 08-07 → 08-11. It was a credit balance exhaustion
+(`invalid_request_error: "Your credit balance is too low to
 access the Anthropic API"`), not the 07-30 configured usage limit — a monthly
-reset will not clear it. Restoring credit in the Console is a manual step
-nothing in the repo can do.
+reset would not have cleared it. Restoring credit in the Console is a manual
+step nothing in the repo can do.
 
 | run | date | new | analyzed | recorded as |
 |---|---|---|---|---|
@@ -301,23 +326,17 @@ edition when the analyst authors one.
 
 **In this order:**
 
-0. **Restore API credit in the Console.** Every step below is blocked on it,
-   and so is the daily run. See "API credit exhausted" above.
-1. Check remaining headroom in the Console — the guard estimates cost, not
-   headroom, and cannot do this step for you.
-2. Run the backfills **sequentially, not concurrently** (running both at
-   once doubled the draw on 07-30):
-   `.venv/bin/python scripts/backfill_translations.py --confirm-spend`
-   (**22** relevant-untranslated), then
-   `.venv/bin/python scripts/backfill_unscored.py --confirm-spend`
-   (**1095** unscreened). Each prints its own spend estimate before proceeding;
-   both abort immediately on an account-level block and resume cleanly on
-   re-run. If spend is constrained, screen the No. 12 window first.
-   *Counts re-measured 2026-08-09; the daily runs through 08-06 drained the
-   1199/80 figures previously recorded here. Re-measure before estimating —
-   these move every run.*
-3. Confirm the No. 12 window is fully screened and analyzed before drafting.
-4. **MOD China (国防部) — collection is failing, the scraper is not.**
+0. **Retro-QA No. 12 and No. 13.** Both shipped without the
+   EDITORIAL_QA_CHECKLIST source-to-claim trace (analyst-directed). Run the
+   trace against the live pages and correct by re-render, not hand-edit.
+   Rewrite `linkedin/2026-08-01.txt`, which is the mechanical fallback.
+1. **~1050 unscreened articles remain outside the published windows.**
+   Not urgent — no edition cites them — but they are the same defect class
+   that stranded 131 articles in July. Drain in scoped chunks when spend
+   allows: `backfill_unscored.py --since X --until Y --confirm-spend`,
+   sequentially, never concurrently (running two at once doubled the draw
+   on 07-30). *Re-measure before estimating — these move every run.*
+2. **MOD China (国防部) — collection is failing, the scraper is not.**
    Investigated 2026-08-09. Run by hand it works perfectly: `target_date`
    2026-07-26 returns 3 URLs, 2026-08-08 returns 1, all six sections fetch
    (~48KB each), `parse_article` yields correct titles, dates and bodies.
