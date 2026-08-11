@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observations and Reflections on Successive Temporary Party Organization Building Under Dispersed and Mobile Conditions in a Certain Naval Unit — China Mil Watch</title>
+  <meta name="description" content="An unidentified PLA naval unit has institutionalized the handover of temporary Party organization records—including a compiled Handbook of Difficult Questions and Answers on Party Organization Buildin">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/3141.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/3141.html">
+  <meta property="og:title"        content="Observations and Reflections on Successive Temporary Party Organization Building Under Dispersed and Mobile Conditions in a Certain Naval Unit">
+  <meta property="og:description"  content="An unidentified PLA naval unit has institutionalized the handover of temporary Party organization records—including a compiled Handbook of Difficult Questions and Answers on Party Organization Buildin">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Observations and Reflections on Successive Temporary Party Organization Building Under Dispersed and Mobile Conditions in a Certain Naval Unit">
+  <meta name="twitter:description" content="An unidentified PLA naval unit has institutionalized the handover of temporary Party organization records—including a compiled Handbook of Difficult Questions and Answers on Party Organization Buildin">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Exercises">Exercises</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Observations and Reflections on Successive Temporary Party Organization Building Under Dispersed and Mobile Conditions in a Certain Naval Unit
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">海军某部接续抓好动散条件下临时党组织建设的见闻与思考</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>11 August 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16478752.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>An unidentified PLA naval unit has institutionalized the handover of temporary Party organization records—including a compiled Handbook of Difficult Questions and Answers on Party Organization Building Under Dispersed and Mobile Conditions and a formal checklist of outstanding problems—between successive temporary Party branch secretaries conducting maritime special missions under dispersed and mobile conditions (动散条件下). The article documents a concrete administrative failure: without standardized Party-affairs handovers, incoming branch secretaries repeatedly rebuilt procedures from scratch, drew higher-authority criticism for lapsed organizational-life requirements, and lost continuity in Party member development records for personnel on extended deployments. The remedies described—a written Implementation Rules document, a Maritime Organizational Life Calendar, and segmented Party-class instruction adapted to operational tempo—are unit-level workarounds that the framing presents as models worth propagating, pointing to a broader PLA recognition that political work continuity degrades under the rotational, multi-unit task-force structures increasingly common in sustained maritime operations.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>In the past, when detachments of a certain naval unit returning from external missions conducted work handovers, they tended to focus on weapons and equipment, materiel inventories, and the like, while paying insufficient attention to the handover of temporary Party organization building, Party member education and management, and related matters. This left the Party organizations taking over the work to start from scratch in their exploration, and it was easy for problems to emerge such as gaps in Party member education (党员教育&#34;断档期&#34;), inadequate implementation of organizational systems, and insufficient exercise of Party members&#39; roles.</p><p>This year, the unit conducted in-depth study and implementation of the relevant content in Xi Jinping&#39;s thought on Party building concerning &#34;persisting in improving an organizational system that is vertically integrated and capable of forceful execution,&#34; and incorporated Party affairs work into the scope of mission handovers. This effectively broke through the previous predicament of &#34;change the unit, start Party affairs work from scratch,&#34; and produced a favorable situation in which work continues without interruption and mission coverage is complete. In this issue, we hear the experiences and reflections of the two successive temporary Party branch secretaries who carried out the work in sequence.</p><p>&#34;The mission officers and soldiers were drawn from various units; some comrades initially lacked unified thinking and harbored a temporary mindset (临时思想). One can strengthen ties with the Party organizations of their original units and focus on doing individualized work (一人一事工作).&#34;</p><p>&#34;A certain mission lasted a relatively long time and posed a significant test of officers&#39; and soldiers&#39; strength of will and character. It is recommended that, when necessary, a Party member shock team (党员突击队) be organized to give full play to its inspiring and motivating role.&#34;</p><p>&#34;When the mission reaches a certain stage, attention should be paid to mixing experienced and new personnel. It is best to ensure that Party member backbone personnel are present at every position, so that no blind spots are missed and comprehensive control is maintained.&#34;…</p><p>Not long ago, during the handover of a certain maritime special mission, I sorted through the key and difficult issues in the temporary Party branch&#39;s work and explained them one by one to Dong Wenbo, the temporary Party branch secretary taking over the mission, while flagging certain issues that required particular attention.</p><p>After the handover, I also passed on to him the Handbook of Difficult Questions and Answers on Party Organization Building Under Dispersed and Mobile Conditions (《动散条件下党组织建设疑难问答手册》), which I had compiled together with the temporary Party branch.</p><p>&#34;This experience is even more valuable than the materiel inventory!&#34; Hearing Secretary Dong&#39;s heartfelt affirmation, I felt deeply gratified. These &#34;clear accounts (明白账)&#34; — bearing the lessons learned from carrying out the mission — were the result of our branch&#39;s collective effort.</p><p>In the past, when several units successively carried out a single mission and conducted handovers, insufficient attention was paid to Party affairs work.</p><p>On one occasion, I led a team in executing a comprehensive exercise mission, and the outgoing temporary Party branch handed over only the military mission situation and the equipment and materiel inventory. As a result, the temporary Party branch&#39;s work was thrown into a state of confusion for a time, and at one point we were even notified and criticized by higher authorities for poor implementation of organizational systems. We spent a long time exploring the allocation of backbone personnel, Party class education, organizational life, and other matters before arriving at a relatively fixed model suited to the actual conditions of the mission.</p><p>After the unit Party committee learned of the situation, it reflected on the problem and concluded that, while on the surface it was a blind spot in the handover, it in fact indicated a systemic shortcoming in temporary Party organization building. Following deliberation, higher authorities formulated the Implementation Rules for Party Organization Building Under Dispersed and Mobile Conditions (《动散条件下党组织建设实施细则》) in accordance with relevant regulations, and explicitly stipulated that mission handovers must, under the leadership of the higher-level Party committee, incorporate the operational status of temporary Party organizations into the handover checklist, to be transferred together with building achievements, lessons learned, and a log of outstanding problems.</p><p>During this mission, our temporary Party branch focused on sorting and recording problems in a timely manner, so as to lay a solid foundation for the brother units that would carry out the mission in succession.</p><p>On one occasion, as the mission entered its most critical phase, a key piece of equipment suddenly malfunctioned. Officers and soldiers were already fatigued from continuous operations and now had to conduct emergency repairs; any delay would affect the entire process. Everyone looked at one another: who would step up to tackle this hard nut to crack?</p><p>&#34;Branch committee members take the lead, Party members go first!&#34; I decided on the spot to organize a Party member shock team and joined it myself. The shock team was quickly established, with all branch committee members at the positions included. Time was pressing; the shock team gathered on the deck to discuss the division of tasks and deployment, held a brief mobilization meeting, and then rushed to the front line to tackle the problem in uninterrupted rotating shifts.</p><p>After more than 30 hours of hard fighting, the malfunction was finally resolved. A young soldier said to me: &#34;When I saw the branch committee members all step up, I didn&#39;t feel tired anymore — I just charged forward with you.&#34;</p><p>Another incident also left a deep impression on me. For a period of time, Soldier Xiao Zhang, who had previously been diligent in his work, seemed deflated. Through a heart-to-heart talk, I learned that he was worried the extended duration of the mission would affect the assessment period for his status as a Party membership applicant (入党积极分子). Upon further inquiry, it became clear that soldiers like Xiao Zhang who had reservations about matters such as Party member development, merit citations, and awards during external missions were not isolated cases. Taking advantage of a Party class education session, I promptly conducted a briefing, telling everyone that the temporary Party branch would conduct real-time assessments and keep records, reporting regularly to their original Party organizations as the basis for Party member development and merit and award evaluations, thereby helping everyone set aside their concerns.</p><p>I later summarized this experience and established that a briefing should be conducted at the very outset of a mission to clearly explain matters bearing directly on officers&#39; and soldiers&#39; personal interests — such as Party member cultivation, the &#34;Dual Striving&#34; (双争) competition, and assistance with difficulties — so that officers and soldiers can go into action unburdened and fully committed.</p><p>During this handover, I transferred to the brother unit the experience and lessons from more than ten areas of the temporary Party branch&#39;s work and several instances of work lapses, in the hope that they could build on our practical experience, take fewer detours, achieve more results, ensure that Party building work continues without interruption, and let the Party flag fly high on the mission front line.</p><p>&#34;This week, the tactical squad led by Squad Leader Ma performed outstandingly in tackling subjects including quick-reaction shooting and squad tactics, and received commendation from higher authorities. The detachment has selected them as this week&#39;s &#39;Party Member Vanguard&#39; (党员先锋). We hope everyone will learn from their example!&#34;</p><p>The duty officer read out the weekly situation report, and I scanned the room. From the resolute expressions on everyone&#39;s faces, it was not hard to see that the spirit of fighting with high morale and striving to be first was growing stronger and stronger, and I felt confident in my heart about doing this mission well.</p><p>In the early phase of the mission, a small number of Party member backbone personnel in the detachment harbored a &#34;temporary mindset (临时思想),&#34; feeling that since the detachment was temporarily assembled and would disband when the mission ended, there was no need to take the work so seriously, and entertaining thoughts of &#34;taking a breather.&#34;</p><p>Everyone came from different units — how to quickly rally the troops and inspire morale? During the Party affairs handover, Secretary Qin had flagged this issue, so I followed their example and launched a &#34;Party Member Vanguard&#34; competition.</p><p>The temporary Party branch divided Party member responsibility zones down to every squad and platoon and every combat team, encouraging and guiding Party member backbone personnel to give full play to their exemplary and leading role at their combat positions. This gave rise to the scene described at the opening.</p><p>Having in hand the methods and experience of the brother unit that came before us gave me, as a first-time temporary Party branch secretary, a sense of confidence. Frequently leafing through that Handbook of Difficult Questions and Answers on Party Organization Building Under Dispersed and Mobile Conditions was like listening to an experienced veteran secretary impart lessons in person — something I could follow and put to immediate use.</p><p>In the past, carrying out work without such a solid foundation was a different matter. I recall one mission in which positions were highly dispersed. As a branch committee member, I led a group of soldiers to garrison an independent position and established a temporary Party group. As for how exactly the Party group should operate at this position and what role it should play, I never managed to get a clear grasp of it, and could only lead everyone in putting their heads down and getting on with the mission.</p><p>Later, higher authorities required each position&#39;s temporary Party group to independently conduct Party class education, but our personnel were scattered and the mission burden was heavy, and the quality and effectiveness of instruction could never be guaranteed. It was only when the higher-level Party organization came to provide guidance that I learned the temporary Party group at this position from the previous rotation had already worked out a set of effective methods: rather than holding large centralized classes, they made use of time before and after meetings and gaps between tasks — about ten minutes at a time — breaking the Party class theme into small sub-topics and covering them in segments.</p><p>During this mission handover, Secretary Qin mentioned that as the voyage entered its middle phase, the enclosed space and restricted movement could easily give rise to problems such as lax organizational life and declining morale among personnel. I seized the opportunity to ask him how to resolve this.</p><p>He told me that one could draw up a &#34;Maritime Organizational Life Calendar (海上组织生活日历)&#34; closely aligned with the rhythm of the mission. In accordance with the transitions between mission phases and key nodes, organizational life activities, heart-to-heart talks, collective activities, and ideological education could be interspersed during training breaks.</p><p>I found this very inspiring and set about drawing up a &#34;Maritime Organizational Life Calendar&#34; in advance: broadcasting a &#34;Voyage Express (远航快报)&#34; during daily mealtimes to cover recent training highlights and noteworthy small events from among the troops; mobilizing Party member backbone personnel to deliver short thematic talks and share brief inspiring stories during training breaks…</p><p>Throughout the entire mission, training quality and effectiveness were ensured, and personnel morale remained stable. Higher authorities later commended our mission detachment: personnel morale was stable, and implementation of organizational systems was flexible and forceful.</p><p>The handover of Party affairs work not only provided ideas and methods for solving problems, but also conferred new responsibilities on the temporary Party branch.</p><p>During the mission, we faced the new situation of multi-position coordinated operations. If we had followed the previous approach of &#34;implementing the organizational life system at dispersed positions,&#34; the different operational tempos at each position would have made rigid uniformity unworkable. So I led the temporary Party branch in attempting a method of &#34;unified theme, implementation by position, consolidated the following day,&#34; which both ensured that organizational life continued without interruption and took into account the actual conditions at each position. I carefully compiled this experience and wrote it into my handover notes.</p><p>When the mission ends, what I hand over to the next secretary will certainly be a more comprehensive and more practical set of Party affairs work experience and methods.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">以往，海军某部外出执行任务的分队进行工作交接时，往往将重点放在武器装备、物资清单等上面，对临时党组织建设、党员教育管理等方面的交接重视不足。这让接续开展工作的党组织常要从零起步进行探索，也容易出现党员教育“断档期”、组织制度落实不到位、党员作用发挥不充分等问题。 今年，该部深入学习贯彻习近平党建思想“坚持健全上下贯通、执行有力的组织体系”有关内容，将党务工作纳入任务交接范畴，有效破解了以往“换个队伍，党务工作从头来”的困境，形成工作不断线、任务全覆盖的良好局面。本期，我们听听接续开展工作的前后两任临时党支部书记的心得体会。 “任务官兵由各单位抽调而来，有些同志一开始思想不够统一、抱有临时思想，可以加强与原单位党组织的联系，重点做好一人一事工作”； “某任务持续时间较长，对官兵意志品质考验较大，建议必要时组织党员突击队，发挥好感召带动作用”； “任务进行到某阶段时，要注意人员的新老搭配，最好确保每个点位都有党员骨干在位，做到不漏死角、全面管控”…… 前不久，在某海上专项任务交接时，我梳理临时党支部工作的重点难点问题，逐个给接替任务的临时党支部书记董文博说明，并对一些需要重点关注的问题进行了提醒。 交接之后，我把带领临时党支部总结整理的《动散条件下党组织建设疑难问答手册》，也交给了他。 “这些经验，可比物资清单还宝贵！”听到董书记发自内心的认可，我感到十分欣慰。这些承载了执行任务中收获的经验教训的“明白账”，是我们支部一起努力的结果。 以往几个单位接续执行一项任务，进行交接时，对党务工作重视不够。 有一次，我带队执行综合演习任务，前任临时党支部只交接了军事任务情况和装备物资清单。结果，临时党支部开展工作一度处于手忙脚乱的状态，有段时间还因组织制度落实情况不好被上级通报批评。我们对骨干分配、党课教育、组织生活等进行了长时间探索，才形成相对固定、符合任务实际的模式。 部党委了解情况后，对这个问题进行了反思，感到表面看是交接存在盲区，实则说明临时党组织建设存在系统性短板。研究后，上级依据相关规定制订了《动散条件下党组织建设实施细则》，还专门明确，任务交接须在上级党委领导下把临时党组织的运行情况纳入清单，连同抓建成效、经验做法、难题台账等一并移交。 这次执行任务，我们临时党支部就注重及时梳理记录问题，以便为接续执行任务的兄弟部队打好基础。 有一次，任务进入攻坚阶段，某关键设备突发故障。官兵连续作战本就比较疲惫，还要紧急抢修，稍有延误就会影响整个进程。大家面面相觑：谁带头啃这块硬骨头？ “支委带头，党员先上！”我当场决定组织一支党员突击队并带头加入。很快，党员突击队就建立了起来，点位上的支委全部在列。时间紧急，突击队在甲板上碰头研究分工部署，召开了简短动员会，而后就冲上一线，不间断轮流攻关。 奋战30多个小时，故障终于被成功排除。有名年轻战士对我说：“当时看到你们几个支部成员都上，我不觉得累了，跟着往上冲。” 另一件事也让我印象深刻。有段时间，工作态度积极的战士小张有些发蔫，谈心了解到，原来他担心这次任务时间较长，会影响到自己入党积极分子的考察期。深入了解，像小张这样对在外执行任务期间发展党员、评功评奖等事项存有顾虑的官兵，并非个例。利用一次党课教育，我及时开展宣讲，告诉大家临时党支部会实时考察并做好记录，定期上报给原党组织，作为发展党员和评功评奖的依据，帮大家消除了顾虑。 后来，我把这一经验总结下来，明确任务之初就应开展一次宣讲，把党员培养、“双争”评比、解难帮困等涉及官兵切身利益的事项讲清楚，让官兵轻装上阵、全心投入。 这次交接，我把临时党支部10余项工作和几次工作疏漏的经验教训都交接给了兄弟部队，希望他们在我们工作实践的基础上，少走弯路，多出成绩，让党建工作不断档，让党旗在任务一线高高飘扬。 “本周马班长带领的战术小队，在快反射击、班组战术等课目攻关中表现突出，受到上级表扬。分队评选其为本周‘党员先锋’，望大家向他学习！” 值班员宣读周情况通报，我扫视现场。从大家坚毅的眼神中不难发现，那种斗志昂扬、奋勇争先的劲头越来越足，我心里也对干好这任工作有了底数。 任务初期，分队里有个别党员骨干存在“临时思想”，觉得分队临时组建起来，任务结束就解散，干工作不必那么较真，产生了“歇歇脚”的想法。 大家来自不同单位，如何迅速聚拢兵心、激发士气？交接党务工作时，覃书记曾就这个问题进行过提示，于是我效仿他们开展了“党员先锋”评比活动。 临时党支部将党员责任区划分到每个班排、每个战斗小组，鼓励引导党员骨干在战位上发挥好模范带头作用。这就有了开头一幕。 手握前面兄弟部队的做法经验，让第一次担任临时党支部书记的我心中有了底气。经常翻看那本《动散条件下党组织建设疑难问答手册》，就像是听一位经验丰富的老书记当面传授心得，照着就能干、拿来就能用。 以前开展工作，可没这么好的基础。记得一次执行任务，点位高度分散，我作为支委带领一批战士驻守一个独立点位，并成立了临时党小组。至于党小组在这个点位上具体怎么运转、发挥什么作用，我一直没有摸清头绪，只好带领大家埋头干任务。 后来，上级要求各点位临时党小组自行开展党课教育，可我们人员散、任务重，授课质效始终无法保证。在上级党组织帮带时，我才得知，前一批该点位的临时党小组已经探索出一套管用招法：不搞集中大课，而是利用会前会后、任务间隙，每次十来分钟，把党课主题拆成小专题，一段段讲完。 这次任务交接时，覃书记提到远航进入中段，空间密闭、活动受限，易出现组织生活松散、人员思想滑坡等问题，我抓住机会向他请教如何破解。 他告诉我，可以紧贴任务节奏制订“海上组织生活日历”。按照任务阶段转换、关键节点，把组织生活、谈心交心、集体活动、思想教育穿插安排在训练间隙。 我很受启发，提前着手制订“海上组织生活日历”：每天就餐时间播放“远航快报”，把近期的训练要点、身边的典型小事讲一讲；发动党员骨干在训练间隙开展小主题讲话、小故事启迪…… 整个任务下来，训练质效保证了，人员思想也稳住了。后来上级表扬我们任务分队：人员思想状态稳定，落实组织制度灵活有力。 党务工作交接，不仅给了解决问题的思路招法，也赋予了临时党支部新的责任。 任务中，我们面临多点位协同作战的新情况，如果按以往“分散点位落实组织生活制度”，各点位任务节奏不同，硬性统一反而落实不了。于是，我带领临时党支部尝试“统一主题、分点实施、次日汇总”的办法，既保证了组织生活不断线，又兼顾了各点位实际。我把这一经验好好梳理，写入了我的交接笔记。 待任务结束，我要交接给下一任书记的，一定是更全面、更管用的党务工作经验招法。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>

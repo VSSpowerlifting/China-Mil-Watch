@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporter&#39;s Field Notes | What Are Sentries Thinking While Standing Guard? — China Mil Watch</title>
+  <meta name="description" content="A PAP reporter embedded for several days with the Xiangyang Detachment in Hubei, interviewing sentries at urban gates, a remote solo post at Nanhe Temple in the Tongbai Mountains, and a high-speed rai">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/3134.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/3134.html">
+  <meta property="og:title"        content="Reporter&#39;s Field Notes | What Are Sentries Thinking While Standing Guard?">
+  <meta property="og:description"  content="A PAP reporter embedded for several days with the Xiangyang Detachment in Hubei, interviewing sentries at urban gates, a remote solo post at Nanhe Temple in the Tongbai Mountains, and a high-speed rai">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Reporter&#39;s Field Notes | What Are Sentries Thinking While Standing Guard?">
+  <meta name="twitter:description" content="A PAP reporter embedded for several days with the Xiangyang Detachment in Hubei, interviewing sentries at urban gates, a remote solo post at Nanhe Temple in the Tongbai Mountains, and a high-speed rai">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Internal Security">Internal Security</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Reporter&#39;s Field Notes | What Are Sentries Thinking While Standing Guard?
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">记者蹲点手记｜站岗时，哨兵在想什么</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>11 August 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16478748.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A PAP reporter embedded for several days with the Xiangyang Detachment in Hubei, interviewing sentries at urban gates, a remote solo post at Nanhe Temple in the Tongbai Mountains, and a high-speed rail station, collecting first-person accounts from personnel ranging from a new Private First Class to a 14-year Staff Sergeant First Class holding two individual Third-Class Merits. The piece documents how the detachment&#39;s political work apparatus — represented here by Political Instructor Wang Shengqi — uses the guard post itself as a site for one-on-one ideological counseling (思想工作), treating homesickness and distraction not as discipline problems but as entry points for motivation. Its value is as a ground-level record of how PAP units translate the institutional slogan &#39;哨位就是战位&#39; (&#39;the guard post is the combat post&#39;) into daily supervisory practice, not as evidence of any change in posture or capability.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>&#34;Standing guard is an inescapable duty for soldiers, and all the more so for the People&#39;s Armed Police.&#34; After spending several days reporting at the PAP Xiangyang Detachment, this reporter felt that sentiment more deeply than ever.</p><p>The detachment is stationed in central China, with guard posts spread across a vast range of locations: cities, villages, waterways, mountain areas… This means that at any given moment, the detachment&#39;s many personnel are scattered across these various posts, all doing the same thing—standing guard. Many officers and soldiers told this reporter that, in their view, standing guard is combat.</p><p>Yet while on guard, soldiers inevitably feel fatigue to some degree; in the dead of night, it is equally hard to avoid a bout of quiet contemplation (静夜思). This reporter could not help but grow curious: what do officers and soldiers actually think about while standing guard?</p><p>On the midsummer plains of Jingchu, even deep in the night the temperature still exceeds 30°C. In front of the main gate of the detachment&#39;s garrison, the occasional lone pedestrian hurried past. The night was ink-black. Private First Class Feng Yihang stood ramrod straight at his post.</p><p>Feng Yihang fixed his gaze on the security zone while this reporter, from a distance, fixed a gaze on Feng Yihang. After he was relieved, the reporter jogged over, identified herself, and struck up a conversation.</p><p>&#34;Young man, what made you enlist?&#34; &#34;To defend my home and country, of course!&#34; &#34;And now that you&#39;re a soldier, you must be proud?&#34; &#34;Proud, sure, it&#39;s just that we&#39;re always standing guard…&#34; The bashful private scratched his head, as if he had said something wrong, then quickly blurted out: &#34;But the squad leader said the guard post is the combat post. First, you can&#39;t let your guard down or doze off. Second, you have to stand this watch properly.&#34; At that, we both burst out laughing. He clearly didn&#39;t know how to answer, so he simply quoted his squad leader.</p><p>The laughter broke the ice. Feng Yihang said the reporter&#39;s question was one he had asked himself, but he hadn&#39;t known how to answer it. This time, he let his real thoughts show rather than brushing the question aside. He told the reporter that when he first stood guard, he was quite excited—but the second half of the night was the hardest to get through, and he kept fighting drowsiness.</p><p>&#34;I&#39;d count the headlights of passing cars, look at the stars, wonder what my family was having for dinner that night…&#34; Feng Yihang told the reporter that new soldiers on guard duty inevitably have those moments when their body is at the post but their mind has flown away.</p><p>&#34;But wouldn&#39;t that affect your readiness and interfere with your duty?&#34; Faced with the reporter&#39;s concern, Feng Yihang answered squarely: &#34;Absolutely not. We may get tired sometimes, but the guard post is a battlefield to us. The moment you stand there, a battle has begun. Maybe because we&#39;re young, we lack experience and might let our minds wander a little, but our eyes are always wide open—nothing that stirs in the wind or grass is going to slip past us.&#34;</p><p>Then he gave a sheepish chuckle and abruptly shifted tone: &#34;The squad leader taught me a homespun method: keep silently reciting in my head the reminders and requirements he gave me before I went on post. He said, the more you recite them, the more your eyes see only the security zone, and you stop thinking about anything else…&#34;</p><p>The following noon, the reporter brought this up with detachment leadership over lunch in the canteen. He laughed heartily: &#34;In our unit, soldiers like little Feng average nearly five hours of guard duty per day. Aside from meals and sleep, they spend the better part of the day at their posts.&#34; His tone then grew more serious. &#34;The hours are long, and many of the locations are extremely remote. In the eyes of many veteran soldiers, &#39;the guard post is the combat post&#39; is not a slogan—it is plain truth, spoken from the heart.&#34;</p><p>Political Instructor Wang Shengqi from a neighboring unit at the next table joined the conversation. He told the reporter that in his view, the guard post is also a small classroom for conducting ideological work (思想工作). He then recounted a personal experience.</p><p>One night, Wang Shengqi went to inspect the guard posts. When he exchanged the password at one location, he noticed that although the sentry gave the correct countersign, the soldier seemed dazed and distracted. &#34;Is something on your mind?&#34; Wang Shengqi asked with concern, but the sentry looked uncomfortable and hemmed and hawed. &#34;Then let me stand here with you for a while.&#34; When Wang Shengqi stood shoulder to shoulder with the sentry, he was surprised to discover, not far away, a vast expanse of golden rapeseed flowers rippling and surging in the moonlight and the glow of streetlamps—a scene of extraordinary beauty. &#34;Political instructor, there&#39;s a field of rapeseed flowers just like this across from my home. When I was little I used to play in it all the time…&#34; the sentry murmured, and Wang Shengqi suddenly understood.</p><p>&#34;This place is your home now too.&#34; Wang Shengqi patted the young man from Henan who had just been assigned to the post. &#34;Then guard it well. Every time the flowers bloom, your family back home is approaching harvest season. That is the meaning of your standing here.&#34;</p><p>Wang Shengqi told the reporter that in his view, soldiers standing guard are both fulfilling their duty and mission and confronting themselves directly. The small knots in their hearts can easily grow larger at such moments—but they can also be more readily untied.</p><p>Wang Shengqi&#39;s experience reminded the reporter of the famous line from the television series Soldier Assault (《士兵突击》), spoken by &#34;Steppe Squad Five&#34;: Glory lies in the ordinary; the hardship lies in the length of time.</p><p>The reporter then rode a supply vehicle to the detachment&#39;s most remote solo guard post at Nanhe Temple. Located deep in the continuous Tongbai Mountain range, the winds are harsh, the water cold, the temperature swings between day and night are large, and human habitation is sparse. The officers and soldiers here call themselves &#34;Mountain Squad Six.&#34; As the supply vehicle passed, Staff Sergeant Second Class Qiu Zhi&#39;ao stood erect at his post and rendered a salute with the unmistakable bearing of a seasoned veteran. After being relieved, he jogged over to help us unload supplies. I noticed his cheeks were a dark, ruddy color; the cadre accompanying the vehicle said this was called &#34;mountain red&#34; (山里红). Qiu Zhi&#39;ao heard this and flashed me a grin. I seized the moment to chat with him and asked what he had been thinking about while on guard just now.</p><p>&#34;I was thinking about how to lead the soldiers in my squad. For instance, Private First Class Liu Mouyu is always too scared to stand guard at night.&#34; Qiu Zhi&#39;ao spoke to the reporter without any hesitation, his voice loud and direct. This staff sergeant candidly acknowledged that standing guard in the wilderness in the middle of the night takes time for young soldiers to get used to, and he understood that. Nine years ago, when he stood his first watch, the guard tower was still a red-brick structure, pitch black at night. Without a veteran soldier alongside him, Qiu Zhi&#39;ao&#39;s heart would pound, and the slightest sound would put him on edge. His squad leader at the time had volunteered to stand the night watch with him, teaching him how to carry his equipment and how to conduct inquiries and checks.</p><p>&#34;Later, I did the same with my own soldiers, helping them adapt as quickly as possible.&#34; Qiu Zhi&#39;ao then shifted course: &#34;Except for this Liu Mouyu—to this day he still always wants me to accompany him.&#34; Qiu Zhi&#39;ao found it both exasperating and funny.</p><p>After dinner, the reporter tracked down Liu Mouyu, who quietly confided that he was not actually timid or afraid. &#34;What soldier is scared of the dark? Standing guard here, there&#39;s nothing but the sound of the wind and the sound of your own heartbeat. When you&#39;re alone and you see a light flickering far in the distance, you can&#39;t help thinking about home until your chest aches. It&#39;s different when the squad leader is there—your heart feels settled.&#34; The soldier spoke with a northeastern accent and declared with conviction: &#34;Next time I&#39;m assigned a night watch, I won&#39;t need the squad leader to come with me!&#34;</p><p>As the reporting trip drew to a close and the reporter was about to leave, she encountered Staff Sergeant First Class Sun Yaobao at the high-speed rail station, just about to go on duty. This veteran has served for 14 years, has handled multiple emergency situations, and has been awarded two individual Third-Class Merits and one collective Third-Class Merit. The reporter asked him the same question. He answered without missing a beat: &#34;The high-speed rail station is a complex environment with heavy foot traffic. While on foot patrol, I have to constantly adjust the patrol formation based on the surroundings, observe which people and vehicles look suspicious, watch for who is taking photographs, and think through how to respond to various situations according to the &#39;three-fast&#39; (三快) response procedure…&#34; His answer was professional and methodical, and this reporter, waiting for her train, felt entirely reassured.</p><p>Once aboard, the train sped forward, and outside the window cities and villages gave way to one another, mountain ranges folding over mountain ranges. The reporter&#39;s mind suddenly drifted back to an offhand remark made by a veteran soldier encountered earlier during reporting in the mountain area: &#34;This is a no-man&#39;s-land. A person has to keep company with the mountains. When I first enlisted, I used to let my mind wander while standing guard too. But now I think about only one thing: standing this watch properly.&#34;</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">“当兵站岗，责无旁贷，武警部队更是如此。”来到武警襄阳支队采访多日，记者对这个说法感触更深了。 该支队地处中部，执勤点位分布甚广：城市、乡村、航道、山区……这就意味着，同一时间，一个支队这么多人，散在各个点位，做着同一件事——站岗。许多官兵告诉记者，在他们看来，站岗就是战斗。 可站岗时，战士们或多或少会感到疲惫；深夜时分，也难免会“静夜思”一番。记者不免心生好奇：站岗时，官兵们会想些啥？ 盛夏的荆楚大地，即便在深夜，气温依然超过30℃。在该支队营区正门前，偶有零星行人匆匆走过。夜色如墨，上等兵冯逸航身姿挺拔，伫立哨位。 冯逸航盯着警戒区，记者在远处“盯”着冯逸航。下哨后，记者小跑上前，表明身份，与他攀谈了起来。 “小伙子，你是因为啥来当兵？”“想保家卫国呗！”“那你现在当上了兵，很骄傲吧？”“骄傲是骄傲，就是总站哨……”这名腼腆的上等兵挠了挠头，好像自己说错了话，随后赶紧蹦出一句：“但班长说了，哨位就是战位。一是不能松懈犯困，二是把这班哨站好。”说完，我们俩都笑出了声。想必他不知如何回答，索性引用班长的话。 笑声拉开了话匣子，冯逸航说，记者的问题他也问过自己，可他不知道怎么回答。这次，他道出了小心思，没搪塞。他告诉记者，刚站岗时，挺激动的，可到了后半夜最难熬，老犯困。 “我就数经过的车灯，看天上的星星，想想家里今晚饭吃的啥……”冯逸航跟记者说，新兵站岗，总是难免会有那么几个瞬间身在哨位心飞扬。 “可这样，会不会影响状态，耽误战备执勤？”面对记者疑虑，冯逸航一板一眼答道：“绝对不会。我们也许会有疲劳的时候，但哨位对我们而言是战场，站在那里，就是开始了一场战斗。也许因为年轻，我们会经验不足，会溜个小号，但我们的眼睛始终瞪得大大的，任何风吹草动都别想躲过去。” 随后他嘿嘿笑了声，语气急转弯：“班长教给我一个土办法，让我一直在心里默念上哨前他的叮嘱和要求。他说，念的多了，眼里只有警戒区，也就不想别的事了……” 第二天中午，记者在食堂与该支队领导聊起此事。他哈哈一笑：“在咱们单位，像小冯这样的战士，日均执勤近5个小时，除了用餐和就寝，一天大半时间都在哨位上度过。”他语气又沉下来，“时间长，不少地区又偏得很。在不少老兵看来，‘哨位是战位’不是口号，而是大实话、心里话。” 邻桌的某部指导员王圣琪也参与进来。他告诉记者，在他看来哨位也是开展思想工作的小课堂。随后王圣琪道出一段经历。 有天夜里王圣琪去查哨。在某点位对口令时，他发现哨兵虽然回令正确，却给人感觉一愣一愣的。“有什么心事吗？”王圣琪关心道，哨兵却面露难色，支支吾吾。“那我陪你站会儿。”当王圣琪和哨兵并肩站立时，惊讶地发现略远处一大片金黄的油菜花，在月色路灯下翻滚涌动，景色极美。“指导员，我家对面也有这么一片油菜花，小时候经常在地里玩……”哨兵嘀咕了一句，让王圣琪恍然大悟。 “现在这儿也是你的家。”王圣琪拍了拍这位刚刚下队执勤的河南小伙，“那就好好守着它，每次花开的时候，你家也到了快丰收的时候，这就是你站在这里的意义。” 王圣琪告诉记者，在他看来，战士们站哨，既是履行职责使命，也是直面自我，心里的小疙瘩很容易在这时“长大”，同样也更好“摘下”。 王圣琪的经历让记者想起《士兵突击》里“草原五班”的那句名言：光荣在于平淡，艰巨在于漫长。 随后，记者随补给车前往支队最偏远的南河庙单独执勤点。这里地处连绵的桐柏山脉，风硬水冷，昼夜温差大，人烟稀少，这儿的官兵说他们是“大山六班”。补给车路过时，二级上士邱志澳挺立在哨位上，敬了一个颇有老兵味的军礼。下哨后，他跑过来和我们一起搬卸东西。我察觉到，他的脸颊颜色黑红，随车干部说这叫“山里红”，邱志澳听完冲我笑了笑，我借机和他聊了起来，问他刚刚站岗时在想啥。 “我在想，怎么带好我们班的兵。比如，上等兵刘厶语总不敢晚上站岗。”邱志澳面对记者不打怯，嗓门大。这位二级上士坦言，半夜在大荒地里站岗，年轻人需要时间适应，他能理解。9年前，他第一次执勤，那时岗楼还是红砖房，夜里漆黑一片。要是没有老兵陪着，邱志澳的心里直突突，一点风吹草动都让他紧张。当时他的班长主动提出陪他一起站夜岗，教他怎样携带装备、询问盘查。 “后来，我也是这样带自己的兵，帮他们尽快适应。”邱志澳话锋一转，“唯独这个刘厶语，到现在还总让我陪。”邱志澳觉得好气又好笑。 晚饭过后，记者找到刘厶语，他悄悄告诉记者，他并非胆小害怕。“咱当兵的还怕黑？在这儿站岗，除了风声就是心跳声。一个人时，看到老远处有灯火一闪一闪的，忍不住念叨家里，想得心口疼。有班长在就不一样了，心里踏实。”这名战士操着东北口音，信誓旦旦说道，“下次排到晚上的岗，不用班长陪！” 采访结束即将离开，记者在高铁站候车时，遇到了即将上哨的一级上士孙耀保。这位老兵已服役14年，曾多次处置突发情况，先后荣立个人三等功2次、集体三等功1次。记者问他同一个问题，他脱口答道：“高铁站地段复杂，人流量大。徒步巡逻时我得时刻根据环境变换巡逻队形，观察周边哪些人、车可疑，哪些人在拍照，按照‘三快’处置流程怎样应对各种情况……”他的回答专业理性，正在候车的记者安全感满满。 上车后，列车疾驰，窗外城村相接、山峦相叠。记者脑海中突然回想起此前在山区采访时一位老兵的随口一答：“这儿是无人区，人得与山为伴。我当兵之初曾经也在站岗时胡思乱想，但我现在只想一件事，那就是把这班岗站好了。”</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
