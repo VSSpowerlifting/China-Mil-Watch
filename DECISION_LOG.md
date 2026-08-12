@@ -2,6 +2,53 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-12 — Veil images must be provably the cited article's own
+
+Auditing the automatic veils against their sources found four editions whose
+image id did not match the article id. Cause: `fetch_article_image.py` takes
+the first body image ≥800×400, and 81.cn article pages carry a recommended-
+video rail (`jskt_208724`) of `<li><a><img>` thumbnails that pass every size
+and path filter. Verified in page HTML: the 06-20 image sat inside a link to
+article 16467895, an unrelated 77th Group Army story. Editions 06-20 and
+06-27 had resolved to the *same* thumbnail.
+
+1. **Provenance is now enforced at fetch time.** 81.cn embeds the owning
+   article's id in every attachment filename; a candidate whose id differs
+   from the article's is rejected as another article's asset. URLs carrying
+   no id (other CMSes) are not judged by a convention they do not use, and
+   fall through to the existing filters. Recorded per image as
+   `provenance: og:image | article-id-match | unverifiable-cms`.
+2. **An edition with no provable image ships text-led.** 2026-05-30's own
+   photograph is 779×1072, below the size floor, and nothing else in its
+   trail qualifies — so it carries no veil rather than a borrowed one. Its
+   auto `media_items` entry was removed; that is a correction of
+   machine-written data, not an editorial sidecar edit.
+3. **Corrected: 06-20, 06-27, 07-18 re-fetched** to their real article
+   images; all eleven remaining source images now match. The defect predates
+   the veil work — these images have been cover-PNG backgrounds since each
+   edition shipped — but rendering them on-page with a credit line naming
+   the article is what made a wrong image into a false claim.
+4. **Standing rule: a veil is evidence-adjacent and must be traceable.**
+   Any future image path — new outlet, new CMS, manual addition — states how
+   the image was tied to the article, or the edition renders text-led. The
+   2026-07-12 exact-URL rule governs which *story* an image attaches to; this
+   governs whether the file is that story's at all.
+
+## 2026-08-12 — Automatic veils render at full curated strength
+
+The damped `--source` treatment introduced with the automatic veil is
+withdrawn at analyst direction: the veil is the edition's identity and should
+read as photography, not as a watermark. `.card-veil` / `.nd-veil` now apply
+identically to curated and automatic images.
+
+The legibility concern that motivated the damping is real but was
+misdiagnosed as a treatment problem. It is an image-selection problem: a
+dark, low-contrast frame (No. 10's submarine) leaves the dek clean at full
+opacity where a bright, signage-heavy briefing frame does not. **Image
+choice, not opacity, is the lever.** Where a frame is too busy, route a
+curated manifest entry for that edition — it still wins over the automatic
+path — rather than reintroducing a per-class opacity rule.
+
 ## 2026-08-11 — Signal Veil falls back to the edition's own source photograph
 
 Editions Nos. 11–13 shipped with no in-page imagery at all. Cause: the

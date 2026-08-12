@@ -204,27 +204,14 @@ main { padding-top: 2rem; }
 @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
   .card-veil { opacity: .3; }
 }
-/* Automatic source photographs (V&M §2) are not chosen for composition the
-   way manifest images are — a press-briefing frame carries its own signage.
-   Hold them further right and quieter so the dek never reads over picture
-   text; the curated treatment above is unchanged. */
-.card-veil--source {
-  width: 50%; opacity: .42;
-  -webkit-mask-image: radial-gradient(95% 130% at 96% 42%, #000 8%, transparent 54%);
-  mask-image: radial-gradient(95% 130% at 96% 42%, #000 8%, transparent 54%);
-}
-@supports not ((mask-image: none) or (-webkit-mask-image: none)) {
-  .card-veil--source { opacity: .22; }
-}
+/* Automatic source photographs carry the same weight as curated ones:
+   the veil is the edition's identity and reads as photography, not as a
+   watermark. Image choice, not opacity, is the lever when a frame is too
+   busy — see DECISION_LOG 2026-08-12. */
 @media (max-width: 700px) {
   .card-veil { width: 85%; opacity: .5;
     -webkit-mask-image: radial-gradient(120% 120% at 95% 100%, #000 12%, transparent 62%);
     mask-image: radial-gradient(120% 120% at 95% 100%, #000 12%, transparent 62%);
-  }
-  /* Must follow the base mobile rule above — equal specificity, later wins. */
-  .card-veil--source { width: 80%; opacity: .3;
-    -webkit-mask-image: radial-gradient(110% 110% at 96% 100%, #000 8%, transparent 52%);
-    mask-image: radial-gradient(110% 110% at 96% 100%, #000 8%, transparent 52%);
   }
 }
 .issue-cover-eyebrow { position: relative; z-index: 1; }
@@ -472,7 +459,7 @@ main { padding-top: 2rem; }
     {% if latest_post %}
       <div class="issue-cover">
         {% if latest_veil %}
-        <div class="card-veil{% if latest_veil.kind == 'source' %} card-veil--source{% endif %}" role="img" aria-label="{{ latest_veil.alt }}" data-editorial-id="{{ latest_veil.id }}"
+        <div class="card-veil" role="img" aria-label="{{ latest_veil.alt }}" data-editorial-id="{{ latest_veil.id }}"
              style="background-image:url('{{ latest_veil.duo }}'); background-position:{{ latest_veil.mask_focus }};"></div>
         {% endif %}
         <div class="issue-cover-eyebrow">

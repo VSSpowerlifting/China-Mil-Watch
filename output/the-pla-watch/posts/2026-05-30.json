@@ -124,18 +124,7 @@
     "Email": "mailto:ben.yang@gwmail.gwu.edu",
     "China Mil Watch": "../../index.html"
   },
-  "media_items": [
-    {
-      "type": "image",
-      "src": "../media/2026-05-30-source-image.jpg",
-      "alt": "Source article image",
-      "caption": "Cover background image sourced from the lead source article. Included for editorial visual context only.",
-      "source_url": "http://www.81.cn/bz_208549/16464526.html",
-      "image_url": "http://www.81.cn/lmyybl/jskt_208724/_attachment/2026/05/30/16464539_db4dd81b0fcfabcc4661276400d2b51b.jpg",
-      "source_label": "article body image",
-      "auto_selected": true
-    }
-  ],
+  "media_items": [],
   "background_image_source": "source_trail_fetch",
   "background_image_path": "output/the-pla-watch/media/2026-05-30-source-image.jpg",
   "cover_image": "../covers/2026-05-30.png",

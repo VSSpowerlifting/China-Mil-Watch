@@ -332,14 +332,20 @@ edition when the analyst authors one.
 
 **In this order:**
 
-0. **Review the automatic Signal Veil before it deploys** (uncommitted, see
-   Working tree). Nine editions gained imagery from their own cited source
-   articles; Nos. 8–10 keep curated images. Two judgment calls are the
-   analyst's: whether a PRC state-media photograph belongs on-page as
-   atmosphere at all (V&M §2 permits it, mandatory credit renders), and
-   whether the No. 13 briefing frame is a good enough image to keep — it is
-   the busiest of the nine. Per-edition opt-out is a curated manifest entry,
-   which still wins over the automatic path.
+0. **Automatic Signal Veil is live** (2026-08-11/12). Eight editions carry an
+   automatic veil from their own cited article, three carry curated images,
+   and 2026-05-30 is text-led because no image in its trail passes the
+   provenance guard. Full-strength treatment for both classes.
+
+   Open: whether a PRC state-media photograph belongs on-page as atmosphere
+   at all (V&M §2 permits it; credit renders). The No. 13 briefing frame is
+   the busiest of the set — route a curated manifest entry for any edition
+   whose frame is too heavy; curated always wins over the automatic path.
+
+   **The og:image cover PNGs for 05-30, 06-20, 06-27 and 07-18 still embed
+   the pre-guard images** — covers were not regenerated in the fix pass
+   (`--no-covers`). Regenerate them before the next publish so link previews
+   stop carrying the wrong photograph.
 0b. **Retro-QA No. 12 and No. 13.** Both shipped without the
    EDITORIAL_QA_CHECKLIST source-to-claim trace (analyst-directed). Run the
    trace against the live pages and correct by re-render, not hand-edit.

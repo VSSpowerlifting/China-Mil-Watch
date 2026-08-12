@@ -124,6 +124,34 @@ def _extract_content_images(html: str, base_url: str) -> list[str]:
     return srcs
 
 
+_ARTICLE_ID_RE = re.compile(r"/(\d{6,})\.html?$")
+_ASSET_ID_RE = re.compile(r"/(\d{6,})_[0-9a-f]{16,}\.[a-z]+$", re.I)
+
+
+def _cms_id(url: str, pattern: re.Pattern) -> Optional[str]:
+    m = pattern.search(urllib.parse.urlparse(url).path)
+    return m.group(1) if m else None
+
+
+def _foreign_asset(img_url: str, article_url: str) -> bool:
+    """True when the image is another article's asset.
+
+    81.cn embeds the owning article's id in every attachment filename
+    (`.../16478287_<hash>.jpg` belongs to `.../16478287.html`). The page's
+    recommended-video rail (`jskt_*`) is full of `<li><a><img>` thumbnails
+    that pass every size and path filter but belong to unrelated stories —
+    that is how editions 05-30, 06-20 and 07-18 ended up crediting a
+    photograph to an article it never appeared in.
+
+    Only judges URLs that carry both ids. Other CMSes (Global Times and
+    friends) have no id to compare, so they fall through to the existing
+    checks rather than being rejected on a convention they do not use.
+    """
+    art = _cms_id(article_url, _ARTICLE_ID_RE)
+    asset = _cms_id(img_url, _ASSET_ID_RE)
+    return bool(art and asset and art != asset)
+
+
 def _probe_image(url: str) -> Optional[tuple[bytes, int, int]]:
     """Download image, return (bytes, width, height) or None if unusable."""
     try:
@@ -193,6 +221,9 @@ def _try_url(article_url: str, log_prefix: str) -> Optional[dict]:
     candidates = _extract_content_images(html, article_url)
     print(f"{log_prefix}    found {len(candidates)} body image candidate(s)")
     for img_url in candidates:
+        if _foreign_asset(img_url, article_url):
+            print(f"{log_prefix}    skip {img_url[-50:]} (belongs to another article)")
+            continue
         result = _probe_image(img_url)
         if not result:
             continue
@@ -262,6 +293,15 @@ def fetch_best_image(
             "article_url": article_url,
             "image_url": image_url,
             "source_label": source_label,
+            # How the image was tied to the article, for later audit:
+            # og:image is the article's own declared image; id-match means the
+            # CMS asset id matches the article id; unverifiable means the CMS
+            # carries no id to compare (judged by the body-scan filters alone).
+            "provenance": (
+                "og:image" if source_label == "og:image"
+                else "article-id-match" if _cms_id(image_url, _ASSET_ID_RE)
+                else "unverifiable-cms"
+            ),
             "original_width": w,
             "original_height": h,
             "local_path": str(image_path.relative_to(ROOT)),

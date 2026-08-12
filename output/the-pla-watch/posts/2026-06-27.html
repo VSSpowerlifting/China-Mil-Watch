@@ -464,21 +464,8 @@
         radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
         radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
     }
-    /* Automatic source photographs (V&M §2): pulled verbatim from the cited
-       article, so composition is whatever the outlet published — often a
-       briefing frame dense with signage. Damped and pulled right so neither
-       the dek nor the credit bracket reads over picture text. Curated
-       manifest imagery keeps the fuller treatment above. */
-    .nd-veil--source {
-      width: 80%; opacity: .5;
-      -webkit-mask-image:
-        radial-gradient(70% 100% at 84% 38%, #000 20%, rgba(0,0,0,.55) 46%, transparent 68%);
-      mask-image:
-        radial-gradient(70% 100% at 84% 38%, #000 20%, rgba(0,0,0,.55) 46%, transparent 68%);
-    }
     @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
       .nd-veil { opacity: .45; }
-      .nd-veil--source { opacity: .28; }
       .nd-veil::after {
         content: ""; position: absolute; inset: 0;
         background: linear-gradient(to right, var(--color-bg) 8%, transparent 56%),
@@ -1331,7 +1318,7 @@ No. 8 · Week ending 27 June 2026
 
     <div class="cover-credit-note">
       <span class="label">Edition cover (link-preview image):</span>
- <a href="http://www.81.cn/yw_208727/16469315.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
+ <a href="http://www.81.cn/yw_208727/16468930.html" target="_blank" rel="noopener nofollow">Source</a>      <span>· Visual context only; not evidence of the specific events discussed.</span>
     </div>
 
 
