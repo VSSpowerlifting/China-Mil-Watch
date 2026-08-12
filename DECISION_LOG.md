@@ -28,7 +28,17 @@ article 16467895, an unrelated 77th Group Army story. Editions 06-20 and
    the veil work — these images have been cover-PNG backgrounds since each
    edition shipped — but rendering them on-page with a credit line naming
    the article is what made a wrong image into a false claim.
-4. **Standing rule: a veil is evidence-adjacent and must be traceable.**
+4. **The cover generator's cross-edition fallback is retired.** Regenerating
+   the corrected covers exposed the same defect one layer down: priority 4
+   borrowed "prior-week images already in the media dir", which put edition
+   1's photograph on No. 4's link preview. Curated assets (priority 3) are
+   generic by design and stay; an edition-specific news photo is not, and on
+   another week's cover it implies a story that edition never covered. An
+   edition with no image of its own now falls through to the abstract
+   gradient — 2026-05-30 is the only one affected and now renders it. Its
+   stale `background_image_path` was cleared, or priority 1 would have read
+   the borrowed photograph straight back out of the sidecar.
+5. **Standing rule: a veil is evidence-adjacent and must be traceable.**
    Any future image path — new outlet, new CMS, manual addition — states how
    the image was tied to the article, or the edition renders text-led. The
    2026-07-12 exact-URL rule governs which *story* an image attaches to; this

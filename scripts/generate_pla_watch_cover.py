@@ -1073,13 +1073,12 @@ def generate_one(json_path: Path, force: bool = False,
             )
             bg_source = "curated_fallback" if bg_path else None
 
-        # Priority 4: last-resort — prior-week images already in the media dir.
-        # Sorted newest-first so the most recently fetched image is tried first.
-        if bg_path is None and MEDIA_DIR.exists():
-            bg_path = _first_image_in_dirs(
-                [MEDIA_DIR], prev_img, sidecar_date, "media_dir_fallback"
-            )
-            bg_source = "media_dir_fallback" if bg_path else None
+        # Priority 4 (retired 2026-08-12): borrowing another edition's fetched
+        # photograph from the media dir. Curated assets above are generic by
+        # design; an edition-specific news photo is not, and putting one on a
+        # different week's cover makes the link preview imply a story it never
+        # covered. An edition with no image of its own now falls through to the
+        # abstract gradient, matching the veil rule in DECISION_LOG 2026-08-12.
 
         if bg_path is None:
             bg_source = "abstract_gradient"

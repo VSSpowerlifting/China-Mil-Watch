@@ -342,10 +342,9 @@ edition when the analyst authors one.
    the busiest of the set — route a curated manifest entry for any edition
    whose frame is too heavy; curated always wins over the automatic path.
 
-   **The og:image cover PNGs for 05-30, 06-20, 06-27 and 07-18 still embed
-   the pre-guard images** — covers were not regenerated in the fix pass
-   (`--no-covers`). Regenerate them before the next publish so link previews
-   stop carrying the wrong photograph.
+   Covers for the four corrected editions were regenerated 2026-08-12; every
+   cover background now comes from its own edition or the abstract gradient
+   (2026-05-30). The cross-edition `media_dir_fallback` is retired.
 0b. **Retro-QA No. 12 and No. 13.** Both shipped without the
    EDITORIAL_QA_CHECKLIST source-to-claim trace (analyst-directed). Run the
    trace against the live pages and correct by re-render, not hand-edit.
