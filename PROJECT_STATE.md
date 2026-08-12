@@ -124,10 +124,16 @@ warnings.
 
 ## Validation status
 
-`validate_output.py`: **passes, 9 warnings** — all historical, ruled on
+`validate_output.py`: **passes, 10 warnings** — 9 historical, ruled on
 2026-07-09/10 (missing LinkedIn files eds. 1–3; undated early trail
 entries; related notes). Do not fix by invention; explain any NEW warning
 here.
+
+The 10th is **`cadence gap: 2026-07-18 → 2026-08-01 is 14 days`** — real
+history, not a defect: no edition shipped for week ending 2026-07-25 during
+the API-credit outage. It is a data fact and stays until an edition exists
+or the check learns about publication gaps. Not introduced by the veil work
+(that pass added no warnings).
 
 ## API credit exhausted — RESOLVED 2026-08-11
 
@@ -326,7 +332,15 @@ edition when the analyst authors one.
 
 **In this order:**
 
-0. **Retro-QA No. 12 and No. 13.** Both shipped without the
+0. **Review the automatic Signal Veil before it deploys** (uncommitted, see
+   Working tree). Nine editions gained imagery from their own cited source
+   articles; Nos. 8–10 keep curated images. Two judgment calls are the
+   analyst's: whether a PRC state-media photograph belongs on-page as
+   atmosphere at all (V&M §2 permits it, mandatory credit renders), and
+   whether the No. 13 briefing frame is a good enough image to keep — it is
+   the busiest of the nine. Per-edition opt-out is a curated manifest entry,
+   which still wins over the automatic path.
+0b. **Retro-QA No. 12 and No. 13.** Both shipped without the
    EDITORIAL_QA_CHECKLIST source-to-claim trace (analyst-directed). Run the
    trace against the live pages and correct by re-render, not hand-edit.
    Rewrite `linkedin/2026-08-01.txt`, which is the mechanical fallback.

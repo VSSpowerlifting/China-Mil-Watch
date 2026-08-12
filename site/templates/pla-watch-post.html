@@ -796,7 +796,7 @@
 {% block hero %}
 {% if pw_veil %}
 <section class="nd-veil-band">
-  <div class="nd-veil" role="img" aria-label="{{ pw_veil.alt }}" data-editorial-id="{{ pw_veil.id }}"
+  <div class="nd-veil{% if pw_veil.kind == 'source' %} nd-veil--source{% endif %}" role="img" aria-label="{{ pw_veil.alt }}" data-editorial-id="{{ pw_veil.id }}"
        style="background-image:url('{{ pw_veil.duo }}'); background-position:{{ pw_veil.mask_focus }};"></div>
   <div class="nd-src-bracket">
     <span class="bracket"></span>

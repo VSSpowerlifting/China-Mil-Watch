@@ -27,9 +27,10 @@ from scripts.pw_env import (
     build_atom_feed,
     copy_editorial_assets,
     editorial_items_for_edition,
-    editorial_veil_for_edition,
     ensure_editorial_derivatives,
+    ensure_source_veils,
     make_pw_env,
+    veil_for_edition,
 )
 
 # Reuse author identity from the generator module without calling its main().
@@ -240,7 +241,7 @@ def _build_post_context(sidecar: dict) -> dict:
     term_word, term_explanation = _flatten_term(sidecar)
     body_media_items, cover_media_item = _split_media_items(sidecar)
     sidecar_date = sidecar.get("date", "")
-    pw_veil = editorial_veil_for_edition(sidecar_date)
+    pw_veil = veil_for_edition(sidecar_date, sidecar=sidecar)
     cover_image = sidecar.get("cover_image") or ""
     cover_thumb = sidecar.get("cover_thumb") or ""
     cover_image_url = sidecar.get("cover_image_url") or ""
@@ -356,6 +357,7 @@ def main() -> int:
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     COVERS_DIR.mkdir(parents=True, exist_ok=True)
     ensure_editorial_derivatives()
+    ensure_source_veils()
     copy_editorial_assets(ROOT / "output")
 
     # Render every post sidecar.
@@ -427,7 +429,9 @@ def main() -> int:
     # index.html sits at the-pla-watch/index.html, one level shallower than
     # a post page, so the editorial-asset prefix drops one "../".
     latest_veil = (
-        editorial_veil_for_edition(latest["date"], src_prefix="../assets/editorial/")
+        veil_for_edition(latest["date"], sidecar=latest,
+                         editorial_prefix="../assets/editorial/",
+                         media_prefix="media/")
         if latest else None
     )
     index_html = index_tmpl.render(

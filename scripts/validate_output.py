@@ -241,6 +241,42 @@ def _required_editorial_derivatives(entry: dict) -> set:
     return names
 
 
+def _source_veil_entry(eid: str, output_dir: Path, errors: list, rel):
+    """Resolve an automatic Signal Veil id ('src-YYYY-MM-DD') to a
+    manifest-shaped entry.
+
+    These are the V&M §2 "source photographs" class — pulled verbatim from an
+    edition's own cited article by scripts/fetch_article_image.py, not from
+    the curated PD/CC library — so they are validated against their fetch
+    metadata and derivative on disk instead of against manifest.json. The
+    credit/aria/'not evidence' checks that follow are the same for both
+    classes, and the exact-URL grounding is checked harder here: the article
+    the photo came from must be linked on the page.
+    """
+    date = eid[4:]
+    media = output_dir / "the-pla-watch" / "media"
+    meta_path = media / f"{date}-source-image.json"
+    if not meta_path.is_file():
+        errors.append(f"{rel}: source veil {eid!r} has no fetch metadata at "
+                      f"the-pla-watch/media/{date}-source-image.json")
+        return None
+    if not (media / f"{date}-veil.jpg").is_file():
+        errors.append(f"{rel}: source veil {eid!r} derivative missing: "
+                      f"the-pla-watch/media/{date}-veil.jpg")
+        return None
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{rel}: source veil {eid!r} metadata unreadable ({exc})")
+        return None
+    article_url = meta.get("article_url")
+    if not article_url:
+        errors.append(f"{rel}: source veil {eid!r} metadata carries no article_url — "
+                      f"provenance cannot be verified")
+        return None
+    return {"id": eid, "source_page": article_url}
+
+
 def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -> None:
     site_editorial = Path(__file__).resolve().parent.parent / "site" / "assets" / "editorial"
     manifest_path = site_editorial / "manifest.json"
@@ -295,9 +331,13 @@ def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -
         #    and the standing "not evidence" language on the page.
         for m in EDITORIAL_ID_TAG_RE.finditer(text):
             eid = m.group(1)
-            entry = by_id.get(eid)
+            if eid.startswith("src-"):
+                entry = _source_veil_entry(eid, output_dir, errors, rel)
+            else:
+                entry = by_id.get(eid)
+                if entry is None:
+                    errors.append(f"{rel}: data-editorial-id={eid!r} not in manifest")
             if entry is None:
-                errors.append(f"{rel}: data-editorial-id={eid!r} not in manifest")
                 continue
             if entry.get("source_page") and entry["source_page"] not in text:
                 errors.append(f"{rel}: editorial element {eid!r} has no credit link "

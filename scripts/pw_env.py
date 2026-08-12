@@ -233,6 +233,7 @@ def editorial_veil_for_edition(date: str, manifest=None,
             continue
         return {
             "id":          e.get("id"),
+            "kind":        "curated",
             "duo":         f"{src_prefix}derivatives/{deriv_name}",
             "alt":         fields["alt"],
             "mask_focus":  fields["mask_focus"] or "52% 46%",
@@ -243,6 +244,134 @@ def editorial_veil_for_edition(date: str, manifest=None,
             "license":     fields["license"],
         }
     return None
+
+
+PW_MEDIA_DIR = TEMPLATES_DIR.parent.parent / "output" / "the-pla-watch" / "media"
+
+
+def _norm_url(url: str) -> str:
+    """Scheme- and trailing-slash-insensitive URL key for exact matching."""
+    u = (url or "").strip().lower()
+    for prefix in ("https://", "http://"):
+        if u.startswith(prefix):
+            u = u[len(prefix):]
+            break
+    return u[4:] if u.startswith("www.") else u.rstrip("/")
+
+
+def source_veil_name(date: str) -> str:
+    return f"{date}-veil.jpg"
+
+
+def ensure_source_veils(dates=None) -> None:
+    """Build the duo-navy derivative for each edition's auto-fetched source
+    photograph (scripts/fetch_article_image.py output). Idempotent: an
+    existing derivative is current by definition, so repeat builds are
+    byte-stable. Best-effort — never raises, because a missing Pillow or a
+    corrupt download must not break the site build; the edition simply falls
+    back to the text-led layout."""
+    try:
+        from scripts.generate_editorial_derivatives import (
+            NAVY, NAVY_HI, NAVY_MID, _load_gray, _write_duotone,
+        )
+    except Exception as exc:  # noqa: BLE001 - build must never break here
+        print(f"WARN: ensure_source_veils() unavailable: {exc!r}")
+        return
+
+    if not PW_MEDIA_DIR.is_dir():
+        return
+    for src in sorted(PW_MEDIA_DIR.glob("*-source-image.*")):
+        if src.suffix.lower() not in (".jpg", ".jpeg", ".png"):
+            continue
+        date = src.name.split("-source-image")[0]
+        if dates is not None and date not in dates:
+            continue
+        out_path = PW_MEDIA_DIR / source_veil_name(date)
+        if out_path.exists():
+            continue
+        try:
+            _write_duotone(_load_gray(src), NAVY, NAVY_HI, NAVY_MID, out_path)
+            print(f"  veil derivative: {out_path.name}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"WARN: veil derivative failed for {date}: {exc!r}")
+
+
+def source_veil_for_edition(date: str, sidecar=None,
+                            src_prefix: str = "../media/"):
+    """
+    Automatic Signal Veil fallback: the photograph already published *inside*
+    the edition's own cited source article, rendered as the duo-navy veil.
+
+    This is the V&M §2 "source photographs" class — verbatim from the cited
+    article, mandatory credit, no invented imagery — not the curated
+    PD/CC editorial library, which keeps its own license allowlist and still
+    wins whenever an entry exists for the edition.
+
+    Association is by exact article URL against the edition's own source
+    trail, so an image can never drift onto the wrong story (DECISION_LOG
+    2026-07-12). Returns None on any miss — no metadata, no download, no
+    derivative, or no URL match — leaving the designed text-led fallback.
+    """
+    import json
+
+    meta_path = PW_MEDIA_DIR / f"{date}-source-image.json"
+    if not meta_path.is_file():
+        return None
+    if not (PW_MEDIA_DIR / source_veil_name(date)).exists():
+        return None
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+    article_url = meta.get("article_url") or ""
+    if not article_url:
+        return None
+
+    # Exact-URL match back into the edition's trail for honest credit.
+    trail_hit = {}
+    for item in ((sidecar or {}).get("source_trail") or []):
+        if _norm_url(item.get("url")) == _norm_url(article_url):
+            trail_hit = item
+            break
+
+    title = (trail_hit.get("title") or "").strip()
+    subject = title if len(title) <= 64 else title[:63].rstrip() + "…"
+    source_id = (trail_hit.get("source") or "").strip() or \
+        _norm_url(article_url).split("/")[0]
+    alt = (f"Photograph published with the cited source article “{title}”, "
+           "rendered as a duotone background.") if title else \
+        ("Photograph from this edition's cited source reporting, rendered "
+         "as a duotone background.")
+
+    return {
+        "id":          f"src-{date}",
+        # Drives the quieter card treatment: an uncurated news photo may carry
+        # its own signage and captions, which must never compete with the
+        # edition's prose the way a chosen, clean-composition image doesn't.
+        "kind":        "source",
+        "duo":         f"{src_prefix}{source_veil_name(date)}",
+        "alt":         alt,
+        # Centre-weighted: the mask fades rather than crops, and an
+        # off-centre focus on an uncurated photo risks the misleading-crop
+        # rule in V&M §2.
+        "mask_focus":  "50% 42%",
+        "source_id":   source_id,
+        "subject":     subject,
+        "source_page": article_url,
+        "credit":      meta.get("note", ""),
+        "license":     "",
+    }
+
+
+def veil_for_edition(date: str, sidecar=None, editorial_prefix: str = "../../assets/editorial/",
+                     media_prefix: str = "../media/"):
+    """The edition's Signal Veil: curated editorial image first (hand-picked,
+    license-cleared), automatic source photograph second. Single resolver so
+    the generate and rerender paths cannot diverge."""
+    return (editorial_veil_for_edition(date, src_prefix=editorial_prefix)
+            or source_veil_for_edition(date, sidecar=sidecar,
+                                       src_prefix=media_prefix))
 
 
 def editorial_items_for_edition(date: str, manifest=None,

@@ -2,6 +2,50 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-11 — Signal Veil falls back to the edition's own source photograph
+
+Editions Nos. 11–13 shipped with no in-page imagery at all. Cause: the
+2026-07-11 ruling demoted cover PNGs to og:image duty in favour of Edition
+Plates (ROADMAP T2), commit `36510bb` executed the removal, T2 was never
+built, and curated veil coverage stopped after No. 10 — leaving the identity
+slot empty for nine of thirteen editions.
+
+1. **The Signal Veil now resolves in two tiers**, via a single
+   `veil_for_edition()` in `scripts/pw_env.py` shared by the generate and
+   rerender paths: curated manifest entry first, then the photograph
+   `scripts/fetch_article_image.py` already pulled from the edition's own
+   cited article, then the text-led fallback. Nine editions gain imagery;
+   Nos. 8–10 keep their curated images unchanged.
+2. **This is the V&M §2 "source photographs" class, not the curated
+   library.** The PD/CC0/CC BY allowlist in `fetch_editorial_image.py`
+   governs the curated library and is untouched. Source photographs are
+   permitted by policy as in-edition context, verbatim from the cited
+   article, and carry the mandatory credit + "context, not evidence" line
+   already rendered by the templates.
+3. **Association stays exact-URL, never topical.** The image comes from an
+   article in the edition's own source trail, matched back to it by
+   normalized URL for its credit. The 2026-07-12 prohibition on
+   category/thread matching is unaffected — no search, no inference, so an
+   image still cannot drift onto the wrong story. A miss at any step
+   (no metadata, no derivative, no `article_url`) yields None, not a guess.
+4. **Automatic veils render quieter than curated ones**
+   (`.card-veil--source`, `.nd-veil--source`). A curated image is chosen for
+   composition; an auto-fetched briefing frame carries its own signage and
+   captions, which must never compete with the edition's prose. Damped
+   opacity and a tighter right-anchored mask are the standing treatment, and
+   `mask_focus` stays centre-weighted — per-image focus tuning on uncurated
+   photography is how the V&M §2 misleading-crop rule gets broken.
+5. **The validator gained a source-veil provenance check** rather than an
+   exemption: a `src-*` id must resolve to real fetch metadata, an existing
+   derivative, and an `article_url` linked on the page. "Manifest-only" as a
+   validation rule is replaced by "provenance-verified", which is stricter
+   for this class.
+6. **T2 (Edition Plate) is not superseded.** It remains the deterministic
+   identity for editions with no usable photograph, and is specified in
+   `docs/T2_EDITION_PLATE_SPEC.md`. Open question D2 there — whether the
+   plate or the veil owns the index card when both exist — is now answered
+   for the veil-present case: the veil wins.
+
 ## 2026-08-11 — Sidecar prose may be edited for style, never for substance
 
 Analyst directed an em-dash cleanup and a humanizer pass on No. 13 before

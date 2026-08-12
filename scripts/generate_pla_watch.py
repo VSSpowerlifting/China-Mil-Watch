@@ -27,8 +27,9 @@ from config import DB_PATH, ANTHROPIC_API_KEY
 from scripts.pw_env import (
     build_atom_feed,
     editorial_items_for_edition,
-    editorial_veil_for_edition,
+    ensure_source_veils,
     make_pw_env,
+    veil_for_edition,
 )
 from storage.db import get_articles_for_date_range
 
@@ -584,7 +585,7 @@ def render_post(result: dict, meta: dict) -> str:
     env = make_pw_env()
     template = env.get_template("pla-watch-post.html")
     post_date = meta.get("date", meta["week_ending"])
-    pw_veil = editorial_veil_for_edition(post_date)
+    pw_veil = veil_for_edition(post_date, sidecar=meta)
     # result and meta both carry a "title" key (post title vs. sidecar title).
     # Strip layout-only fields out of meta so the post-content keys from
     # `result` win cleanly. _build_context raises on any remaining collision.
@@ -628,7 +629,9 @@ def render_index(posts_meta: list[dict]) -> str:
     # index.html sits at the-pla-watch/index.html, one level shallower than
     # a post page, so the editorial-asset prefix drops one "../".
     latest_veil = (
-        editorial_veil_for_edition(latest["date"], src_prefix="../assets/editorial/")
+        veil_for_edition(latest["date"], sidecar=latest,
+                         editorial_prefix="../assets/editorial/",
+                         media_prefix="media/")
         if latest else None
     )
     return template.render(latest_post=latest, archive_posts=archive, root_path="../",
@@ -829,6 +832,10 @@ def main():
         "prev_post": prev_post,
         "next_post": None,
     }
+
+    # Build the Signal Veil derivative from whatever source photograph the
+    # cover step just auto-fetched, so the veil is available to this render.
+    ensure_source_veils()
 
     # Render and write post HTML
     post_html = render_post(result, meta)
