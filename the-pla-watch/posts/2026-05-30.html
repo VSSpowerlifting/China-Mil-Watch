@@ -464,8 +464,21 @@
         radial-gradient(78% 110% at 78% 32%, #000 28%, rgba(0,0,0,.68) 52%, transparent 74%),
         radial-gradient(38% 52% at 30% 92%, rgba(0,0,0,.35) 0%, transparent 62%);
     }
+    /* Automatic source photographs (V&M §2): pulled verbatim from the cited
+       article, so composition is whatever the outlet published — often a
+       briefing frame dense with signage. Damped and pulled right so neither
+       the dek nor the credit bracket reads over picture text. Curated
+       manifest imagery keeps the fuller treatment above. */
+    .nd-veil--source {
+      width: 80%; opacity: .5;
+      -webkit-mask-image:
+        radial-gradient(70% 100% at 84% 38%, #000 20%, rgba(0,0,0,.55) 46%, transparent 68%);
+      mask-image:
+        radial-gradient(70% 100% at 84% 38%, #000 20%, rgba(0,0,0,.55) 46%, transparent 68%);
+    }
     @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
       .nd-veil { opacity: .45; }
+      .nd-veil--source { opacity: .28; }
       .nd-veil::after {
         content: ""; position: absolute; inset: 0;
         background: linear-gradient(to right, var(--color-bg) 8%, transparent 56%),
@@ -1276,14 +1289,19 @@
   </div>
 </header>
 
-
-<main>
-<div class="post-wrap">
-
-  <article class="post-main">
-
-    <div class="hero">
-      <div class="hero-meta-top">
+<section class="nd-veil-band">
+  <div class="nd-veil nd-veil--source" role="img" aria-label="Photograph published with the cited source article “PAP Liaoning Provincial Corps Recruit Regiment Explores Precision Training Model”, rendered as a duotone background." data-editorial-id="src-2026-05-30"
+       style="background-image:url('../media/2026-05-30-veil.jpg'); background-position:50% 42%;"></div>
+  <div class="nd-src-bracket">
+    <span class="bracket"></span>
+    <div class="src-lines">
+      IMG · <a href="http://www.81.cn/bz_208549/16464526.html" target="_blank" rel="noopener nofollow">PLA Daily (解放军报)</a><br>
+PAP Liaoning Provincial Corps Recruit Regiment Explores Precisi…<br>      CONTEXT, NOT EVIDENCE
+    </div>
+  </div>
+  <div class="nd-band-inner">
+    <div class="nd-src-inline">IMG <a href="http://www.81.cn/bz_208549/16464526.html" target="_blank" rel="noopener nofollow">PLA Daily (解放军报)</a> · PAP Liaoning Provincial Corps Recruit Regiment Explores Precisi… · Context, not evidence.</div>
+    <div class="hero-meta-top">
   <div class="hero-edition">
 No. 4 · Week ending 30 May 2026
 <span class="pw-badge pw-badge--significant">Significant</span>  </div>
@@ -1302,7 +1320,14 @@ No. 4 · Week ending 30 May 2026
 <i class="sig"></i><i class="sig"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="nd-tickrow-label">Source trail · 13 records · <b>2 model-flagged</b> · part of the monitored weekly record · of 40 articles analyzed</div>
 
-    </div>
+  </div>
+</section>
+
+<main>
+<div class="post-wrap">
+
+  <article class="post-main">
+
 
     <div class="cover-credit-note">
       <span class="label">Edition cover (link-preview image):</span>
