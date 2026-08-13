@@ -46,12 +46,14 @@ after CI advances `origin/main` again without editing anything.
 """
 
 import argparse
+import contextlib
 import logging
 import os
 import shutil
 import sqlite3
 import subprocess
 import sys
+import tempfile
 
 logger = logging.getLogger("reconcile_db")
 
@@ -146,22 +148,37 @@ def merge_driver(ancestor: str, current: str, other: str) -> int:
                 "ours (%A)" if published == current else "theirs (%B)")
 
     tmp = current + ".reconciled"
+    accepted = False
     try:
-        con, report = reconcile(ancestor, origin_path, local_path, tmp)
-        problems = gates(con, origin_path, local_path, tmp)
-        con.close()
-    except Exception as exc:  # noqa: BLE001 — any failure must become a conflict
-        logger.error("reconcile-db: %s: %s", type(exc).__name__, exc)
-        return 1
+        try:
+            con, report = reconcile(ancestor, origin_path, local_path, tmp)
+            problems = gates(con, origin_path, local_path, tmp)
+            con.close()
+        # noqa: BLE001 — any failure, including SystemExit from a FATAL check,
+        # must become a git conflict rather than a partially accepted database.
+        except (Exception, SystemExit) as exc:
+            logger.error("reconcile-db: %s: %s", type(exc).__name__, exc)
+            return 1
+
+        if problems:
+            for p in problems:
+                logger.error("reconcile-db FAIL: %s", p)
+            return 1
+
+        shutil.move(tmp, current)
+        accepted = True
     finally:
+        # Sidecars for every path we opened, plus — when the merge was NOT
+        # accepted — the temporary database itself. Leaving it behind litters
+        # the repository root after each failed unattended merge. `current`
+        # (git's merge target) and the three inputs are never removed: a failed
+        # merge must leave the conflict exactly as git set it up.
         _cleanup_sqlite_sidecars(ancestor, current, other, tmp)
-
-    if problems:
-        for p in problems:
-            logger.error("reconcile-db FAIL: %s", p)
-        return 1
-
-    shutil.move(tmp, current)
+        if not accepted:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
     logger.info("reconcile-db: merged %s new article(s), backfilled %s analysis row(s)",
                 report["articles_inserted"], report["analysis_backfilled"])
     return 0
@@ -207,8 +224,193 @@ def columns(con, table):
     return [r[1] for r in con.execute(f"PRAGMA table_info({table})")]
 
 
+def _attached_columns(con, schema, table):
+    """Column names of a table in an ATTACHed database, or [] if absent."""
+    try:
+        return [r[1] for r in con.execute(f"PRAGMA {schema}.table_info({table})")]
+    except sqlite3.Error:
+        return []
+
+
+# Tables every input must have, whatever its migration level.
+LEGACY_TABLES = ("articles", "sources", "categories", "article_categories",
+                 "scrape_runs")
+
+# If a post-0001 table is present at all, it must carry at least these columns,
+# or this script cannot read it safely. A legacy input that simply lacks the
+# table is fine — that is what normalize_schema() exists for.
+NEWER_TABLE_MINIMUM = {
+    "source_run_results": ("scrape_run_id", "source_slug", "status"),
+    "schema_migrations": ("version",),
+    "desks": ("desk_id",),
+    "institutions": ("institution_id", "desk_id"),
+}
+
+
+@contextlib.contextmanager
+def _read_only(path):
+    """
+    Read a database with no possibility of altering the original.
+
+    A plain `sqlite3.connect()` can write to an input merely by opening it
+    (journal/WAL recovery, checkpointing). A `mode=ro` URI avoids that but
+    cannot open a WAL-mode database whose `-wal` is present — SQLite needs to
+    write the WAL index to read it — and inputs written by this project are in
+    WAL mode.
+
+    So: copy the database and any sidecars to a scratch directory and read the
+    copy. The original is untouched by construction rather than by hoping, and
+    a hot WAL is recovered into the copy instead of being ignored (dropping the
+    `-wal` would silently hide committed rows from validation).
+    """
+    tmpdir = tempfile.mkdtemp(prefix="reconcile-validate-")
+    try:
+        target = os.path.join(tmpdir, "input.db")
+        shutil.copyfile(path, target)
+        for suffix in ("-wal", "-shm"):
+            side = path + suffix
+            if os.path.exists(side):
+                shutil.copyfile(side, target + suffix)
+        con = sqlite3.connect(target)
+        try:
+            yield con
+        finally:
+            con.close()
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def validate_inputs(base_path, origin_path, local_path):
+    """
+    Read-only preflight over base, origin and local. Raises SystemExit on any
+    defect, before the merge target is touched.
+
+    The distinction that matters: **a legacy input is valid; a corrupt one is
+    not.** Missing newer tables and a missing migration ledger are normal and
+    expected — they are exactly what this script migrates. Internal corruption,
+    dangling foreign keys, a missing legacy table, or a newer table that exists
+    but is structurally unreadable are defects, and merging from them can only
+    produce a wrong answer.
+    """
+    problems = []
+    for label, path in (("base", base_path), ("origin", origin_path),
+                        ("local", local_path)):
+        try:
+            ctx = _read_only(path)
+            con = ctx.__enter__()
+        except Exception as exc:  # noqa: BLE001
+            problems.append(f"{label}: cannot open for validation: {exc}")
+            continue
+        try:
+            integrity = con.execute("PRAGMA integrity_check").fetchone()[0]
+            if integrity != "ok":
+                problems.append(f"{label}: integrity_check: {integrity}")
+
+            violations = con.execute("PRAGMA foreign_key_check").fetchall()
+            if violations:
+                problems.append(
+                    f"{label}: {len(violations)} foreign key violation(s), "
+                    f"e.g. {violations[:3]}"
+                )
+
+            present = {r[0] for r in con.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+            for table in LEGACY_TABLES:
+                if table not in present:
+                    problems.append(f"{label}: required table '{table}' missing")
+
+            for table, required in NEWER_TABLE_MINIMUM.items():
+                if table not in present:
+                    continue          # legitimately pre-migration
+                cols = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
+                missing = [c for c in required if c not in cols]
+                if missing:
+                    problems.append(
+                        f"{label}: table '{table}' exists but lacks {missing}"
+                    )
+        except sqlite3.Error as exc:
+            problems.append(f"{label}: unreadable: {exc}")
+        finally:
+            ctx.__exit__(None, None, None)
+
+    if problems:
+        raise SystemExit(
+            "FATAL: reconciliation inputs failed validation; refusing to merge.\n  "
+            + "\n  ".join(problems)
+        )
+
+
+def _has_table(con, schema, table):
+    row = con.execute(
+        f"SELECT 1 FROM {schema}.sqlite_master WHERE type='table' AND name=?",
+        (table,),
+    ).fetchone()
+    return row is not None
+
+
+def normalize_schema(out_path):
+    """
+    Bring the output copy to the current schema BEFORE any row is merged.
+
+    This is the fix for two defects found in review, both of which produced a
+    silently wrong database with every gate passing:
+
+      * A legacy origin blob made the merged output legacy too — no
+        `source_run_results`, no `schema_migrations`, no `desks`, and a
+        `scrape_runs` CHECK that does not accept 'degraded'. The schema
+        regressed and the reconciler said nothing.
+      * A local run with status 'degraded' could not be inserted into a
+        pre-hotfix origin at all: the INSERT raised IntegrityError, the driver
+        exited non-zero, and CI got a raw binary conflict — unattended, on the
+        path where a conflict is most expensive.
+
+    Migrating the output first makes the merge target always current, so the
+    statuses and tables the local side may carry are supported before anything
+    is inserted. Deliberately NOT left to `init_db()` on the next pipeline run:
+    by then the regressed database has already been committed and pushed, and
+    rows that reconciliation dropped are gone regardless of what a later
+    migration rebuilds.
+
+    Only the OUTPUT copy is touched. base/origin/local are read-only inputs.
+
+    The import is local to this function and the whole migration chain is
+    stdlib-only (verified), so `--install-driver` still runs on a CI runner
+    before `pip install`.
+    """
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if repo_root not in sys.path:
+        sys.path.insert(0, repo_root)
+
+    from migrations.runner import apply_all, applied_versions, connect, discover
+
+    con = connect(out_path)
+    try:
+        report = apply_all(con)
+        ledger = set(applied_versions(con))
+        expected = {m.version for m in discover()}
+        missing = sorted(expected - ledger)
+        if missing:
+            raise SystemExit(
+                f"FATAL: migrations did not complete on the merge output; "
+                f"missing {missing}. Refusing to merge into a database whose "
+                "schema is not current."
+            )
+    finally:
+        con.close()
+
+    _cleanup_sqlite_sidecars(out_path)
+    return report
+
+
 def reconcile(base_path, origin_path, local_path, out_path):
+    # Nothing is copied or written until every input has been proven readable.
+    validate_inputs(base_path, origin_path, local_path)
+
     shutil.copyfile(origin_path, out_path)
+
+    # Schema first, rows second. See normalize_schema().
+    migration_report = normalize_schema(out_path)
+
     con = sqlite3.connect(out_path)
     con.row_factory = sqlite3.Row
     con.execute("ATTACH ? AS loc", (local_path,))
@@ -222,7 +424,10 @@ def reconcile(base_path, origin_path, local_path, out_path):
             "to merge a database whose shape has changed underneath this script."
         )
 
-    report = {}
+    report = {
+        "migrations_applied": migration_report.get("applied", []),
+        "migrations_already_present": migration_report.get("already_present", []),
+    }
 
     # ── 1. scrape_runs ────────────────────────────────────────────────────
     # Runs in local but not in base are local-authored. Origin may have reused
@@ -232,7 +437,11 @@ def reconcile(base_path, origin_path, local_path, out_path):
         r for r in con.execute("SELECT * FROM loc.scrape_runs ORDER BY id")
         if r["id"] not in base_runs
     ]
-    run_cols = columns(con, "scrape_runs")
+    # Intersect with the local side's columns: the output is now migrated and may
+    # legitimately carry columns a legacy local blob does not have. Reading a
+    # missing key off the local row would raise mid-merge.
+    local_run_cols = set(_attached_columns(con, "loc", "scrape_runs"))
+    run_cols = [c for c in columns(con, "scrape_runs") if c in local_run_cols]
     next_run = con.execute("SELECT IFNULL(MAX(id),0) FROM scrape_runs").fetchone()[0] + 1
 
     run_map = {}
@@ -251,16 +460,78 @@ def reconcile(base_path, origin_path, local_path, out_path):
         "SELECT * FROM loc.articles "
         "WHERE url NOT IN (SELECT url FROM main.articles) ORDER BY id"
     ).fetchall()
-    insert_cols = [c for c in art_cols if c not in ARTICLE_COLS_SKIP]
+    local_art_cols = set(_attached_columns(con, "loc", "articles"))
+    # `source_id` joins the skip list: a numeric source id is meaningless across
+    # two independently evolved databases. Carrying it verbatim silently
+    # re-attributed articles — a local PLA Daily article whose `sources.id`
+    # happened to equal origin's `mod_china` id was merged AS mod_china, with
+    # every gate green. Attribution is resolved by slug below.
+    insert_cols = [
+        c for c in art_cols
+        if c not in ARTICLE_COLS_SKIP and c != "source_id" and c in local_art_cols
+    ]
+
+    # slug is the only stable source identity across databases.
+    loc_slug_by_id = {
+        r[0]: r[1] for r in con.execute("SELECT id, slug FROM loc.sources")
+    }
+    out_id_by_slug = {}
+    for sid, slug in con.execute("SELECT id, slug FROM main.sources"):
+        if slug in out_id_by_slug:
+            raise SystemExit(
+                f"FATAL: merge output has more than one source with slug "
+                f"{slug!r}; source identity is ambiguous."
+            )
+        out_id_by_slug[slug] = sid
+
+    def resolve_source(local_source_id, url):
+        slug = loc_slug_by_id.get(local_source_id)
+        if slug is None:
+            raise SystemExit(
+                f"FATAL: local article {url} references source_id "
+                f"{local_source_id}, which has no row in local `sources`. "
+                "Refusing to guess its origin."
+            )
+        out_id = out_id_by_slug.get(slug)
+        if out_id is None:
+            raise SystemExit(
+                f"FATAL: local article {url} belongs to source {slug!r}, which "
+                "does not exist in the merged database. Sources are configured "
+                "through desk manifests and migrations — a source that cannot "
+                "be mapped that way must be reviewed by a human, not invented "
+                "from local metadata."
+            )
+        return out_id
+
+    # A URL both sides hold must mean the same source on both sides.
+    for r in con.execute(
+        "SELECT l.url AS url, l.source_id AS lsid, m.source_id AS msid "
+        "FROM loc.articles l JOIN main.articles m ON m.url = l.url"
+    ):
+        local_slug = loc_slug_by_id.get(r["lsid"])
+        origin_row = con.execute(
+            "SELECT slug FROM main.sources WHERE id = ?", (r["msid"],)
+        ).fetchone()
+        origin_slug = origin_row[0] if origin_row else None
+        if local_slug != origin_slug:
+            raise SystemExit(
+                f"FATAL: {r['url']} is attributed to {origin_slug!r} in origin "
+                f"and {local_slug!r} in local. A shared URL with conflicting "
+                "source attribution cannot be merged automatically."
+            )
+
     next_id = con.execute("SELECT IFNULL(MAX(id),0) FROM articles").fetchone()[0] + 1
 
     art_map = {}
     for r in new_rows:
         art_map[r["id"]] = next_id
         con.execute(
-            f"INSERT INTO articles (id, scrape_run_id, {','.join(insert_cols)}) "
-            f"VALUES ({','.join('?' * (len(insert_cols) + 2))})",
-            [next_id, run_map.get(r["scrape_run_id"], r["scrape_run_id"])]
+            f"INSERT INTO articles (id, scrape_run_id, source_id, "
+            f"{','.join(insert_cols)}) "
+            f"VALUES ({','.join('?' * (len(insert_cols) + 3))})",
+            [next_id,
+             run_map.get(r["scrape_run_id"], r["scrape_run_id"]),
+             resolve_source(r["source_id"], r["url"])]
             + [r[c] for c in insert_cols],
         )
         next_id += 1
@@ -322,13 +593,315 @@ def reconcile(base_path, origin_path, local_path, out_path):
             ac_shared += max(cur.rowcount, 0)
     report["categories_for_shared_rows"] = ac_shared
 
+    # ── 6. per-source collection results ──────────────────────────────────
+    # Origin's rows are already in the output (it was the base copy). Local rows
+    # are merged in on top. Without this, every per-source observation written
+    # locally since the last push was silently deleted by the merge while every
+    # gate passed — which is the steady-state daily shape once CI writes these
+    # rows, so the observability Phase 2 added would have evaporated on contact
+    # with the reconciler.
+    #
+    # SOURCE IDENTITY: `source_run_results.source_slug` is TEXT, so identity is
+    # the slug itself. Numeric `sources.id` values are NOT comparable across two
+    # independently evolved databases and are deliberately never used here — no
+    # guessing is required, which is why this merge is safe to automate.
+    #
+    # RUN IDENTITY: local runs absent from base were renumbered above origin's
+    # maximum in step 1. Their results must follow that remap, or they would
+    # attach to an unrelated origin run — or to nothing.
+    #
+    # CONFLICT RULE: the natural key is (scrape_run_id, source_slug) AFTER the
+    # remap. A true collision can only happen on a run both sides share (a run
+    # present in base), where each side independently recorded the same source.
+    # Published/origin wins, consistent with origin being authoritative for
+    # identity everywhere else in this script. Local-only rows are always kept.
+    srr_merged = 0
+    srr_conflicts = 0
+    if _has_table(con, "main", "source_run_results"):
+        out_srr_cols = columns(con, "source_run_results")
+        # Substantive payload: everything except the surrogate key. Two sides
+        # allocate `id` independently, so it carries no meaning across a merge.
+        cmp_cols = [c for c in out_srr_cols if c != "id"]
+
+        # Expected map, built BEFORE the merge writes anything. Origin's rows
+        # are already in the output because it was the base copy.
+        expected = {
+            (r["scrape_run_id"], r["source_slug"]):
+                tuple(r[c] for c in cmp_cols)
+            for r in con.execute("SELECT * FROM source_run_results")
+        }
+        origin_keys = set(expected)
+
+        if _has_table(con, "loc", "source_run_results"):
+            loc_srr_cols = set(_attached_columns(con, "loc", "source_run_results"))
+            unreadable = [c for c in cmp_cols if c not in loc_srr_cols]
+            if unreadable:
+                raise SystemExit(
+                    "FATAL: local source_run_results lacks columns "
+                    f"{unreadable}; the merge cannot be verified exactly. "
+                    "Reconcile by hand."
+                )
+            copy_cols = [c for c in cmp_cols if c != "scrape_run_id"]
+
+            # Run lineage. A local row's run must be provably one of:
+            #   * local-authored and renumbered in step 1  -> run_map
+            #   * inherited from the merge base            -> same id, verified
+            # Anything else is unmappable. It is NOT enough that some run with
+            # the same numeric id exists in the output: origin allocates ids
+            # independently, so a dangling local id can coincide with a real and
+            # entirely unrelated origin run. Attaching an observation there
+            # misfiles analytical provenance, which is worse than losing it.
+            local_run_ids = {
+                r[0] for r in con.execute("SELECT id FROM loc.scrape_runs")
+            }
+            unmappable = []
+
+            for r in con.execute("SELECT * FROM loc.source_run_results ORDER BY id"):
+                local_run = r["scrape_run_id"]
+                if local_run in run_map:
+                    mapped_run = run_map[local_run]
+                elif local_run in base_runs and local_run in local_run_ids:
+                    mapped_run = local_run          # shared, base-inherited run
+                else:
+                    unmappable.append((local_run, r["source_slug"]))
+                    continue
+
+                if not con.execute(
+                    "SELECT 1 FROM scrape_runs WHERE id=?", (mapped_run,)
+                ).fetchone():
+                    unmappable.append((local_run, r["source_slug"]))
+                    continue
+
+                key = (mapped_run, r["source_slug"])
+                if key in expected:
+                    srr_conflicts += 1              # true conflict: origin wins
+                    continue
+                payload = []
+                for c in cmp_cols:
+                    payload.append(mapped_run if c == "scrape_run_id" else r[c])
+                expected[key] = tuple(payload)
+                con.execute(
+                    f"INSERT INTO source_run_results "
+                    f"(scrape_run_id, {','.join(copy_cols)}) "
+                    f"VALUES ({','.join('?' * (len(copy_cols) + 1))})",
+                    [mapped_run] + [r[c] for c in copy_cols],
+                )
+                srr_merged += 1
+
+            if unmappable:
+                raise SystemExit(
+                    "FATAL: %d local source_run_result(s) reference a run whose "
+                    "lineage cannot be proven (not local-authored, not inherited "
+                    "from the merge base): %r. These are collection observations "
+                    "with analytical provenance — reconciliation stops rather "
+                    "than dropping them or attaching them to another run."
+                    % (len(unmappable), unmappable[:5])
+                )
+
+        # Exact accounting. Not "does this slug appear somewhere" — that check
+        # let a dropped row hide behind an unrelated row with the same slug.
+        actual = {
+            (r["scrape_run_id"], r["source_slug"]): tuple(r[c] for c in cmp_cols)
+            for r in con.execute("SELECT * FROM source_run_results")
+        }
+        missing = sorted(set(expected) - set(actual))
+        extra = sorted(set(actual) - set(expected))
+        altered = sorted(
+            k for k in set(expected) & set(actual) if expected[k] != actual[k]
+        )
+        if missing or extra or altered:
+            raise SystemExit(
+                "FATAL: source_run_results accounting failed — "
+                f"missing={missing[:5]} unexpected={extra[:5]} altered={altered[:5]}"
+            )
+        report["source_results_expected"] = len(expected)
+        report["source_results_from_origin"] = len(origin_keys)
+
+    report["source_results_merged"] = srr_merged
+    report["source_results_origin_won"] = srr_conflicts
+
     con.commit()
     return con, report
 
 
+REQUIRED_TABLES = (
+    "articles", "sources", "categories", "article_categories", "scrape_runs",
+    "schema_migrations", "desks", "institutions", "source_run_results",
+)
+
+
+def _statuses_in(path):
+    """Distinct scrape_runs.status values present in a database file."""
+    with _read_only(path) as probe:
+        try:
+            return {r[0] for r in probe.execute(
+                "SELECT DISTINCT status FROM scrape_runs") if r[0] is not None}
+        except sqlite3.Error:
+            return set()
+
+
+def _srr_keys(path):
+    """(scrape_run_id, source_slug) pairs, or None when the table is absent."""
+    with _read_only(path) as probe:
+        try:
+            has = probe.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' "
+                "AND name='source_run_results'").fetchone()
+            if not has:
+                return None
+            return {(r[0], r[1]) for r in probe.execute(
+                "SELECT scrape_run_id, source_slug FROM source_run_results")}
+        except sqlite3.Error:
+            return None
+
+
+def _srr_payloads(path, payload_cols):
+    """
+    {(run, slug): payload tuple} or None when the table is absent.
+
+    `payload_cols` must NOT include `scrape_run_id`: the run is part of the key,
+    and a local row legitimately changes run id when its run is remapped.
+    Including it would report every correctly remapped row as "payload altered".
+    """
+    with _read_only(path) as probe:
+        probe.row_factory = sqlite3.Row
+        try:
+            has = probe.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' "
+                "AND name='source_run_results'").fetchone()
+            if not has:
+                return None
+            cols = {r[1] for r in probe.execute(
+                "PRAGMA table_info(source_run_results)")}
+            if not set(payload_cols) <= cols:
+                return None
+            return {
+                (r["scrape_run_id"], r["source_slug"]):
+                    tuple(r[c] for c in payload_cols)
+                for r in probe.execute("SELECT * FROM source_run_results")
+            }
+        except sqlite3.Error:
+            return None
+
+
+def _run_lineage(con, origin_path):
+    """
+    {local run id -> merged run id}, recovered independently of reconcile().
+
+    `gates()` receives database paths, not reconcile()'s `run_map`, so lineage
+    is re-derived here rather than taken on trust from the code under test:
+
+      * a run inherited from the merge base keeps its id;
+      * a local-authored run was renumbered above origin's maximum, so the
+        candidates are exactly the output runs present in NEITHER the base nor
+        origin, matched by their verbatim-copied payload.
+
+    Excluding origin's ids is what makes this exact. Matching only against
+    "not in base" was ambiguous: origin's own new runs are also absent from the
+    base, and an origin run whose payload happened to equal a local run's — two
+    runs created the same second with default counters, which is routine —
+    absorbed the match and made a correctly merged result look unaccounted.
+
+    A local run matching neither rule is deliberately absent from the result;
+    callers treat missing lineage as unaccounted, never as "fine".
+    """
+    payload_cols = ["started_at", "completed_at", "articles_scraped",
+                    "articles_new", "articles_analyzed", "errors", "status"]
+    have = {r[1] for r in con.execute("PRAGMA table_info(scrape_runs)")}
+    payload_cols = [c for c in payload_cols if c in have]
+    sel = ", ".join(payload_cols)
+
+    base_ids = {r[0] for r in con.execute("SELECT id FROM bse.scrape_runs")}
+    out_ids = {r[0] for r in con.execute("SELECT id FROM main.scrape_runs")}
+
+    with _read_only(origin_path) as probe:
+        try:
+            origin_ids = {r[0] for r in probe.execute("SELECT id FROM scrape_runs")}
+        except sqlite3.Error:
+            origin_ids = set()
+
+    candidates = {}
+    for row in con.execute(f"SELECT id, {sel} FROM main.scrape_runs"):
+        if row[0] in base_ids or row[0] in origin_ids:
+            continue
+        candidates.setdefault(tuple(row[1:]), []).append(row[0])
+    for ids in candidates.values():
+        ids.sort()
+
+    lineage = {}
+    for row in con.execute(f"SELECT id, {sel} FROM loc.scrape_runs ORDER BY id"):
+        local_id = row[0]
+        if local_id in base_ids and local_id in out_ids:
+            lineage[local_id] = local_id
+            continue
+        matches = candidates.get(tuple(row[1:]))
+        if matches:
+            lineage[local_id] = matches.pop(0)
+    return lineage
+
+
+def _url_slug_map(path):
+    """{article url: source slug} for a database file, or {} if unreadable."""
+    with _read_only(path) as probe:
+        try:
+            return {
+                r[0]: r[1] for r in probe.execute(
+                    "SELECT a.url, s.slug FROM articles a "
+                    "JOIN sources s ON s.id = a.source_id")
+            }
+        except sqlite3.Error:
+            return {}
+
+
 def gates(con, origin_path, local_path, out_path):
-    """Every check that must hold before this database may be considered."""
+    """
+    Every check that must hold before this database may be considered.
+
+    Expanded after review: the previous set proved row and id preservation but
+    was silent about schema. A merge that dropped `source_run_results` entirely
+    and reverted the `scrape_runs` CHECK passed all of it. **A missing table is
+    now a failure, never treated as an empty one.**
+    """
     problems = []
+
+    # ── schema currency ───────────────────────────────────────────────────
+    present = {r[0] for r in con.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'")}
+    for table in REQUIRED_TABLES:
+        if table not in present:
+            problems.append(
+                f"required table '{table}' is missing from the merge output "
+                "(a missing table is not an empty table)"
+            )
+
+    if "schema_migrations" in present:
+        try:
+            repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if repo_root not in sys.path:
+                sys.path.insert(0, repo_root)
+            from migrations.runner import discover
+            expected = {m.version for m in discover()}
+            have = {r[0] for r in con.execute(
+                "SELECT version FROM schema_migrations")}
+            missing = sorted(expected - have)
+            if missing:
+                problems.append(f"migration ledger incomplete: missing {missing}")
+        except Exception as exc:  # noqa: BLE001
+            problems.append(f"could not verify migration ledger: {exc}")
+
+    # The output must accept every status either input legitimately carries,
+    # or inserting those runs would have raised — or will raise on the next
+    # write of a status the merged file cannot represent.
+    run_sql = con.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='scrape_runs'"
+    ).fetchone()
+    if run_sql:
+        for status in sorted(_statuses_in(origin_path) | _statuses_in(local_path)):
+            if f"'{status}'" not in run_sql[0]:
+                problems.append(
+                    f"merged scrape_runs CHECK does not accept status "
+                    f"'{status}', which is present in an input database"
+                )
 
     if con.execute("PRAGMA foreign_key_check").fetchall():
         problems.append("foreign_key_check reported violations")
@@ -379,6 +952,131 @@ def gates(con, origin_path, local_path, out_path):
             problems.append(
                 f"{dropped} {label} relevance decision(s) lost in the merge"
             )
+
+    # ── per-source results survive from both sides ────────────────────────
+    # Counting articles and decisions is not enough: local per-source rows were
+    # being deleted wholesale while every other gate passed. Origin's keys are
+    # compared directly; local's are compared after the run remap, because a
+    # renumbered local run legitimately changes the key.
+    merged_keys = _srr_keys(out_path)
+    if merged_keys is None:
+        problems.append("merge output has no source_run_results table")
+    else:
+        # Payload excludes `id` (surrogate) and `scrape_run_id` (part of the
+        # key, and legitimately rewritten by the run remap).
+        payload_cols = [c for c in columns(con, "source_run_results")
+                        if c not in ("id", "scrape_run_id")]
+        merged_payloads = _srr_payloads(out_path, payload_cols) or {}
+
+        # Exact accounting, independently recomputed here. The earlier version
+        # asked only whether a slug appeared *somewhere* in the output, so a
+        # dropped row was invisible whenever any other row shared its slug.
+        origin_payloads = _srr_payloads(origin_path, payload_cols)
+        if origin_payloads:
+            lost = sorted(set(origin_payloads) - set(merged_keys))
+            if lost:
+                problems.append(
+                    f"{len(lost)} origin source_run_result(s) missing from the "
+                    f"merge, e.g. {lost[:3]}"
+                )
+            changed = sorted(
+                k for k in set(origin_payloads) & set(merged_payloads)
+                if origin_payloads[k] != merged_payloads[k]
+            )
+            if changed:
+                problems.append(
+                    f"{len(changed)} origin source_run_result payload(s) altered "
+                    f"by the merge, e.g. {changed[:3]}"
+                )
+
+        # Local rows are compared after the run remap. A local row is accounted
+        # for when its (mapped run, slug) is present with an identical payload;
+        # since only origin may win a true conflict, the alternative is that
+        # origin already held that exact key.
+        local_payloads = _srr_payloads(local_path, payload_cols)
+        lineage = _run_lineage(con, origin_path) if local_payloads else {}
+        if local_payloads:
+            unaccounted = []
+            for (local_run, slug), payload in sorted(local_payloads.items()):
+                mapped = lineage.get(local_run)
+                if mapped is None:
+                    unaccounted.append((local_run, slug, "run lineage unproven"))
+                    continue
+                key = (mapped, slug)
+                if key not in merged_payloads:
+                    unaccounted.append((local_run, slug, "absent from merge"))
+                    continue
+                if (merged_payloads[key] != payload
+                        and key not in (origin_payloads or {})):
+                    unaccounted.append((local_run, slug, "payload altered"))
+            if unaccounted:
+                problems.append(
+                    f"{len(unaccounted)} local source_run_result(s) unaccounted "
+                    f"for, e.g. {unaccounted[:3]}"
+                )
+
+        accounted = set(origin_payloads or {}) | {
+            (lineage[run], slug)
+            for run, slug in (local_payloads or {}) if run in lineage
+        }
+        unexpected = sorted(set(merged_keys) - accounted)
+        if unexpected:
+            problems.append(
+                f"{len(unexpected)} source_run_result(s) in the merge belong to "
+                f"neither input, e.g. {unexpected[:3]}"
+            )
+
+        dupes = con.execute(
+            "SELECT COUNT(*) FROM (SELECT scrape_run_id, source_slug "
+            "FROM source_run_results GROUP BY 1,2 HAVING COUNT(*) > 1)"
+        ).fetchone()[0]
+        if dupes:
+            problems.append(
+                f"{dupes} duplicate source_run_result natural key(s) "
+                "(scrape_run_id, source_slug)"
+            )
+
+        orphaned = con.execute(
+            "SELECT COUNT(*) FROM source_run_results r "
+            "LEFT JOIN scrape_runs s ON s.id = r.scrape_run_id "
+            "WHERE s.id IS NULL"
+        ).fetchone()[0]
+        if orphaned:
+            problems.append(
+                f"{orphaned} source_run_result(s) reference a run that does not "
+                "exist in the merged database"
+            )
+
+    # ── article attribution, by slug ──────────────────────────────────────
+    # Numeric source ids may legitimately differ between two independently
+    # evolved databases. What must never differ is which SOURCE an article is
+    # attributed to. Comparing slugs catches the silent re-attribution that
+    # carrying `source_id` verbatim used to produce.
+    origin_urls = _url_slug_map(origin_path)
+    local_urls = _url_slug_map(local_path)
+    merged_urls = _url_slug_map(out_path)
+
+    expected_urls = dict(origin_urls)
+    for url, slug in local_urls.items():
+        if url in expected_urls:
+            if expected_urls[url] != slug:
+                problems.append(
+                    f"{url} is attributed to {expected_urls[url]!r} in origin and "
+                    f"{slug!r} in local — conflicting source attribution"
+                )
+        else:
+            expected_urls[url] = slug
+
+    misattributed = sorted(
+        (url, expected_urls[url], merged_urls.get(url))
+        for url in expected_urls
+        if merged_urls.get(url) != expected_urls[url]
+    )
+    if misattributed:
+        problems.append(
+            f"{len(misattributed)} article(s) changed source in the merge, "
+            f"e.g. {misattributed[:3]}"
+        )
 
     return problems
 

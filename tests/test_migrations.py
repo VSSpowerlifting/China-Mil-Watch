@@ -396,3 +396,171 @@ class TestRollback(MigrationTestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestPartialApplication(MigrationTestCase):
+    """
+    A database left half-migrated by an interruption must be completed, not
+    re-applied from scratch and not skipped.
+    """
+
+    def test_partial_0003_is_completed(self):
+        import migrations.versions.m0003_sources_desk_metadata as m3
+
+        conn = self.open()
+        # Simulate an interrupted 0003: only the first few columns landed.
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("BEGIN")
+        for name, coltype in m3.NEW_COLUMNS[:4]:
+            conn.execute("ALTER TABLE sources ADD COLUMN %s %s" % (name, coltype))
+        conn.execute("COMMIT")
+
+        have = {r[1] for r in conn.execute("PRAGMA table_info(sources)")}
+        self.assertFalse(m3.is_already_applied(conn),
+                         "a partially applied 0003 must not report as applied")
+        self.assertIn("desk_id", have)
+        self.assertNotIn("notes", have)
+
+        apply_all(conn)
+
+        have = {r[1] for r in conn.execute("PRAGMA table_info(sources)")}
+        for name, _ in m3.NEW_COLUMNS:
+            self.assertIn(name, have, "0003 did not complete column %s" % name)
+        self.assertIn("0003", applied_versions(conn))
+        report = verify(conn)
+        conn.close()
+        self.assertTrue(report["ok"])
+
+    def test_partial_0003_preserves_existing_rows(self):
+        import migrations.versions.m0003_sources_desk_metadata as m3
+
+        conn = self.open()
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("BEGIN")
+        for name, coltype in m3.NEW_COLUMNS[:4]:
+            conn.execute("ALTER TABLE sources ADD COLUMN %s %s" % (name, coltype))
+        conn.execute("COMMIT")
+        apply_all(conn)
+        after = fingerprint(conn)
+        conn.close()
+        self.assertEqual(after["article_ids"], self.before["article_ids"])
+        self.assertEqual(after["source_slugs"], self.before["source_slugs"])
+
+
+class TestDegradedDetectionIsBehavioural(MigrationTestCase):
+    def test_comment_mentioning_degraded_does_not_count_as_applied(self):
+        """
+        The old substring check would have been satisfied by the word appearing
+        in a comment. The behavioural probe is not.
+        """
+        import migrations.versions.m0001_scrape_run_status_degraded as m1
+
+        conn = self.open()
+        self.assertFalse(m1.is_already_applied(conn))
+
+        # Rebuild scrape_runs with the legacy CHECK but a comment naming the
+        # value — textually indistinguishable, behaviourally different.
+        conn.execute("PRAGMA foreign_keys=OFF")
+        conn.execute("PRAGMA legacy_alter_table=ON")
+        conn.execute("BEGIN")
+        conn.execute(
+            "CREATE TABLE runs_cmt (id INTEGER PRIMARY KEY, started_at TEXT, "
+            "completed_at TEXT, articles_scraped INTEGER, articles_new INTEGER, "
+            "articles_analyzed INTEGER, errors TEXT, "
+            "-- a comment mentioning 'degraded' but not permitting it\n"
+            "status TEXT NOT NULL CHECK (status IN ('running','completed','failed')))")
+        conn.execute(
+            "INSERT INTO runs_cmt SELECT id, started_at, completed_at, "
+            "articles_scraped, articles_new, articles_analyzed, errors, status "
+            "FROM scrape_runs")
+        conn.execute("DROP TABLE scrape_runs")
+        conn.execute("ALTER TABLE runs_cmt RENAME TO scrape_runs")
+        conn.execute("COMMIT")
+
+        sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='scrape_runs'").fetchone()[0]
+        self.assertIn("degraded", sql, "precondition: the word is present")
+        self.assertFalse(
+            m1.is_already_applied(conn),
+            "detection must be behavioural, not a substring search",
+        )
+        conn.close()
+
+
+class TestLanguageConstraint(MigrationTestCase):
+    """Migration 0005 — the legacy zh/en CHECK is removed, values preserved."""
+
+    def test_legacy_check_blocks_ru_before_migration(self):
+        conn = self.open()
+        with self.assertRaises(sqlite3.IntegrityError):
+            conn.execute(
+                "INSERT INTO sources (slug, display_name, base_url, language) "
+                "VALUES ('probe', 'p', 'https://example.invalid', 'ru')")
+        conn.close()
+
+    def test_ru_is_writable_after_migration(self):
+        conn = self.open()
+        apply_all(conn)
+        conn.execute("BEGIN")
+        conn.execute(
+            "INSERT INTO sources (slug, display_name, base_url, language, "
+            "language_tag) VALUES ('probe', 'p', 'https://example.invalid', "
+            "'ru', 'ru-RU')")
+        got = conn.execute(
+            "SELECT language, language_tag FROM sources WHERE slug='probe'"
+        ).fetchone()
+        conn.execute("ROLLBACK")
+        conn.close()
+        self.assertEqual(got, ("ru", "ru-RU"))
+
+    def test_existing_language_values_survive(self):
+        conn = self.open()
+        before = conn.execute(
+            "SELECT slug, language FROM sources ORDER BY slug").fetchall()
+        apply_all(conn)
+        after = conn.execute(
+            "SELECT slug, language FROM sources ORDER BY slug").fetchall()
+        conn.close()
+        self.assertEqual(before, after)
+        self.assertEqual({lang for _, lang in after}, {"zh", "en"})
+
+    def test_source_ids_preserved_across_the_rebuild(self):
+        """articles.source_id references these; a rebuild must not renumber."""
+        conn = self.open()
+        before = conn.execute(
+            "SELECT id, slug FROM sources ORDER BY id").fetchall()
+        apply_all(conn)
+        after = conn.execute(
+            "SELECT id, slug FROM sources ORDER BY id").fetchall()
+        report = verify(conn)
+        conn.close()
+        self.assertEqual(before, after)
+        self.assertEqual(report["orphans"]["articles_without_source"], 0)
+
+    def test_language_still_not_null(self):
+        conn = self.open()
+        apply_all(conn)
+        with self.assertRaises(sqlite3.IntegrityError):
+            conn.execute(
+                "INSERT INTO sources (slug, display_name, base_url) "
+                "VALUES ('probe2', 'p', 'https://example.invalid')")
+        conn.close()
+
+    def test_no_new_finite_language_check(self):
+        """Enumerating languages in the schema would recreate the problem."""
+        conn = self.open()
+        apply_all(conn)
+        sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='sources'").fetchone()[0]
+        conn.close()
+        self.assertNotIn("language IN (", sql)
+
+    def test_migration_is_idempotent(self):
+        conn = self.open()
+        apply_all(conn)
+        first = fingerprint(conn)
+        second_report = apply_all(conn)
+        second = fingerprint(conn)
+        conn.close()
+        self.assertEqual(second_report["applied"], [])
+        self.assertEqual(first, second)

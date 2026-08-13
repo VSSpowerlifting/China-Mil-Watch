@@ -68,11 +68,22 @@ Rows cascade when their run is deleted. Articles deliberately do **not** cascade
 a run holding published articles cannot be deleted at all, because article ids
 are live `output/article/<id>.html` URLs.
 
+**Reconciliation.** `scripts/reconcile_db.py` merges these rows from both
+sides. Local rows whose run was renumbered follow the remap; the natural key is
+`(scrape_run_id, source_slug)` after remapping, and on a true conflict the
+published/origin row wins. Source identity is the **slug**, which is stored
+directly — numeric `sources.id` values are never compared across two
+independently evolved databases.
+
+A row whose run lineage cannot be proven **aborts the merge**. It is never
+dropped, and never attached to a run that merely shares its numeric id. The
+merged table is then compared against an exactly computed expected map, so a
+missing, extra or altered observation fails rather than passing unnoticed. Gates
+also fail if the table is absent — a missing table is never treated as an empty
+one.
+
 **Limitation.** History starts at the first run after migration 0004 — the
-report says so rather than implying a longer record than exists. And rows
-written locally between a `reconcile_db.py` reconcile and the next push are lost
-with the reverted file: unlike schema and desk config, observed data cannot be
-rebuilt from git. Ordering the reconcile against CI is a Phase 3 decision.
+report says so rather than implying a longer record than exists.
 
 ## Reading a degraded run
 

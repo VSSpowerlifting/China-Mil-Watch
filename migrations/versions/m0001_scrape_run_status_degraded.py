@@ -42,12 +42,30 @@ _COLUMNS = (
 
 
 def is_already_applied(conn: sqlite3.Connection) -> bool:
+    """
+    Behavioural check, not a substring search.
+
+    Previously this asked whether the literal `'degraded'` appeared anywhere in
+    the table's stored SQL, which a comment mentioning the word would satisfy
+    just as well as a constraint permitting it. Instead, probe the constraint the
+    way the pipeline will: attempt the write and roll it back.
+    """
     row = conn.execute(
-        "SELECT sql FROM sqlite_master WHERE type='table' AND name='scrape_runs'"
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='scrape_runs'"
     ).fetchone()
     if row is None:
         return False
-    return "'degraded'" in row[0]
+
+    savepoint = "probe_degraded_status"
+    conn.execute("SAVEPOINT %s" % savepoint)
+    try:
+        conn.execute("INSERT INTO scrape_runs (status) VALUES ('degraded')")
+        return True           # accepted → already supported
+    except sqlite3.IntegrityError:
+        return False          # rejected → migration still needed
+    finally:
+        conn.execute("ROLLBACK TO %s" % savepoint)
+        conn.execute("RELEASE %s" % savepoint)
 
 
 def up(conn: sqlite3.Connection) -> None:

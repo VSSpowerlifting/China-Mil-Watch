@@ -132,6 +132,47 @@ jobs:
         if: steps.timecheck.outputs.should_run == 'true'
         run: playwright install chromium --with-deps
 
+      # ── 4b. Apply and verify migrations BEFORE any collection ─────────────
+      # pipeline.py's init_db() also applies migrations, but doing it here means
+      # a migration failure stops the run before a single network request or
+      # paid model call is made, and before anything can be committed. Both
+      # steps carry implicit success(), so a failure skips the pipeline, the
+      # commit steps and the deploy.
+      - name: Apply database migrations
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python -m migrations.cli --apply
+
+      - name: Verify database schema and invariants
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python scripts/verify_db_current.py
+
+      # ── 4c. Offline test suite ────────────────────────────────────────────
+      # No network, no model calls, temporary databases only — the suite never
+      # touches the tracked pla_watch.db. Runs before collection so a broken
+      # build cannot scrape, spend, commit or deploy.
+      - name: Run offline test suite
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python -m unittest discover -s tests -t . -v
+
+      # Re-run just the reconciliation contract separately. Redundant with the
+      # suite above by design: when this fails, the failure line names the
+      # merge-driver contract rather than being one entry in a long list.
+      - name: Reconciliation contract check
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python -m unittest tests.test_reconcile -v
+
+      # The suite must not have dirtied the tracked database. If it did, the
+      # commit step below would push test residue into production.
+      - name: Assert tests left the tracked database clean
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: |
+          if ! git diff --quiet -- pla_watch.db; then
+            echo "::error title=Test residue::The offline suite modified pla_watch.db. Tests must use temporary copies."
+            git diff --stat -- pla_watch.db
+            exit 1
+          fi
+          echo "Tracked database untouched by tests."
+
       # ── 5. Run pipeline (all sources) ─────────────────────────────────────
       - name: Run pipeline
         if: steps.timecheck.outputs.should_run == 'true'
@@ -174,6 +215,24 @@ jobs:
           else
             git commit -m "Persist collection: $(date -u +%Y-%m-%d) (analysis incomplete)"
             git pull --rebase --autostash origin main
+
+            # Post-rebase verification. The rebase may have run the reconcile
+            # merge driver, which now migrates its output before merging rows —
+            # so this is ordinarily a no-op. It exists so that a regressed
+            # database fails closed instead of reaching origin. This path
+            # legitimately commits pla_watch.db, so a repair is permitted, but
+            # only if it ends up inside the commit that gets pushed.
+            python scripts/verify_db_current.py --repair
+            if ! git diff --quiet -- pla_watch.db; then
+              echo "::warning title=DB repaired::Post-rebase migration repaired pla_watch.db; amending the unpushed commit so the repair is pushed with it."
+              git add pla_watch.db
+              git commit --amend --no-edit
+            fi
+            # Proof of inclusion: the working tree must now equal HEAD, and HEAD
+            # is what gets pushed. Then re-verify with no repair allowed.
+            git diff --quiet HEAD -- pla_watch.db
+            python scripts/verify_db_current.py
+
             git push origin main
           fi
 
@@ -214,7 +273,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash origin main
+
+          # Marker-only path: verify, never repair. A repair here would put
+          # database changes into a commit whose documented responsibility is a
+          # single state file. If the rebase produced a regressed database, fail
+          # closed and let the DB-committing path deal with it.
+          python scripts/verify_db_current.py
+
           git add "$MARKER"
+          # Guard the documented responsibility: nothing but the marker may be
+          # staged on this path.
+          STAGED=$(git diff --cached --name-only)
+          if [ "$STAGED" != "$MARKER" ] && [ -n "$STAGED" ]; then
+            echo "::error title=Scope violation::The billing-marker step staged more than the marker: $STAGED"
+            exit 1
+          fi
           if git diff --cached --quiet; then
             echo "Billing-failure marker already committed."
           else
@@ -234,6 +307,20 @@ jobs:
           else
             git commit -m "Daily update: $(date -u +%Y-%m-%d)"
             git pull --rebase --autostash origin main
+
+            # Post-rebase verification, same contract as the persist path: the
+            # reconciler's output should already be current, so this is normally
+            # a no-op. This path commits pla_watch.db, so repair is permitted
+            # and must be proven to be inside the pushed commit.
+            python scripts/verify_db_current.py --repair
+            if ! git diff --quiet -- pla_watch.db; then
+              echo "::warning title=DB repaired::Post-rebase migration repaired pla_watch.db; amending the unpushed commit so the repair is pushed with it."
+              git add pla_watch.db
+              git commit --amend --no-edit
+            fi
+            git diff --quiet HEAD -- pla_watch.db
+            python scripts/verify_db_current.py
+
             git push
           fi
 
@@ -263,9 +350,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash origin main
+
+          # Marker-only path: verify, never repair (see the billing-marker step).
+          python scripts/verify_db_current.py
+
           mkdir -p .github/state
           echo "$TODAY_NY" > .github/state/last_daily_run_date.txt
           git add .github/state/last_daily_run_date.txt
+          STAGED=$(git diff --cached --name-only)
+          if [ "$STAGED" != ".github/state/last_daily_run_date.txt" ] && [ -n "$STAGED" ]; then
+            echo "::error title=Scope violation::The success-marker step staged more than the state file: $STAGED"
+            exit 1
+          fi
           if git diff --cached --quiet; then
             echo "State file already up to date."
           else

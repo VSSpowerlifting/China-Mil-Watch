@@ -40,8 +40,14 @@ locations and behaviour. Nothing was moved to make the tree look tidier.
 call time by `core/registry.py`. Adding, disabling or re-pointing a source is a
 configuration edit; a second desk needs no change to the pipeline at all.
 
-A `SCRAPERS` compatibility shim remains for scripts and the CLI. It is
-documented as a shim and removed in a later approved cleanup.
+`SCRAPERS` remains only as a **slug view** for the CLI's `--source` choices —
+`in`, `.keys()`, iteration and `len()`. It briefly also exposed
+`SCRAPERS[slug](target_date=…)` to mimic the old slug→class mapping; review found
+that interface returned an adapter (which has no `.scrape()`) and silently
+discarded `target_date`, with no callers anywhere in the repository. Rather than
+implement a legacy contract nothing used, it was narrowed to what it can honour
+truthfully, and subscripting now raises with a pointer to
+`get_registry().get_adapter(slug).collect(window)`.
 
 ### 2. Wrap the existing scrapers; do not rewrite them
 
@@ -61,14 +67,27 @@ succeeded.
 `not_implemented` and `skipped_disabled` are deliberately **not** failures — an
 alarm that is always on is not an alarm — but they are always visible.
 
-### 4. Additive migrations, applied on the write path
+### 4. Additive migrations, enforced at every seam
 
-Migrations run inside `storage.db.init_db()`, which `pipeline.py` calls before
-any collection. Because every migration is idempotent and everything they create
-is either DDL or reconstructible from tracked manifests, a reconcile that
-reverts the schema is repaired by the next run instead of by someone remembering
-the standing re-apply rule. `tests/test_migrations.py::TestReconcileReversion`
-tests exactly that sequence.
+Migrations run inside `storage.db.init_db()`, in CI before any collection, and —
+critically — inside `scripts/reconcile_db.py`, which migrates its output copy
+*before* merging rows.
+
+That last one is what actually closes the hole. `init_db()` alone was not
+enough: the reconciler copies the published side's file, so a legacy origin blob
+produced a legacy merged database, and by the time the next pipeline run
+repaired the schema that file had already been committed and pushed — with the
+per-source rows the merge dropped gone for good. The reconciler now also validates every input before touching the merge target,
+merges `source_run_results` from both sides under proven run lineage, resolves
+article sources by slug rather than by cross-database numeric id, and verifies
+the result against an exactly computed expected map. Its gates fail on a missing
+table, an incomplete ledger, a lost or altered row from either side, an
+unexpected row, a changed article attribution, or a `scrape_runs` CHECK that
+cannot represent a status present in an input. Anything unmappable aborts the
+merge and leaves git's conflict in place.
+
+`tests/test_reconcile.py` exercises the production `reconcile()` and `gates()`
+directly across legacy/current permutations, rather than simulating reversion.
 
 No column was dropped. `sources.language` and `sources.is_active` are still
 written; `language_tag` and `enabled` were added beside them with fallback
@@ -94,13 +113,25 @@ translation records, no claims model — those are Phase 3 and need a storage
 decision first. No Russia or US desk. No public rename.
 
 **Costs.** Two ways to express a source (legacy columns and manifest) until the
-cleanup. The `SCRAPERS` shim. `init_db()` now does more than its name implies —
-documented in its docstring.
+cleanup. The `SCRAPERS` slug view. `init_db()` now does more than its name
+implies — documented in its docstring. `reconcile_db.py` now depends on the
+migration package; the whole chain is stdlib-only, so `--install-driver` still
+runs on a CI runner before `pip install`.
 
-**A blocker this surfaced.** `sources.language` carries
-`CHECK (language IN ('zh','en'))`. Syncing a desk in any other language fails
-loudly rather than corrupting the column. **Relaxing that constraint is a
-prerequisite migration for the Russia desk** — see docs/SCHEMA_AND_MIGRATIONS.md.
+**Phase 1–2 durability vs. Phase 3 storage separation.** What is finished here is
+*migration and reconciliation durability*: the schema and the per-source records
+survive a merge, and CI fails closed rather than pushing a regressed database.
+That is not the same as Phase 3, which is about moving the database and raw
+captures out of git entirely (snapshots, restore drills, untracking). Phase 3
+remains unstarted and unauthorized.
+
+**A blocker this surfaced, since closed.** `sources.language` carried
+`CHECK (language IN ('zh','en'))`, so persistence rejected valid non-zh/en tags
+even though the domain layer accepted them. Migration 0005 removed that finite
+constraint; the legacy column is retained and now stores the tag's primary
+language subtag. No new finite list replaces it, and no Russia desk or source
+was added. See the language compatibility policy in
+docs/SCHEMA_AND_MIGRATIONS.md.
 
 ## Alternatives rejected
 

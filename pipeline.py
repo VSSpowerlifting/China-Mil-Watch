@@ -69,31 +69,32 @@ logger = logging.getLogger("pipeline")
 # disabling or re-pointing a source is a configuration edit, and a second desk
 # needs no change here at all.
 #
-# `SCRAPERS` is retained as a compatibility shim because scripts and the CLI
-# read it. It maps slug -> adapter factory rather than slug -> class, and is
-# resolved lazily so importing this module cannot fail on a manifest problem
-# before logging is even configured.
+# `SCRAPERS` survives only as a name lookup, for the CLI's `--source` choices.
+#
+# It used to also expose `SCRAPERS[slug](target_date=…)`, mimicking the old
+# slug -> scraper-class mapping. Review found that interface was a lie: it
+# returned an *adapter* (which has no `.scrape()`) and silently discarded
+# `target_date`. Nothing in the repository called it — so rather than
+# implementing a legacy contract with no consumers, the shim was narrowed to
+# the operations it can honour truthfully. Anything needing to collect goes
+# through `get_registry().get_adapter(slug).collect(window)`.
 
 def available_slugs() -> list:
     """Every source slug any desk manifest declares."""
     return get_registry().slugs
 
 
-class _ScraperRegistryShim:
+class _SourceSlugView:
     """
-    Dict-like view over the registry, for code that still expects `SCRAPERS`.
+    Read-only view of the configured source slugs.
 
-    Documented compatibility shim — remove in the later approved cleanup once
-    nothing reads it. Supports the operations the existing call sites use:
-    `slug in SCRAPERS`, `SCRAPERS[slug](target_date=…)`, and `.keys()`.
+    Supports exactly `slug in SCRAPERS`, `.keys()`, iteration and `len()`.
+    Subscripting deliberately raises with an explanatory message rather than
+    returning something that looks like a scraper and is not.
     """
 
     def __contains__(self, slug: str) -> bool:
         return slug in get_registry()
-
-    def __getitem__(self, slug: str):
-        adapter = get_registry().get_adapter(slug)
-        return lambda target_date=None: adapter
 
     def keys(self):
         return available_slugs()
@@ -101,8 +102,17 @@ class _ScraperRegistryShim:
     def __iter__(self):
         return iter(available_slugs())
 
+    def __len__(self) -> int:
+        return len(available_slugs())
 
-SCRAPERS = _ScraperRegistryShim()
+    def __getitem__(self, slug):
+        raise TypeError(
+            "SCRAPERS is a slug view, not a scraper-class mapping. "
+            "Use get_registry().get_adapter(%r).collect(window) instead." % (slug,)
+        )
+
+
+SCRAPERS = _SourceSlugView()
 
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────

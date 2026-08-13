@@ -121,6 +121,11 @@ extend it.
 Sync writes only the desk-metadata columns on an existing row; it can never
 rename a live source or re-point its `base_url`.
 
-**Adding a desk in another language is currently blocked** by
-`CHECK (language IN ('zh','en'))` on the legacy `sources.language` column. Sync
-raises rather than coercing. See docs/SCHEMA_AND_MIGRATIONS.md.
+**Adding a desk in another language is supported** as of migration 0005, which
+removed the finite `CHECK (language IN ('zh','en'))` from the legacy
+`sources.language` column. A source with `language_tag: "ru"` now syncs through
+the normal path; the legacy column records the primary subtag (`ru`). Tag
+validation stays in this layer, where errors name the file and field. See the
+language compatibility policy in docs/SCHEMA_AND_MIGRATIONS.md.
+
+No Russia desk exists — this is a capability, not a deployment.

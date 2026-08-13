@@ -101,6 +101,15 @@ One required source failing degrades the run even when every other source
 succeeded. The pipeline maps this onto `scrape_runs.status`, alongside the
 existing analysis-failure logic.
 
+## The `SCRAPERS` name
+
+`pipeline.SCRAPERS` is a **slug view**, not a scraper-class mapping. It supports
+`slug in SCRAPERS`, `.keys()`, iteration and `len()`, and exists for the CLI's
+`--source` choices. Subscripting raises: it once returned an adapter and silently
+dropped `target_date`, which looked like the old slug→class contract without
+honouring it. To collect, use
+`get_registry().get_adapter(slug).collect(window)`.
+
 ## Writing a new adapter
 
 Subclass `SourceAdapter`, implement the four methods, return statuses rather

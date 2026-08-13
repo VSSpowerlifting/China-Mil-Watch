@@ -14,6 +14,8 @@ Offline: no network, no model calls. Databases are temporary files.
 
 from __future__ import annotations
 
+import json
+import shutil
 import sqlite3
 import sys
 import tempfile
@@ -30,7 +32,9 @@ from core.collection.health import (                           # noqa: E402
     aggregate_status, human_report, machine_report, silence_verdict,
 )
 from core.registry import SourceRegistry, sync_desk_config     # noqa: E402
-from migrations.runner import apply_all, connect               # noqa: E402
+from migrations.runner import (                                # noqa: E402
+    apply_all, connect, discover, verify,
+)
 from tests.test_migrations import build_legacy_db              # noqa: E402
 
 
@@ -86,8 +90,11 @@ class TestRegistryDrivesCollection(unittest.TestCase):
              "pla_daily", "xinhua_mil"],
         )
 
-    def test_compatibility_shim_still_answers_like_a_dict(self):
-        """Scripts and the CLI still read `SCRAPERS`."""
+    def test_slug_view_answers_membership_and_keys(self):
+        """
+        The CLI reads `SCRAPERS` for its `--source` choices. Full contract in
+        TestScrapersSlugView below.
+        """
         import pipeline
         self.assertIn("pla_daily", pipeline.SCRAPERS)
         self.assertNotIn("does_not_exist", pipeline.SCRAPERS)
@@ -379,3 +386,408 @@ class TestConfigSyncIsIdempotent(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestScrapersSlugView(unittest.TestCase):
+    """
+    The shim exposes only what it can honour. It once returned an adapter from
+    `SCRAPERS[slug]` — no `.scrape()`, `target_date` silently dropped — which
+    looked like the old slug->class contract without being it.
+    """
+
+    def setUp(self):
+        import pipeline
+        self.pipeline = pipeline
+
+    def test_membership_and_keys_work(self):
+        self.assertIn("pla_daily", self.pipeline.SCRAPERS)
+        self.assertNotIn("nope", self.pipeline.SCRAPERS)
+        self.assertEqual(sorted(self.pipeline.SCRAPERS.keys()),
+                         SourceRegistry().slugs)
+
+    def test_iteration_and_len(self):
+        self.assertEqual(sorted(self.pipeline.SCRAPERS), SourceRegistry().slugs)
+        self.assertEqual(len(self.pipeline.SCRAPERS), 5)
+
+    def test_subscripting_raises_with_a_pointer_to_the_real_api(self):
+        with self.assertRaises(TypeError) as ctx:
+            self.pipeline.SCRAPERS["pla_daily"]
+        self.assertIn("get_adapter", str(ctx.exception))
+
+    def test_cli_source_choices_come_from_the_manifest(self):
+        source = (REPO_ROOT / "pipeline.py").read_text(encoding="utf-8")
+        self.assertIn("choices=list(SCRAPERS.keys())", source)
+
+
+class TestSyncIsAtomic(unittest.TestCase):
+    """
+    A failed sync must leave no partial configuration. Review found a desk whose
+    source failed validation still committed its `desks` and `institutions`
+    rows.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.db_path = self.tmp / "sync.db"
+        build_legacy_db(self.db_path)
+        conn = connect(self.db_path)
+        apply_all(conn)
+        conn.close()
+
+        self.desks_dir = self.tmp / "desks"
+        (self.desks_dir / "china").mkdir(parents=True)
+        shutil.copyfile(REPO_ROOT / "desks" / "china" / "manifest.json",
+                        self.desks_dir / "china" / "manifest.json")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _add_failing_desk(self):
+        """A desk whose source cannot be persisted (invalid primary subtag)."""
+        bad = {
+            "desk": {
+                "desk_id": "testland", "display_name": "Testland Desk",
+                "jurisdiction_code": "XX", "default_timezone": "Europe/Moscow",
+                "supported_language_tags": ["ru", "q7x"],
+                "public_status": "shadow",
+            },
+            "institutions": [{
+                "institution_id": "tl_mod", "display_name": "Testland MoD",
+                "institution_type": "defense_ministry",
+            }],
+            "sources": [{
+                "slug": "tl_mod_site", "institution_id": "tl_mod",
+                "display_name": "Testland MoD site",
+                "base_url": "https://example.invalid",
+                "language_tag": "q7x",          # structurally invalid primary subtag
+                "access_method": "html", "authority_tier": "A",
+                "source_type": "ministry_website", "originality": "original",
+            }],
+        }
+        (self.desks_dir / "testland").mkdir()
+        (self.desks_dir / "testland" / "manifest.json").write_text(
+            json.dumps(bad), encoding="utf-8")
+
+    def _state(self, conn):
+        return (
+            sorted(r[0] for r in conn.execute("SELECT desk_id FROM desks")),
+            sorted(r[0] for r in conn.execute(
+                "SELECT institution_id FROM institutions")),
+            sorted(r[0] for r in conn.execute("SELECT slug FROM sources")),
+        )
+
+    def test_failed_sync_rolls_back_every_row(self):
+        conn = connect(self.db_path)
+        sync_desk_config(conn, self.desks_dir)
+        before = self._state(conn)
+
+        self._add_failing_desk()
+        with self.assertRaises(Exception):
+            sync_desk_config(conn, self.desks_dir)
+
+        after = self._state(conn)
+        conn.close()
+        self.assertEqual(
+            before, after,
+            "a failed sync left partial desk/institution/source rows behind",
+        )
+        self.assertNotIn("testland", after[0])
+        self.assertNotIn("tl_mod", after[1])
+
+    def test_previous_configuration_remains_usable(self):
+        conn = connect(self.db_path)
+        sync_desk_config(conn, self.desks_dir)
+        self._add_failing_desk()
+        with self.assertRaises(Exception):
+            sync_desk_config(conn, self.desks_dir)
+        tiers = dict(conn.execute(
+            "SELECT slug, authority_tier FROM sources").fetchall())
+        conn.close()
+        self.assertEqual(tiers["mod_china"], "A")
+        self.assertEqual(tiers["global_times_mil"], "D")
+
+    def test_rerunning_after_correction_succeeds_idempotently(self):
+        conn = connect(self.db_path)
+        self._add_failing_desk()
+        with self.assertRaises(Exception):
+            sync_desk_config(conn, self.desks_dir)
+
+        # Correct the manifest, then re-sync.
+        path = self.desks_dir / "testland" / "manifest.json"
+        fixed = json.loads(path.read_text(encoding="utf-8"))
+        fixed["desk"]["supported_language_tags"] = ["ru"]
+        fixed["sources"][0]["language_tag"] = "ru"
+        path.write_text(json.dumps(fixed), encoding="utf-8")
+
+        first = sync_desk_config(conn, self.desks_dir)
+        state_after_first = self._state(conn)
+        sync_desk_config(conn, self.desks_dir)
+        state_after_second = self._state(conn)
+        conn.close()
+
+        self.assertEqual(first["sources_inserted"], 1)
+        self.assertEqual(state_after_first, state_after_second)
+        self.assertIn("testland", state_after_first[0])
+
+
+class TestNeutralLanguagePersistence(unittest.TestCase):
+    """
+    A non-zh/en source must persist through the NORMAL sync path, without
+    coercion. Capability test only — no Russia desk is added to the repository.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.db_path = self.tmp / "neutral.db"
+        build_legacy_db(self.db_path)
+        conn = connect(self.db_path)
+        apply_all(conn)
+        conn.close()
+
+        self.desks_dir = self.tmp / "desks"
+        (self.desks_dir / "china").mkdir(parents=True)
+        shutil.copyfile(REPO_ROOT / "desks" / "china" / "manifest.json",
+                        self.desks_dir / "china" / "manifest.json")
+        (self.desks_dir / "testland").mkdir()
+        (self.desks_dir / "testland" / "manifest.json").write_text(json.dumps({
+            "desk": {
+                "desk_id": "testland", "display_name": "Testland Desk",
+                "jurisdiction_code": "XX", "default_timezone": "Europe/Moscow",
+                "supported_language_tags": ["ru"], "public_status": "shadow",
+            },
+            "institutions": [{
+                "institution_id": "tl_mod", "display_name": "Testland MoD",
+                "institution_type": "defense_ministry",
+            }],
+            "sources": [{
+                "slug": "tl_mod_site", "institution_id": "tl_mod",
+                "display_name": "Testland MoD site",
+                "base_url": "https://example.invalid",
+                "language_tag": "ru", "access_method": "html",
+                "authority_tier": "A", "source_type": "ministry_website",
+                "originality": "original",
+            }],
+        }), encoding="utf-8")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_ru_source_persists_without_coercion(self):
+        conn = connect(self.db_path)
+        sync_desk_config(conn, self.desks_dir)
+        row = conn.execute(
+            "SELECT language, language_tag, desk_id FROM sources "
+            "WHERE slug='tl_mod_site'").fetchone()
+        conn.close()
+        self.assertIsNotNone(row, "the ru source did not persist")
+        self.assertEqual(row[0], "ru", "legacy column must not be coerced to en/zh")
+        self.assertEqual(row[1], "ru")
+        self.assertEqual(row[2], "testland")
+
+    def test_china_sources_unaffected(self):
+        conn = connect(self.db_path)
+        before = conn.execute(
+            "SELECT slug, display_name, base_url, language FROM sources "
+            "WHERE desk_id='china' OR desk_id IS NULL ORDER BY slug").fetchall()
+        sync_desk_config(conn, self.desks_dir)
+        after = conn.execute(
+            "SELECT slug, display_name, base_url, language FROM sources "
+            "WHERE desk_id='china' ORDER BY slug").fetchall()
+        conn.close()
+        self.assertEqual(before, after)
+
+    def test_production_manifest_declares_no_russia_desk(self):
+        configs = __import__("core.manifests", fromlist=["load_all_desks"]) \
+            .load_all_desks()
+        self.assertEqual(list(configs), ["china"])
+        for cfg in configs.values():
+            for src in cfg.sources:
+                self.assertNotEqual(src.language_tag.split("-")[0], "ru")
+
+    def test_production_database_has_only_china_sources(self):
+        import sqlite3 as _sq
+        prod = REPO_ROOT / "pla_watch.db"
+        if not prod.exists():
+            self.skipTest("production database not present")
+        con = _sq.connect(str(prod))
+        try:
+            desks = {r[0] for r in con.execute("SELECT DISTINCT desk_id FROM desks")}
+            slugs = {r[0] for r in con.execute("SELECT slug FROM sources")}
+        finally:
+            con.close()
+        self.assertEqual(desks, {"china"})
+        self.assertEqual(slugs, {"pla_daily", "mod_china", "xinhua_mil",
+                                 "global_times_mil", "china_mil_online"})
+
+
+class TestSyncAtomicityAtPersistence(unittest.TestCase):
+    """
+    Real SAVEPOINT rollback, exercised at the persistence layer.
+
+    `TestSyncIsAtomic` above uses a structurally invalid language tag, which
+    review showed is rejected during *manifest loading* — before a single row is
+    written. That proves early validation and nothing about the transaction.
+
+    Here the manifest is entirely valid and reaches persistence; a temporary
+    trigger raises ABORT when a specific, legitimate source slug is inserted.
+    That exercises the production `sync_desk_config()` path with no test-only
+    hooks in production code.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.db_path = self.tmp / "atomic.db"
+        build_legacy_db(self.db_path)
+        conn = connect(self.db_path)
+        apply_all(conn)
+        conn.close()
+
+        self.desks_dir = self.tmp / "desks"
+        (self.desks_dir / "china").mkdir(parents=True)
+        shutil.copyfile(REPO_ROOT / "desks" / "china" / "manifest.json",
+                        self.desks_dir / "china" / "manifest.json")
+
+        # Two valid ru sources; the SECOND one is the trigger's target, so at
+        # least one source is already written when the failure fires.
+        (self.desks_dir / "testland").mkdir()
+        (self.desks_dir / "testland" / "manifest.json").write_text(json.dumps({
+            "desk": {
+                "desk_id": "testland", "display_name": "Testland Desk",
+                "jurisdiction_code": "XX", "default_timezone": "Europe/Moscow",
+                "supported_language_tags": ["ru"], "public_status": "shadow",
+            },
+            "institutions": [{
+                "institution_id": "tl_mod", "display_name": "Testland MoD",
+                "institution_type": "defense_ministry",
+            }],
+            "sources": [
+                {"slug": "tl_first", "institution_id": "tl_mod",
+                 "display_name": "First", "base_url": "https://a.invalid",
+                 "language_tag": "ru", "access_method": "html",
+                 "authority_tier": "A", "source_type": "ministry_website",
+                 "originality": "original"},
+                {"slug": "tl_second", "institution_id": "tl_mod",
+                 "display_name": "Second", "base_url": "https://b.invalid",
+                 "language_tag": "ru", "access_method": "html",
+                 "authority_tier": "B", "source_type": "armed_forces_newspaper",
+                 "originality": "original"},
+            ],
+        }), encoding="utf-8")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _install_trigger(self, conn):
+        conn.execute(
+            "CREATE TRIGGER fail_on_second BEFORE INSERT ON sources "
+            "WHEN NEW.slug = 'tl_second' "
+            "BEGIN SELECT RAISE(ABORT, 'injected persistence failure'); END"
+        )
+
+    def _drop_trigger(self, conn):
+        conn.execute("DROP TRIGGER IF EXISTS fail_on_second")
+
+    def _state(self, conn):
+        return {
+            "desks": sorted(r[0] for r in conn.execute("SELECT desk_id FROM desks")),
+            "institutions": sorted(
+                r[0] for r in conn.execute(
+                    "SELECT institution_id FROM institutions")),
+            "sources": sorted(
+                r[0] for r in conn.execute("SELECT slug FROM sources")),
+            "china_rows": conn.execute(
+                "SELECT slug, display_name, base_url, language, authority_tier "
+                "FROM sources WHERE desk_id='china' ORDER BY slug").fetchall(),
+            "ledger": sorted(
+                r[0] for r in conn.execute("SELECT version FROM schema_migrations")),
+        }
+
+    def test_failure_after_a_source_is_written_rolls_everything_back(self):
+        conn = connect(self.db_path)
+        # Establish a valid baseline configuration (China only).
+        china_only = self.tmp / "china_only"
+        china_only.mkdir()
+        shutil.copytree(self.desks_dir / "china", china_only / "china")
+        sync_desk_config(conn, china_only)
+        before = self._state(conn)
+
+        self._install_trigger(conn)
+        try:
+            with self.assertRaises(sqlite3.IntegrityError):
+                sync_desk_config(conn, self.desks_dir)
+        finally:
+            self._drop_trigger(conn)
+
+        after = self._state(conn)
+        conn.close()
+
+        self.assertEqual(before, after, "sync was not atomic")
+        self.assertNotIn("testland", after["desks"], "desk row survived")
+        self.assertNotIn("tl_mod", after["institutions"], "institution survived")
+        self.assertNotIn("tl_first", after["sources"],
+                         "the source written BEFORE the failure survived")
+        self.assertNotIn("tl_second", after["sources"])
+
+    def test_migration_ledger_survives_the_failed_sync(self):
+        conn = connect(self.db_path)
+        self._install_trigger(conn)
+        try:
+            with self.assertRaises(sqlite3.IntegrityError):
+                sync_desk_config(conn, self.desks_dir)
+        finally:
+            self._drop_trigger(conn)
+        ledger = sorted(r[0] for r in conn.execute(
+            "SELECT version FROM schema_migrations"))
+        report = verify(conn)
+        conn.close()
+        self.assertEqual(ledger, sorted(m.version for m in discover()))
+        self.assertTrue(report["ok"])
+
+    def test_corrected_retry_succeeds_after_the_failure(self):
+        conn = connect(self.db_path)
+        self._install_trigger(conn)
+        try:
+            with self.assertRaises(sqlite3.IntegrityError):
+                sync_desk_config(conn, self.desks_dir)
+        finally:
+            self._drop_trigger(conn)
+
+        report = sync_desk_config(conn, self.desks_dir)
+        state = self._state(conn)
+        # Idempotent on a second clean run.
+        sync_desk_config(conn, self.desks_dir)
+        self.assertEqual(self._state(conn), state)
+        langs = dict(conn.execute(
+            "SELECT slug, language FROM sources WHERE desk_id='testland'"))
+        conn.close()
+
+        self.assertEqual(report["sources_inserted"], 2)
+        self.assertIn("testland", state["desks"])
+        self.assertEqual(sorted(langs), ["tl_first", "tl_second"])
+        self.assertEqual(set(langs.values()), {"ru"})
+
+    def test_china_configuration_is_untouched_by_the_failure(self):
+        conn = connect(self.db_path)
+        china_only = self.tmp / "china_only2"
+        china_only.mkdir()
+        shutil.copytree(self.desks_dir / "china", china_only / "china")
+        sync_desk_config(conn, china_only)
+        before = conn.execute(
+            "SELECT slug, display_name, base_url, language, language_tag, "
+            "authority_tier, originality FROM sources ORDER BY slug").fetchall()
+
+        self._install_trigger(conn)
+        try:
+            with self.assertRaises(sqlite3.IntegrityError):
+                sync_desk_config(conn, self.desks_dir)
+        finally:
+            self._drop_trigger(conn)
+
+        after = conn.execute(
+            "SELECT slug, display_name, base_url, language, language_tag, "
+            "authority_tier, originality FROM sources ORDER BY slug").fetchall()
+        conn.close()
+        self.assertEqual(before, after)

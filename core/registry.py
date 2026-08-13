@@ -47,28 +47,29 @@ class RegistryError(RuntimeError):
 
 def _legacy_language(language_tag: str) -> str:
     """
-    Map a BCP 47 tag onto the legacy `sources.language` column.
+    Derive the legacy `sources.language` value from a BCP 47 tag.
 
-    That column carries `CHECK (language IN ('zh','en'))` from the original
-    schema. It is kept (nothing is dropped in Phase 1) and still written so the
-    existing pipeline and site keep reading what they always have.
+    `language` is a deprecated compatibility mirror; `language_tag` is
+    authoritative. The value written here is the tag's **primary language
+    subtag** — `zh-Hans` → `zh`, `en` → `en`, `ru-RU` → `ru` — which is a
+    defensible narrowing of the same fact, not a substitution of a different
+    language.
 
-    This raises rather than guessing for any other language, and that is a real
-    forward constraint worth stating plainly: **a Russia or Iran desk cannot be
-    synced until a migration relaxes or retires that CHECK.** Silently coercing
-    'ru' to 'en' would corrupt the corpus in a way nothing downstream could
-    detect.
+    Until migration 0005 this raised for anything outside zh/en, because the
+    column carried `CHECK (language IN ('zh','en'))` and silently coercing `ru`
+    to `en` would have corrupted the corpus undetectably. 0005 removed that
+    finite CHECK, so the honest narrowing is now writable and the refusal is
+    gone. No new finite list replaces it — validation of the tag itself belongs
+    in the manifest layer, which reports the file and field.
     """
     primary = (language_tag or "").split("-")[0].lower()
-    if primary in ("zh", "en"):
-        return primary
-    raise RegistryError(
-        "language tag %r maps to legacy language %r, which the existing "
-        "sources.language CHECK constraint rejects (it permits only 'zh' and "
-        "'en'). Relaxing that constraint is a prerequisite migration for any "
-        "non-Chinese/English desk — see docs/SCHEMA_AND_MIGRATIONS.md."
-        % (language_tag, primary)
-    )
+    if not primary or not primary.isalpha() or not (2 <= len(primary) <= 3):
+        raise RegistryError(
+            "cannot derive a legacy language value from tag %r: the primary "
+            "subtag must be 2-3 ASCII letters. Manifest validation should have "
+            "rejected this before persistence." % (language_tag,)
+        )
+    return primary
 
 
 def _source_values(src: Source) -> Dict[str, object]:
@@ -128,8 +129,25 @@ def sync_desk_config(
             "migration 0003 has not been applied"
         )
 
-    for cfg in configs.values():
-        _sync_one_desk(conn, cfg, managed, report)
+    # Atomic across ALL desks. Review found that a manifest whose source failed
+    # validation still left that desk's `desks` and `institutions` rows behind:
+    # each statement committed as it went, so a partial configuration survived a
+    # failed sync. Configuration must be all-or-nothing — a desk row with no
+    # sources is a state no manifest describes.
+    savepoint = "desk_config_sync"
+    conn.execute("SAVEPOINT %s" % savepoint)
+    try:
+        for cfg in configs.values():
+            _sync_one_desk(conn, cfg, managed, report)
+    except Exception:
+        conn.execute("ROLLBACK TO %s" % savepoint)
+        conn.execute("RELEASE %s" % savepoint)
+        logger.error(
+            "desk config sync failed — rolled back; the previous valid "
+            "configuration is intact"
+        )
+        raise
+    conn.execute("RELEASE %s" % savepoint)
 
     logger.info(
         "desk config synced: %d desk(s), %d institution(s), "
