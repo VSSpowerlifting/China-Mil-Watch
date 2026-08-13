@@ -1,0 +1,134 @@
+{
+  "manifest_version": 1,
+  "_comment": [
+    "China Desk — the existing China Mil Watch corpus and The PLA Watch archive.",
+    "This manifest describes the sources the pipeline ALREADY collects. It was",
+    "written to match production exactly, not to propose changes: every slug,",
+    "display_name and base_url here is byte-identical to the seed data in",
+    "storage/schema.sql, so syncing this manifest into the database cannot",
+    "rename or re-point an existing source.",
+    "public_status is 'legacy' because this desk is already published under its",
+    "own brand and must keep behaving exactly as it does today."
+  ],
+  "desk": {
+    "desk_id": "china",
+    "display_name": "China Desk",
+    "jurisdiction_code": "CN",
+    "default_timezone": "Asia/Shanghai",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "zh-Hans",
+      "en"
+    ],
+    "public_status": "legacy",
+    "active": true
+  },
+  "institutions": [
+    {
+      "institution_id": "cn_cmc_political_work",
+      "display_name": "CMC Political Work Department",
+      "name_original": "中央军事委员会政治工作部",
+      "institution_type": "armed_forces",
+      "notes": "Publisher of PLA Daily and its English portal."
+    },
+    {
+      "institution_id": "cn_mnd",
+      "display_name": "Ministry of National Defense",
+      "name_original": "中华人民共和国国防部",
+      "institution_type": "defense_ministry"
+    },
+    {
+      "institution_id": "cn_xinhua",
+      "display_name": "Xinhua News Agency",
+      "name_original": "新华通讯社",
+      "institution_type": "state_news_agency"
+    },
+    {
+      "institution_id": "cn_peoples_daily_group",
+      "display_name": "People's Daily Group",
+      "name_original": "人民日报社",
+      "institution_type": "state_linked_media"
+    }
+  ],
+  "sources": [
+    {
+      "slug": "pla_daily",
+      "institution_id": "cn_cmc_political_work",
+      "display_name": "PLA Daily (解放军报)",
+      "base_url": "https://www.81.cn",
+      "language_tag": "zh-Hans",
+      "access_method": "html",
+      "authority_tier": "B",
+      "source_type": "armed_forces_newspaper",
+      "originality": "original",
+      "expected_cadence_days": 1,
+      "silence_threshold_days": 7,
+      "enabled": true,
+      "notes": "Supplies roughly 87% of the corpus. Authoritative for how the PLA describes itself; Tier B because it is service media rather than a directive-issuing body.",
+      "adapter": "scraper.sources.pla_daily:PLADailyScraper"
+    },
+    {
+      "slug": "mod_china",
+      "institution_id": "cn_mnd",
+      "display_name": "MOD China (国防部)",
+      "base_url": "http://www.mod.gov.cn",
+      "language_tag": "zh-Hans",
+      "access_method": "html",
+      "authority_tier": "A",
+      "source_type": "ministry_website",
+      "originality": "original",
+      "expected_cadence_days": 3,
+      "silence_threshold_days": 21,
+      "enabled": true,
+      "notes": "Tier A as the ministry's own authorized public position. Cadence measured 2026-08-09 from the source's own listings (28 distinct publish dates across three months), never from our collection, which is the thing under test. Collection has been failing since 2026-07-10 while the site itself is alive — see PROJECT_STATE; do not treat as inert.",
+      "adapter": "scraper.sources.mod_china:MODChinaScraper"
+    },
+    {
+      "slug": "xinhua_mil",
+      "institution_id": "cn_xinhua",
+      "display_name": "Xinhua Military (新华军事)",
+      "base_url": "https://www.xinhuanet.com",
+      "language_tag": "zh-Hans",
+      "access_method": "html",
+      "authority_tier": "C",
+      "source_type": "state_news_agency",
+      "originality": "syndicated",
+      "expected_cadence_days": 1,
+      "enabled": true,
+      "notes": "Adapter is a documented stub: the listing is JavaScript/API-rendered and returns stale 2020-era HTML to requests-based clients. Has contributed zero rows for the life of the project. Kept enabled so the health report shows it as not_implemented rather than hiding it.",
+      "adapter": "scraper.sources.xinhua_mil:XinhuaMilScraper"
+    },
+    {
+      "slug": "global_times_mil",
+      "institution_id": "cn_peoples_daily_group",
+      "display_name": "Global Times — Defense",
+      "base_url": "https://www.globaltimes.cn",
+      "language_tag": "en",
+      "access_method": "html",
+      "authority_tier": "D",
+      "source_type": "state_linked_newspaper",
+      "originality": "original",
+      "expected_cadence_days": 1,
+      "silence_threshold_days": 7,
+      "enabled": true,
+      "notes": "State-linked rather than official. Signals PLA messaging to foreign audiences; an officially tolerated nationalist line is not an authorized institutional position.",
+      "adapter": "scraper.sources.global_times_mil:GlobalTimesMilScraper"
+    },
+    {
+      "slug": "china_mil_online",
+      "institution_id": "cn_cmc_political_work",
+      "display_name": "China Military Online (EN)",
+      "base_url": "http://english.chinamil.com.cn",
+      "language_tag": "en",
+      "access_method": "html",
+      "authority_tier": "B",
+      "source_type": "armed_forces_english_portal",
+      "originality": "mirror",
+      "expected_cadence_days": 1,
+      "silence_threshold_days": 7,
+      "enabled": true,
+      "notes": "Official English-language mirror under the same institution as PLA Daily. Marked 'mirror' so its republications do not inflate institution-level message volume once cross-source clustering exists.",
+      "adapter": "scraper.sources.china_mil_online:ChinaMilOnlineScraper"
+    }
+  ]
+}

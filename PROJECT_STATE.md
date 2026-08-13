@@ -1,8 +1,61 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-11 (credit restored; No. 12 and No. 13 generated and published).
+Updated: 2026-08-13 (Defense Discourse Phases 1–2 on a branch; DB hotfix pushed).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
+
+## Defense Discourse foundation — Phases 1–2 complete, UNCOMMITTED on a branch
+
+Branch `refactor/defense-discourse-foundation`, off `main` at `92bfa82`.
+**Nothing is committed, pushed or deployed.** Full rationale in
+`docs/ADR_NEUTRAL_CORE.md`; rulings in DECISION_LOG 2026-08-13.
+
+What now works: sources come from `desks/china/manifest.json` instead of
+hardcoded imports; the five existing scrapers are wrapped, not rewritten; every
+source produces a structured per-source result so "published nothing" and
+"could not be reached" are different values; one failing source degrades the
+run; `source_run_results` records discovered/fetched/extracted/duplicate/new/
+rejected counts per source per run; migrations are versioned, idempotent, and
+run inside `init_db()` so the reconciler can no longer silently revert the
+schema.
+
+**Verified:** 109 offline tests pass (no network, no model calls);
+`validate_output.py` green at the same 10 warnings; `output/` **byte-identical**
+after regeneration from the migrated DB; corpus unchanged at 3,182 articles /
+3,182 distinct URLs / max id 3188 / 110 runs, with an identical id↔URL digest
+before and after migration.
+
+**Two things this made visible that were previously invisible:**
+`scripts/source_health_report.py` reports MOD China **overdue at 34 days**
+against its own 21-day threshold, and Xinhua Military as **`not_implemented`**
+rather than as a healthy source that published nothing.
+
+**Working-tree state:** `pla_watch.db` carries migrations 0002–0004 (0001 was
+already applied by the pushed hotfix). Migrations are additive; a pre-migration
+backup was taken. `output/` is clean.
+
+**Known blocker for Phase 4:** a Russia desk cannot be synced until a migration
+relaxes `CHECK (language IN ('zh','en'))` on the legacy `sources.language`
+column. Sync raises rather than coercing `ru` to `en`.
+
+**Not done, deliberately:** no capture storage, no document versioning, no
+translation records, no claims model (all Phase 3); no CI/workflow change; no
+`reconcile_db.py` change; no MOD scraper fix; no public rename. `graphify
+update .` has not been run for the new packages.
+
+## Repository rename (hosting only)
+
+The GitHub repo is now `VSSpowerlifting/China-Mil-Watch`; the old path answers
+via a 301. Local `origin` was repointed 2026-08-13. No public site name, domain,
+canonical URL or branding changed.
+
+## Database hotfix pushed 2026-08-13
+
+`scrape_runs.status` accepts `'degraded'` again on `origin/main` (`92bfa82`).
+The constraint had reverted a **second** time — the 2026-08-09 migration was
+reverted by a rebase, re-applied, and found reverted again by the 2026-08-13
+audit. Until the Phase 1 branch lands, CI still never applies migrations, so
+this can decay again; that is the argument for landing the branch.
 
 ## Working tree (as of this update)
 
@@ -271,7 +324,11 @@ state and durable consequences:
   check is **not** evidence the pipeline executed. Time any manual push
   against the runs API, which answers unauthenticated because the repo is
   public (`gh` is not installed here):
-  `curl -s "https://api.github.com/repos/VSSpowerlifting/PLA-Watch/actions/runs?per_page=8"`
+  `curl -sL "https://api.github.com/repos/VSSpowerlifting/China-Mil-Watch/actions/runs?per_page=8"`
+  (The GitHub repository was renamed `PLA-Watch` → `China-Mil-Watch`. The old
+  path still answers via a 301, so `-L` is required if you use it; the local
+  `origin` remote was repointed at the new URL on 2026-08-13. This is a hosting
+  rename only — no public site name, domain, or URL changed.)
 
 - **Translation losses (fixed 2026-07-30; backfill run).** 163 of 697
   relevant articles (23%) passed the relevance gate but were never

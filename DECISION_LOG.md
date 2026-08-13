@@ -2,6 +2,97 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-13 — Country-neutral core: configuration over central imports, and migrations that survive the reconciler
+
+Phases 1–2 of the Defense Discourse foundation, implemented on branch
+`refactor/defense-discourse-foundation`. Internal architecture only: no public
+rename, no route change, no new desk, no deployment. Full rationale in
+`docs/ADR_NEUTRAL_CORE.md`.
+
+1. **Sources are configuration, not imports.** `pipeline.py` no longer names a
+   scraper class. `desks/china/manifest.json` declares all five sources
+   including the dotted adapter path, and `core/registry.py` resolves it at call
+   time. A test asserts `pipeline.py` contains none of the five class names and
+   that `core/` imports nothing from `scraper.*`. `SCRAPERS` survives as a
+   documented dict-like shim for the CLI and scripts; removing it is a later
+   approved cleanup.
+
+2. **The existing scrapers were wrapped, not rewritten.** `adapters/legacy.py`
+   calls the same methods in the same order as `BaseScraper.scrape()`, and
+   `ExtractedDocument.raw` carries the parser's dict verbatim so downstream
+   normalization, dedup and the keyword filter receive byte-identical input —
+   *including which keys are absent*, which is not the same as
+   present-and-`None`. Months of selector and encoding corrections were not put
+   at risk to gain reporting.
+
+3. **Standing rule: an empty result must name which empty it is.** The 2026-08-09
+   §6 rule now has a vocabulary. `ok_no_publications` (healthy silence) is a
+   different value from `listing_failure`, `fetch_failure`,
+   `extraction_failure`, and `not_implemented`, each declaring whether it is a
+   failure. **One collectible source failing degrades the whole run**, even when
+   every other source succeeded — the condition that reported success for four
+   weeks while MOD China was dead. Verified by driving the real `pipeline.run()`
+   with offline adapters: a simulated MOD listing failure produced
+   `aggregate: DEGRADED` while PLA Daily collected normally.
+
+4. **`not_implemented` and `skipped_disabled` are deliberately not failures.**
+   Both are acknowledged configuration states. Treating them as failures would
+   mark every run degraded for as long as Xinhua remains a stub, and an alarm
+   that is always on is not an alarm. They are always *visible* — Xinhua now
+   reports `not_implemented` in every run and in the health report instead of
+   passing as a source that published nothing.
+
+5. **Migrations run on the write path, because the reconciler reverts schema.**
+   `scripts/reconcile_db.py` copies the published side's *file*, so a rebase onto
+   an older origin silently restores the older schema — this happened to the
+   `'degraded'` constraint on 2026-08-09 and again by the time of the 2026-08-13
+   audit. Idempotent migrations now run inside `storage.db.init_db()`, which
+   `pipeline.py` calls before any collection, so the schema self-heals instead of
+   depending on the standing re-apply rule being remembered.
+   `tests/test_migrations.py::TestReconcileReversion` reproduces the exact
+   sequence and asserts full recovery.
+
+   **The limit of that protection, stated plainly:** everything migrations create
+   is DDL or reconstructible from tracked manifests, so schema and desk config
+   recover completely. **Observed data does not.** `source_run_results` rows
+   written locally between a reconcile and the next push are lost with the
+   reverted file. Ordering the reconcile against CI is a Phase 3 decision and is
+   not solved here.
+
+6. **Nothing was dropped.** `sources.language` and `sources.is_active` are still
+   present and still written; `language_tag` and `enabled` were added beside
+   them with fallback accessors in `storage/db.py`. Config sync touches **only**
+   the columns migration 0003 added — it can never rename a live source or
+   re-point its `base_url`, which is asserted by test.
+
+7. **Blocker recorded, not worked around: a non-Chinese/English desk cannot be
+   synced yet.** `sources.language` carries `CHECK (language IN ('zh','en'))`.
+   `core.registry._legacy_language()` raises rather than coercing, because
+   silently mapping `ru` to `en` would corrupt the corpus in a way nothing
+   downstream could detect. **Relaxing that CHECK is a prerequisite migration for
+   the Russia desk.**
+
+8. **Desk taxonomies stay desk-scoped.** The 14 existing China categories are
+   recorded verbatim as China-desk configuration and are *not* promoted into the
+   universal cross-desk vocabulary. "Taiwan" and "South China Sea" have no
+   meaning on another desk; forcing them into a shared taxonomy would distort
+   both. The universal layer is genre (`directive_law`, `speech_transcript`, …),
+   which means the same thing everywhere.
+
+9. **Authority tier is proximity to an authorized position, not credibility.**
+   A Tier A document is not more likely to be true than a Tier D one; it is more
+   likely to represent what the institution has formally decided to say. China
+   desk assignments: MOD China A, PLA Daily and China Military Online B, Xinhua
+   Military C, Global Times D. China Military Online is marked `mirror` and
+   Xinhua `syndicated` so their republications cannot inflate institution-level
+   message volume once clustering exists.
+
+10. **The GitHub repository rename is hosting-only.** `PLA-Watch` →
+    `China-Mil-Watch`; the local `origin` remote was repointed and the single
+    stale runs-API example in PROJECT_STATE corrected. No public site name,
+    domain, canonical URL, or branding changed, and none may without a separate
+    Phase 5 decision.
+
 ## 2026-08-12 — Veil images must be provably the cited article's own
 
 Auditing the automatic veils against their sources found four editions whose

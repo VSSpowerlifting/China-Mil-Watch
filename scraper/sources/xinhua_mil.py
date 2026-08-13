@@ -38,6 +38,13 @@ from scraper.base import BaseScraper
 class XinhuaMilScraper(BaseScraper):
     """Stub scraper for Xinhua Military (JS-rendered, not yet functional)."""
 
+    #: Declares to the adapter layer that returning [] is by design, not a
+    #: collection failure. Without this the source reports the same
+    #: "published nothing today" as a healthy quiet source — which is how it
+    #: contributed zero rows for the life of the project while every run
+    #: reported success. It now reports `not_implemented` in every run.
+    IS_STUB = True
+
     def __init__(self, target_date: Optional[date] = None) -> None:
         super().__init__("xinhua_mil", target_date=target_date)
 

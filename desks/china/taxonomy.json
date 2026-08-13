@@ -1,0 +1,54 @@
+{
+  "taxonomy_version": 1,
+  "desk_id": "china",
+  "_comment": [
+    "Two layers, kept deliberately separate.",
+    "",
+    "1. `universal_genres` is the cross-desk analytical layer. It answers 'what",
+    "   kind of document is this?' in terms that mean the same thing for a PLA",
+    "   Daily feature and a US DoD transcript. It lives in core/domain.py and is",
+    "   listed here only for reference; desks do not get to extend it.",
+    "",
+    "2. `topical_labels` is this desk's own regional vocabulary. These are the 14",
+    "   category slugs the pipeline already assigns, reproduced byte-identically",
+    "   from storage/schema.sql and analysis/prompts.py VALID_CATEGORIES.",
+    "   They are NOT promoted to the universal layer: 'Taiwan' and 'South China",
+    "   Sea' have no meaning on a Russia or US desk, and forcing them into a",
+    "   shared taxonomy would either distort other desks or quietly redefine",
+    "   what these labels mean here.",
+    "",
+    "Nothing in this file changes how categories are assigned today. It records",
+    "the existing vocabulary as desk-scoped configuration so a second desk can",
+    "declare its own without editing central code."
+  ],
+
+  "universal_genres_reference": [
+    "directive_law",
+    "speech_transcript",
+    "official_statement",
+    "exercise_operational_report",
+    "procurement_industry",
+    "doctrinal_essay",
+    "commentary_editorial",
+    "routine_unit_news",
+    "feature_human_interest",
+    "unknown"
+  ],
+
+  "topical_labels": [
+    { "slug": "taiwan",             "display_name": "Taiwan",               "description": "Taiwan Strait, cross-strait military posture, Taiwan-related operations" },
+    { "slug": "south_china_sea",    "display_name": "South China Sea",      "description": "SCS, Spratly, Paracel, Scarborough Shoal activity" },
+    { "slug": "east_china_sea",     "display_name": "East China Sea",       "description": "Senkaku/Diaoyu, Japan-related maritime" },
+    { "slug": "us_china_military",  "display_name": "U.S.–China Military",  "description": "Direct U.S.-China military interactions, FONOPs, intercepts" },
+    { "slug": "exercises",          "display_name": "Exercises",            "description": "Training, drills, joint exercises" },
+    { "slug": "modernization",      "display_name": "Modernization",        "description": "New platforms, capabilities, defense industry developments" },
+    { "slug": "doctrine",           "display_name": "Doctrine",             "description": "Doctrinal essays, strategic concepts, theoretical writing" },
+    { "slug": "personnel",          "display_name": "Personnel",            "description": "Promotions, removals, anti-corruption actions" },
+    { "slug": "nuclear",            "display_name": "Nuclear",              "description": "Nuclear forces, Rocket Force, strategic weapons" },
+    { "slug": "cyber_info",         "display_name": "Cyber & Information",  "description": "Cyber operations, information warfare, SSF activities" },
+    { "slug": "internal_security",  "display_name": "Internal Security",    "description": "PAP, Xinjiang, Tibet, Hong Kong contingencies" },
+    { "slug": "coast_guard",        "display_name": "Coast Guard",          "description": "CCG operations, gray-zone maritime" },
+    { "slug": "military_diplomacy", "display_name": "Military Diplomacy",   "description": "Mil-to-mil diplomacy, exercises with foreign militaries, arms exports" },
+    { "slug": "political_work",     "display_name": "Political Work",       "description": "Party-army relations, ideological campaigns within PLA" }
+  ]
+}

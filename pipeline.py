@@ -46,11 +46,10 @@ from processing.relevance import (
     keyword_filter,
     llm_relevance_check,
 )
-from scraper.sources.china_mil_online import ChinaMilOnlineScraper
-from scraper.sources.global_times_mil import GlobalTimesMilScraper
-from scraper.sources.mod_china import MODChinaScraper
-from scraper.sources.pla_daily import PLADailyScraper
-from scraper.sources.xinhua_mil import XinhuaMilScraper
+from core.collection import status as collection_status
+from core.collection.contract import CollectionWindow
+from core.collection.health import aggregate_status, human_report
+from core.registry import get_registry
 from storage import db
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -65,13 +64,45 @@ logger = logging.getLogger("pipeline")
 
 # ── Source registry ───────────────────────────────────────────────────────────
 
-SCRAPERS = {
-    "pla_daily":        PLADailyScraper,
-    "mod_china":        MODChinaScraper,
-    "china_mil_online": ChinaMilOnlineScraper,
-    "global_times_mil": GlobalTimesMilScraper,
-    "xinhua_mil":       XinhuaMilScraper,
-}
+# Sources come from desk manifests (`desks/*/manifest.json`), not from a list of
+# imported classes. This module no longer names a single China scraper: adding,
+# disabling or re-pointing a source is a configuration edit, and a second desk
+# needs no change here at all.
+#
+# `SCRAPERS` is retained as a compatibility shim because scripts and the CLI
+# read it. It maps slug -> adapter factory rather than slug -> class, and is
+# resolved lazily so importing this module cannot fail on a manifest problem
+# before logging is even configured.
+
+def available_slugs() -> list:
+    """Every source slug any desk manifest declares."""
+    return get_registry().slugs
+
+
+class _ScraperRegistryShim:
+    """
+    Dict-like view over the registry, for code that still expects `SCRAPERS`.
+
+    Documented compatibility shim — remove in the later approved cleanup once
+    nothing reads it. Supports the operations the existing call sites use:
+    `slug in SCRAPERS`, `SCRAPERS[slug](target_date=…)`, and `.keys()`.
+    """
+
+    def __contains__(self, slug: str) -> bool:
+        return slug in get_registry()
+
+    def __getitem__(self, slug: str):
+        adapter = get_registry().get_adapter(slug)
+        return lambda target_date=None: adapter
+
+    def keys(self):
+        return available_slugs()
+
+    def __iter__(self):
+        return iter(available_slugs())
+
+
+SCRAPERS = _ScraperRegistryShim()
 
 
 # ── Pipeline ──────────────────────────────────────────────────────────────────
@@ -107,33 +138,65 @@ def run(
     errors:      list[str]  = []
 
     # ── Stage 3: Scrape ───────────────────────────────────────────────────────
+    #
+    # Every source now produces an explicit structured result instead of a bare
+    # list. "Published nothing" and "could not be reached" both used to yield
+    # [] — which is how MOD China went silent for four weeks without a single
+    # failed run (DECISION_LOG 2026-08-09 §5). Those are now different statuses,
+    # recorded per source in `source_run_results` and reported before the run
+    # closes.
+    registry = get_registry()
+    window = CollectionWindow(target_date=target_date)
+    source_results = []
+
     for slug in sources:
-        if slug not in SCRAPERS:
-            logger.warning("Unknown source slug '%s' — skipping", slug)
+        if slug not in registry:
+            msg = f"{slug}: no desk manifest declares this source — skipping"
+            logger.warning(msg)
+            errors.append(msg)
+            from core.collection.contract import SourceRunResult
+            source_results.append(
+                SourceRunResult(source_slug=slug,
+                                status=collection_status.UNKNOWN_SOURCE,
+                                error_detail="not declared in any desk manifest")
+            )
             continue
-        scraper = SCRAPERS[slug](target_date=target_date)
+
         try:
-            articles = scraper.scrape()
-            all_scraped.extend(articles)
+            adapter = registry.get_adapter(slug)
+            result, documents = adapter.collect(window)
         except Exception as exc:
+            # An adapter that crashes must not take the run down with it: the
+            # other sources' collection is still worth keeping.
+            from core.collection.contract import SourceRunResult
             msg = f"{slug}: scrape failed — {exc}"
             logger.error(msg)
             errors.append(msg)
-
-        # A source can return zero articles two ways: it published nothing
-        # today (normal), or it could not reach its listing pages at all
-        # (a defect). Only the second leaves failed fetches behind. Recording
-        # them makes the difference legible in scrape_runs.errors instead of
-        # dying in the runner's log.
-        if scraper.failed_fetches:
-            msg = (
-                f"{slug}: {len(scraper.failed_fetches)} fetch(es) exhausted all "
-                f"retries — e.g. {scraper.failed_fetches[0]}"
+            source_results.append(
+                SourceRunResult(source_slug=slug,
+                                status=collection_status.ADAPTER_ERROR,
+                                desk_id=registry.get_source(slug).desk_id,
+                                error_detail=str(exc)[:200])
             )
+            continue
+
+        all_scraped.extend(doc.as_article_dict() for doc in documents)
+        source_results.append(result)
+
+        if result.is_failure:
+            msg = f"{slug}: collection {result.status} — {result.error_detail or 'no detail'}"
             logger.error(msg)
             errors.append(msg)
+        elif result.status == collection_status.OK_NO_PUBLICATIONS:
+            logger.info("%s: listing reached, nothing new published", slug)
+        elif result.status == collection_status.NOT_IMPLEMENTED:
+            logger.warning(
+                "%s: configured but the adapter is a documented stub — "
+                "contributes nothing by design", slug,
+            )
 
     logger.info("Scraped (raw): %d", len(all_scraped))
+    logger.info("\n%s", human_report(source_results, run_id))
 
     # ── Stages 4–6: Normalize, dedup, keyword filter ──────────────────────────
     normalized  = [normalize_article(a) for a in all_scraped]
@@ -168,6 +231,40 @@ def run(
 
     logger.info("Stored %d new articles (%d keyword-rejected, stored with passed=0)",
                 len(inserted), len(kw_rejected))
+
+    # ── Per-source attribution ────────────────────────────────────────────────
+    # Fold the dedup and filter outcomes back onto each source's result, then
+    # persist. Without this the run knows 34 articles arrived but not which
+    # source stopped delivering — the exact blind spot that let MOD China go
+    # silent for four weeks behind PLA Daily's volume.
+    from collections import Counter
+
+    scraped_by_source  = Counter(a.get("source_slug") for a in all_scraped)
+    new_by_source      = Counter(a.get("source_slug") for a in new_articles)
+    inserted_by_source = Counter(a.get("source_slug") for _, a in inserted)
+    rejected_by_source = Counter(a.get("source_slug") for a in kw_rejected)
+
+    for result in source_results:
+        slug = result.source_slug
+        result.duplicates = max(
+            0, scraped_by_source.get(slug, 0) - new_by_source.get(slug, 0)
+        )
+        result.new_documents      = inserted_by_source.get(slug, 0)
+        result.relevance_rejected = rejected_by_source.get(slug, 0)
+
+        # Refine a successful-but-empty outcome now that dedup and filtering
+        # have run. Both are healthy states, and both are distinct from silence:
+        # the source published, we simply kept none of it.
+        if result.status == collection_status.OK and result.new_documents == 0:
+            if result.duplicates > 0:
+                result.status = collection_status.OK_ALL_DUPLICATES
+            elif result.relevance_rejected > 0:
+                result.status = collection_status.OK_ALL_FILTERED
+
+        db.record_source_run_result(run_id, result)
+
+    collection_agg = aggregate_status(source_results)
+    logger.info("Collection aggregate status: %s", collection_agg)
 
     # ── Stages 9–12: LLM analysis ────────────────────────────────────────────
     articles_analyzed      = 0
@@ -453,10 +550,23 @@ def run(
     # "post-relevance analysis incomplete" errors are routine and self-healing
     # (the article stays pending and a later run retries it); downgrading on
     # those would mark most runs 'degraded' and make the field meaningless.
+    #
+    # Collection failures degrade the run too, independently of analysis. A run
+    # where one required source could not be reached is not a clean day, even
+    # if the other sources delivered and every article analyzed successfully —
+    # that combination is precisely what reported success for four weeks while
+    # MOD China was dead.
     if total_analysis_failed:
         run_status = "failed"
     elif account_blocked is not None:
         run_status = "degraded"
+    elif collection_agg in ("failed", "degraded"):
+        run_status = "degraded"
+        failed_slugs = [r.source_slug for r in source_results if r.is_failure]
+        logger.error(
+            "Run marked degraded by collection: %d source(s) failed (%s)",
+            len(failed_slugs), ", ".join(sorted(failed_slugs)),
+        )
     else:
         run_status = "completed"
 
