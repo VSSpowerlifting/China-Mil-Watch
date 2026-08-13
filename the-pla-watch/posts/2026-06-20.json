@@ -131,12 +131,12 @@
       "alt": "Source article image",
       "caption": "Cover background image sourced from the lead source article. Included for editorial visual context only.",
       "source_url": "http://www.81.cn/yw_208727/16467717.html",
-      "image_url": "http://www.81.cn/lmyybl/jskt_208724/_attachment/2026/06/17/16467895_c7e9a8eb44bc5377c16a04a873a7406a.jpg",
+      "image_url": "http://www.81.cn/yw_208727/_attachment/2026/06/16/16467717_97555f8495a2fba069c29199761e7ce3.jpg",
       "source_label": "article body image",
       "auto_selected": true
     }
   ],
-  "background_image_source": "source_trail_fetch",
+  "background_image_source": "edition_media",
   "background_image_path": "output/the-pla-watch/media/2026-06-20-source-image.jpg",
   "cover_image": "../covers/2026-06-20.png",
   "cover_image_url": "https://chinamilwatch.org/the-pla-watch/covers/2026-06-20.png",
