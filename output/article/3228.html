@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garrison Observer | &#34;Defeat Log&#34;: A Clear-Eyed Transparency — China Mil Watch</title>
+  <meta name="description" content="A detachment of the People&#39;s Armed Police Zhejiang General Corps has institutionalized a publicly posted &#34;Defeat Log&#34; (败绩台账) that requires units to record training failures by name, assign specific re">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/3228.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/3228.html">
+  <meta property="og:title"        content="Garrison Observer | &#34;Defeat Log&#34;: A Clear-Eyed Transparency">
+  <meta property="og:description"  content="A detachment of the People&#39;s Armed Police Zhejiang General Corps has institutionalized a publicly posted &#34;Defeat Log&#34; (败绩台账) that requires units to record training failures by name, assign specific re">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Garrison Observer | &#34;Defeat Log&#34;: A Clear-Eyed Transparency">
+  <meta name="twitter:description" content="A detachment of the People&#39;s Armed Police Zhejiang General Corps has institutionalized a publicly posted &#34;Defeat Log&#34; (败绩台账) that requires units to record training failures by name, assign specific re">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Internal Security">Internal Security</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Garrison Observer | &#34;Defeat Log&#34;: A Clear-Eyed Transparency
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨“败绩清单”：一种亮堂堂的清醒</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>14 August 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16479235.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A detachment of the People&#39;s Armed Police Zhejiang General Corps has institutionalized a publicly posted &#34;Defeat Log&#34; (败绩台账) that requires units to record training failures by name, assign specific rectification deadlines and responsible parties, and close each entry through verified acceptance — with proactive disclosure protected from career consequences and concealment subject to accountability. The mechanism distinguishes &#34;accountability-type defeats&#34; (责任性败绩) from &#34;exploratory defeats&#34; (探索性败绩), shielding soldiers who fail while attempting high-difficulty or innovative tasks. The article documents a recurring institutional problem in PLA and PAP training culture — the incentive to suppress adverse results to protect commendation records — and frames the log as a structural fix, though whether the detachment&#39;s three-regulation package can survive personnel turnover or external inspection pressure remains unaddressed.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>From &#34;Covering Up Scars&#34; to &#34;Setting Up Targets&#34;</p><p>■ Yang Yang, Zhou Yiren; PLA Daily Special Correspondent Wang Da</p><p>Deep in the jungle, a red-versus-blue confrontation exercise at a certain detachment of the People&#39;s Armed Police Zhejiang General Corps was in full swing. The blue force used electromagnetic jamming to sever the red force&#39;s communications links, instantly rendering the command post &#34;deaf.&#34; Orders could not be issued, and forward elements fell into chaos. Nearly 20 minutes of communications blackout directly caused the red force&#39;s defeat.</p><p>At the after-action review, the company commander of a certain company in the detachment, Li Hong, did not rush to explain himself, nor did he criticize or blame anyone. He wrote in his notebook: &#34;Defeat Entry No. 1: Weak anti-jamming capability in communications; emergency backup measures absent.&#34;</p><p>After the meeting, Li Hong tore out that page, walked straight to the bulletin board in the garrison hall, and posted it there, adding a line of prominent text: &#34;Today&#39;s defeat is tomorrow&#39;s teacher.&#34;</p><p>&#34;In the past, this kind of mistake would be handled internally and would never be reported up the chain in full — isn&#39;t this just airing our dirty laundry?&#34; some soldiers muttered privately. Li Hong was resolute: &#34;Hide it and cover it up, and tomorrow you&#39;ll stumble again!&#34;</p><p>The news spread quickly through the detachment. Reactions among officers and soldiers varied: some were impressed, some took a wait-and-see attitude, and some were worried — would doing this affect the unit&#39;s chances of being commended? Would it make superiors think they were incompetent?</p><p>But Li Hong had his own accounting. &#34;Over the years, as the intensity of combat-realistic training (实战化训练) has grown and new equipment has been fielded at an ever-faster pace, some problems recur year after year. The root cause is a lack of the courage to confront failure.&#34; He said frankly: &#34;The defeat itself is not frightening. What is frightening is covering it up, allowing it to eventually develop into a greater hidden danger.&#34;</p><p>This publicly posted &#34;Defeat Log&#34; quickly caught the attention of Staff Section Chief Liu of the detachment&#39;s operations and training section. He photographed the entire list and brought it to a &#34;Company Commanders&#39; Forum&#34; activity, with a clear purpose — good practices worth promoting across the entire detachment.</p><p>Skeptical voices followed: &#34;Commendations and awards are based on achievements and honors. If you make failures public, what will superiors think when they see it? Will the career advancement of those &#39;named on the list&#39; be blocked?&#34;</p><p>Company Commander Wan of a certain company was the first to step up and share his personal experience: in a multi-element coordinated exercise, his command error caused a vehicle crew&#39;s position to be exposed, and the mission was judged a failure. Per regulations, this defeat should be recorded and its causes analyzed. He hesitated for an entire day, for a simple reason: &#34;If this gets out, where does the company&#39;s face go?&#34;</p><p>Voices of support were equally forceful: &#34;Every after-action review dissects problems with great clarity, but nothing comes of it afterward. The next time a similar problem arises, we&#39;re still at a loss. On the battlefield, will the enemy give us a second chance? If we don&#39;t &#39;log and close out&#39; our defeats, the lessons will forever remain at the level of lip service.&#34;</p><p>Immediately after, Company Commander Wang of another company shared a positive example: in a recent comprehensive exercise, scouts failed to accurately track the &#34;enemy&#39;s&#34; movements in adverse weather, causing the operation to fail. As soon as the exercise ended, Commander Wang immediately surfaced the problem and organized officers and soldiers to pool their ideas, ultimately producing a complete set of operational contingency plans for different weather conditions, thoroughly plugging the gap.</p><p>The debate lasted nearly an hour.</p><p>&#34;A defeat is not a scar — it&#39;s a target! Fear losing face, and sooner or later you&#39;ll lose your substance!&#34; In the end, the detachment&#39;s leadership delivered a definitive ruling: &#34;Implement it! But the rules must be clear — which defeats must be recorded, how they are recorded, how they are rectified, and who conducts acceptance verification. Everyone must know where they stand.&#34;</p><p>Within a few days, a prominent &#34;Defeat Log&#34; bulletin board was erected at the entrance to the detachment headquarters hall. And so this mechanism was rolled out across the entire detachment.</p><p>Li Hong took the lead in posting three additional problems exposed during the confrontation exercise: coordination breakdown, command lag, and support failure. After each problem, rectification measures and completion deadlines were clearly marked.</p><p>Company Commander Wan also listed in detail four shortfalls in his own command capabilities, and drafted a specific study plan and phased assessment scheme.</p><p>&#34;From today on, we&#39;re getting serious about our problems!&#34; The two company commanders looked at each other and smiled.</p><p>Today, the &#34;Defeat Log&#34; bulletin board has become a focal point of attention for officers and soldiers throughout the detachment. From communications blackouts to tactical errors, from equipment failures to command blind spots, problems of all kinds are analyzed and recorded in detail. The log is by no means a matter of &#34;record it and forget it&#34; — the detachment&#39;s training supervision team conducts a unit-by-unit, item-by-item review of rectification progress at the end of each month. Once an item meets the standard, it is closed out.</p><p>Officers and soldiers are often gathered in front of the bulletin board, discussing. Everyone compares the list against their own unit&#39;s problems and draws on the experience of sister units. Squad Leader Jiang Yucheng of a certain company told this reporter that his unit was once &#34;listed&#34; for equipment failures caused by inadequate maintenance. During the rectification period, the company not only improved its maintenance procedures but also organized cross-position operational training. &#34;Equipment readiness rates have improved significantly. In the past, we always wanted to &#39;turn the page.&#39; Now everyone looks forward to problems being ferreted out and thoroughly resolved!&#34; said Jiang Yucheng.</p><p>From &#34;covering up scars&#34; to &#34;setting up targets,&#34; what has changed is not only the attitude toward training, but the entire unit&#39;s conception of performance (政绩观). In the past, some units simplistically treated &#34;zero problems&#34; as an achievement, fearing that exposing shortcomings would affect commendations. Now, genuine achievement is reflected not only on the trophy board but on the training ground where soldiers are prepared for war. Officers and soldiers say that daring to expose defeats and getting serious about problems is what it means to be responsible for winning.</p><p>---</p><p>&#34;Defeat Log&#34;: A Clear-Eyed Transparency</p><p>■ Yang Yang, Xu Fuze; PLA Daily Special Correspondent Wang Da</p><p>A certain detachment of the People&#39;s Armed Police Zhejiang General Corps organizes its engineer and chemical defense elements to conduct simulated rescue operations. Photo by Yao Zhixiang.</p><p>---</p><p>From &#34;Concealing Illness and Avoiding Treatment (讳疾忌医)&#34; to &#34;Daring to Expose Shortcomings&#34; —</p><p>The &#34;Defeat Log&#34; records the &#34;abnormal indicators&#34; of combat effectiveness; its significance lies in pointing the direction for focused effort.</p><p>In summer, Staff Section Chief Liu of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps paid a follow-up visit to the grassroots level, his gaze habitually drawn to the &#34;Defeat Log&#34; public display wall. The list that had contained only six lines three months ago now had 48 entries recorded in dense text, 35 of which had been crossed out — beside each record were before-and-after comparison data and on-site photographs. Old entries were barely closed before new ones were added. Watching the lively scene of officers and soldiers crowding around the display wall to voluntarily &#34;expose shortcomings&#34; and discuss rectification plans, he could not help but recall the resistance encountered when the &#34;Defeat Log&#34; was first introduced.</p><p>When the detachment Party committee decided to roll out the &#34;Defeat Log&#34; across the entire detachment, discussion at the grassroots level was rife.</p><p>Behind this lay a widespread misconception — equating &#34;defeat&#34; with &#34;blemish.&#34;</p><p>&#34;Everyone had misgivings,&#34; admitted Director Lu of the detachment&#39;s political work office. &#34;They feared affecting the unit&#39;s image, feared superiors questioning their capabilities, feared it would affect commendations and awards.&#34;</p><p>Faced with skepticism and misgivings, the detachment Party committee did not rush to rebut. Instead, it decided to &#34;lay the issues out in the open.&#34; At a dedicated question-and-answer session, the detachment&#39;s leadership offered an analogy: &#34;A medical examination report that flags abnormal indicators doesn&#39;t lead anyone to conclude the patient is unhealthy just because a few arrows appear. The &#39;Defeat Log&#39; records the &#39;abnormal indicators&#39; of combat effectiveness; its significance lies in pointing the direction for focused effort.&#34;</p><p>To put officers and soldiers at ease, the headquarters simultaneously issued three supplementary regulations: First, defeats that are proactively reported and rectified will not be entered into personal files and will not affect commendations or awards; concealment will be subject to serious accountability. Second, each defeat entry must be closed out within 45 days; after closure, it is transferred to training archives for reference and is no longer publicly displayed. Third, a closed-loop management system of &#34;discovery, recording, rectification, acceptance verification, and accountability&#34; is implemented, with no &#34;filtering mechanism&#34; and no &#34;self-inspection and self-verification.&#34;</p><p>Looking closely at the &#34;Defeat Log,&#34; it specifies only six elements: problem description, rectification measures, completion deadline, responsible party, acceptance standard, and remarks. There is no vague &#34;the company bears overall responsibility,&#34; no sweeping &#34;improvements to be made going forward&#34; — only specific details: who rectifies it, when, to what standard, and who verifies it.</p><p>From &#34;concealing illness and avoiding treatment&#34; to &#34;daring to expose shortcomings&#34; — a thin sheet of paper records the transformation in officers&#39; and soldiers&#39; thinking.</p><p>Corporal Yang Zijie of a certain company felt this deeply. During one assessment, his exploration of a new algorithm caused information overload, affecting overall communications connectivity. He expected to be criticized, but when the operations and training section learned of it, rather than holding him accountable, they immediately refined the guidelines: clearly distinguishing between &#34;accountability-type defeats (责任性败绩)&#34; and &#34;exploratory defeats (探索性败绩).&#34; Failures resulting from challenging high-difficulty tasks or exploring new methods of warfare are noted as &#34;exploratory defeats&#34; when recorded — no accountability, no disciplinary action. This regulation acted like a key, unlocking the lock in officers&#39; and soldiers&#39; hearts.</p><p>---</p><p>From &#34;Concealment&#34; to &#34;Proactive Mine-Clearing&#34; —</p><p>If hidden problems are not promptly identified and corrected, they are like submerged reefs that will ultimately sink the ship.</p><p>Once the ideological barrier was crossed, the inertia of old behavior remained.</p><p>In Staff Officer Qian&#39;s metal cabinet in the operations and training section, more than ten old ledgers were locked away. Leafing through them, every page looked pristine — but he knew in his heart that some of those numbers were merely a coat of fine paint, beneath which lay corrosion.</p><p>In the past, officers and soldiers tacitly observed an unspoken &#34;survival code&#34;: when inspections came, always say &#34;no problems&#34;; when organizing training, always choose the easiest tasks; when it came to innovation, wait for &#34;guidance from above.&#34; Anyone who dared to raise problems was, at best, criticized for &#34;lacking perspective,&#34; and at worst, suspected of &#34;being incompetent.&#34;</p><p>In the early stages of exploring the &#34;Defeat Log,&#34; every unit&#39;s list was blank. Staff Officer Qian called each company one by one to ask, and received a strikingly uniform answer: &#34;Our company has no problems!&#34;</p><p>If hidden problems are not promptly identified and corrected, they are like submerged reefs that will ultimately sink the ship. The detachment Party committee resolved to further refine the list&#39;s content: first, &#34;proactively exposing problems&#34; was changed from a deduction item to a credit item, with positive incentives in annual assessments upon verification. Second, a &#34;defeat-sharing&#34; mechanism was established: when one company exposes a problem, the entire detachment conducts a corresponding self-inspection, and rectification experience can be directly referenced.</p><p>This measure took effect quickly. One company entered &#34;worn buckles on night-training equipment&#34; into the log; the logistics section immediately inspected the same type of equipment across the entire detachment, replaced them uniformly, and averted a potential hazard.</p><p>Company Commander Jiang of a certain company was the last in the entire detachment to fill in the log. He was convinced his company had &#34;absolutely no defeats.&#34; The secret was simple — lower the difficulty.</p><p>Until one live-fire shooting adjustment request was rejected by the training supervision team, and the record was faithfully entered onto the detachment&#39;s &#34;Defeat Log&#34;: &#34;Long-term practice of lowering difficulty to ensure safety; combat effectiveness development progress is lagging.&#34;</p><p>That evening, Company Commander Jiang shut himself in the conference room. Keeping him company on the wall were two &#34;Safety Excellence Unit&#34; plaques.</p><p>The transformation came on a rainy night. This time, Commander Jiang did not apply to adjust the training plan. Officers and soldiers dropped to the ground and crawled through mud and water. Some stumbled, some scraped their skin — but not one stopped.</p><p>Standing in the rain, Commander Jiang suddenly felt that the &#34;safety&#34; of the past had in fact been a form of laziness.</p><p>---</p><p>From &#34;Pass or Fail&#34; to &#34;Truly Hardened or Not&#34; —</p><p>Before, &#34;good enough&#34; was enough; now they understand that &#34;good enough&#34; means &#34;not good enough.&#34;</p><p>When the &#34;Defeat Log&#34; first went up on the wall, officers and soldiers of a certain battalion would instinctively lower their heads as they passed the display board. Battalion Commander Dong felt the most pressure — he had the most defeat entries under his name: wrong route selection for hot-meal forward delivery, exceeding the time limit for directing field vehicle park tent erection, ineffective construction of perimeter fortifications… Some issues that had previously been regarded as &#34;not a big deal,&#34; once written in black and white on the list, weighed as heavy as a thousand pounds.</p><p>At one point, the detachment Party committee had debated internally: would making the list public dampen everyone&#39;s enthusiasm? After discussion, the detachment&#39;s leadership said: &#34;If we don&#39;t even have the courage to confront problems directly, how can we talk about fighting?&#34;</p><p>At one after-action review, officers and soldiers habitually attributed problems to &#34;weather,&#34; &#34;equipment,&#34; and &#34;terrain.&#34; But Battalion Commander Dong suddenly spoke up: &#34;Stop deflecting responsibility. We didn&#39;t think things through. Write it down, put it on the list!&#34; In that moment, he completed the transition from &#34;fearing problems&#34; to &#34;seeking out problems.&#34; He later summarized: once a problem has gone through the closed loop of recording, rectification, and closure, a defeat becomes a catalyst for a leap in capability.</p><p>Private First Class Tang Jinquan had a catchphrase: &#34;Good enough is good enough.&#34; In every training subject assessment, he aimed only to clear the &#34;passing line.&#34; This &#34;long live the passing grade&#34; mentality was not uncommon at the grassroots level. After investigation, the detachment Party committee concluded that the root cause lay in the evaluation standard — asking only &#34;pass or fail,&#34; not &#34;truly hardened or not.&#34;</p><p>To address this, the &#34;Defeat Log&#34; added a &#34;progress margin evaluation&#34; mechanism, looking not only at absolute scores but also at incremental improvement.</p><p>One day, a new entry appeared on the &#34;Defeat Log&#34; concerning Tang Jinquan&#39;s squad: squad tactical coordination was insufficiently tight, with a time 8 seconds slower than the excellence standard. Tang Jinquan was unconvinced: &#34;It&#39;s only 8 seconds — what does it matter?&#34;</p><p>The company political instructor standing nearby said nothing. The next day, during political education class, he played a clip of real battlefield footage: due to coordination that was off by a few seconds, a platoon was caught under enemy fire and wiped out to the last man.</p><p>&#34;A few short seconds, and an entire platoon was lost!&#34;</p><p>The instructor&#39;s words burned into Tang Jinquan&#39;s heart like a branding iron. Over the following week, he and his comrades gave their full effort to coordination. At the next assessment, their score surpassed the excellence standard by 4 seconds.</p><p>On the day the problem was closed out, Tang Jinquan voluntarily signed his name: &#34;Before, &#39;good enough&#39; was enough. Now I understand that &#39;good enough&#39; means &#39;not good enough&#39;!&#34;</p><p>The change spread throughout the entire company. First Squad raised its shooting target from &#34;qualified&#34; to &#34;excellent&#34;; Fifth Squad changed its equipment maintenance target from &#34;on time&#34; to &#34;zero faults&#34;…</p><p>Today, each unit&#39;s &#34;Defeat Log&#34; continues to be updated dynamically. Every crossed-out line on the list bears witness to the stumbles this force has taken, and marks the coordinates of their determined pursuit of improvement on the road to victory.</p><p>---</p><p>Hiding and Covering Up: Small Problems Will Eventually Become Major Hazards</p><p>■ Li Hong</p><p>After that confrontation exercise defeat, I overrode dissenting opinions and posted the &#34;Defeat Log&#34; on the bulletin board. The moment I put it up, my own heart was pounding.</p><p>Once the &#34;Defeat Log&#34; was made public, the rapid response from headquarters surprised me considerably. That same day, the signals section called to ask in detail whether there were any technical bottlenecks or practical difficulties. Immediately after, the signals, operations and training, and logistics sections each dispatched key personnel to the company to provide technical support, going through the list item by item, assisting on-site in identifying root causes and drafting countermeasures.</p><p>An even more gratifying change occurred on the training ground. The mentality of lowering difficulty to get passing scores and save face had become nearly impossible to find. A clear orientation took hold across the detachment: encourage exploration and innovation, challenge high-difficulty subjects — even a defeat in a confrontation exercise is evaluated far more favorably than a &#34;false victory&#34; achieved at low difficulty.</p><p>At after-action reviews, the old habit of emphasizing objective reasons disappeared, replaced by proactive assumption of responsibility: &#34;What is my responsibility?&#34; When problems arise, there is no longer hesitation over &#34;whether to report it&#34; — instead, it is proactively recorded and entered on the list. A consensus has taken root among officers and soldiers: bring problems into the open, and everyone works together to solve them; hide and cover them up, and small problems will eventually become major hazards.</p><p>The old practice of &#34;reporting good news but not bad news&#34; may appear to protect the unit&#39;s image on the surface, but in reality it erodes the foundation of combat effectiveness. Fear of exposing problems inevitably leads to skirting around contradictions; unwillingness to own defeats inevitably lowers training standards; fear of affecting commendations inevitably produces satisfaction with &#34;good enough&#34; rather than &#34;truly hardened.&#34; This is not building achievement — it is squandering the odds of victory on tomorrow&#39;s battlefield!</p><p>Not long ago, the company participated in a confrontation exercise again. We developed multiple contingency plans targeting the shortfalls exposed earlier, prepared sufficient countermeasures, and even proactively requested that the &#34;blue force&#34; increase jamming intensity. Although we achieved victory, at the after-action review I still solemnly listed several &#34;defeats&#34; based on new problems discovered during the exercise.</p><p>Someone asked me: you won, and you&#39;re still listing defeats — isn&#39;t that being too exacting? I said: there is no perfect victory on the battlefield, only continuous improvement. Gaps concealed by today&#39;s victory, left unresolved, may become the reason for tomorrow&#39;s defeat! Resolve one more problem in peacetime, and you face one less setback in wartime.</p><p>Several months have passed. Entries on the list are continuously being &#34;closed out,&#34; and new problems are being recorded in a timely manner. The list grows thinner and thinner, but our confidence grows stronger and stronger. I have come to deeply understand: a force that dares to expose its defeats and has the courage to revolutionize itself is a force with true strength, true promise, and the ability to win.</p><p>---</p><p>Garrison Observer Section Editor in Dialogue with the Commander of a Certain Detachment of the People&#39;s Armed Police Zhejiang General Corps ——</p><p>Calibrating the Combat Effectiveness Yardstick</p><p>A &#34;Defeat Log&#34; that confronts problems directly reflects not only shortfalls and weaknesses, but also serves as a &#34;barometer&#34; of a unit&#39;s conception of performance (政绩观). When &#34;zero problems&#34; is simplistically treated as an achievement and &#34;not daring to try&#34; is one-sidedly regarded as prudence, combat effectiveness may erode amid a false prosperity. In response to this phenomenon, the Garrison Observer section editor conducted a dialogue with the commander of a certain detachment of the People&#39;s Armed Police Zhejiang General Corps.</p><p>Editor: Some argue that the &#34;Defeat Log&#34; is airing dirty laundry and damages the unit&#39;s image. What is the internal connection between this concern and one&#39;s conception of performance?</p><p>Detachment Commander: The core of one&#39;s conception of performance lies in answering the question: &#34;What constitutes genuine achievement?&#34; If one treats avoiding incidents, avoiding embarrassment, and avoiding criticism as achievement, then concealing problems and evading contradictions becomes an &#34;instinctive choice.&#34; The military exists to fight — whether it can win is the fundamental yardstick for measuring a soldier&#39;s achievement! By this yardstick, the longer training shortfalls are covered up, the deeper the hidden dangers are buried, and the further one drifts from the goal of winning. The &#34;Defeat Log&#34; is absolutely not airing dirty laundry — it is a self-revolution and self-improvement with the blade turned inward (刀刃向内). It tells us: a unit&#39;s good image is not the gloss on a report form, but the courage and commitment to confront problems directly and to cut out the bone to cure the disease (刮骨疗毒).</p><p>Editor: Drawing broader lessons from the &#34;Defeat Log,&#34; what other changes has establishing a correct conception of performance brought about?</p><p>Detachment Commander: Establishing a correct conception of performance requires first answering the questions: &#34;For whom is achievement built, what kind of achievement, and by what means?&#34; Combat effectiveness is the sole and fundamental standard. Deviate one inch in one&#39;s conception of performance, and implementation of work will deviate one foot. Today, the evaluation orientation no longer simply judges by &#34;whether there are problems,&#34; but by &#34;whether one dares to face problems and is good at solving them.&#34; On the training ground, the &#34;scripted&#34; exercises staged in the past to protect &#34;face&#34; and avoid exposing problems have diminished; proactively setting up difficult and dangerous scenarios and treating every confrontation as a &#34;rehearsal&#34; for actual combat have increased. The atmosphere of getting serious, getting tough, and proactively exposing combat effectiveness shortfalls has grown stronger; the phenomenon of concealment and of concealing illness and avoiding treatment has diminished. This transformation is a vivid embodiment of focusing on actual combat and exerting effort toward winning.</p><p>Editor: Establishing a correct conception of performance is not the work of a moment — it requires sustained, long-term effort. To fundamentally rectify officers&#39; and soldiers&#39; conception of performance, in what areas do you plan to concentrate effort going forward?</p><p>Detachment Commander: The key lies in properly handling the dialectical relationship between &#34;visible achievement (显绩)&#34; and &#34;latent achievement (潜绩).&#34; We must have the courage to work hard and sustain effort on &#34;latent achievement&#34; — accurately identifying and thoroughly analyzing every shortfall exposed in training, digging deep to the root cause behind every &#34;defeat&#34; entry, and repeatedly tempering every weakness until it is truly hardened. Only when the latent work is done sufficiently will visible achievement follow naturally; only when latent achievement is solidly built will visible achievement be sustainable over the long term. This requires leaders at every level to abandon the pursuit of quick results and instant success, and with the spirit of &#34;success need not be credited to me&#34; and the commitment of &#34;success must have my contribution,&#34; to focus steadily on building the grassroots and laying foundations, advancing combat effectiveness step by step, and accumulating strength for victory on the battlefield.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">从“捂伤疤”到“立靶子” ■杨 杨 周益人 解放军报特约通讯员 王 达 丛林深处，武警浙江总队某支队一场红蓝对抗演练激战正酣。蓝方凭借电磁干扰阻断红方通信链路，指挥所瞬间“失聪”。指令无法下达，前沿分队乱作一团。近20分钟的通信中断，直接导致红方失利。 复盘会上，该支队某中队中队长李洪没有急于解释，也没批评指责任何人。他在笔记本上写下：“败绩第1条：通信抗干扰能力薄弱，应急备份手段缺失。” 会后，李洪将这页记录撕下，径直走到营区大厅公告栏前，张贴在公告栏上，并附上一行醒目大字：“今日之败，明日之师。” “以往，这类失误多是内部消化，也不会全盘往上报，这不等于自曝家丑吗？”有战士私下议论。李洪态度坚决：“藏着掖着，明天还得栽跟头！” 消息很快在支队传开。官兵反响不一：有人佩服，有人观望，也有人担心：这么干，会不会影响单位评先？会不会让上级觉得我们不行？ 但李洪心里有本账。“这些年，随着部队实战化训练强度越来越大、新装备列装越来越快，一些问题年年查、年年犯，根源就在于缺乏正视失败的勇气。”他坦言，“败绩本身不可怕，可怕的是捂着盖着，最终发展成更大的隐患。” 这份公之于众的“败绩清单”，很快引起支队作训股刘股长的关注。他把这份清单从头到尾拍了下来，将其带到“中队长之家”活动上，意图明确——好的经验做法，值得全支队推广。 质疑声随之而来：“评先评优看的是成绩和荣誉，把失败公之于众，上级看到了怎么想？‘榜上有名’者的成长进步会不会受阻？” 某中队万中队长第一个走上台分享亲身经历：在一场多要素协同演练中，因他指挥失误，导致车组行踪暴露，任务被判定失败。按规定，这条败绩应记录在案，并分析原因。他犹豫了一整天，理由很简单：“这要是传开，中队的脸面往哪搁？” 支持的声音同样有力：“每次复盘剖析问题头头是道，会后却不了了之。下次类似问题重现，依然束手无策。战场上，敌人岂会给我们第二次机会？不把败绩‘挂账销号’，教训永远停留在口头。” 紧随其后，某中队王中队长分享了正面案例：在前不久的综合演练中，因侦察员在恶劣天气下未能准确捕捉“敌”行踪导致行动失败。演练结束，王中队长第一时间将问题摆出，并组织官兵集思广益，最终形成一整套应对不同天候条件下的行动预案，彻底堵塞了漏洞。 争论持续近一个小时。 “败绩不是伤疤，是靶子！怕丢面子，迟早要丢里子！”最终，该支队领导一锤定音：“推行！但要明确规则——哪些败绩要记、如何记录、怎样整改、谁来验收，必须让大家心中有底。” 没过几天，支队机关大厅门口竖起一块醒目的“败绩清单”公告栏。于是，这一机制在该支队全面推开。 李洪带头将此次对抗演练中暴露的另外3条问题贴了上去：协同脱节、指挥迟滞、保障缺位。每条问题后面，都清晰标注了整改措施与完成时限。 万中队长也详细列出自身4个指挥能力短板，并拟制了具体的学习计划和阶段性考核方案。 “从今天起，咱们就跟问题较上真了！”两位中队长相视一笑。 如今，“败绩清单”公告栏已成为该支队官兵关注的焦点。从通信中断到战术失误，从装备故障到指挥盲区，各类问题条分缕析，记录在案。清单绝非“一记了之”，该支队训练督导组每月底逐单位逐条核查整改进度，达标一项，销号一项。 公告栏前，常围满驻足讨论的官兵。大家对照清单反思本单位问题，借鉴兄弟单位经验。某中队班长蒋宇成告诉笔者，他们曾因装备保养不到位导致故障而“上榜”。整改期间，中队不仅完善了保养流程，还组织跨岗位操作培训。“如今，装备完好率大幅提升。以前总想‘翻篇’，现在都盼着问题被揪出来，彻底解决！”蒋宇成说。 从“捂伤疤”到“立靶子”，改变的不仅是训练态度，更是一支部队的政绩观。过去，有的单位简单把“零问题”当作政绩，生怕亮丑影响评先。现在，真正的政绩不仅体现在奖牌榜上，更体现在练兵备战的训练场上。官兵们说，敢于把败绩亮出来、跟问题较真，才是对打赢负责。 “败绩清单”：一种亮堂堂的清醒 ■杨 杨 许富泽 解放军报特约通讯员 王 达 武警浙江总队某支队组织工兵防化分队展开模拟救援。姚志翔 摄 从“讳疾忌医”到“敢于亮丑”—— “败绩清单”记录的是战斗力的“异常指标”，它的意义是指明发力方向 夏日，武警浙江总队某支队作训股刘股长到基层回访，目光习惯性地投向“败绩清单”公示墙。3个月前仅6行字的清单，如今已密密麻麻登记了48条，其中35条已被划掉——每条记录旁，都贴着整改前后的对比数据和现场照片。旧的刚销，新的又补。看着官兵围在公示墙前主动“揭短”、议论整改方案的热烈场面，他不禁回想起“败绩清单”推行之初遭遇的阻力。 当支队党委决定在全支队推行“败绩清单”时，基层议论纷纷。 这背后，是一种普遍的误解——把“败绩”等同于“污点”。 “大家心里都有顾虑。”该支队政治工作处卢主任坦言，“怕影响单位形象，怕上级质疑能力，怕评先评优受影响。” 面对质疑与顾虑，该支队党委没有急于反驳，而是决定：把问题“摊开来讲”。专题答疑会上，该支队领导打比方道：“体检报告标出异常指标，没人因为有几个箭头否定健康。‘败绩清单’记录的是战斗力的‘异常指标’，它的意义是指明发力方向。” 为让官兵吃下“定心丸”，机关同步出台3条配套规定：第一，主动上报并整改的败绩，不计入个人档案，不影响评先评优；隐瞒不报的严肃追责问责。第二，每条败绩限期45天销号，销号后转入训练档案备查，不再公示。第三，实行“发现、记录、整改、验收、问责”闭环管理，不设“过滤机制”，不搞“自收自验”。 细看“败绩清单”，仅标注6个要素：问题描述、整改措施、完成时限、责任人、验收标准、备注。没有模糊的“中队整体负责”，没有笼统的“下一步改进”，只有具体细节——谁改、何时改、改成啥样、谁验收。 从“讳疾忌医”到“敢于亮丑”，一张薄薄的纸，记录了官兵思想的转变。 某中队中士杨子杰对此感触颇深。一次考核，他因探索新算法导致信息过载，影响了整体通联。本以为要受批评，作训股得知后，不仅没有追责，反而立即优化细则：明确区分“责任性败绩”与“探索性败绩”。因挑战高难度、探索新战法导致的失利，记录时备注“探索性败绩”，不追究、不问责。这一规定像一把钥匙，打开了官兵心中的那把锁。 从“遮遮掩掩”到“主动排雷”—— 若不及时排查纠偏，隐藏的问题如同水下暗礁，终将撞沉航船 思想关过了，行动的惯性仍在。 作训股钱参谋的铁皮柜里，锁着10余本旧台账。翻开来看，页页光鲜，但他心里清楚，有些数字只是一层漂亮的漆，漆面之下，掩盖的却是锈蚀。 过去，官兵心照不宣地奉行“生存法则”：迎检必说“没问题”，组训专挑“最容易”，革新坐等“上级明确”。谁敢点问题，轻则被批“格局小”，重则遭疑“能力差”。 “败绩清单”探索初期，各单位清单都是空白的。钱参谋挨个中队打电话询问，得到的回答惊人一致：“我们中队没有问题！” 若不及时排查纠偏，隐藏的问题如同水下暗礁，终将撞沉航船。该支队党委决心再完善清单内容：一是将“主动暴露问题”由扣分项改为加分项，核实后在年度考评中正向激励。二是建立“败绩共享”机制，一个中队暴露问题，全支队对照排查，整改经验可直接借鉴。 这一招迅速见效。某中队将“夜训器材卡扣磨损”写入清单，保障处立即排查全支队同类装备，统一更换，避免了一场隐患。 某中队姜中队长是全支队最后一个填写清单的。因为他坚信自己的中队“毫无败绩”。秘诀很简单——降低难度。 直到一次实弹射击调整申请被训练督导组驳回，记录如实登上支队“败绩清单”：“长期以降难度保安全，战斗力生成进度滞后。” 当晚，姜中队长把自己关进会议室。一同陪着他的，是墙上两块“安全先进单位”奖牌。 转变发生在一个雨夜。这一次，姜中队长没有申请调整训练计划。官兵在泥水里卧倒、匍匐。有人摔了跟头，有人擦破了皮，却无一人停下来。 站在雨中，姜中队长突然觉得，以往的“安全”，其实是一种偷懒。 从“及不及格”到“过不过硬”—— 以前“过得去就行”，现在懂得了“过得去”就是“过不去” “败绩清单”刚上墙时，某大队官兵路过公示栏常不自觉地低下头。董大队长的压力最大，他名下挂的败绩最多——热食前送路线选择错误、指挥野战车场帐篷搭设超时、环形工事构筑无效……有些过去被视作“不算啥”的问题，一旦白纸黑字上了清单，分量便重若千钧。 曾几何时，该支队党委内部也曾争论：清单公开会不会挫伤大家的积极性？讨论后该支队领导说：“若连直面问题的勇气都没有，何谈打仗？” 一次复盘会，官兵习惯性地把问题归咎“天气”“装备”“场地”。董大队长却突然开口：“别推责了，是我们没考虑到位。记下来，上清单！”那一刻，他完成了从“怕问题”到“找问题”的跨越。后来，他总结道：当问题经历记录、整改、销号闭环后，败绩便成了能力跃升的催化剂。 下士唐金全有句口头禅：“过得去就行。”各项训练课目考核只求跨过“及格线”。这种“及格万岁”的心态在基层并不少见。该支队党委调研后认为，根子在评价标准——只问“及不及格”，不问“过不过硬”。 为此，“败绩清单”新增“进步幅度评价”机制，既看绝对成绩，更看进步增量。 一天，“败绩清单”上多了一条关于唐金全所在班的记录：班组战术协同配合不紧密，用时比优秀标准慢8秒。唐金全不服：“8秒而已，能咋？” 一旁的陈指导员沉默不语。次日教育课，他播放了一段真实战场录像：因协同差了几秒，一个排遭敌火力覆盖，全员牺牲。 “短短几秒，葬送了一个排！” 指导员的话，像烙铁一样烫在唐金全心上。接下来一周，他和战友们全力配合。再次考核，成绩反超标准4秒。 问题销号那天，唐金全主动签下名字：“以前‘过得去就行’，现在懂得了‘过得去’就是‘过不去’！” 变化在全中队蔓延。一班射击目标从“合格”升至“优良”；五班装备保养目标从“按时”变为“零故障”…… 如今，各单位的“败绩清单”仍在动态更新。清单上每一行被划掉的记录，都见证了这支部队摔过的跟头，更标注着他们奋起直追、通向胜利的坐标。 藏着掖着，小问题终会酿成大患 ■李 洪 那次对抗演练失利后，我力排众议，将“败绩清单”张贴在公告栏上。贴上去的那一刻，我的心里也直打鼓。 “败绩清单”晒出后，机关的迅速反应让我颇感意外。当天，信通股便打来电话，详细询问是否存在技术瓶颈或实际困难。紧接着，信通、作训、后装等股室纷纷派出骨干力量到中队进行技术支持，逐条对照清单，现场协助查找症结、拟制对策。 更令人欣喜的变化，发生在训练场上。那种通过降低难度以求成绩过关、面子好看的想法已难觅踪影。支队上下形成了鲜明导向：鼓励探索创新，挑战高难课目，即使在对抗演练中失利，其评价也远高于低难度下的“虚假胜利”。 复盘检讨时，过去习惯性强调客观原因的现象不见了，取而代之的是主动揽责：“我的责任是什么？”遇到问题，不再是“能不能上报”的犹豫，而是主动记录上清单。一种共识在官兵心中生根：问题亮出来，大家齐心协力解决；藏着掖着，小问题终会酿成大患。 过去那种“报喜不报忧”的做法，表面是维护部队形象，实则是侵蚀战斗力的根基。担心暴露问题，必然导致绕着矛盾走；不愿承担败绩，必然降低训练标准；害怕影响评先，必然满足于“过得去”而非“过得硬”。这不是创造政绩，而是在透支未来战场胜算！ 前不久，中队再次参加对抗演练。我们针对前期暴露的短板制订多种预案，备足应对手段，甚至主动要求“蓝军”加大干扰强度。虽取得胜利，但在复盘会上，我依然针对演练中发现的新问题，郑重列上了几条“败绩”。 有人问我：赢了还列败绩，是不是太较真了？我说：战场上没有完美的胜利，只有不断改进。今天胜利掩盖的漏洞不解决，明天就可能成为失败的理由！平时多解决一个问题，战时便少一分被动。 几个月过去，清单上的条目不断被“销号”，新的问题又被及时记录。清单越来越薄，底气却越来越足。我深切体会到：一支勇于亮出败绩、敢于自我革命的部队，才是一支真正有力量、有希望、能打赢的精兵劲旅。 军营观察版编辑对话武警浙江总队某支队支队长—— 校准战斗力标尺 一份直面问题的“败绩清单”，折射的不仅是问题短板，更是一支部队政绩观的“晴雨表”。当“零问题”被简单当成成绩、“不敢试”被片面视作稳妥，战斗力便可能在虚假繁荣中弱化。针对此现象，军营观察版编辑与武警浙江总队某支队支队长进行了连线交流。 编辑：有人认为，“败绩清单”是自曝家丑，影响单位形象。这种顾虑与政绩观存在怎样的内在关联？ 支队长：政绩观的核心，在于回答“什么是真正的政绩”。倘若将不出事、不丢脸、不被批评当作政绩，那么掩盖问题、回避矛盾便成了“本能选择”。军队是要打仗的——能不能打赢，就是衡量军人政绩的根本标尺！在这一标尺下，训练短板捂得越久，隐患埋得越深，离打赢目标就越远。“败绩清单”绝非自曝家丑，而是刀刃向内的自我革命、自我完善。它告诉我们：一个单位的良好形象，不是报表上的光鲜，而是敢于直面问题、勇于刮骨疗毒的胆魄与担当。 编辑：从“败绩清单”举一反三，树立正确政绩观还带来了哪些转变？ 支队长：树立正确政绩观，首先要回答“政绩为谁而树、树什么样的政绩、靠什么树政绩”问题。战斗力是唯一的根本的标准。政绩观偏一寸，工作落实就会偏一尺。如今，评价导向不再简单以“有没有问题”论英雄，而是以“敢不敢面对问题、善不善于解决问题”定优劣；训练场上，以往为保“面子”、怕暴露问题而搞的“脚本化”演练少了，主动设置难局险局、将每次对抗都视作实战“预演”的多了；较真碰硬、主动揭露战斗力短板的氛围浓了，遮遮掩掩、讳疾忌医的现象少了。这种转变，是向实战聚焦、向打赢用力的生动体现。 编辑：树立正确政绩观非一时之功，需久久为功。要从根本上端正官兵政绩观，下一步你们还准备在哪些方面用力？ 支队长：关键在于处理好“显绩”与“潜绩”的辩证关系。我们必须勇于在“潜绩”上下苦功、用长劲——把每一次训练暴露的短板找准析透，把每一条“败绩”背后的根源挖深挖实，把每一个弱项反复锤炼直至过硬。只有潜功做足，显功才能水到渠成；只有潜绩夯实，显绩才可持续长久。这要求各级带兵人必须摒弃急功近利思想，以“功成不必在我”的境界和“功成必定有我”的担当，沉心静气抓基层、打基础，一步一个脚印提升部队战斗力，为制胜疆场积蓄力量。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
