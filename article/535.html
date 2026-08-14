@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Military Forum | Analyzing the Internal Logic of Unmanned Intelligent Counter-Capability Development — China Mil Watch</title>
+  <meta name="description" content="Du Jiyong, writing in what appears to be a PLA professional military journal forum, lays out a five-part doctrinal framework for developing counter-unmanned and counter-autonomous systems capabilities">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/535.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/535.html">
+  <meta property="og:title"        content="Military Forum | Analyzing the Internal Logic of Unmanned Intelligent Counter-Capability Development">
+  <meta property="og:description"  content="Du Jiyong, writing in what appears to be a PLA professional military journal forum, lays out a five-part doctrinal framework for developing counter-unmanned and counter-autonomous systems capabilities">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Military Forum | Analyzing the Internal Logic of Unmanned Intelligent Counter-Capability Development">
+  <meta name="twitter:description" content="Du Jiyong, writing in what appears to be a PLA professional military journal forum, lays out a five-part doctrinal framework for developing counter-unmanned and counter-autonomous systems capabilities">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Modernization">Modernization</span>
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Military Forum | Analyzing the Internal Logic of Unmanned Intelligent Counter-Capability Development
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军事论坛丨解析无人智能反制能力建设内在逻辑</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>21 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16462491.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>Du Jiyong, writing in what appears to be a PLA professional military journal forum, lays out a five-part doctrinal framework for developing counter-unmanned and counter-autonomous systems capabilities, organized around demand-pull, cost-effectiveness, capability form, generation pathway, and evolutionary logic—with explicit calls to shift from reactive &#39;patch-and-chase&#39; postures to pre-positioned, adaptive defense architectures and to pursue &#39;countering the unmanned with the unmanned, countering intelligence with intelligence&#39; (以无反无、以智反智). The article documents an institutional acknowledgment that PLA counter-UAS theory is currently lagging behind technology development, creating what the author calls a risk of theoretical &#39;losing one&#39;s voice&#39; (失语) in the unmanned domain. The framing points to pressure within the defense establishment to accelerate the translation of operational concepts into testable doctrine before adversarial technological surprise closes the window—though the article names no specific programs, units, or timelines, leaving the gap between this theoretical agenda and actual acquisition or force structure changes unknown.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Analyzing the Internal Logic of Unmanned Intelligent Counter-Capability Development</p><p>■ Du Jiyong</p><p>Introduction</p><p>At present, unmanned intelligent technology is reshaping the form of modern warfare with unprecedented breadth and depth. Against this backdrop, building a counter-capability system capable of effectively responding to unmanned intelligent threats has leapt from a tactical-level emergency response to an important proposition bearing on national security and strategic initiative. However, faced with rapid technology iteration and asymmetric operational pressure, the traditional passive-response, technology-stacking model of counter-capability has shown its inadequacy. Jumping out of the threat-driven &#34;patch-and-chase&#34; mode and achieving an active, shaping transformation of counter-capabilities—from &#34;able to counter&#34; to &#34;skilled at countering,&#34; from &#34;emergency response&#34; to &#34;pre-positioned&#34;—requires research into and a grasp of its internal logic.</p><p>The Demand-Pull Logic: Balancing Dynamic Threats with Routine Readiness</p><p>Unmanned intelligent operations pursue surprise and unpredictability in technology, tactics, and methods of operation (战法), which requires both sides to maintain definite, always-available standing counter-capabilities for effective response. The contradiction between dynamic threats and routine readiness reveals the demand source of &#34;why&#34; unmanned intelligent counter-capabilities are built.</p><p>Dynamic threats stem from the diversification, swarming, and multi-domain distribution of unmanned intelligent platforms, giving rise to a wide variety of possible tactical combinations; continuous technological development further broadens the sources of threat. Routine readiness requires maintaining effective response capabilities even when threat characteristics have not been fully identified and attack patterns exceed pre-planned scenarios. The difficulty lies in establishing an all-time, all-domain surveillance network, maintaining always-available rapid-reaction capabilities, and achieving a sustainable supply of counter-capabilities.</p><p>To address the dynamic threats of unmanned intelligent operations, counter-capability development should shift away from a threat-based passive model toward a capability-based forward-looking design, building a highly adaptive integrated defense system. In terms of development philosophy, rather than focusing excessively on specific unmanned intelligent equipment threats, the approach should be to conduct systematic design targeting their common vulnerabilities, building key capabilities in reconnaissance and early warning, rapid decision-making, soft-hard coordination, and effects assessment. In terms of requirements generation, the focus should be on typical scenarios such as protection of key targets, anticipating possible modes of unmanned intelligent attack, and compiling a list of counter-capability requirements. In terms of command and control, both reaction speed and operational controllability must be balanced, with decision-making processes and authorization mechanisms designed to handle sudden and variable threats. In terms of operating mechanisms, an all-time emergency response mechanism should be established, adversarial exercises based on complex scenarios should be conducted, differentiated counter-strategies should be studied, and rapid-reaction capability should be ensured even in non-wartime conditions.</p><p>The Value-Orientation Logic: Unifying Low Cost with High Effectiveness</p><p>Military capability development must pursue maximum effectiveness under conditions of limited resources. In countering continuously evolving unmanned intelligent threats, unifying low cost with high effectiveness is especially important for counter-capabilities—this is the value-orientation of &#34;by what measure&#34; counter-capability development is assessed.</p><p>Low cost and high effectiveness are not simply opposed; rather, dynamic balance and value unity are achieved through systematic design. Low cost does not equal low capability: through scientific overall planning and intelligent empowerment, marginal benefit can be maximized at key junctures such as target identification and resource allocation. High effectiveness does not mean high investment: through precise design and system optimization, limited resources can be converted into optimal operational results. Counter-capabilities should both respond well to real threats and be deployable and sustainably maintained at scale within affordable bounds, finding the balance between &#34;able to defend&#34; and &#34;able to afford defending,&#34; ensuring that investment produces sustainable, regenerative, and cost-effective counter-capabilities.</p><p>Building counter-capabilities that unify low cost with high effectiveness requires going beyond the cost accounting of individual equipment, and establishing a new assessment paradigm for comprehensive trade-offs across dimensions such as the security value of the targets being protected, the full life-cycle cost of system development, and the cascading risks that capability failure may trigger. On one hand, a cost-effectiveness assessment model based on adversarial data should be established to precisely calculate the cost-benefit of different counter-technology pathways and equipment integration schemes, comparing the cost-effectiveness of upgrading and retrofitting traditional equipment versus researching, developing, and trialing new-quality (新质) equipment, and using this to determine resource allocation—concentrating resources on key technologies and capability nodes that can sever the adversary&#39;s operational chain and produce system-level cascading effects. On the other hand, a counter-capability system with tiered cost allocation should be built, integrating various types of counter-equipment and organizing force modules with different functions to form a tiered capability configuration of baseline assurance, main combat, and gap-filling, enabling flexible response to currently known threats while adapting to unknown threats through rapid reconfiguration; promoting lightweight, miniaturized, and mobile deployment of counter-equipment with development toward multi-platform adaptability, reducing maintenance costs through open architecture and modular design, and developing combined soft-hard counter-means to improve cost-effectiveness.</p><p>The Capability-Form Logic: Combining Precise Countering with Elastic Defense</p><p>Unmanned intelligent threats combine the attrition-oriented nature of &#34;numerical saturation&#34; with the precision of &#34;intelligent penetration,&#34; which determines that both sides should possess precise counter-capabilities to address high-value, high-threat targets, and elastic defense capabilities to address large-scale, distributed attacks. Precise countering and elastic defense together delineate the concrete form of &#34;what&#34; counter-capabilities should look like when built.</p><p>Precise countering focuses on the identification and engagement of &#34;points,&#34; emphasizing real-time identification, rapid locking, and efficient destruction of high-value, high-threat targets within complex electromagnetic environments and dense swarm targets. Elastic defense focuses on &#34;area&#34; coverage and survivability, emphasizing the resilience and adaptive capability that a counter-system must possess when facing uncertain, multi-wave, and saturation attacks. Precision is the key to the elastic system achieving deterrence; elasticity is the prerequisite for precision to be sustained; the two are unified in a single objective: effectively striking the adversary&#39;s operational capabilities while ensuring the survival of the counter-system itself.</p><p>The development priorities lie in building, through technology integration and tactical design, a counter-capability system with no blind spots in perception, no delay in reaction, no deviation in strikes, and no paralysis of the system. First, distributed node deployment: develop multi-capable integrated counter-nodes, endow nodes with certain perception, decision-making, and lethality capabilities, and through wide-area dispersed deployment and dynamic network connectivity, break dependence on single nodes and enhance system structural resilience and rapid reconstitution capability. Second, ubiquitous detection networks: integrate diverse sensing means to build a cross-domain, heterogeneous, intelligently fused detection network; relying on artificial intelligence and big data analytics, extract key threat characteristics from massive, mixed information to achieve early identification of adversary intent, behavioral prediction, and situational early warning, enhancing the ability to know first and perceive first. Third, agile interception means: develop rapidly responsive, flexibly maneuverable counter-forces, rationally configure various lethality means to form multi-layered, multi-means, switchable interception capability modules, and through intelligent scheduling and task allocation, achieve on-demand response, precise energy release, and controlled damage.</p><p>The Generation-Pathway Logic: Synchronizing Theory-Pull with Technological Innovation</p><p>The risk of technological surprise in the unmanned intelligent domain is increasingly prominent, forming a significant time gap and capability gap with the relatively lagging preparation of military theory. This contradiction directly determines the primary pathway of &#34;how&#34; counter-capabilities are generated—namely, through theory-pull and technological innovation forming a dual-engine drive for capability generation.</p><p>The critical value of military theory lies in revealing the essence of future warfare, foreseeing trends in technological evolution, and planning capability generation pathways, thereby leading technological innovation, equipment development, and force employment. Technological innovation can often bring temporary advantages, but without the systematic guidance of advanced theory, technological development easily falls into path dependency and blind expansion; equipment development may be reduced to a stacking of technical specifications, making it difficult to form systematic, combat-realistic counter-capabilities. At present, the rapid iteration of unmanned intelligent technology has placed counter-capabilities under &#34;keep-up&#34; pressure at the technical level, while at the theoretical level there exists a risk of &#34;losing one&#39;s voice&#34; (失语).</p><p>Counter-capability generation requires theory-pull and technological innovation to proceed in synchrony, forming a capability generation pathway of theory-pull, technology-push, and practice-verification. First, build a moderately forward-looking counter-theory system: closely track the evolution of artificial intelligence technology, keenly capture the inflection points and disruptive potential of technological change, promptly identify potential threats and technological breakthroughs, put forward original operational concepts, methods of operation (战法), and force employment principles related to unmanned intelligent countering, deepen research in key directions such as data, algorithms, and computing power, and explore the approach of &#34;countering the unmanned with the unmanned, countering intelligence with intelligence&#34; (以无反无、以智反智). Second, establish a rapid channel for concept demonstration and validation: through simulation deduction and other means, rapidly translate theoretical concepts into testable and verifiable practical forms, clarify the applicable boundaries, operational modes, priority rankings, and expected effectiveness of counter-technologies in different scenarios, accelerate the transformation of theoretical results, and shorten the conversion cycle from &#34;thought to weapon.&#34; Third, reform the experimentation model: through high-intensity, high-frequency, multi-scenario combat-realistic adversarial testing, allow theory to iteratively evolve through technological practice and technology to land precisely under theoretical guidance, forming a capability generation chain of &#34;theory—technology—validation—optimization.&#34;</p><p>The Development-Evolution Logic: Coordinating Dynamic Gaming with Autonomous Evolution</p><p>The essence of unmanned intelligent confrontation is a dynamic game (动态博弈) between attacking and defending sides at the levels of algorithms, tactics, and other dimensions, with both sides in a process of continuous learning and adaptation. Dynamic gaming and autonomous evolution reveal the evolutionary logic that counter-capability development must focus on self-renewal and continuous evolution in order to achieve &#34;sustained superiority.&#34;</p><p>Currently, the challenge facing this evolutionary logic is how to convert massive, high-dimensional, fragmented adversarial data into the evolutionary momentum of system capabilities and tactical rules, forming an autonomous evolution mechanism capable of adapting to dynamic gaming and ensuring long-term advantage, and embedding it throughout the full process of technology research and development, tactical training, and system assessment, ensuring that counter-capabilities are continuously enhanced through confrontation.</p><p>The future counter-system should possess the capability to &#34;learn through gaming and evolve through learning,&#34; becoming an intelligent evolutionary system with adaptive, self-optimizing, and self-evolving capabilities. First, extraction and reshaping of operational knowledge: convert each adversarial experience into reusable, iterable algorithm models, verify and optimize counter-strategies through deduction and assessment of various attack-defense scenarios, and drive continuous improvement of counter-capabilities. Second, full-chain feedback of operational data: build a full-chain data connectivity mechanism spanning live-force confrontation, simulated deduction, and capability assessment, feeding back key data such as confrontation results and tactical effectiveness to the technology research-and-development and system-design end, to correct algorithm models, optimize equipment configuration, and iterate tactical rules, driving continuous evolution of counter-capabilities. Third, adversarial environments driving evolution: relying on technologies such as digital twins and reinforcement learning, build a virtual adversarial environment with self-verification capability, dynamically generating high-fidelity sets of adversarial scenarios, methods of operation (战法), and algorithm libraries, supporting the counter-system in conducting autonomous exploration, strategy trial-and-error, and effectiveness assessment in virtual environments, achieving capability leaps through the principle of &#34;using the virtual to promote the real, using training to promote development.&#34;</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">解析无人智能反制能力建设内在逻辑 ■杜继永 引言 当前，无人智能技术正以前所未有的广度与深度重构现代战争形态。在这一背景下，构建能够有效应对无人智能威胁的反制能力体系，已从战术层面的应急响应，跃升为关乎国家安全与战略主动权的重要命题。然而，面对技术快速迭代与非对称作战压力，传统被动应对、技术堆砌的反制模式已显乏力。如何跳出“打补丁”“追着跑”的威胁倒逼模式，实现反制能力从“能反”到“善反”、从“应急”到“预置”的主动塑造转变，需要研究把握其内在逻辑。 需求牵引逻辑：平衡动态威胁与常态备防 无人智能作战在技术、战术、战法上追求突袭性与不可预测性，这就要求作战双方具备确定的、随时可用的常备反制能力予以有效应对。动态威胁与常态备防的矛盾，揭示了无人智能反制能力“为何而建”的需求来源。 动态威胁，源于无人智能平台多样化、集群化以及多域分布，并由此衍生出战术组合的各种可能性，技术的不断发展更是导致威胁来源进一步广泛化。常态备防，要求在威胁特征尚未完全明确、攻击样式超出预案的情况下，保持有效应对能力。其难点在于建立全时全域监视网络，保持随时可用的快速反应能力，实现可持续的反制能力供给。 应对无人智能作战的动态威胁，反制能力建设应当改变基于威胁的被动模式，转向基于能力的前瞻设计，构建具备高适应性的综合防御体系。在建设理念上，不过度关注具体无人智能装备威胁，而是针对其通用弱点进行系统设计，打造侦察预警、快速决策、软硬协同、效果评估等关键能力；在需求生成上，主要针对重要目标防护等典型场景，预想无人智能攻击的可能方式，梳理反制能力需求清单；在指挥控制上，兼顾反应速度与行动可控，设计应对突发、多变威胁的决策流程与授权机制；在运行机制上，建立全时应急响应机制，开展基于复杂场景的对抗演练，研究差异化反制策略，确保在非战争状态下亦具备快速反应能力。 价值导向逻辑：统一低成本与高效能 军事能力建设需要在资源有限的前提下追求效能最大化。为应对持续发展的无人智能威胁，对于反制能力而言，统一低成本与高效能尤为重要，这是反制能力建设“以何衡量”的价值导向。 低成本与高效能并非简单对立，而是通过体系化设计实现动态平衡和价值统一。低成本不等同于低能力，通过科学统筹与智能赋能，在目标识别、资源分配等关键环节寻求边际效益最大化；高效能也并不意味着高投入，依托精准设计与体系优化，可将有限资源转化为最佳作战效果。反制能力既能很好应对现实威胁，又能在可承受范围内规模部署与持续维持，在“防得住”与“防得起”之间找到平衡点，确保投入产生的是可持续、可再生、高效费比的反制能力。 建设低成本与高效能相统一的反制能力，应超越单一装备的成本核算，从守护目标的安全价值、体系建设的全周期成本以及能力失效可能导致的联动风险等维度，建立新的评估范式进行综合权衡。一方面，建立基于对抗数据的效费评估模型，精确测算不同反制技术路线与装备集成方案的成本收益，对比传统装备升级改造与新质装备研发试用的成本效益，据此确定资源投向，将资源聚焦到可阻断对手作战链条、产生体系级联效应的关键技术与能力节点上。另一方面，构建成本梯次配置的反制体系，融合各类型反制装备，编配不同功能的力量模块，形成保底、主战、补盲的梯次能力配置，使其既能灵活应对当前已知威胁，又能通过快速重组适应未知威胁；推动反制装备轻量化、微型化、机动化部署，并向多平台适配发展，通过开放式架构和模块化设计降低维护成本，发展软硬结合反制手段提高效费比。 能力形态逻辑：兼具精准反制与弹性防御 无人智能威胁兼具“数量饱和”的消耗性与“智能突防”的精确性，这决定了作战双方应具备精准反制能力以针对高价值、高威胁目标，且具备弹性防御能力以应对大规模、分布式攻击。精准反制与弹性防御，二者共同勾勒出反制能力“建成什么样”的具象化形态。 精准反制聚焦“点”的识别与打击，强调在复杂电磁环境与密集集群目标中，对高价值、高威胁目标的实时辨识、快速锁定与高效毁伤。弹性防御则聚焦“面”的覆盖与生存，强调反制体系在面临不确定、多波次、饱和式攻击时，所应具备的韧性与自适应能力。精准是弹性体系实现威慑的关键，弹性是精准得以持续发挥的前提，二者统一于一个目标：在确保反制体系自身存续的前提下，有效打击对手作战能力。 建设重点在于通过技术集成与战术设计，构建感知无盲区、反应无延迟、打击无偏差、体系无瘫痪的反制能力体系。一是节点部署分布化，发展多能融合的反制节点，赋予节点一定的感知、决策与杀伤能力，通过广域分散部署与动态网络连接，打破单一节点依赖，提升体系结构韧性与快速重构能力。二是探测网络泛在化，融合多元感知手段，构建跨域、异构、智能融合的探测网络；依托人工智能与大数据分析技术，从海量、混杂信息中提取关键威胁特征，实现对对手意图的早期识别、行为预测与态势预警，提升先知先觉能力。三是拦截手段敏捷化，发展可快速响应、灵活机动的反制力量，合理配置各类杀伤手段，形成多层次、多手段、可切换的拦截能力模块，通过智能调度与任务分配，实现按需响应、精准释能、毁伤可控。 生成路径逻辑：同步理论牵引与技术创新 无人智能领域的技术突袭风险日益凸显，与相对滞后的军事理论准备之间形成了显著的时间差与能力差。这一矛盾直接决定了反制能力“如何生成”的主要路径，即通过理论牵引与技术创新，构成能力生成的双轮驱动。 军事理论的关键价值在于揭示未来战争本质、预见技术演进趋势、规划能力生成路径，从而引领技术创新、装备发展和力量运用。技术创新往往能带来暂时的优势，但若缺乏先进理论的系统性引导，技术发展容易陷入路径依赖与盲目扩张，装备建设可能沦为技术指标的堆砌，难以形成体系化、实战化的反制能力。当前，无人智能技术快速迭代，导致反制能力在技术层面面临“紧随”压力，在理论层面则存在“失语”风险。 反制能力生成需要理论牵引与技术创新同步，形成理论牵引、技术推动、实践检验的能力生成路径。一是构建适度前瞻的反制理论体系，紧跟人工智能技术演进，敏锐捕捉技术变革的临界点与颠覆性潜力，及时识别潜在威胁与技术突破口，提出原创性无人智能反制相关作战概念、战法与力量运用原则，深化数据、算法、算力等关键方向研究，探索“以无反无、以智反智”的方法路子。二是建立概念演示验证快速通道，通过仿真推演等方式，将理论构想快速转化为可测可验的实践形态，明确反制技术在不同场景下的适用边界、作战方式、优先级排序与预期效能，推动理论成果加速转化，缩短“从思想到武器”的转化周期。三是改革试验模式，通过高强度、高频次、多场景的实战化对抗试验，让理论在技术实践中迭代演化，让技术在理论指导下精准落地，形成“理论—技术—验证—优化”的能力生成链条。 发展演化逻辑：协调动态博弈与自主进化 无人智能对抗实质是攻防双方在算法、战术等层面的动态博弈，双方均处于持续学习与适应的过程中。动态博弈与自主进化，揭示了反制能力建设需要着眼自我更新、持续进化，以实现“持续领先”的演化逻辑。 当前，这一演化逻辑面临的挑战，是如何将海量、高维、碎片化的对抗数据，转化为体系能力和战术规则的进化动能，形成能够适应动态博弈、确保长期优势的自主进化机制，并嵌入技术研发、战术训练、体系评估全流程，确保反制能力在对抗中持续增强。 未来反制体系应具备“在博弈中学习、在学习中进化”的能力，成为具备自适应、自优化、自演进能力的智能进化系统。一是作战知识萃取重塑。将每次对抗经验转化为可复用、可迭代的算法模型，通过推演评估各类攻防场景，验证和优化反制策略，推动反制能力持续提升。二是作战数据全链回流。构建从实兵对抗、模拟推演到能力评估的全链条数据贯通机制，将对抗结果、战术效能等关键数据，回传至技术研发与体系设计端，以修正算法模型、优化装备配置、迭代战术规则，推动反制能力持续进化。三是对抗环境推动演进。依托数字孪生与强化学习等技术，构建具备自验证能力的虚拟对抗环境，动态生成高逼真度的对抗场景集、战法集与算法库，支持反制体系在虚拟环境中开展自主探索、策略试错与效能评估，实现以虚促实、以训促建的能力跃升。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
