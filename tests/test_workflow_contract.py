@@ -45,23 +45,57 @@ def index_of(names, fragment: str) -> int:
         "no workflow step matching %r; steps are: %s" % (fragment, names))
 
 
+def strip_comment(line: str) -> str:
+    """
+    Drop a trailing shell/YAML comment, honouring quotes.
+
+    Stripping only whole-line comments was not enough: a trailing
+    `fetch-depth: 0   # ... push-back step` or `echo hi  # git push` puts the
+    command vocabulary these tests key off into a line that survives, so a step
+    could appear to push, or appear to verify, purely from prose. Quote-aware
+    because the workflow legitimately contains `echo "### ..."`, where the hash
+    is data rather than a comment.
+
+    A `#` opens a comment only outside quotes and at the start of a word, which
+    is the shell's own rule. Backslash escapes are not modelled; the workflow
+    contains none, and a test parser that silently guessed at them would be
+    worse than one with a stated limit.
+    """
+    out = []
+    quote = None
+    prev_ws = True                      # start of line counts as a word break
+    for ch in line:
+        if quote is not None:
+            out.append(ch)
+            if ch == quote:
+                quote = None
+            prev_ws = False
+        elif ch in ("'", '"'):
+            quote = ch
+            out.append(ch)
+            prev_ws = False
+        elif ch == "#" and prev_ws:
+            break
+        else:
+            out.append(ch)
+            prev_ws = ch.isspace()
+    return "".join(out).rstrip()
+
+
 def step_blocks(text: str):
     """
     (name, executable-body) per step.
 
-    Comment lines are stripped from the body: the workflow's comments quote the
-    very commands under test (`git pull --rebase`, `git push`), and matching
-    prose would attribute a rebase to whichever step the comment happens to
-    precede.
+    Comments are stripped from the body: the workflow's comments quote the very
+    commands under test (`git pull --rebase`, `git push`), and matching prose
+    would attribute a rebase to whichever step the comment happens to precede.
     """
     parts = re.split(r"^      - name:", text, flags=re.M)[1:]
     out = []
     for part in parts:
         lines = part.splitlines()
         name = lines[0].strip()
-        body = "\n".join(
-            line for line in lines[1:] if not line.lstrip().startswith("#")
-        )
+        body = "\n".join(strip_comment(line) for line in lines[1:])
         out.append((name, body))
     return out
 

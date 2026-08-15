@@ -174,7 +174,12 @@ jobs:
           echo "Tracked database untouched by tests."
 
       # ── 5. Run pipeline (all sources) ─────────────────────────────────────
+      # `id: pipeline` exists so the persist step below can prove this step
+      # actually ran. Without it the only signal available is job-scoped
+      # failure(), which cannot tell "collection failed" from "collection never
+      # started" — the defect that pushed 483d154 (DECISION_LOG 2026-08-14).
       - name: Run pipeline
+        id: pipeline
         if: steps.timecheck.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -202,18 +207,47 @@ jobs:
       # render must never reach production, and this step must not become a way
       # around that. Unanalyzed articles keep passed_relevance NULL, so they
       # re-enter the queue as backlog and drain via BACKLOG_RESERVE_FRACTION.
+      #
+      # GATING (fixed 2026-08-14, DECISION_LOG). `failure()` alone is job-scoped:
+      # it is equally true when migrations, verification, the offline suite, the
+      # reconciliation contract or the tracked-database cleanliness gate failed —
+      # none of which can have produced collection data, because the pipeline was
+      # skipped. On 2026-08-14 run 475 that admitted test residue into a commit
+      # announcing a collection that never happened (483d154). The step now
+      # additionally requires POSITIVE proof the pipeline executed: its outcome
+      # must be `success` or `failure`. A skipped step reports `skipped`, and an
+      # id that never ran reports the empty string — neither satisfies this.
+      #
+      # `success` is deliberately included. The pipeline can succeed and a LATER
+      # step fail (output validation, most plausibly). The day's articles are
+      # then stored and analyzed, the normal commit is gated on success() and
+      # will be skipped, and the runner would be destroyed with the whole day
+      # inside — the 2026-07-17→24 loss mode. Salvaging the database is right;
+      # publishing the unvalidated render is not, which is why output/ stays out.
       - name: Persist scraped articles (if pipeline failed)
         if: >
           failure() &&
-          steps.timecheck.outputs.should_run == 'true'
+          steps.timecheck.outputs.should_run == 'true' &&
+          (steps.pipeline.outcome == 'success' ||
+           steps.pipeline.outcome == 'failure')
+        env:
+          PIPELINE_OUTCOME: ${{ steps.pipeline.outcome }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Say what actually happened. "analysis incomplete" is a claim about
+          # the pipeline, and it is false when the pipeline succeeded and a
+          # downstream step failed.
+          if [ "$PIPELINE_OUTCOME" = "success" ]; then
+            WHY="pipeline completed; a later publication step failed"
+          else
+            WHY="analysis incomplete"
+          fi
           git add pla_watch.db
           if git diff --cached --quiet; then
             echo "No newly scraped articles to persist."
           else
-            git commit -m "Persist collection: $(date -u +%Y-%m-%d) (analysis incomplete)"
+            git commit -m "Persist collection: $(date -u +%Y-%m-%d) (${WHY})"
             git pull --rebase --autostash origin main
 
             # Post-rebase verification. The rebase may have run the reconcile

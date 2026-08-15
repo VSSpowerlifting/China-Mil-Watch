@@ -326,6 +326,61 @@ class TestCountAttribution(PipelineRunCase):
         self.assertEqual(self.run_status(), "completed")
 
 
+class TestLoggedHealthTableMatchesTheDatabase(PipelineRunCase):
+    """
+    The logged table is the operator's view of the run; `source_run_results` is
+    the record. They must agree.
+
+    Until 2026-08-14 they did not: the table was printed straight after
+    collection, before the attribution fold, so every source read `dup=0 new=0`
+    and kept its unrefined status. Production run 112 logged `mod_china ok
+    dup=0 new=0` while storing `ok_all_duplicates dup=7 new=0` — the log said the
+    source delivered nothing and the database said it delivered seven articles we
+    already had. Reading the table alone, an operator could not tell an
+    all-duplicate day from a silent one.
+    """
+
+    def _table(self, adapters):
+        with self.assertLogs("pipeline", level="INFO") as captured:
+            self.run_pipeline(adapters)
+        for message in captured.output:
+            if "Collection health" in message:
+                return message
+        self.fail("the pipeline logged no collection-health table")
+
+    def test_table_reports_the_counts_that_were_stored(self):
+        url = "http://www.81.cn/x/h1.html"
+        factory = scraper_factory(
+            urls=[url], pages={url: "<html/>"}, parsed={url: article(url)})
+        self.run_pipeline({"pla_daily": factory})          # first run: new
+        table = self._table({"pla_daily": factory})        # second: duplicate
+
+        stored = self.results()["pla_daily"]
+        self.assertEqual(stored["duplicates"], 1)
+        self.assertEqual(stored["new_documents"], 0)
+        self.assertIn("dup=%d" % stored["duplicates"], table)
+        self.assertIn("new=%d" % stored["new_documents"], table)
+
+    def test_table_reports_the_status_that_was_stored(self):
+        url = "http://www.81.cn/x/h2.html"
+        factory = scraper_factory(
+            urls=[url], pages={url: "<html/>"}, parsed={url: article(url)})
+        self.run_pipeline({"pla_daily": factory})
+        table = self._table({"pla_daily": factory})
+
+        self.assertEqual(self.results()["pla_daily"]["status"],
+                         st.OK_ALL_DUPLICATES)
+        self.assertIn(st.OK_ALL_DUPLICATES, table)
+
+    def test_a_genuinely_new_article_still_reads_as_new(self):
+        """The fix must not make every run look like a duplicate run."""
+        url = "http://www.81.cn/x/h3.html"
+        table = self._table({"pla_daily": scraper_factory(
+            urls=[url], pages={url: "<html/>"}, parsed={url: article(url)})})
+        self.assertEqual(self.results()["pla_daily"]["new_documents"], 1)
+        self.assertIn("new=1", table)
+
+
 class TestRegistryDrivenSelection(PipelineRunCase):
     def test_unknown_slug_is_recorded_not_silently_skipped(self):
         url = "http://www.81.cn/x/c1.html"

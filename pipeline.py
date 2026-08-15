@@ -206,7 +206,13 @@ def run(
             )
 
     logger.info("Scraped (raw): %d", len(all_scraped))
-    logger.info("\n%s", human_report(source_results, run_id))
+
+    # The collection-health table is printed AFTER per-source attribution below,
+    # not here. Printed at this point it reported `dup=0 new=0` for every source
+    # and an unrefined status — the fold that computes those numbers, and that
+    # turns OK into OK_ALL_DUPLICATES / OK_ALL_FILTERED, has not run yet. The
+    # persisted `source_run_results` rows were always correct, so the log and the
+    # database disagreed, which is the opposite of what a health table is for.
 
     # ── Stages 4–6: Normalize, dedup, keyword filter ──────────────────────────
     normalized  = [normalize_article(a) for a in all_scraped]
@@ -221,6 +227,10 @@ def run(
     kw_passed, kw_rejected = keyword_filter(new_articles)
 
     if dry_run:
+        # Nothing is stored, so the attribution fold below never runs and the
+        # dup/new columns cannot be filled in. Report what a dry run can honestly
+        # know rather than printing nothing at all.
+        logger.info("\n%s", human_report(source_results, run_id))
         _print_summary(all_scraped, new_articles, kw_passed, [], [], dry_run)
         return
 
@@ -274,6 +284,9 @@ def run(
         db.record_source_run_result(run_id, result)
 
     collection_agg = aggregate_status(source_results)
+
+    # Now the table matches what was just written to source_run_results.
+    logger.info("\n%s", human_report(source_results, run_id))
     logger.info("Collection aggregate status: %s", collection_agg)
 
     # ── Stages 9–12: LLM analysis ────────────────────────────────────────────

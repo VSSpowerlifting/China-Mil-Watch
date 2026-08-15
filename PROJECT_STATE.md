@@ -1,8 +1,52 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-13 (Defense Discourse Phases 1–2 on a branch; DB hotfix pushed).
+Updated: 2026-08-14 (foundation released and validated in production; run-475
+persistence defect fixed on a local branch).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
+
+## Defense Discourse foundation — RELEASED and validated in production
+
+`404f3be` is on `origin/main`. The first genuine scheduled run against it,
+**#476 / `31807724411`**, completed: migrations, verification, the 221-test
+offline suite, the 55 reconciliation tests, pipeline (scrape run 112), output
+validation, database+output commit, push, Pages deploy and success marker all
+passed. The only red was the notify-only health gate, on the already-known MOD
+China alarm. Independent verdict: **EXPECTED DEGRADED SUCCESS**.
+
+Production after run 476: 3,250 articles / 3,250 distinct URLs / max id 3,256 /
+112 runs / 5 sources / 1 desk / 4 institutions / 5 `source_run_results` / 1,110
+analyzed / 2,142 category links. Ledger `0001`–`0005`; integrity `ok`; foreign
+keys clean. All 3,211 pre-release URLs kept their ids, source slugs, hashes,
+run attribution and analysis.
+
+**MOD China is not failing collection any more, and that changes the diagnosis
+recorded under Next tasks below.** Run 112 stored `ok_all_duplicates`:
+7 discovered, 7 fetched, 7 extracted, 7 duplicates, 0 new, no error. The
+scraper reaches the listing and parses it; everything it finds is already in the
+corpus. The 35-day health alarm is therefore about **publication recency**, not
+a broken adapter — the open question is why the listing keeps serving items we
+already hold rather than why the fetch fails. Do not add it to `KNOWN_INERT`.
+
+## Run-475 persistence defect — FIXED on a local branch, not yet pushed
+
+Branch `fix/run475-persistence-gate` off `origin/main` (`3534a07`). One commit;
+**nothing pushed, merged or deployed.**
+
+Run 475 failed the pre-pipeline cleanliness gate (the offline suite had dirtied
+`pla_watch.db`), skipped the pipeline, and the persist-on-failure step still ran
+and pushed the residue as `483d154` under a message announcing a collection that
+never happened. Proven logically neutral — identical `.dump`, 39 bytes on one
+page — so the release stood, but the path was unsafe.
+
+Fixed: persistence now requires positive proof the pipeline executed
+(`steps.pipeline.outcome`), the commit message reports what actually happened,
+the offending test reads a scratch copy instead of opening the WAL-mode tracked
+database read-write, the collection-health table is printed after attribution so
+the log matches the database, and the contract parser strips trailing comments.
+Rulings in DECISION_LOG 2026-08-14; 34 new tests, suite 221 → 255. The
+read-write guard is AST-based: the first attempt matched the literal
+`sqlite3.connect(` and missed the aliased call that caused run 475.
 
 ## Defense Discourse foundation — Phases 1–2 complete, UNCOMMITTED on a branch
 

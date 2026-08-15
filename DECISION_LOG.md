@@ -2,6 +2,89 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-14 — Salvage requires proof of collection; a read of the tracked database is not a read
+
+Stabilization of the defect production run 475 exposed on the first scheduled
+run after the neutral-foundation release. Local branch
+`fix/run475-persistence-gate`; nothing pushed or deployed.
+
+**What happened.** Run 475 passed the guard, migrations, verification, the
+221-test offline suite and the reconciliation contract, then failed the
+pre-pipeline tracked-database cleanliness gate — correctly, because the suite
+had modified `pla_watch.db`. The pipeline was therefore skipped. The
+persistence-on-failure step ran anyway and pushed the rejected residue as
+`483d154`, captioned *"Persist collection: 2026-08-14 (analysis incomplete)"*,
+although no collection had occurred. The residue proved logically neutral (an
+identical `sqlite3 .dump`; 39 bytes on one page), and run 476 then succeeded, so
+the release stood. The control-flow defect did not.
+
+1. **Job-scoped `failure()` is not evidence that anything was collected.** It is
+   equally true for all five pre-pipeline gates. Persistence now additionally
+   requires positive proof the pipeline executed —
+   `steps.pipeline.outcome == 'success' || steps.pipeline.outcome == 'failure'`
+   — which is why `Run pipeline` carries `id: pipeline`. Positive, not a
+   negation of `'skipped'`: an id that never ran reports the empty string, and
+   `!= 'skipped'` would wave that through.
+
+2. **Ruling on case 7 — pipeline succeeded, a later publication step failed:
+   salvage stays eligible.** The day's articles are stored and analyzed; the
+   normal commit carries implicit `success()` and is skipped, so without salvage
+   the runner is destroyed with the whole day inside — the 2026-07-17→24 loss
+   mode. Salvage remains database-only, so an unvalidated render still cannot
+   reach production. A test asserts `output/` never enters that commit even when
+   it is dirty.
+
+3. **The persistence commit message must state what actually happened.**
+   "analysis incomplete" is a claim about the pipeline and is false in case 7.
+   The message is now derived from `steps.pipeline.outcome`. A commit that
+   announces work nobody did is worse than a terse one.
+
+4. **A plain `sqlite3.connect()` on the tracked database is a write.** The file
+   is WAL-mode (header write/read version 2), so opening it read-write creates
+   `-wal`/`-shm` and can checkpoint pages back into it. That is what
+   `test_production_database_has_only_china_sources` was doing, and it is the
+   whole of run 475's residue. **A `mode=ro` URI is not the fix**: SQLite must
+   write the WAL index to read a WAL database, so on a fresh clone with no
+   `-shm` the connection fails to open outright. Tests read a scratch copy via
+   the existing `reconcile_db._read_only`, which already documents this exact
+   hazard. Standing rule: **no test may open the tracked database read-write.**
+   A test enforces it by scanning `tests/` rather than by convention.
+
+   **That scan must be structural, not textual.** The first version of this
+   guard matched the literal string `sqlite3.connect(` — and the line that
+   actually caused run 475 was `import sqlite3 as _sq` … `_sq.connect(str(prod))`,
+   which it silently missed. A guard aimed at a defect that cannot detect that
+   defect is worse than none, because it is believed. It now parses each test
+   module with `ast`, resolves whichever local names reach `sqlite3.connect`
+   (module alias, `from sqlite3 import connect`, or an aliased import), and
+   resolves the connection target through local assignment back to
+   `REPO_ROOT / "pla_watch.db"`. The detector carries its own fixtures for
+   every import style it claims to cover, and for the safe cases — temporary
+   databases, fixtures, `_read_only`, and bare mentions of the filename — it
+   must not flag. It is scoped to this one hazard and is not a static analyser.
+
+   Consequence to watch: `validate_output.py` and `check_source_liveness.py` use
+   the `mode=ro` idiom against the tracked database and work in CI only because
+   an earlier read-write step has left `-shm` beside it. Fragile but currently
+   true, and out of scope here — recorded so it is not rediscovered as a mystery.
+
+5. **The collection-health table is printed after attribution, not before.**
+   Printed after collection it read `dup=0 new=0` with an unrefined status for
+   every source: production run 112 logged `mod_china ok dup=0 new=0` while
+   storing `ok_all_duplicates dup=7 new=0`. The stored rows were always right;
+   the log was not, and an operator reading it could not tell an all-duplicate
+   day from a silent one. Dry runs still print the table, with the counts a dry
+   run can honestly know.
+
+6. **Workflow-contract parsing now strips trailing comments, quote-aware.** The
+   suite decides whether a step pushes, rebases or verifies by looking for
+   command text in its body; a trailing `# git push` put that vocabulary into a
+   surviving line. Quote-aware because `echo "### ..."` is data.
+
+Not done, deliberately: MOD China's threshold untouched, Xinhua still
+`not_implemented`, no schema migration, no change to `reconcile_db.py`'s merge
+algorithm, no new desk made collectible.
+
 ## 2026-08-13 — Country-neutral core: configuration over central imports, and migrations that survive the reconciler
 
 Phases 1–2 of the Defense Discourse foundation, implemented on branch

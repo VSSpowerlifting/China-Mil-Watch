@@ -607,16 +607,28 @@ class TestNeutralLanguagePersistence(unittest.TestCase):
                 self.assertNotEqual(src.language_tag.split("-")[0], "ru")
 
     def test_production_database_has_only_china_sources(self):
-        import sqlite3 as _sq
+        # Reads a scratch COPY, never the tracked file.
+        #
+        # A plain `sqlite3.connect()` on the tracked database is not a harmless
+        # read: the file is WAL-mode (header write/read version 2), so opening it
+        # read-write creates -wal/-shm and can checkpoint pages back into it. That
+        # is how this test left binary residue in `pla_watch.db` on 2026-08-14 —
+        # CI run 475's cleanliness gate correctly rejected it, and the persist
+        # step then pushed it as 483d154. A `mode=ro` URI is not sufficient
+        # either: SQLite must write the WAL index to read a WAL database, so on a
+        # fresh clone with no -shm the connection simply fails to open.
+        #
+        # `reconcile_db._read_only` is the project's existing answer to exactly
+        # this hazard and carries the full reasoning. Reused rather than
+        # reinvented, so there is one place to fix if SQLite's rules change.
+        # DECISION_LOG 2026-08-14.
+        from scripts.reconcile_db import _read_only
         prod = REPO_ROOT / "pla_watch.db"
         if not prod.exists():
             self.skipTest("production database not present")
-        con = _sq.connect(str(prod))
-        try:
+        with _read_only(str(prod)) as con:
             desks = {r[0] for r in con.execute("SELECT DISTINCT desk_id FROM desks")}
             slugs = {r[0] for r in con.execute("SELECT slug FROM sources")}
-        finally:
-            con.close()
         self.assertEqual(desks, {"china"})
         self.assertEqual(slugs, {"pla_daily", "mod_china", "xinhua_mil",
                                  "global_times_mil", "china_mil_online"})
