@@ -1,0 +1,161 @@
+# Offline validation for pull requests.
+#
+# Why this exists: until now no workflow carried a `pull_request` trigger, so a
+# PR arrived with zero checks and the only automated path that ran the suite was
+# `daily_update.yml` — which also collects, spends, writes `pla_watch.db` and
+# deploys. Reviewing a change therefore meant either trusting a local run or
+# running production. This job closes that gap and nothing else.
+#
+# Deliberately narrow. It runs exactly two things the repository already
+# governs — the offline suite and the deploy validator — and then proves it
+# changed nothing. It does not collect, migrate, reconcile, render, deploy,
+# commit, push, or read a secret.
+#
+# Trigger choice. `pull_request` runs the workflow definition taken from the
+# PR's merge commit (the base branch merged with the PR head), with the
+# permissions declared below. The alternative, `pull_request_target`, instead
+# runs the workflow definition from the BASE branch in the base repository's
+# context, where a token and secrets can be available. That is not dangerous by
+# itself — the hazard appears when such a privileged context is combined with
+# checking out or executing PR-controlled code. This job avoids the question
+# entirely: `pull_request`, explicit read-only permissions, no secrets, and no
+# persisted checkout credential.
+#
+# It can run without migrations only because the tracked database is now read
+# through `reconcile_db.read_only` (PR #1). Before that, `validate_output.py`
+# could not open a sidecar-less WAL database on a clean checkout and silently
+# downgraded check 8 to a warning — a green run here would have meant nothing.
+
+name: PR offline checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+# Read-only. This job has no reason to write to the repository, and a token
+# that cannot write cannot be talked into pushing test residue.
+permissions:
+  contents: read
+
+# One in-flight run per PR; a new push supersedes the previous check.
+concurrency:
+  group: pr-offline-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  offline-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # No `ref:` — for a pull_request event this checks out the merge of the
+      # PR into its base, which is what the reviewer is deciding about.
+      #
+      # `persist-credentials: false` because nothing here needs git auth. The
+      # default writes the job token into .git/config as an extraheader, where
+      # any later step — including this PR's own test code — could read it.
+      # Every git command below reads the local checkout only.
+      - name: Check out the pull request
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      # Recorded BEFORE dependencies are installed. `requirements.txt` comes
+      # from the pull request, so `pip install` is the first point at which
+      # PR-controlled code executes; the baseline has to predate it or it is
+      # measuring a state the PR could already have altered.
+      - name: Record tracked database baseline
+        id: baseline
+        run: |
+          set -euo pipefail
+          if [ -e pla_watch.db-wal ] || [ -e pla_watch.db-shm ]; then
+            echo "::error title=Unexpected sidecar::A checkout must not carry pla_watch.db-wal or pla_watch.db-shm."
+            exit 1
+          fi
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "Tracked database baseline recorded."
+
+      # First execution of PR-controlled content.
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # The suite uses temporary databases and never touches the tracked file.
+      # The assertion below is what makes that a fact rather than a claim.
+      - name: Run offline test suite
+        run: python -m unittest discover -s tests -t . -v
+
+      # The same gate the daily run uses before deploying. Check 8 compares
+      # analyzed articles in the database against rendered pages, so it reads
+      # the database — through the scratch-copy helper, never the tracked file.
+      - name: Validate rendered output
+        run: python scripts/validate_output.py
+
+      # Must run even when a step above failed: a failing suite that also
+      # dirtied the tracked database is exactly the case worth seeing, and the
+      # default `success()` would hide it. Not after cancellation, where a
+      # half-finished run proves nothing, and not unless the baseline itself
+      # succeeded, since every comparison below is against its output.
+      #
+      # Four independent questions, none of which subsumes another:
+      #   - has the database's content changed (hash, blind to git);
+      #   - does the tracked database differ from the checkout (git diff);
+      #   - does anything under output/ differ from the checkout (git diff);
+      #   - has anything untracked appeared beside either (git status), which
+      #     a diff against the index cannot see;
+      # plus the sidecar check, which catches a read that bypassed the helper
+      # even when it left the database itself byte-identical.
+      - name: Assert the tracked database and output are unchanged
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          failed=0
+
+          after_db="$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          if [ "$after_db" != "${{ steps.baseline.outputs.db }}" ]; then
+            echo "::error title=Database modified::pla_watch.db changed during the run."
+            echo "  before ${{ steps.baseline.outputs.db }}"
+            echo "  after  ${after_db}"
+            failed=1
+          fi
+
+          if ! git diff --quiet -- pla_watch.db; then
+            echo "::error title=Database modified::pla_watch.db differs from the checkout."
+            git diff --stat -- pla_watch.db
+            failed=1
+          fi
+
+          if ! git diff --quiet -- output/; then
+            echo "::error title=Output modified::output/ differs from the checkout."
+            git diff --stat -- output/
+            failed=1
+          fi
+
+          dirty="$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          if [ -n "${dirty}" ]; then
+            echo "::error title=Working tree dirty::pla_watch.db or output/ was modified, or an untracked file appeared beside them."
+            echo "${dirty}"
+            failed=1
+          fi
+
+          if [ -e pla_watch.db-wal ] || [ -e pla_watch.db-shm ]; then
+            echo "::error title=Sidecar residue::a -wal or -shm was left beside the tracked database; reads must go through reconcile_db.read_only."
+            ls -l pla_watch.db-wal pla_watch.db-shm 2>/dev/null || true
+            failed=1
+          fi
+
+          if [ "${failed}" -ne 0 ]; then
+            exit 1
+          fi
+          echo "Tracked database and output/ unchanged; no sidecar residue."

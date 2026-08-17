@@ -179,13 +179,14 @@ def _validate_db_coverage(output_dir: Path, errors: list, warnings: list) -> Non
         errors.append("output/article/ is missing — no article pages rendered")
         return
 
-    # Reads a scratch copy, not the tracked file. The previous `mode=ro` URI
-    # could not open a WAL-mode database with no `-shm` beside it
-    # (DECISION_LOG 2026-08-14), so on a fresh clone this raised, was swallowed
-    # into a warning, and check 8 silently did not run — the one check that
-    # exists because output lagged the DB by 117 articles across four deploys
-    # (DECISION_LOG 2026-08-03). A gate that disappears quietly is worse than
-    # no gate.
+    # Reads a scratch copy, not the tracked file. A direct `mode=ro` URI is not
+    # a portable, side-effect-free read of a WAL database: depending on SQLite,
+    # the VFS and the filesystem it either fails to open or creates the sidecars
+    # beside the input (DECISION_LOG 2026-08-14, corrected 2026-08-17). Where it
+    # failed, this raised, was swallowed into a warning, and check 8 silently did
+    # not run — the one check that exists because output lagged the DB by 117
+    # articles across four deploys (DECISION_LOG 2026-08-03). A gate that
+    # disappears quietly is worse than no gate.
     try:
         with read_only(db_path) as conn:
             db_ids = {
