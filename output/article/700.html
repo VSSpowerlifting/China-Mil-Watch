@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Military Forum | A Brief Analysis of the Characteristics of Warfare in the AI Era — China Mil Watch</title>
+  <meta name="description" content="Writing in a PLA military forum, analyst Jia Yong argues that AI-era warfare is governed by a new victory mechanism he terms &#39;the precise eating the crude&#39; (精吃粗), and identifies four defining characte">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/700.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/700.html">
+  <meta property="og:title"        content="Military Forum | A Brief Analysis of the Characteristics of Warfare in the AI Era">
+  <meta property="og:description"  content="Writing in a PLA military forum, analyst Jia Yong argues that AI-era warfare is governed by a new victory mechanism he terms &#39;the precise eating the crude&#39; (精吃粗), and identifies four defining characte">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Military Forum | A Brief Analysis of the Characteristics of Warfare in the AI Era">
+  <meta name="twitter:description" content="Writing in a PLA military forum, analyst Jia Yong argues that AI-era warfare is governed by a new victory mechanism he terms &#39;the precise eating the crude&#39; (精吃粗), and identifies four defining characte">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Cyber &amp; Info">Cyber &amp; Info</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Military Forum | A Brief Analysis of the Characteristics of Warfare in the AI Era
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军事论坛丨浅析AI时代战争形态特征</div>
+
+  <div class="article-page-meta">
+    <span class="src">PLA Daily (解放军报)</span>
+    <span class="sep"></span>
+    <span>26 May 2026</span>
+  </div>
+
+  <a href="http://www.81.cn/yw_208727/16463492.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>Writing in a PLA military forum, analyst Jia Yong argues that AI-era warfare is governed by a new victory mechanism he terms &#39;the precise eating the crude&#39; (精吃粗), and identifies four defining characteristics: all-domain fused perception collapsing the fog of war, kill-chain closure compressing from hours to milliseconds, dissolution of the physical-virtual boundary into an &#39;all-domain battlefield,&#39; and accelerating iterative self-upgrading that makes today&#39;s advantage tomorrow&#39;s liability. The piece introduces &#39;algorithmic domain superiority&#39; (制算法权) as a concept the author explicitly elevates to the same strategic tier as information domain superiority (制信息权), and argues that soft-kill attacks on decision models, cloud nodes, and data links may match or exceed the effect of destroying physical weapons stockpiles. This is doctrinal opinion writing, not a policy announcement; its value is as a record of how PLA-adjacent analysts are framing the conceptual vocabulary of intelligentized warfare for a professional military audience, not as evidence of an adopted operational doctrine.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>A Brief Analysis of the Characteristics of Warfare in the AI Era</p><p>■ Jia Yong</p><p>Introduction</p><p>AI is driving warfare into the era of intelligentized (智能化) warfare. The victory mechanism of traditional warfare was &#34;the big eating the small,&#34; competing on the scale of forces and density of firepower. The victory mechanism of informatized warfare (信息化战争) was &#34;the fast eating the slow,&#34; pursuing the strike effect of destroy-on-detection. The victory mechanism of AI warfare is &#34;the precise eating the crude (精吃粗)&#34;—whoever can achieve more refined perception, more accurate judgment, and more precise strikes through algorithms will seize the initiative on the battlefield. Under these circumstances, clarifying the characteristics of warfare in the AI era can help us better grasp and apply this victory mechanism, and thereby gain the upper hand and win the initiative on the future battlefield.</p><p>Characteristic One: All-Domain Fused Perception — From &#34;Fog-Shrouded&#34; to &#34;Transparent Battlefield&#34;</p><p>AI is reshaping battlefield perception patterns and achieving unprecedented battlefield transparency. Its core lies in breaking down the barriers between services and operational domains, effectively integrating heterogeneous data streams generated across multiple dimensions—land, sea, air, space, cyber, and the electromagnetic spectrum—and, through real-time fusion and processing, constructing a unified, dynamic, panoramic battlefield situational picture. In an ideal state, what commanders &#34;see&#34; will no longer be fragmented pieces of localized information, but a complete presentation of the all-domain battlefield situation, providing full-dimensional information support for their decision-making. It is worth noting that this transparency is highly dependent on the purity and timeliness of data. The side that possesses key, accurate, and real-time-updated data holds the key to unlocking a &#34;see-through&#34; battlefield; while the side that can effectively implement data contamination, inject false information, or conduct electromagnetic spectrum deception can plunge the adversary into a deeper &#34;fog of war,&#34; causing confusion or even blindness in their situational awareness. We must therefore maintain a clear understanding that the battlefield transparency AI brings does not equal &#34;omniscience&#34;: although artificial intelligence can provide near-complete &#34;battlefield pixels,&#34; the authenticity and timeliness of each &#34;pixel&#34;—and indeed the relevance of the information behind it—still requires a robust information verification and assessment mechanism to ensure accuracy.</p><p>To accomplish this, it is necessary to establish a human-machine deep collaborative information assessment mechanism. Empowered by AI technology, &#34;human + machine&#34; becomes an entirely new operational grouping. AI is a &#34;super staff officer&#34; that computes at high speed and never tires; the human is the ultimate decision-maker who perceives the overall situation and grasps the direction. In this process, AI gives full play to its advantages of speed, accuracy, and the ability to operate at high intensity for extended periods, excelling in the preliminary screening of massive data, automatic identification of key features, and rapid early warning of potential threats; humans must exercise subjective initiative, perceiving the &#34;ethics of war&#34; that AI may overlook, holding firm to the &#34;political stance&#34; that AI may overlook, and clarifying the &#34;value judgments&#34; that AI may overlook, ensuring that all decisions are human-led and always serve the strategic whole.</p><p>Characteristic Two: Rapid Kill Chain Closure — From &#34;Hour-Level&#34; to &#34;Millisecond-Level&#34;</p><p>The deep integration of AI technology is driving a leapfrog upgrade in the speed at which the kill chain closes in modern warfare: from the &#34;hour-level&#34; of the mechanized era and the &#34;minute-level&#34; of informatized warfare, to the &#34;millisecond-level&#34; of the intelligentized context. This change stems from the algorithm&#39;s deep restructuring of operational processes. The traditional linear kill chain has evolved into a dynamic response network, enabling AI to exhibit powerful battlefield autonomy—autonomously identifying high-value targets, autonomously planning optimal courses of action, and autonomously assigning tasks to the most suitable operational units for execution. This brings the operational objective of &#34;destroy-on-detection&#34; ever closer to reality: once a target is acquired by a sensor, its coordinates, attributes, threat-level assessment, generation of the optimal strike plan, weapon platform assignment, and fire release can be completed synchronously within a very short time, achieving an instantaneous closed loop from perception to action.</p><p>From this perspective, algorithms are weapons—code may be more lethal than missiles. The contest in modern warfare has leaped from a competition of performance among individual weapon platforms to an intelligentized confrontation of the entire operational system. The power of an intelligent kill chain system capable of achieving millisecond-level closure lies not only in how many high-end weapons it can mobilize, but even more in its ability to complete the &#34;decision–action&#34; cycle more autonomously. In this process, the autonomous decision-making logic constructed by code, the cross-domain collaborative network driven by data flows, and the real-time dynamic response supported by computing power together constitute the core elements of new-type combat power generation. At this point, soft-kill attacks against algorithmic systems may produce strategic-level effects—for example, disrupting the enemy&#39;s decision-making models, destroying the enemy&#39;s cloud computing nodes, and severing the enemy&#39;s battlefield data links—and their strike effects may equal or even exceed those of using missiles to destroy the enemy&#39;s heavy weapons depots. Therefore, in planning for future warfare, algorithmic domain superiority (制算法权) must be placed at the same strategic level of importance as information domain superiority (制信息权) and other emerging forms of domain control. Efforts must be made to build an intelligent operational system in which millisecond-level autonomous decision-making capability and strong anti-interference resilience complement each other, ensuring firm control over the operational tempo at all times in a complex adversarial environment.</p><p>Characteristic Three: Disappearance of the Virtual-Physical Boundary — From &#34;Physical Battlefield&#34; to &#34;All-Domain Battlefield&#34;</p><p>Entering the era of informatized and intelligentized warfare, the once clearly demarcated physical and virtual boundaries of the traditional battlefield are accelerating their dissolution, gradually evolving into an &#34;all-domain battlefield&#34; in which the physical domain, the information domain, and the social domain are highly integrated and mutually interactive. Kinetic exchanges in physical space and bit-level offense and defense in digital space are no longer two parallel lines, but a unified whole that is mutually interwoven, mutually shaping, and deeply coupled.</p><p>This characteristic is first manifested as the virtual-physical symbiosis of operational space. In virtual space—a parallel space constructed from data flows—AI systems can not only map the situation of the physical world in real time, but can also, through deep learning and simulation deduction, predict the adversary&#39;s courses of action, assess the effectiveness of different operational plans, and even rehearse battle scenarios that have not yet occurred. This precise mapping of the physical world and forward-looking deduction by virtual space greatly expands the dimensions of battlefield perception and decision-making. Second, it is manifested as the cross-domain penetrability of operational actions. A successful cyberattack may directly paralyze the adversary&#39;s command and control system, turning its tank formations in the real world into &#34;steel graveyards&#34;; likewise, the physical destruction of key power grids, communications nodes, and similar targets will also severely damage the adversary&#39;s operational capabilities in virtual space. Finally, it is manifested in the increasing blurring of operational actors and means. Empowered by AI technology, cyber hacker organizations and even individuals may become &#34;asymmetric participants&#34; with significant influence; attack means are similarly generalized: a carefully crafted piece of malicious code, a data-poisoning attack against a critical industrial control system, or a deception induced by AI-generated false intelligence could all trigger chain reactions in the physical world. Attackers can conceal themselves within networks, making it difficult for defenders to trace the source. This high degree of anonymity and unpredictability greatly increases the cost of defense. Faced with this complex situation, there is an urgent need to transform traditional defensive thinking and operational modes, accelerate the construction of a unified confrontation system covering both physical and virtual space, develop intelligent operational means capable of penetrating the virtual-physical barrier and implementing cross-domain coordination, and forge cross-dimensional suppression capabilities (跨维压制能力) in which physical destruction and digital suppression take effect simultaneously.</p><p>Characteristic Four: Accelerating Iterative Evolution — From &#34;Advance or Fall Behind&#34; to &#34;Advance Fast or Fall Behind&#34;</p><p>The development of military capabilities in the AI era is a continuous, accelerating process. This is not the linear development of traditional equipment generational replacement, but the self-upgrading of intelligent technology: when relevant intelligent systems conduct millions of self-training iterations within a short period of time, the speed of technological iteration and offense-defense transition is accelerated to an unprecedented degree. The &#34;iron wall&#34; that was impregnable yesterday may become &#34;crumbling ruins&#34; in a flood of data tomorrow; the &#34;intelligent advantage&#34; that is a source of pride today may become an &#34;outdated symbol&#34; on the training sandbox the day after. From this perspective, the form and logic of warfare in the AI era is shifting from &#34;advance or fall behind&#34; to &#34;advance fast or fall behind.&#34; But we must recognize that the more sophisticated the intelligent system, the more it depends on factors such as networks and algorithms. When satellite links are blinded, training databases are contaminated, and cloud computing nodes are destroyed, a highly intelligentized war machine may instantly transform from &#34;intelligent&#34; to &#34;incapable.&#34;</p><p>At the practical level, it is necessary to build an agile evolution mechanism of &#34;anticipate–adapt.&#34; Abandon the static thinking of &#34;advanced equipment as the endpoint,&#34; treat military capability building as a continuously iterating &#34;living organism,&#34; establish a keen frontier technology sensing network, and by deeply integrating into the all-domain innovation ecosystem, capture at the earliest possible moment the &#34;technological singularities&#34; that may overturn the rules of warfare. At the same time, establish a rapid feedback closed loop that seamlessly connects &#34;research, testing, training, and combat,&#34; so that data from every exercise, simulated confrontation, and even virtual deduction becomes &#34;nutrients&#34; for the self-optimization of intelligent systems such as algorithmic models, driving the dynamic adjustment of operational concepts, organizational structures, and tactics and methods in a near-real-time state, thereby catalyzing a continuous, rapidly evolving endogenous driving force.</p><p>Editor&#39;s Note</p><p>In the AI era, the form of warfare has undergone profound transformation—this intelligentized leap is both a challenge and an opportunity. We must both embrace technology and accelerate the building of intelligent advantages, while also maintaining clarity and recognizing that human political judgment, strategic judgment, and value judgment are always the foundation for mastering future warfare and achieving victory on the future battlefield. Only by closely combining the &#34;precision&#34; of technological development with the &#34;depth&#34; of human wisdom can we always &#34;stand at the crest of the wave&#34; (勇立潮头) in this tide of military transformation.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">浅析AI时代战争形态特征 ■贾 永 引 言 AI正在推动战争形态进入智能化时代。传统战争的制胜机理是“大吃小”，比拼的是兵力规模和火力密度；信息化战争的制胜机理是“快吃慢”，追求发现即摧毁的打击效果；而AI战争的制胜机理是“精吃粗”——谁能通过算法实现更精细的感知、更精准的判断、更精确的打击，谁就能掌握战场主动权。在这种情况下，厘清AI时代的战争形态特征，可以帮助我们更好把握、运用这一制胜机理，进而在未来战场占得先机、赢得主动。 特征一：全域融合感知——从“迷雾重重”到“透明战场” AI正在重塑战场感知模式，实现前所未有的战场透明化。其核心在于打破军种与作战域间的壁垒，有效整合陆、海、空、天、网、电等多维空间产生的异构数据流，通过实时融合与处理，构建起一张统一、动态、全景式的战场态势图。在理想状态下，指挥员“目光所及”的将不再是割裂的局部信息碎片，而是全域战场态势的完整呈现，为其决策提供全维信息支撑。值得注意的是，这种透明化高度依赖数据的纯净度与时效性。掌握关键、正确且实时更新数据的一方拥有开启“透视”战场的钥匙；而能有效实施数据污染、注入虚假信息或进行电磁频谱欺骗的一方，则能使对手陷入更深的“战场迷雾”，造成其态势认知的混乱甚至盲目。因此，我们必须清醒认识到，AI带来的战场透明化不等于“全知”：人工智能虽能提供近乎完整的“战场像素”，但每个“像素”的真实性、时效性乃至其背后信息的关联性，仍需依靠强大的信息验证与研判机制来确保其准确性。 要做好这一点，需要建立人机深度协同的信息研判机制。在AI技术的加持下，“人+机器”成为全新作战编组。AI是高速运算、不知疲倦的“超级参谋”，人则是洞察全局、把握方向的最终决策者。在这个过程中，AI发挥其快、准、可长时间高强度运行等优势，在海量数据的初步筛选、关键特征的自动识别、潜在威胁的快速预警等方面“大显身手”；人则需要发挥主观能动性，看见AI可能忽视的“战争伦理”，守住AI可能忽视的“政治立场”，廓清AI可能忽视的“价值判断”，确保各项决策以人为主导，始终服务于战略全局。 特征二：杀伤链快速闭合——从“小时级”到“毫秒级” AI技术的深度融入，正驱动现代战争杀伤链闭合速度发生跨越式升级：从机械化时代的“小时级”、信息化战争的“分钟级”，跃升至智能化背景下的“毫秒级”。这一变化源于算法对作战流程的深度重构，传统线性杀伤链条演变为动态响应网络，使AI展现出强大的战场自主性，能够自主识别高价值目标、自主规划最优处置方案、自主分配至最合适的作战单元执行。这让“发现即摧毁”的作战目标不断趋近现实：目标一旦被传感器捕获，其坐标、属性、威胁等级判定、最优打击方案生成、武器平台分配及火力释放，可在较短时间内同步完成，实现从感知到行动的瞬时闭环。 从这个角度讲，算法即武器——代码可能比导弹更为致命。现代战争的较量，已从单一武器平台的性能比拼，跃升至整个作战体系的智能化对抗。一套能够实现毫秒级闭环的智能杀伤链系统，其威力不仅在于它能调动多少高精尖武器，更在于它能更自主地完成“决策—行动”循环。在这个过程中，代码所构建的自主决策逻辑、数据流驱动的跨域协同网络、算力支撑的实时动态响应，它们共同构成了新型战斗力生成的核心要素。此时，针对算法系统的软杀伤可能产生战略级效果，例如，破坏敌决策模型、毁伤敌云计算节点、斩断敌战场数据链等，其打击效果相较于用导弹摧毁敌重型武器库可能有过之而无不及。因此，运筹未来战争，必须将制算法权置于与制信息权等新兴制权同样重要的战略位置，着力构建具备毫秒级自主决策能力与强抗干扰韧性相辅相成的智能作战体系，确保在复杂对抗环境中始终牢牢掌控作战节奏。 特征三：虚实边界消失——从“现实战场”到“全域战场” 进入信息化智能化战争时代，传统战场中泾渭分明的物理与虚拟边界正在加速消融，逐渐演变为一个物理域、信息域和社会域高度融合、相互作用的“全域战场”。实体空间的火力交锋与数字空间的比特攻防不再是两条平行线，而是相互交织、彼此塑造、深度耦合的统一整体。 这一特征首先体现为作战空间的虚实共生。在虚拟空间这个由数据流构建的平行空间里，AI系统不仅能实时映射物理世界的态势，更能通过深度学习和仿真推演，预测敌方的行动轨迹、评估不同作战方案的效能，甚至预演尚未发生的战斗场景。这种虚拟空间对物理世界的精确映射和超前推演，极大地拓展了战场感知与决策的维度。其次，体现为作战行动的跨域穿透性。一次成功的网络攻击，可能直接瘫痪敌方的指挥控制系统，导致其现实中的坦克集群成为“钢铁坟墓”；同样，对关键电网、通信节点等的物理摧毁，也将重创对手在虚拟空间的作战能力。最后，体现为作战主体与手段的日益模糊化。在AI技术的加持下，网络黑客组织甚至个人，都可能成为具备重大影响力的“非对称参与者”；攻击手段同样泛化：一段精心设计的恶意代码、一场针对关键工业控制系统的数据投毒、一次利用AI生成的虚假情报诱导，都可能引发物理世界的连锁反应。攻击者可以隐匿于网络中，让防御者难以溯源。这种高度的匿名性和不可预测性，大大增加了防御的成本。面对这一复杂情况，亟需转变传统的防御思维和作战模式，加速构建覆盖物理与虚拟空间的统一对抗体系，发展能穿透虚实屏障、实施跨域协同的智能作战手段，锻造物理摧毁与数字压制同步生效的跨维压制能力。 特征四：迭代进化加速——从“不进则退”到“慢进则退” AI时代的军事能力发展，是一个持续的、加速的过程。这并非传统意义上装备代际更替的线性发展，而是智能技术的自我升级：当相关智能系统在较短时间内进行百万次自我训练，技术迭代、攻防转换的速度被空前加速，昨日牢不可破的“钢铁城墙”，明日可能沦为数据洪流中的“断壁残垣”；今天引以为傲的“智能优势”，后天或将化作训练沙盘上的“陈旧符号”。从这个角度讲，AI时代的战争形态和战争逻辑正从“不进则退”向“慢进则退”转变。但我们必须认识到，越是精密的智能系统，越是依赖网络、算法等因素。当卫星链路被致盲、训练数据库遭污染、云端算力节点被摧毁，高度智能化的战争机器可能瞬间从“智能”变成“无能”。 在实践层面，必须构建“预见—适应”的敏捷进化机制。摒弃“装备先进即终点”的静态思维，将军事能力建设视为持续迭代的“生命体”，建立敏锐的前沿技术感知网络，通过深度融入全域创新生态，在第一时间捕捉可能颠覆战争规则的“技术奇点”。同时，建立“研、试、训、战”无缝衔接的快速反馈闭环，让每一次演习、模拟对抗甚至虚拟推演的数据，都成为算法模型等智能系统自我优化的“养分”，驱动作战概念、编制编成、战术战法在近乎实时的状态下动态调整，进而催生出持续、快速进化的内生动力。 编后 AI时代，战争形态已发生深刻变革——这场智能化跃迁，既是挑战，也是机遇。我们既要拥抱技术，加速构建智能优势，更要保持清醒，认识到人的政治判断、战略判断、价值判断等始终是驾驭未来战争、制胜未来战场的基础。唯有将技术发展之“精”与人类智慧之“深”紧密结合，才能在这场军事变革浪潮中始终“勇立潮头”。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
