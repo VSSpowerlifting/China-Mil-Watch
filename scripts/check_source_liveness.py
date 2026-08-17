@@ -28,12 +28,16 @@ from __future__ import annotations
 
 import argparse
 import os
-import sqlite3
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.reconcile_db import read_only                      # noqa: E402
+
 DEFAULT_DB = REPO_ROOT / "pla_watch.db"
 
 # Sources whose silence is deliberate and documented. The value is the reason,
@@ -59,8 +63,12 @@ SILENCE_THRESHOLD_DAYS = {
 
 
 def rows(db_path: Path, today: date):
-    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-    try:
+    # Reads a scratch copy, not the tracked file. The previous `mode=ro` URI
+    # could not open a WAL-mode database with no `-shm` beside it, so running
+    # this on a fresh clone died with an unhandled OperationalError — the health
+    # gate is the last step of the daily run and only survived because an
+    # earlier step had already created the sidecars.
+    with read_only(db_path) as conn:
         return conn.execute(
             """
             SELECT s.slug,
@@ -74,8 +82,6 @@ def rows(db_path: Path, today: date):
              ORDER BY total DESC
             """
         ).fetchall()
-    finally:
-        conn.close()
 
 
 def classify(slug: str, total: int, last_seen: str | None,
