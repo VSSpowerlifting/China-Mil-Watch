@@ -63,10 +63,12 @@ SILENCE_THRESHOLD_DAYS = {
 
 
 def rows(db_path: Path, today: date):
-    # Reads a scratch copy, not the tracked file. The previous `mode=ro` URI
-    # could not open a WAL-mode database with no `-shm` beside it, so running
-    # this on a fresh clone died with an unhandled OperationalError — the health
-    # gate is the last step of the daily run and only survived because an
+    # Reads a scratch copy, not the tracked file. A direct `mode=ro` URI on a
+    # sidecar-less WAL database is not portable: depending on SQLite, the VFS
+    # and the filesystem it either fails to open or creates the sidecars beside
+    # the input (DECISION_LOG 2026-08-17). Where it failed, running this on a
+    # fresh clone died with an unhandled OperationalError — the health gate is
+    # the last step of the daily run, and it survived there only because an
     # earlier step had already created the sidecars.
     with read_only(db_path) as conn:
         return conn.execute(

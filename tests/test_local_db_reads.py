@@ -1,10 +1,17 @@
 """
-Reading the tracked database must work on a fresh clone.
+Reading the tracked database must work on a fresh clone, on any platform.
 
-The tracked database is WAL-mode. A `file:…?mode=ro` URI cannot open a WAL
-database when its `-shm` sidecar is missing — and the sidecars are gitignored,
-so a fresh `git clone` has none. Both consumers of that idiom were therefore
-broken outside CI, in different and instructive ways:
+The tracked database is WAL-mode, and a fresh `git clone` has no `-wal`/`-shm`
+beside it because the sidecars are gitignored. What a direct
+`file:…?mode=ro` URI does in that state is **not fixed**: it depends on the
+SQLite build, the VFS and the filesystem. SQLite's rule since 3.22.0 is that a
+read-only WAL database can be opened when the `-wal`/`-shm` files already
+exist, when they *can be created*, or when the database is immutable
+(https://www.sqlite.org/wal.html#read_only_databases).
+
+So the same call can go either way. Where the directory is not writable or the
+required WAL state cannot be established, it fails — that is what broke both
+consumers here:
 
   * `check_source_liveness.py` raised an unhandled `OperationalError`. It is the
     last step of the daily workflow.
@@ -12,16 +19,27 @@ broken outside CI, in different and instructive ways:
     check 8 — the analyzed-but-unrendered gate, added because output once lagged
     the database by 117 articles across four deploys — silently did not run.
 
-CI never saw either, because `migrations.cli --apply` runs first and leaves the
-sidecars behind for the rest of the job. That is an ordering accident, not a
-guarantee.
+Where the directory *is* writable, SQLite may create and use the sidecars and
+open perfectly well — which is why the daily workflow never showed either
+failure, and why asserting a specific `OperationalError` is asserting a
+property of one machine rather than of this project.
 
-These tests use a sidecar-less copy in a temporary directory: the fresh-clone
-condition, reproduced. Nothing here touches the tracked database.
+The contract this project actually needs is stronger than "it opens": reads of
+the tracked database must be reliable everywhere, must not mutate it, and must
+leave no sidecar residue in its directory. Direct `mode=ro` guarantees none of
+those. `reconcile_db.read_only` does, by copying the database and any sidecars
+to a scratch directory and reading the copy, so every recovery and sidecar
+effect lands there instead.
+
+These tests therefore pin what the project controls — that the governed
+consumers go through the helper, and that the helper behaves — using a
+sidecar-less copy in a temporary directory. Nothing here touches the tracked
+database.
 """
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import shutil
 import sqlite3
@@ -61,8 +79,8 @@ class FreshCloneCase(unittest.TestCase):
         return hashlib.sha256(self.db.read_bytes()).hexdigest()
 
 
-class TestTheFailureThisFixes(FreshCloneCase):
-    """The old idiom, demonstrated failing, so the fix cannot be undone quietly."""
+class TestTheTrackedDatabaseIsStillWalMode(FreshCloneCase):
+    """The premise the rest of this module rests on."""
 
     def test_the_tracked_database_really_is_wal_mode(self):
         header = self.db.read_bytes()[:100]
@@ -70,24 +88,79 @@ class TestTheFailureThisFixes(FreshCloneCase):
                          "write/read version 2 == WAL; if this ever changes, "
                          "the reasoning below needs revisiting")
 
-    def test_mode_ro_cannot_open_it_without_a_shm(self):
-        with self.assertRaises(sqlite3.OperationalError) as ctx:
-            con = sqlite3.connect(f"file:{self.db}?mode=ro", uri=True)
-            con.execute("SELECT count(*) FROM sources").fetchone()
-        self.assertIn("unable to open database file", str(ctx.exception))
 
-    def test_mode_ro_would_work_once_a_sidecar_exists(self):
-        """
-        Proof that CI's success was an ordering accident: create the sidecars
-        the way `migrations.cli --apply` does, and the old idiom starts working.
-        """
-        warm = sqlite3.connect(str(self.db))
-        warm.execute("SELECT count(*) FROM sources").fetchone()
-        self.assertTrue(sidecars(self.db), "expected -wal/-shm to appear")
-        con = sqlite3.connect(f"file:{self.db}?mode=ro", uri=True)
-        self.assertIsNotNone(con.execute("SELECT count(*) FROM sources").fetchone())
-        con.close()
-        warm.close()
+class TestGovernedConsumersReadThroughTheHelper(unittest.TestCase):
+    """
+    The contract the project controls, in place of one platform's error.
+
+    Whether a direct `mode=ro` open succeeds is a property of SQLite, the VFS
+    and the filesystem — it can fail, or it can create the sidecars and work.
+    Neither outcome is something this project can assert on every machine, and
+    a test that accepted both would assert nothing at all.
+
+    What *is* ours to guarantee is the call site: the two scripts a human runs
+    against the tracked database must go through `reconcile_db.read_only`, and
+    must not open it directly. That holds identically everywhere.
+
+    Structural, not textual: the module is parsed with `ast`, so the corrected
+    explanations in those files' own comments cannot satisfy the guard, and an
+    aliased import cannot evade it. The alias resolution is the scanner already
+    governed by `tests/test_workflow_failure_paths.py`, which carries its own
+    fixtures for every import spelling it claims to cover.
+    """
+
+    CONSUMERS = ("scripts/validate_output.py",
+                 "scripts/check_source_liveness.py")
+
+    def tree(self, relative):
+        path = REPO_ROOT / relative
+        self.assertTrue(path.is_file(), "%s is missing" % relative)
+        return ast.parse(path.read_text(encoding="utf-8"))
+
+    def test_both_governed_consumers_call_the_canonical_helper(self):
+        for relative in self.CONSUMERS:
+            with self.subTest(consumer=relative):
+                tree = self.tree(relative)
+                bound = {alias.asname or alias.name
+                         for node in ast.walk(tree)
+                         if isinstance(node, ast.ImportFrom)
+                         and (node.module or "").endswith("reconcile_db")
+                         for alias in node.names if alias.name == "read_only"}
+                self.assertTrue(
+                    bound,
+                    "%s does not import read_only from reconcile_db" % relative)
+                called = {node.func.id for node in ast.walk(tree)
+                          if isinstance(node, ast.Call)
+                          and isinstance(node.func, ast.Name)}
+                called |= {node.func.attr for node in ast.walk(tree)
+                           if isinstance(node, ast.Call)
+                           and isinstance(node.func, ast.Attribute)}
+                self.assertTrue(
+                    bound & called,
+                    "%s imports read_only but never calls it" % relative)
+
+    def test_no_governed_consumer_opens_sqlite_directly(self):
+        from tests.test_workflow_failure_paths import _sqlite_connect_names
+        for relative in self.CONSUMERS:
+            with self.subTest(consumer=relative):
+                tree = self.tree(relative)
+                modules, funcs = _sqlite_connect_names(tree)
+                offenders = []
+                for node in ast.walk(tree):
+                    if not isinstance(node, ast.Call):
+                        continue
+                    func = node.func
+                    if isinstance(func, ast.Attribute) and func.attr == "connect" \
+                            and isinstance(func.value, ast.Name) \
+                            and func.value.id in modules:
+                        offenders.append("%s.connect line %d"
+                                         % (func.value.id, node.lineno))
+                    elif isinstance(func, ast.Name) and func.id in funcs:
+                        offenders.append("%s() line %d" % (func.id, node.lineno))
+                self.assertEqual(
+                    offenders, [],
+                    "%s opens the database directly; read through "
+                    "reconcile_db.read_only instead: %s" % (relative, offenders))
 
 
 class TestCanonicalHelper(FreshCloneCase):
@@ -206,9 +279,10 @@ class TestCheckEightGatesOnAFreshClone(FreshCloneCase):
     so pointing that at a scratch tree gives the check a database and an
     `output/` this test fully controls, and lets it assert the gate *fires*.
 
-    The fixture database has no sidecars — the fresh-clone condition, in which
-    the old `mode=ro` idiom could not open it at all. That is what made the
-    gate vanish into a warning, so the fixture has to reproduce it.
+    The fixture database has no sidecars — the fresh-clone condition, where a
+    direct `mode=ro` open is only as reliable as the filesystem allows, and
+    where its failure is what made the gate vanish into a warning. The fixture
+    reproduces that condition; the helper is what makes reading it dependable.
     """
 
     def _fake_repo(self):

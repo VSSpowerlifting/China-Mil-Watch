@@ -253,22 +253,27 @@ def read_only(path):
     Read a database with no possibility of altering the original.
 
     A plain `sqlite3.connect()` can write to an input merely by opening it
-    (journal/WAL recovery, checkpointing). A `mode=ro` URI avoids that but
-    cannot open a WAL-mode database whose `-wal` is present — SQLite needs to
-    write the WAL index to read it — and inputs written by this project are in
-    WAL mode.
+    (journal/WAL recovery, checkpointing), and inputs written by this project
+    are in WAL mode.
 
-    Worse, and less obvious: `mode=ro` cannot open a WAL-mode database whose
-    `-shm` is *absent* either. A fresh `git clone` has no sidecars, because they
-    are gitignored — so on a clean checkout the URI form fails outright with
-    "unable to open database file". In CI that never showed, only because
-    `migrations.cli --apply` runs first and leaves the sidecars behind for the
-    rest of the job. Any script a human runs on a fresh clone got the failure
-    (DECISION_LOG 2026-08-14).
+    A `mode=ro` URI is not a portable answer to that. For a read-only WAL
+    database SQLite needs the `-wal`/`-shm` state, and since 3.22.0 it will
+    open one when those files already exist, when they *can be created*, or
+    when the database is immutable
+    (https://www.sqlite.org/wal.html#read_only_databases). So the same call
+    goes different ways on different machines: where that state cannot be
+    established the open fails outright, and where the directory is writable
+    SQLite may create and use the sidecars — succeeding, but leaving residue
+    next to the input. A fresh `git clone` has no sidecars at all, because they
+    are gitignored, which is exactly the state where the two behaviours diverge
+    (DECISION_LOG 2026-08-14, corrected 2026-08-17).
 
-    So: copy the database and any sidecars to a scratch directory and read the
-    copy. The original is untouched by construction rather than by hoping, and
-    a hot WAL is recovered into the copy instead of being ignored (dropping the
+    Neither branch is acceptable here. What this project needs is a read that
+    is reliable everywhere, cannot mutate the input, and leaves nothing beside
+    it. So: copy the database and any sidecars to a scratch directory and read
+    the copy. Every recovery and sidecar effect lands in the scratch directory,
+    the original is untouched by construction rather than by hoping, and a hot
+    WAL is recovered into the copy instead of being ignored (dropping the
     `-wal` would silently hide committed rows from validation).
 
     Use this helper when a script needs read-only access to the tracked

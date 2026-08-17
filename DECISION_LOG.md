@@ -2,6 +2,58 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-17 — Correction: `mode=ro` on a WAL database is platform-dependent, not impossible
+
+The 2026-08-14 entry below states that a `mode=ro` URI "cannot open" a WAL
+database without a `-shm`. That wording is too absolute, and the entry is left
+standing as written — this is a correction to it, not a rewrite.
+
+1. **The claim was disproved by a hosted run.** The first pull-request run of
+   the offline-checks workflow (run 32037681525) failed on
+   `test_mode_ro_cannot_open_it_without_a_shm` with "OperationalError not
+   raised". The Ubuntu runner opened the sidecar-less fixture through `mode=ro`
+   perfectly well. The same call raises `OperationalError` on the macOS
+   environment where the original conclusion was drawn.
+
+2. **SQLite's actual rule.** Since 3.22.0, a read-only WAL database can be
+   opened when the `-wal` and `-shm` files already exist, when those files *can
+   be created*, or when the database is immutable
+   (https://www.sqlite.org/wal.html#read_only_databases). The outcome therefore
+   depends on the SQLite build, the VFS and whether the containing directory is
+   writable — not on anything this project controls. Where the runner's
+   directory was writable, SQLite satisfied the WAL-state requirement and the
+   open succeeded.
+
+3. **The scratch-copy decision stands, and for a better-stated reason.** The
+   2026-08-14 ruling to read the tracked database through
+   `reconcile_db.read_only` is unchanged and remains binding. Its justification
+   is not "the direct form cannot work" but that the direct form guarantees
+   nothing: on one machine it fails outright, on another it succeeds *by
+   creating sidecars next to the tracked file*. Both outcomes are unacceptable
+   for a read of a tracked artifact. Copying the database and its sidecars to a
+   scratch directory gives what is actually required — a read that is reliable
+   on every platform, cannot mutate the input, and leaves no residue in its
+   directory. A hot `-wal` is still copied, so committed rows are never hidden
+   from validation.
+
+4. **Tests now pin project-controlled behaviour, not a platform's error.** The
+   two tests that asserted the `OperationalError` and its disappearance once a
+   sidecar existed are removed; asserting either outcome asserts a property of
+   one machine, and a test written to accept both would assert nothing. In
+   their place, two structural tests parse `validate_output.py` and
+   `check_source_liveness.py` with `ast` and require that each imports and
+   calls `read_only`, and that neither opens the database directly — through
+   `sqlite3.connect`, an aliased module, or `from sqlite3 import connect`. That
+   holds identically everywhere. All functional coverage of the helper is
+   retained: WAL header, sidecar-less access, `str` and `Path` inputs, input
+   byte identity, no sidecars beside the input, hot-WAL recovery, propagated
+   errors, the historical alias, liveness execution, check 8 running rather
+   than degrading to a warning, an unreadable database becoming an error, and
+   analyzed-but-unrendered gating.
+
+Standing rule, restated: **no consumer reads the tracked database directly.**
+The reason is portability and isolation, not impossibility.
+
 ## 2026-08-14 — Salvage requires proof of collection; a read of the tracked database is not a read
 
 Stabilization of the defect production run 475 exposed on the first scheduled
