@@ -248,7 +248,7 @@ NEWER_TABLE_MINIMUM = {
 
 
 @contextlib.contextmanager
-def _read_only(path):
+def read_only(path):
     """
     Read a database with no possibility of altering the original.
 
@@ -258,17 +258,29 @@ def _read_only(path):
     write the WAL index to read it — and inputs written by this project are in
     WAL mode.
 
+    Worse, and less obvious: `mode=ro` cannot open a WAL-mode database whose
+    `-shm` is *absent* either. A fresh `git clone` has no sidecars, because they
+    are gitignored — so on a clean checkout the URI form fails outright with
+    "unable to open database file". In CI that never showed, only because
+    `migrations.cli --apply` runs first and leaves the sidecars behind for the
+    rest of the job. Any script a human runs on a fresh clone got the failure
+    (DECISION_LOG 2026-08-14).
+
     So: copy the database and any sidecars to a scratch directory and read the
     copy. The original is untouched by construction rather than by hoping, and
     a hot WAL is recovered into the copy instead of being ignored (dropping the
     `-wal` would silently hide committed rows from validation).
+
+    Use this helper when a script needs read-only access to the tracked
+    database. Current consumers are the reconciler's own validation gates, the
+    deploy validator, and the source-liveness report.
     """
-    tmpdir = tempfile.mkdtemp(prefix="reconcile-validate-")
+    tmpdir = tempfile.mkdtemp(prefix="dbread-")
     try:
         target = os.path.join(tmpdir, "input.db")
         shutil.copyfile(path, target)
         for suffix in ("-wal", "-shm"):
-            side = path + suffix
+            side = str(path) + suffix
             if os.path.exists(side):
                 shutil.copyfile(side, target + suffix)
         con = sqlite3.connect(target)
@@ -278,6 +290,11 @@ def _read_only(path):
             con.close()
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+#: Historical name. Kept so existing call sites keep working; new code should
+#: use `read_only`, which is the same function.
+_read_only = read_only
 
 
 def validate_inputs(base_path, origin_path, local_path):

@@ -33,6 +33,12 @@ import sys
 from datetime import date
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.reconcile_db import read_only                      # noqa: E402
+
 # Jinja markers that indicate an unrendered template. Deliberately excludes the
 # bare "}}" because minified CSS media queries legitimately end in "}}"; any
 # unrendered expression still contains "{{", so detection stays complete.
@@ -173,19 +179,26 @@ def _validate_db_coverage(output_dir: Path, errors: list, warnings: list) -> Non
         errors.append("output/article/ is missing — no article pages rendered")
         return
 
+    # Reads a scratch copy, not the tracked file. The previous `mode=ro` URI
+    # could not open a WAL-mode database with no `-shm` beside it
+    # (DECISION_LOG 2026-08-14), so on a fresh clone this raised, was swallowed
+    # into a warning, and check 8 silently did not run — the one check that
+    # exists because output lagged the DB by 117 articles across four deploys
+    # (DECISION_LOG 2026-08-03). A gate that disappears quietly is worse than
+    # no gate.
     try:
-        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
-        try:
+        with read_only(db_path) as conn:
             db_ids = {
                 str(r[0]) for r in conn.execute(
                     "SELECT id FROM articles "
                     " WHERE analyzed_at IS NOT NULL AND passed_relevance = 1"
                 )
             }
-        finally:
-            conn.close()
-    except sqlite3.Error as exc:
-        warnings.append(f"could not read pla_watch.db for coverage check: {exc}")
+    except (sqlite3.Error, OSError) as exc:
+        # An unreadable database is a failed check, not a note. The file exists
+        # — that was established above — so this is a real fault.
+        errors.append(
+            f"could not read pla_watch.db for the coverage check: {exc}")
         return
 
     page_ids = {p.stem for p in article_dir.glob("*.html")}
