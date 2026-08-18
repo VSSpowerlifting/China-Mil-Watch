@@ -2,6 +2,144 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-17 — MOD China: canonical choice is an authority judgement, and discovery needs a window
+
+MOD China stored nothing between 2026-07-10 and 2026-08-17 — 38 days against its
+21-day threshold — while publishing on cadence throughout. The adapter was never
+broken. Two defects, both ours.
+
+1. **Cross-source dedup silently reassigned MOD China's copy to PLA Daily.**
+   `dedup_articles()` chose the survivor of a same-title group using
+   `source_priority(url)`, a map of 81.cn *section* names keyed off the first
+   path segment. A MOD URL (`/gfbw/…`) parsed as section `gfbw`, missed the map
+   and scored 70 — below PLA Daily's 要闻 at 100. The Tier A ministry therefore
+   lost every head-to-head to a Tier B newspaper reprinting the same
+   spokesperson text, and the surviving row was stored under an 81.cn URL
+   against `pla_daily`. A representative run recorded `mod_china` as 7
+   discovered, 7 fetched, 7 extracted, **7 duplicates, 0 new**, and reported
+   success.
+
+2. **Canonical selection is a five-part total ordering.** Governed authority
+   tier → source identity → 81.cn section priority → shorter URL → the URL
+   itself. **Only the first is an editorial judgement.** Identity and URL are
+   lexical comparisons — determinism devices, not claims that one source or one
+   URL is better. A three-part key without them tied at the top on 16 of the 17
+   duplicate groups then present in the corpus, which meant input order decided
+   the winner of a function that both stores documents and drives deletion.
+   Where a real ranking between equal-tier sources is wanted, it belongs in the
+   manifest as an authority distinction, not in a tie-break.
+
+3. **Section priority cannot cross a source boundary.** Section is the third
+   component and identity the second, so two candidates from different sources
+   are always separated before section is consulted. That is a property of the
+   key's shape, not a convention.
+
+4. **The tier table is a constant in `processing/dedup.py`, not a manifest
+   read.** `dedup_articles()` is a pure batch transform in the pipeline's hot
+   path; giving it manifest or database I/O would invert the layering. The drift
+   this risks is covered by a test that compares the constant against every
+   `desks/*/manifest.json` and fails the moment they disagree, and by a
+   structural test asserting the module performs no configuration I/O.
+
+5. **Title normalization is unchanged, deliberately.** Stripping `【双语】` is
+   what makes MOD's bilingual release group with PLA Daily's Chinese reprint,
+   which is the grouping we want. No fixture showed it merging two genuinely
+   different releases, so it was not touched.
+
+6. **Discovery is a seven-calendar-date window ending on `target_date`.**
+   Discovery kept a listing link only when the run date appeared verbatim in its
+   text, so an item was collectable on exactly one day and never again. MOD
+   routinely posts an item days after the date it stamps on it, and every such
+   item was invisible when stamped and ignored afterwards.
+
+7. **The window covers ordinary backdating, not outages.** A run gap wider than
+   the window cannot be recovered by widening it; that needs an explicit bounded
+   backfill, decided and run once. Widening the daily window to insure against
+   arbitrary outages would refetch the whole listing every day to solve a
+   problem that should be handled on purpose, when it happens.
+
+8. **The publication date is a terminal metadata stamp, not any date in the
+   text.** Each listing link carries its stamp in its own
+   `<small class="time hidden-xs">` element, reading `YYYY-MM-DD HH:MM`. That
+   element is read directly; only when it is absent does the scraper fall back
+   to requiring the same form at the very end of the flattened link text. In a
+   flattened link the headline and the stamp are one string, so any rule that
+   hunts for a date *somewhere* can be answered by the headline instead of the
+   metadata — `回顾2026-08-14演习纪要` carries no stamp at all yet satisfies such
+   a rule. A malformed terminal stamp returns nothing and is never repaired from
+   an earlier candidate.
+
+   Contract verified across 71 archived listing documents and 2,850 article
+   anchors: 1,980 carry the stamp element and all 1,980 read `YYYY-MM-DD HH:MM`;
+   no date-only stamp occurs; no anchor has non-whitespace content after its
+   stamp; the remaining 870 anchors carry no stamp and were already dropped. Old
+   and new rules agree on all 2,850, so nothing MOD published is dropped.
+   **A date-only stamp is deliberately unsupported** — it does not occur, and
+   accepting it is what let a bare headline date pass as metadata. If MOD ever
+   emits one, those items stop being discovered and the liveness gate fires,
+   which is the direction to fail in; widen the pattern on evidence, not in
+   anticipation.
+
+9. **The destructive cleanup shares the pipeline's ranking and fails closed.**
+   `scripts/cleanup_duplicates.py` ranked by `source_priority(url)` alone, so
+   under the new policy it would have deleted exactly the Tier A copy the
+   pipeline keeps. Both now rank through `processing.dedup.canonical_sort_key`;
+   the ordering is not permitted to exist in two files. The script resolves
+   source identity through an `articles → sources` join rather than the URL,
+   which matters because China Military Online is declared as
+   `english.chinamil.com.cn` but serves its stored articles from
+   `eng.chinamil.com.cn`.
+
+10. **Deletion refuses on unresolvable identity.** Any duplicate group
+    containing a row whose source identity cannot be resolved is reported and
+    skipped outright — an empty identity is the absence of an answer, never
+    evidence that two rows share a source. A group in which every row carries
+    the same explicit slug stays rankable even when that source is not yet in
+    the tier table; a group whose identities differ and include an ungoverned
+    one stays refused.
+
+11. **`--dry-run` cannot write to its input.** It opened the database with a
+    plain `sqlite3.connect()`, which writes to a WAL database merely by opening
+    it, so it could check-point the tracked database or leave `-wal`/`-shm`
+    beside it while reporting that it changed nothing. It now reads through
+    `scripts.reconcile_db.read_only()`, which copies the database and its
+    sidecars and reads the copy. `--apply` still opens directly, because it is
+    meant to write.
+
+12. **The 21-day alarm stands unchanged, and MOD China stays out of
+    `KNOWN_INERT`.** The gate measures `MAX(published_date)` per source; it
+    fired correctly and was the only signal that caught this. A source that
+    publishes on cadence is not inert because our canonical selection discarded
+    it.
+
+13. **Measured 2026-08-17.** Of 52 MOD items published after 2026-07-10 and
+    still on page 1 of the six configured sections: **0** stored under
+    `mod_china`, **40** stored under `pla_daily` at 81.cn URLs, **12** absent
+    from the corpus altogether. Ten of the twelve fall inside a contiguous
+    2026-07-17 → 07-24 window in which no run executed at all — wider than the
+    seven-date window — and two are backdating losses the window now catches.
+    This is a dated measurement, not a standing fact: all three numbers move as
+    runs continue. Record any later count separately, with its own date.
+
+14. **Historical re-attribution is deferred and is a separate decision.**
+    Rewriting the provenance of the 40 rows already stored under `pla_daily`
+    touches published rows and is not a defect fix. Going forward the fix is
+    self-limiting: where a PLA Daily copy is already stored, MOD's copy now wins
+    the title group but is then dropped by the cumulative content-hash check, so
+    no duplicate is created and no history is rewritten.
+
+15. **No backfill has been performed.** The 12 absent articles remain absent. A
+    later bounded backfill should take every item actually missing, not an
+    editorial selection.
+
+16. **Canonical selection still discards the losing copies' URLs.** The survivor
+    is now the most authoritative copy rather than an arbitrary one, but the
+    fact that two institutions both carried a release — and at which URLs — is
+    recorded nowhere. Representing one release as a document with several
+    source-attributed locations is a provenance-model question (capture storage
+    / document versioning), not something a title-dedup filter should invent.
+    **Unresolved.**
+
 ## 2026-08-17 — Correction: `mode=ro` on a WAL database is platform-dependent, not impossible
 
 The 2026-08-14 entry below states that a `mode=ro` URI "cannot open" a WAL
