@@ -80,7 +80,7 @@
       "expected_cadence_days": 3,
       "silence_threshold_days": 21,
       "enabled": true,
-      "notes": "Tier A as the ministry's own authorized public position. Cadence measured 2026-08-09 from the source's own listings (28 distinct publish dates across three months), never from our collection, which is the thing under test. Collection has been failing since 2026-07-10 while the site itself is alive — see PROJECT_STATE; do not treat as inert.",
+      "notes": "Tier A as the ministry's own authorized public position. Cadence measured 2026-08-09 from the source's own listings (28 distinct publish dates across three months), never from our collection, which is the thing under test. The source stayed live throughout the 2026-07-10 to 2026-08-17 gap: the 2026-08-17 investigation traced the apparent silence to our own cross-source canonical selection, which discarded MOD copies in favour of PLA Daily reprints, plus exact-target-date discovery that could not see backdated items. Both are fixed. Remains active and Tier A; silence threshold stays 21 days; recovery of the articles missed during the gap is tracked separately and has not been performed. Do not treat as inert.",
       "adapter": "scraper.sources.mod_china:MODChinaScraper"
     },
     {

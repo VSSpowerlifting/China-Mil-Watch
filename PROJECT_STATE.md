@@ -1,7 +1,7 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-14 (foundation released and validated in production; run-475
-persistence defect fixed on a local branch).
+Updated: 2026-08-17 (MOD China root-caused and fixed; foundation released and
+validated in production; run-475 persistence defect fixed on a local branch).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
@@ -27,6 +27,49 @@ scraper reaches the listing and parses it; everything it finds is already in the
 corpus. The 35-day health alarm is therefore about **publication recency**, not
 a broken adapter — the open question is why the listing keeps serving items we
 already hold rather than why the fetch fails. Do not add it to `KNOWN_INERT`.
+
+**Answered, and fixed — see the section below.** The listing was not serving
+items we already held. It was serving MOD's own copies, which cross-source
+canonical selection then discarded in favour of PLA Daily's reprint.
+
+## MOD China — root-caused and fixed
+
+Rulings in DECISION_LOG 2026-08-17. Two defects, neither in the adapter:
+
+1. **Cross-source canonical selection.** The survivor of a same-title group was
+   chosen by first URL path segment against a map of 81.cn section names, so
+   MOD's `/gfbw/…` scored below PLA Daily's 要闻 and the Tier A ministry lost
+   every duplicate to a Tier B reprint. Canonical choice is now a five-part
+   **total** ordering — authority tier → source identity → 81.cn section →
+   shorter URL → the URL itself — of which only the first is an editorial
+   judgement. Because identity is compared before section, the 81.cn section map
+   can only ever separate candidates from the same source.
+2. **Discovery.** A listing link was kept only if the run date appeared verbatim
+   in its text, so backdated items were invisible when stamped and ignored
+   afterwards. Discovery now accepts the seven calendar dates ending on
+   `target_date`, and takes the publication date from the stamp element MOD
+   marks up (`<small class="time hidden-xs">`, `YYYY-MM-DD HH:MM`) rather than
+   from any date found in the headline.
+
+`scripts/cleanup_duplicates.py` ranks through the same shared key, so the
+destructive tool cannot disagree with what the pipeline stored, and it refuses
+any duplicate group containing a row whose source identity cannot be resolved.
+Its `--dry-run` reads through a copy and cannot write to its input.
+
+**Measured 2026-08-17** — a dated measurement, not a standing fact. Of 52 MOD
+items published after 2026-07-10 and still on page 1 of the six configured
+sections: **0** stored under `mod_china`, **40** stored under `pla_daily` at
+81.cn URLs, **12** absent from the corpus. Ten of the twelve fall inside a
+contiguous 2026-07-17 → 07-24 window in which no run executed at all, wider than
+the seven-date window; two are backdating losses the window now catches.
+
+Deliberately **not** done: no re-attribution of the 40 existing rows, no backfill
+of the 12 absent ones, no change to the 21-day threshold, no `KNOWN_INERT` entry.
+No historical rewrite of any kind has occurred.
+
+Still open: canonical selection keeps one copy and discards the losing copies'
+URLs, so "both institutions carried this release" is recorded nowhere. That is a
+provenance-model question, not a dedup fix.
 
 ## Run-475 persistence defect — FIXED on a local branch, not yet pushed
 
