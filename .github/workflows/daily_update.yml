@@ -146,6 +146,41 @@ jobs:
         if: steps.timecheck.outputs.should_run == 'true'
         run: python scripts/verify_db_current.py
 
+      # ── 4b-bis. Offline-test baseline ─────────────────────────────────────
+      # Captured AFTER migrations and schema verification because both of those
+      # legitimately write. `sync_desk_config()` applies manifest changes to the
+      # tracked database — a reworded `sources.notes` is a real, intended row
+      # update, not residue.
+      #
+      # The gate this replaces compared the post-test database against the
+      # CHECKED-OUT blob, a state that predates migrations. So every legitimate
+      # manifest-to-database synchronization was reported as "the offline suite
+      # modified pla_watch.db" and blocked the entire run. That is what stopped
+      # collection from 2026-08-18 onward: `desks/china/manifest.json` carried a
+      # reworded `mod_china` note, sync applied it before the suite ever ran, and
+      # the tests were blamed for it.
+      #
+      # The -wal is hashed alongside the database. A write that lands only in the
+      # write-ahead log leaves pla_watch.db byte-identical, and neither a hash of
+      # the database alone nor `git diff` would see it. Sidecar PRESENCE is not
+      # an error here (unlike the PR workflow, where no migration runs): the
+      # migration step above legitimately leaves a checkpointed -wal behind.
+      - name: Record offline-test database baseline
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: |
+          set -euo pipefail
+          baseline="${RUNNER_TEMP}/pla_watch.db.baseline.sha256"
+          {
+            sha256sum pla_watch.db
+            if [ -e pla_watch.db-wal ]; then
+              sha256sum pla_watch.db-wal
+            else
+              echo "absent  pla_watch.db-wal"
+            fi
+          } > "${baseline}"
+          echo "Baseline recorded after migrations and schema verification:"
+          sed 's/^/  /' "${baseline}"
+
       # ── 4c. Offline test suite ────────────────────────────────────────────
       # No network, no model calls, temporary databases only — the suite never
       # touches the tracked pla_watch.db. Runs before collection so a broken
@@ -154,24 +189,49 @@ jobs:
         if: steps.timecheck.outputs.should_run == 'true'
         run: python -m unittest discover -s tests -t . -v
 
+      # Measures exactly one phase: the offline suite. Placed immediately after
+      # it and BEFORE the reconciliation re-run, the pipeline and every commit
+      # step, so no later writer can be attributed to the tests and no test
+      # residue can reach production.
+      #
+      # Fails closed, and deliberately does not restore or repair the database:
+      # the residue is the only evidence of what went wrong, and a step that
+      # tidied it away would destroy the thing worth reading.
+      - name: Assert offline tests left the tracked database unchanged
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: |
+          set -euo pipefail
+          baseline="${RUNNER_TEMP}/pla_watch.db.baseline.sha256"
+          after="${RUNNER_TEMP}/pla_watch.db.after.sha256"
+          if [ ! -s "${baseline}" ]; then
+            echo "::error title=Baseline missing::the offline-test baseline was never recorded; refusing to pass by default."
+            exit 1
+          fi
+          {
+            sha256sum pla_watch.db
+            if [ -e pla_watch.db-wal ]; then
+              sha256sum pla_watch.db-wal
+            else
+              echo "absent  pla_watch.db-wal"
+            fi
+          } > "${after}"
+          if ! diff -q "${baseline}" "${after}" >/dev/null 2>&1; then
+            echo "::error title=Test residue::The offline suite modified pla_watch.db. Tests must use temporary copies."
+            echo "  expected, recorded after migrations and schema verification:"
+            sed 's/^/    /' "${baseline}"
+            echo "  actual, after the offline suite:"
+            sed 's/^/    /' "${after}"
+            exit 1
+          fi
+          echo "Offline suite left the tracked database unchanged:"
+          sed 's/^/  /' "${baseline}"
+
       # Re-run just the reconciliation contract separately. Redundant with the
       # suite above by design: when this fails, the failure line names the
       # merge-driver contract rather than being one entry in a long list.
       - name: Reconciliation contract check
         if: steps.timecheck.outputs.should_run == 'true'
         run: python -m unittest tests.test_reconcile -v
-
-      # The suite must not have dirtied the tracked database. If it did, the
-      # commit step below would push test residue into production.
-      - name: Assert tests left the tracked database clean
-        if: steps.timecheck.outputs.should_run == 'true'
-        run: |
-          if ! git diff --quiet -- pla_watch.db; then
-            echo "::error title=Test residue::The offline suite modified pla_watch.db. Tests must use temporary copies."
-            git diff --stat -- pla_watch.db
-            exit 1
-          fi
-          echo "Tracked database untouched by tests."
 
       # ── 5. Run pipeline (all sources) ─────────────────────────────────────
       # `id: pipeline` exists so the persist step below can prove this step
