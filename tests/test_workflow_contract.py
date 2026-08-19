@@ -136,8 +136,8 @@ class TestPrePipelineGates(unittest.TestCase):
 
     def test_db_cleanliness_asserted_after_tests(self):
         self.assertLess(index_of(self.names, "Run offline test suite"),
-                        index_of(self.names, "Assert tests left the tracked"))
-        self.assertLess(index_of(self.names, "Assert tests left the tracked"),
+                        index_of(self.names, "Assert offline tests left the tracked"))
+        self.assertLess(index_of(self.names, "Assert offline tests left the tracked"),
                         index_of(self.names, "Run pipeline"))
 
 
