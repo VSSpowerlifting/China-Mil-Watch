@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% set nested = true %}
+{% block title %}{{ article.title_english or article.title_original }} — {{ title }}{% endblock %}
+{% block content %}
+<p class="meta"><a href="../archive.html">← Archive</a></p>
+
+<div class="record-head">
+  <span class="evidence evidence--record">Source record</span>
+  <span class="meta">{{ article.institution or article.source_name }} · {{ article.published_date }}</span>
+</div>
+<h1>{{ article.title_english or article.title_original }}</h1>
+{% if article.title_english and article.title_original %}
+<p class="original" lang="{{ article.language_tag or 'zh' }}">{{ article.title_original }}</p>
+{% endif %}
+
+<h2>Provenance</h2>
+<div class="table-scroll">
+{# Not `stacking`: that treatment prints attr(data-label) before every cell,
+   which on a key/value table renders a useless "VALUE" above each value and
+   squeezes URLs and hashes. `provenance` gets its own mobile rules. #}
+<table class="provenance">
+  <caption>What is known about this record and where each part came from.</caption>
+  <tbody>
+    <tr><th scope="row">Institution</th><td class="prov-value">{{ article.institution or '—' }}</td></tr>
+    <tr><th scope="row">Source</th><td class="prov-value">{{ article.source_name }} <span class="meta">({{ article.source_slug }})</span></td></tr>
+    <tr><th scope="row">Original language</th><td class="prov-value">{{ article.language_tag or 'zh' }}</td></tr>
+    <tr><th scope="row">Canonical URL</th><td class="prov-value"><a href="{{ article.url }}" rel="noopener nofollow">{{ article.url }}</a></td></tr>
+    <tr><th scope="row">Stated publication date</th><td class="prov-value">{{ article.published_date }}</td></tr>
+    <tr><th scope="row">Retrieved at</th><td class="prov-value">{{ article.scraped_at }}</td></tr>
+    <tr><th scope="row">Collection run</th><td class="prov-value">{{ article.scrape_run_id }}</td></tr>
+    <tr><th scope="row">Content hash</th><td class="prov-value"><span class="meta">{{ article.content_hash }}</span></td></tr>
+    <tr><th scope="row">Analysis model</th><td class="prov-value">{{ article.model_id or '—' }}</td></tr>
+    <tr><th scope="row">Prompt version</th><td class="prov-value">{{ article.prompt_version or '—' }}</td></tr>
+    <tr><th scope="row">Human review</th><td class="prov-value">Not reviewed</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="meta">Translation method and version are not recorded for this item.</p>
+
+{% if article.summary_english %}
+<h2>Summary</h2>
+<div class="interpretation">
+  <p><span class="evidence evidence--model">Model-flagged</span></p>
+  <p>{{ article.summary_english }}</p>
+  <p class="meta">Machine-generated from the original text. Not reviewed by a human.
+  It is a reading of what was published, not a verification of it.</p>
+</div>
+{% endif %}
+
+<h2>What this record supports</h2>
+<ul>
+  <li><span class="evidence evidence--record">Source record</span> This item was published at the URL above on the stated date.</li>
+  <li><span class="evidence evidence--claim">Official claim</span> Its contents are that institution's assertions.</li>
+</ul>
+<p>It does not establish that the described events occurred, that any capability exists, or that
+the institution's stated position is its actual policy.</p>
+{% endblock %}

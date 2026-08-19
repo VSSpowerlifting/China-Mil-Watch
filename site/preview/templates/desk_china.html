@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}China Desk — {{ title }}{% endblock %}
+{% block content %}
+<h1>China Desk</h1>
+<p class="lede">The first desk, and today the only one collecting.
+{{ totals.articles|count }} records from {{ sources|length }} sources across
+{{ institutions }} institutions, {{ totals.first_date }} to {{ totals.last_date }}.</p>
+
+<h2 class="plain">The corpus, as it actually stands</h2>
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+{# "Analyzed" is articles.analyzed_at IS NOT NULL — nothing about publication.
+   All source records are part of the published corpus, so "analyzed and
+   published" was two different claims wearing one label. #}
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Source records</dt><dd>{{ totals.articles|count }}</dd></div>
+  <div class="stat-row"><dt>Analyzed records</dt><dd>{{ totals.analyzed|count }}</dd></div>
+  <div class="stat-row"><dt>Awaiting analysis</dt><dd>{{ (totals.articles - totals.analyzed)|count }}</dd></div>
+  <div class="stat-row"><dt>Collection runs</dt><dd>{{ totals.runs|count }}</dd></div>
+  <div class="stat-row"><dt>Earliest item</dt><dd>{{ totals.first_date }}</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>{{ totals.last_date }}</dd></div>
+</dl>
+<p class="meta">Counts reflect the stored corpus at this snapshot. Records awaiting analysis
+remain included.</p>
+
+<h2>Sources</h2>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">Source</th><th scope="col">Institution</th><th scope="col">Language</th><th scope="col" class="num">Records</th><th scope="col">Last published</th></tr></thead>
+  <tbody>
+  {% for s in sources %}
+    <tr>
+      <td data-label="Source">{{ s.display_name }}</td>
+      <td data-label="Institution">{{ s.institution or '—' }}</td>
+      <td data-label="Language">{{ s.language_tag or s.language }}</td>
+      <td data-label="Records" class="num">{{ s.article_count|count }}</td>
+      <td data-label="Last published">{{ s.last_published or 'never' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="notice">
+  <h3>Concentration, stated plainly</h3>
+  <p>One source accounts for the large majority of this corpus. The others are real but thin,
+  and one has never produced a record at all. That is a property of the corpus a reader needs
+  before citing it — see <a href="coverage.html">Coverage</a>.</p>
+</div>
+{% endblock %}

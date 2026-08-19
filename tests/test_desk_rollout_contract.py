@@ -1,0 +1,312 @@
+"""
+Desk roster contract for the release candidate.
+
+The desk directory is the surface where this project is most able to overstate
+itself: a planned desk rendered like a live one, a reference desk quietly
+promoted, or an invented count under an empty desk would each be a claim the
+corpus cannot support. These tests fix the roster and its states against the
+data and configuration they must be derived from, and pin the legacy China
+routes the transition must not break.
+
+Nothing here collects, enables a source, or writes to the tracked database.
+"""
+
+from __future__ import annotations
+
+import re
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
+import generate_preview as gp                                    # noqa: E402
+from scripts.reconcile_db import _read_only                      # noqa: E402
+
+TRACKED_DB = REPO_ROOT / "pla_watch.db"
+PRODUCTION_OUT = REPO_ROOT / "output"
+MANIFESTS = REPO_ROOT / "desks"
+
+
+class DeskCase(unittest.TestCase):
+    """Builds once into a throwaway directory."""
+
+    @classmethod
+    def setUpClass(cls):
+        if not TRACKED_DB.exists():
+            raise unittest.SkipTest("production database not present")
+        cls.tmp = Path(tempfile.mkdtemp(prefix="desk-rollout-"))
+        cls.out = cls.tmp / "build"
+        gp.build(cls.out, "Test Title", TRACKED_DB)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def page(self, name: str) -> str:
+        return (self.out / name).read_text(encoding="utf-8")
+
+    @staticmethod
+    def db():
+        """
+        Read the tracked database through the scratch-copy helper.
+
+        Never `sqlite3.connect()` on the tracked file, even read-only: it is in
+        WAL mode, so an open can leave a -wal/-shm beside it. That is the run-475
+        defect, and `test_workflow_failure_paths` enforces the rule.
+        """
+        return _read_only(str(TRACKED_DB))
+
+
+class TestRosterMatchesConfiguration(DeskCase):
+
+    def test_china_is_the_only_collecting_desk(self):
+        live = [d for d in gp.DESKS if d["state"] == "live"]
+        self.assertEqual([d["id"] for d in live], ["china"])
+
+    def test_the_only_desk_in_the_database_is_china(self):
+        with self.db() as con:
+            desks = [r[0] for r in con.execute("SELECT desk_id FROM desks")]
+        self.assertEqual(sorted(desks), ["china"])
+
+    def test_every_enabled_source_belongs_to_the_china_desk(self):
+        """A source enabled under any other desk would be collection this
+        product has not declared."""
+        with self.db() as con:
+            rows = con.execute(
+                "SELECT slug, desk_id, is_active FROM sources").fetchall()
+        self.assertTrue(rows, "no sources configured")
+        for slug, desk_id, active in rows:
+            with self.subTest(source=slug):
+                if active:
+                    self.assertEqual(desk_id, "china")
+
+    def test_no_japan_source_exists_or_is_enabled(self):
+        with self.db() as con:
+            japan = con.execute(
+                "SELECT slug FROM sources WHERE desk_id = 'japan' "
+                "OR slug LIKE '%japan%' OR slug LIKE '%mod_jp%'").fetchall()
+        self.assertEqual(japan, [])
+
+    def test_no_japan_manifest_is_discoverable(self):
+        """The draft manifest lives under docs/ precisely so the loader cannot
+        find it. If it ever lands in desks/, collection starts by accident."""
+        discovered = {p.parent.name for p in MANIFESTS.glob("*/manifest.json")}
+        self.assertEqual(discovered, {"china"})
+
+    def test_the_us_is_not_a_live_desk(self):
+        us = [d for d in gp.DESKS if d["id"] == "us-indopacific"]
+        self.assertEqual(len(us), 1)
+        self.assertNotEqual(us[0]["state"], "live")
+        self.assertIn("not yet scoped", us[0]["state_label"].lower())
+
+    def test_counts_are_never_hard_coded_in_a_template(self):
+        """Every figure a reader sees must come from the corpus."""
+        templates = (REPO_ROOT / "site" / "preview" / "templates")
+        for tpl in sorted(templates.glob("*.html")):
+            text = tpl.read_text(encoding="utf-8")
+            with self.subTest(template=tpl.name):
+                self.assertNotRegex(
+                    text, r"\b\d[\d,]{2,}\s+(records|articles|sources)\b",
+                    "%s hard-codes a corpus figure" % tpl.name)
+
+
+class TestJapanDeskIsPlannedNotCoverage(DeskCase):
+
+    def test_the_japan_desk_page_exists_and_is_linked(self):
+        self.assertTrue((self.out / "japan.html").is_file())
+        self.assertIn('href="japan.html"', self.page("desks.html"))
+
+    def test_the_japan_page_states_zero_records_and_zero_sources(self):
+        html = self.page("japan.html")
+        self.assertIn("No records collected. No sources enabled.", html)
+        self.assertIn("No Japan source is enabled", html)
+
+    def test_the_japan_page_shows_no_collection_statistic(self):
+        """Observed publication volume describes the ministry's output, not
+        ours. Nothing may read as a record count for this desk.
+
+        The page may — and does — name the 30-day shadow gate and say that
+        cadence and silence thresholds are deliberately unset. Those are the
+        governing disclosures. What must never appear is a *running* shadow-day
+        counter or a calibrated threshold, either of which would imply a clock
+        that has started."""
+        html = self.page("japan.html")
+        self.assertNotRegex(
+            html, r"\b\d[\d,]*\s+(records|articles)\s+collected\b")
+        lower = html.lower()
+        for counter in (r"day\s+\d+\s+of\s+30", r"\d+\s*/\s*30\s*days",
+                        r"\d+\s+shadow\s+days?", r"shadow\s+day\s+\d+"):
+            with self.subTest(pattern=counter):
+                self.assertNotRegex(lower, counter)
+        for raw_field in ("expected_cadence_days", "silence_threshold_days"):
+            with self.subTest(field=raw_field):
+                self.assertNotIn(raw_field, lower)
+        self.assertIn("thresholds remain unset", lower)
+
+    def test_the_japan_page_is_not_described_as_coverage(self):
+        html = re.sub(r"\s+", " ", self.page("japan.html").lower())
+        self.assertIn("it is not coverage", html)
+        for claim in ("japan coverage", "covering japan", "japan corpus"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, html)
+
+    def test_the_access_problem_is_disclosed_without_promising_a_workaround(self):
+        html = self.page("japan.html")
+        self.assertIn("access", html.lower())
+        for evasion in ("bypass", "circumvent", "user agent", "user-agent",
+                        "proxy", "captcha", "fingerprint"):
+            with self.subTest(term=evasion):
+                self.assertNotIn(evasion, html.lower())
+
+    def test_no_planned_desk_is_counted_as_a_live_one(self):
+        html = self.page("index.html")
+        self.assertIn("1</b> collecting desk", html)
+
+
+class TestLegacyChinaRoutesSurvive(DeskCase):
+
+    EDITIONS = ("2026-05-09", "2026-05-16", "2026-05-23", "2026-05-30",
+                "2026-06-06", "2026-06-13", "2026-06-20", "2026-06-27",
+                "2026-07-04", "2026-07-11", "2026-07-18", "2026-08-01",
+                "2026-08-08")
+
+    def test_all_thirteen_editions_exist_in_production_output(self):
+        for edition in self.EDITIONS:
+            path = PRODUCTION_OUT / "the-pla-watch" / "posts" / (edition + ".html")
+            with self.subTest(edition=edition):
+                self.assertTrue(path.is_file())
+
+    def test_the_preview_links_editions_to_the_live_site_and_copies_none(self):
+        html = self.page("weekly.html")
+        for edition in self.EDITIONS:
+            with self.subTest(edition=edition):
+                self.assertIn(
+                    "https://chinamilwatch.org/the-pla-watch/posts/%s.html"
+                    % edition, html)
+                self.assertFalse(
+                    (self.out / "the-pla-watch" / "posts"
+                     / (edition + ".html")).exists(),
+                    "an edition was copied into the prototype")
+
+    def test_the_pla_watch_remains_a_china_desk_series(self):
+        html = self.page("weekly.html")
+        self.assertIn("China", html)
+        self.assertNotIn("Japan Desk", html)
+
+    def test_the_prototype_never_writes_into_the_production_namespace(self):
+        for reserved in ("article", "the-pla-watch"):
+            with self.subTest(namespace=reserved):
+                self.assertFalse((self.out / reserved).exists())
+
+
+class TestProductionArtifactsAreUntouched(unittest.TestCase):
+    """The release candidate reads production; it never edits it."""
+
+    def test_no_sidecar_sits_beside_the_tracked_database(self):
+        for ext in ("-wal", "-shm"):
+            with self.subTest(sidecar=ext):
+                self.assertFalse(Path(str(TRACKED_DB) + ext).exists())
+
+    def test_the_generator_opens_the_database_read_only(self):
+        source = (REPO_ROOT / "site" / "preview"
+                  / "generate_preview.py").read_text(encoding="utf-8")
+        self.assertIn("_read_only", source)
+        self.assertNotRegex(
+            source, r"sqlite3\.connect\(\s*str\(db_path\)\s*\)",
+            "the generator must not open the tracked database read-write")
+
+
+class TestPrintAndStateLegibility(unittest.TestCase):
+    """
+    Two rendering defects found in visual QA, pinned so they cannot return.
+
+    Neither is cosmetic. A state marker that renders as a tofu box removes the
+    at-a-glance distinction between a desk that collects and one that does not,
+    and a print rule that expands every href buries the record text under its
+    own plumbing on exactly the pages a reader would print.
+    """
+
+    CSS = (REPO_ROOT / "site" / "preview" / "styles.css")
+
+    #: Glyphs measured against the live font stack (Inter, system-ui, …) in the
+    #: browser. Those that resolve draw at ~11px; U+25EB and U+25E7 draw at
+    #: 7.22px, the fallback width, because neither font has them.
+    RENDERABLE = set("◼◻▣□■◐▪▫")
+    MISSING = set("◫◧◨◩◪")
+
+    def css(self):
+        return self.CSS.read_text(encoding="utf-8")
+
+    def test_no_desk_state_marker_uses_an_unrenderable_glyph(self):
+        markers = re.findall(r'\.desk-state[^{]*::before\s*\{\s*content:\s*"([^"]*)"',
+                             self.css())
+        self.assertTrue(markers, "no desk-state markers found")
+        for marker in markers:
+            for ch in marker.strip():
+                with self.subTest(glyph=ch):
+                    self.assertNotIn(ch, self.MISSING,
+                                     "U+%04X has no glyph in the font stack "
+                                     "and renders as a tofu box" % ord(ch))
+                    self.assertIn(ch, self.RENDERABLE)
+
+    def test_every_desk_state_has_one_distinct_marker(self):
+        """
+        Grouped by STATE, not by selector: a state is legitimately styled twice
+        — once for its directory entry (`.desk--scoped .desk-state`) and once
+        for its own desk page (`.desk-state--scoped`), where there is no `.desk`
+        wrapper to select through. Both must draw the same glyph, and no two
+        states may share one.
+        """
+        pairs = re.findall(
+            r'\.desk[-]{1,2}(?:state--)?(live|scoped|development)[^{]*::before'
+            r'\s*\{\s*content:\s*"([^"]*)"', self.css())
+        self.assertTrue(pairs, "no desk-state markers found")
+        by_state = {}
+        for state, glyph in pairs:
+            by_state.setdefault(state, set()).add(glyph.strip())
+        for state, glyphs in by_state.items():
+            with self.subTest(state=state):
+                self.assertEqual(len(glyphs), 1,
+                                 "%s draws inconsistent markers: %s"
+                                 % (state, sorted(glyphs)))
+        used = [next(iter(g)) for g in by_state.values()]
+        self.assertEqual(len(used), len(set(used)),
+                         "two desk states share a marker")
+        self.assertEqual(set(by_state), {"live", "scoped", "development"})
+
+    def test_print_expands_only_absolute_urls(self):
+        css = self.css()
+        print_block = css.split("@media print", 1)[1]
+        self.assertNotRegex(
+            print_block, r'(?<![\]\w"])\ba::after',
+            "an unscoped a::after prints a URL beside every internal link")
+        self.assertIn('a[href^="http"]::after', print_block)
+
+    def test_print_suppresses_fragment_and_mailto_urls(self):
+        block = self.css().split("@media print", 1)[1]
+        for selector in ('a[href^="#"]::after', 'a[href^="mailto:"]::after'):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, block)
+
+    def test_print_keeps_a_record_whole_across_a_page_break(self):
+        block = self.css().split("@media print", 1)[1]
+        self.assertIn("break-inside: avoid", block)
+        self.assertIn("article.record", block)
+
+    def test_print_keeps_a_column_header_with_its_rows(self):
+        """A `thead` stranded at the foot of a page labels nothing."""
+        block = self.css().split("@media print", 1)[1]
+        self.assertRegex(block, r"thead\s*\{[^}]*break-after:\s*avoid")
+
+    def test_print_does_not_clip_a_scrolling_table(self):
+        block = self.css().split("@media print", 1)[1]
+        self.assertRegex(block, r"\.table-scroll\s*\{[^}]*overflow:\s*visible")
+
+
+if __name__ == "__main__":
+    unittest.main()

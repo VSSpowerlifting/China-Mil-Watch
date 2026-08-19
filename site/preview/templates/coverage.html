@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Coverage health — {{ title }}{% endblock %}
+{% block content %}
+<h1>Coverage health</h1>
+<p class="lede">What was collected, what was not, and which kind of "nothing" each source returned.
+This page exists because an empty result has more than one cause, and only one of them is healthy.</p>
+
+<h2>Most recent run</h2>
+<p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }} · aggregate <strong>{{ latest_run.status }}</strong></p>
+<div class="table-scroll">
+<table class="stacking">
+  <caption>Every configured source has a result row for this run. A missing row would be a defect.</caption>
+  <thead>
+    <tr><th scope="col">Source</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
+  </thead>
+  <tbody>
+  {% for r in run_results %}
+    {% set kind = 'fail' if r.is_failure else ('note' if r.status == 'not_implemented' else ('quiet' if r.new_documents == 0 else 'ok')) %}
+    <tr>
+      <td data-label="Source">{{ r.source_slug }}</td>
+      <td data-label="Result">
+        <span class="status status--{{ kind }}">
+          <span class="status-mark" aria-hidden="true">{% if kind == 'ok' %}✓{% elif kind == 'quiet' %}○{% elif kind == 'note' %}◻{% else %}✕{% endif %}</span>
+          <span class="status-name">{{ r.status|status_label }}</span>
+        </span>
+      </td>
+      <td data-label="Found" class="num">{{ r.references_discovered }}</td>
+      <td data-label="Read" class="num">{{ r.extracted }}</td>
+      <td data-label="Already held" class="num">{{ r.duplicates }}</td>
+      <td data-label="New" class="num">{{ r.new_documents }}</td>
+      {# error_detail is shown only for genuine failures. For not_implemented it
+         carries an internal phrase ("adapter is a documented stub") that is
+         repository language, not reader language. #}
+      <td data-label="Note">{% if r.is_failure and r.error_detail %}{{ r.error_detail }}{% elif status_run_note.get(r.status) %}{{ status_run_note[r.status] }}{% else %}{{ r.status|status_prose }}{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>What each result means</h2>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">Result</th><th scope="col">Meaning</th></tr></thead>
+  <tbody>
+  {% for code, pair in status_prose.items() %}
+    <tr><td data-label="Result"><strong>{{ pair[0] }}</strong><br><span class="meta token">{{ code }}</span></td>
+        <td data-label="Meaning">{{ pair[1] }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Gaps in collection</h2>
+{% if gaps %}
+<p>Days with no collection run at all. These are outages, not quiet days —
+no attempt was made, so nothing can be said about what those days held.</p>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">From</th><th scope="col">To</th><th scope="col" class="num">Days</th></tr></thead>
+  <tbody>
+  {% for g in gaps %}
+    <tr><td data-label="From">{{ g.from }}</td><td data-label="To">{{ g.to }}</td><td data-label="Days" class="num">{{ g.days }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="notice">
+  <h3>Why this table is on the site rather than in a changelog</h3>
+  <p>A corpus with undisclosed holes cannot be cited safely. Anyone using this archive to argue
+  that an institution went quiet during one of these windows would be wrong, and would have no
+  way of knowing.</p>
+</div>
+{% else %}
+<p>No multi-day gap in the collection record.</p>
+{% endif %}
+{% endblock %}

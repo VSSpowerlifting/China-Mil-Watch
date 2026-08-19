@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Desks — {{ title }}{% endblock %}
+{% block content %}
+<h1>Desks</h1>
+<p class="lede">A desk groups institutions within a declared collection scope. It appears here once
+that scope is defined and is labeled according to its current state.</p>
+{% for d in desks %}
+{% if d.id != 'us-indopacific' %}
+<section class="desk desk--{{ d.state }}">
+  <p class="desk-state">{{ d.state_label }}</p>
+  <h2 class="plain" style="margin-top:.25rem">{% if d.state == 'live' %}<a href="china.html">{{ d.name }}</a>{% elif d.id == 'japan' %}<a href="japan.html">{{ d.name }}</a>{% else %}{{ d.name }}{% endif %}</h2>
+  <p>{{ d.note }}</p>
+  {% if d.state == 'live' %}
+  <p class="meta">{{ totals.articles|count }} records · {{ sources|length }} sources · {{ totals.runs|count }} runs</p>
+  {% else %}
+  <p class="meta">No records collected. No sources enabled.</p>
+  {% endif %}
+</section>
+{% endif %}
+{% endfor %}
+{# The US entry is deliberately not a peer desk section: it has no scope, so
+   presenting it at the same level as China and Japan would overstate it. #}
+<p class="meta desk-footnote">Not yet scoped: United States reference coverage has not been
+researched and is not presented as a desk.</p>
+
+<p>No Japan source is enabled and no records have been collected. The pre-registered source
+universe, the access problem that blocks it, and the observed publication volume are set out on the
+<a href="japan.html">Japan Desk page</a>. After collection begins, that desk remains in shadow for
+30 consecutive days before it can appear as coverage.</p>
+{% endblock %}

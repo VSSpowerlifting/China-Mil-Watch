@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+{% if lead_edition %}
+<section class="lead">
+  <p class="eyebrow">Current issue{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
+  <h2 class="lead-title"><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h2>
+  {% if lead_edition.dek %}<p class="lede">{{ lead_edition.dek }}</p>{% endif %}
+  {# `articles` is the sidecar's n_articles = the week's relevance-passing
+     collected articles (generate_pla_watch.compute_stats -> total_articles).
+     It is NOT the count of items the edition cites — that is the source_trail,
+     which holds 13 for this edition. "records cited" was false. #}
+  <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+  <p><a href="{{ lead_edition.url }}" rel="noopener">Read this edition →</a> &nbsp; <a href="weekly.html">All analysis →</a></p>
+</section>
+{% endif %}
+
+<h2{% if not lead_edition %} class="plain"{% endif %}>Latest records</h2>
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+<p class="meta">The most recent China Desk records, with original-language titles preserved.</p>
+{% for a in articles[:6] %}
+<article class="record">
+  <div class="record-head">
+    <span class="evidence evidence--record">Source record</span>
+    <span class="meta">{{ a.institution or a.source_name }} · {{ a.published_date }}</span>
+  </div>
+  <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
+  {% if a.title_english and a.title_original %}<p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>{% endif %}
+</article>
+{% endfor %}
+<p><a href="archive.html">All records →</a></p>
+
+<h2>What this is</h2>
+<p>An archive of what selected defense and security institutions publish themselves — the original
+text, the date, the institution, and a per-run record of whether collection actually worked. One
+desk is collecting today; the others are declared and empty, and are labeled that way on
+<a href="desks.html">Desks</a>.</p>
+<p>Coverage is selective and heavily concentrated in one source. What the archive can and cannot
+support is set out in <a href="methodology.html">Methodology</a>, and what each collection run
+actually returned is on <a href="coverage.html">Coverage</a>. Citation guidance is on
+<a href="about.html">About</a>.</p>
+{% endblock %}

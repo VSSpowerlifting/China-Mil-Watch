@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Corpus by week — {{ title }}{% endblock %}
+{% block content %}
+<p class="eyebrow">{{ corpus_eyebrow }}</p>
+<h1>China Desk Corpus — by publication week</h1>
+<p class="lede">All {{ corpus_total | count }} records collected from the China Desk source
+universe, grouped by the publication date each source stated. Every record has its own page and
+is reachable from the week lists below without JavaScript.</p>
+
+<p>{{ snapshot_label }}. Records are not a measure of institutional output or of collection
+completeness. Some stored records were never screened, and some were screened and not selected
+for analysis; the processing status on each entry says which.</p>
+
+<h2>Processing states in this snapshot</h2>
+<div class="table-scroll">
+<table class="corpus-states">
+  <caption>Every stored record is in exactly one state. The four sum to the snapshot count.</caption>
+  <thead>
+    <tr><th scope="col">State</th><th scope="col">Records</th><th scope="col">What it means</th></tr>
+  </thead>
+  <tbody>
+    {% for state in state_counts %}
+    <tr>
+      <th scope="row">{{ state.label }}</th>
+      <td class="c-count">{{ state.count | count }}<span class="c-unit"> records</span></td>
+      <td class="c-definition">{{ state.definition }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2>Publication weeks</h2>
+<div class="table-scroll">
+<table class="corpus-weeks">
+  <caption>Newest first. The run-date figure counts UTC calendar dates carrying at least one
+  recorded pipeline run; it is operational context, not a coverage denominator.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Week</th>
+      <th scope="col">Records</th>
+      <th scope="col">Recorded run dates (UTC)</th>
+      <th scope="col">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for week in weeks %}
+    <tr>
+      <th scope="row"><a href="{{ week.path }}"><span class="c-range">{{ week.start }} to {{ week.end }}</span></a></th>
+      <td class="c-count">{{ week.count | count }}<span class="c-unit"> records</span></td>
+      <td class="c-runs">{{ week.run_dates }}<span class="c-unit"> recorded run dates (UTC)</span></td>
+      <td class="c-note">{% if week.annotation %}{{ week.annotation }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<p class="meta">Records in this snapshot, grouped by the publication date stated by each source.
+Counts reflect stored records after de-duplication, not total institutional output, collection
+completeness, system uptime, or military activity. The accompanying run-day figure counts UTC
+calendar dates with at least one recorded pipeline run. Because run records do not preserve
+target publication dates or historical source-level outcomes, it is operational context—not a
+coverage denominator.</p>
+{% endblock %}

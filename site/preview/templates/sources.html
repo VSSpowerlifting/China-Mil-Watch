@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Source universe — {{ title }}{% endblock %}
+{% block content %}
+<h1>Source universe</h1>
+<p class="lede">Which institutions are collected, how they are positioned, and what authority their
+publications carry. Each source is declared in advance with an institution, source type, language,
+and collection purpose.</p>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">Source</th><th scope="col">Institution</th><th scope="col">Type</th><th scope="col">Authority</th><th scope="col">Language</th><th scope="col" class="num">Records</th></tr></thead>
+  <tbody>
+  {% for s in sources %}
+    <tr>
+      <td data-label="Source">{{ s.display_name }}<br><span class="meta">{{ s.slug }}</span></td>
+      <td data-label="Institution">{{ s.institution or '—' }}{% if s.name_original %}<br><span class="meta" lang="zh">{{ s.name_original }}</span>{% endif %}</td>
+      <td data-label="Type">{{ s.source_type|source_type_label }}</td>
+      <td data-label="Authority">{{ s.authority_tier or '—' }}</td>
+      <td data-label="Language">{{ s.language_tag or s.language }}</td>
+      <td data-label="Records" class="num">{{ s.article_count|count }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<h2>Authority tier is a claim about position, not truthfulness</h2>
+<p>A tier-A source is closer to the institution that speaks. It is not more likely to be
+accurate, and nothing here treats it as such.</p>
+{% endblock %}

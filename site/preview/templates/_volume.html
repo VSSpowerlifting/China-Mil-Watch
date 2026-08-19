@@ -1,0 +1,48 @@
+{# Volume by publication week.
+
+   Server-rendered and complete without JavaScript. The TABLE is the semantic
+   representation; the bars are decoration layered on top of it and are
+   aria-hidden, so a screen reader gets exact figures rather than a described
+   picture. Bar length encodes the record count and nothing else — it is never
+   normalized by run dates, because dividing stored records by run dates would
+   manufacture a rate the data cannot support. #}
+<h2 id="volume-heading">Records by publication week</h2>
+
+<div class="table-scroll">
+<table class="volume">
+  <caption>Fifteen publication weeks, newest first. Bar length shows the record
+  count only.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Week</th>
+      <th scope="col">Records</th>
+      <th scope="col">Recorded run dates (UTC)</th>
+      <th scope="col">Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for week in weeks %}
+    <tr>
+      <th scope="row"><a href="{{ week.path }}"><span class="c-range">{{ week.start }} to {{ week.end }}</span></a></th>
+      <td class="v-count">
+        <span class="v-figure">{{ week.count | count }}</span><span class="c-unit"> records</span>
+        <span class="v-bar" aria-hidden="true"><span class="v-fill" style="width: {{ (week.count * 100 / volume_max) | round(1) }}%"></span></span>
+      </td>
+      <td class="c-runs">{{ week.run_dates }}<span class="c-unit"> recorded run dates (UTC)</span></td>
+      <td class="c-note">{% if week.annotation %}{{ week.annotation }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<p class="meta">Records in this snapshot, grouped by the publication date stated by each source.
+Counts reflect stored records after de-duplication, not total institutional output, collection
+completeness, system uptime, or military activity. The accompanying run-day figure counts UTC
+calendar dates with at least one recorded pipeline run. Because run records do not preserve
+target publication dates or historical source-level outcomes, it is operational context—not a
+coverage denominator.</p>
+
+{# The volume section sits below the result list, which is 50 cards deep. A
+   return link keeps it from being a one-way trip on a long mobile page. #}
+<p id="volume-return"><a href="#results-heading">↑ Back to Archive search</a></p>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Methodology — {{ title }}{% endblock %}
+{% block content %}
+<h1>Methodology and limitations</h1>
+<p class="lede">How a record gets here, and what it can and cannot support.</p>
+<h2>Collection</h2>
+<p>Each source is declared in a desk manifest with its institution, language, listing endpoints and
+expected cadence. A scheduled run visits each listing, fetches items, extracts text, removes
+duplicates, and stores the original alongside metadata. Every source produces an explicit
+result each run, even when it produced nothing.</p>
+<h2>Analysis</h2>
+<p>Records are screened for relevance, translated, and summarized by language models. The model
+and prompt version are recorded per record. Machine classifications are labeled
+<span class="evidence evidence--model">Model-flagged</span>, never "significant".</p>
+<h2>What this archive supports</h2>
+<ul>
+  <li>That a named institution published a specific item on a specific date.</li>
+  <li>That we retrieved it at a specific time, and what the original text was.</li>
+  <li>Whether a source has published anything recently — and whether we successfully looked.</li>
+</ul>
+<h2>What it does not support</h2>
+<ul>
+  <li>That an institution believes what it published.</li>
+  <li>That a described capability exists, or that an announced event occurred.</li>
+  <li>That coverage is comprehensive. It is selective, and heavily concentrated in one source.</li>
+  <li>That a machine-generated summary or translation is accurate without human review.</li>
+  <li>Any quantified confidence in an analytical judgment. No calibration method exists, so no
+      number is offered.</li>
+</ul>
+<h2>How evidence is labeled</h2>
+<p>These are the labels a reader will encounter:</p>
+<ul>
+  <li><span class="evidence evidence--record">Source record</span> the item as published, with
+      its original language, canonical link and retrieval time.</li>
+  <li><span class="evidence evidence--claim">Official claim</span> an assertion by the publishing
+      institution — never rendered as established fact.</li>
+  <li><span class="evidence evidence--model">Model-flagged</span> a machine classification or
+      summary, always marked as not reviewed by a human.</li>
+  <li><strong>Significant</strong> and <strong>Routine</strong> describe the editor's judgment of
+      a weekly edition. They are separate from article-level
+      <span class="evidence evidence--model">Model-flagged</span> classifications.</li>
+</ul>
+
+<h2>Known limitations</h2>
+<ul>
+  <li>Collection gaps are listed on <a href="coverage.html">Coverage</a> and are not smoothed over.</li>
+  <li>Some records are collected but not yet analyzed; they are counted, not hidden.</li>
+  <li>One configured source has no working collector and is reported as such every run.</li>
+</ul>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Archive — {{ title }}{% endblock %}
+{% block content %}
+<h1>Source archive</h1>
+<p class="lede">Search and filter the complete prototype snapshot — all
+{{ corpus_total | count }} stored records.</p>
+
+{# The complete path, always visible and never dependent on JavaScript. It comes
+   first because it is the guarantee, not the fallback: the browser below is a
+   convenience over a static structure that already reaches every record. #}
+<p id="volume-jump"><a href="#volume-heading">View records by publication week ↓</a></p>
+
+<p id="nojs-path">Every record is also reachable by publication week:
+<a href="corpus.html">browse the corpus by week →</a> No JavaScript required.</p>
+
+{# Contextual, not a navigation item. A reader filtering a corpus needs to know
+   what its counts can support before the counts mean anything. #}
+<p id="guide-link">What this corpus holds, what each stored field means, and
+where its counts stop being reliable:
+<a href="corpus-guide.html">Corpus Guide →</a></p>
+
+{# Shown only when the index fails to load. Rendering "0 results" there would
+   describe an empty corpus when the truth is a failed fetch. #}
+<p id="index-error" class="meta" role="status" aria-live="polite" hidden>The
+search index could not be loaded or did not match this snapshot, so search and
+filters are unavailable. The records held in this prototype snapshot remain
+accessible through the week-by-week browse above.</p>
+
+{# Both wrappers start hidden. With JavaScript off they stay hidden, so no
+   control ever appears operative when nothing can operate it. #}
+{# The page states which snapshot it describes. browse.js proves the fetched
+   index agrees before revealing a single control, so a stale cached index
+   cannot render beneath these numbers. Public facts only — the internal
+   logical fingerprint never reaches a reader. #}
+<div id="browse" data-snapshot-date="{{ snapshot.date }}"
+     data-snapshot-records="{{ corpus_total }}" hidden>
+  <div id="controls" hidden>
+    <h2>Search and filter</h2>
+    <p class="meta">Source outlets and publishing institutions overlap: one
+    institution can publish through more than one source, so their counts are
+    not mutually exclusive categories. Original language is an attribute of
+    the source, not something asserted independently for each record.</p>
+
+    <div class="filters">
+      <div>
+        <label for="f-q">Title contains</label>
+        <input id="f-q" type="search" autocomplete="off"
+               placeholder="English or original title">
+      </div>
+      <div>
+        <label for="f-source">Source outlet</label>
+        <select id="f-source"></select>
+      </div>
+      <div>
+        <label for="f-institution">Publishing institution</label>
+        <select id="f-institution"></select>
+      </div>
+      <div>
+        <label for="f-language">Original language (source attribute)</label>
+        <select id="f-language"></select>
+      </div>
+      <div>
+        <label for="f-status">Processing status</label>
+        <select id="f-status"></select>
+      </div>
+      <div>
+        <label for="f-from">Source-stated date from</label>
+        <input id="f-from" type="date">
+      </div>
+      <div>
+        <label for="f-to">Source-stated date to</label>
+        <input id="f-to" type="date">
+      </div>
+      <div class="filter-action">
+        <button type="button" id="f-reset">Reset filters</button>
+      </div>
+    </div>
+    <p class="meta">Search covers titles only — the English title where one
+    exists, and the original title always. It does not search machine summaries
+    or stored source text.</p>
+  </div>
+
+  <h2 id="results-heading">Records</h2>
+  <p class="meta" id="result-range"></p>
+  <p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
+
+  <div id="results"></div>
+
+  <p id="no-results" hidden>No records match these filters. Widen the date range
+  or reset the filters above.</p>
+
+  <nav id="pager" class="pager" aria-label="Result pages" hidden>
+    <button type="button" id="page-prev">Previous page</button>
+    <button type="button" id="page-next">Next page</button>
+  </nav>
+</div>
+
+{% include "_volume.html" %}
+{% endblock %}
+{% block scripts %}<script src="browse.js" defer></script>{% endblock %}
