@@ -2734,8 +2734,20 @@ class TestBrowserRejectsMalformedIndex(PreviewCase):
         cls.thread = threading.Thread(target=cls.httpd.serve_forever,
                                       daemon=True)
         cls.thread.start()
+        # The package can be installed while the browser binary is not:
+        # `pip install playwright` does not fetch chromium, and the pull-request
+        # workflow deliberately installs no browser. Skip cleanly there rather
+        # than erroring — the daily workflow runs `playwright install chromium`
+        # before this suite, so these assertions are still enforced before any
+        # production render.
         cls._pw = sync_playwright().start()
-        cls.browser = cls._pw.chromium.launch()
+        try:
+            cls.browser = cls._pw.chromium.launch()
+        except Exception as exc:                              # pragma: no cover
+            cls._pw.stop()
+            raise unittest.SkipTest(
+                "chromium not available (%s); run `playwright install chromium`"
+                % type(exc).__name__)
         cls.good = json.loads(
             (cls.out / "corpus-index.json").read_text(encoding="utf-8"))
 
@@ -4322,8 +4334,20 @@ class TestCitationCopyBehaviour(PreviewCase):
         cls.httpd = socketserver.TCPServer(("127.0.0.1", 0), handler)
         cls.port = cls.httpd.server_address[1]
         threading.Thread(target=cls.httpd.serve_forever, daemon=True).start()
+        # The package can be installed while the browser binary is not:
+        # `pip install playwright` does not fetch chromium, and the pull-request
+        # workflow deliberately installs no browser. Skip cleanly there rather
+        # than erroring — the daily workflow runs `playwright install chromium`
+        # before this suite, so these assertions are still enforced before any
+        # production render.
         cls._pw = sync_playwright().start()
-        cls.browser = cls._pw.chromium.launch()
+        try:
+            cls.browser = cls._pw.chromium.launch()
+        except Exception as exc:                              # pragma: no cover
+            cls._pw.stop()
+            raise unittest.SkipTest(
+                "chromium not available (%s); run `playwright install chromium`"
+                % type(exc).__name__)
         cls.expected = gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT)
 
     @classmethod
