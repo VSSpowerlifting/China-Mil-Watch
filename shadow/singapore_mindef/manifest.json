@@ -1,0 +1,53 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST — deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a Singapore",
+    "desk and source into the tracked production database on the next migration",
+    "run, which would put a non-collecting desk into public counts. It lives",
+    "here so production discovery cannot see it by accident, and a test asserts",
+    "that desks/ contains only china.",
+    "",
+    "Nothing in this file is read by pipeline.py. Only the shadow runner reads",
+    "it, and the shadow runner writes only to the shadow state branch."
+  ],
+  "desk": {
+    "desk_id": "singapore",
+    "display_name": "Singapore Desk",
+    "jurisdiction_code": "SG",
+    "default_timezone": "Asia/Singapore",
+    "default_calendar": "gregorian",
+    "supported_language_tags": ["en"],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "sg_mindef",
+      "display_name": "Ministry of Defence",
+      "name_original": "Ministry of Defence, Singapore",
+      "institution_type": "defense_ministry",
+      "notes": "MINDEF publishes for itself and for the Singapore Armed Forces."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "sg_mindef_releases",
+      "display_name": "MINDEF Singapore — official releases",
+      "institution_id": "sg_mindef",
+      "base_url": "https://www.mindef.gov.sg",
+      "language_tag": "en",
+      "authority_tier": "A",
+      "enabled": false,
+      "listing_endpoints": [
+        "https://www.mindef.gov.sg/sitemap.xml"
+      ],
+      "article_url_patterns": [
+        "^https://www\\.mindef\\.gov\\.sg/news-and-events/latest-releases/[^/]+/$"
+      ],
+      "notes": "Tier A as the ministry's own authorized public position. Enabled is false and stays false: this source is under shadow evaluation and has never been part of a production run. Scope is documented in shadow/singapore_mindef/README.md."
+    }
+  ]
+}
