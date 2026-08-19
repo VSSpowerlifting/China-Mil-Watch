@@ -652,14 +652,19 @@ def run(
         try:
             import importlib.util
             from pathlib import Path as _Path
+            # Routed through site/render.py, the one place that selects a
+            # frontend. No mode is passed, so this resolves to
+            # DEFAULT_SITE_MODE — legacy — exactly as before. The scheduled
+            # workflow sets nothing, and a contract test asserts it never does.
             _spec = importlib.util.spec_from_file_location(
-                "site_generator",
-                _Path(__file__).parent / "site" / "generator.py",
+                "site_render",
+                _Path(__file__).parent / "site" / "render.py",
             )
-            _gen = importlib.util.module_from_spec(_spec)
-            _spec.loader.exec_module(_gen)
-            _gen.generate_site()
-            logger.info("Site generated → %s", OUTPUT_DIR)
+            _render = importlib.util.module_from_spec(_spec)
+            _spec.loader.exec_module(_render)
+            _report = _render.render_site()
+            logger.info("Site generated (%s mode) → %s",
+                        _report["mode"], _report["output_dir"])
         except Exception as exc:
             logger.error("Site generation failed: %s", exc)
             sys.exit(1)
