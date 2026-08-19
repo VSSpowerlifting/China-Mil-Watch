@@ -30,6 +30,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from scripts.reconcile_db import read_only                        # noqa: E402
+
 POSTS_DIR = ROOT / "output" / "the-pla-watch" / "posts"
 DB_PATH = ROOT / "pla_watch.db"
 
@@ -99,20 +101,34 @@ def extract_body(html_text: str) -> dict:
 
 
 def _load_zh_titles() -> dict:
-    """url → title_original from the daily-monitoring DB (read-only)."""
+    """
+    url → title_original from the daily-monitoring DB (read-only).
+
+    Raises rather than returning an empty mapping. `title_zh` is not optional
+    decoration: it is stored in the sidecar and published from it, so a read
+    that fails and a database with no Chinese titles are not the same answer
+    and must not produce the same file. Degrading either one to `{}` lets the
+    backfill rewrite every sidecar with the trail's `title_zh` missing — the
+    machine-dependent stored output this script exists to avoid.
+
+    A missing database is included: the caller asked for an enrichment that
+    cannot be performed, and silently performing a different, lossier backfill
+    is not an answer. `main()` turns any of these into one ERROR and a nonzero
+    exit, before a single sidecar is touched.
+
+    Reads a scratch copy, not the tracked file. A direct `mode=ro` URI is not
+    a portable, side-effect-free read of a WAL database: depending on SQLite,
+    the VFS and the filesystem it either fails to open or creates the sidecars
+    beside the input (DECISION_LOG 2026-08-14, corrected 2026-08-17).
+    """
     if not DB_PATH.exists():
-        return {}
-    try:
-        conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+        raise FileNotFoundError(f"no such database: {DB_PATH}")
+    with read_only(DB_PATH) as conn:
         rows = conn.execute(
             "SELECT url, title_original FROM articles "
             "WHERE title_original IS NOT NULL AND title_original != ''"
         ).fetchall()
-        conn.close()
-        return dict(rows)
-    except sqlite3.Error as exc:
-        print(f"WARN: could not read DB for Chinese titles: {exc}")
-        return {}
+    return dict(rows)
 
 
 def main() -> int:
@@ -126,7 +142,20 @@ def main() -> int:
         print(f"No sidecars found in {POSTS_DIR}")
         return 1
 
-    zh_titles = _load_zh_titles()
+    # Before anything is written. Every failure mode of the read — missing,
+    # invalid, unreadable, a failed copy, a failed connect, a failed query —
+    # lands here as one ERROR and a nonzero exit, with no sidecar modified and
+    # no traceback. OSError covers the copy the helper makes before it opens
+    # the database; sqlite3.Error covers the connect and the query.
+    # `--dry-run` takes this path too: a dry run that cannot read the database
+    # cannot report what a real run would write.
+    try:
+        zh_titles = _load_zh_titles()
+    except (OSError, sqlite3.Error) as exc:
+        print(f"ERROR: cannot read {DB_PATH.name} for Chinese titles: {exc} "
+              f"— no sidecar was modified", file=sys.stderr)
+        return 2
+
     changed = 0
     for issue_number, json_path in enumerate(json_paths, start=1):
         sidecar = json.loads(json_path.read_text(encoding="utf-8"))
@@ -197,4 +226,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    main()
+    # main()'s return value is the exit status. Without this the documented
+    # failure returns — no sidecars found, and now an unreadable database —
+    # exited 0 and read as success to any caller.
+    sys.exit(main())
