@@ -106,10 +106,10 @@ jobs:
             echo "No shadow state change to record."
             exit 0
           fi
-          git commit -m "shadow(singapore): run ${GITHUB_RUN_ID}
-
-Recorded by ${GITHUB_WORKFLOW} at ${GITHUB_SHA}.
-State only. Never merged to main."
+          git commit \
+            -m "shadow(singapore): run ${GITHUB_RUN_ID}" \
+            -m "Recorded by ${GITHUB_WORKFLOW} at ${GITHUB_SHA}." \
+            -m "State only. Never merged to main."
           git push origin shadow/singapore-mindef
 
       - name: Upload the run ledger
