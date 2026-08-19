@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ title }}{% endblock %}</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="{{ '../' if nested else '' }}index.html">
+      {# The home page leads with the publication, so the wordmark is its h1
+         and the lead story is an h2. Every other page has its own h1. #}
+      {% if page == 'index.html' %}
+      <h1 class="brand-name">{{ title }}</h1>
+      {% else %}
+      <p class="brand-name">{{ title }}</p>
+      {% endif %}
+    </a>
+    <p class="brand-sub">{{ tagline }}</p>
+    <nav class="primary" aria-label="Primary">
+      <ul>
+        {% set nav = [('desks.html','Desks'),('archive.html','Archive'),('coverage.html','Coverage'),('sources.html','Sources'),('weekly.html','Analysis'),('methodology.html','Methodology'),('about.html','About')] %}
+        {% for href, label in nav %}
+        <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</header>
+{# Renders only when a real run exists. A fabricated zero would read as
+   "all clear", which is the opposite of the truth when nothing ran.
+   Each fact is one flex item so a phrase never splits across lines; the items
+   themselves wrap freely. No configured-source total is shown as a collector
+   denominator — see run_status_summary(). #}
+{% if run_status %}
+<div class="status-strip">
+  <div class="wrap">
+    <ul class="status-facts">
+      <li>Run <b>{{ run_status.run_id }}</b></li>
+      {% if run_status.run_date %}<li>{{ run_status.run_date }}</li>{% endif %}
+      <li><b>{{ run_status.executed }}</b> collector{{ '' if run_status.executed == 1 else 's' }} executed</li>
+      <li><b>{{ run_status.failed }}</b> execution failure{{ '' if run_status.failed == 1 else 's' }}</li>
+      {% if run_status.unimplemented %}<li><b>{{ run_status.unimplemented }}</b> unimplemented adapter{{ '' if run_status.unimplemented == 1 else 's' }}</li>{% endif %}
+      {% if run_status.disabled %}<li><b>{{ run_status.disabled }}</b> disabled source{{ '' if run_status.disabled == 1 else 's' }}</li>{% endif %}
+      {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }}</li>{% endif %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+<main id="main">
+  <div class="wrap">
+{% block content %}{% endblock %}
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>{{ maintainer.name }}, {{ maintainer.role }} ·
+    <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
+    <p>Selective coverage. Publication records what an institution said, not whether its claims
+    are true or its capabilities exist.</p>
+    <p><strong>Private prototype.</strong> Not published or deployed; {{ title }} is a working name
+    pending clearance and reader testing.</p>
+  </div>
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

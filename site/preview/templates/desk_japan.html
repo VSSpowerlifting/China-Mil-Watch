@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Japan Desk — {{ title }}{% endblock %}
+{% block content %}
+{% set japan = desks | selectattr("id", "equalto", "japan") | first %}
+<p class="desk-state desk-state--scoped">{{ japan.state_label }}</p>
+<h1>Japan Desk</h1>
+<p class="lede">{{ japan.note }}</p>
+<p class="meta">No records collected. No sources enabled.</p>
+
+<h2>Why this desk is not collecting</h2>
+<p>The scope below was researched directly against the issuing institutions' own listings. It has
+not produced a record, because access to the official sources has not been resolved on terms this
+project is willing to use: the ministry hosts serve the listings behind controls that a collector
+would have to defeat rather than satisfy, and no sanctioned alternative — feed, sitemap, API or
+official index — has been found that covers the same publication universe.</p>
+<p>Until an official access route exists, this desk stays as it is: researched, declared, and empty.
+Nothing here is a substitute for the record it will eventually hold, and no third-party copy is
+treated as a canonical ministry record.</p>
+
+<h2>Pre-registered Japan source universe</h2>
+<p>The source universe is published before collection begins, so the scope can be checked against
+what is eventually collected. This is a statement of intent and of researched fact. It is not
+coverage, and nothing below has produced a record.</p>
+
+<h3>Sources identified</h3>
+<div class="table-scroll">
+<table class="stacking">
+  <caption>Listing and item format verified directly; no endpoint is claimed that was not checked.</caption>
+  <thead><tr><th scope="col">Source</th><th scope="col">Item format</th><th scope="col">Note</th></tr></thead>
+  <tbody>
+  {% for s in japan_scope.sources %}
+    <tr>
+      <td data-label="Source">{{ s.name }}</td>
+      <td data-label="Item format">{{ s.format }}</td>
+      <td data-label="Note">{{ s.note }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h3>Observed publication volume</h3>
+<dl class="stat-rows">
+{% for label, value in japan_scope.volume %}
+  <div class="stat-row"><dt>Joint Staff press releases — {{ label }}</dt><dd>{{ value }}</dd></div>
+{% endfor %}
+</dl>
+<p class="meta">Counts come directly from the archive listing. They describe what the institution
+published, not what this project holds.</p>
+
+<h3>What has to be solved before this desk can collect</h3>
+<dl>
+{% for head, body in japan_scope.blockers %}
+  <dt><strong>{{ head }}</strong></dt>
+  <dd>{{ body }}</dd>
+{% endfor %}
+</dl>
+<p>No Japan source is enabled and no records have been collected. After collection begins, the desk
+remains in shadow for 30 consecutive days before it can appear as coverage.</p>
+<p class="meta"><a href="desks.html">Back to all desks</a></p>
+{% endblock %}

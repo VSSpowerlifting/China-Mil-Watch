@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}About — {{ title }}{% endblock %}
+{% block content %}
+<h1>About</h1>
+<p class="lede">{{ tagline }}</p>
+
+<h2 class="plain">What this project does</h2>
+<p>{{ title }} preserves official defense and security texts, with translations where available, and
+records what collection found, missed, or could not retrieve. Collection gaps are published because
+an archive with invisible gaps cannot support responsible comparison.</p>
+<p>The project began in 2026 with official Chinese military and security publications. That corpus
+continues as the China Desk. Additional desks appear only after their source universe is documented
+and collection has proved reliable.</p>
+<p>The project analyzes public institutional discourse. Official statements show what an institution
+said; they do not by themselves establish policy, capability, intent, or whether a described event
+occurred. Coverage is selective.</p>
+
+<h2>Who makes it</h2>
+<p><strong>{{ maintainer.name }}</strong> — {{ maintainer.role }}</p>
+<p>{{ maintainer.bio }}</p>
+<p class="meta">
+  <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a> ·
+  <a href="{{ maintainer.linkedin }}" rel="noopener">LinkedIn</a>
+</p>
+<p>Corrections are made in the underlying source record and republished, rather than silently
+patched on the rendered page.</p>
+
+<h2>Citing this archive</h2>
+{% if citation %}
+<p class="cite-line">{{ snapshot_label }}. Cite as: {{ citation }}</p>
+{% endif %}
+<p class="meta">Use the snapshot date rather than a version number; no versioning rule has been
+established.</p>
+<p>Record-level and edition citation formats, the meaning of every stored field, and the corpus
+changelog are in the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+{% endblock %}

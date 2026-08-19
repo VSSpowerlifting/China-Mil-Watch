@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% set nested = true %}
+{# Display title: the machine translation when one exists, otherwise the
+   original. Never a placeholder — a record with no English title shows its
+   Chinese title as the heading rather than inventing a substitute. #}
+{% set display_title = record.title_english or record.title_original %}
+{% block title %}{{ display_title }} — {{ title }}{% endblock %}
+{% block content %}
+<p class="meta"><a href="../corpus.html">← Corpus by week</a></p>
+
+<div class="record-head">
+  <span class="evidence evidence--record">Source record</span>
+  <span class="meta">{{ record.institution or record.source_name }} · {{ record.published_date }}</span>
+</div>
+
+<h1>{{ display_title }}</h1>
+{% if record.title_english and record.title_original %}
+{# Two distinct machine outputs. The English TITLE is a translation; the
+   summary below is a different artifact. Labelling them identically would
+   merge two separate claims about what a model produced. #}
+<p class="original" lang="{{ record.language_tag or 'zh' }}">{{ record.title_original }}</p>
+<p class="meta"><span class="evidence evidence--model">Machine translation</span>
+The heading is a machine translation of the original title above. Not reviewed by a human.</p>
+{% endif %}
+
+<h2>Processing status</h2>
+<p class="record-state"><b>{{ record.state_label }}</b></p>
+<p>{{ state_definition }}</p>
+{# The common label is neutral. Labelling a NOT-flagged record "Model-flagged"
+   asserted the opposite of the value it was reporting; "Model-flagged" may now
+   appear only when the flag is actually true. Both outcomes are machine
+   output, so rust is correct for either. #}
+{% if record.model_flagged is not none %}
+<p class="meta"><span class="evidence evidence--model">Machine assessment</span>
+{% if record.model_flagged %}Model-flagged for closer review. This is a software
+triage cue, not an editorial judgment.{% else %}Not flagged for closer review.
+This is a software triage result, not an editorial judgment.{% endif %}</p>
+{% endif %}
+
+<h2>Provenance</h2>
+<div class="table-scroll">
+<table class="provenance">
+  <caption>What is known about this record and where each part came from.</caption>
+  <tbody>
+    <tr><th scope="row">Publishing institution</th><td class="prov-value">{{ record.institution or '—' }}</td></tr>
+    <tr><th scope="row">Source outlet</th><td class="prov-value">{{ record.source_name }} <span class="meta">({{ record.source_slug }})</span></td></tr>
+    <tr><th scope="row">Source language</th><td class="prov-value">{{ record.language_tag or '—' }} <span class="meta">— an attribute of the source, not of this record</span></td></tr>
+    <tr><th scope="row">Source-stated publication date</th><td class="prov-value">{{ record.published_date }}</td></tr>
+    <tr><th scope="row">Original URL</th><td class="prov-value"><a href="{{ record.url }}" rel="noopener nofollow">{{ record.url }}</a></td></tr>
+    <tr><th scope="row">Collected at</th><td class="prov-value">{{ record.scraped_at }} <span class="meta">— collection metadata, not a publication time</span></td></tr>
+    <tr><th scope="row">Content fingerprint</th><td class="prov-value"><span class="token">{{ record.content_hash }}</span> <span class="meta">— taken when the record was captured, over the stored original title and text</span></td></tr>
+    {% if record.scrape_run_id is not none %}
+    <tr><th scope="row">Collection run</th><td class="prov-value">{{ record.scrape_run_id }}</td></tr>
+    {% endif %}
+    {% if record.model_id %}
+    <tr><th scope="row">Analysis model</th><td class="prov-value">{{ record.model_id }}</td></tr>
+    {% endif %}
+    {% if record.prompt_version %}
+    <tr><th scope="row">Prompt version</th><td class="prov-value">{{ record.prompt_version }}</td></tr>
+    {% elif record.model_id %}
+    <tr><th scope="row">Prompt version</th><td class="prov-value">Prompt version is unavailable for this record.</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+</div>
+<p class="meta">Every field above is defined in the
+<a href="../corpus-guide.html#dictionary">data dictionary</a> — what it means,
+when it may be absent, and where it stops being reliable.</p>
+
+<h2>Stored source text</h2>
+{# "Original text" claimed a fidelity the capture does not have: extraction can
+   drop material and can pull in unrelated page furniture. The stored bytes are
+   never cleaned to match the claim — the claim is corrected instead. #}
+<p class="meta">Text captured from the source page. Extraction may omit material
+or include unrelated page elements; consult the original URL when exact wording
+or completeness matters.</p>
+{% if record.has_text %}
+<div class="original-text" lang="{{ record.language_tag or 'zh' }}">
+{% for para in record.text_original.split('\n') %}
+{% if para.strip() %}<p>{{ para.strip() }}</p>
+{% endif %}
+{% endfor %}
+</div>
+{% else %}
+{# Ruled wording. Deliberately not "permanently unavailable": recovery or
+   re-capture remains possible and this page must not foreclose it. #}
+<p>Original text is unavailable in this stored record.</p>
+{% endif %}
+
+{% if record.summary_english %}
+<h2>Summary</h2>
+<div class="interpretation">
+  <p><span class="evidence evidence--model">Machine summary</span></p>
+  <p>{{ record.summary_english }}</p>
+  <p class="meta">Machine-generated from the original text, and distinct from the
+  machine translation of the title. Not reviewed by a human. It is a reading of
+  what was published, not a verification of it.</p>
+</div>
+{% endif %}
+
+<h2>What this record supports</h2>
+<ul>
+  <li><span class="evidence evidence--record">Source record</span> This item was published at the URL above on the date the source stated.</li>
+  <li><span class="evidence evidence--claim">Official claim</span> Its contents are that institution's assertions.</li>
+</ul>
+<p>It does not establish that the described events occurred, that any capability exists, or that
+the institution's stated position is its actual policy.</p>
+
+<h2>Cite this record</h2>
+{# Two claims, two blocks. The source text is the publisher's; the record is
+   this corpus's holding of it. Merging them into one string would let a reader
+   cite the corpus as though it were the publisher. Both are plain selectable
+   text — the copy buttons below them do not exist without JavaScript. #}
+<p class="meta">Two separate claims, cited separately: the item as its publisher
+issued it, and the record as this corpus holds it.</p>
+
+<div class="cite-block">
+  <p class="cite-text" id="cite-source-text">{{ cite.source_text }}</p>
+  <button type="button" class="cite-copy" data-copy="cite-source-text" hidden>Copy source text</button>
+  <p class="cite-status" role="status" aria-live="polite"></p>
+</div>
+
+<div class="cite-block">
+  <p class="cite-text" id="cite-as-held">{{ cite.as_held }}</p>
+  <button type="button" class="cite-copy" data-copy="cite-as-held" hidden>Copy as held</button>
+  <p class="cite-status" role="status" aria-live="polite"></p>
+</div>
+
+{# Selected from this record's actual state. One blanket machine-output
+   sentence across all four states would claim model output for records that
+   have none, and a screening judgment for records never screened. #}
+<p class="meta"><b>Processing note.</b> {{ cite.note }}</p>
+
+{# One paragraph, both distinctions. Two adjacent caveats each carried half the
+   warning and repeated the other half, so the record NUMBER and this page's
+   ADDRESS are now named together and every denial is kept. #}
+<p class="meta">The record number and this prototype path are locators inside
+the {{ snapshot.date }} snapshot. Neither is a DOI, accession number, permanent
+identifier, public permalink, or published route. See
+<a href="../corpus-guide.html#citation">identifiers and citation guidance</a>.</p>
+{% endblock %}
+{% block scripts %}<script src="../citation.js" defer></script>{% endblock %}

@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% block title %}Corpus Guide — {{ title }}{% endblock %}
+{% block content %}
+{# One page, stable anchors. The guide consolidates what a reader needs in order
+   to use the corpus responsibly; Methodology stays the canonical account of how
+   the publication works, and this does not restate it. #}
+<p class="eyebrow">{{ corpus_eyebrow }}</p>
+<h1>Corpus Guide</h1>
+<p class="lede">What the China Desk corpus holds, what it cannot tell you, what
+each field means, and how to cite it. {{ snapshot_label }}.</p>
+
+<nav class="guide-contents" aria-label="Sections of this guide">
+  <ul>
+    <li><a href="#holds">What this corpus holds</a></li>
+    <li><a href="#scope">Scope and limits</a></li>
+    <li><a href="#dates">How dates and collection work</a></li>
+    <li><a href="#states">Processing states</a></li>
+    <li><a href="#machine">Machine-generated layers</a></li>
+    <li><a href="#dictionary">Data dictionary</a></li>
+    <li><a href="#citation">Identifiers and citation guidance</a></li>
+    <li><a href="#changelog">Corpus changelog</a></li>
+  </ul>
+</nav>
+
+<h2 id="holds">What this corpus holds</h2>
+<p>The China Desk corpus is a stored record of {{ guide_stats.total | count }}
+items collected from official and authoritative Chinese defense and security
+publishers, held as they were captured. Each item keeps its original-language
+title, the address it came from, the date its source stated, and the collection
+metadata that describes how it arrived.</p>
+<p>It is a record of what these institutions published. It is not a measure of
+what they did, and it is not a census of everything they published. An item is
+here because collection reached it and stored it, which is a narrower claim than
+it may look. Coverage is selective by design and incomplete in practice, and the
+sections below say where.</p>
+<p>Each record has its own page carrying every stored field described in the
+dictionary. Records are reachable
+<a href="corpus.html">by publication week</a> without JavaScript, and through
+search and filters on the <a href="archive.html">Archive</a>.</p>
+
+<h2 id="scope">Scope and limits</h2>
+<p>Four limits shape what any count from this corpus can support.</p>
+
+<h3>The corpus is concentrated in one institution</h3>
+<p>{{ guide_stats.top_institution }} accounts for
+{{ guide_stats.top_institution_count | count }} of
+{{ guide_stats.total | count }} records —
+{{ guide_stats.top_institution_pct }}%. The remainder is spread across
+{{ guide_stats.institutions - 1 }} other institutions and
+{{ guide_stats.outlets }} outlets in total. Any comparison drawn across
+institutions in this corpus is a comparison of very unequal samples, and a
+pattern found here is a pattern in one publisher's output before it is anything
+else.</p>
+
+<h3>Repeats across outlets are stored once</h3>
+<p>De-duplication across sources is first-writer-wins: when more than one
+configured outlet carries the same item, it is stored once, under whichever
+source reached it first. A per-outlet total therefore counts the records an
+outlet contributed to this corpus, not how often that outlet published. Source
+counts are not publication-volume counts, and they should not be read as market
+share, prominence, or emphasis.</p>
+
+<h3>Some captures stored no source text</h3>
+<p>{{ guide_stats.empty_text }} records hold an empty body capture. The original
+title, the source, the date and the original URL are all recorded for each; only
+the body is missing. An empty capture is a defect in what was stored, not
+evidence that the source page carried nothing, and consulting the original URL
+remains the way to establish what was published.</p>
+
+<h3>Most records carry no English rendering</h3>
+{# Three fields, measured separately. The combined sentence is rendered only
+   when the three empty-sets hold the same record ids and equal the
+   non-Analyzed set; otherwise each count is stated on its own. A permanent
+   test asserts the set equivalence rather than the totals. #}
+{% if guide_stats.english_sets_identical %}
+<p>{{ guide_stats.no_english | count }} of {{ guide_stats.total | count }}
+records hold no machine-translated title. The same records — the same
+identifiers, not merely the same total — also hold no machine summary and no
+analysis-model record, and they are exactly the records outside the Analyzed
+state.</p>
+{% else %}
+<p>Of {{ guide_stats.total | count }} records,
+{{ guide_stats.no_english | count }} hold no machine-translated title,
+{{ guide_stats.no_summary | count }} hold no machine summary, and
+{{ guide_stats.no_model | count }} hold no analysis-model record. These are not
+the same records, so no single figure describes English coverage.</p>
+{% endif %}
+<p>English text is a property of the analyzed subset, not of the corpus, and a
+search over English titles reaches only that subset. The original title is
+present on every record, and searching it reaches all of them.</p>
+
+<h2 id="dates">How dates and collection work</h2>
+<p>Two different clocks run through this corpus, and confusing them produces
+wrong readings.</p>
+<p><strong>Publication dates are stated by the source.</strong> The date on a
+record is the date its publisher gave it. Nothing verifies that date against
+another authority, and it is collection-bounded: it can only fall inside the
+window collection actually reached. Records exist here from
+{{ guide_stats.first_date }} to {{ guide_stats.last_date }} because that is when
+collection ran, not because those dates bound anything the institutions
+did.</p>
+<p><strong>Collection timestamps are the pipeline's own clock, in UTC.</strong>
+They record when an item was stored, not when it was published and not when
+anyone read it. Because publication dates are stated on the source's calendar
+and collection timestamps are UTC, the two do not align, and a record is
+routinely stored on a later calendar date than the one it carries.</p>
+<p><strong>A date with no recorded run is not a quiet day.</strong> The run
+record shows which UTC dates carried at least one pipeline run. Where a date
+carries none, nothing was collected — which says nothing at all about what
+sources published. A gap in the run record is a gap in observation and must
+never be read as an observed absence.</p>
+<p><strong>The run record is thinner than it looks.</strong> A run row proves a
+pipeline run happened. It does not preserve which publication dates were sought,
+and it does not preserve historical per-source outcomes. So a run identifier
+cannot establish which sources were reached on a given day, and this corpus
+cannot support per-source reliability history. Current-run results and the
+vocabulary used to describe them are on
+<a href="coverage.html">Coverage</a>.</p>
+
+<h2 id="states">Processing states</h2>
+<p>Every record is in exactly one of four processing states, and the four sum to
+the snapshot total. This matters more than it may appear: reading the corpus as
+though records were simply analyzed or not merges records that were screened and
+deliberately set aside with records that were never screened at all. Those are
+different claims about what is known.</p>
+
+<div class="table-scroll">
+<table class="corpus-states">
+  <caption>The four processing states in this snapshot. Every stored record is
+  in exactly one; the four sum to {{ guide_stats.total | count }}.</caption>
+  <thead>
+    <tr>
+      <th scope="col">State</th>
+      <th scope="col">Records</th>
+      <th scope="col">What it means</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for state in state_counts %}
+    <tr>
+      <th scope="row">{{ state.label }}</th>
+      <td class="c-count">{{ state.count | count }}<span class="c-unit"> records</span></td>
+      <td class="c-definition">{{ state.definition }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<p>A state describes how far a record traveled through the pipeline. It is not a
+judgment of the item's importance, and it carries no editorial meaning.</p>
+
+<h2 id="machine">Machine-generated layers</h2>
+<p>Three things in this corpus were produced by software rather than captured
+from a source, and each is marked as such wherever it appears.</p>
+<p><strong>English titles and summaries are unreviewed machine output.</strong>
+Where a record carries an English title, a model produced it from the original
+title. Where it carries a summary, a model produced that from the stored source
+text. They are two separate artifacts, not one. No human has checked either
+against the original, and both are a reading of what was published rather than a
+verification of it. The original-language title is the authoritative title in
+every case.</p>
+<p><strong>Machine assessment is a triage cue, and only inside one
+state.</strong> Records that completed analysis carry a software flag marking
+them for closer review. It is meaningful only within the analyzed set, and it is
+displayed nowhere else. The stored value defaults to negative, so a negative
+reading cannot distinguish a record that was assessed and not flagged from one
+that was never assessed at all. For that reason a negative value is never shown
+outside the analyzed set, and it must never be read as evidence that an
+unscreened record was assessed and cleared.</p>
+<p><strong>Significant and Routine are editorial, and belong to editions, not
+records.</strong> Those two words label a <em>PLA Watch</em> edition — the
+editor's own classification of a week — and are applied by a person. They are
+not a machine output, they do not describe any corpus record, and they never
+appear on one. The pipeline's article-level flag and the editor's edition label
+sit at different rungs of the same ladder and are deliberately kept apart. The
+editions themselves are listed under <a href="weekly.html">Analysis</a>.</p>
+
+<h2 id="dictionary">Data dictionary</h2>
+<p>Every field a reader encounters on a record page, what it means, and where it
+stops being reliable. Stored column names appear beside the reader-facing label
+where knowing them helps.</p>
+
+<div class="table-scroll">
+<table class="dictionary">
+  <caption>{{ dictionary | length }} fields. “Stored” means the value is held in
+  the database as captured or as generated; “Derived” means it is computed when
+  this page is built.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Origin</th>
+      <th scope="col">What it means</th>
+      <th scope="col">When it may be absent</th>
+      <th scope="col">Main limitation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for field in dictionary %}
+    <tr>
+      <th scope="row">
+        {{ field.label }}
+        {% if field.stored %}<code class="fieldname">{{ field.stored }}</code>{% endif %}
+      </th>
+      <td class="d-origin">{{ field.origin }}</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>{{ field.meaning }}</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>{{ field.absent }}</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>{{ field.limitation }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2 id="citation">Identifiers and citation guidance</h2>
+<p>Each record has an identifier and a page inside this snapshot. Both are
+locators, and neither is a permanent public name.</p>
+<p>A record identifier locates an item <em>within the
+{{ snapshot.date }} snapshot</em>. It is not a DOI, not an accession number, and
+not a public permalink; no resolver, registry, or persistence commitment stands
+behind it. Identifiers are not contiguous either — the highest is
+{{ guide_stats.max_id }} across {{ guide_stats.total | count }} records — so a
+range of identifiers never describes this corpus, and no citation should quote
+one.</p>
+<p>Because a record identifier is snapshot-scoped, a citation has to carry the
+snapshot with it. Citing a record means citing two things: the source text as
+its publisher issued it, and the record as this corpus holds it. Those are
+separate claims with separate evidence, so the citation on each record page
+states them as two separate blocks, followed by a note saying exactly how far
+that record was processed.</p>
+<p>The snapshot itself is dated, not versioned. No semantic version is invented
+for a corpus with no release discipline: use the snapshot date. When the corpus
+changes, the date advances and the change is recorded in the changelog
+below.</p>
+
+<h3>Citing the corpus</h3>
+{# Borderless: plain editorial text, no tinted ground and no accent rule. A
+   boxed citation read as a third callout on a site rationed to two. #}
+<div class="cite-block">
+  <p class="cite-text" id="cite-corpus">{{ citation }}</p>
+  <button type="button" class="cite-copy" data-copy="cite-corpus" hidden>Copy corpus citation</button>
+  <p class="cite-status" role="status" aria-live="polite"></p>
+</div>
+
+<h3>Citing a record</h3>
+<p>Each record page carries its own citation in two blocks — the source text as
+its publisher issued it, then the record as this corpus holds it — followed by a
+note stating exactly how far that record was processed. The source-text block
+always quotes the original-language title; the machine translation is never
+substituted for it.</p>
+
+<h3>Citing an edition</h3>
+<p>Editions of <em>The PLA Watch</em> are published artifacts with their own
+issue numbers and canonical addresses, and they are cited as published. On
+<a href="weekly.html">Analysis</a>, each edition in the archive carries its own
+citation behind a “Cite this issue” disclosure. Week-ending dates read as
+<span class="nowrap">8 August 2026</span> in citations, while the archive table
+keeps ISO dates.</p>
+
+
+<h2 id="changelog">Corpus changelog</h2>
+<p>A hand-written record of what changed in this corpus and what is known to be
+missing from it. It is maintained by the editor, entry by entry. It is not
+generated from repository history, and it is not a collection-health log —
+current run results and the vocabulary used to describe them belong to
+<a href="coverage.html">Coverage</a>, which this does not duplicate.</p>
+
+{% for entry in changelog %}
+<h3 id="{{ entry.id }}">{{ entry.title }} — {{ entry.date }}</h3>
+<p>{{ entry.summary }}</p>
+<dl class="changelog">
+  {% for heading, body in entry.points %}
+  <dt>{{ heading }}</dt>
+  <dd>{{ body }}</dd>
+  {% endfor %}
+</dl>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="citation.js" defer></script>{% endblock %}

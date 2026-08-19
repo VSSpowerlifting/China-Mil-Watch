@@ -32,3 +32,11 @@ build/
 # Editor
 .vscode/
 .idea/
+
+# Rendered output of the private regional-IA prototype. Disposable; rebuild with
+# `.venv/bin/python site/preview/generate_preview.py`. Root-anchored on purpose:
+# a bare `preview/` also matches site/preview/, which is tracked SOURCE.
+/preview/
+
+# Disposable screenshot set for private prototype review.
+/preview-review-shots/
