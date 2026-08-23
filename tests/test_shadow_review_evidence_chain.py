@@ -427,3 +427,81 @@ class ARemoteIsNotAnOption(PacketFixtureCase):
                               text=True).stdout.split()
         self.assertEqual(refs, [], "the hijacked GIT_DIR was written to")
         self.assertTrue(self.head())
+
+
+class APacketIsOnlyItsOwnFiles(PacketFixtureCase):
+    """
+    The publisher copied three names out of the packet directory without
+    asking what they were. A symlink is read as its target, so the file that
+    reached the review branch could come from anywhere on the machine — and the
+    manifest travelling beside it still named the real report's digest.
+    """
+
+    def test_a_packet_file_that_is_a_symlink_is_refused(self):
+        outside = self.tmp / "outside.md"
+        outside.write_text("# not review evidence\n", encoding="utf-8")
+        (self.packet / "review_report.md").unlink()
+        (self.packet / "review_report.md").symlink_to(outside)
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("symlink", str(c.exception))
+        self.assertEqual(self.remote_git("for-each-ref").strip(), "")
+
+    def test_a_symlink_pointing_inside_the_packet_is_still_refused(self):
+        real = self.tmp / "real.md"
+        shutil.move(str(self.packet / "review_report.md"), str(real))
+        (self.packet / "review_report.md").symlink_to(real)
+        with self.assertRaises(pub.PublishError):
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+
+    def test_an_edited_packet_no_longer_matches_its_own_manifest(self):
+        report = self.packet / "review_report.md"
+        report.write_text(report.read_text(encoding="utf-8") + "\nappended\n",
+                          encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("altered after it was generated", str(c.exception))
+
+    def test_an_honest_packet_still_publishes(self):
+        self.assertEqual(self.run_pub(), 0)
+        self.assertTrue(self.head())
+
+
+class AReviewerFieldIsNotACommitMessage(PacketFixtureCase):
+    """
+    `reviewer` is written into the preserved commit message. A newline in it
+    forges a trailer, so `git log` on the review branch shows a `state-commit`
+    that the receipt never named — two contradictory records of what was
+    reviewed, both preserved, neither flagged.
+    """
+
+    def test_a_newline_in_reviewer_is_refused(self):
+        s = self.complete_signoff()
+        s["reviewer"] = "Auditor\nstate-commit " + "9" * 40
+        self.write_signoff(s)
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("control character", str(c.exception))
+        self.assertEqual(self.remote_git("for-each-ref").strip(), "")
+
+    def test_a_carriage_return_or_null_in_reviewer_is_refused(self):
+        for bad in ("Auditor\rX", "Auditor\x00X", "Auditor\x1b[2J"):
+            with self.subTest(reviewer=repr(bad)):
+                s = self.complete_signoff()
+                s["reviewer"] = bad
+                self.write_signoff(s)
+                with self.assertRaises(pub.PublishError):
+                    pub.publish(self.packet, self.signoff_path,
+                                str(self.remote), "day-07", None, True, True)
+
+    def test_the_preserved_commit_message_names_the_verified_tree(self):
+        self.assertEqual(self.run_pub(), 0)
+        msg = self.remote_git("log", "--format=%B", "-1",
+                              "review/singapore-mindef")
+        trailers = [l for l in msg.splitlines() if l.startswith("state-commit ")]
+        self.assertEqual(trailers, ["state-commit " + self.commit])
+        self.assertIn("state-tree " + self.manifest["state_tree"], msg)

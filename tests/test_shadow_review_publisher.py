@@ -621,6 +621,11 @@ class TestAppendOnly(PublisherCase):
         self.assertEqual(self.head(), head)
 
     def test_conflicting_content_under_the_same_id_is_refused(self):
+        """
+        Editing a packet after generation no longer reaches the append-only
+        check: the manifest records what each artifact hashed to, and that is
+        now verified first. The refusal is earlier and says why.
+        """
         self.run_pub(do_publish=True)
         head = self.head()
         (self.packet / "review_report.md").write_text("tampered\n",
@@ -628,7 +633,7 @@ class TestAppendOnly(PublisherCase):
         with self.assertRaises(pub.PublishError) as c:
             pub.publish(self.packet, self.signoff_path, str(self.remote),
                         "day-07", head, False, True)
-        self.assertIn("append-only", str(c.exception))
+        self.assertIn("altered after it was generated", str(c.exception))
         self.assertEqual(self.head(), head)
 
     def test_a_stale_writer_is_rejected(self):

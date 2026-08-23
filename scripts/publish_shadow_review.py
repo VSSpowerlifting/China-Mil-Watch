@@ -132,12 +132,22 @@ def load_json(path: Path, what: str) -> dict:
 
 def assert_packet_clean(packet: Path) -> None:
     for p in sorted(packet.rglob("*")):
+        rel = p.relative_to(packet)
+        # Checked before anything follows the entry. A symlink is read as its
+        # target, so a packet file replaced by one preserves whatever it points
+        # at — content nobody reviewed, from outside the packet entirely.
+        if p.is_symlink():
+            raise PublishError(
+                "packet entry %s is a symlink to %s. Preserving it would "
+                "record content from outside the packet as the evidence that "
+                "was reviewed." % (rel, os.readlink(str(p))))
         if p.is_dir():
             if p.name == ".github" or p.name == "workflows":
                 raise PublishError("packet contains %s/ — review evidence "
                                    "carries no workflows" % p.name)
             continue
-        rel = p.relative_to(packet)
+        if not p.is_file():
+            raise PublishError("packet entry %s is not a regular file" % rel)
         if p.name in FORBIDDEN_NAMES or p.suffix in FORBIDDEN_SUFFIXES:
             raise PublishError("packet contains %s, which may never be "
                                "preserved on the review branch" % rel)
@@ -153,6 +163,47 @@ def assert_packet_clean(packet: Path) -> None:
             if pattern.search(text):
                 raise PublishError("possible credential in %s — refusing to "
                                    "preserve it" % rel)
+
+
+def assert_packet_matches_its_manifest(packet: Path, manifest: dict) -> None:
+    """
+    The manifest already records what each artifact hashed to when it was
+    generated. Nothing checked it, so a packet could be edited after generation
+    and still name the original digests. Check it.
+    """
+    declared = manifest.get("artifact_sha256")
+    if not isinstance(declared, dict) or not declared:
+        raise PublishError("packet manifest carries no artifact_sha256 — there "
+                           "is nothing to verify its own files against")
+    for name, want in sorted(declared.items()):
+        path = packet / name
+        if not path.is_file():
+            raise PublishError("manifest names %s, which the packet does not "
+                               "contain" % name)
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        if got != want:
+            raise PublishError(
+                "%s does not match the manifest that describes it (%s, "
+                "expected %s) — the packet was altered after it was generated"
+                % (name, got[:16], want[:16]))
+
+
+#: Reviewer-controlled strings that end up in the Git commit message. A newline
+#: there forges a trailer: `reviewer` containing "x\nstate-commit <sha>" makes
+#: `git log` show a state commit the receipt never named.
+COMMIT_MESSAGE_FIELDS = ("reviewer",)
+
+
+def assert_single_line(value, field: str) -> str:
+    text = str(value)
+    bad = [c for c in text if c == "\n" or c == "\r" or ord(c) < 0x20
+           or ord(c) == 0x7f]
+    if bad:
+        raise PublishError(
+            "sign-off %s contains a control character (%r). It is written into "
+            "the preserved commit message, where a newline forges a trailer "
+            "line that contradicts the receipt." % (field, bad[0]))
+    return text
 
 
 def _is_bool(v) -> bool:
@@ -213,6 +264,8 @@ def validate(manifest: dict, signoff: dict, inventory: list,
         if not str(signoff.get(field) or "").strip():
             raise PublishError("sign-off %s is empty — an unfilled form is not "
                                "evidence of a completed review" % field)
+    for field in COMMIT_MESSAGE_FIELDS:
+        assert_single_line(signoff.get(field), field)
     started = _parse_ts(signoff.get("review_started_utc"), "review_started_utc")
     finished = _parse_ts(signoff.get("review_completed_utc"),
                          "review_completed_utc")
@@ -434,6 +487,7 @@ def prepare(packet: Path, signoff_path: Path, checkpoint: str) -> tuple:
         if not (packet / name).is_file():
             raise PublishError("packet is missing %s" % name)
     assert_packet_clean(packet)
+    assert_packet_matches_its_manifest(packet, manifest)
     summary = validate(manifest, signoff, inventory, checkpoint)
     crid = completed_review_id(manifest, signoff)
     receipt = {
