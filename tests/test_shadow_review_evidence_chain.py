@@ -380,3 +380,50 @@ class AStateCommitIsNotAString(EvidenceChainCase):
                 ["git", "cat-file", "blob", "%s:state/%s" % (self.A, name)],
                 cwd=str(self.repo), stdout=subprocess.PIPE, check=True).stdout
             self.assertEqual(hashlib.sha256(blob).hexdigest(), digest, name)
+
+
+class ARemoteIsNotAnOption(PacketFixtureCase):
+    """
+    `--remote` reaches `git ls-remote` as an argument, and Git reads a leading
+    `-` as an option. `--upload-pack=<cmd>` is therefore a command Git runs.
+    An argument array prevents shell metacharacters, not option injection.
+    """
+
+    def test_a_remote_beginning_with_a_dash_is_refused(self):
+        canary = self.tmp / "executed"
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path,
+                        "--upload-pack=touch %s" % canary, "day-07",
+                        None, True, True)
+        self.assertIn("may not begin with '-'", str(c.exception))
+        self.assertFalse(canary.exists(),
+                         "git executed the injected --upload-pack command")
+
+    def test_the_injected_command_never_runs_through_main(self):
+        canary = self.tmp / "executed-main"
+        rc = self.run_pub(remote="--upload-pack=touch %s" % canary)
+        self.assertEqual(rc, 2)
+        self.assertFalse(canary.exists())
+
+    def test_an_expected_head_beginning_with_a_dash_is_refused(self):
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", "--upload-pack=false", False, True)
+        self.assertIn("may not begin with '-'", str(c.exception))
+
+    def test_a_hijacked_git_environment_cannot_redirect_the_publisher(self):
+        evil = self.tmp / "evil.git"
+        subprocess.run(["git", "init", "--bare", "--quiet", str(evil)], check=True)
+        old = dict(os.environ)
+        os.environ.update({"GIT_DIR": str(evil), "GIT_WORK_TREE": str(self.tmp)})
+        try:
+            rc = self.run_pub()
+        finally:
+            os.environ.clear()
+            os.environ.update(old)
+        self.assertEqual(rc, 0, "a scrubbed environment should publish normally")
+        refs = subprocess.run(["git", "--git-dir", str(evil), "for-each-ref",
+                               "--format=%(refname)"], stdout=subprocess.PIPE,
+                              text=True).stdout.split()
+        self.assertEqual(refs, [], "the hijacked GIT_DIR was written to")
+        self.assertTrue(self.head())

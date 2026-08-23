@@ -29,8 +29,11 @@ Safety
 Dry-run is the default; `--publish` is required to touch a remote. The target
 branch is a constant, not an argument. Pushes are ordinary fast-forward pushes:
 no force, no lease, no ref deletion, and never any ref but the review branch.
-Git runs through argument arrays, never a shell string. The source repository's
-own worktree and branch are never checked out or moved.
+Git runs through argument arrays, never a shell string — and an argument array
+is not enough on its own: a remote beginning with `-` is refused, because Git
+would read it as an option and `--upload-pack=` is a command it executes. The
+Git environment is scrubbed of variables that redirect a command elsewhere. The
+source repository's own worktree and branch are never checked out or moved.
 """
 
 from __future__ import annotations
@@ -322,10 +325,43 @@ def _parse_ts(value, field):
 
 # ── git, through argument arrays only ────────────────────────────────────────
 
+#: Git environment that would silently redirect a command somewhere else. The
+#: publisher builds its own repository in a temporary directory; an inherited
+#: GIT_DIR or a hooks path from the caller's environment has no business
+#: reaching it.
+UNSAFE_GIT_ENV = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_NAMESPACE",
+    "GIT_CONFIG", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_SYSTEM", "GIT_CONFIG_COUNT",
+    "GIT_CONFIG_PARAMETERS", "GIT_SSH", "GIT_SSH_COMMAND",
+    "GIT_EXTERNAL_DIFF", "GIT_PROXY_COMMAND", "GIT_ASKPASS",
+)
+
+
+def assert_not_an_option(value: str, what: str) -> str:
+    """
+    An argument array is not enough on its own.
+
+    Git parses a leading `-` as an option wherever it appears, so a remote
+    named `--upload-pack=...` is a command Git runs, not a place it fetches
+    from. That is arbitrary execution reached through an ordinary-looking
+    argument, and no `--` separator helps: `ls-remote` takes the remote before
+    any separator would apply.
+    """
+    if str(value).startswith("-"):
+        raise PublishError(
+            "%s may not begin with '-': %r would be read by git as an option, "
+            "not a %s. Use an absolute path or a full URL."
+            % (what, value, what))
+    return value
+
+
 def git(args, cwd=None, check=True):
+    env = {k: v for k, v in os.environ.items() if k not in UNSAFE_GIT_ENV}
+    env["GIT_TERMINAL_PROMPT"] = "0"
     proc = subprocess.run(["git"] + list(args), cwd=str(cwd) if cwd else None,
-                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                          text=True)
+                          env=env, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, text=True)
     if check and proc.returncode != 0:
         raise PublishError("git %s failed:\n%s"
                            % (" ".join(args[:2]), proc.stdout.strip()))
@@ -333,7 +369,8 @@ def git(args, cwd=None, check=True):
 
 
 def remote_head(remote: str) -> str:
-    proc = git(["ls-remote", "--heads", remote, REVIEW_BRANCH], check=False)
+    assert_not_an_option(remote, "remote")
+    proc = git(["ls-remote", "--heads", "--", remote, REVIEW_BRANCH], check=False)
     if proc.returncode != 0:
         raise PublishError("cannot read %s from %s:\n%s"
                            % (REVIEW_BRANCH, remote, proc.stdout.strip()))
@@ -440,6 +477,9 @@ def prepare(packet: Path, signoff_path: Path, checkpoint: str) -> tuple:
 
 def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
             expected_head: str, bootstrap: bool, do_publish: bool) -> dict:
+    assert_not_an_option(remote, "remote")
+    if expected_head is not None:
+        assert_not_an_option(expected_head, "--expected-head")
     manifest, signoff, crid, receipt = prepare(packet, signoff_path, checkpoint)
 
     head = remote_head(remote)
@@ -476,10 +516,10 @@ def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
         work = tmp / "work"
         if bootstrap:
             git(["init", "--quiet", "-b", REVIEW_BRANCH, str(work)])
-            git(["remote", "add", "origin", remote], cwd=work)
+            git(["remote", "add", "--", "origin", remote], cwd=work)
         else:
             git(["clone", "--quiet", "--branch", REVIEW_BRANCH,
-                 "--single-branch", remote, str(work)])
+                 "--single-branch", "--", remote, str(work)])
         git(["config", "user.name", "shadow-review-publisher"], cwd=work)
         git(["config", "user.email", "review@localhost"], cwd=work)
 
