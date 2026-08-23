@@ -169,16 +169,22 @@ class TestValidStatePasses(KitCase):
             self.assertIn(field, entry)
 
     def test_two_runs_with_the_same_as_of_are_byte_identical(self):
+        """
+        The manifest included. Wall clock and local paths live in
+        `generation_context.json`, which is not part of the package: a package
+        id that named several possible byte sequences would identify nothing.
+        """
         a, b = self.tmp / "a", self.tmp / "b"
         self.run_kit(out=a)
         self.run_kit(out=b)
-        for name in ("review_report.md", "record_inventory.jsonl"):
-            self.assertEqual((a / name).read_bytes(), (b / name).read_bytes(), name)
-        ma = json.loads((a / "review_manifest.json").read_text())
-        mb = json.loads((b / "review_manifest.json").read_text())
-        self.assertEqual(ma["deterministic_sha256"], mb["deterministic_sha256"])
-        ma.pop("generated"); mb.pop("generated")
-        self.assertEqual(ma, mb)
+        for name in ("review_report.md", "record_inventory.jsonl",
+                     "signoff_template.json", "review_manifest.json"):
+            self.assertEqual((a / name).read_bytes(), (b / name).read_bytes(),
+                             name)
+        self.assertNotIn("generated", json.loads(
+            (a / "review_manifest.json").read_text(encoding="utf-8")))
+        self.assertNotEqual((a / "generation_context.json").read_bytes(),
+                            (b / "generation_context.json").read_bytes())
 
 
 class TestInputSafety(KitCase):

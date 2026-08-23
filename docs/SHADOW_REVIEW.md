@@ -194,6 +194,13 @@ package id, so key order in the file cannot change it and a changed answer
 always does. **None of these is a cryptographic signature**, and none verifies
 the reviewer's legal identity.
 
+One package id names one set of bytes. Two runs of the same state commit with
+the same `--as-of` produce byte-identical packet files, the manifest included,
+so an independently regenerated packet republishes as a no-op rather than
+colliding with itself. When a packet was generated, and where, goes to
+`generation_context.json` beside it — not into the package, and not onto the
+review branch. The Git commit records when the review was preserved.
+
 ## Publishing
 
 ```bash

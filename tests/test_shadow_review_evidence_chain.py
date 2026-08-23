@@ -20,6 +20,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -682,3 +683,81 @@ class ASignoffSaysOneThing(PacketFixtureCase):
     def test_the_sidecars_the_kit_writes_do_not_block_publication(self):
         self.assertTrue((self.packet / "signoff_template.json").is_file())
         self.assertEqual(self.run_pub(), 0)
+
+
+class OnePackageIdIsOneSetOfBytes(EvidenceChainCase):
+    """
+    `generated` used to sit in the manifest, excluded from the package id. Two
+    honest generations of the same commit therefore agreed on the id and
+    disagreed on the bytes — so the id identified nothing in particular, and
+    republishing an independently regenerated packet was refused as
+    conflicting content.
+    """
+
+    FILES = ("review_manifest.json", "review_report.md",
+             "record_inventory.jsonl", "signoff_template.json")
+
+    def _two_generations(self):
+        first = self.formal(self.A, out="first")
+        time.sleep(1.1)                       # a different wall clock
+        second = self.formal(self.A, out="second-run-elsewhere")
+        return first, second
+
+    def test_every_packet_file_is_byte_identical(self):
+        first, second = self._two_generations()
+        self.assertEqual(first["deterministic_sha256"],
+                         second["deterministic_sha256"])
+        for name in self.FILES:
+            a = (self.tmp / "first" / name).read_bytes()
+            b = (self.tmp / "second-run-elsewhere" / name).read_bytes()
+            self.assertEqual(hashlib.sha256(a).hexdigest(),
+                             hashlib.sha256(b).hexdigest(), name)
+
+    def test_the_manifest_carries_no_wall_clock_and_no_local_paths(self):
+        m = self.formal(self.A, out="clean")
+        text = (self.tmp / "clean" / "review_manifest.json").read_text(
+            encoding="utf-8")
+        self.assertNotIn("generated", m)
+        self.assertNotIn(str(self.tmp), text,
+                         "the manifest leaks a local filesystem path")
+
+    def test_the_generation_context_is_beside_the_package_not_in_it(self):
+        self.formal(self.A, out="ctx")
+        ctx = json.loads((self.tmp / "ctx" / "generation_context.json")
+                         .read_text(encoding="utf-8"))
+        self.assertIn("generated_utc", ctx)
+        self.assertNotIn("generation_context.json", pub.PACKET_FILES)
+
+    def test_an_independently_regenerated_packet_republishes_as_a_no_op(self):
+        first, second = self._two_generations()
+        t = json.loads((self.tmp / "first" / "signoff_template.json")
+                       .read_text(encoding="utf-8"))
+        t.update({"reviewer": "Auditor", "attestation": "compared each record",
+                  "review_started_utc": "2026-08-27T09:00:00+00:00",
+                  "review_completed_utc": "2026-08-27T11:00:00+00:00",
+                  "verdict": "pass"})
+        for r in t["records"]:
+            for f in pub.CHECK_FIELDS:
+                r[f] = True
+        for a in t.get("anomalies", []):
+            a["disposition"] = "benign"
+        signoff = self.tmp / "signoff.json"
+        signoff.write_text(json.dumps(t, indent=1, sort_keys=True) + "\n",
+                           encoding="utf-8")
+        remote = self.tmp / "remote.git"
+        subprocess.run(["git", "init", "--bare", "--quiet", str(remote)],
+                       check=True)
+        r1 = pub.publish(self.tmp / "first", signoff, str(remote), "day-07",
+                         None, True, True)
+        self.assertEqual(r1["action"], "bootstrap")
+        head = subprocess.run(["git", "--git-dir", str(remote), "rev-parse",
+                               "review/singapore-mindef"],
+                              stdout=subprocess.PIPE, text=True).stdout.strip()
+        r2 = pub.publish(self.tmp / "second-run-elsewhere", signoff,
+                         str(remote), "day-07", head, False, True)
+        self.assertEqual(r2["action"], "idempotent-no-op")
+        self.assertEqual(r1["completed_review_id"], r2["completed_review_id"])
+        after = subprocess.run(["git", "--git-dir", str(remote), "rev-parse",
+                                "review/singapore-mindef"],
+                               stdout=subprocess.PIPE, text=True).stdout.strip()
+        self.assertEqual(after, head, "a no-op must not move the branch")

@@ -42,9 +42,10 @@ Safety, because the input is evidence
 
 Determinism
 -----------
-Two runs with the same `--as-of` produce byte-identical artifacts. Wall-clock
-time appears only under `generated` in the manifest, which is excluded from
-`deterministic_sha256`.
+Two runs of the same state commit with the same `--as-of` produce byte-identical
+packet files — the manifest included. Wall-clock time and local paths go to
+`generation_context.json`, which is neither part of the package nor preserved:
+one package id names one set of bytes, or it names nothing in particular.
 """
 
 from __future__ import annotations
@@ -1135,14 +1136,31 @@ def _build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
         "signoff_template.json": hashlib.sha256(
             template_text.encode("utf-8")).hexdigest(),
     }
-    # Excluded from deterministic_sha256 on purpose.
-    manifest["generated"] = {
-        "generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "state_dir": str(state_dir),
-        "out_dir": str(out_dir),
-    }
     (out_dir / "review_manifest.json").write_text(
         json.dumps(manifest, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+
+    # Wall clock and local paths, kept OUT of the packet.
+    #
+    # `generated` used to live in the manifest, excluded from the package id.
+    # That made one package id name many byte sequences: two honest runs of the
+    # same commit produced identical ids and different manifests, so an
+    # independently regenerated packet was refused as conflicting content and a
+    # completed-review id pointed at no particular bytes. It also wrote the
+    # reviewer's absolute filesystem paths into permanently preserved evidence.
+    # A formal package is content-addressed; when it was generated belongs in
+    # the receipt and the commit that preserves it.
+    (out_dir / "generation_context.json").write_text(
+        json.dumps({
+            "deterministic_sha256": manifest["deterministic_sha256"],
+            "generated_utc": datetime.now(timezone.utc)
+                             .isoformat(timespec="seconds"),
+            "state_dir": str(state_dir),
+            "out_dir": str(out_dir),
+            "not_part_of_the_package": (
+                "This file is not preserved and is not covered by the package "
+                "id. The package is the manifest, the report and the "
+                "inventory."),
+        }, indent=1, sort_keys=True) + "\n", encoding="utf-8")
 
     after = hash_inputs(state_dir)
     if after != before:
@@ -1219,7 +1237,7 @@ def main(argv=None) -> int:
     print("provenance     : %s" % m["provenance"])
     print("publishable    : %s" % ("yes" if m["publishable"] else
                                    "NO — rehearsal packet"))
-    print("written to     : %s" % m["generated"]["out_dir"])
+    print("written to     : %s" % args.out)
     if m["anomaly_count"]:
         print("\nAnomalies must be explained before the checkpoint can pass.")
     print("\nThe automated checks are not the review. Fill in review_report.md.")
