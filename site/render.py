@@ -95,7 +95,7 @@ def resolve_site_mode(explicit: str = None, environ=None) -> str:
 
 
 def render_site(mode: str = None, output_dir=None, db_path=None,
-                environ=None) -> dict:
+                environ=None, snapshot=None) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
@@ -134,6 +134,7 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     spec.loader.exec_module(gp)
     result = gp.build(target, DECLARED_RECORD_TITLE,
                       Path(db_path) if db_path else DB_PATH,
+                      snapshot=snapshot or gp.DECLARED_SNAPSHOT,
                       legacy_routes=True)
     report = {"mode": DECLARED_RECORD, "output_dir": str(target)}
     if isinstance(result, dict):
