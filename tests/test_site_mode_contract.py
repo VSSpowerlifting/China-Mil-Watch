@@ -181,8 +181,14 @@ class TestDeclaredRecordBuild(unittest.TestCase):
         # about `storage/db.py`, which opens the tracked database read-write.
         for ext in ("-wal", "-shm"):
             Path(str(TRACKED_DB) + ext).unlink(missing_ok=True)
-        cls.report = cls.r.render_site(cls.r.DECLARED_RECORD,
-                                       output_dir=cls.out, environ={})
+        spec = importlib.util.spec_from_file_location(
+            "gp_snapshot", REPO_ROOT / "site" / "preview" / "generate_preview.py")
+        gp = importlib.util.module_from_spec(spec)
+        sys.modules["gp_snapshot"] = gp
+        spec.loader.exec_module(gp)
+        cls.report = cls.r.render_site(
+            cls.r.DECLARED_RECORD, output_dir=cls.out, environ={},
+            snapshot=gp.snapshot_from_corpus(TRACKED_DB))
 
     @classmethod
     def tearDownClass(cls):

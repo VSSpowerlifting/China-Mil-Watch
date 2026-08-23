@@ -41,7 +41,8 @@ class DeskCase(unittest.TestCase):
             raise unittest.SkipTest("production database not present")
         cls.tmp = Path(tempfile.mkdtemp(prefix="desk-rollout-"))
         cls.out = cls.tmp / "build"
-        gp.build(cls.out, "Test Title", TRACKED_DB)
+        gp.build(cls.out, "Test Title", TRACKED_DB,
+                 snapshot=gp.snapshot_from_corpus(TRACKED_DB))
 
     @classmethod
     def tearDownClass(cls):

@@ -1459,6 +1459,25 @@ def _paginate_week(week: dict, env, tmpl, ctx: dict):
 
 # ── Rendering ────────────────────────────────────────────────────────────────
 
+def snapshot_from_corpus(db_path) -> dict:
+    """
+    A declared snapshot describing the corpus as it actually is.
+
+    `DECLARED_SNAPSHOT` is hand-advanced release metadata naming one frozen
+    corpus, and `assert_snapshot` refuses to build any other under that name.
+    Callers that legitimately want to render whatever corpus they are handed —
+    tests, and anyone inspecting a build before advancing the release — pass the
+    result of this instead. It is not a way around the guard: it states plainly
+    which corpus is being described, rather than mislabelling one as another.
+    """
+    corpus = load_corpus(Path(db_path))["corpus"]
+    return {
+        "date": max(r["published_date"] for r in corpus),
+        "expected_records": len(corpus),
+        "logical_sha256": corpus_fingerprint(corpus),
+    }
+
+
 #: Legacy record redirect. A meta refresh plus a real link, and
 #: `noindex` so the compatibility route never competes with the record page
 #: it points at. Deterministic: no timestamp, no build id, no ordering.
