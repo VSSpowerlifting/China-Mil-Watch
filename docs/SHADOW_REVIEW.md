@@ -223,6 +223,28 @@ ordinary fast-forwards — no force, no lease, no ref deletion, and no ref but
 push, so a writer who moved the branch during preparation causes a refusal
 rather than a race.
 
+`--remote` may not begin with `-`. Git reads a leading dash as an option
+wherever it appears, and `--upload-pack=` is a command it runs, so an argument
+array alone does not make a remote safe. The Git environment is scrubbed of
+variables that redirect a command elsewhere.
+
+What the publisher refuses, beyond an incomplete sign-off:
+
+| Refusal | Why |
+|---|---|
+| a packet file that is a symlink | it is read as its target, so the preserved evidence would come from outside the packet |
+| a packet whose files disagree with its own `artifact_sha256` | it was edited after it was generated |
+| a file in the packet that is neither preserved nor a known sidecar | the preserved evidence would be a silent subset of what was reviewed |
+| a control character in `reviewer` | it is written into the commit message, where a newline forges a trailer |
+| duplicate JSON keys, `NaN`, `Infinity` | a document that says two things is evidence of neither |
+| a timestamp with no timezone | the field is named `_utc` and is preserved verbatim |
+| a preserved review that no longer hashes to its own id | it was edited after it was preserved |
+| an `index.jsonl` that was rewritten rather than appended to | existing lines must survive byte for byte |
+
+The last two are checked on arrival, before this publication writes anything:
+the publisher builds on whatever the remote hands it, and a `fail` receipt
+quietly edited to `pass` would otherwise be inherited as fact.
+
 Layout:
 
 ```

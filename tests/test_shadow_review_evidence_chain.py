@@ -820,3 +820,112 @@ class PublishableMeansPublishable(EvidenceChainCase):
         self.assertNotIn("NOT PUBLISHABLE",
                          (self.tmp / "arrived" / "review_report.md")
                          .read_text(encoding="utf-8"))
+
+
+class TheSecondLayerIsAlsoPinned(PacketFixtureCase):
+    """
+    Three guards a red-team mutation survived, because the checks in front of
+    them caught everything first. A guard nothing pins is a guard that can be
+    deleted by accident, so each is exercised directly here. They exist because
+    the check in front of them could itself be wrong.
+    """
+
+    def test_a_packet_claiming_unverified_provenance_is_refused(self):
+        """
+        The kit only emits verified packets now, so nothing else hands the
+        publisher an unverified one. A packet from an older kit, or one edited
+        by hand, still can.
+        """
+        manifest = self.packet / "review_manifest.json"
+        d = json.loads(manifest.read_text(encoding="utf-8"))
+        d["provenance"] = "unverified-working-copy"
+        manifest.write_text(json.dumps(d, indent=1, sort_keys=True) + "\n",
+                            encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("provenance", str(c.exception))
+        self.assertEqual(self.remote_git("for-each-ref").strip(), "")
+
+    def test_a_packet_without_a_verified_tree_is_refused(self):
+        for value in (None, "", "abc123", "1" * 39):
+            with self.subTest(state_tree=value):
+                manifest = self.packet / "review_manifest.json"
+                d = json.loads(manifest.read_text(encoding="utf-8"))
+                d["state_tree"] = value
+                manifest.write_text(
+                    json.dumps(d, indent=1, sort_keys=True) + "\n",
+                    encoding="utf-8")
+                with self.assertRaises(pub.PublishError) as c:
+                    pub.publish(self.packet, self.signoff_path,
+                                str(self.remote), "day-07", None, True, True)
+                self.assertIn("state_tree", str(c.exception))
+
+    def test_a_rewrite_during_this_publication_is_caught(self):
+        """
+        `assert_existing_evidence_is_intact` guards this publisher's own write
+        path: if a future change made it write over a review already on the
+        branch, the digests taken before the write would no longer match.
+        """
+        work = self.tmp / "work"
+        (work / "reviews" / "day-07" / "abc").mkdir(parents=True)
+        preserved = work / "reviews" / "day-07" / "abc" / "review_report.md"
+        preserved.write_text("original evidence\n", encoding="utf-8")
+        snapshot = pub.snapshot_existing(work)
+        self.assertEqual(list(snapshot), ["reviews/day-07/abc/review_report.md"])
+        pub.assert_existing_evidence_is_intact(work, snapshot)   # no-op
+
+        preserved.write_text("rewritten\n", encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.assert_existing_evidence_is_intact(work, snapshot)
+        self.assertIn("was rewritten", str(c.exception))
+
+        preserved.unlink()
+        with self.assertRaises(pub.PublishError) as c:
+            pub.assert_existing_evidence_is_intact(work, snapshot)
+        self.assertIn("append-only", str(c.exception))
+
+    def test_an_index_that_was_not_appended_to_is_caught(self):
+        work = self.tmp / "work-index"
+        work.mkdir()
+        index = work / "index.jsonl"
+        prior = '{"a":1}\n{"b":2}\n'
+
+        index.write_text(prior + '{"c":3}\n', encoding="utf-8")
+        pub.assert_index_only_grew(work, prior)                  # no-op
+
+        index.write_text('{"a":1}\n{"c":3}\n', encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.assert_index_only_grew(work, prior)
+        self.assertIn("rewritten rather than appended", str(c.exception))
+
+        index.write_text('{"a":1}\n', encoding="utf-8")
+        with self.assertRaises(pub.PublishError):
+            pub.assert_index_only_grew(work, prior)
+
+    def test_an_index_with_a_partial_last_line_is_refused(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self.tmp / "clone"
+        subprocess.run(["git", "clone", "--quiet", "-b",
+                        "review/singapore-mindef", str(self.remote), str(clone)],
+                       check=True)
+        index = clone / "index.jsonl"
+        index.write_text(index.read_text(encoding="utf-8").rstrip("\n"),
+                         encoding="utf-8")
+        for a in (["add", "-A"],
+                  ["-c", "user.name=x", "-c", "user.email=x@x", "commit",
+                   "--quiet", "-m", "truncate"]):
+            subprocess.run(["git"] + a, cwd=str(clone), check=True,
+                           stdout=subprocess.DEVNULL)
+        subprocess.run(["git", "push", "--quiet", "origin",
+                        "review/singapore-mindef"], cwd=str(clone), check=True)
+        head = self.head()
+        s = self.complete_signoff()
+        s["reviewer"] = "Second"
+        path = self.tmp / "s2.json"
+        path.write_text(json.dumps(s, indent=1, sort_keys=True) + "\n",
+                        encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, path, str(self.remote), "day-07", head,
+                        False, True)
+        self.assertIn("index.jsonl", str(c.exception))
