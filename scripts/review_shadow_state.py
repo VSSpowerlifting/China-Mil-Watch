@@ -49,8 +49,25 @@ if str(REPO_ROOT) not in sys.path:
 
 from core.collection import status as st                       # noqa: E402
 
-TOOL_VERSION = "1.0.0"
+TOOL_VERSION = "1.1.0"
 QUEUE_ALGORITHM = "shadow-review-queue/1"
+SIGNOFF_SCHEMA = "shadow-review-signoff/1"
+
+#: The one desk this kit reviews. Part of the binding: a packet that does not
+#: name its desk could be filed against the wrong one.
+DESK_IDENTITY = "singapore-mindef"
+
+#: Checkpoints the qualification defines. A formal packet is one of these.
+CHECKPOINTS = {"day-07": 7, "day-14": 14, "day-30": 30}
+
+#: Explicit answers only. "yes" in a free-text field is not an answer a program
+#: can check, and a review nobody can check is not evidence.
+CHECK_FIELDS = (
+    "source_page_opened", "title_matches", "publication_date_matches",
+    "canonical_url_matches", "body_appears_complete", "kind_is_reasonable",
+    "no_denial_or_template_stored",
+)
+VERDICTS = ("pass", "pass_with_findings", "fail")
 
 #: Exactly the columns `scripts/shadow_collect.py` creates. An unknown shape is
 #: refused rather than guessed at.
@@ -486,6 +503,14 @@ def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
     w = L.append
     w("# Singapore shadow review — %s" % checkpoint)
     w("")
+    if not manifest["formal"]:
+        w("> ## NOT PUBLISHABLE — rehearsal packet")
+        w(">")
+        w("> This package names no checkpoint and no shadow-state commit, so it")
+        w("> identifies a corpus but not a point in the state branch's history.")
+        w("> It is a tooling rehearsal. Re-generate with `--checkpoint` and")
+        w("> `--state-commit` to produce a packet that can be preserved.")
+        w("")
     w("> **An unfilled report is not evidence of a completed review.** The")
     w("> automated checks below establish that the state is internally")
     w("> consistent. They do not establish that the stored records match what")
@@ -646,8 +671,69 @@ def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
     return "\n".join(L) + "\n"
 
 
+def signoff_template(manifest: dict, rows: list, queue: list) -> dict:
+    """
+    The structured form a reviewer fills in. Deliberately separate from the
+    automated evidence: the package says what was presented, this says what a
+    person concluded, and keeping them apart is what lets each be checked
+    against the other.
+    """
+    return {
+        "signoff_schema": SIGNOFF_SCHEMA,
+        "desk": manifest["desk"],
+        "checkpoint": manifest["checkpoint"],
+        "automated_package_id": manifest["deterministic_sha256"],
+        "state_commit": manifest["state_commit"],
+        "latest_ledger_run_id": manifest["latest_run_id"],
+        "latest_shadow_day": manifest["latest_shadow_day"],
+        "queue_algorithm": manifest["queue_algorithm"],
+        "review_mode": manifest["review_mode"],
+        "records_required": len(manifest["required_review_records"]),
+        "reviewer": "",
+        "review_started_utc": "",
+        "review_completed_utc": "",
+        "records": [
+            {
+                "identity": url,
+                "source_page_opened": None,
+                "title_matches": None,
+                "publication_date_matches": None,
+                "canonical_url_matches": None,
+                "body_appears_complete": None,
+                "kind_is_reasonable": None,
+                "no_denial_or_template_stored": None,
+                "note": "",
+            } for url in manifest["required_review_records"]
+        ],
+        "anomalies": [
+            {"anomaly": x, "disposition": ""} for x in manifest["anomalies"]
+        ],
+        "verdict": "",
+        "notes": "",
+        "attestation": "",
+    }
+
+
 def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
-          since_ledger: str, allow_tracked: bool) -> dict:
+          since_ledger: str, allow_tracked: bool, state_commit: str = None,
+          checkpoint: str = None) -> dict:
+    if state_commit is not None:
+        if not re.fullmatch(r"[0-9a-f]{40}", state_commit):
+            raise ReviewError(
+                "--state-commit must be a full 40-character commit SHA; got %r.\n"
+                "Read it from the clone before removing .git — never infer it "
+                "afterwards." % state_commit)
+        if checkpoint is None:
+            raise ReviewError("--state-commit requires --checkpoint (%s)"
+                              % ", ".join(sorted(CHECKPOINTS)))
+    if checkpoint is not None:
+        if checkpoint not in CHECKPOINTS:
+            raise ReviewError("unknown checkpoint %r; expected one of %s"
+                              % (checkpoint, ", ".join(sorted(CHECKPOINTS))))
+        if state_commit is None:
+            raise ReviewError(
+                "--checkpoint requires --state-commit: a formal packet must "
+                "name the exact shadow-state commit it reviewed")
     assert_safe_state_dir(state_dir)
     assert_safe_out_dir(out_dir, allow_tracked)
     state_dir, out_dir = state_dir.resolve(), out_dir.resolve()
@@ -674,13 +760,33 @@ def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
         kinds[r["publication_kind"]] = kinds.get(r["publication_kind"], 0) + 1
     dates = sorted(r["published_date"] for r in rows)
 
+    ledger_hashes = {k: v for k, v in before.items() if k.startswith("ledger/")}
+    ledger_set_sha256 = hashlib.sha256(json.dumps(
+        ledger_hashes, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")).hexdigest()
+
     manifest = {
         "tool": "scripts/review_shadow_state.py",
         "tool_version": TOOL_VERSION,
         "queue_algorithm": QUEUE_ALGORITHM,
+        "signoff_schema": SIGNOFF_SCHEMA,
         "as_of": as_of,
+        # ── formal binding ───────────────────────────────────────────────
+        # What exactly was reviewed. A packet without a state commit names a
+        # corpus but not a point in the state branch's history, so it can
+        # describe evidence it cannot pin down. Such a packet is usable for a
+        # rehearsal and is refused for publication.
+        "desk": DESK_IDENTITY,
+        "checkpoint": checkpoint,
+        "state_commit": state_commit,
+        "formal": bool(state_commit and checkpoint),
+        "publishable": bool(state_commit and checkpoint),
+        "review_mode": "complete-corpus" if review_all else "focused-queue",
         "state_dir_name": state_dir.name,
         "input_sha256": before,
+        "ledger_set_sha256": ledger_set_sha256,
+        "clock_sha256": before.get("clock.json"),
+        "shadow_db_sha256": before.get("shadow.db"),
         "day_zero_utc": facts["clock"]["day_zero_utc"],
         "day_zero_run_id": facts["clock"]["day_zero_run_id"],
         "latest_ledger": latest["_filename"],
@@ -703,13 +809,19 @@ def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
         "anomalies": anomalies,
         "review_queue_size": len(queue),
         "review_queue": queue,
+        # The exact identities a sign-off must answer for. Under --review-all
+        # this is the whole corpus; under a focused queue it is the queue.
+        "required_review_records": (sorted(r["url"] for r in rows)
+                                    if review_all else queue),
         "automated_checks_are_not_the_human_review": (
             "These checks establish internal consistency only. The checkpoint "
             "is complete only when a person has compared queued records with "
             "the ministry's own pages and signed the report."),
     }
 
-    checkpoint = "shadow_day %s (as of %s)" % (manifest["latest_shadow_day"], as_of)
+    checkpoint_label = "%s — shadow_day %s (as of %s)" % (
+        checkpoint or "rehearsal (no checkpoint)",
+        manifest["latest_shadow_day"], as_of)
     inventory = []
     for r in rows:
         inventory.append({
@@ -733,20 +845,29 @@ def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
     (out_dir / "record_inventory.jsonl").write_text(inv_text, encoding="utf-8")
 
     # The deterministic identity covers content only: no wall clock, no paths.
+    # It includes the desk, checkpoint and state commit, so two packets over the
+    # same corpus at different checkpoints are not the same package.
     deterministic = dict(manifest)
     payload = json.dumps({"manifest": deterministic, "inventory": inventory},
                          sort_keys=True, separators=(",", ":"))
     manifest["deterministic_sha256"] = hashlib.sha256(
         payload.encode("utf-8")).hexdigest()
 
+    template = signoff_template(manifest, rows, queue)
+    template_text = json.dumps(template, indent=1, sort_keys=True) + "\n"
+    (out_dir / "signoff_template.json").write_text(template_text,
+                                                   encoding="utf-8")
+
     report = render_report(manifest, ledgers, rows, collisions, anomalies,
-                           queue, reasons, checkpoint)
+                           queue, reasons, checkpoint_label)
     (out_dir / "review_report.md").write_text(report, encoding="utf-8")
 
     manifest["artifact_sha256"] = {
         "record_inventory.jsonl": hashlib.sha256(
             inv_text.encode("utf-8")).hexdigest(),
         "review_report.md": hashlib.sha256(report.encode("utf-8")).hexdigest(),
+        "signoff_template.json": hashlib.sha256(
+            template_text.encode("utf-8")).hexdigest(),
     }
     # Excluded from deterministic_sha256 on purpose.
     manifest["generated"] = {
@@ -783,6 +904,12 @@ def main(argv=None) -> int:
     p.add_argument("--since-ledger", default=None,
                    help="incremental review: queue records first seen after "
                         "this ledger filename")
+    p.add_argument("--checkpoint", default=None, choices=sorted(CHECKPOINTS),
+                   help="formal checkpoint identity; required with --state-commit")
+    p.add_argument("--state-commit", default=None,
+                   help="full 40-character commit SHA of the shadow-state "
+                        "branch being reviewed. Read it from the clone BEFORE "
+                        "removing .git. Required for a publishable packet.")
     p.add_argument("--allow-tracked-destination", action="store_true",
                    help=argparse.SUPPRESS)
     args = p.parse_args(argv)
@@ -790,7 +917,8 @@ def main(argv=None) -> int:
     as_of = args.as_of or datetime.now(timezone.utc).date().isoformat()
     try:
         m = build(Path(args.state_dir), Path(args.out), as_of, args.review_all,
-                  args.since_ledger, args.allow_tracked_destination)
+                  args.since_ledger, args.allow_tracked_destination,
+                  args.state_commit, args.checkpoint)
     except ReviewError as exc:
         print("review refused: %s" % exc, file=sys.stderr)
         return 2
@@ -803,6 +931,10 @@ def main(argv=None) -> int:
     print("anomalies      : %d" % m["anomaly_count"])
     print("review queue   : %d of %d" % (m["review_queue_size"], m["corpus_count"]))
     print("package id     : %s" % m["deterministic_sha256"])
+    print("checkpoint     : %s" % (m["checkpoint"] or "— (rehearsal)"))
+    print("state commit   : %s" % (m["state_commit"] or "— (rehearsal)"))
+    print("publishable    : %s" % ("yes" if m["publishable"] else
+                                   "NO — rehearsal packet"))
     print("written to     : %s" % m["generated"]["out_dir"])
     if m["anomaly_count"]:
         print("\nAnomalies must be explained before the checkpoint can pass.")
