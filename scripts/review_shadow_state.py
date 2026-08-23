@@ -1,0 +1,814 @@
+#!/usr/bin/env python3
+"""
+Singapore shadow state review kit — read-only.
+
+Produces the evidence package for a Day 7 / 14 / 30 checkpoint review from an
+explicit copy of `shadow/singapore-mindef` state. It validates what a machine
+can validate and then gets out of the way: the checkpoint is a *human* reading
+of stored records against the ministry's own pages, and nothing here can stand
+in for that.
+
+Safety, because the input is evidence
+-------------------------------------
+  * `--state-dir` is required and is refused if it is the repository, contains
+    `pla_watch.db`, or contains a tracked `output/`
+  * the shadow database is opened `mode=ro&immutable=1`, so no lock is taken
+    and no -wal/-shm can appear beside it
+  * every input file is hashed before and after; a changed input fails the run
+  * `--out` is required and refuses a tracked repository destination unless the
+    test-only `--allow-tracked-destination` override is passed
+  * no network. The runtime imports are stdlib plus
+    `core.collection.status`, which is a module of constants. The adapter is
+    deliberately NOT imported: it pulls in `requests`, and `config` reads `.env`
+    and names the production database. What this tool needs from the adapter —
+    the canonical URL shape, the slug date, the slug kind — is re-derived here,
+    and `tests/test_shadow_review_kit.py` imports both and asserts they agree,
+    so drift is caught without giving this tool a network-capable import.
+
+Determinism
+-----------
+Two runs with the same `--as-of` produce byte-identical artifacts. Wall-clock
+time appears only under `generated` in the manifest, which is excluded from
+`deterministic_sha256`.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import sqlite3
+import sys
+from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from core.collection import status as st                       # noqa: E402
+
+TOOL_VERSION = "1.0.0"
+QUEUE_ALGORITHM = "shadow-review-queue/1"
+
+#: Exactly the columns `scripts/shadow_collect.py` creates. An unknown shape is
+#: refused rather than guessed at.
+EXPECTED_COLUMNS = (
+    "url", "source_slug", "title_original", "text_original", "published_date",
+    "language_tag", "publication_kind", "content_sha256", "capture_sha256",
+    "retrieved_at", "first_seen_run",
+)
+REQUIRED_NON_NULL = (
+    "url", "source_slug", "title_original", "text_original", "published_date",
+    "language_tag", "publication_kind", "content_sha256",
+)
+EXPECTED_TABLES = {"shadow_records"}
+
+#: The collector's own terminal-success set (`terminal_ok` in shadow_collect).
+TERMINAL_OK = frozenset({st.OK, st.OK_NO_PUBLICATIONS, st.OK_ALL_DUPLICATES,
+                         st.OK_ALL_FILTERED})
+
+LEDGER_REQUIRED = (
+    "run_id", "collector_commit", "started_utc", "finished_utc", "target_date",
+    "lookback_days", "cap", "robots_status", "listing_status", "discovered",
+    "selected", "retrieved", "inserted", "duplicates", "filtered",
+    "fetch_failures", "extraction_failures", "access_failures",
+    "state_sha256_before", "state_sha256_after", "result", "health",
+    "shadow_day",
+)
+
+#: Mirrors scraper/sources/sg_mindef.py. Kept in step by an equivalence test.
+RELEASE_RE = re.compile(
+    r"^https://www\.mindef\.gov\.sg/news-and-events/latest-releases/[^/]+/$")
+KINDS = {"nr": "news release", "speech": "speech", "fs": "fact sheet",
+         "mq": "ministerial question", "pq": "parliamentary question"}
+_MONTHS = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+           "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}
+
+#: The collector refuses a body under this length, so anything shorter in the
+#: database contradicts the collector that wrote it. This is the collector's
+#: documented floor, not a threshold invented here.
+COLLECTOR_MIN_BODY_CHARS = 200
+
+#: Structures that mean "this is not the published document". Detected by the
+#: text they contain, not by length: a short real reply and a long error page
+#: are both possible, and length alone would misjudge each.
+STUB_MARKERS = (
+    "access denied", "403 forbidden", "404 not found", "page not found",
+    "are you a robot", "enable javascript", "checking your browser",
+    "request unsuccessful", "attention required", "cloudflare",
+    "service unavailable", "temporarily unavailable",
+)
+
+
+class ReviewError(RuntimeError):
+    """The state could not be reviewed. Fails closed; never a partial package."""
+
+
+# ── derivations mirrored from the adapter ────────────────────────────────────
+
+def slug_published_date(url: str):
+    m = re.search(r"/latest-releases/(\d{1,2})([a-z]{3})(\d{2})[-_]", url)
+    if not m:
+        return None
+    mon = _MONTHS.get(m.group(2))
+    if not mon:
+        return None
+    try:
+        return date(2000 + int(m.group(3)), mon, int(m.group(1))).isoformat()
+    except ValueError:
+        return None
+
+
+def publication_kind(url: str) -> str:
+    tail = url.rstrip("/").rsplit("/", 1)[-1]
+    token = re.sub(r"^\d{1,2}[a-z]{3}\d{2}[-_]", "", tail)
+    token = re.sub(r"\d+$", "", token)
+    return KINDS.get(token, "other")
+
+
+# ── input safety ─────────────────────────────────────────────────────────────
+
+def assert_safe_state_dir(state_dir: Path) -> None:
+    state_dir = state_dir.resolve()
+    if not state_dir.is_dir():
+        raise ReviewError("state dir does not exist: %s" % state_dir)
+    if state_dir == REPO_ROOT or REPO_ROOT in state_dir.parents:
+        raise ReviewError(
+            "refusing a state dir inside the repository: %s" % state_dir)
+    for forbidden in ("pla_watch.db", "output"):
+        if (state_dir / forbidden).exists():
+            raise ReviewError(
+                "refusing a state dir that contains %s — that is production, "
+                "not shadow state: %s" % (forbidden, state_dir))
+    if not (state_dir / "shadow.db").is_file():
+        raise ReviewError("no shadow.db in %s" % state_dir)
+
+
+def assert_safe_out_dir(out_dir: Path, allow_tracked: bool) -> None:
+    out_dir = out_dir.resolve()
+    if allow_tracked:
+        return
+    if out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents:
+        raise ReviewError(
+            "refusing to write a review package inside the repository: %s\n"
+            "Review evidence is not source. Pass --allow-tracked-destination "
+            "only from a test." % out_dir)
+
+
+def hash_inputs(state_dir: Path) -> dict:
+    out = {}
+    for p in sorted(state_dir.rglob("*")):
+        if p.is_file():
+            out[str(p.relative_to(state_dir))] = hashlib.sha256(
+                p.read_bytes()).hexdigest()
+    return out
+
+
+# ── loading ──────────────────────────────────────────────────────────────────
+
+def open_readonly(db_path: Path) -> sqlite3.Connection:
+    """Immutable: no lock, no journal, and no sidecar can appear."""
+    return sqlite3.connect(
+        "file://%s?mode=ro&immutable=1" % db_path.resolve(), uri=True)
+
+
+def load_ledgers(state_dir: Path) -> list:
+    entries = []
+    for path in sorted((state_dir / "ledger").glob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError as exc:
+            raise ReviewError("ledger %s is not valid JSON: %s" % (path.name, exc))
+        missing = [f for f in LEDGER_REQUIRED if f not in data]
+        if missing:
+            raise ReviewError(
+                "ledger %s is missing required field(s): %s — refusing to "
+                "review an unrecognised ledger format"
+                % (path.name, ", ".join(missing)))
+        data["_filename"] = path.name
+        entries.append(data)
+    if not entries:
+        raise ReviewError("no ledgers in %s" % (state_dir / "ledger"))
+    entries.sort(key=lambda e: (e["finished_utc"], str(e["run_id"])))
+    return entries
+
+
+def expected_ledger_filename(entry: dict) -> str:
+    return "%s-%s.json" % (
+        entry["finished_utc"].replace(":", "").replace("-", ""), entry["run_id"])
+
+
+def expected_result(entry: dict):
+    """
+    The collector's own decision tree, re-evaluated.
+
+    Only applies to runs that reached the storage loop — an early exit from
+    discovery never sets `stored_total`, and its result is a property of
+    discovery rather than of these counts.
+    """
+    if "stored_total" not in entry:
+        return None
+    if entry["access_failures"]:
+        return st.AUTH_FAILURE
+    if entry["fetch_failures"] and not entry["inserted"] and not entry["duplicates"]:
+        return st.FETCH_FAILURE
+    if entry["extraction_failures"] and not entry["inserted"] and not entry["duplicates"]:
+        return st.EXTRACTION_FAILURE
+    if entry["inserted"]:
+        return st.OK
+    if entry["duplicates"]:
+        return st.OK_ALL_DUPLICATES
+    return st.OK_NO_PUBLICATIONS
+
+
+# ── validation ───────────────────────────────────────────────────────────────
+
+def validate(state_dir: Path, ledgers: list, con: sqlite3.Connection,
+             db_sha: str) -> tuple:
+    """Returns (anomalies, facts). Anomalies are strings; facts feed the report."""
+    a = []
+    facts = {}
+
+    # -- schema ---------------------------------------------------------------
+    tables = {r[0] for r in con.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'")}
+    if not EXPECTED_TABLES <= tables:
+        raise ReviewError("unknown schema: expected tables %s, found %s"
+                          % (sorted(EXPECTED_TABLES), sorted(tables)))
+    cols = tuple(r[1] for r in con.execute("PRAGMA table_info(shadow_records)"))
+    if cols != EXPECTED_COLUMNS:
+        raise ReviewError(
+            "unknown shadow_records shape — refusing to review.\n  expected %s\n"
+            "  found    %s" % (list(EXPECTED_COLUMNS), list(cols)))
+    facts["integrity"] = con.execute("PRAGMA integrity_check").fetchone()[0]
+    if facts["integrity"] != "ok":
+        a.append("database integrity_check returned %r" % facts["integrity"])
+    fk = con.execute("PRAGMA foreign_key_check").fetchall()
+    facts["foreign_keys"] = "clean" if not fk else "%d violation(s)" % len(fk)
+    if fk:
+        a.append("foreign key violations: %d" % len(fk))
+
+    # -- clock ----------------------------------------------------------------
+    clock_path = state_dir / "clock.json"
+    if not clock_path.is_file():
+        raise ReviewError("no clock.json — the shadow clock has not started")
+    try:
+        clock = json.loads(clock_path.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        raise ReviewError("clock.json is not valid JSON: %s" % exc)
+    for field in ("day_zero_utc", "day_zero_run_id"):
+        if field not in clock:
+            raise ReviewError("clock.json is missing %s" % field)
+    facts["clock"] = clock
+    try:
+        day_zero = datetime.fromisoformat(clock["day_zero_utc"])
+    except ValueError as exc:
+        raise ReviewError("clock.json day_zero_utc is unparseable: %s" % exc)
+
+    zero_runs = [e for e in ledgers if str(e["run_id"]) == str(clock["day_zero_run_id"])]
+    if not zero_runs:
+        a.append("clock names day-zero run %s, which has no ledger"
+                 % clock["day_zero_run_id"])
+    else:
+        if zero_runs[0]["finished_utc"] != clock["day_zero_utc"]:
+            a.append("day-zero timestamp mismatch: clock says %s, ledger %s says %s"
+                     % (clock["day_zero_utc"], zero_runs[0]["run_id"],
+                        zero_runs[0]["finished_utc"]))
+        first_ok = next((e for e in ledgers if e["result"] in TERMINAL_OK), None)
+        if first_ok and str(first_ok["run_id"]) != str(clock["day_zero_run_id"]):
+            a.append("clock was not initialised by the first successful run: "
+                     "first success is %s, clock names %s"
+                     % (first_ok["run_id"], clock["day_zero_run_id"]))
+
+    # -- ledgers --------------------------------------------------------------
+    seen_ids = {}
+    prev_finished = None
+    for e in ledgers:
+        rid, name = str(e["run_id"]), e["_filename"]
+        if name != expected_ledger_filename(e):
+            a.append("ledger filename %s does not match its contents "
+                     "(expected %s)" % (name, expected_ledger_filename(e)))
+        if rid in seen_ids:
+            a.append("duplicate run id %s in %s and %s" % (rid, seen_ids[rid], name))
+        seen_ids[rid] = name
+        if e["result"] not in st.ALL_STATUSES:
+            a.append("%s: unrecognised result %r" % (name, e["result"]))
+        expected_health = "ok" if e["result"] in TERMINAL_OK else "fail"
+        if e["health"] != expected_health:
+            a.append("%s: health %r disagrees with result %r (expected %r)"
+                     % (name, e["health"], e["result"], expected_health))
+        want = expected_result(e)
+        if want is not None and want != e["result"]:
+            a.append("%s: counts imply %r but the ledger records %r"
+                     % (name, want, e["result"]))
+        try:
+            finished = datetime.fromisoformat(e["finished_utc"])
+        except ValueError:
+            a.append("%s: unparseable finished_utc %r" % (name, e["finished_utc"]))
+            continue
+        if prev_finished and finished < prev_finished:
+            a.append("%s: ledgers are not chronological" % name)
+        prev_finished = finished
+        # shadow_day recomputation
+        if e["result"] in TERMINAL_OK:
+            want_day = (finished - day_zero).days
+            if e["shadow_day"] != want_day:
+                a.append("%s: shadow_day is %r but %d complete 24-hour periods "
+                         "have elapsed since day zero"
+                         % (name, e["shadow_day"], want_day))
+        elif e["shadow_day"] is not None:
+            a.append("%s: failed run advanced the clock (shadow_day=%r)"
+                     % (name, e["shadow_day"]))
+
+    # -- state hash chain -----------------------------------------------------
+    prev_after = None
+    for i, e in enumerate(ledgers):
+        before, after = e["state_sha256_before"], e["state_sha256_after"]
+        if i == 0:
+            if before is not None and before != prev_after:
+                a.append("%s: first ledger declares a prior state hash %s"
+                         % (e["_filename"], before[:12]))
+        elif before != prev_after:
+            a.append("%s: state chain broken — declares before=%s, previous "
+                     "run ended at %s" % (e["_filename"],
+                                          (before or "None")[:12],
+                                          (prev_after or "None")[:12]))
+        if e["result"] == st.OK_ALL_DUPLICATES and before != after:
+            a.append("%s: a duplicate-only run changed the database "
+                     "(%s -> %s)" % (e["_filename"], (before or "None")[:12],
+                                     (after or "None")[:12]))
+        prev_after = after
+    facts["chain_final"] = prev_after
+    if prev_after and prev_after != db_sha:
+        a.append("the shadow database on disk (%s) does not match the last "
+                 "ledger's after-hash (%s)" % (db_sha[:12], prev_after[:12]))
+
+    # -- scheduled-day continuity --------------------------------------------
+    days = sorted({datetime.fromisoformat(e["finished_utc"]).date()
+                   for e in ledgers})
+    gaps = []
+    for x, y in zip(days, days[1:]):
+        if (y - x).days > 1:
+            gaps += [(x + timedelta(days=n)).isoformat()
+                     for n in range(1, (y - x).days)]
+    facts["observed_days"] = [d.isoformat() for d in days]
+    facts["missing_days"] = gaps
+    for g in gaps:
+        a.append("no ledger for %s, inside the observed collection period" % g)
+    return a, facts
+
+
+def validate_records(con: sqlite3.Connection, ledgers: list) -> tuple:
+    a = []
+    rows = [dict(zip(EXPECTED_COLUMNS, r)) for r in con.execute(
+        "SELECT %s FROM shadow_records ORDER BY url" % ", ".join(EXPECTED_COLUMNS))]
+    by_url, by_title = {}, {}
+    for r in rows:
+        flags = []
+        for field in REQUIRED_NON_NULL:
+            if r[field] in (None, ""):
+                flags.append("missing:%s" % field)
+        if r["url"] in by_url:
+            a.append("duplicate canonical URL in the database: %s" % r["url"])
+        by_url[r["url"]] = r
+        if not RELEASE_RE.match(r["url"] or ""):
+            flags.append("url:not-canonical")
+        want_date = slug_published_date(r["url"] or "")
+        if want_date is None:
+            flags.append("date:unparseable-slug")
+        elif want_date != r["published_date"]:
+            flags.append("date:slug-says-%s" % want_date)
+        want_kind = publication_kind(r["url"] or "")
+        if want_kind != r["publication_kind"]:
+            flags.append("kind:slug-says-%s" % want_kind)
+        body = r["text_original"] or ""
+        if not body.strip():
+            flags.append("body:empty")
+        elif len(body) < COLLECTOR_MIN_BODY_CHARS:
+            flags.append("body:below-collector-floor-%d" % len(body))
+        lowered = body.lower()
+        for marker in STUB_MARKERS:
+            if marker in lowered:
+                flags.append("body:stub-marker:%s" % marker.replace(" ", "-"))
+                break
+        recomputed = hashlib.sha256(body.encode("utf-8")).hexdigest()
+        if recomputed != r["content_sha256"]:
+            flags.append("hash:mismatch")
+        if (r["source_slug"] or "") != "sg_mindef_releases":
+            flags.append("source:foreign-%s" % r["source_slug"])
+        r["_flags"] = flags
+        by_title.setdefault((r["title_original"] or "").strip(), []).append(r["url"])
+        for f in flags:
+            a.append("%s: %s" % (r["url"], f))
+
+    collisions = {t: u for t, u in by_title.items() if len(u) > 1}
+    for title, urls in sorted(collisions.items()):
+        if len(set(urls)) != len(urls):
+            a.append("title %r maps to a repeated URL" % title[:60])
+    return rows, collisions, a
+
+
+# ── review queue ─────────────────────────────────────────────────────────────
+
+def build_queue(rows: list, ledgers: list, review_all: bool,
+                since_ledger: str = None) -> tuple:
+    """
+    Returns (selected_urls, reasons). Deterministic: every rule is a property
+    of the data, and the remainder is chosen by content hash, not by chance.
+    """
+    reasons = {}
+
+    def mark(url, why):
+        reasons.setdefault(url, []).append(why)
+
+    if review_all:
+        for r in rows:
+            mark(r["url"], "review-all")
+        return sorted(reasons), reasons
+
+    since_runs = None
+    if since_ledger:
+        names = [e["_filename"] for e in ledgers]
+        if since_ledger not in names:
+            raise ReviewError("--since-ledger %r is not a ledger in this state "
+                              "(have: %s)" % (since_ledger, ", ".join(names)))
+        idx = names.index(since_ledger)
+        since_runs = {str(e["run_id"]) for e in ledgers[idx + 1:]}
+
+    for r in rows:
+        if since_runs is not None and str(r["first_seen_run"]) in since_runs:
+            mark(r["url"], "new-since-%s" % since_ledger)
+        if r["_flags"]:
+            mark(r["url"], "anomaly:" + ",".join(r["_flags"]))
+
+    by_title = {}
+    for r in rows:
+        by_title.setdefault((r["title_original"] or "").strip(), []).append(r)
+    for title, group in by_title.items():
+        if len(group) > 1:
+            for r in group:
+                mark(r["url"], "duplicate-title-group")
+
+    by_kind = {}
+    for r in rows:
+        by_kind.setdefault(r["publication_kind"], []).append(r)
+    for kind, group in sorted(by_kind.items()):
+        pick = sorted(group, key=lambda x: x["url"])[0]
+        mark(pick["url"], "kind-representative:%s" % kind)
+
+    if rows:
+        by_date = sorted(rows, key=lambda r: (r["published_date"], r["url"]))
+        mark(by_date[0]["url"], "oldest")
+        mark(by_date[-1]["url"], "newest")
+        substantive = [r for r in rows
+                       if len(r["text_original"] or "") >= COLLECTOR_MIN_BODY_CHARS]
+        if substantive:
+            by_len = sorted(substantive,
+                            key=lambda r: (len(r["text_original"]), r["url"]))
+            mark(by_len[0]["url"], "shortest-substantive-body")
+            mark(by_len[-1]["url"], "longest-body")
+        # Deterministic remainder: lowest content hashes not already queued.
+        remainder = sorted((r for r in rows if r["url"] not in reasons),
+                           key=lambda r: r["content_sha256"])
+        for r in remainder[:max(0, min(5, len(remainder)))]:
+            mark(r["url"], "hash-selected-remainder")
+    return sorted(reasons), reasons
+
+
+# ── package ──────────────────────────────────────────────────────────────────
+
+def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
+                  anomalies: list, queue: list, reasons: dict,
+                  checkpoint: str) -> str:
+    L = []
+    w = L.append
+    w("# Singapore shadow review — %s" % checkpoint)
+    w("")
+    w("> **An unfilled report is not evidence of a completed review.** The")
+    w("> automated checks below establish that the state is internally")
+    w("> consistent. They do not establish that the stored records match what")
+    w("> the ministry published. Only the reviewer sign-off section does that,")
+    w("> and only once every field in it is filled in by a person.")
+    w("")
+    w("| | |")
+    w("|---|---|")
+    w("| Deterministic package id | `%s` |" % manifest["deterministic_sha256"])
+    w("| Tool | `%s` v%s |" % (manifest["tool"], manifest["tool_version"]))
+    w("| Collector commit (latest ledger) | `%s` |" % manifest["latest_collector_commit"])
+    w("| Day zero | `%s` (run `%s`) |" % (manifest["day_zero_utc"],
+                                          manifest["day_zero_run_id"]))
+    w("| Latest ledger | `%s` |" % manifest["latest_ledger"])
+    w("| Latest shadow_day | **%s** |" % manifest["latest_shadow_day"])
+    w("| Ledgers | %d |" % manifest["ledger_count"])
+    w("| Corpus | %d records, %s → %s |" % (
+        manifest["corpus_count"], manifest["corpus_range"][0],
+        manifest["corpus_range"][1]))
+    w("| Database integrity | %s |" % manifest["database_integrity"])
+    w("| Foreign keys | %s |" % manifest["foreign_keys"])
+    w("| State-hash chain | %s |" % manifest["state_chain_verdict"])
+    w("| Anomalies | %d |" % len(anomalies))
+    w("")
+    w("## Automated integrity")
+    w("")
+    if anomalies:
+        w("**%d anomaly/anomalies. Each must be explained before this checkpoint "
+          "can pass.**" % len(anomalies))
+        w("")
+        for x in anomalies:
+            w("- %s" % x)
+    else:
+        w("No anomalies. Schema, clock, ledger identity, result taxonomy, "
+          "state-hash chain, `shadow_day` arithmetic, record fields, canonical "
+          "URL uniqueness and content hashes all reconcile.")
+    w("")
+    w("## Run chronology")
+    w("")
+    w("| Ledger | Run | Finished (UTC) | Day | Result | Health | Disc | Sel | Retr | Ins | Dup | Fetch✗ | Extr✗ | Acc✗ |")
+    w("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    for e in ledgers:
+        w("| `%s` | %s | %s | %s | `%s` | %s | %d | %d | %d | %d | %d | %d | %d | %d |" % (
+            e["_filename"], e["run_id"], e["finished_utc"][:19],
+            "—" if e["shadow_day"] is None else e["shadow_day"],
+            e["result"], e["health"], e["discovered"], e["selected"],
+            e["retrieved"], e["inserted"], e["duplicates"], e["fetch_failures"],
+            e["extraction_failures"], e["access_failures"]))
+    w("")
+    w("## Count reconciliation")
+    w("")
+    w("| Ledger | inserted | cumulative | stored_total | agrees |")
+    w("|---|---|---|---|---|")
+    cum = 0
+    for e in ledgers:
+        cum += e["inserted"]
+        stored = e.get("stored_total")
+        ok = "—" if stored is None else ("yes" if stored == cum else "**NO**")
+        w("| `%s` | %d | %d | %s | %s |" % (e["_filename"], e["inserted"], cum,
+                                            "—" if stored is None else stored, ok))
+    w("")
+    w("Corpus in database: **%d**. Sum of insertions: **%d**." %
+      (len(rows), cum))
+    w("")
+    w("## Corpus overview")
+    w("")
+    w("| Publication kind | Records |")
+    w("|---|---|")
+    for kind, n in sorted(manifest["publication_kinds"].items(),
+                          key=lambda kv: (-kv[1], kv[0])):
+        w("| %s | %d |" % (kind, n))
+    w("| **total** | **%d** |" % len(rows))
+    w("")
+    lens = sorted(len(r["text_original"] or "") for r in rows)
+    if lens:
+        def pct(p):
+            return lens[min(len(lens) - 1, int(round(p * (len(lens) - 1))))]
+        w("Body length (characters): min **%d**, p25 %d, median %d, p75 %d, "
+          "max **%d**." % (lens[0], pct(.25), pct(.5), pct(.75), lens[-1]))
+        w("")
+        w("The collector refuses a body under %d characters, so a shorter body "
+          "here would contradict the collector that wrote it. No length is "
+          "treated as proof of completeness — that is a reviewer judgement."
+          % COLLECTOR_MIN_BODY_CHARS)
+    w("")
+    w("## Title collisions")
+    w("")
+    if collisions:
+        w("Distinct publications may share a title. These are kept separate by "
+          "canonical URL and must be confirmed distinct by a reviewer.")
+        w("")
+        w("| Title | URLs |")
+        w("|---|---|")
+        for title, urls in sorted(collisions.items()):
+            w("| %s | %s |" % (title[:70].replace("|", "\\|"),
+                               "<br>".join("`%s`" % u for u in sorted(urls))))
+    else:
+        w("None. Every stored title is unique in this corpus.")
+    w("")
+    w("## Content-change history")
+    w("")
+    changed = [e for e in ledgers if e.get("inserted") and e["result"] == st.OK]
+    w("Records are first-writer-wins on canonical URL, so the collector never "
+      "rewrites a stored body. Insertions by run:")
+    w("")
+    for e in changed:
+        w("- `%s` — %d inserted" % (e["_filename"], e["inserted"]))
+    if not changed:
+        w("- none")
+    w("")
+    w("## Human review queue — %d of %d records" % (len(queue), len(rows)))
+    w("")
+    w("Selection: `%s`. Every reason is a property of the data, so the same "
+      "state always produces the same queue. This is a targeted queue, **not a "
+      "statistically representative sample**, and no inference about "
+      "unreviewed records follows from it." % QUEUE_ALGORITHM)
+    w("")
+    for url in queue:
+        r = next(x for x in rows if x["url"] == url)
+        w("### `%s`" % url)
+        w("")
+        w("- **Title:** %s" % (r["title_original"] or "").replace("|", "\\|"))
+        w("- **Stored date:** %s · **kind:** %s · **body:** %d chars"
+          % (r["published_date"], r["publication_kind"],
+             len(r["text_original"] or "")))
+        w("- **Content sha256:** `%s`" % r["content_sha256"])
+        w("- **First seen in run:** %s" % (r["first_seen_run"] or "—"))
+        w("- **Queued because:** %s" % "; ".join(reasons[url]))
+        if r["_flags"]:
+            w("- **Flags:** %s" % ", ".join(r["_flags"]))
+        w("")
+        w("| Check | Reviewer entry |")
+        w("|---|---|")
+        w("| Source page opened | |")
+        w("| Title matches the page | |")
+        w("| Publication date matches the page | |")
+        w("| Stored body is the complete document | |")
+        w("| Canonical URL is correct | |")
+        w("| Publication kind is reasonable | |")
+        w("| No access-denial or template text stored | |")
+        w("| Notes | |")
+        w("")
+    w("## Reviewer sign-off")
+    w("")
+    w("This checkpoint is complete only when every row above is filled in and "
+      "this block is signed. Until then the package is a request for a review, "
+      "not a record of one.")
+    w("")
+    w("| Field | Entry |")
+    w("|---|---|")
+    w("| Checkpoint | %s |" % checkpoint)
+    w("| Reviewer identity | |")
+    w("| Review completion timestamp (UTC) | |")
+    w("| Records reviewed against source | |")
+    w("| Anomalies accepted, with reasons | |")
+    w("| Verdict (continue / pause / stop) | |")
+    w("")
+    return "\n".join(L) + "\n"
+
+
+def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
+          since_ledger: str, allow_tracked: bool) -> dict:
+    assert_safe_state_dir(state_dir)
+    assert_safe_out_dir(out_dir, allow_tracked)
+    state_dir, out_dir = state_dir.resolve(), out_dir.resolve()
+
+    before = hash_inputs(state_dir)
+    db_path = state_dir / "shadow.db"
+    db_sha = before["shadow.db"]
+
+    ledgers = load_ledgers(state_dir)
+    con = open_readonly(db_path)
+    try:
+        anomalies, facts = validate(state_dir, ledgers, con, db_sha)
+        rows, collisions, record_anomalies = validate_records(con, ledgers)
+    finally:
+        con.close()
+    anomalies = anomalies + record_anomalies
+
+    queue, reasons = build_queue(rows, ledgers, review_all, since_ledger)
+
+    latest = ledgers[-1]
+    successes = [e for e in ledgers if e["result"] in TERMINAL_OK]
+    kinds = {}
+    for r in rows:
+        kinds[r["publication_kind"]] = kinds.get(r["publication_kind"], 0) + 1
+    dates = sorted(r["published_date"] for r in rows)
+
+    manifest = {
+        "tool": "scripts/review_shadow_state.py",
+        "tool_version": TOOL_VERSION,
+        "queue_algorithm": QUEUE_ALGORITHM,
+        "as_of": as_of,
+        "state_dir_name": state_dir.name,
+        "input_sha256": before,
+        "day_zero_utc": facts["clock"]["day_zero_utc"],
+        "day_zero_run_id": facts["clock"]["day_zero_run_id"],
+        "latest_ledger": latest["_filename"],
+        "latest_run_id": latest["run_id"],
+        "latest_collector_commit": latest["collector_commit"],
+        "latest_shadow_day": (successes[-1]["shadow_day"] if successes else None),
+        "ledger_count": len(ledgers),
+        "corpus_count": len(rows),
+        "corpus_range": [dates[0], dates[-1]] if dates else [None, None],
+        "publication_kinds": kinds,
+        "observed_days": facts["observed_days"],
+        "missing_days": facts["missing_days"],
+        "database_integrity": facts["integrity"],
+        "foreign_keys": facts["foreign_keys"],
+        "state_chain_final_sha256": facts["chain_final"],
+        "state_chain_verdict": ("coherent" if not any(
+            "state chain broken" in x or "does not match the last ledger" in x
+            for x in anomalies) else "BROKEN"),
+        "anomaly_count": len(anomalies),
+        "anomalies": anomalies,
+        "review_queue_size": len(queue),
+        "review_queue": queue,
+        "automated_checks_are_not_the_human_review": (
+            "These checks establish internal consistency only. The checkpoint "
+            "is complete only when a person has compared queued records with "
+            "the ministry's own pages and signed the report."),
+    }
+
+    checkpoint = "shadow_day %s (as of %s)" % (manifest["latest_shadow_day"], as_of)
+    inventory = []
+    for r in rows:
+        inventory.append({
+            "identity": r["url"],
+            "canonical_url": r["url"],
+            "title": r["title_original"],
+            "published_date": r["published_date"],
+            "publication_kind": r["publication_kind"],
+            "body_chars": len(r["text_original"] or ""),
+            "content_sha256": r["content_sha256"],
+            "capture_sha256": r["capture_sha256"],
+            "retrieved_at": r["retrieved_at"],
+            "first_seen_run": r["first_seen_run"],
+            "flags": r["_flags"],
+            "selected_for_review": r["url"] in reasons,
+            "selected_because": reasons.get(r["url"], []),
+        })
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    inv_text = "".join(json.dumps(x, sort_keys=True) + "\n" for x in inventory)
+    (out_dir / "record_inventory.jsonl").write_text(inv_text, encoding="utf-8")
+
+    # The deterministic identity covers content only: no wall clock, no paths.
+    deterministic = dict(manifest)
+    payload = json.dumps({"manifest": deterministic, "inventory": inventory},
+                         sort_keys=True, separators=(",", ":"))
+    manifest["deterministic_sha256"] = hashlib.sha256(
+        payload.encode("utf-8")).hexdigest()
+
+    report = render_report(manifest, ledgers, rows, collisions, anomalies,
+                           queue, reasons, checkpoint)
+    (out_dir / "review_report.md").write_text(report, encoding="utf-8")
+
+    manifest["artifact_sha256"] = {
+        "record_inventory.jsonl": hashlib.sha256(
+            inv_text.encode("utf-8")).hexdigest(),
+        "review_report.md": hashlib.sha256(report.encode("utf-8")).hexdigest(),
+    }
+    # Excluded from deterministic_sha256 on purpose.
+    manifest["generated"] = {
+        "generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "state_dir": str(state_dir),
+        "out_dir": str(out_dir),
+    }
+    (out_dir / "review_manifest.json").write_text(
+        json.dumps(manifest, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+
+    after = hash_inputs(state_dir)
+    if after != before:
+        changed = sorted(set(before) ^ set(after)) or [
+            k for k in before if before[k] != after.get(k)]
+        raise ReviewError(
+            "input state changed during review — the package is void: %s"
+            % ", ".join(changed))
+    for sidecar in ("shadow.db-wal", "shadow.db-shm"):
+        if (state_dir / sidecar).exists():
+            raise ReviewError("a %s appeared beside the input database" % sidecar)
+    return manifest
+
+
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    p.add_argument("--state-dir", required=True,
+                   help="a COPY of shadow/singapore-mindef state/")
+    p.add_argument("--out", required=True, help="review package destination")
+    p.add_argument("--as-of", default=None,
+                   help="review date (YYYY-MM-DD); defaults to today UTC. "
+                        "Pass it explicitly for reproducible packages.")
+    p.add_argument("--review-all", action="store_true",
+                   help="queue every record (appropriate while the corpus is small)")
+    p.add_argument("--since-ledger", default=None,
+                   help="incremental review: queue records first seen after "
+                        "this ledger filename")
+    p.add_argument("--allow-tracked-destination", action="store_true",
+                   help=argparse.SUPPRESS)
+    args = p.parse_args(argv)
+
+    as_of = args.as_of or datetime.now(timezone.utc).date().isoformat()
+    try:
+        m = build(Path(args.state_dir), Path(args.out), as_of, args.review_all,
+                  args.since_ledger, args.allow_tracked_destination)
+    except ReviewError as exc:
+        print("review refused: %s" % exc, file=sys.stderr)
+        return 2
+
+    print("corpus         : %d records, %s → %s" % (
+        m["corpus_count"], m["corpus_range"][0], m["corpus_range"][1]))
+    print("ledgers        : %d, latest %s (shadow_day %s)" % (
+        m["ledger_count"], m["latest_ledger"], m["latest_shadow_day"]))
+    print("state chain    : %s" % m["state_chain_verdict"])
+    print("anomalies      : %d" % m["anomaly_count"])
+    print("review queue   : %d of %d" % (m["review_queue_size"], m["corpus_count"]))
+    print("package id     : %s" % m["deterministic_sha256"])
+    print("written to     : %s" % m["generated"]["out_dir"])
+    if m["anomaly_count"]:
+        print("\nAnomalies must be explained before the checkpoint can pass.")
+    print("\nThe automated checks are not the review. Fill in review_report.md.")
+    return 1 if m["anomaly_count"] else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
