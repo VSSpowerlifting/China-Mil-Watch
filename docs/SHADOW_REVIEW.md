@@ -105,6 +105,111 @@ empty sign-off block records that a review was requested, not that one happened.
 
 ---
 
+## Formal packets versus rehearsals
+
+A packet generated without `--checkpoint` and `--state-commit` is a **rehearsal**.
+It identifies a corpus but not a point in the state branch's history, so it can
+describe evidence it cannot pin down. The report says NOT PUBLISHABLE on its
+first screen and the publisher refuses it.
+
+A **formal** packet names both. `--state-commit` must be a full 40-character
+SHA, read from the clone *before* `.git` is removed — never inferred afterwards.
+Both values are bound into the deterministic package id, so the same corpus at
+two checkpoints is two different packages.
+
+```bash
+git clone --branch shadow/singapore-mindef --single-branch \
+  https://github.com/VSSpowerlifting/China-Mil-Watch.git /tmp/shadow-day7
+STATE_COMMIT=$(git -C /tmp/shadow-day7 rev-parse HEAD)   # BEFORE removing .git
+rm -rf /tmp/shadow-day7/.git
+
+python scripts/review_shadow_state.py \
+  --state-dir /tmp/shadow-day7/state \
+  --out ~/shadow-reviews/day-07 \
+  --as-of 2026-08-27 --review-all \
+  --checkpoint day-07 --state-commit "$STATE_COMMIT"
+```
+
+## The structured sign-off
+
+The packet emits `signoff_template.json`. Fill that, not the Markdown — prose a
+program cannot check is not evidence a program can defend.
+
+Every per-record check is an explicit boolean. `"yes"` is refused: a truthy
+string is exactly the kind of answer that looks complete and means nothing.
+Each record needs all of `source_page_opened`, `title_matches`,
+`publication_date_matches`, `canonical_url_matches`, `body_appears_complete`,
+`kind_is_reasonable`, `no_denial_or_template_stored`, plus a `note` (`""` when
+there is nothing to say).
+
+Verdicts:
+
+| Verdict | Allowed when |
+|---|---|
+| `pass` | every check true **and** every packet anomaly disposed |
+| `pass_with_findings` | findings exist, every anomaly disposed |
+| `fail` | always — an honest failing review is evidence and is preserved |
+
+A partially filled sign-off stays useful as a work-in-progress file and is
+categorically non-publishable.
+
+## Three identities
+
+| Identity | Names |
+|---|---|
+| automated package id | what was **presented** for review |
+| completed-review id | the review **answers** and attestation, bound to that package |
+| the Git commit | **when and by whom** the completed review was preserved |
+
+The completed-review id is a hash over the canonicalised sign-off plus the
+package id, so key order in the file cannot change it and a changed answer
+always does. **None of these is a cryptographic signature**, and none verifies
+the reviewer's legal identity.
+
+## Publishing
+
+```bash
+# validate and prepare only — this is the default
+python scripts/publish_shadow_review.py \
+  --packet ~/shadow-reviews/day-07 \
+  --signoff ~/shadow-reviews/day-07/signoff.json \
+  --remote git@github.com:VSSpowerlifting/China-Mil-Watch.git \
+  --checkpoint day-07 --bootstrap
+
+# preserve it
+... --bootstrap --publish            # first ever publication
+... --expected-head <sha> --publish  # every publication after that
+```
+
+The target branch is a constant, not an argument: a publisher that can be
+pointed anywhere is one typo from writing review output onto `main`. Pushes are
+ordinary fast-forwards — no force, no lease, no ref deletion, and no ref but
+`review/singapore-mindef`. The remote head is re-read immediately before the
+push, so a writer who moved the branch during preparation causes a refusal
+rather than a race.
+
+Layout:
+
+```
+README.md
+index.jsonl                                  append-only
+reviews/day-07/<completed-review-id>/review_manifest.json
+                                     review_report.md
+                                     record_inventory.jsonl
+                                     signoff.json
+                                     receipt.json
+```
+
+Append-only in practice: republishing identical content is an explicit no-op;
+different content under the same id is refused; existing files are never
+rewritten; and a failing review can never be quietly replaced by a passing one.
+Two honest attempts at one checkpoint may coexist under distinct ids, and each
+receipt records the others.
+
+The packet is allowlisted on the way in. A database, sidecar, workflow file,
+executable, or anything matching a credential pattern is a refusal, not
+something skipped quietly.
+
 ## Where completed review evidence should live
 
 Four mechanisms were considered. None is implemented; this section is the
