@@ -60,6 +60,12 @@ REVIEW_BRANCH = "review/singapore-mindef"
 DESK_IDENTITY = "singapore-mindef"
 SIGNOFF_SCHEMA = "shadow-review-signoff/1"
 CHECKPOINTS = {"day-07": 7, "day-14": 14, "day-30": 30}
+
+#: The only provenance a publishable packet may claim. A packet whose inputs
+#: came from an unverified working copy names a commit it cannot demonstrate it
+#: was built from, and preserving that would record evidence about a tree
+#: nobody checked.
+VERIFIED_PROVENANCE = "git-verified-tree/1"
 CHECK_FIELDS = (
     "source_page_opened", "title_matches", "publication_date_matches",
     "canonical_url_matches", "body_appears_complete", "kind_is_reasonable",
@@ -158,6 +164,17 @@ def validate(manifest: dict, signoff: dict, inventory: list,
             "packet is a rehearsal, not a formal checkpoint: it names no "
             "checkpoint and no shadow-state commit. Re-generate it with "
             "--checkpoint and --state-commit.")
+    if manifest.get("provenance") != VERIFIED_PROVENANCE:
+        raise PublishError(
+            "packet provenance is %r, expected %r. The packet names a state "
+            "commit its inputs were never checked against — re-generate it "
+            "with --state-repo so the reviewed bytes come from the committed "
+            "tree." % (manifest.get("provenance"), VERIFIED_PROVENANCE))
+    for field in ("state_commit", "state_tree"):
+        if not re.fullmatch(r"[0-9a-f]{40}", str(manifest.get(field) or "")):
+            raise PublishError(
+                "packet %s is %r; a verified packet carries the full 40-"
+                "character object name" % (field, manifest.get(field)))
     if manifest.get("desk") != DESK_IDENTITY:
         raise PublishError("packet desk is %r, expected %r"
                            % (manifest.get("desk"), DESK_IDENTITY))
@@ -330,6 +347,7 @@ def build_index_line(receipt: dict) -> str:
         "completed_review_id": receipt["completed_review_id"],
         "automated_package_id": receipt["automated_package_id"],
         "state_commit": receipt["state_commit"],
+        "state_tree": receipt["state_tree"],
         "latest_ledger_run_id": receipt["latest_ledger_run_id"],
         "latest_shadow_day": receipt["latest_shadow_day"],
         "verdict": receipt["verdict"],
@@ -389,6 +407,9 @@ def prepare(packet: Path, signoff_path: Path, checkpoint: str) -> tuple:
         "automated_package_id": manifest["deterministic_sha256"],
         "signoff_schema": signoff["signoff_schema"],
         "state_commit": manifest["state_commit"],
+        "state_tree": manifest["state_tree"],
+        "state_ref": manifest.get("state_ref"),
+        "provenance": manifest["provenance"],
         "clock_sha256": manifest.get("clock_sha256"),
         "shadow_db_sha256": manifest.get("shadow_db_sha256"),
         "ledger_set_sha256": manifest.get("ledger_set_sha256"),
@@ -536,10 +557,11 @@ def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
                    "completed-review-id %s\n"
                    "automated-package-id %s\n"
                    "state-commit %s\n"
+                   "state-tree %s\n"
                    "reviewer %s\n"
                    % (checkpoint, receipt["verdict"], crid[:12], crid,
                       receipt["automated_package_id"], receipt["state_commit"],
-                      receipt["reviewer"]))
+                      receipt["state_tree"], receipt["reviewer"]))
         git(["commit", "--quiet", "-m", message], cwd=work)
 
         if not do_publish:

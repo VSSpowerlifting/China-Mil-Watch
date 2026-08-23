@@ -13,20 +13,26 @@ substitutes for that, and the report says so on its first screen.
 
 ## Running a checkpoint
 
-Take a fresh copy of the state branch — never review the branch in place, and
-never point the tool at a working tree:
+Take a fresh clone of the state branch — never review the branch in place, and
+never point the tool at the production worktree. Keep the clone's `.git`: it is
+what proves which commit the evidence came from.
 
 ```bash
 git clone --branch shadow/singapore-mindef --single-branch \
   https://github.com/VSSpowerlifting/China-Mil-Watch.git /tmp/shadow-review
-rm -rf /tmp/shadow-review/.git
+STATE_COMMIT=$(git -C /tmp/shadow-review rev-parse HEAD)
 
 python scripts/review_shadow_state.py \
-  --state-dir /tmp/shadow-review/state \
+  --state-repo /tmp/shadow-review \
   --out ~/shadow-reviews/day-07 \
   --as-of 2026-08-27 \
-  --review-all
+  --review-all \
+  --checkpoint day-07 --state-commit "$STATE_COMMIT"
 ```
+
+To exercise the tooling without producing a publishable packet, drop
+`--state-repo`, `--checkpoint` and `--state-commit` and pass `--state-dir` at a
+copy of `state/` instead. That is a rehearsal, and it says so.
 
 `--as-of` is what makes a package reproducible; pass it explicitly. Exit status
 is `0` when no anomalies were found, `1` when there are anomalies to explain,
@@ -40,7 +46,7 @@ previous checkpoint; the focused rules below fill in the rest.
 
 It fails closed rather than reviewing something it does not understand:
 
-* a `--state-dir` inside the repository, or one containing `pla_watch.db` or
+* a rehearsal `--state-dir` inside the repository, or one containing `pla_watch.db` or
   `output/` — that is production, not shadow state
 * an `--out` inside the repository (review evidence is not source)
 * a `shadow_records` table whose columns are not exactly what the collector
@@ -107,28 +113,50 @@ empty sign-off block records that a review was requested, not that one happened.
 
 ## Formal packets versus rehearsals
 
-A packet generated without `--checkpoint` and `--state-commit` is a **rehearsal**.
-It identifies a corpus but not a point in the state branch's history, so it can
-describe evidence it cannot pin down. The report says NOT PUBLISHABLE on its
-first screen and the publisher refuses it.
+A packet generated from `--state-dir` — an ordinary directory, trusted as-is —
+is a **rehearsal**. It identifies a corpus but not a point in the state
+branch's history, so it can describe evidence it cannot pin down. The report
+says NOT PUBLISHABLE on its first screen and the publisher refuses it. Use it
+to exercise the tooling.
 
-A **formal** packet names both. `--state-commit` must be a full 40-character
-SHA, read from the clone *before* `.git` is removed — never inferred afterwards.
-Both values are bound into the deterministic package id, so the same corpus at
-two checkpoints is two different packages.
+A **formal** packet names both, and — this is the part a SHA alone cannot give
+you — its inputs are read from the commit itself. `state/` is exported from the
+Git object named by `--state-commit` with `git cat-file`, and those exported
+bytes are the ones hashed, analysed and packaged. A working-tree copy is
+refused in this mode rather than quietly preferred, because a directory that
+merely looks like state is exactly what a substitution attack supplies.
+
+Four claims are established before anything is written:
+
+| Claim | Refused when |
+|---|---|
+| the commit exists in `--state-repo` | the object is absent, or is not a commit |
+| it belongs to this desk's history | it is not reachable from `--state-ref` (default `shadow/singapore-mindef`) |
+| it carries a reviewable tree | there is no `state/` tree, or a required file is missing |
+| the tree cannot redirect a read | any entry is a symlink, submodule, or an unrecognised file |
+
+The verified commit **and tree** identities travel in the manifest, the
+receipt, and the preserved commit message. `state_commit` is what was claimed;
+`state_tree` is what was read.
+
+**Do not remove `.git`.** The old instruction to strip it before generating a
+packet is what made the claim unverifiable: with no objects to check against,
+`--state-commit` was trusted text.
 
 ```bash
 git clone --branch shadow/singapore-mindef --single-branch \
   https://github.com/VSSpowerlifting/China-Mil-Watch.git /tmp/shadow-day7
-STATE_COMMIT=$(git -C /tmp/shadow-day7 rev-parse HEAD)   # BEFORE removing .git
-rm -rf /tmp/shadow-day7/.git
+STATE_COMMIT=$(git -C /tmp/shadow-day7 rev-parse HEAD)
 
 python scripts/review_shadow_state.py \
-  --state-dir /tmp/shadow-day7/state \
+  --state-repo /tmp/shadow-day7 \
   --out ~/shadow-reviews/day-07 \
   --as-of 2026-08-27 --review-all \
   --checkpoint day-07 --state-commit "$STATE_COMMIT"
 ```
+
+Once the clone exists, verification touches the network no further: every
+object it reads is already local.
 
 ## The structured sign-off
 

@@ -8,9 +8,24 @@ can validate and then gets out of the way: the checkpoint is a *human* reading
 of stored records against the ministry's own pages, and nothing here can stand
 in for that.
 
+Provenance, because a SHA is not a tree
+--------------------------------------
+A **formal** packet is derived from the Git object named by `--state-commit`:
+the `state/` tree is exported from that commit with `git cat-file`, and those
+exported bytes are the ones hashed, analysed and packaged. The commit must
+exist in `--state-repo` and be reachable from `shadow/singapore-mindef` (or a
+ref named explicitly with `--state-ref`), and the tree may hold only regular
+files, so nothing can redirect a read outside it. The verified commit and tree
+identities travel in the manifest.
+
+A **rehearsal** packet reads `--state-dir`, an ordinary directory trusted
+as-is. It exercises the tooling and is refused for publication. The two are
+mutually exclusive: in formal mode a working-tree copy is refused rather than
+quietly preferred over the committed bytes.
+
 Safety, because the input is evidence
 -------------------------------------
-  * `--state-dir` is required and is refused if it is the repository, contains
+  * `--state-dir` (rehearsal) is refused if it is the repository, contains
     `pla_watch.db`, or contains a tracked `output/`
   * the shadow database is opened `mode=ro&immutable=1`, so no lock is taken
     and no -wal/-shm can appear beside it
@@ -37,9 +52,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import shutil
 import sqlite3
+import subprocess
 import sys
+import tempfile
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -56,6 +75,30 @@ SIGNOFF_SCHEMA = "shadow-review-signoff/1"
 #: The one desk this kit reviews. Part of the binding: a packet that does not
 #: name its desk could be filed against the wrong one.
 DESK_IDENTITY = "singapore-mindef"
+
+#: The state history a formal packet must be pinned to. A commit that exists is
+#: not the same claim as a commit that belongs to this desk's state.
+STATE_BRANCH = "shadow/singapore-mindef"
+
+#: Where `state/` lives inside a state commit.
+STATE_PREFIX = "state"
+
+#: Git environment that would silently point a command at another repository.
+#: Provenance read through an inherited GIT_DIR is provenance about some other
+#: repository.
+UNSAFE_GIT_ENV = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_NAMESPACE",
+    "GIT_CONFIG", "GIT_CONFIG_GLOBAL", "GIT_CONFIG_SYSTEM", "GIT_CONFIG_COUNT",
+    "GIT_CONFIG_PARAMETERS", "GIT_SSH", "GIT_SSH_COMMAND",
+    "GIT_EXTERNAL_DIFF", "GIT_PROXY_COMMAND", "GIT_ASKPASS",
+)
+
+#: Every path a state tree may contain. An unexpected file in the committed
+#: tree is a refusal: a packet must not silently incorporate evidence nobody
+#: expected, and must not silently omit evidence that was committed.
+STATE_TREE_REQUIRED = ("clock.json", "shadow.db")
+STATE_TREE_DIRS = ("ledger",)
 
 #: Checkpoints the qualification defines. A formal packet is one of these.
 CHECKPOINTS = {"day-07": 7, "day-14": 14, "day-30": 30}
@@ -121,6 +164,171 @@ STUB_MARKERS = (
 
 class ReviewError(RuntimeError):
     """The state could not be reviewed. Fails closed; never a partial package."""
+
+
+# ── provenance: bytes from the Git object database, not from a working tree ──
+
+def _git_env() -> dict:
+    env = {k: v for k, v in os.environ.items() if k not in UNSAFE_GIT_ENV}
+    # Verification reads objects that are already local. Nothing here may reach
+    # out, and nothing here may stop to ask for a credential.
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    return env
+
+
+def git(args, cwd: Path, check: bool = True):
+    proc = subprocess.run(["git"] + list(args), cwd=str(cwd), env=_git_env(),
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                          text=True)
+    if check and proc.returncode != 0:
+        raise ReviewError("git %s failed in %s:\n%s"
+                          % (" ".join(str(a) for a in args[:2]), cwd,
+                             proc.stdout.strip()))
+    return proc
+
+
+def _git_bytes(args, cwd: Path) -> bytes:
+    proc = subprocess.run(["git"] + list(args), cwd=str(cwd), env=_git_env(),
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if proc.returncode != 0:
+        raise ReviewError("git %s failed in %s:\n%s"
+                          % (" ".join(str(a) for a in args[:2]), cwd,
+                             proc.stderr.decode("utf-8", "replace").strip()))
+    return proc.stdout
+
+
+def assert_not_an_option(value: str, what: str) -> str:
+    """Git reads a leading `-` as an option wherever it appears in an argv."""
+    if str(value).startswith("-"):
+        raise ReviewError(
+            "%s may not begin with '-': %r would be read by git as an option."
+            % (what, value))
+    return str(value)
+
+
+def resolve_state_repo(state_repo: Path) -> Path:
+    """The repository that must contain the commit — a clone, not a worktree copy."""
+    state_repo = Path(state_repo).resolve()
+    if not state_repo.exists():
+        raise ReviewError("no state repository at %s" % state_repo)
+    proc = git(["rev-parse", "--git-dir"], state_repo, check=False)
+    if proc.returncode != 0:
+        raise ReviewError(
+            "%s is not a Git repository. A formal packet is derived from the "
+            "Git objects of the state clone, so `.git` must still be there.\n"
+            "Clone the state branch and pass --state-repo; do not remove .git "
+            "before generating the packet." % state_repo)
+    return state_repo
+
+
+def verify_state_commit(state_repo: Path, state_commit: str,
+                        expected_ref: str) -> dict:
+    """
+    Establish that `state_commit` is a commit of this desk's state history.
+
+    Three separate claims, each refused on its own terms: the object exists and
+    is a commit; it is an ancestor of (or is) the expected state ref; and it
+    carries a `state/` tree. A SHA that satisfies the first two but names no
+    state tree is still not something this kit can review.
+    """
+    assert_not_an_option(state_commit, "--state-commit")
+    if not re.fullmatch(r"[0-9a-f]{40}", state_commit):
+        raise ReviewError(
+            "--state-commit must be a full 40-character commit SHA; got %r"
+            % state_commit)
+
+    kind = git(["cat-file", "-t", state_commit], state_repo, check=False)
+    if kind.returncode != 0 or kind.stdout.strip() != "commit":
+        raise ReviewError(
+            "commit %s does not exist in %s (or is not a commit).\n"
+            "A formal packet is bound to a commit this repository can produce "
+            "the bytes for — a syntactically valid SHA is not provenance."
+            % (state_commit, state_repo))
+
+    ref = assert_not_an_option(expected_ref, "--state-ref")
+    tip = None
+    for candidate in (ref, "refs/heads/%s" % ref, "refs/remotes/origin/%s" % ref):
+        got = git(["rev-parse", "--verify", "--quiet", candidate + "^{commit}"],
+                  state_repo, check=False)
+        if got.returncode == 0:
+            tip, ref = got.stdout.strip(), candidate
+            break
+    if tip is None:
+        raise ReviewError(
+            "%s names no ref in %s. A formal packet must be reachable from the "
+            "state history it claims to review; clone that branch, or name the "
+            "trusted ref explicitly with --state-ref." % (expected_ref, state_repo))
+
+    reach = git(["merge-base", "--is-ancestor", state_commit, tip],
+                state_repo, check=False)
+    if reach.returncode != 0:
+        raise ReviewError(
+            "commit %s is not reachable from %s (%s).\n"
+            "It may exist in this repository, but it is not part of the state "
+            "history this desk's evidence comes from."
+            % (state_commit, ref, tip[:12]))
+
+    tree = git(["rev-parse", "--verify", "--quiet",
+                "%s:%s" % (state_commit, STATE_PREFIX)], state_repo, check=False)
+    if tree.returncode != 0:
+        raise ReviewError("commit %s has no %s/ tree"
+                          % (state_commit, STATE_PREFIX))
+    return {"state_commit": state_commit, "state_tree": tree.stdout.strip(),
+            "state_ref": ref, "state_ref_tip": tip,
+            "state_repo_verified": True}
+
+
+def export_state_tree(state_repo: Path, state_commit: str, dest: Path) -> Path:
+    """
+    Materialise `state/` from the commit's own tree.
+
+    `git cat-file` gives the blob bytes Git has, so nothing a working tree
+    happens to contain can substitute for them. Non-regular entries are refused
+    rather than followed: a symlink committed into the tree would otherwise
+    redirect a read outside it, and a gitlink names a tree this repository does
+    not have.
+    """
+    dest.mkdir(parents=True, exist_ok=True)
+    listing = _git_bytes(["ls-tree", "-r", "-z", "--full-tree", "--long",
+                          "%s:%s" % (state_commit, STATE_PREFIX)], state_repo)
+    written = []
+    for entry in listing.split(b"\0"):
+        if not entry:
+            continue
+        meta, _, raw_name = entry.partition(b"\t")
+        mode, kind, oid, _size = meta.decode("utf-8").split(None, 3)
+        name = raw_name.decode("utf-8")
+        if kind != "blob" or mode not in ("100644", "100755"):
+            raise ReviewError(
+                "%s/%s is a %s with mode %s — a state tree carries regular "
+                "files only. Symlinks and submodules can redirect a read "
+                "outside the committed tree, so they are refused rather than "
+                "followed." % (STATE_PREFIX, name, kind, mode))
+        if name.startswith("/") or ".." in Path(name).parts:
+            raise ReviewError("refusing an escaping path in the state tree: %r"
+                              % name)
+        out = dest / name
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(_git_bytes(["cat-file", "blob", oid], state_repo))
+        written.append(name)
+
+    names = set(written)
+    missing = [f for f in STATE_TREE_REQUIRED if f not in names]
+    if missing:
+        raise ReviewError(
+            "the %s/ tree at this commit is missing %s — there is nothing to "
+            "review" % (STATE_PREFIX, ", ".join(missing)))
+    unexpected = sorted(
+        n for n in names
+        if n not in STATE_TREE_REQUIRED
+        and n.split("/", 1)[0] not in STATE_TREE_DIRS)
+    if unexpected:
+        raise ReviewError(
+            "the %s/ tree at this commit carries unexpected file(s): %s.\n"
+            "A formal packet incorporates exactly the evidence the state branch "
+            "committed, so an unrecognised file is a refusal rather than "
+            "something to skip quietly." % (STATE_PREFIX, ", ".join(unexpected)))
+    return dest
 
 
 # ── derivations mirrored from the adapter ────────────────────────────────────
@@ -508,8 +716,10 @@ def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
         w(">")
         w("> This package names no checkpoint and no shadow-state commit, so it")
         w("> identifies a corpus but not a point in the state branch's history.")
-        w("> It is a tooling rehearsal. Re-generate with `--checkpoint` and")
-        w("> `--state-commit` to produce a packet that can be preserved.")
+        w("> Its inputs were read from a working-tree copy that nothing")
+        w("> verifies. It is a tooling rehearsal. Re-generate with")
+        w("> `--state-repo`, `--state-commit` and `--checkpoint` to produce a")
+        w("> packet whose bytes come from the committed tree itself.")
         w("")
     w("> **An unfilled report is not evidence of a completed review.** The")
     w("> automated checks below establish that the state is internally")
@@ -521,6 +731,11 @@ def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
     w("|---|---|")
     w("| Deterministic package id | `%s` |" % manifest["deterministic_sha256"])
     w("| Tool | `%s` v%s |" % (manifest["tool"], manifest["tool_version"]))
+    if manifest["formal"]:
+        w("| State commit (verified) | `%s` |" % manifest["state_commit"])
+        w("| State tree | `%s` |" % manifest["state_tree"])
+        w("| Reachable from | `%s` |" % manifest["state_ref"])
+    w("| Provenance | %s |" % manifest["provenance"])
     w("| Collector commit (latest ledger) | `%s` |" % manifest["latest_collector_commit"])
     w("| Day zero | `%s` (run `%s`) |" % (manifest["day_zero_utc"],
                                           manifest["day_zero_run_id"]))
@@ -716,25 +931,70 @@ def signoff_template(manifest: dict, rows: list, queue: list) -> dict:
 
 def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
           since_ledger: str, allow_tracked: bool, state_commit: str = None,
-          checkpoint: str = None) -> dict:
-    if state_commit is not None:
-        if not re.fullmatch(r"[0-9a-f]{40}", state_commit):
+          checkpoint: str = None, state_repo: Path = None,
+          state_ref: str = STATE_BRANCH) -> dict:
+    """
+    Two modes, and the difference between them is the whole point.
+
+    A **rehearsal** reads `--state-dir`: an ordinary directory, trusted as-is,
+    useful for exercising the tooling. It is labelled NOT PUBLISHABLE.
+
+    A **formal** packet reads `--state-repo`: the `state/` tree is exported
+    from the Git object identified by `--state-commit`, and those exported
+    bytes are the ones hashed, analysed and packaged. Nothing a working tree
+    contains can substitute for them, so `--state-dir` is refused in this mode
+    rather than quietly ignored.
+    """
+    if checkpoint is not None and checkpoint not in CHECKPOINTS:
+        raise ReviewError("unknown checkpoint %r; expected one of %s"
+                          % (checkpoint, ", ".join(sorted(CHECKPOINTS))))
+    if state_commit is not None and checkpoint is None:
+        raise ReviewError("--state-commit requires --checkpoint (%s)"
+                          % ", ".join(sorted(CHECKPOINTS)))
+    if checkpoint is not None and state_commit is None:
+        raise ReviewError(
+            "--checkpoint requires --state-commit: a formal packet must "
+            "name the exact shadow-state commit it reviewed")
+
+    formal = bool(state_commit and checkpoint)
+    provenance = None
+    export_root = None
+    if formal:
+        if state_repo is None:
             raise ReviewError(
-                "--state-commit must be a full 40-character commit SHA; got %r.\n"
-                "Read it from the clone before removing .git — never infer it "
-                "afterwards." % state_commit)
-        if checkpoint is None:
-            raise ReviewError("--state-commit requires --checkpoint (%s)"
-                              % ", ".join(sorted(CHECKPOINTS)))
-    if checkpoint is not None:
-        if checkpoint not in CHECKPOINTS:
-            raise ReviewError("unknown checkpoint %r; expected one of %s"
-                              % (checkpoint, ", ".join(sorted(CHECKPOINTS))))
-        if state_commit is None:
+                "a formal packet requires --state-repo: the state clone whose "
+                "Git objects prove what --state-commit contains.\n"
+                "Comparing a supplied SHA against another supplied field is "
+                "not provenance. Do not remove .git before generating the "
+                "packet.")
+        if state_dir is not None:
             raise ReviewError(
-                "--checkpoint requires --state-commit: a formal packet must "
-                "name the exact shadow-state commit it reviewed")
-    assert_safe_state_dir(state_dir)
+                "--state-dir and --state-repo are mutually exclusive. A formal "
+                "packet is derived from the committed tree, so a working-tree "
+                "copy is refused rather than trusted.")
+        repo = resolve_state_repo(state_repo)
+        provenance = verify_state_commit(repo, state_commit, state_ref)
+        export_root = Path(tempfile.mkdtemp(prefix="shadow-state-"))
+        state_dir = export_state_tree(repo, state_commit,
+                                      export_root / STATE_PREFIX)
+    elif state_dir is None:
+        raise ReviewError("--state-dir is required for a rehearsal packet")
+
+    try:
+        return _build(Path(state_dir), out_dir, as_of, review_all, since_ledger,
+                      allow_tracked, state_commit, checkpoint, provenance,
+                      skip_state_dir_check=formal)
+    finally:
+        if export_root is not None:
+            shutil.rmtree(export_root, ignore_errors=True)
+
+
+def _build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
+           since_ledger: str, allow_tracked: bool, state_commit: str,
+           checkpoint: str, provenance: dict,
+           skip_state_dir_check: bool) -> dict:
+    if not skip_state_dir_check:
+        assert_safe_state_dir(state_dir)
     assert_safe_out_dir(out_dir, allow_tracked)
     state_dir, out_dir = state_dir.resolve(), out_dir.resolve()
 
@@ -779,6 +1039,12 @@ def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
         "desk": DESK_IDENTITY,
         "checkpoint": checkpoint,
         "state_commit": state_commit,
+        # The tree the bytes actually came from, and the ref they are reachable
+        # from. `state_commit` alone is a claim; these are what was verified.
+        "state_tree": (provenance or {}).get("state_tree"),
+        "state_ref": (provenance or {}).get("state_ref"),
+        "provenance": ("git-verified-tree/1" if provenance
+                       else "unverified-working-copy"),
         "formal": bool(state_commit and checkpoint),
         "publishable": bool(state_commit and checkpoint),
         "review_mode": "complete-corpus" if review_all else "focused-queue",
@@ -893,8 +1159,17 @@ def build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
-    p.add_argument("--state-dir", required=True,
-                   help="a COPY of shadow/singapore-mindef state/")
+    p.add_argument("--state-dir", default=None,
+                   help="REHEARSAL ONLY: a copy of shadow/singapore-mindef "
+                        "state/, trusted as-is. Never produces a publishable "
+                        "packet.")
+    p.add_argument("--state-repo", default=None,
+                   help="the state clone (with its .git) whose objects prove "
+                        "what --state-commit contains. Required for a formal "
+                        "packet: state/ is exported from the commit itself.")
+    p.add_argument("--state-ref", default=STATE_BRANCH,
+                   help="the trusted state ref --state-commit must be "
+                        "reachable from (default: %s)" % STATE_BRANCH)
     p.add_argument("--out", required=True, help="review package destination")
     p.add_argument("--as-of", default=None,
                    help="review date (YYYY-MM-DD); defaults to today UTC. "
@@ -908,17 +1183,24 @@ def main(argv=None) -> int:
                    help="formal checkpoint identity; required with --state-commit")
     p.add_argument("--state-commit", default=None,
                    help="full 40-character commit SHA of the shadow-state "
-                        "branch being reviewed. Read it from the clone BEFORE "
-                        "removing .git. Required for a publishable packet.")
+                        "branch being reviewed. Verified against --state-repo; "
+                        "required for a publishable packet.")
     p.add_argument("--allow-tracked-destination", action="store_true",
                    help=argparse.SUPPRESS)
     args = p.parse_args(argv)
 
     as_of = args.as_of or datetime.now(timezone.utc).date().isoformat()
+    if args.state_dir is None and args.state_repo is None:
+        print("review refused: pass --state-repo (formal) or --state-dir "
+              "(rehearsal)", file=sys.stderr)
+        return 2
     try:
-        m = build(Path(args.state_dir), Path(args.out), as_of, args.review_all,
+        m = build(Path(args.state_dir) if args.state_dir else None,
+                  Path(args.out), as_of, args.review_all,
                   args.since_ledger, args.allow_tracked_destination,
-                  args.state_commit, args.checkpoint)
+                  args.state_commit, args.checkpoint,
+                  Path(args.state_repo) if args.state_repo else None,
+                  args.state_ref)
     except ReviewError as exc:
         print("review refused: %s" % exc, file=sys.stderr)
         return 2
@@ -933,6 +1215,8 @@ def main(argv=None) -> int:
     print("package id     : %s" % m["deterministic_sha256"])
     print("checkpoint     : %s" % (m["checkpoint"] or "— (rehearsal)"))
     print("state commit   : %s" % (m["state_commit"] or "— (rehearsal)"))
+    print("state tree     : %s" % (m["state_tree"] or "— (unverified)"))
+    print("provenance     : %s" % m["provenance"])
     print("publishable    : %s" % ("yes" if m["publishable"] else
                                    "NO — rehearsal packet"))
     print("written to     : %s" % m["generated"]["out_dir"])

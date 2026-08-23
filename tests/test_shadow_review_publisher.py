@@ -45,7 +45,6 @@ pub = _load("publish_shadow_review",
 
 D0 = "2026-08-19T23:03:09+00:00"
 URL = "https://www.mindef.gov.sg/news-and-events/latest-releases/%s/"
-COMMIT = "1" * 40
 
 
 def _body(n):
@@ -113,15 +112,46 @@ CREATE INDEX idx_shadow_published ON shadow_records(published_date);""")
     return state
 
 
+def commit_state(root: Path, runs: int) -> tuple:
+    """
+    A disposable state clone, because provenance is read from Git objects.
+
+    A formal packet is exported from the commit's own `state/` tree, so a test
+    that wants one needs a real repository rather than a directory that merely
+    looks like state.
+    """
+    root.mkdir(parents=True, exist_ok=True)
+    env = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@x",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@x",
+           "GIT_AUTHOR_DATE": "2026-08-20T00:00:00+00:00",
+           "GIT_COMMITTER_DATE": "2026-08-20T00:00:00+00:00"}
+    full = dict(os.environ); full.update(env)
+    for k in ("GIT_DIR", "GIT_WORK_TREE"):
+        full.pop(k, None)
+
+    def g(*args):
+        return subprocess.run(["git"] + list(args), cwd=str(root), env=full,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                              text=True, check=True).stdout.strip()
+
+    g("init", "--quiet", "-b", rk.STATE_BRANCH, ".")
+    build_state(root, runs)
+    g("add", "-A", "--", "state")
+    g("commit", "--quiet", "-m", "state")
+    return root, g("rev-parse", "HEAD")
+
+
 class PublisherCase(unittest.TestCase):
 
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="pub-test-"))
         self.addCleanup(shutil.rmtree, self.tmp, True)
-        self.state = build_state(self.tmp / "s", 8)      # last ledger = day 7
+        # last ledger = day 7
+        self.state_repo, self.commit = commit_state(self.tmp / "s", 8)
+        self.state = self.state_repo / "state"
         self.packet = self.tmp / "packet"
-        rk.build(self.state, self.packet, "2026-08-27", True, None, False,
-                 COMMIT, "day-07")
+        rk.build(None, self.packet, "2026-08-27", True, None, False,
+                 self.commit, "day-07", state_repo=self.state_repo)
         self.manifest = json.loads(
             (self.packet / "review_manifest.json").read_text(encoding="utf-8"))
         self.signoff_path = self.tmp / "signoff.json"
@@ -174,7 +204,9 @@ class TestFormalBinding(PublisherCase):
 
     def test_a_rehearsal_packet_is_not_publishable(self):
         rehearsal = self.tmp / "rehearsal"
-        rk.build(self.state, rehearsal, "2026-08-27", True, None, False)
+        copy = self.tmp / "rehearsal-state"
+        shutil.copytree(str(self.state), str(copy))
+        rk.build(copy, rehearsal, "2026-08-27", True, None, False)
         with self.assertRaises(pub.PublishError) as c:
             self.run_pub(packet=rehearsal)
         self.assertIn("rehearsal", str(c.exception))
@@ -182,11 +214,12 @@ class TestFormalBinding(PublisherCase):
 
     def test_a_formal_packet_requires_a_full_state_commit(self):
         with self.assertRaises(rk.ReviewError):
-            rk.build(self.state, self.tmp / "x", "2026-08-27", True, None,
-                     False, "abc123", "day-07")
+            rk.build(None, self.tmp / "x", "2026-08-27", True, None,
+                     False, "abc123", "day-07", state_repo=self.state_repo)
 
     def test_the_packet_binds_the_state_it_reviewed(self):
-        for field in ("state_commit", "clock_sha256", "shadow_db_sha256",
+        for field in ("state_commit", "state_tree", "state_ref", "provenance",
+                      "clock_sha256", "shadow_db_sha256",
                       "ledger_set_sha256", "latest_ledger", "latest_run_id",
                       "latest_shadow_day", "corpus_count", "corpus_range",
                       "queue_algorithm", "required_review_records", "desk"):
@@ -199,9 +232,11 @@ class TestFormalBinding(PublisherCase):
 
     def test_a_checkpoint_below_its_shadow_day_is_refused(self):
         """A day-2 corpus cannot be filed as a Day 7 review."""
-        early = build_state(self.tmp / "early", 3)        # last ledger = day 2
+        # last ledger = day 2
+        early_repo, early_commit = commit_state(self.tmp / "early", 3)
         packet = self.tmp / "early-packet"
-        rk.build(early, packet, "2026-08-22", True, None, False, COMMIT, "day-07")
+        rk.build(None, packet, "2026-08-22", True, None, False, early_commit,
+                 "day-07", state_repo=early_repo)
         # Build the sign-off from THIS packet, so the shadow-day rule is what
         # refuses it rather than an incidental package-id mismatch.
         s = json.loads((packet / "signoff_template.json").read_text(encoding="utf-8"))
@@ -343,9 +378,19 @@ class TestAnomalyDisposition(PublisherCase):
             e["state_sha256_after"] = sha
             p.write_text(json.dumps(e, indent=1, sort_keys=True) + "\n",
                          encoding="utf-8")
+        subprocess.run(["git", "add", "-A", "--", "state"],
+                       cwd=str(self.state_repo), check=True,
+                       stdout=subprocess.DEVNULL)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@x",
+                        "commit", "--quiet", "-m", "anomaly"],
+                       cwd=str(self.state_repo), check=True,
+                       stdout=subprocess.DEVNULL)
+        commit = subprocess.run(["git", "rev-parse", "HEAD"],
+                                cwd=str(self.state_repo), stdout=subprocess.PIPE,
+                                text=True, check=True).stdout.strip()
         packet = self.tmp / "anom"
-        rk.build(self.state, packet, "2026-08-27", True, None, False, COMMIT,
-                 "day-07")
+        rk.build(None, packet, "2026-08-27", True, None, False, commit,
+                 "day-07", state_repo=self.state_repo)
         return packet, json.loads(
             (packet / "review_manifest.json").read_text(encoding="utf-8"))
 
@@ -536,10 +581,10 @@ class TestPublishSafety(PublisherCase):
 class TestAppendOnly(PublisherCase):
 
     def _day14(self):
-        state = build_state(self.tmp / "s14", 15)
+        repo14, commit14 = commit_state(self.tmp / "s14", 15)
         packet = self.tmp / "p14"
-        rk.build(state, packet, "2026-09-03", True, None, False, "2" * 40,
-                 "day-14")
+        rk.build(None, packet, "2026-09-03", True, None, False, commit14,
+                 "day-14", state_repo=repo14)
         s = json.loads((packet / "signoff_template.json").read_text(encoding="utf-8"))
         for r in s["records"]:
             for f in pub.CHECK_FIELDS:
@@ -593,9 +638,10 @@ class TestAppendOnly(PublisherCase):
         pub.publish(packet, signoff, str(self.remote), "day-14", stale, False, True)
         moved = self.head()
         self.assertNotEqual(stale, moved)
-        state30 = build_state(self.tmp / "s30", 31)
+        repo30, commit30 = commit_state(self.tmp / "s30", 31)
         p30 = self.tmp / "p30"
-        rk.build(state30, p30, "2026-09-19", True, None, False, "3" * 40, "day-30")
+        rk.build(None, p30, "2026-09-19", True, None, False, commit30,
+                 "day-30", state_repo=repo30)
         s = json.loads((p30 / "signoff_template.json").read_text(encoding="utf-8"))
         for r in s["records"]:
             for f in pub.CHECK_FIELDS:

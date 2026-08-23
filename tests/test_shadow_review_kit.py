@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import shutil
 import sqlite3
 import sys
@@ -254,12 +255,54 @@ class TestInputSafety(KitCase):
                           "storage.db", "site.render"):
             with self.subTest(module=forbidden):
                 self.assertNotIn(forbidden, imported)
-        # Only stdlib plus the pure status-constant module.
+        # Only stdlib plus the pure status-constant module. `subprocess` is
+        # here because provenance is read from the local Git object database;
+        # the test below pins what it is allowed to run.
         self.assertTrue(
-            imported <= {"__future__", "argparse", "hashlib", "json", "re",
-                         "sqlite3", "sys", "datetime", "pathlib",
-                         "core.collection"},
+            imported <= {"__future__", "argparse", "hashlib", "json", "os",
+                         "re", "shutil", "sqlite3", "subprocess", "sys",
+                         "tempfile", "datetime", "pathlib", "core.collection"},
             "unexpected runtime import(s): %s" % sorted(imported))
+
+    def test_the_only_subprocess_the_kit_runs_is_git(self):
+        """
+        Reading Git objects means running Git, which means `subprocess`. The
+        guarantee is then about what is run, not about whether anything is:
+        every call goes through the two helpers, both of which prepend `git`.
+        """
+        import ast
+        src = (REPO_ROOT / "scripts"
+               / "review_shadow_state.py").read_text(encoding="utf-8")
+        runs = [n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.Call)
+                and isinstance(n.func, ast.Attribute)
+                and n.func.attr == "run"
+                and isinstance(n.func.value, ast.Name)
+                and n.func.value.id == "subprocess"]
+        self.assertTrue(runs, "no subprocess.run call found to check")
+        for call in runs:
+            arg = call.args[0]
+            self.assertIsInstance(arg, ast.BinOp, "argv must be built, not free")
+            self.assertIsInstance(arg.left, ast.List)
+            self.assertEqual([c.value for c in arg.left.elts], ["git"])
+            kwargs = {k.arg for k in call.keywords}
+            self.assertIn("env", kwargs,
+                          "git must run with the scrubbed environment")
+            self.assertNotIn("shell", kwargs)
+
+    def test_the_git_environment_is_scrubbed_of_redirection(self):
+        env = dict(os.environ)
+        os.environ.update({"GIT_DIR": "/nowhere/evil.git",
+                           "GIT_CONFIG_COUNT": "1",
+                           "GIT_SSH_COMMAND": "false"})
+        try:
+            scrubbed = rk._git_env()
+        finally:
+            os.environ.clear()
+            os.environ.update(env)
+        for k in ("GIT_DIR", "GIT_CONFIG_COUNT", "GIT_SSH_COMMAND"):
+            self.assertNotIn(k, scrubbed)
+        self.assertEqual(scrubbed.get("GIT_TERMINAL_PROMPT"), "0")
 
 
 class TestStateContractRefusals(KitCase):
