@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barracks Observation | A Military Medal of Merit — Who Exactly Should Receive It? — China Mil Watch</title>
+  <meta name="description" content="A brigade of the 83rd Group Army has institutionalized a merit-citation policy that awards by competition results and mission contribution rather than seniority or quota rotation, documented through t">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://chinamilwatch.org/article/3434.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="article">
+  <meta property="og:site_name"    content="China Mil Watch">
+  <meta property="og:url"          content="https://chinamilwatch.org/article/3434.html">
+  <meta property="og:title"        content="Barracks Observation | A Military Medal of Merit — Who Exactly Should Receive It?">
+  <meta property="og:description"  content="A brigade of the 83rd Group Army has institutionalized a merit-citation policy that awards by competition results and mission contribution rather than seniority or quota rotation, documented through t">
+  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Barracks Observation | A Military Medal of Merit — Who Exactly Should Receive It?">
+  <meta name="twitter:description" content="A brigade of the 83rd Group Army has institutionalized a merit-citation policy that awards by competition results and mission contribution rather than seniority or quota rotation, documented through t">
+  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
+
+  <link rel="icon" type="image/png" href="../logo-icon.png">
+  <link rel="apple-touch-icon" href="../logo-icon.png">
+
+  <!-- JSON-LD Structured Data -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
+    :root {
+      /* Surfaces */
+      --paper:        #F6F3EC;   /* page ground */
+      --paper-raised: #FCFAF5;   /* cards, records */
+      --paper-inset:  #EFEAE0;   /* recessed panels */
+      --paper-header: #FBF9F4;   /* masthead */
+      /* Ink */
+      --ink:          #1C2B3A;   /* primary text + structural color */
+      --ink-2:        #4C4A44;   /* secondary text */
+      --ink-3:        #7B746A;   /* muted text, captions */
+      /* Rules */
+      --line:         #CFC6B8;
+      --line-soft:    #E2DBCE;
+      --line-hard:    #1C2B3A;
+      /* Signal — one crimson family shared with The PLA Watch */
+      --signal:       #A31626;
+      --signal-ink:   #7E0E1B;
+      --signal-tint:  #F5E7E4;
+      --signal-line:  #D9A9A3;
+      /* Legacy aliases kept for template compatibility */
+      --color-ink: var(--ink);
+      --color-brand: var(--signal);
+      --color-signal-mid: var(--signal-line);
+      --color-signal-tint: var(--signal-tint);
+      --color-surface: var(--paper-inset);
+      --color-bg: var(--paper);
+      --color-bg-card: var(--paper-raised);
+      --color-bg-header: var(--paper-header);
+      --color-bg-sidebar: var(--paper-inset);
+      --color-text-primary: var(--ink);
+      --color-text-secondary: var(--ink-2);
+      --color-text-muted: var(--ink-3);
+      --color-border: var(--line);
+      --color-border-soft: var(--line-soft);
+      --color-accent: var(--signal);
+      /* Type */
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+      /* Scale */
+      --radius: 2px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --shell: 1180px;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+    [lang="zh-Hans"] { font-family: var(--zh); }
+
+    a { color: var(--signal); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    a:focus-visible {
+      outline: 2px solid var(--signal);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+    }
+
+    /* ── Shared micro-typography ────────────────────────────────────────── */
+    .meta-mono {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink-3);
+      font-variant-numeric: tabular-nums;
+    }
+    .label-caps {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
+    .masthead {
+      background: var(--paper-header);
+      border-bottom: 1px solid var(--line);
+    }
+    .masthead-name-row {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 1.35rem 2rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+    .header-brand:hover { text-decoration: none; }
+    .header-brand img {
+      height: 46px;
+      width: 46px;
+      display: block;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
+    .header-wordmark .title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.7rem;
+      font-optical-sizing: auto;
+      color: var(--ink);
+      letter-spacing: -0.012em;
+      line-height: 1.02;
+      white-space: nowrap;
+    }
+    .wordmark-signal { color: var(--signal); }
+    .header-wordmark .kicker {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-top: 7px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .masthead-plate {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: right;
+      line-height: 1.7;
+      flex-shrink: 0;
+    }
+    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
+
+    /* Sticky nav rail */
+    .nav-rail {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--paper-header);
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
+    }
+    .nav-rail-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 1.9rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-rail-inner::-webkit-scrollbar { display: none; }
+    .nav-rail a {
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 11px 0 10px;
+      position: relative;
+      white-space: nowrap;
+      transition: color 140ms ease;
+    }
+    .nav-rail a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--signal);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 200ms var(--ease);
+    }
+    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
+    .nav-rail a:hover::after { transform: scaleX(1); }
+    .nav-rail a.active { color: var(--ink); }
+    .nav-rail a.active::after { transform: scaleX(1); }
+    .nav-rail .nav-short { display: none; }
+    .nav-rail .nav-pw { color: var(--signal); }
+    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: var(--shell);
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4.5rem;
+    }
+
+    /* ── Footer — three-column editorial colophon ───────────────────────── */
+    .site-footer {
+      background: var(--paper-raised);
+      border-top: 1px solid var(--line);
+      padding: 2.75rem 2rem 2.25rem;
+    }
+    .footer-inner {
+      max-width: var(--shell);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .footer-name {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .footer-desc {
+      font-size: 0.8125rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      max-width: 44ch;
+    }
+    .footer-col-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.7rem;
+    }
+    .footer-links { list-style: none; }
+    .footer-links li { padding: 0.18rem 0; }
+    .footer-links a {
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--signal); }
+    .footer-baseline {
+      max-width: var(--shell);
+      margin: 2.25rem auto 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line-soft);
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--ink-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.5rem;
+      justify-content: space-between;
+    }
+
+    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #4E483E;
+      background: var(--paper-inset);
+      border-radius: var(--radius);
+      padding: 3px 8px;
+      line-height: 1.5;
+    }
+    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
+    .tag[data-label="East China Sea"],
+    .tag[data-label="South China Sea"],
+    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
+    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
+    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
+    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
+    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
+
+    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
+    .analytical-signal-kicker {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0.5rem;
+    }
+    .signal-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--signal);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+    .signal-kicker-text {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: #F2EFE8; }
+    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
+    .btn-signal {
+      background: transparent;
+      color: var(--signal);
+      border: 1px solid var(--signal-line);
+    }
+    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
+
+    /* ── Utilities ──────────────────────────────────────────────────────── */
+    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 1.25rem;
+    }
+    .section-rule::before {
+      content: "";
+      width: 18px; height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
+       data-reveal="art" containers stay fully visible at first paint;
+       only their inner primitives (draw-path, ink-node, rule wipes)
+       animate. Above-the-fold text must never start at opacity 0. */
+    .js [data-reveal]:not([data-reveal="art"]) {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.65s var(--ease),
+        transform 0.65s var(--ease);
+      transition-delay: calc(var(--ri, 0) * 70ms);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
+    @media print {
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Shared motion primitives — all default to the finished state; the
+       animated start state only applies under .js inside an un-revealed
+       [data-reveal] container, so no-JS, print, and reduced-motion render
+       the final artwork. */
+    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    .js [data-reveal].in .draw-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s var(--ease);
+      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
+    .js [data-reveal].in .ink-node {
+      transform: scale(1);
+      transition: transform 0.5s var(--ease);
+      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.7s var(--ease) 120ms;
+    }
+    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .js [data-reveal].in .cat-bar-fill {
+      transform: scaleX(1);
+      transform-origin: left center;
+      transition: transform 0.8s var(--ease);
+      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
+    }
+    @keyframes ink-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
+    .js.no-anim .pulse-dot { animation: none; }
+
+    /* ── Tablet / mobile ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
+      .masthead-plate { display: none; }
+      .header-brand img { height: 40px; width: 40px; }
+      .header-wordmark .title { font-size: 1.35rem; }
+      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
+      main { padding: 1.75rem 1.25rem 3rem; }
+      body { font-size: 0.9375rem; }
+      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
+      .footer-inner > div:first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 720px) {
+      .nav-rail .nav-full { display: none; }
+      .nav-rail .nav-short { display: inline; }
+    }
+    @media (max-width: 600px) {
+      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
+      .header-brand { gap: 10px; }
+      .header-brand img { height: 34px; width: 34px; }
+      .header-wordmark .title { font-size: 1.15rem; }
+      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
+      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
+      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
+      .footer-inner { grid-template-columns: minmax(0, 1fr); }
+      .footer-inner > div:first-child { grid-column: auto; }
+    }
+    @media (max-width: 480px) {
+      .nav-rail-inner { gap: .95rem; }
+      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
+    }
+    @media (max-width: 350px) {
+      /* deliberate scroll affordance: the rail already scrolls via
+         overflow-x, this just signals it instead of clipping a label */
+      .nav-rail-inner {
+        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
+        mask-image: linear-gradient(to right, #000 91%, transparent);
+        padding-right: 1.4rem;
+      }
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
+       Source-Derived Signal Graphics system: a duotone crop of the
+       manifest photograph, keyed to the paper ground, shaped by a union
+       of soft radial masks so no rectangle ever reads as a photo card.
+       Shared by index.html (homepage hero) and article.html (header
+       band). Decorative-context only — role="img" + aria-label on the
+       host element carry the accessible text; no rectangle may read. */
+    .pl-veil {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
+      background-size: cover; pointer-events: none;
+      -webkit-mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+      mask-image:
+        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
+        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-veil { opacity: .5; }
+      .pl-veil::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
+                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
+      }
+    }
+    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
+    .pl-ghost {
+      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
+      background-repeat: no-repeat; background-size: 1250px auto;
+      background-position: top right; opacity: .16; pointer-events: none;
+      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
+    }
+    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+      .pl-ghost { opacity: .10; }
+    }
+    /* motion: veil settles in; the keyframe has no `to` block so the
+       settled state is the static state (no-JS + reduced-motion safe via
+       the global kill switch above). */
+    @media (prefers-reduced-motion: no-preference) {
+      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
+      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
+      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
+      @keyframes ghost-in { from { opacity: 0; } }
+    }
+    /* provenance — desktop analyst bracket (Concept C), mobile inline
+       (Concept A). Content: line1 "IMG · {source_id}" linked to
+       source_page; line2 {subject} (omitted if empty); line3
+       "CONTEXT, NOT EVIDENCE". */
+    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
+    .src-bracket .bracket {
+      display: block; width: 56px; height: 22px;
+      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
+      margin-bottom: .5rem;
+    }
+    .src-bracket .src-lines {
+      font-family: var(--mono); font-size: .6rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+      line-height: 1.7;
+    }
+    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
+    .src-bracket .src-lines a:hover { color: var(--signal); }
+    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
+    .src-inline .img-tag {
+      font-family: var(--mono); font-size: .58rem; font-weight: 600;
+      letter-spacing: .12em; color: var(--ink-3);
+    }
+    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+    @media (max-width: 900px) {
+      .src-bracket { display: none; }
+      .src-inline { display: block; }
+    }
+
+.article-page { max-width: 720px; margin: 0 auto; }
+
+.back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 1.75rem;
+}
+.back-link:hover { color: var(--signal); text-decoration: none; }
+
+/* ── Record header ─────────────────────────────────────────────────── */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ink);
+}
+.article-page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0.85rem 0 0.5rem;
+  text-wrap: balance;
+}
+.article-page-title-zh {
+  font-family: var(--zh);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.article-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.article-page-meta .src { color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.article-page-meta .sep::before { content: "·"; margin-right: 0.75rem; color: var(--line); }
+
+.btn-source {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--signal);
+  border: 1px solid var(--signal-line);
+  border-radius: var(--radius);
+  padding: 7px 16px;
+  margin-top: 1.1rem;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.btn-source:hover {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+  color: var(--signal-ink);
+  text-decoration: none;
+}
+.btn-source:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ── Section label ─────────────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+}
+.section-label::before {
+  content: "";
+  width: 16px; height: 2px;
+  background: var(--signal);
+}
+
+/* ── Editorial header band (manifest-matched, optional) ─────────────
+   Full-width Signal Veil band replacing the article header when a
+   manifest image is tied by exact URL to this article (text-led
+   .article-header renders instead when there's no match). */
+.article-band { position: relative; overflow: hidden; background: var(--paper-header); border-bottom: 1px solid var(--line); }
+.article-band-inner { max-width: 720px; margin: 0 auto; padding: 2rem 2rem 1.9rem; position: relative; z-index: 1; }
+.article-veil {
+  width: 62%; background-size: 165%;
+  -webkit-mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+  mask-image: radial-gradient(80% 130% at 88% 18%, #000 22%, rgba(0,0,0,.6) 48%, transparent 72%);
+}
+.article-ghost { width: 74%; right: -6%; opacity: .13; }
+@media (max-width: 900px) {
+  .article-veil { width: 100%; background-size: 190%;
+    -webkit-mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+    mask-image: radial-gradient(92% 78% at 96% 0%, rgba(0,0,0,.88) 10%, rgba(0,0,0,.4) 40%, transparent 62%);
+  }
+  .article-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Summary block ─────────────────────────────────────────────────── */
+.summary-block {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 2rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.summary-block.significant { border-left-color: var(--signal); }
+.sig-reasoning {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--signal-ink);
+  line-height: 1.6;
+}
+
+/* ── Translation body — the primary reading surface ────────────────── */
+.translation-body {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 2rem;
+}
+.translation-body p { margin-bottom: 1rem; }
+.translation-body p:last-child { margin-bottom: 0; }
+
+/* ── Collapsible original ──────────────────────────────────────────── */
+details {
+  margin-bottom: 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+details summary {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: "▸";
+  font-size: 0.7rem;
+  transition: transform 0.2s var(--ease);
+  display: inline-block;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { color: var(--ink); }
+.original-body {
+  padding: 1.1rem 1.2rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--zh);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── About-this-analysis link ──────────────────────────────────────── */
+.about-analysis {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.about-analysis a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
+.about-analysis a:hover { color: var(--signal); text-decoration-color: var(--signal); }
+
+@media (max-width: 900px) {
+  .article-page { max-width: 100%; }
+}
+  </style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-name-row">
+    <a href="../index.html" class="header-brand" aria-label="China Mil Watch home">
+      <img src="../logo-icon.png" alt="">
+      <span class="header-wordmark">
+        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
+        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
+      </span>
+    </a>
+    <div class="masthead-plate">
+      <span class="plate-strong">Independent monitor</span><br>
+      Official PRC military media, read in the original
+    </div>
+  </div>
+</header>
+<div class="nav-rail">
+  <nav class="nav-rail-inner" aria-label="Primary">
+    <a href="../index.html" >
+      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
+    </a>
+    <a href="../archive.html" >Archive</a>
+    <a href="../signals.html" >Signals</a>
+    <a href="../the-pla-watch/index.html" class="nav-pw">
+      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
+    </a>
+    <a href="../methodology.html" >Methodology</a>
+  </nav>
+</div>
+
+
+<main>
+<div class="article-page">
+  <a href="../index.html" class="back-link">← Daily Brief</a>
+  <div class="article-header">
+
+    <div class="tags">
+        <span class="tag" data-label="Doctrine">Doctrine</span>
+        <span class="tag" data-label="Political Work">Political Work</span>
+    </div>
+
+  <h1 class="article-page-title">
+    Barracks Observation | A Military Medal of Merit — Who Exactly Should Receive It?
+  </h1>
+
+    <div class="article-page-title-zh" lang="zh-Hans">军营观察丨一枚军功章，究竟授予谁</div>
+
+  <div class="article-page-meta">
+    <span class="src">MOD China (国防部)</span>
+    <span class="sep"></span>
+    <span>21 August 2026</span>
+  </div>
+
+  <a href="http://www.mod.gov.cn/gfbw/wzll/yw_214068/16480537.html" target="_blank" rel="noopener" class="btn-source">View original source ↗</a>
+
+  <div class="about-analysis">
+    <a href="../methodology.html">About this analysis</a>
+  </div>
+
+</div>
+
+
+  <div class="section-label">Summary</div>
+  <div class="summary-block">
+    <div>A brigade of the 83rd Group Army has institutionalized a merit-citation policy that awards by competition results and mission contribution rather than seniority or quota rotation, documented through the consecutive individual second-class merit citations awarded to Staff Officer Wu Congcong and the subsequent appointment of competition standouts—including UAV instructor Senior Sergeant Zhou Zihan—as unit trainers and coaches. The article documents a deliberate effort to close the gap between formal policy language about the &#39;combat effectiveness standard&#39; (战斗力标准) and actual commendation practice, where the brigade commander explicitly names &#39;peacetime malaise&#39; (和平积弊) in the awards system as the problem being corrected. What remains unknown is whether this brigade&#39;s approach reflects a theater-level or army-wide directive or is a locally driven initiative the article is being used to publicize as a model.</div>
+  </div>
+
+  <div class="section-label">Translation</div>
+  <div class="translation-body">
+<p>Making Good Use of the &#34;Baton&#34; of Commendation and Awards</p><p>How much does a military medal of merit weigh? For the individual, it is an honor; for the unit, it is a form of guidance.</p><p>Commendation and awards — on the surface, the question is who receives them; at a deeper level, the question is where this &#34;baton&#34; leads officers and soldiers. Award seniority, and people will naturally keep score by years of service; award for the sake of balance, and people will naturally jockey for quota slots; award for actual performance, and officers and soldiers will focus on the training ground and exert themselves toward combat effectiveness. For grassroots units, clearly establishing the orientation of &#34;rewarding the excellent and employing the strong&#34; (奖优用强) comes down to raising the combat effectiveness standard, putting it into practice, and ensuring that capable people have honor, a platform, and responsibility.</p><p>The clearer the orientation, the more necessary it is to guard against oversimplification. &#34;Rewarding the excellent&#34; cannot be reduced to rewarding only competition rankings, nor can &#34;employing the strong&#34; be understood as a cure-all. Contributions to combat effectiveness are reflected not only in winning gold and silver on the competition field, but also in providing critical support during major missions, sustained breakthroughs in daily training, and the silent underpinning of system-wide operations. Only by looking at individual results, positional contributions, the effect of setting an example, and the recognition of one&#39;s peers together can we avoid a simplistic &#34;medal-only theory&#34; and truly pin the medal of merit on the chest of the person who deserves it.</p><p>After rewarding the excellent, one must also employ the strong. If training standouts remain only on the commendation stage, the guidance effect is easily diluted; if competition backbone personnel are satisfied merely with being strong themselves, individual experience is difficult to convert into collective capability. Inviting standouts to serve as coaches, letting backbone personnel lead research topics, and pressing more responsibility onto advanced individuals — only then can &#34;one person standing out&#34; become &#34;a group of people competing to be first,&#34; and individual glory become an overall leap forward.</p><p>Orientation cannot remain at the level of slogans; it must also be underpinned by institutional mechanisms. Who should be rewarded, and on what basis? After receiving an award, how should the person be employed, and what are the responsibilities? How well they are employed — how is that tracked and evaluated? Building a file on training results, incorporating mentoring effectiveness into performance evaluations, and creating a closed loop for post-award utilization — only then can officers and soldiers believe: effort gets a response, actual performance gets recognition, and ability has a place.</p><p>The combat effectiveness standard is not abstract; it must ultimately be realized in every evaluation, every personnel decision, and every training session. Establish hard standards as hard rules, focus honor toward the combat position, open positions to the capable, and use responsibility to press standouts harder — only then will the intrinsic motivation for training and war preparation flow forth in full.</p><p>A Military Medal of Merit — Who Exactly Should Receive It?</p><p>— A News Investigation into a Certain Brigade of the 83rd Group Army Clearly Establishing the Orientation of &#34;Rewarding the Excellent and Employing the Strong&#34;</p><p>■ Zhou Yingbo, Zhao Yibo, Sun Tong</p><p>Not long ago, the 83rd Group Army&#39;s &#34;Central Plains Iron Fist&#34; (中原铁拳) record-breaking competition concluded. Corporal Li Yanfeng of a certain brigade completed six consecutive events — a 5,000-meter run, rope climb, 400-meter obstacle course, battlefield strength combination, casualty carry, and 1,000-meter run — in 35 minutes and 27 seconds, taking first place.</p><p>This year, training standouts have emerged in rapid succession in the brigade: Corporal Pu Junkan of the reconnaissance battalion broke the Group Army&#39;s 400-meter obstacle course record with a time of 1 minute and 26 seconds, taking first place; Sergeant Pu Jun of a combined-arms battalion placed second in the Group Army&#39;s &#34;individual assault&#34; competition; Staff Officer Zhou Chuanhan of the operational support section placed second in a higher-echelon staff officer competition…</p><p>What drove this change? In interviews, many officers and soldiers pointed to the brigade&#39;s clear orientation in recent years on commendation, awards, and personnel selection: &#34;Whoever contributes the most, achieves the hardest results, and plays the most obvious role in training and war preparation gets recognized; whoever has real ability and can fight gets the stage and gets the burden.&#34;</p><p>&#34;A military medal of merit — who receives it and why it is awarded may look like a single commendation, but it actually relates to a unit&#39;s value coordinates,&#34; the brigade&#39;s leadership said. In recent years, the brigade Party committee has consistently used contribution rate to combat effectiveness as an important yardstick for commendation and awards, personnel selection, and backbone development. When recommending candidates for commendation, it has consistently placed training results, mission performance, and contribution to winning in a prominent position, ensuring that honor truly focuses on the front line of training and war preparation.</p><p>Honor and Commendation Are Not Candy to Be Handed Out — Hard Standards Must Be Established</p><p>At the end of last year, a piece of news drew the attention of the entire brigade: Staff Officer Wu Congcong of the operations and training section, who had been awarded an individual second-class merit citation the year before last, was awarded an individual second-class merit citation again, and was simultaneously appointed as a company commander of an armored assault vehicle company.</p><p>Why did one person get all the good things? The story begins with two competitions.</p><p>In November 2024, Wu Congcong led a team in the Group Army&#39;s &#34;Outstanding Staff Officer Evaluation,&#34; winning second place individually and first place as a team, and was awarded an individual second-class merit citation at year&#39;s end.</p><p>In May of last year, he competed again in the Group Army&#39;s &#34;Central Plains Iron Fist&#34; record-breaking competition, winning first place in the individual comprehensive category of &#34;planning and calculation for decisive victory&#34; (谋算智胜). When commendation and awards were deliberated at year&#39;s end, Wu Congcong&#39;s name again entered the recommendation list. When the news spread, discussion followed.</p><p>Some said Wu Congcong had already received a second-class merit citation last year, so a third-class citation would suffice; some said he was still young and would have future opportunities to earn merit, so he should &#34;give way&#34; to other comrades; others said he deserved a second-class citation — military honor and commendation must not be muddled, and whatever the contribution, that is the citation it warrants.</p><p>&#34;Honor and commendation are not candy to be handed out however one pleases. Whoever wins a competition gets a citation; whoever breaks a Group Army competition record gets a higher citation. Awards must not simply look at years of service, seniority, or balance — they must look at training results, mission contributions, and incremental gains in combat effectiveness.&#34; On this point, the brigade Party committee&#39;s position was unambiguous. In conjunction with the annual commendation matters, it organized officers and soldiers throughout the brigade to hold discussions, aiming to clear up the fog of thinking.</p><p>Through discussion, the view that &#34;contribution rate to combat effectiveness is the hard standard&#34; quickly formed a consensus. In the end, Wu Congcong was awarded an individual second-class merit citation again.</p><p>Consecutive merit citations are not an isolated case in this brigade. The experience of Corporal Yang Yunpeng, squad leader of the information support team, also made a deep impression on officers and soldiers.</p><p>In 2024, Yang Yunpeng participated in a Group Army record-breaking competition for the first time and, due to outstanding results, was awarded an individual third-class merit citation.</p><p>Not resting on her laurels, Yang Yunpeng set higher goals for herself, breaking down each training event item by item and precisely filling in her gaps. During that period, her figure could often be seen on the training ground doing extra sessions. Last year, she participated in the Group Army record-breaking competition again, again achieved outstanding results, and was awarded an individual second-class merit citation.</p><p>What impressed everyone even more was that Yang Yunpeng did not treat the honor as a personal halo, but instead brought her training experience back to her squad. During daily training, Yang Yunpeng helped her comrades draw up plans, break down events, and address weaknesses item by item.</p><p>&#34;If you want to stand on the awards platform, you first have to endure on the training ground,&#34; Yang Yunpeng told her comrades. Under her lead, last year, Private Yang Xiaoqing from the same squad also achieved outstanding results in the record-breaking competition and was awarded an individual third-class merit citation.</p><p>&#34;Standing at the front on the strength of your ability — that earns respect,&#34; everyone said when speaking of the young officers and soldiers who have &#34;risen to the top&#34; in recent years.</p><p>Today, officers and soldiers in the brigade firmly believe that &#34;effort gets a response, actual performance gets recognition, and ability has a place.&#34; Gradually, in the headquarters building, more people are studying skills in their spare time; on the training ground, more people are conducting after-action reviews and filling in gaps after assessments…</p><p>A medal of merit illuminates not only an individual&#39;s moment in the spotlight, but also the direction of a soldier&#39;s charge.</p><p>Dare to Reward and Be Good at Employing — All Competition Standouts Move to the Front Line of Organizing Training</p><p>Once the honors are handed down, the work is not finished.</p><p>&#34;Recognizing training standouts is only the first step; we must also make good use of them and build the team well,&#34; said the brigade&#39;s Chief of Staff Li.</p><p>In recent years, the brigade has gradually formed a clear chain: &#34;Achieve results in training, the organization gives honor; honor is given, the position gives a platform; the platform is built, responsibility is then pressed down; responsibility is pressed down, a large group is brought along.&#34;</p><p>&#34;A blade is sharpened on stone; a person is tempered through tasks — only by daring to press responsibility can young cadres be forged.&#34; At the beginning of 2025, the important task of selecting personnel for the Group Army&#39;s &#34;two-event competition&#34; fell to Wu Congcong, who was responsible for the entire process of selecting personnel, providing guidance, and sending the team to training.</p><p>The Party committee leadership&#39;s position was clear: Wu Congcong has ranked at the top in competitions at all levels every year, his professional ability is solid, and his training methods are distinctive — he is the natural choice as &#34;chief instructor&#34; (武教头).</p><p>Wu Congcong has one signature skill: when doing hand-drawn map plotting, he can complete multiple types of annotations and symbols in a single pass using red and blue pencils, without needing repeated corrections.</p><p>He shared his training videos and draft papers with everyone, letting them see how he practiced stroke by stroke — to improve the accuracy of annotations and symbols, he categorized common symbols, annotation positions, and line directions, and repeatedly trained under timed conditions… Over four years, the draft paper he has used alone, stacked up, stands one meter high.</p><p>&#34;Practice makes perfect,&#34; Wu Congcong said. Under his lead, officers and soldiers practiced hard and refined their skills step by step, their abilities growing day by day. That year, Wu Congcong led the team twice to Group Army-organized staff officer training sessions; of the brigade&#39;s 10 participants, 6 placed in the Group Army&#39;s top ten, winning 2 first-place finishes in staff officer training; in the Group Army-organized record-breaking competition, the brigade won 9 first-place and 4 third-place finishes.</p><p>&#34;When officers and soldiers look at standouts, they cannot only see the results; standouts must be made to lay out their training process openly, so that everyone sees the gap and knows how to close it.&#34; In this brigade, competition standouts return with their honors and all move to the front line of organizing training.</p><p>Senior Sergeant (Second Class) Zhou Zihan is one of them. In 2025, he performed outstandingly in the Group Army&#39;s unmanned aerial vehicle (UAV) specialty competition and was awarded an individual third-class merit citation. Afterward, the brigade appointed him as a UAV event training instructor to mentor new pilots.</p><p>&#34;Look here — the turning radius is too wide; by the time the target is spotted, you&#39;re already half a beat behind. Here, the delivery angle is off, which means the pre-delivery stabilization and control wasn&#39;t precise enough…&#34; After each training session, Zhou Zihan pulls up everyone&#39;s training footage, reviews it frame by frame, and patiently answers practical questions such as &#34;target identification and preventing misidentification,&#34; &#34;timing of delivery,&#34; and &#34;low-altitude crosswind resistance.&#34;</p><p>Dare to reward and be good at employing. This reporter learned that the brigade has continuously optimized the allocation of training resources and is vigorously building a &#34;standout incubation&#34; mechanism, establishing regular platforms such as &#34;standout experience exchange sessions&#34; and &#34;specialty skills challenge competitions,&#34; giving training standouts more opportunities for advanced study and tempering.</p><p>Making training standouts truly &#34;valued&#34; cannot be reflected only in medals and certificates — it must be realized in positions, platforms, and responsibilities. The brigade has summarized: only by giving those who can fight their rightful positions, allowing those who know how to fight to fully apply their talents, and letting the standard of genuine combat readiness take root will the guidance of honor be converted into real, tangible incremental gains in combat effectiveness.</p><p>From &#34;Momentary Glory&#34; to &#34;Long-Term Martial Excellence&#34; — Continuously Releasing the Incentive Effect</p><p>&#34;A clear orientation does not mean simple operation; rewarding the excellent and employing the strong is most valuable when sustained and deepened,&#34; the brigade&#39;s leadership stated. The clearer the orientation, the more it requires institutional mechanisms to guarantee it, so that officers and soldiers know where the standards are, how the procedures work, how honors are evaluated, and how backbone personnel are employed.</p><p>To this end, the brigade has explored establishing a dynamic cultivation mechanism for training standouts, building categorized growth files for officers and soldiers who perform outstandingly in higher-echelon competitions, major exercises and training, specialty training sessions, and daily training. The files record not only rankings and awards, but also positional performance, organizing and mentoring training, mission performance, and peer evaluations.</p><p>&#34;You cannot only look at the moment on the awards platform; you must also look at how they perform at their combat position day to day and how effectively they bring along those around them,&#34; said Zhu Yangchun, chief of the organization section.</p><p>During one deliberation on commendation candidates, a grassroots battalion and company recommended a technical backbone who had long been responsible for equipment support breakthroughs and had resolved malfunctions multiple times during major exercises and training. At first, some felt that without a prominent competition ranking, the grounds for recommendation were not &#34;hard&#34; enough. But reviewing the growth file revealed that this person had solved multiple difficult training support problems and had played a key role in critical missions on multiple occasions. In the end, this technical backbone was placed on the candidate list.</p><p>This incident led many officers and soldiers to understand: contribution to combat effectiveness is not measured only by winning competitions — it also looks at combat position responsibility, mission performance, and system-wide contribution.</p><p>To avoid the pattern of &#34;receive an award once, coast on it for a long time,&#34; the brigade has also made follow-on evaluation a continuous thread. After competition backbone personnel return to their positions, the evaluation looks not only at whether their individual results are maintained, but also at whether those they mentor are improving, whether the results of their squad or team are rising, and whether the tasks they undertake are solid. Those who perform outstandingly continue to receive more responsibility and platforms; those whose standards slip or whose drive slackens are promptly reminded and assisted.</p><p>&#34;Rewarding the excellent and employing the strong requires both the courage to reward and employ, and genuine management and strict discipline,&#34; the brigade&#39;s leadership said.</p><p>The refinement of institutional mechanisms has made grassroots officers and soldiers&#39; expectations regarding honor clearer. Today, on the brigade&#39;s training grounds, officers and soldiers are concerned not only with who received an award or earned a merit citation, but also with how those individuals trained to get there, where the organization has placed them to be tested, and whom they have brought along in their progress.</p><p>The light of a medal of merit can only continuously release its incentive effect when it shines into institutions, into positions, and into daily training. The brigade&#39;s practice demonstrates: establishing the clear orientation of &#34;rewarding the excellent and employing the strong&#34; requires not only the courage, at critical moments, to give honor to those who deserve it, but also reliance on regular mechanisms to put outstanding talent to use, manage them, and bring them along, so that the combat effectiveness standard takes root on the training ground and at the combat position.</p><p>The Barracks Observation Section Editor in Dialogue with the Commander of a Certain Brigade of the 83rd Group Army</p><p>Captain Wu Congcong of a certain brigade of the 83rd Group Army earned individual second-class merit citations two consecutive years, sparking heated discussion among officers and soldiers. From the initial controversy of &#34;should he really receive another merit citation&#34; to the eventual consensus that &#34;contribution rate to combat effectiveness is the hard standard&#34; — this is a vivid example of a grassroots unit insisting on awarding for the sake of war-fighting and firmly establishing combat effectiveness as the one and only fundamental standard. Around this topic, the Barracks Observation section editor held a connected exchange with the brigade commander.</p><p>Editor: We noted that Wu Congcong&#39;s consecutive merit citations initially sparked discussion among both headquarters staff and grassroots personnel. In your view, what impact did this discussion have on the thinking of officers and soldiers?</p><p>Brigade Commander: On the surface, it was a discussion about what level of merit citation Wu Congcong should receive; in substance, it was a profound ideological clash over the &#34;combat effectiveness standard.&#34; We often say we must establish the combat effectiveness standard, but where is it &#34;established&#34;? How is it &#34;established&#34;? Many comrades were actually not entirely clear on this. In the course of investigation and inquiry, we found that some comrades still harbored, at a subconscious level, old notions of &#34;balancing considerations&#34; and &#34;seniority-based rotation,&#34; feeling that commendation and awards were like handing out candy — everyone should get some, and it should rotate in turn. This thinking itself is a reflection of the peacetime malaise (和平积弊) in the realm of honor and commendation. What is honor? Honor is recognition of contribution — not consolation for seniority, and certainly not a chip to be used for achieving balance. The Wu Congcong matter was like a mirror, revealing that in some comrades&#39; minds the &#34;combat effectiveness standard&#34; was not yet firmly established. If the logic of &#34;rotating in turn&#34; were to prevail, the hard standard of &#34;contribution rate to combat effectiveness&#34; would be hollowed out. By putting the problem on the table through discussion and exchange, arguing it through and thinking it through clearly, we made the combat effectiveness standard a hard rule that everyone recognizes and must follow.</p><p>Editor: We see that while Wu Congcong received consecutive merit citations, the brigade Party committee also appointed him as a company commander, concentrating honor and position in one person in a short period of time. What was the brigade Party committee&#39;s thinking?</p><p>Brigade Commander: We wanted to send a signal: people with genuine combat ability are not only &#34;valued&#34; in terms of honor — they also have real prospects in their careers. We want to use this concrete action to run the combat effectiveness standard through the entire chain of talent cultivation, selection, and appointment, so that cadres and backbone personnel with outstanding results in training and war preparation have a stage and a position; and at the same time to use honor and commendation as a demonstration and guide, to correct the orientation of personnel use, so that all officers and soldiers can see that &#34;combat talent&#34; will be entrusted with important responsibilities and placed in positions where their strengths can be brought into play.</p><p>Editor: From Wu Congcong earning second-class merit citations two consecutive years, to the current &#34;martial excellence effect&#34; (精武效应) of dozens of people across the brigade proactively applying to compete and everyone striving to be a standout — what work still needs to be done to sustain this momentum?</p><p>Brigade Commander: To make the orientation of &#34;contribution rate to combat effectiveness&#34; take root, we are doing two things: First, exploring and refining the honor incentive mechanism, adhering to the principle of &#34;train hard in whatever fighting requires, and specialize intensively in whatever the unit lacks most,&#34; so that officers and soldiers who shoulder heavy responsibilities at their combat positions and achieve real results in missions become the primary subjects of commendation and awards, and so that &#34;standing on the strength of one&#39;s ability and advancing on the strength of actual performance&#34; becomes a value identity and a behavioral reflex; second, building a &#34;standout incubation&#34; mechanism, so that gold-medal instructors share experience and impart skills, and so that training standouts are not only strong themselves but can also bring a whole group of people along to be strong, truly converting the talent advantage into a capability advantage and a decisive advantage.</p><p>In the height of summer, darkness falls a little later. On the main road of a certain brigade of the 83rd Group Army&#39;s garrison area, the light boxes come on right on schedule. Photographs and brief profiles of training standouts stand out prominently.</p><p>After dinner, Squad Leader Bai Xinyu walked along the main road with several new soldiers.</p><p>On a light box by the road, the words &#34;individual second-class merit citation two consecutive years&#34; caught the new soldiers&#39; attention.</p><p>&#34;Squad leader, he&#39;s only been in the unit a few years — how did he earn individual second-class merit citations two years in a row?&#34; asked new soldier Jiao Jian.</p><p>&#34;Commander Wu won first place in Group Army competitions two years running. In our brigade, merit citations and awards don&#39;t look at who has the most years of service — they only look at who has the strongest ability and the greatest contribution.&#34;</p><p>Jiao Jian stared at the photograph on the light box for a long time. That evening, he wrote in his diary: &#34;I also want my photograph to be up there someday.&#34;</p><p>In the training that followed, Bai Xinyu noticed that the new soldiers had changed. When event training ended, they no longer returned to the back of the formation to rest as before; some sought out the squad&#39;s backbone personnel to ask about technique essentials, some made plans to work on their weak points together after dinner…</p><p>&#34;When they first arrived at the company, they were mostly just thinking about keeping up with the pace,&#34; said one backbone soldier responsible for leading troops. &#34;Now they have something to strive for in their hearts, and they&#39;re more willing to push forward in training.&#34;</p><p>From the light boxes to the training ground, honor is not a halo hanging in the distance but a measuring stick standing nearby; the advanced are not names beyond reach but a direction that can be compared against and pursued. For newly arrived comrades, those light boxes are like silent lessons in education. If &#34;standing on the strength of one&#39;s ability and advancing on the strength of actual performance&#34; is to become a value identity and a behavioral reflex, the first step is to plant a seed of &#34;striving to be first&#34; at the very beginning of their soldier&#39;s journey (兵之初).</p><p>As night deepened, the garrison&#39;s light boxes grew brighter. When officers and soldiers passed by, their steps would involuntarily slow. Lit up alongside the light boxes were the goals in their hearts.</p>  </div>
+
+  <details>
+    <summary>Original Chinese</summary>
+    <div class="original-body" lang="zh-Hans">用好评功评奖“指挥棒” 一枚军功章，分量有多重？对个人而言，是荣誉；对部队而言，是一种导向。 评功评奖，表面看是奖给谁，深层看是这个“指挥棒”将官兵引向哪里。奖给资历，大家就容易盯着年头算账；奖给平衡，大家就容易围着名额转圈；奖给实绩，官兵才会向训练场聚焦、向战斗力用劲。对基层部队来说，鲜明立起“奖优用强”导向，关键就是把战斗力标准立起来、落下去，让有本事的人有荣誉、有平台、有责任。 导向越鲜明，越要防止简单化。不能把“奖优”理解成只奖比武名次，也不能把“用强”理解成一用就灵。对战斗力的贡献既体现在比武场上的摘金夺银，也体现在重大任务中的关键支撑、日常训练中的持续攻关、体系运行中的无声托举。只有把个人成绩、岗位贡献、带动作用、群众认可统起来看，才能避免简单“唯奖牌论”，真正把军功章戴到该戴的人胸前。 奖优之后，还要用强。训练尖子如果只停留在表彰台上，导向效应就容易打折扣；比武骨干如果只满足于自己强，个人经验就难以转化为集体能力。请尖子当教练、让骨干带课题、给先进压担子，才能把“一个人冒尖”变成“一群人争先”，把个人荣光变成整体跃升。 导向不能停留在口号上，还要靠制度机制托底。哪些人该奖，依据是什么；获奖之后怎么用，责任是什么；用得好不好，如何跟踪评价。把训练成绩建档、把带教成效纳入考评，让奖后使用形成闭环，才能让官兵相信：奋斗有回响，实绩有褒奖，本事有位置。 战斗力标准不是抽象的，最终要落实到每一次评比、每一次用人、每一次训练之中。把硬标准立成硬规矩，让荣誉向战位聚焦、把岗位向能者敞开、用责任向尖子加压，练兵备战的内生动力才会充分涌流。 一枚军功章，究竟授予谁 ——第八十三集团军某旅鲜明立起“奖优用强”导向新闻调查 ■周迎波 赵艺博 孙彤 前不久，第83集团军“中原铁拳”创破纪录比武竞赛落下帷幕，某旅下士李岩峰以35分27秒的成绩，连续完成5000米跑、爬绳、400米障碍、战场力量组合、搬运伤员、1000米跑6个课目，夺得冠军。 今年，该旅训练尖子竞相涌现：侦察营下士蒲俊侃以1分26秒的成绩打破集团军400米障碍纪录，斩获冠军；某合成营中士普军参加集团军“单兵突击”比武竞赛获得第二名；作战保障科参谋周传涵参加上级参谋比武夺得第二名…… 变化因何而生？采访中，不少官兵谈到旅里近年立功授奖、选人用人的鲜明导向：“谁在练兵备战中贡献大、成绩硬、作用明显，谁就受到褒奖；谁有真本事、能打仗，舞台就交给谁，担子就压给谁。” “一枚军功章，授予何人、因何而授，看似一次表彰，实则关系一支部队的价值坐标。”该旅领导说。近年来，该旅党委坚持把对战斗力的贡献率作为评功评奖、选人用人、骨干培养的重要标尺，推荐表彰对象时，始终坚持把训练成绩、任务表现和打赢贡献摆在突出位置，确保荣誉真正向练兵备战一线聚焦。 荣誉表彰不是分糖果，必须立起硬标准 去年底，一则消息引发全旅关注：前年荣立个人二等功的作训科参谋武聪聪再次荣立个人二等功，同时被任命为装甲突击车连连长。 “好事”凭啥落到一个人身上？事情得从两场比武说起。 2024年11月，武聪聪带队参加集团军“优秀参谋考评”，勇夺个人第二、团体第一，年底荣立个人二等功。 去年5月，他再次出征集团军“中原铁拳”创破纪录比武，斩获“谋算智胜”综合类课目个人冠军。年底研究评功评奖时，武聪聪的名字再次进入推荐名单。这一消息传开后，议论随之而来。 有人说武聪聪去年已经立过一次二等功，给个三等功就行了；有人说他还年轻，以后还有立功机会，应该“让给”其他同志；也有人说他该立二等功，军人荣誉表彰不容混淆，有什么样的贡献就该立什么功…… “荣誉表彰不是分糖果，想咋分就咋分。谁比武夺冠给谁立功，谁破军级比武纪录给谁立高功。立功授奖不能简单看年头、看资历、看平衡，必须看训练成绩、任务贡献和战斗力增量。”对此，旅党委态度鲜明，并结合年度荣誉表彰事宜，组织全旅官兵开展讨论交流，力图廓清思想迷雾。 经过讨论，“战斗力贡献率是硬标准”的声音很快形成共识。最终，武聪聪再次荣立个人二等功。 连续立功在该旅并非孤例。信息保障队班长、下士杨云蓬的经历，也让官兵感触颇深。 2024年，杨云蓬首次参加集团军创破纪录比武，因成绩突出荣立个人三等功。 功成不怠，杨云蓬给自己定下更高目标，把训练课目逐项拆解，精准补差。那段时间，训练场上常能看到她加练的身影。去年，她再次参加集团军创破纪录比武，再次取得突出成绩，荣立个人二等功。 更让大家服气的是，杨云蓬没有把荣誉当作个人光环，而是把自己的训练经验带回班里。日常训练中，杨云蓬帮助战友制订计划、拆解课目、逐项补短。 “想站上领奖台，先得在训练场上熬得住。”杨云蓬告诫战友说。在她的带领下，去年，同班的列兵杨小庆也在创破纪录比武中取得优异成绩，荣立个人三等功。 “凭本事站前排，大家服气。”谈起近些年“冒”出头的年轻官兵，大家伙回应道。 现如今，该旅官兵坚信“奋斗有回响、实绩有褒奖、本事有位置”。渐渐地，机关楼里，业务之余钻研技能者多了；训练场上，考核结束复盘补差者多了…… 军功章，照亮的不只是个人的高光时刻，更是军人冲锋的方向。 敢奖更要善用，比武尖子全部走上组训一线 荣誉颁发下去，工作并没有结束。 “褒奖训练尖子只是第一步，还要用好他们、带好队伍。”该旅李参谋长说。 近年来，该旅逐步形成一条清晰链路：“训练有成绩，组织给荣誉；荣誉给出去，岗位给平台；平台搭起来，责任再加压；责任压下去，带动一大片。” “刀在石上磨、人在事上练，敢于压担子才能锻炼年轻干部。”2025年初，该旅选拔集团军“两项比武”人员的重任落到了武聪聪手上，由他全程带队，负责选人、辅导、送训。 党委一班人态度鲜明：武聪聪每年参加各级比武均名列前茅，专业能力过硬，训练方法独到，作为“武教头”当仁不让。 武聪聪有一个绝招：在手工标图时，他能用红蓝铅笔一次完成多种注记、标号，不需要反复修改。 他将自己的训练视频、草稿纸与大家分享，让大家看他是怎样一笔一画练出来的——为了提高注记、标号准确率，他把常用符号、标注位置、线条走向分类整理，反复限时训练……4年来，仅其用过的草稿纸，摞起来就有一米高。 “熟能生巧。”武聪聪说。在他的带领下，官兵们一步步苦练精练，本领日增。那一年，武聪聪两次带队参加集团军组织的参谋集训，该旅10人中有6人进入集团军前十名，斩获2项参谋集训第一名；在集团军组织的创破纪录比武中，该旅夺得9个第一、4个第三。 “官兵们看尖子，不能只看到结果；要让尖子把训练过程摊开来讲，大家看到差距，才知道怎么追赶。”在该旅，比武尖子载誉归来，全部走上组训一线。 二级上士周子涵也是其中一员。2025年，他在集团军无人机专业比武表现突出，荣立个人三等功。后来，旅里任命他担任无人机课目训练辅导员，带教新飞手。 “你们看，这里转弯半径太大，等发现目标时已经慢了半拍；这里投送角度偏了，说明前期稳控还不够细……”每次训练结束，周子涵把大家的训练画面调出来，逐帧复盘，并耐心解答“目标识别防误判”“投送时机把握”“低空抗侧风”等实操难题。 敢奖更要善用。笔者了解到，该旅持续优化训练资源分配，大力构建“尖子孵化”机制，搭建“尖子经验交流会”“专业技能擂台赛”等常态化平台，让训练尖子享有更多深造和淬火机会。 让训练尖子真正“香起来”，不能只体现在奖章和证书上，更要落实在岗位、平台和责任中。该旅总结道：只有让能打仗者得其位，会打仗者尽其才，让真打仗的标准落地生根，荣誉导向方能转化为实实在在的战斗力增量。 从“一时荣光”到“长效精武”，持续释放激励效应 “导向鲜明不等于简单操作，奖优用强贵在持久深入。”该旅领导表示，导向越鲜明，越需要制度机制保障，让官兵知道标准在哪里、程序怎么走、荣誉怎么评、骨干怎么用。 为此，该旅探索建立训练尖子动态培养机制，对在上级比武、重大演训、专业集训、日常训练中表现突出的官兵，分类建立成长档案。档案里，不仅记录名次奖项，还记录其岗位履职、组训帮教、任务表现、群众评价等情况。 “不能只看领奖台上一瞬间，还要看平时战位上干得怎么样、带动身边人的效果怎么样。”组织科科长朱阳春说。 一次研究表彰对象时，有基层营连推荐一名长期担负装备保障攻关、在重大演训中多次排除故障的技术骨干。起初，有人觉得他没有显眼的比武名次，推荐理由不够“硬”。但查阅其成长档案发现，他攻关解决了多项训练保障难题，多次在关键任务中发挥作用。最终，这名技术骨干进入候选人名单。 这件事让不少官兵领悟到：战斗力贡献不只看比武夺魁，还看战位担当、任务表现和体系贡献。 为了避免“一次受奖、长期吃香”，该旅还将跟踪考评贯穿始终。比武骨干返回岗位后，既看个人成绩是否保持，也看带教对象是否进步、所在班组成绩是否提升、承担任务是否过硬。表现突出的，继续压担子、给平台；出现标准滑坡、劲头松懈者，及时提醒帮带。 “奖优用强，既要敢奖敢用，也要真管真严。”该旅领导说。 制度机制的完善，让基层官兵对荣誉的预期更加清晰。如今，在该旅训练场上，官兵不仅关心谁获了奖、谁立了功，更关注他们是怎样练出来的、组织又把他们放到哪里去锻炼、他们带动了哪些人进步。 军功章的光芒，只有照进制度、照进岗位、照进日常训练，才能持续释放激励效应。该旅的实践表明：立起“奖优用强”鲜明导向，不仅要在关键时刻敢于把荣誉给到该给的人，更要依靠常态机制，将优秀人才用起来、管起来、带起来，让战斗力标准在训练场和战位上落地生根。 军营观察版编辑对话第八十三集团军某旅旅长—— 第83集团军某旅上尉武聪聪连续两年荣立个人二等功，在官兵中引发热议。从最初的“该不该给他再立功”的争议，到最终“战斗力贡献率是硬标准”的共识，这是基层部队坚持为战而奖，牢固树立战斗力这个唯一的根本的标准的生动实践。围绕这一话题，军营观察版编辑与该旅旅长进行了连线交流。 编辑：我们注意到，武聪聪连续两年立功，最初在机关和基层引发了讨论，在您看来，这场讨论给官兵思想产生了什么影响？ 旅长：表面上看是关于武聪聪该立什么功的讨论，实质上是一次关于“战斗力标准”的深刻思想交锋。我们常说要把战斗力标准立起来，但“立”在哪里？怎么“立”？很多同志其实并不完全清晰。在调查了解中发现，个别同志潜意识里还残留着“平衡照顾”“论资排辈”的老观念，觉得评功评奖像分糖果，得人人有份、轮流坐庄。这种想法本身就是和平积弊在荣誉表彰方面的反映。荣誉是什么？荣誉是对贡献的褒奖，不是对资历的安慰，更不是用来搞平衡的筹码。武聪聪这件事像一面镜子，照出了一些同志头脑中“战斗力标准”还不够牢固。如果让“轮流坐庄”的逻辑占了上风，那“战斗力贡献率”这个硬标准就被架空了。通过讨论交流，把问题摆到桌面上，辩清楚、想明白，让战斗力标准成为人人认可、必须遵循的硬杠杠。 编辑：我们看到，在武聪聪连续立功的同时，旅党委又任命他为连长，让荣誉、职位在短时间内集中在他一个人身上，旅党委有何考量？ 旅长：我们要释放一个信号：真正有打仗本领的人，不仅荣誉上“吃香”，事业上更有奔头。我们要用这样的实际行动，把战斗力标准贯穿到人才培养、选拔、任用的全链条，让那些练兵备战实绩突出的干部骨干有舞台、有位子；同时以荣誉表彰为示范引领，匡正用人导向，让所有官兵都看到，“打仗人才”会被委以重任，放到能发挥其优势的岗位上。 编辑：从武聪聪连续两年荣立二等功，到如今全旅数十人主动申请比武、全员争当尖子的“精武效应”，要想将这样的势头保持下去，还需要做好哪些工作？ 旅长：要让“战斗力贡献率”导向落地生根，我们正在做两件事：一是探索完善荣誉激励机制，坚持“打仗需要什么就苦练什么，部队最缺什么就专攻精练什么”，让那些在战位上扛重任、在任务中出实绩的官兵，成为表彰奖励的主体，让“凭本事立身、靠实绩进步”成为一种价值认同和行为自觉；二是构建“尖子孵化”机制，让金牌教头分享经验、传授技艺，让训练尖子不仅自己强，还能带动一群人强，真正把人才优势转化为能力优势、制胜优势。 盛夏时节，天黑得晚了一些。第83集团军某旅营区主干道上，灯箱准时亮起。一张张训练尖子的照片和简介格外醒目。 晚饭后，班长白新宇带着几名新兵从主干道经过。 路边一块灯箱上，“连续两年荣立个人二等功”几个字引起新兵注意。 “班长，他才到单位没几年，为什么能连续两年荣立个人二等功？”新兵焦健问道。 “武连长连续两年在集团军比武中夺冠。在咱们旅，立功授奖不看谁年头长，只看谁本领强、贡献大。” 焦健盯着灯箱上的照片看了许久。当天晚上，他在日记本上写道：“我也想有一天，自己的照片能摆在那里。” 随后的训练中，白新宇发现，新兵们变了。课目训练结束，他们不再像往常一样回到队伍后排休息，有人向班里骨干请教动作要领，有人约着晚饭后一起补短板…… “刚下连时，他们更多只想着先跟上节奏。”一名带兵骨干说，“现在心里有了奔头，训练也更愿意往前赶。” 从灯箱到训练场，荣誉不是挂在远处的光环，而是立在身边的标尺；先进不是遥不可及的名字，而是可以对照追赶的方向。对于刚下连的新同志来说，那一块块灯箱就像一堂堂无声的教育课，要想让“凭本事立身、靠实绩进步”成为一种价值认同和行为自觉，首先要在他们的“兵之初”种下一颗“争先”的种子。 夜色渐浓，营区灯箱更加明亮。官兵们经过那里，脚步总会不自觉慢下来。与灯箱一起亮起的，还有他们心中的目标。</div>
+  </details>
+
+
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">China Mil Watch</div>
+      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
+    </div>
+    <div>
+      <span class="footer-col-label">Read</span>
+      <ul class="footer-links">
+        <li><a href="../index.html">Daily Brief</a></li>
+        <li><a href="../the-pla-watch/index.html">The PLA Watch</a></li>
+        <li><a href="../archive.html">Archive</a></li>
+        <li><a href="../signals.html">Signals</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="footer-col-label">About</span>
+      <ul class="footer-links">
+        <li><a href="../methodology.html">Methodology</a></li>
+        <li><a href="../methodology.html#model-flagged">How flagging works</a></li>
+        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baseline">
+    <span>China Mil Watch · Mandarin-source monitoring</span>
+    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    root.classList.add('js');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reduce.matches || !('IntersectionObserver' in window)) {
+      root.classList.add('no-anim');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    var targets = document.querySelectorAll('[data-reveal]');
+    targets.forEach(function (el) { io.observe(el); });
+    /* Safety net: anything inside the viewport must never stay hidden —
+       short pages cannot scroll past the -8% margin, and a missed
+       observer callback must not suppress content. */
+    var sweep = function () {
+      targets.forEach(function (el) {
+        if (!el.classList.contains('in') &&
+            el.getBoundingClientRect().top < window.innerHeight) {
+          el.classList.add('in');
+          io.unobserve(el);
+        }
+      });
+    };
+    window.addEventListener('load', function () { setTimeout(sweep, 900); });
+  } catch (e) {
+    root.classList.add('no-anim');
+  }
+})();
+</script>
+</body>
+</html>
