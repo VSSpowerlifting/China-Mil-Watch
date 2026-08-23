@@ -290,6 +290,27 @@ class TestInputSafety(KitCase):
                           "git must run with the scrubbed environment")
             self.assertNotIn("shell", kwargs)
 
+    def test_the_publishers_package_id_matches_the_kits(self):
+        """
+        The publisher re-derives the package id so it can check a preserved
+        review against the id it is filed under. Two implementations means
+        drift, so pin them: same inputs, same digest.
+        """
+        spec = importlib.util.spec_from_file_location(
+            "publish_shadow_review",
+            REPO_ROOT / "scripts" / "publish_shadow_review.py")
+        pub = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pub)
+        packet = self.tmp / "pin"
+        m = self.run_kit(out=packet)
+        inventory = [json.loads(l) for l in
+                     (packet / "record_inventory.jsonl")
+                     .read_text(encoding="utf-8").splitlines() if l.strip()]
+        stored = json.loads((packet / "review_manifest.json")
+                            .read_text(encoding="utf-8"))
+        self.assertEqual(pub.recompute_package_id(stored, inventory),
+                         m["deterministic_sha256"])
+
     def test_the_git_environment_is_scrubbed_of_redirection(self):
         env = dict(os.environ)
         os.environ.update({"GIT_DIR": "/nowhere/evil.git",

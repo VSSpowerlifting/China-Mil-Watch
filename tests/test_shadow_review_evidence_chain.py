@@ -505,3 +505,180 @@ class AReviewerFieldIsNotACommitMessage(PacketFixtureCase):
         trailers = [l for l in msg.splitlines() if l.startswith("state-commit ")]
         self.assertEqual(trailers, ["state-commit " + self.commit])
         self.assertIn("state-tree " + self.manifest["state_tree"], msg)
+
+
+class PreservedEvidenceIsNotInheritedOnFaith(PacketFixtureCase):
+    """
+    The publisher gathered a digest of every preserved file and never compared
+    it. A `fail` receipt on the remote could be edited to `pass`, and the next
+    publication would clone it, build on top of it, and push the rewrite along
+    with its own honest review.
+    """
+
+    def _published_clone(self):
+        clone = self.tmp / "clone"
+        subprocess.run(["git", "clone", "--quiet", "-b",
+                        "review/singapore-mindef", str(self.remote), str(clone)],
+                       check=True)
+        return clone
+
+    def _push(self, clone, message):
+        for a in (["add", "-A"],
+                  ["-c", "user.name=x", "-c", "user.email=x@x", "commit",
+                   "--quiet", "-m", message]):
+            subprocess.run(["git"] + a, cwd=str(clone), check=True,
+                           stdout=subprocess.DEVNULL)
+        subprocess.run(["git", "push", "--quiet", "origin",
+                        "review/singapore-mindef"], cwd=str(clone), check=True)
+        return self.head()
+
+    def _second_review(self):
+        s = self.complete_signoff()
+        s["reviewer"] = "Second Auditor"
+        path = self.tmp / "signoff2.json"
+        path.write_text(json.dumps(s, indent=1, sort_keys=True) + "\n",
+                        encoding="utf-8")
+        return path
+
+    def test_a_rewritten_receipt_is_refused(self):
+        s = self.complete_signoff()
+        s["verdict"] = "fail"
+        s["records"][0]["title_matches"] = False
+        self.write_signoff(s)
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        receipt = next(clone.glob("reviews/day-07/*/receipt.json"))
+        d = json.loads(receipt.read_text(encoding="utf-8"))
+        d["verdict"] = "pass"
+        d["false_checks"] = 0
+        receipt.write_text(json.dumps(d, indent=1, sort_keys=True) + "\n",
+                           encoding="utf-8")
+        head = self._push(clone, "rewrite the verdict")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("disagrees with the evidence", str(c.exception))
+        self.assertEqual(self.head(), head, "the remote must be untouched")
+
+    def test_a_rewritten_signoff_no_longer_names_its_own_directory(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        signoff = next(clone.glob("reviews/day-07/*/signoff.json"))
+        d = json.loads(signoff.read_text(encoding="utf-8"))
+        d["attestation"] = "something the reviewer never wrote"
+        signoff.write_text(json.dumps(d, indent=1, sort_keys=True) + "\n",
+                           encoding="utf-8")
+        head = self._push(clone, "rewrite the sign-off")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("no longer hashes to its own id", str(c.exception))
+
+    def test_a_rewritten_manifest_no_longer_hashes_to_its_package_id(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        manifest = next(clone.glob("reviews/day-07/*/review_manifest.json"))
+        d = json.loads(manifest.read_text(encoding="utf-8"))
+        d["state_commit"] = "0" * 40          # the package id is left alone
+        manifest.write_text(json.dumps(d, indent=1, sort_keys=True) + "\n",
+                            encoding="utf-8")
+        head = self._push(clone, "rewrite the state commit")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("no longer hashes to its own package id",
+                      str(c.exception))
+
+    def test_a_rewritten_report_is_refused(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        report = next(clone.glob("reviews/day-07/*/review_report.md"))
+        report.write_text(report.read_text(encoding="utf-8") + "\nedited\n",
+                          encoding="utf-8")
+        head = self._push(clone, "rewrite the report")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("altered after it was generated", str(c.exception))
+
+    def test_a_tampered_index_line_is_refused(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        index = clone / "index.jsonl"
+        line = json.loads(index.read_text(encoding="utf-8").strip())
+        line["state_commit"] = "0" * 40
+        index.write_text(json.dumps(line, sort_keys=True,
+                                    separators=(",", ":")) + "\n",
+                         encoding="utf-8")
+        head = self._push(clone, "rewrite the index")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("index.jsonl", str(c.exception))
+
+    def test_a_deleted_review_is_refused(self):
+        self.assertEqual(self.run_pub(), 0)
+        clone = self._published_clone()
+        shutil.rmtree(str(next(clone.glob("reviews/day-07/*")).resolve()))
+        head = self._push(clone, "delete a review")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertIn("not preserved on the branch", str(c.exception))
+
+    def test_an_untouched_branch_still_accepts_the_next_review(self):
+        self.assertEqual(self.run_pub(), 0)
+        head = self.head()
+        r = pub.publish(self.packet, self._second_review(), str(self.remote),
+                        "day-07", head, False, True)
+        self.assertTrue(r["published"])
+        self.assertEqual(r["action"], "fast-forward")
+
+
+class ASignoffSaysOneThing(PacketFixtureCase):
+    """JSON that can be read two ways is not a record of what a person answered."""
+
+    def test_a_duplicate_key_is_refused(self):
+        raw = json.dumps(self.complete_signoff(), indent=1, sort_keys=True)
+        raw = raw.replace('"verdict": "pass"',
+                          '"verdict": "fail",\n "verdict": "pass"', 1)
+        self.write_signoff(None, raw=raw + "\n")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("duplicate key", str(c.exception))
+        self.assertEqual(self.remote_git("for-each-ref").strip(), "")
+
+    def test_nan_and_infinity_are_refused(self):
+        for literal in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(literal=literal):
+                raw = json.dumps(self.complete_signoff(), indent=1,
+                                 sort_keys=True)
+                raw = raw.replace('"verdict":',
+                                  '"stray": %s,\n "verdict":' % literal, 1)
+                self.write_signoff(None, raw=raw + "\n")
+                with self.assertRaises(pub.PublishError):
+                    pub.publish(self.packet, self.signoff_path,
+                                str(self.remote), "day-07", None, True, True)
+
+    def test_a_timestamp_without_a_timezone_is_refused(self):
+        s = self.complete_signoff()
+        s["review_started_utc"] = "2026-08-27T09:00:00"
+        s["review_completed_utc"] = "2026-08-27T11:00:00"
+        self.write_signoff(s)
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("no timezone", str(c.exception))
+
+    def test_an_unexpected_file_in_the_packet_is_refused(self):
+        (self.packet / "addendum.md").write_text("# read but not preserved\n",
+                                                 encoding="utf-8")
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(self.packet, self.signoff_path, str(self.remote),
+                        "day-07", None, True, True)
+        self.assertIn("neither preserved nor expected", str(c.exception))
+
+    def test_the_sidecars_the_kit_writes_do_not_block_publication(self):
+        self.assertTrue((self.packet / "signoff_template.json").is_file())
+        self.assertEqual(self.run_pub(), 0)

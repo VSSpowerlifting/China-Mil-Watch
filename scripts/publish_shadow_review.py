@@ -80,6 +80,12 @@ VERDICTS = ("pass", "pass_with_findings", "fail")
 #: rather than something to skip quietly.
 PACKET_FILES = ("review_manifest.json", "review_report.md",
                 "record_inventory.jsonl")
+
+#: Generated beside the packet and deliberately not preserved: the sign-off
+#: template is a form, and the generation context is wall-clock and local
+#: paths. Naming them is what makes anything *else* in the directory a refusal.
+PACKET_SIDECARS = ("signoff_template.json", "signoff.json",
+                   "generation_context.json")
 FORBIDDEN_SUFFIXES = (".db", ".db-wal", ".db-shm", ".sqlite", ".sqlite3",
                       ".pem", ".key", ".env", ".pyc", ".so", ".dylib")
 FORBIDDEN_NAMES = (".env", "pla_watch.db", "shadow.db", "id_rsa", ".netrc")
@@ -121,13 +127,39 @@ def completed_review_id(manifest: dict, signoff: dict) -> str:
 
 # ── validation ───────────────────────────────────────────────────────────────
 
+def _no_duplicate_keys(pairs):
+    """
+    `json.loads` keeps the last value for a repeated key. A sign-off reading
+    `"verdict": "fail"` on one line and `"verdict": "pass"` on another
+    therefore publishes as a pass, and the preserved copy is re-serialised so
+    the contradiction disappears. Refuse the file instead of picking a side.
+    """
+    seen = set()
+    for key, _ in pairs:
+        if key in seen:
+            raise ValueError("duplicate key %r — a document that says two "
+                             "things cannot be evidence of either" % key)
+        seen.add(key)
+    return dict(pairs)
+
+
+def strict_loads(text: str, what: str):
+    """No duplicate keys, and no NaN/Infinity: neither survives a round trip."""
+    try:
+        return json.loads(text, object_pairs_hook=_no_duplicate_keys,
+                          parse_constant=_refuse_constant)
+    except ValueError as exc:
+        raise PublishError("%s is not valid JSON: %s" % (what, exc))
+
+
+def _refuse_constant(name):
+    raise ValueError("%s is not a JSON value that can be preserved" % name)
+
+
 def load_json(path: Path, what: str) -> dict:
     if not path.is_file():
         raise PublishError("no %s at %s" % (what, path))
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except ValueError as exc:
-        raise PublishError("%s is not valid JSON: %s" % (what, exc))
+    return strict_loads(path.read_text(encoding="utf-8"), what)
 
 
 def assert_packet_clean(packet: Path) -> None:
@@ -163,9 +195,37 @@ def assert_packet_clean(packet: Path) -> None:
             if pattern.search(text):
                 raise PublishError("possible credential in %s — refusing to "
                                    "preserve it" % rel)
+        name = rel.as_posix()
+        if name not in PACKET_FILES and name not in PACKET_SIDECARS:
+            raise PublishError(
+                "packet contains %s, which is neither preserved nor expected. "
+                "A file the reviewer read but the branch would not keep makes "
+                "the preserved evidence a subset of what was reviewed." % rel)
 
 
-def assert_packet_matches_its_manifest(packet: Path, manifest: dict) -> None:
+#: Fields the package id is computed *without*: they are written after it, or
+#: they are not content. Re-derived here rather than imported, because the kit
+#: and the publisher are separate tools; `tests/test_shadow_review_kit.py` pins
+#: them together so drift is caught.
+PACKAGE_ID_EXCLUDES = ("deterministic_sha256", "artifact_sha256", "generated")
+
+
+def recompute_package_id(manifest: dict, inventory: list) -> str:
+    """
+    The package id over the manifest and inventory as preserved.
+
+    This is what makes a preserved review checkable: the id feeds the
+    completed-review id, which is the directory name, so a manifest edited
+    after preservation cannot keep the name it is filed under.
+    """
+    content = {k: v for k, v in manifest.items() if k not in PACKAGE_ID_EXCLUDES}
+    payload = json.dumps({"manifest": content, "inventory": inventory},
+                         sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def assert_packet_matches_its_manifest(packet: Path, manifest: dict,
+                                       names=None) -> None:
     """
     The manifest already records what each artifact hashed to when it was
     generated. Nothing checked it, so a packet could be edited after generation
@@ -175,7 +235,10 @@ def assert_packet_matches_its_manifest(packet: Path, manifest: dict) -> None:
     if not isinstance(declared, dict) or not declared:
         raise PublishError("packet manifest carries no artifact_sha256 — there "
                            "is nothing to verify its own files against")
-    for name, want in sorted(declared.items()):
+    wanted = sorted(declared) if names is None else sorted(
+        n for n in declared if n in names)
+    for name in wanted:
+        want = declared[name]
         path = packet / name
         if not path.is_file():
             raise PublishError("manifest names %s, which the packet does not "
@@ -370,10 +433,16 @@ def _parse_ts(value, field):
     if not value:
         raise PublishError("sign-off %s is empty" % field)
     try:
-        return datetime.fromisoformat(str(value))
+        ts = datetime.fromisoformat(str(value))
     except ValueError:
         raise PublishError("sign-off %s is not an ISO-8601 timestamp: %r"
                            % (field, value))
+    if ts.tzinfo is None:
+        raise PublishError(
+            "sign-off %s has no timezone: %r. The field is named _utc and is "
+            "preserved verbatim, so a naive timestamp records a moment nobody "
+            "can place. Write it as ...+00:00." % (field, value))
+    return ts
 
 
 # ── git, through argument arrays only ────────────────────────────────────────
@@ -431,6 +500,128 @@ def remote_head(remote: str) -> str:
     return line.split()[0] if line else None
 
 
+def snapshot_existing(work: Path) -> dict:
+    """Every preserved evidence file, by content, before anything is added."""
+    out = {}
+    root = work / "reviews"
+    if not root.exists():
+        return out
+    for p in sorted(root.rglob("*")):
+        if p.is_file() and not p.is_symlink():
+            out[p.relative_to(work).as_posix()] = hashlib.sha256(
+                p.read_bytes()).hexdigest()
+    return out
+
+
+def assert_existing_evidence_is_intact(work: Path, expected: dict) -> None:
+    """
+    Preserved reviews are append-only, and `index.jsonl` only ever grows.
+
+    The publisher used to gather these digests and never compare them. A
+    review already on the branch could be rewritten — a `fail` receipt edited
+    to `pass` — and the next publication would build cheerfully on top of it.
+    """
+    for rel, want in sorted(expected.items()):
+        path = work / rel
+        if not path.is_file():
+            raise PublishError(
+                "%s is preserved on the review branch but is missing from the "
+                "tree being published. Review evidence is append-only." % rel)
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        if got != want:
+            raise PublishError(
+                "%s was rewritten (%s, expected %s). A review already on the "
+                "branch may never be edited; publish a correction under its "
+                "own id." % (rel, got[:16], want[:16]))
+
+
+def assert_branch_is_self_consistent(work: Path) -> None:
+    """
+    Every review already on the branch still hashes to the id it is filed
+    under.
+
+    The directory name is the completed-review id: a hash over the sign-off
+    bound to the package it answers. So a preserved sign-off or manifest that
+    has been edited no longer names its own directory, and a preserved report
+    that has been edited no longer matches the manifest beside it. Checked on
+    arrival, because the publisher builds on whatever the remote hands it — and
+    a `fail` receipt quietly rewritten to `pass` would otherwise be inherited
+    as fact.
+    """
+    root = work / "reviews"
+    seen = {}
+    for checkpoint_dir in sorted(
+            d for d in (root.iterdir() if root.exists() else []) if d.is_dir()):
+        for review in sorted(d for d in checkpoint_dir.iterdir() if d.is_dir()):
+            rel = review.relative_to(work).as_posix()
+            manifest = load_json(review / "review_manifest.json",
+                                 "preserved manifest in %s" % rel)
+            signoff = load_json(review / "signoff.json",
+                                "preserved sign-off in %s" % rel)
+            crid = completed_review_id(manifest, signoff)
+            if crid != review.name:
+                raise PublishError(
+                    "preserved review %s no longer hashes to its own id (%s). "
+                    "Its sign-off or manifest was edited after it was "
+                    "preserved." % (rel, crid[:16]))
+            assert_packet_matches_its_manifest(review, manifest, PACKET_FILES)
+            inventory = [strict_loads(l, "preserved inventory in %s" % rel)
+                         for l in (review / "record_inventory.jsonl")
+                         .read_text(encoding="utf-8").splitlines() if l.strip()]
+            if recompute_package_id(manifest, inventory) != \
+                    manifest.get("deterministic_sha256"):
+                raise PublishError(
+                    "preserved review %s no longer hashes to its own package "
+                    "id — its manifest or inventory was edited after it was "
+                    "preserved." % rel)
+            receipt = load_json(review / "receipt.json",
+                                "preserved receipt in %s" % rel)
+            for field, want in (("completed_review_id", crid),
+                                ("automated_package_id",
+                                 manifest["deterministic_sha256"]),
+                                ("state_commit", manifest["state_commit"]),
+                                ("verdict", signoff.get("verdict")),
+                                ("reviewer", signoff.get("reviewer"))):
+                if receipt.get(field) != want:
+                    raise PublishError(
+                        "preserved receipt %s/receipt.json disagrees with the "
+                        "evidence it describes: %s is %r, the review says %r"
+                        % (rel, field, receipt.get(field), want))
+            seen[crid] = receipt
+
+    index = work / "index.jsonl"
+    if not index.exists():
+        if seen:
+            raise PublishError("reviews are preserved but index.jsonl is gone")
+        return
+    for n, line in enumerate(index.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        entry = strict_loads(line, "index.jsonl line %d" % n)
+        crid = entry.get("completed_review_id")
+        if crid not in seen:
+            raise PublishError(
+                "index.jsonl line %d names review %r, which is not preserved "
+                "on the branch" % (n, crid))
+        if line + "\n" != build_index_line(seen[crid]):
+            raise PublishError(
+                "index.jsonl line %d does not match the receipt it indexes "
+                "(review %s)" % (n, str(crid)[:16]))
+    if len(seen) != len([l for l in index.read_text(encoding="utf-8")
+                         .splitlines() if l.strip()]):
+        raise PublishError("index.jsonl and the preserved reviews disagree on "
+                           "how many reviews exist")
+
+
+def assert_index_only_grew(work: Path, prior: str) -> None:
+    """`index.jsonl` is append-only: the old bytes must still be its prefix."""
+    text = (work / "index.jsonl").read_text(encoding="utf-8")
+    if not text.startswith(prior):
+        raise PublishError(
+            "index.jsonl was rewritten rather than appended to. Existing lines "
+            "must survive byte for byte.")
+
+
 def build_index_line(receipt: dict) -> str:
     return canonical({
         "checkpoint": receipt["checkpoint"],
@@ -481,7 +672,7 @@ def prepare(packet: Path, signoff_path: Path, checkpoint: str) -> tuple:
     inv_path = packet / "record_inventory.jsonl"
     if not inv_path.is_file():
         raise PublishError("no record_inventory.jsonl in %s" % packet)
-    inventory = [json.loads(l) for l in
+    inventory = [strict_loads(l, "record inventory") for l in
                  inv_path.read_text(encoding="utf-8").splitlines() if l.strip()]
     for name in PACKET_FILES:
         if not (packet / name).is_file():
@@ -603,17 +794,17 @@ def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
                 "Review evidence is append-only; publish a new review under its "
                 "own id instead." % crid[:16])
 
-        # Existing evidence must never be rewritten.
-        existing_paths = set()
+        # Existing evidence must never be rewritten. Recorded before this
+        # publication writes anything, and compared again after, so a bug here
+        # cannot quietly replace a review that is already preserved.
         if not bootstrap:
-            for p in (work / "reviews").rglob("*") if (work / "reviews").exists() else []:
-                if p.is_file():
-                    existing_paths.add((p.relative_to(work),
-                                        hashlib.sha256(p.read_bytes()).hexdigest()))
-            for p, _ in existing_paths:
-                if ".github" in p.parts:
-                    raise PublishError("the review branch already contains %s, "
-                                       "which it must not" % p)
+            assert_branch_is_self_consistent(work)
+        existing_paths = snapshot_existing(work) if not bootstrap else {}
+        for rel in existing_paths:
+            if ".github" in Path(rel).parts:
+                raise PublishError("the review branch already contains %s, "
+                                   "which it must not" % rel)
+        assert_existing_evidence_is_intact(work, existing_paths)
 
         target.mkdir(parents=True)
         for name in PACKET_FILES:
@@ -626,6 +817,9 @@ def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
             (work / "README.md").write_text(README, encoding="utf-8")
         index = work / "index.jsonl"
         prior = index.read_text(encoding="utf-8") if index.exists() else ""
+        if prior and not prior.endswith("\n"):
+            raise PublishError("index.jsonl does not end in a newline; a "
+                               "partial last line cannot be appended to safely")
         siblings = [json.loads(l) for l in prior.splitlines() if l.strip()]
         same_checkpoint = [s for s in siblings if s["checkpoint"] == checkpoint]
         if same_checkpoint:
@@ -636,6 +830,12 @@ def publish(packet: Path, signoff_path: Path, remote: str, checkpoint: str,
                 json.dumps(receipt, indent=1, sort_keys=True) + "\n",
                 encoding="utf-8")
         index.write_text(prior + build_index_line(receipt), encoding="utf-8")
+
+        # Re-checked after this publication wrote its own files: append-only
+        # is a property of the tree that leaves, not only of the tree that
+        # arrived.
+        assert_existing_evidence_is_intact(work, existing_paths)
+        assert_index_only_grew(work, prior)
 
         # Nothing outside the allowlist may be committed.
         proc = git(["status", "--porcelain", "--untracked-files=all"], cwd=work)
