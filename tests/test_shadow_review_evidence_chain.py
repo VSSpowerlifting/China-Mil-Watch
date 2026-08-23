@@ -170,10 +170,10 @@ class EvidenceChainCase(unittest.TestCase):
         subprocess.run(["tar", "-x", "-C", str(dest)], input=tar, check=True)
         return dest / "state"
 
-    def formal(self, commit, out="out", **kw):
+    def formal(self, commit, out="out", checkpoint="day-07", **kw):
         kw.setdefault("state_repo", self.repo)
         return rk.build(None, self.tmp / out, "2026-08-27", True, None, False,
-                        commit, "day-07", **kw)
+                        commit, checkpoint, **kw)
 
 
 class PacketFixtureCase(unittest.TestCase):
@@ -761,3 +761,62 @@ class OnePackageIdIsOneSetOfBytes(EvidenceChainCase):
                                 "review/singapore-mindef"],
                                stdout=subprocess.PIPE, text=True).stdout.strip()
         self.assertEqual(after, head, "a no-op must not move the branch")
+
+
+class PublishableMeansPublishable(EvidenceChainCase):
+    """
+    The real Singapore state at the time of this audit records shadow_day 2. A
+    day-07 packet built from it was pinned to its commit correctly and labelled
+    `publishable: true` — a claim the publisher was always going to refuse. A
+    reviewer could work through the whole packet before finding out.
+    """
+
+    def _short_state(self, runs, name):
+        git(["checkout", "--quiet", "-b", name, self.A], self.repo)
+        build_state(self.repo / "state", runs)
+        git(["add", "-A", "--", "state"], self.repo)
+        git(["commit", "--quiet", "-m", name], self.repo)
+        return git(["rev-parse", "HEAD"], self.repo)
+
+    def test_a_checkpoint_that_has_not_arrived_is_not_publishable(self):
+        early = self._short_state(3, "day2")         # last ledger = day 2
+        m = self.formal(early, out="early", state_ref="day2")
+        self.assertTrue(m["formal"])
+        self.assertEqual(m["latest_shadow_day"], 2)
+        self.assertFalse(m["publishable"])
+        report = (self.tmp / "early" / "review_report.md").read_text(
+            encoding="utf-8")
+        self.assertIn("NOT PUBLISHABLE YET", report)
+
+    def test_the_publisher_agrees_with_the_label(self):
+        early = self._short_state(3, "day2b")
+        self.formal(early, out="early2", state_ref="day2b")
+        packet = self.tmp / "early2"
+        t = json.loads((packet / "signoff_template.json")
+                       .read_text(encoding="utf-8"))
+        t.update({"reviewer": "R", "attestation": "a",
+                  "review_started_utc": "2026-08-27T09:00:00+00:00",
+                  "review_completed_utc": "2026-08-27T11:00:00+00:00",
+                  "verdict": "pass"})
+        for r in t["records"]:
+            for f in pub.CHECK_FIELDS:
+                r[f] = True
+        for a in t.get("anomalies", []):
+            a["disposition"] = "n/a"
+        signoff = self.tmp / "early-signoff.json"
+        signoff.write_text(json.dumps(t, indent=1, sort_keys=True) + "\n",
+                           encoding="utf-8")
+        remote = self.tmp / "early-remote.git"
+        subprocess.run(["git", "init", "--bare", "--quiet", str(remote)],
+                       check=True)
+        with self.assertRaises(pub.PublishError) as c:
+            pub.publish(packet, signoff, str(remote), "day-07", None, True, True)
+        self.assertIn("shadow_day >= 7", str(c.exception))
+
+    def test_an_arrived_checkpoint_is_still_publishable(self):
+        m = self.formal(self.A, out="arrived")
+        self.assertEqual(m["latest_shadow_day"], 7)
+        self.assertTrue(m["publishable"])
+        self.assertNotIn("NOT PUBLISHABLE",
+                         (self.tmp / "arrived" / "review_report.md")
+                         .read_text(encoding="utf-8"))

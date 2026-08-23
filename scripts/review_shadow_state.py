@@ -712,6 +712,15 @@ def render_report(manifest: dict, ledgers: list, rows: list, collisions: dict,
     w = L.append
     w("# Singapore shadow review — %s" % checkpoint)
     w("")
+    if manifest["formal"] and not manifest["publishable"]:
+        w("> ## NOT PUBLISHABLE YET — the checkpoint has not arrived")
+        w(">")
+        w("> The state is pinned to its commit, but %s needs shadow_day >= %d"
+          % (manifest["checkpoint"], CHECKPOINTS[manifest["checkpoint"]]))
+        w("> and the latest ledger records shadow_day %s. Re-generate once a"
+          % manifest["latest_shadow_day"])
+        w("> run has recorded the day; the publisher refuses it until then.")
+        w("")
     if not manifest["formal"]:
         w("> ## NOT PUBLISHABLE — rehearsal packet")
         w(">")
@@ -1047,7 +1056,15 @@ def _build(state_dir: Path, out_dir: Path, as_of: str, review_all: bool,
         "provenance": ("git-verified-tree/1" if provenance
                        else "unverified-working-copy"),
         "formal": bool(state_commit and checkpoint),
-        "publishable": bool(state_commit and checkpoint),
+        # Formal is about provenance; publishable is also about time. A day-2
+        # corpus can be pinned to its commit perfectly well and still cannot be
+        # filed as a Day 7 review, and the publisher refuses it. Saying
+        # "publishable" here would send a reviewer through a checkpoint the
+        # publisher was always going to turn away.
+        "publishable": bool(
+            state_commit and checkpoint
+            and (successes[-1]["shadow_day"] if successes else None) is not None
+            and successes[-1]["shadow_day"] >= CHECKPOINTS[checkpoint]),
         "review_mode": "complete-corpus" if review_all else "focused-queue",
         "state_dir_name": state_dir.name,
         "input_sha256": before,
