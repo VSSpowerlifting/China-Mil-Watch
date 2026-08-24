@@ -229,7 +229,14 @@ def run(
     if dry_run:
         # Nothing is stored, so the attribution fold below never runs and the
         # dup/new columns cannot be filled in. Report what a dry run can honestly
-        # know rather than printing nothing at all.
+        # know rather than printing nothing at all — but say so, because an
+        # unlabelled `dup=0 new=0` reads as "this source delivered nothing"
+        # rather than "this run did not compute that".
+        logger.info(
+            "DRY RUN — the table below reports discovery only. dup/new/rejected "
+            "are UNAVAILABLE (no storage, so no attribution), and each status is "
+            "pre-refinement: ok_all_duplicates / ok_all_filtered are not resolved."
+        )
         logger.info("\n%s", human_report(source_results, run_id))
         _print_summary(all_scraped, new_articles, kw_passed, [], [], dry_run)
         return
