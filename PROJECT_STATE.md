@@ -1,59 +1,70 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-24 (shadow review kit, dedup-scope block and dry-run labelling
-all merged; one PR held on a red check; the offline suite is failing on main and
-that blocks the next daily run).
+Updated: 2026-08-24 (shadow review kit, dedup-scope block, dry-run labelling,
+PDF extraction and the preview week-growth repair all merged; suite green).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
 
-## BLOCKER — the offline suite fails on main, and the daily run will stop
+## Preview week tests froze the corpus shape — fixed
 
-**Two tests fail on `main` right now**, and they are the first thing to fix:
+For part of 2026-08-24 the offline suite failed on `main`, and it would have
+stopped collection:
 
 ```
-FAIL: test_sixteen_weeks_render_with_counts_matching_sql
-      (tests.test_preview_prototype.TestVolumeByWeek)           AssertionError: 17 != 16
-FAIL: test_only_governed_weeks_carry_an_annotation
-      (tests.test_preview_prototype.TestWeekShards)             '2026-08-24' != '2026-08-17'
+FAIL: test_sixteen_weeks_render_with_counts_matching_sql   AssertionError: 17 != 16
+FAIL: test_only_governed_weeks_carry_an_annotation         '2026-08-24' != '2026-08-17'
 ```
 
-Neither is caused by a code change. Both were introduced by the **scheduled
-daily run itself**: commit `5aa1285` (Daily update: 2026-08-24) added articles
-that opened a **17th publication week**, and both tests hard-code the 16-week
-corpus — one asserts the week count, the other asserts which week carries the
-`Snapshot boundary` annotation. Bisected: `d6bf6ed` passes, `5aa1285` fails.
+No code caused it. The scheduled daily commit `5aa1285` added articles that
+opened a **seventeenth publication week**, and both tests had frozen a corpus
+shape into an assertion — one a week total, the other a literal list of
+annotated week starts. The generator was right; the tests had expired.
+Bisected: `d6bf6ed` (16 weeks) passed, `5aa1285` (17 weeks) failed.
 
-**Why this stops collection.** In `daily_update.yml`, `Run offline test suite`
-has no `continue-on-error` and runs *before* `Run pipeline`, `Commit updated
-database and site output` and `Deploy to GitHub Pages`. The runs since have all
-reported success only because the scheduling guard set `should_run=false` and
-skipped every step — the documented trap where a green run does not mean the
-pipeline executed. **The next run with `should_run=true` will fail at the test
-step and never reach collection, commit or deploy.**
+It was not cosmetic. `Run offline test suite` in `daily_update.yml` has no
+`continue-on-error` and precedes `Run pipeline`, the commit step and the Pages
+deploy, so the next run with `should_run=true` would have failed at the test
+step and never collected. The runs in between reported success only because the
+scheduling guard set `should_run=false` and skipped every step — the documented
+trap where a green run does not mean the pipeline executed.
 
-Fixing it is a governance decision, not a mechanical one: these assertions encode
-how the corpus is expected to grow, so they should be reconciled deliberately
-(derive the week count from the corpus, or advance the governed expectation) and
-not merely re-pinned to 17. Untouched pending that decision.
+**Repaired durably in PR #15**, not re-pinned to 17. Expectations are now
+derived from the corpus by SQL that never calls the generator: the ordered
+weeks, their record counts and their run-date counts come from an independent
+query, and the annotated set is computed from the documented policy — outage
+overlap wins, otherwise the corpus's first and last week. The snapshot boundary
+therefore moves as the corpus grows. The governed outage window stays written
+down because it is governed data, with a test pinning it against the
+generator's copy so the two cannot drift apart silently.
+
+The assertions got stronger: a duplicated week, a missing week, a wrong render
+order, an annotation on an ungoverned week and a missing annotation on a
+governed one all fail now. `TestWeekInvariantsGrowWithTheCorpus` builds from a
+temporary corpus carrying one extra later week and proves the same helpers
+accept it with no new constants — so the next new week does not require editing
+a test. Three injected defects (a dropped week, an off-by-one count, a
+misplaced annotation) were each confirmed to fail the repaired tests.
 
 ## Public state, 2026-08-24
 
-`origin/main` is **`ba971c2`**. Public site unchanged: `DEFAULT_SITE_MODE =
+`origin/main` is **`0a1b099`**. Public site unchanged: `DEFAULT_SITE_MODE =
 LEGACY`, `DECLARED_SNAPSHOT` still declares 2026-08-19 / 3,388 records,
 `gh-pages` carries only what the scheduled run deployed, and no workflow was
 dispatched by hand.
 
-**Canonical suite on `main`: 1,141 tests — 2 failures (above), 1 governed
-skip.** Run it with the project virtualenv (`.venv/bin/python -m unittest
-discover -s tests -t .`), never system python, which lacks `dotenv` and
-`requests` and reports dozens of dependency failures. The governed skip is the
+**Canonical suite on `main`: 1,171 tests, OK, 0 failures, 1 governed skip.**
+Run it with the project virtualenv (`.venv/bin/python -m unittest discover -s
+tests -t .`), never system python, which lacks `dotenv` and `requests` and
+reports dozens of dependency failures. The governed skip is the
 release-readiness test reporting the declared snapshot is stale against the
 tracked corpus (declared 2026-08-19 / 3,388; corpus now 2026-08-24 / 3,499).
 That is the guard working; advancing the snapshot is a deliberate act — date,
 record count **and** logical fingerprint — and has not been done.
 
-Focused suites all green: review kit 142/142, dedup authority 32/32, pipeline-run
-integration 18/18. Output validator passes with the **10 governed warnings**.
+Focused suites all green: review kit 142/142, dedup authority 32/32,
+pipeline-run integration 18/18, PDF extraction 23/23. Output validator passes
+with the **10 governed warnings**. The daily workflow's offline-test gate passes
+on exact current `main`, so collection is unblocked.
 
 ## Merged since 2026-08-23
 
@@ -62,18 +73,20 @@ integration 18/18. Output validator passes with the **10 governed warnings**.
 | [#10](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/10) | `d6bf6ed` | Singapore shadow **review kit** — twelve commits, six files, 142 focused tests |
 | [#11](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/11) | `9e685bf` | Blocks the corpus-wide title dedup proposed in `FOLLOWUP.md`; 4 tests pin the batch scope |
 | [#12](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/12) | `ba971c2` | A dry run now names the columns it could not compute; one log line + 4 tests |
+| [#15](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/15) | `8193dff` | Preview week tests derive their expectations from the corpus; 7 tests added, suite unblocked |
+| [#13](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/13) | `0a1b099` | `processing/pdf_text.py` — PDF text extraction as a pure function over bytes, returning a status rather than a `str`; 23 tests; adds `pypdf` |
 
-All three were normal merge commits; no branch was deleted. None changed
-`pla_watch.db`, `output/`, workflows, `desks/`, the renderer, the snapshot or the
-site mode.
+All were normal merge commits; no branch was deleted. None changed
+`pla_watch.db`, `output/`, workflows, `desks/`, the renderer, the snapshot or
+the site mode.
 
-**[#13](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/13) — PDF text extraction — remains OPEN and unmerged.** Its own contract is
-verified: a pure function over supplied bytes, no network, no filesystem writes,
-no subprocess, no OCR, imported by nothing but its own tests, and it returns a
-status rather than a `str` so an empty extraction can never read as a successful
-empty article. It is held only because CI is red — on the two failures above,
-which are identical on `main` and unrelated to it. It can merge as soon as they
-are resolved.
+**PDF extraction is dormant infrastructure.** `processing/pdf_text.py` is
+imported by nothing but its own tests — no collector, adapter, manifest,
+workflow or site path references it. Text is never truncated; the two limits
+that exist (`MAX_BYTES`, `MAX_PAGES`) are refusals checked before any text is
+assembled, each returning its own status carrying no text, and a non-`OK`
+result cannot carry text at all. A network caller is responsible for its own
+fetch-size policy before invoking it.
 
 ## Singapore shadow desk — collecting, day 3 of 30
 
@@ -132,10 +145,11 @@ able to recognise it and say so, so impersonating a browser would defeat the
 capability that rule protects. Resolving it means requesting an official
 discovery route. Until then `access-blocked` is the honest status.
 
-PR #13 would remove the one real engineering blocker (those items are PDFs and
-the pipeline cannot read PDFs at all); PR #11, already merged, prevents the other
-(recurring official exercise titles would be erased by a corpus-wide title
-dedup). Neither enables anything.
+The two engineering blockers are now closed. PDF extraction exists on `main`
+(those items are PDFs, and the pipeline previously could not read PDFs at all),
+and the corpus-wide title dedup that would have erased recurring official
+exercise titles is blocked and pinned by tests. **Neither enables a desk**, and
+no collector for a second desk exists. What remains is access, not code.
 
 ## Public launch gates — still incomplete
 
