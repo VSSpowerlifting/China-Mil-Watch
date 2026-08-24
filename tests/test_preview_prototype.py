@@ -17,9 +17,11 @@ import hashlib
 import json
 import re
 import shutil
+import sqlite3
 import sys
 import tempfile
 import unittest
+import urllib.parse
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -140,6 +142,81 @@ def _tree_digest(root: Path) -> str:
             h.update(str(p.relative_to(root)).encode())
             h.update(hashlib.sha256(p.read_bytes()).digest())
     return h.hexdigest()
+
+
+#: The governed collection outage, as recorded in PROJECT_STATE.md. Written
+#: here as data rather than imported so the expectation below is derived
+#: independently of the generator; `test_the_governed_outage_window_has_not_drifted`
+#: pins the two copies together, so a change to either is caught rather than
+#: silently absorbed.
+GOVERNED_OUTAGE_START, GOVERNED_OUTAGE_END = "2026-07-17", "2026-07-24"
+
+
+def weeks_from_sql(db_path):
+    """
+    The publication weeks, derived from the database by SQL alone.
+
+    This deliberately does **not** call `generate_preview`. An expectation
+    computed by the code under test proves only that the code agrees with
+    itself; these tests exist to check the rendered page against the corpus,
+    so the corpus has to be read independently.
+
+    Monday bucketing is done in SQL — `weekday 0` moves to that week's Sunday
+    and six days back lands on its Monday — and the run-date count is assembled
+    in Python from a separate `DISTINCT` query. Ordering is newest-first, which
+    is the order the archive table renders.
+
+    Opened `mode=ro&immutable=1`: no lock is taken and no `-wal` or `-shm` can
+    appear beside the tracked database.
+    """
+    from datetime import date, timedelta
+    uri = "file:%s?mode=ro&immutable=1" % urllib.parse.quote(str(db_path))
+    con = sqlite3.connect(uri, uri=True)
+    try:
+        rows = con.execute(
+            "SELECT date(a.published_date,'weekday 0','-6 days') AS start, "
+            "       COUNT(*) AS n "
+            "  FROM articles a JOIN sources s ON s.id = a.source_id "
+            " GROUP BY start ORDER BY start DESC").fetchall()
+        run_days = {r[0] for r in con.execute(
+            "SELECT DISTINCT substr(started_at,1,10) FROM scrape_runs")}
+    finally:
+        con.close()
+
+    weeks = []
+    for start, count in rows:
+        y, m, d = (int(part) for part in start.split("-"))
+        monday = date(y, m, d)
+        days = [(monday + timedelta(days=i)).isoformat() for i in range(7)]
+        weeks.append({"start": start, "end": days[-1], "count": count,
+                      "run_dates": sum(1 for day in days if day in run_days)})
+    return weeks
+
+
+def governed_annotations(weeks):
+    """
+    Which weeks the policy says must carry an annotation, and which one.
+
+    The rule (`generate_preview.week_annotation`, ruled 2026-08-16 §6a): a week
+    is annotated only when the reason is independently governed — it overlaps
+    the recorded outage, or it sits at an edge of the snapshot. Nothing else
+    may be.
+
+    Both halves are derived, not listed. The outage window is governed data;
+    the boundary is whichever weeks are currently first and last, so it **moves
+    every time the corpus grows a week**. That movement is the whole reason the
+    frozen version of this expectation had to be replaced.
+    """
+    starts = [w["start"] for w in weeks]
+    first, last = min(starts), max(starts)
+    expected = {}
+    for week in weeks:
+        if (week["start"] <= GOVERNED_OUTAGE_END
+                and week["end"] >= GOVERNED_OUTAGE_START):
+            expected[week["start"]] = "Known collection interruption"
+        elif week["start"] in (first, last):
+            expected[week["start"]] = "Snapshot boundary"
+    return expected
 
 
 def snapshot_of(db_path):
@@ -1618,14 +1695,53 @@ class TestWeekShards(PreviewCase):
                     self.assertLessEqual(rec["published_date"], week["end"])
 
     def test_only_governed_weeks_carry_an_annotation(self):
+        """
+        Exactly the governed weeks are annotated, and every other week is not.
+
+        The expected set is derived by `governed_annotations()` from the
+        corpus and the governed outage window — never copied back from the
+        generator. The snapshot boundary is by definition the current first and
+        last week, so it moves as the corpus grows; a frozen list of week
+        starts here is a test that expires.
+        """
+        expected = governed_annotations(weeks_from_sql(TRACKED_DB))
+        self.assertTrue(expected, "the policy annotates no week at all")
+
         annotated = {w["start"]: w["annotation"]
                      for w in self.weeks if w["annotation"]}
-        self.assertEqual(
-            annotated,
-            {"2026-07-20": "Known collection interruption",
-             "2026-07-13": "Known collection interruption",
-             "2026-08-17": "Snapshot boundary",
-             "2026-05-04": "Snapshot boundary"})
+        self.assertEqual(annotated, expected)
+
+        # The other half of "only": every week the policy does not name must
+        # carry no annotation at all.
+        for week in self.weeks:
+            if week["start"] not in expected:
+                with self.subTest(week=week["start"]):
+                    self.assertIsNone(week["annotation"])
+                    self.assertIsNone(week["annotation_note"])
+
+    def test_the_annotation_reaches_the_rendered_shard(self):
+        """The governed set is what a reader actually sees, not just what the
+        loader computed."""
+        expected = governed_annotations(weeks_from_sql(TRACKED_DB))
+        for week in self.weeks:
+            html = self.shard_html["week-%s.html" % week["start"]]
+            with self.subTest(week=week["start"]):
+                if week["start"] in expected:
+                    self.assertIn(expected[week["start"]], html)
+                else:
+                    for label in ("Snapshot boundary",
+                                  "Known collection interruption"):
+                        self.assertNotIn(label, html)
+
+    def test_the_governed_outage_window_has_not_drifted(self):
+        """
+        The expectation above hard-codes the outage window deliberately — it is
+        governed data, not a moving fact. This is what keeps that copy honest:
+        if the generator's window ever changes, the two disagree here rather
+        than the expectation silently tracking whatever the code now says.
+        """
+        self.assertEqual(GOVERNED_OUTAGE_START, gp.OUTAGE_START)
+        self.assertEqual(GOVERNED_OUTAGE_END, gp.OUTAGE_END)
 
     def test_outage_annotation_names_the_governed_dates(self):
         html = self.shard_html["week-2026-07-20.html"]
@@ -2632,11 +2748,33 @@ class TestVolumeByWeek(PreviewCase):
     def page_static(out, name):
         return (out / name).read_text(encoding="utf-8")
 
-    def test_sixteen_weeks_render_with_counts_matching_sql(self):
-        self.assertEqual(len(self.rows), 16)
-        self.assertEqual(len(self.data["weeks"]), 16)
-        for (start, end, count, runs), week in zip(self.rows,
-                                                   self.data["weeks"]):
+    def test_every_publication_week_renders_with_counts_matching_sql(self):
+        """
+        Every publication week the corpus contains renders exactly once, with
+        the right span, record count and run-date count.
+
+        The expectation comes from `weeks_from_sql()` — a separate query
+        against the same database — so this compares the rendered page to the
+        corpus rather than to the generator's own idea of the corpus. It also
+        carries no week total: the corpus grows a week roughly every seven
+        days, and a number written here would be wrong again by the next one.
+        """
+        expected = weeks_from_sql(TRACKED_DB)
+        self.assertTrue(expected, "the corpus has no publication weeks")
+
+        # Set comparison first: it names a missing or duplicated week directly,
+        # where a zip() mismatch would only report the first row that differs.
+        rendered_starts = [start for start, _, _, _ in self.rows]
+        self.assertEqual(len(rendered_starts), len(set(rendered_starts)),
+                         "a publication week rendered more than once")
+        self.assertEqual(set(rendered_starts),
+                         {w["start"] for w in expected},
+                         "rendered weeks do not match the corpus")
+        self.assertEqual(len(self.rows), len(expected))
+        self.assertEqual(rendered_starts, [w["start"] for w in expected],
+                         "weeks are not in newest-first order")
+
+        for (start, end, count, runs), week in zip(self.rows, expected):
             with self.subTest(week=start):
                 self.assertEqual(start, week["start"])
                 self.assertEqual(end, week["end"])
@@ -4928,6 +5066,138 @@ class TestStop4RoutesAreIntact(PreviewCase):
         self.assertEqual(
             len([q for q in top if q.name.startswith("week-")]),
             self.shard_count)
+
+
+
+class TestWeekInvariantsGrowWithTheCorpus(unittest.TestCase):
+    """
+    Adding a publication week must not require editing a test.
+
+    This is the regression for the defect the two tests above carried. Both
+    froze a corpus shape — "sixteen weeks", and a literal list of annotated
+    week starts — into an assertion. Collection added a seventeenth week on
+    2026-08-24 and both failed, on `main`, with no code change and nothing
+    actually wrong with the page. Because `Run offline test suite` in
+    `daily_update.yml` has no `continue-on-error` and precedes the pipeline,
+    that would have stopped collection outright.
+
+    So: build from a corpus that has one more week than the tracked one, run
+    the *same* invariant helpers with no new constants, and require them to
+    accept it.
+
+    Nothing here touches the tracked database or `output/`. The corpus is a
+    copy in a temporary directory and the build goes to a temporary directory.
+    """
+
+    NEW_WEEK_START = None   # derived in setUpClass; never written down
+
+    @classmethod
+    def setUpClass(cls):
+        if not TRACKED_DB.exists():
+            raise unittest.SkipTest("production database not present")
+        from datetime import date, timedelta
+
+        cls.tmp = Path(tempfile.mkdtemp(prefix="preview-growth-"))
+        cls.db = cls.tmp / "grown.db"
+        shutil.copy(TRACKED_DB, cls.db)
+
+        cls.before = weeks_from_sql(TRACKED_DB)
+        latest = max(w["start"] for w in cls.before)
+        y, m, d = (int(part) for part in latest.split("-"))
+        # The Monday after the current last week, and a date inside it.
+        cls.NEW_WEEK_START = (date(y, m, d) + timedelta(days=7)).isoformat()
+        published = (date(y, m, d) + timedelta(days=9)).isoformat()
+
+        con = sqlite3.connect(str(cls.db))
+        try:
+            source_id = con.execute(
+                "SELECT id FROM sources ORDER BY id LIMIT 1").fetchone()[0]
+            con.execute(
+                "INSERT INTO articles (url, content_hash, source_id, "
+                "                      title_original, text_original, "
+                "                      published_date, passed_relevance) "
+                "VALUES (?, ?, ?, ?, ?, ?, 1)",
+                ("https://example.invalid/growth-fixture-%s" % published,
+                 "growthfixture" + "0" * 51, source_id,
+                 "成長テスト記事", "本文" * 60, published))
+            con.commit()
+        finally:
+            con.close()
+
+        cls.after = weeks_from_sql(cls.db)
+        cls.out = cls.tmp / "build"
+        gp.build(cls.out, "Growth Test", cls.db, snapshot=snapshot_of(cls.db))
+        cls.html = (cls.out / "archive.html").read_text(encoding="utf-8")
+        cls.rows = re.findall(
+            r'<span class="c-range">([\d-]+) to ([\d-]+)</span>.*?'
+            r'<span class="v-figure">([\d,]+)</span>.*?'
+            r'<td class="c-runs">(\d+)', cls.html, re.S)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_the_fixture_added_exactly_one_later_week(self):
+        self.assertEqual(len(self.after), len(self.before) + 1)
+        self.assertEqual(max(w["start"] for w in self.after),
+                         self.NEW_WEEK_START)
+        self.assertNotIn(self.NEW_WEEK_START,
+                         {w["start"] for w in self.before})
+
+    def test_the_volume_invariant_accepts_the_new_week_unedited(self):
+        """The assertion body from the repaired test, verbatim and unchanged —
+        no constant, no total, no week start written down."""
+        rendered_starts = [start for start, _, _, _ in self.rows]
+        self.assertEqual(len(rendered_starts), len(set(rendered_starts)))
+        self.assertEqual(set(rendered_starts),
+                         {w["start"] for w in self.after})
+        self.assertEqual(len(self.rows), len(self.after))
+        self.assertEqual(rendered_starts, [w["start"] for w in self.after])
+        for (start, end, count, runs), week in zip(self.rows, self.after):
+            with self.subTest(week=start):
+                self.assertEqual(start, week["start"])
+                self.assertEqual(end, week["end"])
+                self.assertEqual(count, "{:,}".format(week["count"]))
+                self.assertEqual(int(runs), week["run_dates"])
+
+    def test_the_new_week_renders_its_own_shard_and_count(self):
+        shard = self.out / ("week-%s.html" % self.NEW_WEEK_START)
+        self.assertTrue(shard.is_file(), "the new week rendered no shard")
+        row = [r for r in self.rows if r[0] == self.NEW_WEEK_START]
+        self.assertEqual(len(row), 1)
+        self.assertEqual(row[0][2], "1", "the added record was not counted")
+
+    def test_the_snapshot_boundary_moves_to_the_new_week(self):
+        """
+        The boundary is a property of the corpus, so it must follow it. The
+        week that was last is no longer a boundary — unless it overlaps the
+        governed outage, which outranks the boundary rule.
+        """
+        expected = governed_annotations(self.after)
+        self.assertEqual(expected.get(self.NEW_WEEK_START),
+                         "Snapshot boundary")
+
+        previous_last = max(w["start"] for w in self.before)
+        previous = [w for w in self.after if w["start"] == previous_last][0]
+        overlaps_outage = (previous["start"] <= GOVERNED_OUTAGE_END
+                           and previous["end"] >= GOVERNED_OUTAGE_START)
+        if overlaps_outage:
+            self.assertEqual(expected[previous_last],
+                             "Known collection interruption")
+        else:
+            self.assertNotIn(previous_last, expected)
+
+        # And the generator agrees with the derived policy on the new corpus.
+        actual = {w["start"]: w["annotation"]
+                  for w in gp.load_corpus(self.db)["weeks"] if w["annotation"]}
+        self.assertEqual(actual, expected)
+
+    def test_the_tracked_database_and_output_were_not_touched(self):
+        self.assertNotEqual(self.db.resolve(), TRACKED_DB.resolve())
+        self.assertFalse(str(self.out).startswith(str(PRODUCTION_OUT)))
+        for residue in ("pla_watch.db-wal", "pla_watch.db-shm"):
+            self.assertFalse((REPO_ROOT / residue).exists(),
+                             "%s appeared beside the tracked database" % residue)
 
 
 if __name__ == "__main__":
