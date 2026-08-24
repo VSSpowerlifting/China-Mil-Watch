@@ -28,13 +28,26 @@ from config import (
     REQUEST_TIMEOUT_SECONDS,
 )
 
-# Polite user-agent that identifies the project and its purpose.
-# Replace [username] with your GitHub username before deploying.
+# Honest identification. An institution that wants to refuse this collector must
+# be able to recognise it and say so in robots.txt, which requires a name that
+# does not change and a URL that resolves.
+#
+# What the previous string got wrong, recorded so it is not reintroduced:
+#
+#   * `github.com/[username]/pla-watch` was a placeholder that was never
+#     replaced, so the collector advertised a source URL that does not exist.
+#     Offering an unreachable identity is worse than offering none.
+#   * "academic OSINT research" contradicts the project's own description of
+#     itself (CLAUDE.md: never "OSINT tool or intelligence cosplay"). A defense
+#     ministry reading "OSINT" in a user agent may reasonably read it as
+#     intelligence collection, which is precisely the framing this project
+#     rejects.
+#
+# `tests/test_user_agent_identity.py` refuses all three faults.
 _USER_AGENT = (
-    "PLAWatch/1.0 "
-    "(academic OSINT research; non-commercial; "
-    "source: github.com/[username]/pla-watch) "
-    "Python-requests/2.x"
+    "ChinaMilWatch/1.0 "
+    "(non-commercial research; "
+    "source and contact: https://github.com/VSSpowerlifting/China-Mil-Watch)"
 )
 
 
