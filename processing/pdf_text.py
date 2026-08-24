@@ -28,6 +28,26 @@ Determinism
 Same bytes in, same result out. No wall clock, no network, no filesystem. The
 whitespace normalisation matches `visible_text()` in the source adapters so a
 PDF body and an HTML body are comparable once stored.
+
+Limits, and whose job they are
+------------------------------
+Text is never truncated. There is no output ceiling, and none should be added
+quietly: a shortened body returned as `OK` is indistinguishable from a short
+document, which is the confusion this whole module exists to prevent.
+
+The two limits that do exist — `MAX_BYTES` and `MAX_PAGES` — are refusals, not
+trims. Both are checked before any text is assembled and both return their own
+status carrying no text at all. Any limit added later must follow that rule:
+**fail closed under a distinct status** (`resource_limit_exceeded` or a more
+specific one), never return partial text as success. `__post_init__` enforces
+the second half of that mechanically — a non-`OK` result cannot carry text even
+if someone tries.
+
+These limits are a backstop against a pathological document, not an intake
+policy. **A caller that fetches over the network is responsible for its own
+fetch-size and timeout policy before it calls this function.** By the time bytes
+arrive here they have already been downloaded; refusing them at this point saves
+parsing, not bandwidth.
 """
 
 from __future__ import annotations
@@ -118,7 +138,18 @@ def _quiet_pypdf():
 
 @dataclass(frozen=True)
 class PdfExtraction:
-    """What a PDF turned out to contain. `text` is non-empty only when OK."""
+    """
+    What a PDF turned out to contain. `text` is non-empty only when OK.
+
+    What `OK` claims, precisely: the parser read this document and what came
+    back is here in full, untruncated. It does **not** claim every page
+    contributed. A page that raised during extraction is skipped rather than
+    failing the document, and `pages_failed` records how many — so `OK` with
+    `pages_failed > 0` means "complete as far as the parser got", and a caller
+    that needs whole-document certainty should read that field rather than the
+    status alone. `page_count` and `pages_with_text` bound the same question
+    from the other side.
+    """
 
     status: str
     text: str = ""
