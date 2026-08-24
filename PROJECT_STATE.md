@@ -1,9 +1,162 @@
 # PROJECT_STATE — China Mil Watch / The PLA Watch
 
-Updated: 2026-08-17 (MOD China root-caused and fixed; foundation released and
-validated in production; run-475 persistence defect fixed on a local branch).
+Updated: 2026-08-24 (shadow review kit, dedup-scope block, dry-run labelling,
+PDF extraction and the preview week-growth repair all merged; suite green).
 State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
 table).
+
+## Preview week tests froze the corpus shape — fixed
+
+For part of 2026-08-24 the offline suite failed on `main`, and it would have
+stopped collection:
+
+```
+FAIL: test_sixteen_weeks_render_with_counts_matching_sql   AssertionError: 17 != 16
+FAIL: test_only_governed_weeks_carry_an_annotation         '2026-08-24' != '2026-08-17'
+```
+
+No code caused it. The scheduled daily commit `5aa1285` added articles that
+opened a **seventeenth publication week**, and both tests had frozen a corpus
+shape into an assertion — one a week total, the other a literal list of
+annotated week starts. The generator was right; the tests had expired.
+Bisected: `d6bf6ed` (16 weeks) passed, `5aa1285` (17 weeks) failed.
+
+It was not cosmetic. `Run offline test suite` in `daily_update.yml` has no
+`continue-on-error` and precedes `Run pipeline`, the commit step and the Pages
+deploy, so the next run with `should_run=true` would have failed at the test
+step and never collected. The runs in between reported success only because the
+scheduling guard set `should_run=false` and skipped every step — the documented
+trap where a green run does not mean the pipeline executed.
+
+**Repaired durably in PR #15**, not re-pinned to 17. Expectations are now
+derived from the corpus by SQL that never calls the generator: the ordered
+weeks, their record counts and their run-date counts come from an independent
+query, and the annotated set is computed from the documented policy — outage
+overlap wins, otherwise the corpus's first and last week. The snapshot boundary
+therefore moves as the corpus grows. The governed outage window stays written
+down because it is governed data, with a test pinning it against the
+generator's copy so the two cannot drift apart silently.
+
+The assertions got stronger: a duplicated week, a missing week, a wrong render
+order, an annotation on an ungoverned week and a missing annotation on a
+governed one all fail now. `TestWeekInvariantsGrowWithTheCorpus` builds from a
+temporary corpus carrying one extra later week and proves the same helpers
+accept it with no new constants — so the next new week does not require editing
+a test. Three injected defects (a dropped week, an off-by-one count, a
+misplaced annotation) were each confirmed to fail the repaired tests.
+
+## Public state, 2026-08-24
+
+`origin/main` is **`0a1b099`**. Public site unchanged: `DEFAULT_SITE_MODE =
+LEGACY`, `DECLARED_SNAPSHOT` still declares 2026-08-19 / 3,388 records,
+`gh-pages` carries only what the scheduled run deployed, and no workflow was
+dispatched by hand.
+
+**Canonical suite on `main`: 1,171 tests, OK, 0 failures, 1 governed skip.**
+Run it with the project virtualenv (`.venv/bin/python -m unittest discover -s
+tests -t .`), never system python, which lacks `dotenv` and `requests` and
+reports dozens of dependency failures. The governed skip is the
+release-readiness test reporting the declared snapshot is stale against the
+tracked corpus (declared 2026-08-19 / 3,388; corpus now 2026-08-24 / 3,499).
+That is the guard working; advancing the snapshot is a deliberate act — date,
+record count **and** logical fingerprint — and has not been done.
+
+Focused suites all green: review kit 142/142, dedup authority 32/32,
+pipeline-run integration 18/18, PDF extraction 23/23. Output validator passes
+with the **10 governed warnings**. The daily workflow's offline-test gate passes
+on exact current `main`, so collection is unblocked.
+
+## Merged since 2026-08-23
+
+| PR | Merge commit | What landed |
+|---|---|---|
+| [#10](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/10) | `d6bf6ed` | Singapore shadow **review kit** — twelve commits, six files, 142 focused tests |
+| [#11](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/11) | `9e685bf` | Blocks the corpus-wide title dedup proposed in `FOLLOWUP.md`; 4 tests pin the batch scope |
+| [#12](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/12) | `ba971c2` | A dry run now names the columns it could not compute; one log line + 4 tests |
+| [#15](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/15) | `8193dff` | Preview week tests derive their expectations from the corpus; 7 tests added, suite unblocked |
+| [#13](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/13) | `0a1b099` | `processing/pdf_text.py` — PDF text extraction as a pure function over bytes, returning a status rather than a `str`; 23 tests; adds `pypdf` |
+
+All were normal merge commits; no branch was deleted. None changed
+`pla_watch.db`, `output/`, workflows, `desks/`, the renderer, the snapshot or
+the site mode.
+
+**PDF extraction is dormant infrastructure.** `processing/pdf_text.py` is
+imported by nothing but its own tests — no collector, adapter, manifest,
+workflow or site path references it. Text is never truncated; the two limits
+that exist (`MAX_BYTES`, `MAX_PAGES`) are refusals checked before any text is
+assembled, each returning its own status carrying no text, and a non-`OK`
+result cannot carry text at all. A network caller is responsible for its own
+fetch-size policy before invoking it.
+
+## Singapore shadow desk — collecting, day 3 of 30
+
+Daily at 21:10 UTC into the orphan `shadow/singapore-mindef` branch; nothing it
+writes reaches production, `desks/`, `pla_watch.db` or `output/`. Doctrine in
+`docs/SHADOW_COLLECTION.md`; collector `scripts/shadow_collect.py`.
+
+State head **`adff5b7`**. Five ledger entries, 2026-08-19 → 2026-08-23,
+consecutive, unique run ids, every one `health=ok` with `robots_status=allowed`
+and zero access, fetch or extraction failures. 32 records over a 2026-07-21 →
+2026-08-20 corpus range. The state-hash chain is continuous and the
+`ok_all_duplicates` runs correctly left the database byte-identical.
+
+**Latest ledger records `shadow_day` 3.** Day zero is 2026-08-19T23:03:09Z and
+the field counts complete elapsed 24-hour periods, so the 2026-08-20 run — which
+fired 82 minutes before the first period closed — also recorded day 0. Calendar
+date and shadow day differ by one; the ledger is the authority.
+
+**This desk is not qualified and must not be described as qualified.** It is 3
+days into a 30-day shadow qualification, renders nothing, and appears on no
+public surface.
+
+## Checkpoint reviews — tooling merged, nothing published
+
+`scripts/review_shadow_state.py` and `scripts/publish_shadow_review.py` with
+`docs/SHADOW_REVIEW.md` as the operator guide. A formal packet's inputs are
+exported from the named commit's own `state/` tree via `git cat-file`, so
+`--state-commit` is verified rather than trusted text; a `--state-dir` packet is
+a rehearsal, is stamped NOT PUBLISHABLE, and the publisher refuses it.
+Publication is an ordinary fast-forward — no force, no lease, no ref deletion.
+
+**No formal review has been published.** No packet generated, no sign-off
+created, and `review/singapore-mindef` does not exist on the remote.
+
+**Next operational gate: the Day 7 checkpoint, earliest 2026-08-27.**
+`shadow_day >= 7` needs a run at or after 2026-08-26T23:03:09Z, and the cron
+fires at 21:10 UTC — so the 2026-08-26 run lands at day 6 and **2026-08-27** is
+the first eligible one. The tool recomputes `shadow_day` itself and refuses
+anything earlier. Day 7 is one of three checkpoints and qualifies nothing alone.
+
+## Second desk — access-blocked on discovery
+
+No second desk is enabled: `desks/` declares exactly one, and the production
+registry resolves only China.
+
+Candidate official sources were checked under honest identification — a user
+agent naming this project, no browser impersonation, no challenge solving, no
+proxy. `robots.txt` permits the relevant paths, but the HTML listing pages are
+served behind an interactive challenge that a collector would have to defeat
+rather than satisfy. Individual documents are reachable; the listings that would
+say which documents exist are not.
+
+**The blocker is discovery — not engineering, and not robots policy.** The
+standing rule is that an institution wanting to refuse this collector must be
+able to recognise it and say so, so impersonating a browser would defeat the
+capability that rule protects. Resolving it means requesting an official
+discovery route. Until then `access-blocked` is the honest status.
+
+The two engineering blockers are now closed. PDF extraction exists on `main`
+(those items are PDFs, and the pipeline previously could not read PDFs at all),
+and the corpus-wide title dedup that would have erased recurring official
+exercise titles is blocked and pinned by tests. **Neither enables a desk**, and
+no collector for a second desk exists. What remains is access, not code.
+
+## Public launch gates — still incomplete
+
+Unchanged and unmet: one non-China desk collecting 30 consecutive days, its
+source universe published, coverage health public, the 2026-07-17→24 collection
+outage disclosed, and owner sign-off recorded in `DECISION_LOG.md`. Singapore is
+3 days into the first of those.
 
 ## Defense Discourse foundation — RELEASED and validated in production
 
@@ -71,10 +224,12 @@ Still open: canonical selection keeps one copy and discards the losing copies'
 URLs, so "both institutions carried this release" is recorded nowhere. That is a
 provenance-model question, not a dedup fix.
 
-## Run-475 persistence defect — FIXED on a local branch, not yet pushed
+## Run-475 persistence defect — RELEASED as `fa284b6` on `origin/main`
 
-Branch `fix/run475-persistence-gate` off `origin/main` (`3534a07`). One commit;
-**nothing pushed, merged or deployed.**
+Released and confirmed by scheduled run #480 (2026-08-15): the
+failure-persistence step correctly skipped, which is the behaviour the fix
+exists to produce. This section previously read "nothing pushed, merged or
+deployed", which was true when written and is not now.
 
 Run 475 failed the pre-pipeline cleanliness gate (the offline suite had dirtied
 `pla_watch.db`), skipped the pipeline, and the persist-on-failure step still ran
