@@ -123,12 +123,24 @@ class TestTheCollectorAgentIsTheAgreedString(unittest.TestCase):
     """
 
     AGREED = ("ChinaMilWatch/1.0 (non-commercial research; "
-              "source and contact: https://github.com/VSSpowerlifting/"
+              "project: https://github.com/VSSpowerlifting/"
               "China-Mil-Watch)")
 
     def test_the_default_agent_matches_the_agreed_identity(self):
         from scraper.base import _USER_AGENT
         self.assertEqual(_USER_AGENT, self.AGREED)
+
+    def test_it_does_not_advertise_a_contact_route(self):
+        """
+        The URL identifies the project; it is not a reply address. Labelling it
+        `contact:` would promise a mechanism the project does not operate, which
+        is the same class of fault as the placeholder that preceded it — an
+        identity making a claim that does not hold up when someone acts on it.
+        Correspondence carries a real reply address separately.
+        """
+        from scraper.base import _USER_AGENT
+        self.assertIn("project:", _USER_AGENT)
+        self.assertNotIn("contact", _USER_AGENT.lower())
 
     def test_it_is_what_the_session_actually_sends(self):
         """Pinning the constant is worth nothing if the header is built from

@@ -32,6 +32,12 @@ from config import (
 # be able to recognise it and say so in robots.txt, which requires a name that
 # does not change and a URL that resolves.
 #
+# The URL is labelled `project:`, not `contact:`. It is a verified project and
+# source location; it is not a guaranteed reply route, and advertising a contact
+# mechanism the project does not actually operate would be the same class of
+# fault as the placeholder below. Correspondence carries a real reply address
+# separately, supplied by whoever sends it.
+#
 # What the previous string got wrong, recorded so it is not reintroduced:
 #
 #   * `github.com/[username]/pla-watch` was a placeholder that was never
@@ -47,7 +53,7 @@ from config import (
 _USER_AGENT = (
     "ChinaMilWatch/1.0 "
     "(non-commercial research; "
-    "source and contact: https://github.com/VSSpowerlifting/China-Mil-Watch)"
+    "project: https://github.com/VSSpowerlifting/China-Mil-Watch)"
 )
 
 
