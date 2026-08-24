@@ -412,5 +412,72 @@ class TestTierTableGovernance(unittest.TestCase):
         self.assertGreater(r["C"], r["D"])
 
 
+class TestScopeIsPartOfTheContract(unittest.TestCase):
+    """
+    `dedup_articles()` collapses same-title copies **within one batch**. That
+    scope is not an implementation detail waiting to be widened — it is the
+    only scope that is correct for every source at once, and these tests exist
+    so that widening it has to be a deliberate act.
+
+    Why it matters: a corpus-wide title check is right for a source that reuses
+    a title for the same story (PLA Daily reposts one piece across
+    service-branch sub-paths) and destructive for a source that reuses a title
+    for different events. The second-desk research found the latter — on the
+    Japan Joint Staff feed "Japan-U.S. Bilateral Exercise" titles 27 distinct
+    exercises. A global check would drop 26 of them as duplicates, with no
+    error raised and nothing in the ledger to show for it.
+
+    `FOLLOWUP.md` proposes exactly that widening. It is annotated as blocked;
+    this is the executable half of that annotation.
+    """
+
+    def _release(self, url, title):
+        return {"url": url, "source_slug": "pla_daily",
+                "title_original": title,
+                "text_original": "正文内容 %s" % url,
+                "published_date": "2026-05-10"}
+
+    def test_dedup_reads_only_the_batch_it_is_given(self):
+        """No database, no filesystem, no global state — call it twice and the
+        second call cannot know what the first one saw."""
+        title = "日米共同訓練について"
+        first = dedup_articles([self._release("http://x/a1", title)])
+        second = dedup_articles([self._release("http://x/a2", title)])
+        self.assertEqual(len(first), 1)
+        self.assertEqual(len(second), 1,
+                         "a later batch was collapsed against an earlier one; "
+                         "dedup has acquired cross-batch memory")
+        self.assertEqual(second[0]["url"], "http://x/a2")
+
+    def test_recurring_event_titles_survive_across_batches(self):
+        """The Joint Staff case, run through the real function."""
+        title = "Japan-U.S. Bilateral Exercise"
+        kept = [dedup_articles([self._release("http://js/p%02d" % i, title)])[0]
+                for i in range(1, 28)]
+        self.assertEqual(len({a["url"] for a in kept}), 27,
+                         "recurring event titles were collapsed; 27 distinct "
+                         "exercises must survive as 27 records")
+
+    def test_same_title_inside_one_batch_is_still_collapsed(self):
+        """The behaviour that must NOT regress while protecting the above."""
+        title = "解放军演习报道"
+        kept = dedup_articles([self._release("http://x/a1", title),
+                               self._release("http://x/a2", title)])
+        self.assertEqual(len(kept), 1)
+
+    def test_dedup_takes_no_database_handle(self):
+        """
+        The signature is the guard. A corpus-wide check needs a connection or a
+        lookup callable; if one is ever added, this fails and the author has to
+        come and read why.
+        """
+        import inspect
+        params = list(inspect.signature(dedup_articles).parameters)
+        self.assertEqual(params, ["articles"],
+                         "dedup_articles gained a parameter — if this is the "
+                         "persistent title-hash work, read the blocked note in "
+                         "FOLLOWUP.md first")
+
+
 if __name__ == "__main__":
     unittest.main()
