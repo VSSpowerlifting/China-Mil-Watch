@@ -145,7 +145,7 @@ class PipelineRunCase(unittest.TestCase):
 
     # -- harness ----------------------------------------------------------
 
-    def run_pipeline(self, adapters_by_slug, sources=None):
+    def run_pipeline(self, adapters_by_slug, sources=None, dry_run=False):
         """
         Drive the real pipeline.run() with controlled adapters.
 
@@ -169,7 +169,7 @@ class PipelineRunCase(unittest.TestCase):
         self.pipeline.run(
             sources=sources or sorted(adapters_by_slug),
             target_date=date(2026, 5, 10),
-            dry_run=False,
+            dry_run=dry_run,
             no_analysis=True,
         )
         return registry
@@ -379,6 +379,57 @@ class TestLoggedHealthTableMatchesTheDatabase(PipelineRunCase):
             urls=[url], pages={url: "<html/>"}, parsed={url: article(url)})})
         self.assertEqual(self.results()["pla_daily"]["new_documents"], 1)
         self.assertIn("new=1", table)
+
+
+class TestADryRunSaysWhatItDidNotCompute(PipelineRunCase):
+    """
+    A dry run stores nothing, so the attribution fold never runs and the
+    dup/new/rejected columns cannot be filled. The table prints anyway, which
+    is right — but an unlabelled `dup=0 new=0` reads as "this source published
+    nothing", which is the one confusion `core/collection/status.py` exists to
+    prevent. The label is the difference between an empty answer and no answer.
+    """
+
+    def _dry_run_log(self):
+        url = "http://www.81.cn/x/a1.html"
+        adapters = {
+            "pla_daily": scraper_factory(
+                urls=[url], pages={url: "<html/>"}, parsed={url: article(url)}),
+        }
+        with self.assertLogs("pipeline", level="INFO") as captured:
+            self.run_pipeline(adapters, sources=["pla_daily"], dry_run=True)
+        return "\n".join(captured.output)
+
+    def test_the_table_is_labelled_as_discovery_only(self):
+        log = self._dry_run_log()
+        self.assertIn("DRY RUN", log)
+        self.assertIn("discovery only", log)
+
+    def test_the_unavailable_columns_are_named(self):
+        log = self._dry_run_log()
+        self.assertIn("UNAVAILABLE", log)
+        for column in ("dup", "new", "rejected"):
+            self.assertIn(column, log)
+
+    def test_the_pre_refinement_statuses_are_disclosed(self):
+        """
+        `ok_all_duplicates` and `ok_all_filtered` are resolved during the
+        attribution fold, which a dry run skips. A reader comparing a dry-run
+        table against a real one would otherwise see a status change and read
+        it as the source behaving differently.
+        """
+        log = self._dry_run_log()
+        self.assertIn("pre-refinement", log)
+        self.assertIn("ok_all_duplicates", log)
+
+    def test_a_dry_run_still_writes_nothing(self):
+        self._dry_run_log()
+        con = sqlite3.connect(str(self.db_path))
+        try:
+            self.assertEqual(
+                con.execute("SELECT COUNT(*) FROM articles").fetchone()[0], 0)
+        finally:
+            con.close()
 
 
 class TestRegistryDrivenSelection(PipelineRunCase):
