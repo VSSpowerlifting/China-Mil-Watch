@@ -1,0 +1,136 @@
+{
+  "registry_version": 1,
+  "_comment": [
+    "THE DESK REGISTRY — one authoritative list of every declared desk.",
+    "",
+    "This file is NOT a desk manifest and is deliberately not discoverable as",
+    "one. core.manifests.load_all_desks() globs desks/*/manifest.json; this",
+    "file sits one level up, so declaring a desk here cannot make",
+    "sync_desk_config() write a desk, institution or source row into the",
+    "tracked production database, and cannot enable collection.",
+    "",
+    "What a desk's manifest says is authoritative for its SOURCES. What this",
+    "file says is authoritative for its STATUS and its public presentation.",
+    "Neither invents the other: configured and enabled source counts are read",
+    "from the manifest this file points at, and a desk with no manifest has no",
+    "sources — which is a fact, not a gap to fill in.",
+    "",
+    "Record counts are never declared here. They come from the database, for",
+    "desks that have records in it.",
+    "",
+    "Statuses (core/domain.py DESK_STATUSES):",
+    "  planned        declared scope, nothing researched or configured",
+    "  research       scope researched; no collector, no enabled source",
+    "  shadow         collecting privately under evaluation; no public records",
+    "  live           collecting into the production corpus",
+    "  paused         configured and deliberately stopped",
+    "  access_blocked researched and reachable in principle, but official",
+    "                 discovery is not available under honest identification"
+  ],
+  "desks": [
+    {
+      "slug": "china",
+      "name": "China Desk",
+      "route": "china.html",
+      "scope": "Chinese official and state-linked defense publication surfaces: the armed forces newspaper, the defense ministry, the state news agency's military desk, and two English-language portals.",
+      "status": "live",
+      "status_explanation": "Collecting daily into the production corpus. This is the only mature collection in the project.",
+      "public": true,
+      "manifest": "desks/china/manifest.json",
+      "has_production_records": true,
+      "limits": [
+        "Coverage is selective and heavily concentrated in one source.",
+        "Not every Chinese official publication surface is implemented. One configured source has no working collector and is reported as such on every run rather than hidden.",
+        "Collection was interrupted between 2026-07-17 and 2026-07-24. The gap is preserved, not backfilled."
+      ]
+    },
+    {
+      "slug": "singapore",
+      "name": "Singapore Desk",
+      "route": "singapore.html",
+      "scope": "One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.",
+      "status": "shadow",
+      "status_explanation": "Under shadow evaluation. It collects into an isolated state branch that reaches neither the production database nor the published site, renders no records, and is counted nowhere. A shadow desk is not a qualified desk.",
+      "public": true,
+      "manifest": "shadow/singapore_mindef/manifest.json",
+      "has_production_records": false,
+      "qualification": {
+        "required_consecutive_days": 30,
+        "checkpoints": 3,
+        "explanation": "Qualification requires 30 consecutive days of shadow collection and governed checkpoint reviews. Elapsed days are held in the shadow ledger and are deliberately not restated here or on any page: a number copied out of the ledger goes stale the next day and would be read as a promise."
+      },
+      "limits": [
+        "This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defence coverage.",
+        "Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.",
+        "No review has been completed and no verdict has been reached."
+      ]
+    },
+    {
+      "slug": "japan",
+      "name": "Japan Desk",
+      "route": "japan.html",
+      "scope": "Two researched publication families: defense ministry press releases, and Joint Staff releases published as PDF.",
+      "status": "access_blocked",
+      "status_explanation": "Researched, and not collecting. Individual documents are reachable, but the listing pages that would say which documents exist are served behind an interactive challenge. The blocker is official discovery access, not engineering and not robots policy.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Ministry of Defense — press releases",
+            "format": "HTML — 21 HTML links, 0 PDFs on the listing",
+            "note": "Listing verified; item format verified."
+          },
+          {
+            "name": "Joint Staff — press releases",
+            "format": "PDF only — 895 PDF links, 10 HTML links on the page",
+            "note": "One page holds the entire 2014-2026 archive; the year “tabs” are in-page anchors, not separate pages, so no pagination or year-walking is required."
+          }
+        ],
+        "observed_volume": [
+          ["2026, to mid-August", "135"],
+          ["2025, full year", "214"],
+          ["2014-2026, whole archive", "895"]
+        ],
+        "volume_caveat": "These figures describe what the ministry published. They are not a record count and nothing here has been collected.",
+        "blockers": [
+          [
+            "Official discovery access is not available.",
+            "The listing pages are served behind an interactive challenge. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official discovery route."
+          ],
+          [
+            "PDF text extraction exists but is not wired to any collector.",
+            "Joint Staff releases are published as PDFs, and the extractor that can read them is dormant infrastructure: no collector, adapter, manifest or workflow references it."
+          ],
+          [
+            "Repeated titles require a different deduplication rule.",
+            "On the 2026 listing, “Japan-U.S. Bilateral Exercise” appears 27 times for distinct events. A title-only rule would collapse 26 of those 27 records."
+          ],
+          [
+            "Collection-health thresholds remain unset.",
+            "Publication cadence and silence thresholds are calibrated only after shadow collection has run. Guessing now would create false alarms or hide real silence."
+          ]
+        ]
+      },
+      "limits": [
+        "No source is enabled. No collector exists. No records have been collected."
+      ]
+    },
+    {
+      "slug": "us-indopacific",
+      "name": "US Indo-Pacific Reference Desk",
+      "route": "us-indopacific.html",
+      "scope": "Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks' framing against a US framing of the same events. It is not a feed of US defense releases.",
+      "status": "planned",
+      "status_explanation": "Declared scope only. Its source universe has not been researched to the standard applied to Japan, so no source, endpoint or volume is claimed for it.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "limits": [
+        "Nothing has been researched, configured, enabled or collected.",
+        "If it is ever built it is collected under the same contract, health thresholds and evidence hierarchy as every other desk. It is not “our side”."
+      ]
+    }
+  ]
+}
