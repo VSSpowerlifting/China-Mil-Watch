@@ -95,15 +95,17 @@ pla-watch/
 
 ### Prerequisites
 
-- Python 3.11+
+- Python 3.9 — the version every workflow pins. `docs/ARCHITECTURE_AND_PUBLISHING.md`
+  §4 is the governing statement: keep the validator and the site generator
+  3.9-compatible, or CI cannot run them.
 - An [Anthropic API key](https://console.anthropic.com/)
 - A GitHub account
 
 ### Local installation
 
 ```bash
-git clone https://github.com/[username]/pla-watch.git
-cd pla-watch
+git clone https://github.com/VSSpowerlifting/China-Mil-Watch.git
+cd China-Mil-Watch
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -122,9 +124,22 @@ python pipeline.py
 
 ### Generate the site
 
+`pipeline.py` renders the site itself at the end of a successful run, so this
+is only needed to re-render from the database without collecting.
+
 ```bash
-# Not yet implemented — see site/ directory
 python site/generator.py
+```
+
+`site/render.py` is the mode switch that decides which frontend gets built; it
+defaults to the legacy site, which is the one that is published. See
+`docs/SITE_MODES.md`.
+
+Validate before trusting any output change — this is the same gate CI applies
+before it deploys:
+
+```bash
+python scripts/validate_output.py
 ```
 
 ---
@@ -153,12 +168,21 @@ GitHub will create the `gh-pages` branch automatically on first workflow run.
 
 ### 4. The workflow
 
-The file at `.github/workflows/daily_update.yml` runs the pipeline at 06:00
-UTC daily, commits the updated static site to `gh-pages`, and triggers a Pages
-deployment.  Your site will be live at:
+The file at `.github/workflows/daily_update.yml` schedules five windows
+between 12:23 and 14:23 UTC and lets a scheduling guard admit **one** of them
+per New York day; the other four exit immediately. The one that runs collects,
+regenerates the site, commits `pla_watch.db` and `output/` to `main`, and
+deploys `output/` to `gh-pages`.
+
+Because the four skipped runs also report success, **a green check is not
+evidence that the pipeline executed.** To tell the two apart, open the run and
+look at the `Scheduling guard` step: it prints `should_run=true` or
+`should_run=false`, and every later step is skipped when it is false.
+
+This deployment serves:
 
 ```
-https://[username].github.io/pla-watch/
+https://chinamilwatch.org
 ```
 
 ---
