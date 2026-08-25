@@ -508,7 +508,7 @@ main dl:not(.stat-rows) dd { margin: .25rem 0 0; max-width: var(--measure); }
 }
 .filters select, .filters input {
   font: inherit; font-size: .9375rem; padding: .45rem .5rem;
-  border: 1px solid var(--rule-strong); background: #fff; color: var(--ink);
+  border: 1px solid var(--rule-strong); background: var(--white); color: var(--ink);
   min-height: 44px; border-radius: 2px;
 }
 /* `hidden` is a semantic state, so it must beat any author display rule.

@@ -1,0 +1,285 @@
+{
+  "map_version": 1,
+  "_comment": [
+    "THE URL TRANSITION MAP — every currently public route, and what happens",
+    "to it when Indo-Pacific Record launches.",
+    "",
+    "It is data rather than code because it is a promise about a published",
+    "surface, and a promise has to be checkable. Tests read this file, compare",
+    "it against what output/ actually holds, and against what the candidate",
+    "build actually emits. A route that exists in production and is missing",
+    "here fails the suite.",
+    "",
+    "NOTHING HERE IS DEPLOYED BY THIS BRANCH. No redirect is written to the",
+    "live site, no DNS record is changed, and no domain is selected. This is",
+    "the plan the launch executes, pinned so it cannot drift before then."
+  ],
+  "dispositions": {
+    "preserve": "The route keeps working at the same URL. Its content may change; its address does not.",
+    "move": "The route moves. The old address keeps resolving via a redirect that names exactly one new address.",
+    "legacy_archive": "Preserved as published, under an explicit legacy label. Not rewritten to look as though it appeared under the new name.",
+    "owner_decision": "Retired only with owner approval. Nothing on this branch removes it.",
+    "evidence": "Never deleted. It is cited, or it is the record of a citation."
+  },
+  "routes": [
+    {
+      "old": "/",
+      "new": "/",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": "/",
+      "legacy_label": false,
+      "note": "The home page keeps its address and gets the regional masthead and the desk directory."
+    },
+    {
+      "old": "/index.html",
+      "new": "/index.html",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": "/",
+      "legacy_label": false,
+      "note": "Same page as /, addressed explicitly."
+    },
+    {
+      "old": "/archive.html",
+      "new": "/archive.html",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": "/archive.html",
+      "legacy_label": false,
+      "note": "The record index. Deliberately NOT renamed to /records.html: this is a live public address, and the navigation label can change without the URL changing. 'Record' in navigation, /archive.html on the wire."
+    },
+    {
+      "old": "/methodology.html",
+      "new": "/methodology.html",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": "/methodology.html",
+      "legacy_label": false,
+      "note": "Keeps its address; gains the regional scope statement and the derived corpus metrics."
+    },
+    {
+      "old": "/signals.html",
+      "new": "/methodology.html",
+      "disposition": "move",
+      "redirect": true,
+      "canonical": "/methodology.html",
+      "legacy_label": false,
+      "note": "'Signals & Methodology' has no separate equivalent in the regional model — its content is methodology. One redirect to one page; it is not folded into the home page."
+    },
+    {
+      "old": "/article/{id}.html",
+      "new": "/record/{id}.html",
+      "disposition": "move",
+      "redirect": true,
+      "pattern": true,
+      "canonical": "/record/{id}.html",
+      "legacy_label": false,
+      "evidence": true,
+      "note": "Every published article URL keeps resolving, each to the record page holding the same article. Redirects are generated from the corpus, never from a directory listing, so an id absent from the snapshot acquires no redirect to nothing. Mass-redirecting these to the home page is forbidden: they are cited."
+    },
+    {
+      "old": "/the-pla-watch/",
+      "new": "/the-pla-watch/",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "canonical": "/the-pla-watch/",
+      "legacy_label": true,
+      "evidence": true,
+      "note": "The weekly series index, published under the predecessor masthead. Preserved as published."
+    },
+    {
+      "old": "/the-pla-watch/index.html",
+      "new": "/the-pla-watch/index.html",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "canonical": "/the-pla-watch/",
+      "legacy_label": true,
+      "evidence": true,
+      "note": "Same page as /the-pla-watch/, addressed explicitly."
+    },
+    {
+      "old": "/the-pla-watch/archive.html",
+      "new": "/the-pla-watch/archive.html",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "canonical": "/the-pla-watch/archive.html",
+      "legacy_label": true,
+      "evidence": true,
+      "note": "The full edition archive. The candidate links to it rather than copying it."
+    },
+    {
+      "old": "/the-pla-watch/posts/{date}.html",
+      "new": "/the-pla-watch/posts/{date}.html",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "pattern": true,
+      "canonical": "/the-pla-watch/posts/{date}.html",
+      "legacy_label": true,
+      "evidence": true,
+      "note": "Thirteen published editions. Issue numbers, titles, deks, bylines and dates are unchanged, and none is rewritten to appear as though it were published under the new name."
+    },
+    {
+      "old": "/the-pla-watch/posts/{date}.json",
+      "new": "/the-pla-watch/posts/{date}.json",
+      "disposition": "evidence",
+      "redirect": false,
+      "pattern": true,
+      "canonical": null,
+      "legacy_label": true,
+      "evidence": true,
+      "note": "The canonical edition record each rendered page is generated from. Never hand-edited, never deleted."
+    },
+    {
+      "old": "/the-pla-watch/terms.html",
+      "new": "/the-pla-watch/terms.html",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "canonical": "/the-pla-watch/terms.html",
+      "legacy_label": true,
+      "note": "The series glossary, as published."
+    },
+    {
+      "old": "/the-pla-watch/feed.xml",
+      "new": "/the-pla-watch/feed.xml",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Subscribers hold this address. Moving a feed silently unsubscribes everyone who did not notice."
+    },
+    {
+      "old": "/the-pla-watch/covers/{file}",
+      "new": "/the-pla-watch/covers/{file}",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "pattern": true,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Edition cover images, referenced by the published pages."
+    },
+    {
+      "old": "/the-pla-watch/media/{file}",
+      "new": "/the-pla-watch/media/{file}",
+      "disposition": "legacy_archive",
+      "redirect": false,
+      "pattern": true,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Media referenced by the published editions."
+    },
+    {
+      "old": "/the-pla-watch/.gitkeep",
+      "new": "/the-pla-watch/.gitkeep",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Repository plumbing that happens to be deployed. Harmless, and removing it is not this transition's business."
+    },
+    {
+      "old": "/assets/editorial/{file}",
+      "new": "/assets/editorial/{file}",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "pattern": true,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Editorial imagery for the predecessor identity. The regional design uses no stock or platform photography, so these become unreferenced at launch — but they are referenced by published pages until then, and removal is an owner decision, not a side effect."
+    },
+    {
+      "old": "/data/articles.json",
+      "new": "/data/articles.json",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "An existing machine-readable export. The candidate publishes /corpus-index.json instead, which is a different shape. Keeping both, retiring this one, or redirecting it is an owner decision; nothing here removes it."
+    },
+    {
+      "old": "/favicon.svg",
+      "new": "/favicon.svg",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Predecessor mark. The candidate ships /mark.svg; which file the launch serves as the favicon is a deployment decision."
+    },
+    {
+      "old": "/logo-icon.png",
+      "new": "/logo-icon.png",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Predecessor mark, referenced by published edition pages. Not removed here."
+    },
+    {
+      "old": "/logo-wordmark.png",
+      "new": "/logo-wordmark.png",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Predecessor wordmark, referenced by published edition pages. Not removed here."
+    },
+    {
+      "old": "/og-image.png",
+      "new": "/og-image.png",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Social preview image carrying the predecessor identity. Replacing it is part of the launch, not of this candidate."
+    },
+    {
+      "old": "/robots.txt",
+      "new": "/robots.txt",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Regenerated at launch with whatever sitemap address the launch uses."
+    },
+    {
+      "old": "/sitemap.xml",
+      "new": "/sitemap.xml",
+      "disposition": "preserve",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "Regenerated at launch. It must list the new addresses, not the redirects."
+    },
+    {
+      "old": "/CNAME",
+      "new": "/CNAME",
+      "disposition": "owner_decision",
+      "redirect": false,
+      "canonical": null,
+      "legacy_label": false,
+      "note": "The deployed domain. Domain selection and DNS are owner decisions and are explicitly outside this branch."
+    }
+  ],
+  "new_routes": [
+    "/desks.html",
+    "/china.html",
+    "/singapore.html",
+    "/japan.html",
+    "/us-indopacific.html",
+    "/sources.html",
+    "/source/{slug}.html",
+    "/analysis.html",
+    "/pla-watch.html",
+    "/coverage.html",
+    "/about.html",
+    "/corpus.html",
+    "/corpus-guide.html",
+    "/corpus-index.json",
+    "/record/{id}.html",
+    "/week-{start}.html",
+    "/mark.svg",
+    "/styles.css",
+    "/browse.js",
+    "/citation.js"
+  ]
+}
