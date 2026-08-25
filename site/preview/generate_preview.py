@@ -1258,7 +1258,7 @@ def changelog_entries(stats: dict) -> list:
                    "describes English coverage.".format(**stats))
     return [{
         "id": "entry-2026-08-19",
-        "title": "Initial documented prototype snapshot",
+        "title": "Initial documented snapshot",
         "date": stats["last_date"],
         "summary": "The first snapshot of this corpus to be documented for "
                    "readers. What follows begins with what is missing from it.",
@@ -1353,7 +1353,7 @@ def corpus_citation(title: str, snapshot: dict, maintainer=MAINTAINER) -> str:
     count from the corpus as well would create a second source of truth for a
     value that is governed in exactly one place.
     """
-    return ("{title}. China Desk Corpus. Prototype snapshot — {date}. "
+    return ("{title}. China Desk Corpus. Snapshot — {date}. "
             "{records:,} records. {name}, {role}.").format(
                 title=title, date=snapshot["date"],
                 records=snapshot["expected_records"],
@@ -1405,8 +1405,8 @@ def record_citation(record: dict, title: str, snapshot: dict) -> dict:
                               "source-stated publication date", subject),
                 url=_require(record.get("url"), "original URL", subject)),
         "as_held":
-            "As held. {work}, China Desk Corpus, Record {id}, Prototype "
-            "snapshot — {date} ({records:,} records).".format(
+            "As held. {work}, China Desk Corpus, Record {id}, "
+            "Snapshot — {date} ({records:,} records).".format(
                 work=title,
                 id=_require(record.get("id"), "record id", subject),
                 date=snapshot["date"],
@@ -1573,7 +1573,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # unchanged snapshot date; `assert_snapshot` above makes that a build
     # failure instead.
     snapshot_date = snapshot["date"]
-    snapshot_label = "Prototype snapshot — %s" % snapshot_date
+    snapshot_label = "Snapshot — %s" % snapshot_date
     # Citation carries the snapshot date and the total record count. It must
     # never assert an id range: ids are not contiguous (3,250 records against a
     # max id of 3,256), so "records 1–3250" would be false. Both values come
@@ -1602,6 +1602,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         "developing_desk_count": desks.not_collecting_count,
         "metrics": metrics,
         "source_views": source_views,
+        # slug -> DeskView, for surfaces that name a source's desk. Built from
+        # the source's declared desk rather than from `source_run_results.
+        # desk_id`, which is NULL on the historical rows: a dash in every cell
+        # is honest and useless, and the source's desk is the fact a reader is
+        # actually asking for.
+        "desk_by_source": {s.slug: desks.get(s.desk_slug)
+                           for s in source_views},
         "sources": data["sources"],
         "totals": data["totals"],
         "latest_run": data["latest_run"],
@@ -1679,7 +1686,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # ── record/{id}.html — one page per stored record ────────────────────────
     # `record/`, deliberately NOT `article/`: the production namespace holds
     # 1,110 analyzed articles and is live and canonical, while this holds all
-    # 3,250 stored records and is a prototype path. Ids are taken as stored, so
+    # every stored record and is a candidate path. Ids are taken as stored, so
     # the six gaps below MAX(id) stay absent rather than being enumerated.
     (out_dir / "record").mkdir(parents=True)
     record_tmpl = env.get_template("record.html")

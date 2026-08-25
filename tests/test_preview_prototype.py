@@ -918,7 +918,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_citation_uses_snapshot_date_and_total_count_not_an_id_range(self):
         data = gp.load_corpus(TRACKED_DB)
         html = self.page("about.html")
-        self.assertIn("Prototype snapshot — %s" % data["totals"]["last_date"],
+        self.assertIn("Snapshot — %s" % data["totals"]["last_date"],
                       html)
         self.assertIn("{:,} records".format(data["totals"]["articles"]), html)
         # Ids are not contiguous, so a range would be a false claim.
@@ -1562,7 +1562,7 @@ class TestRecordPages(PreviewCase):
 
     def test_the_route_is_described_as_a_prototype_path(self):
         flat = re.sub(r"\s+", " ", self.record(self.ids[-1]))
-        self.assertIn("this prototype path are locators inside", flat)
+        self.assertIn("this record path are locators inside", flat)
         for denial in ("DOI", "accession number", "permanent identifier",
                        "public permalink", "published route"):
             with self.subTest(denial=denial):
@@ -2802,7 +2802,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertIn(
             "The search index could not be loaded or did not match this "
             "snapshot, so search and filters are unavailable. The records held "
-            "in this prototype snapshot remain accessible through the "
+            "in this snapshot remain accessible through the "
             "week-by-week browse above.", html)
         self.assertNotIn("Nothing is missing from the corpus", html)
 
@@ -3307,7 +3307,7 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
         # carrying both distinctions. Matched on normalized whitespace so a
         # line wrap inside the paragraph cannot break the guard.
         flat = re.sub(r"\s+", " ", authored)
-        self.assertIn("The record number and this prototype path are locators "
+        self.assertIn("The record number and this record path are locators "
                       "inside the %s snapshot." % self.corpus_edge, flat)
         self.assertIn("Neither is a DOI, accession number, permanent "
                       "identifier, public permalink, or published route.",
@@ -4067,8 +4067,8 @@ class TestSnapshotScopedCitations(PreviewCase):
 
     def test_the_corpus_citation_is_exact(self):
         self.assertEqual(
-            gp.corpus_citation("The Declared Record", gp.DECLARED_SNAPSHOT),
-            "The Declared Record. China Desk Corpus. Prototype snapshot — "
+            gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT),
+            "Test Title. China Desk Corpus. Snapshot — "
             "2026-08-19. 3,388 records. Benjamin Yang, Creator and Editor.")
 
     def test_the_corpus_citation_is_rendered_and_copyable(self):
@@ -4083,7 +4083,7 @@ class TestSnapshotScopedCitations(PreviewCase):
         citation must follow it."""
         other = {"date": "2027-01-02", "expected_records": 4096}
         text = gp.corpus_citation("Work", other)
-        self.assertIn("Prototype snapshot — 2027-01-02", text)
+        self.assertIn("Snapshot — 2027-01-02", text)
         self.assertIn("4,096 records", text)
         source = (REPO_ROOT / "site" / "preview"
                   / "generate_preview.py").read_text(encoding="utf-8")
@@ -4142,7 +4142,7 @@ class TestSnapshotScopedCitations(PreviewCase):
                     '"%s."' % rec["title_original"])), html)
 
     def test_all_record_pages_carry_the_snapshot_date_and_count(self):
-        expected = ("Prototype snapshot — %s (%s records)"
+        expected = ("Snapshot — %s (%s records)"
                     % (self.snapshot["date"],
                        "{:,}".format(self.snapshot["expected_records"])))
         missing = [p.name for p in sorted((self.out / "record").glob("*.html"))
@@ -4255,12 +4255,12 @@ class TestSnapshotScopedCitations(PreviewCase):
     # ── Fabrication guards ──────────────────────────────────────────────
 
     def test_no_citation_contains_a_forbidden_element(self):
-        texts = [gp.corpus_citation("The Declared Record",
+        texts = [gp.corpus_citation("Test Title",
                                     gp.DECLARED_SNAPSHOT)]
         texts += [gp.edition_citation(e) for e in self.editions]
         for state in gp.STATE_ORDER:
             cite = gp.record_citation(self.by_id[self.first_in_state(state)],
-                                      "The Declared Record",
+                                      "Test Title",
                                       gp.DECLARED_SNAPSHOT)
             texts += [cite["source_text"], cite["as_held"], cite["note"]]
         for text in texts:

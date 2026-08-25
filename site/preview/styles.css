@@ -248,10 +248,14 @@ a { color: var(--ocean); text-underline-offset: .15em; }
 /* No bottom padding: the following section head already carries 2.75rem of
    margin plus its rule inset, and the two together left a visible void. */
 .lead { padding-bottom: 0; }
-/* The lead headline is the largest thing on the page even though it is an h2:
-   the masthead wordmark is the home page's h1. */
+/* The lead headline is the largest thing in the body, but it is no longer the
+   top of the page: the regional home page leads with purpose, then records,
+   then desks, and the lead edition sits under a section head. At full display
+   size it outweighed the h2 above it and the outline read upside down. This
+   step sits between deck and display — unmistakably the flagship item, still
+   subordinate to the section that introduces it. */
 .lead-title {
-  font-size: var(--step-display); font-weight: 700;
+  font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 700;
   border-top: 0; padding-top: 0; margin: 0 0 .6rem;
 }
 .lead-title::before { content: none; }
@@ -374,8 +378,16 @@ main dl:not(.stat-rows) dd { margin: .25rem 0 0; max-width: var(--measure); }
 .desk-state {
   font-family: var(--sans); font-size: .75rem;
   letter-spacing: .06em; text-transform: uppercase;
-  display: inline-block;
+  display: inline-block; margin: 0;
 }
+/* The status marker labels the desk name directly beneath it, so the two are
+   set as one unit. The h2's own top margin would otherwise open a gap wide
+   enough to read as a section break between a label and the thing it labels. */
+.desk .desk-state { margin-bottom: .15rem; }
+.desk h2.plain { margin-top: 0; }
+.desk-state--live + h1, .desk-state--shadow + h1,
+.desk-state--access_blocked + h1, .desk-state--research + h1,
+.desk-state--planned + h1, .desk-state--paused + h1 { margin-top: .15rem; }
 /* A collecting desk is the only one that gets the accent. Everything else is
    muted, because a status that is not "live" must not read as a promotion. */
 .desk-state--live          { color: var(--teal-text); font-weight: 600; }

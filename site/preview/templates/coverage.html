@@ -12,7 +12,7 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 <p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }} · aggregate <strong>{{ latest_run.status }}</strong></p>
 <div class="table-scroll">
 <table class="stacking">
-  <caption>Every configured source has a result row for this run. A missing row would be a defect.</caption>
+  <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
   <thead>
     <tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
   </thead>
@@ -21,7 +21,7 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
     {% set kind = 'fail' if r.is_failure else ('note' if r.status == 'not_implemented' else ('quiet' if r.new_documents == 0 else 'ok')) %}
     <tr>
       <td data-label="Source"><a href="source/{{ r.source_slug }}.html">{{ r.source_slug }}</a></td>
-      <td data-label="Desk">{{ r.desk_id or '—' }}</td>
+      <td data-label="Desk">{% if desk_by_source.get(r.source_slug) %}<a href="{{ desk_by_source[r.source_slug].route }}">{{ desk_by_source[r.source_slug].name }}</a>{% else %}—{% endif %}</td>
       <td data-label="Result">
         <span class="status status--{{ kind }}">
           <span class="status-mark" aria-hidden="true">{% if kind == 'ok' %}✓{% elif kind == 'quiet' %}○{% elif kind == 'note' %}◻{% else %}✕{% endif %}</span>
