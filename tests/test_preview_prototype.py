@@ -33,9 +33,21 @@ if str(REPO_ROOT) not in sys.path:
 
 sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
 import generate_preview as gp                                    # noqa: E402
+from core.desk_registry import load_registry                     # noqa: E402
 
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
 PRODUCTION_OUT = REPO_ROOT / "output"
+
+#: Institutions whose OWN NAME is spelled the British way. American spelling is
+#: house style for the publication's own prose; an institution's name is not
+#: the publication's prose, and Americanising it would be an edit to the
+#: record. The exemption covers the name only — the sentence around it is still
+#: checked — and the list stays short and explicit so it cannot drift into a
+#: general licence.
+OFFICIAL_NAMES_WITH_BRITISH_SPELLING = (
+    "Singapore Ministry of Defence",
+    "Ministry of National Defence",
+)
 
 
 # ── House-style guard scope ──────────────────────────────────────────────────
@@ -265,6 +277,7 @@ class PreviewCase(unittest.TestCase):
                               snapshot=cls.snapshot)
         # Measured from the built tree, so necessarily after the build.
         cls.shard_count = len(list(cls.out.glob("week-*.html")))
+        cls.source_count = len(list(cls.out.glob("source/*.html")))
         cls.file_count = sum(1 for q in cls.out.rglob("*") if q.is_file())
 
     @classmethod
@@ -339,44 +352,59 @@ class TestNoFabricatedCoverage(PreviewCase):
     """
 
     def test_only_one_desk_is_marked_live(self):
-        live = [d for d in gp.DESKS if d["state"] == "live"]
-        self.assertEqual([d["id"] for d in live], ["china"])
+        live = [e for e in load_registry() if e.is_collecting]
+        self.assertEqual([e.slug for e in live], ["china"])
 
-    def test_developing_desks_are_labelled_and_carry_no_numbers(self):
+    def test_non_collecting_desks_are_labelled_and_carry_no_record_count(self):
         """
-        Only desks rendered as sections are checked here. The US placeholder is
-        deliberately not a section any more — see
-        test_us_placeholder_is_not_a_peer_desk_section.
+        Every declared desk is rendered, including the ones that collect
+        nothing — a declared desk with no page is one a reader cannot check.
+        What a non-collecting desk may never show is a record figure.
         """
         html = self.page("desks.html")
-        for desk in gp.DESKS:
-            if desk["state"] == "live" or desk["id"] == "us-indopacific":
+        # One block per desk section, so the status marker that precedes the
+        # desk name stays inside the block being checked.
+        blocks = {}
+        for chunk in html.split('<section class="desk')[1:]:
+            body = chunk.split("</section>", 1)[0]
+            for entry in load_registry():
+                if entry.name in body:
+                    blocks.setdefault(entry.slug, body)
+                    break
+        for entry in load_registry():
+            if entry.is_collecting:
                 continue
-            self.assertIn(desk["name"], html)
-            # the desk's own block must not contain a digit-led statistic
-            block = html.split(desk["name"], 1)[1].split("</section>", 1)[0]
-            self.assertNotRegex(
-                block, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b",
-                "%s shows a count; it has collected nothing" % desk["name"])
-            self.assertIn("not yet collecting", html)
+            with self.subTest(desk=entry.slug):
+                self.assertIn(entry.name, html)
+                block = blocks[entry.slug]
+                self.assertNotRegex(
+                    block, r"\b\d[\d,]*\s+(records|runs|articles)\b",
+                    "%s shows a count; it has collected nothing" % entry.name)
+                self.assertIn("Records</dt><dd>None collected", block)
+                self.assertIn(entry.status_label, block)
 
     def test_desk_directory_states_the_live_count_honestly(self):
         """
-        Tranche 1 moved this from a callout into the persistent status strip.
-        The claim still has to be on the page — only its rendering changed.
+        The claim lives in the persistent status strip and again on the home
+        page's own desk table, both derived from the same registry and the same
+        run — never typed in.
         """
         html = self.page("index.html")
         self.assertIn("1</b> collecting desk", html)
-        self.assertIn("One\ndesk is collecting today", html)
+        self.assertIn("of <b>4</b> declared", html)
+        self.assertIn("1 of 4", " ".join(html.split()))
 
     def test_home_page_discloses_single_desk_coverage(self):
         """
-        The empty-desk disclosure and the 30-day gate now live on the desk
-        directory, which is where a reader goes to ask the question.
+        The empty-desk disclosure lives on the desk directory, which is where a
+        reader goes to ask the question, and the qualification gate lives on the
+        desk it governs.
         """
         desks = self.page("desks.html")
-        self.assertIn("No records collected. No sources enabled.", desks)
-        self.assertIn("30 consecutive days", desks)
+        self.assertIn("Records</dt><dd>None collected", desks)
+        self.assertIn("no record count at all", desks)
+        self.assertIn("Consecutive days required</dt><dd>30",
+                      self.page("singapore.html"))
         self.assertIn("Desks", self.page("index.html"))
 
     def test_no_page_claims_comprehensive_coverage(self):
@@ -448,16 +476,18 @@ class TestCoverageHealthIsRendered(PreviewCase):
 
 class TestPlaWatchContinuity(PreviewCase):
     """
-    The acceptance review found the prototype had no path at all to the 13
+    The acceptance review found the candidate had no path at all to the 13
     published editions — a continuity gap in the surface whose central claim is
-    that the archive survives a masthead change.
+    that the archive survives a masthead change. It has survived one: the
+    editions were published under China Mil Watch and are preserved under that
+    name, with their issue numbers, titles, dates and URLs untouched.
     """
 
     def editions(self):
         return gp.load_editions(REPO_ROOT)
 
     def test_every_published_edition_is_listed(self):
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         eds = self.editions()
         self.assertGreaterEqual(len(eds), 13, "expected the published editions")
         for e in eds:
@@ -465,7 +495,7 @@ class TestPlaWatchContinuity(PreviewCase):
                 self.assertIn(e["url"], html)
 
     def test_edition_links_point_at_the_live_archive(self):
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         self.assertIn(gp.LIVE_BASE + "/the-pla-watch/archive.html", html)
 
     def test_every_linked_edition_actually_exists(self):
@@ -499,7 +529,7 @@ class TestPlaWatchContinuity(PreviewCase):
 
     def test_a_missing_sidecar_field_renders_a_dash_not_a_number(self):
         """An absent figure must read as absent, never as zero."""
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         for e in self.editions():
             if e["flagged"] is None:
                 self.assertIn("—", html,
@@ -512,9 +542,14 @@ class TestPlaWatchContinuity(PreviewCase):
         journalism. What must survive is the *structure* the argument described
         — the series named, placed under its desk, and reachable.
         """
-        html = self.page("weekly.html")
-        self.assertIn("The PLA Watch — China Desk weekly", html)
-        self.assertIn("Analysis", html)
+        html = self.page("pla-watch.html")
+        self.assertIn("The PLA Watch", html)
+        # Named as the China Desk's series, and reachable from the Analysis
+        # index rather than being the Analysis index.
+        self.assertIn("China Desk", html)
+        self.assertIn('href="analysis.html"', html)
+        index = self.page("analysis.html")
+        self.assertIn('href="pla-watch.html"', index)
         # And the argument itself must be gone, not merely moved.
         for governance in ("predates", "Proposed hierarchy",
                            "does not make the parent product China-only"):
@@ -527,7 +562,7 @@ class TestPlaWatchContinuity(PreviewCase):
         archive. A prototype that invented, renumbered or relabelled one would
         corrupt the citation record.
         """
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         links = re.findall(r'href="(https://[^"]*?/the-pla-watch/posts/[^"]+)"',
                            html)
         self.assertEqual(len(links), 13)
@@ -710,17 +745,34 @@ class TestRenderedStructure(PreviewCase):
         controls = html.split('id="controls"', 1)[1].split(">", 1)[0]
         self.assertIn("hidden", controls)
 
-    def test_working_title_is_configurable_and_flagged(self):
+    def test_the_title_is_configurable_and_the_build_names_itself(self):
         """
         The masthead chip is gone — it shouted a caveat on every page. The
-        caveat itself is not gone: it sits once, quietly, in the footer.
+        caveat itself is not gone: it sits once, quietly, in the footer, and it
+        now names the build rather than a working name, because the name is no
+        longer provisional. The build mode is also in a meta tag, so a stray
+        copy of this directory identifies itself without being read.
         """
         html = self.page("index.html")
         self.assertIn("Test Title", html)
         self.assertNotIn("working title — not adopted", html)
-        self.assertIn("is a working name\n    pending clearance and reader "
-                      "testing", html)
-        self.assertNotIn("China Mil Watch", html)
+        self.assertNotIn("is a working name", html)
+        self.assertIn("<strong>Release candidate.</strong>", html)
+        self.assertIn("<code>indo-pacific-record</code> mode", html)
+        self.assertIn('name="generator" content="Test Title '
+                      '— indo-pacific-record build"', html)
+        # The predecessor name is archival, never chrome. It may appear in the
+        # body where it labels the legacy series — that is the honest thing to
+        # say about issues published under it — but never in the masthead, the
+        # document title, or the footer.
+        header = html.split("<header", 1)[1].split("</header>", 1)[0]
+        footer = html.split("<footer", 1)[1].split("</footer>", 1)[0]
+        title = html.split("<title>", 1)[1].split("</title>", 1)[0]
+        for region, name in ((header, "masthead"), (footer, "footer"),
+                             (title, "document title")):
+            with self.subTest(region=name):
+                self.assertNotIn("China Mil Watch", region)
+                self.assertNotIn("The Declared Record", region)
 
 
 class TestTrancheOneIdentityAndStructure(PreviewCase):
@@ -834,10 +886,24 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                 self.assertNotIn("working-title-flag", html)
 
     def test_callouts_are_rationed(self):
-        """At most two on the whole site (revision brief §5)."""
+        """
+        At most two on the whole site. The ration is what keeps a callout
+        meaning "stop and read this"; a desk page that boxed its own limits
+        would spend the treatment four times over for nothing.
+        """
         total = sum(html.count('class="notice"')
                     for html in self._all_html().values())
         self.assertLessEqual(total, 2, "callout treatment has crept back")
+
+    def test_a_desk_states_its_limits_without_a_callout(self):
+        """The limits are still on the page — only their rendering changed."""
+        for route in ("china.html", "singapore.html", "japan.html",
+                      "us-indopacific.html"):
+            with self.subTest(page=route):
+                html = self.page(route)
+                self.assertIn("Limits of this desk, stated plainly", html)
+                block = html.split("Limits of this desk", 1)[1]
+                self.assertNotIn('class="notice"', block)
 
     def test_internal_governance_prose_is_not_reader_facing(self):
         for name, html in self._all_html().items():
@@ -867,12 +933,19 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     # ── Desks ───────────────────────────────────────────────────────────
 
     def test_japan_scope_is_pre_registered_with_verified_figures(self):
+        """
+        The figures come from the desk registry, verbatim. A figure typed into
+        a template could drift from the research that produced it; one read
+        from configuration cannot.
+        """
         html = self.page("japan.html")
-        self.assertIn("Pre-registered Japan source universe", html)
-        for figure in ("135", "214", "895"):
+        self.assertIn("Pre-registered source universe", html)
+        research = load_registry().get("japan").research
+        for _label, figure in research["observed_volume"]:
             with self.subTest(figure=figure):
                 self.assertIn(figure, html)
-        self.assertIn("PDF extraction is required.", html)
+        self.assertIn("PDF text extraction exists but is not wired to any "
+                      "collector.", html)
 
     def test_japan_heading_is_not_repeated(self):
         """
@@ -897,7 +970,8 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_japan_scope_omits_internal_history_and_raw_field_names(self):
         html = self.page("japan.html") + self.page("desks.html")
-        self.assertIn("Counts come directly from the archive listing.", html)
+        self.assertIn("They are not a record count and nothing here has been "
+                      "collected.", html)
         for internal in ("earlier reading", "corrected count",
                          "expected_cadence_days", "silence_threshold_days",
                          "15–25", "15-25", "Chief of Staff"):
@@ -907,27 +981,36 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_japan_scope_claims_no_coverage(self):
         japan = self.page("japan.html")
         self.assertIn("nothing below has produced a record", japan)
-        self.assertIn("No Japan source is enabled", japan)
-        self.assertIn("No records collected. No sources enabled.", japan)
+        self.assertIn("No source is enabled. No collector exists.", japan)
+        self.assertIn("Records</dt><dd>None collected", japan)
         # The directory must carry the claim too, not defer all of it.
-        self.assertIn("No Japan source is enabled", self.page("desks.html"))
+        desks = self.page("desks.html")
+        self.assertIn("Access blocked — not collecting", desks)
+        self.assertIn("Records</dt><dd>None collected", desks)
 
-    def test_us_placeholder_is_not_a_peer_desk_section(self):
+    def test_the_us_reference_desk_is_declared_but_never_promoted(self):
         """
-        It was an h2 beside China and Japan, which gave an unscoped
-        placeholder the same standing as a collecting desk.
+        Every declared desk is now rendered, the reference desk included: a
+        desk a reader cannot open is worse than one labelled honestly. What it
+        may never carry is a status, a count or a source that reads like an
+        operating desk, and its own page has to say so in its own words.
         """
-        html = self.page("desks.html")
-        headings = [re.sub(r"<[^>]+>", "", h).strip() for h in
-                    re.findall(r"<h[123][^>]*>(.*?)</h[123]>", html, re.S)]
-        for h in headings:
-            with self.subTest(heading=h):
-                self.assertNotIn("United States", h)
-                self.assertNotIn("US Indo-Pacific", h)
-        self.assertNotIn('desk desk--development', html)
-        self.assertIn("Not yet scoped: United States reference coverage has "
-                      "not been\nresearched and is not presented as a desk.",
-                      html)
+        directory = self.page("desks.html")
+        block = [b.split("</section>", 1)[0]
+                 for b in directory.split('<section class="desk')[1:]
+                 if "US Indo-Pacific Reference Desk" in b][0]
+        self.assertIn("Planned — nothing collected", block)
+        self.assertIn("Records</dt><dd>None collected", block)
+        self.assertNotIn("Live — collecting", block)
+        self.assertNotIn("desk--live", block)
+
+        page = self.page("us-indopacific.html")
+        self.assertIn("Planned — nothing collected", page)
+        self.assertIn("It is not a feed of US defense releases.", page)
+        self.assertIn("Nothing has been researched, configured, enabled or "
+                      "collected.", page)
+        self.assertNotRegex(
+            page, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
 
     # ── Maintainer ──────────────────────────────────────────────────────
 
@@ -959,19 +1042,35 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     # ── Home is analysis-led ────────────────────────────────────────────
 
-    def test_home_leads_with_the_current_issue(self):
+    def test_home_orders_purpose_records_desks_analysis_coverage(self):
+        """
+        The regional expansion has to be legible from the home page without
+        scrolling into it: what this is, what arrived, which desks exist and
+        what they actually do, what was read into it, and what did not collect.
+        """
         html = self.page("index.html")
-        lead = html.index('class="lead"')
-        records = html.index("Latest records")
-        explanation = html.index("What this is")
-        self.assertLess(lead, records)
-        self.assertLess(records, explanation)
+        order = [html.index(marker) for marker in (
+            'class="purpose"', "Latest records", '<h2 id="desks">',
+            "Latest analysis", "What did not collect")]
+        self.assertEqual(order, sorted(order),
+                         "the home page sections are out of order")
 
-    def test_home_no_longer_opens_with_a_readme_heading(self):
+    def test_home_leads_with_the_publication_not_a_readme_heading(self):
         html = self.page("index.html")
         first_h = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.S)
         self.assertIsNotNone(first_h)
+        self.assertIn("Test Title", first_h.group(1))
         self.assertNotIn("What this is", first_h.group(1))
+
+    def test_home_does_not_lead_with_a_cross_desk_total(self):
+        """
+        A single headline number spanning desks that do not collect would be
+        the central dishonesty available to this page. Every figure on it is
+        attached to the desk it came from.
+        """
+        html = self.page("index.html")
+        purpose = html.split('class="purpose"', 1)[1].split("</section>", 1)[0]
+        self.assertNotRegex(purpose, r"\b\d[\d,]{3,}\b")
 
     # ── Corpus counts and labels ────────────────────────────────────────
 
@@ -988,6 +1087,11 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         html = self.page("china.html")
         self.assertIn("5 sources across\n4 institutions", html)
         self.assertNotIn("from 5 institutions", html)
+        # And the desk view derives both rather than being handed either.
+        from core.viewmodel import PublicView
+        desk = PublicView(TRACKED_DB).desk_directory().get("china")
+        self.assertEqual(desk.configured_source_count, 5)
+        self.assertEqual(desk.institution_count, 4)
 
     def test_institution_count_is_derived_not_hardcoded(self):
         data = gp.load_corpus(TRACKED_DB)
@@ -1009,6 +1113,8 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("Analysed and published", html)
         self.assertNotIn("Analyzed and published", html)
         self.assertIn("Counts reflect the stored corpus at this snapshot.",
+                      html)
+        self.assertIn("Records awaiting analysis\nremain part of the record.",
                       html)
 
     def test_reader_facing_counts_use_thousands_separators(self):
@@ -1052,10 +1158,16 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("134 records", html)
 
     def test_latest_records_blurb_does_not_deny_translation(self):
+        """
+        The blurb may not imply the titles are untranslated — most of them
+        carry a machine translation, shown above the original. It also may not
+        name a single desk now that the roster is derived.
+        """
         html = self.page("index.html")
-        self.assertIn("The most recent China Desk records, with "
-                      "original-language titles preserved.", html)
+        self.assertIn("The most recent records from the desks that collect, "
+                      "with original-language titles\npreserved.", html)
         self.assertNotIn("in the language they were published in", html)
+        self.assertNotIn("China Desk records", html)
 
     # ── Reader-facing language ──────────────────────────────────────────
 
@@ -1086,9 +1198,24 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
             re.I)
         for name, html in self._all_html().items():
             text = re.sub(r"<[^>]+>", " ", _authored_text(html, name))
+            for proper_noun in OFFICIAL_NAMES_WITH_BRITISH_SPELLING:
+                text = text.replace(proper_noun, " ")
             with self.subTest(page=name):
                 self.assertIsNone(british.search(text),
                                   "British spelling in %s" % name)
+
+    def test_the_proper_noun_carve_out_is_narrow(self):
+        """
+        The spelling rule governs the publication's own prose, so an
+        institution whose own name is spelled the British way is exempt — but
+        only the name itself, never the sentence around it. Keeping the list
+        short and explicit is what stops the exemption becoming a loophole.
+        """
+        for name in OFFICIAL_NAMES_WITH_BRITISH_SPELLING:
+            with self.subTest(name=name):
+                # Each entry must be a full institution name, not a bare word.
+                self.assertGreaterEqual(len(name.split()), 3)
+        self.assertLessEqual(len(OFFICIAL_NAMES_WITH_BRITISH_SPELLING), 4)
 
     def test_source_types_render_human_readable_labels(self):
         html = self.page("sources.html")
@@ -1154,7 +1281,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_editions_get_an_editorial_mobile_treatment(self):
         css = (self.out / "styles.css").read_text(encoding="utf-8")
         self.assertIn(".editions", css)
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         # the generic key/value stacking must not apply to this table
         self.assertNotIn('<table class="stacking">', html)
         self.assertIn('<table class="editions">', html)
@@ -1222,9 +1349,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_japan_directory_note_avoids_implementation_vocabulary(self):
         html = self.page("desks.html")
-        self.assertIn("Two source families have been researched and are "
-                      "documented below. No source is enabled and no records "
-                      "have been collected.", html)
+        entry = load_registry().get("japan")
+        # The directory entry is the registry's own words, not a second copy.
+        self.assertIn(entry.scope, html)
+        self.assertIn(entry.status_explanation, html)
         japan = html.split("Japan Desk", 1)[1].split("</section>", 1)[0]
         for word in ("adapter", "no data has been collected"):
             with self.subTest(word=word):
@@ -1574,7 +1702,9 @@ class TestRecordPages(PreviewCase):
 
     def test_rust_marks_only_machine_generated_material(self):
         css = (self.out / "styles.css").read_text(encoding="utf-8")
-        self.assertIn("--signal:       #9C5841", css)
+        # The rust family moved with the palette; what may not move is the
+        # discipline. One token, reserved for machine output.
+        self.assertIn("--signal:       #9C4B36", css)
         html = self.record(self.first_in_state("not_selected"))
         # A record with no machine output must carry no machine-output marker.
         self.assertNotIn("evidence--model", html)
@@ -2014,7 +2144,7 @@ class TestTransitionalArchiveIsTruthful(PreviewCase):
         html = self.page("archive.html")
         lede = re.sub(r"\s+", " ", html.split('class="lede"', 1)[1]
                       .split("</p>", 1)[0])
-        self.assertIn("Search and filter the complete prototype snapshot", lede)
+        self.assertIn("Every stored record in this snapshot", lede)
         self.assertIn("{:,}".format(self.corpus_size), lede)
         self.assertNotIn("recent sample", html)
         self.assertNotIn("the list is complete", html)
@@ -2028,7 +2158,7 @@ class TestTransitionalArchiveIsTruthful(PreviewCase):
 
     def test_completeness_is_backed_by_a_reachable_complete_path(self):
         html = re.sub(r"\s+", " ", self.page("archive.html"))
-        self.assertIn("complete prototype snapshot", html)
+        self.assertIn("Every stored record in this snapshot", html)
         self.assertIn("Every record is also reachable by publication week",
                       html)
 
@@ -2495,7 +2625,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
     def test_the_volume_section_offers_a_route_back(self):
         html = self.page("archive.html")
         self.assertIn('<a href="#results-heading">', html)
-        self.assertIn("Back to Archive search", html)
+        self.assertIn("Back to record search", html)
         self.assertIn('id="results-heading"', html)
 
     def test_both_fragment_targets_resolve(self):
@@ -2544,12 +2674,26 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertIn("It does not search machine summaries or stored source "
                       "text.", html)
 
-    def test_top_level_navigation_is_unchanged(self):
+    def test_top_level_navigation_matches_the_regional_information_model(self):
+        """
+        Record · Desks · Sources · Analysis · Coverage · Methodology · About.
+        "Record" leads because the preserved text is the product; "Corpus" is
+        kept as methodological language and does not appear in navigation.
+        """
         nav = self.page("archive.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Desks", "Archive", "Coverage", "Sources",
-                                  "Analysis", "Methodology", "About"])
+        self.assertEqual(labels, ["Record", "Desks", "Sources", "Analysis",
+                                  "Coverage", "Methodology", "About"])
+        self.assertNotIn("Corpus", labels)
+        self.assertNotIn("Archive", labels)
+
+    def test_every_navigation_target_is_a_page_that_exists(self):
+        nav = self.page("archive.html").split('aria-label="Primary"', 1)[1]
+        nav = nav.split("</nav>", 1)[0]
+        for href in re.findall(r'href="([^"]+)"', nav):
+            with self.subTest(target=href):
+                self.assertTrue((self.out / href).is_file())
 
     def test_corpus_values_are_never_written_through_inner_html(self):
         js = (self.out / "browse.js").read_text(encoding="utf-8")
@@ -2684,8 +2828,8 @@ class TestCoverageTableSemantics(PreviewCase):
     def test_every_header_is_scoped_as_a_column(self):
         html = self.page("coverage.html")
         headers = re.findall(r"<th[ >]", html)
-        self.assertEqual(len(headers), 12)
-        self.assertEqual(len(re.findall(r'scope="col"', html)), 12)
+        self.assertEqual(len(headers), 13)
+        self.assertEqual(len(re.findall(r'scope="col"', html)), 13)
         # None of these tables has a header cell as a row label, so a
         # scope="row" here would be a mechanical addition, not a true one.
         self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
@@ -2695,9 +2839,9 @@ class TestCoverageTableSemantics(PreviewCase):
         labels = [re.sub(r"<[^>]+>", "", t).strip() for t in
                   re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)]
         self.assertEqual(labels,
-                         ["Source", "Result", "Found", "Read", "Already held",
-                          "New", "Note", "Result", "Meaning", "From", "To",
-                          "Days"])
+                         ["Source", "Desk", "Result", "Found", "Read",
+                          "Already held", "New", "Note", "Result", "Meaning",
+                          "From", "To", "Days"])
 
     def test_every_scoped_header_sits_inside_a_thead(self):
         html = self.page("coverage.html")
@@ -2716,12 +2860,16 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(
                     len(re.findall(r"<th(?![^>]*scope)[ >]", html)), 0)
 
-    def test_the_remaining_nineteen_headers_are_column_headers(self):
-        """china/desks/sources/weekly carried 19 between them; each sits in a
-        `<thead>` row and labels a column, so none takes `scope="row"` and no
-        `<td>` body cell was promoted."""
-        expected = {"china.html": 5, "japan.html": 3, "sources.html": 6,
-                    "weekly.html": 5}
+    def test_the_remaining_desk_and_source_headers_are_column_headers(self):
+        """
+        Each sits in a `<thead>` row and labels a column, so none takes
+        `scope="row"` and no `<td>` body cell was promoted. The source detail
+        pages are the deliberate exception: their provenance table is a list of
+        row-labelled facts, exactly like a record page's, so its headers are
+        `scope="row"` and there is no `<thead>` at all.
+        """
+        expected = {"china.html": 5, "japan.html": 3, "sources.html": 7,
+                    "desks.html": 2, "pla-watch.html": 5}
         for name, count in expected.items():
             html = (self.out / name).read_text(encoding="utf-8")
             with self.subTest(page=name):
@@ -2729,7 +2877,14 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
                 outside = re.sub(r"<thead>.*?</thead>", " ", html, flags=re.S)
                 self.assertNotIn("<th", outside)
-        self.assertEqual(sum(expected.values()), 19)
+        self.assertEqual(sum(expected.values()), 22)
+
+    def test_source_pages_label_rows_not_columns(self):
+        for path in sorted(self.out.glob("source/*.html")):
+            html = path.read_text(encoding="utf-8")
+            with self.subTest(page=path.name):
+                self.assertEqual(len(re.findall(r'scope="col"', html)), 0)
+                self.assertGreater(len(re.findall(r'scope="row"', html)), 0)
 
 
 class TestVolumeByWeek(PreviewCase):
@@ -3063,7 +3218,7 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
 
     def test_authored_non_record_titles_stay_guarded(self):
         for rel, fragment in (("corpus.html", "Corpus by week"),
-                              ("archive.html", "Archive"),
+                              ("archive.html", "The record"),
                               ("methodology.html", "Methodology"),
                               ("about.html", "About")):
             with self.subTest(page=rel):
@@ -3170,7 +3325,7 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
     def test_chrome_stays_guarded(self):
         authored = self.authored("record/%d.html" % self.analyzed["id"])
         for fragment in ("Skip to content", "Methodology", "Coverage",
-                         "Creator and Editor", "Private prototype.",
+                         "Creator and Editor", "Release candidate.",
                          "collectors executed", "Selective coverage."):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, authored)
@@ -3892,7 +4047,7 @@ class TestSnapshotScopedCitations(PreviewCase):
         cls.by_id = {r["id"]: r for r in cls.corpus}
         cls.editions = gp.load_editions(REPO_ROOT)
         cls.guide = cls.page(cls, "corpus-guide.html")
-        cls.weekly = cls.page(cls, "weekly.html")
+        cls.weekly = cls.page(cls, "pla-watch.html")
 
     def record(self, rec_id):
         return (self.out / "record" / ("%d.html" % rec_id)).read_text(
@@ -4149,7 +4304,7 @@ class TestSnapshotScopedCitations(PreviewCase):
     def test_citation_text_is_visible_without_javascript(self):
         """The text is ordinary markup. Only the buttons are enhancement."""
         for page, anchor in (("corpus-guide.html", "cite-corpus"),
-                             ("weekly.html", "cite-edition-2026-08-08")):
+                             ("pla-watch.html", "cite-edition-2026-08-08")):
             html = self.page(page)
             with self.subTest(page=page):
                 self.assertRegex(
@@ -4181,7 +4336,7 @@ class TestSnapshotScopedCitations(PreviewCase):
         loading = sorted(name for name, html in self._all_html().items()
                          if "citation.js" in html)
         self.assertIn("corpus-guide.html", loading)
-        self.assertIn("weekly.html", loading)
+        self.assertIn("pla-watch.html", loading)
         self.assertNotIn("archive.html", loading)
         records = [n for n in loading if n.startswith("record/")]
         self.assertEqual(len(records), self.corpus_size)
@@ -4244,7 +4399,7 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.html = cls.page(cls, "weekly.html")
+        cls.html = cls.page(cls, "pla-watch.html")
         cls.editions = gp.load_editions(REPO_ROOT)
         cls.table = cls.html.split('<table class="editions">', 1)[1].split(
             "</table>", 1)[0]
@@ -4639,7 +4794,7 @@ class TestCitationCopyBehaviour(PreviewCase):
         """A page-level region would announce a result far from the control
         that produced it — Analysis has thirteen controls."""
         for page_name, expected in (("corpus-guide.html", 1),
-                                    ("weekly.html", 13)):
+                                    ("pla-watch.html", 13)):
             html = self.page(page_name)
             with self.subTest(page=page_name):
                 self.assertEqual(html.count('class="cite-status"'), expected)
@@ -4701,7 +4856,7 @@ class TestCitationCopyBehaviour(PreviewCase):
         context = self.browser.new_context(java_script_enabled=False)
         try:
             page = context.new_page()
-            page.goto(self.url("weekly.html"), wait_until="load")
+            page.goto(self.url("pla-watch.html"), wait_until="load")
             anchor = "#cite-edition-2026-08-08"
             # Closed to begin with, and its text is not on screen.
             self.assertFalse(page.is_visible(anchor))
@@ -4731,7 +4886,7 @@ class TestCitationCopyBehaviour(PreviewCase):
         context = self.browser.new_context(java_script_enabled=False)
         try:
             page = context.new_page()
-            page.goto(self.url("weekly.html"), wait_until="load")
+            page.goto(self.url("pla-watch.html"), wait_until="load")
             anchor = "#cite-edition-2026-08-08"
             page.focus("details.ed-cite:first-of-type > summary")
             self.assertEqual(
@@ -4749,7 +4904,7 @@ class TestCitationCopyBehaviour(PreviewCase):
             permissions=["clipboard-read", "clipboard-write"])
         try:
             page = context.new_page()
-            page.goto(self.url("weekly.html"), wait_until="load")
+            page.goto(self.url("pla-watch.html"), wait_until="load")
             page.wait_for_timeout(300)
             page.click("details.ed-cite:first-of-type > summary")
             button = page.query_selector(
@@ -5046,7 +5201,7 @@ class TestStop4RoutesAreIntact(PreviewCase):
         self.assertIn("citation.js", top)
         # Nothing was renamed away underneath the new page.
         for kept in ("index.html", "archive.html", "corpus.html",
-                     "coverage.html", "sources.html", "weekly.html",
+                     "coverage.html", "sources.html", "pla-watch.html",
                      "methodology.html", "about.html", "desks.html",
                      "china.html", "japan.html", "browse.js", "styles.css",
                      "corpus-index.json"):
@@ -5061,8 +5216,11 @@ class TestStop4RoutesAreIntact(PreviewCase):
         """
         files = [p for p in self.out.rglob("*") if p.is_file()]
         top = [q for q in self.out.iterdir() if q.is_file()]
+        sources = [q for q in (self.out / "source").iterdir() if q.is_file()]
         # Week shards are top-level files, so they are already inside `top`.
-        self.assertEqual(len(files), self.corpus_size + len(top))
+        self.assertEqual(len(files),
+                         self.corpus_size + len(top) + len(sources))
+        self.assertEqual(len(sources), self.source_count)
         self.assertEqual(
             len([q for q in top if q.name.startswith("week-")]),
             self.shard_count)

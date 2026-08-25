@@ -2,29 +2,51 @@
 {% block title %}Desks — {{ title }}{% endblock %}
 {% block content %}
 <h1>Desks</h1>
-<p class="lede">A desk groups institutions within a declared collection scope. It appears here once
-that scope is defined and is labeled according to its current state.</p>
-{% for d in desks %}
-{% if d.id != 'us-indopacific' %}
-<section class="desk desk--{{ d.state }}">
-  <p class="desk-state">{{ d.state_label }}</p>
-  <h2 class="plain" style="margin-top:.25rem">{% if d.state == 'live' %}<a href="china.html">{{ d.name }}</a>{% elif d.id == 'japan' %}<a href="japan.html">{{ d.name }}</a>{% else %}{{ d.name }}{% endif %}</h2>
-  <p>{{ d.note }}</p>
-  {% if d.state == 'live' %}
-  <p class="meta">{{ totals.articles|count }} records · {{ sources|length }} sources · {{ totals.runs|count }} runs</p>
-  {% else %}
-  <p class="meta">No records collected. No sources enabled.</p>
-  {% endif %}
-</section>
-{% endif %}
-{% endfor %}
-{# The US entry is deliberately not a peer desk section: it has no scope, so
-   presenting it at the same level as China and Japan would overstate it. #}
-<p class="meta desk-footnote">Not yet scoped: United States reference coverage has not been
-researched and is not presented as a desk.</p>
+<p class="lede">A desk is a declared collection scope: one jurisdiction or institutional family,
+with its own sources, its own coverage record, and its own limits. A desk appears here as soon as
+its scope is declared, and is labeled according to what it actually does.</p>
+<p class="meta">{{ desks.declared_count }} declared ·
+{{ desks.collecting_count }} collecting into the record ·
+{{ desks.not_collecting_count }} not collecting. Statuses and source counts come from the desk
+registry and the manifests it points at; record counts come from the corpus, and only a collecting
+desk has one.</p>
 
-<p>No Japan source is enabled and no records have been collected. The pre-registered source
-universe, the access problem that blocks it, and the observed publication volume are set out on the
-<a href="japan.html">Japan Desk page</a>. After collection begins, that desk remains in shadow for
-30 consecutive days before it can appear as coverage.</p>
+{% for d in desks %}
+<section class="desk desk--{{ d.status }}">
+  <p class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</p>
+  <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
+  <p>{{ d.scope }}</p>
+  <p class="meta">{{ d.status_explanation }}</p>
+  <dl class="desk-facts">
+    <div><dt>Sources configured</dt><dd>{{ d.configured_source_count }}</dd></div>
+    <div><dt>Sources enabled</dt><dd>{{ d.enabled_source_count }}</dd></div>
+    <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
+    <div><dt>Last successful collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+  </dl>
+  <p class="meta"><a href="{{ d.route }}">{{ d.name }} in full →</a></p>
+</section>
+{% endfor %}
+
+<h2>What a status means</h2>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th></tr></thead>
+  <tbody>
+    <tr><td data-label="Status"><span class="desk-state desk-state--live">Live — collecting</span></td>
+        <td data-label="Meaning">Sources are enabled and a scheduled run collects into the record. Only these desks have record counts.</td></tr>
+    <tr><td data-label="Status"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></td>
+        <td data-label="Meaning">Collecting privately into an isolated state, under evaluation. It reaches neither the corpus nor the site, is counted nowhere, and is not qualified.</td></tr>
+    <tr><td data-label="Status"><span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></td>
+        <td data-label="Meaning">Researched and reachable in principle, but the institution's discovery surface is not available to an honestly identified collector. Nothing has been collected.</td></tr>
+    <tr><td data-label="Status"><span class="desk-state desk-state--research">Researched — not yet collecting</span></td>
+        <td data-label="Meaning">The source universe is documented; no collector has been built and no source is enabled.</td></tr>
+    <tr><td data-label="Status"><span class="desk-state desk-state--planned">Planned — nothing collected</span></td>
+        <td data-label="Meaning">Scope declared, nothing researched, configured, enabled or collected.</td></tr>
+    <tr><td data-label="Status"><span class="desk-state desk-state--paused">Paused — collection stopped</span></td>
+        <td data-label="Meaning">Configured and deliberately stopped. Its existing records stay in the record; nothing new arrives.</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="meta">A desk that does not collect shows no record count at all. Zero would say the record
+was checked and found empty; the truth is that no record exists to check.</p>
 {% endblock %}

@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}{{ title }}{% endblock %}</title>
+<meta name="description" content="{{ tagline }}">
+{# Build provenance. A candidate build and the published site are both static
+   HTML in a directory; this is how a stray copy identifies itself. #}
+<meta name="generator" content="{{ title }} — {{ mode }} build">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
 </head>
 <body>
@@ -12,6 +17,14 @@
 <header class="masthead">
   <div class="wrap">
     <a class="brand" href="{{ '../' if nested else '' }}index.html">
+      {# The record mark: a stack of preserved entries, ruled. It carries no
+         military symbolism, works at favicon size and in monochrome, and is
+         decorative — the wordmark beside it is the accessible name. #}
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="3" y="4" width="26" height="24" rx="2" class="mark-field"/>
+        <path d="M8 11h16M8 16h16M8 21h10" class="mark-rules"/>
+        <path d="M3 25.5h26" class="mark-tide"/>
+      </svg>
       {# The home page leads with the publication, so the wordmark is its h1
          and the lead story is an h2. Every other page has its own h1. #}
       {% if page == 'index.html' %}
@@ -23,7 +36,7 @@
     <p class="brand-sub">{{ tagline }}</p>
     <nav class="primary" aria-label="Primary">
       <ul>
-        {% set nav = [('desks.html','Desks'),('archive.html','Archive'),('coverage.html','Coverage'),('sources.html','Sources'),('weekly.html','Analysis'),('methodology.html','Methodology'),('about.html','About')] %}
+        {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
         {% for href, label in nav %}
         <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
         {% endfor %}
@@ -46,7 +59,7 @@
       <li><b>{{ run_status.failed }}</b> execution failure{{ '' if run_status.failed == 1 else 's' }}</li>
       {% if run_status.unimplemented %}<li><b>{{ run_status.unimplemented }}</b> unimplemented adapter{{ '' if run_status.unimplemented == 1 else 's' }}</li>{% endif %}
       {% if run_status.disabled %}<li><b>{{ run_status.disabled }}</b> disabled source{{ '' if run_status.disabled == 1 else 's' }}</li>{% endif %}
-      {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }}</li>{% endif %}
+      {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }} of <b>{{ desks|length }}</b> declared</li>{% endif %}
     </ul>
   </div>
 </div>
@@ -62,8 +75,9 @@
     <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
     <p>Selective coverage. Publication records what an institution said, not whether its claims
     are true or its capabilities exist.</p>
-    <p><strong>Private prototype.</strong> Not published or deployed; {{ title }} is a working name
-    pending clearance and reader testing.</p>
+    <p><strong>Release candidate.</strong> Built in <code>{{ mode }}</code> mode and not published
+    or deployed. The public site continues under its current identity until a separately
+    authorized launch.</p>
   </div>
 </footer>
 {% block scripts %}{% endblock %}

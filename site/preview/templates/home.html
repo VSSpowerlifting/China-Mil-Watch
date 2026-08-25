@@ -1,22 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-{% if lead_edition %}
-<section class="lead">
-  <p class="eyebrow">Current issue{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
-  <h2 class="lead-title"><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h2>
-  {% if lead_edition.dek %}<p class="lede">{{ lead_edition.dek }}</p>{% endif %}
-  {# `articles` is the sidecar's n_articles = the week's relevance-passing
-     collected articles (generate_pla_watch.compute_stats -> total_articles).
-     It is NOT the count of items the edition cites — that is the source_trail,
-     which holds 13 for this edition. "records cited" was false. #}
-  <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
-  <p><a href="{{ lead_edition.url }}" rel="noopener">Read this edition →</a> &nbsp; <a href="weekly.html">All analysis →</a></p>
+<section class="purpose">
+  <p class="lede">{{ title }} preserves what defense and security institutions across the region
+  publish themselves — the original text, the date, the institution, and a per-run record of
+  whether collection actually worked. Analysis is separate from the record, cites it, and is
+  labeled as interpretation.</p>
+  <p class="meta">Coverage is selective. {{ desks.collecting_count }} of {{ desks.declared_count }}
+  declared desks {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest are
+  labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
 </section>
-{% endif %}
 
-<h2{% if not lead_edition %} class="plain"{% endif %}>Latest records</h2>
+<h2>Latest records</h2>
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
-<p class="meta">The most recent China Desk records, with original-language titles preserved.</p>
+<p class="meta">The most recent records from the desks that collect, with original-language titles
+preserved.</p>
 {% for a in articles[:6] %}
 <article class="record">
   <div class="record-head">
@@ -27,15 +24,59 @@
   {% if a.title_english and a.title_original %}<p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>{% endif %}
 </article>
 {% endfor %}
-<p><a href="archive.html">All records →</a></p>
+<p><a href="archive.html">The full record →</a></p>
 
-<h2>What this is</h2>
-<p>An archive of what selected defense and security institutions publish themselves — the original
-text, the date, the institution, and a per-run record of whether collection actually worked. One
-desk is collecting today; the others are declared and empty, and are labeled that way on
-<a href="desks.html">Desks</a>.</p>
-<p>Coverage is selective and heavily concentrated in one source. What the archive can and cannot
-support is set out in <a href="methodology.html">Methodology</a>, and what each collection run
-actually returned is on <a href="coverage.html">Coverage</a>. Citation guidance is on
-<a href="about.html">About</a>.</p>
+<h2 id="desks">Desks</h2>
+<p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
+beside it is derived from configuration or from the corpus — never from intent.</p>
+<div class="table-scroll">
+<table class="stacking desk-table">
+  <caption>{{ desks.declared_count }} declared desks. Only a collecting desk has a record count.</caption>
+  <thead>
+    <tr><th scope="col">Desk</th><th scope="col">Status</th><th scope="col" class="num">Enabled sources</th><th scope="col" class="num">Records</th></tr>
+  </thead>
+  <tbody>
+  {% for d in desks %}
+    <tr>
+      <td data-label="Desk"><a href="{{ d.route }}">{{ d.name }}</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></td>
+      <td data-label="Enabled sources" class="num">{{ d.enabled_source_count }}</td>
+      <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p><a href="desks.html">All desks and what blocks them →</a></p>
+
+{% if lead_edition %}
+<h2>Latest analysis</h2>
+<section class="lead">
+  <p class="eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
+  <h3 class="lead-title"><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
+  {% if lead_edition.dek %}<p class="lede">{{ lead_edition.dek }}</p>{% endif %}
+  {# `articles` is the sidecar's n_articles = the week's relevance-passing
+     collected articles (generate_pla_watch.compute_stats -> total_articles).
+     It is NOT the count of items the edition cites — that is the source_trail. #}
+  <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+  <p class="meta">A legacy China Desk series, published under the predecessor masthead
+  {{ predecessor_name }} and preserved with its original issue numbers, titles and URLs.</p>
+  <p><a href="{{ lead_edition.url }}" rel="noopener">Read this edition →</a> &nbsp; <a href="analysis.html">All analysis →</a></p>
+</section>
+{% endif %}
+
+<h2>What did not collect</h2>
+{% if run_status %}
+<p>Run {{ run_status.run_id }} executed {{ run_status.executed }}
+collector{{ '' if run_status.executed == 1 else 's' }} and recorded
+{{ run_status.failed }} execution failure{{ '' if run_status.failed == 1 else 's' }}{% if run_status.unimplemented %}, alongside {{ run_status.unimplemented }}
+configured source{{ '' if run_status.unimplemented == 1 else 's' }} with no working
+collector{% endif %}. An empty result has more than one cause and only one of them is healthy, so
+each source's own outcome is published rather than summarized away.</p>
+{% else %}
+<p>No collection run is recorded in this snapshot, so nothing can be said about what any source
+held. That is an absence, not a quiet day.</p>
+{% endif %}
+<p><a href="coverage.html">Coverage, per source, per run →</a> &nbsp;
+<a href="methodology.html">What this record can and cannot support →</a></p>
 {% endblock %}

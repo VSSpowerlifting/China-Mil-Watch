@@ -104,6 +104,10 @@ class SourceView:
     #: `ok_no_publications` both produce zero records and mean opposite things.
     latest_status: Optional[str] = None
     latest_error_detail: Optional[str] = None
+    #: This source's records as a percentage of the whole stored record,
+    #: rounded to one decimal. Derived, never declared: a share written into a
+    #: manifest note goes stale silently, and this one cannot.
+    share_of_record: Optional[float] = None
 
     @property
     def route(self) -> str:
@@ -130,6 +134,14 @@ class DeskView:
     entry: DeskEntry
     sources: List[SourceView] = field(default_factory=list)
     record_count: Optional[int] = None
+    #: Records this desk has stored with a completed model reading. `None`
+    #: wherever `record_count` is None, for the same reason.
+    analyzed_count: Optional[int] = None
+    #: Distinct publishing institutions behind this desk's sources. Counted
+    #: separately from sources on purpose: two sources can share one
+    #: institution, and calling the source count an institution count was a
+    #: real defect on the page this replaces.
+    institution_count: int = 0
     first_published: Optional[str] = None
     last_published: Optional[str] = None
     last_successful_run: Optional[str] = None
@@ -360,12 +372,21 @@ class PublicView:
 
             self._desk_stats = {r["desk_id"]: r for r in con.execute(
                 "SELECT s.desk_id, COUNT(a.id) AS n, "
+                "       SUM(CASE WHEN a.analyzed_at IS NOT NULL "
+                "                THEN 1 ELSE 0 END) AS analyzed, "
                 "       MIN(a.published_date) AS first_published, "
                 "       MAX(a.published_date) AS last_published "
                 "  FROM sources s "
                 "  JOIN articles a ON a.source_id = s.id "
                 " WHERE s.desk_id IS NOT NULL "
                 " GROUP BY s.desk_id").fetchall()}
+
+            self._desk_institutions = {
+                r["desk_id"]: r["n"] for r in con.execute(
+                    "SELECT desk_id, COUNT(DISTINCT institution_id) AS n "
+                    "  FROM sources WHERE desk_id IS NOT NULL "
+                    "   AND institution_id IS NOT NULL "
+                    " GROUP BY desk_id").fetchall()}
 
             self._latest_run = con.execute(
                 "SELECT id, started_at, completed_at, status "
@@ -451,6 +472,22 @@ class PublicView:
 
     # -- sources --------------------------------------------------------------
 
+    def _share(self, n: int) -> Optional[float]:
+        """
+        A source's share of the whole stored record, to one decimal.
+
+        `None` when the record is empty — a percentage of nothing is not zero
+        percent, it is undefined, and rendering 0.0% would assert a measurement
+        nobody could make.
+        """
+        total = self._totals["records"]
+        if not total or not n:
+            # A source that has stored nothing has no share to state. The
+            # record count beside it already says zero; "0.0%" would dress the
+            # same absence as a measurement.
+            return None
+        return round(100.0 * n / total, 1)
+
     def _latest_status_for(self, slug: str):
         for row in self._run_results:
             if row["source_slug"] == slug:
@@ -489,6 +526,7 @@ class PublicView:
                 first_published=stats.get("first_published"),
                 last_published=stats.get("last_published"),
                 latest_status=status, latest_error_detail=detail,
+                share_of_record=self._share(stats.get("n", 0)),
             ))
 
         for entry in self.registry:
@@ -528,6 +566,8 @@ class PublicView:
                 entry=entry,
                 sources=by_desk.get(entry.slug, []),
                 record_count=stats.get("n") if allowed else None,
+                analyzed_count=(stats.get("analyzed") or 0) if allowed else None,
+                institution_count=self._desk_institutions.get(entry.slug, 0),
                 first_published=stats.get("first_published") if allowed else None,
                 last_published=stats.get("last_published") if allowed else None,
                 last_successful_run=(

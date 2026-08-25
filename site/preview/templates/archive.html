@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Archive — {{ title }}{% endblock %}
+{% block title %}The record — {{ title }}{% endblock %}
 {% block content %}
-<h1>Source archive</h1>
-<p class="lede">Search and filter the complete prototype snapshot — all
-{{ corpus_total | count }} stored records.</p>
+<h1>The record</h1>
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+<p class="lede">Every stored record in this snapshot — all
+{{ corpus_total | count }} of them — searchable and filterable, with the
+original-language title preserved on every one.</p>
 
 {# The complete path, always visible and never dependent on JavaScript. It comes
    first because it is the guarantee, not the fallback: the browser below is a

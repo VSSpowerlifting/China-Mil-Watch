@@ -42,8 +42,9 @@ This is a software triage result, not an editorial judgment.{% endif %}</p>
 <table class="provenance">
   <caption>What is known about this record and where each part came from.</caption>
   <tbody>
+    <tr><th scope="row">Desk</th><td class="prov-value">{% if record_desk %}<a href="../{{ record_desk.route }}">{{ record_desk.name }}</a>{% else %}—{% endif %}</td></tr>
     <tr><th scope="row">Publishing institution</th><td class="prov-value">{{ record.institution or '—' }}</td></tr>
-    <tr><th scope="row">Source outlet</th><td class="prov-value">{{ record.source_name }} <span class="meta">({{ record.source_slug }})</span></td></tr>
+    <tr><th scope="row">Source outlet</th><td class="prov-value"><a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a> <span class="meta">({{ record.source_slug }})</span></td></tr>
     <tr><th scope="row">Source language</th><td class="prov-value">{{ record.language_tag or '—' }} <span class="meta">— an attribute of the source, not of this record</span></td></tr>
     <tr><th scope="row">Source-stated publication date</th><td class="prov-value">{{ record.published_date }}</td></tr>
     <tr><th scope="row">Original URL</th><td class="prov-value"><a href="{{ record.url }}" rel="noopener nofollow">{{ record.url }}</a></td></tr>

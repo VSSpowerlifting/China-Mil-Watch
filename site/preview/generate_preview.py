@@ -1,21 +1,30 @@
 """
-Private regional-IA prototype. Renders to an ignored directory; never to
-production `output/`.
+Indo-Pacific Record — the candidate renderer.
+
+Renders to an explicit disposable directory; never to production `output/`.
 
 WHY THIS IS NOT A FLAG ON site/generator.py
 -------------------------------------------
 The production generator renders the *current* product: a China-only daily brief
-plus the weekly. This prototype renders a *different information architecture* —
-parent brand, desk directory, source universe, coverage health — for a product
-that does not exist publicly yet. Those are different page sets, not different
+plus the weekly. This renders a *different information architecture* — the
+umbrella record, a desk directory, a source universe, coverage health — for a
+product that is not public yet. Those are different page sets, not different
 settings, and threading a `--regional` flag through `generate_site()` would put
 unshipped IA inside the function that writes production output on every CI run.
 The constraint that matters more than code reuse is that `output/` cannot
 change; a separate entry point makes that structural rather than careful.
 
 What IS shared, deliberately: the database (read-only), the real corpus, the
-design tokens, and the evidence vocabulary. Nothing is duplicated that could be
+desk registry, the evidence vocabulary. Nothing is duplicated that could be
 imported.
+
+WHAT IS DERIVED RATHER THAN DECLARED
+------------------------------------
+The desk roster comes from `desks/registry.json` through
+`core.desk_registry`, and every desk figure comes from `core.viewmodel`. There
+is no presentation constant listing desks any more, because there is no honest
+way to keep two such lists in agreement. A desk that does not collect has
+`record_count is None` — an absence with an explanation — never a zero.
 
 SAFETY
 ------
@@ -35,11 +44,15 @@ USAGE
 -----
     .venv/bin/python site/preview/generate_preview.py
     .venv/bin/python site/preview/generate_preview.py --serve      # localhost:8770
-    .venv/bin/python site/preview/generate_preview.py --title "Some Other Name"
+    .venv/bin/python site/preview/generate_preview.py --snapshot-from-corpus
 
-The working title is configuration, not a literal, so an approved name is
-applied in exactly one place. It is NOT a public name and NOTHING here is
-deployed.
+`--snapshot-from-corpus` is the local-inspection affordance, not a way around
+the release guard: the default remains the declared snapshot and a corpus that
+does not match it fails the build. The flag states plainly which corpus is being
+described instead of mislabelling one as another.
+
+NOTHING HERE IS DEPLOYED. The public site continues to build under
+`DEFAULT_SITE_MODE = LEGACY` until a separately authorized launch.
 """
 
 from __future__ import annotations
@@ -58,6 +71,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from jinja2 import Environment, FileSystemLoader                    # noqa: E402
+from core.viewmodel import PublicView                               # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
 
 TEMPLATES = Path(__file__).parent / "templates"
@@ -65,12 +79,14 @@ DEFAULT_OUT = REPO_ROOT / "preview"
 PRODUCTION_OUT = (REPO_ROOT / "output").resolve()
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
 
-#: Preferred WORKING name. Approved 2026-08-15 as the preferred candidate,
-#: pending USPTO/EUIPO trademark clearance and reader testing
-#: (docs/transition/FRONTEND_AND_BRAND_REVISION_BRIEF.md §1). NOT adopted, NOT
-#: public, NOT registered. It occupies the codename slot `Western Pacific
-#: Record` previously held.
-WORKING_TITLE = "The Declared Record"
+#: The public name. Owner-directed 2026-08-25; the governing record is
+#: docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. "The Declared Record" and
+#: "Western Pacific Record" were prototype codenames and are retired.
+#:
+#: Trademark screening, domain, handles and organization naming are owner
+#: actions and none has been performed. None of them is required to build this
+#: candidate locally, and this constant asserts none of them.
+PUBLIC_TITLE = "Indo-Pacific Record"
 
 #: Approved 2026-08-15. US spelling ("defense") is the ruling; the prototype's
 #: earlier British spelling is corrected throughout to match.
@@ -80,6 +96,20 @@ TAGLINE = ("Official defense and security texts, preserved as published and "
 #: Used ONLY as an eyebrow above corpus and record surfaces. It is not the
 #: tagline, not a subtitle, and never appears in the masthead.
 CORPUS_EYEBROW = "As published."
+
+#: The name this record was published under before the umbrella changed, and
+#: the name of the weekly series published under it. Both are historical fact
+#: and appear ONLY in archival context — a legacy series label, a historical
+#: issue, a note explaining the change. Neither is ever a masthead, a page
+#: title, or a description of what the project is now.
+PREDECESSOR_NAME = "China Mil Watch"
+PREDECESSOR_SERIES = "The PLA Watch"
+
+#: Names the build that produced a page. Carried into the footer and a meta
+#: tag because a candidate build and the published site are both static HTML in
+#: a directory, and a reader — or a future maintainer finding a stray copy —
+#: must be able to tell which one they are holding.
+BUILD_MODE = "indo-pacific-record"
 
 #: Maintainer. Name, role, contact and biography are owner-approved
 #: (2026-08-15). The historical sidecar `author_bio` and `author_title` values
@@ -96,69 +126,16 @@ MAINTAINER = {
     "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
 }
 
-#: Desks the prototype displays. `live` is the only one with data; the others
-#: exist to show the shape of the future product WITHOUT inventing activity.
-#: Any count, chart or sample item for a non-live desk would be fabrication.
-DESKS = [
-    {
-        "id": "china", "name": "China Desk", "state": "live",
-        "state_label": "Live — collecting",
-        "note": "Collecting since 2026. The corpus below is real.",
-    },
-    {
-        "id": "japan", "name": "Japan Desk", "state": "scoped",
-        "state_label": "Pre-registered scope — not yet collecting",
-        "note": "Two source families have been researched and are documented "
-                "below. No source is enabled and no records have been "
-                "collected.",
-    },
-    {
-        "id": "us-indopacific", "name": "US Indo-Pacific Reference Desk",
-        "state": "development",
-        "state_label": "In development — not yet scoped",
-        "note": "Scope deliberately bounded to a reference desk. Its source "
-                "universe has not been researched to the standard applied to "
-                "Japan, so none is claimed here.",
-    },
-]
-
-#: Japan pre-registered scope. Every figure below is carried from
-#: docs/transition/SECOND_DESK_SOURCE_UNIVERSE.md, where it is marked
-#: `verified`. Nothing is estimated, and no field is filled in that the
-#: research left deliberately unset.
-JAPAN_SCOPE = {
-    "sources": [
-        {"name": "Ministry of Defense — press releases",
-         "format": "HTML — 21 HTML links, 0 PDFs on the listing",
-         "note": "Listing verified; item format verified."},
-        {"name": "Joint Staff — press releases",
-         "format": "PDF only — 895 PDF links, 10 HTML links on the page",
-         "note": "One page holds the entire 2014–2026 archive; the year "
-                 "“tabs” are in-page anchors, not separate pages, so "
-                 "no pagination or year-walking is required."},
-    ],
-    "volume": [
-        ("2026, to mid-August", "135"),
-        ("2025, full year", "214"),
-        ("2014–2026, whole archive", "895"),
-    ],
-    # Reader-facing wording. No raw field names, no repository language.
-    "blockers": [
-        ("PDF extraction is required.",
-         "Joint Staff releases are published as PDFs. The current pipeline "
-         "does not extract them, so a working collector must be built and "
-         "tested before collection begins."),
-        ("Repeated titles require a different deduplication rule.",
-         "On the 2026 listing, “Japan-U.S. Bilateral Exercise” appears 27 "
-         "times for distinct events. A title-only rule would collapse 26 of "
-         "those 27 records."),
-        ("Collection-health thresholds remain unset.",
-         "Publication cadence and silence thresholds will be calibrated only "
-         "after 30 days of shadow collection; guessing now could create false "
-         "alarms or hide real silence."),
-    ],
-}
-
+#: The desk roster is NOT a constant here any more. It is loaded from
+#: `desks/registry.json` through `core.desk_registry`, joined to the database by
+#: `core.viewmodel.PublicView.desk_directory()`, and every figure on it is
+#: derived. Two lists of desks — one for collection, one for display — is the
+#: exact configuration that lets a page promote a desk no source supports.
+#: The Japan research block — source families, observed publication volume and
+#: the blockers — is registry configuration (`desks/registry.json`, desk
+#: `japan`, key `research`), not a constant here. It describes what the
+#: ministry published and what stops collection; it is not a record count and
+#: the desk holds no records.
 #: Plain-language explanations of the stored status vocabulary
 #: (core/collection/status.py). Wording is reader-facing, meaning is not
 #: reinterpreted.
@@ -182,6 +159,14 @@ SOURCE_TYPE_LABELS = {
     "armed_forces_english_portal": "Armed forces English-language portal",
 }
 
+#: Every stored collection status, in plain reader-facing language.
+#:
+#: The map covers `core.collection.status.ALL_STATUSES` exhaustively and a test
+#: proves it: a status with no entry would render as its raw stored token, which
+#: is repository language leaking onto a reader surface. The distinctions are
+#: translated, never collapsed — "nothing published" and "could not reach" both
+#: produce zero records and mean opposite things, and merging them into "no
+#: results" is the single failure this whole page exists to prevent.
 STATUS_PROSE = {
     "ok": ("Collected", "Reached the listing and stored new items."),
     "ok_no_publications": ("Nothing published",
@@ -200,10 +185,45 @@ STATUS_PROSE = {
     "listing_failure": ("Could not reach",
                         "The listing could not be retrieved or parsed. The "
                         "empty result is a fault, not silence."),
+    "auth_failure": ("Access refused",
+                     "The source refused access — a login wall, or a refusal "
+                     "returned to an honestly identified collector. Nothing "
+                     "was collected, and nothing was done to defeat it."),
+    "timeout": ("Timed out",
+                "The request ran past its time limit. Whether the source had "
+                "anything to offer is unknown."),
+    "disallowed_redirect": ("Redirected away",
+                            "The request was redirected outside the source's "
+                            "declared domains and was not followed."),
+    "unexpected_content_type": ("Unexpected format",
+                                "The response was not the document type the "
+                                "source declares. A challenge page served in "
+                                "place of a listing arrives this way."),
+    "oversized_response": ("Refused as oversized",
+                           "The response exceeded the size ceiling and was "
+                           "refused unread. No partial content was kept."),
+    "fetch_failure": ("Could not retrieve documents",
+                      "The listing was reached, but the documents it named "
+                      "could not be fetched. Items exist that we do not hold."),
     "extraction_failure": ("Could not read",
                            "Pages were fetched but nothing usable was parsed — "
                            "usually the source changed its markup."),
+    "analysis_failure": ("Collected, not analyzed",
+                         "Collection succeeded and the records are stored; the "
+                         "analysis step failed for them. The record is intact."),
+    "adapter_error": ("Collector error",
+                      "The collector raised an unexpected error. Deliberately "
+                      "kept distinct from the specific failures above so an "
+                      "unclassified crash is never absorbed as one of them."),
+    "unknown_source": ("Unknown source",
+                       "A source was requested that no desk manifest "
+                       "declares. This is a configuration fault, not silence."),
 }
+
+#: Statuses that describe an access refusal rather than a fault on our side.
+#: Grouped so the coverage page can say plainly that a refusal was respected.
+ACCESS_REFUSED_STATUSES = ("auth_failure", "disallowed_redirect",
+                           "unexpected_content_type")
 
 #: Declared snapshot identity. Ruled 2026-08-16: this is *editorial metadata*,
 #: deliberately declared — NOT inferred from `MAX(published_date)`, which is how
@@ -405,8 +425,8 @@ def load_corpus(db_path: Path) -> dict:
             " ORDER BY source_slug", (latest_run["id"],)).fetchall()
 
         # Desks that actually collected in this run, derived from the persisted
-        # source -> desk mapping rather than from the DESKS presentation
-        # constant. `not_implemented` / `skipped_disabled` never counted: a
+        # source -> desk mapping rather than from the desk registry.
+        # `not_implemented` / `skipped_disabled` are never counted: a
         # configured source that did not run is not a collecting desk.
         collecting_desks = [r["desk_id"] for r in con.execute(
             "SELECT DISTINCT s.desk_id AS desk_id "
@@ -822,8 +842,8 @@ def run_status_summary(latest_run, run_results, collecting_desks,
         unimplemented / disabled   -> `source_run_results` for that run
       * collecting desk count      -> `sources.desk_id` joined to the executed
                                       rows of that run. It is a persisted
-                                      relationship, NOT the DESKS presentation
-                                      constant, and NOT a count of sources.
+                                      relationship, NOT the desk registry,
+                                      and NOT a count of sources.
 
     No configured-source total is exposed as a collector denominator. Four
     working collectors executed and a fifth configured source has no adapter;
@@ -1499,7 +1519,7 @@ LEGACY_REDIRECT = """<!doctype html>
 
 def build(out_dir: Path, title: str, db_path: Path,
           snapshot: dict = DECLARED_SNAPSHOT,
-          legacy_routes: bool = False) -> dict:
+          legacy_routes: bool = False, mode: str = BUILD_MODE) -> dict:
     out_dir = Path(out_dir).resolve()
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -1528,7 +1548,17 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
-    live_desks = [d for d in DESKS if d["state"] == "live"]
+
+    # The desk roster, derived. `view` reads the same database the corpus above
+    # came from, so a desk figure and a corpus figure cannot describe different
+    # snapshots of it.
+    view = PublicView(db_path)
+    desks = view.desk_directory()
+    identity = view.identity(
+        title, TAGLINE, CORPUS_EYEBROW, MAINTAINER, mode,
+        snapshot_date=snapshot["date"], predecessor_name=PREDECESSOR_NAME)
+    metrics = view.methodology_metrics()
+    source_views = view.source_directory()
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
     # render, so the guide cannot describe a different snapshot than the one
@@ -1554,19 +1584,24 @@ def build(out_dir: Path, title: str, db_path: Path,
         "title": title,
         "tagline": TAGLINE,
         "corpus_eyebrow": CORPUS_EYEBROW,
+        "identity": identity,
+        "mode": mode,
+        "predecessor_name": PREDECESSOR_NAME,
+        "predecessor_series": PREDECESSOR_SERIES,
         "maintainer": MAINTAINER,
         "snapshot_label": snapshot_label,
         "citation": citation,
-        "japan_scope": JAPAN_SCOPE,
         "institutions": data["institutions"],
         "run_status": run_status_summary(
             data["latest_run"], data["run_results"],
             data["collecting_desks"], data["unmapped_executed"]),
         "status_run_note": STATUS_RUN_NOTE,
         "lead_edition": editions[0] if editions else None,
-        "desks": DESKS,
-        "live_desk_count": len(live_desks),
-        "developing_desk_count": len(DESKS) - len(live_desks),
+        "desks": desks,
+        "live_desk_count": desks.collecting_count,
+        "developing_desk_count": desks.not_collecting_count,
+        "metrics": metrics,
+        "source_views": source_views,
         "sources": data["sources"],
         "totals": data["totals"],
         "latest_run": data["latest_run"],
@@ -1602,13 +1637,12 @@ def build(out_dir: Path, title: str, db_path: Path,
     pages = {
         "index.html": "home.html",
         "desks.html": "desks.html",
-        "china.html": "desk_china.html",
-        "japan.html": "desk_japan.html",
         "archive.html": "archive.html",
         "corpus-guide.html": "corpus_guide.html",
         "coverage.html": "coverage.html",
         "sources.html": "sources.html",
-        "weekly.html": "weekly.html",
+        "analysis.html": "analysis.html",
+        "pla-watch.html": "pla_watch.html",
         "methodology.html": "methodology.html",
         "about.html": "about.html",
     }
@@ -1619,6 +1653,29 @@ def build(out_dir: Path, title: str, db_path: Path,
             encoding="utf-8")
         written.append(target)
 
+    # ── One page per declared desk, from the registry ────────────────────────
+    # Every public desk gets a page, including the ones that collect nothing.
+    # A declared desk with no page would be a desk a reader cannot check.
+    desk_tmpl = env.get_template("desk.html")
+    for desk in desks:
+        (out_dir / desk.route).write_text(
+            desk_tmpl.render(page=desk.route, desk=desk, **ctx),
+            encoding="utf-8")
+        written.append(desk.route)
+
+    # ── One page per source ──────────────────────────────────────────────────
+    # Including the shadow source, which is described from its manifest and
+    # carries no record count at all — not a zero.
+    (out_dir / "source").mkdir(parents=True)
+    source_tmpl = env.get_template("source.html")
+    for src in source_views:
+        desk = desks.get(src.desk_slug)
+        (out_dir / src.route).write_text(
+            source_tmpl.render(page="sources.html", nested=True, source=src,
+                               source_desk=desk, **ctx),
+            encoding="utf-8")
+        written.append(src.route)
+
     # ── record/{id}.html — one page per stored record ────────────────────────
     # `record/`, deliberately NOT `article/`: the production namespace holds
     # 1,110 analyzed articles and is live and canonical, while this holds all
@@ -1627,10 +1684,14 @@ def build(out_dir: Path, title: str, db_path: Path,
     (out_dir / "record").mkdir(parents=True)
     record_tmpl = env.get_template("record.html")
     definitions = {s["code"]: s["definition"] for s in PROCESSING_STATES}
+    # Desk association is resolved from the stored source→desk mapping, so a
+    # record can never be attributed to a desk the registry does not declare.
+    desk_by_source = {s.slug: desks.get(s.desk_slug) for s in source_views}
     for rec in data["corpus"]:
         (out_dir / "record" / ("%d.html" % rec["id"])).write_text(
             record_tmpl.render(page="archive.html", record=rec,
                                state_definition=definitions[rec["state"]],
+                               record_desk=desk_by_source.get(rec["source_slug"]),
                                cite=record_citation(rec, title, snapshot),
                                **ctx),
             encoding="utf-8")
@@ -1685,6 +1746,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         encoding="utf-8")
     written.append("styles.css")
 
+    # Code-native mark. One SVG serves the masthead and the tab icon, so the
+    # two cannot drift, and it carries no military symbolism to drift into.
+    (out_dir / "mark.svg").write_text(
+        (Path(__file__).parent / "mark.svg").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("mark.svg")
+
     # ── Legacy route continuity ──────────────────────────────────────────
     # Off by default, so the prototype build keeps its guarantee of never
     # creating the production `article/` namespace — the preview is built
@@ -1709,31 +1777,50 @@ def build(out_dir: Path, title: str, db_path: Path,
             redirects += 1
         written.append("article/*.html")
 
-    return {"out_dir": out_dir, "files": written,
+    return {"out_dir": out_dir, "files": written, "mode": mode,
             "articles": len(data["recent"]), "editions": len(editions),
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
+            "desks": len(desks), "collecting_desks": desks.collecting_count,
+            "sources": len(source_views),
             "legacy_redirects": redirects}
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default=str(DEFAULT_OUT))
-    ap.add_argument("--title", default=WORKING_TITLE,
-                    help="working title; NOT a public name")
+    ap.add_argument("--title", default=PUBLIC_TITLE)
     ap.add_argument("--db", default=str(TRACKED_DB))
+    ap.add_argument("--snapshot-from-corpus", action="store_true",
+                    help="describe the corpus in the database rather than the "
+                         "declared release snapshot. Local inspection only: it "
+                         "states which corpus is being described instead of "
+                         "mislabelling one as another, and it does not relax "
+                         "the release guard.")
+    ap.add_argument("--legacy-routes", action="store_true",
+                    help="also emit the /article/<id> compatibility redirects")
     ap.add_argument("--serve", action="store_true",
                     help="serve the result on localhost:8770")
     args = ap.parse_args(argv)
 
-    result = build(Path(args.out), args.title, Path(args.db))
-    print("preview: %d files -> %s" % (len(result["files"]), result["out_dir"]))
-    print("title  : %s (working title, not adopted)" % args.title)
-    print("data   : %d real articles; no desk other than China shows any data"
-          % result["articles"])
+    snapshot = (snapshot_from_corpus(Path(args.db))
+                if args.snapshot_from_corpus else DECLARED_SNAPSHOT)
+
+    result = build(Path(args.out), args.title, Path(args.db),
+                   snapshot=snapshot, legacy_routes=args.legacy_routes)
+    print("build  : %d files -> %s" % (len(result["files"]), result["out_dir"]))
+    print("mode   : %s (candidate; the public site builds under legacy)"
+          % result["mode"])
+    print("title  : %s" % args.title)
+    print("desks  : %d declared, %d collecting"
+          % (result["desks"], result["collecting_desks"]))
     print("corpus : %d record pages across %d publication weeks"
           % (result["records"], result["weeks"]))
-    print("weekly : %d real editions linked to the live archive (never copied)"
+    print("sources: %d source pages" % result["sources"])
+    print("analysis: %d editions linked to the live archive (never copied)"
           % result["editions"])
+    if result["legacy_redirects"]:
+        print("legacy : %d /article/<id> redirects"
+              % result["legacy_redirects"])
 
     if args.serve:
         import http.server, socketserver, functools
