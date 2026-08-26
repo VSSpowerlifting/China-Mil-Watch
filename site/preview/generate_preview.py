@@ -1561,6 +1561,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # snapshots of it.
     view = PublicView(db_path)
     desks = view.desk_directory()
+    coverage_view = view.coverage()
     identity = view.identity(
         title, TAGLINE, CORPUS_EYEBROW, MAINTAINER, mode,
         snapshot_date=snapshot["date"], predecessor_name=PREDECESSOR_NAME)
@@ -1619,7 +1620,12 @@ def build(out_dir: Path, title: str, db_path: Path,
         "sources": data["sources"],
         "totals": data["totals"],
         "latest_run": data["latest_run"],
-        "run_results": data["run_results"],
+        # The Coverage table renders the VIEW MODEL rows, not the raw dict
+        # rows. The dicts carry only what the query selected, so a template
+        # asking for a derived field — `usable_text` — got Jinja Undefined and
+        # silently rendered an empty cell instead of "not measured". Local
+        # visual QA caught it; nothing in the template layer could have.
+        "run_results": coverage_view.results,
         "articles": data["recent"],
         "gaps": gaps,
         "source_facets": sorted(by_source.items()),

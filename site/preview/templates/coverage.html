@@ -13,8 +13,15 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 <div class="table-scroll">
 <table class="stacking">
   <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
+  <tfoot>
+    <tr><td colspan="9" class="meta"><strong>Parsed</strong> counts pages the parser returned a document for.
+    <strong>Text read</strong> counts the documents that actually carried readable text. They differ when a
+    page was reachable but unreadable: the item's title, link and date are kept, and its text is not.
+    Runs recorded before this measurement existed read <em>not measured</em> rather than a zero they never
+    observed.</td></tr>
+  </tfoot>
   <thead>
-    <tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
+    <tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Parsed</th><th scope="col" class="num">Text read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
   </thead>
   <tbody>
   {% for r in run_results %}
@@ -29,7 +36,8 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
         </span>
       </td>
       <td data-label="Found" class="num">{{ r.references_discovered }}</td>
-      <td data-label="Read" class="num">{{ r.extracted }}</td>
+      <td data-label="Parsed" class="num">{{ r.extracted }}</td>
+      <td data-label="Text read" class="num">{% if r.usable_text is not none %}{{ r.usable_text }}{% if r.text_unavailable %} <span class="meta">({{ r.text_unavailable }} without text)</span>{% endif %}{% else %}<span class="meta">not measured</span>{% endif %}</td>
       <td data-label="Already held" class="num">{{ r.duplicates }}</td>
       <td data-label="New" class="num">{{ r.new_documents }}</td>
       {# error_detail is shown only for genuine failures. For not_implemented it

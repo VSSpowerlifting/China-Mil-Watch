@@ -19,13 +19,14 @@ depended on four separate properties holding at once, none of which was pinned:
      paid retries that day and nothing after it;
   4. the marker's date and the guard's date are the same date.
 
-Property 4 is currently true by coincidence of scheduling rather than by
-construction: the marker is written from `date.today()` (UTC on a GitHub
-runner) while the workflow guard compares against America/New_York. Every
-configured cron window sits at 08:23–10:23 EDT, where the two agree. A cron
-moved past 20:00 EDT would write tomorrow's marker against today's guard and
-suppress a day that never failed. The test below fails if that ever becomes
-possible.
+Property 4 was, when this suite was written, true only by coincidence of
+scheduling: the marker was written from `date.today()` (UTC on a GitHub runner)
+while the workflow guard compared against America/New_York, and every
+configured cron window happened to sit at 08:23–10:23 EDT where the two agree.
+It is now true by construction — both derive one New York workflow day, and
+`tests/test_workflow_day_contract.py` pins the boundary and DST cases. The
+cron-window test below is kept regardless: it is cheap, and it fails loudly if
+a schedule change ever puts the two zones on different dates again.
 
 Nothing here calls a provider, opens the tracked database for writing, or
 touches `output/`.
@@ -374,10 +375,24 @@ class TestTheMarkerDateAgreesWithTheGuardDate(unittest.TestCase):
                         "failed, or fail to write one for a day that did."
                         % (hour, minute))
 
-    def test_the_marker_is_written_from_the_runs_target_date(self):
+    def test_the_marker_is_written_from_the_workflow_day(self):
+        """
+        Updated when the mismatch was closed.
+
+        This test previously asserted the marker was written from the run's
+        `target_date` — which was the defect, recorded as a fact so the risk
+        was visible. `fix/billing-marker-schedule-timezone` replaced it with a
+        single New York workflow-day contract shared by the guard, so the pin
+        moves from "the risk exists here" to "the risk is closed here".
+        `tests/test_workflow_day_contract.py` holds the boundary and DST cases.
+        """
         source = PIPELINE.read_text(encoding="utf-8")
-        self.assertIn("_write_billing_failure_marker(target_date)", source)
-        self.assertIn("target   = args.date or date.today()", source)
+        self.assertNotIn("_write_billing_failure_marker(target_date)", source)
+        self.assertIn("from core.workflow_day import workflow_day_string",
+                      source)
+        self.assertIn("target   = args.date or date.today()", source,
+                      "the COLLECTION target date is unchanged; only the "
+                      "schedule stamp moved")
 
 
 class TestRecoveryIsIdempotentAgainstTheStoredCorpus(unittest.TestCase):
