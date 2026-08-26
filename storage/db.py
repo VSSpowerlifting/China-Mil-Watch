@@ -527,8 +527,8 @@ def record_source_run_result(run_id: int, result) -> None:
                 (scrape_run_id, source_slug, desk_id, status, is_failure,
                  started_at, completed_at, references_discovered, fetched,
                  extracted, duplicates, new_documents, relevance_rejected,
-                 failed_fetches, error_detail)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 failed_fetches, text_unavailable, error_detail)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(scrape_run_id, source_slug) DO UPDATE SET
                 status                = excluded.status,
                 is_failure            = excluded.is_failure,
@@ -536,6 +536,7 @@ def record_source_run_result(run_id: int, result) -> None:
                 references_discovered = excluded.references_discovered,
                 fetched               = excluded.fetched,
                 extracted             = excluded.extracted,
+                text_unavailable      = excluded.text_unavailable,
                 duplicates            = excluded.duplicates,
                 new_documents         = excluded.new_documents,
                 relevance_rejected    = excluded.relevance_rejected,
@@ -547,7 +548,7 @@ def record_source_run_result(run_id: int, result) -> None:
              result.completed_at, result.references_discovered, result.fetched,
              result.extracted, result.duplicates, result.new_documents,
              result.relevance_rejected, result.failed_fetches,
-             result.error_detail),
+             result.text_unavailable, result.error_detail),
         )
 
 
