@@ -198,7 +198,18 @@ examples showing the change in output quality.
 
 ## License
 
-MIT.  See LICENSE.
+The repository holds material under different terms, so one line cannot cover it.
+
+* **Software** — MIT. Full text in [`LICENSE`](LICENSE).
+* **Original editorial analysis, issue text and site copy** — copyright
+  Benjamin Yang, all rights reserved.
+* **Official source documents and quotations** — remain under the terms of the
+  institutions that published them. This project does not relicense them.
+* **Underlying public facts** — claimed by nobody, including this project.
+
+[`CONTENT_AND_DATA_RIGHTS.md`](CONTENT_AND_DATA_RIGHTS.md) sets out the scope
+of each in full. The MIT grant covers the machinery, not the journalism and not
+the ministries' documents.
 
 ---
 
