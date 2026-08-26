@@ -335,11 +335,60 @@ class TestTheCoverageSurfaceTellsThemApart(unittest.TestCase):
         self.assertIn("reachable but unreadable", html)
         self.assertIn("not measured", html)
 
-    def test_an_unmeasured_run_is_not_rendered_as_zero(self):
-        html = self.template()
-        block = html.split('data-label="Text read"', 1)[1].split("</td>", 1)[0]
-        self.assertIn("usable_text is not none", block)
-        self.assertIn("not measured", block)
+    def test_an_unmeasured_run_actually_renders_not_measured(self):
+        """
+        Rendered, not read from the template source.
+
+        The first version of this test asserted the template *contained* the
+        words, and passed while every cell rendered empty: the Coverage table
+        was being handed raw query dicts, so a derived field became Jinja
+        Undefined and silently produced nothing. A template-source assertion
+        cannot see that. This renders the real template through the real
+        context object.
+        """
+        from jinja2 import Environment, FileSystemLoader
+        from core.viewmodel import RunResultView
+
+        env = Environment(
+            loader=FileSystemLoader(str(self.TEMPLATE.parent)),
+            autoescape=True, trim_blocks=True, lstrip_blocks=True)
+        source = env.loader.get_source(env, "coverage.html")[0]
+        cell = [line for line in source.splitlines()
+                if 'data-label="Text read"' in line][0]
+        tmpl = env.from_string(cell)
+
+        unmeasured = RunResultView(source_slug="s", status=st.OK,
+                                   is_failure=False, extracted=5)
+        out = tmpl.render(r=unmeasured)
+        self.assertIn("not measured", out)
+        self.assertNotIn(">0<", out)
+
+        measured = RunResultView(source_slug="s", status=st.OK,
+                                 is_failure=False, extracted=5,
+                                 text_unavailable=2)
+        out = tmpl.render(r=measured)
+        self.assertIn("3", out)
+        self.assertIn("2 without text", out)
+        self.assertNotIn("not measured", out)
+
+        clean = RunResultView(source_slug="s", status=st.OK,
+                              is_failure=False, extracted=5,
+                              text_unavailable=0)
+        out = tmpl.render(r=clean)
+        self.assertIn("5", out)
+        self.assertNotIn("without text", out)
+        self.assertNotIn("not measured", out)
+
+    def test_the_coverage_table_is_given_view_model_rows(self):
+        """
+        The defect underneath the empty cell. Raw query dicts carry only the
+        columns the SELECT named, so any derived field a template asks for
+        becomes Undefined and renders as nothing at all.
+        """
+        source = (REPO_ROOT / "site" / "preview"
+                  / "generate_preview.py").read_text(encoding="utf-8")
+        self.assertIn('"run_results": coverage_view.results,', source)
+        self.assertNotIn('"run_results": data["run_results"],', source)
 
     def test_the_view_model_degrades_when_the_column_is_absent(self):
         """
