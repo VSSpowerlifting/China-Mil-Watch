@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ desk.name }} — {{ title }}{% endblock %}
+{% block content %}
+<p class="desk-state desk-state--{{ desk.status }}">{{ desk.status_label }}</p>
+<h1>{{ desk.name }}</h1>
+<p class="lede">{{ desk.scope }}</p>
+{% if desk.record_count is not none %}
+<p>{{ desk.record_count|count }} records from {{ desk.configured_source_count }} sources across
+{{ desk.institution_count }} institutions, {{ desk.first_published }} to {{ desk.last_published }}.</p>
+{% endif %}
+<p>{{ desk.status_explanation }}</p>
+
+{% if desk.record_count is not none %}
+<h2 class="plain">The record, as it actually stands</h2>
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+{# "Analyzed" is articles.analyzed_at IS NOT NULL — nothing about publication.
+   All source records are part of the published record, so "analyzed and
+   published" was two different claims wearing one label. #}
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Source records</dt><dd>{{ desk.record_count|count }}</dd></div>
+  <div class="stat-row"><dt>Analyzed records</dt><dd>{{ desk.analyzed_count|count }}</dd></div>
+  <div class="stat-row"><dt>Awaiting analysis</dt><dd>{{ (desk.record_count - desk.analyzed_count)|count }}</dd></div>
+  <div class="stat-row"><dt>Earliest item</dt><dd>{{ desk.first_published or '—' }}</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>{{ desk.last_published or '—' }}</dd></div>
+  <div class="stat-row"><dt>Last successful collection</dt><dd>{{ desk.last_successful_run or 'None' }}</dd></div>
+  <div class="stat-row"><dt>Sources configured</dt><dd>{{ desk.configured_source_count }}</dd></div>
+  <div class="stat-row"><dt>Sources enabled</dt><dd>{{ desk.enabled_source_count }}</dd></div>
+</dl>
+<p class="meta">Counts reflect the stored corpus at this snapshot. "Analyzed" means a model
+completed a reading of the record — it says nothing about publication. Records awaiting analysis
+remain part of the record.</p>
+{% else %}
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+  <div class="stat-row"><dt>Sources configured</dt><dd>{{ desk.configured_source_count }}</dd></div>
+  <div class="stat-row"><dt>Sources enabled</dt><dd>{{ desk.enabled_source_count }}</dd></div>
+</dl>
+<p class="meta">This desk has collected nothing into the record. No count on this page describes
+material this project holds.</p>
+{% endif %}
+
+{% if desk.sources %}
+<h2>Sources</h2>
+<div class="table-scroll">
+<table class="stacking">
+  <thead><tr><th scope="col">Source</th><th scope="col">Institution</th><th scope="col">Authority</th><th scope="col">Enabled</th><th scope="col" class="num">Records</th></tr></thead>
+  <tbody>
+  {% for s in desk.sources %}
+    <tr>
+      <td data-label="Source"><a href="source/{{ s.slug }}.html">{{ s.display_name }}</a></td>
+      <td data-label="Institution">{{ s.institution or '—' }}</td>
+      <td data-label="Authority">{{ s.authority_tier or '—' }}</td>
+      <td data-label="Enabled">{{ 'Yes' if s.enabled else 'No' }}</td>
+      <td data-label="Records" class="num">{% if s.record_count is not none %}{{ s.record_count|count }}{% else %}<span class="meta">none</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="meta">An enabled source is one the pipeline is configured to visit. It is not a promise
+that a working collector exists for it — see <a href="coverage.html">Coverage</a>, where each
+source's own outcome is recorded every run.</p>
+{% endif %}
+
+{% if desk.qualification %}
+<h2>What qualification requires</h2>
+<p>{{ desk.qualification.explanation }}</p>
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Consecutive days required</dt><dd>{{ desk.qualification.required_consecutive_days }}</dd></div>
+  <div class="stat-row"><dt>Governed checkpoint reviews</dt><dd>{{ desk.qualification.checkpoints }}</dd></div>
+</dl>
+<p class="meta">No review has been completed and no verdict has been reached.</p>
+{% endif %}
+
+{% if desk.research %}
+<h2>Pre-registered source universe</h2>
+<p>The source universe is published before collection begins, so the declared scope can be checked
+against what is eventually collected. This is a statement of intent and of researched fact. It is
+not coverage, and nothing below has produced a record.</p>
+
+<h3>Sources identified</h3>
+<div class="table-scroll">
+<table class="stacking">
+  <caption>Listing and item format verified directly; no endpoint is claimed that was not checked.</caption>
+  <thead><tr><th scope="col">Source</th><th scope="col">Item format</th><th scope="col">Note</th></tr></thead>
+  <tbody>
+  {% for s in desk.research.source_families %}
+    <tr>
+      <td data-label="Source">{{ s.name }}</td>
+      <td data-label="Item format">{{ s.format }}</td>
+      <td data-label="Note">{{ s.note }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h3>Observed publication volume</h3>
+<dl class="stat-rows">
+{% for label, value in desk.research.observed_volume %}
+  <div class="stat-row"><dt>Joint Staff press releases — {{ label }}</dt><dd>{{ value }}</dd></div>
+{% endfor %}
+</dl>
+<p class="meta">{{ desk.research.volume_caveat }}</p>
+
+<h3>What has to be solved before this desk can collect</h3>
+<dl>
+{% for head, body in desk.research.blockers %}
+  <dt><strong>{{ head }}</strong></dt>
+  <dd>{{ body }}</dd>
+{% endfor %}
+</dl>
+{% endif %}
+
+{% if desk.limits %}
+<h2>Limits of this desk, stated plainly</h2>
+<ul>
+{% for limit in desk.limits %}
+  <li>{{ limit }}</li>
+{% endfor %}
+</ul>
+<p class="meta">These are properties of the desk a reader needs before citing it — see
+<a href="coverage.html">Coverage</a> for what each collection run actually returned.</p>
+{% endif %}
+
+{% if desk.slug == 'china' %}
+<h2>The legacy analytical series</h2>
+<p>This desk's weekly analysis was published as {{ predecessor_series }} under the predecessor
+masthead {{ predecessor_name }}. Every issue keeps its original number, title, date and URL —
+see <a href="pla-watch.html">{{ predecessor_series }}</a>.</p>
+{% endif %}
+
+<p class="meta"><a href="desks.html">← All desks</a></p>
+{% endblock %}

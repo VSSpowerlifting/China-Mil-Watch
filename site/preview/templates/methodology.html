@@ -3,14 +3,43 @@
 {% block content %}
 <h1>Methodology and limitations</h1>
 <p class="lede">How a record gets here, and what it can and cannot support.</p>
+
+<h2>Scope</h2>
+<p>{{ title }} collects from declared desks, one jurisdiction or institutional family at a time.
+It does <strong>not</strong> monitor the Indo-Pacific comprehensively, and no page here should be
+read as claiming that it does. {{ desks.collecting_count }} of {{ desks.declared_count }} declared
+desks {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the remainder are
+labeled on <a href="desks.html">Desks</a> with what specifically blocks each one.</p>
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Records stored</dt><dd>{{ metrics.records|count }}</dd></div>
+  <div class="stat-row"><dt>Records with stored original text</dt><dd>{{ metrics.with_original_text|count }}</dd></div>
+  <div class="stat-row"><dt>Records with a machine translation of the title</dt><dd>{{ metrics.with_english_title|count }}</dd></div>
+  <div class="stat-row"><dt>Records with a machine summary</dt><dd>{{ metrics.with_english_summary|count }}</dd></div>
+  <div class="stat-row"><dt>Collection runs recorded</dt><dd>{{ metrics.runs|count }}</dd></div>
+  <div class="stat-row"><dt>Publishing institutions</dt><dd>{{ metrics.institutions }}</dd></div>
+  <div class="stat-row"><dt>Earliest item</dt><dd>{{ metrics.first_published }}</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>{{ metrics.last_published }}</dd></div>
+</dl>
+<p class="meta">Every figure above is a count over stored rows, computed at build time. None is an
+estimate, a rate or a projection.</p>
+
 <h2>Collection</h2>
 <p>Each source is declared in a desk manifest with its institution, language, listing endpoints and
 expected cadence. A scheduled run visits each listing, fetches items, extracts text, removes
 duplicates, and stores the original alongside metadata. Every source produces an explicit
 result each run, even when it produced nothing.</p>
-<h2>Analysis</h2>
+<h2>Preservation and provenance</h2>
+<p>Each record stores the canonical URL it was retrieved from, the institution that published it,
+the source-stated publication date, the retrieval time, and a content hash computed once at
+insert. Original text, extracted text, machine translation, machine labels and human analysis are
+five separate layers and are labeled separately wherever they appear. A record's identifier never
+changes, and equal titles never collapse into one record — official institutions reuse titles for
+distinct events, and a title-only rule would erase the distinctions.</p>
+
+<h2>Translation and machine layers</h2>
 <p>Records are screened for relevance, translated, and summarized by language models. The model
-and prompt version are recorded per record. Machine classifications are labeled
+and prompt version are recorded per record. A machine translation is always shown as a translation
+beside the original, never in place of it. Machine classifications are labeled
 <span class="evidence evidence--model">Model-flagged</span>, never "significant".</p>
 <h2>What this archive supports</h2>
 <ul>
@@ -22,7 +51,8 @@ and prompt version are recorded per record. Machine classifications are labeled
 <ul>
   <li>That an institution believes what it published.</li>
   <li>That a described capability exists, or that an announced event occurred.</li>
-  <li>That coverage is comprehensive. It is selective, and heavily concentrated in one source.</li>
+  <li>That coverage is comprehensive. It is selective, heavily concentrated in one source, and
+      regional only in declared scope — most of the region is not collected at all.</li>
   <li>That a machine-generated summary or translation is accurate without human review.</li>
   <li>Any quantified confidence in an analytical judgment. No calibration method exists, so no
       number is offered.</li>
@@ -46,5 +76,11 @@ and prompt version are recorded per record. Machine classifications are labeled
   <li>Collection gaps are listed on <a href="coverage.html">Coverage</a> and are not smoothed over.</li>
   <li>Some records are collected but not yet analyzed; they are counted, not hidden.</li>
   <li>One configured source has no working collector and is reported as such every run.</li>
+  <li>Desks that do not collect show no record count. Zero would say the record was checked and
+      found empty; the truth is that no record exists to check.</li>
+  <li>Institutional authority is a claim about position, not truthfulness. A tier-A source is
+      closer to the institution that speaks; it is not more likely to be accurate.</li>
 </ul>
+<p>Field-by-field definitions, the identifier and citation rules, and the corpus changelog are in
+the <a href="corpus-guide.html">Corpus Guide</a>.</p>
 {% endblock %}

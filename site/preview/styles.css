@@ -1,43 +1,74 @@
 /*
- * Prototype stylesheet — Tranche 1 of the approved revision brief.
+ * Indo-Pacific Record — candidate stylesheet.
  *
- * Every colour pairing below was measured, not estimated
- * (docs/transition/INFORMATION_ARCHITECTURE.md §3). The two seed colours that
- * failed WCAG AA are demoted to decoration and replaced for text:
- *   sea-glass #7FA39B  2.43 on paper -> decoration/dark-mode only; text #58726C (4.58)
- *   coral     #C46F52  3.22 on paper -> large accents only;        text #9C5841 (4.75)
+ * OCEANIC PALETTE, MEASURED
+ * -------------------------
+ * Every pairing below was computed (WCAG 2.1 relative luminance), not
+ * estimated, against the page ground `--paper #F5F8F6`. Three of the seed
+ * colours cannot carry body text and are demoted rather than waved through:
  *
- * ACCENT DISCIPLINE (revision brief §4, DESIGN_SYSTEM.md §3)
- * ---------------------------------------------------------
- *   --ocean  petrol/teal   the SOLE structural accent: links, section marks,
- *                          current nav, focus rings, official-claim labels.
- *   --signal rust          RESERVED for machine-generated or unreviewed
- *                          material. Nothing else may use it — not callout
- *                          rules, not failure states, not decoration. If rust
- *                          appears, a model produced what it marks.
+ *   teal      #138A83   3.94 on paper -> large text and non-text marks only;
+ *                                        text tone #0F726C (5.39)
+ *   turquoise #28B8A6   2.31 on paper -> decoration only in light contexts;
+ *                                        6.41 on ink, so it is a TEXT tone
+ *                                        on the dark band and nowhere else
+ *   sea glass #CBEAE5   1.19 on paper -> fills, rules and marks; never text,
+ *                                        and never a ground for muted text
+ *                                        (muted measures 4.38 on it, so a
+ *                                        darker tinted tone exists instead)
+ *
+ * Measured text pairings actually used (all >= 4.5 unless marked):
+ *   ink        #10252E  14.81 paper · 13.98 mist
+ *   deep       #123E4A  10.83 paper · 10.22 mist
+ *   ocean      #176B87   5.63 paper ·  5.31 mist ·  4.71 sea glass
+ *   teal-text  #0F726C   5.39 paper ·  5.09 mist ·  4.51 sea glass
+ *   muted      #586B70   5.23 paper ·  4.94 mist
+ *   muted-tint #4A5D62   6.11 mist   ·  5.42 sea glass
+ *   signal     #9C4B36   5.65 paper ·  5.34 mist ·  4.73 sea glass
+ *   sea glass  #CBEAE5  12.40 on ink  (text on the dark band)
+ *   turquoise  #28B8A6   6.41 on ink  (accent text on the dark band)
+ *
+ * ACCENT DISCIPLINE
+ * -----------------
+ *   --ocean   the SOLE structural accent: links, section marks, current nav,
+ *             focus rings, official-claim labels.
+ *   --teal    the desk/status family. It says what a collection scope IS; it
+ *             never says whether something is good.
+ *   --signal  rust, RESERVED for machine-generated or unreviewed material.
+ *             Nothing else may use it — not callout rules, not failure states,
+ *             not decoration. If rust appears, a model produced what it marks.
+ *
+ * Colour never carries meaning alone: every desk status and every run outcome
+ * has a text label and a distinct glyph, so a monochrome print stays complete.
  *
  * No box shadows, no gradients, no dashboard tiles, no motion that carries
  * meaning — house doctrine (CLAUDE.md design north star).
  */
 
 :root {
-  --paper:        #F4F0E8;
-  --ink:          #142531;
-  --graphite:     #333B40;
-  --ocean:        #2E6070;   /* sole structural accent */
-  --seaglass:     #7FA39B;   /* decoration in light mode — never text */
-  --coral:        #C46F52;   /* large accents only — never body text */
+  --paper:        #F5F8F6;   /* page ground */
+  --white:        #FFFFFF;
+  --ink:          #10252E;   /* 14.81 on paper — body text, dark bands */
+  --deep:         #123E4A;   /* 10.83 on paper — secondary text */
+  --graphite:     #123E4A;   /* legacy alias for --deep; one tone, one value */
+  --ocean:        #176B87;   /* 5.63 — sole structural accent */
+  --teal:         #138A83;   /* 3.94 — large text and marks ONLY */
+  --teal-text:    #0F726C;   /* 5.39 — the teal that may carry small text */
+  --turquoise:    #28B8A6;   /* 2.31 on paper: decoration. 6.41 on ink: text */
+  --seaglass:     #CBEAE5;   /* fills, rules, marks — never text */
+  --mist:         #E8F3F2;   /* tinted surface */
 
-  --text-muted:   #58726C;   /* 4.58 on paper */
-  /* Muted text on the tinted surface. #58726C measures 4.18 there — it passes
-     on paper and fails on --surface-2, so tinted grounds get their own tone
-     rather than a colour that is only usually legible. 4.90 measured. */
-  --text-muted-tinted: #4F6760;
-  --signal:       #9C5841;   /* 4.75 on paper — machine-generated ONLY */
+  --text-muted:   #586B70;   /* 5.23 on paper, 4.94 on mist */
+  /* Muted text on the sea-glass ground. #586B70 measures 4.38 there — it
+     passes on paper and fails on sea glass, so tinted grounds get their own
+     tone rather than a colour that is only usually legible. 5.42 measured. */
+  --text-muted-tinted: #4A5D62;
+  --signal:       #9C4B36;   /* 5.65 on paper — machine-generated ONLY */
+  --signal-rule:  #A5533D;   /* 5.03 — rules and large marks in the same family */
 
-  --rule:         #D8D2C6;
-  --rule-strong:  #B9B1A2;
-  --surface-2:    #EBE6DB;
+  --rule:         #B8CFCC;
+  --rule-strong:  #8FB3AE;
+  --surface-2:    #E8F3F2;   /* mist */
 
   /* ── Six-level type ladder (revision brief §4) ───────────────────────
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta
@@ -98,7 +129,17 @@ input:focus-visible, summary:focus-visible {
 /* ── Masthead ─────────────────────────────────────────────────────────── */
 
 .masthead { border-bottom: 2px solid var(--ink); padding: 1.35rem 0 0; }
-.brand { display: block; text-decoration: none; color: inherit; }
+.brand {
+  display: flex; align-items: center; gap: .6rem;
+  text-decoration: none; color: inherit;
+}
+/* Decorative: the wordmark beside it is the accessible name, so the SVG is
+   aria-hidden and carries no title. Sized in em so it tracks the wordmark. */
+.brand-mark { width: 1.5em; height: 1.5em; flex: none; }
+.brand-mark .mark-field { fill: none; stroke: var(--ocean); stroke-width: 1.6; }
+.brand-mark .mark-rules { fill: none; stroke: var(--deep); stroke-width: 1.6;
+  stroke-linecap: square; }
+.brand-mark .mark-tide  { fill: none; stroke: var(--turquoise); stroke-width: 1.6; }
 /* Level 1. On the home page this is the h1; elsewhere a <p>, because the
    page's own heading is the h1 and two h1s per page is a real defect. */
 .brand-name {
@@ -135,17 +176,17 @@ nav.primary a[aria-current="page"] {
    when a run exists; a fabricated zero would read as "all clear". */
 
 .status-strip {
-  background: var(--surface-2);
-  border-bottom: 1px solid var(--rule);
+  background: var(--ink);
+  border-bottom: 1px solid var(--ink);
   font-family: var(--sans);
   font-size: .78125rem;
-  color: var(--text-muted-tinted);
+  color: var(--seaglass);
   font-variant-numeric: tabular-nums lining-nums;
 }
 /* Any muted text sitting on a tinted ground, not just the strip. */
 .notice .meta, .citation .meta { color: var(--text-muted-tinted); }
 .status-strip .wrap { padding-top: .5rem; padding-bottom: .5rem; }
-.status-strip b { color: var(--ink); font-weight: 600; }
+.status-strip b { color: var(--turquoise); font-weight: 600; }
 /* Each fact is one flex item, so a phrase never breaks across lines; the
    items themselves wrap freely at narrow widths. */
 .status-facts {
@@ -155,7 +196,7 @@ nav.primary a[aria-current="page"] {
 }
 .status-facts li { max-width: none; white-space: nowrap; }
 .status-facts li + li::before {
-  content: "·"; color: var(--rule-strong); padding: 0 .5rem;
+  content: "·"; color: var(--ocean); padding: 0 .5rem;
 }
 
 /* ── Typography ───────────────────────────────────────────────────────── */
@@ -207,10 +248,14 @@ a { color: var(--ocean); text-underline-offset: .15em; }
 /* No bottom padding: the following section head already carries 2.75rem of
    margin plus its rule inset, and the two together left a visible void. */
 .lead { padding-bottom: 0; }
-/* The lead headline is the largest thing on the page even though it is an h2:
-   the masthead wordmark is the home page's h1. */
+/* The lead headline is the largest thing in the body, but it is no longer the
+   top of the page: the regional home page leads with purpose, then records,
+   then desks, and the lead edition sits under a section head. At full display
+   size it outweighed the h2 above it and the outline read upside down. This
+   step sits between deck and display — unmistakably the flagship item, still
+   subordinate to the section that introduces it. */
 .lead-title {
-  font-size: var(--step-display); font-weight: 700;
+  font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 700;
   border-top: 0; padding-top: 0; margin: 0 0 .6rem;
 }
 .lead-title::before { content: none; }
@@ -316,30 +361,75 @@ main dl:not(.stat-rows) dd { margin: .25rem 0 0; max-width: var(--measure); }
 .record .original { font-size: 1rem; color: var(--graphite); margin: .2rem 0; }
 .record-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 
-/* ── Desk states ──────────────────────────────────────────────────────── */
+/* ── Desk states ──────────────────────────────────────────────────────────
+   Six statuses, six glyphs, six labels. Colour is never the carrier: the glyph
+   and the label both survive a monochrome print, and the two desks that differ
+   most (live and planned) differ in glyph weight, not only in hue.
+
+   Glyphs are restricted to the set that actually resolves in the live font
+   stack. The half-filled squares (◫, ◧, ◨, ◩, ◪) are absent from Inter and the
+   system fallback and render as tofu boxes — measured at 7.22px against the
+   ~11px every resolving glyph draws. A test pins the set. */
 
 .desk { padding: 1.5rem 0; border-bottom: 1px solid var(--rule); }
 /* The last desk sits directly above a section head that draws its own top
    rule; two rules 1.5rem apart read as a mistake. */
 .desk:last-of-type { border-bottom: 0; padding-bottom: .5rem; }
-.desk--development, .desk--scoped { color: var(--graphite); }
 .desk-state {
   font-family: var(--sans); font-size: .75rem;
   letter-spacing: .06em; text-transform: uppercase;
+  display: inline-block; margin: 0;
 }
-.desk--live .desk-state { color: var(--ocean); }
-.desk--scoped .desk-state, .desk--development .desk-state { color: var(--text-muted); }
-.desk--development .desk-state::before { content: "◻ "; }
-/* U+25A3, not U+25EB: the half-filled squares (◫, ◧) are absent from
-   Inter and the system fallback, so the one desk that has collected nothing
-   rendered its state marker as a tofu box. Measured against the live stack,
-   ◫ draws at 7.22px where every glyph that resolves draws at ~11px. */
-.desk--scoped .desk-state::before { content: "▣ "; }
-.desk--live .desk-state::before { content: "◼ "; }
-/* A desk page carries the same state marker as its directory entry, where
-   there is no .desk wrapper to select through. */
-.desk-state--scoped::before { content: "▣ "; }
-.desk-state--scoped { color: var(--text-muted); }
+/* The status marker labels the desk name directly beneath it, so the two are
+   set as one unit. The h2's own top margin would otherwise open a gap wide
+   enough to read as a section break between a label and the thing it labels. */
+.desk .desk-state { margin-bottom: .15rem; }
+.desk h2.plain { margin-top: 0; }
+.desk-state--live + h1, .desk-state--shadow + h1,
+.desk-state--access_blocked + h1, .desk-state--research + h1,
+.desk-state--planned + h1, .desk-state--paused + h1 { margin-top: .15rem; }
+/* A collecting desk is the only one that gets the accent. Everything else is
+   muted, because a status that is not "live" must not read as a promotion. */
+.desk-state--live          { color: var(--teal-text); font-weight: 600; }
+.desk-state--shadow        { color: var(--text-muted); }
+.desk-state--access_blocked{ color: var(--text-muted); }
+.desk-state--research      { color: var(--text-muted); }
+.desk-state--planned       { color: var(--text-muted); }
+.desk-state--paused        { color: var(--text-muted); }
+
+.desk-state--live::before          { content: "◼ "; }
+.desk-state--shadow::before        { content: "◐ "; }
+.desk-state--access_blocked::before{ content: "▣ "; }
+.desk-state--research::before      { content: "◻ "; }
+.desk-state--planned::before       { content: "▫ "; }
+.desk-state--paused::before        { content: "□ "; }
+
+/* The directory entry and the desk's own page draw the same marker; the
+   selectors differ only because the desk page has no .desk wrapper. */
+.desk--live .desk-state          { color: var(--teal-text); font-weight: 600; }
+.desk--shadow .desk-state,
+.desk--access_blocked .desk-state,
+.desk--research .desk-state,
+.desk--planned .desk-state,
+.desk--paused .desk-state        { color: var(--text-muted); }
+.desk--live .desk-state::before          { content: "◼ "; }
+.desk--shadow .desk-state::before        { content: "◐ "; }
+.desk--access_blocked .desk-state::before{ content: "▣ "; }
+.desk--research .desk-state::before      { content: "◻ "; }
+.desk--planned .desk-state::before       { content: "▫ "; }
+.desk--paused .desk-state::before        { content: "□ "; }
+
+/* Facts under a directory entry. A definition list, not a card: the label and
+   its value stay bound together when the row wraps. */
+.desk-facts {
+  display: flex; flex-wrap: wrap; gap: .35rem 2rem;
+  margin: .85rem 0 .5rem; padding: 0;
+  font-family: var(--sans); font-size: var(--step-meta);
+}
+.desk-facts > div { display: flex; gap: .4rem; align-items: baseline; }
+.desk-facts dt { color: var(--text-muted); margin: 0; }
+.desk-facts dd { margin: 0; color: var(--ink); font-weight: 600; }
+.desk-table .desk-state { text-transform: none; letter-spacing: .02em; }
 
 /* ── Callout ──────────────────────────────────────────────────────────────
    At most two on the whole site. Rust is not available here; the rule is ink,
@@ -430,7 +520,7 @@ main dl:not(.stat-rows) dd { margin: .25rem 0 0; max-width: var(--measure); }
 }
 .filters select, .filters input {
   font: inherit; font-size: .9375rem; padding: .45rem .5rem;
-  border: 1px solid var(--rule-strong); background: #fff; color: var(--ink);
+  border: 1px solid var(--rule-strong); background: var(--white); color: var(--ink);
   min-height: 44px; border-radius: 2px;
 }
 /* `hidden` is a semantic state, so it must beat any author display rule.

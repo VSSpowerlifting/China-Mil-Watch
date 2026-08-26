@@ -1,22 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Source universe — {{ title }}{% endblock %}
+{% block title %}Sources — {{ title }}{% endblock %}
 {% block content %}
 <h1>Source universe</h1>
 <p class="lede">Which institutions are collected, how they are positioned, and what authority their
-publications carry. Each source is declared in advance with an institution, source type, language,
-and collection purpose.</p>
+publications carry. Each source is declared in advance with an institution, source type, language
+and collection purpose, and belongs to exactly one desk.</p>
+<p class="meta">{{ source_views|length }} sources declared across
+{{ desks.declared_count }} desks. A source with no record count has never been part of a
+production run — which is different from a source that ran and stored nothing.</p>
 <div class="table-scroll">
 <table class="stacking">
-  <thead><tr><th scope="col">Source</th><th scope="col">Institution</th><th scope="col">Type</th><th scope="col">Authority</th><th scope="col">Language</th><th scope="col" class="num">Records</th></tr></thead>
+  <thead><tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Institution</th><th scope="col">Type</th><th scope="col">Authority</th><th scope="col">Language</th><th scope="col" class="num">Records</th></tr></thead>
   <tbody>
-  {% for s in sources %}
+  {% for s in source_views %}
     <tr>
-      <td data-label="Source">{{ s.display_name }}<br><span class="meta">{{ s.slug }}</span></td>
-      <td data-label="Institution">{{ s.institution or '—' }}{% if s.name_original %}<br><span class="meta" lang="zh">{{ s.name_original }}</span>{% endif %}</td>
+      <td data-label="Source"><a href="source/{{ s.slug }}.html">{{ s.display_name }}</a><br><span class="meta token">{{ s.slug }}</span></td>
+      <td data-label="Desk">{% if desks.get(s.desk_slug) %}<a href="{{ desks.get(s.desk_slug).route }}">{{ desks.get(s.desk_slug).name }}</a>{% else %}{{ s.desk_slug or '—' }}{% endif %}</td>
+      <td data-label="Institution">{{ s.institution or '—' }}{% if s.institution_original %}<br><span class="meta" lang="zh">{{ s.institution_original }}</span>{% endif %}</td>
       <td data-label="Type">{{ s.source_type|source_type_label }}</td>
       <td data-label="Authority">{{ s.authority_tier or '—' }}</td>
-      <td data-label="Language">{{ s.language_tag or s.language }}</td>
-      <td data-label="Records" class="num">{{ s.article_count|count }}</td>
+      <td data-label="Language">{{ s.language_tag or '—' }}</td>
+      <td data-label="Records" class="num">{% if s.record_count is not none %}{{ s.record_count|count }}{% else %}<span class="meta">none</span>{% endif %}</td>
     </tr>
   {% endfor %}
   </tbody>
@@ -24,5 +28,11 @@ and collection purpose.</p>
 </div>
 <h2>Authority tier is a claim about position, not truthfulness</h2>
 <p>A tier-A source is closer to the institution that speaks. It is not more likely to be
-accurate, and nothing here treats it as such.</p>
+accurate, and nothing here treats it as such. Tier describes who is authorized to say a thing,
+never whether the thing is so.</p>
+<h2>Enabled is not implemented</h2>
+<p>A source is <em>enabled</em> when the pipeline is configured to visit it. Whether a working
+collector exists for it is a separate fact, recorded per run on
+<a href="coverage.html">Coverage</a> — one configured source here has never produced a record and
+is reported as unimplemented every run rather than hidden.</p>
 {% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ source.display_name }} — {{ title }}{% endblock %}
+{% block content %}
+<p class="meta"><a href="../sources.html">← Source universe</a></p>
+<h1>{{ source.display_name }}</h1>
+<p class="lede">{% if source.institution %}Published by {{ source.institution }}{% if source.institution_original %} (<span lang="zh">{{ source.institution_original }}</span>){% endif %}. {% endif %}
+{% if source_desk %}Part of the <a href="../{{ source_desk.route }}">{{ source_desk.name }}</a>, currently {{ source_desk.status_label|lower }}.{% endif %}</p>
+
+<div class="table-scroll">
+<table class="provenance">
+  <caption>What is declared about this source, and what the record shows.</caption>
+  <tbody>
+    <tr><th scope="row">Source identifier</th><td class="prov-value token">{{ source.slug }}</td></tr>
+    <tr><th scope="row">Desk</th><td class="prov-value">{% if source_desk %}{{ source_desk.name }}{% else %}—{% endif %}</td></tr>
+    <tr><th scope="row">Institution</th><td class="prov-value">{{ source.institution or '—' }}</td></tr>
+    <tr><th scope="row">Source type</th><td class="prov-value">{{ source.source_type|source_type_label }}</td></tr>
+    <tr><th scope="row">Authority tier</th><td class="prov-value">{{ source.authority_tier or '—' }}</td></tr>
+    <tr><th scope="row">Original language</th><td class="prov-value">{{ source.language_tag or '—' }}</td></tr>
+    <tr><th scope="row">Official base URL</th><td class="prov-value">{% if source.base_url %}<a href="{{ source.base_url }}" rel="noopener nofollow">{{ source.base_url }}</a>{% else %}Not declared{% endif %}</td></tr>
+    <tr><th scope="row">Enabled for collection</th><td class="prov-value">{{ 'Yes' if source.enabled else 'No' }}</td></tr>
+    <tr><th scope="row">Records held</th><td class="prov-value">{% if source.record_count is not none %}{{ source.record_count|count }}{% else %}None — this source has never been part of a production run{% endif %}</td></tr>
+    {% if source.share_of_record is not none %}
+    <tr><th scope="row">Share of the whole record</th><td class="prov-value">{{ source.share_of_record }}% <span class="meta">— derived from the stored counts, not declared</span></td></tr>
+    {% endif %}
+    {% if source.record_count is not none %}
+    <tr><th scope="row">Earliest item</th><td class="prov-value">{{ source.first_published or '—' }}</td></tr>
+    <tr><th scope="row">Latest item</th><td class="prov-value">{{ source.last_published or '—' }}</td></tr>
+    {% endif %}
+    <tr><th scope="row">Most recent run outcome</th><td class="prov-value">{% if source.latest_status %}<span class="status-name">{{ source.latest_status|status_label }}</span> — {{ source.latest_status|status_prose }}{% else %}Not part of the most recent run{% endif %}</td></tr>
+  </tbody>
+</table>
+</div>
+
+{% if not source.contract_validated %}
+<h2>Declared outside production configuration</h2>
+<p>This source is declared in a shadow manifest, which is deliberately not discoverable by the
+production configuration loader. It is not part of the collection contract, it is not enabled, and
+nothing it reaches enters the record. Fields the shadow manifest does not declare are shown as
+undeclared rather than filled in.</p>
+{% endif %}
+
+<h2>How this source is positioned</h2>
+<p>Authority tier {{ source.authority_tier or '—' }} describes how close this publication sits to
+the institution's authorized public position. It is not a reliability score, and nothing here
+treats it as one. The source type — {{ source.source_type|source_type_label|lower }} — describes
+what kind of body publishes it.</p>
+
+<h2>What a record from this source can support</h2>
+<p>That this institution published a specific item on a specific date, and what its original text
+was at the time it was retrieved. Not that the institution believes it, not that a described
+capability exists, and not that coverage of this source is complete — see
+<a href="../coverage.html">Coverage</a> for what each run actually returned, and
+<a href="../methodology.html">Methodology</a> for the limits.</p>
+{% endblock %}

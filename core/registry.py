@@ -17,6 +17,17 @@ Sync is deliberately conservative about legacy columns. For a source row that
 already exists it writes ONLY the columns migration 0003 added, and never
 touches `display_name`, `base_url`, `language` or `is_active`. A config sync
 must not be able to rename a live source or re-point it at a different host.
+
+It is also conservative about writing at all. Every upsert below is guarded by
+a comparison against what is already stored, and a row whose values already
+match is skipped rather than rewritten. That is not an optimisation: this
+repository TRACKS its database file, and an unconditional upsert that writes
+the values already present changes no data while changing the file — SQLite
+bumps the header change counter on any committed write transaction. A daily
+workflow that runs migrations would then produce a database diff on a run where
+nothing was collected, which is a commit asserting the corpus moved when it did
+not. `tests/test_migration_byte_stability.py` pins the property in bytes,
+because a logical fingerprint cannot see it.
 """
 
 from __future__ import annotations
@@ -109,6 +120,11 @@ def sync_desk_config(
     report = {
         "desks": 0, "institutions": 0,
         "sources_updated": 0, "sources_inserted": 0,
+        # Rows examined and found already correct. Reported rather than
+        # silently omitted: "nothing was written" and "nothing was checked"
+        # are different facts, and only one of them is healthy.
+        "desks_unchanged": 0, "institutions_unchanged": 0,
+        "sources_unchanged": 0,
     }
 
     have_tables = {
@@ -150,12 +166,34 @@ def sync_desk_config(
     conn.execute("RELEASE %s" % savepoint)
 
     logger.info(
-        "desk config synced: %d desk(s), %d institution(s), "
-        "%d source(s) updated, %d inserted",
-        report["desks"], report["institutions"],
+        "desk config synced: %d desk(s) written / %d already correct, "
+        "%d institution(s) written / %d already correct, "
+        "%d source(s) updated, %d inserted, %d already correct",
+        report["desks"], report["desks_unchanged"],
+        report["institutions"], report["institutions_unchanged"],
         report["sources_updated"], report["sources_inserted"],
+        report["sources_unchanged"],
     )
     return report
+
+
+def _unchanged(conn: sqlite3.Connection, table: str, key_column: str,
+               key: str, columns: List[str], values: List[object]) -> bool:
+    """
+    True when the stored row already holds exactly these values.
+
+    Compared through the same column order the write would use, so the
+    comparison cannot drift from the statement it guards. A missing row is
+    never "unchanged" — it has to be inserted.
+    """
+    row = conn.execute(
+        "SELECT %s FROM %s WHERE %s = ?" % (", ".join(columns), table,
+                                            key_column),
+        (key,),
+    ).fetchone()
+    if row is None:
+        return False
+    return all(stored == wanted for stored, wanted in zip(row, values))
 
 
 def _sync_one_desk(
@@ -163,8 +201,21 @@ def _sync_one_desk(
     report: Dict[str, int],
 ) -> None:
     d = cfg.desk
-    conn.execute(
-        """
+    desk_columns = ["display_name", "jurisdiction_code", "default_timezone",
+                    "default_calendar", "supported_language_tags", "active",
+                    "public_status"]
+    desk_values = [
+        d.display_name, d.jurisdiction_code, d.default_timezone,
+        d.default_calendar,
+        json.dumps(d.supported_language_tags, ensure_ascii=False),
+        1 if d.active else 0, d.public_status,
+    ]
+    if _unchanged(conn, "desks", "desk_id", d.desk_id, desk_columns,
+                  desk_values):
+        report["desks_unchanged"] += 1
+    else:
+        conn.execute(
+            """
         INSERT INTO desks (desk_id, display_name, jurisdiction_code,
                            default_timezone, default_calendar,
                            supported_language_tags, active, public_status)
@@ -178,14 +229,23 @@ def _sync_one_desk(
             active                  = excluded.active,
             public_status           = excluded.public_status
         """,
-        (d.desk_id, d.display_name, d.jurisdiction_code, d.default_timezone,
-         d.default_calendar,
-         json.dumps(d.supported_language_tags, ensure_ascii=False),
-         1 if d.active else 0, d.public_status),
-    )
-    report["desks"] += 1
+            [d.desk_id] + desk_values,
+        )
+        report["desks"] += 1
 
+    inst_columns = ["desk_id", "display_name", "name_original",
+                    "institution_type", "parent_institution_id",
+                    "active_from", "active_to"]
     for inst in cfg.institutions:
+        inst_values = [
+            inst.desk_id, inst.display_name, inst.name_original,
+            inst.institution_type, inst.parent_institution_id,
+            inst.active_from, inst.active_to,
+        ]
+        if _unchanged(conn, "institutions", "institution_id",
+                      inst.institution_id, inst_columns, inst_values):
+            report["institutions_unchanged"] += 1
+            continue
         conn.execute(
             """
             INSERT INTO institutions (institution_id, desk_id, display_name,
@@ -201,9 +261,7 @@ def _sync_one_desk(
                 active_from           = excluded.active_from,
                 active_to             = excluded.active_to
             """,
-            (inst.institution_id, inst.desk_id, inst.display_name,
-             inst.name_original, inst.institution_type,
-             inst.parent_institution_id, inst.active_from, inst.active_to),
+            [inst.institution_id] + inst_values,
         )
         report["institutions"] += 1
 
@@ -216,11 +274,16 @@ def _sync_one_desk(
         if exists:
             # Existing, live source: touch only the managed metadata columns.
             # display_name / base_url / language / is_active are left exactly as
-            # production holds them.
+            # production holds them — and even the managed columns are written
+            # only when one of them actually differs.
+            wanted = [values[c] for c in managed]
+            if _unchanged(conn, "sources", "slug", src.slug, managed, wanted):
+                report["sources_unchanged"] += 1
+                continue
             conn.execute(
                 "UPDATE sources SET %s WHERE slug = ?"
                 % ", ".join("%s = ?" % c for c in managed),
-                [values[c] for c in managed] + [src.slug],
+                wanted + [src.slug],
             )
             report["sources_updated"] += 1
         else:
