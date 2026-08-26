@@ -66,6 +66,7 @@ import shutil
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+from urllib.parse import urlsplit
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -1516,6 +1517,73 @@ def snapshot_from_corpus(db_path) -> dict:
 NOINDEX_TAG = '<meta name="robots" content="noindex, nofollow">'
 
 
+class UnusableSiteOrigin(ValueError):
+    """The supplied origin cannot be published under."""
+
+
+#: Names that must never reach a published sitemap. RFC 2606 reserves the first
+#: group for documentation and testing, so any of them appearing in a real
+#: build means a stand-in was left behind.
+PLACEHOLDER_HOSTS = (
+    "example.com", "example.org", "example.net", "example.edu",
+    "localhost", "yourdomain.com", "yourdomain.org", "domain.com",
+    "changeme.com", "todo.com", "placeholder.com",
+)
+RESERVED_SUFFIXES = (".invalid", ".test", ".example", ".localhost", ".local")
+
+
+def validate_site_origin(origin: str, allow_test_origin: bool = False) -> str:
+    """
+    Accept an origin only if a real site could be published under it.
+
+    This fails closed on purpose. Every other part of the origin switch is
+    permissive — omit it and you get a candidate build — but once an origin is
+    *supplied*, it is written into every canonical and every sitemap entry. A
+    malformed or stand-in origin there does not fail loudly; it ships, and the
+    published site tells crawlers its canonical home is somewhere that does not
+    exist.
+
+    `allow_test_origin` is the single, named escape hatch, for tests that need a
+    syntactically real origin without claiming a domain. Production never sets
+    it, so a reserved or placeholder host cannot reach a published build by
+    being forgotten — only by being asked for explicitly.
+    """
+    if origin is None:
+        raise UnusableSiteOrigin("no site origin supplied")
+    origin = origin.strip().rstrip("/")
+    if not origin:
+        raise UnusableSiteOrigin("site origin is empty")
+
+    parts = urlsplit(origin)
+    if parts.scheme not in ("http", "https"):
+        raise UnusableSiteOrigin(
+            "site origin must be an absolute http(s) URL, got %r" % origin)
+    if not parts.netloc:
+        raise UnusableSiteOrigin("site origin has no host: %r" % origin)
+    if parts.path or parts.query or parts.fragment:
+        raise UnusableSiteOrigin(
+            "site origin must be scheme and host only, got %r" % origin)
+
+    host = parts.hostname or ""
+    if "." not in host:
+        raise UnusableSiteOrigin("site origin host is not a domain: %r" % host)
+
+    lowered = host.lower()
+    if not allow_test_origin:
+        if lowered in PLACEHOLDER_HOSTS:
+            raise UnusableSiteOrigin(
+                "%r is a placeholder host and must never be published under. "
+                "Supply the real domain, or pass allow_test_origin for a test "
+                "build." % host)
+        for suffix in RESERVED_SUFFIXES:
+            if lowered.endswith(suffix):
+                raise UnusableSiteOrigin(
+                    "%r uses the reserved suffix %r and can never resolve. "
+                    "Supply the real domain, or pass allow_test_origin for a "
+                    "test build." % (host, suffix))
+    return "%s://%s" % (parts.scheme, parts.netloc)
+
+
 def canonical_route(rel: str) -> str:
     """
     The one address a page should be known by, given its path in the tree.
@@ -1549,7 +1617,7 @@ LEGACY_REDIRECT = """<!doctype html>
 def build(out_dir: Path, title: str, db_path: Path,
           snapshot: dict = DECLARED_SNAPSHOT,
           legacy_routes: bool = False, mode: str = BUILD_MODE,
-          site_origin: str = None) -> dict:
+          site_origin: str = None, allow_test_origin: bool = False) -> dict:
     out_dir = Path(out_dir).resolve()
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -1829,7 +1897,11 @@ def build(out_dir: Path, title: str, db_path: Path,
     # has not been made. Rather than bake in a placeholder that would ship as
     # a real URL, the sitemap is written only when an origin is supplied, and
     # its absence is reported rather than passed over in silence.
-    origin = (site_origin or "").rstrip("/")
+    # An omitted origin is the candidate path and stays permissive. A supplied
+    # one is validated, and an unusable value stops the build rather than being
+    # written into every canonical on the site.
+    origin = (validate_site_origin(site_origin, allow_test_origin)
+              if (site_origin or "").strip() else "")
     robots = ["User-agent: *", "Allow: /"]
     if origin:
         robots.append("Sitemap: %s/sitemap.xml" % origin)
@@ -1929,6 +2001,10 @@ def main(argv=None):
                          "the sitemap and the robots Sitemap: line. Omitted by "
                          "default: a sitemap needs absolute URLs and the domain "
                          "is an owner decision, so no placeholder is invented.")
+    ap.add_argument("--allow-test-origin", action="store_true",
+                    help="permit a reserved or placeholder origin (example.com, "
+                         "*.invalid, *.test). For test builds only; a real "
+                         "publication must name a real domain.")
     ap.add_argument("--serve", action="store_true",
                     help="serve the result on localhost:8770")
     args = ap.parse_args(argv)
@@ -1938,7 +2014,8 @@ def main(argv=None):
 
     result = build(Path(args.out), args.title, Path(args.db),
                    snapshot=snapshot, legacy_routes=args.legacy_routes,
-                   site_origin=args.site_origin)
+                   site_origin=args.site_origin,
+                   allow_test_origin=args.allow_test_origin)
     print("build  : %d files -> %s" % (len(result["files"]), result["out_dir"]))
     print("mode   : %s (candidate; the public site builds under legacy)"
           % result["mode"])

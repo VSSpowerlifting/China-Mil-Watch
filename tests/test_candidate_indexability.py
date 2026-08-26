@@ -35,9 +35,13 @@ ORIGIN = "https://example.invalid"
 
 
 def _build(tmp, origin=None):
+    #: `.invalid` is reserved by RFC 2606 and can never resolve, so a test tree
+    #: built under it cannot be mistaken for a publishable one. The build
+    #: refuses such an origin unless asked explicitly — which is the point.
     return gp.build(Path(tmp), gp.PUBLIC_TITLE, gp.TRACKED_DB,
                     snapshot=gp.snapshot_from_corpus(gp.TRACKED_DB),
-                    legacy_routes=True, site_origin=origin)
+                    legacy_routes=True, site_origin=origin,
+                    allow_test_origin=True)
 
 
 class BuiltTreeCase(unittest.TestCase):
@@ -180,3 +184,100 @@ class TestTheBuilderAndTheTemplateCannotDrift(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAnUnusableOriginStopsTheBuild(unittest.TestCase):
+    """
+    Every other part of the origin switch is permissive: omit it and you get a
+    candidate. But a *supplied* origin is written into every canonical and every
+    sitemap entry, where a malformed or stand-in value does not fail loudly — it
+    ships, and the published site tells crawlers its canonical home is somewhere
+    that does not exist. So supplying one fails closed.
+    """
+
+    def refuse(self, origin, **kw):
+        with self.assertRaises(gp.UnusableSiteOrigin):
+            gp.validate_site_origin(origin, **kw)
+
+    def test_a_placeholder_host_is_refused(self):
+        for host in ("https://example.com", "https://example.org",
+                     "https://yourdomain.com", "https://localhost"):
+            with self.subTest(host=host):
+                self.refuse(host)
+
+    def test_a_reserved_suffix_is_refused(self):
+        for host in ("https://foo.invalid", "https://foo.test",
+                     "https://foo.example", "https://foo.local"):
+            with self.subTest(host=host):
+                self.refuse(host)
+
+    def test_a_non_http_scheme_is_refused(self):
+        for origin in ("ftp://x.org", "file:///tmp", "x.org", "//x.org"):
+            with self.subTest(origin=origin):
+                self.refuse(origin)
+
+    def test_a_host_without_a_dot_is_refused(self):
+        self.refuse("https://nodot")
+
+    def test_an_origin_carrying_a_path_or_query_is_refused(self):
+        for origin in ("https://x.org/path", "https://x.org?a=1",
+                       "https://x.org#f"):
+            with self.subTest(origin=origin):
+                self.refuse(origin)
+
+    def test_empty_and_missing_origins_are_refused(self):
+        for origin in ("", "   ", None):
+            with self.subTest(origin=origin):
+                self.refuse(origin)
+
+    def test_a_real_looking_origin_is_accepted_and_normalised(self):
+        self.assertEqual(
+            gp.validate_site_origin("https://indopacificrecord.org/"),
+            "https://indopacificrecord.org")
+
+    def test_the_escape_hatch_is_explicit_and_never_implicit(self):
+        """A reserved origin passes only when asked for by name."""
+        self.refuse("https://foo.invalid")
+        self.assertEqual(
+            gp.validate_site_origin("https://foo.invalid",
+                                    allow_test_origin=True),
+            "https://foo.invalid")
+
+    def test_the_build_itself_refuses_an_unusable_origin(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(gp.UnusableSiteOrigin):
+                gp.build(Path(tmp), gp.PUBLIC_TITLE, gp.TRACKED_DB,
+                         snapshot=gp.snapshot_from_corpus(gp.TRACKED_DB),
+                         site_origin="https://example.com")
+
+    def test_omitting_the_origin_is_still_permitted(self):
+        """The candidate path must not be made to require a domain."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            result = gp.build(Path(tmp), gp.PUBLIC_TITLE, gp.TRACKED_DB,
+                              snapshot=gp.snapshot_from_corpus(gp.TRACKED_DB))
+            self.assertIsNone(result["site_origin"])
+
+
+class TestLegacyModeIsUntouched(unittest.TestCase):
+    """
+    The origin switch lives entirely in the candidate renderer. Legacy renders
+    through site/generator.py, which this work does not touch — the public site
+    must be unaffected until a launch is separately authorised.
+    """
+
+    def test_the_legacy_generator_is_not_modified_by_this_work(self):
+        gen = (ROOT / "site" / "generator.py").read_text(encoding="utf-8")
+        for name in ("site_origin", "allow_test_origin", "validate_site_origin"):
+            with self.subTest(name=name):
+                self.assertNotIn(name, gen)
+
+    def test_the_default_site_mode_is_still_legacy(self):
+        render = (ROOT / "site" / "render.py").read_text(encoding="utf-8")
+        self.assertIn("DEFAULT_SITE_MODE = LEGACY", render)
+
+    def test_the_legacy_generator_still_writes_its_own_robots_and_sitemap(self):
+        gen = (ROOT / "site" / "generator.py").read_text(encoding="utf-8")
+        self.assertIn("_generate_robots_txt", gen)
+        self.assertIn("_generate_sitemap_xml", gen)
