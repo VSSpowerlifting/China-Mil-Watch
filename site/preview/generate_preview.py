@@ -189,6 +189,13 @@ STATUS_PROSE = {
                      "The source refused access — a login wall, or a refusal "
                      "returned to an honestly identified collector. Nothing "
                      "was collected, and nothing was done to defeat it."),
+    "access_challenged": ("Challenge required",
+                          "The publisher's edge asked for a browser challenge "
+                          "instead of serving the document. The site is up and "
+                          "the request was well formed — this collector simply "
+                          "is not being served that page. The item is recorded "
+                          "so the gap is visible; the challenge is not solved, "
+                          "retried, or worked around."),
     "timeout": ("Timed out",
                 "The request ran past its time limit. Whether the source had "
                 "anything to offer is unknown."),
