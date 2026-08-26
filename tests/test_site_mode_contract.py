@@ -198,9 +198,15 @@ class TestCandidateBuild(unittest.TestCase):
         gp = importlib.util.module_from_spec(spec)
         sys.modules["gp_snapshot"] = gp
         spec.loader.exec_module(gp)
+        # render_site() is the publishing path, so on the launch branch it
+        # fails closed without an origin. A reserved `.invalid` host keeps this
+        # a test build: it can never resolve, so a tree built here cannot be
+        # mistaken for a publishable one, and the named opt-in is required.
         cls.report = cls.r.render_site(
             cls.r.INDO_PACIFIC_RECORD, output_dir=cls.out, environ={},
-            snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+            snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+            site_origin="https://site-mode-contract.invalid",
+            allow_test_origin=True)
 
     @classmethod
     def tearDownClass(cls):

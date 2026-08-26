@@ -76,6 +76,18 @@ DEFAULT_SITE_MODE = INDO_PACIFIC_RECORD
 #: every workflow: `tests/test_site_mode_contract.py` asserts that.
 SITE_MODE_ENV = "PLA_WATCH_SITE_MODE"
 
+#: Where the published site will live. Read from the environment so the deploy
+#: workflow supplies it once, in one place, rather than every caller
+#: remembering a flag.
+#:
+#: This exists because an optional flag that production never passes is not a
+#: safety feature. `generate_preview.build()` leaves a tree `noindex` and
+#: writes no sitemap unless it is given an origin — correct for a candidate,
+#: catastrophic for a launch — and `render_site()` did not pass one. Flipping
+#: the mode alone would therefore have published a site that tells every
+#: crawler to ignore it.
+SITE_ORIGIN_ENV = "PLA_WATCH_SITE_ORIGIN"
+
 #: Public name carried by the candidate build. Owner-directed 2026-08-25 and
 #: recorded in docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. Trademark screening,
 #: domain and handles are owner actions and none has been performed — none of
@@ -104,8 +116,13 @@ def resolve_site_mode(explicit: str = None, environ=None) -> str:
     return mode
 
 
+class MissingSiteOrigin(RuntimeError):
+    """A publishable mode was asked for without saying where it publishes."""
+
+
 def render_site(mode: str = None, output_dir=None, db_path=None,
-                environ=None, snapshot=None) -> dict:
+                environ=None, snapshot=None, site_origin=None,
+                allow_test_origin=False) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
@@ -142,10 +159,25 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     gp = importlib.util.module_from_spec(spec)
     sys.modules["generate_preview"] = gp
     spec.loader.exec_module(gp)
+    # Fail closed. In this mode the tree is publishable, so the origin is
+    # required rather than optional: without one every page ships `noindex` and
+    # no sitemap is written, and that failure is silent — the build succeeds and
+    # the damage only appears once crawlers obey it.
+    env = os.environ if environ is None else environ
+    origin = site_origin or env.get(SITE_ORIGIN_ENV) or ""
+    if not origin.strip():
+        raise MissingSiteOrigin(
+            "%s mode needs the site origin it will be published under. Set %s "
+            "(e.g. https://example-domain.org) or pass site_origin=. Without "
+            "it the build would emit a site that is entirely noindex and has "
+            "no sitemap." % (INDO_PACIFIC_RECORD, SITE_ORIGIN_ENV))
+
     result = gp.build(target, INDO_PACIFIC_RECORD_TITLE,
                       Path(db_path) if db_path else DB_PATH,
                       snapshot=snapshot or gp.DECLARED_SNAPSHOT,
-                      legacy_routes=True)
+                      legacy_routes=True,
+                      site_origin=origin,
+                      allow_test_origin=allow_test_origin)
     report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target)}
     if isinstance(result, dict):
         report.update(result)
@@ -160,10 +192,19 @@ def main(argv=None) -> int:
                    help="destination directory; required for %s"
                         % INDO_PACIFIC_RECORD)
     p.add_argument("--db", default=None, help="database to read (read-only)")
+    p.add_argument("--site-origin", default=None,
+                   help="absolute origin the site will be published under. "
+                        "Required for %s; may also come from %s."
+                        % (INDO_PACIFIC_RECORD, SITE_ORIGIN_ENV))
+    p.add_argument("--allow-test-origin", action="store_true",
+                   help="permit a reserved or placeholder origin. Test builds "
+                        "only; a real publication must name a real domain.")
     args = p.parse_args(argv)
     try:
-        report = render_site(args.mode, args.out, args.db)
-    except UnsupportedSiteMode as exc:
+        report = render_site(args.mode, args.out, args.db,
+                             site_origin=args.site_origin,
+                             allow_test_origin=args.allow_test_origin)
+    except (UnsupportedSiteMode, MissingSiteOrigin) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2
     print("mode   : %s" % report["mode"])
