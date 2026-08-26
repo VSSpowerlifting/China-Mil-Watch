@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns1="http://purl.org/rss/1.0/modules/syndication/" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xml:lang="ja">
+<channel>
+<title>防衛省・自衛隊</title>
+<link>https://www.mod.go.jp/</link>
+<description>防衛省・自衛隊ホームページで公開された情報一覧です。</description>
+<language>ja</language>
+<copyright> (c) Japan Ministry of Defense</copyright>
+<lastBuildDate>Wed, 26 Aug 2026 18:06:48 +0900</lastBuildDate>
+<generator />
+<dc:creator>防衛省広報課</dc:creator>
+<dc:subject>行政</dc:subject>
+<ns1:updatePeriod>daily</ns1:updatePeriod>
+<ns1:updateFrequency>2</ns1:updateFrequency>
+
+<item><title>「第２回退職自衛隊員・家族に対する支援の強化に関する検討委員会」の開催について</title><link>/j/press/news/2026/08/26b.html</link><guid isPermaLink="true">/j/press/news/2026/08/26b.html</guid><category>行政</category><pubDate>Wed, 26 Aug 2026 18:06:48 +0900</pubDate><description /><ns2:encoded /></item>
+<item><title>令和８年度「防災の日」総合防災訓練について</title><link>/j/press/news/2026/08/26a.html</link><guid isPermaLink="true">/j/press/news/2026/08/26a.html</guid><category>行政</category><pubDate>Wed, 26 Aug 2026 18:06:48 +0900</pubDate><description /><ns2:encoded /></item>
+<item><title>日豪尼防衛相電話会談について</title><link>/j/approach/exchange/area/2026/20260826_aus_idn-j.html</link><guid isPermaLink="true">/j/approach/exchange/area/2026/20260826_aus_idn-j.html</guid><category>行政</category><pubDate>Wed, 26 Aug 2026 18:06:48 +0900</pubDate><description /><ns2:encoded /></item>
+<item><title>日米合同委員会合意について</title><link>/j/press/news/2026/08/25a.pdf</link><guid isPermaLink="true">/j/press/news/2026/08/25a.pdf</guid><category>行政</category><pubDate>Tue, 25 Aug 2026 18:03:42 +0900</pubDate><description /><ns2:encoded /></item>
+<item><title>宮﨑防衛副大臣の海外出張予定について</title><link>/j/press/news/2026/08/24a.html</link><guid isPermaLink="true">/j/press/news/2026/08/24a.html</guid><category>行政</category><pubDate>Mon, 24 Aug 2026 18:06:02 +0900</pubDate><description /><ns2:encoded /></item>
+<item><title>防衛人事審議会公正審査分科会の持ち回り開催について</title><link>/j/press/news/2026/08/24c.html</link><guid isPermaLink="true">/j/press/news/2026/08/24c.html</guid><category>行政</category><pubDate>Mon, 24 Aug 2026 18:06:02 +0900</pubDate><description /><ns2:encoded /></item>
+</channel>
+</rss>

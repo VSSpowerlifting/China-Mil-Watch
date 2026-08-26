@@ -1,0 +1,60 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST — deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a Japan desk",
+    "and source into the tracked production database on the next migration run,",
+    "which would put a non-collecting desk into public counts. It lives here so",
+    "production discovery cannot see it by accident, and a test asserts that",
+    "desks/ contains only china.",
+    "",
+    "Nothing in this file is read by pipeline.py. Only the shadow runner reads",
+    "it, and the shadow runner writes only to the shadow state branch."
+  ],
+  "desk": {
+    "desk_id": "japan",
+    "display_name": "Japan Desk",
+    "jurisdiction_code": "JP",
+    "default_timezone": "Asia/Tokyo",
+    "default_calendar": "gregorian",
+    "supported_language_tags": ["ja", "en"],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "jp_mod",
+      "display_name": "Ministry of Defense",
+      "name_original": "防衛省",
+      "institution_type": "defense_ministry",
+      "notes": "The Ministry publishes for itself and, through the Joint Staff (統合幕僚監部), for the Self-Defense Forces."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "jp_mod_releases",
+      "display_name": "Japan MOD / Joint Staff — official releases",
+      "institution_id": "jp_mod",
+      "base_url": "https://www.mod.go.jp",
+      "discovery_endpoints": [
+        "https://www.mod.go.jp/j/rss/news.xml",
+        "https://www.mod.go.jp/j/rss/update.xml"
+      ],
+      "adapter": "scraper.sources.jp_mod:JPModAdapter",
+      "enabled": false,
+      "language_tags": ["ja", "en"],
+      "access_notes": [
+        "Access qualified 2026-08-26, one honest request per endpoint.",
+        "robots.txt: 200, disallows only /a/ and /sp/j/ — every path used here is permitted.",
+        "RSS feeds: 200, application/xml, and 304 on If-None-Match.",
+        "PDF documents: 200, application/pdf.",
+        "HTML documents: 403 with Cf-Mitigated: challenge, on /j/, /en/ and /js/ alike.",
+        "Consequence: discovery and PDF bodies are collectable; HTML bodies are not.",
+        "HTML items are recorded as access_challenged and carry no body. The",
+        "challenge is not solved, worked around, or retried."
+      ]
+    }
+  ]
+}
