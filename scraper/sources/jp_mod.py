@@ -84,11 +84,27 @@ MAX_BODY_BYTES = pdf_text.MAX_BYTES
 #: as a fallback only; `assert_robots_allows` parses the live file when given it.
 KNOWN_DISALLOW = ("/a/", "/sp/j/")
 
+#: URL family -> what that family actually is, measured across both feeds on
+#: 2026-08-26. These are **labels, not filters**. Nothing is dropped for failing
+#: to match: an unrecognised family is stored as "ministry page (unclassified)"
+#: so a new section shows up as itself rather than vanishing.
+#:
+#: `update.xml` is a whole-site stream, so it carries budget tables, profile
+#: pages and even a children's page alongside press releases. Storing all of
+#: them under one word like "release" would fabricate a document type; storing
+#: only the ones that look like releases would be silent sampling. Both are
+#: refused: everything is kept, and each record says which family it came from.
 _PRESS_KIND = (
-    (re.compile(r"/js/press/"), "joint staff press release"),
-    (re.compile(r"/j/press/news/"), "press release"),
-    (re.compile(r"/j/approach/"), "policy statement"),
-    (re.compile(r"/en/"), "press release (english)"),
+    (re.compile(r"^/js/"), "joint staff publication"),
+    (re.compile(r"^/en/"), "ministry page (english)"),
+    (re.compile(r"^/j/press/news/"), "press release"),
+    (re.compile(r"^/j/press/"), "press material"),
+    (re.compile(r"^/j/approach/"), "defense exchange or policy item"),
+    (re.compile(r"^/j/budget/"), "budget document"),
+    (re.compile(r"^/j/profile/"), "ministry profile page"),
+    (re.compile(r"^/j/policy/"), "policy document"),
+    (re.compile(r"^/j/presiding/"), "presiding-office page"),
+    (re.compile(r"^/j/kids/"), "public education page"),
 )
 
 
@@ -120,10 +136,11 @@ def is_pdf(url: str) -> bool:
 
 
 def publication_kind(url: str) -> str:
+    path = urlsplit(url).path
     for pattern, kind in _PRESS_KIND:
-        if pattern.search(url):
+        if pattern.search(path):
             return kind
-    return "publication"
+    return "ministry page (unclassified)"
 
 
 def language_tag(url: str) -> str:
@@ -156,7 +173,8 @@ def parse_robots(robots_text: str) -> List[str]:
 
 
 def parse_feed(xml_text: str, feed_url: str,
-               titles: Optional[dict] = None) -> List[CandidateReference]:
+               titles: Optional[dict] = None,
+               source_slug: str = "jp_mod_news_ja") -> List[CandidateReference]:
     """
     RSS 2.0 items -> candidate references.
 
@@ -178,7 +196,7 @@ def parse_feed(xml_text: str, feed_url: str,
                 titles[link] = title
         refs.append(CandidateReference(
             url=link,
-            source_slug="jp_mod_releases",
+            source_slug=source_slug,
             discovered_via=feed_url,
             hint_published_date=_rfc822_date(item.findtext("pubDate")),
         ))
@@ -242,7 +260,12 @@ class JPModAdapter(SourceAdapter):
     def __init__(self, source, session=None, cap: int = 40,
                  validators=None, sleep=time.sleep):
         self.source = source
-        self.slug = getattr(source, "slug", "jp_mod_releases")
+        self.slug = getattr(source, "slug", "jp_mod_news_ja")
+        #: Each declared feed is its own source, because the two are objectively
+        #: different things: news.xml is the press stream, update.xml reports any
+        #: page on the site. Merging them into one "releases" source is what made
+        #: the first manifest describe a budget table as an official release.
+        self.feeds = tuple(getattr(source, "discovery_endpoints", None) or FEEDS)
         # A real session by default. Leaving this None meant every live run
         # raised AttributeError inside the transport try/except and reported
         # `listing_failure` — a broken collector that looked like a dead
@@ -310,7 +333,7 @@ class JPModAdapter(SourceAdapter):
     def discover(self, window: CollectionWindow) -> DiscoveryResult:
         refs, failed = [], []
         seen = set()
-        for feed in FEEDS:
+        for feed in self.feeds:
             try:
                 response = self._get(feed)
                 if getattr(response, "status_code", None) == 304:
@@ -318,7 +341,8 @@ class JPModAdapter(SourceAdapter):
                 if getattr(response, "status_code", None) != 200:
                     failed.append(feed)
                     continue
-                for ref in parse_feed(response.text, feed, self._titles):
+                for ref in parse_feed(response.text, feed, self._titles,
+                                      source_slug=self.slug):
                     if ref.url not in seen:
                         seen.add(ref.url)
                         refs.append(ref)
@@ -470,7 +494,7 @@ class JPModAdapter(SourceAdapter):
 
     def healthcheck(self) -> SourceHealthResult:
         try:
-            response = self._get(FEEDS[0], conditional=False)
+            response = self._get(self.feeds[0], conditional=False)
         except Exception as exc:
             return SourceHealthResult(
                 source_slug=self.slug, status=st.LISTING_FAILURE,
