@@ -193,13 +193,61 @@ class TestThisEnablesNothing(unittest.TestCase):
                 self.assertNotIn("processing.extraction", text)
                 self.assertNotIn("from processing import extraction", text)
 
-    def test_the_pdf_extractor_reaches_no_collector_either(self):
+    #: `processing/pdf_text.py` was written for the Japan Joint Staff releases
+    #: and sat dormant until a Japan source could actually be reached. It is now
+    #: used by exactly one caller: the Japan **shadow** adapter, which writes to
+    #: an isolated state branch and cannot touch production.
+    #:
+    #: The invariant this guard protects was never "nothing may import it" for
+    #: its own sake — it was "importing it must not quietly put PDF bodies into
+    #: the production corpus". So the allowance is a named file, not a relaxed
+    #: assertion, and the production path below is still checked.
+    PDF_CALLERS_ALLOWED = {"jp_mod.py"}
+
+    def test_the_pdf_extractor_reaches_no_unexpected_caller(self):
         for path in self.source_files():
             if path.parent.name == "processing":
+                continue
+            if path.name in self.PDF_CALLERS_ALLOWED:
                 continue
             text = path.read_text(encoding="utf-8")
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
                 self.assertNotIn("pdf_text", text)
+
+    def test_the_pdf_extractor_stays_off_the_production_collection_path(self):
+        """
+        The allowance above is for one shadow adapter. Production collection —
+        the pipeline, the China adapters and the daily workflow — must still
+        never reach it, because a PDF body arriving there would enter the
+        tracked corpus and the public counts.
+        """
+        production = [REPO_ROOT / "pipeline.py",
+                      REPO_ROOT / ".github" / "workflows" / "daily_update.yml"]
+        production += list((REPO_ROOT / "adapters").rglob("*.py"))
+        production += [p for p in (REPO_ROOT / "scraper").rglob("*.py")
+                       if p.name not in self.PDF_CALLERS_ALLOWED]
+        for path in production:
+            if not path.exists():
+                continue
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(file=str(path.relative_to(REPO_ROOT))):
+                self.assertNotIn("pdf_text", text)
+
+    def test_the_only_allowed_pdf_caller_is_a_shadow_adapter(self):
+        """The allowance must not silently come to cover a production file."""
+        for name in self.PDF_CALLERS_ALLOWED:
+            matches = [p for p in REPO_ROOT.rglob(name)
+                       if "__pycache__" not in p.parts]
+            self.assertTrue(matches, "allowed caller %s no longer exists" % name)
+            for path in matches:
+                manifest = REPO_ROOT / "shadow" / "jp_mod" / "manifest.json"
+                with self.subTest(file=str(path.relative_to(REPO_ROOT))):
+                    self.assertTrue(
+                        manifest.is_file(),
+                        "the allowed PDF caller must belong to a shadow source")
+                    self.assertFalse(
+                        (REPO_ROOT / "desks" / "japan").exists(),
+                        "the allowed PDF caller's desk must not be in desks/")
 
     def test_the_view_layer_is_not_on_the_collection_path(self):
         """

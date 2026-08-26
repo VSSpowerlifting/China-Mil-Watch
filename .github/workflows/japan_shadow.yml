@@ -1,0 +1,141 @@
+name: Japan Shadow Collection
+
+# Shadow evaluation only. This workflow collects Japan MOD / Joint Staff
+# releases into an isolated state branch. It publishes nothing, deploys nothing,
+# and never writes to `main`.
+#
+# Isolation, by construction:
+#   * state lives on `shadow/jp-mod`, checked out into a directory OUTSIDE the
+#     repository working tree; the runner refuses to write inside it
+#   * `contents: write` is the only permission, and the only ref it pushes is
+#     the state branch
+#   * no Pages step, no call to the daily workflow, no output/ generation
+#   * pushes are non-force and fail on non-fast-forward, so a divergent state
+#     branch stops the run instead of being overwritten
+#
+# What this collector can and cannot reach (qualified 2026-08-26):
+#   robots.txt disallows only /a/ and /sp/j/, so every path here is permitted.
+#   The RSS feeds and PDF documents are served; HTML documents are returned
+#   behind a Cloudflare challenge. Challenged items are recorded as
+#   `access_challenged` and are never fetched, retried, or worked around.
+#   A run with most items challenged is therefore normal and reports `partial`.
+
+on:
+  schedule:
+    # 22:40 UTC — clear of the daily China window (12:23–14:23 UTC plus its
+    # observed 60–100 minute lateness) and of Singapore shadow at 21:10 UTC, so
+    # no two collection jobs contend.
+    - cron: '40 22 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: japan-shadow
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the collector
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r repo/requirements.txt
+
+      # The state branch is checked out as a sibling of the repository, never
+      # inside it. `scripts/shadow_collect_japan.py` refuses any --state-dir
+      # under the repo root, so this layout is enforced on both sides.
+      - name: Check out shadow state
+        run: |
+          set -euo pipefail
+          git clone --branch shadow/jp-mod --single-branch \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+            "${RUNNER_TEMP}/shadow-state" 2>/dev/null \
+          || {
+            echo "state branch absent — initialising an empty orphan"
+            git clone "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+              "${RUNNER_TEMP}/shadow-state"
+            cd "${RUNNER_TEMP}/shadow-state"
+            git checkout --orphan shadow/jp-mod
+            git rm -rf . >/dev/null 2>&1 || true
+          }
+          echo "state at ${RUNNER_TEMP}/shadow-state"
+
+      - name: Assert the state checkout is not the repository
+        run: |
+          set -euo pipefail
+          case "${RUNNER_TEMP}/shadow-state" in
+            "${GITHUB_WORKSPACE}"/repo*)
+              echo "::error title=Isolation::shadow state resolved inside the collector checkout"
+              exit 1 ;;
+          esac
+          echo "Shadow state is outside the collector checkout."
+
+      - name: Run shadow collection
+        id: collect
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          python scripts/shadow_collect_japan.py \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --lookback-days 14 \
+            --cap 40 \
+            --run-id "${GITHUB_RUN_ID}" \
+            --commit "${GITHUB_SHA}"
+
+      - name: Assert the collector left the repository untouched
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error title=Isolation::the collector modified the checkout"
+            git status --porcelain
+            exit 1
+          fi
+          echo "Collector checkout is clean."
+
+      # Only reached when collection succeeded: a failing run must not persist a
+      # half-written state, and `set -e` above already stopped the job.
+      - name: Publish shadow state
+        if: success()
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          if [ -e state/shadow.db-wal ] || [ -e state/shadow.db-shm ]; then
+            echo "::error title=Sidecar::refusing to commit a WAL/SHM sidecar"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          if git diff --cached --quiet; then
+            echo "No shadow state change to record."
+            exit 0
+          fi
+          git commit \
+            -m "shadow(japan): run ${GITHUB_RUN_ID}" \
+            -m "Recorded by ${GITHUB_WORKFLOW} at ${GITHUB_SHA}." \
+            -m "State only. Never merged to main."
+          git push origin shadow/jp-mod
+
+      - name: Upload the run ledger
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-shadow-ledger-${{ github.run_id }}
+          path: ${{ runner.temp }}/shadow-state/state/ledger/
+          if-no-files-found: warn
+          retention-days: 90

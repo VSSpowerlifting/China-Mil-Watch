@@ -58,6 +58,17 @@ defect, not silence."""
 AUTH_FAILURE = "auth_failure"
 """Authentication, authorization, or access refused (401/403, login wall)."""
 
+ACCESS_CHALLENGED = "access_challenged"
+"""An edge/bot-mitigation layer interposed a challenge instead of serving the
+document. Distinct from AUTH_FAILURE: nothing was refused on credentials, and
+distinct from FETCH_FAILURE: the origin is healthy and the request was
+well-formed. The host is declining to serve *this client* without a browser
+challenge, which this project does not solve.
+
+It is recorded rather than retried. A challenge answered by hammering is the
+behaviour an honest collector must not have, and a challenge recorded as a
+generic fetch failure hides a policy decision behind an apparent outage."""
+
 TIMEOUT = "timeout"
 """Request exceeded the configured timeout."""
 
@@ -91,7 +102,8 @@ UNKNOWN_SOURCE = "unknown_source"
 ALL_STATUSES: FrozenSet[str] = frozenset({
     OK, OK_NO_PUBLICATIONS, OK_ALL_DUPLICATES, OK_ALL_FILTERED,
     SKIPPED_DISABLED, NOT_IMPLEMENTED,
-    LISTING_FAILURE, AUTH_FAILURE, TIMEOUT, DISALLOWED_REDIRECT,
+    LISTING_FAILURE, AUTH_FAILURE, ACCESS_CHALLENGED, TIMEOUT,
+    DISALLOWED_REDIRECT,
     UNEXPECTED_CONTENT_TYPE, OVERSIZED_RESPONSE, FETCH_FAILURE,
     EXTRACTION_FAILURE, ANALYSIS_FAILURE, ADAPTER_ERROR, UNKNOWN_SOURCE,
 })
@@ -106,7 +118,8 @@ SUCCESS_STATUSES: FrozenSet[str] = frozenset({
 #: would make every run degraded for as long as Xinhua stays a stub, and an
 #: alarm that is always on is not an alarm.
 FAILURE_STATUSES: FrozenSet[str] = frozenset({
-    LISTING_FAILURE, AUTH_FAILURE, TIMEOUT, DISALLOWED_REDIRECT,
+    LISTING_FAILURE, AUTH_FAILURE, ACCESS_CHALLENGED, TIMEOUT,
+    DISALLOWED_REDIRECT,
     UNEXPECTED_CONTENT_TYPE, OVERSIZED_RESPONSE, FETCH_FAILURE,
     EXTRACTION_FAILURE, ANALYSIS_FAILURE, ADAPTER_ERROR, UNKNOWN_SOURCE,
 })
