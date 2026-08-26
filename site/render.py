@@ -70,7 +70,7 @@ SITE_MODES = (LEGACY, INDO_PACIFIC_RECORD)
 #: ── THE LAUNCH SWITCH ────────────────────────────────────────────────────
 #: Change this one constant to publish Indo-Pacific Record. Change it back to
 #: roll the launch back. Do not add a second way to select a mode.
-DEFAULT_SITE_MODE = LEGACY
+DEFAULT_SITE_MODE = INDO_PACIFIC_RECORD
 
 #: Override for local builds and CI contract tests. Deliberately absent from
 #: every workflow: `tests/test_site_mode_contract.py` asserts that.
