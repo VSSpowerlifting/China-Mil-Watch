@@ -5,6 +5,44 @@ figure. The Japan desk's public status is `shadow`; its source is `enabled:
 false`; and `desks/` deliberately does not contain a `japan/` directory, so
 production desk discovery cannot see this manifest by accident.
 
+## What the two feeds actually are
+
+Both declared feeds were categorised in full on 2026-08-26. The result corrected
+the original scope claim, which called this source "Japan MOD / Joint Staff —
+official releases" in languages `["ja", "en"]`. All three parts of that were
+wrong.
+
+### `/j/rss/news.xml` → `jp_mod_news_ja`
+
+The ministry's Japanese-language news stream. **142 items**: `/j/press/` 105,
+`/j/approach/` 37. **134 HTML, 8 PDF.**
+
+### `/j/rss/update.xml` → `jp_mod_siteupdate_ja`
+
+A **whole-site update stream, not a press-release feed**. It reports any page
+the ministry publishes or revises. **391 items**: `/j/press/` 126,
+`/j/budget/` 93, `/j/profile/` 76, `/j/approach/` 63, `/j/policy/` 21,
+`/j/presiding/` 11, `/j/kids/` 1. **342 HTML, 0 PDF.**
+
+### What neither feed carries
+
+**Zero Joint Staff (`/js/`) items. Zero English (`/en/`) items.** Both are
+declared in the manifest as separate, not-collected sources so they stay
+distinguishable, and both are unreachable — their index pages are challenged.
+
+### Why they are two sources and not one
+
+They are objectively different streams. Collapsing them into one source called
+"official releases" is what let the first manifest describe a budget table as an
+official release. Each feed is now its own source, each with one endpoint, and
+every stored record carries the source it came from.
+
+Nothing is filtered. Keeping only the items that look like press releases would
+be silent sampling, so every discovered item is kept and labelled by its URL
+family — a budget page is stored as a budget document, a children's page as a
+public education page, and an unrecognised family as "ministry page
+(unclassified)" rather than vanishing.
+
 ## What access actually looks like
 
 Qualified 2026-08-26 with one honest request per endpoint, using the project's
@@ -23,6 +61,15 @@ treat every document the same way:
 
 **XML and PDF are served. HTML is challenged.** Robots permits every path this
 collector touches — the challenge is an edge policy, not a robots directive.
+
+### How much of it can actually be read
+
+Across `news.xml`, **8 of 142 items (6%) are PDF and carry full text**; **134 of
+142 (94%) are HTML and are recorded as titled, dated discovery records with no
+body**. `update.xml` carries no PDFs at all.
+
+This is **partial retrieval, not coverage**, and it is not a qualified desk.
+Most sampled bodies remain challenged.
 
 ## What the collector does with that
 

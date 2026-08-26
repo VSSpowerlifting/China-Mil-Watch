@@ -171,3 +171,73 @@ separately authorized launch.
 * The public launch gates are unchanged and unmet: one non-China desk collecting
   30 consecutive days, its source universe published, coverage health public,
   the 2026-07-17→24 collection outage disclosed, and owner sign-off recorded.
+
+---
+
+## 8. Regional allocation — collect everything, allocate analysis
+
+Two different scarcities, and conflating them is how a multi-desk publication
+starts lying about its own coverage.
+
+**Collection is not scarce, and is never rationed.** Within each declared source
+scope, preservation is comprehensive: every qualifying official record that is
+discovered is collected and stored. Nothing is dropped to make desks look
+balanced, and no keyword filter sits inside a collector deciding what the
+ministry "really" published. A corpus that has been quietly sampled cannot
+support any claim made on top of it.
+
+**Analysis is scarce, and is allocated deliberately.** Screening and analysis
+cost money per record, under a hard daily cap. That budget may be pointed
+preferentially at underrepresented desks, because a new desk that receives
+capacity only after the largest desk is satisfied never becomes readable.
+
+### What follows from that
+
+* **Comprehensive within scope.** Collection is capped by politeness and by
+  what a source serves, never by a target count per desk.
+* **No artificial balance.** China publishes more than Singapore. The corpus
+  will say so. Equalising by discarding Chinese records would be falsification.
+* **Analysis may be weighted.** Underrepresented desks may hold explicit floors
+  or weights, disclosed publicly rather than applied quietly.
+* **Unused capacity returns to a common pool.** A floor is an opportunity, not
+  a reservation: slots a desk does not use spill to whoever has the oldest
+  backlog, so a quiet desk cannot idle the budget.
+* **The inherited China record stays intact.** Nothing about desk expansion
+  deletes, downsamples, or de-prioritises the existing China corpus.
+* **Balance is measured over recent periods.** The all-time corpus is
+  overwhelmingly China and always will be; that is history, not policy.
+  Reporting it as though every desk had always existed would be dishonest, so
+  balance is stated over a recent window and the all-time figures are shown
+  separately.
+* **Per-desk counts and awaiting-screening rates stay visible.** A reader can
+  see what each desk holds and how much of it has not yet been screened. A
+  desk's backlog is part of its coverage, not a defect to be hidden.
+
+### What is deliberately not built yet
+
+No production allocator exists, and none should be written until there is a
+real multi-desk queue to allocate. Today exactly one desk collects into the
+production corpus; Singapore is in shadow qualification, Japan has just begun
+shadow collection, and U.S. Pacific Command is access-blocked. An allocator
+tuned against a queue of one desk would encode assumptions nobody has tested,
+and its numbers would be invented rather than measured.
+
+`docs/COLLECTION_HEALTH.md` already records the same conclusion from the
+collection side: no per-desk budget is needed with one desk, and one is
+required before a second is activated.
+
+When a second desk does reach production, the shape to build is configurable
+weighted fairness, not a hardcoded split:
+
+1. a minimum current-item opportunity for every active desk, so a new desk is
+   readable from its first day
+2. weighted round-robin for the rest of the budget
+3. oldest-global-backlog spillover for anything unclaimed
+4. no starvation — every active desk advances every run
+5. unused-slot recovery within the same run, not carried forward
+6. per-desk reporting of what each desk was allocated and what it used
+
+The weights belong in configuration and in this document, where a reader can
+check them, not buried in a scheduler. Any provisional split discussed while
+planning — 15/10/5/15/10 or otherwise — is illustrative only and is
+deliberately not encoded anywhere in production.

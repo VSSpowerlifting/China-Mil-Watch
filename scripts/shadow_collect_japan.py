@@ -53,7 +53,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from core.collection import status as st                      # noqa: E402
 from core.collection.contract import CollectionWindow          # noqa: E402
-from scraper.sources.jp_mod import JPModAdapter                # noqa: E402
+from scraper.sources.jp_mod import (                            # noqa: E402
+    JPModAdapter, publication_kind)
 
 MANIFEST = REPO_ROOT / "shadow" / "jp_mod" / "manifest.json"
 # Deliberately no constant for the production database or output directory.
@@ -119,16 +120,29 @@ def file_sha256(path: Path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_source():
+def load_sources():
+    """
+    Every declared source that is actually collected, in manifest order.
+
+    Sources marked `_not_collected` are declared so the Joint Staff and the
+    English estate stay visible and distinguishable — neither is reachable, and
+    neither has an adapter. Returning them here would start collecting things
+    this project has said it cannot reach.
+    """
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    spec = manifest["sources"][0]
+    out = []
+    for spec in manifest["sources"]:
+        if spec.get("_not_collected"):
+            continue
 
-    class Source:
-        slug = spec["slug"]
-        display_name = spec["display_name"]
-        base_url = spec["base_url"]
+        class Source:
+            slug = spec["slug"]
+            display_name = spec["display_name"]
+            base_url = spec["base_url"]
+            discovery_endpoints = tuple(spec["discovery_endpoints"])
 
-    return Source()
+        out.append(Source())
+    return out
 
 
 def load_validators(conn) -> dict:
@@ -137,6 +151,80 @@ def load_validators(conn) -> dict:
         for row in conn.execute(
             "SELECT url, etag, last_modified FROM shadow_validators")
     }
+
+
+
+def _collect_source(conn, adapter, window, run_id, entry, bucket) -> None:
+    """
+    Collect one declared feed into the shared shadow database.
+
+    Counters land in two places on purpose: `bucket`, so each feed can be read
+    on its own, and `entry`, so the run still has one honest total. A reader who
+    sees only the total cannot tell whether the press feed went dark while the
+    site-update feed carried on as usual.
+    """
+    def count(name):
+        bucket[name] += 1
+        entry[name] += 1
+
+    discovery = adapter.discover(window)
+    bucket["listing_status"] = discovery.status
+    bucket["discovered"] = len(discovery.references)
+    entry["discovered"] += len(discovery.references)
+    if discovery.status == st.LISTING_FAILURE:
+        return
+    bucket["selected"] = len(discovery.references)
+    entry["selected"] += len(discovery.references)
+
+    for ref in discovery.references:
+        # Every discovered item is tallied by URL family whether or not its body
+        # can be read. That is what makes the site-update feed's breadth visible
+        # instead of hidden: a budget page counts as a budget page, and nothing
+        # is dropped for not looking like a press release.
+        kind = publication_kind(ref.url)
+        bucket["kinds"][kind] = bucket["kinds"].get(kind, 0) + 1
+
+        capture = adapter.fetch(ref)
+
+        if capture.status == st.ACCESS_CHALLENGED:
+            count("challenged")
+            entry["challenged_urls"].append(ref.url)
+            _record_unretrieved(conn, ref, adapter, "access_challenged", run_id)
+            continue
+        if capture.status == st.OK_ALL_DUPLICATES:
+            count("duplicates")          # 304: unchanged since the stored validator
+            continue
+        if capture.status != st.OK:
+            count("fetch_failures")
+            _record_unretrieved(conn, ref, adapter, capture.status, run_id)
+            continue
+
+        count("retrieved")
+        result = adapter.extract(capture)
+        if result.status != st.OK or not result.documents:
+            count("extraction_failures")
+            _record_unretrieved(conn, ref, adapter,
+                                result.error_detail or result.status, run_id)
+            continue
+
+        for doc in result.documents:
+            _store_validator(conn, doc, run_id)
+            if conn.execute("SELECT 1 FROM shadow_records WHERE url = ?",
+                            (doc.url,)).fetchone():
+                count("duplicates")
+                continue
+            conn.execute(
+                "INSERT INTO shadow_records (url, source_slug, title_original,"
+                " text_original, published_date, language_tag,"
+                " publication_kind, content_sha256, capture_sha256,"
+                " retrieved_at, first_seen_run) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (doc.url, doc.source_slug, doc.title_original,
+                 doc.text_original, doc.published_date, doc.language_tag,
+                 doc.extra["publication_kind"], doc.extra["content_sha256"],
+                 doc.extra.get("capture_sha256"), doc.extra.get("retrieved_at"),
+                 run_id))
+            count("inserted")
+            entry["content_hashes"].append(doc.extra["content_sha256"])
 
 
 def run(state_dir: Path, target: date, lookback: int, cap: int,
@@ -177,72 +265,47 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
     conn = sqlite3.connect(str(db_path))
     conn.executescript(SCHEMA)
 
-    src = load_source()
-    adapter = adapter or JPModAdapter(src, cap=cap,
-                                      validators=load_validators(conn))
     window = CollectionWindow(target_date=target, lookback_days=lookback)
+    entry["robots_status"] = "allowed"     # robots.txt permits every path used
 
-    discovery = adapter.discover(window)
-    entry["listing_status"] = discovery.status
-    entry["discovered"] = len(discovery.references)
-    entry["robots_status"] = "allowed"     # verified against the live file below
+    # Each declared feed is collected as its own source. They are objectively
+    # different streams — news.xml is the press stream, update.xml reports any
+    # page on the site — and collapsing them into one "releases" source is what
+    # let the first manifest describe a budget table as an official release.
+    if adapter is not None:
+        pairs = [(getattr(adapter, "slug", "jp_mod_news_ja"), adapter)]
+    else:
+        validators = load_validators(conn)
+        pairs = [(src.slug, JPModAdapter(src, cap=cap, validators=validators))
+                 for src in load_sources()]
 
-    if discovery.status == st.LISTING_FAILURE:
+    entry["sources"] = []
+    listing_statuses = []
+    for slug, source_adapter in pairs:
+        bucket = {"source_slug": slug, "discovered": 0, "selected": 0,
+                  "retrieved": 0, "inserted": 0, "duplicates": 0,
+                  "challenged": 0, "fetch_failures": 0,
+                  "extraction_failures": 0, "listing_status": None,
+                  "kinds": {}}
+        _collect_source(conn, source_adapter, window, run_id, entry, bucket)
+        entry["sources"].append(bucket)
+        listing_statuses.append(bucket["listing_status"])
+
+    entry["listing_status"] = (
+        st.LISTING_FAILURE
+        if listing_statuses and all(x == st.LISTING_FAILURE for x in listing_statuses)
+        else st.OK)
+
+    if entry["listing_status"] == st.LISTING_FAILURE:
         conn.close()
         entry.update(result=st.LISTING_FAILURE, health="fail",
-                     error_detail=discovery.error_detail)
+                     error_detail="no declared feed returned a usable listing")
         return _finish(entry, state_dir, db_path)
 
-    if discovery.status == st.OK_NO_PUBLICATIONS:
+    if entry["selected"] == 0:
         conn.close()
         entry.update(result=st.OK_NO_PUBLICATIONS, health="ok")
         return _finish(entry, state_dir, db_path)
-
-    entry["selected"] = len(discovery.references)
-
-    for ref in discovery.references:
-        capture = adapter.fetch(ref)
-
-        if capture.status == st.ACCESS_CHALLENGED:
-            entry["challenged"] += 1
-            entry["challenged_urls"].append(ref.url)
-            _record_unretrieved(conn, ref, adapter, "access_challenged", run_id)
-            continue
-        if capture.status == st.OK_ALL_DUPLICATES:
-            entry["duplicates"] += 1      # 304: unchanged since last run
-            continue
-        if capture.status != st.OK:
-            entry["fetch_failures"] += 1
-            _record_unretrieved(conn, ref, adapter, capture.status, run_id)
-            continue
-
-        entry["retrieved"] += 1
-        result = adapter.extract(capture)
-        if result.status != st.OK or not result.documents:
-            entry["extraction_failures"] += 1
-            _record_unretrieved(conn, ref, adapter,
-                                result.error_detail or result.status, run_id)
-            continue
-
-        for doc in result.documents:
-            _store_validator(conn, doc, run_id)
-            if conn.execute("SELECT 1 FROM shadow_records WHERE url = ?",
-                            (doc.url,)).fetchone():
-                entry["duplicates"] += 1
-                continue
-            conn.execute(
-                "INSERT INTO shadow_records (url, source_slug, title_original,"
-                " text_original, published_date, language_tag,"
-                " publication_kind, content_sha256, capture_sha256,"
-                " retrieved_at, first_seen_run) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                (doc.url, doc.source_slug, doc.title_original,
-                 doc.text_original, doc.published_date, doc.language_tag,
-                 doc.extra["publication_kind"], doc.extra["content_sha256"],
-                 doc.extra.get("capture_sha256"), doc.extra.get("retrieved_at"),
-                 run_id))
-            entry["inserted"] += 1
-            entry["content_hashes"].append(doc.extra["content_sha256"])
-
     conn.commit()
     entry["stored_total"] = conn.execute(
         "SELECT COUNT(*) FROM shadow_records").fetchone()[0]
