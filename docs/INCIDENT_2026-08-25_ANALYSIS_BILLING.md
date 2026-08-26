@@ -130,24 +130,88 @@ marker was never written, so 2026-08-25 is not recorded as a completed day, and
 attempt one analysis call, fail, rewrite the marker, exit 2, and skip publishing.
 Collection is preserved every day. Analysis stalls.
 
-At ~30 records/day the unscreened backlog grows from 799 to roughly 980 by
-2026-09-01.
+### Confirmed on 2026-08-26: the prediction held, exactly
 
-After that it **shrinks**, and it is worth being exact about why, because the
-figures invite the opposite reading. A day with 30 fresh records spends 30 of
-the 55 slots on them and the remaining 25 on the backlog, so the backlog falls
-**25 per collecting day** — roughly 40 days to clear from 980. The backlog only
-grows once daily inflow exceeds the whole cap:
+The pattern above repeated, and this is the shape to recognise on any later day:
+
+| Run | Time (UTC) | Conclusion | What actually ran |
+|---|---|---|---|
+| 538 | 13:29 | **failure** | everything; aborted at analysis 1/55, marker written |
+| 539 | 13:41 | success | checkout and the guard |
+| 540 | 14:08 | success | checkout and the guard |
+| 541 | 14:30 | success | checkout and the guard |
+| 542 | 15:55 | success | checkout and the guard |
+
+**Four green runs, and production did not recover.** In runs 539–542 every
+substantive step — migrations, the offline suite, the pipeline, collection,
+output validation, commit, deploy, the success marker — is `skipped`. The guard
+reported:
+
+```
+Decision:  should_run=false
+Reason:    billing/API failure already recorded today (2026-08-26);
+           use workflow_dispatch to retry after fixing credits
+```
+
+A green check on this workflow means "the guard decided not to spend money
+today". It does not mean the pipeline succeeded. `last_daily_run_date.txt` is
+the honest signal, and on 2026-08-26 it still read **2026-08-24**.
+
+### Measured inflow, and what it means for recovery
+
+This section originally projected from "~30 records/day". Measured against the
+corpus on 2026-08-26 — 28 collecting days — the real figure is **34.6/day mean,
+35.5 median**, and 35.3/day over the last fourteen. The mechanism below was
+right; the input was low, and the resulting estimates were optimistic.
+
+Corrected, with the backlog measured at **834 unscreened on 2026-08-26**:
+
+| | Original estimate | Measured |
+|---|---:|---:|
+| Assumed inflow | ~30/day | **~35/day** |
+| Backlog on 2026-09-01 | ~980 | **~1,045** |
+| Net drain once analysis resumes | 25/day | **20/day** |
+| Days to clear | ~40 | **~52** |
+
+So recovery is roughly **eight weeks, not six**, and that clock does not start
+until the limit lifts.
+
+The mechanism itself is unchanged, and it is worth being exact about because the
+figures invite the opposite reading. A day with 35 fresh records spends 35 of
+the 55 slots on them and the remaining 20 on the backlog, so the backlog falls
+**20 per collecting day**. The backlog only grows once daily inflow exceeds the
+whole cap:
 
 | New records/day | Analysed new | Analysed backlog | Net backlog/day |
 |---:|---:|---:|---:|
 | 20 | 20 | 35 | −35 |
 | 30 | 30 | 25 | −25 |
+| **35 (measured)** | **35** | **20** | **−20** |
 | 40 | 39 | 16 | −15 |
 | 55 | 39 | 16 | 0 |
 | 60 | 39 | 16 | +5 |
 
-Raising `DAILY_ANALYSIS_CAP` for a few runs clears it far faster.
+Days to clear 834, by inflow, holding the cap at 55: **0/day → 16 days**,
+20/day → 24, 30/day → 34, **35/day → 42**, 40/day → 56, 55/day → never.
+The 2026-09-01 figures above are higher because the backlog keeps growing until
+the limit lifts.
+
+Raising `DAILY_ANALYSIS_CAP` for a few runs clears it far faster: at 200, with
+35/day inflow, 834 clears in **6 runs**.
+
+### One number that is easy to misread
+
+Of 3,574 stored records on 2026-08-26, **2,239 have no `analyzed_at`**. That is
+not the backlog. It decomposes as:
+
+| | Count | |
+|---|---:|---|
+| Relevance-rejected | 1,402 | screened and correctly not analysed |
+| Unscreened | 834 | **the actual backlog** |
+| Scored, analysis incomplete | 3 | resumes on the next run |
+
+Quoting 2,239 as "awaiting analysis" overstates the queue by a factor of about
+2.7, because most of it was screened out on purpose and is never coming back.
 
 ---
 
