@@ -2828,8 +2828,8 @@ class TestCoverageTableSemantics(PreviewCase):
     def test_every_header_is_scoped_as_a_column(self):
         html = self.page("coverage.html")
         headers = re.findall(r"<th[ >]", html)
-        self.assertEqual(len(headers), 13)
-        self.assertEqual(len(re.findall(r'scope="col"', html)), 13)
+        self.assertEqual(len(headers), 14)
+        self.assertEqual(len(re.findall(r'scope="col"', html)), 14)
         # None of these tables has a header cell as a row label, so a
         # scope="row" here would be a mechanical addition, not a true one.
         self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
@@ -2839,9 +2839,9 @@ class TestCoverageTableSemantics(PreviewCase):
         labels = [re.sub(r"<[^>]+>", "", t).strip() for t in
                   re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)]
         self.assertEqual(labels,
-                         ["Source", "Desk", "Result", "Found", "Read",
-                          "Already held", "New", "Note", "Result", "Meaning",
-                          "From", "To", "Days"])
+                         ["Source", "Desk", "Result", "Found", "Parsed",
+                          "Text read", "Already held", "New", "Note",
+                          "Result", "Meaning", "From", "To", "Days"])
 
     def test_every_scoped_header_sits_inside_a_thead(self):
         html = self.page("coverage.html")

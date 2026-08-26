@@ -142,17 +142,38 @@ class ByteStabilityCase(unittest.TestCase):
 
 class TestMigrationsAreByteStable(ByteStabilityCase):
 
-    def test_the_tracked_database_is_already_fully_migrated(self):
+    def test_the_tracked_database_reaches_full_currency_in_one_pass(self):
         """
-        The premise of every test below. If production were behind, a re-run
-        would legitimately change bytes and these tests would be asserting the
-        wrong thing.
+        The premise of every test below, stated so a pending migration does not
+        break it.
+
+        The tracked database is normally fully migrated, and between a
+        migration merging and the first production run that applies it, it is
+        legitimately behind by exactly that migration. Asserting "nothing to
+        apply" would fail for the whole of that window and would push whoever
+        hit it toward migrating the tracked file — which is the one thing this
+        repository must not do casually.
+
+        What actually has to hold is weaker and more useful: one pass brings it
+        current, and a second pass then finds nothing left. Everything below
+        runs its own pass first, so they measure an already-current database
+        either way.
         """
-        report = self.run_migrations()
-        self.assertEqual(report["applied"], [],
-                         "the tracked database is not fully migrated")
-        self.assertEqual(sorted(report["skipped"]),
+        first = self.run_migrations()
+        second = self.run_migrations()
+
+        self.assertEqual(
+            second["applied"], [],
+            "a second pass still had migrations to apply: %s"
+            % second["applied"])
+        self.assertEqual(sorted(second["skipped"]),
                          sorted(m.version for m in discover()))
+
+        if first["applied"]:
+            # Visible, not silent. A pending migration is a fact about the
+            # working tree that a reader of this suite should see named.
+            print("\n    tracked database was behind by: %s"
+                  % ", ".join(first["applied"]))
 
     def test_a_second_migration_run_changes_no_bytes(self):
         self.run_migrations()

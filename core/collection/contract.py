@@ -107,6 +107,24 @@ class ExtractedDocument:
     #: to code that uses `in` or `.get(k, default)`.
     raw: Optional[Dict[str, Any]] = None
 
+    @property
+    def has_usable_text(self) -> bool:
+        """
+        Whether this document actually yielded readable text.
+
+        A parser that returns a structure has not necessarily read anything.
+        `parse_article()` reports success whenever it can build a dict, and an
+        empty body arrives here as `""` — indistinguishable, by type, from a
+        document that was read in full. The corpus holds 44 records with a
+        complete title, canonical URL, date and content hash and a
+        zero-character body: real items whose text was never captured.
+
+        Whitespace counts as nothing, because a body of newlines is not text a
+        reader or a model can use. Shortness is NOT emptiness: genuine short
+        bulletins exist and a length threshold here would discard them.
+        """
+        return bool((self.text_original or "").strip())
+
     def as_article_dict(self) -> Dict[str, Any]:
         """
         Render to the dict shape the existing pipeline and storage layer use.
@@ -185,10 +203,39 @@ class SourceRunResult:
     new_documents: int = 0
     relevance_rejected: int = 0
     failed_fetches: int = 0
+    #: Documents that PARSED but carried no usable text — the metadata-only
+    #: shells. `None` means the run predates this measurement, which is not the
+    #: same claim as zero: an old row observed nothing, and reporting a
+    #: confident 0 for it would invent a fact the data cannot support.
+    text_unavailable: Optional[int] = None
     error_detail: Optional[str] = None
+
+    @property
+    def usable_text(self) -> Optional[int]:
+        """
+        Documents that parsed AND yielded text. `None` when unmeasured.
+
+        This is the number a reader means by "read". `extracted` is the number
+        of documents the parser returned a structure for, and the two differ
+        exactly when a page was reachable but unreadable.
+        """
+        if self.text_unavailable is None:
+            return None
+        return self.extracted - self.text_unavailable
 
     def __post_init__(self) -> None:
         st.validate(self.status)
+        if self.text_unavailable is None:
+            return
+        if self.text_unavailable < 0:
+            raise ValueError(
+                "text_unavailable cannot be negative (got %r)"
+                % (self.text_unavailable,))
+        if self.text_unavailable > self.extracted:
+            raise ValueError(
+                "text_unavailable (%d) exceeds extracted (%d): a document "
+                "cannot lack text without having parsed"
+                % (self.text_unavailable, self.extracted))
 
     @property
     def is_failure(self) -> bool:
@@ -205,6 +252,8 @@ class SourceRunResult:
             % (self.references_discovered, self.fetched, self.extracted,
                self.duplicates, self.new_documents, self.relevance_rejected)
         )
+        if self.text_unavailable:
+            counts += " no-text=%d" % self.text_unavailable
         line = "%-18s %-22s %s" % (self.source_slug, self.status, counts)
         if self.error_detail:
             line += "  | %s" % self.error_detail

@@ -271,17 +271,40 @@ class LegacyScraperAdapter(SourceAdapter):
             else:
                 extraction_failures += 1
 
+        # `extracted` counts documents the parser returned a structure for.
+        # It is NOT the number of documents that yielded text — those differ
+        # exactly when a page was reachable but unreadable, and conflating them
+        # is what let a source report "34 read" while one of the 34 was an
+        # empty shell.
         result.extracted = len(documents)
+        unusable = [d for d in documents if not d.has_usable_text]
+        result.text_unavailable = len(unusable)
         result.failed_fetches = len(self.failed_fetches)
         result.completed_at = _now()
 
-        if documents:
+        notes = []
+        if extraction_failures:
+            notes.append("%d of %d fetched page(s) failed extraction"
+                         % (extraction_failures, result.fetched))
+
+        if documents and len(unusable) < len(documents):
+            # At least one document was actually read. A single unreadable page
+            # is a gap in an otherwise working source, not an outage — calling
+            # it one would hide the working majority behind a failure status.
             result.status = st.OK
-            if extraction_failures:
-                result.error_detail = (
-                    "%d of %d fetched page(s) failed extraction"
-                    % (extraction_failures, result.fetched)
-                )
+            if unusable:
+                notes.append(
+                    "%d of %d parsed page(s) carried no usable text; their "
+                    "titles, URLs and dates were kept"
+                    % (len(unusable), len(documents)))
+        elif documents:
+            # Every document parsed and none carried text. Nothing readable was
+            # obtained, so this is a failure — but not `ok_no_publications`,
+            # which would claim the source had nothing to offer.
+            result.status = st.EXTRACTION_FAILURE
+            notes.append(
+                "%d page(s) parsed, none carried usable text — check for "
+                "source markup drift" % len(documents))
         elif result.fetched == 0:
             result.status = st.FETCH_FAILURE
             result.error_detail = (
@@ -290,10 +313,12 @@ class LegacyScraperAdapter(SourceAdapter):
             )
         else:
             result.status = st.EXTRACTION_FAILURE
-            result.error_detail = (
+            notes.append(
                 "%d page(s) fetched, none could be parsed — check for source "
-                "markup drift" % result.fetched
-            )
+                "markup drift" % result.fetched)
+
+        if notes:
+            result.error_detail = "; ".join(notes)
         return result, documents
 
 
