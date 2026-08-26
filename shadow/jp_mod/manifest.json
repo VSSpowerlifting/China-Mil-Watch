@@ -3,6 +3,10 @@
   "_shadow": true,
   "_comment": [
     "SHADOW MANIFEST — deliberately NOT under desks/.",
+    "Scope corrected 2026-08-26 after categorising both feeds in full.",
+    "Neither feed carries a single Joint Staff (/js/) or English (/en/) item,",
+    "so this manifest no longer claims either. What the feeds actually carry is",
+    "declared per feed below, by measured counts.",
     "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
     "file anywhere under desks/ would make sync_desk_config() write a Japan desk",
     "and source into the tracked production database on the next migration run,",
@@ -19,7 +23,9 @@
     "jurisdiction_code": "JP",
     "default_timezone": "Asia/Tokyo",
     "default_calendar": "gregorian",
-    "supported_language_tags": ["ja", "en"],
+    "supported_language_tags": [
+      "ja"
+    ],
     "public_status": "shadow",
     "active": false
   },
@@ -27,34 +33,115 @@
     {
       "institution_id": "jp_mod",
       "display_name": "Ministry of Defense",
-      "name_original": "防衛省",
+      "name_original": "防衛省・自衛隊",
       "institution_type": "defense_ministry",
-      "notes": "The Ministry publishes for itself and, through the Joint Staff (統合幕僚監部), for the Self-Defense Forces."
+      "notes": "The Japanese-language estate of the Ministry of Defense and the Self-Defense Forces. The Joint Staff (統合幕僚監部) publishes separately under /js/ and is NOT carried by either feed here."
+    },
+    {
+      "institution_id": "jp_joint_staff",
+      "display_name": "Joint Staff",
+      "name_original": "統合幕僚監部",
+      "institution_type": "joint_staff",
+      "notes": "Publishes separately from the ministry's own pages. Not carried by either RSS feed collected here, and its own index is challenged."
     }
   ],
   "sources": [
     {
-      "slug": "jp_mod_releases",
-      "display_name": "Japan MOD / Joint Staff — official releases",
+      "slug": "jp_mod_news_ja",
+      "display_name": "防衛省・自衛隊 — news feed (Japanese)",
       "institution_id": "jp_mod",
       "base_url": "https://www.mod.go.jp",
       "discovery_endpoints": [
-        "https://www.mod.go.jp/j/rss/news.xml",
+        "https://www.mod.go.jp/j/rss/news.xml"
+      ],
+      "adapter": "scraper.sources.jp_mod:JPModAdapter",
+      "enabled": false,
+      "language_tags": [
+        "ja"
+      ],
+      "declared_scope": [
+        "The ministry's Japanese-language news stream. NOT an English press-release feed.",
+        "Measured 2026-08-26, 142 items: /j/press/ 105, /j/approach/ 37.",
+        "Item types: 134 HTML, 8 PDF.",
+        "Joint Staff (/js/) items: 0. English (/en/) items: 0."
+      ]
+    },
+    {
+      "slug": "jp_mod_siteupdate_ja",
+      "display_name": "防衛省・自衛隊 — site update feed (Japanese)",
+      "institution_id": "jp_mod",
+      "base_url": "https://www.mod.go.jp",
+      "discovery_endpoints": [
         "https://www.mod.go.jp/j/rss/update.xml"
       ],
       "adapter": "scraper.sources.jp_mod:JPModAdapter",
       "enabled": false,
-      "language_tags": ["ja", "en"],
-      "access_notes": [
-        "Access qualified 2026-08-26, one honest request per endpoint.",
-        "robots.txt: 200, disallows only /a/ and /sp/j/ — every path used here is permitted.",
-        "RSS feeds: 200, application/xml, and 304 on If-None-Match.",
-        "PDF documents: 200, application/pdf.",
-        "HTML documents: 403 with Cf-Mitigated: challenge, on /j/, /en/ and /js/ alike.",
-        "Consequence: discovery and PDF bodies are collectable; HTML bodies are not.",
-        "HTML items are recorded as access_challenged and carry no body. The",
-        "challenge is not solved, worked around, or retried."
+      "language_tags": [
+        "ja"
+      ],
+      "declared_scope": [
+        "A whole-site update stream, NOT a press-release feed. It reports any page",
+        "the ministry publishes or revises, across every section of the site.",
+        "Measured 2026-08-26, 391 items: /j/press/ 126, /j/budget/ 93,",
+        "/j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1.",
+        "Item types: 342 HTML, 49 directory or other URLs, 0 PDF.",
+        "Joint Staff (/js/) items: 0. English (/en/) items: 0.",
+        "Because the stream is site-wide, every stored record carries the URL family",
+        "it came from. Nothing is filtered out: a budget page and a press release are",
+        "both preserved, and labelled as what they are."
+      ]
+    },
+    {
+      "_not_collected": true,
+      "slug": "jp_joint_staff_en",
+      "display_name": "統合幕僚監部 Joint Staff — press releases (English)",
+      "institution_id": "jp_joint_staff",
+      "base_url": "https://www.mod.go.jp",
+      "discovery_endpoints": [
+        "https://www.mod.go.jp/js/press/index-en.html"
+      ],
+      "adapter": null,
+      "enabled": false,
+      "language_tags": [
+        "en"
+      ],
+      "declared_scope": [
+        "Declared so the Joint Staff stays distinguishable from the ministry's own",
+        "Japanese estate. NOT collected and NOT reachable: the index is served behind",
+        "an interactive challenge (403), and no RSS route for it is known.",
+        "No item from this source has ever been collected."
+      ]
+    },
+    {
+      "_not_collected": true,
+      "slug": "jp_mod_press_en",
+      "display_name": "Ministry of Defense — press releases (English)",
+      "institution_id": "jp_mod",
+      "base_url": "https://www.mod.go.jp",
+      "discovery_endpoints": [
+        "https://www.mod.go.jp/en/press-release/"
+      ],
+      "adapter": null,
+      "enabled": false,
+      "language_tags": [
+        "en"
+      ],
+      "declared_scope": [
+        "Declared so the English estate stays distinguishable from the Japanese one.",
+        "NOT collected and NOT reachable: served behind an interactive challenge (403).",
+        "No item from this source has ever been collected."
       ]
     }
+  ],
+  "access_notes": [
+    "Access qualified 2026-08-26, one honest request per endpoint.",
+    "robots.txt: 200, disallows only /a/ and /sp/j/ — every path used here is permitted.",
+    "RSS feeds: 200, application/xml, 304 on If-None-Match.",
+    "PDF documents: 200, application/pdf.",
+    "HTML documents: 403 with Cf-Mitigated: challenge, on /j/, /en/ and /js/ alike.",
+    "Consequence, measured across news.xml: 8 of 142 items (6%) are PDF and carry",
+    "full text; 134 of 142 (94%) are HTML and are recorded as titled, dated",
+    "discovery records with no body. This is partial retrieval, not coverage.",
+    "The challenge is not solved, worked around, or retried."
   ]
 }

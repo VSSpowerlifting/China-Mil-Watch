@@ -59,12 +59,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html as _html
 import json
 import os
 import shutil
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+from urllib.parse import urlsplit
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -1508,6 +1510,94 @@ def snapshot_from_corpus(db_path) -> dict:
 #: Legacy record redirect. A meta refresh plus a real link, and
 #: `noindex` so the compatibility route never competes with the record page
 #: it points at. Deterministic: no timestamp, no build id, no ordering.
+#: The exact tag `base.html` emits. Declared once so the builder cannot fall
+#: silently out of step with the template: if the template's wording changes,
+#: `tests/test_candidate_indexability.py` fails rather than the builder quietly
+#: leaving every page noindex on a real launch.
+NOINDEX_TAG = '<meta name="robots" content="noindex, nofollow">'
+
+
+class UnusableSiteOrigin(ValueError):
+    """The supplied origin cannot be published under."""
+
+
+#: Names that must never reach a published sitemap. RFC 2606 reserves the first
+#: group for documentation and testing, so any of them appearing in a real
+#: build means a stand-in was left behind.
+PLACEHOLDER_HOSTS = (
+    "example.com", "example.org", "example.net", "example.edu",
+    "localhost", "yourdomain.com", "yourdomain.org", "domain.com",
+    "changeme.com", "todo.com", "placeholder.com",
+)
+RESERVED_SUFFIXES = (".invalid", ".test", ".example", ".localhost", ".local")
+
+
+def validate_site_origin(origin: str, allow_test_origin: bool = False) -> str:
+    """
+    Accept an origin only if a real site could be published under it.
+
+    This fails closed on purpose. Every other part of the origin switch is
+    permissive — omit it and you get a candidate build — but once an origin is
+    *supplied*, it is written into every canonical and every sitemap entry. A
+    malformed or stand-in origin there does not fail loudly; it ships, and the
+    published site tells crawlers its canonical home is somewhere that does not
+    exist.
+
+    `allow_test_origin` is the single, named escape hatch, for tests that need a
+    syntactically real origin without claiming a domain. Production never sets
+    it, so a reserved or placeholder host cannot reach a published build by
+    being forgotten — only by being asked for explicitly.
+    """
+    if origin is None:
+        raise UnusableSiteOrigin("no site origin supplied")
+    origin = origin.strip().rstrip("/")
+    if not origin:
+        raise UnusableSiteOrigin("site origin is empty")
+
+    parts = urlsplit(origin)
+    if parts.scheme not in ("http", "https"):
+        raise UnusableSiteOrigin(
+            "site origin must be an absolute http(s) URL, got %r" % origin)
+    if not parts.netloc:
+        raise UnusableSiteOrigin("site origin has no host: %r" % origin)
+    if parts.path or parts.query or parts.fragment:
+        raise UnusableSiteOrigin(
+            "site origin must be scheme and host only, got %r" % origin)
+
+    host = parts.hostname or ""
+    if "." not in host:
+        raise UnusableSiteOrigin("site origin host is not a domain: %r" % host)
+
+    lowered = host.lower()
+    if not allow_test_origin:
+        if lowered in PLACEHOLDER_HOSTS:
+            raise UnusableSiteOrigin(
+                "%r is a placeholder host and must never be published under. "
+                "Supply the real domain, or pass allow_test_origin for a test "
+                "build." % host)
+        for suffix in RESERVED_SUFFIXES:
+            if lowered.endswith(suffix):
+                raise UnusableSiteOrigin(
+                    "%r uses the reserved suffix %r and can never resolve. "
+                    "Supply the real domain, or pass allow_test_origin for a "
+                    "test build." % (host, suffix))
+    return "%s://%s" % (parts.scheme, parts.netloc)
+
+
+def canonical_route(rel: str) -> str:
+    """
+    The one address a page should be known by, given its path in the tree.
+
+    `index.html` is the directory it sits in — `index.html` is `""` (the site
+    root) and `desk/index.html` is `desk/`. Used by both the canonical tag and
+    the sitemap so the two cannot disagree about what a page's URL is.
+    """
+    if rel == "index.html":
+        return ""
+    if rel.endswith("/index.html"):
+        return rel[: -len("index.html")]
+    return rel
+
 LEGACY_REDIRECT = """<!doctype html>
 <html lang="en">
 <head>
@@ -1526,7 +1616,8 @@ LEGACY_REDIRECT = """<!doctype html>
 
 def build(out_dir: Path, title: str, db_path: Path,
           snapshot: dict = DECLARED_SNAPSHOT,
-          legacy_routes: bool = False, mode: str = BUILD_MODE) -> dict:
+          legacy_routes: bool = False, mode: str = BUILD_MODE,
+          site_origin: str = None, allow_test_origin: bool = False) -> dict:
     out_dir = Path(out_dir).resolve()
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -1797,7 +1888,94 @@ def build(out_dir: Path, title: str, db_path: Path,
             redirects += 1
         written.append("article/*.html")
 
+    # ── Crawl directives and the sitemap ─────────────────────────────────
+    # The legacy site ships both. A candidate that ships neither is a
+    # regression: search engines lose the map of every record page, and the
+    # /article/<id> stubs have nothing pointing them at their records.
+    #
+    # A sitemap needs absolute URLs, and the domain is an owner decision that
+    # has not been made. Rather than bake in a placeholder that would ship as
+    # a real URL, the sitemap is written only when an origin is supplied, and
+    # its absence is reported rather than passed over in silence.
+    # An omitted origin is the candidate path and stays permissive. A supplied
+    # one is validated, and an unusable value stops the build rather than being
+    # written into every canonical on the site.
+    origin = (validate_site_origin(site_origin, allow_test_origin)
+              if (site_origin or "").strip() else "")
+    robots = ["User-agent: *", "Allow: /"]
+    if origin:
+        robots.append("Sitemap: %s/sitemap.xml" % origin)
+    (out_dir / "robots.txt").write_text("\n".join(robots) + "\n",
+                                        encoding="utf-8")
+    written.append("robots.txt")
+
+    # ── Indexability ─────────────────────────────────────────────────────
+    # Every page carries `noindex, nofollow` from base.html, which is right for
+    # a candidate: a preview tree that leaked must not be indexed. It is also
+    # the single thing that would most damage a launch if it shipped unchanged,
+    # because it tells every crawler to ignore the entire publication.
+    #
+    # Supplying an origin is what says "this build targets a real address", so
+    # it is the same switch that lifts noindex, writes the canonical, and emits
+    # the sitemap. Default stays noindex; you cannot get an indexable tree by
+    # forgetting a flag, only by naming where it will live.
+    #
+    # Canonicals are written from each file's real path in the built tree, for
+    # the same reason the sitemap routes are: a route derived from the output
+    # cannot drift from the output. The /article/ stubs are skipped — they
+    # already carry `noindex` and a canonical pointing at their record.
+    indexable = 0
+    if origin:
+        for path in sorted(out_dir.rglob("*.html")):
+            rel = path.relative_to(out_dir).as_posix()
+            if rel.startswith("article/"):
+                continue
+            page = path.read_text(encoding="utf-8")
+            if NOINDEX_TAG not in page:
+                continue
+            loc = origin + "/" + canonical_route(rel)
+            canonical = '<link rel="canonical" href="%s">' % _html.escape(
+                loc, quote=True)
+            path.write_text(page.replace(NOINDEX_TAG, canonical, 1),
+                            encoding="utf-8")
+            indexable += 1
+
+    sitemap_urls = 0
+    if origin:
+        # Routes are read back off the built tree rather than accumulated by
+        # hand, so a page added later cannot be forgotten here. The /article/
+        # stubs are excluded on purpose: every one carries `noindex` and exists
+        # to redirect, and listing them would invite indexing of the redirect
+        # instead of the record it points at.
+        # One rule, shared with the canonical above: `index.html` *is* the
+        # directory URL. Listing both `/` and `/index.html` would advertise a
+        # URL the canonical disavows, which is how a sitemap ends up arguing
+        # with the pages it points at.
+        locs, seen = [], set()
+        for path in sorted(out_dir.rglob("*.html")):
+            rel = path.relative_to(out_dir).as_posix()
+            if rel.startswith("article/"):
+                continue
+            loc = "%s/%s" % (origin, canonical_route(rel))
+            if loc not in seen:
+                seen.add(loc)
+                locs.append(loc)
+        body = ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+                "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">"]
+        for loc in locs:
+            body.append("  <url>")
+            body.append("    <loc>%s</loc>" % _html.escape(loc, quote=False))
+            body.append("  </url>")
+        body.append("</urlset>")
+        (out_dir / "sitemap.xml").write_text("\n".join(body) + "\n",
+                                             encoding="utf-8")
+        written.append("sitemap.xml")
+        sitemap_urls = len(locs)
+
     return {"out_dir": out_dir, "files": written, "mode": mode,
+            "site_origin": origin or None,
+            "sitemap_urls": sitemap_urls,
+            "indexable_pages": indexable,
             "articles": len(data["recent"]), "editions": len(editions),
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
@@ -1818,6 +1996,15 @@ def main(argv=None):
                          "the release guard.")
     ap.add_argument("--legacy-routes", action="store_true",
                     help="also emit the /article/<id> compatibility redirects")
+    ap.add_argument("--site-origin", default=None,
+                    help="absolute origin (e.g. https://example.org) used for "
+                         "the sitemap and the robots Sitemap: line. Omitted by "
+                         "default: a sitemap needs absolute URLs and the domain "
+                         "is an owner decision, so no placeholder is invented.")
+    ap.add_argument("--allow-test-origin", action="store_true",
+                    help="permit a reserved or placeholder origin (example.com, "
+                         "*.invalid, *.test). For test builds only; a real "
+                         "publication must name a real domain.")
     ap.add_argument("--serve", action="store_true",
                     help="serve the result on localhost:8770")
     args = ap.parse_args(argv)
@@ -1826,7 +2013,9 @@ def main(argv=None):
                 if args.snapshot_from_corpus else DECLARED_SNAPSHOT)
 
     result = build(Path(args.out), args.title, Path(args.db),
-                   snapshot=snapshot, legacy_routes=args.legacy_routes)
+                   snapshot=snapshot, legacy_routes=args.legacy_routes,
+                   site_origin=args.site_origin,
+                   allow_test_origin=args.allow_test_origin)
     print("build  : %d files -> %s" % (len(result["files"]), result["out_dir"]))
     print("mode   : %s (candidate; the public site builds under legacy)"
           % result["mode"])
@@ -1838,6 +2027,15 @@ def main(argv=None):
     print("sources: %d source pages" % result["sources"])
     print("analysis: %d editions linked to the live archive (never copied)"
           % result["editions"])
+    if result["site_origin"]:
+        print("index  : %d pages made indexable with canonicals at %s"
+              % (result["indexable_pages"], result["site_origin"]))
+        print("sitemap: %d urls at %s/sitemap.xml"
+              % (result["sitemap_urls"], result["site_origin"]))
+    else:
+        print("index  : noindex on every page (candidate build)")
+        print("sitemap: NOT WRITTEN — pass --site-origin to emit one. A "
+              "sitemap needs absolute URLs and no domain has been chosen.")
     if result["legacy_redirects"]:
         print("legacy : %d /article/<id> redirects"
               % result["legacy_redirects"])
