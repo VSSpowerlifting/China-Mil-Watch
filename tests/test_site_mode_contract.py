@@ -263,7 +263,7 @@ class TestCandidateBuild(unittest.TestCase):
     def test_japan_renders_with_no_records_and_no_sources(self):
         html = (self.out / "japan.html").read_text(encoding="utf-8")
         self.assertIn("Records</dt><dd>None collected", html)
-        self.assertIn("No source is enabled. No collector exists.", html)
+        self.assertIn("No source is enabled in production.", html)
 
     def test_the_us_is_not_a_collecting_desk_in_the_build(self):
         """
@@ -272,7 +272,7 @@ class TestCandidateBuild(unittest.TestCase):
         or a source that reads like an operating desk.
         """
         html = (self.out / "us-indopacific.html").read_text(encoding="utf-8")
-        self.assertIn("Planned — nothing collected", html)
+        self.assertIn("Access blocked — not collecting", html)
         self.assertIn("Records</dt><dd>None collected", html)
         self.assertNotIn("Live — collecting", html)
 

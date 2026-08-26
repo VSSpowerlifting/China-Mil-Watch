@@ -110,6 +110,18 @@ not coverage, and nothing below has produced a record.</p>
   <dd>{{ body }}</dd>
 {% endfor %}
 </dl>
+
+{% if desk.research.resolved %}
+<h3>What has already been solved</h3>
+<p class="meta">Recorded rather than deleted. A blocker that quietly disappears from
+this page leaves a reader unable to tell whether it was solved or abandoned.</p>
+<dl>
+{% for head, body in desk.research.resolved %}
+  <dt><strong>{{ head }}</strong></dt>
+  <dd>{{ body }}</dd>
+{% endfor %}
+</dl>
+{% endif %}
 {% endif %}
 
 {% if desk.limits %}

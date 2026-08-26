@@ -944,8 +944,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         for _label, figure in research["observed_volume"]:
             with self.subTest(figure=figure):
                 self.assertIn(figure, html)
-        self.assertIn("PDF text extraction exists but is not wired to any "
-                      "collector.", html)
+        self.assertIn("PDF text extraction wired to a collector", html)
 
     def test_japan_heading_is_not_repeated(self):
         """
@@ -970,8 +969,11 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_japan_scope_omits_internal_history_and_raw_field_names(self):
         html = self.page("japan.html") + self.page("desks.html")
-        self.assertIn("They are not a record count and nothing here has been "
-                      "collected.", html)
+        # The durable claim: these figures describe the ministry's output, not
+        # this project's holdings. Whether anything has yet been collected into
+        # the public record is a separate sentence, because Japan is now in
+        # shadow testing and that fact changes.
+        self.assertIn("They are not a record count", html)
         for internal in ("earlier reading", "corrected count",
                          "expected_cadence_days", "silence_threshold_days",
                          "15–25", "15-25", "Chief of Staff"):
@@ -981,7 +983,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_japan_scope_claims_no_coverage(self):
         japan = self.page("japan.html")
         self.assertIn("nothing below has produced a record", japan)
-        self.assertIn("No source is enabled. No collector exists.", japan)
+        self.assertIn("No source is enabled in production.", japan)
         self.assertIn("Records</dt><dd>None collected", japan)
         # The directory must carry the claim too, not defer all of it.
         desks = self.page("desks.html")
@@ -999,15 +1001,15 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         block = [b.split("</section>", 1)[0]
                  for b in directory.split('<section class="desk')[1:]
                  if "US Indo-Pacific Reference Desk" in b][0]
-        self.assertIn("Planned — nothing collected", block)
+        self.assertIn("Access blocked — not collecting", block)
         self.assertIn("Records</dt><dd>None collected", block)
         self.assertNotIn("Live — collecting", block)
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Planned — nothing collected", page)
+        self.assertIn("Access blocked — not collecting", page)
         self.assertIn("It is not a feed of US defense releases.", page)
-        self.assertIn("Nothing has been researched, configured, enabled or "
+        self.assertIn("Nothing has been configured, enabled or "
                       "collected.", page)
         self.assertNotRegex(
             page, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
@@ -2868,7 +2870,7 @@ class TestCoverageTableSemantics(PreviewCase):
         row-labelled facts, exactly like a record page's, so its headers are
         `scope="row"` and there is no `<thead>` at all.
         """
-        expected = {"china.html": 5, "japan.html": 3, "sources.html": 7,
+        expected = {"china.html": 5, "japan.html": 8, "sources.html": 7,
                     "desks.html": 2, "pla-watch.html": 5}
         for name, count in expected.items():
             html = (self.out / name).read_text(encoding="utf-8")
@@ -2877,7 +2879,7 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
                 outside = re.sub(r"<thead>.*?</thead>", " ", html, flags=re.S)
                 self.assertNotIn("<th", outside)
-        self.assertEqual(sum(expected.values()), 22)
+        self.assertEqual(sum(expected.values()), 27)
 
     def test_source_pages_label_rows_not_columns(self):
         for path in sorted(self.out.glob("source/*.html")):
