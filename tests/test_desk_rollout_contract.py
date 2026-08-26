@@ -129,13 +129,19 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(discovered, {"china"})
 
     def test_the_us_is_not_a_live_desk(self):
+        """
+        Moved from `planned` to `access_blocked` on 2026-08-26: probed once per
+        endpoint, the site root, the Press Releases and Readouts listing and
+        robots.txt itself all return 403 at the edge. What this test protects is
+        unchanged — the desk collects nothing and has no enabled source.
+        """
         us = load_registry().get("us-indopacific")
         self.assertIsNotNone(us)
-        self.assertEqual(us.status, "planned")
+        self.assertEqual(us.status, "access_blocked")
         self.assertFalse(us.is_collecting)
         self.assertEqual(us.configured_source_count, 0)
         self.assertEqual(us.enabled_source_count, 0)
-        self.assertIn("nothing collected", us.status_label.lower())
+        self.assertIn("not collecting", us.status_label.lower())
 
     def test_singapore_is_shadow_and_is_never_promoted(self):
         """
@@ -209,7 +215,7 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
         html = self.page("japan.html")
         self.assertIn("Records</dt><dd>None collected", html)
         self.assertIn("Sources enabled</dt><dd>0", html)
-        self.assertIn("No source is enabled. No collector exists.", html)
+        self.assertIn("No source is enabled in production.", html)
 
     def test_the_japan_page_shows_no_collection_statistic(self):
         """Observed publication volume describes the ministry's output, not
