@@ -1,15 +1,22 @@
 """
 Site-mode contract.
 
-`site/render.py` is the one seam between the live China Mil Watch renderer and
-The Declared Record desk architecture. The risk it exists to control is not a
-rendering bug — it is a mode selected implicitly, so that a scheduled run that
-believed it was publishing the live site published something else, or wrote the
-prototype over `output/`.
+`site/render.py` is the one seam between the live renderer — which publishes
+the site under its historical China Mil Watch identity — and the Indo-Pacific
+Record candidate. The risk it exists to control is not a rendering bug: it is a
+mode selected implicitly, so that a scheduled run which believed it was
+publishing the live site published something else, or wrote the candidate over
+`output/`.
 
 Every assertion here is about that: what the default is, what happens to an
-unrecognised mode, what Declared Record mode refuses to do, and whether the
-scheduled workflow can reach it at all.
+unrecognised mode, what candidate mode refuses to do, and whether the scheduled
+workflow can reach it at all.
+
+The non-legacy mode string was renamed from `declared-record` to
+`indo-pacific-record` on 2026-08-25. Nothing published ever carried the old
+value — legacy is the only mode that has ever written to `output/` — so the
+rename is a candidate-side change with no public surface, and the tests below
+now assert the old string is gone from the selection path entirely.
 
 No network. No writes to the tracked database or `output/`.
 """
@@ -73,20 +80,20 @@ class TestModeResolution(unittest.TestCase):
         with self.assertRaises(self.r.UnsupportedSiteMode):
             self.r.resolve_site_mode(environ={self.r.SITE_MODE_ENV: "nonsense"})
 
-    def test_declared_record_must_be_selected_explicitly(self):
+    def test_the_candidate_must_be_selected_explicitly(self):
         self.assertEqual(
-            self.r.resolve_site_mode(self.r.DECLARED_RECORD, environ={}),
-            self.r.DECLARED_RECORD)
+            self.r.resolve_site_mode(self.r.INDO_PACIFIC_RECORD, environ={}),
+            self.r.INDO_PACIFIC_RECORD)
         self.assertEqual(
             self.r.resolve_site_mode(
-                environ={self.r.SITE_MODE_ENV: self.r.DECLARED_RECORD}),
-            self.r.DECLARED_RECORD)
+                environ={self.r.SITE_MODE_ENV: self.r.INDO_PACIFIC_RECORD}),
+            self.r.INDO_PACIFIC_RECORD)
 
     def test_the_explicit_argument_beats_the_environment(self):
         self.assertEqual(
             self.r.resolve_site_mode(
                 self.r.LEGACY,
-                environ={self.r.SITE_MODE_ENV: self.r.DECLARED_RECORD}),
+                environ={self.r.SITE_MODE_ENV: self.r.INDO_PACIFIC_RECORD}),
             self.r.LEGACY)
 
     def test_there_is_exactly_one_launch_switch(self):
@@ -129,6 +136,11 @@ class TestScheduledWorkflowCannotReachTheNewMode(unittest.TestCase):
         """
         src = (REPO_ROOT / "pipeline.py").read_text(encoding="utf-8")
         self.assertIn("render_site()", src)
+        self.assertNotIn("INDO_PACIFIC_RECORD", src)
+        self.assertNotIn("indo-pacific-record", src)
+        # The retired mode string must not survive anywhere on the selection
+        # path either: two spellings of one mode is exactly the ambiguity this
+        # module exists to remove.
         self.assertNotIn("DECLARED_RECORD", src)
         self.assertNotIn("declared-record", src)
 
@@ -138,23 +150,23 @@ class TestScheduledWorkflowCannotReachTheNewMode(unittest.TestCase):
         self.assertIn("scripts/generate_pla_watch.py", wf)
 
 
-class TestDeclaredRecordRefusesProduction(unittest.TestCase):
+class TestCandidateRefusesProduction(unittest.TestCase):
 
     def setUp(self):
         self.r = load_render()
 
     def test_it_refuses_to_run_without_a_destination(self):
         with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.DECLARED_RECORD, environ={})
+            self.r.render_site(self.r.INDO_PACIFIC_RECORD, environ={})
 
     def test_it_refuses_the_production_output_directory(self):
         with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.DECLARED_RECORD,
+            self.r.render_site(self.r.INDO_PACIFIC_RECORD,
                                output_dir=PRODUCTION_OUT, environ={})
 
     def test_it_refuses_a_directory_inside_production_output(self):
         with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.DECLARED_RECORD,
+            self.r.render_site(self.r.INDO_PACIFIC_RECORD,
                                output_dir=PRODUCTION_OUT / "nested",
                                environ={})
 
@@ -165,7 +177,7 @@ class TestDeclaredRecordRefusesProduction(unittest.TestCase):
         self.assertNotRegex(gp, r"sqlite3\.connect\(\s*str\(db_path\)\s*\)")
 
 
-class TestDeclaredRecordBuild(unittest.TestCase):
+class TestCandidateBuild(unittest.TestCase):
     """One real build, asserted for routes and desk state."""
 
     @classmethod
@@ -187,23 +199,32 @@ class TestDeclaredRecordBuild(unittest.TestCase):
         sys.modules["gp_snapshot"] = gp
         spec.loader.exec_module(gp)
         cls.report = cls.r.render_site(
-            cls.r.DECLARED_RECORD, output_dir=cls.out, environ={},
+            cls.r.INDO_PACIFIC_RECORD, output_dir=cls.out, environ={},
             snapshot=gp.snapshot_from_corpus(TRACKED_DB))
 
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
-    def test_the_build_reports_declared_record_mode(self):
-        self.assertEqual(self.report["mode"], self.r.DECLARED_RECORD)
+    def test_the_build_reports_candidate_mode(self):
+        self.assertEqual(self.report["mode"], self.r.INDO_PACIFIC_RECORD)
 
     def test_the_desk_routes_render(self):
-        for route in ("index.html", "desks.html", "china.html", "japan.html",
+        for route in ("index.html", "desks.html", "china.html",
+                      "singapore.html", "japan.html", "us-indopacific.html",
                       "archive.html", "coverage.html", "sources.html",
-                      "weekly.html", "methodology.html", "about.html",
-                      "corpus.html", "corpus-guide.html"):
+                      "analysis.html", "pla-watch.html", "methodology.html",
+                      "about.html", "corpus.html", "corpus-guide.html",
+                      "mark.svg"):
             with self.subTest(route=route):
                 self.assertTrue((self.out / route).is_file())
+
+    def test_every_declared_desk_has_a_page(self):
+        """A declared desk with no page is a desk a reader cannot check."""
+        from core.desk_registry import load_registry
+        for entry in load_registry().public_entries:
+            with self.subTest(desk=entry.slug):
+                self.assertTrue((self.out / entry.route).is_file())
 
     def test_legacy_record_routes_are_preserved_as_redirects(self):
         """
@@ -235,35 +256,40 @@ class TestDeclaredRecordBuild(unittest.TestCase):
     def test_china_is_the_only_collecting_desk_in_the_build(self):
         html = (self.out / "desks.html").read_text(encoding="utf-8")
         self.assertIn("Live — collecting", html)
-        self.assertIn("not yet collecting", html)
+        self.assertIn("Access blocked — not collecting", html)
         self.assertIn("1</b> collecting desk",
                       (self.out / "index.html").read_text(encoding="utf-8"))
 
     def test_japan_renders_with_no_records_and_no_sources(self):
         html = (self.out / "japan.html").read_text(encoding="utf-8")
-        self.assertIn("No records collected. No sources enabled.", html)
-        self.assertIn("No Japan source is enabled", html)
+        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("No source is enabled. No collector exists.", html)
 
     def test_the_us_is_not_a_collecting_desk_in_the_build(self):
-        html = (self.out / "desks.html").read_text(encoding="utf-8")
-        self.assertIn("not presented as a desk", html)
-        headings = [re.sub(r"<[^>]+>", "", h).strip() for h in
-                    re.findall(r"<h[123][^>]*>(.*?)</h[123]>", html, re.S)]
-        for h in headings:
-            with self.subTest(heading=h):
-                self.assertNotIn("United States", h)
+        """
+        It has a page, because a declared desk a reader cannot check is worse
+        than one labelled honestly. What it may not have is a status, a count
+        or a source that reads like an operating desk.
+        """
+        html = (self.out / "us-indopacific.html").read_text(encoding="utf-8")
+        self.assertIn("Planned — nothing collected", html)
+        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertNotIn("Live — collecting", html)
 
-    def test_no_other_desk_was_introduced(self):
-        """Candidates under research must not leak into the release build."""
+    def test_no_undeclared_desk_was_introduced(self):
+        """A desk absent from the registry must not appear in the build."""
+        from core.desk_registry import load_registry
+        declared = {e.name for e in load_registry().public_entries}
         html = (self.out / "desks.html").read_text(encoding="utf-8")
-        for absent in ("Korea", "Australia", "Philippines", "Taiwan",
-                       "Singapore", "India", "Cross-Regional"):
+        for absent in ("Korea Desk", "Australia Desk", "Philippines Desk",
+                       "Taiwan Desk", "India Desk", "Cross-Regional Desk"):
             with self.subTest(desk=absent):
+                self.assertNotIn(absent, declared)
                 self.assertNotIn(absent, html)
 
     def test_the_build_did_not_touch_the_tracked_database(self):
         """
-        The Declared Record renderer reads through `reconcile_db._read_only`,
+        The candidate renderer reads through `reconcile_db._read_only`,
         which works on a scratch copy, so it leaves the tracked file and its
         sidecars alone. (The legacy renderer does open the tracked database
         directly and does leave a checkpointed -wal; that is pre-existing

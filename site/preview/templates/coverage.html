@@ -1,23 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Coverage health — {{ title }}{% endblock %}
 {% block content %}
-<h1>Coverage health</h1>
+<h1>Coverage</h1>
 <p class="lede">What was collected, what was not, and which kind of "nothing" each source returned.
 This page exists because an empty result has more than one cause, and only one of them is healthy.</p>
+<p class="meta">Only desks that collect appear in a run. A desk that is planned, researched,
+access-blocked or under shadow evaluation contributes no rows here, and its absence is explained on
+<a href="desks.html">Desks</a> rather than shown as a failure.</p>
 
 <h2>Most recent run</h2>
 <p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }} · aggregate <strong>{{ latest_run.status }}</strong></p>
 <div class="table-scroll">
 <table class="stacking">
-  <caption>Every configured source has a result row for this run. A missing row would be a defect.</caption>
+  <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
   <thead>
-    <tr><th scope="col">Source</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
+    <tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Result</th><th scope="col" class="num">Found</th><th scope="col" class="num">Read</th><th scope="col" class="num">Already held</th><th scope="col" class="num">New</th><th scope="col">Note</th></tr>
   </thead>
   <tbody>
   {% for r in run_results %}
     {% set kind = 'fail' if r.is_failure else ('note' if r.status == 'not_implemented' else ('quiet' if r.new_documents == 0 else 'ok')) %}
     <tr>
-      <td data-label="Source">{{ r.source_slug }}</td>
+      <td data-label="Source"><a href="source/{{ r.source_slug }}.html">{{ r.source_slug }}</a></td>
+      <td data-label="Desk">{% if desk_by_source.get(r.source_slug) %}<a href="{{ desk_by_source[r.source_slug].route }}">{{ desk_by_source[r.source_slug].name }}</a>{% else %}—{% endif %}</td>
       <td data-label="Result">
         <span class="status status--{{ kind }}">
           <span class="status-mark" aria-hidden="true">{% if kind == 'ok' %}✓{% elif kind == 'quiet' %}○{% elif kind == 'note' %}◻{% else %}✕{% endif %}</span>
@@ -39,6 +43,9 @@ This page exists because an empty result has more than one cause, and only one o
 </div>
 
 <h2>What each result means</h2>
+<p>Every outcome the pipeline can store has a plain-language meaning here. They are translated, not
+merged: two results that both produce zero records can mean opposite things, and the whole point of
+keeping seventeen of them apart is that they are seventeen different facts.</p>
 <div class="table-scroll">
 <table class="stacking">
   <thead><tr><th scope="col">Result</th><th scope="col">Meaning</th></tr></thead>
@@ -50,6 +57,13 @@ This page exists because an empty result has more than one cause, and only one o
   </tbody>
 </table>
 </div>
+
+<h2>Access refusals are respected, not worked around</h2>
+<p>When a source refuses an honestly identified collector — a login wall, a redirect off its own
+domains, or a challenge page served in place of a listing — the refusal is recorded as the outcome
+and collection stops there. No browser impersonation, no challenge solving, no proxying. An
+institution that wants to refuse this collector must be able to recognise it and say so, and
+defeating a refusal would destroy the capability that rule protects.</p>
 
 <h2>Gaps in collection</h2>
 {% if gaps %}

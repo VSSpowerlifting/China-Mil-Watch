@@ -27,6 +27,38 @@ from typing import List, Optional
 #: stops collection without deleting configuration.
 PUBLIC_STATUSES = ("legacy", "shadow", "public", "paused")
 
+#: How a desk is presented publicly, and what it is allowed to claim.
+#: Distinct from `PUBLIC_STATUSES`, which describes how a *collecting* desk is
+#: exposed. These describe where a desk is in its life, including the states a
+#: desk can occupy before it collects anything at all, and are the only values
+#: `desks/registry.json` may use.
+#:
+#: `access_blocked` is deliberately separate from `paused`: paused is our
+#: decision, access_blocked is the institution's publication surface refusing
+#: discovery to an honestly identified collector. Collapsing them would let a
+#: refusal we did not choose read as a choice we made.
+DESK_STATUSES = (
+    "planned",
+    "research",
+    "shadow",
+    "live",
+    "paused",
+    "access_blocked",
+)
+
+#: The one status that means records reach the public corpus. Everything else
+#: renders as an absence with an explanation, never as a small number.
+COLLECTING_DESK_STATUSES = ("live",)
+
+DESK_STATUS_LABELS = {
+    "planned": "Planned — nothing collected",
+    "research": "Researched — not yet collecting",
+    "shadow": "Shadow evaluation — not public",
+    "live": "Live — collecting",
+    "paused": "Paused — collection stopped",
+    "access_blocked": "Access blocked — not collecting",
+}
+
 #: Proximity to an institution's authorized public position.
 #: **Not** a truth, reliability, accuracy, or moral score. A Tier A document is
 #: not more likely to be true than a Tier D one; it is more likely to represent

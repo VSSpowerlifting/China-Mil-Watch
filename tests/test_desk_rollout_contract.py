@@ -25,6 +25,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
 import generate_preview as gp                                    # noqa: E402
+from core.desk_registry import load_registry                      # noqa: E402
 from scripts.reconcile_db import _read_only                      # noqa: E402
 
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
@@ -65,9 +66,37 @@ class DeskCase(unittest.TestCase):
 
 class TestRosterMatchesConfiguration(DeskCase):
 
+    def test_the_registry_is_the_only_desk_roster(self):
+        """
+        There is no second list. The renderer used to carry a `DESKS`
+        presentation constant beside `desks/*/manifest.json`, and two lists of
+        desks with no relationship between them is exactly the configuration
+        that lets a page promote a desk no source supports.
+        """
+        source = (REPO_ROOT / "site" / "preview"
+                  / "generate_preview.py").read_text(encoding="utf-8")
+        self.assertNotRegex(source, r"^DESKS\s*=", "a second desk roster returned")
+        self.assertIn("PublicView", source)
+        self.assertTrue((REPO_ROOT / "desks" / "registry.json").is_file())
+
     def test_china_is_the_only_collecting_desk(self):
-        live = [d for d in gp.DESKS if d["state"] == "live"]
-        self.assertEqual([d["id"] for d in live], ["china"])
+        live = [e for e in load_registry() if e.is_collecting]
+        self.assertEqual([e.slug for e in live], ["china"])
+
+    def test_a_collecting_desk_must_have_an_enabled_source(self):
+        """Derived, not declared: the count comes from the desk's manifest."""
+        for entry in load_registry():
+            with self.subTest(desk=entry.slug):
+                if entry.is_collecting:
+                    self.assertGreater(entry.enabled_source_count, 0)
+                else:
+                    self.assertFalse(entry.may_show_record_count)
+
+    def test_a_non_collecting_desk_declares_no_production_records(self):
+        for entry in load_registry():
+            with self.subTest(desk=entry.slug):
+                if not entry.is_collecting:
+                    self.assertFalse(entry.has_production_records)
 
     def test_the_only_desk_in_the_database_is_china(self):
         with self.db() as con:
@@ -100,10 +129,64 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(discovered, {"china"})
 
     def test_the_us_is_not_a_live_desk(self):
-        us = [d for d in gp.DESKS if d["id"] == "us-indopacific"]
-        self.assertEqual(len(us), 1)
-        self.assertNotEqual(us[0]["state"], "live")
-        self.assertIn("not yet scoped", us[0]["state_label"].lower())
+        us = load_registry().get("us-indopacific")
+        self.assertIsNotNone(us)
+        self.assertEqual(us.status, "planned")
+        self.assertFalse(us.is_collecting)
+        self.assertEqual(us.configured_source_count, 0)
+        self.assertEqual(us.enabled_source_count, 0)
+        self.assertIn("nothing collected", us.status_label.lower())
+
+    def test_singapore_is_shadow_and_is_never_promoted(self):
+        """
+        The shadow desk is declared, labelled by its ledger status, and
+        counted nowhere. Its manifest is read for its sources — one, disabled —
+        and it may not claim a record count.
+        """
+        sg = load_registry().get("singapore")
+        self.assertIsNotNone(sg)
+        self.assertEqual(sg.status, "shadow")
+        self.assertFalse(sg.is_collecting)
+        self.assertEqual(sg.configured_source_count, 1)
+        self.assertEqual(sg.enabled_source_count, 0)
+        self.assertFalse(sg.may_show_record_count)
+
+    def test_the_shadow_manifest_stays_outside_production_discovery(self):
+        """
+        Pointing the registry at the shadow manifest must not make it
+        discoverable. `load_all_desks()` globs `desks/*/manifest.json`; the
+        shadow manifest lives elsewhere and syncing configuration must never
+        write a Singapore desk into the tracked database.
+        """
+        sg = load_registry().get("singapore")
+        self.assertEqual(sg.manifest_path, "shadow/singapore_mindef/manifest.json")
+        self.assertFalse((MANIFESTS / "singapore" / "manifest.json").exists())
+        discovered = {p.parent.name for p in MANIFESTS.glob("*/manifest.json")}
+        self.assertEqual(discovered, {"china"})
+
+    def test_no_shadow_day_count_reaches_a_public_surface(self):
+        """
+        A day counter copied out of the ledger is stale the next morning and
+        reads as a promise. The page states the requirement, never the elapsed
+        count.
+        """
+        html = self.page("singapore.html").lower()
+        for counter in (r"day\s+\d+\s+of\s+30", r"\d+\s*/\s*30\s*days",
+                        r"\d+\s+shadow\s+days?", r"shadow\s+day\s+\d+"):
+            with self.subTest(pattern=counter):
+                self.assertNotRegex(html, counter)
+        # The requirement is stated; the elapsed count is not.
+        self.assertIn("consecutive days required</dt><dd>30", html)
+        self.assertIn("not a qualified desk", html)
+
+    def test_no_review_verdict_is_published(self):
+        html = self.page("singapore.html").lower()
+        self.assertIn("no review has been completed", html)
+        self.assertIn("no verdict has been reached", html)
+        for premature in ("is qualified", "has qualified", "verdict:",
+                          "approved for launch", "cleared for launch"):
+            with self.subTest(claim=premature):
+                self.assertNotIn(premature, html)
 
     def test_counts_are_never_hard_coded_in_a_template(self):
         """Every figure a reader sees must come from the corpus."""
@@ -124,8 +207,9 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
 
     def test_the_japan_page_states_zero_records_and_zero_sources(self):
         html = self.page("japan.html")
-        self.assertIn("No records collected. No sources enabled.", html)
-        self.assertIn("No Japan source is enabled", html)
+        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("Sources enabled</dt><dd>0", html)
+        self.assertIn("No source is enabled. No collector exists.", html)
 
     def test_the_japan_page_shows_no_collection_statistic(self):
         """Observed publication volume describes the ministry's output, not
@@ -167,6 +251,7 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
     def test_no_planned_desk_is_counted_as_a_live_one(self):
         html = self.page("index.html")
         self.assertIn("1</b> collecting desk", html)
+        self.assertIn("of <b>4</b> declared", html)
 
 
 class TestLegacyChinaRoutesSurvive(DeskCase):
@@ -183,7 +268,7 @@ class TestLegacyChinaRoutesSurvive(DeskCase):
                 self.assertTrue(path.is_file())
 
     def test_the_preview_links_editions_to_the_live_site_and_copies_none(self):
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         for edition in self.EDITIONS:
             with self.subTest(edition=edition):
                 self.assertIn(
@@ -195,9 +280,20 @@ class TestLegacyChinaRoutesSurvive(DeskCase):
                     "an edition was copied into the prototype")
 
     def test_the_pla_watch_remains_a_china_desk_series(self):
-        html = self.page("weekly.html")
+        html = self.page("pla-watch.html")
         self.assertIn("China", html)
         self.assertNotIn("Japan Desk", html)
+
+    def test_the_pla_watch_page_is_labelled_as_a_legacy_series(self):
+        """
+        The issues were published under the predecessor masthead. Saying so is
+        the difference between preserving a record and backdating a rebrand.
+        """
+        html = self.page("pla-watch.html")
+        self.assertIn("The PLA Watch", html)
+        self.assertIn("China Mil Watch", html)
+        self.assertIn("preserved as published", html.lower())
+        self.assertIn("did not", html)
 
     def test_the_prototype_never_writes_into_the_production_namespace(self):
         for reserved in ("article", "the-pla-watch"):
@@ -244,7 +340,8 @@ class TestPrintAndStateLegibility(unittest.TestCase):
         return self.CSS.read_text(encoding="utf-8")
 
     def test_no_desk_state_marker_uses_an_unrenderable_glyph(self):
-        markers = re.findall(r'\.desk-state[^{]*::before\s*\{\s*content:\s*"([^"]*)"',
+        markers = re.findall(r'\.desk[-]{1,2}(?:state--)?[a-z_]+[^{]*::before'
+                             r'\s*\{\s*content:\s*"([^"]*)"',
                              self.css())
         self.assertTrue(markers, "no desk-state markers found")
         for marker in markers:
@@ -264,8 +361,9 @@ class TestPrintAndStateLegibility(unittest.TestCase):
         states may share one.
         """
         pairs = re.findall(
-            r'\.desk[-]{1,2}(?:state--)?(live|scoped|development)[^{]*::before'
-            r'\s*\{\s*content:\s*"([^"]*)"', self.css())
+            r'\.desk[-]{1,2}(?:state--)?'
+            r'(live|shadow|access_blocked|research|planned|paused)'
+            r'[^{]*::before\s*\{\s*content:\s*"([^"]*)"', self.css())
         self.assertTrue(pairs, "no desk-state markers found")
         by_state = {}
         for state, glyph in pairs:
@@ -278,7 +376,10 @@ class TestPrintAndStateLegibility(unittest.TestCase):
         used = [next(iter(g)) for g in by_state.values()]
         self.assertEqual(len(used), len(set(used)),
                          "two desk states share a marker")
-        self.assertEqual(set(by_state), {"live", "scoped", "development"})
+        # Every status the registry can hold has a marker, so a desk moving
+        # into `paused` or `research` cannot render an unmarked state.
+        from core.domain import DESK_STATUSES
+        self.assertEqual(set(by_state), set(DESK_STATUSES))
 
     def test_print_expands_only_absolute_urls(self):
         css = self.css()

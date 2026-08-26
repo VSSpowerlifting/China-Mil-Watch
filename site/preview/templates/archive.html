@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Archive — {{ title }}{% endblock %}
+{% block title %}The record — {{ title }}{% endblock %}
 {% block content %}
-<h1>Source archive</h1>
-<p class="lede">Search and filter the complete prototype snapshot — all
-{{ corpus_total | count }} stored records.</p>
+<h1>The record</h1>
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+<p class="lede">Every stored record in this snapshot — all
+{{ corpus_total | count }} of them — searchable and filterable, with the
+original-language title preserved on every one.</p>
 
 {# The complete path, always visible and never dependent on JavaScript. It comes
    first because it is the guarantee, not the fallback: the browser below is a
@@ -23,7 +25,7 @@ where its counts stop being reliable:
    describe an empty corpus when the truth is a failed fetch. #}
 <p id="index-error" class="meta" role="status" aria-live="polite" hidden>The
 search index could not be loaded or did not match this snapshot, so search and
-filters are unavailable. The records held in this prototype snapshot remain
+filters are unavailable. The records held in this snapshot remain
 accessible through the week-by-week browse above.</p>
 
 {# Both wrappers start hidden. With JavaScript off they stay hidden, so no
