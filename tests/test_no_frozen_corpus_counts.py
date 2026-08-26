@@ -32,6 +32,7 @@ Mutation-proved: replacing `"{:,}".format(self.corpus_size)` with the literal
 
 from __future__ import annotations
 
+import ast
 import re
 import sys
 import unittest
@@ -106,6 +107,48 @@ def literals(text: str):
     return found
 
 
+def code_literals(source: str):
+    """
+    Numbers a Python module actually *uses*, excluding prose.
+
+    Docstrings and comments are skipped, because a figure written there is not
+    a time bomb: nothing asserts it, and nothing fails when the corpus moves.
+    Scanning them made the guard fire on a test that merely narrated the run
+    number of the 2026-08-25 incident — a true historical fact that happened to
+    equal the day's collection-run count.
+
+    What is NOT skipped is string constants inside expressions. A frozen figure
+    most often appears as `assertIn("3,534", ...)`, which is a string, and
+    dropping those would remove the guard's main tooth.
+    """
+    tree = ast.parse(source)
+
+    # Collect the exact node identities of docstrings so they can be excluded
+    # by identity rather than by value — an ordinary string that happens to
+    # match a docstring's text must still be scanned.
+    docstrings = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef,
+                             ast.AsyncFunctionDef)):
+            body = getattr(node, "body", None)
+            if (body and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)):
+                docstrings.add(id(body[0].value))
+
+    found = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Constant) or id(node) in docstrings:
+            continue
+        if isinstance(node.value, bool):
+            continue
+        if isinstance(node.value, int):
+            found.add(node.value)
+        elif isinstance(node.value, str):
+            found |= literals(node.value)
+    return found
+
+
 class FrozenCountCase(unittest.TestCase):
 
     @classmethod
@@ -115,7 +158,9 @@ class FrozenCountCase(unittest.TestCase):
         cls.figures = moving_figures()
 
     def assert_no_frozen_figure(self, path: Path):
-        present = literals(path.read_text(encoding="utf-8"))
+        source = path.read_text(encoding="utf-8")
+        present = (code_literals(source) if path.suffix == ".py"
+                   else literals(source))
         for name, value in self.figures.items():
             with self.subTest(figure=name):
                 self.assertNotIn(
@@ -154,6 +199,67 @@ class TestNoFrozenCorpusCounts(FrozenCountCase):
                      REPO_ROOT / "site" / "url_transition_map.json"):
             with self.subTest(config=path.name):
                 self.assert_no_frozen_figure(path)
+
+
+class TestTheScanReadsCodeNotProse(unittest.TestCase):
+    """
+    The guard's precision, pinned in both directions.
+
+    It fired once on a test that merely narrated the run number of the
+    2026-08-25 incident, because that number happened to equal the day's
+    collection-run count. A figure in prose is not a time bomb — nothing
+    asserts it, and nothing fails when the corpus moves. What must keep firing
+    is a figure an assertion actually depends on, including the string form
+    that is how a frozen count usually appears.
+    """
+
+    SAMPLE = 3534
+
+    def scan(self, source):
+        return code_literals(source)
+
+    def test_a_figure_in_a_module_docstring_is_ignored(self):
+        self.assertNotIn(self.SAMPLE, self.scan(
+            '"""The corpus held %d records."""\nx = 1\n' % self.SAMPLE))
+
+    def test_a_figure_in_a_function_docstring_is_ignored(self):
+        self.assertNotIn(self.SAMPLE, self.scan(
+            'def f():\n    """held %d records"""\n    return 1\n' % self.SAMPLE))
+
+    def test_a_figure_in_a_class_docstring_is_ignored(self):
+        self.assertNotIn(self.SAMPLE, self.scan(
+            'class C:\n    """held %d records"""\n    pass\n' % self.SAMPLE))
+
+    def test_a_figure_in_a_comment_is_ignored(self):
+        self.assertNotIn(self.SAMPLE, self.scan(
+            '# held %d records\nx = 1\n' % self.SAMPLE))
+
+    def test_an_integer_literal_in_code_is_still_seen(self):
+        self.assertIn(self.SAMPLE, self.scan(
+            'assert total == %d\n' % self.SAMPLE))
+
+    def test_a_comma_formatted_string_in_code_is_still_seen(self):
+        """The shape a frozen count actually takes: assertIn("3,534", ...)."""
+        self.assertIn(self.SAMPLE, self.scan(
+            'assertIn("%s", page)\n' % format(self.SAMPLE, ",")))
+
+    def test_a_plain_string_literal_in_code_is_still_seen(self):
+        self.assertIn(self.SAMPLE, self.scan(
+            'assertIn("%d records", page)\n' % self.SAMPLE))
+
+    def test_a_string_that_merely_matches_a_docstring_is_still_seen(self):
+        """
+        Docstrings are excluded by node identity, not by text. An ordinary
+        string that happens to read like one must still be scanned, or the
+        exclusion becomes a way to hide a frozen figure.
+        """
+        text = "held %d records" % self.SAMPLE
+        source = 'def f():\n    """%s"""\n    return assertIn("%s", page)\n' % (text, text)
+        self.assertIn(self.SAMPLE, self.scan(source))
+
+    def test_booleans_are_not_counted_as_numbers(self):
+        """`True` is an int subclass; counting it would make 1 a corpus figure."""
+        self.assertNotIn(1, self.scan("x = True\n"))
 
 
 class TestGovernedConstantsAreNotCollateralDamage(FrozenCountCase):
