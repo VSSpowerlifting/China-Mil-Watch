@@ -568,7 +568,7 @@ def run(
             "marker so later cron windows today skip their paid retries.",
             account_blocked,
         )
-        _write_billing_failure_marker(target_date)
+        _write_billing_failure_marker()
 
     # Close the run with an honest status. Until 2026-08-09 this call omitted
     # `status`, so it always defaulted to 'completed' — including 2026-08-07,
@@ -634,7 +634,7 @@ def run(
                 len(queue),
             )
             if not dry_run and account_blocked is None:
-                _write_billing_failure_marker(target_date)
+                _write_billing_failure_marker()
         else:
             logger.error(
                 "FATAL: %d article(s) passed relevance but none produced a usable "
@@ -682,19 +682,33 @@ def run(
 BILLING_FAILURE_STATE_FILE = ".github/state/last_billing_failure_date.txt"
 
 
-def _write_billing_failure_marker(target_date: date) -> None:
+def _write_billing_failure_marker(now: "datetime" = None) -> None:
     """
-    Write today's NY date to a state file so the scheduling guard in the
-    workflow can skip later cron windows after a total API/billing failure.
-    This file is separate from last_daily_run_date.txt so a successful manual
-    workflow_dispatch still writes the success marker and clears the failure.
-    Note: the workflow must commit+push this file for it to persist to origin/main.
+    Record the WORKFLOW DAY on which the account was blocked.
+
+    The scheduling guard suppresses later cron windows by comparing this file
+    to the current New York date, so the value written here has to be the same
+    New York date. It previously wrote the run's `target_date`, which is
+    `date.today()` — the runner's UTC date — while this docstring claimed
+    otherwise. The two agree for every configured cron window and diverge for
+    the four hours after 20:00 New York.
+
+    The collection target date is deliberately no longer used: it is a claim
+    about which day's *articles* were sought, not about which day the workflow
+    is having. Conflating a content date with a schedule date is how this
+    drifted in the first place.
+
+    `now` is for tests. The workflow must still commit and push this file for
+    it to reach origin/main.
     """
     from pathlib import Path
+    from core.workflow_day import workflow_day_string
+    stamp = workflow_day_string(now)
     p = Path(BILLING_FAILURE_STATE_FILE)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(target_date.isoformat())
-    logger.info("Billing-failure marker written: %s → %s", p, target_date.isoformat())
+    p.write_text(stamp)
+    logger.info("Billing-failure marker written: %s → %s (workflow day, "
+                "America/New_York)", p, stamp)
 
 
 # ── Terminal summary ──────────────────────────────────────────────────────────
