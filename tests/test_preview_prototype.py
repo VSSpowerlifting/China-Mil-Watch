@@ -969,8 +969,11 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_japan_scope_omits_internal_history_and_raw_field_names(self):
         html = self.page("japan.html") + self.page("desks.html")
-        self.assertIn("They are not a record count and nothing here has been "
-                      "collected.", html)
+        # The durable claim: these figures describe the ministry's output, not
+        # this project's holdings. Whether anything has yet been collected into
+        # the public record is a separate sentence, because Japan is now in
+        # shadow testing and that fact changes.
+        self.assertIn("They are not a record count", html)
         for internal in ("earlier reading", "corrected count",
                          "expected_cadence_days", "silence_threshold_days",
                          "15–25", "15-25", "Chief of Staff"):

@@ -69,23 +69,33 @@
    "slug": "japan",
    "name": "Japan Desk",
    "route": "japan.html",
-   "scope": "Two researched publication families: defense ministry press releases, and Joint Staff releases published as PDF.",
+   "scope": "Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.",
    "status": "shadow",
-   "status_explanation": "Shadow collection, scheduled daily and publishing nothing. Official machine-readable discovery access exists and is served: two ministry RSS feeds answer normally and support conditional requests, which is the discovery route the earlier research could not find. Documents published as PDF are served and are collected in full. Documents published as HTML are returned behind an interactive challenge and are recorded, with their titles and dates, as explicitly unretrieved — never fetched, never worked around. Robots permits every path used; the remaining access limit is the challenge on HTML documents.",
+   "status_explanation": "Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.",
    "public": true,
    "manifest": "shadow/jp_mod/manifest.json",
    "has_production_records": false,
    "research": {
     "source_families": [
      {
-      "name": "Ministry of Defense — press releases",
-      "format": "HTML — 21 HTML links, 0 PDFs on the listing",
-      "note": "Listing verified; item format verified."
+      "name": "Ministry of Defense — news feed (Japanese)",
+      "format": "RSS — 142 items measured 2026-08-26: 134 HTML, 8 PDF",
+      "note": "Families: /j/press/ 105, /j/approach/ 37."
      },
      {
-      "name": "Joint Staff — press releases",
-      "format": "PDF only — 895 PDF links, 10 HTML links on the page",
-      "note": "One page holds the entire 2014-2026 archive; the year “tabs” are in-page anchors, not separate pages, so no pagination or year-walking is required."
+      "name": "Ministry of Defense — site update feed (Japanese)",
+      "format": "RSS — 391 items measured 2026-08-26: 342 HTML, 0 PDF",
+      "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out."
+     },
+     {
+      "name": "Joint Staff — press releases (English)",
+      "format": "HTML index — challenged (403), not collected",
+      "note": "Declared so the Joint Staff stays distinguishable. Carried by neither RSS feed, and its own index is challenged. Nothing has been collected from it."
+     },
+     {
+      "name": "Ministry of Defense — press releases (English)",
+      "format": "HTML index — challenged (403), not collected",
+      "note": "Declared so the English estate stays distinguishable. Nothing has been collected from it."
      }
     ],
     "observed_volume": [
@@ -102,7 +112,7 @@
       "895"
      ]
     ],
-    "volume_caveat": "These figures describe what the ministry published. They are not a record count and nothing here has been collected.",
+    "volume_caveat": "These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only documents published as PDF carry text; on the news feed that was 8 of 142 items on 2026-08-26.",
     "blockers": [
      [
       "Documents published as HTML cannot be retrieved.",
@@ -130,8 +140,9 @@
    },
    "limits": [
     "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
-    "Only documents published as PDF carry text. Items published as HTML are recorded with their title and date and no body, and are counted separately rather than folded into the collected total.",
-    "Shadow collection began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
+    "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
+    "Both collected feeds are Japanese-language. The English estate and the Joint Staff are declared but not collected, and neither is reachable.",
+    "Shadow testing began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
    ]
   },
   {
