@@ -246,8 +246,26 @@ class RunResultView:
     duplicates: Optional[int] = None
     new_documents: Optional[int] = None
     relevance_rejected: Optional[int] = None
+    #: Parsed documents that carried no usable text. `None` means the run
+    #: predates the measurement — not the same claim as zero.
+    text_unavailable: Optional[int] = None
     error_detail: Optional[str] = None
     desk_slug: Optional[str] = None
+
+    @property
+    def usable_text(self) -> Optional[int]:
+        """Documents that parsed AND yielded text. `None` when unmeasured."""
+        if self.text_unavailable is None or self.extracted is None:
+            return None
+        return self.extracted - self.text_unavailable
+
+    @property
+    def extraction_measured(self) -> bool:
+        return self.text_unavailable is not None
+
+    @property
+    def has_extraction_gap(self) -> bool:
+        return bool(self.text_unavailable)
 
 
 @dataclass(frozen=True)
@@ -388,6 +406,18 @@ class PublicView:
                     "   AND institution_id IS NOT NULL "
                     " GROUP BY desk_id").fetchall()}
 
+            # The measurement column arrives with migration 0006. A database
+            # that has not run it yet is not broken and must still render —
+            # it simply has not measured usable text, which is exactly what
+            # `text_unavailable IS NULL` already means everywhere else. Probing
+            # rather than assuming keeps the renderer working against the
+            # tracked database between the merge of this change and the first
+            # production run that migrates.
+            # `con.row_factory` is `_dict_row`, so PRAGMA rows arrive as dicts.
+            self._has_text_unavailable = "text_unavailable" in {
+                row["name"] for row in con.execute(
+                    "PRAGMA table_info(source_run_results)")}
+
             self._latest_run = con.execute(
                 "SELECT id, started_at, completed_at, status "
                 "  FROM scrape_runs ORDER BY id DESC LIMIT 1").fetchone()
@@ -396,7 +426,10 @@ class PublicView:
             self._run_results = con.execute(
                 "SELECT source_slug, desk_id, status, is_failure, "
                 "       references_discovered, fetched, extracted, duplicates, "
-                "       new_documents, relevance_rejected, error_detail "
+                "       new_documents, relevance_rejected, "
+                + ("text_unavailable, " if self._has_text_unavailable
+                   else "NULL AS text_unavailable, ") +
+                "       error_detail "
                 "  FROM source_run_results WHERE scrape_run_id = ? "
                 " ORDER BY source_slug", (run_id,)).fetchall() if run_id else []
 
@@ -595,6 +628,7 @@ class PublicView:
                 fetched=r["fetched"], extracted=r["extracted"],
                 duplicates=r["duplicates"], new_documents=r["new_documents"],
                 relevance_rejected=r["relevance_rejected"],
+                text_unavailable=r["text_unavailable"],
                 error_detail=r["error_detail"], desk_slug=r["desk_id"],
             ) for r in self._run_results],
             run_days=list(self._run_days),
