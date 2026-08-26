@@ -95,10 +95,13 @@ queue is selected by **record state**, never by which run inserted a record:
 * `get_articles_unscored()` → every row with `passed_relevance IS NULL`
 * `get_articles_pending_analysis()` → every row scored but not analyzed
 
-The backlog receives a reserved share of the daily cap
-(`BACKLOG_RESERVE_FRACTION`, 30% of 55 → 17 slots minimum), and unscreened rows
-scraped within `LIVE_BACKLOG_DAYS` are drained **before** the archive, so the
-records from this outage go to the front rather than behind ~769 older ones.
+`DAILY_ANALYSIS_CAP` is a **total** of 55 analyses per run, shared between
+the day's fresh scrapes and the backlog — not a per-bucket allowance. The
+backlog holds a reserved floor of `round(55 x 0.3)` = **16** slots, fresh
+scrapes may take up to 39, and any slot the scrapes do not need spills back to
+the backlog. Unscreened rows scraped within `LIVE_BACKLOG_DAYS` drain **before**
+the archive, so the records from this outage go to the front rather than behind
+~769 older ones.
 
 Simulated locally against a copy of the post-incident database, with the
 provider mocked and the network denied — the 30 unscreened records from run 121
@@ -128,9 +131,23 @@ attempt one analysis call, fail, rewrite the marker, exit 2, and skip publishing
 Collection is preserved every day. Analysis stalls.
 
 At ~30 records/day the unscreened backlog grows from 799 to roughly 980 by
-2026-09-01. After that, at cap 55 with the 30% reserve, it drains ~25/day
-against ~30/day inflow — roughly 40 collecting days to clear, or far fewer with
-`DAILY_ANALYSIS_CAP` raised for a few runs.
+2026-09-01.
+
+After that it **shrinks**, and it is worth being exact about why, because the
+figures invite the opposite reading. A day with 30 fresh records spends 30 of
+the 55 slots on them and the remaining 25 on the backlog, so the backlog falls
+**25 per collecting day** — roughly 40 days to clear from 980. The backlog only
+grows once daily inflow exceeds the whole cap:
+
+| New records/day | Analysed new | Analysed backlog | Net backlog/day |
+|---:|---:|---:|---:|
+| 20 | 20 | 35 | −35 |
+| 30 | 30 | 25 | −25 |
+| 40 | 39 | 16 | −15 |
+| 55 | 39 | 16 | 0 |
+| 60 | 39 | 16 | +5 |
+
+Raising `DAILY_ANALYSIS_CAP` for a few runs clears it far faster.
 
 ---
 
