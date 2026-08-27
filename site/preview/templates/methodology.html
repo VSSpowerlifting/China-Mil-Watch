@@ -28,6 +28,35 @@ estimate, a rate or a projection.</p>
 expected cadence. A scheduled run visits each listing, fetches items, extracts text, removes
 duplicates, and stores the original alongside metadata. Every source produces an explicit
 result each run, even when it produced nothing.</p>
+<h2 id="freshness">How current this is</h2>
+<p>Three dates, because they are three different facts and they come apart
+exactly when it matters. During a provider failure collection keeps running while
+analysis stops, and a single &ldquo;last updated&rdquo; line would have to pick one
+story to tell.</p>
+<dl>
+  <dt><strong>Records last collected</strong>
+    &mdash; {{ freshness.records_last_collected or 'not measured' }}</dt>
+  <dd>The newest document actually stored. Collection runs daily and is the
+  part least likely to be interrupted.</dd>
+
+  <dt><strong>Analysis last produced</strong>
+    &mdash; {{ freshness.analysis_last_produced or 'not yet recorded' }}</dt>
+  <dd>The newest date on which any record was analyzed. It says when analysis
+  last ran. It does <strong>not</strong> say that every record up to that date
+  has been analyzed &mdash; records awaiting screening are counted separately on
+  <a href="{{ '../' if nested else '' }}coverage.html">Coverage</a>, and that
+  count is the honest measure of the backlog.</dd>
+
+  <dt><strong>Last full update</strong>
+    &mdash; {{ freshness.last_full_update or 'not yet recorded' }}</dt>
+  <dd>The last run that finished everything, including publication. A run that
+  collects and then fails part-way never records one, so this date can sit behind
+  the other two. When it does, the difference is the outage.</dd>
+</dl>
+<p>Any of the three may read <em>not measured</em> or <em>not yet recorded</em>.
+That is a real state &mdash; older runs did not record it &mdash; and it is
+printed rather than filled in with a plausible substitute.</p>
+
 <h2>Preservation and provenance</h2>
 <p>Each record stores the canonical URL it was retrieved from, the institution that published it,
 the source-stated publication date, the retrieval time, and a content hash computed once at
