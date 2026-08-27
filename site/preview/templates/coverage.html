@@ -10,6 +10,77 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 
 <h2>Most recent run</h2>
 <p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }} · aggregate <strong>{{ latest_run.status }}</strong></p>
+
+{# The run's four states, in full. These stood in a strip above every page on
+   the site until 2026-08-27. They were accurate and they were the loudest
+   thing a reader met — "1 unimplemented adapter" is implementation language,
+   and it arrived before the publication did. Moving them did not shorten them:
+   every fact is still here, still separate, still with its own count.
+
+   The four are kept apart on purpose. A collector that executed, one that
+   failed, a configured source with no collector at all, and a desk that
+   actually collected are four different things, and merging any two of them
+   loses the distinction that makes an empty result readable. No denominator is
+   shown: "4 of 5 collectors executed" would assert that five collectors exist,
+   and the fifth configured source has no adapter to run. #}
+{% if run_status %}
+<ul class="status-facts">
+  <li>Run <b>{{ run_status.run_id }}</b></li>
+  {% if run_status.run_date %}<li>{{ run_status.run_date }}</li>{% endif %}
+  <li><b>{{ run_status.executed }}</b> collector{{ '' if run_status.executed == 1 else 's' }} executed</li>
+  <li><b>{{ run_status.failed }}</b> execution failure{{ '' if run_status.failed == 1 else 's' }}</li>
+  {% if run_status.unimplemented %}<li><b>{{ run_status.unimplemented }}</b> unimplemented adapter{{ '' if run_status.unimplemented == 1 else 's' }}</li>{% endif %}
+  {% if run_status.disabled %}<li><b>{{ run_status.disabled }}</b> disabled source{{ '' if run_status.disabled == 1 else 's' }}</li>{% endif %}
+  {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }} of <b>{{ desks|length }}</b> declared</li>{% endif %}
+</ul>
+{% endif %}
+
+{# ── Extraction completeness, per source ───────────────────────────────────
+   A bar per source, drawn only from values this run actually recorded: the
+   documents parsed, and how many of those carried readable text. The two come
+   apart when a page is reachable but unreadable, and that difference is the
+   single most useful thing on this page — it is the difference between "the
+   source published nothing" and "we could not read what it published".
+
+   Rules this graphic follows, because a chart is the easiest place to make an
+   evidence claim nobody checked:
+     * every bar is a ratio of two stored integers, never a rate, a target or
+       a projection;
+     * a source whose text was never measured draws NO bar and says so — a
+       zero-width bar would report a measurement that was never taken;
+     * the table below carries the same numbers, so the graphic is a second
+       reading of the evidence and never the only one;
+     * colour is not the signal. Each bar states its own figures beside it.
+   ── #}
+<h3 class="plain">Extraction completeness</h3>
+<p class="meta">Of the documents each source returned in this run, how many
+carried readable text. Same figures as the <em>Parsed</em> and
+<em>Text read</em> columns below.</p>
+<div class="barset">
+{% for r in run_results %}
+  {% if r.usable_text is not none and r.extracted %}
+  {% set pct = (100 * r.usable_text / r.extracted)|round(0, 'floor')|int %}
+  <div class="bar-row">
+    <span class="bar-label">{{ r.source_slug }}</span>
+    <span class="bar-track">
+      <span class="bar-fill{% if pct < 100 %} is-partial{% endif %}"
+            style="width: {{ pct }}%"></span>
+    </span>
+    <span class="bar-value">{{ r.usable_text }}/{{ r.extracted }} · {{ pct }}%</span>
+  </div>
+  {% elif r.usable_text is none and r.extracted %}
+  <div class="bar-row">
+    <span class="bar-label">{{ r.source_slug }}</span>
+    <span class="bar-track"></span>
+    <span class="bar-value">not measured</span>
+  </div>
+  {% endif %}
+{% endfor %}
+</div>
+<p class="meta">Sources that returned no documents in this run draw no bar:
+there is nothing to express as a proportion, and a zero-length bar would look
+like a measured failure rather than an absent measurement. Their outcome is in
+the table below, per source, with its own reason.</p>
 <div class="table-scroll">
 <table class="stacking">
   <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
@@ -56,6 +127,8 @@ merged: two results that both produce zero records can mean opposite things, and
 keeping seventeen of them apart is that they are seventeen different facts.</p>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>What each run result means. An empty return has more than one cause
+  and they are not interchangeable.</caption>
   <thead><tr><th scope="col">Result</th><th scope="col">Meaning</th></tr></thead>
   <tbody>
   {% for code, pair in status_prose.items() %}
@@ -79,6 +152,8 @@ defeating a refusal would destroy the capability that rule protects.</p>
 no attempt was made, so nothing can be said about what those days held.</p>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>Days on which no collection run is recorded. A gap is published as a
+  gap rather than smoothed over.</caption>
   <thead><tr><th scope="col">From</th><th scope="col">To</th><th scope="col" class="num">Days</th></tr></thead>
   <tbody>
   {% for g in gaps %}

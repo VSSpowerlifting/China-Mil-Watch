@@ -192,10 +192,21 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
     #: source keeps the test honest: if the block is edited, this follows it.
     @staticmethod
     def _fragment():
+        """
+        Lifted from `base.html` by its own markers, so an edit to the block
+        moves this test with it rather than leaving it asserting against
+        markup the site no longer renders.
+
+        The anchors changed on 2026-08-27 when the operational strip became a
+        compact freshness bar: `ul.status-facts.freshness` became `dl` inside
+        `.freshness-bar`, and `.status-note` became `.behind`. The block itself
+        does the same job — three named dates, and one sentence that appears
+        only when collection and analysis have come apart.
+        """
         base = (ROOT / "site" / "preview" / "templates"
                 / "base.html").read_text(encoding="utf-8")
-        start = base.index('<ul class="status-facts freshness">')
-        end = base.index("{% endif %}", base.index("status-note")) + len("{% endif %}")
+        start = base.index("<dl>", base.index('class="freshness-bar"'))
+        end = base.index("{% endif %}", base.index('class="behind"')) + len("{% endif %}")
         return base[start:end]
 
     def render_with(self, freshness):

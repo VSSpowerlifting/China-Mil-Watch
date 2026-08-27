@@ -34,51 +34,70 @@
       {% endif %}
     </a>
     <p class="brand-sub">{{ tagline }}</p>
-    <nav class="primary" aria-label="Primary">
-      <ul>
-        {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
-        {% for href, label in nav %}
-        <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
+    {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
+    {# Seven destinations. On a phone they were a seven-line wall above the
+       content; this is a disclosure rather than a scripted menu, so it is
+       keyboard operable, announced as expandable, and works with JavaScript
+       off — which the rest of this site also assumes. CSS decides which of the
+       two presentations shows, so there is one nav in the markup and one set
+       of links for a screen reader to find. #}
+    <details class="nav-toggle">
+      <summary>Sections</summary>
+      <nav class="primary" aria-label="Primary">
+        <ul>
+          {% for href, label in nav %}
+          <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </details>
   </div>
 </header>
-{# Renders only when a real run exists. A fabricated zero would read as
-   "all clear", which is the opposite of the truth when nothing ran.
-   Each fact is one flex item so a phrase never splits across lines; the items
-   themselves wrap freely. No configured-source total is shown as a collector
-   denominator — see run_status_summary(). #}
+{# Three dates and, when they disagree, one sentence saying why.
+
+   What stood here was a run-status strip: collectors executed, execution
+   failures, unimplemented adapters, disabled sources, collecting desks — six
+   operational facts, in the loudest position on every page, above the
+   publication itself. They are real and they are published, but "1
+   unimplemented adapter" is implementation language and it was the first thing
+   a reader met. It now lives on Coverage, per source and per run, in full.
+
+   The three dates stay, because they come apart during a provider failure —
+   collection continues while analysis stops — and a single "last updated"
+   would have to pick a story. An unknown value says so rather than borrowing a
+   plausible neighbour. Rendered only when a real run exists: a fabricated zero
+   would read as "all clear", which is the opposite of the truth when nothing
+   ran. #}
 {% if run_status %}
-<div class="status-strip">
+<div class="freshness-bar">
   <div class="wrap">
-    <ul class="status-facts">
-      <li>Run <b>{{ run_status.run_id }}</b></li>
-      {% if run_status.run_date %}<li>{{ run_status.run_date }}</li>{% endif %}
-      <li><b>{{ run_status.executed }}</b> collector{{ '' if run_status.executed == 1 else 's' }} executed</li>
-      <li><b>{{ run_status.failed }}</b> execution failure{{ '' if run_status.failed == 1 else 's' }}</li>
-      {% if run_status.unimplemented %}<li><b>{{ run_status.unimplemented }}</b> unimplemented adapter{{ '' if run_status.unimplemented == 1 else 's' }}</li>{% endif %}
-      {% if run_status.disabled %}<li><b>{{ run_status.disabled }}</b> disabled source{{ '' if run_status.disabled == 1 else 's' }}</li>{% endif %}
-      {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }} of <b>{{ desks|length }}</b> declared</li>{% endif %}
-    </ul>
-      {# Three dates, never one. They come apart during a provider failure —
-         collection continues while analysis stops — and a single "last updated"
-         line would have to pick a story. An unknown value says so rather than
-         borrowing a plausible neighbour. #}
-      <ul class="status-facts freshness">
-        <li>Records last collected <b>{{ freshness.records_last_collected or 'not measured' }}</b></li>
-        <li>Analysis last produced <b>{{ freshness.analysis_last_produced or 'not yet recorded' }}</b></li>
-        <li>Last full update <b>{{ freshness.last_full_update or 'not yet recorded' }}</b></li>
-      </ul>
-      {% if freshness.analysis_is_behind_collection %}
-      <p class="status-note">Collection is current; analysis is behind it. Records
-        dated after {{ freshness.analysis_last_produced }} are stored and awaiting
-        screening. <a href="{{ '../' if nested else '' }}methodology.html#freshness">What these dates mean</a>.</p>
-      {% endif %}
+    {# The labels are not shortened. "Analysis" alone does not say whether it
+       is the date analysis was produced or the date it covers, and these three
+       dates exist precisely because they come apart. Compaction is a layout
+       change; it is not permission to make a date ambiguous. #}
+    <dl>
+      <div><dt>Records last collected</dt>
+        <dd>{{ freshness.records_last_collected or 'not measured' }}</dd></div>
+      <div><dt>Analysis last produced</dt>
+        <dd>{{ freshness.analysis_last_produced or 'not yet recorded' }}</dd></div>
+      <div><dt>Last full update</dt>
+        <dd>{{ freshness.last_full_update or 'not yet recorded' }}</dd></div>
+    </dl>
+    {% if freshness.analysis_is_behind_collection %}
+    <p class="behind">Collection is current; analysis is behind it. Records dated
+      after {{ freshness.analysis_last_produced }} are stored and awaiting
+      screening. <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
+      these dates mean</a>.</p>
+    {% endif %}
+    <p class="detail"><a href="{{ '../' if nested else '' }}coverage.html">Run
+      {{ run_status.run_id }} in full &rarr;</a></p>
   </div>
 </div>
 {% endif %}
 <main id="main">
+{# Full-bleed editorial furniture goes here, inside the main landmark but
+   outside the reading column. Only the home page uses it so far. #}
+{% block hero %}{% endblock %}
   <div class="wrap">
 {% block content %}{% endblock %}
   </div>

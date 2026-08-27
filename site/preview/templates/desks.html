@@ -11,25 +11,63 @@ its scope is declared, and is labeled according to what it actually does.</p>
 registry and the manifests it points at; record counts come from the corpus, and only a collecting
 desk has one.</p>
 
+{# Cards first for scanning, then the same four desks as a table for
+   comparing them column by column. Both are generated from one loop over the
+   same registry rows, so they cannot disagree.
+
+   A desk that does not collect shows "None collected" and its blocking
+   condition — never a zero. A zero in a records column would read as a
+   measurement, and nothing measured it. #}
+<div class="cards cards--desks">
 {% for d in desks %}
-<section class="desk desk--{{ d.status }}">
-  <p class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</p>
-  <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
-  <p>{{ d.scope }}</p>
-  <p class="meta">{{ d.status_explanation }}</p>
-  <dl class="desk-facts">
-    <div><dt>Sources configured</dt><dd>{{ d.configured_source_count }}</dd></div>
-    <div><dt>Sources enabled</dt><dd>{{ d.enabled_source_count }}</dd></div>
-    <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
-    <div><dt>Last successful collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
-  </dl>
-  <p class="meta"><a href="{{ d.route }}">{{ d.name }} in full →</a></p>
-</section>
+  {# Still a `section.desk` element: the no-fabricated-coverage guards split
+     this page on it to check each desk's block in isolation, and a card is a
+     presentation of the same block rather than a different thing. #}
+  <section class="desk desk--{{ d.status }} card card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}">
+    <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+    <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
+    <p class="card-prose">{{ d.scope }}</p>
+    <p class="blocking">{{ d.status_explanation }}</p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Sources configured</dt><dd>{{ d.configured_source_count }}</dd></div>
+      <div class="stat-row"><dt>Sources enabled</dt><dd>{{ d.enabled_source_count }}</dd></div>
+      <div class="stat-row"><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
+      <div class="stat-row"><dt>Last successful collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+    </dl>
+    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full →</a></p>
+  </section>
 {% endfor %}
+</div>
+
+<h2>Every desk, side by side</h2>
+<div class="table-scroll">
+<table class="stacking desk-table">
+  <caption>The same {{ desks.declared_count }} desks as the cards above. Only a
+  collecting desk has a record count.</caption>
+  <thead>
+    <tr><th scope="col">Desk</th><th scope="col">Status</th>
+        <th scope="col" class="num">Configured</th><th scope="col" class="num">Enabled</th>
+        <th scope="col" class="num">Records</th><th scope="col">Last collection</th></tr>
+  </thead>
+  <tbody>
+  {% for d in desks %}
+    <tr>
+      <td data-label="Desk"><a href="{{ d.route }}">{{ d.name }}</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></td>
+      <td data-label="Configured" class="num">{{ d.configured_source_count }}</td>
+      <td data-label="Enabled" class="num">{{ d.enabled_source_count }}</td>
+      <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>
+      <td data-label="Last collection">{{ d.last_successful_run or 'None' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
 
 <h2>What a status means</h2>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>What each desk status means, and what it implies about the record.</caption>
   <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th></tr></thead>
   <tbody>
     <tr><td data-label="Status"><span class="desk-state desk-state--live">Live — collecting</span></td>
