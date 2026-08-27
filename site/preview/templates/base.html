@@ -85,13 +85,17 @@
 </main>
 <footer class="site">
   <div class="wrap">
-    <p>{{ maintainer.name }}, {{ maintainer.role }} ·
+    {# Permanent footer. The three sentences that stood here until 2026-08-27
+       described a build that had not been published — "Release candidate",
+       "not published or deployed", and a promise that the public site
+       continued under its previous identity. PR #32 published this build, and
+       from that moment every one of those statements was false on 3,680 live
+       pages. Nothing here may describe the site as unpublished again. #}
+    <p>{{ title }} is an independent research project created and edited by
+    {{ maintainer.name }} ·
     <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
-    <p>Selective coverage. Publication records what an institution said, not whether its claims
-    are true or its capabilities exist.</p>
-    <p><strong>Release candidate.</strong> Built in <code>{{ mode }}</code> mode and not published
-    or deployed. The public site continues under its current identity until a separately
-    authorized launch.</p>
+    <p>Coverage is selective. Publication records what an institution said, not whether its
+    claims are true or its capabilities exist.</p>
   </div>
 </footer>
 {% block scripts %}{% endblock %}
