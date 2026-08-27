@@ -81,9 +81,23 @@ def routes_with_pdf():
 
 class RunnerCase(unittest.TestCase):
 
+    #: The fixture feed is dated 2026-08-24..26. The bootstrap cutoff defaults
+    #: to the day the first run happens, which would put the whole fixture
+    #: before it and leave these tests measuring an empty run. Seeding an
+    #: explicit earlier cutoff keeps them about what they are about — counters,
+    #: state and the ledger — and the cutoff itself is covered by
+    #: tests/test_japan_bootstrap_contract.py.
+    SEEDED_CUTOFF = "2026-08-01"
+
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.state = Path(self._tmp.name) / "state"
+        self.state.mkdir(parents=True, exist_ok=True)
+        (self.state / "bootstrap.json").write_text(json.dumps({
+            "cutoff_utc": self.SEEDED_CUTOFF + "T00:00:00+00:00",
+            "cutoff_date": self.SEEDED_CUTOFF,
+            "established_run": "seed",
+        }) + "\n", encoding="utf-8")
 
     def tearDown(self):
         self._tmp.cleanup()

@@ -54,7 +54,7 @@ if str(REPO_ROOT) not in sys.path:
 from core.collection import status as st                      # noqa: E402
 from core.collection.contract import CollectionWindow          # noqa: E402
 from scraper.sources.jp_mod import (                            # noqa: E402
-    JPModAdapter, publication_kind)
+    JPModAdapter, partition_refs, publication_kind)
 
 MANIFEST = REPO_ROOT / "shadow" / "jp_mod" / "manifest.json"
 # Deliberately no constant for the production database or output directory.
@@ -87,6 +87,21 @@ CREATE TABLE IF NOT EXISTS shadow_unretrieved (
     title_original TEXT,
     published_date TEXT,
     reason         TEXT NOT NULL,
+    first_seen_run TEXT,
+    last_seen_run  TEXT,
+    seen_count     INTEGER NOT NULL DEFAULT 1
+);
+
+-- Feed entries published before collection began. Recorded by URL, title and
+-- date so the history this collector did not witness is countable rather than
+-- invisible. No body is ever fetched for these: recording that a document
+-- exists is not the same as collecting it, and treating them as collected
+-- would overstate the corpus by the whole of the ministry's back catalogue.
+CREATE TABLE IF NOT EXISTS shadow_pre_bootstrap (
+    url            TEXT PRIMARY KEY,
+    source_slug    TEXT NOT NULL,
+    title_original TEXT,
+    published_date TEXT,
     first_seen_run TEXT,
     last_seen_run  TEXT,
     seen_count     INTEGER NOT NULL DEFAULT 1
@@ -145,6 +160,53 @@ def load_sources():
     return out
 
 
+def establish_cutoff(state_dir: Path, now: datetime, run_id: str) -> dict:
+    """
+    The date on and after which this collector is responsible for the record.
+
+    Written once, on the first run, and never rewritten. Everything the feeds
+    carry from before it is the ministry's history from before this collector
+    existed: recorded as such, never fetched, never counted as collected.
+
+    A persisted cutoff is what makes the corpus claim checkable. A rolling
+    `today - N days` window cannot be audited, because the set it admits
+    changes every day and no reader can tell which items were ever eligible.
+    """
+    path = state_dir / "bootstrap.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    record = {
+        "cutoff_utc": now.isoformat(timespec="seconds"),
+        "cutoff_date": now.date().isoformat(),
+        "established_run": run_id,
+        "note": ("Collection begins here. Feed entries dated before this are "
+                 "recorded as pre-bootstrap history and are never fetched."),
+    }
+    path.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n",
+                    encoding="utf-8")
+    return record
+
+
+def record_pre_bootstrap(conn, refs, adapter, slug, run_id) -> None:
+    """Metadata only. Never a fetch, and never counted as a collected record."""
+    titles = getattr(adapter, "_titles", {}) or {}
+    for ref in refs:
+        row = conn.execute(
+            "SELECT seen_count FROM shadow_pre_bootstrap WHERE url = ?",
+            (ref.url,)).fetchone()
+        if row:
+            conn.execute(
+                "UPDATE shadow_pre_bootstrap SET last_seen_run = ?,"
+                " seen_count = seen_count + 1 WHERE url = ?", (run_id, ref.url))
+        else:
+            conn.execute(
+                "INSERT INTO shadow_pre_bootstrap (url, source_slug,"
+                " title_original, published_date, first_seen_run, last_seen_run,"
+                " seen_count) VALUES (?,?,?,?,?,?,1)",
+                (ref.url, slug, titles.get(ref.url), ref.hint_published_date,
+                 run_id, run_id))
+
+
 def load_validators(conn) -> dict:
     return {
         row[0]: {"etag": row[1], "last_modified": row[2]}
@@ -154,7 +216,8 @@ def load_validators(conn) -> dict:
 
 
 
-def _collect_source(conn, adapter, window, run_id, entry, bucket) -> None:
+def _collect_source(conn, adapter, window, run_id, entry, bucket,
+                    cutoff_date, cap) -> None:
     """
     Collect one declared feed into the shared shadow database.
 
@@ -169,14 +232,26 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket) -> None:
 
     discovery = adapter.discover(window)
     bucket["listing_status"] = discovery.status
+    # `discovered` is now everything the feed carried, not everything that
+    # survived a filter. The difference between it and `selected` is the whole
+    # point: a reader can see how much of the feed this run was responsible for.
     bucket["discovered"] = len(discovery.references)
     entry["discovered"] += len(discovery.references)
     if discovery.status == st.LISTING_FAILURE:
         return
-    bucket["selected"] = len(discovery.references)
-    entry["selected"] += len(discovery.references)
 
-    for ref in discovery.references:
+    in_scope, pre_bootstrap, deferred, undated = partition_refs(
+        discovery.references, cutoff_date, cap)
+    record_pre_bootstrap(conn, pre_bootstrap, adapter, bucket["source_slug"],
+                         run_id)
+    for name, n in (("pre_bootstrap", len(pre_bootstrap)),
+                    ("deferred", len(deferred)),
+                    ("undated", len(undated)),
+                    ("selected", len(in_scope))):
+        bucket[name] = n
+        entry[name] += n
+
+    for ref in in_scope:
         # Every discovered item is tallied by URL family whether or not its body
         # can be read. That is what makes the site-update feed's breadth visible
         # instead of hidden: a budget page counts as a budget page, and nothing
@@ -253,6 +328,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         # refused to serve is not an item that failed to parse, and neither is
         # an outage. Reported separately so coverage can say so out loud.
         "challenged": 0,
+        "pre_bootstrap": 0, "deferred": 0, "undated": 0,
         "challenged_urls": [],
         "content_hashes": [],
         "state_sha256_before": before_hash,
@@ -267,6 +343,12 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
 
     window = CollectionWindow(target_date=target, lookback_days=lookback)
     entry["robots_status"] = "allowed"     # robots.txt permits every path used
+
+    bootstrap = establish_cutoff(state_dir, datetime.now(timezone.utc), run_id)
+    entry["bootstrap_cutoff_utc"] = bootstrap["cutoff_utc"]
+    entry["bootstrap_cutoff_date"] = bootstrap["cutoff_date"]
+    entry["bootstrap_established_run"] = bootstrap["established_run"]
+    entry["is_bootstrap_run"] = bootstrap["established_run"] == run_id
 
     # Each declared feed is collected as its own source. They are objectively
     # different streams — news.xml is the press stream, update.xml reports any
@@ -285,9 +367,11 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         bucket = {"source_slug": slug, "discovered": 0, "selected": 0,
                   "retrieved": 0, "inserted": 0, "duplicates": 0,
                   "challenged": 0, "fetch_failures": 0,
-                  "extraction_failures": 0, "listing_status": None,
+                  "extraction_failures": 0, "pre_bootstrap": 0,
+                  "deferred": 0, "undated": 0, "listing_status": None,
                   "kinds": {}}
-        _collect_source(conn, source_adapter, window, run_id, entry, bucket)
+        _collect_source(conn, source_adapter, window, run_id, entry, bucket,
+                        bootstrap["cutoff_date"], cap)
         entry["sources"].append(bucket)
         listing_statuses.append(bucket["listing_status"])
 
@@ -296,21 +380,42 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         if listing_statuses and all(x == st.LISTING_FAILURE for x in listing_statuses)
         else st.OK)
 
-    if entry["listing_status"] == st.LISTING_FAILURE:
+    # Commit before any early return. Pre-bootstrap history is written during
+    # collection, and a run that discovers nothing new still has that history
+    # to record — closing without committing rolled all of it back, so the
+    # ledger said "288 pre-bootstrap" while the table held nothing.
+    def _close_out(**update):
+        entry["pre_bootstrap_total"] = conn.execute(
+            "SELECT COUNT(*) FROM shadow_pre_bootstrap").fetchone()[0]
+        conn.commit()
         conn.close()
-        entry.update(result=st.LISTING_FAILURE, health="fail",
-                     error_detail="no declared feed returned a usable listing")
+        entry.update(**update)
         return _finish(entry, state_dir, db_path)
 
+    if entry["listing_status"] == st.LISTING_FAILURE:
+        return _close_out(result=st.LISTING_FAILURE, health="fail",
+                          error_detail="no declared feed returned a usable "
+                                       "listing")
+
     if entry["selected"] == 0:
-        conn.close()
-        entry.update(result=st.OK_NO_PUBLICATIONS, health="ok")
-        return _finish(entry, state_dir, db_path)
+        # Not "nothing published": the feeds carried plenty. Nothing was in
+        # scope, which on the bootstrap run is the expected state and on any
+        # later run means the ministry has published nothing since.
+        return _close_out(
+            result=st.OK_NO_PUBLICATIONS,
+            health="ok",
+            error_detail=("%d feed entries were discovered and all predate the "
+                          "collection cutoff of %s; recorded as history, none "
+                          "fetched" % (entry["pre_bootstrap"],
+                                       entry["bootstrap_cutoff_date"]))
+            if entry["pre_bootstrap"] else None)
     conn.commit()
     entry["stored_total"] = conn.execute(
         "SELECT COUNT(*) FROM shadow_records").fetchone()[0]
     entry["unretrieved_total"] = conn.execute(
         "SELECT COUNT(*) FROM shadow_unretrieved").fetchone()[0]
+    entry["pre_bootstrap_total"] = conn.execute(
+        "SELECT COUNT(*) FROM shadow_pre_bootstrap").fetchone()[0]
     rng = conn.execute("SELECT MIN(published_date), MAX(published_date) "
                        "FROM shadow_records").fetchone()
     entry["corpus_range"] = list(rng) if rng else [None, None]
@@ -433,6 +538,12 @@ def main(argv=None) -> int:
     print("challenged : %d  fetch-fail %d  extract-fail %d"
           % (entry["challenged"], entry["fetch_failures"],
              entry["extraction_failures"]))
+    print("bootstrap  : cutoff %s (established by run %s)%s"
+          % (entry["bootstrap_cutoff_date"], entry["bootstrap_established_run"],
+             "  <- this run" if entry["is_bootstrap_run"] else ""))
+    print("pre-boot   : %d feed entries predate the cutoff (recorded, never "
+          "fetched); %d deferred to a later run; %d undated"
+          % (entry["pre_bootstrap"], entry["deferred"], entry["undated"]))
     if entry.get("error_detail"):
         print("detail     : %s" % entry["error_detail"])
     return 0 if entry["result"] in TERMINAL_OK or entry["challenged"] else 1
