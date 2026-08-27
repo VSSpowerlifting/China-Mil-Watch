@@ -1,0 +1,6 @@
+{
+ "cutoff_date": "2026-08-27",
+ "cutoff_utc": "2026-08-27T02:14:34+00:00",
+ "established_run": "33032633240",
+ "note": "Collection begins here. Feed entries dated before this are recorded as pre-bootstrap history and are never fetched."
+}
