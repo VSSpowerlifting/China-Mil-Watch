@@ -748,17 +748,23 @@ class TestRenderedStructure(PreviewCase):
     def test_the_title_is_configurable_and_the_build_names_itself(self):
         """
         The masthead chip is gone — it shouted a caveat on every page. The
-        caveat itself is not gone: it sits once, quietly, in the footer, and it
-        now names the build rather than a working name, because the name is no
-        longer provisional. The build mode is also in a meta tag, so a stray
-        copy of this directory identifies itself without being read.
+        caveat that replaced it is gone too, as of 2026-08-27: it said the
+        build was a release candidate that had not been published, and PR #32
+        published it. The footer now states what the publication is instead.
+
+        The build mode is still in a meta tag, so a stray copy of this
+        directory identifies itself without being read — that one is a fact
+        about the artifact rather than a claim about the world, and it does not
+        expire.
         """
         html = self.page("index.html")
         self.assertIn("Test Title", html)
         self.assertNotIn("working title — not adopted", html)
         self.assertNotIn("is a working name", html)
-        self.assertIn("<strong>Release candidate.</strong>", html)
-        self.assertIn("<code>indo-pacific-record</code> mode", html)
+        self.assertNotIn("Release candidate", html)
+        self.assertNotIn("not published", html)
+        self.assertIn("is an independent research project created and edited by",
+                      html)
         self.assertIn('name="generator" content="Test Title '
                       '— indo-pacific-record build"', html)
         # The predecessor name is archival, never chrome. It may appear in the
@@ -1240,7 +1246,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                 self.assertNotIn("not an intelligence service", html)
         html = self.page("index.html")
         self.assertIn("Publication records what an institution said, not "
-                      "whether its claims\n    are true", html)
+                      "whether its\n    claims are true", html)
 
     def test_coverage_note_is_reader_language(self):
         html = self.page("coverage.html")
@@ -3341,10 +3347,17 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
         self.assertIn("not a coverage denominator", index)
 
     def test_chrome_stays_guarded(self):
+        """
+        Footer fragments updated 2026-08-27: the chrome no longer says
+        "Release candidate." or "Selective coverage." because the first became
+        false at launch and the second was reworded with it. What is guarded is
+        that the chrome still carries authored prose at all — the failure this
+        catches is chrome silently emptying out, not a particular sentence.
+        """
         authored = self.authored("record/%d.html" % self.analyzed["id"])
         for fragment in ("Skip to content", "Methodology", "Coverage",
-                         "Creator and Editor", "Release candidate.",
-                         "collectors executed", "Selective coverage."):
+                         "independent research project", "Benjamin Yang",
+                         "collectors executed", "Coverage is selective."):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, authored)
 
