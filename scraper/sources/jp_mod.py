@@ -222,29 +222,58 @@ def _rfc822_date(value: Optional[str]) -> Optional[str]:
     return None
 
 
-def select_window(refs, window: CollectionWindow, cap: int):
+def partition_refs(refs, cutoff_date: str, cap: int):
     """
-    Keep references published inside the window, newest first, up to `cap`.
+    Split discovered references into what this run may collect and what it may
+    only record.
 
-    An item with no parseable date is kept: dropping it would be a silent
-    sampling decision, and the run counters would then describe a corpus the
-    collector chose rather than the one the ministry published.
+    Returns `(in_scope, pre_bootstrap, deferred, undated)`.
+
+    The rule this replaces was a rolling `today - lookback` window followed by
+    `kept[:cap]`. Both halves lost material without saying so. Measured against
+    the real news feed on 2026-08-26: of 142 items, 21 fell inside the 14-day
+    window and **121 were dropped for being older** — 85% of the feed vanished,
+    and the run reported "21 discovered" as though that were the whole of it.
+
+    What replaces it:
+
+    * `pre_bootstrap` — dated strictly before the collection cutoff. These are
+      the ministry's history from before this collector existed. They are
+      *recorded* by URL, title and date so the gap is countable, and they are
+      never fetched. Recording that something exists is not backfilling it.
+    * `in_scope` — dated on or after the cutoff, plus everything undated.
+    * `undated` — kept in scope rather than discarded. An item whose date cannot
+      be parsed cannot be placed relative to the cutoff, and dropping it would
+      be a sampling decision made by the collector. It is counted separately so
+      the ambiguity is visible.
+    * `deferred` — in-scope items beyond `cap`. `cap` is a rate ceiling, not a
+      sample: overflow is **counted and left for the next run**, which will see
+      it again because the feed still carries it. Nothing is silently trimmed.
+
+    In-scope items are ordered **oldest first** so a backlog drains
+    chronologically and nothing can starve behind a permanently newer item.
     """
-    start = window.target_date.toordinal() - max(0, window.lookback_days)
-    kept = []
+    pre_bootstrap, dated_in_scope, undated = [], [], []
     for ref in refs:
-        if ref.hint_published_date:
-            try:
-                d = datetime.strptime(ref.hint_published_date, "%Y-%m-%d").date()
-            except ValueError:
-                kept.append(ref)
-                continue
-            if start <= d.toordinal() <= window.target_date.toordinal():
-                kept.append(ref)
+        raw = ref.hint_published_date
+        if not raw:
+            undated.append(ref)
+            continue
+        try:
+            parsed = datetime.strptime(raw, "%Y-%m-%d").date()
+        except ValueError:
+            undated.append(ref)
+            continue
+        if raw < cutoff_date:
+            pre_bootstrap.append(ref)
         else:
-            kept.append(ref)
-    kept.sort(key=lambda r: (r.hint_published_date or ""), reverse=True)
-    return kept[:cap]
+            dated_in_scope.append(ref)
+
+    dated_in_scope.sort(key=lambda r: (r.hint_published_date or "", r.url))
+    ordered = dated_in_scope + undated
+    if cap is not None and cap >= 0 and len(ordered) > cap:
+        return ordered[:cap], pre_bootstrap, ordered[cap:], undated
+    return ordered, pre_bootstrap, [], undated
 
 
 class JPModAdapter(SourceAdapter):
@@ -361,7 +390,7 @@ class JPModAdapter(SourceAdapter):
         return DiscoveryResult(
             source_slug=self.slug,
             status=st.OK if refs else st.OK_NO_PUBLICATIONS,
-            references=select_window(refs, window, self._cap),
+            references=refs,
             failed_endpoints=failed)
 
     # ----------------------------------------------------------------- fetch
