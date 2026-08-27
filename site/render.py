@@ -43,14 +43,17 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from config import OUTPUT_DIR, DB_PATH                          # noqa: E402
+from config import OUTPUT_DIR, DB_PATH, SITE_ORIGIN             # noqa: E402
 
 #: The live site. Default, and the only mode that may write to `output/`.
 LEGACY = "legacy"
@@ -87,6 +90,58 @@ SITE_MODE_ENV = "PLA_WATCH_SITE_MODE"
 #: the mode alone would therefore have published a site that tells every
 #: crawler to ignore it.
 SITE_ORIGIN_ENV = "PLA_WATCH_SITE_ORIGIN"
+
+#: What the published site keeps, and what it regenerates.
+#:
+#: `generate_preview` is forbidden from writing into the predecessor namespace
+#: at all, and it does not render the editorial imagery, the predecessor marks
+#: or the existing machine-readable export. Those are published pages and cited
+#: evidence; a build that simply replaced `output/` with its own tree would
+#: delete thirteen editions, their sidecar records, their covers, their media
+#: and the feed every subscriber holds.
+#:
+#: So the publish is an exchange rather than an overwrite: these entries are
+#: lifted out, the rest of `output/` is replaced wholesale by the new build —
+#: which keeps the build deterministic and stops a withdrawn record leaving a
+#: stale page behind — and then they are put back.
+CARRIED_FORWARD = (
+    "the-pla-watch",       # the weekly series as published, and its evidence
+    "assets",              # editorial imagery referenced by published pages
+    "data",                # the existing machine-readable export
+    "favicon.svg",
+    "logo-icon.png",
+    "logo-wordmark.png",
+    "og-image.png",
+    "CNAME",               # the deployed domain
+    ".nojekyll",
+)
+
+#: `/signals.html` moves to `/methodology.html`: "Signals & Methodology" has no
+#: separate page in the regional model because its content is the methodology.
+#: The renderer does not emit this stub — it emits no legacy route outside
+#: `/article/` — so the publish writes it, and without it the predecessor's own
+#: page would survive at a live address under the new masthead.
+MOVED_LEGACY_PAGES = {"signals.html": "methodology.html"}
+
+#: The stub written for a moved legacy page. Deliberately not the record-page
+#: redirect from `generate_preview`: that one says "this record has moved to
+#: its record page", which is true of `/article/<id>.html` and false of a
+#: section page. A redirect that misdescribes what it is redirecting is a small
+#: lie in the one place a reader is already confused.
+MOVED_PAGE_STUB = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moved</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="%(target)s">
+<meta http-equiv="refresh" content="0; url=%(target)s">
+</head>
+<body>
+<p>This page has moved to <a href="%(target)s">%(target)s</a>.</p>
+</body>
+</html>
+"""
 
 #: Public name carried by the candidate build. Owner-directed 2026-08-25 and
 #: recorded in docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. Trademark screening,
@@ -141,16 +196,16 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
         gen.generate_site(target)
         return {"mode": LEGACY, "output_dir": str(target)}
 
-    # Indo-Pacific Record candidate.
-    if output_dir is None:
-        raise UnsupportedSiteMode(
-            "%s mode requires an explicit destination; it must not inherit the "
-            "production output directory" % INDO_PACIFIC_RECORD)
-    target = Path(output_dir).resolve()
-    if target == OUTPUT_DIR.resolve() or OUTPUT_DIR.resolve() in target.parents:
-        raise UnsupportedSiteMode(
-            "refusing to render %s inside production output/: %s"
-            % (INDO_PACIFIC_RECORD, target))
+    # Indo-Pacific Record — the published site since 2026-08-27.
+    #
+    # Until the launch this mode had no default destination and refused
+    # `output/` outright, because a dormant candidate that could reach the
+    # published tree is one typo away from replacing it. That is now the tree
+    # it is supposed to write, so the destination defaults like legacy's does
+    # and the refusal is gone from here. It is *not* gone from
+    # `generate_preview.build()`: that guard still stands, and the publish
+    # below satisfies it by building into a scratch tree and exchanging it in.
+    target = Path(output_dir).resolve() if output_dir else OUTPUT_DIR.resolve()
 
     import importlib.util
     spec = importlib.util.spec_from_file_location(
@@ -164,7 +219,7 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     # no sitemap is written, and that failure is silent — the build succeeds and
     # the damage only appears once crawlers obey it.
     env = os.environ if environ is None else environ
-    origin = site_origin or env.get(SITE_ORIGIN_ENV) or ""
+    origin = site_origin or env.get(SITE_ORIGIN_ENV) or SITE_ORIGIN
     if not origin.strip():
         raise MissingSiteOrigin(
             "%s mode needs the site origin it will be published under. Set %s "
@@ -172,16 +227,129 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
             "it the build would emit a site that is entirely noindex and has "
             "no sitemap." % (INDO_PACIFIC_RECORD, SITE_ORIGIN_ENV))
 
-    result = gp.build(target, INDO_PACIFIC_RECORD_TITLE,
-                      Path(db_path) if db_path else DB_PATH,
-                      snapshot=snapshot or gp.DECLARED_SNAPSHOT,
-                      legacy_routes=True,
-                      site_origin=origin,
-                      allow_test_origin=allow_test_origin)
-    report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target)}
+    def _render(destination):
+        return gp.build(destination, INDO_PACIFIC_RECORD_TITLE,
+                        Path(db_path) if db_path else DB_PATH,
+                        snapshot=snapshot or gp.DECLARED_SNAPSHOT,
+                        legacy_routes=True,
+                        site_origin=origin,
+                        allow_test_origin=allow_test_origin)
+
+    if target == OUTPUT_DIR.resolve():
+        with tempfile.TemporaryDirectory(prefix="ipr-publish-") as scratch:
+            staged = Path(scratch) / "site"
+            result = _render(staged)
+            carried, moved, listed = publish(staged, target, gp)
+        report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
+                  "carried_forward": carried, "moved_legacy_pages": moved,
+                  "carried_pages_listed_in_sitemap": listed}
+    else:
+        result = _render(target)
+        report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target)}
+
     if isinstance(result, dict):
         report.update(result)
     return report
+
+
+def publish(staged: Path, target: Path, gp) -> tuple:
+    """
+    Exchange a freshly built tree into `output/`, keeping what is cited.
+
+    The order matters and is the whole point. The carried-forward entries are
+    moved aside *first*, so that if anything below fails they are still on
+    disk rather than half-copied. Only then is the old tree removed and the new
+    one moved into place — a replacement rather than a merge, so a record that
+    has left the corpus cannot leave a stale page behind. Finally the carried
+    entries go back, and the pages that moved get their redirect.
+
+    Returns what was carried and what was redirected, so the caller can report
+    it and a test can assert on it rather than on a directory listing.
+    """
+    staged, target = Path(staged), Path(target)
+    holding = target.parent / (target.name + ".carried")
+    if holding.exists():
+        shutil.rmtree(holding)
+    holding.mkdir(parents=True)
+
+    carried = []
+    for name in CARRIED_FORWARD:
+        source = target / name
+        if not source.exists():
+            continue
+        shutil.move(str(source), str(holding / name))
+        carried.append(name)
+
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.move(str(staged), str(target))
+
+    for name in carried:
+        shutil.move(str(holding / name), str(target / name))
+    shutil.rmtree(holding)
+
+    moved = []
+    for page, destination in sorted(MOVED_LEGACY_PAGES.items()):
+        (target / page).write_text(
+            MOVED_PAGE_STUB % {"target": destination}, encoding="utf-8")
+        moved.append("%s -> %s" % (page, destination))
+
+    listed = add_carried_pages_to_sitemap(target)
+
+    return carried, moved, listed
+
+
+#: A page's own declaration of where it lives. The carried pages already carry
+#: one, written by the weekly renderer against the same origin, so the sitemap
+#: can be built from what the pages say rather than from a second list that
+#: would have to be kept in step with them.
+_CANONICAL = re.compile(r'<link rel="canonical" href="([^"]+)"')
+_NOINDEX = re.compile(r'content="noindex')
+_LOC = re.compile(r"<loc>([^<]+)</loc>")
+
+
+def add_carried_pages_to_sitemap(target: Path) -> int:
+    """
+    Put the carried-forward series back into the sitemap.
+
+    The renderer cannot do this itself: it is forbidden from the predecessor
+    namespace, so it has never seen these pages and writes a sitemap without
+    them. Left alone, the launch would quietly drop sixteen indexable pages —
+    the weekly index, its archive, its glossary and the thirteen editions —
+    from the map every crawler reads. They would still resolve, and nothing
+    would report that they had stopped being advertised.
+
+    Derived from the pages themselves: any carried page that declares a
+    canonical and is not `noindex` belongs in the map, at the address it
+    declares. Sorted, so a rebuild is byte-identical.
+    """
+    sitemap = target / "sitemap.xml"
+    if not sitemap.exists():
+        return 0
+
+    existing = _LOC.findall(sitemap.read_text(encoding="utf-8"))
+    found = set(existing)
+    added = 0
+    for page in sorted((target / "the-pla-watch").rglob("*.html")):
+        html = page.read_text(encoding="utf-8", errors="replace")
+        if _NOINDEX.search(html):
+            continue
+        match = _CANONICAL.search(html)
+        if not match:
+            continue
+        url = match.group(1)
+        if not url.startswith("http") or url in found:
+            continue
+        found.add(url)
+        added += 1
+
+    body = "".join("  <url>\n    <loc>%s</loc>\n  </url>\n" % url
+                   for url in sorted(found))
+    sitemap.write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + body + "</urlset>\n", encoding="utf-8")
+    return added
 
 
 def main(argv=None) -> int:

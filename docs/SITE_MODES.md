@@ -4,8 +4,11 @@ This repository builds two frontends from one corpus. This document is the
 operator's reference for which one runs, how to select the other, and how a
 future launch and rollback would work.
 
-Nothing here changes what is published today. The public site is China Mil
-Watch, legacy mode is the default, and the second renderer is dormant.
+**Updated 2026-08-27.** The public site is Indo-Pacific Record at
+`https://indopacificrecord.org`; `indo-pacific-record` is the default mode and
+`legacy` is the rollback path. The predecessor's domain is served by a separate
+redirect-only Pages site. Sections below that still describe the pre-launch
+arrangement are marked.
 
 ---
 
@@ -67,11 +70,15 @@ These are contract, not convention. Each is covered by
 
 `DEFAULT_SITE_MODE` in `site/render.py`. One constant.
 
-Launching The Declared Record would be changing it to `DECLARED_RECORD` and
-removing the guard that refuses production `output/` — a deliberate, reviewed
-change, not a configuration accident. Rolling back is changing it back and
-re-running the daily workflow, which rewrites `output/` from the legacy
-renderer.
+Launched 2026-08-27 by changing that constant to `INDO_PACIFIC_RECORD`. The
+guard that refuses production `output/` was **not** removed: `render_site()`
+builds into a scratch tree and exchanges it into `output/`, so
+`generate_preview.build()` still refuses the destination it always refused, and
+the exchange is what preserves the predecessor namespace it cannot render.
+
+Rolling back is changing that constant back to `LEGACY`, changing
+`config.SITE_ORIGIN` back to `https://chinamilwatch.org`, and re-running the
+daily workflow, which rewrites `output/` from the legacy renderer.
 
 There is no automatic launch condition anywhere in this repository. No date, no
 counter, and no collection milestone flips this switch.

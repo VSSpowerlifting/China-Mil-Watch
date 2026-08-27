@@ -258,9 +258,9 @@ class TestTheGuardIsNotARepositoryWideStringBan(unittest.TestCase):
         self.assertEqual(len(carrying), len(rendered),
                          "a published edition lost its original masthead")
 
-    def test_the_site_mode_seam_still_defaults_to_legacy(self):
+    def test_the_site_mode_seam_defaults_to_the_launched_mode(self):
         r = load_render()
-        self.assertEqual(r.DEFAULT_SITE_MODE, r.LEGACY)
+        self.assertEqual(r.DEFAULT_SITE_MODE, r.INDO_PACIFIC_RECORD)
         self.assertEqual(r.INDO_PACIFIC_RECORD_TITLE, TITLE)
 
 

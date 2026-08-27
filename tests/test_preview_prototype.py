@@ -1546,8 +1546,13 @@ class TestRecordPages(PreviewCase):
                 self.assertFalse((self.out / "record"
                                   / ("%d.html" % gap)).exists())
 
-    def test_production_article_routes_are_untouched(self):
-        """The live namespace is not this prototype's to reuse or edit."""
+    def test_production_article_routes_still_cover_exactly_what_was_public(self):
+        """
+        `/article/` is a compatibility namespace, and its shape is the promise.
+        One address per analyzed article — the rule the legacy renderer used —
+        so it neither loses an address that was cited nor invents one that
+        never existed.
+        """
         live = PRODUCTION_OUT / "article"
         self.assertTrue(live.is_dir())
         self.assertEqual(len(list(live.glob("*.html"))), self.analyzed_count)
@@ -1559,8 +1564,19 @@ class TestRecordPages(PreviewCase):
                 self.assertNotIn('rel="canonical"', html)
                 self.assertIn('content="noindex, nofollow"', html)
         self.assertFalse((self.out / "sitemap.xml").exists())
+
+    def test_the_published_sitemap_lists_records_and_not_their_redirects(self):
+        """
+        The inverse of what this asserted before the launch, when `/record/`
+        appearing in the production sitemap would have meant an unpublished
+        prototype had leaked into it. Now the records are the publication, and
+        the thing that must not appear is the compatibility namespace: a
+        redirect stub competing in the index with the page it points at is the
+        duplicate-content problem the stubs carry `noindex` to avoid.
+        """
         sitemap = (PRODUCTION_OUT / "sitemap.xml").read_text(encoding="utf-8")
-        self.assertNotIn("/record/", sitemap)
+        self.assertIn("/record/", sitemap)
+        self.assertNotIn("/article/", sitemap)
 
     def test_the_route_is_described_as_a_prototype_path(self):
         flat = re.sub(r"\s+", " ", self.record(self.ids[-1]))
@@ -3476,8 +3492,10 @@ class TestDeclaredSnapshot(unittest.TestCase):
     """The snapshot is declared editorial metadata, not an inferred value."""
 
     def test_the_declared_snapshot_is_the_approved_one(self):
-        self.assertEqual(gp.DECLARED_SNAPSHOT["date"], "2026-08-19")
-        self.assertEqual(gp.DECLARED_SNAPSHOT["expected_records"], 3388)
+        """Accepted 2026-08-27 at the Indo-Pacific Record launch. Previously
+        2026-08-19 / 3,388, the last candidate-era snapshot."""
+        self.assertEqual(gp.DECLARED_SNAPSHOT["date"], "2026-08-26")
+        self.assertEqual(gp.DECLARED_SNAPSHOT["expected_records"], 3574)
 
     def test_the_declared_fingerprint_is_a_literal_digest(self):
         """The real default can never silently opt out of the content check."""
@@ -3495,8 +3513,8 @@ class TestDeclaredSnapshot(unittest.TestCase):
             gp.assert_snapshot([_fake_record(), _fake_record(id=2)],
                                gp.DECLARED_SNAPSHOT)
         message = str(caught.exception)
-        self.assertIn("3388", message)
-        self.assertIn("2026-08-19", message)
+        self.assertIn(str(gp.DECLARED_SNAPSHOT["expected_records"]), message)
+        self.assertIn(gp.DECLARED_SNAPSHOT["date"], message)
 
     def test_a_fixture_may_declare_its_own_snapshot(self):
         """Fixtures declare their own values without weakening the default."""
@@ -3506,7 +3524,7 @@ class TestDeclaredSnapshot(unittest.TestCase):
         gp.assert_snapshot(corpus, fixture)
         with self.assertRaises(gp.SnapshotMismatch):
             gp.assert_snapshot(corpus + [_fake_record(id=99)], fixture)
-        self.assertEqual(gp.DECLARED_SNAPSHOT["expected_records"], 3388)
+        self.assertGreater(gp.DECLARED_SNAPSHOT["expected_records"], 7)
         self.assertRegex(gp.DECLARED_SNAPSHOT["logical_sha256"],
                          r"^[0-9a-f]{64}$")
 
@@ -4071,7 +4089,9 @@ class TestSnapshotScopedCitations(PreviewCase):
         self.assertEqual(
             gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT),
             "Test Title. China Desk Corpus. Snapshot — "
-            "2026-08-19. 3,388 records. Benjamin Yang, Creator and Editor.")
+            "%s. %s records. Benjamin Yang, Creator and Editor."
+            % (gp.DECLARED_SNAPSHOT["date"],
+               "{:,}".format(gp.DECLARED_SNAPSHOT["expected_records"])))
 
     def test_the_corpus_citation_is_rendered_and_copyable(self):
         expected = gp.corpus_citation("Test Title", self.snapshot)
@@ -4243,7 +4263,7 @@ class TestSnapshotScopedCitations(PreviewCase):
             'Benjamin Yang. "The PLA Watch: Scarborough Shoal, Platform '
             'Disclosures, and the Limits of Anniversary Week." The PLA Watch, '
             'No. 13, week ending 8 August 2026. '
-            'https://chinamilwatch.org/the-pla-watch/posts/2026-08-08.html.')
+            '%s/the-pla-watch/posts/2026-08-08.html.' % gp.LIVE_BASE)
 
     def test_edition_issue_numbers_and_urls_are_unchanged(self):
         """The citation may not renumber or relocate a published edition."""

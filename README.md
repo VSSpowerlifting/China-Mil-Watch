@@ -182,8 +182,15 @@ look at the `Scheduling guard` step: it prints `should_run=true` or
 This deployment serves:
 
 ```
-https://chinamilwatch.org
+https://indopacificrecord.org
 ```
+
+China Mil Watch was renamed Indo-Pacific Record on 2026-08-27. Every address
+the old domain served still resolves: `https://chinamilwatch.org` is answered
+by a redirect-only site that sends each one to its exact counterpart here, and
+`/article/<id>.html` continues to resolve to the record holding the same
+article. The thirteen published editions of *The PLA Watch* keep their
+addresses and their original masthead.
 
 ---
 

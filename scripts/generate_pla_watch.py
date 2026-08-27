@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT))
 
 import anthropic
 
-from config import DB_PATH, ANTHROPIC_API_KEY
+from config import DB_PATH, ANTHROPIC_API_KEY, SITE_ORIGIN
 from scripts.pw_env import (
     build_atom_feed,
     editorial_items_for_edition,
@@ -499,7 +499,7 @@ def generate_linkedin_fallback(result: dict, week_ending: str) -> str:
     if watching:
         lines += ["## What I'm watching next", watching, ""]
     lines += [
-        f"Full edition: https://chinamilwatch.org/the-pla-watch/posts/{week_ending}.html",
+        f"Full edition: {SITE_ORIGIN}/the-pla-watch/posts/{week_ending}.html",
         "",
         "I welcome comments or corrections from people working on Chinese military media, "
         "PLA studies, or U.S.-China security.",
@@ -800,7 +800,7 @@ def main():
         if cover_path.exists():
             sidecar["cover_image"] = f"../covers/{week_ending_str}.png"
             sidecar["cover_image_url"] = (
-                f"https://chinamilwatch.org/the-pla-watch/covers/{week_ending_str}.png"
+                f"{SITE_ORIGIN}/the-pla-watch/covers/{week_ending_str}.png"
             )
             if thumb_path.exists():
                 sidecar["cover_thumb"] = f"../covers/{week_ending_str}-thumb.png"

@@ -57,7 +57,7 @@ MEDIA_DIR = ROOT / "output" / "the-pla-watch" / "media"
 
 USER_AGENT = (
     "ChinaMilWatch-PLAWatch-CoverFetcher/0.1 "
-    "(https://chinamilwatch.org; contact via site)"
+    "(https://indopacificrecord.org; contact via site)"
 )
 HTTP_TIMEOUT = 20
 MIN_WIDTH = 800

@@ -2,6 +2,76 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-27 — Indo-Pacific Record is the published identity, and chinamilwatch.org keeps resolving
+
+Owner sign-off given 2026-08-27, closing gate 5 of
+`docs/LAUNCH_AND_REDIRECT_READINESS.md`. The launch is one commit against
+`origin/main` `ecfb828`, and the parts of it that constrain future work are
+these.
+
+1. **The switch is still one constant, and rollback is still changing it back.**
+   `DEFAULT_SITE_MODE` in `site/render.py`. What moved is that `config.py` now
+   carries `SITE_ORIGIN`, and a rollback has to change **both** — the mode back
+   to `LEGACY` and the origin back to `https://chinamilwatch.org`. Two
+   constants, and they move together. `site/generator.py` deliberately does not
+   read `SITE_ORIGIN`: it still writes the predecessor's own addresses, so a
+   rollback re-renders exactly the site that was there before rather than a
+   hybrid of the two.
+
+2. **Publishing is an exchange, not an overwrite.** `generate_preview.build()`
+   still refuses to write inside `output/` — that guard was not removed, and a
+   test holds it. `render_site()` builds into a scratch tree and swaps it in,
+   lifting `the-pla-watch/`, `assets/`, `data/`, the predecessor marks and
+   `CNAME` out first and putting them back after. The renderer is forbidden
+   from the predecessor namespace, so a straight replacement of `output/` would
+   have deleted thirteen editions, their sidecar records, their covers, their
+   media and the feed. Anything added to the published tree that the renderer
+   does not itself emit must be added to `CARRIED_FORWARD` or it will be
+   deleted by the next daily run.
+
+3. **`/article/<id>.html` covers what was public, not what is stored.** One
+   stub per *analyzed* record — the rule the legacy renderer used — so the
+   compatibility namespace neither loses a cited address nor invents one. The
+   earlier behaviour, a stub per record, minted 2,239 addresses that had never
+   existed and made the deploy gate report thousands of rendered pages with no
+   analyzed article behind them.
+
+4. **The carried pages are put back into the sitemap by the publish step.** The
+   renderer cannot list pages it is forbidden to see. Without that step the
+   launch would silently have dropped sixteen indexable pages — the weekly
+   index, its archive, its glossary and the thirteen editions — from the map
+   crawlers read, while leaving them resolving so that nothing reported it.
+
+5. **The predecessor's route list is frozen, not derived.**
+   `site/predecessor_routes.txt`, taken from `gh-pages` `099b7b41`. `output/`
+   was the right source for "what did China Mil Watch serve" only while it held
+   China Mil Watch. `production_routes()` still exists and still reads a tree;
+   `predecessor_routes()` answers the historical question.
+
+6. **A deploy workflow that names the predecessor domain would undo the
+   redirects.** `chinamilwatch.org` is served by a separate redirect-only Pages
+   site, and a domain can be held by one Pages site at a time. Both workflows
+   now publish `cname: indopacificrecord.org`; a revert of either would reclaim
+   the old domain on the next scheduled run and turn every preserved legacy
+   address back into the predecessor's site. Pinned by test.
+
+7. **Editions keep their masthead and their paths.** The thirteen issues are
+   still labelled as published under China Mil Watch, still carry their issue
+   numbers, titles, deks, bylines and dates, and still live at
+   `/the-pla-watch/posts/<date>.html`. Their canonicals were re-rendered onto
+   the new origin because the alternative — carrying them across with
+   canonicals pointing at a domain that redirects back — would have left the
+   new site's own archive declaring itself elsewhere. The sidecar JSON was not
+   touched: it records what was published, including a `cover_image_url` on the
+   predecessor's domain, and the renderer rewrites that at render time rather
+   than editing the record.
+
+8. **Snapshot accepted: 2026-08-26, 3,574 records, `d5b897cd…`.** Derived from
+   the tracked corpus in one operation. Immediately after an advance the stored
+   record count equals the declared count, so `moving_figures()` drops it from
+   the frozen-count guard for as long as the corpus sits where the snapshot
+   froze it. That is the documented behaviour, not a hole.
+
 ## 2026-08-17 — MOD China: canonical choice is an authority judgement, and discovery needs a window
 
 MOD China stored nothing between 2026-07-10 and 2026-08-17 — 38 days against its

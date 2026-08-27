@@ -1,9 +1,38 @@
-# PROJECT_STATE — China Mil Watch / The PLA Watch
+# PROJECT_STATE — Indo-Pacific Record (formerly China Mil Watch)
 
-Updated: 2026-08-24 (shadow review kit, dedup-scope block, dry-run labelling,
-PDF extraction and the preview week-growth repair all merged; suite green).
-State only — durable doctrine lives in CLAUDE.md and docs/ (see CLAUDE.md
-table).
+Updated: 2026-08-27 — **Indo-Pacific Record launched.** State only; durable
+doctrine lives in CLAUDE.md and docs/ (see the CLAUDE.md table).
+
+## Launch, 2026-08-27
+
+`DEFAULT_SITE_MODE` is `INDO_PACIFIC_RECORD` and `config.SITE_ORIGIN` is
+`https://indopacificrecord.org`. The published tree is the record architecture:
+3,574 record pages, 3,696 sitemap URLs, four desks of which one collects.
+
+Accepted snapshot: **2026-08-26, 3,574 records, `d5b897cd…`**.
+
+What is preserved, and how:
+
+* `chinamilwatch.org` is served by `VSSpowerlifting/chinamilwatch-legacy-redirects`,
+  a redirect-only Pages site covering all 1,451 addresses the predecessor
+  published. `/article/<id>.html` → `/record/<id>.html`, `/signals.html` →
+  `/methodology.html`, everything else keeps its path.
+* The thirteen editions of *The PLA Watch* keep their addresses, their issue
+  numbers and their original masthead, carried across by the publish step and
+  re-rendered onto the new origin.
+* `/article/<id>.html` still resolves on the new domain: 1,335 `noindex` stubs,
+  one per address that was public, each pointing at the record holding the same
+  article.
+
+Desk states are unchanged by the launch: China collecting, Singapore and Japan
+both **shadow evaluation — not public**, US Indo-Pacific **access blocked**.
+Gates 1, 6 and 8 of `docs/LAUNCH_AND_REDIRECT_READINESS.md` (a second
+thirty-day desk, trademark screening, licence) are still open; the launch
+proceeded on the owner's explicit instruction with those outstanding.
+
+Rollback: `DEFAULT_SITE_MODE` → `LEGACY`, `config.SITE_ORIGIN` →
+`https://chinamilwatch.org`, restore the Pages custom domain, re-run the daily
+workflow. `site/generator.py` is untouched and does not read `SITE_ORIGIN`.
 
 ## Preview week tests froze the corpus shape — fixed
 

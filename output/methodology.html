@@ -1,826 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Methodology — China Mil Watch</title>
-  <meta name="description" content="Independent Mandarin-source monitoring and analysis of Chinese military and security reporting from official and authoritative PRC sources. Daily monitoring of the original-language record, plus The PLA Watch, a weekly analytical brief.">
-
-  <!-- Canonical URL -->
-  <link rel="canonical" href="https://chinamilwatch.org/methodology.html">
-
-  <!-- Open Graph -->
-  <meta property="og:type"         content="website">
-  <meta property="og:site_name"    content="China Mil Watch">
-  <meta property="og:url"          content="https://chinamilwatch.org/methodology.html">
-  <meta property="og:title"        content="China Mil Watch">
-  <meta property="og:description"  content="Independent Mandarin-source monitoring and analysis of Chinese military and security reporting from official and authoritative PRC sources. Daily monitoring of the original-language record, plus The PLA Watch, a weekly analytical brief.">
-  <meta property="og:image"        content="https://chinamilwatch.org/og-image.png">
-  <meta property="og:image:width"  content="1200">
-  <meta property="og:image:height" content="630">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="China Mil Watch">
-  <meta name="twitter:description" content="Independent Mandarin-source monitoring and analysis of Chinese military and security reporting from official and authoritative PRC sources.">
-  <meta name="twitter:image"       content="https://chinamilwatch.org/og-image.png">
-
-  <link rel="icon" type="image/png" href="logo-icon.png">
-  <link rel="apple-touch-icon" href="logo-icon.png">
-
-  <!-- JSON-LD Structured Data -->
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-    /* ══ China Mil Watch design tokens — light "paper ledger" surface ═══════ */
-    :root {
-      /* Surfaces */
-      --paper:        #F6F3EC;   /* page ground */
-      --paper-raised: #FCFAF5;   /* cards, records */
-      --paper-inset:  #EFEAE0;   /* recessed panels */
-      --paper-header: #FBF9F4;   /* masthead */
-      /* Ink */
-      --ink:          #1C2B3A;   /* primary text + structural color */
-      --ink-2:        #4C4A44;   /* secondary text */
-      --ink-3:        #7B746A;   /* muted text, captions */
-      /* Rules */
-      --line:         #CFC6B8;
-      --line-soft:    #E2DBCE;
-      --line-hard:    #1C2B3A;
-      /* Signal — one crimson family shared with The PLA Watch */
-      --signal:       #A31626;
-      --signal-ink:   #7E0E1B;
-      --signal-tint:  #F5E7E4;
-      --signal-line:  #D9A9A3;
-      /* Legacy aliases kept for template compatibility */
-      --color-ink: var(--ink);
-      --color-brand: var(--signal);
-      --color-signal-mid: var(--signal-line);
-      --color-signal-tint: var(--signal-tint);
-      --color-surface: var(--paper-inset);
-      --color-bg: var(--paper);
-      --color-bg-card: var(--paper-raised);
-      --color-bg-header: var(--paper-header);
-      --color-bg-sidebar: var(--paper-inset);
-      --color-text-primary: var(--ink);
-      --color-text-secondary: var(--ink-2);
-      --color-text-muted: var(--ink-3);
-      --color-border: var(--line);
-      --color-border-soft: var(--line-soft);
-      --color-accent: var(--signal);
-      /* Type */
-      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-      --sans:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-      --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
-      /* Scale */
-      --radius: 2px;
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-      --shell: 1180px;
-    }
-
-    /* ── Reset ──────────────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; scroll-behavior: smooth; }
-
-    body {
-      background-color: var(--paper);
-      color: var(--ink);
-      font-family: var(--sans);
-      font-weight: 400;
-      font-size: 1rem;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    ::selection { background: var(--signal-tint); color: var(--signal-ink); }
-
-    [lang="zh-Hans"] { font-family: var(--zh); }
-
-    a { color: var(--signal); text-decoration: none; }
-    a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    a:focus-visible {
-      outline: 2px solid var(--signal);
-      outline-offset: 2px;
-      border-radius: var(--radius);
-    }
-
-    /* ── Shared micro-typography ────────────────────────────────────────── */
-    .meta-mono {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      color: var(--ink-3);
-      font-variant-numeric: tabular-nums;
-    }
-    .label-caps {
-      font-family: var(--mono);
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-    }
-
-    /* ── Masthead — editorial nameplate + sticky nav rail ───────────────── */
-    .masthead {
-      background: var(--paper-header);
-      border-bottom: 1px solid var(--line);
-    }
-    .masthead-name-row {
-      max-width: var(--shell);
-      margin: 0 auto;
-      padding: 1.35rem 2rem 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
-    }
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      color: inherit;
-      text-decoration: none;
-      min-width: 0;
-    }
-    .header-brand:hover { text-decoration: none; }
-    .header-brand img {
-      height: 46px;
-      width: 46px;
-      display: block;
-      border-radius: var(--radius);
-      flex-shrink: 0;
-    }
-    .header-wordmark { display: flex; flex-direction: column; line-height: 1; min-width: 0; }
-    .header-wordmark .title {
-      font-family: var(--serif);
-      font-weight: 700;
-      font-size: 1.7rem;
-      font-optical-sizing: auto;
-      color: var(--ink);
-      letter-spacing: -0.012em;
-      line-height: 1.02;
-      white-space: nowrap;
-    }
-    .wordmark-signal { color: var(--signal); }
-    .header-wordmark .kicker {
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      margin-top: 7px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .masthead-plate {
-      font-family: var(--mono);
-      font-size: 0.66rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      text-align: right;
-      line-height: 1.7;
-      flex-shrink: 0;
-    }
-    .masthead-plate .plate-strong { color: var(--ink); font-weight: 600; }
-
-    /* Sticky nav rail */
-    .nav-rail {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      background: var(--paper-header);
-      border-top: 1px solid var(--line-soft);
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 1px 0 rgba(28, 43, 58, 0.03);
-    }
-    .nav-rail-inner {
-      max-width: var(--shell);
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      align-items: stretch;
-      gap: 1.9rem;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .nav-rail-inner::-webkit-scrollbar { display: none; }
-    .nav-rail a {
-      color: var(--ink-2);
-      font-family: var(--sans);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 11px 0 10px;
-      position: relative;
-      white-space: nowrap;
-      transition: color 140ms ease;
-    }
-    .nav-rail a::after {
-      content: "";
-      position: absolute;
-      left: 0; right: 0; bottom: -1px;
-      height: 2px;
-      background: var(--signal);
-      transform: scaleX(0);
-      transform-origin: left center;
-      transition: transform 200ms var(--ease);
-    }
-    .nav-rail a:hover { color: var(--ink); text-decoration: none; }
-    .nav-rail a:hover::after { transform: scaleX(1); }
-    .nav-rail a.active { color: var(--ink); }
-    .nav-rail a.active::after { transform: scaleX(1); }
-    .nav-rail .nav-short { display: none; }
-    .nav-rail .nav-pw { color: var(--signal); }
-    .nav-rail .nav-pw:hover { color: var(--signal-ink); }
-
-    /* ── Main layout ────────────────────────────────────────────────────── */
-    main {
-      flex: 1;
-      max-width: var(--shell);
-      width: 100%;
-      margin: 0 auto;
-      padding: 2.5rem 2rem 4.5rem;
-    }
-
-    /* ── Footer — three-column editorial colophon ───────────────────────── */
-    .site-footer {
-      background: var(--paper-raised);
-      border-top: 1px solid var(--line);
-      padding: 2.75rem 2rem 2.25rem;
-    }
-    .footer-inner {
-      max-width: var(--shell);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
-      gap: 2.5rem;
-      align-items: start;
-    }
-    .footer-name {
-      font-family: var(--serif);
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-      color: var(--ink);
-      margin-bottom: 0.5rem;
-    }
-    .footer-desc {
-      font-size: 0.8125rem;
-      color: var(--ink-2);
-      line-height: 1.65;
-      max-width: 44ch;
-    }
-    .footer-col-label {
-      display: block;
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--signal);
-      margin-bottom: 0.7rem;
-    }
-    .footer-links { list-style: none; }
-    .footer-links li { padding: 0.18rem 0; }
-    .footer-links a {
-      color: var(--ink-2);
-      font-size: 0.8125rem;
-      font-weight: 500;
-    }
-    .footer-links a:hover { color: var(--signal); }
-    .footer-baseline {
-      max-width: var(--shell);
-      margin: 2.25rem auto 0;
-      padding-top: 1rem;
-      border-top: 1px solid var(--line-soft);
-      font-family: var(--mono);
-      font-size: 0.66rem;
-      letter-spacing: 0.05em;
-      color: var(--ink-3);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 1.5rem;
-      justify-content: space-between;
-    }
-
-    /* ── Tags — harmonized topic chips ──────────────────────────────────── */
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-bottom: 0.75rem;
-    }
-    .tag {
-      display: inline-block;
-      font-family: var(--mono);
-      font-size: 0.625rem;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #4E483E;
-      background: var(--paper-inset);
-      border-radius: var(--radius);
-      padding: 3px 8px;
-      line-height: 1.5;
-    }
-    .tag[data-label="Taiwan"]                { background: #F3E2DF; color: #8C2B22; }
-    .tag[data-label="East China Sea"],
-    .tag[data-label="South China Sea"],
-    .tag[data-label="U.S.\2013 China Military"] { background: #E1EAF0; color: #2A5674; }
-    .tag[data-label*="Personnel"]             { background: #F1E7D2; color: #6A4A14; }
-    .tag[data-label="Exercises"]              { background: #E5ECD8; color: #47611F; }
-    .tag[data-label="Military Diplomacy"]     { background: #E7E5F2; color: #45407E; }
-    .tag[data-label="Modernization"]          { background: #DEEBE4; color: #1F5C46; }
-
-    /* ── Model-flagged kicker (semantic signal, not decoration) ─────────── */
-    .analytical-signal-kicker {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-bottom: 0.5rem;
-    }
-    .signal-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--signal);
-      flex-shrink: 0;
-      display: inline-block;
-    }
-    .signal-kicker-text {
-      font-family: var(--mono);
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: var(--signal);
-    }
-
-    /* ── Buttons ────────────────────────────────────────────────────────── */
-    .btn {
-      display: inline-block;
-      font-family: var(--sans);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      padding: 9px 18px;
-      border-radius: var(--radius);
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
-    }
-    .btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
-    .btn:active { transform: translateY(1px); }
-    .btn-primary { background: var(--ink); color: #F2EFE8; }
-    .btn-primary:hover { background: #14202D; color: #F2EFE8; text-decoration: none; }
-    .btn-secondary {
-      background: transparent;
-      color: var(--ink);
-      border: 1px solid var(--line);
-    }
-    .btn-secondary:hover { background: var(--paper-inset); text-decoration: none; }
-    .btn-signal {
-      background: transparent;
-      color: var(--signal);
-      border: 1px solid var(--signal-line);
-    }
-    .btn-signal:hover { background: var(--signal-tint); color: var(--signal-ink); text-decoration: none; }
-
-    /* ── Utilities ──────────────────────────────────────────────────────── */
-    .empty-state { color: var(--ink-3); font-style: italic; padding: 2rem 0; }
-    .section-rule {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-family: var(--mono);
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      margin-bottom: 1.25rem;
-    }
-    .section-rule::before {
-      content: "";
-      width: 18px; height: 2px;
-      background: var(--signal);
-      flex-shrink: 0;
-    }
-
-    /* ── Motion — reveal-on-scroll (JS-gated, reduced-motion safe) ───────
-       data-reveal="art" containers stay fully visible at first paint;
-       only their inner primitives (draw-path, ink-node, rule wipes)
-       animate. Above-the-fold text must never start at opacity 0. */
-    .js [data-reveal]:not([data-reveal="art"]) {
-      opacity: 0;
-      transform: translateY(14px);
-      transition:
-        opacity 0.65s var(--ease),
-        transform 0.65s var(--ease);
-      transition-delay: calc(var(--ri, 0) * 70ms);
-    }
-    .js [data-reveal].in { opacity: 1; transform: none; }
-    .js.no-anim [data-reveal] { opacity: 1; transform: none; transition: none; }
-    @media print {
-      [data-reveal] { opacity: 1 !important; transform: none !important; }
-    }
-
-    /* Shared motion primitives — all default to the finished state; the
-       animated start state only applies under .js inside an un-revealed
-       [data-reveal] container, so no-JS, print, and reduced-motion render
-       the final artwork. */
-    .js:not(.no-anim) [data-reveal]:not(.in) .draw-path {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-    }
-    .js [data-reveal].in .draw-path {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 1s var(--ease);
-      transition-delay: calc(var(--pi, 0) * 90ms + 150ms);
-    }
-    .js:not(.no-anim) [data-reveal]:not(.in) .ink-node { transform: scale(0); }
-    .js [data-reveal].in .ink-node {
-      transform: scale(1);
-      transition: transform 0.5s var(--ease);
-      transition-delay: min(calc(var(--ni, 0) * 60ms + 200ms), 900ms);
-    }
-    .js:not(.no-anim) [data-reveal]:not(.in) :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
-      transform: scaleX(0);
-      transform-origin: left center;
-    }
-    .js [data-reveal].in :is(.brief-eyebrow, .section-rule, .signals-eyebrow, .s-section-heading)::before {
-      transform: scaleX(1);
-      transform-origin: left center;
-      transition: transform 0.7s var(--ease) 120ms;
-    }
-    .js:not(.no-anim) [data-reveal]:not(.in) .cat-bar-fill {
-      transform: scaleX(0);
-      transform-origin: left center;
-    }
-    .js [data-reveal].in .cat-bar-fill {
-      transform: scaleX(1);
-      transform-origin: left center;
-      transition: transform 0.8s var(--ease);
-      transition-delay: calc(var(--bi, 0) * 70ms + 150ms);
-    }
-    @keyframes ink-pulse {
-      0%, 100% { opacity: 1; }
-      50%      { opacity: 0.45; }
-    }
-    .js .pulse-dot { animation: ink-pulse 3.4s ease-in-out infinite; }
-    .js.no-anim .pulse-dot { animation: none; }
-
-    /* ── Tablet / mobile ────────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .masthead-name-row { padding: 1.1rem 1.25rem 0.9rem; }
-      .masthead-plate { display: none; }
-      .header-brand img { height: 40px; width: 40px; }
-      .header-wordmark .title { font-size: 1.35rem; }
-      .nav-rail-inner { padding: 0 1.25rem; gap: 1.4rem; }
-      main { padding: 1.75rem 1.25rem 3rem; }
-      body { font-size: 0.9375rem; }
-      .site-footer { padding: 2.25rem 1.25rem 1.75rem; }
-      .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.75rem; }
-      .footer-inner > div:first-child { grid-column: 1 / -1; }
-    }
-    @media (max-width: 720px) {
-      .nav-rail .nav-full { display: none; }
-      .nav-rail .nav-short { display: inline; }
-    }
-    @media (max-width: 600px) {
-      .masthead-name-row { padding: 0.95rem 1rem 0.8rem; }
-      .header-brand { gap: 10px; }
-      .header-brand img { height: 34px; width: 34px; }
-      .header-wordmark .title { font-size: 1.15rem; }
-      .header-wordmark .kicker { font-size: 0.54rem; letter-spacing: 0.1em; }
-      .nav-rail-inner { padding: 0 1rem; gap: 1.15rem; }
-      .nav-rail a { font-size: 0.66rem; letter-spacing: 0.06em; padding: 9px 0 8px; }
-      .footer-inner { grid-template-columns: minmax(0, 1fr); }
-      .footer-inner > div:first-child { grid-column: auto; }
-    }
-    @media (max-width: 480px) {
-      .nav-rail-inner { gap: .95rem; }
-      .nav-rail a { font-size: .64rem; letter-spacing: .05em; }
-    }
-    @media (max-width: 350px) {
-      /* deliberate scroll affordance: the rail already scrolls via
-         overflow-x, this just signals it instead of clipping a label */
-      .nav-rail-inner {
-        -webkit-mask-image: linear-gradient(to right, #000 91%, transparent);
-        mask-image: linear-gradient(to right, #000 91%, transparent);
-        padding-right: 1.4rem;
-      }
-    }
-
-    /* ── Reduced motion ─────────────────────────────────────────────────── */
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after {
-        transition: none !important;
-        animation: none !important;
-      }
-    }
-
-    /* ── Signal Veil — editorial imagery (Paper Ledger) ─────────────────
-       Source-Derived Signal Graphics system: a duotone crop of the
-       manifest photograph, keyed to the paper ground, shaped by a union
-       of soft radial masks so no rectangle ever reads as a photo card.
-       Shared by index.html (homepage hero) and article.html (header
-       band). Decorative-context only — role="img" + aria-label on the
-       host element carry the accessible text; no rectangle may read. */
-    .pl-veil {
-      position: absolute; top: 0; right: 0; bottom: 0; width: 88%;
-      background-size: cover; pointer-events: none;
-      -webkit-mask-image:
-        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
-        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
-      mask-image:
-        radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
-        radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
-    }
-    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
-      .pl-veil { opacity: .5; }
-      .pl-veil::after {
-        content: ""; position: absolute; inset: 0;
-        background: linear-gradient(to right, var(--paper-header) 6%, transparent 58%),
-                    linear-gradient(to top, var(--paper-header) 4%, transparent 44%);
-      }
-    }
-    /* dither ghost — Concept C fallback (manifest treatment: "dither") */
-    .pl-ghost {
-      position: absolute; top: 0; right: -3%; bottom: -4%; width: 70%;
-      background-repeat: no-repeat; background-size: 1250px auto;
-      background-position: top right; opacity: .16; pointer-events: none;
-      -webkit-mask-image: linear-gradient(to left, #000 55%, transparent 96%);
-      mask-image: linear-gradient(to left, #000 55%, transparent 96%);
-    }
-    @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
-      .pl-ghost { opacity: .10; }
-    }
-    /* motion: veil settles in; the keyframe has no `to` block so the
-       settled state is the static state (no-JS + reduced-motion safe via
-       the global kill switch above). */
-    @media (prefers-reduced-motion: no-preference) {
-      .pl-veil { animation: veil-in 1.1s var(--ease) both; }
-      .pl-ghost { animation: ghost-in 1.2s var(--ease) both; }
-      @keyframes veil-in { from { opacity: .35; transform: scale(1.012); } }
-      @keyframes ghost-in { from { opacity: 0; } }
-    }
-    /* provenance — desktop analyst bracket (Concept C), mobile inline
-       (Concept A). Content: line1 "IMG · {source_id}" linked to
-       source_page; line2 {subject} (omitted if empty); line3
-       "CONTEXT, NOT EVIDENCE". */
-    .src-bracket { position: absolute; text-align: left; max-width: 250px; z-index: 1; }
-    .src-bracket .bracket {
-      display: block; width: 56px; height: 22px;
-      border-left: 2px solid var(--signal); border-top: 2px solid var(--signal);
-      margin-bottom: .5rem;
-    }
-    .src-bracket .src-lines {
-      font-family: var(--mono); font-size: .6rem; font-weight: 500;
-      letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
-      line-height: 1.7;
-    }
-    .src-bracket .src-lines a { color: var(--ink-2); border-bottom: 1px solid var(--signal-line); text-decoration: none; }
-    .src-bracket .src-lines a:hover { color: var(--signal); }
-    .src-inline { display: none; font-size: .68rem; line-height: 1.6; color: var(--ink-3); }
-    .src-inline .img-tag {
-      font-family: var(--mono); font-size: .58rem; font-weight: 600;
-      letter-spacing: .12em; color: var(--ink-3);
-    }
-    .src-inline a { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line); }
-    @media (max-width: 900px) {
-      .src-bracket { display: none; }
-      .src-inline { display: block; }
-    }
-
-.methodology-page {
-  max-width: 740px;
-  margin: 0 auto;
-}
-
-.methodology-page h1 {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 2.25rem;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: var(--color-text-primary);
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--ink);
-}
-
-.methodology-page h2 {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1.35rem;
-  line-height: 1.3;
-  color: var(--color-text-primary);
-  margin-top: 2.25rem;
-  margin-bottom: 0.75rem;
-}
-
-.methodology-page p {
-  font-family: var(--serif);
-  font-size: 1.0325rem;
-  line-height: 1.78;
-  color: var(--color-text-primary);
-  margin-bottom: 1rem;
-}
-
-.methodology-page p:last-child { margin-bottom: 0; }
-
-.methodology-page a { color: var(--color-brand); }
-
-.methodology-page ol.ladder {
-  margin: 0 0 1rem 1.25rem;
-  padding: 0;
-}
-.methodology-page ol.ladder li {
-  font-family: var(--serif);
-  font-size: 1.0325rem;
-  line-height: 1.75;
-  color: var(--color-text-primary);
-  margin-bottom: 0.85rem;
-  padding-left: 0.35rem;
-}
-.methodology-page ol.ladder li strong {
-  font-weight: 600;
-}
-
-@media (max-width: 900px) {
-  .methodology-page { max-width: 100%; }
-  .methodology-page h1 { font-size: 1.65rem; }
-  .methodology-page h2 { font-size: 1.15rem; }
-  .methodology-page p { font-size: 0.9375rem; }
-}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology — Indo-Pacific Record</title>
+<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">
+<meta name="generator" content="Indo-Pacific Record — indo-pacific-record build">
+<link rel="canonical" href="https://indopacificrecord.org/methodology.html">
+<link rel="icon" type="image/svg+xml" href="mark.svg">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
+<a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
-  <div class="masthead-name-row">
-    <a href="index.html" class="header-brand" aria-label="China Mil Watch home">
-      <img src="logo-icon.png" alt="">
-      <span class="header-wordmark">
-        <span class="title"><span class="wordmark-primary">China Mil</span> <span class="wordmark-signal">Watch</span></span>
-        <span class="kicker">Mandarin-source monitoring · Chinese military &amp; security reporting</span>
-      </span>
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="3" y="4" width="26" height="24" rx="2" class="mark-field"/>
+        <path d="M8 11h16M8 16h16M8 21h10" class="mark-rules"/>
+        <path d="M3 25.5h26" class="mark-tide"/>
+      </svg>
+      <p class="brand-name">Indo-Pacific Record</p>
     </a>
-    <div class="masthead-plate">
-      <span class="plate-strong">Independent monitor</span><br>
-      Official PRC military media, read in the original
-    </div>
+    <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
+    <nav class="primary" aria-label="Primary">
+      <ul>
+        <li><a href="archive.html">Record</a></li>
+        <li><a href="desks.html">Desks</a></li>
+        <li><a href="sources.html">Sources</a></li>
+        <li><a href="analysis.html">Analysis</a></li>
+        <li><a href="coverage.html">Coverage</a></li>
+        <li><a href="methodology.html" aria-current="page">Methodology</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
-<div class="nav-rail">
-  <nav class="nav-rail-inner" aria-label="Primary">
-    <a href="index.html" >
-      <span class="nav-full">Daily Brief</span><span class="nav-short">Daily</span>
-    </a>
-    <a href="archive.html" >Archive</a>
-    <a href="signals.html" >Signals</a>
-    <a href="the-pla-watch/index.html" class="nav-pw">
-      <span class="nav-full">The PLA Watch</span><span class="nav-short">PLA Watch</span>
-    </a>
-    <a href="methodology.html" class="active">Methodology</a>
-  </nav>
-</div>
-
-
-<main>
-<article class="methodology-page">
-  <h1>Methodology</h1>
-
-  <p>China Mil Watch is an independent Mandarin-source monitoring and analysis project. It tracks Chinese military and security reporting from official and authoritative PRC sources on a daily schedule, and publishes The PLA Watch, a weekly analytical brief. This page documents how the pipeline works, what role automation plays, and what limitations readers should keep in mind.</p>
-
-  <h2>What the pipeline does</h2>
-  <p>The pipeline is configured to collect from official and state-linked sources, with current production coverage centered on PLA Daily (解放军报) while additional sources are expanded and verified. Articles are filtered for relevance to military and security topics, translated from Mandarin to English, and given a short analytical summary. Summaries are categorized across fourteen topic areas including Taiwan, the South China Sea, modernization, military diplomacy, and political work.</p>
-  <p>Every article links to its original source. Readers who want to verify any claim can read the original text directly.</p>
-
-  <h2 id="model-flagged">From source record to published brief</h2>
-  <p>Readers should know which layer of the project they are looking at. There are five, and they carry different weight:</p>
-  <ol class="ladder">
-    <li><strong>Scraped source records.</strong> The raw layer: headlines and article text captured verbatim in the original Chinese from official outlets, with the source URL and publication date. These records are never edited, and the original Chinese text is the authoritative version in every case.</li>
-    <li><strong>Model processing.</strong> A language model filters each record for relevance, translates it, writes a short English summary, and assigns topic categories. This is automated triage, and it can be wrong in the ways described under Limitations.</li>
-    <li><strong>Model-flagged items.</strong> During processing, the model marks some items for closer attention. This is the count labeled “model-flagged” across the site. It is a triage cue produced by software — not a judgment that the item is important, escalatory, or new. Many model-flagged items turn out to be routine on closer reading.</li>
-    <li><strong>Analyst judgment.</strong> Which items get read closely, which patterns get weight, and what the week's coverage does and does not support saying. This layer is human and appears in the watchlist and the framing of each weekly edition. The daily readout panel on the homepage, by contrast, is assembled automatically from the day's records and should be read as pipeline output.</li>
-    <li><strong>The PLA Watch weekly brief.</strong> The published analytical prose. Editions are drafted with model assistance from the week's collected records, then reviewed before publication. Every edition carries a source trail linking cited items back to the original Chinese-language records.</li>
-  </ol>
-  <p>A model flag never becomes an editorial claim by itself. If a weekly edition treats an item as meaningful, that is the analyst's call, and the source trail shows the underlying record.</p>
-
-  <h2>Role of automation</h2>
-  <p>Translations and analytical summaries are produced using large language models, with a defined prompt structure that instructs the model to translate accurately, identify the analytically relevant elements of each article, and mark items that may warrant closer attention — shown across the site as “model-flagged.”</p>
-  <p>Daily article translations and summaries are generated through a structured automated pipeline. The system uses prompts, relevance thresholds, and flagging criteria designed to reduce overclaiming. Model-flagged items, weekly editions, and flagged anomalies receive closer human review; corrections are made when errors are identified.</p>
-
-  <h2>What the pipeline is not</h2>
-  <p>China Mil Watch is not a substitute for primary source reading. It is a triage and synthesis tool. Its purpose is to make Chinese-language military reporting accessible to English-language readers who do not have time to monitor PLA Daily directly, and to surface items that warrant closer attention. The original Chinese source is the authoritative text in every case.</p>
-  <p>The pipeline does not assess classified information, reproduce non-public reporting, or generate independent intelligence. It works only with publicly available Chinese-language military media.</p>
-
-  <h2>Limitations</h2>
-  <p>All monitored sources are Party-controlled outlets. Their content reflects the messaging priorities of the Central Military Commission and the Political Work Department. Readers should treat the pipeline's outputs as a window into PRC official military communications rather than as a neutral account of PLA activity.</p>
-  <p>Translation and summarization by language models can introduce errors, including subtle mistranslation of technical terms, misattribution of speakers, and loss of rhetorical nuance. Where a summary or translation matters for serious analytical use, readers should consult the original Chinese text.</p>
-  <p>Some sources may return zero articles on a given day. Xinhua Military remains in development because its listings are JavaScript/API-rendered.</p>
-
-  <h2>Coverage and completeness</h2>
-  <p>The archive is a record of what this pipeline collected and processed, not a complete record of what its sources published. Two documented gaps qualify the material published to date.</p>
-  <p><strong>A collection outage from 17 to 24 July 2026.</strong> Eight consecutive days were not collected: the scheduled job failed before writing its results, and the articles published in that window were not captured. Retroactive collection was attempted and rejected — the source listings surface only recent items, so a later pass recovers a small and recency-biased fraction of any past day rather than the day itself. Those eight days are therefore unobserved and will stay that way. No weekly edition was published for the week ending 25 July 2026, because only one of its seven days had been observed; the break in the weekly sequence marks the outage rather than a quiet week.</p>
-  <p><strong>Incomplete processing before 30 July 2026.</strong> Collecting an article and processing it are separate stages, and for the project's first three months the second stage did not keep pace with the first. Two independent faults were responsible: a token limit in the translation step truncated articles above a length threshold, which affected the longest and most substantial pieces in particular; and a per-run processing ceiling set below the daily collection rate left a growing share of collected articles unscreened for relevance. Both were identified and fixed on 30 July 2026, and the unprocessed material is being worked through. The practical consequence is that editions No. 1 through No. 11 were written against an incomplete view of the collected record: on current estimate they drew on a little under half of the relevant material collected in that period. That figure is an estimate: it applies the historical relevance-pass rate to the material that was never screened, and it will firm up as the backlog is processed.</p>
-  <p>For a reader, the operative point in both cases is the same: the absence of an item from this archive is not evidence that the item does not exist. Where completeness matters for serious analytical use, the source listings remain authoritative.</p>
-
-  <h2>Corrections</h2>
-  <p>Readers are encouraged to report translation, attribution, or source-matching errors. Corrections may be made after publication.</p>
-
-  <h2>Operator</h2>
-  <p>China Mil Watch is built and maintained by Benjamin Yang, an incoming undergraduate at the George Washington University Elliott School of International Affairs working on U.S.–China relations and national security. Related research is available on SSRN.</p>
-  <p>For corrections, feedback, or inquiries: <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a>.</p>
-</article>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div>
-      <div class="footer-name">China Mil Watch</div>
-      <p class="footer-desc">An independent Mandarin-source monitoring and analysis project tracking Chinese military and security reporting from official and authoritative PRC sources. The original Chinese text is the authoritative record in every case.</p>
-    </div>
-    <div>
-      <span class="footer-col-label">Read</span>
-      <ul class="footer-links">
-        <li><a href="index.html">Daily Brief</a></li>
-        <li><a href="the-pla-watch/index.html">The PLA Watch</a></li>
-        <li><a href="archive.html">Archive</a></li>
-        <li><a href="signals.html">Signals</a></li>
+<div class="status-strip">
+  <div class="wrap">
+    <ul class="status-facts">
+      <li>Run <b>122</b></li>
+<li>2026-08-26</li>      <li><b>4</b> collectors executed</li>
+      <li><b>0</b> execution failures</li>
+<li><b>1</b> unimplemented adapter</li><li><b>1</b> collecting desk of <b>4</b> declared</li>    </ul>
+      <ul class="status-facts freshness">
+        <li>Records last collected <b>2026-08-26</b></li>
+        <li>Analysis last produced <b>2026-08-24</b></li>
+        <li>Last full update <b>2026-08-24</b></li>
       </ul>
-    </div>
-    <div>
-      <span class="footer-col-label">About</span>
-      <ul class="footer-links">
-        <li><a href="methodology.html">Methodology</a></li>
-        <li><a href="methodology.html#model-flagged">How flagging works</a></li>
-        <li><a href="mailto:ben.yang@gwmail.gwu.edu">Corrections &amp; contact</a></li>
-      </ul>
-    </div>
+      <p class="status-note">Collection is current; analysis is behind it. Records
+        dated after 2026-08-24 are stored and awaiting
+        screening. <a href="methodology.html#freshness">What these dates mean</a>.</p>
   </div>
-  <div class="footer-baseline">
-    <span>China Mil Watch · Mandarin-source monitoring</span>
-    <span>Not affiliated with any government. Sources are Party-controlled outlets; read as institutional messaging.</span>
+</div>
+<main id="main">
+  <div class="wrap">
+<h1>Methodology and limitations</h1>
+<p class="lede">How a record gets here, and what it can and cannot support.</p>
+
+<h2>Scope</h2>
+<p>Indo-Pacific Record collects from declared desks, one jurisdiction or institutional family at a time.
+It does <strong>not</strong> monitor the Indo-Pacific comprehensively, and no page here should be
+read as claiming that it does. 1 of 4 declared
+desks collects today; the remainder are
+labeled on <a href="desks.html">Desks</a> with what specifically blocks each one.</p>
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Records stored</dt><dd>3,574</dd></div>
+  <div class="stat-row"><dt>Records with stored original text</dt><dd>3,529</dd></div>
+  <div class="stat-row"><dt>Records with a machine translation of the title</dt><dd>1,335</dd></div>
+  <div class="stat-row"><dt>Records with a machine summary</dt><dd>1,335</dd></div>
+  <div class="stat-row"><dt>Collection runs recorded</dt><dd>122</dd></div>
+  <div class="stat-row"><dt>Publishing institutions</dt><dd>4</dd></div>
+  <div class="stat-row"><dt>Earliest item</dt><dd>2026-05-07</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>2026-08-26</dd></div>
+</dl>
+<p class="meta">Every figure above is a count over stored rows, computed at build time. None is an
+estimate, a rate or a projection.</p>
+
+<h2>Collection</h2>
+<p>Each source is declared in a desk manifest with its institution, language, listing endpoints and
+expected cadence. A scheduled run visits each listing, fetches items, extracts text, removes
+duplicates, and stores the original alongside metadata. Every source produces an explicit
+result each run, even when it produced nothing.</p>
+<h2 id="freshness">How current this is</h2>
+<p>Three dates, because they are three different facts and they come apart
+exactly when it matters. During a provider failure collection keeps running while
+analysis stops, and a single &ldquo;last updated&rdquo; line would have to pick one
+story to tell.</p>
+<dl>
+  <dt><strong>Records last collected</strong>
+    &mdash; 2026-08-26</dt>
+  <dd>The newest document actually stored. Collection runs daily and is the
+  part least likely to be interrupted.</dd>
+
+  <dt><strong>Analysis last produced</strong>
+    &mdash; 2026-08-24</dt>
+  <dd>The newest date on which any record was analyzed. It says when analysis
+  last ran. It does <strong>not</strong> say that every record up to that date
+  has been analyzed &mdash; records awaiting screening are counted separately on
+  <a href="coverage.html">Coverage</a>, and that
+  count is the honest measure of the backlog.</dd>
+
+  <dt><strong>Last full update</strong>
+    &mdash; 2026-08-24</dt>
+  <dd>The last run that finished everything, including publication. A run that
+  collects and then fails part-way never records one, so this date can sit behind
+  the other two. When it does, the difference is the outage.</dd>
+</dl>
+<p>Any of the three may read <em>not measured</em> or <em>not yet recorded</em>.
+That is a real state &mdash; older runs did not record it &mdash; and it is
+printed rather than filled in with a plausible substitute.</p>
+
+<h2>Preservation and provenance</h2>
+<p>Each record stores the canonical URL it was retrieved from, the institution that published it,
+the source-stated publication date, the retrieval time, and a content hash computed once at
+insert. Original text, extracted text, machine translation, machine labels and human analysis are
+five separate layers and are labeled separately wherever they appear. A record's identifier never
+changes, and equal titles never collapse into one record — official institutions reuse titles for
+distinct events, and a title-only rule would erase the distinctions.</p>
+
+<h2>Translation and machine layers</h2>
+<p>Records are screened for relevance, translated, and summarized by language models. The model
+and prompt version are recorded per record. A machine translation is always shown as a translation
+beside the original, never in place of it. Machine classifications are labeled
+<span class="evidence evidence--model">Model-flagged</span>, never "significant".</p>
+<h2>What this archive supports</h2>
+<ul>
+  <li>That a named institution published a specific item on a specific date.</li>
+  <li>That we retrieved it at a specific time, and what the original text was.</li>
+  <li>Whether a source has published anything recently — and whether we successfully looked.</li>
+</ul>
+<h2>What it does not support</h2>
+<ul>
+  <li>That an institution believes what it published.</li>
+  <li>That a described capability exists, or that an announced event occurred.</li>
+  <li>That coverage is comprehensive. It is selective, heavily concentrated in one source, and
+      regional only in declared scope — most of the region is not collected at all.</li>
+  <li>That a machine-generated summary or translation is accurate without human review.</li>
+  <li>Any quantified confidence in an analytical judgment. No calibration method exists, so no
+      number is offered.</li>
+</ul>
+<h2>How evidence is labeled</h2>
+<p>These are the labels a reader will encounter:</p>
+<ul>
+  <li><span class="evidence evidence--record">Source record</span> the item as published, with
+      its original language, canonical link and retrieval time.</li>
+  <li><span class="evidence evidence--claim">Official claim</span> an assertion by the publishing
+      institution — never rendered as established fact.</li>
+  <li><span class="evidence evidence--model">Model-flagged</span> a machine classification or
+      summary, always marked as not reviewed by a human.</li>
+  <li><strong>Significant</strong> and <strong>Routine</strong> describe the editor's judgment of
+      a weekly edition. They are separate from article-level
+      <span class="evidence evidence--model">Model-flagged</span> classifications.</li>
+</ul>
+
+<h2>Known limitations</h2>
+<ul>
+  <li>Collection gaps are listed on <a href="coverage.html">Coverage</a> and are not smoothed over.</li>
+  <li>Some records are collected but not yet analyzed; they are counted, not hidden.</li>
+  <li>One configured source has no working collector and is reported as such every run.</li>
+  <li>Desks that do not collect show no record count. Zero would say the record was checked and
+      found empty; the truth is that no record exists to check.</li>
+  <li>Institutional authority is a claim about position, not truthfulness. A tier-A source is
+      closer to the institution that speaks; it is not more likely to be accurate.</li>
+</ul>
+<p>Field-by-field definitions, the identifier and citation rules, and the corpus changelog are in
+the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Benjamin Yang, Creator and Editor ·
+    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+    <p>Selective coverage. Publication records what an institution said, not whether its claims
+    are true or its capabilities exist.</p>
+    <p><strong>Release candidate.</strong> Built in <code>indo-pacific-record</code> mode and not published
+    or deployed. The public site continues under its current identity until a separately
+    authorized launch.</p>
   </div>
 </footer>
-
-<script>
-(function () {
-  var root = document.documentElement;
-  try {
-    root.classList.add('js');
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (reduce.matches || !('IntersectionObserver' in window)) {
-      root.classList.add('no-anim');
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
-    var targets = document.querySelectorAll('[data-reveal]');
-    targets.forEach(function (el) { io.observe(el); });
-    /* Safety net: anything inside the viewport must never stay hidden —
-       short pages cannot scroll past the -8% margin, and a missed
-       observer callback must not suppress content. */
-    var sweep = function () {
-      targets.forEach(function (el) {
-        if (!el.classList.contains('in') &&
-            el.getBoundingClientRect().top < window.innerHeight) {
-          el.classList.add('in');
-          io.unobserve(el);
-        }
-      });
-    };
-    window.addEventListener('load', function () { setTimeout(sweep, 900); });
-  } catch (e) {
-    root.classList.add('no-anim');
-  }
-})();
-</script>
 </body>
 </html>

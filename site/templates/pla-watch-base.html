@@ -7,15 +7,15 @@
   <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="{{ page_url | default('https://chinamilwatch.org/the-pla-watch/') }}">
+  <link rel="canonical" href="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
 
   <!-- Open Graph -->
   <meta property="og:type"         content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name"    content="The PLA Watch">
-  <meta property="og:url"          content="{{ page_url | default('https://chinamilwatch.org/the-pla-watch/') }}">
+  <meta property="og:url"          content="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
   <meta property="og:title"        content="{% block og_title %}The PLA Watch{% endblock %}">
   <meta property="og:description"  content="{% block og_description %}Weekly signals from Chinese military media. Published every Sunday by China Mil Watch.{% endblock %}">
-  <meta property="og:image"        content="{% block og_image %}https://chinamilwatch.org/og-image.png{% endblock %}">
+  <meta property="og:image"        content="{% block og_image %}{{ site_origin }}/og-image.png{% endblock %}">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
 
@@ -27,7 +27,7 @@
 
   <link rel="icon" type="image/png" href="{{ root_path }}logo-icon.png">
   <link rel="apple-touch-icon" href="{{ root_path }}logo-icon.png">
-  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://chinamilwatch.org/the-pla-watch/feed.xml">
+  <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="{{ site_origin }}/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

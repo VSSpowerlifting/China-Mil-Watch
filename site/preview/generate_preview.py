@@ -72,6 +72,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from config import SITE_ORIGIN                                    # noqa: E402
+
 from jinja2 import Environment, FileSystemLoader                    # noqa: E402
 from core.viewmodel import PublicView                               # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
@@ -290,11 +292,18 @@ def corpus_fingerprint(corpus) -> str:
 #:
 #: A fixture may set `logical_sha256` to None to opt out explicitly; the real
 #: default carries a literal digest and is never relaxed.
+#: Accepted 2026-08-27 for the Indo-Pacific Record launch, derived from the
+#: tracked corpus in one operation rather than assembled from three separate
+#: readings: date, count and logical digest describe the same corpus or the
+#: build refuses to publish. Previous value was 2026-08-19 / 3,388 /
+#: cab9b24c…, the last candidate-era snapshot, which was deliberately never
+#: advanced on the launch branch so that a stale corpus could not be frozen
+#: into it early.
 DECLARED_SNAPSHOT = {
-    "date": "2026-08-19",
-    "expected_records": 3388,
+    "date": "2026-08-26",
+    "expected_records": 3574,
     "logical_sha256":
-        "cab9b24c8283749439068af206a79eaf163add2a91d17aebe8e1c192d4da583c",
+        "d5b897cd48029650df66f968e525d9fb4bc198fd84b11266e9360f87e444fe9c",
 }
 
 #: The four reader-facing processing states (DECISION_LOG 2026-08-16 §2).
@@ -795,11 +804,16 @@ def _dict_row(cursor, row):
     return {d[0]: row[i] for i, d in enumerate(cursor.description)}
 
 
-#: The live site. Editions are linked, never copied: the sidecars under
+#: The published site. Editions are linked, never copied: the sidecars under
 #: `output/the-pla-watch/posts/` are the canonical edition record, and a second
 #: rendered copy inside a prototype would be a second source of truth that
 #: silently drifts.
-LIVE_BASE = "https://chinamilwatch.org"
+#:
+#: Since the launch this is the same origin the rest of the site is served
+#: from — the weekly series was carried across the rename at its own addresses,
+#: so linking it through the predecessor's domain would send a reader out to a
+#: redirect and back for a page sitting in the same tree.
+LIVE_BASE = SITE_ORIGIN
 
 
 def load_editions(repo_root: Path):
@@ -1878,11 +1892,22 @@ def build(out_dir: Path, title: str, db_path: Path,
     # redirect to the record page holding the same article, written from the
     # corpus rather than from a directory listing, so an id that is not in
     # this snapshot does not silently acquire a redirect to nothing.
+    #
+    # Only the analyzed records get a stub, because only they were ever public
+    # there: the legacy renderer built `/article/` from
+    # `analyzed_at IS NOT NULL AND passed_relevance = 1`, which is exactly the
+    # `analyzed` state. A compatibility namespace is a promise about addresses
+    # that existed, so inventing 2,239 more — one per record that was stored
+    # but never published as an article — would make `/article/` mean something
+    # it never meant, and would leave the deploy gate reporting thousands of
+    # rendered pages with no analyzed article behind them.
     redirects = 0
     if legacy_routes:
         legacy_dir = out_dir / "article"
         legacy_dir.mkdir(parents=True, exist_ok=True)
-        for rec in sorted(data["corpus"], key=lambda r: r["id"]):
+        published = [rec for rec in sorted(data["corpus"], key=lambda r: r["id"])
+                     if rec["state"] == "analyzed"]
+        for rec in published:
             target = "../record/%d.html" % rec["id"]
             (legacy_dir / ("%d.html" % rec["id"])).write_text(
                 LEGACY_REDIRECT % {"target": target}, encoding="utf-8")

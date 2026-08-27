@@ -262,9 +262,10 @@ class TestAnUnusableOriginStopsTheBuild(unittest.TestCase):
 
 class TestLegacyModeIsUntouched(unittest.TestCase):
     """
-    The origin switch lives entirely in the candidate renderer. Legacy renders
-    through site/generator.py, which this work does not touch — the public site
-    must be unaffected until a launch is separately authorised.
+    The origin switch lives entirely in the Indo-Pacific Record renderer.
+    Legacy renders through site/generator.py, which this work does not touch —
+    and which is now the rollback path, so leaving it alone matters more after
+    the launch than it did before.
     """
 
     def test_the_legacy_generator_is_not_modified_by_this_work(self):
@@ -273,9 +274,15 @@ class TestLegacyModeIsUntouched(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertNotIn(name, gen)
 
-    def test_the_default_site_mode_is_still_legacy(self):
+    def test_the_default_site_mode_is_the_launched_mode(self):
+        """
+        Launched 2026-08-27. This pin held the switch shut while the candidate
+        was dormant; it now holds it open, so that a careless revert of the one
+        constant is a test failure rather than a silent unpublication.
+        """
         render = (ROOT / "site" / "render.py").read_text(encoding="utf-8")
-        self.assertIn("DEFAULT_SITE_MODE = LEGACY", render)
+        self.assertIn("DEFAULT_SITE_MODE = INDO_PACIFIC_RECORD", render)
+        self.assertNotIn("DEFAULT_SITE_MODE = LEGACY", render)
 
     def test_the_legacy_generator_still_writes_its_own_robots_and_sitemap(self):
         gen = (ROOT / "site" / "generator.py").read_text(encoding="utf-8")
