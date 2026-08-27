@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Indo-Pacific Record">
+  <title>Indo-Pacific Record</title>
+  <rect width="32" height="32" fill="#10252E"/>
+  <rect x="3" y="4" width="26" height="24" rx="2" fill="none" stroke="#CBEAE5" stroke-width="1.6"/>
+  <path d="M8 11h16M8 16h16M8 21h10" fill="none" stroke="#CBEAE5" stroke-width="1.6" stroke-linecap="square"/>
+  <path d="M3 25.5h26" fill="none" stroke="#28B8A6" stroke-width="1.6"/>
+</svg>

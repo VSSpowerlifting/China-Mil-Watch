@@ -1,0 +1,892 @@
+/*
+ * Indo-Pacific Record — candidate stylesheet.
+ *
+ * OCEANIC PALETTE, MEASURED
+ * -------------------------
+ * Every pairing below was computed (WCAG 2.1 relative luminance), not
+ * estimated, against the page ground `--paper #F5F8F6`. Three of the seed
+ * colours cannot carry body text and are demoted rather than waved through:
+ *
+ *   teal      #138A83   3.94 on paper -> large text and non-text marks only;
+ *                                        text tone #0F726C (5.39)
+ *   turquoise #28B8A6   2.31 on paper -> decoration only in light contexts;
+ *                                        6.41 on ink, so it is a TEXT tone
+ *                                        on the dark band and nowhere else
+ *   sea glass #CBEAE5   1.19 on paper -> fills, rules and marks; never text,
+ *                                        and never a ground for muted text
+ *                                        (muted measures 4.38 on it, so a
+ *                                        darker tinted tone exists instead)
+ *
+ * Measured text pairings actually used (all >= 4.5 unless marked):
+ *   ink        #10252E  14.81 paper · 13.98 mist
+ *   deep       #123E4A  10.83 paper · 10.22 mist
+ *   ocean      #176B87   5.63 paper ·  5.31 mist ·  4.71 sea glass
+ *   teal-text  #0F726C   5.39 paper ·  5.09 mist ·  4.51 sea glass
+ *   muted      #586B70   5.23 paper ·  4.94 mist
+ *   muted-tint #4A5D62   6.11 mist   ·  5.42 sea glass
+ *   signal     #9C4B36   5.65 paper ·  5.34 mist ·  4.73 sea glass
+ *   sea glass  #CBEAE5  12.40 on ink  (text on the dark band)
+ *   turquoise  #28B8A6   6.41 on ink  (accent text on the dark band)
+ *
+ * ACCENT DISCIPLINE
+ * -----------------
+ *   --ocean   the SOLE structural accent: links, section marks, current nav,
+ *             focus rings, official-claim labels.
+ *   --teal    the desk/status family. It says what a collection scope IS; it
+ *             never says whether something is good.
+ *   --signal  rust, RESERVED for machine-generated or unreviewed material.
+ *             Nothing else may use it — not callout rules, not failure states,
+ *             not decoration. If rust appears, a model produced what it marks.
+ *
+ * Colour never carries meaning alone: every desk status and every run outcome
+ * has a text label and a distinct glyph, so a monochrome print stays complete.
+ *
+ * No box shadows, no gradients, no dashboard tiles, no motion that carries
+ * meaning — house doctrine (CLAUDE.md design north star).
+ */
+
+:root {
+  --paper:        #F5F8F6;   /* page ground */
+  --white:        #FFFFFF;
+  --ink:          #10252E;   /* 14.81 on paper — body text, dark bands */
+  --deep:         #123E4A;   /* 10.83 on paper — secondary text */
+  --graphite:     #123E4A;   /* legacy alias for --deep; one tone, one value */
+  --ocean:        #176B87;   /* 5.63 — sole structural accent */
+  --teal:         #138A83;   /* 3.94 — large text and marks ONLY */
+  --teal-text:    #0F726C;   /* 5.39 — the teal that may carry small text */
+  --turquoise:    #28B8A6;   /* 2.31 on paper: decoration. 6.41 on ink: text */
+  --seaglass:     #CBEAE5;   /* fills, rules, marks — never text */
+  --mist:         #E8F3F2;   /* tinted surface */
+
+  --text-muted:   #586B70;   /* 5.23 on paper, 4.94 on mist */
+  /* Muted text on the sea-glass ground. #586B70 measures 4.38 there — it
+     passes on paper and fails on sea glass, so tinted grounds get their own
+     tone rather than a colour that is only usually legible. 5.42 measured. */
+  --text-muted-tinted: #4A5D62;
+  --signal:       #9C4B36;   /* 5.65 on paper — machine-generated ONLY */
+  --signal-rule:  #A5533D;   /* 5.03 — rules and large marks in the same family */
+
+  --rule:         #B8CFCC;
+  --rule-strong:  #8FB3AE;
+  --surface-2:    #E8F3F2;   /* mist */
+
+  /* ── Six-level type ladder (revision brief §4) ───────────────────────
+     1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta
+     Distinct in size AND colour, so the level is legible without measuring. */
+  --step-wordmark: clamp(1.45rem, 3.6vw, 2rem);
+  --step-display:  clamp(1.75rem, 5vw, 2.75rem);
+  --step-deck:     clamp(1.0625rem, 2.2vw, 1.25rem);
+  --step-section:  clamp(1.125rem, 2.4vw, 1.375rem);
+  --step-body:     1.0625rem;
+  --step-meta:     .8125rem;
+
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Metadata only — stored column names and citation identifiers. Never
+     headings, never prose (DESIGN_SYSTEM §4). A system stack, so it downloads
+     nothing and adds no weight to the font budget. */
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --measure: 68ch;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--step-body);
+  line-height: 1.6;
+}
+
+/* Skip link — first in tab order, visible on focus. */
+.skip {
+  position: absolute; left: -9999px;
+  background: var(--ink); color: var(--paper);
+  padding: .6rem 1rem; z-index: 10;
+}
+.skip:focus { left: var(--gutter); top: .5rem; }
+
+/* Focus is never removed. 2px ring + 2px offset. */
+a:focus-visible, button:focus-visible, select:focus-visible,
+input:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--ocean);
+  outline-offset: 2px;
+}
+
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 var(--gutter); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ── Masthead ─────────────────────────────────────────────────────────── */
+
+.masthead { border-bottom: 2px solid var(--ink); padding: 1.35rem 0 0; }
+.brand {
+  display: flex; align-items: center; gap: .6rem;
+  text-decoration: none; color: inherit;
+}
+/* Decorative: the wordmark beside it is the accessible name, so the SVG is
+   aria-hidden and carries no title. Sized in em so it tracks the wordmark. */
+.brand-mark { width: 1.5em; height: 1.5em; flex: none; }
+.brand-mark .mark-field { fill: none; stroke: var(--ocean); stroke-width: 1.6; }
+.brand-mark .mark-rules { fill: none; stroke: var(--deep); stroke-width: 1.6;
+  stroke-linecap: square; }
+.brand-mark .mark-tide  { fill: none; stroke: var(--turquoise); stroke-width: 1.6; }
+/* Level 1. On the home page this is the h1; elsewhere a <p>, because the
+   page's own heading is the h1 and two h1s per page is a real defect. */
+.brand-name {
+  font-family: var(--serif);
+  font-size: var(--step-wordmark);
+  line-height: 1.15; letter-spacing: -.005em; margin: 0; font-weight: 600;
+}
+.brand-sub {
+  font-family: var(--sans);
+  font-size: var(--step-meta); color: var(--text-muted);
+  margin: .3rem 0 .9rem; letter-spacing: .01em; max-width: 46ch;
+}
+
+nav.primary ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 0 1.5rem;
+}
+nav.primary a {
+  font-family: var(--sans);
+  font-size: .875rem; letter-spacing: .02em;
+  display: flex; align-items: center; padding: .6rem 0;
+  color: var(--graphite); text-decoration: none;
+  border-bottom: 3px solid transparent;
+  min-height: 44px;                     /* tap target */
+}
+nav.primary a:hover { color: var(--ocean); }
+/* Current section marked by weight + rule, never colour alone. */
+nav.primary a[aria-current="page"] {
+  color: var(--ink); font-weight: 600; border-bottom-color: var(--ink);
+}
+
+/* ── Status strip ─────────────────────────────────────────────────────────
+   One quiet line, every value counted from source_run_results. Renders only
+   when a run exists; a fabricated zero would read as "all clear". */
+
+.status-strip {
+  background: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--sans);
+  font-size: .78125rem;
+  color: var(--seaglass);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* Any muted text sitting on a tinted ground, not just the strip. */
+.notice .meta, .citation .meta { color: var(--text-muted-tinted); }
+.status-strip .wrap { padding-top: .5rem; padding-bottom: .5rem; }
+.status-strip b { color: var(--turquoise); font-weight: 600; }
+/* Each fact is one flex item, so a phrase never breaks across lines; the
+   items themselves wrap freely at narrow widths. */
+.status-facts {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: .15rem 0;
+}
+.status-facts li { max-width: none; white-space: nowrap; }
+.status-facts li + li::before {
+  content: "·"; color: var(--ocean); padding: 0 .5rem;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────── */
+
+main { padding: 2.25rem 0 4rem; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.01em; }
+
+/* Level 2 — display */
+h1 { font-size: var(--step-display); margin: 0 0 .6rem; font-weight: 700; }
+
+/* Level 4 — section. Separated by a short accent rule above, not by size
+   alone; at ~1.2× body, size cannot carry the distinction on its own. */
+h2 {
+  font-size: var(--step-section); margin: 2.75rem 0 .75rem;
+  padding-top: .9rem; font-weight: 700;
+  border-top: 1px solid var(--rule); position: relative;
+}
+h2::before {
+  content: ""; position: absolute; top: -1px; left: 0;
+  width: 2.25rem; height: 2px; background: var(--ocean);
+}
+h2.plain { border-top: 0; padding-top: 0; }
+h2.plain::before { content: none; }
+h3 { font-size: 1.0625rem; margin: 1.75rem 0 .5rem; font-weight: 600; }
+
+p, li { max-width: var(--measure); }
+a { color: var(--ocean); text-underline-offset: .15em; }
+
+/* Level 3 — deck. Distinct in size and colour from body. */
+.lede {
+  font-size: var(--step-deck); color: var(--graphite);
+  max-width: var(--measure); line-height: 1.45;
+}
+/* Level 6 — meta */
+.meta { font-family: var(--sans); font-size: var(--step-meta); color: var(--text-muted); }
+
+/* Eyebrow — a label, not a heading. Never enters the heading outline. */
+.eyebrow {
+  font-family: var(--sans); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-muted); margin: 0 0 .5rem;
+}
+.eyebrow--corpus { color: var(--ocean); font-style: normal; }
+
+.rule { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+/* ── Lead item (analysis-led home) ────────────────────────────────────── */
+
+/* No bottom padding: the following section head already carries 2.75rem of
+   margin plus its rule inset, and the two together left a visible void. */
+.lead { padding-bottom: 0; }
+/* The lead headline is the largest thing in the body, but it is no longer the
+   top of the page: the regional home page leads with purpose, then records,
+   then desks, and the lead edition sits under a section head. At full display
+   size it outweighed the h2 above it and the outline read upside down. This
+   step sits between deck and display — unmistakably the flagship item, still
+   subordinate to the section that introduces it. */
+.lead-title {
+  font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 700;
+  border-top: 0; padding-top: 0; margin: 0 0 .6rem;
+}
+.lead-title::before { content: none; }
+.lead-title a { color: inherit; text-decoration: none; }
+.lead-title a:hover { color: var(--ocean); text-decoration: underline; }
+.lead .byline {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--text-muted); margin: .75rem 0 0;
+}
+
+/* ── Evidence hierarchy ───────────────────────────────────────────────────
+   Editorial labels: small-caps letterspaced text on a 2px semantic left rule.
+   Outlined pills read as disabled form controls, which is a UI pattern, not an
+   editorial one. */
+
+.evidence {
+  font-family: var(--sans);
+  font-size: .6875rem; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  border: 0; border-left: 2px solid var(--rule-strong);
+  padding: .05rem 0 .05rem .5rem;
+  color: var(--graphite);
+  white-space: nowrap; display: inline-block;
+}
+.evidence--claim  { border-left-color: var(--ocean);  color: var(--ocean); }
+.evidence--model  { border-left-color: var(--signal); color: var(--signal); }
+.evidence--record { border-left-color: var(--rule-strong); }
+
+/* Machine-generated material. Rust here is load-bearing, not decorative. */
+.interpretation {
+  border-left: 3px solid var(--signal);
+  padding-left: 1rem; margin: 1.25rem 0;
+}
+
+/* ── Status — icon + text, never colour alone ─────────────────────────── */
+
+.status { display: flex; gap: .5rem; align-items: baseline; }
+.status-mark {
+  font-family: var(--sans);
+  font-weight: 700; font-size: .875rem;
+  width: 1.4em; flex: none; text-align: center;
+}
+.status-name { font-weight: 600; }
+.status--ok      .status-mark { color: var(--ocean); }
+.status--quiet   .status-mark { color: var(--text-muted); }
+/* Not rust: a failure is not machine-generated material. The glyph and the
+   label carry the meaning, per "never colour alone". */
+.status--note    .status-mark { color: var(--graphite); }
+.status--fail    .status-mark { color: var(--ink); }
+
+/* ── Tables: rules, not cards. Scroll in their own container. ─────────── */
+
+.table-scroll { overflow-x: auto; margin: 1rem 0; }
+table {
+  border-collapse: collapse; width: 100%; font-size: .9375rem;
+  /* Required: figures align down every column. */
+  font-variant-numeric: tabular-nums lining-nums;
+}
+caption {
+  text-align: left; font-family: var(--sans);
+  font-size: var(--step-meta); color: var(--text-muted); padding-bottom: .5rem;
+}
+th, td {
+  text-align: left; padding: .6rem .75rem .6rem 0;
+  border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+th {
+  font-family: var(--sans);
+  font-size: .75rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--text-muted); border-bottom-color: var(--rule-strong);
+  white-space: nowrap;
+}
+/* Row headers name a field rather than a column, so they read as prose, not
+   as the letterspaced column-head treatment. */
+th[scope="row"] {
+  font-family: var(--serif); font-size: inherit; font-weight: 400;
+  letter-spacing: normal; text-transform: none;
+  color: var(--ink); white-space: normal;
+  border-bottom-color: var(--rule);
+}
+td.num { font-variant-numeric: tabular-nums lining-nums; }
+
+/* Stat rows — label + figure separated by a rule. Not "stat cards". */
+.stat-rows { margin: 1rem 0; font-variant-numeric: tabular-nums lining-nums; }
+.stat-row {
+  display: flex; justify-content: space-between; gap: 1.5rem;
+  padding: .55rem 0; border-bottom: 1px solid var(--rule);
+  max-width: var(--measure);
+}
+.stat-row dt { color: var(--graphite); }
+.stat-row dd { margin: 0; font-weight: 600; }
+
+/* Definition list used for prose pairs (scope blockers). */
+main dl:not(.stat-rows) dt { margin-top: 1rem; max-width: var(--measure); }
+main dl:not(.stat-rows) dd { margin: .25rem 0 0; max-width: var(--measure); }
+
+/* ── Records ──────────────────────────────────────────────────────────── */
+
+.record { padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+.record h3 { margin: .35rem 0 .4rem; font-size: 1.0625rem; }
+.record h3 a { color: var(--ink); text-decoration: none; }
+.record h3 a:hover { color: var(--ocean); text-decoration: underline; }
+.record .original { font-size: 1rem; color: var(--graphite); margin: .2rem 0; }
+.record-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+
+/* ── Desk states ──────────────────────────────────────────────────────────
+   Six statuses, six glyphs, six labels. Colour is never the carrier: the glyph
+   and the label both survive a monochrome print, and the two desks that differ
+   most (live and planned) differ in glyph weight, not only in hue.
+
+   Glyphs are restricted to the set that actually resolves in the live font
+   stack. The half-filled squares (◫, ◧, ◨, ◩, ◪) are absent from Inter and the
+   system fallback and render as tofu boxes — measured at 7.22px against the
+   ~11px every resolving glyph draws. A test pins the set. */
+
+.desk { padding: 1.5rem 0; border-bottom: 1px solid var(--rule); }
+/* The last desk sits directly above a section head that draws its own top
+   rule; two rules 1.5rem apart read as a mistake. */
+.desk:last-of-type { border-bottom: 0; padding-bottom: .5rem; }
+.desk-state {
+  font-family: var(--sans); font-size: .75rem;
+  letter-spacing: .06em; text-transform: uppercase;
+  display: inline-block; margin: 0;
+}
+/* The status marker labels the desk name directly beneath it, so the two are
+   set as one unit. The h2's own top margin would otherwise open a gap wide
+   enough to read as a section break between a label and the thing it labels. */
+.desk .desk-state { margin-bottom: .15rem; }
+.desk h2.plain { margin-top: 0; }
+.desk-state--live + h1, .desk-state--shadow + h1,
+.desk-state--access_blocked + h1, .desk-state--research + h1,
+.desk-state--planned + h1, .desk-state--paused + h1 { margin-top: .15rem; }
+/* A collecting desk is the only one that gets the accent. Everything else is
+   muted, because a status that is not "live" must not read as a promotion. */
+.desk-state--live          { color: var(--teal-text); font-weight: 600; }
+.desk-state--shadow        { color: var(--text-muted); }
+.desk-state--access_blocked{ color: var(--text-muted); }
+.desk-state--research      { color: var(--text-muted); }
+.desk-state--planned       { color: var(--text-muted); }
+.desk-state--paused        { color: var(--text-muted); }
+
+.desk-state--live::before          { content: "◼ "; }
+.desk-state--shadow::before        { content: "◐ "; }
+.desk-state--access_blocked::before{ content: "▣ "; }
+.desk-state--research::before      { content: "◻ "; }
+.desk-state--planned::before       { content: "▫ "; }
+.desk-state--paused::before        { content: "□ "; }
+
+/* The directory entry and the desk's own page draw the same marker; the
+   selectors differ only because the desk page has no .desk wrapper. */
+.desk--live .desk-state          { color: var(--teal-text); font-weight: 600; }
+.desk--shadow .desk-state,
+.desk--access_blocked .desk-state,
+.desk--research .desk-state,
+.desk--planned .desk-state,
+.desk--paused .desk-state        { color: var(--text-muted); }
+.desk--live .desk-state::before          { content: "◼ "; }
+.desk--shadow .desk-state::before        { content: "◐ "; }
+.desk--access_blocked .desk-state::before{ content: "▣ "; }
+.desk--research .desk-state::before      { content: "◻ "; }
+.desk--planned .desk-state::before       { content: "▫ "; }
+.desk--paused .desk-state::before        { content: "□ "; }
+
+/* Facts under a directory entry. A definition list, not a card: the label and
+   its value stay bound together when the row wraps. */
+.desk-facts {
+  display: flex; flex-wrap: wrap; gap: .35rem 2rem;
+  margin: .85rem 0 .5rem; padding: 0;
+  font-family: var(--sans); font-size: var(--step-meta);
+}
+.desk-facts > div { display: flex; gap: .4rem; align-items: baseline; }
+.desk-facts dt { color: var(--text-muted); margin: 0; }
+.desk-facts dd { margin: 0; color: var(--ink); font-weight: 600; }
+.desk-table .desk-state { text-transform: none; letter-spacing: .02em; }
+
+/* ── Callout ──────────────────────────────────────────────────────────────
+   At most two on the whole site. Rust is not available here; the rule is ink,
+   because a callout is emphasis, not machine output. */
+.notice {
+  border: 1px solid var(--rule-strong); border-left: 4px solid var(--ink);
+  background: var(--surface-2); padding: 1rem 1.25rem; margin: 1.5rem 0;
+}
+.notice p:last-child { margin-bottom: 0; }
+.notice h2, .notice h3 { margin-top: 0; border-top: 0; padding-top: 0; }
+.notice h2::before, .notice h3::before { content: none; }
+
+/* ── Citation ─────────────────────────────────────────────────────────────
+   Plain editorial formatting. It previously carried a tinted ground and an
+   accent left border, which made it read as a third callout on pages that
+   were supposed to have none. It now appears once, on About. */
+
+.cite-line {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--graphite); max-width: var(--measure);
+  margin: 1rem 0;
+}
+
+/* ── Citation blocks ──────────────────────────────────────────────────────
+   Borderless, deliberately. An earlier citation treatment carried a tinted
+   ground and an accent rule, which made it read as a third callout on a site
+   rationed to two. Separation between blocks is spacing and the control that
+   follows each one — never a box, a fill, or a left rule.
+
+   The text is ordinary selectable copy and stays legible with no script. The
+   button is a control and is styled as one, matching the filter and pager
+   buttons; it ships `hidden` and citation.js reveals it. */
+
+.cite-block { margin: 1.25rem 0 1.75rem; max-width: var(--measure); }
+
+.cite-text {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--graphite); line-height: 1.55;
+  margin: 0; max-width: var(--measure);
+  /* Long original URLs wrap instead of forcing the page sideways at 320px. */
+  overflow-wrap: anywhere; word-break: break-word;
+}
+
+.cite-copy {
+  font: inherit; font-family: var(--sans); font-size: .8125rem;
+  margin-top: .55rem; min-height: 44px; padding: .4rem .9rem;
+  border: 1px solid var(--rule-strong); border-radius: 2px;
+  background: var(--surface-2); color: var(--ink); cursor: pointer;
+}
+.cite-copy:hover { border-color: var(--ocean); }
+
+/* Copy result, beside the control that produced it. Empty until something
+   happens, so it costs nothing on load. Visible rather than screen-reader-only:
+   the failure message tells the reader what to do instead, and that remedy is
+   no use if only a screen reader receives it. */
+.cite-status {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--text-muted); margin: .4rem 0 0; max-width: var(--measure);
+}
+.cite-status:empty { margin: 0; }
+
+/* Edition citation — a native disclosure inside the edition's own row, not a
+   second bibliography of the same 13 titles. Quiet by default and neutral:
+   petrol on hover, ink when open, no fill, no rule, no box, and never rust.
+   `<details>` opens, closes and takes keyboard focus with no script, so the
+   citation is reachable with JavaScript disabled. */
+.ed-cite { margin: .45rem 0 0; }
+.ed-cite > summary {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--text-muted); cursor: pointer;
+  padding: .6rem 0; min-height: 44px;          /* touch target */
+  font-weight: 400; letter-spacing: .01em;
+}
+.ed-cite > summary:hover { color: var(--ocean); }
+.ed-cite[open] > summary { color: var(--ink); }
+.ed-cite .cite-text { margin-top: .25rem; }
+.ed-cite .cite-copy { margin-top: .5rem; }
+
+/* ── Filters: progressive enhancement only ────────────────────────────── */
+
+.filters {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;
+  padding: 1rem 0; border-bottom: 1px solid var(--rule);
+}
+.filters label {
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--text-muted); display: block;
+}
+.filters select, .filters input {
+  font: inherit; font-size: .9375rem; padding: .45rem .5rem;
+  border: 1px solid var(--rule-strong); background: var(--white); color: var(--ink);
+  min-height: 44px; border-radius: 2px;
+}
+/* `hidden` is a semantic state, so it must beat any author display rule.
+   `.pager { display: flex }` previously overrode the UA [hidden] rule and
+   left the pager on screen for a zero-result query. */
+[hidden] { display: none !important; }
+
+.no-results { padding: 2rem 0; }
+#no-results { padding: 1.5rem 0; color: var(--graphite); }
+
+/* Buttons: ink on paper, 44px target, ocean focus ring from the shared rule. */
+.filters button, .pager button {
+  font: inherit; font-family: var(--sans); font-size: .9375rem;
+  min-height: 44px; padding: .45rem 1rem;
+  border: 1px solid var(--rule-strong); border-radius: 2px;
+  background: var(--surface-2); color: var(--ink); cursor: pointer;
+}
+.filters button:hover, .pager button:hover { border-color: var(--ocean); }
+.pager button[disabled] {
+  color: var(--text-muted); cursor: default; border-color: var(--rule);
+}
+.pager {
+  display: flex; gap: .75rem; padding: 1.25rem 0;
+  border-top: 1px solid var(--rule);
+}
+.filter-action { align-self: flex-end; }
+
+footer.site {
+  border-top: 1px solid var(--rule); padding: 2rem 0 3rem;
+  font-family: var(--sans); font-size: var(--step-meta);
+  color: var(--text-muted);
+}
+footer.site a { color: var(--ocean); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+/* Masthead footprint at the most constrained width. The tagline is carried on
+   the home lead and About, so dropping it here removes ~3 wrapped lines
+   without losing the statement. */
+@media (max-width: 600px) {
+  .masthead { padding-top: 1rem; }
+  .brand-sub { display: none; }
+  /* Six facts as two columns x three rows, in DOM order, so the strip stays a
+     quiet band instead of six wrapped lines. Every fact keeps its own cell and
+     its own wording; nothing is hidden, shortened or merged, and the type size
+     is unchanged. The separator dots are dropped because the grid already
+     separates the items. */
+  .status-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: .75rem; row-gap: .15rem;
+    /* Tighter leading, not smaller type — the font size is unchanged. */
+    line-height: 1.35;
+  }
+  .status-facts li + li::before { content: none; padding: 0; }
+  /* Measured: rows 2 and 3 need 307px and 318px of intrinsic width, and only
+     288px exists at 320px. Holding every phrase on one line makes the cells
+     collide, so a phrase may wrap inside its own cell. It stays whole — never
+     hidden, shortened, merged, or split across cells. */
+  .status-facts li { white-space: normal; }
+  nav.primary ul { gap: 0 1.1rem; }
+  nav.primary a { font-size: .8125rem; padding: .45rem 0; min-height: 44px; }
+  main { padding-top: 1.75rem; }
+  h2 { margin-top: 2rem; }
+}
+
+/* Long unbroken tokens (status codes, hashes, URLs) must wrap, not clip. */
+.token, .prov-value { overflow-wrap: anywhere; word-break: break-word; }
+
+/* The two label renderings for an edition: exactly one is displayed at any
+   width, so the accessibility tree carries it once. */
+.ed-label-inline { display: none; }
+
+/* Tables become lists below 640px. */
+@media (max-width: 640px) {
+  .stacking thead { position: absolute; left: -9999px; }
+  .stacking tr {
+    display: block; border-bottom: 1px solid var(--rule-strong);
+    padding: .75rem 0;
+  }
+  .stacking td {
+    display: flex; justify-content: space-between; gap: 1rem;
+    border: 0; padding: .2rem 0;
+  }
+  .stacking td::before {
+    content: attr(data-label);
+    font-family: var(--sans); font-size: .75rem;
+    text-transform: uppercase; letter-spacing: .04em;
+    color: var(--text-muted); flex: none;
+  }
+  .stat-row { flex-wrap: wrap; gap: .25rem 1rem; }
+
+  /* ── Analysis editions: editorial rows, not a 5-column key/value grid ──
+     Metadata line, then the headline at full width, then the counts. */
+  .editions thead { position: absolute; left: -9999px; }
+  .editions, .editions tbody, .editions tr, .editions td { display: block; }
+  /* A caption inside a display:block table collapses to a few characters
+     wide unless it is given the full row itself. */
+  .editions caption, .provenance caption { display: block; width: 100%; }
+  .editions tr {
+    padding: 1rem 0; border-bottom: 1px solid var(--rule-strong);
+  }
+  .editions td { border: 0; padding: 0; }
+  .editions .ed-no,
+  .editions .ed-date { display: inline; font-family: var(--sans); font-size: .75rem;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); }
+  .editions .ed-no::before { content: "No. "; }
+  .editions .ed-date::before { content: " · "; }
+  .editions .ed-label-inline { display: inline; }
+  .editions .ed-label-inline::before { content: " · "; }
+  .editions .ed-label-wide { display: none; }
+  .editions .ed-title {
+    margin: .35rem 0 .4rem; font-size: 1.0625rem; line-height: 1.3;
+  }
+  .editions .ed-title a { color: var(--ink); text-decoration: none; }
+  .editions .ed-articles,
+  .editions .ed-flagged { display: inline; font-family: var(--sans);
+    font-size: var(--step-meta); color: var(--text-muted); }
+  .editions .ed-articles::after { content: " articles"; }
+  .editions .ed-flagged::before { content: " · "; }
+  .editions .ed-flagged::after { content: " model-flagged"; }
+
+  /* ── Article provenance: row header once, value beneath, nothing clipped ──
+     The generic `stacking` treatment printed "VALUE" above every value. */
+  .provenance, .provenance tbody, .provenance tr,
+  .provenance th, .provenance td { display: block; }
+  .provenance tr {
+    padding: .6rem 0; border-bottom: 1px solid var(--rule);
+  }
+  .provenance th[scope="row"] {
+    font-family: var(--sans); font-size: .75rem; font-weight: 600;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-muted); border: 0; padding: 0;
+  }
+  .provenance td { border: 0; padding: .15rem 0 0; }
+}
+
+/* ── Reduced motion: nothing here animates, and this keeps it that way ─ */
+
+/* ── Corpus index tables at narrow widths ─────────────────────────────────
+   Scoped to the two corpus-index tables ONLY. The provenance table and the
+   Tranche 1 `.stacking` / `.editions` treatments are accepted and untouched.
+
+   At 320–390px a four-column week row squeezed the date range into fragments
+   ("2026- / 08-10") and gave the definition column a two-word measure. These
+   rules re-flow those two tables into readable stacked rows.
+
+   Accessibility: `thead` stays in the accessibility tree (moved off-screen,
+   not `display:none`), so `scope` relationships and column names survive. No
+   `::before` pseudo-labels are used, so nothing is announced twice; the unit
+   words below are real markup, hidden on wider viewports where the column
+   header already supplies them. */
+.c-unit { display: none; }
+
+@media (max-width: 640px) {
+  .corpus-states thead,
+  .corpus-weeks thead { position: absolute; left: -9999px; }
+
+  .corpus-states tr,
+  .corpus-weeks tr {
+    display: block;
+    border-bottom: 1px solid var(--rule-strong);
+    padding: .8rem 0;
+  }
+  .corpus-states th[scope="row"],
+  .corpus-weeks th[scope="row"] {
+    display: block; border: 0; padding: 0 0 .15rem;
+    text-align: left; font-weight: 700;
+  }
+  .corpus-states td,
+  .corpus-weeks td { display: block; border: 0; padding: .1rem 0; }
+
+  .c-unit { display: inline; }
+
+  /* Counts stay tabular and quiet; the definition gets the full measure. */
+  .corpus-states .c-count,
+  .corpus-weeks .c-count,
+  .corpus-weeks .c-runs {
+    font-variant-numeric: tabular-nums lining-nums;
+    color: var(--text-muted);
+    font-size: .875rem;
+  }
+  .corpus-states .c-definition {
+    padding-top: .3rem;
+    max-width: none;
+    color: var(--ink);
+  }
+  /* An empty note cell must not leave a blank line. */
+  .corpus-weeks .c-note:empty { display: none; }
+  .corpus-weeks .c-note { padding-top: .25rem; font-size: .875rem; }
+}
+
+/* A week range never breaks mid-date, at any width. */
+.c-range { white-space: nowrap; }
+
+/* A date quoted inside prose must not fragment across a line break either. */
+.nowrap { white-space: nowrap; }
+
+/* ── Volume by publication week ───────────────────────────────────────────
+   CSS only: no chart library, no canvas, no SVG plate. The table carries the
+   meaning and the bars are decoration — they are aria-hidden in the markup, so
+   nothing here is the sole carrier of any figure.
+
+   Petrol, never rust: rust is reserved for machine-generated or unreviewed
+   material, and a record count is neither. Bar width encodes the record count
+   only, never a run-date normalisation. */
+.volume .v-figure {
+  font-variant-numeric: tabular-nums lining-nums;
+  display: inline-block; min-width: 3.2em;
+}
+.volume .v-bar {
+  display: block; height: 6px; margin-top: .3rem;
+  background: var(--surface-2); border-radius: 1px;
+  max-width: 22rem;
+}
+.volume .v-fill {
+  display: block; height: 100%;
+  background: var(--ocean); border-radius: 1px;
+}
+.volume th[scope="row"] { white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .volume thead { position: absolute; left: -9999px; }
+  .volume tr {
+    display: block; border-bottom: 1px solid var(--rule-strong);
+    padding: .8rem 0;
+  }
+  .volume th[scope="row"] {
+    display: block; border: 0; padding: 0 0 .15rem;
+    text-align: left; font-weight: 700; white-space: normal;
+  }
+  .volume td { display: block; border: 0; padding: .1rem 0; }
+  .volume .v-bar { max-width: none; }
+  .volume .c-runs, .volume .c-note {
+    font-size: .875rem; color: var(--text-muted);
+  }
+  .volume .c-note:empty { display: none; }
+}
+
+/* ── Corpus Guide ─────────────────────────────────────────────────────────
+   One reader-facing page with stable anchored sections. Ordinary editorial
+   sections and tables — no boxed callouts, and the site-wide ration of two
+   stays spent where it already is. Petrol is the only accent here; rust is
+   reserved for machine-generated material and appears nowhere on this page. */
+
+/* Section contents. A plain list with a petrol rule above it, not a boxed
+   navigation panel. */
+.guide-contents {
+  border-top: 1px solid var(--rule);
+  margin: 1.75rem 0 0; padding-top: .9rem;
+}
+.guide-contents ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: .35rem 1.5rem;
+  font-family: var(--sans); font-size: var(--step-meta);
+}
+.guide-contents li { max-width: none; }
+
+/* Stored column name beside a reader-facing label. Metadata, one line, and
+   never carrying prose. */
+.fieldname {
+  display: block; font-family: var(--mono); font-size: .75rem;
+  color: var(--text-muted); font-weight: 400; letter-spacing: 0;
+  text-transform: none; margin-top: .2rem;
+  overflow-wrap: anywhere; word-break: break-word;
+}
+
+/* Data dictionary. Prose in three of five columns, so it is given room and
+   allowed to scroll inside its own container above the stacking width. */
+.dictionary { table-layout: fixed; min-width: 54rem; }
+.dictionary th[scope="row"] { width: 12rem; font-weight: 600; }
+.dictionary .d-origin { width: 5.5rem; }
+.dictionary td { font-size: .9375rem; }
+.dictionary td, .dictionary th { max-width: none; }
+
+/* Inline stacked labels: real markup, shown only where the columns collapse.
+   Not `::before` generated content — a pseudo-label is announced in addition
+   to the column header, which is the duplication this avoids. */
+.d-key { display: none; }
+
+/* Changelog. Hand-maintained editorial entries, set as term and definition. */
+.changelog { margin: 1rem 0 2rem; }
+.changelog dt {
+  font-weight: 600; margin-top: 1.1rem; max-width: var(--measure);
+}
+.changelog dd { margin: .2rem 0 0; max-width: var(--measure); }
+
+@media (max-width: 640px) {
+  /* Same contract as the other corpus tables: `thead` moves off-screen rather
+     than out of the accessibility tree, so `scope` relationships and column
+     names survive; the visible labels below are real markup. */
+  .dictionary { min-width: 0; table-layout: auto; }
+  .dictionary thead { position: absolute; left: -9999px; }
+  .dictionary tr {
+    display: block; border-bottom: 1px solid var(--rule-strong);
+    padding: .9rem 0;
+  }
+  .dictionary th[scope="row"] {
+    display: block; width: auto; border: 0; padding: 0 0 .25rem;
+    text-align: left; font-weight: 700;
+  }
+  .dictionary td {
+    display: block; width: auto; border: 0; padding: .25rem 0 0;
+  }
+  .dictionary .d-origin {
+    width: auto; font-family: var(--sans); font-size: .75rem;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .d-key { display: inline; font-weight: 600; }
+  .guide-contents ul { gap: .3rem 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print: the record must survive paper ─────────────────────────────── */
+
+@media print {
+  nav.primary, .filters, .skip, .status-strip { display: none; }
+  body { background: #fff; color: #000; }
+
+  /* Only absolute URLs are expanded. The rule this replaces expanded EVERY
+     href, so a record page printed a parenthesised path after each of its
+     internal links and the archive printed one after every row — the link
+     text disappeared into its own plumbing. A relative path is meaningless
+     off-site anyway; an absolute one (a source record, a live PLA Watch
+     edition) is the citation a printed page cannot otherwise carry. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: .75em; word-break: break-all;
+  }
+  a[href^="#"]::after, a[href^="mailto:"]::after { content: ""; }
+
+  /* A record split across a page break loses the provenance label that gives
+     its text standing. Same for a table row and its stacked labels. */
+  article.record, tr, .stat-row, dd { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+
+  /* A column header stranded at the foot of a page labels nothing. Keep it
+     with its first row; `thead` is already a table-header-group, so it repeats
+     on continuation pages once it is not orphaned. */
+  thead { break-after: avoid; break-inside: avoid; }
+  caption { break-after: avoid; }
+
+  /* A horizontally scrolling container prints clipped at its visible width. */
+  .table-scroll { overflow: visible; }
+}
+
+/* Freshness strip. Three dates rather than one, so the row wraps on narrow
+   viewports instead of truncating a date the reader needs. */
+.status-facts.freshness { margin-top: .35rem; }
+/* Keep each label and its date together, and never break the date itself.
+   At 375px "Last full update 2026-08-24" wrapped as "2026-08-" / "24", and a
+   date split across two lines is a number a reader has to reassemble before
+   trusting. */
+.status-facts.freshness > li { margin-right: 1.25rem; }
+.status-facts.freshness > li > b { white-space: nowrap; }
+.status-note {
+  margin: .35rem 0 0;
+  font-size: .82rem;
+  line-height: 1.45;
+}

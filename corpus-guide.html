@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpus Guide — Indo-Pacific Record</title>
+<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">
+<meta name="generator" content="Indo-Pacific Record — indo-pacific-record build">
+<link rel="canonical" href="https://indopacificrecord.org/corpus-guide.html">
+<link rel="icon" type="image/svg+xml" href="mark.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <rect x="3" y="4" width="26" height="24" rx="2" class="mark-field"/>
+        <path d="M8 11h16M8 16h16M8 21h10" class="mark-rules"/>
+        <path d="M3 25.5h26" class="mark-tide"/>
+      </svg>
+      <p class="brand-name">Indo-Pacific Record</p>
+    </a>
+    <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
+    <nav class="primary" aria-label="Primary">
+      <ul>
+        <li><a href="archive.html">Record</a></li>
+        <li><a href="desks.html">Desks</a></li>
+        <li><a href="sources.html">Sources</a></li>
+        <li><a href="analysis.html">Analysis</a></li>
+        <li><a href="coverage.html">Coverage</a></li>
+        <li><a href="methodology.html">Methodology</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="status-strip">
+  <div class="wrap">
+    <ul class="status-facts">
+      <li>Run <b>122</b></li>
+<li>2026-08-26</li>      <li><b>4</b> collectors executed</li>
+      <li><b>0</b> execution failures</li>
+<li><b>1</b> unimplemented adapter</li><li><b>1</b> collecting desk of <b>4</b> declared</li>    </ul>
+      <ul class="status-facts freshness">
+        <li>Records last collected <b>2026-08-26</b></li>
+        <li>Analysis last produced <b>2026-08-24</b></li>
+        <li>Last full update <b>2026-08-24</b></li>
+      </ul>
+      <p class="status-note">Collection is current; analysis is behind it. Records
+        dated after 2026-08-24 are stored and awaiting
+        screening. <a href="methodology.html#freshness">What these dates mean</a>.</p>
+  </div>
+</div>
+<main id="main">
+  <div class="wrap">
+<p class="eyebrow">As published.</p>
+<h1>Corpus Guide</h1>
+<p class="lede">What the China Desk corpus holds, what it cannot tell you, what
+each field means, and how to cite it. Snapshot — 2026-08-26.</p>
+
+<nav class="guide-contents" aria-label="Sections of this guide">
+  <ul>
+    <li><a href="#holds">What this corpus holds</a></li>
+    <li><a href="#scope">Scope and limits</a></li>
+    <li><a href="#dates">How dates and collection work</a></li>
+    <li><a href="#states">Processing states</a></li>
+    <li><a href="#machine">Machine-generated layers</a></li>
+    <li><a href="#dictionary">Data dictionary</a></li>
+    <li><a href="#citation">Identifiers and citation guidance</a></li>
+    <li><a href="#changelog">Corpus changelog</a></li>
+  </ul>
+</nav>
+
+<h2 id="holds">What this corpus holds</h2>
+<p>The China Desk corpus is a stored record of 3,574
+items collected from official and authoritative Chinese defense and security
+publishers, held as they were captured. Each item keeps its original-language
+title, the address it came from, the date its source stated, and the collection
+metadata that describes how it arrived.</p>
+<p>It is a record of what these institutions published. It is not a measure of
+what they did, and it is not a census of everything they published. An item is
+here because collection reached it and stored it, which is a narrower claim than
+it may look. Coverage is selective by design and incomplete in practice, and the
+sections below say where.</p>
+<p>Each record has its own page carrying every stored field described in the
+dictionary. Records are reachable
+<a href="corpus.html">by publication week</a> without JavaScript, and through
+search and filters on the <a href="archive.html">the record</a>.</p>
+
+<h2 id="scope">Scope and limits</h2>
+<p>Four limits shape what any count from this corpus can support.</p>
+
+<h3>The corpus is concentrated in one institution</h3>
+<p>CMC Political Work Department accounts for
+3,448 of
+3,574 records —
+96.5%. The remainder is spread across
+2 other institutions and
+4 outlets in total. Any comparison drawn across
+institutions in this corpus is a comparison of very unequal samples, and a
+pattern found here is a pattern in one publisher's output before it is anything
+else.</p>
+
+<h3>Repeats across outlets are stored once</h3>
+<p>De-duplication across sources is first-writer-wins: when more than one
+configured outlet carries the same item, it is stored once, under whichever
+source reached it first. A per-outlet total therefore counts the records an
+outlet contributed to this corpus, not how often that outlet published. Source
+counts are not publication-volume counts, and they should not be read as market
+share, prominence, or emphasis.</p>
+
+<h3>Some captures stored no source text</h3>
+<p>45 records hold an empty body capture. The original
+title, the source, the date and the original URL are all recorded for each; only
+the body is missing. An empty capture is a defect in what was stored, not
+evidence that the source page carried nothing, and consulting the original URL
+remains the way to establish what was published.</p>
+
+<h3>Most records carry no English rendering</h3>
+<p>2,239 of 3,574
+records hold no machine-translated title. The same records — the same
+identifiers, not merely the same total — also hold no machine summary and no
+analysis-model record, and they are exactly the records outside the Analyzed
+state.</p>
+<p>English text is a property of the analyzed subset, not of the corpus, and a
+search over English titles reaches only that subset. The original title is
+present on every record, and searching it reaches all of them.</p>
+
+<h2 id="dates">How dates and collection work</h2>
+<p>Two different clocks run through this corpus, and confusing them produces
+wrong readings.</p>
+<p><strong>Publication dates are stated by the source.</strong> The date on a
+record is the date its publisher gave it. Nothing verifies that date against
+another authority, and it is collection-bounded: it can only fall inside the
+window collection actually reached. Records exist here from
+2026-05-07 to 2026-08-26 because that is when
+collection ran, not because those dates bound anything the institutions
+did.</p>
+<p><strong>Collection timestamps are the pipeline's own clock, in UTC.</strong>
+They record when an item was stored, not when it was published and not when
+anyone read it. Because publication dates are stated on the source's calendar
+and collection timestamps are UTC, the two do not align, and a record is
+routinely stored on a later calendar date than the one it carries.</p>
+<p><strong>A date with no recorded run is not a quiet day.</strong> The run
+record shows which UTC dates carried at least one pipeline run. Where a date
+carries none, nothing was collected — which says nothing at all about what
+sources published. A gap in the run record is a gap in observation and must
+never be read as an observed absence.</p>
+<p><strong>The run record is thinner than it looks.</strong> A run row proves a
+pipeline run happened. It does not preserve which publication dates were sought,
+and it does not preserve historical per-source outcomes. So a run identifier
+cannot establish which sources were reached on a given day, and this corpus
+cannot support per-source reliability history. Current-run results and the
+vocabulary used to describe them are on
+<a href="coverage.html">Coverage</a>.</p>
+
+<h2 id="states">Processing states</h2>
+<p>Every record is in exactly one of four processing states, and the four sum to
+the snapshot total. This matters more than it may appear: reading the corpus as
+though records were simply analyzed or not merges records that were screened and
+deliberately set aside with records that were never screened at all. Those are
+different claims about what is known.</p>
+
+<div class="table-scroll">
+<table class="corpus-states">
+  <caption>The four processing states in this snapshot. Every stored record is
+  in exactly one; the four sum to 3,574.</caption>
+  <thead>
+    <tr>
+      <th scope="col">State</th>
+      <th scope="col">Records</th>
+      <th scope="col">What it means</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Analyzed</th>
+      <td class="c-count">1,335<span class="c-unit"> records</span></td>
+      <td class="c-definition">Passed relevance screening and completed analysis. English title and summary are machine-generated.</td>
+    </tr>
+    <tr>
+      <th scope="row">Not selected for analysis</th>
+      <td class="c-count">1,402<span class="c-unit"> records</span></td>
+      <td class="c-definition">Screened and not selected for analysis. The original record is stored; no translation or summary was produced.</td>
+    </tr>
+    <tr>
+      <th scope="row">Awaiting screening</th>
+      <td class="c-count">834<span class="c-unit"> records</span></td>
+      <td class="c-definition">Stored but not yet screened for relevance. No judgment of any kind has been made about this record.</td>
+    </tr>
+    <tr>
+      <th scope="row">Analysis incomplete</th>
+      <td class="c-count">3<span class="c-unit"> records</span></td>
+      <td class="c-definition">Passed relevance screening, but analysis did not complete. The original record remains stored; no completed analysis is claimed.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>A state describes how far a record traveled through the pipeline. It is not a
+judgment of the item's importance, and it carries no editorial meaning.</p>
+
+<h2 id="machine">Machine-generated layers</h2>
+<p>Three things in this corpus were produced by software rather than captured
+from a source, and each is marked as such wherever it appears.</p>
+<p><strong>English titles and summaries are unreviewed machine output.</strong>
+Where a record carries an English title, a model produced it from the original
+title. Where it carries a summary, a model produced that from the stored source
+text. They are two separate artifacts, not one. No human has checked either
+against the original, and both are a reading of what was published rather than a
+verification of it. The original-language title is the authoritative title in
+every case.</p>
+<p><strong>Machine assessment is a triage cue, and only inside one
+state.</strong> Records that completed analysis carry a software flag marking
+them for closer review. It is meaningful only within the analyzed set, and it is
+displayed nowhere else. The stored value defaults to negative, so a negative
+reading cannot distinguish a record that was assessed and not flagged from one
+that was never assessed at all. For that reason a negative value is never shown
+outside the analyzed set, and it must never be read as evidence that an
+unscreened record was assessed and cleared.</p>
+<p><strong>Significant and Routine are editorial, and belong to editions, not
+records.</strong> Those two words label a <em>PLA Watch</em> edition — the
+editor's own classification of a week — and are applied by a person. They are
+not a machine output, they do not describe any corpus record, and they never
+appear on one. The pipeline's article-level flag and the editor's edition label
+sit at different rungs of the same ladder and are deliberately kept apart. The
+editions themselves are listed under <a href="analysis.html">Analysis</a>.</p>
+
+<h2 id="dictionary">Data dictionary</h2>
+<p>Every field a reader encounters on a record page, what it means, and where it
+stops being reliable. Stored column names appear beside the reader-facing label
+where knowing them helps.</p>
+
+<div class="table-scroll">
+<table class="dictionary">
+  <caption>17 fields. “Stored” means the value is held in
+  the database as captured or as generated; “Derived” means it is computed when
+  this page is built.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Origin</th>
+      <th scope="col">What it means</th>
+      <th scope="col">When it may be absent</th>
+      <th scope="col">Main limitation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Record ID
+<code class="fieldname">id</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The identifier of a stored record inside this snapshot.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>A locator inside this snapshot, not a permanent public identifier. Identifiers are not contiguous — the highest is 3580 across 3,574 records — so a range of identifiers never describes the corpus.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Source-stated publication date
+<code class="fieldname">published_date</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The publication date as the source itself stated it.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Source-stated and collection-bounded. It records what the source said, and it can only fall inside the window collection actually reached. Nothing verifies it against another authority.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Source outlet
+<code class="fieldname">sources.display_name</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The outlet that published the item, taken from the configured source that collected it.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>De-duplication across sources is first-writer-wins, so an item carried by several outlets is held once, under whichever source stored it first. Outlet totals are counts of stored records, not of publication volume.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Publishing institution
+<code class="fieldname">institutions.display_name</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The institution behind the outlet.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent in this snapshot. A source configured without an institution would leave it empty.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>The corpus is heavily concentrated: CMC Political Work Department accounts for 3,448 of 3,574 records (96.5%). Institution totals describe this collection, not the wider field.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Original language
+<code class="fieldname">sources.language_tag</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The language of the original item. It is an attribute of the source, inherited by every record collected from it.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Inherited from the configured source and never detected on the record itself. A source that published in a second language would still report its configured one.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Original title
+<code class="fieldname">title_original</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The item&#39;s title as published, stored as captured.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Held as captured and never edited, translated in place, or normalized. It is the authoritative title for this record.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Stored source text
+<code class="fieldname">text_original</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>Body text captured from the source page.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Empty in 45 records.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Extraction can omit material or pull in unrelated page furniture, so no capture is a facsimile. An empty capture is a stored defect, not evidence that the page carried nothing.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Machine-translated English title
+<code class="fieldname">title_english</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>A model&#39;s English rendering of the original title.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Absent for 2,239 records.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Unreviewed machine output. No human has checked it against the original title.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Machine summary
+<code class="fieldname">summary_english</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>A model&#39;s summary of the stored source text.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Absent for 2,239 records.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Unreviewed machine output, and a reading of what was published rather than a verification of it.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Processing state
+<code class="fieldname">passed_relevance, analyzed_at</code>      </th>
+      <td class="d-origin">Derived</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>How far a record traveled through screening and analysis. Every record is in exactly one of the four states above.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent; it is computed for every record.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Processing has four states, not two. Reading the corpus as analyzed-or-not merges records that were screened and set aside with records never screened at all.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Machine assessment
+      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>A software triage cue marking a record for closer review.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Shown only for records in the Analyzed state.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Meaningful only inside the Analyzed state. The stored column defaults to a negative value, so a negative reading cannot tell an assessed record from one that was never assessed — and must never be read as evidence that an unscreened record was assessed and cleared.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Analysis model
+<code class="fieldname">model_id</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The model that produced the English title and summary.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Absent for 2,239 records.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Names the model only. It does not record the model&#39;s configuration or how it behaved on this record.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Prompt version
+<code class="fieldname">prompt_version</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The analysis prompt in force when the record was analyzed.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Absent for 253 of the 1,335 analyzed records.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Where it is absent, the exact prompt behind that record&#39;s English output cannot be established afterward.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Capture fingerprint
+<code class="fieldname">content_hash</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>A hash taken once, at capture, over the stored original title and text.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>A capture-time fingerprint that is never recomputed. It records what arrived; it is not a continuing integrity guarantee, and a later correction to the stored text would leave it stale.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Collection run
+<code class="fieldname">scrape_run_id</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The pipeline run that stored the record.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Run history preserves no target publication date and no historical source-level outcome, so a run identifier does not establish which sources were reached or which dates were sought.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Collection timestamp
+<code class="fieldname">scraped_at</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>When the pipeline stored the record.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>A pipeline collection timestamp in UTC — not a reader access date and not a publication time. Publication dates are stated on the source&#39;s own calendar, so the two do not align.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Original URL
+<code class="fieldname">url</code>      </th>
+      <td class="d-origin">Stored</td>
+      <td class="d-meaning"><span class="d-key">What it means. </span>The address the item was collected from.</td>
+      <td class="d-absent"><span class="d-key">When absent. </span>Never absent.</td>
+      <td class="d-limit"><span class="d-key">Limitation. </span>Recorded as collected. Whether it still resolves is not checked when this page is built.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="citation">Identifiers and citation guidance</h2>
+<p>Each record has an identifier and a page inside this snapshot. Both are
+locators, and neither is a permanent public name.</p>
+<p>A record identifier locates an item <em>within the
+2026-08-26 snapshot</em>. It is not a DOI, not an accession number, and
+not a public permalink; no resolver, registry, or persistence commitment stands
+behind it. Identifiers are not contiguous either — the highest is
+3580 across 3,574 records — so a
+range of identifiers never describes this corpus, and no citation should quote
+one.</p>
+<p>Because a record identifier is snapshot-scoped, a citation has to carry the
+snapshot with it. Citing a record means citing two things: the source text as
+its publisher issued it, and the record as this corpus holds it. Those are
+separate claims with separate evidence, so the citation on each record page
+states them as two separate blocks, followed by a note saying exactly how far
+that record was processed.</p>
+<p>The snapshot itself is dated, not versioned. No semantic version is invented
+for a corpus with no release discipline: use the snapshot date. When the corpus
+changes, the date advances and the change is recorded in the changelog
+below.</p>
+
+<h3>Citing the corpus</h3>
+<div class="cite-block">
+  <p class="cite-text" id="cite-corpus">Indo-Pacific Record. China Desk Corpus. Snapshot — 2026-08-26. 3,574 records. Benjamin Yang, Creator and Editor.</p>
+  <button type="button" class="cite-copy" data-copy="cite-corpus" hidden>Copy corpus citation</button>
+  <p class="cite-status" role="status" aria-live="polite"></p>
+</div>
+
+<h3>Citing a record</h3>
+<p>Each record page carries its own citation in two blocks — the source text as
+its publisher issued it, then the record as this corpus holds it — followed by a
+note stating exactly how far that record was processed. The source-text block
+always quotes the original-language title; the machine translation is never
+substituted for it.</p>
+
+<h3>Citing an edition</h3>
+<p>Editions of <em>The PLA Watch</em> are published artifacts with their own
+issue numbers and canonical addresses, and they are cited as published. On
+<a href="analysis.html">Analysis</a>, each edition in the archive carries its own
+citation behind a “Cite this issue” disclosure. Week-ending dates read as
+<span class="nowrap">8 August 2026</span> in citations, while the archive table
+keeps ISO dates.</p>
+
+
+<h2 id="changelog">Corpus changelog</h2>
+<p>A hand-written record of what changed in this corpus and what is known to be
+missing from it. It is maintained by the editor, entry by entry. It is not
+generated from repository history, and it is not a collection-health log —
+current run results and the vocabulary used to describe them belong to
+<a href="coverage.html">Coverage</a>, which this does not duplicate.</p>
+
+<h3 id="entry-2026-08-19">Initial documented snapshot — 2026-08-26</h3>
+<p>The first snapshot of this corpus to be documented for readers. What follows begins with what is missing from it.</p>
+<dl class="changelog">
+  <dt>A recorded collection interruption</dt>
+  <dd>No pipeline run is recorded on the UTC dates 2026-07-17 through 2026-07-24, and no record in this snapshot carries a source-stated publication date inside that window.</dd>
+  <dt>The interruption cannot be quantified</dt>
+  <dd>What those dates would have held is not recoverable from stored data. Run records preserve no target publication date and no source-level outcome, so the volume missed can be neither reconstructed nor estimated. It is not counted, and its absence is not evidence that nothing was published.</dd>
+  <dt>A processing backlog</dt>
+  <dd>837 records have not completed analysis and are not settled as out of scope: 834 are awaiting screening and 3 passed screening without a completed analysis.</dd>
+  <dt>Most records carry no English rendering</dt>
+  <dd>2,239 of 3,574 records hold no machine-translated title. The same records — the same identifiers, not merely the same total — also hold no machine summary and no analysis-model record, and they are exactly the records outside the Analyzed state. English coverage is a property of the analyzed subset, not of the corpus.</dd>
+  <dt>Some captures stored no source text</dt>
+  <dd>45 records hold an empty body capture. The original URL remains recorded for each; the empty value is a stored capture defect, not evidence that the page was blank.</dd>
+  <dt>Repeats across outlets are held once</dt>
+  <dd>De-duplication across sources is first-writer-wins. An item carried by more than one outlet is stored under whichever source reached it first, so per-outlet totals count stored records rather than how often something was published.</dd>
+  <dt>Snapshot and size</dt>
+  <dd>This snapshot is dated 2026-08-26 and holds 3,574 records from 4 outlets and 3 institutions, with source-stated publication dates from 2026-05-07 onward.</dd>
+</dl>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <p>Benjamin Yang, Creator and Editor ·
+    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+    <p>Selective coverage. Publication records what an institution said, not whether its claims
+    are true or its capabilities exist.</p>
+    <p><strong>Release candidate.</strong> Built in <code>indo-pacific-record</code> mode and not published
+    or deployed. The public site continues under its current identity until a separately
+    authorized launch.</p>
+  </div>
+</footer>
+<script src="citation.js" defer></script></body>
+</html>
