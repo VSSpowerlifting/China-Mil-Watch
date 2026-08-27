@@ -13,8 +13,12 @@ disposition, every redirect lands somewhere real in one hop, nothing loops,
 nothing mass-redirects distinct records to a home page, and no historical page
 is dressed up as having been published under a name it never carried.
 
-Nothing here deploys a redirect. No workflow, no DNS, no domain. The launch
-executes this map; this branch only pins it.
+The launch executed this map on 2026-08-27. What the predecessor published is
+now a historical fact rather than a live directory, so completeness is checked
+against `site/predecessor_routes.txt` — frozen from the last predecessor
+deployment — and the emitted side is checked against a real build. Reading
+`output/` for the first question would compare the map against the site it
+transitions *to*.
 """
 
 from __future__ import annotations
@@ -61,24 +65,35 @@ class TestTheMapIsComplete(MapCase):
 
     def test_every_published_route_has_a_disposition(self):
         """
-        Read from the deployed tree, not from a list. A route that exists and
-        was never written down is exactly the one that breaks at launch.
+        A route the predecessor served and nobody wrote down is exactly the one
+        that breaks. The record of what it served is frozen, so this stays
+        answerable now that the tree that proved it has been replaced.
         """
-        if not PRODUCTION_OUT.is_dir():
-            self.skipTest("no output/ in this tree")
-        published = set(self.t.production_routes())
+        published = set(self.t.predecessor_routes())
         declared = {r.old for r in self.map}
         missing = sorted(published - declared)
         self.assertEqual(missing, [],
                          "published routes with no recorded disposition")
 
     def test_the_map_declares_no_route_that_does_not_exist(self):
-        if not PRODUCTION_OUT.is_dir():
-            self.skipTest("no output/ in this tree")
-        published = set(self.t.production_routes())
+        published = set(self.t.predecessor_routes())
         declared = {r.old for r in self.map}
         self.assertEqual(sorted(declared - published), [],
-                         "the map describes routes the site does not serve")
+                         "the map describes routes the predecessor never served")
+
+    def test_the_frozen_record_matches_the_last_predecessor_deployment(self):
+        """
+        Twenty-five route patterns, which is the whole of what China Mil Watch
+        ever served. A file that can be edited without anything noticing is not
+        a record.
+        """
+        published = self.t.predecessor_routes()
+        self.assertEqual(len(published), 25)
+        for required in ("/", "/article/{id}.html", "/signals.html",
+                         "/the-pla-watch/posts/{date}.html",
+                         "/the-pla-watch/feed.xml"):
+            with self.subTest(route=required):
+                self.assertIn(required, published)
 
     def test_every_disposition_is_defined_in_the_map_itself(self):
         for route in self.map:
@@ -256,8 +271,15 @@ class TestTheCandidateHonoursTheMap(unittest.TestCase):
                 self.assertTrue((self.out / route.new.lstrip("/")).is_file())
 
     def test_every_legacy_record_route_resolves_to_a_real_record(self):
+        """
+        One stub per address that was public, not one per record. The legacy
+        renderer built `/article/` from the analyzed articles, so that is the
+        set of addresses that can be cited, and the set the compatibility
+        namespace has to cover — no more.
+        """
         stubs = sorted((self.out / "article").glob("*.html"))
-        self.assertEqual(len(stubs), self.result["records"])
+        self.assertEqual(len(stubs), self.result["legacy_redirects"])
+        self.assertLessEqual(len(stubs), self.result["records"])
         for stub in stubs:
             html = stub.read_text(encoding="utf-8")
             match = re.search(r'href="\.\./record/(\d+)\.html"', html)

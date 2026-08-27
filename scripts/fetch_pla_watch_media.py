@@ -49,7 +49,7 @@ MEDIA_DIR = ROOT / "output" / "the-pla-watch" / "media"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 USER_AGENT = (
     "ChinaMilWatch-PLAWatch-MediaFetcher/0.1 "
-    "(https://chinamilwatch.org; contact via site)"
+    "(https://indopacificrecord.org; contact via site)"
 )
 HTTP_TIMEOUT = 20
 

@@ -6,10 +6,10 @@
 
 {% block meta_description %}{{ dek }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}https://chinamilwatch.org/the-pla-watch/posts/{{ date }}.html{% endblock %}
+{% block og_url %}{{ site_origin }}/the-pla-watch/posts/{{ date }}.html{% endblock %}
 {% block og_title %}{{ title }}{% endblock %}
 {% block og_description %}{{ dek }}{% endblock %}
-{% block og_image %}{% if cover_image_url %}{{ cover_image_url }}{% else %}https://chinamilwatch.org/og-image.png{% endif %}{% endblock %}
+{% block og_image %}{% if cover_image_url %}{{ cover_image_url }}{% else %}{{ site_origin }}/og-image.png{% endif %}{% endblock %}
 
 {% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% endblock %}
 
@@ -1093,7 +1093,7 @@
 
     <div class="sb-card">
       <div class="sb-eyebrow">Cite this edition</div>
-      <div class="cite-text" id="pw-cite">{% if author_name %}{{ author_name }}, {% endif %}“{{ title }},” <em>The PLA Watch</em>{% if issue_number %} No. {{ issue_number }}{% endif %}, China Mil Watch, {{ week_ending | format_date }}. https://chinamilwatch.org/the-pla-watch/posts/{{ date }}.html</div>
+      <div class="cite-text" id="pw-cite">{% if author_name %}{{ author_name }}, {% endif %}“{{ title }},” <em>The PLA Watch</em>{% if issue_number %} No. {{ issue_number }}{% endif %}, China Mil Watch, {{ week_ending | format_date }}. {{ site_origin }}/the-pla-watch/posts/{{ date }}.html</div>
       <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
     </div>
 

@@ -23,6 +23,8 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from config import SITE_ORIGIN
+
 from scripts.pw_env import (
     build_atom_feed,
     copy_editorial_assets,
@@ -146,7 +148,7 @@ def _cover_paths(sidecar: dict) -> tuple[str, str, str]:
     rel = f"../covers/{sidecar_date}.png"
     thumb = f"../covers/{sidecar_date}-thumb.png"
     abs_url = (
-        f"https://chinamilwatch.org/the-pla-watch/covers/{sidecar_date}.png"
+        f"{SITE_ORIGIN}/the-pla-watch/covers/{sidecar_date}.png"
     )
     return rel, thumb, abs_url
 
@@ -316,8 +318,8 @@ def _build_post_context(sidecar: dict) -> dict:
 
         "root_path": "../../",
         "page_url": (
-            f"https://chinamilwatch.org/the-pla-watch/posts/{sidecar.get('date', '')}.html"
-            if sidecar.get("date") else "https://chinamilwatch.org/the-pla-watch/"
+            f"{SITE_ORIGIN}/the-pla-watch/posts/{sidecar.get('date', '')}.html"
+            if sidecar.get("date") else f"{SITE_ORIGIN}/the-pla-watch/"
         ),
     }
 
@@ -436,7 +438,7 @@ def main() -> int:
     )
     index_html = index_tmpl.render(
         latest_post=latest, archive_posts=archive_posts, root_path="../",
-        page_url="https://chinamilwatch.org/the-pla-watch/",
+        page_url=f"{SITE_ORIGIN}/the-pla-watch/",
         latest_veil=latest_veil,
     )
     (PLA_WATCH_DIR / "index.html").write_text(index_html, encoding="utf-8")
@@ -444,7 +446,7 @@ def main() -> int:
 
     archive_html = archive_tmpl.render(
         posts=sidecars, root_path="../",
-        page_url="https://chinamilwatch.org/the-pla-watch/archive.html",
+        page_url=f"{SITE_ORIGIN}/the-pla-watch/archive.html",
     )
     (PLA_WATCH_DIR / "archive.html").write_text(archive_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'archive.html').relative_to(ROOT)}")
@@ -465,7 +467,7 @@ def main() -> int:
     terms_tmpl = env.get_template("pla-watch-terms.html")
     terms_html = terms_tmpl.render(
         terms=terms, root_path="../",
-        page_url="https://chinamilwatch.org/the-pla-watch/terms.html",
+        page_url=f"{SITE_ORIGIN}/the-pla-watch/terms.html",
     )
     (PLA_WATCH_DIR / "terms.html").write_text(terms_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'terms.html').relative_to(ROOT)} "

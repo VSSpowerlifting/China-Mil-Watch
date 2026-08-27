@@ -39,6 +39,14 @@ if str(REPO_ROOT) not in sys.path:
 
 from scripts.reconcile_db import read_only                      # noqa: E402
 
+#: The published origin. Deliberately a literal rather than `from config import
+#: SITE_ORIGIN`: this script is the deploy gate and the workflow runs it on the
+#: runner's system Python, with none of the project's dependencies installed.
+#: Importing `config` would pull in python-dotenv and fail the deploy before it
+#: validated anything. `tests/test_site_mode_contract.py` asserts this value and
+#: `config.SITE_ORIGIN` agree, so the copy cannot drift.
+SITE_ORIGIN = "https://indopacificrecord.org"
+
 # Jinja markers that indicate an unrendered template. Deliberately excludes the
 # bare "}}" because minified CSS media queries legitimately end in "}}"; any
 # unrendered expression still contains "{{", so detection stays complete.
@@ -506,7 +514,7 @@ def _validate_pla_watch(output_dir: Path, errors: list, warnings: list) -> None:
                     f"but {len(sidecars)} editions")
             feed_ids = {e.findtext(f"{ns}id") or "" for e in entries}
             for sc in sidecars:
-                url = (f"https://chinamilwatch.org/the-pla-watch/posts/"
+                url = (f"{SITE_ORIGIN}/the-pla-watch/posts/"
                        f"{sc.get('date', '')}.html")
                 if url not in feed_ids:
                     errors.append(

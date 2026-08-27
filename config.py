@@ -21,6 +21,21 @@ OUTPUT_DIR = ROOT_DIR / "output"
 DB_PATH    = ROOT_DIR / "pla_watch.db"
 
 # ---------------------------------------------------------------------------
+# Published origin
+# ---------------------------------------------------------------------------
+# The absolute origin the published site is served from. One constant, because
+# a canonical URL, a sitemap entry, a feed id and an Open Graph URL all have to
+# agree, and the way they stop agreeing is by each carrying its own copy.
+#
+# Changed 2026-08-27 from https://chinamilwatch.org as part of the Indo-Pacific
+# Record launch. Rolling the launch back means changing this back *and*
+# changing DEFAULT_SITE_MODE in site/render.py back to LEGACY; they are two
+# constants and they move together. site/generator.py, the legacy renderer,
+# deliberately does not read this — it still writes the predecessor's own
+# addresses, so a rollback re-renders exactly the site that was there before.
+SITE_ORIGIN: str = "https://indopacificrecord.org"
+
+# ---------------------------------------------------------------------------
 # Secrets
 # ---------------------------------------------------------------------------
 ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", "")

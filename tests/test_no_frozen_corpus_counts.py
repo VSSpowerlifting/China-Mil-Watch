@@ -174,10 +174,25 @@ class FrozenCountCase(unittest.TestCase):
 class TestTheGuardHasSomethingToGuard(FrozenCountCase):
 
     def test_there_are_moving_figures_to_check(self):
-        """A guard measuring nothing passes for the wrong reason."""
+        """
+        A guard measuring nothing passes for the wrong reason.
+
+        Which figures are in scope is not fixed. `moving_figures()` drops any
+        value equal to the declared snapshot's record count, because that one
+        number is *supposed* to be written down. Immediately after a snapshot
+        is advanced the stored-record count equals it, so "stored records"
+        leaves the set for as long as the corpus stays where the snapshot froze
+        it — the case the function's own comment anticipates. Requiring that
+        particular key would make this guard fail every time a snapshot is
+        accepted, which is the one moment it is least useful to break.
+
+        So the requirement is that the guard is measuring several real,
+        substantial figures — not that it is measuring one named one.
+        """
         self.assertTrue(self.figures)
-        self.assertIn("stored records", self.figures)
-        self.assertGreaterEqual(self.figures["stored records"], FLOOR)
+        self.assertGreaterEqual(len(self.figures), 4)
+        self.assertTrue(all(value >= FLOOR for value in self.figures.values()))
+        self.assertIn("analyzed records", self.figures)
 
 
 class TestNoFrozenCorpusCounts(FrozenCountCase):

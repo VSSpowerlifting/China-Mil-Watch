@@ -41,6 +41,19 @@ PRODUCTION_OUT = REPO_ROOT / "output"
 DAILY_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "daily_update.yml"
 
 
+def OUTPUT_DEFAULT_CHECK(render):
+    """
+    Returns None when an omitted destination resolves to production `output/`,
+    or a description of what went wrong. Written as a probe rather than a call
+    so it does not have to run a full build to answer the question.
+    """
+    import inspect
+    source = inspect.getsource(render.render_site)
+    if "OUTPUT_DIR.resolve()" not in source:
+        return "render_site() no longer falls back to OUTPUT_DIR"
+    return None
+
+
 def load_render():
     spec = importlib.util.spec_from_file_location("site_render", RENDER_PY)
     mod = importlib.util.module_from_spec(spec)
@@ -49,14 +62,15 @@ def load_render():
 
 
 class TestModeResolution(unittest.TestCase):
-    """Selection is explicit, defaults to legacy, and never guesses."""
+    """Selection is explicit, defaults to the published mode, never guesses."""
 
     def setUp(self):
         self.r = load_render()
 
-    def test_the_default_mode_is_legacy(self):
-        self.assertEqual(self.r.DEFAULT_SITE_MODE, self.r.LEGACY)
-        self.assertEqual(self.r.resolve_site_mode(environ={}), self.r.LEGACY)
+    def test_the_default_mode_is_the_published_mode(self):
+        self.assertEqual(self.r.DEFAULT_SITE_MODE, self.r.INDO_PACIFIC_RECORD)
+        self.assertEqual(self.r.resolve_site_mode(environ={}),
+                         self.r.INDO_PACIFIC_RECORD)
 
     def test_an_unsupported_mode_fails_closed(self):
         """No silent fallback: a typo must stop the run, not publish legacy."""
@@ -74,13 +88,24 @@ class TestModeResolution(unittest.TestCase):
         """
         self.assertEqual(
             self.r.resolve_site_mode(environ={self.r.SITE_MODE_ENV: ""}),
-            self.r.LEGACY)
+            self.r.INDO_PACIFIC_RECORD)
 
     def test_an_unsupported_environment_value_fails_closed(self):
         with self.assertRaises(self.r.UnsupportedSiteMode):
             self.r.resolve_site_mode(environ={self.r.SITE_MODE_ENV: "nonsense"})
 
-    def test_the_candidate_must_be_selected_explicitly(self):
+    def test_legacy_remains_reachable_for_rollback(self):
+        """
+        Rolling the launch back is selecting legacy again. If that stopped
+        working, the rollback story would be a rewrite rather than a revert.
+        """
+        self.assertEqual(self.r.resolve_site_mode(self.r.LEGACY, environ={}),
+                         self.r.LEGACY)
+        self.assertEqual(
+            self.r.resolve_site_mode(environ={self.r.SITE_MODE_ENV: "legacy"}),
+            self.r.LEGACY)
+
+    def test_the_published_mode_can_also_be_selected_explicitly(self):
         self.assertEqual(
             self.r.resolve_site_mode(self.r.INDO_PACIFIC_RECORD, environ={}),
             self.r.INDO_PACIFIC_RECORD)
@@ -150,25 +175,68 @@ class TestScheduledWorkflowCannotReachTheNewMode(unittest.TestCase):
         self.assertIn("scripts/generate_pla_watch.py", wf)
 
 
-class TestCandidateRefusesProduction(unittest.TestCase):
+class TestTheRendererStillCannotOverwriteProductionDirectly(unittest.TestCase):
+    """
+    Before the launch, `render_site()` refused `output/` outright: a dormant
+    candidate that could reach the published tree is one typo away from
+    replacing it. `output/` is now the tree this mode is supposed to write, so
+    that refusal moved rather than vanished.
+
+    The renderer itself still cannot touch production. `render_site()` builds
+    into a scratch directory and exchanges the result in, precisely so the
+    guard inside `generate_preview.build()` — the one that fails independently
+    of anything in `render.py` — keeps standing. These tests hold that guard in
+    place, because a publish path that quietly gained the ability to render
+    straight into `output/` would lose the step that preserves the thirteen
+    editions and the cited assets.
+    """
 
     def setUp(self):
         self.r = load_render()
+        spec = importlib.util.spec_from_file_location(
+            "gp_probe",
+            REPO_ROOT / "site" / "preview" / "generate_preview.py")
+        self.gp = importlib.util.module_from_spec(spec)
+        sys.modules["generate_preview"] = self.gp
+        spec.loader.exec_module(self.gp)
 
-    def test_it_refuses_to_run_without_a_destination(self):
-        with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.INDO_PACIFIC_RECORD, environ={})
+    def snapshot(self):
+        """
+        Derived, not inherited. A build against the tracked database that falls
+        back to `DECLARED_SNAPSHOT` starts failing the moment production
+        collects, which `test_corpus_advance_does_not_block_production` exists
+        to prevent. The destination guard fires before the snapshot is ever
+        checked here, but a test that only works because of the order two
+        guards happen to run in is a test waiting to break.
+        """
+        return self.gp.snapshot_from_corpus(TRACKED_DB)
 
-    def test_it_refuses_the_production_output_directory(self):
-        with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.INDO_PACIFIC_RECORD,
-                               output_dir=PRODUCTION_OUT, environ={})
+    def test_the_builder_still_refuses_the_production_output_directory(self):
+        with self.assertRaises(SystemExit):
+            self.gp.build(PRODUCTION_OUT, self.gp.PUBLIC_TITLE, TRACKED_DB,
+                          snapshot=self.snapshot(),
+                          site_origin="https://a-real-domain.org")
 
-    def test_it_refuses_a_directory_inside_production_output(self):
-        with self.assertRaises(self.r.UnsupportedSiteMode):
-            self.r.render_site(self.r.INDO_PACIFIC_RECORD,
-                               output_dir=PRODUCTION_OUT / "nested",
-                               environ={})
+    def test_the_builder_still_refuses_a_directory_inside_it(self):
+        with self.assertRaises(SystemExit):
+            self.gp.build(PRODUCTION_OUT / "nested", self.gp.PUBLIC_TITLE,
+                          TRACKED_DB, snapshot=self.snapshot(),
+                          site_origin="https://a-real-domain.org")
+
+    def test_publishing_goes_through_the_exchange_rather_than_a_direct_write(self):
+        """
+        The property that makes the guard above survivable. If this ever built
+        straight into the destination, the carried-forward entries would be
+        deleted by the builder before anything could preserve them.
+        """
+        source = RENDER_PY.read_text(encoding="utf-8")
+        self.assertIn("tempfile.TemporaryDirectory", source)
+        self.assertIn("CARRIED_FORWARD", source)
+
+    def test_the_published_tree_defaults_to_production(self):
+        """The daily run passes no destination. After the launch that has to
+        mean `output/`, or the scheduled publish stops publishing."""
+        self.assertIsNone(OUTPUT_DEFAULT_CHECK(self.r))
 
     def test_the_renderer_reads_the_database_read_only(self):
         gp = (REPO_ROOT / "site" / "preview"
@@ -198,9 +266,15 @@ class TestCandidateBuild(unittest.TestCase):
         gp = importlib.util.module_from_spec(spec)
         sys.modules["gp_snapshot"] = gp
         spec.loader.exec_module(gp)
+        # render_site() is the publishing path, so on the launch branch it
+        # fails closed without an origin. A reserved `.invalid` host keeps this
+        # a test build: it can never resolve, so a tree built here cannot be
+        # mistaken for a publishable one, and the named opt-in is required.
         cls.report = cls.r.render_site(
             cls.r.INDO_PACIFIC_RECORD, output_dir=cls.out, environ={},
-            snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+            snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+            site_origin="https://site-mode-contract.invalid",
+            allow_test_origin=True)
 
     @classmethod
     def tearDownClass(cls):
@@ -228,12 +302,18 @@ class TestCandidateBuild(unittest.TestCase):
 
     def test_legacy_record_routes_are_preserved_as_redirects(self):
         """
-        /article/<id>.html is live today. Every one must still resolve after a
-        launch, and must point at a record page that exists in this snapshot.
+        /article/<id>.html was live under the predecessor. Every one must still
+        resolve, and must point at a record page that exists in this snapshot.
+
+        The count is the number of addresses that were public there — the
+        analyzed articles — not the number of records. A record that was stored
+        but never published as an article never had an `/article/` address, and
+        minting one for it would invent a citation target rather than preserve
+        one.
         """
         stubs = sorted((self.out / "article").glob("*.html"))
-        self.assertEqual(len(stubs), self.report["records"])
         self.assertEqual(len(stubs), self.report["legacy_redirects"])
+        self.assertLessEqual(len(stubs), self.report["records"])
         checked = 0
         for stub in stubs:
             html = stub.read_text(encoding="utf-8")

@@ -195,14 +195,41 @@ def load_map(path: Optional[Path] = None) -> TransitionMap:
     )
 
 
+#: What the predecessor published, frozen at launch. See the file's own header.
+PREDECESSOR_ROUTES = Path(__file__).resolve().parent / "predecessor_routes.txt"
+
+
+def predecessor_routes(path: Optional[Path] = None) -> List[str]:
+    """
+    Every route China Mil Watch served, as map patterns.
+
+    Frozen rather than derived. `production_routes()` below reads the deployed
+    tree, which was the right source for this question while the deployed tree
+    *was* the predecessor's. Since the launch it is Indo-Pacific Record's, and
+    asking it what the predecessor published would get an answer about the
+    successor. The transition map is a promise about addresses that existed;
+    this is the record of which addresses those were.
+    """
+    source = Path(path or PREDECESSOR_ROUTES)
+    routes = []
+    for line in source.read_text(encoding="utf-8").splitlines():
+        route = line.strip()
+        if route and not route.startswith("#"):
+            routes.append(route)
+    return sorted(set(routes))
+
+
 def production_routes(output_dir: Optional[Path] = None) -> List[str]:
     """
-    Every route the published site currently serves, as map patterns.
+    Every route a built tree serves, as map patterns.
 
-    Read from the deployed tree rather than from a list, so a route that exists
-    but was never written down is discoverable. Directory-index files also
-    yield their bare directory address, because that is the address people
-    actually hold.
+    Still derived rather than listed, and still the right tool for asking what
+    a tree in hand actually contains — the launch verification uses it on the
+    freshly built site. It is no longer the answer to "what did the predecessor
+    publish": use `predecessor_routes()` for that.
+
+    Directory-index files also yield their bare directory address, because that
+    is the address people actually hold.
     """
     out = Path(output_dir or PRODUCTION_OUT)
     if not out.is_dir():

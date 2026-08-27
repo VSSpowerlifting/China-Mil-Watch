@@ -3,10 +3,22 @@
 What has to be true before Indo-Pacific Record replaces China Mil Watch as the
 public identity, what the launch mechanically does, and how to roll it back.
 
-**Nothing in this document has been executed.** The branch it lives on is a
-local release candidate. `DEFAULT_SITE_MODE` is `LEGACY`, `DECLARED_SNAPSHOT`
-is unchanged, no workflow was dispatched, no ref was pushed, and no redirect
-exists anywhere but in `site/url_transition_map.json`.
+**Executed 2026-08-27.** `DEFAULT_SITE_MODE` is `INDO_PACIFIC_RECORD`,
+`DECLARED_SNAPSHOT` is `2026-08-26` / 3,574 / `d5b897cd…`, `output/CNAME` is
+`indopacificrecord.org`, and `chinamilwatch.org` is served by a separate
+redirect-only Pages site that sends each of its 1,451 published addresses to
+its counterpart here. `DECISION_LOG.md` 2026-08-27 records what the launch
+constrains; this document is kept as the plan it followed, corrected below
+where the plan and the execution differed.
+
+Two things the plan did not anticipate, both found by building it:
+
+* The renderer is forbidden from the predecessor namespace, so it emits none of
+  it. Replacing `output/` with its output would have deleted the thirteen
+  editions and the cited assets. The publish is an exchange — see
+  `CARRIED_FORWARD` in `site/render.py`.
+* `/signals.html` moves, but the renderer emits no legacy route outside
+  `/article/`. The publish writes that stub.
 
 ---
 
@@ -18,19 +30,24 @@ exists anywhere but in `site/url_transition_map.json`.
 | 2 | That desk's source universe published | Scope is written down (`shadow/singapore_mindef/README.md`, and the registry entry). Publishing it is part of the launch, not of shadow. |
 | 3 | Coverage health public | **Ready.** The candidate's Coverage page renders every stored outcome per source per run. |
 | 4 | The 2026-07-17→24 collection outage disclosed | **Ready.** It renders on Coverage as a recorded gap, and on the legacy series page as the reason an edition is missing. |
-| 5 | Owner sign-off recorded in `DECISION_LOG.md` | **Not done.** |
+| 5 | Owner sign-off recorded in `DECISION_LOG.md` | **Done**, 2026-08-27. |
 | 6 | Trademark screening for "Indo-Pacific Record" | **Not performed.** A lawyer's job. |
-| 7 | Domain, DNS, social handles, organization naming | **Not selected.** Explicitly outside this branch. |
+| 7 | Domain, DNS, social handles, organization naming | **Domain and DNS done**: `indopacificrecord.org`, apex A/AAAA and `www` CNAME on Namecheap BasicDNS, account domain verified. Handles and organization naming remain open. |
 | 8 | License | **Not chosen.** |
 
-Gates 1, 5, 6, 7 and 8 are blocking. Nothing on this branch advances any of
-them, and nothing on this branch should be read as claiming otherwise.
+Gates 5 and 7 were closed at the launch. **Gates 1, 6 and 8 remain open**:
+no second desk has thirty consecutive collecting days, no trademark screening
+has been performed, and no licence has been chosen. The launch proceeded on the
+owner's explicit instruction with those three outstanding, which is a decision
+rather than an oversight, and none of the published pages claims otherwise —
+the desk directory still shows one collecting desk of four.
 
 ---
 
 ## 2. What the launch mechanically is
 
-Four changes, in this order. Each is reversible on its own.
+Six changes, in this order. Each is reversible on its own. The first four are
+as planned; the last two were found while executing it.
 
 1. **Advance `DECLARED_SNAPSHOT`** in `site/preview/generate_preview.py` — date,
    record count **and** logical fingerprint, together, deliberately, with a
@@ -45,14 +62,27 @@ Four changes, in this order. Each is reversible on its own.
 4. **Regenerate `sitemap.xml` and `robots.txt`** so the sitemap lists
    destinations rather than redirects.
 
-**Rollback is step 2 in reverse**, and it is complete: the legacy renderer is
-untouched by any of this, and `output/` is regenerated from the database on
-every run.
+5. **Carry the predecessor namespace across.** `the-pla-watch/`, `assets/`,
+   `data/`, the predecessor marks and `CNAME` are lifted out of `output/`
+   before the new tree replaces it and put back after. The weekly pages are
+   re-rendered against the new origin so the archive does not canonicalise
+   itself onto a domain that redirects back to it.
+6. **Write the `/signals.html` stub and put the carried pages back into the
+   sitemap.** Neither is something the renderer can do: it does not own
+   `/signals.html`, and it cannot list pages it is forbidden to see.
+
+**Rollback is step 2 in reverse, plus `SITE_ORIGIN`**: set `DEFAULT_SITE_MODE`
+back to `LEGACY` and `config.SITE_ORIGIN` back to `https://chinamilwatch.org`,
+then re-run the daily workflow. The legacy renderer is untouched by any of
+this and does not read `SITE_ORIGIN`, so it rebuilds exactly the site that was
+there before. `output/` is regenerated from the database on every run.
 
 ### What the launch is not
 
-It is not a repository migration, a database migration, a schema change, a
-domain change, or a rewrite of any published page. The corpus, the record ids,
+It is not a repository migration, a database migration, a schema change, or a
+rewrite of any published page. It *is* a domain change — that was decided after
+this document was first written, and it is why the predecessor domain now has a
+redirect site of its own rather than simply being dropped. The corpus, the record ids,
 the source slugs, the content hashes and the thirteen published editions are the
 same objects before and after.
 

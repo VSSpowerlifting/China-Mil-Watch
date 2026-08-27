@@ -18,6 +18,8 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import Markup, escape
 
+from config import SITE_ORIGIN
+
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "site" / "templates"
 
 # Inline tags allowed to pass through prose fields. Some early sidecars carry
@@ -64,7 +66,7 @@ def build_atom_feed(sidecars: list) -> str:
     """
     from xml.sax.saxutils import escape as xml_escape
 
-    site = "https://chinamilwatch.org/the-pla-watch"
+    site = f"{SITE_ORIGIN}/the-pla-watch"
     posts = sorted(
         [s for s in sidecars if s.get("date")],
         key=lambda s: s["date"], reverse=True,
@@ -421,4 +423,8 @@ def make_pw_env() -> Environment:
     env.filters["format_date"] = format_date
     env.filters["inline_markup"] = inline_markup
     env.filters["first_cjk"] = first_cjk
+    # The published origin, as a template global. A canonical, an og:url, an
+    # og:image and a feed link all have to name the same host, and six copies
+    # of a literal is how they stop doing that.
+    env.globals["site_origin"] = SITE_ORIGIN
     return env

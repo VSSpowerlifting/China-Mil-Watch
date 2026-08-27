@@ -1,0 +1,40 @@
+# Every route China Mil Watch served, as url_transition_map.json patterns.
+#
+# Frozen 2026-08-27 from the last predecessor deployment, gh-pages
+# 099b7b41e9a85ca014898b97b90e3327a5d38322. Until the launch this list was read
+# live from output/, which was the right source while output/ held the
+# predecessor's tree. It now holds Indo-Pacific Record, so reading it live would
+# compare the map against the site it transitions *to* and report every new
+# route as an undocumented one.
+#
+# What the predecessor published is a historical fact. Recording it here keeps
+# the promise checkable after the tree that proved it is gone.
+#
+# `/CNAME` is here because the deployed tree really did serve it and the map
+# gives it a disposition. `/.nojekyll` is not: the deploy action writes it onto
+# gh-pages, it has never existed in output/, and the map has never claimed it.
+/
+/CNAME
+/archive.html
+/article/{id}.html
+/assets/editorial/{file}
+/data/articles.json
+/favicon.svg
+/index.html
+/logo-icon.png
+/logo-wordmark.png
+/methodology.html
+/og-image.png
+/robots.txt
+/signals.html
+/sitemap.xml
+/the-pla-watch/
+/the-pla-watch/.gitkeep
+/the-pla-watch/archive.html
+/the-pla-watch/covers/{file}
+/the-pla-watch/feed.xml
+/the-pla-watch/index.html
+/the-pla-watch/media/{file}
+/the-pla-watch/posts/{date}.html
+/the-pla-watch/posts/{date}.json
+/the-pla-watch/terms.html

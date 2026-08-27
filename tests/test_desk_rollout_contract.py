@@ -273,13 +273,24 @@ class TestLegacyChinaRoutesSurvive(DeskCase):
             with self.subTest(edition=edition):
                 self.assertTrue(path.is_file())
 
-    def test_the_preview_links_editions_to_the_live_site_and_copies_none(self):
+    def test_the_series_page_links_editions_to_the_live_site_and_copies_none(self):
+        """
+        Linked, never copied. The sidecars are the canonical edition record and
+        a second rendered copy inside this renderer would be a second source of
+        truth that drifts.
+
+        The host in those links is `gp.LIVE_BASE` rather than a literal. It was
+        the predecessor's domain while the editions were served there; at the
+        launch the whole series was carried across at its own paths, so it is
+        now the published origin. The path — which is the part a citation
+        depends on — is unchanged either way, and that is what this asserts.
+        """
         html = self.page("pla-watch.html")
         for edition in self.EDITIONS:
             with self.subTest(edition=edition):
                 self.assertIn(
-                    "https://chinamilwatch.org/the-pla-watch/posts/%s.html"
-                    % edition, html)
+                    "%s/the-pla-watch/posts/%s.html" % (gp.LIVE_BASE, edition),
+                    html)
                 self.assertFalse(
                     (self.out / "the-pla-watch" / "posts"
                      / (edition + ".html")).exists(),
