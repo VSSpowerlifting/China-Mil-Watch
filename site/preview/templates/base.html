@@ -61,6 +61,20 @@
       {% if run_status.disabled %}<li><b>{{ run_status.disabled }}</b> disabled source{{ '' if run_status.disabled == 1 else 's' }}</li>{% endif %}
       {% if run_status.desks is not none %}<li><b>{{ run_status.desks }}</b> collecting desk{{ '' if run_status.desks == 1 else 's' }} of <b>{{ desks|length }}</b> declared</li>{% endif %}
     </ul>
+      {# Three dates, never one. They come apart during a provider failure —
+         collection continues while analysis stops — and a single "last updated"
+         line would have to pick a story. An unknown value says so rather than
+         borrowing a plausible neighbour. #}
+      <ul class="status-facts freshness">
+        <li>Records last collected <b>{{ freshness.records_last_collected or 'not measured' }}</b></li>
+        <li>Analysis last produced <b>{{ freshness.analysis_last_produced or 'not yet recorded' }}</b></li>
+        <li>Last full update <b>{{ freshness.last_full_update or 'not yet recorded' }}</b></li>
+      </ul>
+      {% if freshness.analysis_is_behind_collection %}
+      <p class="status-note">Collection is current; analysis is behind it. Records
+        dated after {{ freshness.analysis_last_produced }} are stored and awaiting
+        screening. <a href="{{ '../' if nested else '' }}methodology.html#freshness">What these dates mean</a>.</p>
+      {% endif %}
   </div>
 </div>
 {% endif %}

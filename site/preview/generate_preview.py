@@ -1717,6 +1717,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         # silently rendered an empty cell instead of "not measured". Local
         # visual QA caught it; nothing in the template layer could have.
         "run_results": coverage_view.results,
+        "freshness": view.freshness(),
         "articles": data["recent"],
         "gaps": gaps,
         "source_facets": sorted(by_source.items()),
