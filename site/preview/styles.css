@@ -879,6 +879,12 @@ footer.site a { color: var(--ocean); }
 /* Freshness strip. Three dates rather than one, so the row wraps on narrow
    viewports instead of truncating a date the reader needs. */
 .status-facts.freshness { margin-top: .35rem; }
+/* Keep each label and its date together, and never break the date itself.
+   At 375px "Last full update 2026-08-24" wrapped as "2026-08-" / "24", and a
+   date split across two lines is a number a reader has to reassemble before
+   trusting. */
+.status-facts.freshness > li { margin-right: 1.25rem; }
+.status-facts.freshness > li > b { white-space: nowrap; }
 .status-note {
   margin: .35rem 0 0;
   font-size: .82rem;

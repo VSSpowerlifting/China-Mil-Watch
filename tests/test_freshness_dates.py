@@ -230,3 +230,35 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheDatesAreReadableOnANarrowViewport(unittest.TestCase):
+    """
+    At 375px the freshness row wrapped "Last full update 2026-08-24" as
+    "2026-08-" / "24". A date split across two lines is a number the reader has
+    to reassemble before trusting, and this row exists precisely to be trusted.
+    """
+
+    @property
+    def css(self):
+        return (ROOT / "site" / "preview" / "styles.css").read_text("utf-8")
+
+    def test_the_date_value_is_kept_on_one_line(self):
+        block = self.css[self.css.index(".status-facts.freshness"):]
+        block = block[:block.index("}", block.index("> li > b")) + 1]
+        self.assertIn("white-space: nowrap", block)
+
+    def test_the_rule_targets_the_value_not_the_whole_row(self):
+        """
+        Nowrapping the row would push it off-screen instead of wrapping between
+        items. Only the date itself may be unbreakable.
+        """
+        rows = [l for l in self.css.splitlines()
+                if l.strip().startswith(".status-facts.freshness {")]
+        self.assertTrue(rows)
+        self.assertNotIn("nowrap", rows[0])
+
+    def test_the_row_can_still_wrap_between_items(self):
+        base = self.css[self.css.index(".status-facts {"):]
+        base = base[:base.index("}") + 1]
+        self.assertIn("flex-wrap: wrap", base)
