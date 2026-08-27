@@ -348,6 +348,72 @@ _STATE_CASE_SQL = (
 )
 
 
+#: Where the daily workflow records a run that finished everything, including
+#: publication. Read as a file rather than from the database because that is
+#: where the workflow writes it, and because a run can store records without
+#: ever reaching this marker — which is precisely the distinction being drawn.
+COMPLETED_RUN_MARKER = REPO_ROOT / ".github" / "state" / "last_daily_run_date.txt"
+
+
+@dataclass(frozen=True)
+class FreshnessView:
+    """
+    Three different dates that a single "last updated" line would conflate.
+
+    They come apart exactly when it matters. During the 2026-08 provider outage
+    collection kept running daily while analysis stopped: records were current
+    to 2026-08-26, the newest analysis was 2026-08-24, and no run had completed
+    end to end since 2026-08-24. One date would have had to pick a story.
+
+      records_last_collected — the newest document actually stored.
+      analysis_last_produced — the newest `analyzed_at` on any record. It says
+          when analysis last ran, NOT that everything up to it was analysed;
+          the backlog is reported separately and deliberately.
+      last_full_update       — the last run that finished everything including
+          publication, from the workflow's own marker. A run that collected and
+          then failed at analysis never writes it, which is the point.
+
+    Any of the three may be unknown. `None` means unmeasured, and the renderer
+    is required to say so rather than substitute a plausible date.
+    """
+
+    records_last_collected: Optional[str] = None
+    analysis_last_produced: Optional[str] = None
+    last_full_update: Optional[str] = None
+
+    @property
+    def analysis_is_behind_collection(self) -> bool:
+        """True only when both are known and analysis genuinely trails."""
+        if not (self.records_last_collected and self.analysis_last_produced):
+            return False
+        return self.analysis_last_produced < self.records_last_collected
+
+    @property
+    def last_run_completed(self) -> bool:
+        """
+        Whether the most recent collection also finished as a full update.
+
+        False while a provider failure is stopping runs short, which is the
+        state a reader most needs named.
+        """
+        if not (self.records_last_collected and self.last_full_update):
+            return False
+        return self.last_full_update >= self.records_last_collected
+
+
+def _marker_date(path=None) -> Optional[str]:
+    path = Path(path) if path else COMPLETED_RUN_MARKER
+    try:
+        value = path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    return value if _looks_like_a_date(value) else None
+
+
+def _looks_like_a_date(value: str) -> bool:
+    return bool(value) and len(value) == 10 and value[4] == "-" and value[7] == "-"
+
+
 class PublicView:
     """
     One read of the database, exposed as the objects the site renders.
@@ -398,6 +464,15 @@ class PublicView:
                 "  JOIN articles a ON a.source_id = s.id "
                 " WHERE s.desk_id IS NOT NULL "
                 " GROUP BY s.desk_id").fetchall()}
+
+            # Read here, with everything else. The class opens one connection
+            # on purpose so a page cannot describe two different corpora; a
+            # lazy second read for freshness would break exactly that.
+            _fresh = con.execute(
+                "SELECT MAX(scraped_at) AS collected,"
+                "       MAX(analyzed_at) AS analysed FROM articles").fetchone()
+            self._last_collected = (_fresh["collected"] or "")[:10] or None
+            self._last_analysed = (_fresh["analysed"] or "")[:10] or None
 
             self._desk_institutions = {
                 r["desk_id"]: r["n"] for r in con.execute(
@@ -613,6 +688,25 @@ class PublicView:
         return self.desk_directory().get(slug)
 
     # -- coverage -------------------------------------------------------------
+
+    def freshness(self, marker_path=None) -> FreshnessView:
+        """
+        The three dates, each from its own authority or left unknown.
+
+        Collection and analysis come from the single corpus read in `__init__`.
+        The full-update date comes from the workflow's own marker file, because
+        that is where a run records having finished everything — a run that
+        collected and then failed at analysis never writes it, which is the
+        distinction this whole view exists to preserve.
+
+        A value that cannot be read stays `None`. A plausible substitute here
+        would be a fabricated claim about how current the record is.
+        """
+        return FreshnessView(
+            records_last_collected=self._last_collected,
+            analysis_last_produced=self._last_analysed,
+            last_full_update=_marker_date(marker_path),
+        )
 
     def coverage(self) -> CoverageView:
         if not self._latest_run:

@@ -875,3 +875,12 @@ footer.site a { color: var(--ocean); }
   /* A horizontally scrolling container prints clipped at its visible width. */
   .table-scroll { overflow: visible; }
 }
+
+/* Freshness strip. Three dates rather than one, so the row wraps on narrow
+   viewports instead of truncating a date the reader needs. */
+.status-facts.freshness { margin-top: .35rem; }
+.status-note {
+  margin: .35rem 0 0;
+  font-size: .82rem;
+  line-height: 1.45;
+}
