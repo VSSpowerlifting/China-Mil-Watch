@@ -227,10 +227,52 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
             "it the build would emit a site that is entirely noindex and has "
             "no sitemap." % (INDO_PACIFIC_RECORD, SITE_ORIGIN_ENV))
 
+    # ── Which corpus, and which corpus identity ──────────────────────────
+    #
+    # The database is selected first, because the snapshot has to describe the
+    # corpus that is actually about to be rendered — not a different one that
+    # happens to be the default.
+    #
+    # Then the two callers are separated, and the distinction is the whole
+    # point of this block:
+    #
+    #   snapshot omitted   the daily run. Derive the identity from the corpus
+    #                      in hand and render it truthfully. Collection adds
+    #                      records every morning; a daily build that refused
+    #                      to describe them would stop publishing the moment
+    #                      the corpus moved, which is exactly what happened
+    #                      after the launch.
+    #   snapshot supplied  a release build. Render exactly that declared
+    #                      corpus or fail. The count, the date and the
+    #                      fingerprint are checked in `build()` and none of
+    #                      them is relaxed here.
+    #
+    # `DECLARED_SNAPSHOT` is neither of those. It is the accepted release
+    # metadata for the launch — immutable, and not the daily corpus identity.
+    # Defaulting to it is what made every daily render after 2026-08-27 abort
+    # with `SnapshotMismatch`, and because the scheduled workflow runs the
+    # offline suite before it collects, that stopped collection too.
+    #
+    # `is not None`, not truthiness: an empty dict is a caller saying "this
+    # snapshot", and answering it with the launch pin would silently render a
+    # different corpus identity than the one asked for.
+    selected_db = Path(db_path) if db_path else DB_PATH
+    if snapshot is not None:
+        effective_snapshot = snapshot
+        snapshot_source = "declared"
+    else:
+        # Derived once, here, and handed to the builder explicitly. `build()`
+        # re-reads the database and asserts the corpus against what it is
+        # given, so a corpus that changes between this line and that read is
+        # caught there rather than producing a page set that describes neither
+        # state.
+        effective_snapshot = gp.snapshot_from_corpus(selected_db)
+        snapshot_source = "derived"
+
     def _render(destination):
         return gp.build(destination, INDO_PACIFIC_RECORD_TITLE,
-                        Path(db_path) if db_path else DB_PATH,
-                        snapshot=snapshot or gp.DECLARED_SNAPSHOT,
+                        selected_db,
+                        snapshot=effective_snapshot,
                         legacy_routes=True,
                         site_origin=origin,
                         allow_test_origin=allow_test_origin)
@@ -241,11 +283,13 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
             result = _render(staged)
             carried, moved, listed = publish(staged, target, gp)
         report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
+                  "snapshot_source": snapshot_source,
                   "carried_forward": carried, "moved_legacy_pages": moved,
                   "carried_pages_listed_in_sitemap": listed}
     else:
         result = _render(target)
-        report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target)}
+        report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
+                  "snapshot_source": snapshot_source}
 
     if isinstance(result, dict):
         report.update(result)
