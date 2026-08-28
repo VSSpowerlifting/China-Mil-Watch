@@ -1302,7 +1302,11 @@ footer.site a { color: var(--ocean); }
 /* ── Feature (image-backed) ───────────────────────────────────────────── */
 .feature {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  /* Equal columns. The cover is a designed 1200x630 card, so at half the
+     feature width its height lands close to the body's and it can be shown
+     whole. The asymmetric 1.35fr this replaced left the cover too small to
+     read its own headline. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0;
   background: var(--ink);
   color: var(--parchment);
@@ -1362,13 +1366,6 @@ footer.site a { color: var(--ocean); }
   height: 100%;
   object-fit: cover;
   aspect-ratio: 4 / 5;
-}
-@media (max-width: 47.5rem) {
-  /* One column, cover first. The cover is the entry point on a phone, and
-     ordering it above the text is what makes the feature read as a feature
-     rather than as another block of copy. */
-  .feature { grid-template-columns: 1fr; }
-  .feature-figure { order: -1; }
 }
 
 /* ── Record facts rail ────────────────────────────────────────────────── */
@@ -1522,13 +1519,17 @@ select, input, textarea, button { max-width: 100%; }
 /* The cover is a designed 1200×630 card with its own typography. Cropping it
    to a portrait frame cut the headline off it. It now keeps its own aspect
    ratio and is centred in its column, so nothing is cut. */
-/* Equal columns and a top-aligned figure. The cover is 1200x630, so at half
-   the feature width its height lands close to the body's, and neither a crop
-   nor a large empty margin is needed. Cropping was tried both ways first:
-   filling a portrait cell cuts the left and right off the cover, and the
-   earlier 4:5 frame cut the headline out of it. The cover is a designed card
-   with its own typography — it is shown whole or not at all. */
-.feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+/* A top-aligned figure. Cropping was tried both ways first: filling a portrait
+   cell cuts the left and right off the cover, and an earlier 4:5 frame cut the
+   headline out of it. The cover is a designed card with its own typography —
+   it is shown whole or not at all.
+
+   The equal-columns declaration that used to sit here has moved up into the
+   base `.feature` rule. Here, after the mobile media query, it overrode it at
+   equal specificity: the phone layout asked for one column and got two, so the
+   cover rendered 127px wide beside the text instead of above it at full width.
+   Nothing reported that, because both rules were valid and the cascade was
+   doing exactly what it was told. */
 .feature-figure {
   align-self: start;
   padding: clamp(1.4rem, 3.2vw, 2.25rem);
@@ -1543,7 +1544,20 @@ select, input, textarea, button { max-width: 100%; }
   border: 1px solid rgba(237, 233, 224, .14);
 }
 @media (max-width: 47.5rem) {
-  .feature-figure { padding: clamp(1.4rem, 3.2vw, 2.25rem); padding-bottom: 0; }
+  /* One column, cover first, cover full width. The cover is the entry point on
+     a phone, and ordering it above the text is what makes the feature read as
+     a feature rather than as another block of copy.
+
+     This is deliberately the ONLY media query that touches the feature grid.
+     There were two, and the later unconditional desktop rule sat between them
+     — so the first one's single column was silently overridden and the phone
+     rendered two 171px columns with a 127px cover. One block, last. */
+  .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature-figure {
+    order: -1;
+    padding: clamp(1.4rem, 3.2vw, 2.25rem);
+    padding-bottom: 0;
+  }
 }
 
 /* The image credit sits under the feature, not tucked back under it: it is a
