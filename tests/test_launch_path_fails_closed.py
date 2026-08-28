@@ -131,11 +131,47 @@ class TestTheAcceptedSnapshot(unittest.TestCase):
         """
         self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
 
-    def test_the_declared_snapshot_still_matches_the_tracked_corpus(self):
+    def test_the_declared_snapshot_is_a_pin_and_not_the_daily_identity(self):
+        """
+        This used to assert that the declared snapshot still equalled the
+        tracked corpus, and it was right to while the two were the same thing.
+        They are not any more, and holding them equal is what broke production.
+
+        The declared snapshot is accepted release metadata for one frozen
+        corpus: 2026-08-26, 3,574 records. Collection adds records every
+        morning. Requiring equality made every daily render abort with
+        `SnapshotMismatch` once the corpus passed 3,574 — and because
+        `daily_update.yml` runs this suite before it collects, with no
+        `continue-on-error`, it would have stopped collection as well.
+
+        Owner decision, 2026-08-28: the pin does not move. The daily path
+        derives its own identity from the corpus it is rendering instead. So
+        the corpus is ALLOWED to have grown past the pin, and what is asserted
+        here is that the pin itself is intact and that the drift is in the
+        direction growth produces. `tests/test_daily_corpus_advance.py` proves
+        the daily render follows the corpus, and the two cases below prove a
+        declared snapshot is still enforced exactly.
+        """
         derived = gp.snapshot_from_corpus(gp.TRACKED_DB)
-        for key in ("date", "expected_records", "logical_sha256"):
-            with self.subTest(key=key):
-                self.assertEqual(derived[key], gp.DECLARED_SNAPSHOT[key])
+        self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
+        self.assertGreaterEqual(derived["expected_records"],
+                                self.ACCEPTED["expected_records"],
+                                "the corpus has fewer records than the "
+                                "accepted snapshot — records do not "
+                                "disappear, so this is data loss, not growth")
+
+    def test_a_corpus_that_has_moved_past_the_pin_still_renders(self):
+        """
+        The production symptom, asserted directly. A daily build asks for no
+        snapshot and must succeed against whatever the corpus currently holds.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            report = render.render_site(
+                output_dir=Path(tmp) / "out", environ={},
+                site_origin="https://a-real-domain.org")
+        derived = gp.snapshot_from_corpus(gp.TRACKED_DB)
+        self.assertEqual(report["snapshot_source"], "derived")
+        self.assertEqual(report["records"], derived["expected_records"])
 
     def test_a_snapshot_that_does_not_match_the_corpus_is_refused(self):
         """The guard that mattered before the launch has to keep mattering

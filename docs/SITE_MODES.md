@@ -61,8 +61,24 @@ These are contract, not convention. Each is covered by
   `build()` refuses independently. Two guards, because one of them is the one
   that fails.
 * **The snapshot guard aborts before writing** when the corpus does not match
-  the declared snapshot — the build will not publish a changed corpus under an
-  unchanged snapshot identity.
+  the snapshot it was *given* — the build will not publish a changed corpus
+  under an unchanged snapshot identity.
+
+  Which snapshot it is given depends on who is asking, and the distinction was
+  added on 2026-08-28 after the launch broke production:
+
+  | Caller | Snapshot | Behaviour |
+  |---|---|---|
+  | daily run — `render_site()` with no snapshot | derived from the corpus being rendered | renders what is there, truthfully |
+  | release build — an explicit snapshot | exactly that declaration | renders that corpus or aborts |
+  | `DECLARED_SNAPSHOT` | accepted launch metadata, 2026-08-26 / 3,574 | a historical pin, **not** the daily identity |
+
+  Defaulting the daily run to `DECLARED_SNAPSHOT` is what made every render
+  after the launch abort once collection passed 3,574 records — and because
+  `daily_update.yml` runs the offline suite before the pipeline with no
+  `continue-on-error`, that would have stopped collection too. The guard was
+  not weakened: an explicit snapshot is still checked on date, count and
+  logical fingerprint, and still aborts before anything is written.
 * **The renderer reads the database through `reconcile_db._read_only`**, which
   works on a scratch copy. It never opens the tracked file.
 
