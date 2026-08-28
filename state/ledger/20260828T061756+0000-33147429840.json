@@ -1,0 +1,92 @@
+{
+ "bootstrap_cutoff_date": "2026-08-27",
+ "bootstrap_cutoff_utc": "2026-08-27T02:14:34+00:00",
+ "bootstrap_established_run": "33032633240",
+ "cap": 40,
+ "challenged": 6,
+ "challenged_urls": [
+  "https://www.mod.go.jp/j/press/news/2026/08/26d.html",
+  "https://www.mod.go.jp/j/press/news/2026/08/27a.html",
+  "https://www.mod.go.jp/j/approach/defense/saigai/index.html",
+  "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/nyuusatu/index.html",
+  "https://www.mod.go.jp/j/policy/agenda/meeting/support-for-retired/index.html",
+  "https://www.mod.go.jp/j/profile/minister/vice-minister/wakabayashi.html"
+ ],
+ "collector_commit": "cef89e0c56e212310a78b3ea20eeecc8ce703aa0",
+ "content_hashes": [
+  "fd4eaf5138625f63dc3ec14f6c71bbc25de1b2676b597d487edad3a4a5c59120"
+ ],
+ "corpus_range": [
+  "2026-08-27",
+  "2026-08-27"
+ ],
+ "day_zero_utc": "2026-08-27T02:14:38+00:00",
+ "deferred": 0,
+ "discovered": 269,
+ "duplicates": 0,
+ "error_detail": "6 of 7 selected item(s) are HTML and are served behind an edge challenge; recorded, not fetched",
+ "extraction_failures": 0,
+ "fetch_failures": 0,
+ "finished_utc": "2026-08-28T06:17:56+00:00",
+ "health": "partial",
+ "inserted": 1,
+ "is_bootstrap_run": false,
+ "listing_status": "ok",
+ "lookback_days": 14,
+ "pre_bootstrap": 262,
+ "pre_bootstrap_total": 288,
+ "result": "ok",
+ "retrieved": 1,
+ "robots_status": "allowed",
+ "run_id": "33147429840",
+ "selected": 7,
+ "shadow_day": 1,
+ "sources": [
+  {
+   "challenged": 2,
+   "deferred": 0,
+   "discovered": 144,
+   "duplicates": 0,
+   "extraction_failures": 0,
+   "fetch_failures": 0,
+   "inserted": 1,
+   "kinds": {
+    "press release": 3
+   },
+   "listing_status": "ok",
+   "pre_bootstrap": 141,
+   "retrieved": 1,
+   "selected": 3,
+   "source_slug": "jp_mod_news_ja",
+   "undated": 0
+  },
+  {
+   "challenged": 4,
+   "deferred": 0,
+   "discovered": 125,
+   "duplicates": 0,
+   "extraction_failures": 0,
+   "fetch_failures": 0,
+   "inserted": 0,
+   "kinds": {
+    "budget document": 1,
+    "defense exchange or policy item": 1,
+    "ministry profile page": 1,
+    "policy document": 1
+   },
+   "listing_status": "ok",
+   "pre_bootstrap": 121,
+   "retrieved": 0,
+   "selected": 4,
+   "source_slug": "jp_mod_siteupdate_ja",
+   "undated": 0
+  }
+ ],
+ "started_utc": "2026-08-28T06:17:51+00:00",
+ "state_sha256_after": "d2a9085cc904c9c21c699f981abbe6bb917124b6f951931e048e7cd7237368f5",
+ "state_sha256_before": "ea55e58ebaec9d4416139548c5127fcd642af2107e2deea78d1f262264cf55cd",
+ "stored_total": 1,
+ "target_date": "2026-08-28",
+ "undated": 0,
+ "unretrieved_total": 6
+}
