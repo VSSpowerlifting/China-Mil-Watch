@@ -91,7 +91,7 @@ when it may be absent, and where it stops being reliable.</p>
 or include unrelated page elements; consult the original URL when exact wording
 or completeness matters.</p>
 {% if record.has_text %}
-<div class="original-text source-text" lang="{{ record.language_tag or 'zh' }}">
+<div class="original-text" lang="{{ record.language_tag or 'zh' }}">
 {% for para in record.text_original.split('\n') %}
 {% if para.strip() %}<p>{{ para.strip() }}</p>
 {% endif %}

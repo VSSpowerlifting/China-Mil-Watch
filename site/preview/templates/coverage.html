@@ -57,24 +57,20 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 carried readable text. Same figures as the <em>Parsed</em> and
 <em>Text read</em> columns below.</p>
 <div class="barset">
-{% for r in run_results %}
-  {% if r.usable_text is not none and r.extracted %}
-  {% set pct = (100 * r.usable_text / r.extracted)|round(0, 'floor')|int %}
+{% for bar in extraction_bars %}
   <div class="bar-row">
-    <span class="bar-label">{{ r.source_slug }}</span>
+    <span class="bar-label">{{ bar.slug }}</span>
+    {% if bar.measured %}
     <span class="bar-track">
-      <span class="bar-fill{% if pct < 100 %} is-partial{% endif %}"
-            style="width: {{ pct }}%"></span>
+      <span class="bar-fill{% if bar.partial %} is-partial{% endif %}"
+            style="width: {{ bar.percent }}%"></span>
     </span>
-    <span class="bar-value">{{ r.usable_text }}/{{ r.extracted }} · {{ pct }}%</span>
-  </div>
-  {% elif r.usable_text is none and r.extracted %}
-  <div class="bar-row">
-    <span class="bar-label">{{ r.source_slug }}</span>
+    <span class="bar-value">{{ bar.usable }}/{{ bar.extracted }} &middot; {{ bar.percent }}%</span>
+    {% else %}
     <span class="bar-track"></span>
     <span class="bar-value">not measured</span>
+    {% endif %}
   </div>
-  {% endif %}
 {% endfor %}
 </div>
 <p class="meta">Sources that returned no documents in this run draw no bar:

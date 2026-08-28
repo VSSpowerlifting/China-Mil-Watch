@@ -963,7 +963,11 @@ footer.site a { color: var(--ocean); }
   letter-spacing: -0.011em;
   margin: 0;
 }
-.masthead .brand-mark .mark-field { stroke: var(--crimson-mark); }
+/* The mark is drawn in the masthead's own parchment and the collection-health
+   turquoise. Crimson here was a fourth appearance of the accent on a surface
+   that already carries the top rule and the primary button — decorative use,
+   which is the thing the accent budget exists to prevent. */
+.masthead .brand-mark .mark-field { stroke: var(--parchment); }
 .masthead .brand-mark .mark-rules { stroke: var(--dark-muted); }
 .masthead .brand-mark .mark-tide  { stroke: var(--turquoise); }
 .masthead .brand-sub {
@@ -1053,7 +1057,9 @@ footer.site a { color: var(--ocean); }
     transform: translateY(-2px) rotate(45deg);
   }
   .nav-toggle[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
-  .nav-toggle[open] > summary { border-color: var(--crimson-mark); }
+  /* Open state, not active page. Crimson marks which page you are on; it does
+     not mark that a disclosure is expanded. */
+  .nav-toggle[open] > summary { border-color: rgba(237, 233, 224, .55); }
   .masthead nav.primary ul {
     flex-direction: column;
     gap: 0;
@@ -1124,7 +1130,9 @@ footer.site a { color: var(--ocean); }
   font-weight: 600;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--crimson-text);
+  /* Muted parchment, not crimson. An eyebrow is a label; the accent is
+     reserved for the top rule, the primary action and the current page. */
+  color: var(--dark-muted);
   margin: 0 0 1rem;
 }
 .hero-statement {
@@ -1307,7 +1315,7 @@ footer.site a { color: var(--ocean); }
   font-size: .6875rem;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--crimson-text);
+  color: var(--dark-muted);
   margin: 0 0 .8rem;
 }
 .feature h3 {
@@ -1319,7 +1327,9 @@ footer.site a { color: var(--ocean); }
 }
 .feature h3::before { content: none; }
 .feature h3 a { color: inherit; text-decoration: none; }
-.feature h3 a:hover { color: var(--crimson-text); }
+/* Underline rather than recolour: the hover affordance does not need to spend
+   the accent. */
+.feature h3 a:hover { text-decoration: underline; text-underline-offset: .18em; }
 .feature .dek {
   font-family: var(--serif);
   font-size: 1.0625rem;
@@ -1354,9 +1364,11 @@ footer.site a { color: var(--ocean); }
   aspect-ratio: 4 / 5;
 }
 @media (max-width: 47.5rem) {
+  /* One column, cover first. The cover is the entry point on a phone, and
+     ordering it above the text is what makes the feature read as a feature
+     rather than as another block of copy. */
   .feature { grid-template-columns: 1fr; }
   .feature-figure { order: -1; }
-  .feature-figure img { aspect-ratio: 16 / 9; }
 }
 
 /* ── Record facts rail ────────────────────────────────────────────────── */
@@ -1406,11 +1418,18 @@ footer.site a { color: var(--ocean); }
 }
 
 /* ── Source text readability ──────────────────────────────────────────── */
-.source-text {
+/* Styled on `.original-text` rather than through a second class. That class is
+   not decoration: it is how `tests/test_preview_prototype.py` finds the stored
+   capture and removes it before scanning the page for completeness claims.
+   Adding a second class here quietly stopped the guard matching, and two
+   records whose SOURCE TEXT contains the word "permanently" were read as the
+   publication claiming its capture was permanent. The styling hook and the
+   evidence hook are the same hook, so they cannot drift apart again. */
+.original-text {
   max-width: 46em;      /* CJK glyphs are full-width; 68ch runs far too long */
   line-height: 1.95;
 }
-.source-text:lang(zh), .source-text[lang^="zh"] { line-height: 2.05; }
+.original-text:lang(zh), .original-text[lang^="zh"] { line-height: 2.05; }
 
 /* ── Archive filters ──────────────────────────────────────────────────── */
 .filters {

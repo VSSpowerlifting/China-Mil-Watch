@@ -7,8 +7,8 @@
 <section class="hero">
   <div class="wrap">
     <p class="hero-eyebrow">Indo-Pacific defense and security record</p>
-    <p class="hero-statement">What defense institutions publish about themselves,
-      <b>preserved as published</b> and read in context.</p>
+    <p class="hero-statement">A record of what defense institutions publish
+      about themselves, <b>preserved as published</b> and read in context.</p>
     <p class="hero-sub">{{ title }} keeps the original text, the date, the
       institution, and a per-run record of whether collection actually worked.
       Analysis is separate from the record, cites it, and is labeled as
@@ -18,31 +18,32 @@
       <a class="btn btn--ghost" href="analysis.html">Read analysis</a>
       <a class="btn btn--ghost" href="methodology.html">Methodology</a>
     </div>
-    {# Five derived figures, and one rule about the first of them.
+    {# Three derived figures, and one rule about all of them: a figure is
+       shown with the thing it was measured on, never as a bare total.
 
        A corpus figure sitting beside a desk count invites the reading "N
-       records across four desks", which is false: one desk collects and the
-       other three hold nothing. The figure is therefore labeled with the desk
-       it came from rather than presented as a total. Every figure on this page
-       is attached to its source in the same way — that is the central
-       dishonesty available to a regional masthead over a single-desk corpus,
-       and the labeling is what keeps it shut.
+       records across four desks", which is false — one desk collects and the
+       other three hold nothing. So the record count names its desk, and the
+       source count is summed over the collecting desks alone rather than over
+       every declared desk. A "sources enabled" figure spanning all four would
+       have counted sources that have never returned a document.
 
-       Nothing here is a target, an estimate, or a projection: the count is the
-       declared snapshot's, the source and desk counts come from the registry,
-       and the dates come from the run history. #}
+       Five figures stood here and two of them were dates. Those dates are in
+       the freshness bar directly above, and a number repeated twice on one
+       screen reads as two different measurements.
+
+       Nothing here is a target, an estimate, a projection or a literal: the
+       count is the declared snapshot's, and the source and desk figures are
+       summed from the registry at render time. #}
     {% set collecting = desks | selectattr('status', 'equalto', 'live') | list %}
+    {% set collecting_sources = collecting | sum(attribute='enabled_source_count') %}
     <dl class="snapshot">
       <div><dt>Records{% if collecting|length == 1 %}, {{ collecting[0].name }}{% endif %}</dt>
         <dd>{{ snapshot.expected_records|count }}<small>{% if collecting|length == 1 %}the only collecting desk{% else %}across {{ collecting|length }} collecting desks{% endif %}</small></dd></div>
-      <div><dt>Sources enabled</dt>
-        <dd>{{ enabled_source_count }}<small>across all desks</small></dd></div>
-      <div><dt>Desks declared</dt>
-        <dd>{{ desks.declared_count }}<small>{{ desks.collecting_count }} collecting</small></dd></div>
-      <div><dt>Records last collected</dt>
-        <dd class="is-date">{{ freshness.records_last_collected or 'not measured' }}</dd></div>
-      <div><dt>Analysis last produced</dt>
-        <dd class="is-date">{{ freshness.analysis_last_produced or 'not yet recorded' }}</dd></div>
+      <div><dt>Collecting sources</dt>
+        <dd>{{ collecting_sources|count }}<small>{% if collecting|length == 1 %}enabled on {{ collecting[0].name }}{% else %}enabled across the collecting desks{% endif %}</small></dd></div>
+      <div><dt>Collecting desks</dt>
+        <dd>{{ desks.collecting_count }}<small>of {{ desks.declared_count }} declared</small></dd></div>
     </dl>
   </div>
 </section>

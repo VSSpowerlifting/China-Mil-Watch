@@ -889,6 +889,35 @@ def edition_cover(repo_root: Path, slug: str, sidecar: dict):
     }
 
 
+def extraction_bars(results) -> list:
+    """
+    Per-source extraction completeness for the Coverage bar chart.
+
+    `usable_text is None` means the run did not measure it, which is different
+    from measuring zero — the bar is omitted and the row says "not measured"
+    rather than drawing an empty bar that would read as a total failure. A
+    source that returned nothing draws no bar at all: there is no denominator,
+    and a zero-width bar would assert a completeness of zero it cannot support.
+
+    The percentage floors rather than rounds. 99.6% displayed as 100% would say
+    every document carried text when one did not.
+    """
+    bars = []
+    for r in results:
+        if not r.extracted:
+            continue
+        if r.usable_text is None:
+            bars.append({"slug": r.source_slug, "measured": False,
+                         "usable": None, "extracted": r.extracted,
+                         "percent": None, "partial": False})
+            continue
+        percent = int(r.usable_text * 100 // r.extracted)
+        bars.append({"slug": r.source_slug, "measured": True,
+                     "usable": r.usable_text, "extracted": r.extracted,
+                     "percent": percent, "partial": r.usable_text < r.extracted})
+    return bars
+
+
 def run_status_summary(latest_run, run_results, collecting_desks,
                        unmapped_executed=0):
     """
@@ -1770,6 +1799,17 @@ def build(out_dir: Path, title: str, db_path: Path,
         # silently rendered an empty cell instead of "not measured". Local
         # visual QA caught it; nothing in the template layer could have.
         "run_results": coverage_view.results,
+        # Extraction completeness per source, derived here rather than in the
+        # template. Two reasons, and the second is the one that bit.
+        #
+        # A template that computes is a template that can be wrong quietly.
+        # And the arithmetic needed a literal 100 to turn a ratio into a
+        # percent — which collided with `records from global_times_mil` the
+        # day that source's corpus count reached exactly 100, tripping the
+        # frozen-corpus-figure guard. The guard was right to be suspicious: a
+        # bare number in a template is indistinguishable from a frozen count.
+        # Derived values carry no literal, so the collision cannot recur.
+        "extraction_bars": extraction_bars(coverage_view.results),
         "freshness": view.freshness(),
         "articles": data["recent"],
         "gaps": gaps,

@@ -2144,6 +2144,18 @@ class TestRecordSemantics(PreviewCase):
                 "<h2>Stored source text</h2>", 1)[1].split("<h2", 1)[0]
             with self.subTest(id=rec["id"]):
                 self.assertIsNotNone(caveat.search(section))
+                # The stored capture has to be FOUND before it can be excluded.
+                # A markup change that stopped this matching would not fail
+                # here — it would quietly start reading the source article's
+                # own words as the publication's claims about it, which is how
+                # two records carrying a spokesperson saying "permanently
+                # settle the vessel" once read as a permanence claim.
+                if rec.get("has_text"):
+                    self.assertIsNotNone(
+                        stored.search(section),
+                        "the stored capture is no longer identifiable by "
+                        'class="original-text"; the evidence guard below is '
+                        "scanning source text as though it were authored")
                 # A source article that happens to use the word "complete" is
                 # not the publication claiming the capture is complete.
                 authored = stored.sub(" ", caveat.sub(" ", section))
