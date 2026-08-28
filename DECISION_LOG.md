@@ -2,6 +2,55 @@
 
 Newest first. Record decisions that constrain future work.
 
+## 2026-08-28 — The declared snapshot is a release pin, not the daily corpus identity
+
+Owner decision: **do not advance `DECLARED_SNAPSHOT`.** It stays at the accepted
+launch values — 2026-08-26, 3,574 records, `d5b897cd…` — permanently.
+
+The launch made `indo-pacific-record` the default mode, and `render_site()`
+defaulted its snapshot to `DECLARED_SNAPSHOT`. Under `legacy` that could not
+matter, because the legacy renderer has no snapshot guard. Under the new
+default it meant the daily build asserted a frozen corpus identity against a
+corpus that grows every morning. The first collection after launch took the
+corpus to 3,611 and every subsequent render aborted with `SnapshotMismatch`.
+
+The second-order failure is the one that made this P0. `daily_update.yml` runs
+`Run offline test suite` **before** `Run pipeline`, with no `continue-on-error`.
+Three of the tests that failed were assertions about the snapshot matching the
+corpus, so the red suite would have stopped the run before it collected
+anything. A rendering contract defect had become a collection outage.
+
+What is now true, and constrains future work:
+
+1. **Omitted snapshot means "describe what you are rendering".** `render_site()`
+   selects the database first, derives the identity once with
+   `snapshot_from_corpus(selected_db)`, and passes it explicitly. The check is
+   `is not None`, not truthiness: an empty declaration is a caller naming a
+   corpus, and answering it with the launch pin would render a different
+   identity than the one asked for.
+2. **Explicit snapshot still means "this corpus or nothing".** Date, count and
+   logical fingerprint are all still enforced, still before any write. A
+   matching count with a different fingerprint is still refused.
+3. **Derivation and build read the database twice on purpose.** The identity is
+   taken once and handed to the builder, which re-reads the corpus and checks
+   what it loaded against what it was given. A corpus that changes in between
+   aborts rather than producing a tree that describes neither state.
+4. **The frozen-count guard tests context, not equality.** It compared every
+   integer literal in the suite against every moving corpus figure, and when
+   `global_times_mil` reached exactly 100 records it began failing on
+   percentages, byte slices, day counts, fixture ids, a cap argument, an
+   authority tier score and a `<h[123]>` regex character class — nine files,
+   nine false positives, zero real ones. It now matches the two shapes a frozen
+   total actually takes: comma-grouped numerals, and bare integers in a
+   statement that names a corpus metric. `FLOOR` is unchanged and nothing is
+   exempted by value — 100, 123 and 365 are still caught when they *are* corpus
+   totals.
+5. **The truth guarantee is now made positively as well.**
+   `tests/test_daily_corpus_advance.py` renders against a temporary corpus that
+   differs from the tracked one and asserts the public metric surfaces state
+   that corpus and not the launch pin. A literal frozen into a template cannot
+   survive it.
+
 ## 2026-08-27 — Indo-Pacific Record is the published identity, and chinamilwatch.org keeps resolving
 
 Owner sign-off given 2026-08-27, closing gate 5 of
