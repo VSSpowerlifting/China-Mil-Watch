@@ -23,34 +23,49 @@
       <p class="brand-name">Indo-Pacific Record</p>
     </a>
     <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
-    <nav class="primary" aria-label="Primary">
+    <nav class="primary nav-desktop" aria-label="Primary">
       <ul>
-        <li><a href="archive.html">Record</a></li>
-        <li><a href="desks.html">Desks</a></li>
-        <li><a href="sources.html">Sources</a></li>
-        <li><a href="analysis.html">Analysis</a></li>
-        <li><a href="coverage.html" aria-current="page">Coverage</a></li>
-        <li><a href="methodology.html">Methodology</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
+      <li><a href="archive.html">Record</a></li>
+      <li><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
+      <li><a href="analysis.html">Analysis</a></li>
+      <li><a href="coverage.html" aria-current="page">Coverage</a></li>
+      <li><a href="methodology.html">Methodology</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
     </nav>
+    <details class="nav-toggle nav-mobile">
+      <summary>Sections</summary>
+      <nav class="primary" aria-label="Primary">
+        <ul>
+      <li><a href="archive.html">Record</a></li>
+      <li><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
+      <li><a href="analysis.html">Analysis</a></li>
+      <li><a href="coverage.html" aria-current="page">Coverage</a></li>
+      <li><a href="methodology.html">Methodology</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+      </nav>
+    </details>
   </div>
 </header>
-<div class="status-strip">
+<div class="freshness-bar">
   <div class="wrap">
-    <ul class="status-facts">
-      <li>Run <b>122</b></li>
-<li>2026-08-26</li>      <li><b>4</b> collectors executed</li>
-      <li><b>0</b> execution failures</li>
-<li><b>1</b> unimplemented adapter</li><li><b>1</b> collecting desk of <b>4</b> declared</li>    </ul>
-      <ul class="status-facts freshness">
-        <li>Records last collected <b>2026-08-26</b></li>
-        <li>Analysis last produced <b>2026-08-24</b></li>
-        <li>Last full update <b>2026-08-24</b></li>
-      </ul>
-      <p class="status-note">Collection is current; analysis is behind it. Records
-        dated after 2026-08-24 are stored and awaiting
-        screening. <a href="methodology.html#freshness">What these dates mean</a>.</p>
+    <dl>
+      <div><dt>Records last collected</dt>
+        <dd>2026-08-29</dd></div>
+      <div><dt>Analysis last produced</dt>
+        <dd>2026-08-24</dd></div>
+      <div><dt>Last full update</dt>
+        <dd>2026-08-24</dd></div>
+    </dl>
+    <p class="behind">Analysis trails collection; records after
+      2026-08-24 await screening.
+      <a href="methodology.html#freshness">What
+      these dates mean</a>.</p>
+    <p class="detail"><a href="coverage.html">Run
+      125 in full &rarr;</a></p>
   </div>
 </div>
 <main id="main">
@@ -63,7 +78,59 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 <a href="desks.html">Desks</a> rather than shown as a failure.</p>
 
 <h2>Most recent run</h2>
-<p class="meta">Run 122 · 2026-08-26 13:33:24 → 2026-08-26 13:36:50 · aggregate <strong>failed</strong></p>
+<p class="meta">Run 125 · 2026-08-29 16:53:10 → 2026-08-29 16:55:27</p>
+<p class="run-verdict">Collection completed; the pipeline failed after
+  collection. <span class="meta">Recorded run status: <strong>failed</strong>.
+  The stage that failed is not recorded here.</span></p>
+
+<ul class="status-facts">
+  <li>Run <b>125</b></li>
+<li>2026-08-29</li>  <li><b>4</b> collectors executed</li>
+  <li><b>0</b> execution failures</li>
+<li><b>1</b> unimplemented adapter</li><li><b>1</b> collecting desk of <b>4</b> declared</li></ul>
+
+<h3 class="plain">Extraction completeness</h3>
+<p class="meta">Of the documents each source returned in this run, how many
+carried readable text. Same figures as the <em>Parsed</em> and
+<em>Text read</em> columns below.</p>
+<div class="barset">
+  <div class="bar-row">
+    <span class="bar-label">china_mil_online</span>
+    <span class="bar-track">
+      <span class="bar-fill"
+            style="width: 100%"></span>
+    </span>
+    <span class="bar-value">1/1 &middot; 100%</span>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">global_times_mil</span>
+    <span class="bar-track">
+      <span class="bar-fill"
+            style="width: 100%"></span>
+    </span>
+    <span class="bar-value">1/1 &middot; 100%</span>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">mod_china</span>
+    <span class="bar-track">
+      <span class="bar-fill"
+            style="width: 100%"></span>
+    </span>
+    <span class="bar-value">6/6 &middot; 100%</span>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">pla_daily</span>
+    <span class="bar-track">
+      <span class="bar-fill"
+            style="width: 100%"></span>
+    </span>
+    <span class="bar-value">20/20 &middot; 100%</span>
+  </div>
+</div>
+<p class="meta">Sources that returned no documents in this run draw no bar:
+there is nothing to express as a proportion, and a zero-length bar would look
+like a measured failure rather than an absent measurement. Their outcome is in
+the table below, per source, with its own reason.</p>
 <div class="table-scroll">
 <table class="stacking">
   <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
@@ -87,44 +154,44 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
           <span class="status-name">Collected</span>
         </span>
       </td>
-      <td data-label="Found" class="num">8</td>
-      <td data-label="Parsed" class="num">8</td>
-      <td data-label="Text read" class="num"><span class="meta">not measured</span></td>
+      <td data-label="Found" class="num">1</td>
+      <td data-label="Parsed" class="num">1</td>
+      <td data-label="Text read" class="num">1</td>
       <td data-label="Already held" class="num">0</td>
-      <td data-label="New" class="num">6</td>
+      <td data-label="New" class="num">1</td>
       <td data-label="Note">Reached the listing and stored new items.</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/global_times_mil.html">global_times_mil</a></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
       <td data-label="Result">
-        <span class="status status--ok">
-          <span class="status-mark" aria-hidden="true">✓</span>
-          <span class="status-name">Collected</span>
+        <span class="status status--quiet">
+          <span class="status-mark" aria-hidden="true">○</span>
+          <span class="status-name">Nothing new</span>
         </span>
       </td>
       <td data-label="Found" class="num">1</td>
       <td data-label="Parsed" class="num">1</td>
-      <td data-label="Text read" class="num"><span class="meta">not measured</span></td>
-      <td data-label="Already held" class="num">0</td>
-      <td data-label="New" class="num">1</td>
-      <td data-label="Note">Reached the listing and stored new items.</td>
+      <td data-label="Text read" class="num">1</td>
+      <td data-label="Already held" class="num">1</td>
+      <td data-label="New" class="num">0</td>
+      <td data-label="Note">Reached the listing; everything it offered was already in the archive. This is healthy.</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/mod_china.html">mod_china</a></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
       <td data-label="Result">
-        <span class="status status--ok">
-          <span class="status-mark" aria-hidden="true">✓</span>
-          <span class="status-name">Collected</span>
+        <span class="status status--quiet">
+          <span class="status-mark" aria-hidden="true">○</span>
+          <span class="status-name">Nothing new</span>
         </span>
       </td>
-      <td data-label="Found" class="num">9</td>
-      <td data-label="Parsed" class="num">9</td>
-      <td data-label="Text read" class="num"><span class="meta">not measured</span></td>
-      <td data-label="Already held" class="num">8</td>
-      <td data-label="New" class="num">1</td>
-      <td data-label="Note">Reached the listing and stored new items.</td>
+      <td data-label="Found" class="num">6</td>
+      <td data-label="Parsed" class="num">6</td>
+      <td data-label="Text read" class="num">6</td>
+      <td data-label="Already held" class="num">6</td>
+      <td data-label="New" class="num">0</td>
+      <td data-label="Note">Reached the listing; everything it offered was already in the archive. This is healthy.</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/pla_daily.html">pla_daily</a></td>
@@ -135,11 +202,11 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
           <span class="status-name">Collected</span>
         </span>
       </td>
-      <td data-label="Found" class="num">34</td>
-      <td data-label="Parsed" class="num">34</td>
-      <td data-label="Text read" class="num"><span class="meta">not measured</span></td>
-      <td data-label="Already held" class="num">4</td>
-      <td data-label="New" class="num">27</td>
+      <td data-label="Found" class="num">20</td>
+      <td data-label="Parsed" class="num">20</td>
+      <td data-label="Text read" class="num">20</td>
+      <td data-label="Already held" class="num">0</td>
+      <td data-label="New" class="num">20</td>
       <td data-label="Note">Reached the listing and stored new items.</td>
     </tr>
     <tr>
@@ -168,6 +235,8 @@ merged: two results that both produce zero records can mean opposite things, and
 keeping seventeen of them apart is that they are seventeen different facts.</p>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>What each run result means. An empty return has more than one cause
+  and they are not interchangeable.</caption>
   <thead><tr><th scope="col">Result</th><th scope="col">Meaning</th></tr></thead>
   <tbody>
     <tr><td data-label="Result"><strong>Collected</strong><br><span class="meta token">ok</span></td>
@@ -222,6 +291,8 @@ defeating a refusal would destroy the capability that rule protects.</p>
 no attempt was made, so nothing can be said about what those days held.</p>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>Days on which no collection run is recorded. A gap is published as a
+  gap rather than smoothed over.</caption>
   <thead><tr><th scope="col">From</th><th scope="col">To</th><th scope="col" class="num">Days</th></tr></thead>
   <tbody>
     <tr><td data-label="From">2026-07-17</td><td data-label="To">2026-07-24</td><td data-label="Days" class="num">8</td></tr>

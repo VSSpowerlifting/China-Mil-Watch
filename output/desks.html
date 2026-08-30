@@ -23,34 +23,49 @@
       <p class="brand-name">Indo-Pacific Record</p>
     </a>
     <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
-    <nav class="primary" aria-label="Primary">
+    <nav class="primary nav-desktop" aria-label="Primary">
       <ul>
-        <li><a href="archive.html">Record</a></li>
-        <li><a href="desks.html" aria-current="page">Desks</a></li>
-        <li><a href="sources.html">Sources</a></li>
-        <li><a href="analysis.html">Analysis</a></li>
-        <li><a href="coverage.html">Coverage</a></li>
-        <li><a href="methodology.html">Methodology</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
+      <li><a href="archive.html">Record</a></li>
+      <li><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
+      <li><a href="analysis.html">Analysis</a></li>
+      <li><a href="coverage.html">Coverage</a></li>
+      <li><a href="methodology.html">Methodology</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
     </nav>
+    <details class="nav-toggle nav-mobile">
+      <summary>Sections</summary>
+      <nav class="primary" aria-label="Primary">
+        <ul>
+      <li><a href="archive.html">Record</a></li>
+      <li><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
+      <li><a href="analysis.html">Analysis</a></li>
+      <li><a href="coverage.html">Coverage</a></li>
+      <li><a href="methodology.html">Methodology</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+      </nav>
+    </details>
   </div>
 </header>
-<div class="status-strip">
+<div class="freshness-bar">
   <div class="wrap">
-    <ul class="status-facts">
-      <li>Run <b>122</b></li>
-<li>2026-08-26</li>      <li><b>4</b> collectors executed</li>
-      <li><b>0</b> execution failures</li>
-<li><b>1</b> unimplemented adapter</li><li><b>1</b> collecting desk of <b>4</b> declared</li>    </ul>
-      <ul class="status-facts freshness">
-        <li>Records last collected <b>2026-08-26</b></li>
-        <li>Analysis last produced <b>2026-08-24</b></li>
-        <li>Last full update <b>2026-08-24</b></li>
-      </ul>
-      <p class="status-note">Collection is current; analysis is behind it. Records
-        dated after 2026-08-24 are stored and awaiting
-        screening. <a href="methodology.html#freshness">What these dates mean</a>.</p>
+    <dl>
+      <div><dt>Records last collected</dt>
+        <dd>2026-08-29</dd></div>
+      <div><dt>Analysis last produced</dt>
+        <dd>2026-08-24</dd></div>
+      <div><dt>Last full update</dt>
+        <dd>2026-08-24</dd></div>
+    </dl>
+    <p class="behind">Analysis trails collection; records after
+      2026-08-24 await screening.
+      <a href="methodology.html#freshness">What
+      these dates mean</a>.</p>
+    <p class="detail"><a href="coverage.html">Run
+      125 in full &rarr;</a></p>
   </div>
 </div>
 <main id="main">
@@ -65,62 +80,112 @@ its scope is declared, and is labeled according to what it actually does.</p>
 registry and the manifests it points at; record counts come from the corpus, and only a collecting
 desk has one.</p>
 
-<section class="desk desk--live">
-  <p class="desk-state desk-state--live">Live — collecting</p>
-  <h2 class="plain"><a href="china.html">China Desk</a></h2>
-  <p>Chinese official and state-linked defense publication surfaces: the armed forces newspaper, the defense ministry, the state news agency&#39;s military desk, and two English-language portals.</p>
-  <p class="meta">Collecting daily into the production corpus. This is the only mature collection in the project.</p>
-  <dl class="desk-facts">
-    <div><dt>Sources configured</dt><dd>5</dd></div>
-    <div><dt>Sources enabled</dt><dd>5</dd></div>
-    <div><dt>Records</dt><dd>3,574</dd></div>
-    <div><dt>Last successful collection</dt><dd>2026-08-26</dd></div>
-  </dl>
-  <p class="meta"><a href="china.html">China Desk in full →</a></p>
-</section>
-<section class="desk desk--shadow">
-  <p class="desk-state desk-state--shadow">Shadow evaluation — not public</p>
-  <h2 class="plain"><a href="singapore.html">Singapore Desk</a></h2>
-  <p>One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.</p>
-  <p class="meta">Under shadow evaluation. It collects into an isolated state branch that reaches neither the production database nor the published site, renders no records, and is counted nowhere. A shadow desk is not a qualified desk.</p>
-  <dl class="desk-facts">
-    <div><dt>Sources configured</dt><dd>1</dd></div>
-    <div><dt>Sources enabled</dt><dd>0</dd></div>
-    <div><dt>Records</dt><dd>None collected</dd></div>
-    <div><dt>Last successful collection</dt><dd>None</dd></div>
-  </dl>
-  <p class="meta"><a href="singapore.html">Singapore Desk in full →</a></p>
-</section>
-<section class="desk desk--shadow">
-  <p class="desk-state desk-state--shadow">Shadow evaluation — not public</p>
-  <h2 class="plain"><a href="japan.html">Japan Desk</a></h2>
-  <p>Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.</p>
-  <p class="meta">Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.</p>
-  <dl class="desk-facts">
-    <div><dt>Sources configured</dt><dd>4</dd></div>
-    <div><dt>Sources enabled</dt><dd>0</dd></div>
-    <div><dt>Records</dt><dd>None collected</dd></div>
-    <div><dt>Last successful collection</dt><dd>None</dd></div>
-  </dl>
-  <p class="meta"><a href="japan.html">Japan Desk in full →</a></p>
-</section>
-<section class="desk desk--access_blocked">
-  <p class="desk-state desk-state--access_blocked">Access blocked — not collecting</p>
-  <h2 class="plain"><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a></h2>
-  <p>Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks&#39; framing against a US framing of the same events. It is not a feed of US defense releases.</p>
-  <p class="meta">Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.</p>
-  <dl class="desk-facts">
-    <div><dt>Sources configured</dt><dd>0</dd></div>
-    <div><dt>Sources enabled</dt><dd>0</dd></div>
-    <div><dt>Records</dt><dd>None collected</dd></div>
-    <div><dt>Last successful collection</dt><dd>None</dd></div>
-  </dl>
-  <p class="meta"><a href="us-indopacific.html">US Indo-Pacific Reference Desk in full →</a></p>
-</section>
+<div class="cards cards--desks">
+  <section class="desk desk--live card card--desk is-collecting">
+    <p class="card-meta"><span class="desk-state desk-state--live">Live — collecting</span></p>
+    <h2 class="plain"><a href="china.html">China Desk</a></h2>
+    <p class="card-prose">Chinese official and state-linked defense publication surfaces: the armed forces newspaper, the defense ministry, the state news agency&#39;s military desk, and two English-language portals.</p>
+    <p class="blocking">Collecting daily into the production corpus. This is the only mature collection in the project.</p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Sources configured</dt><dd>5</dd></div>
+      <div class="stat-row"><dt>Sources enabled</dt><dd>5</dd></div>
+      <div class="stat-row"><dt>Records</dt><dd>3,673</dd></div>
+      <div class="stat-row"><dt>Last successful collection</dt><dd>2026-08-29</dd></div>
+    </dl>
+    <p class="card-foot"><a href="china.html">China Desk in full →</a></p>
+  </section>
+  <section class="desk desk--shadow card card--desk is-shadow">
+    <p class="card-meta"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></p>
+    <h2 class="plain"><a href="singapore.html">Singapore Desk</a></h2>
+    <p class="card-prose">One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.</p>
+    <p class="blocking">Under shadow evaluation. It collects into an isolated state branch that reaches neither the production database nor the published site, renders no records, and is counted nowhere. A shadow desk is not a qualified desk.</p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Sources configured</dt><dd>1</dd></div>
+      <div class="stat-row"><dt>Sources enabled</dt><dd>0</dd></div>
+      <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+      <div class="stat-row"><dt>Last successful collection</dt><dd>None</dd></div>
+    </dl>
+    <p class="card-foot"><a href="singapore.html">Singapore Desk in full →</a></p>
+  </section>
+  <section class="desk desk--shadow card card--desk is-shadow">
+    <p class="card-meta"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></p>
+    <h2 class="plain"><a href="japan.html">Japan Desk</a></h2>
+    <p class="card-prose">Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.</p>
+    <p class="blocking">Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.</p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Sources configured</dt><dd>4</dd></div>
+      <div class="stat-row"><dt>Sources enabled</dt><dd>0</dd></div>
+      <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+      <div class="stat-row"><dt>Last successful collection</dt><dd>None</dd></div>
+    </dl>
+    <p class="card-foot"><a href="japan.html">Japan Desk in full →</a></p>
+  </section>
+  <section class="desk desk--access_blocked card card--desk is-blocked">
+    <p class="card-meta"><span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></p>
+    <h2 class="plain"><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a></h2>
+    <p class="card-prose">Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks&#39; framing against a US framing of the same events. It is not a feed of US defense releases.</p>
+    <p class="blocking">Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.</p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Sources configured</dt><dd>0</dd></div>
+      <div class="stat-row"><dt>Sources enabled</dt><dd>0</dd></div>
+      <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+      <div class="stat-row"><dt>Last successful collection</dt><dd>None</dd></div>
+    </dl>
+    <p class="card-foot"><a href="us-indopacific.html">US Indo-Pacific Reference Desk in full →</a></p>
+  </section>
+</div>
+
+<h2>Every desk, side by side</h2>
+<div class="table-scroll">
+<table class="stacking desk-table">
+  <caption>The same 4 desks as the cards above. Only a
+  collecting desk has a record count.</caption>
+  <thead>
+    <tr><th scope="col">Desk</th><th scope="col">Status</th>
+        <th scope="col" class="num">Configured</th><th scope="col" class="num">Enabled</th>
+        <th scope="col" class="num">Records</th><th scope="col">Last collection</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td data-label="Desk"><a href="china.html">China Desk</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--live">Live — collecting</span></td>
+      <td data-label="Configured" class="num">5</td>
+      <td data-label="Enabled" class="num">5</td>
+      <td data-label="Records" class="num">3,673</td>
+      <td data-label="Last collection">2026-08-29</td>
+    </tr>
+    <tr>
+      <td data-label="Desk"><a href="singapore.html">Singapore Desk</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></td>
+      <td data-label="Configured" class="num">1</td>
+      <td data-label="Enabled" class="num">0</td>
+      <td data-label="Records" class="num"><span class="meta">none — see status</span></td>
+      <td data-label="Last collection">None</td>
+    </tr>
+    <tr>
+      <td data-label="Desk"><a href="japan.html">Japan Desk</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></td>
+      <td data-label="Configured" class="num">4</td>
+      <td data-label="Enabled" class="num">0</td>
+      <td data-label="Records" class="num"><span class="meta">none — see status</span></td>
+      <td data-label="Last collection">None</td>
+    </tr>
+    <tr>
+      <td data-label="Desk"><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a></td>
+      <td data-label="Status"><span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></td>
+      <td data-label="Configured" class="num">0</td>
+      <td data-label="Enabled" class="num">0</td>
+      <td data-label="Records" class="num"><span class="meta">none — see status</span></td>
+      <td data-label="Last collection">None</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 <h2>What a status means</h2>
 <div class="table-scroll">
 <table class="stacking">
+  <caption>What each desk status means, and what it implies about the record.</caption>
   <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th></tr></thead>
   <tbody>
     <tr><td data-label="Status"><span class="desk-state desk-state--live">Live — collecting</span></td>
