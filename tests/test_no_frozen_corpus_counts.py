@@ -44,6 +44,18 @@ ways, positively and negatively:
     1. Comma-grouped numerals — `"3,611"`. This is how a corpus total appears
        on a page and in an assertion about a page. Percentages, status codes,
        byte offsets, day counts and fixture ids are never written this way.
+
+       In a Python file this rule reads the PARSE TREE, not the raw text:
+       string constants only, docstrings excluded by node identity, and
+       comments invisible because they are not nodes at all. Corrected
+       2026-08-28 — it had been a regex over the whole file, so a comment
+       reading `# Historical launch contained 3,611 records` was reported as a
+       frozen total. The prose tests below did not catch it because they
+       called the context scanner directly while the end-to-end path composed
+       both, which is why `TestProseIsInvisibleEndToEnd` goes through
+       `frozen_total_literals_from` instead. Templates and JSON configs keep
+       the raw rule: they have no docstrings, no comments in this sense, and
+       every number in one is content a reader sees.
     2. Bare integers in a statement that also names a corpus metric —
        `assertEqual(metrics.records, 3611)`. Whole-identifier matches only, so
        `add_run` is not `runs` and `count` is not `record_count`.
@@ -159,6 +171,60 @@ def grouped_literals(text: str):
     return {int(m.replace(",", "")) for m in GROUPED.findall(text)}
 
 
+def _docstring_node_ids(tree) -> set:
+    """
+    The identity of every module, class and function docstring in `tree`.
+
+    By identity, not by text: an ordinary string that happens to read like a
+    docstring must still be scanned, or the exclusion becomes a way to hide a
+    frozen figure inside a lookalike.
+    """
+    found = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef,
+                             ast.AsyncFunctionDef)):
+            body = getattr(node, "body", None)
+            if (body and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)):
+                found.add(id(body[0].value))
+    return found
+
+
+def grouped_literals_in_code(source: str):
+    """
+    Comma-grouped numerals in a Python file's EXECUTABLE strings only.
+
+    `grouped_literals` runs a regex over raw text, which is right for a
+    template or a JSON config and wrong for Python: it read comments and
+    docstrings too, so
+
+        # Historical launch contained 3,611 records
+
+    was reported as a frozen corpus total. That contradicted this module's own
+    stated contract — prose is ignored — and the prose tests did not catch it
+    because they exercised `corpus_context_literals` while the end-to-end path
+    also called the raw scanner. A guard whose documented behaviour and actual
+    behaviour disagree is worse than one that is merely strict.
+
+    So the source is parsed and only string constants are read. Comments are
+    not AST nodes and therefore cannot be seen at all — the strongest available
+    form of "invisible", because it needs no rule. Docstrings are excluded by
+    node identity. What remains is the ordinary executable string, which is
+    where a frozen total actually lives:
+
+        self.assertIn("3,611", page)
+    """
+    tree = ast.parse(source)
+    docstrings = _docstring_node_ids(tree)
+    found = set()
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Constant) and isinstance(node.value, str)
+                and id(node) not in docstrings):
+            found |= grouped_literals(node.value)
+    return found
+
+
 def _own_nodes(stmt):
     """
     The nodes belonging to this statement, not to statements nested inside it.
@@ -204,15 +270,7 @@ def corpus_context_literals(source: str):
     the superseded scanner did: a figure nothing asserts is not a time bomb.
     """
     tree = ast.parse(source)
-    docstrings = set()
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef,
-                             ast.AsyncFunctionDef)):
-            body = getattr(node, "body", None)
-            if (body and isinstance(body[0], ast.Expr)
-                    and isinstance(body[0].value, ast.Constant)
-                    and isinstance(body[0].value.value, str)):
-                docstrings.add(id(body[0].value))
+    docstrings = _docstring_node_ids(tree)
 
     found = set()
     for node in ast.walk(tree):
@@ -236,22 +294,33 @@ def frozen_total_literals(path: Path):
     """
     Every number in `path` that looks like a frozen public corpus total.
 
-    Python files get both rules. Everything else gets the comma-grouped rule
-    only: a template has no statements to read context from, and the mutation
-    proof in `test_daily_corpus_advance.py` covers a template that freezes a
-    figure far better than any literal scan could — it renders a different
-    corpus and checks the page followed it.
+    Python files get both rules, and both read the parse tree rather than the
+    raw text, so a figure in a comment or a docstring is invisible to each.
+
+    Everything else gets the raw comma-grouped rule: a template or a JSON
+    config has no statements to read context from and no docstrings to
+    exclude, and every number in one is content. The mutation proof in
+    `test_daily_corpus_advance.py` covers a template that freezes a figure far
+    better than any literal scan could — it renders a different corpus and
+    checks the page followed it.
     """
     text = path.read_text(encoding="utf-8")
     if path.suffix == ".py":
-        return grouped_literals(text) | corpus_context_literals(text)
+        return grouped_literals_in_code(text) | corpus_context_literals(text)
     return grouped_literals(text)
 
 
 def frozen_total_literals_from(text: str, suffix: str):
-    """`frozen_total_literals` for a source string, so cases read as code."""
+    """
+    `frozen_total_literals` for a source string, so cases read as code.
+
+    Deliberately the same composition as the file-reading path. When these two
+    diverged, the prose tests passed against a scanner the real guard was not
+    only using, and a comment containing `3,611` was reported as a frozen
+    corpus total for a day.
+    """
     if suffix == ".py":
-        return grouped_literals(text) | corpus_context_literals(text)
+        return grouped_literals_in_code(text) | corpus_context_literals(text)
     return grouped_literals(text)
 
 
@@ -390,6 +459,124 @@ class TestTheScanReadsCodeNotProse(unittest.TestCase):
     def test_booleans_are_not_counted_as_numbers(self):
         """`True` is an int subclass; counting it would make 1 a corpus figure."""
         self.assertNotIn(1, self.scan("records = True\n"))
+
+
+class TestProseIsInvisibleEndToEnd(unittest.TestCase):
+    """
+    The guard's stated contract, tested through the door the guard actually
+    uses.
+
+    This class exists because the contract and the code disagreed for a day.
+    `TestTheScanReadsCodeNotProse` proved prose was ignored — but it called
+    `corpus_context_literals` directly, while `frozen_total_literals` ALSO
+    applied a raw regex to the whole file. So
+
+        # Historical launch contained 3,611 records
+
+    was reported as a frozen corpus total, and every prose test passed.
+
+    Every case below goes through `frozen_total_literals_from`, which composes
+    exactly what the file-reading path composes. A lower-level test cannot
+    prove this property, because the defect was in the composition.
+    """
+
+    TOTAL = 3611
+    GROUPED = "3,611"
+
+    def scan(self, source):
+        return frozen_total_literals_from(source, ".py")
+
+    # ── prose: invisible ────────────────────────────────────────────────────
+
+    def test_a_grouped_number_in_a_comment_is_ignored(self):
+        """The reported defect, verbatim."""
+        self.assertNotIn(self.TOTAL, self.scan(
+            "# Historical launch contained %s records\nx = 1\n" % self.GROUPED))
+
+    def test_a_grouped_number_in_a_trailing_comment_is_ignored(self):
+        self.assertNotIn(self.TOTAL, self.scan(
+            "x = 1  # was %s records at launch\n" % self.GROUPED))
+
+    def test_a_grouped_number_in_a_module_docstring_is_ignored(self):
+        self.assertNotIn(self.TOTAL, self.scan(
+            '"""Historical launch contained %s records."""\nx = 1\n'
+            % self.GROUPED))
+
+    def test_a_grouped_number_in_a_class_docstring_is_ignored(self):
+        self.assertNotIn(self.TOTAL, self.scan(
+            'class C:\n    """held %s records"""\n    pass\n' % self.GROUPED))
+
+    def test_a_grouped_number_in_a_function_docstring_is_ignored(self):
+        self.assertNotIn(self.TOTAL, self.scan(
+            'def f():\n    """held %s records"""\n    return 1\n'
+            % self.GROUPED))
+
+    def test_a_grouped_number_in_a_method_docstring_is_ignored(self):
+        self.assertNotIn(self.TOTAL, self.scan(
+            'class C:\n    def f(self):\n        """held %s records"""\n'
+            '        return 1\n' % self.GROUPED))
+
+    # ── code: still caught ──────────────────────────────────────────────────
+
+    def test_the_same_text_in_an_executable_string_is_caught(self):
+        """
+        Identical words, different node. This is the pair that shows the rule
+        is about where the number lives, not about what it says.
+        """
+        self.assertIn(self.TOTAL, self.scan(
+            'note = "Historical launch contained %s records"\n' % self.GROUPED))
+
+    def test_a_page_assertion_is_caught(self):
+        self.assertIn(self.TOTAL, self.scan(
+            'self.assertIn("%s", page)\n' % self.GROUPED))
+
+    def test_a_grouped_number_in_an_f_string_is_caught(self):
+        self.assertIn(self.TOTAL, self.scan(
+            'msg = f"expected %s records {suffix}"\n' % self.GROUPED))
+
+    def test_a_string_that_merely_looks_like_a_docstring_is_caught(self):
+        """
+        Docstrings are excluded by node identity. A string with the same text
+        in an executable position is a different node and must still be read,
+        or the exclusion becomes a hiding place.
+        """
+        text = "held %s records" % self.GROUPED
+        self.assertIn(self.TOTAL, self.scan(
+            'def f():\n    """%s"""\n    return assertIn("%s", page)\n'
+            % (text, text)))
+
+
+class TestNonPythonFilesStillReadEveryNumber(unittest.TestCase):
+    """
+    The AST scoping applies to Python only. A template has no docstrings and no
+    comments in the Python sense — every number in one is content a reader
+    sees, so the raw rule stays.
+    """
+
+    TOTAL = 3611
+    GROUPED = "3,611"
+
+    def test_a_grouped_total_in_a_template_is_caught(self):
+        self.assertIn(self.TOTAL, frozen_total_literals_from(
+            '<dd>%s<small>records</small></dd>\n' % self.GROUPED, ".html"))
+
+    def test_a_grouped_total_in_a_jinja_comment_is_still_caught(self):
+        """
+        Deliberately NOT excluded. A Jinja comment is not executable, but it is
+        also not parsed here, and a template is small enough that a number in
+        one is worth a look. Erring strict on templates costs a reviewer a
+        glance; erring loose costs a frozen figure on a public page.
+        """
+        self.assertIn(self.TOTAL, frozen_total_literals_from(
+            '{# was %s records #}\n' % self.GROUPED, ".html"))
+
+    def test_a_grouped_total_in_a_json_config_is_caught(self):
+        self.assertIn(self.TOTAL, frozen_total_literals_from(
+            '{"expected_records": "%s"}\n' % self.GROUPED, ".json"))
+
+    def test_an_ungrouped_structural_number_in_a_template_is_quiet(self):
+        self.assertNotIn(100, frozen_total_literals_from(
+            '<span style="width: {{ (n * 100 / top) }}%"></span>\n', ".html"))
 
 
 class TestTheNarrowingStillCatchesTheRealThing(unittest.TestCase):

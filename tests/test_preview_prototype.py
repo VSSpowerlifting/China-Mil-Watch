@@ -1676,10 +1676,20 @@ class TestRecordPages(PreviewCase):
                 self.assertNotIn(">%s<" % bogus, html)
 
     def test_display_title_falls_back_to_the_original(self):
+        """
+        The expected fragment is escaped the way the template escapes it.
+
+        The raw comparison held for as long as no untranslated title contained
+        a character Jinja escapes. On 2026-08-29 record 3679 arrived carrying
+        Chinese typographic quotes around 强军杯, autoescape rendered them as
+        `&#34;`, and the raw substring stopped matching — a test failing on
+        correctly rendered output. `test_all_record_pages_carry_the_source_text_citation`
+        already escapes for this reason; this one now does too.
+        """
         rec = next(r for r in self.data["corpus"] if not r["title_english"])
         html = self.record(rec["id"])
         self.assertIn("<h1>", html)
-        self.assertIn(rec["title_original"][:20], html)
+        self.assertIn(str(markupsafe.escape(rec["title_original"][:20])), html)
 
     def test_exactly_one_h1_per_record_page(self):
         for state in gp.STATE_ORDER:
