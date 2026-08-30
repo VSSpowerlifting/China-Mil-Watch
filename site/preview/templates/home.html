@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block main_class %} class="leads-with-hero"{% endblock %}
 {% block hero %}
 {# The front door. What stood here was a paragraph of body copy directly under
    an operational status strip — accurate, and no way in. A reader arriving
@@ -136,8 +137,8 @@ desk has a record count; the others say what stops them rather than showing a ze
   </figure>
   {% endif %}
 </article>
-{% if lead_edition.cover and lead_edition.cover.credit %}
-<p class="figure-credit">{{ lead_edition.cover.credit }}</p>
+{% if lead_edition.cover %}
+<p class="figure-credit">{{ lead_edition.cover.credit_note }}</p>
 {% endif %}
 {% endif %}
 

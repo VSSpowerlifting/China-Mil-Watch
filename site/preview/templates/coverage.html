@@ -9,7 +9,28 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 <a href="desks.html">Desks</a> rather than shown as a failure.</p>
 
 <h2>Most recent run</h2>
-<p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }} · aggregate <strong>{{ latest_run.status }}</strong></p>
+{# The aggregate status covers the whole pipeline, not collection alone.
+
+   Rendered on its own it read as a contradiction: "aggregate failed" sitting
+   directly above "4 collectors executed / 0 execution failures". Both are
+   true — collection succeeded and something after it did not — but a reader
+   met the verdict first and the evidence second, and the obvious reading was
+   that collection had failed.
+
+   So the two stages are named separately when the stored facts distinguish
+   them: collectors ran, none of them failed, and the run as a whole is
+   recorded as failed. What failed afterwards is NOT named here. This model
+   holds no record of which later stage stopped or why, and guessing at one
+   would be inventing an operational detail from an absence. The aggregate
+   status stays, as the secondary evidence it is. #}
+<p class="meta">Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }}</p>
+{% if run_status and latest_run.status == 'failed' and run_status.executed and not run_status.failed %}
+<p class="run-verdict">Collection completed; the pipeline failed after
+  collection. <span class="meta">Recorded run status: <strong>{{ latest_run.status }}</strong>.
+  The stage that failed is not recorded here.</span></p>
+{% else %}
+<p class="meta">Recorded run status: <strong>{{ latest_run.status }}</strong></p>
+{% endif %}
 
 {# The run's four states, in full. These stood in a strip above every page on
    the site until 2026-08-27. They were accurate and they were the loudest

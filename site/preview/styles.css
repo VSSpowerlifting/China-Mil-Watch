@@ -1014,22 +1014,27 @@ footer.site a { color: var(--ocean); }
   background: none;
 }
 
-/* Mobile: a disclosure, not a hamburger script. <details> is keyboard
-   operable, announced as expandable, and works with JavaScript off.
+/* Two presentations, one of which exists at a time.
 
-   Both presentations are driven explicitly rather than by leaning on the UA
-   style that hides a closed <details>'s children: at wide widths the summary
-   is hidden and the nav is shown unconditionally, so the open/closed state is
-   simply irrelevant there. Nothing depends on overriding a browser default. */
-.nav-toggle { flex: 1 0 100%; }
-.nav-toggle > summary { display: none; }
-.nav-toggle > nav.primary { display: block; }
+   This used to be a single nav inside a closed <details>, revealed on desktop
+   with `display: block`. That does not work: a closed <details> hides its
+   contents through a mechanism a child's `display` cannot override, so the
+   desktop masthead rendered with no navigation while these rules claimed it
+   was visible. The lesson was not "find a better override" — it was to stop
+   asking a disclosure to be two things.
+
+   `display: none` is deliberate on the hidden one: it removes the element from
+   the accessibility tree as well as the layout, so a screen reader finds seven
+   links, never fourteen. */
+.nav-desktop { display: block; flex: 1 0 100%; }
+.nav-mobile { display: none; }
 @media (max-width: 43.75rem) {
   .masthead .wrap { padding-top: .85rem; padding-bottom: .85rem; }
   .masthead .brand-sub { display: none; }
   .masthead nav.primary { border-top: 0; margin: 0; padding: 0; flex-basis: auto; }
+  .nav-desktop { display: none; }
+  .nav-mobile { display: block; }
   .nav-toggle { flex: 0 0 auto; margin-left: auto; }
-  .nav-toggle:not([open]) > nav.primary { display: none; }
   .nav-toggle[open] { flex: 1 0 100%; margin-left: 0; }
   .nav-toggle[open] > summary { margin-left: auto; width: max-content; }
   .nav-toggle > summary {
@@ -1094,12 +1099,24 @@ footer.site a { color: var(--ocean); }
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: .35rem 1.5rem;
-  padding-top: .55rem;
-  padding-bottom: .55rem;
+  gap: .2rem 1.5rem;
+  padding-top: .4rem;
+  padding-bottom: .4rem;
 }
-.freshness-bar dl { display: flex; flex-wrap: wrap; gap: .35rem 1.5rem; margin: 0; }
+/* The three dates take a row of their own, so the explanation and the run link
+   share the one below rather than interleaving with them at some widths and
+   not others. Two rows, deterministically, at every desktop width. */
+.freshness-bar dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem 1.5rem;
+  margin: 0;
+  flex: 1 0 100%;
+}
 .freshness-bar div { display: flex; gap: .4rem; align-items: baseline; }
+/* A label and its date are one unit. Wrapping between them puts a bare date on
+   a line with nothing saying which of the three it is. */
+.freshness-bar dl > div { white-space: nowrap; }
 .freshness-bar dt { color: var(--text-muted-tinted); }
 .freshness-bar dd {
   margin: 0;
@@ -1112,10 +1129,30 @@ footer.site a { color: var(--ocean); }
 .freshness-bar .behind {
   color: var(--text-muted-tinted);
   margin: 0;
-  flex: 1 1 18rem;
+  flex: 1 1 auto;
 }
 .freshness-bar .behind a { color: var(--ocean); }
 .freshness-bar .detail { margin-left: auto; white-space: nowrap; }
+
+@media (max-width: 43.75rem) {
+  /* A two-column label/value grid. `display: contents` on each wrapper lets the
+     dt and dd become grid items directly, so every date lines up on one column
+     edge instead of each pair wrapping at its own width. */
+  .freshness-bar dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: .15rem .75rem;
+    width: 100%;
+  }
+  .freshness-bar dl > div { display: contents; }
+  .freshness-bar dt, .freshness-bar dd { white-space: nowrap; }
+  .freshness-bar .behind { flex: 1 0 100%; margin-top: .3rem; }
+  .freshness-bar .detail { margin-left: 0; flex: 1 0 100%; }
+}
+
+/* The reading column's top padding would otherwise open a band of page
+   background above a full-bleed hero. Pages without one keep it. */
+main.leads-with-hero { padding-top: 0; }
 
 /* ── Hero ─────────────────────────────────────────────────────────────── */
 .hero {
@@ -1427,6 +1464,14 @@ footer.site a { color: var(--ocean); }
   line-height: 1.95;
 }
 .original-text:lang(zh), .original-text[lang^="zh"] { line-height: 2.05; }
+
+/* The run verdict sits above the per-source evidence and has to be readable
+   as a sentence, not skimmed as a status chip. */
+.run-verdict {
+  margin: 0 0 .9rem;
+  max-width: var(--measure);
+}
+.run-verdict .meta { display: block; margin-top: .15rem; }
 
 /* ── Archive filters ──────────────────────────────────────────────────── */
 .filters {

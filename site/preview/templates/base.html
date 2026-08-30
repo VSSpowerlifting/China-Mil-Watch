@@ -35,20 +35,38 @@
     </a>
     <p class="brand-sub">{{ tagline }}</p>
     {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
-    {# Seven destinations. On a phone they were a seven-line wall above the
-       content; this is a disclosure rather than a scripted menu, so it is
-       keyboard operable, announced as expandable, and works with JavaScript
-       off — which the rest of this site also assumes. CSS decides which of the
-       two presentations shows, so there is one nav in the markup and one set
-       of links for a screen reader to find. #}
-    <details class="nav-toggle">
+    {# Seven destinations, defined once and rendered twice.
+
+       The previous version put the only nav inside a closed <details> and
+       relied on `display: block` to reveal it above the mobile breakpoint. It
+       does not: a closed <details> hides its contents through a mechanism a
+       child's `display` cannot override, so the desktop masthead shipped with
+       no navigation at all while the stylesheet claimed otherwise. That is not
+       fixable with a better override, and this does not try — it renders a
+       plain <nav> for desktop and a separate disclosure for mobile, from one
+       macro, so the two link sets cannot drift apart.
+
+       Exactly one is in the document at a time: the other is `display: none`,
+       which removes it from the accessibility tree as well as from view, so
+       nothing is announced twice.
+
+       The mobile presentation stays a <details> rather than a scripted menu —
+       keyboard operable, announced as expandable, and working with JavaScript
+       off, which the rest of this site also assumes. #}
+    {% macro nav_links() -%}
+    <ul>
+      {% for href, label in nav %}
+      <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+    {%- endmacro %}
+    <nav class="primary nav-desktop" aria-label="Primary">
+      {{ nav_links() }}
+    </nav>
+    <details class="nav-toggle nav-mobile">
       <summary>Sections</summary>
       <nav class="primary" aria-label="Primary">
-        <ul>
-          {% for href, label in nav %}
-          <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
-          {% endfor %}
-        </ul>
+        {{ nav_links() }}
       </nav>
     </details>
   </div>
@@ -83,10 +101,16 @@
       <div><dt>Last full update</dt>
         <dd>{{ freshness.last_full_update or 'not yet recorded' }}</dd></div>
     </dl>
+    {# "Collection is current" was a claim the dates cannot support. All they
+       show is that collection ran more recently than analysis — which is also
+       true of a corpus whose last successful collection was a month ago. The
+       sentence now states the relationship it can actually see, and the
+       ordering: analysis trails collection, and everything after the analysis
+       date is stored but unscreened. #}
     {% if freshness.analysis_is_behind_collection %}
-    <p class="behind">Collection is current; analysis is behind it. Records dated
-      after {{ freshness.analysis_last_produced }} are stored and awaiting
-      screening. <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
+    <p class="behind">Analysis trails collection; records after
+      {{ freshness.analysis_last_produced }} await screening.
+      <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
       these dates mean</a>.</p>
     {% endif %}
     <p class="detail"><a href="{{ '../' if nested else '' }}coverage.html">Run
@@ -94,7 +118,11 @@
   </div>
 </div>
 {% endif %}
-<main id="main">
+{# A page whose first child is full-bleed editorial furniture opts out of the
+   reading column's top padding, or the dark hero opens with a band of page
+   background above it. Opt-in per page rather than keyed to the home page's
+   name, so the next page to grow a hero gets it by saying so. #}
+<main id="main"{% block main_class %}{% endblock %}>
 {# Full-bleed editorial furniture goes here, inside the main landmark but
    outside the reading column. Only the home page uses it so far. #}
 {% block hero %}{% endblock %}

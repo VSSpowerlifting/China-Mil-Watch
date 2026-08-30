@@ -876,6 +876,22 @@ def edition_cover(repo_root: Path, slug: str, sidecar: dict):
         if item.get("type") == "image" and item.get("caption"):
             credit = item["caption"]
             break
+    # What the caption line SAYS, as distinct from what the sidecar RECORDS.
+    #
+    # The sidecar's caption is the edition's own published wording — "Cover
+    # background image sourced from the lead source article" — and it is the
+    # canonical record, so it is neither edited nor overwritten; it stays on
+    # `credit` below. But rendered under the cover on this site it described
+    # the wrong object. The image shown here is not the source photograph: it
+    # is the edition's own generated cover, a project-owned artifact preserved
+    # as it was published, which happens to have that photograph composed into
+    # its background. The line now says which of the two the reader is looking
+    # at, and attributes the embedded photograph only when the edition actually
+    # recorded a credit for it.
+    note = "Original PLA Watch edition cover, preserved as published."
+    if credit:
+        note += (" Its embedded background image was credited to the lead"
+                 " source article.")
     return {
         "slug": slug,
         "source": full,
@@ -883,6 +899,7 @@ def edition_cover(repo_root: Path, slug: str, sidecar: dict):
         "sha256": hashlib.sha256(full.read_bytes()).hexdigest(),
         "bytes": full.stat().st_size,
         "credit": credit,
+        "credit_note": note,
         "alt": ("Cover of The PLA Watch No. %s, week ending %s"
                 % (sidecar.get("issue_number"), sidecar.get("week_ending")
                    or sidecar.get("date") or slug)),
@@ -1991,6 +2008,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                 "sha256": c["sha256"],
                 "bytes": c["bytes"],
                 "credit": c["credit"],
+                "credit_note": c["credit_note"],
                 "alt": c["alt"],
                 "origin": "output/the-pla-watch/covers/%s.png" % c["slug"],
             } for c in covers],
