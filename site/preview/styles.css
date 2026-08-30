@@ -68,6 +68,45 @@
 
   --rule:         #B8CFCC;
   --rule-strong:  #8FB3AE;
+
+  /* ── DARK EDITORIAL SURFACES (added 2026-08-27) ────────────────────────
+     The publication had one voice: a light document canvas, correct for
+     reading a 4,000-character source text and wrong as a front door. These
+     are the grounds for chrome and for editorial furniture — masthead, hero,
+     feature — and nothing long-form is ever set on them. Long source texts
+     and CJK material stay on paper.
+
+     Measured against each ground, same method as above:
+       parchment  #EDE9E0  13.07 ink · 14.64 abyss · 11.40 slate
+       dark-muted #A8B6B8   7.58 ink ·  8.49 abyss ·  6.61 slate
+       seaglass   #CBEAE5  12.40 ink · 13.89 abyss · 10.82 slate
+       turquoise  #28B8A6   6.41 ink ·  7.18 abyss ·  5.59 slate  (status)
+       crimson-up #E8737F   5.42 ink ·  6.07 abyss ·  4.73 slate  (text)
+       crimson-mk #E05A6D   4.41 ink ·  4.94 abyss ·  3.85 slate  (large only)
+     ------------------------------------------------------------------- */
+  --abyss:        #0A1A22;   /* masthead ground */
+  --slate:        #16303B;   /* raised cards on a dark ground */
+  --parchment:    #EDE9E0;   /* primary text on dark */
+  --dark-muted:   #A8B6B8;   /* secondary text on dark */
+
+  /* ── CRIMSON (added 2026-08-27) ────────────────────────────────────────
+     The editorial accent, taken from The PLA Watch, whose masthead is the
+     quality benchmark for this work.
+
+     It does NOT join the light-surface accent scheme, and that is the whole
+     of its discipline. On paper, --ocean remains the sole structural accent
+     and --signal rust keeps its exclusive meaning: if rust appears, a model
+     produced what it marks. Crimson is confined to DARK chrome, where rust
+     never appears, so the two can never be read against each other and the
+     rust rule stays exactly as true as it was.
+
+     --crimson itself measures 6.45 on paper and 2.30 on ink: it is a text
+     tone on light and a FILL or RULE on dark, never dark-surface text. The
+     two lifted tones exist because of that.
+     ------------------------------------------------------------------- */
+  --crimson:      #B3132B;   /* 6.45 on paper — brand mark, fills, rules */
+  --crimson-text: #E8737F;   /* the crimson that may carry text on dark */
+  --crimson-mark: #E05A6D;   /* large display text and rules on dark */
   --surface-2:    #E8F3F2;   /* mist */
 
   /* ── Six-level type ladder (revision brief §4) ───────────────────────
@@ -890,3 +929,753 @@ footer.site a { color: var(--ocean); }
   font-size: .82rem;
   line-height: 1.45;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EDITORIAL CHROME — added 2026-08-27
+   ───────────────────────────────────────────────────────────────────────
+   The site read as documentation: one column, one weight, one surface, an
+   operational strip louder than the masthead, and no way in. These rules
+   add the missing register — a dark masthead, an editorial hero, and modular
+   cards — without touching the reading surface underneath. Long records and
+   CJK source text stay exactly where they were, on paper.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Masthead ─────────────────────────────────────────────────────────── */
+.masthead {
+  background: var(--abyss);
+  border-bottom: 0;
+  border-top: 3px solid var(--crimson);
+  padding: 0;
+  color: var(--parchment);
+}
+.masthead .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem 2rem;
+  padding-top: 1.05rem;
+  padding-bottom: 1.05rem;
+}
+.masthead .brand { align-items: center; gap: .6rem; margin: 0; }
+.masthead .brand-name {
+  color: var(--parchment);
+  font-size: var(--step-wordmark);
+  letter-spacing: -0.011em;
+  margin: 0;
+}
+/* The mark is drawn in the masthead's own parchment and the collection-health
+   turquoise. Crimson here was a fourth appearance of the accent on a surface
+   that already carries the top rule and the primary button — decorative use,
+   which is the thing the accent budget exists to prevent. */
+.masthead .brand-mark .mark-field { stroke: var(--parchment); }
+.masthead .brand-mark .mark-rules { stroke: var(--dark-muted); }
+.masthead .brand-mark .mark-tide  { stroke: var(--turquoise); }
+.masthead .brand-sub {
+  color: var(--dark-muted);
+  margin: 0;
+  max-width: 30ch;
+  font-size: var(--step-meta);
+  line-height: 1.45;
+  flex: 1 1 16rem;
+}
+
+/* Navigation sits on its own rule below the lockup so seven items never
+   compete with the wordmark for the same line. */
+.masthead nav.primary {
+  flex: 1 0 100%;
+  border-top: 1px solid rgba(237, 233, 224, .14);
+  margin-top: .15rem;
+  padding-top: .1rem;
+}
+.masthead nav.primary ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.masthead nav.primary a {
+  display: block;
+  padding: .6rem 0;
+  color: var(--dark-muted);
+  font-family: var(--sans);
+  font-size: .8125rem;
+  font-weight: 500;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.masthead nav.primary a:hover { color: var(--parchment); }
+.masthead nav.primary a[aria-current="page"] {
+  color: var(--parchment);
+  border-bottom-color: var(--crimson-mark);
+  background: none;
+}
+
+/* Two presentations, one of which exists at a time.
+
+   This used to be a single nav inside a closed <details>, revealed on desktop
+   with `display: block`. That does not work: a closed <details> hides its
+   contents through a mechanism a child's `display` cannot override, so the
+   desktop masthead rendered with no navigation while these rules claimed it
+   was visible. The lesson was not "find a better override" — it was to stop
+   asking a disclosure to be two things.
+
+   `display: none` is deliberate on the hidden one: it removes the element from
+   the accessibility tree as well as the layout, so a screen reader finds seven
+   links, never fourteen. */
+.nav-desktop { display: block; flex: 1 0 100%; }
+.nav-mobile { display: none; }
+@media (max-width: 43.75rem) {
+  .masthead .wrap { padding-top: .85rem; padding-bottom: .85rem; }
+  .masthead .brand-sub { display: none; }
+  .masthead nav.primary { border-top: 0; margin: 0; padding: 0; flex-basis: auto; }
+  .nav-desktop { display: none; }
+  .nav-mobile { display: block; }
+  .nav-toggle { flex: 0 0 auto; margin-left: auto; }
+  .nav-toggle[open] { flex: 1 0 100%; margin-left: 0; }
+  .nav-toggle[open] > summary { margin-left: auto; width: max-content; }
+  .nav-toggle > summary {
+    display: flex;
+    list-style: none;
+    cursor: pointer;
+    align-items: center;
+    gap: .45rem;
+    padding: .5rem .7rem;
+    color: var(--parchment);
+    font-family: var(--sans);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(237, 233, 224, .3);
+    border-radius: 2px;
+  }
+  .nav-toggle > summary::-webkit-details-marker { display: none; }
+  .nav-toggle > summary::after {
+    content: "";
+    width: .5rem; height: .5rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+  }
+  .nav-toggle[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+  /* Open state, not active page. Crimson marks which page you are on; it does
+     not mark that a disclosure is expanded. */
+  .nav-toggle[open] > summary { border-color: rgba(237, 233, 224, .55); }
+  .masthead nav.primary ul {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    padding-top: .35rem;
+  }
+  .masthead nav.primary li { border-top: 1px solid rgba(237, 233, 224, .12); }
+  .masthead nav.primary a {
+    padding: .8rem .2rem;
+    font-size: .875rem;
+    border-bottom: 0;
+    border-left: 3px solid transparent;
+    padding-left: .6rem;
+  }
+  .masthead nav.primary a[aria-current="page"] {
+    border-left-color: var(--crimson-mark);
+  }
+}
+
+/* ── Freshness bar ────────────────────────────────────────────────────────
+   Replaces the multi-line operational strip that used to open every page.
+   Three dates and one status sentence; the run-by-run detail it used to shout —
+   collectors executed, execution failures, unimplemented adapters — is on
+   Coverage, in full, where it can be read rather than skimmed past. */
+.freshness-bar {
+  background: var(--mist);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: var(--step-meta);
+}
+.freshness-bar .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .2rem 1.5rem;
+  padding-top: .4rem;
+  padding-bottom: .4rem;
+}
+/* The three dates take a row of their own, so the explanation and the run link
+   share the one below rather than interleaving with them at some widths and
+   not others. Two rows, deterministically, at every desktop width. */
+.freshness-bar dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem 1.5rem;
+  margin: 0;
+  flex: 1 0 100%;
+}
+.freshness-bar div { display: flex; gap: .4rem; align-items: baseline; }
+/* A label and its date are one unit. Wrapping between them puts a bare date on
+   a line with nothing saying which of the three it is. */
+.freshness-bar dl > div { white-space: nowrap; }
+.freshness-bar dt { color: var(--text-muted-tinted); }
+.freshness-bar dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--teal-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.freshness-bar .behind {
+  color: var(--text-muted-tinted);
+  margin: 0;
+  flex: 1 1 auto;
+}
+.freshness-bar .behind a { color: var(--ocean); }
+.freshness-bar .detail { margin-left: auto; white-space: nowrap; }
+
+@media (max-width: 43.75rem) {
+  /* A two-column label/value grid. `display: contents` on each wrapper lets the
+     dt and dd become grid items directly, so every date lines up on one column
+     edge instead of each pair wrapping at its own width. */
+  .freshness-bar dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: .15rem .75rem;
+    width: 100%;
+  }
+  .freshness-bar dl > div { display: contents; }
+  .freshness-bar dt, .freshness-bar dd { white-space: nowrap; }
+  .freshness-bar .behind { flex: 1 0 100%; margin-top: .3rem; }
+  .freshness-bar .detail { margin-left: 0; flex: 1 0 100%; }
+}
+
+/* The reading column's top padding would otherwise open a band of page
+   background above a full-bleed hero. Pages without one keep it. */
+main.leads-with-hero { padding-top: 0; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  background: var(--ink);
+  color: var(--parchment);
+  border-bottom: 1px solid rgba(237, 233, 224, .12);
+}
+.hero .wrap { padding-top: clamp(2.25rem, 6vw, 3.75rem); padding-bottom: clamp(2rem, 5vw, 3rem); }
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  /* Muted parchment, not crimson. An eyebrow is a label; the accent is
+     reserved for the top rule, the primary action and the current page. */
+  color: var(--dark-muted);
+  margin: 0 0 1rem;
+}
+.hero-statement {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 3.6vw, 2.375rem);
+  line-height: 1.24;
+  letter-spacing: -0.012em;
+  font-weight: 400;
+  margin: 0;
+  max-width: 26ch;
+  color: var(--parchment);
+}
+.hero-statement b { font-weight: 600; color: var(--white); }
+.hero-sub {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--dark-muted);
+  max-width: 54ch;
+  margin: 1.15rem 0 0;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.75rem; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--sans);
+  font-size: .875rem;
+  font-weight: 600;
+  letter-spacing: .01em;
+  text-decoration: none;
+  padding: .6rem 1.05rem;
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+.btn--primary { background: var(--crimson); color: var(--white); }
+.btn--primary:hover { background: var(--crimson-mark); color: var(--abyss); }
+.btn--ghost { border-color: rgba(237, 233, 224, .34); color: var(--parchment); }
+.btn--ghost:hover { border-color: var(--parchment); background: rgba(237, 233, 224, .07); }
+.btn--quiet {
+  border-color: var(--rule-strong);
+  color: var(--ocean);
+  background: var(--white);
+}
+.btn--quiet:hover { border-color: var(--ocean); }
+
+/* ── Evidence snapshot ────────────────────────────────────────────────── */
+.snapshot {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 1px;
+  background: rgba(237, 233, 224, .16);
+  border: 1px solid rgba(237, 233, 224, .16);
+  margin-top: 2.25rem;
+}
+.snapshot > div { background: var(--ink); padding: .95rem 1rem; }
+.snapshot dt {
+  font-family: var(--sans);
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--dark-muted);
+  margin: 0 0 .3rem;
+}
+.snapshot dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--white);
+  line-height: 1.15;
+}
+.snapshot dd.is-date { font-size: 1rem; color: var(--turquoise); white-space: nowrap; }
+.snapshot dd small {
+  display: block;
+  font-family: var(--sans);
+  font-size: .6875rem;
+  color: var(--dark-muted);
+  margin-top: .3rem;
+  letter-spacing: 0;
+}
+
+/* ── Section headers ──────────────────────────────────────────────────── */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem 1.5rem;
+  border-top: 2px solid var(--ink);
+  padding-top: .8rem;
+  margin: 3.25rem 0 1.5rem;
+}
+.section-head h2 { margin: 0; font-size: var(--step-section); }
+.section-head h2::before { content: none; }
+.section-head .more {
+  font-family: var(--sans);
+  font-size: .8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.section-note {
+  font-family: var(--sans);
+  font-size: var(--step-meta);
+  color: var(--text-muted);
+  max-width: 62ch;
+  margin: -.9rem 0 1.4rem;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.card {
+  border: 1px solid var(--rule);
+  background: var(--white);
+  padding: 1.05rem 1.15rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.card h3 { margin: 0; font-size: 1.0625rem; line-height: 1.3; }
+.card h3::before { content: none; }
+.card h3 a { color: var(--ink); text-decoration: none; }
+.card h3 a:hover { color: var(--ocean); text-decoration: underline; }
+.card .original {
+  font-size: .9375rem;
+  color: var(--graphite);
+  margin: 0;
+  line-height: 1.75;      /* CJK needs the extra leading */
+}
+.card .card-meta {
+  font-family: var(--sans);
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem .6rem;
+  align-items: baseline;
+}
+.card .card-meta time {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.card--desk { border-left: 3px solid var(--rule-strong); }
+.card--desk.is-collecting { border-left-color: var(--teal); }
+.card--desk.is-shadow     { border-left-color: var(--ocean); }
+.card--desk.is-blocked    { border-left-color: var(--graphite); }
+.card--desk dl { margin: .35rem 0 0; }
+.card--desk .blocking {
+  font-family: var(--sans);
+  font-size: .8125rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+.card-foot { margin-top: auto; padding-top: .55rem; font-family: var(--sans); font-size: .8125rem; }
+
+/* ── Feature (image-backed) ───────────────────────────────────────────── */
+.feature {
+  display: grid;
+  /* Equal columns. The cover is a designed 1200x630 card, so at half the
+     feature width its height lands close to the body's and it can be shown
+     whole. The asymmetric 1.35fr this replaced left the cover too small to
+     read its own headline. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  background: var(--ink);
+  color: var(--parchment);
+  border: 0;
+  margin: 1.5rem 0 0;
+}
+.feature-body { padding: clamp(1.4rem, 3.2vw, 2.25rem); display: flex; flex-direction: column; }
+.feature-eyebrow {
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--dark-muted);
+  margin: 0 0 .8rem;
+}
+.feature h3 {
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+  line-height: 1.24;
+  margin: 0 0 .75rem;
+  color: var(--white);
+  font-weight: 600;
+}
+.feature h3::before { content: none; }
+.feature h3 a { color: inherit; text-decoration: none; }
+/* Underline rather than recolour: the hover affordance does not need to spend
+   the accent. */
+.feature h3 a:hover { text-decoration: underline; text-underline-offset: .18em; }
+.feature .dek {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--parchment);
+  margin: 0 0 1rem;
+  max-width: 46ch;
+}
+.feature .byline {
+  font-family: var(--sans);
+  font-size: .8125rem;
+  color: var(--dark-muted);
+  margin: 0 0 1.25rem;
+}
+.feature .legacy-note {
+  font-family: var(--sans);
+  font-size: .75rem;
+  color: var(--dark-muted);
+  line-height: 1.55;
+  margin: 0 0 1.25rem;
+  padding-left: .7rem;
+  border-left: 2px solid rgba(237, 233, 224, .2);
+  max-width: 46ch;
+}
+.feature-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: auto; }
+.feature-figure { margin: 0; position: relative; background: var(--abyss); }
+.feature-figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 4 / 5;
+}
+
+/* ── Record facts rail ────────────────────────────────────────────────── */
+.record-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+@media (min-width: 62rem) {
+  .record-layout { grid-template-columns: minmax(0, 1fr) 16.5rem; align-items: start; }
+  .record-rail { position: sticky; top: 1.5rem; }
+}
+.record-rail {
+  border: 1px solid var(--rule);
+  background: var(--mist);
+  padding: 1rem 1.1rem;
+  font-family: var(--sans);
+  font-size: .8125rem;
+}
+.record-rail h2 {
+  font-family: var(--sans);
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted-tinted);
+  margin: 0 0 .75rem;
+  padding: 0;
+  border: 0;
+}
+.record-rail h2::before { content: none; }
+.record-rail dl { margin: 0; display: grid; gap: .6rem; }
+.record-rail dt {
+  font-size: .6875rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-muted-tinted);
+  margin: 0;
+}
+.record-rail dd {
+  margin: .1rem 0 0;
+  color: var(--ink);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.record-rail dd time,
+.record-rail dd .tabular {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+/* ── Source text readability ──────────────────────────────────────────── */
+/* Styled on `.original-text` rather than through a second class. That class is
+   not decoration: it is how `tests/test_preview_prototype.py` finds the stored
+   capture and removes it before scanning the page for completeness claims.
+   Adding a second class here quietly stopped the guard matching, and two
+   records whose SOURCE TEXT contains the word "permanently" were read as the
+   publication claiming its capture was permanent. The styling hook and the
+   evidence hook are the same hook, so they cannot drift apart again. */
+.original-text {
+  max-width: 46em;      /* CJK glyphs are full-width; 68ch runs far too long */
+  line-height: 1.95;
+}
+.original-text:lang(zh), .original-text[lang^="zh"] { line-height: 2.05; }
+
+/* The run verdict sits above the per-source evidence and has to be readable
+   as a sentence, not skimmed as a status chip. */
+.run-verdict {
+  margin: 0 0 .9rem;
+  max-width: var(--measure);
+}
+.run-verdict .meta { display: block; margin-top: .15rem; }
+
+/* ── Archive filters ──────────────────────────────────────────────────── */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: .75rem 1rem;
+  border: 1px solid var(--rule);
+  background: var(--mist);
+  padding: .9rem 1rem;
+  margin: 1.25rem 0;
+  font-family: var(--sans);
+}
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-muted-tinted);
+}
+.filters select, .filters input {
+  font: inherit;
+  font-size: .875rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  padding: .45rem .55rem;
+  border: 1px solid var(--rule-strong);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 2px;
+  min-width: 0;
+}
+.filters .filter-actions { display: flex; align-items: flex-end; }
+
+/* ── Coverage bars — every graphic has a table beside it ──────────────── */
+.barset { margin: 1.25rem 0; display: grid; gap: .5rem; }
+.barset .bar-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 12rem) minmax(0, 1fr) auto;
+  gap: .75rem;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: .8125rem;
+}
+.barset .bar-label { color: var(--ink); overflow-wrap: anywhere; }
+.barset .bar-track { background: var(--seaglass); height: .7rem; border-radius: 1px; }
+.barset .bar-fill { background: var(--teal); height: 100%; display: block; border-radius: 1px; }
+.barset .bar-fill.is-partial { background: var(--ocean); }
+.barset .bar-fill.is-none { background: var(--rule-strong); }
+.barset .bar-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text-muted-tinted);
+  white-space: nowrap;
+}
+
+/* ── Utility ──────────────────────────────────────────────────────────── */
+.stack-tight > * + * { margin-top: .5rem; }
+.dates, time.tabular {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ── Fixes found by measuring the rendered pages, 2026-08-27 ──────────── */
+
+/* The archive's source filter is populated from the corpus, and one outlet
+   name is long enough that the <select> took its intrinsic width — 297px
+   inside a 320px viewport, which pushed the whole document sideways. Form
+   controls never widen a layout again. This is also why the archive
+   overflowed at 320 before any of this work: it is a pre-existing defect,
+   fixed here rather than inherited. */
+select, input, textarea, button { max-width: 100%; }
+#controls select, #controls input { min-width: 0; }
+#controls > div { min-width: 0; }
+
+/* The cover is a designed 1200×630 card with its own typography. Cropping it
+   to a portrait frame cut the headline off it. It now keeps its own aspect
+   ratio and is centred in its column, so nothing is cut. */
+/* A top-aligned figure. Cropping was tried both ways first: filling a portrait
+   cell cuts the left and right off the cover, and an earlier 4:5 frame cut the
+   headline out of it. The cover is a designed card with its own typography —
+   it is shown whole or not at all.
+
+   The equal-columns declaration that used to sit here has moved up into the
+   base `.feature` rule. Here, after the mobile media query, it overrode it at
+   equal specificity: the phone layout asked for one column and got two, so the
+   cover rendered 127px wide beside the text instead of above it at full width.
+   Nothing reported that, because both rules were valid and the cascade was
+   doing exactly what it was told. */
+.feature-figure {
+  align-self: start;
+  padding: clamp(1.4rem, 3.2vw, 2.25rem);
+  padding-left: 0;
+  background: transparent;
+}
+.feature-figure img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: contain;
+  border: 1px solid rgba(237, 233, 224, .14);
+}
+@media (max-width: 47.5rem) {
+  /* One column, cover first, cover full width. The cover is the entry point on
+     a phone, and ordering it above the text is what makes the feature read as
+     a feature rather than as another block of copy.
+
+     This is deliberately the ONLY media query that touches the feature grid.
+     There were two, and the later unconditional desktop rule sat between them
+     — so the first one's single column was silently overridden and the phone
+     rendered two 171px columns with a 127px cover. One block, last. */
+  .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature-figure {
+    order: -1;
+    padding: clamp(1.4rem, 3.2vw, 2.25rem);
+    padding-bottom: 0;
+  }
+}
+
+/* The image credit sits under the feature, not tucked back under it: it is a
+   caption, and .section-note's negative top margin belongs to section
+   introductions. */
+.figure-credit {
+  font-family: var(--sans);
+  font-size: .75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: .6rem 0 0;
+  max-width: 62ch;
+}
+
+/* Four desks should sit on one row on a wide screen rather than 3 + 1. */
+.cards--desks { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+
+/* Card prose was borrowing .section-note, which carries a negative top margin
+   meant for section intros. */
+.card-prose {
+  font-family: var(--sans);
+  font-size: var(--step-meta);
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Issue cards ──────────────────────────────────────────────────────── */
+.cards--issues { grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+.card--issue { padding: 0; overflow: hidden; }
+.card--issue > *:not(.issue-cover) { padding-left: 1.15rem; padding-right: 1.15rem; }
+.card--issue > .card-meta { padding-top: .9rem; }
+.card--issue > .card-foot { padding-bottom: 1.1rem; }
+.issue-cover { display: block; background: var(--abyss); }
+.issue-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+  object-position: top center;
+}
+.issue-no {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--ocean);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.issue-label {
+  font-family: var(--sans);
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-muted-tinted);
+  border: 1px solid var(--rule);
+  padding: .05rem .4rem;
+  border-radius: 1px;
+}
+.card--desk .card-prose { margin-bottom: .1rem; }
+.card--desk h2.plain { margin: .1rem 0 .2rem; font-size: 1.0625rem; }
+.card--desk h2.plain::before { content: none; }
+.card--desk h2.plain a { color: var(--ink); text-decoration: none; }
+.card--desk h2.plain a:hover { color: var(--ocean); text-decoration: underline; }
+
+/* Measured note on the archive's layout shift, so the next person does not
+   re-derive it. #controls is `hidden` until browse.js can operate it — the
+   no-JavaScript baseline requires that — and revealing an 846px block moves
+   what follows. Capping the filter <select> widths (above, which is what fixes
+   the 320px overflow) made that block 42px taller and the shift correspondingly
+   larger: 0 to 0.042 CLS at 375px, against a 0.1 budget.
+
+   A reserve was tried and removed. Reserving the real height would leave 846px
+   of blank space on a page that a reader without JavaScript sees as empty, to
+   buy back 0.042 on a page that has it. The shift is the cost of the
+   progressive-enhancement baseline, and it is inside budget. */

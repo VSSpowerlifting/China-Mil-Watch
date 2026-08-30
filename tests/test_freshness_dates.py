@@ -192,10 +192,21 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
     #: source keeps the test honest: if the block is edited, this follows it.
     @staticmethod
     def _fragment():
+        """
+        Lifted from `base.html` by its own markers, so an edit to the block
+        moves this test with it rather than leaving it asserting against
+        markup the site no longer renders.
+
+        The anchors changed on 2026-08-27 when the operational strip became a
+        compact freshness bar: `ul.status-facts.freshness` became `dl` inside
+        `.freshness-bar`, and `.status-note` became `.behind`. The block itself
+        does the same job — three named dates, and one sentence that appears
+        only when collection and analysis have come apart.
+        """
         base = (ROOT / "site" / "preview" / "templates"
                 / "base.html").read_text(encoding="utf-8")
-        start = base.index('<ul class="status-facts freshness">')
-        end = base.index("{% endif %}", base.index("status-note")) + len("{% endif %}")
+        start = base.index("<dl>", base.index('class="freshness-bar"'))
+        end = base.index("{% endif %}", base.index('class="behind"')) + len("{% endif %}")
         return base[start:end]
 
     def render_with(self, freshness):
@@ -217,15 +228,36 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
         html = self.render_with(FreshnessView(None, None, None))
         self.assertNotRegex(html, r"last collected\s*</?b?>?\s*\d{4}-\d{2}-\d{2}")
 
+    #: The note's opening words. Matched rather than the whole sentence so a
+    #: wording change does not silently stop these two from checking anything.
+    #: The wording moved on 2026-08-30: "Collection is current; analysis is
+    #: behind it" claimed currency the three dates cannot support — they show
+    #: only that collection ran more recently than analysis, which is equally
+    #: true of a corpus last collected a month ago.
+    BEHIND_NOTE = "Analysis trails collection"
+
     def test_the_behind_note_is_suppressed_when_dates_are_unknown(self):
         html = self.render_with(FreshnessView(None, None, None))
-        self.assertNotIn("analysis is behind it", html)
+        self.assertNotIn(self.BEHIND_NOTE, html)
 
     def test_the_behind_note_appears_only_when_it_is_true(self):
         behind = self.render_with(FreshnessView("2026-08-26", "2026-08-24", None))
         caught = self.render_with(FreshnessView("2026-08-26", "2026-08-26", None))
-        self.assertIn("analysis is behind it", behind)
-        self.assertNotIn("analysis is behind it", caught)
+        self.assertIn(self.BEHIND_NOTE, behind)
+        self.assertNotIn(self.BEHIND_NOTE, caught)
+
+    def test_the_note_does_not_call_collection_current(self):
+        """
+        The claim that was removed. A date newer than another date is not a
+        statement that either is recent.
+        """
+        behind = self.render_with(FreshnessView("2026-08-26", "2026-08-24", None))
+        self.assertNotIn("Collection is current", behind)
+
+    def test_the_note_names_the_date_after_which_records_are_unscreened(self):
+        behind = self.render_with(FreshnessView("2026-08-26", "2026-08-24", None))
+        self.assertIn("records after 2026-08-24 await screening",
+                      " ".join(behind.split()))
 
 
 if __name__ == "__main__":

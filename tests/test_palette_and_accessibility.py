@@ -258,8 +258,14 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
             with self.subTest(selector=flat):
                 self.assertTrue(
                     any(marker in flat for marker in
-                        (".brand", "h3 a", ".lead-title", ".editions",
-                         "nav.primary", ".skip")),
+                        # `h2.plain a` joined this list on 2026-08-27 for the
+                        # desk cards. Same rationale as `h3 a`, and it meets the
+                        # same condition: it is a card heading rather than
+                        # prose, the card's own border and status chip already
+                        # mark it as a target, and the rule restores the
+                        # underline on hover.
+                        (".brand", "h3 a", "h2.plain a", ".lead-title",
+                         ".editions", "nav.primary", ".skip")),
                     "%s removes the underline from prose links" % flat)
 
 

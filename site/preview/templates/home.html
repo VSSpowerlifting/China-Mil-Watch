@@ -1,71 +1,181 @@
 {% extends "base.html" %}
+{% block main_class %} class="leads-with-hero"{% endblock %}
+{% block hero %}
+{# The front door. What stood here was a paragraph of body copy directly under
+   an operational status strip — accurate, and no way in. A reader arriving
+   cold could not tell in one screen what this publication is, what it holds,
+   or what separates its record from its analysis. #}
+<section class="hero">
+  <div class="wrap">
+    <p class="hero-eyebrow">Indo-Pacific defense and security record</p>
+    <p class="hero-statement">A record of what defense institutions publish
+      about themselves, <b>preserved as published</b> and read in context.</p>
+    <p class="hero-sub">{{ title }} keeps the original text, the date, the
+      institution, and a per-run record of whether collection actually worked.
+      Analysis is separate from the record, cites it, and is labeled as
+      interpretation.</p>
+    <div class="hero-actions">
+      <a class="btn btn--primary" href="archive.html">Explore the record</a>
+      <a class="btn btn--ghost" href="analysis.html">Read analysis</a>
+      <a class="btn btn--ghost" href="methodology.html">Methodology</a>
+    </div>
+    {# Three derived figures, and one rule about all of them: a figure is
+       shown with the thing it was measured on, never as a bare total.
+
+       A corpus figure sitting beside a desk count invites the reading "N
+       records across four desks", which is false — one desk collects and the
+       other three hold nothing. So the record count names its desk, and the
+       source count is summed over the collecting desks alone rather than over
+       every declared desk. A "sources enabled" figure spanning all four would
+       have counted sources that have never returned a document.
+
+       Five figures stood here and two of them were dates. Those dates are in
+       the freshness bar directly above, and a number repeated twice on one
+       screen reads as two different measurements.
+
+       Nothing here is a target, an estimate, a projection or a literal: the
+       count is the declared snapshot's, and the source and desk figures are
+       summed from the registry at render time. #}
+    {% set collecting = desks | selectattr('status', 'equalto', 'live') | list %}
+    {% set collecting_sources = collecting | sum(attribute='enabled_source_count') %}
+    <dl class="snapshot">
+      <div><dt>Records{% if collecting|length == 1 %}, {{ collecting[0].name }}{% endif %}</dt>
+        <dd>{{ snapshot.expected_records|count }}<small>{% if collecting|length == 1 %}the only collecting desk{% else %}across {{ collecting|length }} collecting desks{% endif %}</small></dd></div>
+      <div><dt>Collecting sources</dt>
+        <dd>{{ collecting_sources|count }}<small>{% if collecting|length == 1 %}enabled on {{ collecting[0].name }}{% else %}enabled across the collecting desks{% endif %}</small></dd></div>
+      <div><dt>Collecting desks</dt>
+        <dd>{{ desks.collecting_count }}<small>of {{ desks.declared_count }} declared</small></dd></div>
+    </dl>
+  </div>
+</section>
+{% endblock %}
 {% block content %}
+
+{# Section order is governed, not stylistic: purpose, then the record, then the
+   desks that produce it, then the reading of it, then what failed to collect.
+   The record leads. An analysis-first home page would make the weekly reading
+   the product and the record its supporting material, which is the reverse of
+   what this publication is. #}
 <section class="purpose">
-  <p class="lede">{{ title }} preserves what defense and security institutions across the region
-  publish themselves — the original text, the date, the institution, and a per-run record of
-  whether collection actually worked. Analysis is separate from the record, cites it, and is
-  labeled as interpretation.</p>
-  <p class="meta">Coverage is selective. {{ desks.collecting_count }} of {{ desks.declared_count }}
-  declared desks {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest are
-  labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
+  <p class="lede">Coverage is selective. {{ desks.collecting_count }} of
+  {{ desks.declared_count }} declared desks
+  {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest
+  are labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
 </section>
 
-<h2>Latest records</h2>
+<div class="section-head">
+  <h2>Latest records</h2>
+  <p class="more"><a href="archive.html">The full record &rarr;</a></p>
+</div>
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
 <p class="meta">The most recent records from the desks that collect, with original-language titles
 preserved.</p>
+<div class="cards">
 {% for a in articles[:6] %}
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-    <span class="meta">{{ a.institution or a.source_name }} · {{ a.published_date }}</span>
-  </div>
-  <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
-  {% if a.title_english and a.title_original %}<p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>{% endif %}
-</article>
+  <article class="card">
+    <p class="card-meta"><span class="evidence evidence--record">Source record</span>
+      <span>{{ a.institution or a.source_name }}</span>
+      <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
+    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
+    {% if a.title_english and a.title_original %}<p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>{% endif %}
+  </article>
 {% endfor %}
-<p><a href="archive.html">The full record →</a></p>
-
-<h2 id="desks">Desks</h2>
-<p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
-beside it is derived from configuration or from the corpus — never from intent.</p>
-<div class="table-scroll">
-<table class="stacking desk-table">
-  <caption>{{ desks.declared_count }} declared desks. Only a collecting desk has a record count.</caption>
-  <thead>
-    <tr><th scope="col">Desk</th><th scope="col">Status</th><th scope="col" class="num">Enabled sources</th><th scope="col" class="num">Records</th></tr>
-  </thead>
-  <tbody>
-  {% for d in desks %}
-    <tr>
-      <td data-label="Desk"><a href="{{ d.route }}">{{ d.name }}</a></td>
-      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></td>
-      <td data-label="Enabled sources" class="num">{{ d.enabled_source_count }}</td>
-      <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
 </div>
-<p><a href="desks.html">All desks and what blocks them →</a></p>
+
+<div class="section-head">
+  <h2 id="desks">Desks</h2>
+  <p class="more"><a href="desks.html">All desks and what blocks them &rarr;</a></p>
+</div>
+<p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
+beside it is derived from configuration or from the corpus — never from intent. Only a collecting
+desk has a record count; the others say what stops them rather than showing a zero.</p>
+{# The claim the home page must keep making, in the markup the guard reads:
+   how many desks collect, out of how many are declared. Both derived. #}
+<p class="meta"><b>{{ desks.collecting_count }}</b> collecting desk{{ '' if desks.collecting_count == 1 else 's' }} of <b>{{ desks.declared_count }}</b> declared.</p>
+<div class="cards cards--desks">
+{% for d in desks %}
+  <article class="card card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}">
+    <h3><a href="{{ d.route }}">{{ d.name }}</a></h3>
+    <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+    <dl class="stat-rows">
+      <div class="stat-row"><dt>Enabled sources</dt><dd>{{ d.enabled_source_count }}</dd></div>
+      <div class="stat-row"><dt>Records</dt>
+        <dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}none — see status{% endif %}</dd></div>
+    </dl>
+    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full &rarr;</a></p>
+  </article>
+{% endfor %}
+</div>
 
 {% if lead_edition %}
-<h2>Latest analysis</h2>
-<section class="lead">
-  <p class="eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
-  <h3 class="lead-title"><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
-  {% if lead_edition.dek %}<p class="lede">{{ lead_edition.dek }}</p>{% endif %}
-  {# `articles` is the sidecar's n_articles = the week's relevance-passing
-     collected articles (generate_pla_watch.compute_stats -> total_articles).
-     It is NOT the count of items the edition cites — that is the source_trail. #}
-  <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
-  <p class="meta">A legacy China Desk series, published under the predecessor masthead
-  {{ predecessor_name }} and preserved with its original issue numbers, titles and URLs.</p>
-  <p><a href="{{ lead_edition.url }}" rel="noopener">Read this edition →</a> &nbsp; <a href="analysis.html">All analysis →</a></p>
-</section>
+<div class="section-head">
+  <h2>Latest analysis</h2>
+  <p class="more"><a href="analysis.html">All analysis &rarr;</a></p>
+</div>
+<article class="feature">
+  <div class="feature-body">
+    <p class="feature-eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
+    <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
+    {% if lead_edition.dek %}<p class="dek">{{ lead_edition.dek }}</p>{% endif %}
+    {# `articles` is the sidecar's n_articles = the week's relevance-passing
+       collected articles (generate_pla_watch.compute_stats -> total_articles).
+       It is NOT the count of items the edition cites — that is the source_trail. #}
+    <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+    <p class="legacy-note">A legacy China Desk series, published under the
+      predecessor masthead {{ predecessor_name }} and preserved with its
+      original issue numbers, titles and URLs.</p>
+    <div class="feature-actions">
+      <a class="btn btn--primary" href="{{ lead_edition.url }}" rel="noopener">Read this edition</a>
+    </div>
+  </div>
+  {# Rendered only when the cover exists. An edition without one gets a
+     one-column feature rather than an empty frame. #}
+  {% if lead_edition.cover %}
+  <figure class="feature-figure">
+    <img src="{{ lead_edition.cover.route }}" alt="{{ lead_edition.cover.alt }}"
+         width="1200" height="630" loading="eager" decoding="async">
+  </figure>
+  {% endif %}
+</article>
+{% if lead_edition.cover %}
+<p class="figure-credit">{{ lead_edition.cover.credit_note }}</p>
+{% endif %}
 {% endif %}
 
-<h2>What did not collect</h2>
+<div class="section-head">
+  <h2>Record and analysis are not the same thing</h2>
+</div>
+<div class="cards">
+  <article class="card">
+    <h3>The record</h3>
+    <p class="card-prose">Every item is stored as its institution published it:
+    original language, original date, original URL, and a content fingerprint
+    taken at capture. English titles and summaries, where they exist, are
+    produced by machine and labeled as such. Nothing in the record asserts that
+    what an institution said is true.</p>
+    <p class="card-foot"><a href="archive.html">Explore the record &rarr;</a></p>
+  </article>
+  <article class="card">
+    <h3>The analysis</h3>
+    <p class="card-prose">Analysis is written by a person, cites the records it
+    rests on, and is labeled as interpretation. No model writes it and no script
+    derives it from the corpus. An edition is a reading of the week, not a
+    summary of the record.</p>
+    <p class="card-foot"><a href="analysis.html">Read analysis &rarr;</a></p>
+  </article>
+  <article class="card">
+    <h3>Methodology</h3>
+    <p class="card-prose">What this record can and cannot support, how each
+    field is derived, when a value may be absent, and where it stops being
+    reliable — stated once, in one place, rather than implied across pages.</p>
+    <p class="card-foot"><a href="methodology.html">Read the methodology &rarr;</a></p>
+  </article>
+</div>
+
+<div class="section-head">
+  <h2>What did not collect</h2>
+  <p class="more"><a href="coverage.html">Coverage, per source, per run &rarr;</a></p>
+</div>
 {% if run_status %}
 <p>Run {{ run_status.run_id }} executed {{ run_status.executed }}
 collector{{ '' if run_status.executed == 1 else 's' }} and recorded
@@ -77,6 +187,4 @@ each source's own outcome is published rather than summarized away.</p>
 <p>No collection run is recorded in this snapshot, so nothing can be said about what any source
 held. That is an absence, not a quiet day.</p>
 {% endif %}
-<p><a href="coverage.html">Coverage, per source, per run →</a> &nbsp;
-<a href="methodology.html">What this record can and cannot support →</a></p>
 {% endblock %}

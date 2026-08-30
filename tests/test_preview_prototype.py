@@ -800,7 +800,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     # ── Status strip ────────────────────────────────────────────────────
 
     def test_status_strip_keeps_the_four_states_apart(self):
-        html = self.page("index.html")
+        html = self.page("coverage.html")
         self.assertIn("collectors executed", html)
         self.assertIn("execution failures", html)
         self.assertIn("unimplemented adapter", html)
@@ -812,7 +812,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         the fifth configured source has no adapter, which this project's own
         vocabulary calls "no working collector". The denominator was false.
         """
-        html = self.page("index.html")
+        html = self.page("coverage.html")
         self.assertIn("<b>4</b> collectors executed", html)
         self.assertNotIn("of 5 collectors", html)
         self.assertNotRegex(html, r"\d+\s+of\s+\d+\s+collectors")
@@ -1329,8 +1329,16 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                          .split("}", 1)[0])
 
     def test_every_status_fact_survives_the_compaction(self):
-        """No fact hidden, abbreviated, truncated or merged."""
-        html = self.page("index.html")
+        """
+        No fact hidden, abbreviated, truncated or merged.
+
+        These moved from the strip above every page to Coverage on 2026-08-27,
+        which is where the per-source detail they summarise already lived. The
+        guard follows them: it never cared which page carried the facts, only
+        that none of them was lost on the way. The compact bar that replaced
+        the strip carries the three freshness dates and links here.
+        """
+        html = self.page("coverage.html")
         for phrase in ("Run <b>%s</b>" % self.latest_run, self.corpus_edge,
                        "<b>4</b> collectors executed",
                        "<b>0</b> execution failures",
@@ -2146,6 +2154,18 @@ class TestRecordSemantics(PreviewCase):
                 "<h2>Stored source text</h2>", 1)[1].split("<h2", 1)[0]
             with self.subTest(id=rec["id"]):
                 self.assertIsNotNone(caveat.search(section))
+                # The stored capture has to be FOUND before it can be excluded.
+                # A markup change that stopped this matching would not fail
+                # here — it would quietly start reading the source article's
+                # own words as the publication's claims about it, which is how
+                # two records carrying a spokesperson saying "permanently
+                # settle the vessel" once read as a permanence claim.
+                if rec.get("has_text"):
+                    self.assertIsNotNone(
+                        stored.search(section),
+                        "the stored capture is no longer identifiable by "
+                        'class="original-text"; the evidence guard below is '
+                        "scanning source text as though it were authored")
                 # A source article that happens to use the word "complete" is
                 # not the publication claiming the capture is complete.
                 authored = stored.sub(" ", caveat.sub(" ", section))
@@ -2902,8 +2922,13 @@ class TestCoverageTableSemantics(PreviewCase):
         row-labelled facts, exactly like a record page's, so its headers are
         `scope="row"` and there is no `<thead>` at all.
         """
+        # desks.html went 2 -> 8 on 2026-08-27: the status-meaning table it
+        # already had (2) now sits below a six-column comparison of every desk,
+        # added so the four can be read against each other rather than only as
+        # separate cards. Both are `<thead>` column headers; neither is a
+        # promoted body cell, which is what this guard is actually protecting.
         expected = {"china.html": 5, "japan.html": 8, "sources.html": 7,
-                    "desks.html": 2, "pla-watch.html": 5}
+                    "desks.html": 8, "pla-watch.html": 5}
         for name, count in expected.items():
             html = (self.out / name).read_text(encoding="utf-8")
             with self.subTest(page=name):
@@ -2911,7 +2936,7 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
                 outside = re.sub(r"<thead>.*?</thead>", " ", html, flags=re.S)
                 self.assertNotIn("<th", outside)
-        self.assertEqual(sum(expected.values()), 27)
+        self.assertEqual(sum(expected.values()), 33)
 
     def test_source_pages_label_rows_not_columns(self):
         for path in sorted(self.out.glob("source/*.html")):
@@ -3365,9 +3390,13 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
         catches is chrome silently emptying out, not a particular sentence.
         """
         authored = self.authored("record/%d.html" % self.analyzed["id"])
+        # "collectors executed" left this list on 2026-08-27 with the rest of
+        # the operational strip; it is on Coverage now, and
+        # TestTrancheOneIdentityAndStructure checks it there. What is guarded
+        # here is that chrome still carries authored prose at all.
         for fragment in ("Skip to content", "Methodology", "Coverage",
                          "independent research project", "Benjamin Yang",
-                         "collectors executed", "Coverage is selective."):
+                         "Records last collected", "Coverage is selective."):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, authored)
 
@@ -5262,9 +5291,17 @@ class TestStop4RoutesAreIntact(PreviewCase):
         files = [p for p in self.out.rglob("*") if p.is_file()]
         top = [q for q in self.out.iterdir() if q.is_file()]
         sources = [q for q in (self.out / "source").iterdir() if q.is_file()]
+        # `cover/` joined the tree on 2026-08-27: one PNG per published
+        # edition, copied in so a build is self-contained rather than pointing
+        # across at the carried-forward series. Its manifest, covers.json, is a
+        # top-level file and is already inside `top`.
+        covers = [q for q in (self.out / "cover").iterdir() if q.is_file()] \
+            if (self.out / "cover").is_dir() else []
         # Week shards are top-level files, so they are already inside `top`.
         self.assertEqual(len(files),
-                         self.corpus_size + len(top) + len(sources))
+                         self.corpus_size + len(top) + len(sources)
+                         + len(covers))
+        self.assertEqual(len(covers), len(gp.load_editions(REPO_ROOT)))
         self.assertEqual(len(sources), self.source_count)
         self.assertEqual(
             len([q for q in top if q.name.startswith("week-")]),
