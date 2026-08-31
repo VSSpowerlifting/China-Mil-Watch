@@ -906,6 +906,80 @@ def edition_cover(repo_root: Path, slug: str, sidecar: dict):
     }
 
 
+#: The homepage atmospheric visual. One asset, chosen by the manifest's own
+#: `placement` field rather than by name here, so swapping it is a manifest
+#: edit and not a code edit.
+ATMOSPHERE_PLACEMENT = "homepage-atmosphere"
+
+#: Where the veil derivative is published, and therefore what `styles.css`
+#: references. A fixed route, because the stylesheet cannot carry an inline
+#: background — `tests/test_palette_and_accessibility.py` forbids
+#: `style="...background..."` on any built page, and it is right to: an inline
+#: paint is a colour nobody measured and nobody can retune.
+ATMOSPHERE_ROUTE = "atmosphere/chengdu-j20-duo-paper.jpg"
+
+
+def home_atmosphere(repo_root: Path):
+    """
+    The homepage veil image, with the provenance that makes it usable.
+
+    Rights basis: the manifest records a CC BY-SA 2.0 photograph by emperornie
+    via Wikimedia Commons, with the source page, the licence URL and the date
+    it was fetched. The duotone derivative is a modified adaptation and stays
+    under the same licence including ShareAlike, which is why the credit is
+    rendered visibly rather than buried in a manifest — attribution is a
+    licence condition, not a courtesy.
+
+    Nothing is generated and nothing is sourced afresh: this returns the asset
+    already in the repository or nothing at all. A missing file renders no
+    veil rather than a broken frame.
+    """
+    manifest_path = repo_root / "site" / "assets" / "editorial" / "manifest.json"
+    if not manifest_path.is_file():
+        return None
+    raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entries = raw if isinstance(raw, list) else (
+        raw.get("assets") or raw.get("images") or [])
+    if isinstance(entries, dict):
+        entries = list(entries.values())
+    entry = next((e for e in entries
+                  if e.get("placement") == ATMOSPHERE_PLACEMENT), None)
+    if not entry:
+        return None
+
+    # The duotone derivative, not the source photograph. The source is the
+    # rights anchor; the derivative is what is shown, keyed to the paper.
+    deriv = (repo_root / "site" / "assets" / "editorial" / "derivatives"
+             / "chengdu-j20-duo-paper.jpg")
+    if not deriv.is_file():
+        return None
+    return {
+        "id": entry.get("id"),
+        "source_file": deriv,
+        "route": ATMOSPHERE_ROUTE,
+        "sha256": hashlib.sha256(deriv.read_bytes()).hexdigest(),
+        "bytes": deriv.stat().st_size,
+        "alt": entry.get("alt", ""),
+        "caption": entry.get("caption", ""),
+        "credit": entry.get("credit", ""),
+        "creator": entry.get("creator", ""),
+        "license": entry.get("license", ""),
+        "license_url": entry.get("license_url", ""),
+        "source_page": entry.get("source_page", ""),
+        "original_url": entry.get("original_url", ""),
+        "downloaded_at": entry.get("downloaded_at", ""),
+        "source_id": entry.get("source_id", ""),
+        "subject": entry.get("subject", ""),
+        # The designation alone, for the narrow-viewport plate. The manifest's
+        # `subject` is "J-20 · CHENGDU AIRCRAFT"; a metadata line that already
+        # carries creator, licence and repository does not also need the
+        # manufacturer.
+        "subject_short": (entry.get("subject", "").split("·")[0].strip()
+                          or entry.get("subject", "")),
+        "note": entry.get("note", ""),
+    }
+
+
 def extraction_bars(results) -> list:
     """
     Per-source extraction completeness for the Coverage bar chart.
@@ -1745,6 +1819,7 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
+    atmosphere = home_atmosphere(REPO_ROOT)
 
     # The desk roster, derived. `view` reads the same database the corpus above
     # came from, so a desk figure and a corpus figure cannot describe different
@@ -1840,6 +1915,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             {"edition": edition, "citation": edition_citation(edition),
              "anchor": "cite-edition-%s" % edition["slug"]}
             for edition in editions],
+        "atmosphere": atmosphere,
         "live_base": LIVE_BASE,
         "snapshot": snapshot,
         # Sources actually enabled for collection, summed from the desk
@@ -2015,6 +2091,42 @@ def build(out_dir: Path, title: str, db_path: Path,
         }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         written.append("cover/*.png")
         written.append("covers.json")
+
+    # ── Homepage atmosphere ──────────────────────────────────────────────
+    # Copied in with a recorded digest and a provenance manifest of its own.
+    # The licence is ShareAlike, so the credit is rendered on the page as well
+    # as recorded here: attribution is a condition of use, not a footnote.
+    if atmosphere:
+        (out_dir / "atmosphere").mkdir(parents=True, exist_ok=True)
+        (out_dir / atmosphere["route"]).write_bytes(
+            atmosphere["source_file"].read_bytes())
+        (out_dir / "atmosphere.json").write_text(json.dumps({
+            "_comment": ("The homepage atmospheric visual. A duotone "
+                         "derivative of a CC BY-SA 2.0 photograph, shown as a "
+                         "masked veil rather than as an image card. It "
+                         "illustrates no record and is not evidence of "
+                         "anything; the page says so beside it."),
+            "route": "/" + atmosphere["route"],
+            "editorial_id": atmosphere["id"],
+            "sha256": atmosphere["sha256"],
+            "bytes": atmosphere["bytes"],
+            "alt": atmosphere["alt"],
+            "caption": atmosphere["caption"],
+            "credit": atmosphere["credit"],
+            "creator": atmosphere["creator"],
+            "license": atmosphere["license"],
+            "license_url": atmosphere["license_url"],
+            "source_page": atmosphere["source_page"],
+            "original_url": atmosphere["original_url"],
+            "acquired_at": atmosphere["downloaded_at"],
+            "derivative": ("downscaled, cropped and duotoned from the source "
+                           "photograph; a modified adaptation, and therefore "
+                           "subject to the same licence including ShareAlike"),
+            "origin": "site/assets/editorial/derivatives/chengdu-j20-duo-paper.jpg",
+            "note": atmosphere["note"],
+        }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        written.append(atmosphere["route"])
+        written.append("atmosphere.json")
 
     # ── Legacy route continuity ──────────────────────────────────────────
     # Off by default, so the prototype build keeps its guarantee of never

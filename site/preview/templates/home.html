@@ -6,50 +6,112 @@
    cold could not tell in one screen what this publication is, what it holds,
    or what separates its record from its analysis. #}
 <section class="hero">
-  <div class="wrap">
-    <p class="hero-eyebrow">Indo-Pacific defense and security record</p>
-    <p class="hero-statement">A record of what defense institutions publish
-      about themselves, <b>preserved as published</b> and read in context.</p>
-    <p class="hero-sub">{{ title }} keeps the original text, the date, the
-      institution, and a per-run record of whether collection actually worked.
-      Analysis is separate from the record, cites it, and is labeled as
-      interpretation.</p>
-    <div class="hero-actions">
-      <a class="btn btn--primary" href="archive.html">Explore the record</a>
-      <a class="btn btn--ghost" href="analysis.html">Read analysis</a>
-      <a class="btn btn--ghost" href="methodology.html">Methodology</a>
+  {# ── Signal Veil ───────────────────────────────────────────────────────
+     The atmospheric layer, carried over from the predecessor's Paper Ledger
+     system: a duotone crop keyed to the paper ground and shaped by a union of
+     soft radial masks, so no rectangle ever reads as a photo card. It is
+     publication identity, not illustration — it depicts no record, and the
+     bracket beside it says so in as many words.
+
+     The image is painted by the stylesheet rather than an inline style: a
+     built page may not carry `style="...background..."`, and the rule that
+     forbids it is the same one that keeps every colour measurable.
+
+     `role="img"` with the manifest's own alt text carries the accessible
+     description; the div is otherwise inert. #}
+  {% if atmosphere %}
+  <div class="pl-veil" role="img" aria-label="{{ atmosphere.alt }}"
+       data-editorial-id="{{ atmosphere.id }}"></div>
+  <div class="src-bracket">
+    <span class="bracket" aria-hidden="true"></span>
+    <p class="src-lines">
+      IMG · <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.source_id }}</a><br>
+      {% if atmosphere.subject %}{{ atmosphere.subject }}<br>{% endif %}
+      CONTEXT, NOT EVIDENCE
+    </p>
+  </div>
+  {% endif %}
+  <div class="wrap hero-grid{% if atmosphere %} has-veil{% endif %}">
+    <div class="hero-lede">
+      <p class="hero-eyebrow">Indo-Pacific defense and security record</p>
+      {# A paragraph, not a heading. The masthead wordmark is already this
+         page's single h1, and a second one would give the home page two
+         top-level headings — the exact regression the structure tests catch.
+         Its weight here is typographic, not semantic. #}
+      <p class="hero-statement">A record of what defense institutions publish
+        about themselves, <em>preserved as published</em> and read in context.</p>
+      <p class="hero-sub">{{ title }} keeps the original text, the date, the
+        institution, and a per-run record of whether collection actually
+        worked. Analysis is separate from the record, cites it, and is labeled
+        as interpretation.</p>
+      <div class="hero-actions">
+        <a class="btn btn--primary" href="archive.html">Explore the record</a>
+        <a class="btn btn--quiet" href="analysis.html">Read analysis</a>
+        <a class="btn btn--quiet" href="methodology.html">Methodology</a>
+      </div>
     </div>
-    {# Three derived figures, and one rule about all of them: a figure is
-       shown with the thing it was measured on, never as a bare total.
 
-       A corpus figure sitting beside a desk count invites the reading "N
-       records across four desks", which is false — one desk collects and the
-       other three hold nothing. So the record count names its desk, and the
-       source count is summed over the collecting desks alone rather than over
-       every declared desk. A "sources enabled" figure spanning all four would
-       have counted sources that have never returned a document.
+    {# ── Ledger rail ──────────────────────────────────────────────────────
+       The predecessor's ledger, not a row of statistic cards. Fine rules,
+       right-aligned figures in the serif, small monospace labels, and a
+       paper whisper behind the rows so a numeral never sits on the veil's
+       darkest mass.
 
-       Five figures stood here and two of them were dates. Those dates are in
-       the freshness bar directly above, and a number repeated twice on one
-       screen reads as two different measurements.
-
-       Nothing here is a target, an estimate, a projection or a literal: the
-       count is the declared snapshot's, and the source and desk figures are
-       summed from the registry at render time. #}
+       Three figures, each attached to what it was measured on. A corpus count
+       beside a desk count invites "N records across four desks", which is
+       false: one desk collects and the other three hold nothing. Nothing here
+       is a literal — the count is the snapshot's, the source and desk figures
+       are summed from the registry at render time. #}
     {% set collecting = desks | selectattr('status', 'equalto', 'live') | list %}
     {% set collecting_sources = collecting | sum(attribute='enabled_source_count') %}
-    <dl class="snapshot">
-      <div><dt>Records{% if collecting|length == 1 %}, {{ collecting[0].name }}{% endif %}</dt>
-        <dd>{{ snapshot.expected_records|count }}<small>{% if collecting|length == 1 %}the only collecting desk{% else %}across {{ collecting|length }} collecting desks{% endif %}</small></dd></div>
-      <div><dt>Collecting sources</dt>
-        <dd>{{ collecting_sources|count }}<small>{% if collecting|length == 1 %}enabled on {{ collecting[0].name }}{% else %}enabled across the collecting desks{% endif %}</small></dd></div>
-      <div><dt>Collecting desks</dt>
-        <dd>{{ desks.collecting_count }}<small>of {{ desks.declared_count }} declared</small></dd></div>
-    </dl>
+    <aside class="hero-ledger" aria-labelledby="ledger-label">
+      <p class="hero-ledger-label" id="ledger-label">The record, as held</p>
+      <dl class="hero-ledger-rows">
+        <div class="hero-ledger-row">
+          <dt>Records{% if collecting|length == 1 %}, {{ collecting[0].name }}{% endif %}</dt>
+          <dd class="v">{{ snapshot.expected_records|count }}</dd></div>
+        <div class="hero-ledger-row">
+          <dt>Collecting sources</dt>
+          <dd class="v">{{ collecting_sources|count }}</dd></div>
+        <div class="hero-ledger-row">
+          <dt>Collecting desks</dt>
+          <dd class="v">{{ desks.collecting_count }}<span class="of">of {{ desks.declared_count }}</span></dd></div>
+      </dl>
+      <p class="hero-ledger-foot">{% if collecting|length == 1 %}{{ collecting[0].name }} is the only
+        desk collecting today. The other {{ desks.declared_count - 1 }} are
+        labeled by what they actually are on <a href="desks.html">Desks</a>.{% else %}Desk
+        states are on <a href="desks.html">Desks</a>.{% endif %}</p>
+    </aside>
   </div>
+  {% if atmosphere %}
+  {# Two metadata lines rather than a sentence. The first is the attribution
+     the licence requires, reading as a plate rather than a caption; the second
+     says what the image is and what it is not. Both links are kept: the asset
+     to its source page, the licence to its own text. The complete chain —
+     original URL, digest, acquisition date, adaptation note — stays in
+     atmosphere.json. #}
+  <p class="src-inline">
+    <span class="img-tag">IMG</span> · {{ atmosphere.subject_short }} ·
+    <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.creator }}</a> ·
+    <a href="{{ atmosphere.license_url }}" rel="noopener nofollow license">{{ atmosphere.license }}</a> ·
+    Wikimedia Commons<br>
+    <span class="src-inline-note">Duotone adaptation · Visual context, not evidence.</span>
+  </p>
+  {% endif %}
 </section>
 {% endblock %}
 {% block content %}
+
+{# The sentence the freshness block no longer carries above the hero. Same
+   words, placed where a reader who followed the link lands, and where it reads
+   as a note about the record rather than as a status banner over it. #}
+{% if freshness.analysis_is_behind_collection %}
+<p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
+  collection; records after {{ freshness.analysis_last_produced }} await
+  screening. <a href="methodology.html#freshness">What these dates mean</a>,
+  and <a href="coverage.html">what each source returned</a>.</p>
+{% endif %}
+
 
 {# Section order is governed, not stylistic: purpose, then the record, then the
    desks that produce it, then the reading of it, then what failed to collect.
