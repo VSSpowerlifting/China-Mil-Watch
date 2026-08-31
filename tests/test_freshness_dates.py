@@ -205,7 +205,11 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
         """
         base = (ROOT / "site" / "preview" / "templates"
                 / "base.html").read_text(encoding="utf-8")
-        start = base.index("<dl>", base.index('class="freshness-bar"'))
+        # Anchored on the class NAME, not on `class="freshness-bar"` with its
+        # closing quote: the home page adds a `--lead` modifier, and an anchor
+        # that assumed a single class stopped finding the block at all — seven
+        # errors that said nothing about the dates they exist to check.
+        start = base.index("<dl>", base.index("freshness-bar"))
         end = base.index("{% endif %}", base.index('class="behind"')) + len("{% endif %}")
         return base[start:end]
 

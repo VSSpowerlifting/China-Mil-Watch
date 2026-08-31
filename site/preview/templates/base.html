@@ -87,7 +87,7 @@
    would read as "all clear", which is the opposite of the truth when nothing
    ran. #}
 {% if run_status %}
-<div class="freshness-bar">
+<div class="freshness-bar{% if page == 'index.html' %} freshness-bar--lead{% endif %}">
   <div class="wrap">
     {# The labels are not shortened. "Analysis" alone does not say whether it
        is the date analysis was produced or the date it covers, and these three

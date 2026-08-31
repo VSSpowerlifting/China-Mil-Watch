@@ -5297,10 +5297,18 @@ class TestStop4RoutesAreIntact(PreviewCase):
         # top-level file and is already inside `top`.
         covers = [q for q in (self.out / "cover").iterdir() if q.is_file()] \
             if (self.out / "cover").is_dir() else []
+        # `atmosphere/` joined the tree on 2026-08-30: the single duotone veil
+        # image the home page paints behind its hero. Its manifest,
+        # atmosphere.json, is a top-level file and is already inside `top`.
+        atmosphere = [q for q in (self.out / "atmosphere").iterdir() if q.is_file()] \
+            if (self.out / "atmosphere").is_dir() else []
         # Week shards are top-level files, so they are already inside `top`.
         self.assertEqual(len(files),
                          self.corpus_size + len(top) + len(sources)
-                         + len(covers))
+                         + len(covers) + len(atmosphere))
+        self.assertLessEqual(len(atmosphere), 1,
+                             "the veil is one asset; a second image here would "
+                             "be an undeclared addition to the page")
         self.assertEqual(len(covers), len(gp.load_editions(REPO_ROOT)))
         self.assertEqual(len(sources), self.source_count)
         self.assertEqual(
