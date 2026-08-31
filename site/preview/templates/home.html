@@ -84,15 +84,34 @@
     </aside>
   </div>
   {% if atmosphere %}
+  {# Two metadata lines rather than a sentence. The first is the attribution
+     the licence requires, reading as a plate rather than a caption; the second
+     says what the image is and what it is not. Both links are kept: the asset
+     to its source page, the licence to its own text. The complete chain —
+     original URL, digest, acquisition date, adaptation note — stays in
+     atmosphere.json. #}
   <p class="src-inline">
-    <span class="img-tag">IMG</span> {{ atmosphere.caption }}
-    <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.credit }}</a>.
-    Visual context, not evidence.
+    <span class="img-tag">IMG</span> · {{ atmosphere.subject_short }} ·
+    <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.creator }}</a> ·
+    <a href="{{ atmosphere.license_url }}" rel="noopener nofollow license">{{ atmosphere.license }}</a> ·
+    Wikimedia Commons<br>
+    <span class="src-inline-note">Duotone adaptation · Visual context, not evidence.</span>
   </p>
   {% endif %}
 </section>
 {% endblock %}
 {% block content %}
+
+{# The sentence the freshness block no longer carries above the hero. Same
+   words, placed where a reader who followed the link lands, and where it reads
+   as a note about the record rather than as a status banner over it. #}
+{% if freshness.analysis_is_behind_collection %}
+<p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
+  collection; records after {{ freshness.analysis_last_produced }} await
+  screening. <a href="methodology.html#freshness">What these dates mean</a>,
+  and <a href="coverage.html">what each source returned</a>.</p>
+{% endif %}
+
 
 {# Section order is governed, not stylistic: purpose, then the record, then the
    desks that produce it, then the reading of it, then what failed to collect.

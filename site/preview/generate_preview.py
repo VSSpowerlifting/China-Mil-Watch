@@ -970,6 +970,12 @@ def home_atmosphere(repo_root: Path):
         "downloaded_at": entry.get("downloaded_at", ""),
         "source_id": entry.get("source_id", ""),
         "subject": entry.get("subject", ""),
+        # The designation alone, for the narrow-viewport plate. The manifest's
+        # `subject` is "J-20 · CHENGDU AIRCRAFT"; a metadata line that already
+        # carries creator, licence and repository does not also need the
+        # manufacturer.
+        "subject_short": (entry.get("subject", "").split("·")[0].strip()
+                          or entry.get("subject", "")),
         "note": entry.get("note", ""),
     }
 

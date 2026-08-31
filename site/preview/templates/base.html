@@ -107,11 +107,26 @@
        sentence now states the relationship it can actually see, and the
        ordering: analysis trails collection, and everything after the analysis
        date is stored but unscreened. #}
-    {% if freshness.analysis_is_behind_collection %}
+    {# The sentence stays on every page that has room for it. The home page
+       does not: above the hero it made the freshness block a paragraph of
+       administrative prose between the masthead and the publication. There it
+       becomes one link, and the full explanation moves to just below the
+       hero — same words, a screen later, where a reader who wants them is
+       looking for them.
+
+       Written as two separate conditions rather than an if/else so the block
+       stays self-contained: `tests/test_freshness_dates.py` extracts this
+       fragment by finding the first `{% endif %}` after `class="behind"`, and
+       an else branch would leave the extracted fragment unbalanced. #}
+    {% if freshness.analysis_is_behind_collection and page != 'index.html' %}
     <p class="behind">Analysis trails collection; records after
       {{ freshness.analysis_last_produced }} await screening.
       <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
       these dates mean</a>.</p>
+    {% endif %}
+    {% if freshness.analysis_is_behind_collection and page == 'index.html' %}
+    <p class="freshness-more"><a href="#freshness-note">Freshness and screening
+      status &rarr;</a></p>
     {% endif %}
     <p class="detail"><a href="{{ '../' if nested else '' }}coverage.html">Run
       {{ run_status.run_id }} in full &rarr;</a></p>

@@ -1243,13 +1243,21 @@ main.leads-with-hero { padding-top: 0; }
   background-size: cover;
   background-position: 10% 8%;
   pointer-events: none;
-  opacity: .92;
+  /* Presence raised roughly 15% on 2026-08-30, and deliberately through the
+     mask rather than a blunt opacity crank: a global opacity rise lifts the
+     faint left tail too, which is the edge that has to stay near-invisible for
+     the headline to sit on clean paper. Instead the opaque core widens
+     (22%→30%), the mid stop holds more (.55→.64) and the fade runs further out
+     (70%→78%). The aircraft gains body where it already had body; the tail
+     over the text gains almost nothing. Opacity moves .92→.96, a trim rather
+     than the lever. */
+  opacity: .96;
   -webkit-mask-image:
-    radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
-    radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    radial-gradient(80% 105% at 82% 12%, #000 30%, rgba(0,0,0,.64) 52%, transparent 78%),
+    radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.30) 0%, transparent 64%);
   mask-image:
-    radial-gradient(80% 105% at 82% 12%, #000 22%, rgba(0,0,0,.55) 46%, transparent 70%),
-    radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.28) 0%, transparent 62%);
+    radial-gradient(80% 105% at 82% 12%, #000 30%, rgba(0,0,0,.64) 52%, transparent 78%),
+    radial-gradient(42% 50% at 30% 96%, rgba(0,0,0,.30) 0%, transparent 64%);
 }
 /* Gradient fallback where masks are unsupported: fade it down and wash the
    paper back across the left and bottom edges, so the join is still soft. */
@@ -1394,7 +1402,7 @@ main.leads-with-hero { padding-top: 0; }
    ── */
 @media (max-width: 60rem) {
   .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
-  .pl-veil { width: 78%; opacity: .5; }
+  .pl-veil { width: 78%; opacity: .58; }
   .src-bracket { display: none; }
   .src-inline {
     display: block;
@@ -1415,6 +1423,16 @@ main.leads-with-hero { padding-top: 0; }
     letter-spacing: .12em;
   }
   .src-inline a { color: var(--text-muted); text-decoration-color: var(--rule); }
+  /* A plate, not a sentence: mono, tracked, and small enough to read as
+     metadata attached to the image rather than as body copy about it. */
+  .src-inline {
+    font-family: var(--mono);
+    font-size: .5625rem;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    line-height: 1.85;
+  }
+  .src-inline-note { color: var(--text-muted); }
   .hero-ledger::before { inset: -.75rem -1rem; }
 }
 @media (max-width: 43.75rem) {
@@ -1424,12 +1442,16 @@ main.leads-with-hero { padding-top: 0; }
     width: 88%;
     bottom: auto;
     height: 58%;
-    opacity: .38;
+    /* The mask origin moves to the right edge and tightens, so the silhouette
+       reads where the aircraft actually is and the gradient reaches zero
+       before it crosses the column the text occupies. The field behind the
+       lede is not darkened — it is left alone. */
+    opacity: .46;
     background-position: 14% 6%;
     -webkit-mask-image:
-      radial-gradient(88% 92% at 88% 6%, #000 12%, rgba(0,0,0,.45) 40%, transparent 72%);
+      radial-gradient(72% 88% at 100% 4%, #000 18%, rgba(0,0,0,.5) 46%, transparent 76%);
     mask-image:
-      radial-gradient(88% 92% at 88% 6%, #000 12%, rgba(0,0,0,.45) 40%, transparent 72%);
+      radial-gradient(72% 88% at 100% 4%, #000 18%, rgba(0,0,0,.5) 46%, transparent 76%);
   }
   .hero-grid { padding-top: 1.75rem; padding-bottom: 1.75rem; }
   .hero-statement { font-size: clamp(1.25rem, 6vw, 1.6rem); max-width: 22ch; }
@@ -1471,6 +1493,24 @@ main.leads-with-hero { padding-top: 0; }
 .freshness-bar--lead dt { color: var(--text-muted); }
 .freshness-bar--lead dd { color: var(--text-muted-tinted); font-weight: 500; }
 .freshness-bar--lead .behind, .freshness-bar--lead .detail { color: var(--text-muted); }
+.freshness-more { margin: 0; }
+.freshness-more a { color: var(--ocean); }
+
+/* The explanation, below the hero. A note about the record, not a banner over
+   it. `tabindex="-1"` so following the link moves focus here as well as the
+   viewport — a jump that moves only the scroll position leaves a keyboard
+   reader where they started. */
+.freshness-note {
+  font-family: var(--sans);
+  font-size: .8125rem;
+  line-height: 1.6;
+  color: var(--text-muted-tinted);
+  max-width: var(--measure);
+  margin: 0 0 1.75rem;
+  padding-left: .8rem;
+  border-left: 2px solid var(--rule);
+}
+.freshness-note:focus-visible { outline: 2px solid var(--ocean); outline-offset: 4px; }
 @media (max-width: 43.75rem) {
   /* On a phone the identity page cannot spend a third of the first screen on
      dates before the publication has said what it is. Same three labels, same
@@ -1480,7 +1520,15 @@ main.leads-with-hero { padding-top: 0; }
   .freshness-bar--lead .wrap { padding-top: .45rem; padding-bottom: .35rem; }
   .freshness-bar--lead dl { gap: .05rem .6rem; }
   .freshness-bar--lead .behind { margin-top: .2rem; line-height: 1.45; }
-  .freshness-bar--lead .detail { margin-top: .15rem; }
+  /* The freshness link and the run link sit on one row rather than stacking.
+     Three date rows plus two stacked links was five lines of chrome above the
+     hero; this is four, and the hero starts that much sooner. */
+  .freshness-bar--lead .freshness-more,
+  .freshness-bar--lead .detail {
+    flex: 0 1 auto;
+    margin-top: .25rem;
+  }
+  .freshness-bar--lead .detail { margin-left: auto; }
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
