@@ -133,6 +133,44 @@
 
   --measure: 68ch;
   --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  /* ── Motion vocabulary (added 2026-08-31) ─────────────────────────────
+     Four durations and three curves. Nothing in this file declares its own
+     milliseconds any more: a component picks a step, and the step says what
+     kind of event it is. The names are the doctrine — `--dur-instant` is
+     press feedback, and it sits under the 100ms floor at which a press stops
+     feeling attached to the finger that made it.
+
+     Motion here NEVER carries meaning. Every state a transition moves
+     between is already stated by a colour, a rule, a glyph or a word, so the
+     reduced-motion kill-switch below removes movement without removing
+     information. That is the condition on which motion was allowed into a
+     stylesheet whose header says the publication does not animate.
+     ------------------------------------------------------------------- */
+  --dur-instant:    90ms;   /* press: the button answers the finger */
+  --dur-fast:      150ms;   /* hover: colour, border, underline tone */
+  --dur-base:      240ms;   /* state: rule wipes, arrows, disclosure */
+  --dur-deliberate: 380ms;  /* editorial: a section arriving on scroll */
+  --ease-out:  cubic-bezier(.22, .61, .36, 1);   /* entering */
+  --ease-in:   cubic-bezier(.55, .06, .68, .19); /* leaving */
+  --ease-rule: cubic-bezier(.16, 1, .3, 1);      /* rules, reveals */
+
+  /* ── Spacing scale (added 2026-08-31) ─────────────────────────────────
+     One scale, so a gap is a decision rather than a number someone typed.
+     Editorial rhythm needs the steps to be USED unevenly: the distance
+     between two sections must exceed the distance inside one, and the
+     distance inside a card must not be uniform either.
+     ------------------------------------------------------------------- */
+  --sp-1: .25rem;  --sp-2: .5rem;   --sp-3: .75rem;  --sp-4: 1rem;
+  --sp-5: 1.5rem;  --sp-6: 2rem;    --sp-7: 3rem;    --sp-8: 4.5rem;
+
+  /* Card interior rhythm — three tiers, not one flex gap. A marker sits
+     tight to what it labels; a headline stands away from its deck; the foot
+     is separated from the content it acts on. */
+  --card-pad:        1.15rem;
+  --card-gap-tight:  .3rem;
+  --card-gap:        .6rem;
+  --card-gap-loose:  .95rem;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -2017,3 +2055,888 @@ select, input, textarea, button { max-width: 100%; }
    of blank space on a page that a reader without JavaScript sees as empty, to
    buy back 0.042 on a page that has it. The shift is the cost of the
    progressive-enhancement baseline, and it is inside budget. */
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   COMPONENT & MOTION SYSTEM — added 2026-08-31
+   ───────────────────────────────────────────────────────────────────────
+   The page was correct and inert. Every card was the same white box with the
+   same border on all four sides and the same flex gap between every child,
+   so a headline, a machine label and a date arrived at equal weight; six of
+   them sat in two rows of three, which is the one card arrangement house
+   doctrine names as forbidden. Nothing responded to a pointer, nothing
+   responded to a keyboard beyond the global focus ring, and the whole
+   stylesheet contained one keyframe.
+
+   What follows is a system, not a set of touch-ups:
+
+     · a PLATE — one card object with an index rule at its top edge, a three
+       tier interior rhythm, and one hover/focus treatment shared by every
+       variant, so a desk card and an edition card are visibly the same
+       species of thing;
+     · a DENSITY LADDER — lead, standard, register. The record feed stops
+       being six equal boxes and becomes a front page: one item carries the
+       weight, two support it, three are filed beneath in a ruled register;
+     · a MOTION VOCABULARY — the four durations and three curves declared in
+       `:root`, used for state and affordance only.
+
+   Motion never carries meaning here. Every state it moves between is already
+   said by a colour, a rule, a glyph or a word, so the reduced-motion
+   kill-switch removes movement and removes nothing else. That is the
+   condition on which motion entered a stylesheet whose header says this
+   publication does not animate — and the guards at the foot of this block
+   are what keep it true for no-JS, print and reduced-motion readers.
+
+   POSITION: appended, like every block before it. Media queries add no
+   specificity; only position decides, and this overrides what precedes it.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Reveal on scroll ─────────────────────────────────────────────────────
+   Opacity and an 10px rise, once, on the way in. The start state is written
+   ONLY under `html.js-reveal` (a class `reveal.js` sets on itself) and ONLY
+   under `no-preference`, so all three fallback paths render the finished
+   page rather than a hidden one:
+
+     no JavaScript      → the class is never added, nothing is ever hidden
+     reduced motion     → this media query does not match, nothing is hidden
+     print              → the guard at the foot of this block
+
+   `reveal.js` also drops the class after 1.5s regardless of the observer, so
+   a browser that loads the script and then fails to observe cannot leave the
+   publication invisible. Content is never behind an animation.
+   ── */
+@media (prefers-reduced-motion: no-preference) {
+  html.js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity   var(--dur-deliberate) var(--ease-rule),
+      transform var(--dur-deliberate) var(--ease-rule);
+    /* Stagger, capped by the writer of `--ri` rather than here: a long list
+       must not end with a two-second delay on its last item. */
+    transition-delay: calc(var(--ri, 0) * 55ms);
+  }
+  html.js-reveal [data-reveal].is-in { opacity: 1; transform: none; }
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────
+   Precise and mechanical, not glowing. Four states on every button, and the
+   primary one is the only one that carries a chevron — the affordance marks
+   which action leads, so the three hero actions stop reading as equals.
+
+   The press is `translateY(1px)` and nothing else: a transform reflows
+   nothing, so a pressed button cannot nudge the paragraph beside it.
+   ── */
+.btn {
+  position: relative;
+  min-height: 2.5rem;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color     var(--dur-fast) var(--ease-out),
+    color            var(--dur-fast) var(--ease-out),
+    transform        var(--dur-instant) var(--ease-out);
+}
+.btn:hover  { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px); transition-duration: var(--dur-instant); }
+.btn:focus-visible { outline: 2px solid var(--ocean); outline-offset: 3px; }
+/* On the dark feature and the masthead the ocean ring measures badly against
+   ink. Turquoise is the token that was demoted to "text on ink" precisely
+   because it is legible there. */
+.feature .btn:focus-visible,
+.masthead a:focus-visible,
+.masthead summary:focus-visible { outline-color: var(--turquoise); }
+.btn[aria-disabled="true"], .btn:disabled {
+  opacity: .45;
+  pointer-events: none;
+  transform: none;
+}
+
+/* The chevron is drawn from borders rather than set as a glyph, so it never
+   enters the button's accessible name and never depends on a font. */
+.btn--primary::after {
+  content: "";
+  flex: none;
+  width: .4rem; height: .4rem;
+  margin-left: .15rem;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.btn--primary:hover::after,
+.btn--primary:focus-visible::after { transform: rotate(45deg) translate(2px, -2px); }
+
+/* Secondary actions get a rule that wipes in along the bottom edge instead of
+   a fill. It is the same gesture the nav and the section eyebrows make, which
+   is what makes them read as one publication rather than one page. */
+.btn--quiet { overflow: hidden; }
+.btn--quiet::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--ocean);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-rule);
+}
+.btn--quiet:hover::after,
+.btn--quiet:focus-visible::after { transform: scaleX(1); }
+
+.btn--ghost::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--crimson-mark);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-rule);
+}
+.btn--ghost:hover::after,
+.btn--ghost:focus-visible::after { transform: scaleX(1); }
+
+/* ── Section-forward links ────────────────────────────────────────────────
+   "The full record →", "Read edition →", "China Desk in full →". These keep
+   a real underline — the accessibility test forbids removing it from
+   anything that is not a heading or the masthead — so the motion is in the
+   underline's TONE and in the arrow, not in the underline's existence.
+   Ordinary inline citations are deliberately excluded: a footnote that moves
+   when the pointer crosses it is noise, not affordance.
+   ── */
+.more a, .card-foot a, .freshness-more a {
+  text-decoration-color: var(--rule);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    text-decoration-color var(--dur-fast) var(--ease-out);
+}
+.more a:hover, .card-foot a:hover, .freshness-more a:hover {
+  text-decoration-color: currentColor;
+}
+/* The arrow is a literal glyph in the templates, wrapped here in a bare
+   `<span class="arrow">` so it can be moved. The span carries no `aria-hidden`
+   on purpose: hiding it would change what a screen reader announces for
+   every one of these links, and this pass is not permitted to change what
+   the publication says — only how it behaves. */
+.more a .arrow, .card-foot a .arrow {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.more a:hover .arrow, .card-foot a:hover .arrow,
+.more a:focus-visible .arrow, .card-foot a:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+/* ── Navigation ───────────────────────────────────────────────────────────
+   The current page is marked by a crimson rule that is simply THERE. Hover
+   draws a parchment rule in from the left over 240ms. The two are different
+   colours and different origins, so a hovered link never impersonates the
+   page you are on.
+   ── */
+.masthead nav.primary a {
+  position: relative;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+/* ::before, not ::after, and deliberately.
+
+   `test_print_expands_only_absolute_urls` splits this stylesheet at its first
+   `@media print` and scans the whole remainder for an unscoped link-suffix
+   rule — the one that would print a URL beside every internal link. Every
+   block appended after that print block falls inside its scan, including this
+   one, and the scan is a plain text match: it fired on this comment too, in
+   an earlier wording that quoted the selector it looks for.
+
+   The rule below prints nothing (the print block hides `nav.primary`
+   outright) and the pseudo-element is empty and absolutely positioned, so the
+   two pseudo-elements are interchangeable here. Taking the one that does not
+   read like the defect keeps the guard doing its job. */
+.masthead nav.primary a::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: var(--dark-muted);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-rule);
+}
+.masthead nav.primary a:hover::before,
+.masthead nav.primary a:focus-visible::before { transform: scaleX(1); }
+/* The active page's own rule is the border-bottom set earlier; it must not
+   be redrawn by a hover rule sitting on top of it. */
+.masthead nav.primary a[aria-current="page"]::before { content: none; }
+.nav-toggle > summary {
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.nav-toggle > summary::after { transition: transform var(--dur-base) var(--ease-out); }
+
+/* ═══ THE PLATE ══════════════════════════════════════════════════════════
+   One card object, three densities, and an index rule at the top edge doing
+   the work a box shadow does elsewhere. The border is deliberately NOT equal
+   on four sides: a 2px rule across the top and hairlines around the rest
+   reads as a plate laid on paper rather than as a box drawn around text.
+
+   Depth is a surface shift and a rule darkening — house doctrine forbids box
+   shadows, and it is right to: on a warm paper ground a shadow reads as a
+   web widget immediately.
+   ── */
+.card {
+  position: relative;
+  border-top: 2px solid var(--rule-strong);
+  /* The flex gap was doing all the interior spacing at one value, which is
+     why every card read flat. Spacing is now set per relationship. */
+  gap: 0;
+  transition:
+    border-color     var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    transform        var(--dur-base) var(--ease-out);
+}
+.card > * + * { margin-top: var(--card-gap); }
+.card > .card-meta + h3,
+.card > .card-meta + h2 { margin-top: var(--card-gap-tight); }
+.card h3 + .original { margin-top: var(--card-gap-tight); }
+
+/* Hover and keyboard focus are the same state. `:focus-within` is what makes
+   the plate answer a tab key as well as a pointer — hover is never the only
+   way this affordance appears. */
+.card:hover,
+.card:focus-within {
+  border-color: var(--rule-strong);
+  border-top-color: var(--ink);
+  background: var(--white);
+  transform: translateY(-2px);
+}
+/* Keyboard focus is marked in the accent rather than in ink, so a tabbed
+   plate is distinguishable from a hovered one at a glance. */
+.card:focus-within { border-top-color: var(--ocean); }
+
+/* The foot is separated from the content it acts on by a hairline, not by
+   whitespace alone: it is a different kind of thing. */
+.card .card-foot {
+  margin-top: var(--card-gap-loose);
+  padding-top: .6rem;
+  border-top: 1px solid var(--line-soft);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.card:hover .card-foot, .card:focus-within .card-foot {
+  border-top-color: var(--rule);
+}
+
+/* The desk card's semantic left rule IS its index mark — it says what the
+   collection scope is, and it is the one edge accent that carries meaning.
+   It keeps the top edge quiet so the two marks never compete. */
+.card--desk { border-top-color: var(--rule); }
+.card--desk:hover, .card--desk:focus-within { border-top-color: var(--rule-strong); }
+.card--desk { transition: border-left-width var(--dur-base) var(--ease-out),
+                          border-color var(--dur-base) var(--ease-out),
+                          background-color var(--dur-base) var(--ease-out),
+                          transform var(--dur-base) var(--ease-out); }
+
+/* ── Card metadata ────────────────────────────────────────────────────────
+   Metadata was one muted grey at one size, wrapped in a flex row: a date, an
+   institution and an evidence label all arriving as the same material. Three
+   registers now, and they are distinguishable in a monochrome print:
+
+     the evidence label  small caps, on its semantic rule (unchanged)
+     the institution     sans, tinted darker than muted
+     the date            mono, tabular, tracked, quietest of the three
+
+   The separator is a rule between items rather than a bullet, because a
+   bullet is a character and a rule is not.
+   ── */
+.card .card-meta {
+  font-size: .6875rem;
+  letter-spacing: .015em;
+  gap: .25rem .55rem;
+  align-items: center;
+}
+.card .card-meta > span:not(.evidence):not(.desk-state):not(.issue-no):not(.issue-label) {
+  color: var(--text-muted-tinted);
+  font-weight: 500;
+}
+.card .card-meta time {
+  font-size: .625rem;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  padding-left: .55rem;
+  border-left: 1px solid var(--line-soft);
+}
+.card .card-meta > .evidence + span { padding-left: 0; }
+
+/* Headline. The card heading was 1.0625rem — the same size as body — so it
+   never led its own card. Serif, a step up, and tightened. */
+.card h3 {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.26;
+  letter-spacing: -.012em;
+  font-weight: 600;
+}
+.card h3 a { transition: color var(--dur-fast) var(--ease-out); }
+.card:hover h3 a { color: var(--ocean); }
+.card .original {
+  font-size: .875rem;
+  color: var(--text-muted-tinted);
+  line-height: 1.7;
+}
+
+/* ═══ DENSITY LADDER — the record feed ═══════════════════════════════════
+   Six identical boxes in two rows of three said that six records were of
+   equal consequence and that the publication had no opinion about any of
+   them. This is a front page instead: the most recent record takes two
+   columns and the full height of the block, two support it in the third
+   column, and the remaining three are filed below in a ruled register that
+   is not a box at all.
+
+   Nothing about which records appear, or in what order, has changed. Only
+   the weight the page gives them.
+   ── */
+.record-feed {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+  margin: var(--sp-5) 0 0;
+}
+.record-feed .card--lead { grid-column: 1 / 3; grid-row: 1 / 3; }
+
+.card--lead {
+  border-top-width: 3px;
+  border-top-color: var(--ink);
+  padding: 1.5rem 1.6rem 1.4rem;
+}
+.card--lead h3 {
+  font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+  line-height: 1.18;
+  letter-spacing: -.016em;
+  font-weight: 700;
+}
+.card--lead .original { font-size: 1rem; }
+.card--lead .card-meta { font-size: .71875rem; }
+/* The one restrained corner detail in the card system, and it appears on
+   exactly one card per page. It is the hero's own analyst bracket at a
+   quarter scale — the same mark, so the archive reads as the same
+   publication as the field above it. */
+.card--lead::before {
+  content: "";
+  position: absolute;
+  top: .85rem; right: .95rem;
+  width: 20px; height: 20px;
+  border-top: 2px solid var(--crimson);
+  border-right: 2px solid var(--crimson);
+  opacity: .55;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.card--lead:hover::before, .card--lead:focus-within::before { opacity: 1; }
+/* The lead card's own text must not run under the bracket. */
+.card--lead > .card-meta { padding-right: 2.4rem; }
+
+/* ── The register — metadata-only rows, not cards ─────────────────────── */
+.record-register {
+  list-style: none;
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--ink);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.register-item {
+  max-width: none;
+  position: relative;
+  padding: .95rem 1.1rem 1rem;
+  border-left: 1px solid var(--line-soft);
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+.register-item:first-child { border-left: 0; padding-left: 0; }
+.register-item:last-child { padding-right: 0; }
+/* The rule that answers the pointer: a 2px ink mark wiping in along the top
+   edge of the row, which is where the register's own rule already is. */
+.register-item::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 0; right: 0;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-rule);
+}
+.register-item:hover::before,
+.register-item:focus-within::before { transform: scaleX(1); }
+.register-item h3 {
+  font-family: var(--serif);
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.32;
+  letter-spacing: -.008em;
+  margin: 0 0 .35rem;
+  max-width: none;
+}
+.register-item h3::before { content: none; }
+.register-item h3 a { color: var(--ink); text-decoration: none; }
+.register-item h3 a:hover { color: var(--ocean); text-decoration: underline; }
+.register-meta {
+  font-family: var(--mono);
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: none;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.register-meta .register-date { color: var(--text-muted-tinted); }
+
+/* ── Section heads: rhythm, and a folio mark ──────────────────────────────
+   Every section opened with the same 2px rule at the same distance from the
+   section before it, so the page had no idea which of its five sections
+   mattered. Two tiers now — a major opener with a full ink rule and a folio
+   index above it, and a quiet one with a hairline — and the space BEFORE a
+   head is larger than the space after it, which is what makes a rule read as
+   an opening rather than as a divider.
+   ── */
+.section-head {
+  position: relative;
+  margin: var(--sp-8) 0 var(--sp-4);
+  padding-top: .85rem;
+}
+.section-head h2 {
+  font-family: var(--serif);
+  letter-spacing: -.016em;
+  font-weight: 700;
+}
+.section-index {
+  position: absolute;
+  top: -1.35rem; left: 0;
+  margin: 0;
+  max-width: none;
+  font-family: var(--mono);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.section-index::after {
+  content: "";
+  display: inline-block;
+  width: 1.6rem;
+  margin-left: .5rem;
+  border-top: 1px solid var(--rule);
+  vertical-align: .28em;
+}
+/* Quiet openers: the two sections that explain rather than publish. */
+.section-head--quiet { border-top-width: 1px; border-top-color: var(--rule); }
+.section-head--quiet h2 { font-size: 1.125rem; }
+
+/* ── Hero → archive handoff ───────────────────────────────────────────────
+   The hero used to end on a hairline and the archive used to begin four
+   openings later: a freshness note, then a lede paragraph, then a section
+   rule, each on a different ground. The apron closes the identity field
+   properly — it keeps the hero's parchment, carries the two sentences that
+   belong to the hero's voice, and ends on the same 2px ink rule that opens
+   the record. One seam instead of four.
+   ── */
+.hero { border-bottom: 0; }
+.hero-apron {
+  background: var(--parchment-field);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 2px solid var(--ink);
+}
+.hero-apron > .wrap {
+  padding-top: 1.4rem;
+  padding-bottom: 1.5rem;
+}
+.hero-apron .freshness-note {
+  margin: 0 0 1.1rem;
+  border-left-color: var(--rule-strong);
+}
+.hero-apron .purpose { margin: 0; }
+/* The standfirst. It is the hero's last sentence, so it is set in the hero's
+   serif at deck size with the eyebrow's own crimson mark, rather than as a
+   stray paragraph of body copy on a new ground. */
+.hero-apron .purpose .lede {
+  font-family: var(--serif);
+  font-size: var(--step-deck);
+  line-height: 1.45;
+  color: var(--deep);
+  max-width: 58ch;
+  margin: 0;
+  padding-left: .85rem;
+  border-left: 2px solid var(--crimson);
+}
+/* The first section after the apron does not need the full 4.5rem: the apron
+   already closed with the ink rule. */
+main.leads-with-hero > .wrap > .section-head:first-child { margin-top: var(--sp-6); }
+
+/* ── The feature band ─────────────────────────────────────────────────────
+   The strongest object on the page already. It gets the same state grammar
+   as the plates so it belongs to the system: the crimson top rule of the
+   masthead, and a cover that lifts its border on hover.
+   ── */
+.feature { border-top: 3px solid var(--crimson); }
+.feature-figure img { transition: border-color var(--dur-base) var(--ease-out); }
+.feature:hover .feature-figure img { border-color: rgba(237, 233, 224, .34); }
+
+/* ── Desk cards on the desks page: a readable measure ────────────────────
+   Four prose columns at 1440px gave each card a 25-character measure — a
+   third of the minimum this stylesheet sets for prose anywhere else. The
+   home page's desk cards carry no prose and stay four across; the desks page
+   carries a scope paragraph per desk and goes two across, where the measure
+   lands near 45 characters.
+   ── */
+@media (min-width: 60rem) {
+  main:not(.leads-with-hero) .cards--desks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── Responsive: the ladder holds its shape ─────────────────────────────── */
+@media (max-width: 60rem) {
+  .record-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .record-feed .card--lead { grid-column: 1 / -1; grid-row: auto; }
+  .record-register { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .record-register .register-item:nth-child(2n+1) { border-left: 0; padding-left: 0; }
+  .record-register .register-item:nth-child(2n) { padding-right: 0; }
+  .record-register .register-item:nth-child(n+3) {
+    border-top: 1px solid var(--line-soft);
+  }
+}
+@media (max-width: 43.75rem) {
+  /* One column, and the register becomes what it is on paper: a list of
+     ruled rows. The plate treatment is dropped from it entirely — three
+     boxes stacked under three boxes is the monotony this ladder exists to
+     break, and it is worse on a phone than on a desktop. */
+  .record-feed { grid-template-columns: minmax(0, 1fr); gap: .85rem; }
+  .record-feed .card--lead { grid-column: auto; padding: 1.25rem 1.15rem 1.2rem; }
+  .card--lead h3 { font-size: 1.25rem; }
+  .record-register { grid-template-columns: minmax(0, 1fr); }
+  .record-register .register-item {
+    border-left: 0;
+    padding: .85rem 0;
+  }
+  .record-register .register-item + .register-item {
+    border-top: 1px solid var(--line-soft);
+  }
+  .section-head { margin-top: var(--sp-7); }
+  .section-index { top: -1.15rem; }
+  /* 44px on touch, per the platform minimum, without inflating the desktop
+     button into a SaaS slab. */
+  .btn { min-height: 44px; }
+  .masthead nav.primary a { min-height: 44px; display: flex; align-items: center; }
+  .hero-apron > .wrap { padding-top: 1.1rem; padding-bottom: 1.15rem; }
+  .hero-apron .purpose .lede { font-size: 1rem; }
+}
+
+/* ── Guards ───────────────────────────────────────────────────────────────
+   Three of them, and they are the reason motion was allowed in at all.
+   ── */
+
+/* Print: the reveal start state must never reach paper. */
+@media print {
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .card, .register-item { transform: none !important; }
+  .section-index { color: #000; }
+}
+
+/* Reduced motion: the kill-switch earlier in this file already zeroes every
+   duration, which leaves the transitions correct but instantaneous. What it
+   cannot do is stop a transform from being declared, so the two that move a
+   whole object are removed by name. A reduced-motion reader gets the border
+   darkening and the surface shift — the state is still fully expressed,
+   which is the point of never letting motion carry it. */
+@media (prefers-reduced-motion: reduce) {
+  .card:hover, .card:focus-within,
+  .btn:hover, .btn:active { transform: none; }
+  html.js-reveal [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* The register's single evidence declaration. It sits on the register's own
+   top rule rather than above it, so the label reads as belonging to the rows
+   it governs. */
+.register-head {
+  margin: var(--sp-5) 0 0;
+  max-width: none;
+  line-height: 1;
+}
+.record-register { margin-top: .55rem; }
+
+/* ── Card foot: back to the bottom of the plate ───────────────────────────
+   `margin-top: auto` is what keeps the foot links of a row of cards on one
+   baseline; the interior-rhythm rule above was overriding it and the three
+   note feet landed at three different heights. The minimum gap is carried by
+   the element ahead of the foot instead, so the two do not fight. */
+.card .card-foot { margin-top: auto; }
+.card > *:has(+ .card-foot) { margin-bottom: var(--card-gap-loose); }
+
+/* ── Notes: a ruled comparison, not three boxes ───────────────────────────
+   "Record and analysis are not the same thing" was three identical bordered
+   cards — the third three-equal-box row on one page, and the one that least
+   needed to be boxed: it is a definition set, and definitions belong in
+   columns under a rule, not in containers.
+
+   One ink rule across the group, hairlines between the columns, and the
+   headings carry the weight. No border, no fill, no hover lift: nothing here
+   is a destination, so nothing here pretends to be clickable. Only the three
+   foot links move, and they move the way every other forward link on the
+   site does.
+   ── */
+.notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 2px solid var(--ink);
+  margin: var(--sp-4) 0 0;
+}
+.note {
+  display: flex;
+  flex-direction: column;
+  padding: 1.1rem 1.35rem 0;
+  border-left: 1px solid var(--line-soft);
+}
+.note:first-child { border-left: 0; padding-left: 0; }
+.note:last-child { padding-right: 0; }
+.note h3 {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.012em;
+  margin: 0 0 .55rem;
+}
+.note h3::before { content: none; }
+.note .card-prose { margin: 0 0 var(--card-gap-loose); }
+.note .card-foot {
+  margin-top: auto;
+  padding-top: .6rem;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--sans);
+  font-size: .8125rem;
+}
+/* 60rem, not 47.5rem, and the same breakpoint the record feed uses so the
+   page changes shape once rather than three times on the way down. Three
+   definition columns at 768px are ~28 characters wide and at 900px ~31 —
+   both well under the measure this stylesheet holds prose to everywhere
+   else. Below it the definitions stack, which is what a set of definitions
+   does on a narrow page anyway. */
+@media (max-width: 60rem) {
+  .notes { grid-template-columns: minmax(0, 1fr); }
+  .note {
+    border-left: 0;
+    padding: 1rem 0 1.1rem;
+  }
+  .note + .note { border-top: 1px solid var(--line-soft); }
+}
+
+/* ── Second measuring pass, same day ──────────────────────────────────────
+   Rendered at 1440/1024/390 and read back. Three things the first pass got
+   wrong, fixed here rather than by editing the block above, because position
+   is what decides in this file.
+   ── */
+
+/* 1. The lead plate had 200px of dead interior. The fix is not more copy —
+      it is anchoring the verbatim 中文 title to the foot of the plate on its
+      own hairline, where it reads as the original-language line of a record
+      rather than as a caption that ran out of card. The whitespace it leaves
+      above is now air around the headline, which is what a lead is for. */
+.card--lead .original {
+  margin-top: auto;
+  padding-top: .85rem;
+  border-top: 1px solid var(--line-soft);
+  font-size: 1.0625rem;
+  color: var(--deep);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.card--lead:hover .original,
+.card--lead:focus-within .original { border-top-color: var(--rule); }
+/* A lead with no separate original title keeps its headline off the floor. */
+.card--lead h3 { margin-bottom: var(--card-gap); }
+
+/* 2. Four desk cards, four different places the stat rows started, because
+      one title wrapped to two lines and three status labels wrapped to two.
+      The two elements above the figures are given a two-line floor, so the
+      figures line up across the row and the row reads as one table. Nothing
+      is truncated: a longer title still grows the card. */
+.cards--desks .card--desk > h3,
+.cards--desks .card--desk > h2.plain { min-height: 2.6em; }
+.cards--desks .card--desk > .card-meta { min-height: 2.4em; align-items: flex-start; }
+
+/* 3. The notes group opened on a 2px ink rule directly under a section head
+      whose own rule is a hairline — the subordinate object was heavier than
+      the section introducing it. */
+.notes { border-top: 1px solid var(--rule); }
+
+/* `.card h3 + .original` is (0,2,1) and was quietly winning the margin over
+   `.card--lead .original` at (0,2,0), so the lead's original-language line
+   never left the headline. Measured, not assumed: computed margin-top was
+   4.8px where `auto` was written. */
+.record-feed .card--lead > .original { margin-top: auto; }
+
+/* ── The ladder, re-proportioned after measuring ──────────────────────────
+   The lead was given two grid rows and only ever had two lines of headline
+   to put in them: 446px of plate holding ~250px of record, and 200px of
+   nothing in the middle of the most important object on the page. Air around
+   a lead is editorial; a hole in one is not.
+
+   The lead now takes two columns and one row beside a single supporting
+   plate, and the register carries four rows instead of three. Same six
+   records, same order — the tiers are 1 / 1 / 4 rather than 1 / 2 / 3.
+   ── */
+.record-feed .card--lead { grid-column: 1 / 3; grid-row: auto; }
+.record-register { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.record-register .register-item:nth-child(odd) { border-left: 0; padding-left: 0; }
+.record-register .register-item:nth-child(even) { padding-right: 0; }
+.record-register .register-item:nth-child(n+3) { border-top: 1px solid var(--line-soft); }
+@media (max-width: 43.75rem) {
+  .record-register { grid-template-columns: minmax(0, 1fr); }
+  .record-register .register-item:nth-child(n+3) { border-top: 0; }
+  .record-register .register-item + .register-item {
+    border-top: 1px solid var(--line-soft);
+  }
+}
+
+/* ── Two things the rendered page reported ───────────────────────────────
+   Both were invisible in the source and obvious at 1440.
+   ── */
+
+/* 1. A stray hairline above every section title. `h2` carries its own
+      `border-top` from the base typography, and inside `.section-head`'s
+      flex row the h2 is sized to its text — so the border rendered as a
+      short rule floating under the section's real rule, at the width of the
+      words. It was hidden while the head had no top padding; adding padding
+      exposed it. The section head owns the rule; the h2 does not. */
+.section-head h2 { border-top: 0; padding-top: 0; }
+
+/* 2. "none — see status" was being set in the same bold serif as 3,673 —
+      a status phrase wearing the typography of a figure, wrapping to two
+      lines, and pulling three of the four desk cards out of alignment with
+      the fourth. It is a sentence about why there is no number, so it is set
+      as one. Nothing about what it says has changed. */
+.stat-none {
+  font-family: var(--sans);
+  font-size: .78125rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
+  line-height: 1.4;
+  display: inline-block;
+  text-align: right;
+}
+
+/* The desk card's figures had ~62px of stacked margin between the last row
+   and the foot rule: `.stat-rows`' own 1rem bottom margin, plus the
+   pre-foot gap, plus the foot's padding. Three separate spacings doing one
+   job. The figures table owns its bottom edge; the foot owns the rest. */
+.cards--desks .card--desk > .stat-rows { margin: .75rem 0 0; }
+.cards--desks .card--desk > .stat-rows:has(+ .card-foot) { margin-bottom: .2rem; }
+
+/* ── Narrow-width metadata and section heads ──────────────────────────────
+   Measured at 390px. Two wraps that were being left to chance.
+   ── */
+@media (max-width: 47.5rem) {
+  /* The meta row wrapped wherever it happened to run out of room, so one
+     card broke after the evidence label and the next broke before the date —
+     which also stranded the date's separator rule at the start of a line.
+     The label takes its own line and the attribution takes the next, in
+     every card, at every width below this. */
+  .card .card-meta > .evidence { flex: 1 0 100%; }
+  .card .card-meta time { padding-left: .55rem; border-left: 1px solid var(--line-soft); }
+  /* A seven-word section link does not belong beside a section title in a
+     390px column. */
+  .section-head .more { flex: 1 0 100%; }
+}
+
+/* ── Touch targets on the forward links ──────────────────────────────────
+   Measured at 320/390/430. Every "… in full →" and "Read edition →" was a
+   16px-tall hit box, and the mobile nav disclosure was 37px against the 40px
+   floor DESIGN_SYSTEM §7 sets for mobile nav.
+
+   These are standalone links in their own paragraph, not citations inside a
+   sentence, so WCAG 2.5.8's inline exception does not cover them. On touch
+   widths the link takes the whole line it already occupies: the target grows,
+   the layout does not, and the desktop treatment is untouched.
+   ── */
+@media (max-width: 47.5rem) {
+  .card-foot a, .more a, .note .card-foot a {
+    display: block;
+    padding: .55rem 0;
+    min-height: 40px;
+  }
+  .card .card-foot, .note .card-foot { padding-top: .2rem; }
+  /* Chrome links stay compact — this band is dense on purpose — but clear
+     the 24px floor rather than sitting under it. */
+  .freshness-more a, .freshness-bar .detail a { display: inline-block; padding: .3rem 0; }
+}
+@media (max-width: 43.75rem) {
+  .nav-toggle > summary { min-height: 44px; }
+}
+
+/* The two-line floor exists to align four desk cards across one row on the
+   home page. On the Desks page there are two columns, every title fits on one
+   line, and the reserve is just a gap under each heading. Scope it to the row
+   it was measured for. */
+main:not(.leads-with-hero) .cards--desks .card--desk > h3,
+main:not(.leads-with-hero) .cards--desks .card--desk > h2.plain,
+main:not(.leads-with-hero) .cards--desks .card--desk > .card-meta { min-height: 0; }
+
+/* ── The credit plate and the ledger stop sharing a line ──────────────────
+   Pre-existing, and visible from 1500px down to the point where the bracket
+   is swapped for the inline credit: the analyst bracket and the ledger's
+   "THE RECORD, AS HELD" both want the top of the right-hand column. At 1440
+   they merely sit on the same optical line and read as one confused row of
+   mono caps; at 1280 the clearance is a few pixels; at 1024 the glyphs
+   overlap outright and the attribution the CC BY-SA licence requires is
+   printed through the ledger label.
+
+   No breakpoint chase. The bracket owns the top of the field, and the ledger
+   is anchored below it rather than centred into it — which also gives the
+   rail something to hang from and reads as a plate over a ledger rather than
+   two labels colliding. Measured clearance at every width from 961px up.
+   ── */
+@media (min-width: 60.0625rem) {
+  .hero-grid.has-veil .hero-ledger {
+    align-self: start;
+    padding-top: 4.25rem;
+  }
+  /* The paper whisper is re-aimed, not clipped.
+
+     Clipping it to start below the bracket did stop it washing the credit
+     plate, and it produced exactly the defect the original whisper comment
+     warns about: the opaque core met the clip and drew a legible lightened
+     rectangle behind the rail — the photo-card effect the whole veil exists
+     to avoid. A radial gradient cut by its own box has a hard edge, always.
+
+     So it is not cut. The box extends past the label in both directions and
+     the gradient's centre moves up to 38%, which puts the label inside the
+     core and leaves the gradient already transparent at every edge of its
+     own box. It reaches a little way behind the bracket, and that costs
+     nothing: the bracket paints above it, and paper behind small mono type
+     over a photograph only helps it. */
+  .hero-grid.has-veil .hero-ledger::before {
+    inset: -1rem -3rem -2.5rem -3rem;
+    background: radial-gradient(76% 70% at 50% 38%,
+                rgba(250, 247, 240, .93) 0%,
+                rgba(250, 247, 240, .72) 46%,
+                transparent 80%);
+  }
+}
+
+/* ── Tablet: two arrangements that left a hole ───────────────────────────
+   Measured at 768.
+   ── */
+@media (max-width: 60rem) {
+  /* The feed holds two plates. Letting the lead span both columns of a
+     two-column grid put the supporting plate in column one and nothing in
+     column two — a half-width card beside an empty half. Below the
+     two-column breakpoint the ladder is simply vertical: lead, support,
+     then the register. */
+  .record-feed { grid-template-columns: minmax(0, 1fr); }
+  .record-feed .card--lead { grid-column: 1 / -1; }
+}
+@media (min-width: 47.5rem) and (max-width: 62rem) {
+  /* `auto-fit` puts four desks on three columns here and orphans the fourth —
+     the 3 + 1 the desk grid was widened to avoid in the first place. Two by
+     two, which is also the arrangement the Desks page uses. */
+  .cards--desks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block main_class %} class="leads-with-hero"{% endblock %}
+{# The publication's only scripted motion, on the only page that has any
+   reveal targets. Synchronous and in the head on purpose: it adds the class
+   the reveal start state is written under, and adding that class after first
+   paint would flash the sections in and back out. ~2 KB, no dependencies,
+   and it bails before touching the document when the browser lacks
+   IntersectionObserver or the reader has asked for reduced motion — in which
+   case the class is never added and nothing is ever hidden. #}
+{% block head_scripts %}<script src="reveal.js"></script>{% endblock %}
 {% block hero %}
 {# The front door. What stood here was a paragraph of body copy directly under
    an operational status strip — accurate, and no way in. A reader arriving
@@ -99,42 +107,63 @@
   </p>
   {% endif %}
 </section>
-{% endblock %}
-{% block content %}
 
-{# The sentence the freshness block no longer carries above the hero. Same
-   words, placed where a reader who followed the link lands, and where it reads
-   as a note about the record rather than as a status banner over it. #}
+{# ── The apron ─────────────────────────────────────────────────────────────
+   The seam between the identity field and the archive. What stood here was
+   four separate openings on three grounds — the hero's hairline, then a
+   freshness note, then a lede paragraph, then a section rule — and the page
+   read as one component ending and another starting.
+
+   The same two sentences, unchanged, now close the hero instead: they keep
+   the hero's parchment, and the band ends on the 2px ink rule that the record
+   opens with. One seam. Full-bleed, so it belongs to the hero block rather
+   than to the reading column; the content block below is unchanged in order,
+   which is what `test_home_orders_purpose_records_desks_analysis_coverage`
+   reads. #}
+<div class="hero-apron">
+  <div class="wrap">
 {% if freshness.analysis_is_behind_collection %}
-<p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
-  collection; records after {{ freshness.analysis_last_produced }} await
-  screening. <a href="methodology.html#freshness">What these dates mean</a>,
-  and <a href="coverage.html">what each source returned</a>.</p>
+    <p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
+      collection; records after {{ freshness.analysis_last_produced }} await
+      screening. <a href="methodology.html#freshness">What these dates mean</a>,
+      and <a href="coverage.html">what each source returned</a>.</p>
 {% endif %}
-
-
 {# Section order is governed, not stylistic: purpose, then the record, then the
    desks that produce it, then the reading of it, then what failed to collect.
    The record leads. An analysis-first home page would make the weekly reading
    the product and the record its supporting material, which is the reverse of
    what this publication is. #}
-<section class="purpose">
-  <p class="lede">Coverage is selective. {{ desks.collecting_count }} of
-  {{ desks.declared_count }} declared desks
-  {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest
-  are labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
-</section>
+    <section class="purpose">
+      <p class="lede">Coverage is selective. {{ desks.collecting_count }} of
+      {{ desks.declared_count }} declared desks
+      {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest
+      are labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block content %}
 
 <div class="section-head">
+  <p class="section-index" aria-hidden="true">01</p>
   <h2>Latest records</h2>
-  <p class="more"><a href="archive.html">The full record &rarr;</a></p>
+  <p class="more"><a href="archive.html">The full record <span class="arrow">&rarr;</span></a></p>
 </div>
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
 <p class="meta">The most recent records from the desks that collect, with original-language titles
 preserved.</p>
-<div class="cards">
-{% for a in articles[:6] %}
-  <article class="card">
+{# ── The density ladder ────────────────────────────────────────────────────
+   Six identical cards in two rows of three is the one card arrangement
+   DESIGN_SYSTEM §5 names as forbidden, and it said that six records were of
+   equal consequence — an opinion this page does not hold and cannot support.
+
+   Same six records, same order, same fields. The most recent takes the lead
+   plate; the next two support it; the last three are filed in a register of
+   ruled rows rather than boxes. The record a reader reaches is identical;
+   only the weight the page gives it changed. #}
+<div class="record-feed">
+{% for a in articles[:2] %}
+  <article class="card{{ ' card--lead' if loop.first }}" data-reveal style="--ri:{{ loop.index0 }}">
     <p class="card-meta"><span class="evidence evidence--record">Source record</span>
       <span>{{ a.institution or a.source_name }}</span>
       <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
@@ -143,10 +172,27 @@ preserved.</p>
   </article>
 {% endfor %}
 </div>
+{% if articles[2:6] %}
+{# The evidence label is declared once for the register rather than repeated
+   on each row. It is the same claim the plates above make — these are stored
+   source records, not analysis — and the register is a single group, so
+   stamping it three more times would be repetition, not disclosure. #}
+<p class="register-head"><span class="evidence evidence--record">Source record</span></p>
+<ul class="record-register" data-reveal>
+{% for a in articles[2:6] %}
+  <li class="register-item">
+    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
+    <p class="register-meta">{{ a.institution or a.source_name }} ·
+      <time class="register-date" datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
 
 <div class="section-head">
+  <p class="section-index" aria-hidden="true">02</p>
   <h2 id="desks">Desks</h2>
-  <p class="more"><a href="desks.html">All desks and what blocks them &rarr;</a></p>
+  <p class="more"><a href="desks.html">All desks and what blocks them <span class="arrow">&rarr;</span></a></p>
 </div>
 <p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
 beside it is derived from configuration or from the corpus — never from intent. Only a collecting
@@ -154,7 +200,7 @@ desk has a record count; the others say what stops them rather than showing a ze
 {# The claim the home page must keep making, in the markup the guard reads:
    how many desks collect, out of how many are declared. Both derived. #}
 <p class="meta"><b>{{ desks.collecting_count }}</b> collecting desk{{ '' if desks.collecting_count == 1 else 's' }} of <b>{{ desks.declared_count }}</b> declared.</p>
-<div class="cards cards--desks">
+<div class="cards cards--desks" data-reveal>
 {% for d in desks %}
   <article class="card card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}">
     <h3><a href="{{ d.route }}">{{ d.name }}</a></h3>
@@ -162,19 +208,20 @@ desk has a record count; the others say what stops them rather than showing a ze
     <dl class="stat-rows">
       <div class="stat-row"><dt>Enabled sources</dt><dd>{{ d.enabled_source_count }}</dd></div>
       <div class="stat-row"><dt>Records</dt>
-        <dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}none — see status{% endif %}</dd></div>
+        <dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="stat-none">none — see status</span>{% endif %}</dd></div>
     </dl>
-    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full &rarr;</a></p>
+    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full <span class="arrow">&rarr;</span></a></p>
   </article>
 {% endfor %}
 </div>
 
 {% if lead_edition %}
 <div class="section-head">
+  <p class="section-index" aria-hidden="true">03</p>
   <h2>Latest analysis</h2>
-  <p class="more"><a href="analysis.html">All analysis &rarr;</a></p>
+  <p class="more"><a href="analysis.html">All analysis <span class="arrow">&rarr;</span></a></p>
 </div>
-<article class="feature">
+<article class="feature" data-reveal>
   <div class="feature-body">
     <p class="feature-eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
     <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
@@ -204,39 +251,41 @@ desk has a record count; the others say what stops them rather than showing a ze
 {% endif %}
 {% endif %}
 
-<div class="section-head">
+<div class="section-head section-head--quiet">
+  <p class="section-index" aria-hidden="true">04</p>
   <h2>Record and analysis are not the same thing</h2>
 </div>
-<div class="cards">
-  <article class="card">
+<div class="notes">
+  <article class="note">
     <h3>The record</h3>
     <p class="card-prose">Every item is stored as its institution published it:
     original language, original date, original URL, and a content fingerprint
     taken at capture. English titles and summaries, where they exist, are
     produced by machine and labeled as such. Nothing in the record asserts that
     what an institution said is true.</p>
-    <p class="card-foot"><a href="archive.html">Explore the record &rarr;</a></p>
+    <p class="card-foot"><a href="archive.html">Explore the record <span class="arrow">&rarr;</span></a></p>
   </article>
-  <article class="card">
+  <article class="note">
     <h3>The analysis</h3>
     <p class="card-prose">Analysis is written by a person, cites the records it
     rests on, and is labeled as interpretation. No model writes it and no script
     derives it from the corpus. An edition is a reading of the week, not a
     summary of the record.</p>
-    <p class="card-foot"><a href="analysis.html">Read analysis &rarr;</a></p>
+    <p class="card-foot"><a href="analysis.html">Read analysis <span class="arrow">&rarr;</span></a></p>
   </article>
-  <article class="card">
+  <article class="note">
     <h3>Methodology</h3>
     <p class="card-prose">What this record can and cannot support, how each
     field is derived, when a value may be absent, and where it stops being
     reliable — stated once, in one place, rather than implied across pages.</p>
-    <p class="card-foot"><a href="methodology.html">Read the methodology &rarr;</a></p>
+    <p class="card-foot"><a href="methodology.html">Read the methodology <span class="arrow">&rarr;</span></a></p>
   </article>
 </div>
 
-<div class="section-head">
+<div class="section-head section-head--quiet">
+  <p class="section-index" aria-hidden="true">05</p>
   <h2>What did not collect</h2>
-  <p class="more"><a href="coverage.html">Coverage, per source, per run &rarr;</a></p>
+  <p class="more"><a href="coverage.html">Coverage, per source, per run <span class="arrow">&rarr;</span></a></p>
 </div>
 {% if run_status %}
 <p>Run {{ run_status.run_id }} executed {{ run_status.executed }}

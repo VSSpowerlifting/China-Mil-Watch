@@ -11,6 +11,17 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
+{# Head scripts, declared per page rather than inherited by all of them.
+
+   `reveal.js` lived here first and that was wrong twice over. The week
+   shards carry a contract — `test_no_javascript_is_required_by_the_shards` —
+   that they ship no <script> at all, and putting a tag in the shared head
+   broke it on every one of them. It would also have shipped 2 KB to every
+   record page in the corpus, none of which has anything to reveal, against
+   a per-page script budget that already has browse.js in it.
+
+   A page that wants scripted behaviour asks for it. Today exactly one does. #}
+{% block head_scripts %}{% endblock %}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
