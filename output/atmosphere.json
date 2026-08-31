@@ -1,0 +1,19 @@
+{
+  "_comment": "The homepage atmospheric visual. A duotone derivative of a CC BY-SA 2.0 photograph, shown as a masked veil rather than as an image card. It illustrates no record and is not evidence of anything; the page says so beside it.",
+  "route": "/atmosphere/chengdu-j20-duo-paper.jpg",
+  "editorial_id": "chengdu-j20",
+  "sha256": "d3007c9895a07c7cf5de4ae12993da43aa0bba31577932aed9ecc87c8de2fcc3",
+  "bytes": 120503,
+  "alt": "A Chengdu J-20 stealth fighter banking in flight with its weapon bays open, seen from below against a pale overcast sky",
+  "caption": "A Chengdu J-20 stealth fighter in flight with its ventral weapon bays open.",
+  "credit": "emperornie · CC BY-SA 2.0 · via Wikimedia Commons",
+  "creator": "emperornie",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "source_page": "https://commons.wikimedia.org/wiki/File:J-20_fighter_(44040541250)_(cropped).jpg",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/J-20_fighter_%2844040541250%29_%28cropped%29.jpg",
+  "acquired_at": "2026-07-16T05:12:41Z",
+  "derivative": "downscaled, cropped and duotoned from the source photograph; a modified adaptation, and therefore subject to the same licence including ShareAlike",
+  "origin": "site/assets/editorial/derivatives/chengdu-j20-duo-paper.jpg",
+  "note": "Homepage atmospheric visual (publication identity), not tied to any article or record item; replaces the Jin-class SSBN as the homepage veil (2026-07-16). Original: Flickr photo 44040541250 by emperornie, via Wikimedia Commons, CC BY-SA 2.0. The duo-paper veil derivative is a modified (downscaled, cropped, duotone) adaptation and remains subject to CC BY-SA 2.0, including ShareAlike."
+}
