@@ -2040,6 +2040,15 @@ def build(out_dir: Path, title: str, db_path: Path,
         encoding="utf-8")
     written.append("citation.js")
 
+    # Reveal-on-scroll. Requested per page through base.html's
+    # `head_scripts` block rather than inherited by all of them, so the week
+    # shards keep their no-script contract and the record pages carry no
+    # bytes for behaviour they do not have. ~2 KB, no dependencies.
+    (out_dir / "reveal.js").write_text(
+        (Path(__file__).parent / "reveal.js").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("reveal.js")
+
     (out_dir / "corpus.html").write_text(
         env.get_template("corpus_weeks.html").render(page="corpus.html", **ctx),
         encoding="utf-8")
