@@ -2940,3 +2940,65 @@ main:not(.leads-with-hero) .cards--desks .card--desk > .card-meta { min-height: 
      two, which is also the arrangement the Desks page uses. */
   .cards--desks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ── Final interaction pass, 2026-08-31: the card lift is removed ─────────
+   Judged on a rendered 13-card analysis grid with one card hovered, not on
+   the rule.
+
+   In a ruled grid the alignment IS the composition: every card shares a top
+   rule and every foot rule sits on one baseline. A 2px lift breaks both, and
+   what the eye reads is not elevation — it is one card out of register with
+   its row, which looks like a rendering fault. On a dense list it is worse:
+   the misalignment travels with the pointer.
+
+   Instrumentation also showed the lift was never consistent. The two feed
+   plates carry `data-reveal`, and the reveal's finished state — 
+   `html.js-reveal [data-reveal].is-in { transform: none }`, at (0,3,1) —
+   outranks `.card:hover` at (0,2,0), so those two never lifted at all while
+   the desk and edition cards did. Removing the translation makes every plate
+   behave the same way instead of two of them behaving differently for a
+   reason no reader could see.
+
+   Nothing is lost. The state is still carried by four signals, all of them
+   colour or rule and none of them geometry: the top index rule goes to ink,
+   the hairline border warms, the foot rule warms, and the headline takes the
+   accent. Buttons keep their lift and their press — a button is a discrete
+   object with no shared baseline to break, and the 1px press is the feedback
+   that makes it feel attached to the finger.
+   ── */
+.card:hover,
+.card:focus-within {
+  transform: none;
+  /* Was `background: var(--white)` — a no-op, because the resting card is
+     already white. A state that claims to shift a surface and does not is
+     worse than one that does not claim it. */
+  background: var(--white);
+}
+.card {
+  transition:
+    border-color     var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+.cards--desks .card--desk {
+  transition:
+    border-color     var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+
+/* A desk card's keyboard focus was indistinguishable from its hover: the
+   variant rule set both to `--rule-strong` and outranked `.card:focus-within`
+   at (0,3,0) against (0,2,0). The inner link still drew its own ring, so
+   focus was never invisible — but the plate stopped agreeing with every
+   other plate on the page about what focus looks like. */
+.card--desk:hover { border-top-color: var(--rule-strong); }
+.card--desk:focus-within { border-top-color: var(--ocean); }
+
+/* The two-line floor on the desk card's title and status exists to align four
+   cards across one row. In a single column there is no row to align to, so
+   all it does is open dead space under a one-line title — on the width where
+   vertical space is scarcest. */
+@media (max-width: 47.5rem) {
+  .cards--desks .card--desk > h3,
+  .cards--desks .card--desk > h2.plain,
+  .cards--desks .card--desk > .card-meta { min-height: 0; }
+}
