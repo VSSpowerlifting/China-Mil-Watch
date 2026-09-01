@@ -38,6 +38,19 @@ import generate_preview as gp                                        # noqa: E40
 
 TRACKED_DB = ROOT / "pla_watch.db"
 
+#: The opening words of the backlog sentence, and the single anchor every test
+#: that cares about it matches on.
+#:
+#: It lived as a class attribute on one test class while another test matched
+#: the bare substring "wait" on a rendered page. The two drifted the moment the
+#: state changed, which is exactly what this constant now prevents: a wording
+#: change moves every test that depends on it, together.
+#:
+#: Matched on the opening rather than the whole sentence so a change to the
+#: date or the trailing clause does not silently stop these from checking
+#: anything.
+BACKLOG_SENTENCE = "Analysis trails collection"
+
 
 class TestTheThreeConceptsAreSeparate(unittest.TestCase):
 
@@ -175,8 +188,52 @@ class TestForbiddenWordings(RenderedCase):
         self.assertNotIn("last updated:", text)
 
     def test_the_backlog_is_reported_separately_from_the_analysis_date(self):
-        coverage = (self.root / "coverage.html").read_text(encoding="utf-8")
-        self.assertIn("wait", self.flat(coverage).lower())
+        """
+        The invariant, stated once: `analysis_last_produced` says when analysis
+        last RAN, never that everything up to it was analysed. So whenever a
+        backlog exists the site has to say so in its own words, and the two
+        freshness facts have to stay separately represented either way.
+
+        This assertion used to read `assertIn("wait", coverage)` unconditionally
+        and it was only ever true of one state. On 2026-08-31 analysis caught up
+        with collection, the site correctly stopped saying records were waiting,
+        and the test failed for reporting the truth. A state-dependent contract
+        written as a state-independent one.
+
+        Both branches are asserted here, chosen by the corpus rather than by a
+        date written into a test:
+
+          behind    the backlog sentence is present, and it NAMES the analysis
+                    date — reported separately, not left to be inferred from
+                    two dates sitting next to each other;
+          caught up the sentence is absent, because claiming records are
+                    waiting when none are is the same class of false statement
+                    the sentence exists to prevent.
+
+        What holds in both: each freshness fact is present under its own label,
+        with its own value. That is the half of this test the old one never
+        actually checked.
+        """
+        f = PublicView(TRACKED_DB).freshness()
+        coverage = self.flat(
+            (self.root / "coverage.html").read_text(encoding="utf-8"))
+
+        for label, value in (("Records last collected", f.records_last_collected),
+                             ("Analysis last produced", f.analysis_last_produced)):
+            with self.subTest(label=label):
+                self.assertRegex(
+                    coverage, re.escape(label) + r"\s*" + re.escape(value),
+                    "%s is not represented with its own value" % label)
+
+        if f.analysis_is_behind_collection:
+            self.assertIn(BACKLOG_SENTENCE, coverage,
+                          "analysis trails collection and the page does not "
+                          "say so")
+            self.assertIn(f.analysis_last_produced, coverage)
+        else:
+            self.assertNotIn(BACKLOG_SENTENCE, coverage,
+                             "analysis has caught up and the page still "
+                             "claims records are waiting")
 
 
 class TestUnknownDatesDegradeHonestly(unittest.TestCase):
@@ -213,11 +270,17 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
         end = base.index("{% endif %}", base.index('class="behind"')) + len("{% endif %}")
         return base[start:end]
 
-    def render_with(self, freshness):
+    def render_with(self, freshness, page="coverage.html"):
+        """
+        `page` is passed through because the block's own condition reads it:
+        the home page carries the backlog sentence in its own note below the
+        hero, so the bar suppresses it there and prints it everywhere else.
+        Leaving it undefined tested one side of that branch by accident.
+        """
         from jinja2 import Environment
         env = Environment()
         return env.from_string(self._fragment()).render(freshness=freshness,
-                                                        nested=False)
+                                                        nested=False, page=page)
 
     def test_the_fragment_under_test_is_the_one_the_site_renders(self):
         self.assertIn("freshness.records_last_collected", self._fragment())
@@ -238,7 +301,7 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
     #: behind it" claimed currency the three dates cannot support — they show
     #: only that collection ran more recently than analysis, which is equally
     #: true of a corpus last collected a month ago.
-    BEHIND_NOTE = "Analysis trails collection"
+    BEHIND_NOTE = BACKLOG_SENTENCE
 
     def test_the_behind_note_is_suppressed_when_dates_are_unknown(self):
         html = self.render_with(FreshnessView(None, None, None))
@@ -262,6 +325,42 @@ class TestUnknownDatesDegradeHonestly(unittest.TestCase):
         behind = self.render_with(FreshnessView("2026-08-26", "2026-08-24", None))
         self.assertIn("records after 2026-08-24 await screening",
                       " ".join(behind.split()))
+
+    #: The two states the rendered-page test can only check one of at a time.
+    #:
+    #: `TestForbiddenWordings` asserts against a build of the tracked corpus, so
+    #: it exercises whichever state production happens to be in — and the state
+    #: it is NOT in goes unchecked. That is how the backlog wording survived
+    #: with no coverage until the day it changed. These two render the real
+    #: block from `base.html` against synthetic dates instead, so neither state
+    #: depends on what collection did last night.
+
+    def test_a_backlog_is_stated_on_a_non_home_page(self):
+        behind = self.render_with(
+            FreshnessView("2026-08-26", "2026-08-24", "2026-08-24"),
+            page="coverage.html")
+        flat = " ".join(behind.split())
+        self.assertIn(BACKLOG_SENTENCE, flat)
+        # Separately represented: the sentence names the analysis date rather
+        # than leaving a reader to infer the backlog from two adjacent dates.
+        self.assertIn("2026-08-24", flat)
+        self.assertIn("2026-08-26", flat)
+
+    def test_a_caught_up_corpus_states_no_backlog_but_still_shows_both_dates(self):
+        # Any equal triple is the caught-up state. Deliberately NOT the date
+        # production happens to be on: a fixture that quoted it would read as
+        # the contract encoding today's corpus, which is the mistake being
+        # fixed here.
+        caught = self.render_with(
+            FreshnessView("2026-08-26", "2026-08-26", "2026-08-26"),
+            page="coverage.html")
+        flat = " ".join(caught.split())
+        self.assertNotIn(BACKLOG_SENTENCE, flat)
+        self.assertNotIn("await screening", flat)
+        for label in ("Records last collected", "Analysis last produced",
+                      "Last full update"):
+            with self.subTest(label=label):
+                self.assertIn(label, flat)
 
 
 if __name__ == "__main__":
