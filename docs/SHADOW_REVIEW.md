@@ -54,6 +54,29 @@ copy of `state/` instead. That is a rehearsal, and it says so.
 is `0` when no anomalies were found, `1` when there are anomalies to explain,
 and `2` when the state was refused outright.
 
+### A checkpoint that was missed can still be completed
+
+A review that did not happen on its checkpoint day is not forfeit. Point
+`--state-commit` at the commit the state branch actually held at that
+checkpoint — the packet exports `state/` from that commit object with
+`git cat-file`, so the evidence is the historical corpus rather than today's —
+and set `--checkpoint` to the checkpoint being answered.
+
+What must stay honest:
+
+* the packet identifies the historical state commit and tree it was built
+  from, and that identity travels in the manifest, the receipt and the
+  preserved commit message;
+* the sign-off's completion timestamp is **when the human review actually
+  happened**, never the checkpoint date it answers;
+* `--as-of` describes the corpus being reviewed and is not a claim about when
+  the reviewer worked;
+* nothing is backdated, and a late packet is never presented as
+  contemporaneous.
+
+A retrospective review is real evidence and is preserved as such. Like every
+checkpoint, it qualifies nothing on its own.
+
 While the corpus is small enough to read end to end, use `--review-all`. Once it
 is not, use `--since-ledger <filename>` to queue everything first seen since the
 previous checkpoint; the focused rules below fill in the rest.

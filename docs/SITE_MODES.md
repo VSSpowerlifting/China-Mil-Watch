@@ -1,14 +1,14 @@
-# Site modes and the launch switch
+# Site modes and the rollback switch
 
 This repository builds two frontends from one corpus. This document is the
-operator's reference for which one runs, how to select the other, and how a
-future launch and rollback would work.
+operator's reference for which one runs, how to select the other, and how to
+roll back.
 
-**Updated 2026-08-27.** The public site is Indo-Pacific Record at
-`https://indopacificrecord.org`; `indo-pacific-record` is the default mode and
-`legacy` is the rollback path. The predecessor's domain is served by a separate
-redirect-only Pages site. Sections below that still describe the pre-launch
-arrangement are marked.
+**The launch happened on 2026-08-27.** The public site is Indo-Pacific Record
+at `https://indopacificrecord.org`; `indo-pacific-record` is the default mode
+and the production build, and `legacy` is the rollback path. The predecessor's
+domain is served by a separate redirect-only Pages site. Where a section
+describes how something worked before the launch, it says so explicitly.
 
 ---
 
@@ -40,16 +40,24 @@ explicit argument  >  PLA_WATCH_SITE_MODE  >  DEFAULT_SITE_MODE
 ```
 
 ```bash
-# the production build, into output/ (no --out needed only for legacy)
+# the production build. No --out: this mode defaults to output/, the tree it
+# is supposed to write. Origin comes from config.SITE_ORIGIN.
 python site/render.py
 
-# the record architecture, into a scratch directory
-python site/render.py --mode indo-pacific-record --out /tmp/ipr \
-  --site-origin https://indopacificrecord.org
+# the same tree, into a scratch directory instead of production
+python site/render.py --out /tmp/ipr
 
 # the rollback renderer, into a scratch directory
 python site/render.py --mode legacy --out /tmp/legacy
 ```
+
+`--out` is optional in **both** modes: each defaults to `output/`. Passing it
+selects a non-production destination — it is a convenience, not a requirement,
+and not a safety guard.
+
+Note that `--out`'s CLI help still reads "required for indo-pacific-record".
+That is stale help text, not behaviour; the narration debt is tracked in
+`PROJECT_STATE.md` §6.
 
 `pipeline.py` calls `render_site()` with no mode, so the daily run resolves to
 `DEFAULT_SITE_MODE`. No workflow sets `PLA_WATCH_SITE_MODE`, and a test asserts
@@ -62,11 +70,35 @@ These are contract, not convention. Each is covered by
 
 * **An unrecognised mode raises.** There is no fallback to legacy. A typo that
   quietly published the wrong site is the failure this seam exists to prevent.
-* **`indo-pacific-record` requires an explicit destination when not building production.** It cannot inherit the
-  production `output/` default.
-* **the candidate build refuses to write inside `output/`**, and the underlying
-  `build()` refuses independently. Two guards, because one of them is the one
-  that fails.
+* **The renderer never writes into `output/` directly, in either mode.** This
+  is the guard that used to be stated as "the candidate needs an explicit
+  destination"; before the launch `indo-pacific-record` had no default
+  destination and refused `output/` outright. That requirement is gone —
+  `output/` is now the tree this mode is supposed to write — and the
+  protection moved rather than vanished:
+
+  1. an ordinary no-argument call resolves to `indo-pacific-record` and
+     targets `output/`;
+  2. `render_site()` builds the tree in a temporary staging directory
+     (`tempfile.TemporaryDirectory`), never in the destination;
+  3. `generate_preview.build()` **still refuses** `output/` and any directory
+     inside it, independently of anything in `render.py`, and the staged build
+     satisfies that refusal by construction;
+  4. `publish()` then exchanges the staged tree in, lifting `CARRIED_FORWARD`
+     out first and putting it back after — `the-pla-watch/`, `assets/`,
+     `data/`, the predecessor marks, `CNAME` and `.nojekyll`.
+
+  Step 4 is why the exchange matters rather than being an implementation
+  detail: a straight replacement of `output/` would delete the thirteen
+  published editions, their sidecar records and their cited assets, none of
+  which the renderer emits. **Anything added to the published tree that the
+  renderer does not itself emit must be added to `CARRIED_FORWARD` or the next
+  daily run deletes it.**
+* **A publishable mode fails closed without an origin.** `indo-pacific-record`
+  needs the origin it will be published under (`--site-origin`,
+  `PLA_WATCH_SITE_ORIGIN`, or `config.SITE_ORIGIN`, which is set). Without one
+  every page would ship `noindex` and no sitemap would be written — a silent
+  failure that only surfaces once crawlers obey it, so it raises instead.
 * **The snapshot guard aborts before writing** when the corpus does not match
   the snapshot it was *given* — the build will not publish a changed corpus
   under an unchanged snapshot identity.
@@ -89,11 +121,12 @@ These are contract, not convention. Each is covered by
 * **The renderer reads the database through `reconcile_db._read_only`**, which
   works on a scratch copy. It never opens the tracked file.
 
-## The launch switch
+## The mode switch, and rolling back
 
-`DEFAULT_SITE_MODE` in `site/render.py`. One constant.
+`DEFAULT_SITE_MODE` in `site/render.py`. One constant, and today it is
+`INDO_PACIFIC_RECORD`.
 
-Launched 2026-08-27 by changing that constant to `INDO_PACIFIC_RECORD`. The
+The launch, on 2026-08-27, was changing that constant. The
 guard that refuses production `output/` was **not** removed: `render_site()`
 builds into a scratch tree and exchanges it into `output/`, so
 `generate_preview.build()` still refuses the destination it always refused, and
@@ -103,8 +136,9 @@ Rolling back is changing that constant back to `LEGACY`, changing
 `config.SITE_ORIGIN` back to `https://chinamilwatch.org`, and re-running the
 daily workflow, which rewrites `output/` from the legacy renderer.
 
-There is no automatic launch condition anywhere in this repository. No date, no
-counter, and no collection milestone flips this switch.
+There is no automatic condition anywhere in this repository that moves this
+switch in either direction. No date, no counter, and no collection milestone
+flips it; it moves only by a deliberate edit.
 
 ## Legacy route continuity
 

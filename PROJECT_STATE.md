@@ -143,15 +143,59 @@ to be bypassed; resolving this means requesting an official route.
 * **Cross-source occurrence is not modelled.** Canonical selection keeps one
   copy and discards the losing copies' URLs, so "both institutions carried this
   release" is recorded nowhere.
-* **Repository growth.** `.git` is ~334 MB; `output/` is ~94 MB across 5,400
-  tracked files; the 32 MB `pla_watch.db` is committed daily. No threshold or
-  storage strategy is defined.
+* **Repository growth.** Measured 2026-09-02 on this checkout, and the three
+  numbers are not interchangeable:
+  * **Git objects, repeatable:** `git count-objects -vH` reports `size-pack`
+    **296.28 MiB** across 18 packs, plus 30.11 MiB loose. Quote this with its
+    date and pack count.
+  * **Fresh clone (the portable figure):** an independently measured fresh
+    clone repacks to ~167.50 MiB packed / ~169 MB `.git`. A long-lived
+    checkout roughly doubles it through unconsolidated packs.
+  * **Checkout-specific:** `du -sh .git` says 334 MB here. **This is not a
+    property of the repository** and must not be quoted as one.
+  * **Tracked content:** `output/` ~94 MB across 5,400 tracked files;
+    `pla_watch.db` ~32 MB, committed on every daily run.
+
+  No threshold or storage strategy is defined. When one is set, state it
+  against the fresh-clone packed size — see `docs/ROADMAP.md` §8.
 * **A green Actions run is not evidence the pipeline executed.** The daily
   workflow schedules five windows and a guard admits one per New York day; the
   other four exit successfully. Read the `Scheduling guard` step.
-* Stale in-code narration: the module docstring in `site/render.py` and the
-  render comment in `pipeline.py` still describe legacy as the resolved mode.
-  Code is out of scope for this documentation reset; fix in a code PR.
+* **Stale in-code narration.** Behaviour is correct everywhere below; only the
+  prose is wrong. Inventoried 2026-09-02; all of it needs a code PR, and none
+  of it was touched by the documentation reset.
+
+  `site/render.py`:
+  * module docstring calls `site/generator.py` "the live China Mil Watch site"
+    and `generate_preview.py` "the Indo-Pacific Record candidate … Tested,
+    complete, and not public" — inverted since the launch;
+  * the same docstring says `DEFAULT_SITE_MODE` "is `LEGACY` today", that
+    "Candidate mode REQUIRES an explicit destination", and that "the scheduled
+    workflow sets nothing, so it resolves to legacy";
+  * the `INDO_PACIFIC_RECORD` constant comment still reads "Not public.
+    Renders to a disposable destination", and two later comments still call the
+    live mode a "candidate";
+  * `render_site()`'s docstring says "The candidate has no default destination
+    on purpose" — it defaults to `output/`;
+  * **stale CLI help:** `--out` advertises "required for
+    `indo-pacific-record`". It is optional; both modes default to `output/`.
+
+  `pipeline.py`:
+  * the render comment says the no-mode call "resolves to `DEFAULT_SITE_MODE` —
+    legacy — exactly as before".
+
+  `tests/test_site_mode_contract.py` (narration only — every assertion is
+  current and passing):
+  * module docstring describes the live renderer as publishing "under its
+    historical China Mil Watch identity" and Indo-Pacific Record as "the
+    candidate", and calls the mode rename "a candidate-side change with no
+    public surface";
+  * `test_the_pipeline_selects_no_mode_so_it_resolves_to_legacy` — the **name**
+    is wrong (it resolves to `indo-pacific-record`); the assertions it makes,
+    that `pipeline.py` selects no mode, remain correct;
+  * `TestCandidateBuild`, its docstring, `test_the_build_reports_candidate_mode`
+    and a later "candidate renderer" reference all name the live production
+    mode as a candidate.
 
 ## 7. Immediate priorities
 

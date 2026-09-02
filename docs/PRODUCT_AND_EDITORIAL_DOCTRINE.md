@@ -162,10 +162,15 @@ Future (roadmap): category grouping and cross-edition "appears in" links —
 only from real sidecar data.
 
 ### Archives
-- Record archive: the searchable corpus record. Page weight and grouping
-  remain known IA/performance debt; see docs/ROADMAP.md §deferred.
-- PLA Watch archive: issue-anchored list with distinct-source counts and an
-  honest limitations footnote. At ~20+ editions, add month grouping.
+- Record archive: the searchable corpus record, and **already a compact weekly
+  index**. `archive.html` is a short list of weeks that links out to generated
+  per-week surfaces, paginated where a week is large. It is not a flat
+  all-records page and carries no known weight or grouping defect; the
+  measurement and the threshold for revisiting it are in docs/ROADMAP.md.
+- PLA Watch archive: a **separate surface** — the issue-anchored edition list,
+  with distinct-source counts and an honest limitations footnote. At ~20+
+  editions, month grouping is worth reconsidering. Do not conflate this with
+  the record archive above; they have different shapes and different budgets.
 
 ### Methodology
 The credibility centerpiece: pipeline description, five-layer ladder,

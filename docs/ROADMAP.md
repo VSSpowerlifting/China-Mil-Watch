@@ -46,9 +46,23 @@ exist on the remote. The tooling (`scripts/review_shadow_state.py`,
 a person reading stored records against the ministry's own pages and completing
 the structured sign-off.
 
-Procedure is in `docs/SHADOW_REVIEW.md`. Nothing about this is automatable:
-an unfilled report is not evidence of a completed review, and a missed
-checkpoint cannot be back-dated.
+Procedure is in `docs/SHADOW_REVIEW.md`. Nothing about this is automatable: an
+unfilled report is not evidence of a completed review.
+
+**Being late does not close the checkpoint.** A Day 7 review that was not done
+on day 7 can still be completed retrospectively, against the exact historical
+state commit that the branch held at that checkpoint — that is what
+`--state-commit` is for, and why the packet reads its inputs from the commit
+object rather than from a working tree. The requirements are:
+
+* the evidence packet names the historical state commit it was built from;
+* the review and its sign-off carry **the actual date the human review
+  happened**, not the date being reviewed;
+* nothing is backdated, and no packet is presented as contemporaneous when it
+  was not.
+
+A delayed checkpoint review is still real evidence, and it still qualifies
+nothing on its own.
 
 ### 3. Scoped screening and backfill for publication-ready windows
 
@@ -111,16 +125,32 @@ over that record rather than a destructive one.
 
 ### 8. Repository growth thresholds and a storage strategy
 
-`.git` is ~334 MB. `output/` is ~94 MB across 5,400 tracked files. The 32 MB
-`pla_watch.db` is committed on every daily run. Nothing here is broken yet and
-nothing should be rewritten reactively.
+Three different measurements, which are routinely conflated. All taken
+2026-09-02 on this project checkout.
 
-What is needed first is a **threshold and a measurement**, recorded in
-`PROJECT_STATE.md`: the size at which the current arrangement stops being
-acceptable, and what happens then — artifact storage for generated output, a
-separate data branch, LFS, or periodic snapshots. Deciding after the fact means
-deciding under pressure, and history rewriting on a repository holding cited
-evidence is not a step to take in a hurry.
+| Measurement | Value | What it means |
+|---|---|---|
+| `git count-objects -vH` → `size-pack` | **296.28 MiB** in 18 packs, plus 30.11 MiB loose | Git object store as this checkout holds it. Repeatable, but pack layout dependent. |
+| Fresh clone, repacked | **~167.50 MiB** packed / ~169 MB `.git` (independent measurement) | The portable figure: what someone cloning today actually downloads and stores. |
+| `du -sh .git` | 334 MB | **Checkout-specific.** Reflects 18 unconsolidated packs and loose objects accumulated by incremental fetches. Not an intrinsic property of the repository. |
+| `du -sh output` | ~94 MB, 5,400 tracked files | Tracked generated output. |
+| `du -sh pla_watch.db` | ~32 MB | Tracked database, committed on every daily run. |
+
+The gap between the first two rows is the point: `size-pack` on a
+long-lived working checkout roughly doubles the packed size a fresh clone
+sees, so **never quote a local `.git` directory size as the repository's
+size.** Quote `size-pack` with its date and pack count, or quote a fresh
+clone.
+
+Nothing here is broken yet and nothing should be rewritten reactively.
+
+What is needed first is a **threshold**, recorded in `PROJECT_STATE.md` and
+stated against the fresh-clone packed size rather than a local directory: the
+size at which the current arrangement stops being acceptable, and what happens
+then — artifact storage for generated output, a separate data branch, LFS, or
+periodic snapshots. Deciding after the fact means deciding under pressure, and
+history rewriting on a repository holding cited evidence is not a step to take
+in a hurry.
 
 ---
 
@@ -136,11 +166,22 @@ collecting days, its human checkpoint reviews, and an owner sign-off recorded in
 `DECISION_LOG.md`. The US Indo-Pacific desk stays `access_blocked` while
 `robots.txt` returns 403; a desk that cannot establish permission is not built.
 
+**The record archive is not on this list, and the old "archive weight" ticket
+is retired.** It was written against an 804 KB flat all-records page that no
+longer exists. Measured 2026-09-02 on the tracked tree: `output/archive.html`
+is **15,911 bytes**, a compact index of 18 linked weeks, and the corpus is
+served by **85 generated `week-*.html` pages**, paginated within a week where
+needed; the largest of them is under 30 KB against the DS §8 budget of 300 KB.
+There is no present defect to fix. Re-open the question only on a measured
+budget crossing — an archive index over 300 KB, a single generated week page
+over 300 KB, or a week index that no longer fits one screen of scanning — and
+re-measure before asserting one. The **PLA Watch edition archive** is a
+separate surface with its own shape, and month grouping there at ~20+ editions
+remains a legitimate later consideration.
+
 Also deferred, carried forward from the superseded plan and still valid when
 the gates above are healthy:
 
-* Record archive weight and month grouping (largest archive page ≤300 KB;
-  every record reachable in ≤2 clicks).
 * Image and asset hygiene against the DS §8 budgets.
 * `executive_readout` rendering — analyst-authored only, render-if-present,
   never synthesized.
