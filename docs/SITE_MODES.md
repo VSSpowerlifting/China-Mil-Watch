@@ -14,19 +14,22 @@ arrangement are marked.
 
 ## The two modes
 
-| Mode | Renderer | Writes to | Status |
-|---|---|---|---|
-| `legacy` | `site/generator.py` | `output/`, committed and deployed daily | **default, live** |
-| `declared-record` | `site/preview/generate_preview.py` | an explicit disposable directory | dormant, not public |
+| Mode | Constant | Renderer | Writes to | Status |
+|---|---|---|---|---|
+| `indo-pacific-record` | `INDO_PACIFIC_RECORD` | `site/preview/generate_preview.py` | `output/` via `render_site()`, committed and deployed daily | **default, live** |
+| `legacy` | `LEGACY` | `site/generator.py` | `output/` | rollback path only |
 
-`legacy` produces the site at chinamilwatch.org exactly as it has. Routing it
-through the seam below changed no behaviour: re-rendering into a copy of
-`output/` reproduces the committed tree in 1,330 of its 1,331 files.
+`indo-pacific-record` produces the record architecture — the parent publication
+with its desks — and is what `https://indopacificrecord.org` serves. It became
+the default on 2026-08-27.
 
-`declared-record` produces the desk architecture — a parent publication with a
-live China Desk and a planned, non-collecting Japan Desk. It is complete and
-tested. It is not published, and this repository contains no mechanism that
-publishes it.
+`legacy` produces the predecessor's site exactly as it was, and is retained
+solely so the launch can be reversed. It does not read `config.SITE_ORIGIN`, so
+a rollback rebuilds the site that was there before rather than a hybrid.
+**Never call `site/generator.py` as the production build.**
+
+The mode string is `indo-pacific-record`; the earlier working name
+`declared-record` is retired and is not accepted by `--mode`.
 
 ## Selecting a mode
 
@@ -37,11 +40,15 @@ explicit argument  >  PLA_WATCH_SITE_MODE  >  DEFAULT_SITE_MODE
 ```
 
 ```bash
-# the live site, into a scratch directory
-python site/render.py --mode legacy --out /tmp/legacy
+# the production build, into output/ (no --out needed only for legacy)
+python site/render.py
 
-# the desk architecture, into a scratch directory
-python site/render.py --mode declared-record --out /tmp/declared-record
+# the record architecture, into a scratch directory
+python site/render.py --mode indo-pacific-record --out /tmp/ipr \
+  --site-origin https://indopacificrecord.org
+
+# the rollback renderer, into a scratch directory
+python site/render.py --mode legacy --out /tmp/legacy
 ```
 
 `pipeline.py` calls `render_site()` with no mode, so the daily run resolves to
@@ -55,9 +62,9 @@ These are contract, not convention. Each is covered by
 
 * **An unrecognised mode raises.** There is no fallback to legacy. A typo that
   quietly published the wrong site is the failure this seam exists to prevent.
-* **`declared-record` requires an explicit destination.** It cannot inherit the
+* **`indo-pacific-record` requires an explicit destination when not building production.** It cannot inherit the
   production `output/` default.
-* **`declared-record` refuses to write inside `output/`**, and the underlying
+* **the candidate build refuses to write inside `output/`**, and the underlying
   `build()` refuses independently. Two guards, because one of them is the one
   that fails.
 * **The snapshot guard aborts before writing** when the corpus does not match
@@ -102,7 +109,7 @@ counter, and no collection milestone flips this switch.
 ## Legacy route continuity
 
 `/article/<id>.html` is a live URL today and some of those URLs are cited.
-`declared-record` mode emits a redirect for every record in the snapshot,
+`indo-pacific-record` mode emits a redirect for every record in the snapshot,
 generated from the corpus rather than from a directory listing, so an id outside
 the snapshot cannot acquire a redirect to nothing. Each carries `noindex` so the
 compatibility route never competes with the record page it points at.
@@ -112,7 +119,7 @@ production `article/` namespace.
 
 ## Determinism
 
-`declared-record` builds are byte-identical across runs.
+`indo-pacific-record` builds are byte-identical across runs.
 
 `legacy` builds are byte-identical **except `og-image.png`**, which is a
 Playwright screenshot of the rendered homepage. Screenshot rasterisation is not
@@ -166,17 +173,20 @@ corroborated.
 ## Provenance of the Japan desk figures
 
 The Japan Desk page states a pre-registered source universe. Those figures are
-research findings, not collection, and the page says so. For the record, they
-were measured directly from the issuing institutions' own listings:
+research findings, not collection, and the page says so.
 
-| Figure | Meaning |
-|---|---|
-| 21 HTML links, 0 PDFs | Ministry of Defense press-release listing, item format |
-| 895 PDF links, 10 HTML links | Joint Staff press releases, whole 2014–2026 archive on one page |
-| 135 | Joint Staff press releases, 2026 to mid-August |
-| 214 | Joint Staff press releases, 2025 full year |
-| 27 occurrences / would collapse 26 | Repeated title on the 2026 listing, which is why a title-only
-  deduplication rule is unsafe for that source |
+**The figures and their attribution were re-measured and corrected on
+2026-08-26**, and this document deliberately no longer restates them. The
+authoritative statements are `desks/registry.json` (the desk's declared
+research findings, observed volumes and volume caveat) and
+`shadow/jp_mod/README.md` (what each feed actually is, categorised in full).
+The correction matters: the earlier scope claim attributed items to the Joint
+Staff and to an English estate that neither collected feed carries, and both of
+those index pages are challenged and uncollected.
 
-No Japan source is enabled, no Japan manifest is discoverable by the loader, and
-the desk holds zero records.
+What remains true, and is the point of this section: **no Japan source is
+enabled in production, no Japan manifest is discoverable by the desk loader, and
+the desk holds zero records in `pla_watch.db` and zero on any public surface.**
+Japan collects only into the isolated `shadow/jp-mod` state branch under shadow
+evaluation — see `docs/SHADOW_COLLECTION.md`. Retrieval there is partial and
+access-constrained, and nothing about it makes the desk qualified.

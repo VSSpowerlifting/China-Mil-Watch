@@ -1,8 +1,24 @@
-# Singapore shadow checkpoint reviews
+# Shadow checkpoint reviews
 
 The 30-day qualification requires that manual corpus reviews happen around days
 7, 14 and 30, and that there is evidence they happened. This document is how
 those reviews are run so that they are reproducible rather than improvised.
+
+**Scope.** The tooling and the branch constants described here are
+**Singapore-specific**: `scripts/review_shadow_state.py` and
+`scripts/publish_shadow_review.py` read the Singapore state branch and publish
+to `review/singapore-mindef`. The **Japan** shadow desk (`shadow/jp-mod`) is
+subject to the same checkpoint requirement, the same human-review standard and
+the same no-automatic-promotion rule, but **has no review tooling yet**; a
+Japan checkpoint would need an equivalent tool, or an explicit extension of
+this one, before a formal packet could be produced. Do not point the Singapore
+publisher at Japan state — the target branch is a constant precisely so it
+cannot be redirected.
+
+Neither desk is qualified. A completed checkpoint review qualifies nothing on
+its own, and no review outcome promotes a desk: promotion is an owner decision
+recorded in `DECISION_LOG.md` after 30 consecutive collecting days and the
+reviews are complete.
 
 `scripts/review_shadow_state.py` produces the evidence package. It validates
 what a machine can validate and then stops. **The checkpoint is a person
@@ -13,9 +29,9 @@ substitutes for that, and the report says so on its first screen.
 
 ## Running a checkpoint
 
-Take a fresh clone of the state branch — never review the branch in place, and
-never point the tool at the production worktree. Keep the clone's `.git`: it is
-what proves which commit the evidence came from.
+Take a fresh clone of the Singapore state branch — never review the branch in
+place, and never point the tool at the production worktree. Keep the clone's
+`.git`: it is what proves which commit the evidence came from.
 
 ```bash
 git clone --branch shadow/singapore-mindef --single-branch \

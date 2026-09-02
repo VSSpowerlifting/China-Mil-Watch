@@ -1,9 +1,19 @@
-# PLA Watch
+# Indo-Pacific Record
 
-An independent Mandarin-source monitoring and analysis project that tracks
-Chinese military and security reporting from official and authoritative PRC
-sources, translates and summarizes daily reporting, and publishes a
-structured brief to a static website updated on a 24-hour cycle.
+An independent, source-grounded monitoring and analysis project that preserves
+official defense and security publication from the Indo-Pacific, translates and
+summarizes it, and publishes a structured record to a static website updated on
+a 24-hour cycle. It is live at <https://indopacificrecord.org>.
+
+The project publishes through **desks**. The **China Desk** is the only mature
+collection: Mandarin-language military and security reporting from official and
+authoritative PRC sources. Its weekly human-written analytical series is **The
+PLA Watch**. Singapore and Japan are under private shadow evaluation and appear
+in no public count; a US Indo-Pacific reference desk is declared but
+access-blocked.
+
+*China Mil Watch* was this project's name until 2026-08-27. It is a legacy name
+only; see [Deployment](#deployment-github-pages--github-actions).
 
 This is an academic portfolio project.  It does not use or claim access to any
 classified information.  All source material is publicly available.
@@ -12,15 +22,17 @@ classified information.  All source material is publicly available.
 
 ## What It Does
 
-China Mil Watch currently monitors PLA Daily and is configured for expansion
-across additional official and state-linked sources including MND, China Military
-Online, Global Times Military, and Xinhua Military. It filters content for
+The China Desk collects from PLA Daily, China Military Online, Global Times
+Defense and the Ministry of National Defense, and is configured for expansion.
+Coverage is heavily concentrated in PLA Daily; the pipeline filters content for
 relevance, translates Chinese-language articles to English, generates analytic
-summaries, and marks model-flagged items (a software triage cue, not an editorial judgment).
-Results are stored in a local SQLite database and published as a static site
-suitable for hosting on GitHub Pages. Some sources may return zero articles on
-a given day; Xinhua Military remains in development because its listings are
-JavaScript/API-rendered.
+summaries, and marks model-flagged items (a software triage cue, not an
+editorial judgment). Results are stored in a local SQLite database and
+published as a static site hosted on GitHub Pages. Some sources return zero
+articles on a given day. **Xinhua Military is not implemented** — its adapter
+is a documented stub because the listing is JavaScript/API-rendered, and it has
+contributed no records. It stays configured so health reporting shows it as
+`not_implemented` rather than hiding it.
 
 The tool is designed to reduce the friction of monitoring official Chinese
 military media for analysts, researchers, and students who cannot read
@@ -30,28 +42,34 @@ Chinese at speed, while preserving the original source text for those who can.
 
 ## Sources
 
-| Source | Language | Coverage |
-|--------|----------|---------|
-| PLA Daily (`81.cn`) | Chinese | CMC-attributed statements; official PLA narrative |
-| Ministry of National Defense (`mod.gov.cn`) | Chinese | MND press releases; spokesperson statements |
-| Xinhua Military (`xinhuanet.com`) | Chinese | Amplified PLA/MND items |
-| Global Times Defense (`globaltimes.cn`) | English | Official-line commentary for foreign audiences |
-| China Military Online (`english.chinamil.com.cn`) | English | English mirror of PLA Daily ecosystem |
+These are the China Desk's configured sources.
 
-All sources are organs of the Chinese state.  See [METHODOLOGY.md](METHODOLOGY.md)
-for a full discussion of source biases and what these outlets do and do not
-report.
+| Source | Language | Coverage | State |
+|--------|----------|---------|---|
+| PLA Daily (`81.cn`) | Chinese | CMC-attributed statements; official PLA narrative | collecting |
+| China Military Online (`english.chinamil.com.cn`) | English | English mirror of PLA Daily ecosystem | collecting |
+| Global Times Defense (`globaltimes.cn`) | English | Official-line commentary for foreign audiences | collecting |
+| Ministry of National Defense (`mod.gov.cn`) | Chinese | MND press releases; spokesperson statements | collecting, low volume |
+| Xinhua Military (`xinhuanet.com`) | Chinese | Amplified PLA/MND items | **not implemented** — stub adapter, no records |
+
+All of these are organs or instruments of the Chinese state.  See
+[METHODOLOGY.md](METHODOLOGY.md) for a full discussion of source biases and
+what these outlets do and do not report. Desk status and public presentation
+are declared in `desks/registry.json`; a desk's own manifest is authoritative
+for its sources.
 
 ---
 
 ## Methodology
 
 The relevance filter, translation approach, analytic summary framework, and
-significance flag criteria are documented in detail in [METHODOLOGY.md](METHODOLOGY.md).
+model-flag criteria are documented in detail in [METHODOLOGY.md](METHODOLOGY.md).
 
 Short version: keyword pre-filter → LLM relevance scoring → LLM
-translation and summary → category tagging → significance flag.
-Everything is stored; thresholds are tunable.
+translation and summary → category tagging → model flag.
+Everything is stored; thresholds are tunable. "Model-flagged" is the only
+reader-facing label for an automated classification; "significant" is never
+used for one.
 
 ---
 
@@ -62,8 +80,11 @@ Everything is stored; thresholds are tunable.
 - **Machine translation.**  Chinese military and doctrinal terminology does not
   always translate cleanly.  Original text is preserved; treat translations
   as assistive, not authoritative.
-- **LLM errors.**  Relevance scores, summaries, and significance flags can be
+- **LLM errors.**  Relevance scores, summaries, and model flags can be
   wrong.  Review the source before acting on a flag.
+- **Coverage is uneven and gaps are preserved.**  Collection is concentrated in
+  one source, and the 2026-07-17 → 07-24 outage is disclosed rather than
+  backfilled.
 - **Scraper fragility.**  CSS selectors break when sites redesign.  Check the
   run log if articles stop appearing.
 - No historical data prior to first deployment.
@@ -79,8 +100,11 @@ pla-watch/
 ├── processing/         # Dedup, keyword filter, metadata normalization
 ├── analysis/           # LLM translation, summary, categorization (prompts.py)
 ├── storage/            # SQLite schema and data access layer
-├── site/               # Jinja2 static site generator
-├── .github/workflows/  # GitHub Actions daily scheduler
+├── site/               # Jinja2 renderers; render.py selects the frontend
+├── desks/              # Declared desks: registry.json + per-desk manifests
+├── shadow/             # Shadow-desk manifests (never discoverable as desks)
+├── scripts/            # Validator, re-renderers, backfills, shadow tooling
+├── .github/workflows/  # Daily pipeline, deploy, and shadow collection
 ├── cache/              # Raw HTML cache (gitignored)
 ├── output/             # Generated static site (published to gh-pages)
 ├── pipeline.py         # Main pipeline runner
@@ -96,7 +120,7 @@ pla-watch/
 ### Prerequisites
 
 - Python 3.9 — the version every workflow pins. `docs/ARCHITECTURE_AND_PUBLISHING.md`
-  §4 is the governing statement: keep the validator and the site generator
+  §4 is the governing statement: keep the validator and the renderers
   3.9-compatible, or CI cannot run them.
 - An [Anthropic API key](https://console.anthropic.com/)
 - A GitHub account
@@ -128,15 +152,19 @@ python pipeline.py
 is only needed to re-render from the database without collecting.
 
 ```bash
-python site/generator.py
+python site/render.py
 ```
 
-`site/render.py` is the mode switch that decides which frontend gets built; it
-defaults to the legacy site, which is the one that is published. See
+`site/render.py` is the single place a frontend is selected, and it is the
+production renderer. Its `DEFAULT_SITE_MODE` is `indo-pacific-record`.
+`site/generator.py` is the `legacy` renderer that produced the predecessor
+site; it is retained as the rollback path and is not the production build. See
 `docs/SITE_MODES.md`.
 
 Validate before trusting any output change — this is the same gate CI applies
-before it deploys:
+before it deploys. It passes today with a governed baseline of **10 warnings**,
+each a recorded historical gap; a new warning must be explained, never fixed by
+invention:
 
 ```bash
 python scripts/validate_output.py
@@ -148,8 +176,10 @@ python scripts/validate_output.py
 
 ### 1. Create the repository
 
-Create a new **public** repository named `pla-watch` on GitHub.
-Push your local code to the `main` branch.
+Create a new **public** repository on GitHub and push your local code to the
+`main` branch. This project's own repository is
+`VSSpowerlifting/China-Mil-Watch` — a hosting path that kept the predecessor's
+name; it is not the publication's identity.
 
 ### 2. Add the API key as a secret
 
@@ -172,12 +202,19 @@ The file at `.github/workflows/daily_update.yml` schedules five windows
 between 12:23 and 14:23 UTC and lets a scheduling guard admit **one** of them
 per New York day; the other four exit immediately. The one that runs collects,
 regenerates the site, commits `pla_watch.db` and `output/` to `main`, and
-deploys `output/` to `gh-pages`.
+deploys `output/` to `gh-pages` via `peaceiris/actions-gh-pages` with
+`cname: indopacificrecord.org`. The action writes `.nojekyll` at the root of
+`gh-pages`; it is not tracked under `output/`.
 
 Because the four skipped runs also report success, **a green check is not
 evidence that the pipeline executed.** To tell the two apart, open the run and
 look at the `Scheduling guard` step: it prints `should_run=true` or
 `should_run=false`, and every later step is skipped when it is false.
+
+Two shadow-collection workflows (`singapore_shadow.yml`, `japan_shadow.yml`)
+run daily into isolated orphan state branches. They publish nothing, deploy
+nothing, and never touch `pla_watch.db` or `output/`. See
+`docs/SHADOW_COLLECTION.md`.
 
 This deployment serves:
 

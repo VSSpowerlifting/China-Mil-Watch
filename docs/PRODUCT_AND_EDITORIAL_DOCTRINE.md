@@ -1,38 +1,53 @@
-# Product & Editorial Doctrine — China Mil Watch
+# Product & Editorial Doctrine — Indo-Pacific Record
 
 Durable. Change only by deliberate decision (record in DECISION_LOG.md).
 Design tokens and components live in docs/DESIGN_SYSTEM.md; visual/motion
-specs in docs/VISUAL_AND_MOTION_SYSTEM.md.
+specs in docs/VISUAL_AND_MOTION_SYSTEM.md. Current operational state lives in
+PROJECT_STATE.md and is deliberately not restated here.
 
 ## 1. What this publication is
 
-China Mil Watch is an independent, source-grounded analytical publication
-monitoring Mandarin-language Chinese military and security reporting from
-official and authoritative PRC sources. Its value is pattern recognition
-across the original-language record, institutional context, and explicit
+**Indo-Pacific Record** is an independent, source-grounded publication that
+preserves official defense and security texts from the Indo-Pacific as
+published, and analyzes them in context. Its value is archival preservation of
+the original-language record, institutional context, and the explicit
 separation of evidence from inference — not story collection.
+
+**Naming.** The public identity is *Indo-Pacific Record*. "China Mil Watch" is
+the **retired predecessor name** (renamed 2026-08-27) and is correct only in
+historical statements — including on the thirteen editions published under it,
+which keep their original masthead. **"The PLA Watch" is current**: it is the
+name of the China Desk's analytical series and is not a legacy term.
 
 Two layers, one masthead:
 
-- **China Mil Watch (Daily Brief)** — the *record*. Automated pipeline:
-  scraped Chinese originals, model translation/summaries/categorization,
-  model flags. The homepage daily readout is assembled automatically and is
-  labeled as pipeline output, never as analyst prose.
-- **The PLA Watch** — the *analysis*. Weekly human-controlled editorial
-  brief (Vol. I, numbered editions, week ending Saturday, published Sunday).
-  Every claim traces to a source-trail record.
+- **The record** — automated preservation and rendering: scraped originals held
+  verbatim, model translation/summaries/categorization, model flags. Every
+  automatically assembled readout is labeled as pipeline output, never as
+  analyst prose.
+- **The PLA Watch** — the *analysis*. The China Desk's weekly human-controlled
+  editorial brief (Vol. I, numbered editions, week ending Saturday, published
+  Sunday). Every claim traces to a source-trail record.
 
-The identity phrase is "independent Mandarin-source monitoring and analysis
-project." Never "OSINT tool," never "intelligence platform" (decision
-2026-07-10). The publication must feel like a serious analytical journal run
-by a working analyst — never an intelligence-agency imitation, a SaaS
-product, or a dashboard aesthetic.
+The project publishes through **desks**. A desk's status and public
+presentation are declared in `desks/registry.json`; its sources come from its
+own manifest. A desk under shadow evaluation is never presented as coverage,
+never counted publicly, and never promoted automatically — see
+docs/SHADOW_COLLECTION.md.
+
+The identity phrase is "independent, source-grounded monitoring and analysis."
+Never "OSINT tool," never "intelligence platform" (decision 2026-07-10). The
+publication must feel like a serious analytical journal run by a working
+analyst — never an intelligence-agency imitation, a SaaS product, or a
+dashboard aesthetic. No intelligence cosplay, and no claim the record does not
+support.
 
 ## 2. Audiences
 
-1. **Primary — policy professionals and analysts** who cannot monitor PLA
-   Daily in Mandarin at speed. They need: what mattered, what was routine,
-   what not to overread, with the original sources one click away.
+1. **Primary — policy professionals and analysts** who cannot monitor official
+   Indo-Pacific defense publication in its own languages at speed. They need:
+   what mattered, what was routine, what not to overread, with the original
+   sources one click away.
 2. **Researchers** — durable, citable editions; a source trail with original
    Chinese headlines; methodology they can evaluate.
 3. **Journalists** — fast source discovery: the original URL, the Chinese
@@ -89,21 +104,38 @@ EDITORIAL_QA_CHECKLIST.md and the editorial-integrity-reviewer agent):
   "Beijing intends…".
 - Historical data gaps are recorded and warned, never fixed by invention.
 - Visual design must never distort meaning: no visualization may imply data
-  precision, source diversity, or liveness the pipeline does not have
-  (current reality: coverage is overwhelmingly PLA Daily; other outlets are
-  "configured / expanding" and must be shown that way).
+  precision, source diversity, or liveness the pipeline does not have.
+  Coverage is concentrated in one source, one desk collects into the public
+  record, and configured-but-unimplemented sources must be shown as such.
+- **Provenance is preserved, never reconstructed.** The original text, its
+  canonical URL, its publication date and its institution travel with the
+  record. Collection gaps are disclosed as gaps and never backfilled by
+  inference or by retro-scraping.
+- **Reproducibility is a publication requirement.** Rendered pages are
+  regenerated from the database and the sidecar records; nothing is
+  hand-edited into `output/`, and any figure on a public surface must be
+  derivable from stored data.
+- **Access is never taken by force.** No collector defeats an interactive
+  challenge, impersonates a browser, or routes around `robots.txt`. An
+  institution that wants to refuse this project must be able to recognise it
+  and say so. A source we cannot reach honestly is reported as unreachable.
 
 ## 5. Page roles and required anatomy
 
 ### Homepage (Paper Ledger surface)
+
 Order of communication: identity (masthead + hero) → today's record ledger →
 how the record is built (Signal Field) → latest PLA Watch edition (Night Desk
 band) → today's daily brief with analyst readout → sidebar (brief stats,
 source status, recent model-flagged with explainer) → footer colophon.
-The hero must answer "what is this and why Mandarin sources" inside one
+The hero must answer "what is this, and why these sources" inside one
 viewport. Depth is progressive; no overlong hero.
 
 ### PLA Watch edition (Night Desk surface)
+
+The China Desk's analytical series. Editions published before 2026-08-27 carry
+the predecessor masthead and keep their addresses; that is a preserved
+historical fact, not a naming inconsistency to correct.
 Hierarchy: edition identity (No., week ending, badge) → title + dek + byline
 → this week's signal (≤28 words) → coverage snapshot (stats, labeled
 model-flagged) → analytical body in the standing sections (opening note →
@@ -130,8 +162,8 @@ Future (roadmap): category grouping and cross-edition "appears in" links —
 only from real sidecar data.
 
 ### Archives
-- Daily archive: the searchable corpus record. Currently a flat all-articles
-  page (~800 KB) — the known IA/performance defect; roadmap ticket T1.
+- Record archive: the searchable corpus record. Page weight and grouping
+  remain known IA/performance debt; see docs/ROADMAP.md §deferred.
 - PLA Watch archive: issue-anchored list with distinct-source counts and an
   honest limitations footnote. At ~20+ editions, add month grouping.
 

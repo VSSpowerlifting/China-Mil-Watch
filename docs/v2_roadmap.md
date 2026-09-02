@@ -1,14 +1,27 @@
-# PLA Watch — v2 Roadmap
+# Pipeline backlog (originally "v2 Roadmap")
+
+Pipeline-layer backlog — analyzer, scrapers, relevance filter. Product and
+publishing priorities are in `docs/ROADMAP.md`, which is the authoritative
+ordering; nothing here outranks it.
 
 Items scoped out of v1 during initial development.  Each entry includes
 the failure mode or limitation that motivated it and a rough implementation
 direction.  Ordered roughly by analytical impact.
+
+**Status, 2026-09-02.** Some entries below have since shipped and are marked
+so; the rest are still open. Nothing here should be read as a current
+description of the system — for that, see `PROJECT_STATE.md` and
+`docs/ARCHITECTURE_AND_PUBLISHING.md`.
 
 ---
 
 ## P1 — High impact, clear implementation path
 
 ### Structured output for LLM analysis tasks
+
+**Partly delivered.** Translation now uses a forced `emit_translation` tool
+call (DECISION_LOG 2026-07-30); the remaining analysis tasks are still open.
+
 **Motivation:** The current `_parse_json()` method in `analysis/analyzer.py`
 strips markdown code fences via regex.  Long responses — particularly
 multi-thousand-character translation outputs for doctrinal and historical
@@ -87,6 +100,10 @@ passes `skip_relevance=True` for articles sourced from
 ## P3 — Low priority / post-MVP
 
 ### Xinhua Military scraper (JS-rendered)
+
+**Still open, and still a stub.** It has contributed zero records for the life
+of the project and is reported as `not_implemented` rather than hidden.
+
 `xinhua_mil` is implemented as a stub.  `xinhuanet.com/mil/` renders
 article listings entirely via JavaScript API calls and returns only stale
 2020-era HTML to requests-based clients.  Three options are documented in
@@ -94,16 +111,26 @@ article listings entirely via JavaScript API calls and returns only stale
 reverse-engineering the `xhpfmapi.zhongguowangshi.com` API, or substituting
 a different Chinese-language military source.
 
-### Static site generator
-Jinja2 templates in `site/` producing daily brief, searchable archive,
-category filters.  Depends on having enough archive depth to make the archive
-view non-trivial.
+### Static site generator — **DELIVERED**
+Shipped and since superseded twice: the legacy generator is now the rollback
+path and `site/render.py` selects the production record renderer. See
+`docs/ARCHITECTURE_AND_PUBLISHING.md` §2 and `docs/SITE_MODES.md`.
 
-### GitHub Actions deployment
-`.github/workflows/daily_update.yml` — runs pipeline at 06:00 UTC, commits
-output to `gh-pages`.  Straightforward once the site generator exists.
+### GitHub Actions deployment — **DELIVERED**
+`.github/workflows/daily_update.yml` runs on five scheduled windows with a
+one-per-New-York-day guard, commits `pla_watch.db` and `output/` to `main`, and
+deploys `output/` to `gh-pages` with `cname: indopacificrecord.org`. The
+single 06:00 UTC cron originally sketched here was never the shipped schedule.
 
 ### Cross-source deduplication signal quality
+
+**Partly superseded.** Cross-source canonical selection is now a five-part
+total ordering (DECISION_LOG 2026-08-17), and corpus-wide *title* dedup is
+explicitly blocked and pinned by tests (`FOLLOWUP.md`) because a recurring
+official title names distinct events. What remains open is the
+occurrence/provenance model — recording that two institutions carried the same
+release — which is priority 7 in `docs/ROADMAP.md`.
+
 Current deduplication uses URL and SHA-256 content hash.  Xinhua and China
 Military Online frequently republish PLA Daily content with minor edits,
 which will pass the content-hash check.  A fuzzy-match approach (e.g.,

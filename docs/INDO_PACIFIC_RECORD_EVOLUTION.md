@@ -1,6 +1,13 @@
 # The Indo-Pacific Record evolution contract
 
-Governing proposal for the release candidate on
+> **The launch described here happened on 2026-08-27.** §1–§5 and §8 remain the
+> durable contract — identity, product model, continuity guarantees, epistemic
+> rules, architecture decisions and regional allocation policy. **§6 (launch
+> boundary) is historical**, and §7's open items are superseded by the status
+> noted there. Current state is in `PROJECT_STATE.md`; current priorities in
+> `docs/ROADMAP.md`.
+
+Governing proposal, written for the release candidate on
 `work/indo-pacific-record-evolution-20260825`. It records what the product
 becomes, what may not change while it becomes that, and where the boundary
 between a candidate and a launch sits.
@@ -144,12 +151,18 @@ stay in `source_run_results`, where they already are.
    imported by nothing on the collection path.
 
 **One renderer seam, unchanged in shape.** `site/render.py` still selects
-exactly one mode in exactly one constant. The non-legacy mode is renamed from
-`declared-record` to `indo-pacific-record`; `DEFAULT_SITE_MODE` stays `LEGACY`.
+exactly one mode in exactly one constant. The non-legacy mode was renamed from
+`declared-record` to `indo-pacific-record`. `DEFAULT_SITE_MODE` stayed `LEGACY`
+on the candidate branch; it became `INDO_PACIFIC_RECORD` at the 2026-08-27
+launch and is that today.
 
 ---
 
-## 6. Launch boundary
+## 6. Launch boundary — historical
+
+**Superseded by the 2026-08-27 launch** (DECISION_LOG 2026-08-27). The
+paragraphs below describe the pre-launch candidate state and are kept as the
+record of what that boundary was.
 
 This branch is a **release candidate**. It is local. Nothing on it is published.
 
@@ -165,12 +178,21 @@ separately authorized launch.
 
 ## 7. Open, and owner-owned
 
-* Trademark screening for "Indo-Pacific Record" — not performed; a lawyer's job.
-* Domain, DNS, social handles, GitHub organization naming — not selected.
-* License — not chosen.
-* The public launch gates are unchanged and unmet: one non-China desk collecting
-  30 consecutive days, its source universe published, coverage health public,
-  the 2026-07-17→24 collection outage disclosed, and owner sign-off recorded.
+Status as of 2026-09-02. `docs/LAUNCH_AND_REDIRECT_READINESS.md` §Gate status
+today is the authoritative reading.
+
+* Trademark screening for "Indo-Pacific Record" — **still open**; not
+  performed, a lawyer's job.
+* Domain and DNS — **closed.** `indopacificrecord.org` is live. Social handles
+  and GitHub organization naming remain open.
+* License — **closed.** `LICENSE` is MIT for the software;
+  `CONTENT_AND_DATA_RIGHTS.md` covers editorial work, source documents and
+  public facts separately.
+* Owner sign-off, coverage health and outage disclosure — **closed** at the
+  2026-08-27 launch.
+* A non-China desk collecting 30 consecutive days with its source universe
+  published — **still open.** Singapore and Japan are both in shadow
+  evaluation; neither is qualified.
 
 ---
 

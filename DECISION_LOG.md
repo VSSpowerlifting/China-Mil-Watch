@@ -1,6 +1,64 @@
-# DECISION_LOG — China Mil Watch
+# DECISION_LOG — Indo-Pacific Record
 
-Newest first. Record decisions that constrain future work.
+Newest first. Record decisions that constrain future work. Entries below
+2026-08-27 were written under the predecessor name, China Mil Watch, and are
+preserved as written.
+
+## 2026-09-02 — One documentation hierarchy, and PROJECT_STATE is a snapshot
+
+Governance reset. No code, data, output, workflow, shadow state, collection,
+publication or deployment changed; this entry records what the documentation is
+now required to be, which constrains future sessions.
+
+1. **There is one hierarchy, and each document has one job.** A fact belongs in
+   exactly one of these, and the others link to it rather than restating it.
+
+   | Document | Governs |
+   |---|---|
+   | `README.md` | public and contributor overview |
+   | `PROJECT_STATE.md` | current operational snapshot and immediate handoff |
+   | `docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md` | identity, editorial standard, provenance, publication principles |
+   | `docs/ARCHITECTURE_AND_PUBLISHING.md` | technical layer map, commands, publishing and deployment |
+   | `docs/AGENT_WORKFLOWS.md` | agent operating constraints and model routing |
+   | `docs/ROADMAP.md` | current priority order |
+   | `DECISION_LOG.md` | durable decisions that constrain future work |
+   | Git history | superseded state and incident history |
+
+2. **`PROJECT_STATE.md` is a snapshot, not a diary.** It had grown to 740 lines
+   spanning six weeks of incident narrative, and the top of the file disagreed
+   with the middle about the corpus, the renderer and the warning baseline. It
+   is now rewritten in place at each update and kept under roughly 250 lines.
+   Nothing was preserved by copying it into another file: Git already holds
+   every prior version, and duplicating superseded state is what produced the
+   contradictions in the first place.
+
+3. **Detailed history goes to Git, not to a second document.** An incident
+   worth remembering earns a `DECISION_LOG` entry stating what it constrains.
+   The narrative of how it was found belongs in the commit that fixed it.
+
+4. **Current-state assertions carry their verification date.** A figure copied
+   out of the database, a ledger or the Actions API is stale the next day.
+   Either date it, or name the authoritative source and do not restate the
+   number — the pattern `desks/registry.json` already uses for shadow-day
+   counts.
+
+5. **Stale assertions corrected in this pass, and now prohibited as current
+   claims:** `site/generator.py` presented as the production renderer (it is
+   the `legacy` rollback path; `site/render.py` is production and its
+   `DEFAULT_SITE_MODE` is `indo-pacific-record`); a nine-warning validator
+   baseline (it is **ten**, verified 2026-09-02); `chinamilwatch.org` as the
+   deploy CNAME (both deploy workflows name `indopacificrecord.org`); China Mil
+   Watch as the current public identity (it is the retired predecessor name;
+   *The PLA Watch* is current and is not a legacy term); one shadow desk (there
+   are two, Singapore and Japan, neither qualified); licensing undecided
+   (`LICENSE` is MIT and `CONTENT_AND_DATA_RIGHTS.md` covers the rest); and the
+   retired `declared-record` mode string.
+
+6. **Nothing in this reset relaxes a gate.** Both shadow desks remain
+   unqualified and unpromoted, human checkpoint reviews remain required, no
+   access challenge may be bypassed, and no desk is promoted without 30
+   consecutive collecting days, completed reviews and an owner sign-off
+   recorded here.
 
 ## 2026-08-28 — The declared snapshot is a release pin, not the daily corpus identity
 

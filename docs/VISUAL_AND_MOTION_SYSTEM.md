@@ -1,4 +1,4 @@
-# Visual & Motion System — China Mil Watch
+# Visual & Motion System — Indo-Pacific Record
 
 Durable specification for motion and the flagship visual components.
 Tokens/typography: docs/DESIGN_SYSTEM.md. Tickets: docs/ROADMAP.md.
@@ -69,7 +69,8 @@ live surveillance or quantitative precision.
 **Placement.** Homepage, directly under the hero (replaces/upgrades the
 current "How the record is built" strip in `site/templates/index.html`).
 
-**Data.** From `site/generator.py` at build time: configured outlets with
+**Data.** From the production renderer (`site/render.py`) at build time:
+configured outlets with
 per-outlet 30-day collected-article counts from the DB (`pla_daily` real;
 others render in a visibly quieter "configured / expanding" state — never
 fake activity), plus latest-edition metadata from the newest sidecar.

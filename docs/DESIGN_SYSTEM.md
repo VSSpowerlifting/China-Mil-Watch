@@ -1,4 +1,4 @@
-# Design System — China Mil Watch / The PLA Watch
+# Design System — Indo-Pacific Record / The PLA Watch
 
 Durable doctrine. The tokens below are the live values in
 `site/templates/base.html` (Paper Ledger) and
