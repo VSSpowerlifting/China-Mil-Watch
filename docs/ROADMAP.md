@@ -1,118 +1,200 @@
-# Roadmap — China Mil Watch frontend & product
+# Roadmap — Indo-Pacific Record
 
-Authoritative forward plan (supersedes DESIGN_BACKLOG.md, 2026-07-11).
-Pipeline-layer backlog (analyzer, scrapers, relevance filter) lives
-separately in docs/v2_roadmap.md.
-Completed work is recorded in PROJECT_STATE.md / DECISION_LOG.md, not here.
-Specs referenced: docs/VISUAL_AND_MOTION_SYSTEM.md (V&M),
-docs/DESIGN_SYSTEM.md (DS).
+Authoritative forward plan. **Replaces the 2026-07-11 frontend release
+sequence (R1–R5, tickets T1–T5)**, which was written before the rebrand, before
+the record architecture launched, and before either shadow desk existed. That
+plan is superseded; its remaining useful ideas are carried into
+§Explicitly deferred below, and its full text is in Git history. This document
+also continues to supersede `DESIGN_BACKLOG.md` (2026-07-11).
 
-## Release sequence
+Pipeline-layer backlog (analyzer, scrapers, relevance filter) is in
+`docs/v2_roadmap.md`. Specs referenced below:
+`docs/VISUAL_AND_MOTION_SYSTEM.md` (V&M), `docs/DESIGN_SYSTEM.md` (DS).
 
-- **R1 — Foundation stabilization**: archive weight fix, asset optimization,
-  README/public-copy alignment. (Tickets T1, T4)
-- **R2 — Homepage & edition identity**: Signal Field v1, Edition Plate v1.
-  (T2, T3)
-- **R3 — PLA Watch reading depth**: executive readout, Continuity Strip
-  Phase 1. (T5, then strip)
-- **R4 — Discovery**: Signals recurrence + archive month grouping (both
-  surfaces), edition comparison entry points. `recurring_threads` adopted
-  2026-07-11 (vocabulary in V&M §4); data accrues as editions carry it.
-- **R5 — Terms & institutional knowledge**: glossary categories,
-  cross-edition term appearances, related entries — only from real sidecar
-  data.
+Completed work is recorded in `DECISION_LOG.md` and in Git history, not here.
+Current operational state is in `PROJECT_STATE.md`.
 
-Deferred until archive depth or metadata exists: Relationship Plate beyond
-the Signal Field (needs >1 active source to be honest), regional plates,
-edition-comparison modules, cover-PNG regeneration in plate style (P3).
+The ordering principle: **research and review gates before presentation.** The
+project's credibility rests on the analytical publication cadence, on completed
+human reviews, and on honest coverage — not on the front end. Nothing below
+reorders around a frontend idea.
 
 ---
 
-## First five Sonnet tickets
+## Priority order
 
-### T1 — Archive: month grouping + weight reduction
-- **Objective:** `output/archive.html` is 804 KB / ~23,000px flat list of
-  446 articles. Split into month sections with per-month archive pages
-  (`archive/2026-06.html`…) and a compact index page listing months with
-  counts + the current month inline. Keep client-side filters working
-  within a month page.
-- **Reader value:** archive becomes browsable (journeys #3, #5); page
-  weight within budget (DS §8: ≤300 KB).
-- **Files:** `site/generator.py` (new month-page emission + index),
-  `site/templates/archive.html`, `scripts/validate_output.py` (check month
-  pages exist for every month with data + links resolve), sitemap emission.
-- **Risk:** medium — URL structure changes; keep `archive.html` as the
-  index URL so inbound links survive. No DB or sidecar changes.
-- **Acceptance:** every article reachable in ≤2 clicks from archive index;
-  largest emitted archive page ≤300 KB; validator green; 375px no overflow.
-- **Model/skills:** Sonnet; ui-ux-pro-max optional for the index layout.
-  Ruflo: no.
+### 1. Restore the human analytical publication cadence
 
-### T2 — Edition Plate v1 (spec V&M §3.2)
-- **Objective:** deterministic SVG edition plates from sidecar data via a
-  shared Jinja macro in `site/templates/` (context from
-  `scripts/pw_env.py`); replace cover-PNG thumbs on PW index latest-edition
-  card, PW archive entries, and homepage dark band. PNG covers remain for
-  og:image only. Source photos remain inside editions as captioned figures.
-- **Files:** new `site/templates/_edition_plate.html` (macro),
-  `pla-watch-index.html`, `pla-watch-archive.html`, `index.html` (band
-  mini), `scripts/pw_env.py` (expose macro context), re-render.
-- **Dependencies:** none — all fields exist in sidecars. Fallbacks per spec
-  (no badge, no CJK motif) must render for eds. 1–3 and 2026-05-16.
-- **Acceptance:** V&M §3.2 acceptance list; identical output from generate
-  and rerender paths; validator green; PW archive page weight drops.
-- **Model/skills:** Sonnet build → Fable/impeccable visual review before
-  regeneration is committed. Ruflo: no.
+The last edition is No. 13, week ending 2026-08-08. The weeks ending
+2026-08-15, 08-22 and 08-29 have no edition. This is the highest priority: the
+analytical series is the layer that distinguishes this publication from a
+scraper, and a lapsed cadence is visible to every reader.
 
-### T3 — Signal Field v1 (spec V&M §3.1)
-- **Objective:** upgrade the homepage "How the record is built" strip into
-  the Signal Field SVG plate with real per-outlet 30-day counts from the DB,
-  draw-path/ink-node reveal, honest dormant-source states, and the
-  mobile vertical variant.
-- **Files:** `site/generator.py` (outlet counts query + context),
-  `site/templates/index.html` (plate markup/styles).
-- **Acceptance:** V&M §3.1 acceptance list; counts match
-  `data/articles.json` reality; a11y title/desc present; three motion
-  fallbacks verified.
-- **Model/skills:** Sonnet; Fable reviews the rendered plate. Ruflo: no.
+Restoration means editions published through the full `EDITORIAL_QA_CHECKLIST.md`
+gate — source-to-claim tracing and a rendered-page review — not a catch-up
+batch that repeats the No. 12/No. 13 shortfall. Decide explicitly whether the
+missed weeks are published retrospectively or recorded as a disclosed gap; a
+gap that is ruled and recorded is acceptable, a gap that is silently skipped is
+not.
 
-### T4 — Image and asset hygiene pass
-- **Objective:** meet DS §8 image budgets: recompress covers/thumbs
-  (currently ~8.2 MB total), add explicit width/height and
-  `loading="lazy"` where missing (edition figures, archive thumbs until T2
-  lands), verify og-image sizes.
-- **Files:** `scripts/generate_pla_watch_cover.py` (output size caps),
-  a one-off recompression script in `scripts/`, templates where img tags
-  lack dimensions. No visual redesign.
-- **Acceptance:** thumbs ≤60 KB, covers ≤250 KB, no CLS from images
-  (spot-check via Playwright), validator green, visual diff imperceptible.
-- **Model/skills:** Sonnet or Haiku for inventory + Sonnet for changes.
-  Ruflo: no.
+### 2. Complete Singapore's required human reviews
 
-### T5 — Executive readout block (DESIGN_BACKLOG P1 carried forward)
-- **Objective:** render an optional `executive_readout` (2–4 analyst-written
-  bullets) under the edition hero as an "If you read nothing else" block —
-  render-if-present only; never synthesized from old editions.
-- **Files:** `scripts/generate_pla_watch.py` (accept/write field at publish;
-  prompt asks the analyst-reviewed draft to propose bullets clearly marked
-  for human approval), `site/templates/pla-watch-post.html` (block +
-  styles per DS: signal-tinted treatment ceiling applies),
-  `scripts/validate_output.py` (optional-field validation: 2–4 items,
-  strings), docs note in V&M §4 already present.
-- **Dependencies:** none — field adopted starting Edition No. 10 (decision
-  2026-07-11); manually authored only; historical editions render unchanged.
-- **Acceptance:** absent field → page byte-identical except template
-  comments; present field → block renders on desktop/mobile/print;
-  validator green.
-- **Model/skills:** Sonnet; editorial-integrity-reviewer confirms no
-  auto-synthesis path exists. Ruflo: no.
+Singapore is past its Day 7 checkpoint and approaching Day 14, and **no
+checkpoint packet has been published** — `review/singapore-mindef` does not
+exist on the remote. The tooling (`scripts/review_shadow_state.py`,
+`scripts/publish_shadow_review.py`) is merged and rehearsed; what is missing is
+a person reading stored records against the ministry's own pages and completing
+the structured sign-off.
+
+Procedure is in `docs/SHADOW_REVIEW.md`. Nothing about this is automatable: an
+unfilled report is not evidence of a completed review.
+
+**Being late does not close the checkpoint.** A Day 7 review that was not done
+on day 7 can still be completed retrospectively, against the exact historical
+state commit that the branch held at that checkpoint — that is what
+`--state-commit` is for, and why the packet reads its inputs from the commit
+object rather than from a working tree. The requirements are:
+
+* the evidence packet names the historical state commit it was built from;
+* the review and its sign-off carry **the actual date the human review
+  happened**, not the date being reviewed;
+* nothing is backdated, and no packet is presented as contemporaneous when it
+  was not.
+
+A delayed checkpoint review is still real evidence, and it still qualifies
+nothing on its own.
+
+### 3. Scoped screening and backfill for publication-ready windows
+
+903 records have never been relevance-screened. Draining the whole backlog is
+not the goal and never was — it is spend against material no edition cites.
+
+Screen **only** the window an edition will draw on, using
+`backfill_unscored.py --since X --until Y`, sequentially, never concurrently.
+Re-measure before estimating; pass rates move. This unblocks priority 1 and is
+sequenced behind it for that reason.
+
+### 4. Terminal processing states and retry budgets
+
+There is no terminal state for a record that cannot be processed. 48 records
+hold an empty body; 3 of those passed relevance and are unanalyzed, so they
+re-enter the analysis queue on every run and can never clear. A body that was
+never captured at scrape time is a collection defect, and no number of
+translation retries will fix it.
+
+What is needed: an explicit terminal disposition (recorded, not deleted, and
+distinguishable from "pending"), a bounded retry budget per record, and a count
+of terminal records on the coverage surface so the state is visible rather than
+silently absorbed. Empty-body records are also a scoring-path question — an
+article that passed relevance on its title alone should be identifiable.
+
+### 5. Japan shadow: an explicit continue or pause decision
+
+Japan is at shadow day 5 with health `partial`. RSS discovery works and PDF
+documents retrieve in full, but HTML documents on the same host are returned
+behind an interactive challenge — 28 of 32 selected items in the most recent
+run. The challenge is never to be bypassed, so the ceiling on this desk is set
+by the ministry, not by engineering.
+
+The decision to take, and to record in `DECISION_LOG.md`: **continue** shadow
+collection as a discovery-only record with retrieval openly reported as
+partial, **pause** it pending a request for an official route, or **stop** it.
+Letting it run indefinitely without a ruling is the option to avoid — it
+accumulates evaluation days that cannot support a promotion argument.
+
+### 6. Decouple preservation and rendering from LLM availability
+
+Collection already survives an analysis-stage failure, but preservation,
+rendering and publication remain coupled to model availability more tightly
+than they should be. An account-level block should degrade analysis only: the
+record must still be preserved, the site must still render, and the public
+surface must say which layer is degraded. This is the durability property that
+makes the archive claim honest.
+
+### 7. Cross-source occurrence and provenance modelling
+
+Canonical selection keeps one copy of a same-story group and discards the
+losing copies' URLs, so "both institutions carried this release" is recorded
+nowhere. That is a provenance-model gap, not a dedup bug, and it will get worse
+as desks are added: cross-desk occurrence is exactly the analytical signal a
+multi-desk publication exists to show.
+
+Needs an occurrence model that records every institution that published a text
+and every URL it appeared at, with canonical selection as a presentation choice
+over that record rather than a destructive one.
+
+### 8. Repository growth thresholds and a storage strategy
+
+Three different measurements, which are routinely conflated. All taken
+2026-09-02 on this project checkout.
+
+| Measurement | Value | What it means |
+|---|---|---|
+| `git count-objects -vH` → `size-pack` | **296.28 MiB** in 18 packs, plus 30.11 MiB loose | Git object store as this checkout holds it. Repeatable, but pack layout dependent. |
+| Fresh clone, repacked | **~167.50 MiB** packed / ~169 MB `.git` (independent measurement) | The portable figure: what someone cloning today actually downloads and stores. |
+| `du -sh .git` | 334 MB | **Checkout-specific.** Reflects 18 unconsolidated packs and loose objects accumulated by incremental fetches. Not an intrinsic property of the repository. |
+| `du -sh output` | ~94 MB, 5,400 tracked files | Tracked generated output. |
+| `du -sh pla_watch.db` | ~32 MB | Tracked database, committed on every daily run. |
+
+The gap between the first two rows is the point: `size-pack` on a
+long-lived working checkout roughly doubles the packed size a fresh clone
+sees, so **never quote a local `.git` directory size as the repository's
+size.** Quote `size-pack` with its date and pack count, or quote a fresh
+clone.
+
+Nothing here is broken yet and nothing should be rewritten reactively.
+
+What is needed first is a **threshold**, recorded in `PROJECT_STATE.md` and
+stated against the fresh-clone packed size rather than a local directory: the
+size at which the current arrangement stops being acceptable, and what happens
+then — artifact storage for generated output, a separate data branch, LFS, or
+periodic snapshots. Deciding after the fact means deciding under pressure, and
+history rewriting on a repository holding cited evidence is not a step to take
+in a hurry.
+
+---
+
+## Explicitly deferred
+
+**Further frontend polish is deferred** until priorities 1–5 are healthy. The
+record architecture launched, the component and homepage passes have landed,
+and additional visual refinement is not what the publication is short of.
+
+**Geographic promotion is deferred.** No new desk is declared, promoted or
+presented as coverage until an existing shadow desk completes 30 consecutive
+collecting days, its human checkpoint reviews, and an owner sign-off recorded in
+`DECISION_LOG.md`. The US Indo-Pacific desk stays `access_blocked` while
+`robots.txt` returns 403; a desk that cannot establish permission is not built.
+
+**The record archive is not on this list, and the old "archive weight" ticket
+is retired.** It was written against an 804 KB flat all-records page that no
+longer exists. Measured 2026-09-02 on the tracked tree: `output/archive.html`
+is **15,911 bytes**, a compact index of 18 linked weeks, and the corpus is
+served by **85 generated `week-*.html` pages**, paginated within a week where
+needed; the largest of them is under 30 KB against the DS §8 budget of 300 KB.
+There is no present defect to fix. Re-open the question only on a measured
+budget crossing — an archive index over 300 KB, a single generated week page
+over 300 KB, or a week index that no longer fits one screen of scanning — and
+re-measure before asserting one. The **PLA Watch edition archive** is a
+separate surface with its own shape, and month grouping there at ~20+ editions
+remains a legitimate later consideration.
+
+Also deferred, carried forward from the superseded plan and still valid when
+the gates above are healthy:
+
+* Image and asset hygiene against the DS §8 budgets.
+* `executive_readout` rendering — analyst-authored only, render-if-present,
+  never synthesized.
+* Cross-edition continuity and term relations — only from real sidecar data.
+* Cadence-aware summaries and relevance-filter tightening
+  (`docs/v2_roadmap.md`).
 
 ---
 
 ## Ticket hygiene
 
-Every future ticket must state: objective, reader value, affected routes,
-files, dependencies, required metadata, model + skills, Ruflo yes/no,
-complexity, risk, acceptance criteria, validation method. Tickets that
-cannot fill the metadata row honestly (data doesn't exist) go to §Deferred,
-not to implementation.
+Every ticket must state: objective, reader value, affected routes, files,
+dependencies, required metadata, model + skills, complexity, risk, acceptance
+criteria, validation method. A ticket that cannot fill its metadata honestly —
+because the data does not exist — goes to §Explicitly deferred, not to
+implementation.

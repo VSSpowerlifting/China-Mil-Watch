@@ -2,13 +2,15 @@
 
 ## Project identity
 
-The PLA Watch is the reader-facing weekly publication from China Mil Watch.
+The PLA Watch is the reader-facing weekly publication of the China Desk of
+Indo-Pacific Record. ("China Mil Watch" was the project's name until
+2026-08-27; it is a legacy name, while *The PLA Watch* remains current.)
 
-China Mil Watch is the automated Mandarin-source monitoring and analysis platform. The PLA Watch turns weekly China Mil Watch outputs into accessible analysis of Chinese military media, PLA politics, and U.S.-China security signals.
+The record is the automated Mandarin-source preservation and analysis layer. The PLA Watch turns a week of that record into accessible analysis of Chinese military media, PLA politics, and U.S.-China security signals.
 
 The goal is not to sound like a generic think tank newsletter. The goal is to sound like a serious, human, reader-facing foreign policy briefing: clear, curated, analytical, and engaging.
 
-China Mil Watch gives readers the daily machine-readable signal. The PLA Watch gives them the weekly human-readable meaning.
+The record gives readers the daily machine-readable signal. The PLA Watch gives them the weekly human-readable meaning.
 
 ## Editorial model
 
@@ -86,7 +88,7 @@ One useful PLA, PRC, or Chinese military-media term/institution explained clearl
 A forward-looking but cautious section.
 
 7. Source trail
-Links to the relevant China Mil Watch daily briefs and source material.
+Links to the relevant daily record entries and source material.
 
 ## Opening note
 
@@ -267,11 +269,11 @@ Over:
 
 ## Relationship to evidence
 
-Every claim should stay close to the China Mil Watch output.
+Every claim should stay close to the stored record.
 
 The PLA Watch may use:
 
-- China Mil Watch daily outputs
+- daily record entries
 - article titles
 - source names
 - dates

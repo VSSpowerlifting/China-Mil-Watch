@@ -23,10 +23,10 @@ Implementation rules:
   at 375px.
 
 Loop: edit source → regenerate the affected surface
-(`.venv/bin/python site/generator.py` and/or
+(`.venv/bin/python site/render.py` — the production renderer — and/or
 `.venv/bin/python scripts/rerender_pla_watch.py --no-covers`) →
-`.venv/bin/python scripts/validate_output.py` (must pass with only the 9
-historical warnings) → Playwright full-page screenshots at 1280 and 375 for
+`.venv/bin/python scripts/validate_output.py` (must pass with only the 10
+governed warnings) → Playwright full-page screenshots at 1280 and 375 for
 changed routes → fix and repeat.
 
 Report: files changed, what changed, validation result, screenshot paths,

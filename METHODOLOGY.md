@@ -1,18 +1,22 @@
-# PLA Watch — Methodology
+# China Desk — Methodology
 
 This document describes the sourcing rationale, analytical framework, and known
-limitations of PLA Watch.  It is intended to be read alongside the tool output
-and before drawing any conclusions from it.  Anyone using this tool for research
-or analysis should read this document first.
+limitations of the **China Desk** of Indo-Pacific Record — the desk whose
+weekly analytical series is *The PLA Watch*. ("China Mil Watch" was this
+project's name until 2026-08-27 and is a legacy name only.)
+
+It is intended to be read alongside the output and before drawing any
+conclusions from it.  Anyone using this record for research or analysis should
+read this document first.
 
 ---
 
 ## 1. Source Selection
 
-China Mil Watch currently centers production coverage on PLA Daily and is
-configured for expansion across additional publicly accessible official and
-state-linked sources, including MND, China Military Online, Global Times
-Military, and Xinhua Military. Each source was selected for a distinct
+The China Desk centers production coverage on PLA Daily and is configured for
+expansion across additional publicly accessible official and state-linked
+sources, including MND, China Military Online, Global Times Military, and
+Xinhua Military. Each source was selected for a distinct
 analytical purpose.
 
 | Source | Language | Purpose |
@@ -38,11 +42,13 @@ signaling.  What it omits is equally deliberate.
 
 ### Coverage Status
 
-China Mil Watch currently monitors PLA Daily and is being expanded across
-additional official and state-linked sources including MND, China Military
-Online, Global Times Military, and Xinhua Military. Some sources may return
-zero articles on a given day; Xinhua Military remains in development because
-its listings are JavaScript/API-rendered.
+Coverage is heavily concentrated in PLA Daily. China Military Online, Global
+Times Defense and MND all contribute, at much lower volume. Some sources return
+zero articles on a given day. **Xinhua Military is not implemented** — its
+listings are JavaScript/API-rendered, its adapter is a documented stub, and it
+has contributed no records; it stays configured so health reporting shows it as
+`not_implemented` rather than hiding it. Live per-source figures come from the
+database, never from this document.
 
 ### What these sources are not
 

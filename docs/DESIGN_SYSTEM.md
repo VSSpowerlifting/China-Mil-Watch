@@ -1,4 +1,4 @@
-# Design System — China Mil Watch / The PLA Watch
+# Design System — Indo-Pacific Record / The PLA Watch
 
 Durable doctrine. The tokens below are the live values in
 `site/templates/base.html` (Paper Ledger) and
@@ -176,15 +176,26 @@ Defined in base templates or per-page `extra_styles`; reuse before inventing:
 - Print: PW posts print as light single-column brief with full URLs — keep
   the print token remap in pla-watch-base.html working.
 
-## 8. Performance budgets (measured 2026-07-11, static architecture)
+## 8. Performance budgets
 
-Current: index 62 KB, PW post 69 KB, signals 58 KB HTML (CSS inlined);
-JS ≈ 1 KB vanilla (IntersectionObserver); zero external libraries;
-3 font families from Google; archive.html **804 KB (defect — roadmap T1)**;
-covers ~8.2 MB total (~430 KB avg — roadmap T4).
+**Measured 2026-09-02 on the production tree.** These replace the 2026-07-11
+figures, which described the predecessor's static site:
+index 15.6 KB, `archive.html` 15.9 KB, coverage 17.3 KB, desks 13.3 KB,
+methodology 9.7 KB, largest generated week page 29.9 KB, largest record page
+64.7 KB, PLA Watch post 81.2 KB — all HTML with CSS inlined. JS ≈ 1 KB vanilla
+(IntersectionObserver); zero external libraries; 3 font families from Google.
+Covers remain ~8.5 MB total (~430 KB average) and are the one budget still
+missed.
+
+**`archive.html` is no longer a defect.** The 804 KB flat all-records page that
+retired roadmap ticket T1 was written against no longer exists: the record
+archive is now a compact index of 18 weeks linking out to 85 generated
+`week-*.html` surfaces, paginated within a week where needed. Do not carry the
+old figure forward.
 
 Budgets for all future work:
-- HTML+inline CSS per page ≤ 120 KB (archive target ≤ 300 KB after T1).
+- HTML+inline CSS per page ≤ 120 KB; ≤ 300 KB for any index or archive
+  surface. Re-open archive navigation only if a measurement crosses those.
 - Client JS ≤ 10 KB per page, vanilla only; no frameworks, no chart libs,
   no canvas unless a spec explicitly justifies it.
 - Images: explicit width/height (no CLS), `loading="lazy"` below fold,

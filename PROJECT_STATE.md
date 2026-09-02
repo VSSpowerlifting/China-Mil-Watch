@@ -1,740 +1,230 @@
-# PROJECT_STATE — Indo-Pacific Record (formerly China Mil Watch)
+# PROJECT_STATE — Indo-Pacific Record
 
-Updated: 2026-08-27 — **Indo-Pacific Record launched.** State only; durable
-doctrine lives in CLAUDE.md and docs/ (see the CLAUDE.md table).
+**Current operational snapshot and handoff. Verified 2026-09-02 against
+`origin/main` `67da1c67`.**
 
-## Launch, 2026-08-27
+This file is state, not history. It is deliberately short and is rewritten
+rather than appended to. Superseded state, incident narratives and the
+reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-`DEFAULT_SITE_MODE` is `INDO_PACIFIC_RECORD` and `config.SITE_ORIGIN` is
-`https://indopacificrecord.org`. The published tree is the record architecture:
-3,574 record pages, 3,696 sitemap URLs, four desks of which one collects.
+Durable documents, and what each one governs:
 
-Accepted snapshot: **2026-08-26, 3,574 records, `d5b897cd…`**.
+| Document | Governs |
+|---|---|
+| `README.md` | public and contributor overview |
+| `docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md` | identity, editorial standard, provenance, publication principles |
+| `docs/ARCHITECTURE_AND_PUBLISHING.md` | technical layer map, commands, publishing and deployment procedure |
+| `docs/AGENT_WORKFLOWS.md` | agent operating constraints and model routing |
+| `docs/ROADMAP.md` | current priority order |
+| `docs/SHADOW_COLLECTION.md`, `docs/SHADOW_REVIEW.md` | shadow desk isolation and human review procedure |
+| `DECISION_LOG.md` | durable decisions that constrain future work |
 
-What is preserved, and how:
+---
 
-* `chinamilwatch.org` is served by `VSSpowerlifting/chinamilwatch-legacy-redirects`,
-  a redirect-only Pages site covering all 1,451 addresses the predecessor
-  published. `/article/<id>.html` → `/record/<id>.html`, `/signals.html` →
-  `/methodology.html`, everything else keeps its path.
-* The thirteen editions of *The PLA Watch* keep their addresses, their issue
-  numbers and their original masthead, carried across by the publish step and
-  re-rendered onto the new origin.
-* `/article/<id>.html` still resolves on the new domain: 1,335 `noindex` stubs,
-  one per address that was public, each pointing at the record holding the same
-  article.
+## 1. Production state
 
-Desk states are unchanged by the launch: China collecting, Singapore and Japan
-both **shadow evaluation — not public**, US Indo-Pacific **access blocked**.
-Gates 1, 6 and 8 of `docs/LAUNCH_AND_REDIRECT_READINESS.md` (a second
-thirty-day desk, trademark screening, licence) are still open; the launch
-proceeded on the owner's explicit instruction with those outstanding.
+* **Public identity: Indo-Pacific Record.** Live at
+  `https://indopacificrecord.org` (verified 2026-09-02, HTTP 200, page title
+  `Indo-Pacific Record`).
+* **"China Mil Watch" is a legacy name only.** `chinamilwatch.org` is served by
+  a separate redirect-only Pages site
+  (`VSSpowerlifting/chinamilwatch-legacy-redirects`) that sends every address
+  the predecessor published to its counterpart on the current domain.
+* **"The PLA Watch" is current** — it is the name of the China Desk weekly
+  analytical series, and the thirteen published editions keep their addresses,
+  issue numbers and original masthead.
+* **Renderer:** `.venv/bin/python site/render.py`. `DEFAULT_SITE_MODE` is
+  `indo-pacific-record`. `site/generator.py` is the `legacy` renderer and is
+  the rollback path only — it is not the production renderer.
+* **Validator / deploy gate:** `.venv/bin/python scripts/validate_output.py`.
+* **Deployment:** `daily_update.yml` commits `pla_watch.db` and `output/` to
+  `main`, then publishes `output/` to `gh-pages` via
+  `peaceiris/actions-gh-pages@v3` with `cname: indopacificrecord.org`.
+  `deploy_output_only.yml` is the manual equivalent for an already-committed
+  `output/`. The action writes `.nojekyll` at the root of `gh-pages`; it is not
+  tracked under `output/`.
+* **Licensing is settled.** `LICENSE` is MIT for the software;
+  `CONTENT_AND_DATA_RIGHTS.md` sets out editorial, source-document and
+  public-fact terms separately. Any document still describing licensing as
+  undecided is stale.
 
-Rollback: `DEFAULT_SITE_MODE` → `LEGACY`, `config.SITE_ORIGIN` →
-`https://chinamilwatch.org`, restore the Pages custom domain, re-run the daily
-workflow. `site/generator.py` is untouched and does not read `SITE_ORIGIN`.
+## 2. Public surfaces
 
-## Preview week tests froze the corpus shape — fixed
+Four desks are declared in `desks/registry.json`, which is authoritative for
+desk **status and public presentation**; a desk's own manifest is authoritative
+for its **sources**.
 
-For part of 2026-08-24 the offline suite failed on `main`, and it would have
-stopped collection:
-
-```
-FAIL: test_sixteen_weeks_render_with_counts_matching_sql   AssertionError: 17 != 16
-FAIL: test_only_governed_weeks_carry_an_annotation         '2026-08-24' != '2026-08-17'
-```
-
-No code caused it. The scheduled daily commit `5aa1285` added articles that
-opened a **seventeenth publication week**, and both tests had frozen a corpus
-shape into an assertion — one a week total, the other a literal list of
-annotated week starts. The generator was right; the tests had expired.
-Bisected: `d6bf6ed` (16 weeks) passed, `5aa1285` (17 weeks) failed.
-
-It was not cosmetic. `Run offline test suite` in `daily_update.yml` has no
-`continue-on-error` and precedes `Run pipeline`, the commit step and the Pages
-deploy, so the next run with `should_run=true` would have failed at the test
-step and never collected. The runs in between reported success only because the
-scheduling guard set `should_run=false` and skipped every step — the documented
-trap where a green run does not mean the pipeline executed.
-
-**Repaired durably in PR #15**, not re-pinned to 17. Expectations are now
-derived from the corpus by SQL that never calls the generator: the ordered
-weeks, their record counts and their run-date counts come from an independent
-query, and the annotated set is computed from the documented policy — outage
-overlap wins, otherwise the corpus's first and last week. The snapshot boundary
-therefore moves as the corpus grows. The governed outage window stays written
-down because it is governed data, with a test pinning it against the
-generator's copy so the two cannot drift apart silently.
-
-The assertions got stronger: a duplicated week, a missing week, a wrong render
-order, an annotation on an ungoverned week and a missing annotation on a
-governed one all fail now. `TestWeekInvariantsGrowWithTheCorpus` builds from a
-temporary corpus carrying one extra later week and proves the same helpers
-accept it with no new constants — so the next new week does not require editing
-a test. Three injected defects (a dropped week, an off-by-one count, a
-misplaced annotation) were each confirmed to fail the repaired tests.
-
-## Public state, 2026-08-24
-
-`origin/main` is **`0a1b099`**. Public site unchanged: `DEFAULT_SITE_MODE =
-LEGACY`, `DECLARED_SNAPSHOT` still declares 2026-08-19 / 3,388 records,
-`gh-pages` carries only what the scheduled run deployed, and no workflow was
-dispatched by hand.
-
-**Canonical suite on `main`: 1,171 tests, OK, 0 failures, 1 governed skip.**
-Run it with the project virtualenv (`.venv/bin/python -m unittest discover -s
-tests -t .`), never system python, which lacks `dotenv` and `requests` and
-reports dozens of dependency failures. The governed skip is the
-release-readiness test reporting the declared snapshot is stale against the
-tracked corpus (declared 2026-08-19 / 3,388; corpus now 2026-08-24 / 3,499).
-That is the guard working; advancing the snapshot is a deliberate act — date,
-record count **and** logical fingerprint — and has not been done.
-
-Focused suites all green: review kit 142/142, dedup authority 32/32,
-pipeline-run integration 18/18, PDF extraction 23/23. Output validator passes
-with the **10 governed warnings**. The daily workflow's offline-test gate passes
-on exact current `main`, so collection is unblocked.
-
-## Merged since 2026-08-23
-
-| PR | Merge commit | What landed |
+| Desk | Status | Public meaning |
 |---|---|---|
-| [#10](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/10) | `d6bf6ed` | Singapore shadow **review kit** — twelve commits, six files, 142 focused tests |
-| [#11](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/11) | `9e685bf` | Blocks the corpus-wide title dedup proposed in `FOLLOWUP.md`; 4 tests pin the batch scope |
-| [#12](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/12) | `ba971c2` | A dry run now names the columns it could not compute; one log line + 4 tests |
-| [#15](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/15) | `8193dff` | Preview week tests derive their expectations from the corpus; 7 tests added, suite unblocked |
-| [#13](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/13) | `0a1b099` | `processing/pdf_text.py` — PDF text extraction as a pure function over bytes, returning a status rather than a `str`; 23 tests; adds `pypdf` |
-
-All were normal merge commits; no branch was deleted. None changed
-`pla_watch.db`, `output/`, workflows, `desks/`, the renderer, the snapshot or
-the site mode.
-
-**PDF extraction is dormant infrastructure.** `processing/pdf_text.py` is
-imported by nothing but its own tests — no collector, adapter, manifest,
-workflow or site path references it. Text is never truncated; the two limits
-that exist (`MAX_BYTES`, `MAX_PAGES`) are refusals checked before any text is
-assembled, each returning its own status carrying no text, and a non-`OK`
-result cannot carry text at all. A network caller is responsible for its own
-fetch-size policy before invoking it.
-
-## Singapore shadow desk — collecting, day 3 of 30
-
-Daily at 21:10 UTC into the orphan `shadow/singapore-mindef` branch; nothing it
-writes reaches production, `desks/`, `pla_watch.db` or `output/`. Doctrine in
-`docs/SHADOW_COLLECTION.md`; collector `scripts/shadow_collect.py`.
-
-State head **`adff5b7`**. Five ledger entries, 2026-08-19 → 2026-08-23,
-consecutive, unique run ids, every one `health=ok` with `robots_status=allowed`
-and zero access, fetch or extraction failures. 32 records over a 2026-07-21 →
-2026-08-20 corpus range. The state-hash chain is continuous and the
-`ok_all_duplicates` runs correctly left the database byte-identical.
-
-**Latest ledger records `shadow_day` 3.** Day zero is 2026-08-19T23:03:09Z and
-the field counts complete elapsed 24-hour periods, so the 2026-08-20 run — which
-fired 82 minutes before the first period closed — also recorded day 0. Calendar
-date and shadow day differ by one; the ledger is the authority.
-
-**This desk is not qualified and must not be described as qualified.** It is 3
-days into a 30-day shadow qualification, renders nothing, and appears on no
-public surface.
-
-## Checkpoint reviews — tooling merged, nothing published
-
-`scripts/review_shadow_state.py` and `scripts/publish_shadow_review.py` with
-`docs/SHADOW_REVIEW.md` as the operator guide. A formal packet's inputs are
-exported from the named commit's own `state/` tree via `git cat-file`, so
-`--state-commit` is verified rather than trusted text; a `--state-dir` packet is
-a rehearsal, is stamped NOT PUBLISHABLE, and the publisher refuses it.
-Publication is an ordinary fast-forward — no force, no lease, no ref deletion.
-
-**No formal review has been published.** No packet generated, no sign-off
-created, and `review/singapore-mindef` does not exist on the remote.
-
-**Next operational gate: the Day 7 checkpoint, earliest 2026-08-27.**
-`shadow_day >= 7` needs a run at or after 2026-08-26T23:03:09Z, and the cron
-fires at 21:10 UTC — so the 2026-08-26 run lands at day 6 and **2026-08-27** is
-the first eligible one. The tool recomputes `shadow_day` itself and refuses
-anything earlier. Day 7 is one of three checkpoints and qualifies nothing alone.
-
-## Second desk — access-blocked on discovery
-
-No second desk is enabled: `desks/` declares exactly one, and the production
-registry resolves only China.
-
-Candidate official sources were checked under honest identification — a user
-agent naming this project, no browser impersonation, no challenge solving, no
-proxy. `robots.txt` permits the relevant paths, but the HTML listing pages are
-served behind an interactive challenge that a collector would have to defeat
-rather than satisfy. Individual documents are reachable; the listings that would
-say which documents exist are not.
-
-**The blocker is discovery — not engineering, and not robots policy.** The
-standing rule is that an institution wanting to refuse this collector must be
-able to recognise it and say so, so impersonating a browser would defeat the
-capability that rule protects. Resolving it means requesting an official
-discovery route. Until then `access-blocked` is the honest status.
-
-The two engineering blockers are now closed. PDF extraction exists on `main`
-(those items are PDFs, and the pipeline previously could not read PDFs at all),
-and the corpus-wide title dedup that would have erased recurring official
-exercise titles is blocked and pinned by tests. **Neither enables a desk**, and
-no collector for a second desk exists. What remains is access, not code.
-
-## Public launch gates — still incomplete
-
-Unchanged and unmet: one non-China desk collecting 30 consecutive days, its
-source universe published, coverage health public, the 2026-07-17→24 collection
-outage disclosed, and owner sign-off recorded in `DECISION_LOG.md`. Singapore is
-3 days into the first of those.
-
-## Defense Discourse foundation — RELEASED and validated in production
-
-`404f3be` is on `origin/main`. The first genuine scheduled run against it,
-**#476 / `31807724411`**, completed: migrations, verification, the 221-test
-offline suite, the 55 reconciliation tests, pipeline (scrape run 112), output
-validation, database+output commit, push, Pages deploy and success marker all
-passed. The only red was the notify-only health gate, on the already-known MOD
-China alarm. Independent verdict: **EXPECTED DEGRADED SUCCESS**.
-
-Production after run 476: 3,250 articles / 3,250 distinct URLs / max id 3,256 /
-112 runs / 5 sources / 1 desk / 4 institutions / 5 `source_run_results` / 1,110
-analyzed / 2,142 category links. Ledger `0001`–`0005`; integrity `ok`; foreign
-keys clean. All 3,211 pre-release URLs kept their ids, source slugs, hashes,
-run attribution and analysis.
-
-**MOD China is not failing collection any more, and that changes the diagnosis
-recorded under Next tasks below.** Run 112 stored `ok_all_duplicates`:
-7 discovered, 7 fetched, 7 extracted, 7 duplicates, 0 new, no error. The
-scraper reaches the listing and parses it; everything it finds is already in the
-corpus. The 35-day health alarm is therefore about **publication recency**, not
-a broken adapter — the open question is why the listing keeps serving items we
-already hold rather than why the fetch fails. Do not add it to `KNOWN_INERT`.
-
-**Answered, and fixed — see the section below.** The listing was not serving
-items we already held. It was serving MOD's own copies, which cross-source
-canonical selection then discarded in favour of PLA Daily's reprint.
-
-## MOD China — root-caused and fixed
-
-Rulings in DECISION_LOG 2026-08-17. Two defects, neither in the adapter:
-
-1. **Cross-source canonical selection.** The survivor of a same-title group was
-   chosen by first URL path segment against a map of 81.cn section names, so
-   MOD's `/gfbw/…` scored below PLA Daily's 要闻 and the Tier A ministry lost
-   every duplicate to a Tier B reprint. Canonical choice is now a five-part
-   **total** ordering — authority tier → source identity → 81.cn section →
-   shorter URL → the URL itself — of which only the first is an editorial
-   judgement. Because identity is compared before section, the 81.cn section map
-   can only ever separate candidates from the same source.
-2. **Discovery.** A listing link was kept only if the run date appeared verbatim
-   in its text, so backdated items were invisible when stamped and ignored
-   afterwards. Discovery now accepts the seven calendar dates ending on
-   `target_date`, and takes the publication date from the stamp element MOD
-   marks up (`<small class="time hidden-xs">`, `YYYY-MM-DD HH:MM`) rather than
-   from any date found in the headline.
-
-`scripts/cleanup_duplicates.py` ranks through the same shared key, so the
-destructive tool cannot disagree with what the pipeline stored, and it refuses
-any duplicate group containing a row whose source identity cannot be resolved.
-Its `--dry-run` reads through a copy and cannot write to its input.
-
-**Measured 2026-08-17** — a dated measurement, not a standing fact. Of 52 MOD
-items published after 2026-07-10 and still on page 1 of the six configured
-sections: **0** stored under `mod_china`, **40** stored under `pla_daily` at
-81.cn URLs, **12** absent from the corpus. Ten of the twelve fall inside a
-contiguous 2026-07-17 → 07-24 window in which no run executed at all, wider than
-the seven-date window; two are backdating losses the window now catches.
-
-Deliberately **not** done: no re-attribution of the 40 existing rows, no backfill
-of the 12 absent ones, no change to the 21-day threshold, no `KNOWN_INERT` entry.
-No historical rewrite of any kind has occurred.
-
-Still open: canonical selection keeps one copy and discards the losing copies'
-URLs, so "both institutions carried this release" is recorded nowhere. That is a
-provenance-model question, not a dedup fix.
-
-## Run-475 persistence defect — RELEASED as `fa284b6` on `origin/main`
-
-Released and confirmed by scheduled run #480 (2026-08-15): the
-failure-persistence step correctly skipped, which is the behaviour the fix
-exists to produce. This section previously read "nothing pushed, merged or
-deployed", which was true when written and is not now.
-
-Run 475 failed the pre-pipeline cleanliness gate (the offline suite had dirtied
-`pla_watch.db`), skipped the pipeline, and the persist-on-failure step still ran
-and pushed the residue as `483d154` under a message announcing a collection that
-never happened. Proven logically neutral — identical `.dump`, 39 bytes on one
-page — so the release stood, but the path was unsafe.
-
-Fixed: persistence now requires positive proof the pipeline executed
-(`steps.pipeline.outcome`), the commit message reports what actually happened,
-the offending test reads a scratch copy instead of opening the WAL-mode tracked
-database read-write, the collection-health table is printed after attribution so
-the log matches the database, and the contract parser strips trailing comments.
-Rulings in DECISION_LOG 2026-08-14; 34 new tests, suite 221 → 255. The
-read-write guard is AST-based: the first attempt matched the literal
-`sqlite3.connect(` and missed the aliased call that caused run 475.
-
-## Defense Discourse foundation — Phases 1–2 complete, UNCOMMITTED on a branch
-
-Branch `refactor/defense-discourse-foundation`, off `main` at `92bfa82`.
-**Nothing is committed, pushed or deployed.** Full rationale in
-`docs/ADR_NEUTRAL_CORE.md`; rulings in DECISION_LOG 2026-08-13.
-
-What now works: sources come from `desks/china/manifest.json` instead of
-hardcoded imports; the five existing scrapers are wrapped, not rewritten; every
-source produces a structured per-source result so "published nothing" and
-"could not be reached" are different values; one failing source degrades the
-run; `source_run_results` records discovered/fetched/extracted/duplicate/new/
-rejected counts per source per run; migrations are versioned, idempotent, and
-run inside `init_db()` so the reconciler can no longer silently revert the
-schema.
-
-**Verified:** 109 offline tests pass (no network, no model calls);
-`validate_output.py` green at the same 10 warnings; `output/` **byte-identical**
-after regeneration from the migrated DB; corpus unchanged at 3,182 articles /
-3,182 distinct URLs / max id 3188 / 110 runs, with an identical id↔URL digest
-before and after migration.
-
-**Two things this made visible that were previously invisible:**
-`scripts/source_health_report.py` reports MOD China **overdue at 34 days**
-against its own 21-day threshold, and Xinhua Military as **`not_implemented`**
-rather than as a healthy source that published nothing.
-
-**Working-tree state:** `pla_watch.db` carries migrations 0002–0004 (0001 was
-already applied by the pushed hotfix). Migrations are additive; a pre-migration
-backup was taken. `output/` is clean.
-
-**Known blocker for Phase 4:** a Russia desk cannot be synced until a migration
-relaxes `CHECK (language IN ('zh','en'))` on the legacy `sources.language`
-column. Sync raises rather than coercing `ru` to `en`.
-
-**Not done, deliberately:** no capture storage, no document versioning, no
-translation records, no claims model (all Phase 3); no CI/workflow change; no
-`reconcile_db.py` change; no MOD scraper fix; no public rename. `graphify
-update .` has not been run for the new packages.
-
-## Repository rename (hosting only)
-
-The GitHub repo is now `VSSpowerlifting/China-Mil-Watch`; the old path answers
-via a 301. Local `origin` was repointed 2026-08-13. No public site name, domain,
-canonical URL or branding changed.
-
-## Database hotfix pushed 2026-08-13
-
-`scrape_runs.status` accepts `'degraded'` again on `origin/main` (`92bfa82`).
-The constraint had reverted a **second** time — the 2026-08-09 migration was
-reverted by a rebase, re-applied, and found reverted again by the 2026-08-13
-audit. Until the Phase 1 branch lands, CI still never applies migrations, so
-this can decay again; that is the argument for landing the branch.
-
-## Working tree (as of this update)
-
-**The No. 12 screening and CI's 08-04 run are merged and pushed.** Local
-`main` is in sync with `origin/main` and the working tree is clean. The
-reconciliation described below landed earlier and remains accurate history.
-`fix/pipeline-data-loss-2026-07-30` points at the same commit and is safe to
-delete. The 80 recovered articles (07-30, 07-31) are **no longer
-single-copy** — verified on the remote after the push: 2880 rows / 2880
-distinct urls / 672 analyzed, 40 articles on each of the two days.
-
-History: `origin/main` advanced independently while the branch sat local —
-billing markers for 07-30/07-31, then daily updates for 08-01, 08-02 and
-08-03. CI recovered unaided on 08-01, consistent with the monthly spend cap
-resetting, not with any repair. Production never held 07-30 or 07-31.
-
-`pla_watch.db` cannot be merged by git: both sides advance from the same
-base and allocate ids from the same counter, so the two sets collide and a
-plain merge silently drops one side. This is now handled automatically by a
-**row-level merge driver** (`scripts/reconcile_db.py --merge-driver`, named
-in `.gitattributes`, installed by CI before every `git pull --rebase`).
-Origin is authoritative for identity; local-only rows are renumbered above
-origin's maximum. The 2026-08-03 merge of origin's 08-03 collection ran
-through this driver with no conflict: 80 new articles merged, 117 analysis
-rows backfilled.
-
-Reconciled state (measured 2026-08-03): **2880 rows / 2880 distinct urls /
-672 analyzed**, continuous 07-26→08-03 coverage. All gates pass — 0 urls
-lost from either side, **0 id drift on rows origin already had** (origin's
-ids run to 2806, and those already rendered are live in
-`output/article/*.html` and the sitemap, so renumbering them would break
-published links), 0 duplicate urls, `foreign_key_check` and
-`integrity_check` clean. `validate_output.py` green
-at the 9-warning baseline.
-
-`output/` was byte-identical to `origin/main` at that point — the branch
-never regenerated it. That is no longer true: see the output/DB divergence
-under Known issues, found and fixed 2026-08-03.
-
-Pushed 2026-08-04 01:32 UTC, deliberately outside the drifted execution
-window (last run 08-03 16:42 UTC; next cron 08-04 12:23 UTC). Time any
-future manual push the same way — query the Actions API, never the cron
-comments. See CI schedule drift under Known issues.
-
-Historical note, still accurate: the previously uncommitted 2026-07-12 production-completion pass,
-2026-07-13 Signal Veil pass, and 2026-07-16 J-20 atmospheric pass (see
-DECISION_LOG entries of those dates) were reconciled onto `origin/main`
-and committed on branch `reconcile/unfinished-pla-watch-2026-07-16`
-(DECISION_LOG 2026-07-17 records the recovery mechanics). Local-only
-safety branch `rescue/unfinished-pla-watch-2026-07-16` preserves the raw
-WIP snapshots and must not be pushed or treated as production history.
-The old local `main` (`1f0917c`, patch-id-identical to remote `5e92dc4`)
-was intentionally left untouched in `~/pla-watch`.
-
-## Publication state
-
-13 editions published, No. 1–13: 2026-05-09 (pilot, 2-day window) through
-2026-08-08. Issue numbers stored in sidecars, validated unique +
-chronological. One cadence gap, by ruling — see below.
-
-**No. 12 and No. 13 generated and published 2026-08-11**, clearing the
-catch-up backlog that opened when credit ran out on 08-07:
-- **No. 12**, w/e 2026-08-01, "Army Day, Scarborough Shoal, and a Week of
-  Deliberate Disclosure", Significant, 7/7 days, 154 articles / 25
-  model-flagged.
-- **No. 13**, w/e 2026-08-08, "Scarborough Shoal, Platform Disclosures, and
-  the Limits of Anniversary Week", Significant, 7/7 days, 134 articles / 11
-  model-flagged.
-
-Prerequisites cleared the same day: a scoped
-`backfill_unscored.py --since 2026-08-02 --until 2026-08-08` run (43
-processed: 24 analyzed, 19 rejected, 0 errors) and a full
-`backfill_translations.py` pass (21 of 22 cleared; two JSON-parse failures
-succeeded on re-run). The global 1095-article unscreened backlog was
-**deliberately not** drained — it is ~$32 of screening for articles no
-edition cites. Scope backfills to the publication window.
-
-**Both editions were published without the EDITORIAL_QA_CHECKLIST
-source-to-claim trace and without a rendered-page visual review.** Analyst
-directed publication; recorded here so the gap is visible, not implied.
-No. 12's `linkedin/2026-08-01.txt` is the mechanical fallback (the model
-returned no `linkedin_version`), so it is template-assembled, not authored
-prose. Rewrite before posting.
-
-**Next edition: No. 14, week ending 2026-08-15.** There is no edition for
-the week ending 2026-07-25 — analyst-ruled 2026-07-30, DECISION_LOG. The
-2026-07-17→07-24 collection outage left that window with one observed day
-of seven (07-25 only: 29 articles, 8 relevant, 0 model-flagged), and
-retro-scraping was tested and rejected as unsound (07-16 control: 33
-articles captured live, 3 recoverable). Expect and keep a **cadence-gap
-warning** from the validator for this break; it is the record of the
-outage, not a defect to suppress.
-
-Both published windows read **0 unscreened** at generation time. The
-07-26→08-01 window observed a **72% pass rate, not the historical 44%** —
-the estimate assumed 44%, so actual spend was ~$4.55 against a $2.86
-pre-flight. Treat 44% as a floor for recent windows when estimating.
-
-**`id=2678` (Sichuan-ship layout piece, 07-28, relevance 0.85) is
-permanently untranslatable.** Its `text_original` is 0 chars: the body was
-never captured at scrape time, so this is a collection defect, not a
-translation failure, and re-running the backfill will never clear it. It
-also means the article passed relevance screening on its title alone —
-worth investigating as a scoring-path question.
-The site has been re-rendered and merged with CI's 08-04 run — `output/`
-and the DB are in sync at 825 analyzed articles, 0 unrendered, 0 orphans,
-gate green at the 9-warning baseline.
-
-No. 11 shipped after correcting three editorial-integrity findings caught
-by QA before publish (analyst-approved 2026-07-25, DECISION_LOG): the
-Y-20B first-international-flight date "April 2025" → **April 2026** (the
-cited source 81.cn/16473227, published 2026-07-12, says "今年4月");
-engine "WS-20" downgraded from source-"confirmed" to "widely identified
-as" (source says only "新型国产发动机"); and three Routine-Baseline
-articles (Strong Military Forum frugality 16473917, 80th GA compliance
-16473559, RF governance 16473317) added to the source trail so the named
-units trace. Trail now 16 entries; validator green at the 9 historical
-warnings.
-
-## Validation status
-
-`validate_output.py`: **passes, 10 warnings** — 9 historical, ruled on
-2026-07-09/10 (missing LinkedIn files eds. 1–3; undated early trail
-entries; related notes). Do not fix by invention; explain any NEW warning
-here.
-
-The 10th is **`cadence gap: 2026-07-18 → 2026-08-01 is 14 days`** — real
-history, not a defect: no edition shipped for week ending 2026-07-25 during
-the API-credit outage. It is a data fact and stays until an edition exists
-or the check learns about publication gaps. Not introduced by the veil work
-(that pass added no warnings).
-
-## API credit exhausted — RESOLVED 2026-08-11
-
-**Credit was restored in the Console on 08-11**; the backfills and both
-edition generations ran clean with no account-level block. The 08-08 and
-08-09 collections that CI recorded as billing failures were screened
-retroactively as part of the No. 13 window. History below is kept as the
-outage record.
-
-The block ran 08-07 → 08-11. It was a credit balance exhaustion
-(`invalid_request_error: "Your credit balance is too low to
-access the Anthropic API"`), not the 07-30 configured usage limit — a monthly
-reset would not have cleared it. Restoring credit in the Console is a manual
-step nothing in the repo can do.
-
-| run | date | new | analyzed | recorded as |
-|---|---|---|---|---|
-| 105 | 08-07 | 36 | 24 | `completed` + "mark daily run" — **wrong, see below** |
-| 106 | 08-08 | 23 | 0 | `completed` + billing marker |
-| 107 | 08-09 | 29 | 0 | `completed` + billing marker |
-
-Run 105 exhausted credit mid-run and still exited 0, so 08-07 published as a
-clean day and the marker never reached `origin/main`. Fixed 2026-08-09
-(DECISION_LOG); the audit trail for 105 stays wrong as history.
-
-**Verified still blocked 2026-08-09 14:5x UTC** via
-`spend_guard.probe_api_access()` — same `invalid_request_error`, fresh
-request_id. The key authenticates (a bad key returns 401
-`authentication_error`, not this), so the credit has not reached the org or
-workspace this key belongs to. **Note CI uses a repo secret, not `.env`** —
-if those are different keys, funding one does not fix the other.
-
-Re-test, free, no tokens billed:
-```
-.venv/bin/python -c "import sys; sys.path.insert(0,'.'); \
-from scripts.spend_guard import probe_api_access; \
-ok,msg=probe_api_access(); print('OK' if ok else 'BLOCKED'); print(msg)"
-```
-
-**To recover:** restore credit, then re-run the workflow via
-`workflow_dispatch` — a manual run deliberately bypasses the marker guard.
-The 52 articles collected across 08-08 and 08-09 are stored and unscreened;
-they re-enter the queue as backlog.
-
-## API spend limit — block lifted 2026-08-01 (superseded by the above)
-
-The account's configured API usage limit was reached 2026-07-30 during the
-backfills; all LLM calls returned 400 until the monthly reset. The block has
-lifted and daily collection ran normally on 08-01, 08-02 and 08-03. Current
-state and durable consequences:
-
-- **Corpus as measured 2026-08-04 (after merging CI 08-04):** 2914
-  articles, **1043 never screened** (36%), **61 relevant but untranslated**,
-  0 translated-without-summary. The No. 12 window accounts for the drop from
-  1199; the untranslated count rose by 3 because the scoped run produced 1
-  translation-failure and 2 summary-failures, which stay unwritten by design
-  and re-queue. Both backfill scripts are re-runnable and resume where they
-  stopped — the DB is the checkpoint (`passed_relevance IS NULL`), there is
-  no checkpoint file.
-- **The unscored backlog drains at zero while translations are stuck
-  (measured 2026-08-04).** `backlog = pending + unscored` puts every
-  relevant-but-untranslated article ahead of every unscored one, so with 80
-  pending against a ~21-slot reserve the 08-04 CI run screened 34 new articles,
-  cleared 22 pending, and drained **0** of the 1,199 — the unscored count did
-  not move. Self-clearing, not permanent: pending fell 80 → 58 in one run and
-  empties in ~3 more, after which the reserve reaches the backlog at ~16-21/day.
-  Running `backfill_translations.py` clears pending immediately and is the
-  cheapest way to restart the drain — it also unblocks the No. 12 window.
-- **The DB reconciler discarded 46 relevance decisions (fixed 2026-08-04).**
-  Rejections and translation/summary failures leave `analyzed_at` NULL, and the
-  backfill predicate tested that column instead of `passed_relevance`. Fixed,
-  plus a new gate that fails the merge when either side's decision is missing.
-  See DECISION_LOG 2026-08-04. **Check `passed_relevance IS NULL` counts before
-  and after any DB merge.**
-- **Output silently lagged the DB by 117 articles for four deploys
-  (found and fixed 2026-08-03).** The 07-30 backfill's articles reached `main`
-  via the reconcile merge driver and were never rendered; the deploy gate read
-  `output/` in isolation and could not see it. Re-rendered (227 pages written,
-  including this session's 110), and `validate_output.py` **check 8** now fails
-  the gate on any analyzed-but-unrendered article. See DECISION_LOG 2026-08-03.
-  **Any DB-writing path must re-render before it counts as done.**
-- **`backfill_unscored.py` now takes `--since` / `--until`** (inclusive,
-  `published_date`, YYYY-MM-DD). `--limit` alone could not scope a run to a
-  current edition: it slices oldest-id-first, and the No. 12 window sat at
-  positions 1024–1199 of the 1199-item queue, so reaching it meant paying for
-  the entire backlog. Default behaviour without the flags is unchanged.
-- **2026-07-30 and 2026-07-31 collection are both captured** (40 articles
-  each, still unanalyzed). 07-31 was taken at 21:58 UTC on 07-31 via
-  `.venv/bin/python pipeline.py --no-analysis`, closing the last window in
-  which permanent loss was still possible. Do NOT rely on
-  `ANTHROPIC_API_KEY=""`; see DECISION_LOG.
-- **`--no-analysis` no longer regenerates `output/`** (DECISION_LOG
-  2026-07-31 §1). The 07-31 capture, under the old behaviour, rendered the
-  unreviewed methodology draft into `output/` — that regeneration was
-  reverted and the behaviour fixed.
-- **CI persists whatever it scraped even when the analysis stage fails**
-  (workflow step added 07-30), so an account-level block no longer costs
-  collection.
-
-## Known issues / gaps (recorded, not explained away)
-
-- **Analysis cap starved the backlog (fixed 2026-07-30; pile still draining).**
-  `DAILY_ANALYSIS_CAP` was 15 while runs scrape ~30/day, and the queue was
-  `new + pending + unscored` truncated to the cap — so the slice never
-  reached the backlog and it drained at **zero per run, permanently**.
-  Result: **1,119 of 2,720 articles (41%) were never relevance-screened**,
-  growing ~18/day for 66 days, and the 163 translation failures were never
-  retried once. At the historical 44% pass rate the unscreened pile holds
-  an estimated **~487 relevant articles** — so editions No. 1–11 drew on
-  roughly 60% of the relevant material actually scraped. Fixed by
-  `BACKLOG_RESERVE_FRACTION` (0.3) plus raising the cap to **55**, above the
-  scrape rate; `scripts/backfill_unscored.py` clears the pile faster.
-  **Standing rule: the cap must stay above the daily scrape rate** — below
-  it, a cost ceiling becomes a silent data-loss mechanism. Watch for the
-  "newly scraped article(s) deferred by the cap" warning.
-  **Passive drain is too slow to rely on:** at cap 55 × 0.3 the reserve is
-  ~16 backlog slots, and the scheduling guard allows one real run per NY
-  day, so ~16/day against a 1199 pile is ~75 days. The pile shrinks only if
-  the backfill script is run deliberately.
-
-- **CI schedule drift, and green runs that did nothing.**
-  Scheduled runs start well after their cron time, every window, and the lag
-  is **not stable from day to day**. On 08-01 and 08-02 it was 60–100 min
-  (cron 12:23 UTC executing 14:02 and 14:04). On **08-03 it was far worse**:
-  the five runs started 15:21, 15:32, 15:58, 16:11 and 16:42 UTC against
-  crons 12:23–14:23 — roughly **138–178 min late**. So the 08:23–10:23 NY in
-  the old workflow comment is wrong, and the ~13:23–16:03 UTC replacement
-  first recorded on 08-03 is itself too narrow. Treat the window as
-  unpredictable: **always query the runs API before a manual push** instead
-  of trusting any recorded range, including this one. The off-peak
-  `:23`/`:53` minutes do not measurably help. Separately, a run whose
-  scheduling guard returns
-  `should_run=false` skips every step and still reports **success** — five
-  green runs a day is the designed shape (one real, four no-ops), so a green
-  check is **not** evidence the pipeline executed. Time any manual push
-  against the runs API, which answers unauthenticated because the repo is
-  public (`gh` is not installed here):
-  `curl -sL "https://api.github.com/repos/VSSpowerlifting/China-Mil-Watch/actions/runs?per_page=8"`
-  (The GitHub repository was renamed `PLA-Watch` → `China-Mil-Watch`. The old
-  path still answers via a 301, so `-L` is required if you use it; the local
-  `origin` remote was repointed at the new URL on 2026-08-13. This is a hosting
-  rename only — no public site name, domain, or URL changed.)
-
-- **Translation losses (fixed 2026-07-30; backfill run).** 163 of 697
-  relevant articles (23%) passed the relevance gate but were never
-  translated, spanning 70 days since launch, and so were invisible to all
-  11 published editions. **Two independent causes**, both fixed — see the
-  two DECISION_LOG entries of 2026-07-30:
-  1. *Token cap.* `translate()` was capped at `max_tokens=4000`; long
-     bodies truncated mid-JSON. Length-determined: 95% failure above 3800
-     Chinese chars, **100% above 5000**. Now `TRANSLATION_MAX_TOKENS`
-     (32K, streamed), with `stop_reason=max_tokens` checked before parsing.
-  2. *Unescaped inner quotes.* Preserved rhetorical quotation marks
-     terminated JSON strings early in complete, untruncated responses.
-     `translate()` now uses a forced `emit_translation` tool call, so the
-     API handles escaping. Do not reintroduce raw-JSON instructions to the
-     translation prompt.
-  Editorial consequence, now remediated but true of editions No. 1–11:
-  the excluded set was the longest, most analytically substantial PLA
-  Daily material — it included the full China–Russia joint statement on
-  comprehensive strategic coordination (article 476, 18,148 chars), which
-  no edition ever saw.
-  Backfill: `scripts/backfill_translations.py` (re-runnable; deliberately
-  does **not** re-score relevance, preserving the audit record).
-- **2026-07-17→07-24 collection outage (permanent).** No `scrape_runs`
-  rows exist for those eight days; the failed CI runs never persisted
-  their DB writes. Not recoverable — see the backfill ruling in
-  DECISION_LOG 2026-07-30.
-- Public-surface disclosure of the 07-17→07-24 outage is **not yet
-  written** — archive/methodology still imply continuous collection.
-- `output/archive.html` is 804 KB flat list (446 articles) — ROADMAP T1.
-- Cover PNGs ~8.2 MB total; photo-overlay covers duplicate titles — ROADMAP
-  T2 (Edition Plate) + T4 (asset hygiene).
-- Source coverage is effectively PLA Daily only; other outlets remain
-  "configured / expanding" — visuals must show this honestly.
-- 2026-05-16 sidecar lacks `edition_label` (no badge, by design); its body
-  carries literal `<strong>` handled by the `inline_markup` whitelist.
-- `pla_watch.db` committed to main by the daily workflow — revisit if it
-  grows.
-- Homepage image-load-failure path: the `.src-bracket` credit still renders
-  even when the `.pl-veil`/derivative fails to load, so the attribution
-  bracket can appear with no image behind it. Accepted as a deferred minor
-  issue 2026-07-16 (analyst-approved); pre-existing behavior of the Signal
-  Veil system, not introduced by the J-20 swap. Not fixed by invention.
-- No enforced review gate between weekly generation and publication;
-  discipline is EDITORIAL_QA_CHECKLIST + validator.
-- In-app Browser-pane screenshots go stale after scroll; use Playwright
-  (in `.venv`) for full-page visual review at 1280 + 375.
-
-## Outstanding decisions (analyst input needed)
-
-None. The 2026-07-11 analyst rulings resolved the then-open items;
-"Model-flagged" stays the only reader-facing label for automated
-classifications (all surfaces verified). Note: `executive_readout` /
-`recurring_threads` adoption was deferred by analyst instruction — No. 10
-shipped without them (DECISION_LOG 2026-07-17 §2); adopt from a later
-edition when the analyst authors one.
-
-## Next tasks
-
-**In this order:**
-
-0. **Automatic Signal Veil is live** (2026-08-11/12). Eight editions carry an
-   automatic veil from their own cited article, three carry curated images,
-   and 2026-05-30 is text-led because no image in its trail passes the
-   provenance guard. Full-strength treatment for both classes.
-
-   Open: whether a PRC state-media photograph belongs on-page as atmosphere
-   at all (V&M §2 permits it; credit renders). The No. 13 briefing frame is
-   the busiest of the set — route a curated manifest entry for any edition
-   whose frame is too heavy; curated always wins over the automatic path.
-
-   Covers for the four corrected editions were regenerated 2026-08-12; every
-   cover background now comes from its own edition or the abstract gradient
-   (2026-05-30). The cross-edition `media_dir_fallback` is retired.
-0b. **Retro-QA No. 12 and No. 13.** Both shipped without the
-   EDITORIAL_QA_CHECKLIST source-to-claim trace (analyst-directed). Run the
-   trace against the live pages and correct by re-render, not hand-edit.
-   Rewrite `linkedin/2026-08-01.txt`, which is the mechanical fallback.
-1. **~1050 unscreened articles remain outside the published windows.**
-   Not urgent — no edition cites them — but they are the same defect class
-   that stranded 131 articles in July. Drain in scoped chunks when spend
-   allows: `backfill_unscored.py --since X --until Y --confirm-spend`,
-   sequentially, never concurrently (running two at once doubled the draw
-   on 07-30). *Re-measure before estimating — these move every run.*
-2. **MOD China (国防部) — collection is failing, the scraper is not.**
-   Investigated 2026-08-09. Run by hand it works perfectly: `target_date`
-   2026-07-26 returns 3 URLs, 2026-08-08 returns 1, all six sections fetch
-   (~48KB each), `parse_article` yields correct titles, dates and bodies.
-   **None of those articles are in the DB at all** — not even as
-   keyword-rejected rows, which are stored with `passed_relevance=0`. So CI's
-   scrape returned nothing on days when the articles were live and reachable.
-   Not total: CI collected MOD successfully 11 times through 2026-07-10.
-   Cause still unknown — candidates are transient reachability from Actions
-   runners to a plain-`http://` host, or listing-CDN lag against the
-   exact-date match. **Do not add it to `KNOWN_INERT`: the source is alive.**
-   `failed_fetches` instrumentation now records exhausted retries into
-   `scrape_runs.errors`, so the next CI run answers this directly. Check
-   there first before changing scraper logic.
-
-   If it turns out to be CDN lag, the fix is a lookback window (match
-   `target_date` **and** the day before) rather than exact-date-only. That was
-   deliberately **not** done now: it raises collection volume, and volume is
-   spend. Diagnose first, then widen.
-
-Then Sonnet tickets T1–T5 in docs/ROADMAP.md (archive month grouping;
-Edition Plate v1; Signal Field v1; asset hygiene; executive readout). Fable
-reviews rendered results of T2/T3 before regenerated output is committed.
-
-## Recent completed work (compressed; details in DECISION_LOG.md)
-
-- 2026-08-02/03: three data-loss defects fixed and 131 stranded articles
-  recovered; 07-31 captured before its loss window closed; backlog drain
-  reordered live-window-first; `scripts/reconcile_db.py` added and wired as
-  a git merge driver so `pla_watch.db` reconciles by url instead of
-  conflicting; CI schedule drift and no-op green runs measured and recorded.
-  Landed and pushed as `0f963fa` on 2026-08-04.
-
-- 2026-07-25: daily workflow outage diagnosed and fixed. Every scheduled
-  run 2026-07-18→07-24 failed at "Commit updated database and site
-  output": `ensure_editorial_derivatives()` used mtime staleness, but git
-  checkouts don't preserve mtimes, so CI regenerated the five committed
-  `site/assets/editorial/derivatives/*` files (different Pillow/platform
-  bytes), dirtying tracked files and aborting `git pull --rebase`
-  ("You have unstaged changes"). Fix: derivatives regenerate only when
-  missing (`--force` to rewrite; committed files authoritative) and all
-  workflow rebases use `--autostash`. First failing window was the first
-  scheduled run after the 2026-07-17 reconciliation committed the
-  derivatives. CI fix committed to main; No. 11 edition held separately
-  (see Publication state).
-
-- 2026-07-11: frontend pass (feed, Terms, Signals cross-promo, sitemap) and
-  visual refinement pass (see Working tree above) — validation green, same
-  9 historical warnings.
-- 2026-07-10: identity language de-OSINT'd; "model-flagged" rename across
-  all surfaces; methodology trust ladder; homepage latest-edition module;
-  mobile header fix; focus-visible outlines.
-- 2026-07-09: sidecar body backfill (sidecars canonical); shared Jinja env;
-  issue numbering; date convention; print stylesheet; Chinese trail
-  headlines; prev/next edition navigation.
+| China | `live` | Collecting daily into the production corpus. The only mature collection. |
+| Singapore | `shadow` | Isolated evaluation. No production records, no public counts. |
+| Japan | `shadow` | Isolated evaluation. No production records, no public counts. |
+| US Indo-Pacific | `access_blocked` | Declared scope only; `robots.txt` returns 403, so permission cannot be established. |
+
+The site also publishes the record archive, per-record pages, coverage,
+methodology, and the legacy `/article/<id>.html` compatibility namespace.
+
+## 3. Data and pipeline condition
+
+Measured 2026-09-02 from a read-only copy of the tracked `pla_watch.db`:
+
+* **3,762 records**, 3,762 distinct URLs, max record id 3,768.
+* **127 scrape runs.** Run 127 completed 2026-09-01 17:15 UTC, `completed`,
+  47 scraped / 40 new / 30 analyzed. Run 125 (2026-08-29) is recorded `failed`.
+* **Freshness through 2026-09-01** (latest `published_date`).
+* Records by source: `pla_daily` 3,238; `china_mil_online` 388;
+  `global_times_mil` 106; `mod_china` 30; `xinhua_mil` **0**.
+* **Xinhua Military remains unimplemented.** The adapter is a documented stub —
+  the listing is JavaScript/API-rendered. It stays enabled so health reporting
+  shows it as `not_implemented` rather than hiding it.
+* 1,394 records analyzed; **903 never relevance-screened**; 4 relevant but
+  untranslated.
+* 48 records hold an empty body; 3 of those are relevant and unanalyzed, so
+  they re-enter the analysis queue on every run and can never clear. See §6.
+
+Coverage is heavily concentrated in one source and every public surface must
+show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
+disclosed, and never backfilled.
+
+## 4. Analytical publication status
+
+* **13 editions published**, No. 1 (2026-05-09 pilot) through **No. 13, week
+  ending 2026-08-08**.
+* **The cadence has lapsed.** No edition exists for the weeks ending
+  2026-08-15, 08-22 or 08-29. Restoring it is the first priority in
+  `docs/ROADMAP.md`.
+* There is a ruled cadence gap for the week ending 2026-07-25 (analyst ruling,
+  `DECISION_LOG.md` 2026-07-30). The validator warning that records it is
+  history, not a defect to suppress.
+* No. 12 and No. 13 shipped without the `EDITORIAL_QA_CHECKLIST.md`
+  source-to-claim trace and without a rendered-page visual review, by analyst
+  direction. That gap is recorded, not implied.
+
+## 5. Shadow desks
+
+Neither desk is qualified, and neither may be described or promoted as
+qualified. Doctrine in `docs/SHADOW_COLLECTION.md`; review procedure in
+`docs/SHADOW_REVIEW.md`.
+
+**Singapore MINDEF** — state branch `shadow/singapore-mindef` (`fd8428c6`).
+Day zero 2026-08-19T23:03:09Z. The 2026-09-01 run recorded `shadow_day` **13**,
+result `ok`, health `ok`, `robots_status=allowed`; 14 ledger entries.
+**Awaiting human review:** `review/singapore-mindef` does not exist on the
+remote, so no checkpoint packet has been published. The Day 7 checkpoint is
+past due and Day 14 is imminent. Completing them is a human task that the
+tooling can prepare but cannot perform.
+
+**Japan MOD** — state branch `shadow/jp-mod` (`6761b963`). Day zero
+2026-08-27T02:14:38Z. The 2026-09-02 run recorded `shadow_day` **5**, result
+`ok_all_duplicates`, health **`partial`**. **Access-constrained:** RSS
+discovery works and PDF documents are retrieved in full, but HTML documents on
+the same host are returned behind an interactive challenge — 28 of 32 selected
+items were challenged in that run. Challenged items are stored as titled, dated
+discovery records with no body and nothing inferred. The challenge is **never**
+to be bypassed; resolving this means requesting an official route.
+
+## 6. Known technical debt
+
+* **Governed validator baseline: exactly 10 warnings.** Three
+  no-date-source-trail warnings (eds. 2026-05-09/05-16/05-23), two
+  `n_significant` warnings with no marked trail entry, one pilot week-span
+  warning, three missing LinkedIn files (eds. 1–3), and one cadence gap
+  (2026-07-18 → 2026-08-01). Any **new** warning must be explained here before
+  it is accepted; none is ever fixed by invention.
+* **No terminal processing state.** A record with an empty body that passed
+  relevance is retried indefinitely. 3 records are in this state now. There is
+  no retry budget and no poison-record disposition.
+* **903 unscreened records** outside any published window. Not urgent — no
+  edition cites them — but this is the defect class that previously stranded
+  material. Drain only in scoped, windowed chunks.
+* **Rendering and preservation depend on LLM availability.** An analysis-stage
+  billing or API failure has repeatedly degraded runs; collection now survives
+  it, but the coupling is not fully removed.
+* **Cross-source occurrence is not modelled.** Canonical selection keeps one
+  copy and discards the losing copies' URLs, so "both institutions carried this
+  release" is recorded nowhere.
+* **Repository growth.** Measured 2026-09-02 on this checkout, and the three
+  numbers are not interchangeable:
+  * **Git objects, repeatable:** `git count-objects -vH` reports `size-pack`
+    **296.28 MiB** across 18 packs, plus 30.11 MiB loose. Quote this with its
+    date and pack count.
+  * **Fresh clone (the portable figure):** an independently measured fresh
+    clone repacks to ~167.50 MiB packed / ~169 MB `.git`. A long-lived
+    checkout roughly doubles it through unconsolidated packs.
+  * **Checkout-specific:** `du -sh .git` says 334 MB here. **This is not a
+    property of the repository** and must not be quoted as one.
+  * **Tracked content:** `output/` ~94 MB across 5,400 tracked files;
+    `pla_watch.db` ~32 MB, committed on every daily run.
+
+  No threshold or storage strategy is defined. When one is set, state it
+  against the fresh-clone packed size — see `docs/ROADMAP.md` §8.
+* **A green Actions run is not evidence the pipeline executed.** The daily
+  workflow schedules five windows and a guard admits one per New York day; the
+  other four exit successfully. Read the `Scheduling guard` step.
+* **Stale in-code narration.** Behaviour is correct everywhere below; only the
+  prose is wrong. Inventoried 2026-09-02; all of it needs a code PR, and none
+  of it was touched by the documentation reset.
+
+  `site/render.py`:
+  * module docstring calls `site/generator.py` "the live China Mil Watch site"
+    and `generate_preview.py` "the Indo-Pacific Record candidate … Tested,
+    complete, and not public" — inverted since the launch;
+  * the same docstring says `DEFAULT_SITE_MODE` "is `LEGACY` today", that
+    "Candidate mode REQUIRES an explicit destination", and that "the scheduled
+    workflow sets nothing, so it resolves to legacy";
+  * the `INDO_PACIFIC_RECORD` constant comment still reads "Not public.
+    Renders to a disposable destination", and two later comments still call the
+    live mode a "candidate";
+  * `render_site()`'s docstring says "The candidate has no default destination
+    on purpose" — it defaults to `output/`;
+  * **stale CLI help:** `--out` advertises "required for
+    `indo-pacific-record`". It is optional; both modes default to `output/`.
+
+  `pipeline.py`:
+  * the render comment says the no-mode call "resolves to `DEFAULT_SITE_MODE` —
+    legacy — exactly as before".
+
+  `tests/test_site_mode_contract.py` (narration only — every assertion is
+  current and passing):
+  * module docstring describes the live renderer as publishing "under its
+    historical China Mil Watch identity" and Indo-Pacific Record as "the
+    candidate", and calls the mode rename "a candidate-side change with no
+    public surface";
+  * `test_the_pipeline_selects_no_mode_so_it_resolves_to_legacy` — the **name**
+    is wrong (it resolves to `indo-pacific-record`); the assertions it makes,
+    that `pipeline.py` selects no mode, remain correct;
+  * `TestCandidateBuild`, its docstring, `test_the_build_reports_candidate_mode`
+    and a later "candidate renderer" reference all name the live production
+    mode as a candidate.
+
+## 7. Immediate priorities
+
+Full ordering and rationale in `docs/ROADMAP.md`. In short:
+
+1. Restore the human analytical publication cadence.
+2. Complete Singapore's Day 7 / Day 14 human checkpoint reviews.
+3. Scoped screening/backfill for publication-ready windows only.
+4. Terminal processing states and retry budgets for poison and empty-body
+   records.
+5. An explicit continue/pause decision on the Japan shadow desk.
+
+Further frontend polish and geographic promotion are deferred until the
+research and review gates are healthy.
+
+## 8. Prohibited shortcuts and human-review gates
+
+* Never invent Chinese text, translations, titles, outlets, dates, units, ranks
+  or claims. Historical gaps stay recorded as warnings.
+* Never hand-edit `output/` — it is generated. Fix templates, scripts or
+  sidecars and re-render. Sidecar JSON under `output/the-pla-watch/posts/*.json`
+  is the canonical edition record.
+* Never bypass a source's access challenge, impersonate a browser, or use a
+  proxy to defeat one. An institution must be able to recognise this collector
+  and refuse it.
+* No shadow desk is promoted automatically. Promotion requires 30 consecutive
+  collecting days, completed human checkpoint reviews, and a recorded owner
+  sign-off in `DECISION_LOG.md`.
+* Do not commit, push, deploy, publish, regenerate output, or run collection
+  unless explicitly asked.
+* An edition is published only after the `EDITORIAL_QA_CHECKLIST.md` gate and a
+  rendered-page review; where that was skipped, it is recorded, not implied.

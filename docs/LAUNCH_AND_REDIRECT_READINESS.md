@@ -1,15 +1,22 @@
 # Launch and redirect readiness
 
-What has to be true before Indo-Pacific Record replaces China Mil Watch as the
-public identity, what the launch mechanically does, and how to roll it back.
+> **HISTORICAL — the rebrand is complete.** This document was the pre-launch
+> plan. It is kept because §2 (what the launch mechanically was), §3
+> (redirects) and §5 (standing post-launch obligations) remain the reference
+> for the rollback path and for the permanent redirect commitments. The
+> readiness gates in §1 are a **historical checklist**; current state lives in
+> `PROJECT_STATE.md` and current priorities in `docs/ROADMAP.md`.
 
-**Executed 2026-08-27.** `DEFAULT_SITE_MODE` is `INDO_PACIFIC_RECORD`,
-`DECLARED_SNAPSHOT` is `2026-08-26` / 3,574 / `d5b897cd…`, `output/CNAME` is
-`indopacificrecord.org`, and `chinamilwatch.org` is served by a separate
-redirect-only Pages site that sends each of its 1,451 published addresses to
-its counterpart here. `DECISION_LOG.md` 2026-08-27 records what the launch
-constrains; this document is kept as the plan it followed, corrected below
-where the plan and the execution differed.
+**Executed 2026-08-27, and verified live 2026-09-02.** `DEFAULT_SITE_MODE` is
+`INDO_PACIFIC_RECORD`, `DECLARED_SNAPSHOT` is `2026-08-26` / 3,574 /
+`d5b897cd…` (a release pin, not the daily corpus identity — DECISION_LOG
+2026-08-28), `output/CNAME` and both deploy workflows name
+`indopacificrecord.org`, `https://indopacificrecord.org` serves the record
+under the Indo-Pacific Record masthead, and `chinamilwatch.org` is served by a
+separate redirect-only Pages site that sends each of its 1,451 published
+addresses to its counterpart here. `DECISION_LOG.md` 2026-08-27 records what
+the launch constrains; this document is kept as the plan it followed, corrected
+below where the plan and the execution differed.
 
 Two things the plan did not anticipate, both found by building it:
 
@@ -22,9 +29,13 @@ Two things the plan did not anticipate, both found by building it:
 
 ---
 
-## 1. Gates — all owner-owned, none met by this branch
+## 1. Gates — historical pre-launch checklist
 
-| # | Gate | State |
+**This table records the state at launch, not current state.** Rows are updated
+only where a gate has since closed; §Gate status today, below the table, is the
+current reading.
+
+| # | Gate | State at launch |
 |---|---|---|
 | 1 | One non-China desk collecting 30 consecutive days | **Not met.** Singapore is in shadow. The ledger holds the elapsed count; this document deliberately does not restate it. |
 | 2 | That desk's source universe published | Scope is written down (`shadow/singapore_mindef/README.md`, and the registry entry). Publishing it is part of the launch, not of shadow. |
@@ -33,14 +44,28 @@ Two things the plan did not anticipate, both found by building it:
 | 5 | Owner sign-off recorded in `DECISION_LOG.md` | **Done**, 2026-08-27. |
 | 6 | Trademark screening for "Indo-Pacific Record" | **Not performed.** A lawyer's job. |
 | 7 | Domain, DNS, social handles, organization naming | **Domain and DNS done**: `indopacificrecord.org`, apex A/AAAA and `www` CNAME on Namecheap BasicDNS, account domain verified. Handles and organization naming remain open. |
-| 8 | License | **Not chosen.** |
+| 8 | License | Not chosen at launch. **Since closed** — see below. |
 
-Gates 5 and 7 were closed at the launch. **Gates 1, 6 and 8 remain open**:
-no second desk has thirty consecutive collecting days, no trademark screening
-has been performed, and no licence has been chosen. The launch proceeded on the
-owner's explicit instruction with those three outstanding, which is a decision
-rather than an oversight, and none of the published pages claims otherwise —
-the desk directory still shows one collecting desk of four.
+Gates 5 and 7 were closed at the launch, which proceeded on the owner's
+explicit instruction with 1, 6 and 8 outstanding. That was a decision rather
+than an oversight, and no published page claimed otherwise.
+
+### Gate status today (2026-09-02)
+
+* **Gate 8 — licence: CLOSED.** The repository carries `LICENSE` (MIT, for the
+  software) and `CONTENT_AND_DATA_RIGHTS.md`, which separates software,
+  original editorial work, official source documents and public facts. Any
+  document still describing licensing as undecided is stale.
+* **Gate 7 — domain and DNS: CLOSED and live.** `indopacificrecord.org`
+  resolves and serves the record. Social handles and organization naming remain
+  open; that part of the gate is unchanged.
+* **Gate 1 — a second desk collecting 30 consecutive days: STILL OPEN.** Two
+  desks are now in shadow evaluation, Singapore and Japan, and neither has
+  qualified. Elapsed counts live in each desk's ledger and are deliberately not
+  restated here.
+* **Gate 6 — trademark screening: STILL OPEN.** Not performed. A lawyer's job.
+
+The desk directory shows one collecting desk of four, which remains accurate.
 
 ---
 
@@ -122,9 +147,12 @@ dispositions do not change, only the mechanism.
 
 ---
 
-## 4. Verification before flipping the switch
+## 4. Verification before flipping the switch — historical
 
-Run in order; every one of these passes today on this branch:
+**This section describes the pre-flip verification and is retained as the
+rollback rehearsal.** The commands still work; the snapshot semantics changed
+on 2026-08-28 (an omitted snapshot now describes the corpus being rendered).
+Run in order:
 
 ```bash
 .venv/bin/python -m unittest discover -s tests -t .

@@ -1,8 +1,24 @@
-# Singapore shadow checkpoint reviews
+# Shadow checkpoint reviews
 
 The 30-day qualification requires that manual corpus reviews happen around days
 7, 14 and 30, and that there is evidence they happened. This document is how
 those reviews are run so that they are reproducible rather than improvised.
+
+**Scope.** The tooling and the branch constants described here are
+**Singapore-specific**: `scripts/review_shadow_state.py` and
+`scripts/publish_shadow_review.py` read the Singapore state branch and publish
+to `review/singapore-mindef`. The **Japan** shadow desk (`shadow/jp-mod`) is
+subject to the same checkpoint requirement, the same human-review standard and
+the same no-automatic-promotion rule, but **has no review tooling yet**; a
+Japan checkpoint would need an equivalent tool, or an explicit extension of
+this one, before a formal packet could be produced. Do not point the Singapore
+publisher at Japan state — the target branch is a constant precisely so it
+cannot be redirected.
+
+Neither desk is qualified. A completed checkpoint review qualifies nothing on
+its own, and no review outcome promotes a desk: promotion is an owner decision
+recorded in `DECISION_LOG.md` after 30 consecutive collecting days and the
+reviews are complete.
 
 `scripts/review_shadow_state.py` produces the evidence package. It validates
 what a machine can validate and then stops. **The checkpoint is a person
@@ -13,9 +29,9 @@ substitutes for that, and the report says so on its first screen.
 
 ## Running a checkpoint
 
-Take a fresh clone of the state branch — never review the branch in place, and
-never point the tool at the production worktree. Keep the clone's `.git`: it is
-what proves which commit the evidence came from.
+Take a fresh clone of the Singapore state branch — never review the branch in
+place, and never point the tool at the production worktree. Keep the clone's
+`.git`: it is what proves which commit the evidence came from.
 
 ```bash
 git clone --branch shadow/singapore-mindef --single-branch \
@@ -37,6 +53,29 @@ copy of `state/` instead. That is a rehearsal, and it says so.
 `--as-of` is what makes a package reproducible; pass it explicitly. Exit status
 is `0` when no anomalies were found, `1` when there are anomalies to explain,
 and `2` when the state was refused outright.
+
+### A checkpoint that was missed can still be completed
+
+A review that did not happen on its checkpoint day is not forfeit. Point
+`--state-commit` at the commit the state branch actually held at that
+checkpoint — the packet exports `state/` from that commit object with
+`git cat-file`, so the evidence is the historical corpus rather than today's —
+and set `--checkpoint` to the checkpoint being answered.
+
+What must stay honest:
+
+* the packet identifies the historical state commit and tree it was built
+  from, and that identity travels in the manifest, the receipt and the
+  preserved commit message;
+* the sign-off's completion timestamp is **when the human review actually
+  happened**, never the checkpoint date it answers;
+* `--as-of` describes the corpus being reviewed and is not a claim about when
+  the reviewer worked;
+* nothing is backdated, and a late packet is never presented as
+  contemporaneous.
+
+A retrospective review is real evidence and is preserved as such. Like every
+checkpoint, it qualifies nothing on its own.
 
 While the corpus is small enough to read end to end, use `--review-all`. Once it
 is not, use `--since-ledger <filename>` to queue everything first seen since the

@@ -1,6 +1,27 @@
-# Agent Workflows & Model Routing — China Mil Watch
+# Agent Workflows & Model Routing — Indo-Pacific Record
 
-How future Claude sessions allocate models, skills, and agents. Durable.
+How future Claude sessions allocate models, skills, and agents, and the
+constraints every agent works under. Durable.
+
+## 0. Documentation hierarchy
+
+An agent reads down this list and stops at the document that governs the change
+it is making. Do not restate one document's content inside another.
+
+| Document | Governs |
+|---|---|
+| `README.md` | public and contributor overview |
+| `PROJECT_STATE.md` | current operational snapshot and immediate handoff |
+| `docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md` | identity, editorial standard, provenance, publication principles |
+| `docs/ARCHITECTURE_AND_PUBLISHING.md` | technical layer map, commands, publishing and deployment |
+| `docs/AGENT_WORKFLOWS.md` (this file) | agent operating constraints and model routing |
+| `docs/ROADMAP.md` | current priority order |
+| `DECISION_LOG.md` | durable decisions that constrain future work |
+| Git history | superseded state and incident history |
+
+`PROJECT_STATE.md` is a **current snapshot, not a diary**. Update it in place
+and let Git hold the previous version; do not append a new dated section for
+every session.
 
 ## 1. Model routing
 
@@ -27,12 +48,25 @@ architecture.
 ### Standing rules (any model)
 - Read PROJECT_STATE.md at session start; read the relevant docs/*.md
   before changing what they govern; update PROJECT_STATE.md after
-  meaningful work.
+  meaningful work, keeping it a snapshot rather than a diary.
 - Editorial-integrity rules (PRODUCT_AND_EDITORIAL_DOCTRINE §4) bind every
   model at every tier: never invent Chinese text, translations, dates,
   ranks, sources, or claims — in code, copy, tests, or fixtures.
 - Never commit, push, deploy, publish, or regenerate output unless the
   analyst explicitly asks.
+- Never hand-edit `output/`; never modify `pla_watch.db` outside the pipeline;
+  never modify shadow branches, ledgers or stored shadow records.
+- Never defeat a source's access challenge, impersonate a browser, or route
+  around `robots.txt`, however much coverage it would unlock.
+- Never describe a shadow desk as qualified and never promote one. Promotion
+  needs 30 consecutive collecting days, completed human checkpoint reviews,
+  and owner sign-off in DECISION_LOG.md.
+- The production renderer is `site/render.py`; the deploy gate is
+  `scripts/validate_output.py`, whose governed baseline is **10 warnings**.
+  A new warning is explained, never invented away.
+- **Do not invent facts to fill a documentation gap.** State the uncertainty
+  and name the authoritative source — the database, the ledger, the registry,
+  the workflow file, or Git history.
 
 ## 2. Skills
 
