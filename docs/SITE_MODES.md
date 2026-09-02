@@ -70,17 +70,19 @@ These are contract, not convention. Each is covered by
 
 * **An unrecognised mode raises.** There is no fallback to legacy. A typo that
   quietly published the wrong site is the failure this seam exists to prevent.
-* **The renderer never writes into `output/` directly, in either mode.** This
-  is the guard that used to be stated as "the candidate needs an explicit
-  destination"; before the launch `indo-pacific-record` had no default
+* **`indo-pacific-record` never writes into `output/` directly.** This applies
+  to the production path only; legacy's behaviour is described in the next
+  rule. It is the guard that used to be stated as "the candidate needs an
+  explicit destination": before the launch `indo-pacific-record` had no default
   destination and refused `output/` outright. That requirement is gone —
-  `output/` is now the tree this mode is supposed to write — and the
-  protection moved rather than vanished:
+  `output/` is now the tree this mode is supposed to write — and the protection
+  moved rather than vanished:
 
   1. an ordinary no-argument call resolves to `indo-pacific-record` and
      targets `output/`;
-  2. `render_site()` builds the tree in a temporary staging directory
-     (`tempfile.TemporaryDirectory`), never in the destination;
+  2. because the target *is* `output/`, `render_site()` builds the tree in a
+     temporary staging directory (`tempfile.TemporaryDirectory`) rather than in
+     the destination;
   3. `generate_preview.build()` **still refuses** `output/` and any directory
      inside it, independently of anything in `render.py`, and the staged build
      satisfies that refusal by construction;
@@ -88,12 +90,26 @@ These are contract, not convention. Each is covered by
      out first and putting it back after — `the-pla-watch/`, `assets/`,
      `data/`, the predecessor marks, `CNAME` and `.nojekyll`.
 
+  Steps 2 and 4 are conditional on the destination being `output/`. Given an
+  explicit `--out` elsewhere, this mode builds straight into that directory and
+  no exchange happens — there is nothing there to preserve. `build()`'s refusal
+  in step 3 is unconditional and is what stops an `--out` aimed back at
+  production.
+
   Step 4 is why the exchange matters rather than being an implementation
   detail: a straight replacement of `output/` would delete the thirteen
   published editions, their sidecar records and their cited assets, none of
   which the renderer emits. **Anything added to the published tree that the
   renderer does not itself emit must be added to `CARRIED_FORWARD` or the next
   daily run deletes it.**
+* **Legacy writes directly, and always did.** None of the staging above applies
+  to it. `render_site()`'s `LEGACY` branch selects its target — `output/` by
+  default — and calls `site/generator.py`'s `generate_site(target)` straight
+  into it: no temporary directory, no `publish()` exchange, no
+  `CARRIED_FORWARD`. That is correct for its purpose. Legacy is the rollback
+  path, it emits the predecessor's whole tree including the namespace the
+  record renderer is forbidden to touch, so it has nothing to carry across and
+  nothing to exchange. It stays reachable for exactly that reason.
 * **A publishable mode fails closed without an origin.** `indo-pacific-record`
   needs the origin it will be published under (`--site-origin`,
   `PLA_WATCH_SITE_ORIGIN`, or `config.SITE_ORIGIN`, which is set). Without one
