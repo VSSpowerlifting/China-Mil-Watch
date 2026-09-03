@@ -106,13 +106,31 @@ Neither desk is qualified, and neither may be described or promoted as
 qualified. Doctrine in `docs/SHADOW_COLLECTION.md`; review procedure in
 `docs/SHADOW_REVIEW.md`.
 
-**Singapore MINDEF** — state branch `shadow/singapore-mindef` (`fd8428c6`).
-Day zero 2026-08-19T23:03:09Z. The 2026-09-01 run recorded `shadow_day` **13**,
-result `ok`, health `ok`, `robots_status=allowed`; 14 ledger entries.
-**Awaiting human review:** `review/singapore-mindef` does not exist on the
-remote, so no checkpoint packet has been published. The Day 7 checkpoint is
-past due and Day 14 is imminent. Completing them is a human task that the
-tooling can prepare but cannot perform.
+**Singapore MINDEF** — state branch `shadow/singapore-mindef`. Day zero
+2026-08-19T23:03:09Z. The 2026-09-02 run recorded `shadow_day` **14**, result
+`ok_all_duplicates`, health `ok`, `robots_status=allowed`; 15 ledger entries,
+40 records.
+
+**Day 7 and Day 14 human checkpoint reviews are complete and published** to the
+orphan branch `review/singapore-mindef`, both `pass_with_findings`, reviewer
+Benjamin Yang:
+
+| Checkpoint | State commit | Completed-review id | Scope |
+|---|---|---|---|
+| Day 7 (retrospective) | `f806335e` | `403df921…3c3d89` | complete corpus, 37 of 37 |
+| Day 14 | `5fa49c81` | `10a28df1…e7b756` | focused queue, 16 of 40 |
+
+**Day 30 remains required, and Singapore remains unqualified.** Two completed
+checkpoints qualify nothing: promotion still needs 30 consecutive collecting
+days, the Day 30 review, and an owner sign-off recorded in `DECISION_LOG.md`.
+
+Both reviews disposed of the same class of finding — a scheduled run delayed
+across UTC midnight was stamped with its execution date, leaving its nominal
+day with no ledger (2026-08-26 and 2026-08-31). No collection loss was
+observable: the state-hash chain stayed coherent, no fetch, extraction or
+access failure was recorded, and the 30-day lookback covered both days. A fix
+for future attribution is **proposed, not merged** — see the open PR for
+`fix/shadow-logical-target-date-20260903`.
 
 **Japan MOD** — state branch `shadow/jp-mod` (`6761b963`). Day zero
 2026-08-27T02:14:38Z. The 2026-09-02 run recorded `shadow_day` **5**, result

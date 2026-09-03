@@ -77,6 +77,42 @@ What must stay honest:
 A retrospective review is real evidence and is preserved as such. Like every
 checkpoint, it qualifies nothing on its own.
 
+### Logical collection dates versus execution timestamps
+
+A ledger's `target_date` is the **logical collection date** — the day the run
+was scheduled to cover. `started_utc` and `finished_utc` are the **actual
+execution timestamps**. They are different facts and a review must not conflate
+them.
+
+They used to be conflated. Both collectors derived `target_date` from
+`datetime.now(timezone.utc).date()`, so a scheduled job that GitHub started
+after UTC midnight was stamped with the following day and its own nominal day
+acquired no ledger. The Day 7 and Day 14 reviews each found one:
+
+| Nominal day | Run | Created (UTC) | Stamped |
+|---|---|---|---|
+| 2026-08-26 | 33027905549 | 2026-08-27T00:45:40Z | 2026-08-27 |
+| 2026-08-31 | 33455386368 | 2026-09-01T00:35:45Z | 2026-09-01 |
+
+Both were disposed as **target-date metadata defects, not corpus-integrity
+failures**: health `ok`, zero fetch, extraction and access failures, a coherent
+state-hash chain, and a 30-day lookback that covered the nominal day either
+way. Those dispositions remain historically true and the ledgers behind them
+are immutable — nothing is renamed, edited, backfilled or squashed.
+
+`core/shadow_schedule.py` resolves the logical date at the source for future
+runs: a scheduled run belongs to the most recent occurrence of its cron
+time-of-day at or before it started, and a manual dispatch records the honest
+UTC date it ran on rather than borrowing a slot. A ledger written after that
+change also carries `target_date_source`, so a reader never has to infer which
+rule produced the date.
+
+**The review tool was deliberately not changed.** A missing-day anomaly is a
+true statement about the ledger set it reads, and teaching it to suppress one
+would have removed the signal that found this defect. Ledgers written before
+the fix keep their execution-date stamps, so historical missing-day anomalies
+will keep appearing and still need disposition.
+
 While the corpus is small enough to read end to end, use `--review-all`. Once it
 is not, use `--since-ledger <filename>` to queue everything first seen since the
 previous checkpoint; the focused rules below fill in the rest.

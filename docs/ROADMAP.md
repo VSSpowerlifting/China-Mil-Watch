@@ -37,14 +37,18 @@ missed weeks are published retrospectively or recorded as a disclosed gap; a
 gap that is ruled and recorded is acceptable, a gap that is silently skipped is
 not.
 
-### 2. Complete Singapore's required human reviews
+### 2. Complete Singapore's required human reviews — Day 30 remains
 
-Singapore is past its Day 7 checkpoint and approaching Day 14, and **no
-checkpoint packet has been published** — `review/singapore-mindef` does not
-exist on the remote. The tooling (`scripts/review_shadow_state.py`,
-`scripts/publish_shadow_review.py`) is merged and rehearsed; what is missing is
-a person reading stored records against the ministry's own pages and completing
-the structured sign-off.
+**Day 7 and Day 14 are complete and published** to `review/singapore-mindef`,
+both `pass_with_findings` (completed-review ids `403df921…3c3d89` and
+`10a28df1…e7b756`). Day 7 was retrospective, against the historical state
+commit; Day 14 used a focused queue of 16 of 40 records with Day 7's decisions
+deliberately not carried forward.
+
+**Day 30 is the remaining Singapore gate**, and it is a gate, not a formality:
+two completed checkpoints qualify nothing. What is still missing is 30
+consecutive collecting days, the Day 30 review, and an owner sign-off recorded
+in `DECISION_LOG.md`.
 
 Procedure is in `docs/SHADOW_REVIEW.md`. Nothing about this is automatable: an
 unfilled report is not evidence of a completed review.

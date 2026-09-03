@@ -81,12 +81,19 @@ jobs:
         working-directory: repo
         run: |
           set -euo pipefail
+          # --event-name / --cron-utc give the collector the LOGICAL date of
+          # the nominal 21:10 UTC slot. Actions starts scheduled jobs late —
+          # observed hours late here — and a run that crosses UTC midnight was
+          # previously stamped with the following day, leaving its own day with
+          # no ledger. Keep --cron-utc equal to the cron above.
           python scripts/shadow_collect.py \
             --state-dir "${RUNNER_TEMP}/shadow-state/state" \
             --lookback-days 30 \
             --cap 40 \
             --run-id "${GITHUB_RUN_ID}" \
-            --commit "${GITHUB_SHA}"
+            --commit "${GITHUB_SHA}" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --cron-utc "21:10"
 
       # Only reached when collection succeeded: a failing run must not persist a
       # half-written state, and `set -e` above already stopped the job.

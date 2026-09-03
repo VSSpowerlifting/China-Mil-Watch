@@ -4,6 +4,53 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-03 — A shadow run's date is its scheduled slot, not its execution date
+
+Two completed Singapore checkpoint reviews (Day 7 `403df921…3c3d89`, Day 14
+`10a28df1…e7b756`, both `pass_with_findings`, preserved on
+`review/singapore-mindef`) each disposed of a missing-day anomaly with the same
+root cause. The rulings that follow constrain future work.
+
+1. **`target_date` is the logical collection date.** It names the day a run was
+   scheduled to cover. `started_utc` and `finished_utc` name when it actually
+   ran. Deriving the first from the second — which both collectors did —
+   silently reassigns a run to the wrong day whenever Actions starts it after
+   UTC midnight. Observed twice: run 33027905549 (created 2026-08-27T00:45:40Z,
+   nominal 2026-08-26) and run 33455386368 (created 2026-09-01T00:35:45Z,
+   nominal 2026-08-31). Each left its nominal day with no ledger and made the
+   next on-time run the second ledger carrying that date.
+
+2. **A scheduled run belongs to its nominal slot**: the most recent occurrence
+   of the cron's time-of-day at or before it started. `core/shadow_schedule.py`
+   is the single implementation, and a test holds each workflow's `--cron-utc`
+   equal to its own cron so the two copies of that fact cannot drift.
+
+3. **A manual dispatch may not borrow a slot.** It records the UTC date it
+   actually ran on, or an explicit `--target-date`, and the ledger says which
+   through `target_date_source`. A hand-started run that could claim a
+   scheduled run's date would make the ledger unable to distinguish the two.
+
+4. **A scheduled run with no cron time is refused, not defaulted.** Falling
+   back to the execution date is the original defect; a workflow that forgets
+   to pass its cron must fail on its first run rather than quietly two months
+   later inside a checkpoint review.
+
+5. **Historical ledgers are immutable, and the review tool was not changed.**
+   No ledger is renamed, edited, backfilled or squashed: two completed human
+   reviews reason about them and a rewrite would invalidate both. The
+   missing-day anomaly stays in `review_shadow_state.py` because it is a true
+   statement about the ledgers it reads — suppressing it would have removed the
+   signal that found this bug. Ledgers written before the fix keep their
+   execution-date stamps, and their anomalies still require disposition.
+
+6. **Japan was fixed in the same change.** Its cron sits at 22:40 UTC, eighty
+   minutes from midnight, so it carried the same defect with more exposure, not
+   less. Fixing one collector and not the other would have left the identical
+   bug in the desk with the shorter margin.
+
+Neither review qualifies or promotes Singapore. Day 30, 30 consecutive
+collecting days, and an owner sign-off recorded here all remain outstanding.
+
 ## 2026-09-02 — One documentation hierarchy, and PROJECT_STATE is a snapshot
 
 Governance reset. No code, data, output, workflow, shadow state, collection,

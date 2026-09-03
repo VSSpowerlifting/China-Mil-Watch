@@ -89,12 +89,18 @@ jobs:
         working-directory: repo
         run: |
           set -euo pipefail
+          # See the Singapore workflow and core/shadow_schedule.py: the
+          # logical date is the nominal 22:40 UTC slot, not the execution date.
+          # Japan's cron sits eighty minutes from midnight, so it is the more
+          # exposed of the two. Keep --cron-utc equal to the cron above.
           python scripts/shadow_collect_japan.py \
             --state-dir "${RUNNER_TEMP}/shadow-state/state" \
             --lookback-days 14 \
             --cap 40 \
             --run-id "${GITHUB_RUN_ID}" \
-            --commit "${GITHUB_SHA}"
+            --commit "${GITHUB_SHA}" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --cron-utc "22:40"
 
       - name: Assert the collector left the repository untouched
         working-directory: repo
