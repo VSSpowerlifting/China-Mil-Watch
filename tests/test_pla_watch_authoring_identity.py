@@ -347,6 +347,26 @@ class TestFixtureRenders(unittest.TestCase):
         html = self.render(sidecar("2026-08-08"))
         self.assertIn(HISTORICAL_NAME, html)
         self.assertIn(f"<em>{SERIES_NAME}</em>", html)
+        # The masthead tag states the publishing identity of the page it is on.
+        self.assertIn(f"A weekly publication of {HISTORICAL_NAME}", html)
+        self.assertNotIn(f"A weekly publication of {CURRENT_NAME}", html)
+
+    def test_a_new_edition_renders_the_current_masthead(self):
+        html = self.render({"date": "2026-08-15", "issue_number": 14,
+                            "title": "T", "dek": "D"})
+        self.assertIn(f"A weekly publication of {CURRENT_NAME}", html)
+        self.assertNotIn(f"A weekly publication of {HISTORICAL_NAME}", html)
+
+    def test_site_chrome_stays_current_on_a_historical_page(self):
+        """
+        The split the rename requires: the edition's own byline, citation,
+        author block and parent links are historical, while the navigation and
+        footer — the site the reader is actually on — are current.
+        """
+        html = self.render(sidecar("2026-08-08"))
+        self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
+        self.assertIn(f"{CURRENT_NAME} — Daily Brief", html)
+        self.assertIn(f"{CURRENT_NAME} — Archive", html)
 
     def test_an_early_edition_remains_historical(self):
         """No. 1 — the one with no stored author fields."""

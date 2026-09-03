@@ -532,7 +532,10 @@
       <a href="{{ pw_root | default('') }}index.html" class="pw-nameplate" aria-label="The PLA Watch home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
-        <span class="pw-tag">A weekly publication of Indo-Pacific Record</span>
+        {# The masthead states the publishing identity of the page it sits on, so on an
+           edition page it is that edition's publisher. Index, archive and terms carry no
+           edition context and fall through to the current identity. #}
+        <span class="pw-tag">A weekly publication of {{ publication | default('Indo-Pacific Record') }}</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
         <a href="{{ pw_root | default('') }}index.html" {% if active_page == 'index' %}class="active"{% endif %}>Latest Edition</a>
