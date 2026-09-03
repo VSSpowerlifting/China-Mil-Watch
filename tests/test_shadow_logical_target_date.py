@@ -23,6 +23,7 @@ from unittest import mock
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from core.collection import status as st
 from core.shadow_schedule import (
     SOURCES, SOURCE_EXPLICIT, SOURCE_MANUAL, SOURCE_SCHEDULE, ScheduleError,
     parse_cron_utc, parse_iso_date, parse_run_attempt, resolve_target_date,
@@ -541,8 +542,13 @@ def _load_collector(script):
 
 
 class _Discovery:
-    """Enough of a discovery result for the no-publications path."""
-    status = "ok_no_publications"
+    """
+    Enough of a discovery result for the no-publications path. The status comes
+    from the collector's own constant rather than a copy of its value: a stub
+    that hardcoded the string would quietly take a different branch if the
+    taxonomy ever moved.
+    """
+    status = st.OK_NO_PUBLICATIONS
     ok = False
     references = ()
     error_detail = None
