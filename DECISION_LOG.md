@@ -86,10 +86,23 @@ root cause. The rulings that follow constrain future work.
    signal that found this bug. Ledgers written before the fix keep their
    execution-date stamps, and their anomalies still require disposition.
 
-10. **Japan was fixed in the same change.** Its cron sits at 22:40 UTC, eighty
-    minutes from midnight, so it carried the same defect with more exposure,
-    not less. Fixing one collector and not the other would have left the
-    identical bug in the desk with the shorter margin.
+10. **Japan was fixed in the same change, where the defect is total.** Its
+    cron sits at 22:40 UTC, eighty minutes from midnight, and Actions has
+    started every scheduled Japan run late enough to cross it — observed
+    lateness 1h50m to 7h38m. Verified 2026-09-03 against `shadow/jp-mod`
+    `35f9b9c3`: **all 9 Japan ledgers are stamped one day after the slot they
+    belong to**, most recently run `33700195896`, which started
+    2026-09-03T00:36:36Z, stamped 2026-09-03 and belongs to 2026-09-02. Japan's
+    mis-attribution is systemic where Singapore's was occasional, so fixing one
+    collector and not the other was never an option.
+
+    Two consequences at the changeover, both accepted rather than smoothed. The
+    first slot-dated Japan run records 2026-09-03, a date the last
+    execution-dated ledger already carries, so one duplicate-date pair appears
+    and nominal 2026-09-02 acquires no Japan ledger; no ledger is rewritten to
+    hide it, and the review tool will report it truthfully. And the
+    qualification clock does not move: `shadow_day` is derived from
+    `finished_utc` against day zero, never from `target_date`.
 
 11. **What the evidence supports, stated at its actual strength.** The
     reviewed corpus shows a coherent state-hash chain across both boundaries,

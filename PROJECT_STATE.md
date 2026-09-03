@@ -151,14 +151,33 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
-**Japan MOD** — state branch `shadow/jp-mod` (`6761b963`). Day zero
-2026-08-27T02:14:38Z. The 2026-09-02 run recorded `shadow_day` **5**, result
-`ok_all_duplicates`, health **`partial`**. **Access-constrained:** RSS
-discovery works and PDF documents are retrieved in full, but HTML documents on
-the same host are returned behind an interactive challenge — 28 of 32 selected
-items were challenged in that run. Challenged items are stored as titled, dated
-discovery records with no body and nothing inferred. The challenge is **never**
-to be bypassed; resolving this means requesting an official route.
+**Japan MOD** — state branch `shadow/jp-mod`. Day zero
+2026-08-27T02:14:38Z. The 2026-09-03 run recorded `shadow_day` **6**, result
+`ok_all_duplicates`, health **`partial`**; 9 ledger entries. **Access-constrained:**
+RSS discovery works and PDF documents are retrieved in full, but HTML documents
+on the same host are returned behind an interactive challenge — 35 of 39
+selected items were challenged in that run. Challenged items are stored as
+titled, dated discovery records with no body and nothing inferred. The
+challenge is **never** to be bypassed; resolving this means requesting an
+official route.
+
+**Every Japan ledger written so far carries an execution date, not a slot
+date.** Japan's cron sits at 22:40 UTC and Actions has started every scheduled
+Japan run late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
+Verified 2026-09-03 against `shadow/jp-mod`: all 9 ledgers are stamped one day
+after the slot they belong to, most recently run `33700195896` (started
+2026-09-03T00:36:36Z, stamped 2026-09-03, nominal 2026-09-02). Japan's
+mis-attribution is systemic, where Singapore's was occasional.
+
+Two consequences of the source fix, both expected and neither retroactive:
+
+* the first slot-dated Japan run records 2026-09-03, which the last
+  execution-dated ledger already carries, so one duplicate-date pair appears at
+  the changeover and nominal 2026-09-02 acquires no Japan ledger. Historical
+  ledgers are not rewritten to smooth this;
+* **the qualification clock is unaffected.** `shadow_day` is derived from
+  `finished_utc` against day zero, never from `target_date`, so no day count
+  moves.
 
 ## 6. Known technical debt
 

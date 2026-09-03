@@ -138,6 +138,91 @@ class TestJapanIsAffectedTheSameWay(unittest.TestCase):
         self.assertNotEqual(a, b)
 
 
+class TestTheRealJapanLedgerSequence(unittest.TestCase):
+    """
+    Japan is not the milder case. Its cron sits at 22:40 UTC and Actions has
+    started every scheduled Japan run late enough to cross midnight, so every
+    ledger written before the fix is stamped a day after its slot. These start
+    times are the real ones, read from `shadow/jp-mod` on 2026-09-03.
+    """
+
+    #: (run id, started_utc, the date the ledger actually recorded)
+    LEDGERS = (
+        ("33032633240", "2026-08-27T02:14:34+00:00", "2026-08-27"),
+        ("33036656277", "2026-08-27T03:32:42+00:00", "2026-08-27"),
+        ("33147429840", "2026-08-28T06:17:51+00:00", "2026-08-28"),
+        ("33232394996", "2026-08-29T03:51:06+00:00", "2026-08-29"),
+        ("33283822684", "2026-08-30T00:39:51+00:00", "2026-08-30"),
+        ("33345652417", "2026-08-31T00:48:45+00:00", "2026-08-31"),
+        ("33458500053", "2026-09-01T01:23:11+00:00", "2026-09-01"),
+        ("33575561889", "2026-09-02T00:30:21+00:00", "2026-09-02"),
+        ("33700195896", "2026-09-03T00:36:36+00:00", "2026-09-03"),
+    )
+
+    def test_every_recorded_japan_ledger_is_a_day_late(self):
+        for run_id, started, recorded in self.LEDGERS:
+            with self.subTest(run=run_id):
+                fixed, source = resolve_target_date(
+                    utc(started), "schedule", JP_CRON, None, 1)
+                self.assertEqual(source, SOURCE_SCHEDULE)
+                self.assertEqual(
+                    fixed, date.fromisoformat(recorded) - timedelta(days=1),
+                    "run %s should belong to the day before %s"
+                    % (run_id, recorded))
+
+    def test_run_33700195896_belongs_to_2026_09_02(self):
+        """
+        The occurrence that happened *after* this defect was reported — the
+        reason Japan could not be left for a follow-up change.
+        """
+        self.assertEqual(
+            resolve_target_date(utc("2026-09-03T00:36:36+00:00"),
+                                "schedule", JP_CRON, None, 1),
+            (date(2026, 9, 2), SOURCE_SCHEDULE))
+
+    def test_the_repaired_japan_sequence_has_no_duplicate_after_day_zero(self):
+        """
+        Day zero ran twice on 2026-08-27, so that pair stays a pair. Every
+        other slot-dated run is distinct and consecutive.
+        """
+        fixed = [resolve_target_date(utc(s), "schedule", JP_CRON, None, 1)[0]
+                 for _, s, _ in self.LEDGERS]
+        self.assertEqual(fixed[0], fixed[1], "the day-zero pair is real")
+        rest = fixed[1:]
+        self.assertEqual(len(set(rest)), len(rest), "duplicate slot date")
+        for earlier, later in zip(rest, rest[1:]):
+            self.assertEqual(later - earlier, timedelta(days=1),
+                             "gap in the repaired sequence")
+
+    def test_the_changeover_duplicates_one_japan_date(self):
+        """
+        Stated rather than smoothed. The last execution-dated ledger carries
+        2026-09-03; the first slot-dated run carries it too, so nominal
+        2026-09-02 acquires no Japan ledger. Documented in PROJECT_STATE.md,
+        DECISION_LOG.md and docs/SHADOW_REVIEW.md, and deliberately not fixed
+        by rewriting a ledger.
+        """
+        last_pre_fix = date(2026, 9, 3)
+        for executed_at in ("2026-09-03T23:05:00+00:00",
+                            "2026-09-04T00:35:00+00:00"):
+            with self.subTest(executed=executed_at):
+                first_post_fix, _ = resolve_target_date(
+                    utc(executed_at), "schedule", JP_CRON, None, 1)
+                self.assertEqual(first_post_fix, last_pre_fix)
+
+    def test_the_qualification_clock_does_not_read_the_target_date(self):
+        """
+        `shadow_day` is derived from `finished_utc` against day zero, so
+        changing the logical date moves no day count in either collector.
+        """
+        for script in ("shadow_collect.py", "shadow_collect_japan.py"):
+            with self.subTest(script=script):
+                src = (REPO_ROOT / "scripts" / script).read_text(encoding="utf-8")
+                body = src.split('entry["shadow_day"] =', 1)[1][:200]
+                self.assertIn("finished_utc", body)
+                self.assertNotIn("target_date", body)
+
+
 class TestManualDispatchCannotMasqueradeAsASlot(unittest.TestCase):
 
     def test_manual_dispatch_records_the_actual_utc_date(self):

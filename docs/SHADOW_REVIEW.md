@@ -89,10 +89,23 @@ They used to be conflated. Both collectors derived `target_date` from
 after UTC midnight was stamped with the following day and its own nominal day
 acquired no ledger. The Day 7 and Day 14 reviews each found one:
 
-| Nominal day | Run | Created (UTC) | Stamped |
-|---|---|---|---|
-| 2026-08-26 | 33027905549 | 2026-08-27T00:45:40Z | 2026-08-27 |
-| 2026-08-31 | 33455386368 | 2026-09-01T00:35:45Z | 2026-09-01 |
+| Desk | Nominal day | Run | Started (UTC) | Stamped |
+|---|---|---|---|---|
+| Singapore | 2026-08-26 | 33027905549 | 2026-08-27T00:45:40Z | 2026-08-27 |
+| Singapore | 2026-08-31 | 33455386368 | 2026-09-01T00:35:45Z | 2026-09-01 |
+| Japan | 2026-09-02 | 33700195896 | 2026-09-03T00:36:36Z | 2026-09-03 |
+
+**On Japan the defect is not occasional but total.** Its cron sits at 22:40 UTC
+and Actions has started every scheduled Japan run late enough to cross midnight
+— observed lateness 1h50m to 7h38m. Verified 2026-09-03 against `shadow/jp-mod`
+`35f9b9c3`: all 9 Japan ledgers are stamped one day after their slot. A Japan
+reviewer should expect every pre-fix ledger to read one day late, and should
+expect one duplicate-date pair at the changeover — the first slot-dated run
+records 2026-09-03, which the last execution-dated ledger already carries, so
+nominal 2026-09-02 never acquires a Japan ledger. That is reported truthfully
+rather than smoothed, and no ledger is rewritten to hide it. The qualification
+clock is unaffected either way: `shadow_day` comes from `finished_utc` against
+day zero, never from `target_date`.
 
 Both were disposed as **target-date metadata defects, not corpus-integrity
 failures**: health `ok`, zero fetch, extraction and access failures, a coherent
