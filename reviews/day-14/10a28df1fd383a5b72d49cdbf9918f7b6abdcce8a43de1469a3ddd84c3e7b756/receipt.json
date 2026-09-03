@@ -1,0 +1,40 @@
+{
+ "anomaly_count": 2,
+ "artifact_sha256": {
+  "record_inventory.jsonl": "844766379f649d8206c7ee19c64701f69899d5035d117eeb6e6d6276c0c6f9fc",
+  "review_report.md": "8ceaa98a9aae2dd0869f7455db13f64bb5f3159664bf5c1b9d9393e42c1adde6",
+  "signoff_template.json": "0cbd0fc6bd5d422b1263f893e34d769332ac082b616df1070fb7d831132d43f2"
+ },
+ "automated_package_id": "724a8a2457c8cda92df8ed04b8547f086d448bda55e8e6ac87d366cd64524042",
+ "checkpoint": "day-14",
+ "clock_sha256": "9b3e07aeabde79410a85f2f26533fa10bcdc0f61931e41a34ce1e9cffab76cf6",
+ "completed_review_id": "10a28df1fd383a5b72d49cdbf9918f7b6abdcce8a43de1469a3ddd84c3e7b756",
+ "corpus_count": 40,
+ "corpus_range": [
+  "2026-07-21",
+  "2026-09-01"
+ ],
+ "desk": "singapore-mindef",
+ "false_checks": 0,
+ "latest_ledger": "20260902T231841+0000-33694377692.json",
+ "latest_ledger_run_id": "33694377692",
+ "latest_shadow_day": 14,
+ "ledger_set_sha256": "67e490244a9679da1894c61a380ec844f1c9e2c4d100ec8eb8385e7e748a28b8",
+ "not_a_signature": "These identifiers bind answers to a corpus. They are not a cryptographic signature and do not verify the reviewer's identity.",
+ "provenance": "git-verified-tree/1",
+ "publisher_version": "1.0.0",
+ "queue_algorithm": "shadow-review-queue/1",
+ "records_required": 16,
+ "records_reviewed": 16,
+ "review_completed_utc": "2026-09-03T03:51:25+00:00",
+ "review_mode": "focused-queue",
+ "review_started_utc": "2026-09-03T02:07:33+00:00",
+ "reviewer": "Benjamin Yang",
+ "shadow_db_sha256": "d50eec1c9f6ff539cfe5ea3241493276a0cb7a450254104ca3f2bac4079d0d58",
+ "signoff_schema": "shadow-review-signoff/1",
+ "signoff_sha256": "6ae2df610425a744623440851d93177629974bb78630464e3c8d08f95aeab4ea",
+ "state_commit": "5fa49c81b9250b7723eb5f707f8c71d86d051903",
+ "state_ref": "shadow/singapore-mindef",
+ "state_tree": "ea29908033de29afeba03d318217d6bc6abb3bfd",
+ "verdict": "pass_with_findings"
+}

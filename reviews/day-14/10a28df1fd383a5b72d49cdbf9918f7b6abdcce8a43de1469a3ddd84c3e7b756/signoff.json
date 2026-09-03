@@ -1,0 +1,206 @@
+{
+ "anomalies": [
+  {
+   "anomaly": "no ledger for 2026-08-26, inside the observed collection period",
+   "disposition": "Accepted as an orchestration-delay and target-date metadata finding. The daily 21:10 UTC scheduled trigger was delayed across midnight; because the collector derives `target_date` from the actual UTC execution date, run 33027905549 was labelled 2026-08-27 rather than its nominal 2026-08-26 collection date. GitHub Actions records the scheduled run as created and started at 2026-08-27T00:45:40Z and successfully completed at 00:47:29Z. Its ledger reports health `ok`, zero fetch, extraction, and access failures, a coherent state-hash chain, a 30-day lookback encompassing 2026-08-26, and two insertions. No collection loss is observable in the reviewed corpus. Retained as a target-date metadata defect, not a corpus-integrity failure. After this checkpoint review, remediation should make the logical collection date explicit and add regression coverage for scheduled runs delayed past UTC midnight."
+  },
+  {
+   "anomaly": "no ledger for 2026-08-31, inside the observed collection period",
+   "disposition": "Accepted as an orchestration-delay and target-date metadata finding, recurring after the 2026-08-26 instance. The daily 21:10 UTC scheduled trigger was again delayed across midnight; because the collector derives `target_date` from the actual UTC execution date, run 33455386368 was labelled 2026-09-01 rather than its nominal 2026-08-31 collection date. GitHub Actions records the scheduled run as created and started at 2026-09-01T00:35:45Z and successfully completed at 00:37:23Z. Its ledger reports health `ok`, result `ok_all_duplicates`, zero fetch, extraction, and access failures, a coherent state-hash chain, a 30-day lookback encompassing 2026-08-31, and zero insertions against an unchanged stored total of 39. No collection loss is observable in the reviewed corpus. Retained as a target-date metadata defect, not a corpus-integrity failure. The recurrence strengthens the case for the remediation recorded against the 2026-08-26 finding: make the logical collection date explicit and add regression coverage for scheduled runs delayed past UTC midnight."
+  }
+ ],
+ "attestation": "I, Benjamin Yang, personally reviewed all 16 records in the Singapore MINDEF Day 14 focused checkpoint queue against their live canonical source pages and the Git-bound stored evidence. I made each recorded determination and confirm that this sign-off accurately reflects my review. I acknowledge the two documented orchestration-delay and target-date metadata findings. I understand that this focused review covered 16 of the 40 records in the checkpoint corpus, that the Day 7 decisions were not carried forward as Day 14 decisions, and that this review does not by itself qualify or promote the Singapore desk.",
+ "automated_package_id": "724a8a2457c8cda92df8ed04b8547f086d448bda55e8e6ac87d366cd64524042",
+ "checkpoint": "day-14",
+ "desk": "singapore-mindef",
+ "latest_ledger_run_id": "33694377692",
+ "latest_shadow_day": 14,
+ "notes": "",
+ "queue_algorithm": "shadow-review-queue/1",
+ "records": [
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/12aug26-fs/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/12aug26-nr1/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/12aug26-speech/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/14aug26-mq/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/15aug26-speech/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/1sep26-mq/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/20aug26-speech/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/21jul26-nr/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/21jul26-nr3/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/25aug26-speech/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/27aug26-nr/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/27jul26-speech/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/29aug26-nr/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/30jul26-nr2/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/31jul26-fr/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  },
+  {
+   "body_appears_complete": true,
+   "canonical_url_matches": true,
+   "identity": "https://www.mindef.gov.sg/news-and-events/latest-releases/4aug26-pq/",
+   "kind_is_reasonable": true,
+   "no_denial_or_template_stored": true,
+   "note": "",
+   "publication_date_matches": true,
+   "source_page_opened": true,
+   "title_matches": true
+  }
+ ],
+ "records_required": 16,
+ "review_completed_utc": "2026-09-03T03:51:25+00:00",
+ "review_mode": "focused-queue",
+ "review_started_utc": "2026-09-03T02:07:33+00:00",
+ "reviewer": "Benjamin Yang",
+ "signoff_schema": "shadow-review-signoff/1",
+ "state_commit": "5fa49c81b9250b7723eb5f707f8c71d86d051903",
+ "verdict": "pass_with_findings"
+}
