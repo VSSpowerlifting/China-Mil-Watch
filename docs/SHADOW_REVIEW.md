@@ -107,8 +107,8 @@ rather than smoothed, and no ledger is rewritten to hide it. The qualification
 clock is unaffected either way: `shadow_day` comes from `finished_utc` against
 day zero, never from `target_date`.
 
-Both were disposed as **target-date metadata defects, not corpus-integrity
-failures**: health `ok`, zero fetch, extraction and access failures, a coherent
+The two Singapore anomalies were disposed as **target-date metadata defects,
+not corpus-integrity failures**: health `ok`, zero fetch, extraction and access failures, a coherent
 state-hash chain, insertions continuing in the runs that followed, and
 overlapping 30-day lookbacks that covered the nominal day either way. Those
 dispositions remain historically true and the ledgers behind them are immutable
@@ -167,11 +167,21 @@ A recovery dispatch writes a **new** ledger for that date. It does not amend
 the ledger the failed attempt may already have written, and nothing in this
 repository does.
 
-**The review tool was deliberately not changed.** A missing-day anomaly is a
-true statement about the ledger set it reads, and teaching it to suppress one
-would have removed the signal that found this defect. Ledgers written before
-the fix keep their execution-date stamps, so historical missing-day anomalies
-will keep appearing and still need disposition.
+**The review tool's missing-day detection was deliberately not changed.** A
+missing-day anomaly is a true statement about the ledger set it reads, and
+teaching it to suppress one would have removed the signal that found this
+defect. Ledgers written before the fix keep their execution-date stamps, so
+historical missing-day anomalies will keep appearing and still need
+disposition.
+
+That is a narrower claim than "the review tool was not changed", and the
+distinction matters. The reader *is* changed in one backward-compatible
+respect: it validates `target_date_source` when a ledger carries that field,
+and accepts every ledger that omits it. Provenance validation and missing-day
+detection are separate concerns — the first refuses a ledger whose date
+provenance cannot be read, the second reports a day no ledger covers, and
+nothing about any existing ledger's anomalies, disposition or report content
+changes.
 
 While the corpus is small enough to read end to end, use `--review-all`. Once it
 is not, use `--since-ledger <filename>` to queue everything first seen since the

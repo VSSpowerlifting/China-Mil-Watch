@@ -36,10 +36,14 @@ What this fixes, and what it deliberately does not
 --------------------------------------------------
 It fixes attribution *at the source*, for future runs. It does not rewrite a
 single historical ledger: those are append-only evidence, two completed human
-reviews already reason about them, and a backfill would invalidate both. The
-review tool is likewise left alone — a missing-day anomaly is a true statement
-about the ledger set it reads, and teaching it to hide one would remove the
-signal that found this bug.
+reviews already reason about them, and a backfill would invalidate both.
+
+The review tool's **missing-day detection** is likewise left alone — a
+missing-day anomaly is a true statement about the ledger set it reads, and
+teaching it to hide one would remove the signal that found this bug. The review
+reader is changed in exactly one respect, and it is backward compatible: it
+validates `target_date_source` when a ledger carries the field, and continues
+to accept every historical ledger, none of which does.
 
 The rule
 --------

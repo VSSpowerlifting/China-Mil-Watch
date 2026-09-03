@@ -79,13 +79,21 @@ root cause. The rulings that follow constrain future work.
    equivalence test holds the two copies equal, exactly as `KINDS` and
    `RELEASE_RE` are already held.
 
-9. **Historical ledgers are immutable, and the review tool was not changed.**
-   No ledger is renamed, edited, backfilled or squashed: two completed human
-   reviews reason about them and a rewrite would invalidate both. The
-   missing-day anomaly stays in `review_shadow_state.py` because it is a true
-   statement about the ledgers it reads — suppressing it would have removed the
-   signal that found this bug. Ledgers written before the fix keep their
-   execution-date stamps, and their anomalies still require disposition.
+9. **Historical ledgers are immutable, and the review tool's missing-day
+   detection was not changed.** No ledger is renamed, edited, backfilled or
+   squashed: two completed human reviews reason about them and a rewrite would
+   invalidate both. The missing-day anomaly stays in `review_shadow_state.py`
+   because it is a true statement about the ledgers it reads — suppressing it
+   would have removed the signal that found this bug. Ledgers written before
+   the fix keep their execution-date stamps, and their anomalies still require
+   disposition.
+
+   The review reader is not otherwise frozen, and this change does alter it in
+   one backward-compatible respect: the optional `target_date_source`
+   validation of ruling 8. That addition refuses a ledger naming a provenance
+   this repository cannot explain, and accepts every ledger that omits the
+   field — which is all of them to date. No detection, anomaly, disposition or
+   report content changes for any existing ledger.
 
 10. **Japan was fixed in the same change, where the defect is total.** Its
     cron sits at 22:40 UTC, eighty minutes from midnight, and Actions has
