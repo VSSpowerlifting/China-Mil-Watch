@@ -8,9 +8,14 @@ on:
   workflow_dispatch:
     inputs:
       week_ending:
-        description: 'Week ending date (YYYY-MM-DD). Leave blank for the next Sunday.'
+        description: 'Week ending date (YYYY-MM-DD). Editions close on Saturday; leave blank for the upcoming Saturday.'
         required: false
         type: string
+      retrospective:
+        description: 'Prepared after its week rather than during it. Records publication_timing=retrospective, renders a visible label, and uses the deterministic gradient cover instead of fetching a source image.'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: pla-watch-draft
@@ -39,12 +44,22 @@ jobs:
       - name: Generate PLA Watch draft
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Through the environment, never interpolated into the script body.
+          WEEK_ENDING: ${{ inputs.week_ending }}
+          RETROSPECTIVE: ${{ inputs.retrospective }}
         run: |
-          if [ -n "${{ github.event.inputs.week_ending }}" ]; then
-            python scripts/generate_pla_watch.py --week-ending "${{ github.event.inputs.week_ending }}"
-          else
-            python scripts/generate_pla_watch.py
+          set -euo pipefail
+          # Build arguments only when actually selected: an empty input must not
+          # reach argparse as --week-ending "", and --retrospective must be
+          # absent unless the operator ticked it.
+          set --
+          if [ -n "${WEEK_ENDING:-}" ]; then
+            set -- "$@" --week-ending "${WEEK_ENDING}"
           fi
+          if [ "${RETROSPECTIVE:-false}" = "true" ]; then
+            set -- "$@" --retrospective
+          fi
+          python scripts/generate_pla_watch.py "$@"
 
       - name: Upload draft artifact
         if: always()

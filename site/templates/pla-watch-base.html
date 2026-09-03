@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from Indo-Pacific Record, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
@@ -14,7 +14,7 @@
   <meta property="og:site_name"    content="The PLA Watch">
   <meta property="og:url"          content="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
   <meta property="og:title"        content="{% block og_title %}The PLA Watch{% endblock %}">
-  <meta property="og:description"  content="{% block og_description %}Weekly signals from Chinese military media. Published every Sunday by China Mil Watch.{% endblock %}">
+  <meta property="og:description"  content="{% block og_description %}Weekly signals from Chinese military media, published by Indo-Pacific Record. Each edition covers the week ending Saturday.{% endblock %}">
   <meta property="og:image"        content="{% block og_image %}{{ site_origin }}/og-image.png{% endblock %}">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
@@ -448,6 +448,7 @@
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+      .pw-badge--retrospective { color: #4a5568; background: transparent; border-color: #4a5568; }
     }
 
     /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
@@ -531,14 +532,14 @@
       <a href="{{ pw_root | default('') }}index.html" class="pw-nameplate" aria-label="The PLA Watch home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
-        <span class="pw-tag">A weekly publication of China Mil Watch</span>
+        <span class="pw-tag">A weekly publication of Indo-Pacific Record</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
         <a href="{{ pw_root | default('') }}index.html" {% if active_page == 'index' %}class="active"{% endif %}>Latest Edition</a>
         <a href="{{ pw_root | default('') }}archive.html" {% if active_page == 'archive' %}class="active"{% endif %}>Archive</a>
         <a href="{{ pw_root | default('') }}terms.html" {% if active_page == 'terms' %}class="active"{% endif %}>Terms</a>
         <span class="nav-sep">|</span>
-        <a href="{{ root_path }}index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
+        <a href="{{ root_path }}index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
     <div class="pw-masthead-rule">
@@ -558,15 +559,15 @@
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
         Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="{{ root_path }}index.html">China Mil Watch — Daily Brief</a><br>
-      <a href="{{ root_path }}archive.html">China Mil Watch — Archive</a><br>
+      <a href="{{ root_path }}index.html">Indo-Pacific Record — Daily Brief</a><br>
+      <a href="{{ root_path }}archive.html">Indo-Pacific Record — Archive</a><br>
       <a href="{{ root_path }}signals.html">Signals &amp; Methodology</a><br>
       <a href="{{ root_path }}the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="{{ root_path }}the-pla-watch/feed.xml">Atom feed</a>

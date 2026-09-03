@@ -24,6 +24,9 @@ sys.path.insert(0, str(ROOT))
 import anthropic
 
 from config import DB_PATH, ANTHROPIC_API_KEY, SITE_ORIGIN
+from core.edition_identity import (                          # noqa: E402
+    TIMING_REGULAR, TIMING_RETROSPECTIVE, current_identity_fields,
+    resolve_identity)
 from scripts.pw_env import (
     build_atom_feed,
     editorial_items_for_edition,
@@ -36,19 +39,16 @@ from storage.db import get_articles_for_date_range
 
 # ── Author identity ──────────────────────────────────────────────────────────
 
-AUTHOR_NAME = "Benjamin Yang"
-AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
-AUTHOR_BIO = (
-    "Benjamin Yang is the principal analyst at China Mil Watch and an incoming "
-    "International Affairs student at George Washington University’s "
-    "Elliott School, focused on U.S.-China relations, public diplomacy, "
-    "and security affairs."
-)
-AUTHOR_LINKS = {
-    "LinkedIn":        "https://www.linkedin.com/in/benjamin-yang-42b525294",
-    "Email":           "mailto:ben.yang@gwmail.gwu.edu",
-    "China Mil Watch": "../../index.html",
-}
+# Resolved through `core/edition_identity.py`, never hard-coded here. An
+# edition's parent publication is a property of the edition, and these names
+# are the *current* identity only: a re-render must reproduce the page that was
+# published, not restate a 2026-05 edition under a 2026-08 name.
+_CURRENT_IDENTITY = current_identity_fields()
+
+AUTHOR_NAME = _CURRENT_IDENTITY["author_name"]
+AUTHOR_TITLE = _CURRENT_IDENTITY["author_title"]
+AUTHOR_BIO = _CURRENT_IDENTITY["author_bio"]
+AUTHOR_LINKS = _CURRENT_IDENTITY["author_links"]
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -59,6 +59,14 @@ def parse_args():
         "--week-ending",
         metavar="YYYY-MM-DD",
         help="Saturday end date for the edition (default: Saturday of current week)",
+    )
+    parser.add_argument(
+        "--retrospective",
+        action="store_true",
+        help="Mark this edition as prepared after its week, not during it. "
+             "Records publication_timing=retrospective, renders a visible "
+             "'Retrospective edition' label, and uses the deterministic "
+             "gradient cover instead of fetching a source image.",
     )
     parser.add_argument(
         "--dry-run",
@@ -587,6 +595,8 @@ def render_post(result: dict, meta: dict) -> str:
     post_date = meta.get("date", meta["week_ending"])
     pw_veil = veil_for_edition(post_date, sidecar=meta)
     # result and meta both carry a "title" key (post title vs. sidecar title).
+    identity = resolve_identity(meta)
+
     # Strip layout-only fields out of meta so the post-content keys from
     # `result` win cleanly. _build_context raises on any remaining collision.
     layout_meta = {
@@ -603,10 +613,20 @@ def render_post(result: dict, meta: dict) -> str:
         "cover_image":     meta.get("cover_image", ""),
         "cover_image_url": meta.get("cover_image_url", ""),
         "source_trail_truncated": meta.get("source_trail_truncated", False),
-        "author_name":   meta.get("author_name", AUTHOR_NAME),
-        "author_title":  meta.get("author_title", AUTHOR_TITLE),
-        "author_bio":    meta.get("author_bio", AUTHOR_BIO),
-        "author_links":  meta.get("author_links", AUTHOR_LINKS),
+        # Identity comes from the edition, not from this module's constants.
+        # `meta.get(..., AUTHOR_*)` was safe only while the constants were
+        # stale: editions 1 and 2 store no author fields, so correcting the
+        # constants would have silently rebranded them. `resolve_identity`
+        # decides by era, so the current names cannot reach a historical page.
+        "author_name":   identity["author_name"],
+        "author_title":  identity["author_title"],
+        "author_bio":    identity["author_bio"],
+        "author_links":  identity["author_links"],
+        "publication":            identity["publication"],
+        "publication_home_label": identity["publication_home_label"],
+        "series_name":            identity["series_name"],
+        "is_retrospective":       identity["is_retrospective"],
+        "retrospective_label":    identity["retrospective_label"],
         "prev_post":     meta.get("prev_post"),
         "next_post":     meta.get("next_post"),
         # Render-time editorial-manifest context images (sidecar media_items
@@ -743,6 +763,7 @@ def main():
     linkedin_dir.mkdir(parents=True, exist_ok=True)
 
     days_covered = len(stats["dates_covered"])
+    timing = TIMING_RETROSPECTIVE if args.retrospective else TIMING_REGULAR
     edition_label = derive_edition_label(result["edition_type"], days_covered)
     source_trail, trail_truncated = build_source_trail(articles)
 
@@ -777,10 +798,9 @@ def main():
         "edition_type": result["edition_type"],
         "edition_label": edition_label,
         "source_trail": source_trail,
-        "author_name":  AUTHOR_NAME,
-        "author_title": AUTHOR_TITLE,
-        "author_bio":   AUTHOR_BIO,
-        "author_links": AUTHOR_LINKS,
+        # Recorded explicitly so this page can be reproduced without inferring
+        # an era. `resolve_identity` prefers these over any inference.
+        **current_identity_fields(timing),
     }
 
     # Write sidecar JSON before cover generation so generate_one() can read

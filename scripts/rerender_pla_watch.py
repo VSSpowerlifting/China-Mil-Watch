@@ -35,27 +35,23 @@ from scripts.pw_env import (
     veil_for_edition,
 )
 
-# Reuse author identity from the generator module without calling its main().
-# Guard against the anthropic import that generate_pla_watch.py performs at
-# module level — this script never calls the API.
-try:
-    from scripts.generate_pla_watch import (
-        AUTHOR_NAME, AUTHOR_TITLE, AUTHOR_BIO, AUTHOR_LINKS,
-    )
-except ImportError:
-    AUTHOR_NAME = "Benjamin Yang"
-    AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
-    AUTHOR_BIO = (
-        "Benjamin Yang is the principal analyst at China Mil Watch and an incoming "
-        "International Affairs student at George Washington University's "
-        "Elliott School, focused on U.S.-China relations, public diplomacy, "
-        "and security affairs."
-    )
-    AUTHOR_LINKS = {
-        "LinkedIn":        "https://www.linkedin.com/in/benjamin-yang-42b525294",
-        "Email":           "mailto:ben.yang@gwmail.gwu.edu",
-        "China Mil Watch": "../../index.html",
-    }
+# Author identity comes from `core/edition_identity.py`, which is stdlib-only
+# and imports neither `anthropic` nor `config` — so there is no import to guard
+# against and no fallback copy to drift.
+#
+# The previous fallback here hard-coded the predecessor identity, which meant a
+# failed import silently rebranded every edition it touched to "Principal
+# Analyst, China Mil Watch" — the exact stale branding this contract exists to
+# stop reintroducing. A duplicated identity is a second source of truth; there
+# is now one.
+from core.edition_identity import (
+    AUTHOR_NAME, current_identity_fields, resolve_identity,
+)
+
+_CURRENT_IDENTITY = current_identity_fields()
+AUTHOR_TITLE = _CURRENT_IDENTITY["author_title"]
+AUTHOR_BIO = _CURRENT_IDENTITY["author_bio"]
+AUTHOR_LINKS = _CURRENT_IDENTITY["author_links"]
 from scripts.generate_pla_watch_cover import (
     render_cover,
     render_thumbnail,

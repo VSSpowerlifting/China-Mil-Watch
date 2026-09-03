@@ -1050,6 +1050,18 @@ def generate_one(json_path: Path, force: bool = False,
     # Determine the previous issue's background so we can refuse to reuse it.
     prev_img = _prev_issue_image(sidecar_date)
 
+    # A retrospective edition takes the deterministic abstract gradient. It is
+    # written weeks after its week, so there is no contemporaneous photograph to
+    # fetch, and a curated stock asset would dress a back-dated edition in
+    # imagery it never had. Metadata-driven rather than flag-driven, so the
+    # re-render path obeys it without the caller having to remember. A human may
+    # still supply an edition-specific image later: priority 1 below still runs.
+    if (sidecar.get("publication_timing") or "").strip() == "retrospective":
+        fetch_source_image = False
+        allow_curated = False
+    else:
+        allow_curated = True
+
     if out_path.exists() and not force:
         print(f"[skip] {out_path.relative_to(ROOT)} already exists "
               f"(use --force to overwrite)")
@@ -1067,7 +1079,7 @@ def generate_one(json_path: Path, force: bool = False,
                 bg_source = "source_trail_fetch" if bg_path else None
 
         # Priority 3: curated reusable cover images (static assets, never edition-specific).
-        if bg_path is None:
+        if bg_path is None and allow_curated:
             bg_path = _first_image_in_dirs(
                 CURATED_IMAGE_DIRS, prev_img, sidecar_date, "curated_fallback"
             )
@@ -1081,8 +1093,13 @@ def generate_one(json_path: Path, force: bool = False,
         # abstract gradient, matching the veil rule in DECISION_LOG 2026-08-12.
 
         if bg_path is None:
-            bg_source = "abstract_gradient"
-            print(f"[cover:{sidecar_date}] no local image found — using abstract fallback gradient")
+            # Recorded truthfully either way: a retrospective edition says so,
+            # rather than being indistinguishable from an edition that merely
+            # found no image.
+            bg_source = ("retrospective_gradient" if not allow_curated
+                         else "abstract_gradient")
+            print(f"[cover:{sidecar_date}] using abstract fallback gradient "
+                  f"({bg_source})")
 
         # Record the image source in the sidecar so callers can audit it.
         sidecar_on_disk = _load_sidecar(json_path)
