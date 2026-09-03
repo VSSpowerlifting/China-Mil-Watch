@@ -15,10 +15,11 @@ root cause. The rulings that follow constrain future work.
    scheduled to cover. `started_utc` and `finished_utc` name when it actually
    ran. Deriving the first from the second — which both collectors did —
    silently reassigns a run to the wrong day whenever Actions starts it after
-   UTC midnight. Observed twice: run 33027905549 (created 2026-08-27T00:45:40Z,
-   nominal 2026-08-26) and run 33455386368 (created 2026-09-01T00:35:45Z,
-   nominal 2026-08-31). Each left its nominal day with no ledger and made the
-   next on-time run the second ledger carrying that date.
+   UTC midnight. Observed twice on Singapore: run 33027905549 (created
+   2026-08-27T00:45:40Z, nominal 2026-08-26) and run 33455386368 (created
+   2026-09-01T00:35:45Z, nominal 2026-08-31). Each left its nominal day with no
+   ledger and made the next on-time run the second ledger carrying that date.
+   On Japan it is not occasional but universal — see ruling 10.
 
 2. **A scheduled first attempt belongs to its nominal slot**: the most recent
    occurrence of the cron's time-of-day at or before it started, boundary
@@ -105,17 +106,24 @@ root cause. The rulings that follow constrain future work.
     `finished_utc` against day zero, never from `target_date`.
 
 11. **What the evidence supports, stated at its actual strength.** The
-    reviewed corpus shows a coherent state-hash chain across both boundaries,
-    zero recorded fetch, extraction and access failures, continued insertions
-    afterwards, and overlapping 30-day lookbacks covering both nominal days.
-    That supports one claim: *no collection loss is observable in the reviewed
-    corpus.* It does not support *nothing was lost.* Every one of those facts
-    describes what the desk observed and stored, and a document the ministry
-    published but the desk never discovered would leave no trace in any of
-    them. No document in this repository may assert that the ministry
-    published nothing that escaped observation: that negative is not provable
-    from inside the corpus, and asserting it would trade real evidence for a
-    stronger-sounding sentence.
+    Singapore corpus — the only one either checkpoint review has read — shows a
+    coherent state-hash chain across both boundaries, zero recorded fetch,
+    extraction and access failures, continued insertions afterwards, and
+    overlapping 30-day lookbacks covering both nominal days. That supports one
+    claim: *no collection loss is observable in the reviewed Singapore corpus.*
+
+    It does not support *nothing was lost.* Every one of those facts describes
+    what the desk observed and stored, and a document the ministry published
+    but the desk never discovered would leave no trace in any of them. **No
+    document in this repository may assert that a ministry published nothing
+    that escaped observation**: that negative is not provable from inside a
+    corpus, and asserting it would trade real evidence for a stronger-sounding
+    sentence.
+
+    Nor does it extend to Japan, which has had **no checkpoint review at all**.
+    Japan's ledgers are healthy on their own counters, and that is the whole of
+    what is known; the same claim may not be made for it until a human review
+    has read it.
 
 Neither review qualifies or promotes Singapore. Day 30, 30 consecutive
 collecting days, and an owner sign-off recorded here all remain outstanding.

@@ -129,7 +129,7 @@ Both reviews disposed of the same class of finding — a scheduled run delayed
 across UTC midnight was stamped with its execution date, leaving its nominal
 day with no ledger (2026-08-26 and 2026-08-31).
 
-**No collection loss is observable in the reviewed corpus.** The state-hash
+**No collection loss is observable in the reviewed Singapore corpus.** The state-hash
 chain stayed coherent, no fetch, extraction or access failure was recorded,
 insertions continued in the runs that followed, and the overlapping 30-day
 lookbacks covered both days. Those facts are about what the desk observed and

@@ -114,9 +114,10 @@ overlapping 30-day lookbacks that covered the nominal day either way. Those
 dispositions remain historically true and the ledgers behind them are immutable
 — nothing is renamed, edited, backfilled or squashed.
 
-**State the limit of that evidence.** Those facts support one claim: *no
-collection loss is observable in the reviewed corpus.* They do not support
-*nothing was lost.* Every one of them is a property of what this desk observed
+**State the limit of that evidence.** Those facts are Singapore's, and they
+support one claim: *no collection loss is observable in the reviewed Singapore
+corpus.* They do not support *nothing was lost*, and they say nothing at all
+about Japan, which has had no checkpoint review. Every one of them is a property of what this desk observed
 and stored, and a document the ministry published but the desk never discovered
 would leave no trace in any of them. A reviewer may not write, and may not
 accept, a disposition that asserts the ministry published nothing that escaped

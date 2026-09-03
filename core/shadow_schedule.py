@@ -21,8 +21,9 @@ Each left a missing-day anomaly for a day on which collection had in fact
 happened, and each made the *following* on-time run the second ledger to carry
 that date.
 
-No collection loss is observable in the reviewed corpus. The state-hash chain
-stayed coherent across both boundaries, no fetch, extraction or access failure
+No collection loss is observable in the reviewed Singapore corpus — the only
+corpus either checkpoint review has read. The state-hash chain stayed coherent
+across both boundaries, no fetch, extraction or access failure
 was recorded, insertions continued in the runs that followed, and the 30-day
 lookbacks overlap so heavily that the nominal day was inside the window either
 way. Those facts are about what this desk observed and stored. They do not, and
