@@ -271,6 +271,11 @@ def main(argv=None) -> int:
                     help="the workflow's cron time-of-day in UTC (HH:MM). "
                          "Required for a scheduled run: a job started after "
                          "midnight belongs to the previous day's slot.")
+    ap.add_argument("--run-attempt",
+                    default=os.environ.get("GITHUB_RUN_ATTEMPT") or "1",
+                    help="GITHUB_RUN_ATTEMPT: 1 on a first attempt, higher on "
+                         "a re-run. A re-run without --target-date is refused "
+                         "rather than re-dated. Local calls default to 1.")
     args = ap.parse_args(argv)
 
     # The logical collection date, not the execution date. See
@@ -278,7 +283,7 @@ def main(argv=None) -> int:
     try:
         target, target_source = resolve_target_date(
             datetime.now(timezone.utc), args.event_name, args.cron_utc,
-            args.target_date)
+            args.target_date, args.run_attempt)
     except ScheduleError as exc:
         print("collection refused: %s" % exc, file=sys.stderr)
         return 2

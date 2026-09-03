@@ -9,14 +9,24 @@ are pinned here as data rather than described in prose.
 
 from __future__ import annotations
 
+import importlib.util
+import json
+import os
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import textwrap
 import unittest
+from unittest import mock
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from core.shadow_schedule import (
-    SOURCE_EXPLICIT, SOURCE_MANUAL, SOURCE_SCHEDULE, ScheduleError,
-    parse_cron_utc, parse_iso_date, resolve_target_date, scheduled_slot_date)
+    SOURCES, SOURCE_EXPLICIT, SOURCE_MANUAL, SOURCE_SCHEDULE, ScheduleError,
+    parse_cron_utc, parse_iso_date, parse_run_attempt, resolve_target_date,
+    scheduled_slot_date)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SG_CRON = "21:10"
@@ -219,11 +229,520 @@ class TestWorkflowsAgreeWithTheirCollectors(unittest.TestCase):
             with self.subTest(workflow=wf):
                 self.assertIn('--event-name "${GITHUB_EVENT_NAME}"', self.workflow(wf))
 
-    def test_neither_workflow_pins_an_explicit_target_date(self):
-        """A hard-coded date would defeat the resolver entirely."""
+    def test_neither_workflow_pins_a_literal_target_date(self):
+        """
+        A hard-coded date would defeat the resolver entirely. `--target-date`
+        may appear only as the guarded dispatch variable, never as a literal.
+        """
         for wf, _ in self.CASES:
             with self.subTest(workflow=wf):
-                self.assertNotIn("--target-date", self.workflow(wf))
+                text = self.workflow(wf)
+                self.assertEqual(
+                    re.findall(r"--target-date\s+\S+", text),
+                    ['--target-date "${TARGET_DATE}"'],
+                    "%s passes --target-date as something other than the "
+                    "guarded dispatch input" % wf)
+
+    def test_each_workflow_passes_the_run_attempt(self):
+        """Without it every re-run looks like a first attempt."""
+        for wf, _ in self.CASES:
+            with self.subTest(workflow=wf):
+                self.assertIn('--run-attempt "${GITHUB_RUN_ATTEMPT}"',
+                              self.workflow(wf))
+
+    def test_each_workflow_offers_a_manual_target_date_input(self):
+        """
+        The recovery path for a refused re-run has to exist in the UI.
+
+        Read as text, not with a parser: `tests/test_workflow_yaml_shape.py`
+        records that PyYAML is deliberately not a dependency of this project,
+        so a workflow assertion has to be structural.
+        """
+        for wf, _ in self.CASES:
+            with self.subTest(workflow=wf):
+                text = self.workflow(wf)
+                block = re.search(
+                    r"(?m)^  workflow_dispatch:\n((?:^    .*\n|^\n)*)", text)
+                self.assertIsNotNone(
+                    block, "%s has no indented workflow_dispatch block" % wf)
+                body = block.group(1)
+                self.assertRegex(body, r"(?m)^    inputs:$")
+                self.assertRegex(body, r"(?m)^      target_date:$")
+                self.assertRegex(body, r"(?m)^        required: false$")
+                self.assertRegex(body, r"(?m)^        default: ''$")
+
+    def test_the_dispatch_input_reaches_the_shell_through_the_environment(self):
+        """
+        `${{ inputs.target_date }}` interpolated into a `run:` body would be a
+        script-injection sink. It travels as an environment variable instead,
+        and the collector's own ISO-date check is what rejects its content.
+        """
+        for wf, _ in self.CASES:
+            with self.subTest(workflow=wf):
+                text = self.workflow(wf)
+                self.assertEqual(
+                    re.findall(r".*\$\{\{ inputs\.target_date \}\}.*", text),
+                    ["          TARGET_DATE: ${{ inputs.target_date }}"],
+                    "%s expands the dispatch input somewhere other than the "
+                    "step's env: block" % wf)
+                self.assertNotIn("${{ inputs", text.split("env:", 1)[0])
+
+    def test_an_empty_dispatch_input_passes_no_target_date_at_all(self):
+        """
+        The guard, run as shell. An unset or empty input must produce zero
+        arguments — passing `--target-date ""` would refuse every scheduled
+        run, turning a recovery affordance into an outage.
+        """
+        guard = None
+        for wf, _ in self.CASES:
+            text = self.workflow(wf)
+            start = text.index('if [ -n "${TARGET_DATE:-}" ]; then')
+            end = text.index("fi\n", start) + 3
+            snippet = textwrap.dedent(text[start:end])
+            if guard is None:
+                guard = snippet
+            self.assertEqual(snippet, guard, "%s guards differently" % wf)
+
+        script = ("set -euo pipefail\n" + guard
+                  + 'printf "%s\\n" "$#"\nfor a in "$@"; do printf "[%s]\\n" "$a"; done\n')
+
+        def sh(env):
+            full = dict(os.environ)
+            full.pop("TARGET_DATE", None)
+            full.update(env)
+            out = subprocess.run(["bash", "-c", script], env=full,
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                 text=True)
+            self.assertEqual(out.returncode, 0, out.stdout)
+            return out.stdout.splitlines()
+
+        self.assertEqual(sh({}), ["0"])
+        self.assertEqual(sh({"TARGET_DATE": ""}), ["0"])
+        self.assertEqual(sh({"TARGET_DATE": "2026-08-31"}),
+                         ["2", "[--target-date]", "[2026-08-31]"])
+        # A hostile value stays one argument and never reaches the shell as
+        # syntax; `parse_iso_date` is what refuses it.
+        self.assertEqual(sh({"TARGET_DATE": "2026-08-31; touch /tmp/pwned"}),
+                         ["2", "[--target-date]", "[2026-08-31; touch /tmp/pwned]"])
+        with self.assertRaises(ScheduleError):
+            parse_iso_date("2026-08-31; touch /tmp/pwned")
+
+
+class TestARerunIsRefusedRatherThanReDated(unittest.TestCase):
+    """
+    `GITHUB_RUN_ATTEMPT` begins at 1 and increments on each re-run. A re-run
+    keeps the original run id, ref, commit and triggering event — but not the
+    original moment. Re-running a scheduled job a day later therefore arrives
+    looking like a first attempt while `started` names a different slot, and
+    re-running a dispatch simply re-dates it. Neither is unambiguous, so
+    neither is inferred.
+    """
+
+    LATER = utc("2026-09-03T11:00:00+00:00")
+
+    def test_a_scheduled_rerun_without_a_date_is_refused(self):
+        with self.assertRaises(ScheduleError) as caught:
+            resolve_target_date(self.LATER, "schedule", SG_CRON, None, 2)
+        self.assertIn("attempt 2", str(caught.exception))
+
+    def test_a_scheduled_rerun_with_an_explicit_date_succeeds(self):
+        """The explicit date stays authoritative on a re-run. It is the fix."""
+        self.assertEqual(
+            resolve_target_date(self.LATER, "schedule", SG_CRON,
+                                "2026-08-31", 2),
+            (date(2026, 8, 31), SOURCE_EXPLICIT))
+
+    def test_a_dispatched_rerun_without_a_date_is_refused(self):
+        """
+        Manual dispatch is not the safe category. A re-run of a dispatch
+        recomputes `datetime.now()`, so a re-run two days later would record
+        the day of the re-run and say `manual-utc-date` while doing it.
+        """
+        with self.assertRaises(ScheduleError):
+            resolve_target_date(self.LATER, "workflow_dispatch", None, None, 2)
+
+    def test_a_dispatched_rerun_with_an_explicit_date_succeeds(self):
+        self.assertEqual(
+            resolve_target_date(self.LATER, "workflow_dispatch", None,
+                                "2026-09-01", 3),
+            (date(2026, 9, 1), SOURCE_EXPLICIT))
+
+    def test_a_rerun_of_a_run_with_no_event_name_is_also_refused(self):
+        with self.assertRaises(ScheduleError):
+            resolve_target_date(self.LATER, None, None, None, 2)
+
+    def test_the_refusal_names_the_recovery(self):
+        """An error an operator cannot act on is only half a refusal."""
+        with self.assertRaises(ScheduleError) as caught:
+            resolve_target_date(self.LATER, "schedule", SG_CRON, None, 2)
+        message = str(caught.exception)
+        self.assertIn("target_date", message)
+        self.assertIn("--target-date YYYY-MM-DD", message)
+        self.assertIn("Run workflow", message)
+
+    def test_attempt_one_is_the_ordinary_path_for_both_desks(self):
+        """11:00 UTC precedes both crons, so both resolve to the day before."""
+        for cron in (SG_CRON, JP_CRON):
+            with self.subTest(cron=cron):
+                self.assertEqual(
+                    resolve_target_date(self.LATER, "schedule", cron, None, 1),
+                    (date(2026, 9, 2), SOURCE_SCHEDULE))
+
+    def test_the_default_attempt_is_one_so_local_calls_are_unaffected(self):
+        self.assertEqual(
+            resolve_target_date(self.LATER, "schedule", SG_CRON),
+            (date(2026, 9, 2), SOURCE_SCHEDULE))
+
+
+class TestTheRunAttemptItselfMustBeReadable(unittest.TestCase):
+    """
+    An attempt number this module cannot read is not treated as 1: it means the
+    caller cannot tell a first run from a re-run, which is exactly the state in
+    which a date must not be inferred.
+    """
+
+    GOOD = utc("2026-09-03T11:00:00+00:00")
+
+    def test_a_positive_integer_parses_from_int_or_string(self):
+        for value, expected in ((1, 1), ("1", 1), (7, 7), ("7", 7), (" 2 ", 2)):
+            with self.subTest(value=value):
+                self.assertEqual(parse_run_attempt(value), expected)
+
+    def test_zero_is_refused(self):
+        with self.assertRaises(ScheduleError) as caught:
+            parse_run_attempt(0)
+        self.assertIn("at least 1", str(caught.exception))
+
+    def test_a_negative_attempt_is_refused(self):
+        for value in (-1, "-1", "-0"):
+            with self.subTest(value=value):
+                with self.assertRaises(ScheduleError):
+                    parse_run_attempt(value)
+
+    def test_malformed_attempts_are_refused(self):
+        for value in ("", "   ", None, "abc", "1.5", "2a", "one", "1e3",
+                      "+1", "1_0", "\u0662"):
+            with self.subTest(value=value):
+                with self.assertRaises(ScheduleError):
+                    parse_run_attempt(value)
+
+    def test_a_malformed_attempt_is_refused_even_with_an_explicit_date(self):
+        """
+        Validated before anything else. An explicit date makes *this* run's
+        date unambiguous, but an unreadable attempt number means the workflow
+        contract itself is broken, and that should fail on its first run.
+        """
+        with self.assertRaises(ScheduleError):
+            resolve_target_date(self.GOOD, "schedule", SG_CRON,
+                                "2026-08-31", "not-a-number")
+
+    def test_a_malformed_attempt_refuses_an_ordinary_scheduled_run(self):
+        with self.assertRaises(ScheduleError):
+            resolve_target_date(self.GOOD, "schedule", SG_CRON, None, "")
+
+
+# ── the collectors, end to end ───────────────────────────────────────────────
+
+def _load_collector(script):
+    """
+    Imported by path, the way the review-kit tests do it, so that importing one
+    collector does not put the other's module name in `sys.modules`.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "collector_" + script.replace(".py", ""), REPO_ROOT / "scripts" / script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class _Discovery:
+    """Enough of a discovery result for the no-publications path."""
+    status = "ok_no_publications"
+    ok = False
+    references = ()
+    error_detail = None
+
+
+class _StubAdapter:
+    slug = "jp_mod_news_ja"
+
+    def discover(self, window):
+        return _Discovery()
+
+
+class CollectorCase(unittest.TestCase):
+
+    SCRIPT = None
+
+    def setUp(self):
+        self.mod = _load_collector(self.SCRIPT)
+        # Outside the repository: both collectors refuse a state dir inside it.
+        self.tmp = Path(tempfile.mkdtemp(prefix="logical-date-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.state = self.tmp / "state"
+
+    def ledger(self):
+        paths = sorted((self.state / "ledger").glob("*.json"))
+        self.assertEqual(len(paths), 1, "expected exactly one ledger")
+        return json.loads(paths[0].read_text(encoding="utf-8"))
+
+    def argv(self, *extra):
+        return ["--state-dir", str(self.state), "--run-id", "test-run",
+                "--commit", "testsha"] + list(extra)
+
+
+class TestTheCollectorsRecordTheProvenance(CollectorCase):
+    """
+    The wiring, not just the resolver: argparse -> resolve_target_date ->
+    `run(target_source=...)` -> the ledger on disk. Asserted for both desks.
+    """
+
+    SCRIPT = "shadow_collect.py"
+
+    def capture(self, *extra):
+        """Run `main` with the storage layer replaced by a recorder."""
+        seen = {}
+
+        class Entry(dict):
+            """Answers 0 for anything a desk's summary happens to print."""
+            def __missing__(self, key):
+                return 0
+
+        def fake_run(state_dir, target, lookback, cap, run_id, commit,
+                     adapter=None, target_source=None):
+            seen.update(target=target, target_source=target_source)
+            return Entry(result="ok", health="ok", content_hashes=[])
+
+        real, self.mod.run = self.mod.run, fake_run
+        try:
+            code = self.mod.main(self.argv(*extra))
+        finally:
+            self.mod.run = real
+        return code, seen
+
+    def test_a_scheduled_first_attempt_records_the_slot(self):
+        code, seen = self.capture("--event-name", "schedule",
+                                  "--cron-utc", SG_CRON, "--run-attempt", "1")
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target_source"], SOURCE_SCHEDULE)
+
+    def test_an_explicit_date_records_explicit(self):
+        code, seen = self.capture("--target-date", "2026-08-31",
+                                  "--event-name", "schedule",
+                                  "--cron-utc", SG_CRON, "--run-attempt", "1")
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target"], date(2026, 8, 31))
+        self.assertEqual(seen["target_source"], SOURCE_EXPLICIT)
+
+    def test_a_dispatch_records_the_manual_date(self):
+        code, seen = self.capture("--event-name", "workflow_dispatch",
+                                  "--run-attempt", "1")
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target_source"], SOURCE_MANUAL)
+
+    def test_a_rerun_exits_non_zero_and_writes_no_ledger(self):
+        code, seen = self.capture("--event-name", "schedule",
+                                  "--cron-utc", SG_CRON, "--run-attempt", "2")
+        self.assertEqual(code, 2)
+        self.assertEqual(seen, {})
+        self.assertFalse(self.state.exists(),
+                         "a refused run must not create state")
+
+    def test_a_rerun_with_an_explicit_date_proceeds(self):
+        code, seen = self.capture("--target-date", "2026-08-31",
+                                  "--event-name", "schedule",
+                                  "--cron-utc", SG_CRON, "--run-attempt", "2")
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target_source"], SOURCE_EXPLICIT)
+
+    def test_a_malformed_run_attempt_exits_non_zero(self):
+        for value in ("0", "-1", "abc", ""):
+            with self.subTest(value=value):
+                code, seen = self.capture("--event-name", "schedule",
+                                          "--cron-utc", SG_CRON,
+                                          "--run-attempt", value)
+                self.assertEqual(code, 2)
+                self.assertEqual(seen, {})
+
+    def test_the_run_attempt_defaults_to_one_for_a_direct_local_call(self):
+        """
+        With GITHUB_RUN_ATTEMPT absent from the environment — which is what a
+        direct local call looks like. Pinned rather than inherited: this suite
+        runs inside Actions, and a *re-run of CI itself* would otherwise set
+        the variable to 2 and fail a test about local behaviour.
+        """
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("GITHUB_RUN_ATTEMPT", None)
+            code, seen = self.capture("--event-name", "schedule",
+                                      "--cron-utc", SG_CRON)
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target_source"], SOURCE_SCHEDULE)
+
+    def test_the_run_attempt_is_read_from_the_environment_when_not_passed(self):
+        """The env default is what makes a forgotten flag fail closed."""
+        with mock.patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "2"}):
+            code, seen = self.capture("--event-name", "schedule",
+                                      "--cron-utc", SG_CRON)
+        self.assertEqual(code, 2)
+        self.assertEqual(seen, {})
+
+    def test_an_empty_environment_value_is_treated_as_a_first_attempt(self):
+        """`os.environ.get(...) or "1"`: empty is absent, not malformed."""
+        with mock.patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": ""}):
+            code, seen = self.capture("--event-name", "schedule",
+                                      "--cron-utc", SG_CRON)
+        self.assertEqual(code, 0)
+        self.assertEqual(seen["target_source"], SOURCE_SCHEDULE)
+
+
+class TestJapanRecordsTheProvenanceToo(TestTheCollectorsRecordTheProvenance):
+    """The identical contract, asserted against the other desk's collector."""
+
+    SCRIPT = "shadow_collect_japan.py"
+
+
+class TestBothCollectorsStartAtAll(CollectorCase):
+    """
+    `main` reads `os.environ` while building its parser, so a collector that
+    does not import `os` raises `NameError` before parsing a single argument —
+    a total outage that no test touching `run()` alone would ever see.
+    """
+
+    SCRIPT = "shadow_collect.py"
+
+    def test_main_reaches_argument_parsing(self):
+        for script in ("shadow_collect.py", "shadow_collect_japan.py"):
+            with self.subTest(script=script):
+                mod = _load_collector(script)
+                with self.assertRaises(SystemExit):
+                    mod.main(["--help"])
+
+    def test_each_collector_imports_os_at_module_level(self):
+        for script in ("shadow_collect.py", "shadow_collect_japan.py"):
+            with self.subTest(script=script):
+                self.assertTrue(hasattr(_load_collector(script), "os"))
+
+
+class TestGeneratedLedgersCarryTheSource(CollectorCase):
+    """A real ledger, written to disk by the real `run`, for each desk."""
+
+    SCRIPT = "shadow_collect.py"
+
+    def test_a_singapore_ledger_records_the_schedule_slot(self):
+        self.mod.run(self.state, date(2026, 8, 31), 30, 40, "r", "c",
+                     adapter=_StubAdapter(), target_source=SOURCE_SCHEDULE)
+        entry = self.ledger()
+        self.assertEqual(entry["target_date"], "2026-08-31")
+        self.assertEqual(entry["target_date_source"], SOURCE_SCHEDULE)
+
+    def test_a_japan_ledger_records_the_schedule_slot(self):
+        jp = _load_collector("shadow_collect_japan.py")
+        real, jp.load_sources = jp.load_sources, lambda: []
+        try:
+            jp.run(self.state, date(2026, 8, 31), 14, 40, "r", "c",
+                   target_source=SOURCE_SCHEDULE)
+        finally:
+            jp.load_sources = real
+        entry = self.ledger()
+        self.assertEqual(entry["target_date"], "2026-08-31")
+        self.assertEqual(entry["target_date_source"], SOURCE_SCHEDULE)
+
+    def test_every_source_a_collector_can_record_is_a_declared_source(self):
+        for source in SOURCES:
+            with self.subTest(source=source):
+                shutil.rmtree(self.state, ignore_errors=True)
+                self.mod.run(self.state, date(2026, 8, 31), 30, 40, "r", "c",
+                             adapter=_StubAdapter(), target_source=source)
+                self.assertEqual(self.ledger()["target_date_source"], source)
+
+
+# ── the reader ───────────────────────────────────────────────────────────────
+
+class TestTheReviewReaderValidatesTheProvenance(unittest.TestCase):
+    """
+    Backward compatible by construction: `target_date_source` is optional, so
+    every historical ledger still loads. A value it *does* carry must be one
+    this repository can explain — an unreadable provenance is worse than none,
+    because it looks like an answer.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        spec = importlib.util.spec_from_file_location(
+            "review_shadow_state_provenance",
+            REPO_ROOT / "scripts" / "review_shadow_state.py")
+        cls.rk = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.rk)
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="ledger-provenance-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        (self.tmp / "ledger").mkdir(parents=True)
+
+    def write(self, **extra):
+        entry = {f: 0 for f in self.rk.LEDGER_REQUIRED}
+        entry.update(run_id="r1", collector_commit="c",
+                     started_utc="2026-08-31T21:12:00+00:00",
+                     finished_utc="2026-08-31T21:13:00+00:00",
+                     target_date="2026-08-31", robots_status="allowed",
+                     listing_status="ok", result="ok", health="ok",
+                     state_sha256_before=None, state_sha256_after="a" * 64,
+                     shadow_day=1)
+        entry.update(extra)
+        (self.tmp / "ledger" / "20260831T211300-r1.json").write_text(
+            json.dumps(entry, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+
+    def test_a_historical_ledger_without_the_field_still_loads(self):
+        """The published Day 7 and Day 14 evidence has no such field."""
+        self.write()
+        loaded = self.rk.load_ledgers(self.tmp)
+        self.assertEqual(len(loaded), 1)
+        self.assertNotIn("target_date_source", loaded[0])
+
+    def test_each_supported_value_is_accepted(self):
+        for source in self.rk.TARGET_DATE_SOURCES:
+            with self.subTest(source=source):
+                self.write(target_date_source=source)
+                loaded = self.rk.load_ledgers(self.tmp)
+                self.assertEqual(loaded[0]["target_date_source"], source)
+
+    def test_an_unknown_value_is_refused(self):
+        for bad in ("execution-date", "schedule_slot", "SCHEDULE-SLOT",
+                    "guessed", ""):
+            with self.subTest(value=bad):
+                self.write(target_date_source=bad)
+                with self.assertRaises(self.rk.ReviewError) as caught:
+                    self.rk.load_ledgers(self.tmp)
+                self.assertIn("target_date_source", str(caught.exception))
+
+    def test_a_malformed_value_is_refused(self):
+        for bad in (None, 0, 1, [], {}, ["explicit"]):
+            with self.subTest(value=bad):
+                self.write(target_date_source=bad)
+                with self.assertRaises(self.rk.ReviewError):
+                    self.rk.load_ledgers(self.tmp)
+
+    def test_the_refusal_names_the_ledger_and_the_accepted_values(self):
+        self.write(target_date_source="execution-date")
+        with self.assertRaises(self.rk.ReviewError) as caught:
+            self.rk.load_ledgers(self.tmp)
+        message = str(caught.exception)
+        self.assertIn("20260831T211300-r1.json", message)
+        for source in SOURCES:
+            self.assertIn(source, message)
+
+    def test_the_reader_and_the_collectors_accept_the_same_set(self):
+        """
+        The kit re-declares this tuple rather than importing it: its runtime
+        imports are pinned to an allowlist by
+        `test_the_kit_imports_nothing_network_capable`, and widening a real
+        guard for three strings is the worse trade. This test is what keeps the
+        two copies equal — the same treatment `KINDS` and `RELEASE_RE` get.
+        """
+        self.assertEqual(tuple(self.rk.TARGET_DATE_SOURCES), tuple(SOURCES))
+
+    def test_the_field_is_not_required(self):
+        self.assertNotIn("target_date_source", self.rk.LEDGER_REQUIRED)
 
 
 class TestHistoricalLedgersAreNotRewritten(unittest.TestCase):

@@ -96,16 +96,62 @@ acquired no ledger. The Day 7 and Day 14 reviews each found one:
 
 Both were disposed as **target-date metadata defects, not corpus-integrity
 failures**: health `ok`, zero fetch, extraction and access failures, a coherent
-state-hash chain, and a 30-day lookback that covered the nominal day either
-way. Those dispositions remain historically true and the ledgers behind them
-are immutable — nothing is renamed, edited, backfilled or squashed.
+state-hash chain, insertions continuing in the runs that followed, and
+overlapping 30-day lookbacks that covered the nominal day either way. Those
+dispositions remain historically true and the ledgers behind them are immutable
+— nothing is renamed, edited, backfilled or squashed.
+
+**State the limit of that evidence.** Those facts support one claim: *no
+collection loss is observable in the reviewed corpus.* They do not support
+*nothing was lost.* Every one of them is a property of what this desk observed
+and stored, and a document the ministry published but the desk never discovered
+would leave no trace in any of them. A reviewer may not write, and may not
+accept, a disposition that asserts the ministry published nothing that escaped
+observation: that negative is not provable from inside the corpus, and a review
+that claims it has stopped being evidence. Write the observable claim and name
+the limit.
 
 `core/shadow_schedule.py` resolves the logical date at the source for future
-runs: a scheduled run belongs to the most recent occurrence of its cron
-time-of-day at or before it started, and a manual dispatch records the honest
-UTC date it ran on rather than borrowing a slot. A ledger written after that
-change also carries `target_date_source`, so a reader never has to infer which
-rule produced the date.
+runs. A **scheduled first attempt** belongs to the most recent occurrence of
+its cron time-of-day at or before it started — a repository-defined convention,
+not a reconstruction of GitHub's own nominal occurrence, which a runner is
+never told. It assumes a delay shorter than a full cron period; every delay
+observed here has been. A manual dispatch records the honest UTC date it ran on
+rather than borrowing a slot, and an explicit `--target-date` is authoritative
+wherever it is given. A ledger written after that change also carries
+`target_date_source` — `explicit`, `schedule-slot` or `manual-utc-date` — so a
+reader never has to infer which rule produced the date. The field is optional
+in the ledger contract, because every historical ledger predates it; a value it
+does carry must be one of those three, and the review kit refuses a ledger that
+names any other.
+
+### Recovering a failed or re-run scheduled collection
+
+**Do not use the Actions "Re-run" button.** A re-run keeps the original run id,
+ref, commit and triggering event, but not the original moment: `GITHUB_RUN_ATTEMPT`
+increments and the clock has moved, so a re-run of a scheduled job would resolve
+to whichever slot the *re-run* falls in. Both collectors therefore refuse any
+attempt above 1 that carries no explicit date, and say so on stderr rather than
+recording a plausible-looking wrong day.
+
+Recover by dispatching the desk's workflow by hand and naming the day the
+failed run was meant to cover:
+
+> Actions → **Singapore Shadow Collection** or **Japan Shadow Collection** →
+> **Run workflow** → set **target_date** to the intended logical date
+> (`YYYY-MM-DD`, UTC) → **Run workflow**.
+
+Leaving `target_date` empty is the ordinary manual collection: the run records
+the UTC date it actually ran on, as `manual-utc-date`. Filling it in records
+that date as `explicit`. Equivalently, from a checkout:
+
+```
+python scripts/shadow_collect.py --state-dir <state> --target-date 2026-08-31
+```
+
+A recovery dispatch writes a **new** ledger for that date. It does not amend
+the ledger the failed attempt may already have written, and nothing in this
+repository does.
 
 **The review tool was deliberately not changed.** A missing-day anomaly is a
 true statement about the ledger set it reads, and teaching it to suppress one

@@ -20,10 +20,12 @@ root cause. The rulings that follow constrain future work.
    nominal 2026-08-31). Each left its nominal day with no ledger and made the
    next on-time run the second ledger carrying that date.
 
-2. **A scheduled run belongs to its nominal slot**: the most recent occurrence
-   of the cron's time-of-day at or before it started. `core/shadow_schedule.py`
-   is the single implementation, and a test holds each workflow's `--cron-utc`
-   equal to its own cron so the two copies of that fact cannot drift.
+2. **A scheduled first attempt belongs to its nominal slot**: the most recent
+   occurrence of the cron's time-of-day at or before it started, boundary
+   inclusive. `core/shadow_schedule.py` is the single implementation, and a
+   test holds each workflow's `--cron-utc` equal to its own cron so the two
+   copies of that fact cannot drift. Ruling 5 covers re-runs; ruling 7 states
+   what this convention does and does not reconstruct.
 
 3. **A manual dispatch may not borrow a slot.** It records the UTC date it
    actually ran on, or an explicit `--target-date`, and the ledger says which
@@ -35,7 +37,48 @@ root cause. The rulings that follow constrain future work.
    to pass its cron must fail on its first run rather than quietly two months
    later inside a checkpoint review.
 
-5. **Historical ledgers are immutable, and the review tool was not changed.**
+5. **A re-run is refused, not re-dated, unless it names its date.**
+   `GITHUB_RUN_ATTEMPT` begins at 1 and increments on each re-run; a re-run
+   keeps the original run id, ref, commit and triggering event, but not the
+   original moment. A scheduled job re-run from the UI a day later therefore
+   arrives indistinguishable from a first attempt while the clock names a
+   different slot, and a re-run dispatch is simply re-dated. Neither category
+   is unambiguous, so both are refused: any attempt above 1 without an explicit
+   `--target-date` is fatal, and an attempt number that cannot be read as a
+   positive integer is fatal too, because a caller that cannot tell a first run
+   from a re-run must not infer a date. Both workflows pass
+   `GITHUB_RUN_ATTEMPT` explicitly; a direct local call defaults to 1.
+
+6. **The recovery path is a deliberate dispatch, never a UI re-run.** Both
+   shadow workflows take an optional `target_date` dispatch input, passed to
+   the collector only when non-empty. A failed scheduled run is recovered by
+   dispatching the desk's workflow with the day it was meant to cover; the
+   procedure is in `docs/SHADOW_REVIEW.md`. The refusal message names it, so an
+   operator meeting this for the first time is not left guessing.
+
+7. **The schedule-slot rule is this repository's convention, not GitHub's.**
+   A runner is never told the nominal time its schedule fired; only the event
+   name and the moment the job started are available. The rule therefore
+   assumes a delay shorter than one cron period, which every observed delay
+   here has been, and a longer delay would resolve to the wrong slot
+   undetectably. That residual is accepted deliberately and stated in
+   `core/shadow_schedule.py` rather than papered over with a claim of
+   exactness.
+
+8. **`target_date_source` is optional in the ledger contract, and its value is
+   not.** Every historical ledger predates the field, so requiring it would
+   make the review kit refuse the corpus it exists to review. A ledger that
+   *does* carry it must name one of `explicit`, `schedule-slot` or
+   `manual-utc-date`; anything else is refused, because an unreadable
+   provenance is worse than an absent one — it looks like an answer. The kit
+   re-declares that tuple rather than importing it: its runtime imports are
+   pinned to an allowlist by
+   `tests/test_shadow_review_kit.py::test_the_kit_imports_nothing_network_capable`,
+   and spending a real guard on three strings is the worse trade. An
+   equivalence test holds the two copies equal, exactly as `KINDS` and
+   `RELEASE_RE` are already held.
+
+9. **Historical ledgers are immutable, and the review tool was not changed.**
    No ledger is renamed, edited, backfilled or squashed: two completed human
    reviews reason about them and a rewrite would invalidate both. The
    missing-day anomaly stays in `review_shadow_state.py` because it is a true
@@ -43,10 +86,23 @@ root cause. The rulings that follow constrain future work.
    signal that found this bug. Ledgers written before the fix keep their
    execution-date stamps, and their anomalies still require disposition.
 
-6. **Japan was fixed in the same change.** Its cron sits at 22:40 UTC, eighty
-   minutes from midnight, so it carried the same defect with more exposure, not
-   less. Fixing one collector and not the other would have left the identical
-   bug in the desk with the shorter margin.
+10. **Japan was fixed in the same change.** Its cron sits at 22:40 UTC, eighty
+    minutes from midnight, so it carried the same defect with more exposure,
+    not less. Fixing one collector and not the other would have left the
+    identical bug in the desk with the shorter margin.
+
+11. **What the evidence supports, stated at its actual strength.** The
+    reviewed corpus shows a coherent state-hash chain across both boundaries,
+    zero recorded fetch, extraction and access failures, continued insertions
+    afterwards, and overlapping 30-day lookbacks covering both nominal days.
+    That supports one claim: *no collection loss is observable in the reviewed
+    corpus.* It does not support *nothing was lost.* Every one of those facts
+    describes what the desk observed and stored, and a document the ministry
+    published but the desk never discovered would leave no trace in any of
+    them. No document in this repository may assert that the ministry
+    published nothing that escaped observation: that negative is not provable
+    from inside the corpus, and asserting it would trade real evidence for a
+    stronger-sounding sentence.
 
 Neither review qualifies or promotes Singapore. Day 30, 30 consecutive
 collecting days, and an owner sign-off recorded here all remain outstanding.

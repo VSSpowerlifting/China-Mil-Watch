@@ -27,6 +27,16 @@ on:
     # no two collection jobs contend.
     - cron: '40 22 * * *'
   workflow_dispatch:
+    inputs:
+      target_date:
+        description: >-
+          Logical collection date to record, YYYY-MM-DD in UTC. Leave empty to
+          record the UTC date this dispatch runs on. Set it to recover a
+          scheduled run that failed or was re-run: name the day that run was
+          meant to cover. A UI re-run cannot say which day it means and is
+          refused, so this input is the recovery path.
+        required: false
+        default: ''
 
 concurrency:
   group: japan-shadow
@@ -87,8 +97,20 @@ jobs:
       - name: Run shadow collection
         id: collect
         working-directory: repo
+        env:
+          # Through the environment, never interpolated into the script body.
+          TARGET_DATE: ${{ inputs.target_date }}
         run: |
           set -euo pipefail
+          # An absent or empty dispatch input must not reach argparse as an
+          # empty --target-date: "" is not a date, and a refusal here would be
+          # a refusal of every scheduled run. Build the argument only when the
+          # operator actually named a day.
+          if [ -n "${TARGET_DATE:-}" ]; then
+            set -- --target-date "${TARGET_DATE}"
+          else
+            set --
+          fi
           # See the Singapore workflow and core/shadow_schedule.py: the
           # logical date is the nominal 22:40 UTC slot, not the execution date.
           # Japan's cron sits eighty minutes from midnight, so it is the more
@@ -100,7 +122,9 @@ jobs:
             --run-id "${GITHUB_RUN_ID}" \
             --commit "${GITHUB_SHA}" \
             --event-name "${GITHUB_EVENT_NAME}" \
-            --cron-utc "22:40"
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --cron-utc "22:40" \
+            "$@"
 
       - name: Assert the collector left the repository untouched
         working-directory: repo

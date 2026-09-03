@@ -139,6 +139,24 @@ LEDGER_REQUIRED = (
     "shadow_day",
 )
 
+#: `target_date_source` is deliberately absent from LEDGER_REQUIRED. Ledgers
+#: written before `core/shadow_schedule.py` existed do not carry it, they are
+#: immutable evidence that two completed reviews reason about, and a reader that
+#: demanded the field would refuse the very corpus it was built to review. The
+#: field is therefore optional — but a value it does carry must be one this
+#: repository can explain, because an unreadable provenance is worse than none:
+#: it looks like an answer.
+PROVENANCE_OPTIONAL = "target_date_source"
+
+#: Mirrors `SOURCES` in core/shadow_schedule.py — re-declared, not imported.
+#: The kit's runtime imports are pinned to an allowlist by
+#: `tests/test_shadow_review_kit.py::test_the_kit_imports_nothing_network_capable`,
+#: and widening that allowlist to admit a module of collector logic would spend
+#: a real guard on a three-element tuple. So the tuple is stated here and
+#: `tests/test_shadow_logical_target_date.py` asserts the two are equal, which
+#: is the same treatment `KINDS` and `RELEASE_RE` already get.
+TARGET_DATE_SOURCES = ("explicit", "schedule-slot", "manual-utc-date")
+
 #: Mirrors scraper/sources/sg_mindef.py. Kept in step by an equivalence test.
 RELEASE_RE = re.compile(
     r"^https://www\.mindef\.gov\.sg/news-and-events/latest-releases/[^/]+/$")
@@ -413,6 +431,16 @@ def load_ledgers(state_dir: Path) -> list:
                 "ledger %s is missing required field(s): %s — refusing to "
                 "review an unrecognised ledger format"
                 % (path.name, ", ".join(missing)))
+        if PROVENANCE_OPTIONAL in data \
+                and data[PROVENANCE_OPTIONAL] not in TARGET_DATE_SOURCES:
+            raise ReviewError(
+                "ledger %s records %s %r, which is not one of %s — refusing to "
+                "review a ledger whose date provenance cannot be read. A "
+                "ledger written before core/shadow_schedule.py omits the field "
+                "entirely and is accepted; a ledger that names a rule this "
+                "repository does not have is not."
+                % (path.name, PROVENANCE_OPTIONAL, data[PROVENANCE_OPTIONAL],
+                   ", ".join(repr(v) for v in TARGET_DATE_SOURCES)))
         data["_filename"] = path.name
         entries.append(data)
     if not entries:

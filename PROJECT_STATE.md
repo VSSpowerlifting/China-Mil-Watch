@@ -1,7 +1,8 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Current operational snapshot and handoff. Verified 2026-09-02 against
-`origin/main` `67da1c67`.**
+**Current operational snapshot and handoff. Shadow-desk state, protected refs
+and repository scope verified 2026-09-03 against `origin/main` `d10c6c4a`.
+Production and corpus figures below carry their own measurement dates.**
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -126,11 +127,29 @@ days, the Day 30 review, and an owner sign-off recorded in `DECISION_LOG.md`.
 
 Both reviews disposed of the same class of finding — a scheduled run delayed
 across UTC midnight was stamped with its execution date, leaving its nominal
-day with no ledger (2026-08-26 and 2026-08-31). No collection loss was
-observable: the state-hash chain stayed coherent, no fetch, extraction or
-access failure was recorded, and the 30-day lookback covered both days. A fix
-for future attribution is **proposed, not merged** — see the open PR for
-`fix/shadow-logical-target-date-20260903`.
+day with no ledger (2026-08-26 and 2026-08-31).
+
+**No collection loss is observable in the reviewed corpus.** The state-hash
+chain stayed coherent, no fetch, extraction or access failure was recorded,
+insertions continued in the runs that followed, and the overlapping 30-day
+lookbacks covered both days. Those facts are about what the desk observed and
+stored; they cannot establish that the ministry published nothing the desk
+never observed, and no evidence reachable from inside the corpus could. Loss is
+unobserved, which is a narrower claim than ruled out, and the limitation is
+recorded rather than rounded off.
+
+**Attribution is fixed at the source, forward-only.** Singapore and Japan
+shadow runs derive their logical target date through `core/shadow_schedule.py`:
+a scheduled first attempt takes the schedule-slot convention — the most recent
+occurrence of the configured daily cron time at or before the run started,
+boundary inclusive — an explicit `--target-date` is authoritative wherever it
+is given, and a re-run without one is refused rather than re-dated. Each ledger
+records which rule applied in `target_date_source`. Historical ledgers and both
+published review findings are untouched: the fix changes no review evidence and
+does not retroactively alter a single stored date, so historical missing-day
+anomalies remain and still require disposition. Recovery from a failed
+scheduled run is a manual dispatch naming the intended logical date, not a UI
+re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
 **Japan MOD** — state branch `shadow/jp-mod` (`6761b963`). Day zero
 2026-08-27T02:14:38Z. The 2026-09-02 run recorded `shadow_day` **5**, result
