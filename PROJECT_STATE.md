@@ -91,9 +91,17 @@ disclosed, and never backfilled.
 
 * **13 editions published**, No. 1 (2026-05-09 pilot) through **No. 13, week
   ending 2026-08-08**.
-* **The cadence has lapsed.** No edition exists for the weeks ending
-  2026-08-15, 08-22 or 08-29. Restoring it is the first priority in
-  `docs/ROADMAP.md`.
+* **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
+  exists for the weeks ending 2026-08-15, 08-22 or 08-29. The owner ruling of
+  2026-09-03 (`DECISION_LOG.md`) prepares **08-15 and 08-22 as retrospective
+  editions**, rules **08-29 a disclosed gap** (36% of that window was never
+  relevance-screened), and **resumes normal cadence at 09-05**. Restoring
+  cadence remains the first priority in `docs/ROADMAP.md`.
+* **No retrospective edition is published or approved.** Preparation of No. 14
+  (w/e 2026-08-15) is under way on `editorial/pla-watch-no-14-retrospective`
+  and is blocked pending an owner decision on the authoring path — the only
+  path that writes an edition's source sidecar also renders into `output/`.
+  See that branch's pull request.
 * There is a ruled cadence gap for the week ending 2026-07-25 (analyst ruling,
   `DECISION_LOG.md` 2026-07-30). The validator warning that records it is
   history, not a defect to suppress.
