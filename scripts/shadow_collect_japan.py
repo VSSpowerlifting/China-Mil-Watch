@@ -42,6 +42,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sqlite3
 import sys
 from datetime import date, datetime, timezone
@@ -52,6 +53,8 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from core.collection import status as st                      # noqa: E402
+from core.shadow_schedule import (                            # noqa: E402
+    SOURCE_EXPLICIT, ScheduleError, resolve_target_date)
 from core.collection.contract import CollectionWindow          # noqa: E402
 from scraper.sources.jp_mod import (                            # noqa: E402
     JPModAdapter, partition_refs, publication_kind)
@@ -303,7 +306,8 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
 
 
 def run(state_dir: Path, target: date, lookback: int, cap: int,
-        run_id: str, commit: str, adapter=None) -> dict:
+        run_id: str, commit: str, adapter=None,
+        target_source: str = SOURCE_EXPLICIT) -> dict:
     assert_isolated(state_dir)
     state_dir.mkdir(parents=True, exist_ok=True)
     (state_dir / "ledger").mkdir(exist_ok=True)
@@ -317,6 +321,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         "collector_commit": commit,
         "started_utc": started,
         "target_date": target.isoformat(),
+        "target_date_source": target_source,
         "lookback_days": lookback,
         "cap": cap,
         "robots_status": None,
@@ -524,12 +529,34 @@ def main(argv=None) -> int:
     ap.add_argument("--cap", type=int, default=40)
     ap.add_argument("--run-id", default="local")
     ap.add_argument("--commit", default="unknown")
+    ap.add_argument("--event-name",
+                    default=os.environ.get("GITHUB_EVENT_NAME"),
+                    help="the GitHub event that started this run. 'schedule' "
+                         "resolves the logical date from --cron-utc; anything "
+                         "else records the UTC date it actually ran on.")
+    ap.add_argument("--cron-utc", default=None,
+                    help="the workflow's cron time-of-day in UTC (HH:MM). "
+                         "Required for a scheduled run: a job started after "
+                         "midnight belongs to the previous day's slot.")
+    ap.add_argument("--run-attempt",
+                    default=os.environ.get("GITHUB_RUN_ATTEMPT") or "1",
+                    help="GITHUB_RUN_ATTEMPT: 1 on a first attempt, higher on "
+                         "a re-run. A re-run without --target-date is refused "
+                         "rather than re-dated. Local calls default to 1.")
     args = ap.parse_args(argv)
 
-    target = (date.fromisoformat(args.target_date) if args.target_date
-              else datetime.now(timezone.utc).date())
+    # The logical collection date, not the execution date. Japan's cron sits at
+    # 22:40 UTC — eighty minutes from midnight — so it is more exposed to this
+    # than Singapore, not less. See core/shadow_schedule.py.
+    try:
+        target, target_source = resolve_target_date(
+            datetime.now(timezone.utc), args.event_name, args.cron_utc,
+            args.target_date, args.run_attempt)
+    except ScheduleError as exc:
+        print("collection refused: %s" % exc, file=sys.stderr)
+        return 2
     entry = run(Path(args.state_dir), target, args.lookback_days, args.cap,
-                args.run_id, args.commit)
+                args.run_id, args.commit, target_source=target_source)
 
     print("result     : %s (%s)" % (entry["result"], entry["health"]))
     print("discovered : %d, selected %d" % (entry["discovered"], entry["selected"]))

@@ -77,6 +77,112 @@ What must stay honest:
 A retrospective review is real evidence and is preserved as such. Like every
 checkpoint, it qualifies nothing on its own.
 
+### Logical collection dates versus execution timestamps
+
+A ledger's `target_date` is the **logical collection date** — the day the run
+was scheduled to cover. `started_utc` and `finished_utc` are the **actual
+execution timestamps**. They are different facts and a review must not conflate
+them.
+
+They used to be conflated. Both collectors derived `target_date` from
+`datetime.now(timezone.utc).date()`, so a scheduled job that GitHub started
+after UTC midnight was stamped with the following day and its own nominal day
+acquired no ledger. The Day 7 and Day 14 reviews each found one:
+
+| Desk | Nominal day | Run | Started (UTC) | Stamped |
+|---|---|---|---|---|
+| Singapore | 2026-08-26 | 33027905549 | 2026-08-27T00:45:40Z | 2026-08-27 |
+| Singapore | 2026-08-31 | 33455386368 | 2026-09-01T00:35:45Z | 2026-09-01 |
+| Japan | 2026-09-02 | 33700195896 | 2026-09-03T00:36:36Z | 2026-09-03 |
+
+**On Japan the defect is not occasional but total.** Its cron sits at 22:40 UTC
+and Actions has started every scheduled Japan run late enough to cross midnight
+— observed lateness 1h50m to 7h38m. Verified 2026-09-03 against `shadow/jp-mod`
+`35f9b9c3`: all 9 Japan ledgers are stamped one day after their slot. A Japan
+reviewer should expect every pre-fix ledger to read one day late, and should
+expect one duplicate-date pair at the changeover — the first slot-dated run
+records 2026-09-03, which the last execution-dated ledger already carries, so
+nominal 2026-09-02 never acquires a Japan ledger. That is reported truthfully
+rather than smoothed, and no ledger is rewritten to hide it. The qualification
+clock is unaffected either way: `shadow_day` comes from `finished_utc` against
+day zero, never from `target_date`.
+
+The two Singapore anomalies were disposed as **target-date metadata defects,
+not corpus-integrity failures**: health `ok`, zero fetch, extraction and access failures, a coherent
+state-hash chain, insertions continuing in the runs that followed, and
+overlapping 30-day lookbacks that covered the nominal day either way. Those
+dispositions remain historically true and the ledgers behind them are immutable
+— nothing is renamed, edited, backfilled or squashed.
+
+**State the limit of that evidence.** Those facts are Singapore's, and they
+support one claim: *no collection loss is observable in the reviewed Singapore
+corpus.* They do not support *nothing was lost*, and they say nothing at all
+about Japan, which has had no checkpoint review. Every one of them is a property of what this desk observed
+and stored, and a document the ministry published but the desk never discovered
+would leave no trace in any of them. A reviewer may not write, and may not
+accept, a disposition that asserts the ministry published nothing that escaped
+observation: that negative is not provable from inside the corpus, and a review
+that claims it has stopped being evidence. Write the observable claim and name
+the limit.
+
+`core/shadow_schedule.py` resolves the logical date at the source for future
+runs. A **scheduled first attempt** belongs to the most recent occurrence of
+its cron time-of-day at or before it started — a repository-defined convention,
+not a reconstruction of GitHub's own nominal occurrence, which a runner is
+never told. It assumes a delay shorter than a full cron period; every delay
+observed here has been. A manual dispatch records the honest UTC date it ran on
+rather than borrowing a slot, and an explicit `--target-date` is authoritative
+wherever it is given. A ledger written after that change also carries
+`target_date_source` — `explicit`, `schedule-slot` or `manual-utc-date` — so a
+reader never has to infer which rule produced the date. The field is optional
+in the ledger contract, because every historical ledger predates it; a value it
+does carry must be one of those three, and the review kit refuses a ledger that
+names any other.
+
+### Recovering a failed or re-run scheduled collection
+
+**Do not use the Actions "Re-run" button.** A re-run keeps the original run id,
+ref, commit and triggering event, but not the original moment: `GITHUB_RUN_ATTEMPT`
+increments and the clock has moved, so a re-run of a scheduled job would resolve
+to whichever slot the *re-run* falls in. Both collectors therefore refuse any
+attempt above 1 that carries no explicit date, and say so on stderr rather than
+recording a plausible-looking wrong day.
+
+Recover by dispatching the desk's workflow by hand and naming the day the
+failed run was meant to cover:
+
+> Actions → **Singapore Shadow Collection** or **Japan Shadow Collection** →
+> **Run workflow** → set **target_date** to the intended logical date
+> (`YYYY-MM-DD`, UTC) → **Run workflow**.
+
+Leaving `target_date` empty is the ordinary manual collection: the run records
+the UTC date it actually ran on, as `manual-utc-date`. Filling it in records
+that date as `explicit`. Equivalently, from a checkout:
+
+```
+python scripts/shadow_collect.py --state-dir <state> --target-date 2026-08-31
+```
+
+A recovery dispatch writes a **new** ledger for that date. It does not amend
+the ledger the failed attempt may already have written, and nothing in this
+repository does.
+
+**The review tool's missing-day detection was deliberately not changed.** A
+missing-day anomaly is a true statement about the ledger set it reads, and
+teaching it to suppress one would have removed the signal that found this
+defect. Ledgers written before the fix keep their execution-date stamps, so
+historical missing-day anomalies will keep appearing and still need
+disposition.
+
+That is a narrower claim than "the review tool was not changed", and the
+distinction matters. The reader *is* changed in one backward-compatible
+respect: it validates `target_date_source` when a ledger carries that field,
+and accepts every ledger that omits it. Provenance validation and missing-day
+detection are separate concerns — the first refuses a ledger whose date
+provenance cannot be read, the second reports a day no ledger covers, and
+nothing about any existing ledger's anomalies, disposition or report content
+changes.
+
 While the corpus is small enough to read end to end, use `--review-all`. Once it
 is not, use `--since-ledger <filename>` to queue everything first seen since the
 previous checkpoint; the focused rules below fill in the rest.

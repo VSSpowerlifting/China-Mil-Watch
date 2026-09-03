@@ -1,7 +1,8 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Current operational snapshot and handoff. Verified 2026-09-02 against
-`origin/main` `67da1c67`.**
+**Current operational snapshot and handoff. Shadow-desk state, protected refs
+and repository scope verified 2026-09-03 against `origin/main` `d10c6c4a`.
+Production and corpus figures below carry their own measurement dates.**
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -106,22 +107,77 @@ Neither desk is qualified, and neither may be described or promoted as
 qualified. Doctrine in `docs/SHADOW_COLLECTION.md`; review procedure in
 `docs/SHADOW_REVIEW.md`.
 
-**Singapore MINDEF** — state branch `shadow/singapore-mindef` (`fd8428c6`).
-Day zero 2026-08-19T23:03:09Z. The 2026-09-01 run recorded `shadow_day` **13**,
-result `ok`, health `ok`, `robots_status=allowed`; 14 ledger entries.
-**Awaiting human review:** `review/singapore-mindef` does not exist on the
-remote, so no checkpoint packet has been published. The Day 7 checkpoint is
-past due and Day 14 is imminent. Completing them is a human task that the
-tooling can prepare but cannot perform.
+**Singapore MINDEF** — state branch `shadow/singapore-mindef`. Day zero
+2026-08-19T23:03:09Z. The 2026-09-02 run recorded `shadow_day` **14**, result
+`ok_all_duplicates`, health `ok`, `robots_status=allowed`; 15 ledger entries,
+40 records.
 
-**Japan MOD** — state branch `shadow/jp-mod` (`6761b963`). Day zero
-2026-08-27T02:14:38Z. The 2026-09-02 run recorded `shadow_day` **5**, result
-`ok_all_duplicates`, health **`partial`**. **Access-constrained:** RSS
-discovery works and PDF documents are retrieved in full, but HTML documents on
-the same host are returned behind an interactive challenge — 28 of 32 selected
-items were challenged in that run. Challenged items are stored as titled, dated
-discovery records with no body and nothing inferred. The challenge is **never**
-to be bypassed; resolving this means requesting an official route.
+**Day 7 and Day 14 human checkpoint reviews are complete and published** to the
+orphan branch `review/singapore-mindef`, both `pass_with_findings`, reviewer
+Benjamin Yang:
+
+| Checkpoint | State commit | Completed-review id | Scope |
+|---|---|---|---|
+| Day 7 (retrospective) | `f806335e` | `403df921…3c3d89` | complete corpus, 37 of 37 |
+| Day 14 | `5fa49c81` | `10a28df1…e7b756` | focused queue, 16 of 40 |
+
+**Day 30 remains required, and Singapore remains unqualified.** Two completed
+checkpoints qualify nothing: promotion still needs 30 consecutive collecting
+days, the Day 30 review, and an owner sign-off recorded in `DECISION_LOG.md`.
+
+Both reviews disposed of the same class of finding — a scheduled run delayed
+across UTC midnight was stamped with its execution date, leaving its nominal
+day with no ledger (2026-08-26 and 2026-08-31).
+
+**No collection loss is observable in the reviewed Singapore corpus.** The state-hash
+chain stayed coherent, no fetch, extraction or access failure was recorded,
+insertions continued in the runs that followed, and the overlapping 30-day
+lookbacks covered both days. Those facts are about what the desk observed and
+stored; they cannot establish that the ministry published nothing the desk
+never observed, and no evidence reachable from inside the corpus could. Loss is
+unobserved, which is a narrower claim than ruled out, and the limitation is
+recorded rather than rounded off.
+
+**Attribution is fixed at the source, forward-only.** Singapore and Japan
+shadow runs derive their logical target date through `core/shadow_schedule.py`:
+a scheduled first attempt takes the schedule-slot convention — the most recent
+occurrence of the configured daily cron time at or before the run started,
+boundary inclusive — an explicit `--target-date` is authoritative wherever it
+is given, and a re-run without one is refused rather than re-dated. Each ledger
+records which rule applied in `target_date_source`. Historical ledgers and both
+published review findings are untouched: the fix changes no review evidence and
+does not retroactively alter a single stored date, so historical missing-day
+anomalies remain and still require disposition. Recovery from a failed
+scheduled run is a manual dispatch naming the intended logical date, not a UI
+re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
+
+**Japan MOD** — state branch `shadow/jp-mod`. Day zero
+2026-08-27T02:14:38Z. The 2026-09-03 run recorded `shadow_day` **6**, result
+`ok_all_duplicates`, health **`partial`**; 9 ledger entries. **Access-constrained:**
+RSS discovery works and PDF documents are retrieved in full, but HTML documents
+on the same host are returned behind an interactive challenge — 35 of 39
+selected items were challenged in that run. Challenged items are stored as
+titled, dated discovery records with no body and nothing inferred. The
+challenge is **never** to be bypassed; resolving this means requesting an
+official route.
+
+**Every Japan ledger written so far carries an execution date, not a slot
+date.** Japan's cron sits at 22:40 UTC and Actions has started every scheduled
+Japan run late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
+Verified 2026-09-03 against `shadow/jp-mod`: all 9 ledgers are stamped one day
+after the slot they belong to, most recently run `33700195896` (started
+2026-09-03T00:36:36Z, stamped 2026-09-03, nominal 2026-09-02). Japan's
+mis-attribution is systemic, where Singapore's was occasional.
+
+Two consequences of the source fix, both expected and neither retroactive:
+
+* the first slot-dated Japan run records 2026-09-03, which the last
+  execution-dated ledger already carries, so one duplicate-date pair appears at
+  the changeover and nominal 2026-09-02 acquires no Japan ledger. Historical
+  ledgers are not rewritten to smooth this;
+* **the qualification clock is unaffected.** `shadow_day` is derived from
+  `finished_utc` against day zero, never from `target_date`, so no day count
+  moves.
 
 ## 6. Known technical debt
 

@@ -19,6 +19,16 @@ on:
     # observed 60–100 minute lateness), so the two never contend.
     - cron: '10 21 * * *'
   workflow_dispatch:
+    inputs:
+      target_date:
+        description: >-
+          Logical collection date to record, YYYY-MM-DD in UTC. Leave empty to
+          record the UTC date this dispatch runs on. Set it to recover a
+          scheduled run that failed or was re-run: name the day that run was
+          meant to cover. A UI re-run cannot say which day it means and is
+          refused, so this input is the recovery path.
+        required: false
+        default: ''
 
 concurrency:
   group: singapore-shadow
@@ -79,14 +89,35 @@ jobs:
       - name: Run shadow collection
         id: collect
         working-directory: repo
+        env:
+          # Through the environment, never interpolated into the script body.
+          TARGET_DATE: ${{ inputs.target_date }}
         run: |
           set -euo pipefail
+          # An absent or empty dispatch input must not reach argparse as an
+          # empty --target-date: "" is not a date, and a refusal here would be
+          # a refusal of every scheduled run. Build the argument only when the
+          # operator actually named a day.
+          if [ -n "${TARGET_DATE:-}" ]; then
+            set -- --target-date "${TARGET_DATE}"
+          else
+            set --
+          fi
+          # --event-name / --cron-utc give the collector the LOGICAL date of
+          # the nominal 21:10 UTC slot. Actions starts scheduled jobs late —
+          # observed hours late here — and a run that crosses UTC midnight was
+          # previously stamped with the following day, leaving its own day with
+          # no ledger. Keep --cron-utc equal to the cron above.
           python scripts/shadow_collect.py \
             --state-dir "${RUNNER_TEMP}/shadow-state/state" \
             --lookback-days 30 \
             --cap 40 \
             --run-id "${GITHUB_RUN_ID}" \
-            --commit "${GITHUB_SHA}"
+            --commit "${GITHUB_SHA}" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --cron-utc "21:10" \
+            "$@"
 
       # Only reached when collection succeeded: a failing run must not persist a
       # half-written state, and `set -e` above already stopped the job.
