@@ -11,7 +11,7 @@
 {% block og_description %}{{ dek }}{% endblock %}
 {% block og_image %}{% if cover_image_url %}{{ cover_image_url }}{% else %}{{ site_origin }}/og-image.png{% endif %}{% endblock %}
 
-{% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% endblock %}
+{% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% if is_retrospective %}<span>{{ retrospective_label }}</span>{% endif %}{% endblock %}
 
 {% block progress %}
 <div class="progress-rail" aria-hidden="true"><b></b></div>
@@ -761,7 +761,7 @@
 <div class="hero-meta-top">
   <div class="hero-edition">
     {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
-    {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}
+    {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}{# Retrospective is independent of edition_type: it says when the edition was written, not what the week held. #}{% if is_retrospective %}<span class="pw-badge pw-badge--retrospective">{{ retrospective_label }}</span>{% endif %}
   </div>
 </div>
 <h1 class="hero-title">{{ _t.display }}</h1>
@@ -1012,11 +1012,11 @@
           {% endfor %}
         </div>
         {% if source_trail_truncated %}
-          <div class="source-trail-cap">Showing the {{ articles | length }} most relevant items from this week's coverage. The full set is searchable on <a href="{{ root_path }}archive.html">China Mil Watch</a>.</div>
+          <div class="source-trail-cap">Showing the {{ articles | length }} most relevant items from this week's coverage. The full set is searchable on <a href="{{ root_path }}archive.html">{{ publication_home_label | default('Indo-Pacific Record') }}</a>.</div>
         {% endif %}
         {% else %}
         <p style="color: var(--color-text-muted); font-size: 0.875rem;">
-          See <a href="{{ root_path }}archive.html">China Mil Watch daily briefs</a> for source material.
+          See <a href="{{ root_path }}archive.html">{{ publication_home_label | default('Indo-Pacific Record') }} daily briefs</a> for source material.
         </p>
         {% endif %}
       </div>
@@ -1035,7 +1035,7 @@
         <div class="author-chips">
           {% if author_links.LinkedIn %}<a class="author-chip" href="{{ author_links.LinkedIn }}" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a>{% endif %}
           {% if author_links.Email %}<a class="author-chip" href="{{ author_links.Email }}">Email <span class="arrow">→</span></a>{% endif %}
-          {% if author_links['China Mil Watch'] %}<a class="author-chip" href="{{ author_links['China Mil Watch'] }}">China Mil Watch <span class="arrow">→</span></a>{% endif %}
+          {% set _home = publication_home_label | default('Indo-Pacific Record') %}{% if author_links[_home] %}<a class="author-chip" href="{{ author_links[_home] }}">{{ _home }} <span class="arrow">→</span></a>{% endif %}
         </div>
         {% endif %}
       </div>
@@ -1061,7 +1061,7 @@
     {% endif %}
     <div class="post-nav{% if prev_post or next_post %} post-nav--tight{% endif %}">
       <a href="../archive.html">&larr; Back to Archive</a>
-      <a href="{{ root_path }}index.html">Visit China Mil Watch &rarr;</a>
+      <a href="{{ root_path }}index.html">Visit {{ publication_home_label | default('Indo-Pacific Record') }} &rarr;</a>
     </div>
   </article>
 
@@ -1084,6 +1084,7 @@
     <div class="sb-card">
       <div class="sb-eyebrow">Edition</div>
       <div class="sb-row"><span class="label">Type</span><span class="value">{{ edition_label or 'Standard' }}</span></div>
+      {% if is_retrospective %}<div class="sb-row"><span class="label">Timing</span><span class="value">{{ retrospective_label }}</span></div>{% endif %}
       {% if issue_number %}<div class="sb-row"><span class="label">Issue</span><span class="value">No. {{ issue_number }}</span></div>{% endif %}
       <div class="sb-row"><span class="label">Week ending</span><span class="value">{{ week_ending | format_date }}</span></div>
       {% if days_covered %}<div class="sb-row"><span class="label">Days observed</span><span class="value">{{ days_covered }}</span></div>{% endif %}
@@ -1093,14 +1094,17 @@
 
     <div class="sb-card">
       <div class="sb-eyebrow">Cite this edition</div>
-      <div class="cite-text" id="pw-cite">{% if author_name %}{{ author_name }}, {% endif %}“{{ title }},” <em>The PLA Watch</em>{% if issue_number %} No. {{ issue_number }}{% endif %}, China Mil Watch, {{ week_ending | format_date }}. {{ site_origin }}/the-pla-watch/posts/{{ date }}.html</div>
+      {# `publication` is resolved per edition by core/edition_identity.py: editions
+   1-13 cite China Mil Watch, 14+ cite Indo-Pacific Record. Never hard-code it
+   here — a citation must name the publication that published the edition. #}
+      <div class="cite-text" id="pw-cite">{% if author_name %}{{ author_name }}, {% endif %}“{{ title }},” <em>{{ series_name | default('The PLA Watch') }}</em>{% if issue_number %} No. {{ issue_number }}{% endif %}, {{ publication | default('Indo-Pacific Record') }}, {{ week_ending | format_date }}. {{ site_origin }}/the-pla-watch/posts/{{ date }}.html</div>
       <button type="button" class="cite-copy" id="pw-cite-copy">Copy citation</button>
     </div>
 
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="{{ root_path }}methodology.html">Methodology</a>
+        Source-grounded weekly synthesis built from {{ publication_home_label | default('Indo-Pacific Record') }}'s daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>
     </div>
   </aside>

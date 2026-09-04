@@ -4,6 +4,57 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-03 — Editions keep the name they were published under
+
+**Owner ruling.** Preparing the first post-rename edition surfaced that the
+authoring pipeline had no concept of *which publication published an edition*.
+These rulings constrain future work.
+
+1. **Editions 1–13 retain the China Mil Watch masthead, citation, parent links
+   and stored author identity** when displayed or re-rendered. An edition is a
+   dated artifact of record; a re-render reproduces the published page rather
+   than restating it under the current name.
+
+2. **Editions 14 onward are published by Indo-Pacific Record.** *The PLA Watch*
+   remains the series name and is unchanged by the rename.
+
+3. **The boundary is the issue number, not the covered week.** Edition 14 covers
+   the week ending 2026-08-15, which precedes the 2026-08-27 rename, yet is
+   published now. The parent publication of an edition is the one that publishes
+   it. A `week_ending < RENAME_DATE` test would have put No. 14 under the
+   retired name, and a retrospective edition is precisely where the two diverge.
+
+4. **Identity is resolved centrally in `core/edition_identity.py`**, not by
+   module constants and not by date conditionals in templates. This closes a
+   real trap: editions 1 and 2 store no author fields at all and rendered
+   historically only because the generator's constants were still stale.
+   Correcting those constants would have silently rebranded two published
+   editions with no test failing. Correctness by coincidence is not correctness.
+
+5. **`rerender_pla_watch.py` carries no duplicate identity.** Its
+   `except ImportError` fallback re-declared the predecessor identity, so an
+   import failure would have rebranded every edition it touched. One source of
+   truth, stdlib-only, with nothing to guard against.
+
+6. **`publication_timing` is `regular` or `retrospective`, and is independent of
+   `edition_type`.** Timing says when the edition was written; `edition_type`
+   says what the week held. Overloading either onto the other would destroy a
+   distinction the archive needs. Absent means `regular`, so every historical
+   sidecar stays valid; an unrecognised value is refused.
+
+7. **A retrospective edition is visibly labelled** on the post page and on its
+   index and archive cards, so it cannot read as the current week's brief. The
+   label is not applied to editions 1–13, none of which is retrospective.
+
+8. **Retrospective covers use the deterministic gradient.** No source-image
+   fetch and no curated stock asset: the edition is written weeks after its
+   week, so there is no contemporaneous image, and stock imagery would dress a
+   back-dated edition in a look it never had. A human-approved edition-specific
+   image still wins.
+
+9. **Source concentration is standing methodology**, stated once, not injected
+   as a repeated per-edition disclaimer.
+
 ## 2026-09-03 — A shadow run's date is its scheduled slot, not its execution date
 
 Two completed Singapore checkpoint reviews (Day 7 `403df921…3c3d89`, Day 14

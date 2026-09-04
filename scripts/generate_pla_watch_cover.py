@@ -34,6 +34,9 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
+from core.edition_identity import (  # noqa: E402
+    TIMING_RETROSPECTIVE, IdentityError, parse_timing, resolve_identity)
+
 ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "output" / "the-pla-watch" / "posts"
 COVERS_DIR = ROOT / "output" / "the-pla-watch" / "covers"
@@ -96,6 +99,32 @@ _PLACEHOLDER_WEEK_ENDING = "___COVER_WEEK_ENDING___"
 _PLACEHOLDER_N_ARTICLES = "___COVER_N_ARTICLES___"
 _PLACEHOLDER_N_SIGNIFICANT = "___COVER_N_SIGNIFICANT___"
 _PLACEHOLDER_EDITION_STAT = "___COVER_EDITION_STAT___"
+_PLACEHOLDER_PUBLICATION = "___COVER_PUBLICATION___"
+
+#: The series. Unchanged by the rename and not era-dependent, unlike the
+#: parent publication printed above and below it.
+SERIES_TITLE = "THE PLA WATCH"
+
+
+def cover_copy(sidecar: dict) -> dict:
+    """
+    The identity copy printed on one edition's cover.
+
+    Both renderers read this, so the Playwright cover and the PIL
+    fallback cannot disagree about who published an edition. The parent
+    publication comes from `core.edition_identity`; nothing here
+    re-declares it. Raises `IdentityError` on metadata that cannot be
+    resolved, which is what lets callers fail closed before any side
+    effect.
+    """
+    publication = resolve_identity(sidecar)["publication"]
+    return {
+        "series_title": SERIES_TITLE,
+        "publication": publication,
+        # The PIL eyebrow is set in caps as a type treatment, not as a
+        # different name.
+        "publication_eyebrow_pil": publication.upper(),
+    }
 _PLACEHOLDER_BACKGROUND = "___COVER_BACKGROUND___"
 
 _HTML_TEMPLATE = f"""\
@@ -445,7 +474,7 @@ body {{
   <div class="content">
     <div class="eyebrow">
       <span class="eyebrow-line"></span>
-      China Mil Watch
+      {_PLACEHOLDER_PUBLICATION}
     </div>
     <div class="pub-title">THE PLA WATCH</div>
     <div class="subtitle">Weekly Briefing on Chinese Military and Security Developments</div>
@@ -468,7 +497,7 @@ body {{
         </div>
         {_PLACEHOLDER_EDITION_STAT}
       </div>
-      <div class="footer">China Mil Watch</div>
+      <div class="footer">{_PLACEHOLDER_PUBLICATION}</div>
     </div>
   </div>
 </div>
@@ -615,6 +644,9 @@ def _build_html(sidecar: dict) -> str:
         .replace(_PLACEHOLDER_N_SIGNIFICANT,
                  html_lib.escape(str(sidecar.get("n_significant", 0))))
         .replace(_PLACEHOLDER_EDITION_STAT, edition_stat_html)
+        # Escaped like every other injected value.
+        .replace(_PLACEHOLDER_PUBLICATION,
+                 html_lib.escape(cover_copy(sidecar)["publication"]))
     )
 
 
@@ -826,14 +858,14 @@ def _render_with_pil(sidecar: dict, out_path: Path) -> None:
 
     # Eyebrow
     eye_font = _find_font(_SANS_BOLD, 13)
-    eye_text = "CHINA MIL WATCH"
+    eye_text = cover_copy(sidecar)["publication_eyebrow_pil"]
     draw.text((margin_x, y), eye_text, font=eye_font,
               fill=(169, 196, 216))
     y += 32
 
     # Publication title
     title_font = _find_font(_SERIF_BOLD, 68)
-    draw.text((margin_x, y), "THE PLA WATCH", font=title_font,
+    draw.text((margin_x, y), SERIES_TITLE, font=title_font,
               fill=(232, 241, 247))
     y += 78
 
@@ -932,7 +964,7 @@ def _render_with_pil(sidecar: dict, out_path: Path) -> None:
 
     # Footer
     foot_font = _find_font(_SANS_REG, 12)
-    draw.text((margin_x, HEIGHT - 30), "China Mil Watch",
+    draw.text((margin_x, HEIGHT - 30), cover_copy(sidecar)["publication"],
               font=foot_font, fill=(183, 201, 216))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -946,6 +978,11 @@ def render_cover(sidecar: dict, out_path: Path) -> Path:
     Render a 1200×630 cover PNG for one sidecar. Tries Playwright first;
     falls back to PIL if Playwright is unavailable or fails.
     """
+    # Validate before the mkdir: unreadable identity metadata must not leave a
+    # directory, a partial cover, or anything else behind.
+    cover_copy(sidecar)
+    parse_timing(sidecar.get("publication_timing"))
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     html_content = _build_html(sidecar)
     if not _render_with_playwright(html_content, out_path):
@@ -1050,6 +1087,21 @@ def generate_one(json_path: Path, force: bool = False,
     # Determine the previous issue's background so we can refuse to reuse it.
     prev_img = _prev_issue_image(sidecar_date)
 
+    # A retrospective edition takes the deterministic abstract gradient. It is
+    # written weeks after its week, so there is no contemporaneous photograph to
+    # fetch, and a curated stock asset would dress a back-dated edition in
+    # imagery it never had. Metadata-driven rather than flag-driven, so the
+    # re-render path obeys it without the caller having to remember. A human may
+    # still supply an edition-specific image later: priority 1 below still runs.
+    # Through the canonical contract, not a raw string compare: an unreadable
+    # timing must stop the run here, before any network fetch, curated-image
+    # selection or write — not be silently treated as a regular edition.
+    if parse_timing(sidecar.get("publication_timing")) == TIMING_RETROSPECTIVE:
+        fetch_source_image = False
+        allow_curated = False
+    else:
+        allow_curated = True
+
     if out_path.exists() and not force:
         print(f"[skip] {out_path.relative_to(ROOT)} already exists "
               f"(use --force to overwrite)")
@@ -1067,7 +1119,7 @@ def generate_one(json_path: Path, force: bool = False,
                 bg_source = "source_trail_fetch" if bg_path else None
 
         # Priority 3: curated reusable cover images (static assets, never edition-specific).
-        if bg_path is None:
+        if bg_path is None and allow_curated:
             bg_path = _first_image_in_dirs(
                 CURATED_IMAGE_DIRS, prev_img, sidecar_date, "curated_fallback"
             )
@@ -1081,8 +1133,13 @@ def generate_one(json_path: Path, force: bool = False,
         # abstract gradient, matching the veil rule in DECISION_LOG 2026-08-12.
 
         if bg_path is None:
-            bg_source = "abstract_gradient"
-            print(f"[cover:{sidecar_date}] no local image found — using abstract fallback gradient")
+            # Recorded truthfully either way: a retrospective edition says so,
+            # rather than being indistinguishable from an edition that merely
+            # found no image.
+            bg_source = ("retrospective_gradient" if not allow_curated
+                         else "abstract_gradient")
+            print(f"[cover:{sidecar_date}] using abstract fallback gradient "
+                  f"({bg_source})")
 
         # Record the image source in the sidecar so callers can audit it.
         sidecar_on_disk = _load_sidecar(json_path)
