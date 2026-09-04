@@ -142,16 +142,22 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
 
     def test_the_mark_is_decorative_and_the_wordmark_is_the_name(self):
         """
-        The SVG in the masthead is aria-hidden, so a screen reader announces
-        the wordmark once rather than a graphic and a heading. The standalone
-        file, used as a favicon, carries its own accessible title instead.
+        The mark in the masthead is announced to nobody, so a screen reader
+        reads the wordmark once rather than a graphic and a heading. The
+        standalone file, used as a favicon, carries its own accessible title
+        instead.
+
+        The masthead mark became an <img> when the compass replaced the
+        generic document glyph: the canonical artwork is owner-supplied raster
+        and is not redrawn as inline vector. The property being asserted is
+        unchanged — decorative in the page, named in the icon file.
         """
         html = self.page("index.html")
-        svg = html.split("<svg", 1)[1].split("</svg>", 1)[0]
-        self.assertIn('class="brand-mark"', svg)
-        self.assertIn('aria-hidden="true"', svg)
-        self.assertIn('focusable="false"', svg)
-        self.assertNotIn("<title>", svg)
+        mark = re.search(r'<img[^>]+class="brand-mark"[^>]*>', html)
+        self.assertIsNotNone(mark, "no masthead mark rendered")
+        mark = mark.group(0)
+        self.assertIn('alt=""', mark)
+        self.assertIn('aria-hidden="true"', mark)
         standalone = (self.out / "mark.svg").read_text(encoding="utf-8")
         self.assertIn("<title>%s</title>" % TITLE, standalone)
 

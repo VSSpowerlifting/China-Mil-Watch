@@ -1799,6 +1799,27 @@ def canonical_route(rel: str) -> str:
         return rel[: -len("index.html")]
     return rel
 
+#: Build route -> file under `site/assets/identity/`.
+#:
+#: `site/assets/identity/IDENTITY_ASSETS.md` is authoritative for which of
+#: these is canonical artwork and which are derivatives; the short answer is
+#: that `ipr-compass-logo.png` is canonical, is never served directly, and
+#: every file below is produced from it by `scripts/build_identity_assets.py`.
+IDENTITY_DIR = Path(__file__).resolve().parent.parent / "assets" / "identity"
+#: The social card's fixed geometry, declared in `og:image:width/height`.
+#: `site/assets/identity/IDENTITY_ASSETS.md` records the file itself, and
+#: `tests/test_identity_assets.py` asserts the emitted numbers match it.
+SOCIAL_CARD = (1200, 630)
+
+IDENTITY_ASSETS = {
+    "mark.svg": "ipr-compass-mark-small.svg",
+    "icon-16.png": "ipr-compass-icon-16.png",
+    "icon-32.png": "ipr-compass-icon-32.png",
+    "apple-touch-icon.png": "ipr-compass-touch-180.png",
+    "masthead-mark.png": "ipr-compass-masthead-112.png",
+    "social-card.png": "ipr-social-card-1200x630.png",
+}
+
 LEGACY_REDIRECT = """<!doctype html>
 <html lang="en">
 <head>
@@ -2087,12 +2108,28 @@ def build(out_dir: Path, title: str, db_path: Path,
         encoding="utf-8")
     written.append("styles.css")
 
-    # Code-native mark. One SVG serves the masthead and the tab icon, so the
-    # two cannot drift, and it carries no military symbolism to drift into.
-    (out_dir / "mark.svg").write_text(
-        (Path(__file__).parent / "mark.svg").read_text(encoding="utf-8"),
-        encoding="utf-8")
-    written.append("mark.svg")
+    # ── Identity assets ──────────────────────────────────────────────────
+    # All derived from one owner-supplied compass, and copied rather than
+    # re-drawn, so the masthead and the tab icon cannot drift apart.
+    #
+    # The route names describe the job, not the provenance; the source names
+    # under `site/assets/identity/` describe the provenance, and
+    # IDENTITY_ASSETS.md maps the two. `mark.svg` keeps the name it has always
+    # had because published pages already reference it.
+    #
+    # The favicon routes carry the *simplified* mark. The canonical artwork's
+    # two outer rings are 4 px strokes on a 500 px field, which is 0.13 device
+    # px at 16 — the rings do not survive the downscale, and a mark that
+    # dissolves at tab size is not an icon. The canonical file is used
+    # unaltered everywhere there is room for it.
+    for route, source in IDENTITY_ASSETS.items():
+        src = IDENTITY_DIR / source
+        if src.suffix == ".svg":
+            (out_dir / route).write_text(src.read_text(encoding="utf-8"),
+                                         encoding="utf-8")
+        else:
+            (out_dir / route).write_bytes(src.read_bytes())
+        written.append(route)
 
     # ── Edition covers ───────────────────────────────────────────────────
     # Copied into this build's own namespace rather than referenced across
@@ -2246,9 +2283,34 @@ def build(out_dir: Path, title: str, db_path: Path,
             if NOINDEX_TAG not in page:
                 continue
             loc = origin + "/" + canonical_route(rel)
-            canonical = '<link rel="canonical" href="%s">' % _html.escape(
-                loc, quote=True)
-            path.write_text(page.replace(NOINDEX_TAG, canonical, 1),
+            # The canonical and og:url are the same fact stated twice, so they
+            # are derived from one value here rather than composed separately
+            # in a template that does not know the origin. A social card that
+            # disagrees with the canonical is a page that cannot be cited.
+            # The card's dimensions and its alt text are known at build time —
+            # it is one fixed asset — so they are stated rather than left for a
+            # scraper to discover by fetching. They are written here, beside
+            # og:image, so a page can never carry one without the other.
+            #
+            # The alt text is the publication's name because the card *is* the
+            # publication's identity lockup. Describing it per page would mean
+            # inventing a sentence about a document the renderer has not read,
+            # which is the same rule that governs og:description.
+            safe_origin = _html.escape(origin, True)
+            card = "%s/social-card.png" % safe_origin
+            head = "\n".join([
+                '<link rel="canonical" href="%s">' % _html.escape(loc, True),
+                '<meta property="og:url" content="%s">' % _html.escape(loc, True),
+                '<meta property="og:image" content="%s">' % card,
+                '<meta property="og:image:width" content="%d">' % SOCIAL_CARD[0],
+                '<meta property="og:image:height" content="%d">' % SOCIAL_CARD[1],
+                '<meta property="og:image:alt" content="%s">' % _html.escape(
+                    title, True),
+                '<meta name="twitter:image" content="%s">' % card,
+                '<meta name="twitter:image:alt" content="%s">' % _html.escape(
+                    title, True),
+            ])
+            path.write_text(page.replace(NOINDEX_TAG, head, 1),
                             encoding="utf-8")
             indexable += 1
 

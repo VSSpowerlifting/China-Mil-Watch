@@ -9,7 +9,27 @@
    HTML in a directory; this is how a stray copy identifies itself. #}
 <meta name="generator" content="{{ title }} — {{ mode }} build">
 <meta name="robots" content="noindex, nofollow">
+{# Identity. The compass is the publication's mark; `mark.svg` is the
+   simplified derivative, because the canonical artwork's 4 px rings are
+   sub-pixel below 32 px and dissolve into a halo at favicon size. The PNG
+   pair is the fallback for clients that will not take an SVG icon.
+   `site/assets/identity/IDENTITY_ASSETS.md` records which file is canonical. #}
+<meta name="theme-color" content="#0A1A22">
 <link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ '../' if nested else '' }}icon-16.png">
+<link rel="apple-touch-icon" href="{{ '../' if nested else '' }}apple-touch-icon.png">
+{# Link-preview identity. Title and description are the page's own; the
+   absolute URL and image need an origin the template does not have, so they
+   are written in the same post-processing pass that writes the canonical —
+   one source of truth for a page's address, and no hard-coded domain. #}
+<meta property="og:site_name" content="{{ title }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ tagline }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ self.title() }}">
+<meta name="twitter:description" content="{{ tagline }}">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
 {# Head scripts, declared per page rather than inherited by all of them.
 
@@ -28,14 +48,17 @@
 <header class="masthead">
   <div class="wrap">
     <a class="brand" href="{{ '../' if nested else '' }}index.html">
-      {# The record mark: a stack of preserved entries, ruled. It carries no
-         military symbolism, works at favicon size and in monochrome, and is
-         decorative — the wordmark beside it is the accessible name. #}
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <rect x="3" y="4" width="26" height="24" rx="2" class="mark-field"/>
-        <path d="M8 11h16M8 16h16M8 21h10" class="mark-rules"/>
-        <path d="M3 25.5h26" class="mark-tide"/>
-      </svg>
+      {# The compass, at 56 CSS px on desktop and 48 compact. Both are above
+         the 48 px floor the audit measured: below it the canonical artwork's
+         double ring merges and the mark stops reading as a compass. Delivered
+         at 112 px so a 2x screen has real pixels to use.
+
+         Decorative, exactly as the glyph it replaces was — the wordmark
+         beside it is the accessible name, and announcing the graphic too
+         would make a screen reader say the publication twice. #}
+      <img class="brand-mark" src="{{ '../' if nested else '' }}masthead-mark.png"
+           width="56" height="56" alt="" aria-hidden="true"
+           decoding="async" fetchpriority="high">
       {# The home page leads with the publication, so the wordmark is its h1
          and the lead story is an h2. Every other page has its own h1. #}
       {% if page == 'index.html' %}
@@ -111,6 +134,18 @@
         <dd>{{ freshness.analysis_last_produced or 'not yet recorded' }}</dd></div>
       <div><dt>Last full update</dt>
         <dd>{{ freshness.last_full_update or 'not yet recorded' }}</dd></div>
+      {# Scale, beside the dates that qualify it. Both figures are already in
+         this template's context — no query exists for them — and both are
+         counts of things the corpus actually holds, so neither can print a
+         zero that would read as "collection failed".
+
+         They sit here rather than on the home page alone because the state of
+         collection is a property of the publication, not of one surface, and
+         a reader who lands on a record page deserves the same footing. #}
+      {% if corpus_total %}<div><dt>Records held</dt>
+        <dd>{{ '{:,}'.format(corpus_total) }}</dd></div>{% endif %}
+      {% if totals and totals.analyzed is not none %}<div><dt>Of those, analyzed</dt>
+        <dd>{{ '{:,}'.format(totals.analyzed) }}</dd></div>{% endif %}
     </dl>
     {# "Collection is current" was a claim the dates cannot support. All they
        show is that collection ran more recently than analysis — which is also
