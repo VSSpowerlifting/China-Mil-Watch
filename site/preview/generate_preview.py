@@ -1778,6 +1778,11 @@ def canonical_route(rel: str) -> str:
 #: that `ipr-compass-logo.png` is canonical, is never served directly, and
 #: every file below is produced from it by `scripts/build_identity_assets.py`.
 IDENTITY_DIR = Path(__file__).resolve().parent.parent / "assets" / "identity"
+#: The social card's fixed geometry, declared in `og:image:width/height`.
+#: `site/assets/identity/IDENTITY_ASSETS.md` records the file itself, and
+#: `tests/test_identity_assets.py` asserts the emitted numbers match it.
+SOCIAL_CARD = (1200, 630)
+
 IDENTITY_ASSETS = {
     "mark.svg": "ipr-compass-mark-small.svg",
     "icon-16.png": "ipr-compass-icon-16.png",
@@ -2254,13 +2259,28 @@ def build(out_dir: Path, title: str, db_path: Path,
             # are derived from one value here rather than composed separately
             # in a template that does not know the origin. A social card that
             # disagrees with the canonical is a page that cannot be cited.
+            # The card's dimensions and its alt text are known at build time —
+            # it is one fixed asset — so they are stated rather than left for a
+            # scraper to discover by fetching. They are written here, beside
+            # og:image, so a page can never carry one without the other.
+            #
+            # The alt text is the publication's name because the card *is* the
+            # publication's identity lockup. Describing it per page would mean
+            # inventing a sentence about a document the renderer has not read,
+            # which is the same rule that governs og:description.
+            safe_origin = _html.escape(origin, True)
+            card = "%s/social-card.png" % safe_origin
             head = "\n".join([
                 '<link rel="canonical" href="%s">' % _html.escape(loc, True),
                 '<meta property="og:url" content="%s">' % _html.escape(loc, True),
-                '<meta property="og:image" content="%s/social-card.png">' % (
-                    _html.escape(origin, True)),
-                '<meta name="twitter:image" content="%s/social-card.png">' % (
-                    _html.escape(origin, True)),
+                '<meta property="og:image" content="%s">' % card,
+                '<meta property="og:image:width" content="%d">' % SOCIAL_CARD[0],
+                '<meta property="og:image:height" content="%d">' % SOCIAL_CARD[1],
+                '<meta property="og:image:alt" content="%s">' % _html.escape(
+                    title, True),
+                '<meta name="twitter:image" content="%s">' % card,
+                '<meta name="twitter:image:alt" content="%s">' % _html.escape(
+                    title, True),
             ])
             path.write_text(page.replace(NOINDEX_TAG, head, 1),
                             encoding="utf-8")

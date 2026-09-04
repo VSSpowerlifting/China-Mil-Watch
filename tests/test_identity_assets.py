@@ -16,11 +16,14 @@ owner-supplied and its bytes are pinned by digest. Everything else under
 recorded dimensions is a build nobody can reproduce.
 
 Size is a correctness property, not a preference. The audit measured the
-canonical artwork's ring strokes at 4 px against a 500 px field, which is
-below one device pixel at every masthead size. The floor that follows — 48 CSS
-px for the canonical mark, a separate simplified derivative below 32 px — is
-enforced here so a future change cannot quietly reintroduce a mark that
-renders as a grey smudge.
+canonical artwork's ring strokes at 4 **source pixels** in a 500 px image. A
+feature that size, drawn into a 48 px box, covers 0.38 CSS pixels at 1x and
+0.77 physical pixels on a 2x display — under the one physical pixel a stroke
+needs in order to exist. The floor that follows — 48 **CSS** px for the
+canonical mark, a separate simplified derivative below 32 — was set by looking
+at renders and is enforced here so a future change cannot quietly reintroduce
+a mark that renders as a grey smudge. It is a CSS-pixel floor, so it holds
+whatever the viewer's device-pixel ratio turns out to be.
 
 The predecessor is forbidden in current chrome and required in the archive.
 That directional rule is `test_indo_pacific_identity`'s and is not restated;
@@ -166,6 +169,18 @@ class TestTheDerivativesAreTruthful(unittest.TestCase):
                 size = (IDENTITY_DIR / name).stat().st_size
                 self.assertLess(size, ICON_BYTE_CEILING,
                                 "%s is %d bytes" % (name, size))
+
+    def test_the_declared_card_dimensions_match_the_committed_file(self):
+        """
+        `og:image:width`/`height` are emitted from a constant in the renderer.
+        A constant that disagrees with the asset is worse than no tag: a
+        scraper reserves the wrong box and the preview reflows.
+        """
+        sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
+        import generate_preview as preview
+        self.assertEqual(
+            tuple(preview.SOCIAL_CARD),
+            png_size(IDENTITY_DIR / "ipr-social-card-1200x630.png"))
 
     def test_the_social_card_stays_inside_the_documented_budget(self):
         size = (IDENTITY_DIR / "ipr-social-card-1200x630.png").stat().st_size
@@ -401,6 +416,60 @@ class TestTheCurrentMetadataIdentity(IdentityBuildCase):
                         head).group(1)
                     self.assertTrue(value.startswith(SITE_ORIGIN + "/"),
                                     "%s = %s" % (prop, value))
+
+    def test_the_social_card_declares_its_known_dimensions(self):
+        """
+        The card is a fixed 1200 x 630 asset, so its size is known at build
+        time. Declaring it lets a scraper lay out the preview before the image
+        arrives, and costs two tags.
+        """
+        for name, html in self.sample().items():
+            head = self.head(html)
+            with self.subTest(page=name):
+                self.assertIn('<meta property="og:image:width" content="1200">',
+                              head)
+                self.assertIn('<meta property="og:image:height" content="630">',
+                              head)
+
+    def test_the_social_card_carries_alternative_text(self):
+        """
+        A link preview is an image in someone else's timeline, and it needs a
+        name there for the same reason it needs one here. The card is the
+        publication's own identity lockup, so the publication's name is the
+        honest description of it — not a sentence invented about the page.
+        """
+        for name, html in self.sample().items():
+            head = self.head(html)
+            with self.subTest(page=name):
+                self.assertIn(
+                    '<meta property="og:image:alt" content="%s">' % TITLE, head)
+                self.assertIn(
+                    '<meta name="twitter:image:alt" content="%s">' % TITLE, head)
+
+    def test_no_social_tag_is_emitted_twice(self):
+        """
+        Half of these come from the template and half from the post-processing
+        pass that knows the origin. A tag emitted by both would leave a scraper
+        picking one at random.
+        """
+        properties = ("og:title", "og:description", "og:image", "og:url",
+                      "og:type", "og:site_name", "og:image:width",
+                      "og:image:height", "og:image:alt")
+        names = ("twitter:card", "twitter:title", "twitter:description",
+                 "twitter:image", "twitter:image:alt")
+        for page, html in self.sample().items():
+            head = self.head(html)
+            for prop in properties:
+                with self.subTest(page=page, tag=prop):
+                    self.assertEqual(
+                        len(re.findall(r'property="%s"' % re.escape(prop), head)),
+                        1)
+            for meta in names:
+                with self.subTest(page=page, tag=meta):
+                    self.assertEqual(
+                        len(re.findall(r'name="%s"' % re.escape(meta), head)), 1)
+            with self.subTest(page=page, tag="canonical"):
+                self.assertEqual(len(re.findall(r'rel="canonical"', head)), 1)
 
     def test_no_page_hard_codes_the_retired_domain(self):
         offenders = [n for n, h in self.pages().items()
