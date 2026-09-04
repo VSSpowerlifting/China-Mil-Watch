@@ -558,18 +558,46 @@ class TestPlaWatchContinuity(PreviewCase):
 
     def test_no_edition_is_created_renumbered_or_relabelled(self):
         """
-        The 13 canonical editions are read from sidecars and linked to the live
+        Every canonical edition is read from its sidecar and linked to the live
         archive. A prototype that invented, renumbered or relabelled one would
         corrupt the citation record.
+
+        The expected set is derived from the sidecars rather than pinned to a
+        count, so adding a legitimate edition does not require editing a
+        literal here, and inventing one still fails.
         """
+        canonical = gp.load_editions(REPO_ROOT)
+        expected_issues = [e["issue"] for e in canonical]
+        expected_urls = {e["url"] for e in canonical}
+
         html = self.page("pla-watch.html")
         links = re.findall(r'href="(https://[^"]*?/the-pla-watch/posts/[^"]+)"',
                            html)
-        self.assertEqual(len(links), 13)
-        self.assertEqual(len(set(links)), 13)
-        # Issue numbers run 13..1 with nothing inserted.
-        numbers = re.findall(r'class="num ed-no">(\d+)<', html)
-        self.assertEqual([int(n) for n in numbers], list(range(13, 0, -1)))
+        self.assertEqual(len(links), len(canonical))
+        self.assertEqual(set(links), expected_urls,
+                         "a linked edition is not a canonical sidecar")
+        # Issue numbers descend with nothing inserted or skipped.
+        numbers = [int(n) for n in re.findall(r'class="num ed-no">(\d+)<', html)]
+        self.assertEqual(numbers, expected_issues)
+        self.assertEqual(numbers, sorted(numbers, reverse=True))
+        self.assertEqual(len(set(numbers)), len(numbers), "duplicate issue number")
+
+        # Preservation is scoped through the identity contract: editions at or
+        # below the boundary must still resolve historical, and No. 14 onward
+        # must resolve current. Neither claim weakens the other.
+        from core.edition_identity import LAST_HISTORICAL_ISSUE
+        historical = [e for e in canonical
+                      if e["issue"] <= LAST_HISTORICAL_ISSUE]
+        current = [e for e in canonical if e["issue"] > LAST_HISTORICAL_ISSUE]
+        self.assertGreaterEqual(len(historical), 13)
+        for e in historical:
+            with self.subTest(issue=e["issue"]):
+                self.assertEqual(e["era"], "historical")
+                self.assertEqual(e["publication"], "China Mil Watch")
+        for e in current:
+            with self.subTest(issue=e["issue"]):
+                self.assertEqual(e["era"], "current")
+                self.assertEqual(e["publication"], "Indo-Pacific Record")
         # edition_label is the analyst's field and is rendered verbatim
         # (DECISION_LOG 2026-07-17 §2).
         for label in ("Significant", "Routine", "Pilot edition"):
@@ -1148,22 +1176,34 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_lead_edition_count_uses_the_governed_field_meaning(self):
         """
-        n_articles is compute_stats()['total_articles'] — the week's
+        `n_articles` is compute_stats()['total_articles'], the week's
         relevance-passing collected articles. The edition's citations are its
-        source_trail (13 entries here), so "records cited" was false.
+        `source_trail`, which is a different and smaller number, so "records
+        cited" would be false.
+
+        The lead edition and its figure are read from whichever sidecar
+        actually leads, rather than pinned to one edition's numbers.
         """
         import json
+        lead = gp.load_editions(REPO_ROOT)[0]
         sidecar = json.loads(
             (PRODUCTION_OUT / "the-pla-watch" / "posts"
-             / "2026-08-08.json").read_text(encoding="utf-8"))
-        self.assertEqual(sidecar["n_articles"], 134)
-        self.assertEqual(len(sidecar["source_trail"]), 13)
-        self.assertNotEqual(sidecar["n_articles"],
-                            len(sidecar["source_trail"]))
+             / ("%s.json" % lead["slug"])).read_text(encoding="utf-8"))
+
+        n_articles = sidecar["n_articles"]
+        trail = len(sidecar["source_trail"])
+        self.assertEqual(lead["articles"], n_articles)
+        self.assertGreater(n_articles, 0)
+        self.assertGreater(trail, 0)
+        self.assertNotEqual(n_articles, trail,
+                            "the two fields must stay distinguishable")
+
         html = self.page("index.html")
-        self.assertIn("134 articles", html)
+        self.assertIn("%d articles" % n_articles, html)
         self.assertNotIn("records cited", html)
-        self.assertNotIn("134 records", html)
+        self.assertNotIn("%d records" % n_articles, html)
+        # The trail count must not be presented as the article count.
+        self.assertNotIn("%d articles" % trail, html)
 
     def test_latest_records_blurb_does_not_deny_translation(self):
         """
@@ -4274,8 +4314,15 @@ class TestSnapshotScopedCitations(PreviewCase):
 
     # ── C. Editions ─────────────────────────────────────────────────────
 
-    def test_all_thirteen_edition_citations_preserve_their_sidecar_values(self):
-        self.assertEqual(len(self.editions), 13)
+    def test_every_edition_citation_preserves_its_sidecar_values(self):
+        """
+        Was `test_all_thirteen_...`, which pinned a count that stopped being
+        true when a fourteenth edition was added. The set is derived from the
+        canonical sidecars instead.
+        """
+        canonical = gp.load_editions(REPO_ROOT)
+        self.assertEqual(len(self.editions), len(canonical))
+        self.assertGreaterEqual(len(self.editions), 13)
         for edition in self.editions:
             text = gp.edition_citation(edition)
             with self.subTest(edition=edition["slug"]):
@@ -4480,10 +4527,12 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
 
     def test_every_edition_row_owns_exactly_one_citation(self):
         # Scoped to <tbody>: the header row is a <tr> too, and counting it
-        # would report 14 editions.
+        # would report one edition too many. The expected row count is derived
+        # from the canonical sidecars rather than pinned to a literal.
         body = self.table.split("<tbody>", 1)[1].split("</tbody>", 1)[0]
         rows = re.findall(r"<tr>.*?</tr>", body, re.S)
-        self.assertEqual(len(rows), 13)
+        self.assertEqual(len(rows), len(self.editions))
+        self.assertEqual(len(self.editions), len(gp.load_editions(REPO_ROOT)))
         for row, edition in zip(rows, self.editions):
             with self.subTest(edition=edition["slug"]):
                 self.assertEqual(row.count("<details class=\"ed-cite\">"), 1)
@@ -4866,9 +4915,11 @@ class TestCitationCopyBehaviour(PreviewCase):
 
     def test_each_block_carries_its_own_status_line(self):
         """A page-level region would announce a result far from the control
-        that produced it — Analysis has thirteen controls."""
+        that produced it. Analysis carries one control per edition, so the
+        expected count is derived from the canonical sidecars."""
+        _editions = len(gp.load_editions(REPO_ROOT))
         for page_name, expected in (("corpus-guide.html", 1),
-                                    ("pla-watch.html", 13)):
+                                    ("pla-watch.html", _editions)):
             html = self.page(page_name)
             with self.subTest(page=page_name):
                 self.assertEqual(html.count('class="cite-status"'), expected)
@@ -4931,11 +4982,14 @@ class TestCitationCopyBehaviour(PreviewCase):
         try:
             page = context.new_page()
             page.goto(self.url("pla-watch.html"), wait_until="load")
-            anchor = "#cite-edition-2026-08-08"
+            # The first row is whatever edition leads, not a pinned date.
+            _lead_slug = gp.load_editions(REPO_ROOT)[0]["slug"]
+            anchor = "#cite-edition-%s" % _lead_slug
             # Closed to begin with, and its text is not on screen.
             self.assertFalse(page.is_visible(anchor))
+            _editions = len(gp.load_editions(REPO_ROOT))
             summaries = page.query_selector_all("details.ed-cite > summary")
-            self.assertEqual(len(summaries), 13)
+            self.assertEqual(len(summaries), _editions)
             page.click("details.ed-cite:first-of-type > summary")
             self.assertTrue(page.is_visible(anchor))
             self.assertEqual(
@@ -4945,12 +4999,13 @@ class TestCitationCopyBehaviour(PreviewCase):
             self.assertEqual(page.eval_on_selector_all(
                 "button[data-copy]",
                 "els => els.filter(e => e.offsetParent !== null).length"), 0)
-            # Every one of the 13 opens on its own.
+            # Every one of them opens on its own.
             page.eval_on_selector_all(
                 "details.ed-cite", "els => els.forEach(e => e.open = true)")
             self.assertEqual(page.eval_on_selector_all(
                 "details.ed-cite > .cite-text",
-                "els => els.filter(e => e.offsetParent !== null).length"), 13)
+                "els => els.filter(e => e.offsetParent !== null).length"),
+                _editions)
         finally:
             context.close()
 
@@ -4961,7 +5016,9 @@ class TestCitationCopyBehaviour(PreviewCase):
         try:
             page = context.new_page()
             page.goto(self.url("pla-watch.html"), wait_until="load")
-            anchor = "#cite-edition-2026-08-08"
+            # The first row is whatever edition leads, not a pinned date.
+            _lead_slug = gp.load_editions(REPO_ROOT)[0]["slug"]
+            anchor = "#cite-edition-%s" % _lead_slug
             page.focus("details.ed-cite:first-of-type > summary")
             self.assertEqual(
                 page.evaluate("() => document.activeElement.tagName"),
@@ -4979,13 +5036,15 @@ class TestCitationCopyBehaviour(PreviewCase):
         try:
             page = context.new_page()
             page.goto(self.url("pla-watch.html"), wait_until="load")
+            # The first row is whatever edition leads, not a pinned date.
+            _lead_slug = gp.load_editions(REPO_ROOT)[0]["slug"]
             page.wait_for_timeout(300)
             page.click("details.ed-cite:first-of-type > summary")
             button = page.query_selector(
-                'button[data-copy="cite-edition-2026-08-08"]')
+                'button[data-copy="cite-edition-%s"]' % _lead_slug)
             self.assertFalse(button.is_hidden(),
                              "the control was never revealed")
-            page.focus('button[data-copy="cite-edition-2026-08-08"]')
+            page.focus('button[data-copy="cite-edition-%s"]' % _lead_slug)
             page.keyboard.press("Enter")
             page.wait_for_timeout(400)
             self.assertEqual(
@@ -5450,3 +5509,167 @@ class TestWeekInvariantsGrowWithTheCorpus(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+# ── preview edition identity ─────────────────────────────────────────────────
+
+class TestPreviewEditionIdentity(unittest.TestCase):
+    """
+    The preview's lead-edition feature states which publication an edition was
+    published under. Before this coverage `load_editions()` discarded the
+    sidecar's identity entirely and both lead templates asserted, without a
+    condition, that the series is "a legacy China Desk series, published under
+    the predecessor masthead China Mil Watch". That is false the moment a
+    current-masthead edition leads, which No. 14 does.
+
+    Identity is decided by `core.edition_identity`, never by an issue-number
+    comparison written into the preview.
+    """
+
+    HISTORICAL = "China Mil Watch"
+    CURRENT = "Indo-Pacific Record"
+
+    @classmethod
+    def setUpClass(cls):
+        from core.edition_identity import RETROSPECTIVE_LABEL, SERIES_NAME
+        cls.RETRO_LABEL = RETROSPECTIVE_LABEL
+        cls.SERIES = SERIES_NAME
+        cls.editions = gp.load_editions(REPO_ROOT)
+        cls.by_issue = {e.get("issue"): e for e in cls.editions}
+
+    def test_load_editions_resolves_through_the_identity_contract(self):
+        """Every view model carries the resolved fields, not a subset."""
+        required = ("publication", "publication_home_label", "series_name",
+                    "era", "publication_timing", "is_retrospective",
+                    "retrospective_label")
+        for e in self.editions:
+            with self.subTest(issue=e.get("issue")):
+                for field in required:
+                    self.assertIn(field, e)
+
+    def test_edition_13_resolves_historical(self):
+        e = self.by_issue[13]
+        self.assertEqual(e["era"], "historical")
+        self.assertEqual(e["publication"], self.HISTORICAL)
+        self.assertFalse(e["is_retrospective"])
+
+    def test_edition_14_resolves_current_and_retrospective(self):
+        e = self.by_issue[14]
+        self.assertEqual(e["era"], "current")
+        self.assertEqual(e["publication"], self.CURRENT)
+        self.assertEqual(e["publication_timing"], "retrospective")
+        self.assertTrue(e["is_retrospective"])
+        self.assertEqual(e["retrospective_label"], self.RETRO_LABEL)
+
+    def test_the_series_name_is_not_era_dependent(self):
+        for e in self.editions:
+            with self.subTest(issue=e.get("issue")):
+                self.assertEqual(e["series_name"], self.SERIES)
+
+    def test_the_preview_does_not_infer_identity_from_the_issue_number(self):
+        src = (REPO_ROOT / "site" / "preview"
+               / "generate_preview.py").read_text(encoding="utf-8")
+        self.assertIn("resolve_identity", src)
+        for banned in ("issue_number > 13", "issue > 13", "issue_number <= 13",
+                       "issue <= 13"):
+            with self.subTest(pattern=banned):
+                self.assertNotIn(banned, src)
+
+    def test_the_preview_declares_no_publication_names_of_its_own(self):
+        """Names live in the contract; the preview may not restate them."""
+        src = (REPO_ROOT / "site" / "preview"
+               / "generate_preview.py").read_text(encoding="utf-8")
+        body = src.split("def load_editions", 1)[1].split("\ndef ", 1)[0]
+        self.assertNotIn('"%s"' % self.CURRENT, body)
+        self.assertNotIn('"%s"' % self.HISTORICAL, body)
+
+    # ── the two lead templates, through the real build ──
+    #
+    # Rendered by `gp.build()` into a temp directory rather than by a
+    # hand-assembled context: the lead feature depends on the full page
+    # context, and a partial one proves nothing about the page readers get.
+
+    @classmethod
+    def _build_with_lead(cls, issue):
+        """Build the preview with `issue` forced to lead, in a temp tree."""
+        import shutil as _shutil
+        import tempfile as _tempfile
+        tmp = Path(_tempfile.mkdtemp(prefix="preview-lead-"))
+        real = gp.load_editions
+        ordered = [e for e in cls.editions if e.get("issue") == issue]
+        ordered += [e for e in cls.editions if e.get("issue") != issue]
+        gp.load_editions = lambda *a, **k: ordered
+        try:
+            gp.build(tmp / "out", "Test Title", TRACKED_DB,
+                     snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+        finally:
+            gp.load_editions = real
+        pages = {name: (tmp / "out" / name).read_text(encoding="utf-8")
+                 for name in ("index.html", "analysis.html")}
+        _shutil.rmtree(tmp, ignore_errors=True)
+        return pages
+
+    @classmethod
+    def setUpClass_pages(cls):
+        pass
+
+    def leads(self, issue):
+        if not hasattr(self.__class__, "_lead_cache"):
+            self.__class__._lead_cache = {}
+        if issue not in self.__class__._lead_cache:
+            self.__class__._lead_cache[issue] = self._build_with_lead(issue)
+        return self.__class__._lead_cache[issue]
+
+    def test_a_current_lead_never_gets_the_predecessor_legacy_note(self):
+        for page, html in self.leads(14).items():
+            with self.subTest(page=page):
+                self.assertNotIn("legacy China Desk series", html)
+                self.assertNotIn(
+                    "predecessor masthead %s and preserved with its" % self.HISTORICAL,
+                    html)
+
+    def test_a_historical_lead_keeps_the_legacy_note(self):
+        for page, html in self.leads(13).items():
+            with self.subTest(page=page):
+                self.assertIn("legacy China Desk series", html)
+                self.assertIn(self.HISTORICAL, html)
+
+    def test_a_current_retrospective_lead_shows_the_canonical_label(self):
+        for page, html in self.leads(14).items():
+            with self.subTest(page=page):
+                self.assertIn(self.RETRO_LABEL, html)
+
+    def test_a_historical_lead_shows_no_retrospective_label(self):
+        for page, html in self.leads(13).items():
+            with self.subTest(page=page):
+                self.assertNotIn(self.RETRO_LABEL, html)
+
+    def test_the_series_is_not_called_wholly_legacy_once_a_current_edition_exists(self):
+        """The archive spans two mastheads; the page must not flatten that."""
+        html = self.leads(14)["analysis.html"]
+        self.assertNotIn(
+            "Published under the predecessor masthead %s\nand preserved" % self.HISTORICAL,
+            html)
+        self.assertIn("published under the predecessor masthead", html.lower())
+
+    def test_invalid_identity_metadata_fails_the_build_naming_the_sidecar(self):
+        import json as _json
+        import shutil as _shutil
+        import tempfile as _tempfile
+        from core.edition_identity import IdentityError
+
+        tmp = Path(_tempfile.mkdtemp(prefix="preview-identity-"))
+        self.addCleanup(_shutil.rmtree, tmp, True)
+        posts = tmp / "output" / "the-pla-watch" / "posts"
+        posts.mkdir(parents=True)
+        good = _json.loads(
+            (REPO_ROOT / "output" / "the-pla-watch" / "posts"
+             / "2026-08-08.json").read_text(encoding="utf-8"))
+        (posts / "2026-08-08.json").write_text(_json.dumps(good), encoding="utf-8")
+        bad = dict(good, date="2026-08-15", issue_number=14,
+                   publication="Some Other Outlet")
+        (posts / "2026-08-15.json").write_text(_json.dumps(bad), encoding="utf-8")
+
+        with self.assertRaises(IdentityError) as caught:
+            gp.load_editions(tmp)
+        self.assertIn("2026-08-15", str(caught.exception))
