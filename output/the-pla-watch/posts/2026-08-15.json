@@ -1,0 +1,131 @@
+{
+  "date": "2026-08-15",
+  "week_ending": "2026-08-15",
+  "week_start": "2026-08-09",
+  "issue_number": 14,
+  "title": "The PLA Watch: A Partner Navy East of Taiwan",
+  "dek": "Chinese official media spent the week presenting the PLA to audiences outside it. A bilateral passage exercise with Indonesia was placed in waters east of Taiwan, a Chinese diplomat contested Washington's account of a missile test in Geneva, and two accounts of women in combat aviation carried the same institutional message.",
+  "signal": "One event, three outlets, four reports. The week's most-covered item was a short passage drill whose location did more work than its content.",
+  "opening_note": "This edition covers the week of 9 to 15 August 2026 and was prepared afterwards, in September. It is a record of what Chinese official and state-linked military media published that week, not a dispatch written as the week unfolded, and it should be read that way.\n\nThe corpus for the week holds 229 records, of which 137 passed relevance screening and all 137 were analysed. Nothing in the window was left unscreened. Four sources contributed: PLA Daily supplied 111 of the 137 relevant records, China Military Online 14, Global Times Defense 10, and MOD China 2. That concentration is normal for this corpus and is described in the methodology; it is worth holding in mind whenever a week appears to speak with one voice.",
+  "what_stood_out": "On 11 August, PLA Daily announced that the Chinese Navy replenishment ship Honghe and the Indonesian Navy frigate Rê would conduct a passage exercise in waters east of Taiwan Island. On 12 August the same outlet reported the drill complete, listing formation manoeuvring, underway replenishment and signal communications. China Military Online and Global Times carried the announcement in English on 11 August, and PLA Daily returned to it on 14 August.\n\nThat is one exercise, reported four times across three outlets over four days. It is the most-covered item of the week by a wide margin, and it should be counted once.\n\nThe drill itself is unremarkable. Formation manoeuvring and replenishment are the ordinary content of a bilateral passage exercise, and the reports describe a short encounter, not a combined operation. What the reporting emphasises is where it happened. Every account names the operating area explicitly, in the headline, rather than leaving it to the body text.\n\nTwo other items are worth separating from the routine. On 12 August, China Military Online reported that China's Ambassador for Disarmament Affairs, Li Chijiang, rejected a United States led joint statement at the Conference on Disarmament in Geneva concerning a 6 July submarine-launched ballistic missile test. The report has China disputing the American characterisation of how much advance notice was given. On 14 August, PLA Daily and MOD China both carried an account of the Navy's female carrier-based pilot trainees completing daytime solo carrier-landing assessments in Bohai Bay, and on 13 August PLA Daily published a named profile of a J-16 pilot, Tian Jing.",
+  "why_it_matters": "The week's most notable items share an orientation: they are addressed outward. A partner navy was brought into waters east of Taiwan and the location was placed in the headline. A Chinese official contested an American account in a multilateral forum. Two aviation accounts present a service that trains women for carrier decks and fourth-generation fighters. Global Times, writing in English, released capability footage on 9 August.\n\nWhat this establishes is limited but real: it tells us what these institutions chose to publish, and to whom. Choosing to name the operating area east of Taiwan in a headline is an editorial decision by the publisher, and it recurs across three outlets in the same week.\n\nWhat it does not establish is intent. None of these records shows why the exercise was placed where it was, what Jakarta understood itself to be doing, or whether any of it was coordinated as a message. Official media shows messaging; it does not show decision-making. A reader should also resist reading the Geneva exchange as confirmation of the underlying test's characteristics. The report confirms that China publicly disputed an American statement about notification, which is a different and narrower fact.\n\nOne source distinction matters here. Global Times is state-linked rather than official, and its capability videos signal a line aimed at foreign readers; they are not an authorised institutional position in the way a Ministry of National Defense release is. The two female-aviation reports of 14 August are the same release carried by two outlets, not two independent accounts.",
+  "what_was_routine": "The bulk of the week was ordinary institutional output. Political work items were the largest single category among relevant records, followed by exercise coverage and doctrinal writing. A representative example of the latter appeared on 9 August, when PLA Daily published a theoretical article arguing that artificial intelligence integrated across the operational chain compresses decision timing, introducing terminology for the idea. Doctrinal essays of this kind appear steadily in PLA Daily and are useful as evidence of what concepts are being circulated, not as evidence that any capability exists.\n\nGlobal Times also reported on 9 August that the Sansha Maritime Safety Administration had issued a navigation alert for drills near Xisha Qundao. Navigation alerts of this type are published regularly and are not, in themselves, notable.",
+  "term_to_know_term": "通航演练 (tōngháng yǎnliàn), passage exercise",
+  "term_to_know_explanation": "A short drill run when two navies' ships are in proximity, usually covering formation manoeuvring, communications and sometimes replenishment. It is among the lightest forms of naval cooperation: it demonstrates that two navies can operate alongside each other without implying any standing arrangement. Chinese reporting used this term for the August encounter with the Indonesian Navy rather than a term denoting a combined exercise, which is a distinction worth preserving when reading the coverage.",
+  "what_im_watching_next": "Whether the location choice repeats. A single bilateral passage exercise east of Taiwan is one data point, and reading a pattern into it would be premature. If further exercises with regional partners are reported in the same waters, and the operating area continues to be named in headlines, that would be evidence of a deliberate practice rather than a single instance. The absence of any repetition would be equally informative.\n\nAlso worth following: whether the Navy's carrier-aviation training accounts continue, since the 14 August report describes night carrier landings as the next stage.",
+  "edition_type": "significant",
+  "edition_label": "Significant",
+  "n_articles": 137,
+  "n_significant": 12,
+  "days_covered": 7,
+  "source_trail": [
+    {
+      "title": "AI Empowerment: Reshaping an Entirely New Concept of Operational Timing",
+      "title_zh": "AI赋能：重塑全新作战时机观",
+      "url": "http://www.81.cn/yw_208727/16478485.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-09",
+      "is_significant": true
+    },
+    {
+      "title": "Sansha Maritime Safety Administration issues navigation alert for military drills near Xisha Qundao, entry banned",
+      "title_zh": "Sansha maritime safety administration issues navigation alert for military drills near Xisha Qundao, entry banned",
+      "url": "https://www.globaltimes.cn/page/202608/1367819.shtml",
+      "source": "Global Times — Defense",
+      "date": "2026-08-09",
+      "is_significant": true
+    },
+    {
+      "title": "Official video shows how PLA Army portable missiles, coordinated with air defense systems, can target stealth fighters",
+      "title_zh": "Official video shows how PLA Army portable missiles, coordinated with air defense systems, can target stealth fighters",
+      "url": "https://www.globaltimes.cn/page/202608/1367811.shtml",
+      "source": "Global Times — Defense",
+      "date": "2026-08-09",
+      "is_significant": true
+    },
+    {
+      "title": "Chinese and Indonesian Naval Vessels to Conduct Passage Exercise in Waters East of Taiwan Island",
+      "title_zh": "中国印尼海军舰艇将位台岛以东海域开展通航演练",
+      "url": "http://www.81.cn/yw_208727/16478851.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-11",
+      "is_significant": true
+    },
+    {
+      "title": "China, Indonesia to conduct naval navigation exercise in waters east of Taiwan Island",
+      "title_zh": "China, Indonesia to conduct naval navigation exercise in waters east of Taiwan Island",
+      "url": "http://eng.chinamil.com.cn/2025xb/C_251453/TE/16478875.html",
+      "source": "China Military Online (EN)",
+      "date": "2026-08-11",
+      "is_significant": true
+    },
+    {
+      "title": "China, Indonesia navies to hold navigation exercise east of Taiwan island in mid-August",
+      "title_zh": "China, Indonesia navies to hold navigation exercise east of Taiwan island in mid-August",
+      "url": "https://www.globaltimes.cn/page/202608/1367962.shtml",
+      "source": "Global Times — Defense",
+      "date": "2026-08-11",
+      "is_significant": true
+    },
+    {
+      "title": "Chinese Navy Ship Honghe and Indonesian Navy Frigate \"Rê\" Successfully Complete Passage Exercise in Waters East of Taiwan Island",
+      "title_zh": "中国海军红河舰与印尼海军“莱”号护卫舰位台岛以东海域圆满完成通航演练",
+      "url": "http://www.81.cn/yw_208727/16479044.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-12",
+      "is_significant": true
+    },
+    {
+      "title": "China rejects US 'political manipulation' over missile test notification",
+      "title_zh": "China rejects US 'political manipulation' over missile test notification",
+      "url": "http://eng.chinamil.com.cn/2025xb/V_251452/16479020.html",
+      "source": "China Military Online (EN)",
+      "date": "2026-08-12",
+      "is_significant": true
+    },
+    {
+      "title": "The Quiet Sky — A Reporter's Conversation with J-16 Female Pilot Tian Jing",
+      "title_zh": "静静的天空——记者对话歼-16女飞行员田静",
+      "url": "http://www.81.cn/yw_208727/16479174.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-13",
+      "is_significant": true
+    },
+    {
+      "title": "Chinese and Indonesian Navies Complete Passage Exercise in Waters East of Taiwan Island",
+      "title_zh": "中印尼海军在台岛以东海域完成通航演练",
+      "url": "http://www.81.cn/yw_208727/16479246.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-14",
+      "is_significant": true
+    },
+    {
+      "title": "Navy's First Cohort of Female Carrier-Based Aircraft Pilot Trainees Complete Solo Carrier-Landing Assessment",
+      "title_zh": "海军首批舰载机女飞行学员完成着舰单飞考核",
+      "url": "http://www.81.cn/yw_208727/16479229.html",
+      "source": "PLA Daily (解放军报)",
+      "date": "2026-08-14",
+      "is_significant": true
+    },
+    {
+      "title": "Navy's First Cohort of Female Carrier-Based Aircraft Student Pilots Complete Solo Carrier-Landing Assessment",
+      "title_zh": "海军首批舰载机女飞行学员完成着舰单飞考核",
+      "url": "http://www.mod.gov.cn/gfbw/wzll/hj/16479268.html",
+      "source": "MOD China (国防部)",
+      "date": "2026-08-14",
+      "is_significant": true
+    }
+  ],
+  "media_items": [],
+  "publication": "Indo-Pacific Record",
+  "publication_timing": "retrospective",
+  "author_name": "Benjamin Yang",
+  "author_title": "Creator and Editor, Indo-Pacific Record",
+  "author_bio": "Benjamin Yang is the creator and editor of Indo-Pacific Record. He studies International Affairs at George Washington University’s Elliott School, with interests in U.S.–China relations, public diplomacy, and security affairs. He writes The PLA Watch and maintains the project’s collection pipeline.",
+  "author_links": {
+    "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294",
+    "Email": "mailto:ben.yang@gwmail.gwu.edu",
+    "Indo-Pacific Record": "../../index.html"
+  },
+  "background_image_source": "retrospective_gradient"
+}

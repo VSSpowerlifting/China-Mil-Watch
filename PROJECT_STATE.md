@@ -97,11 +97,17 @@ disclosed, and never backfilled.
   editions**, rules **08-29 a disclosed gap** (36% of that window was never
   relevance-screened), and **resumes normal cadence at 09-05**. Restoring
   cadence remains the first priority in `docs/ROADMAP.md`.
-* **No retrospective edition is published or approved.** Preparation of No. 14
-  (w/e 2026-08-15) is under way on `editorial/pla-watch-no-14-retrospective`
-  and is blocked pending an owner decision on the authoring path — the only
-  path that writes an edition's source sidecar also renders into `output/`.
-  See that branch's pull request.
+* **No. 14 is prepared as a draft and is not published or approved.** The
+  authoring blocker is resolved: the edition-identity, retrospective-timing and
+  cover contract merged with PR #44, so a retrospective edition can be authored
+  and rendered through the API-free path. The w/e 2026-08-15 draft exists on
+  `editorial/pla-watch-no-14-retrospective` with its sidecar, page, gradient
+  cover and LinkedIn companion, and **awaits Benjamin's editorial review**. No
+  human checklist item is complete and nothing is deployed.
+* **14 editions now exist in the tree, 13 published.** No. 14 is the first
+  edition under the Indo-Pacific Record masthead and the first marked
+  `publication_timing: retrospective`. Editions 1–13 keep the China Mil Watch
+  identity on their own pages; site chrome is current throughout.
 * There is a ruled cadence gap for the week ending 2026-07-25 (analyst ruling,
   `DECISION_LOG.md` 2026-07-30). The validator warning that records it is
   history, not a defect to suppress.

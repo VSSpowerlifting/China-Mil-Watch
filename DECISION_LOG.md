@@ -4,6 +4,36 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-04 — No. 14 is drafted, not published
+
+The authoring blocker recorded on 2026-09-03 is resolved. PR #44 supplied the
+edition-identity contract, the `publication_timing` field and the corrected
+cover path, so a retrospective edition can now be authored and rendered without
+the model API and without the generator's `output/`-writing publish path.
+
+1. **No. 14 (w/e 2026-08-15) exists as a draft.** Sidecar, page, deterministic
+   gradient cover, thumbnail and LinkedIn companion are prepared on
+   `editorial/pla-watch-no-14-retrospective`. It is the first edition published
+   under Indo-Pacific Record and the first carrying
+   `publication_timing: retrospective`.
+
+2. **It is not approved and not published.** No human editorial checklist item
+   is complete, and none may be marked on Benjamin's behalf. The draft is
+   evidence of preparation, not of review.
+
+3. **The prose was written in-session, not generated.** `generate_pla_watch.py`
+   was not run and no model API was called, so the edition carries no
+   machine-generated text. Every claim traces to a stored record in the source
+   trail.
+
+4. **`edition_type` was chosen independently of timing.** It is `significant`
+   because of what the week held, not because the edition is retrospective. The
+   two fields answer different questions and neither may be read off the other.
+
+5. **The cover took the deterministic gradient**, with the network fetch and the
+   curated fallback proven unreached and `background_image_source` recorded as
+   `retrospective_gradient`.
+
 ## 2026-09-03 — Editions keep the name they were published under
 
 **Owner ruling.** Preparing the first post-rename edition surfaced that the

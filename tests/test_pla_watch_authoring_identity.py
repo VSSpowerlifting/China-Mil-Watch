@@ -48,6 +48,20 @@ def sidecar(name):
     return json.loads((POSTS / f"{name}.json").read_text(encoding="utf-8"))
 
 
+def all_sidecars():
+    return [json.loads(p.read_text(encoding="utf-8"))
+            for p in sorted(POSTS.glob("*.json"))]
+
+
+def historical_sidecars():
+    """
+    Editions at or below the boundary. Scoped by rule rather than by "every
+    file present", because the tree now also holds post-rename editions.
+    """
+    return [sc for sc in all_sidecars()
+            if (sc.get("issue_number") or 0) <= LAST_HISTORICAL_ISSUE]
+
+
 class TestTheRenameBoundary(unittest.TestCase):
 
     def test_edition_13_resolves_historical(self):
@@ -68,12 +82,21 @@ class TestTheRenameBoundary(unittest.TestCase):
         self.assertEqual(ident["publication"], HISTORICAL_NAME)
         self.assertIn(HISTORICAL_NAME, ident["author_title"])
 
-    def test_every_published_edition_resolves_historical(self):
-        for path in sorted(POSTS.glob("*.json")):
-            sc = json.loads(path.read_text(encoding="utf-8"))
+    def test_every_pre_boundary_edition_resolves_historical(self):
+        historical = historical_sidecars()
+        self.assertGreaterEqual(len(historical), 13, "fixture set shrank")
+        for sc in historical:
             with self.subTest(edition=sc.get("issue_number")):
                 self.assertEqual(resolve_identity(sc)["publication"],
                                  HISTORICAL_NAME)
+
+    def test_every_post_boundary_edition_resolves_current(self):
+        post = [sc for sc in all_sidecars()
+                if (sc.get("issue_number") or 0) > LAST_HISTORICAL_ISSUE]
+        for sc in post:
+            with self.subTest(edition=sc.get("issue_number")):
+                self.assertEqual(resolve_identity(sc)["publication"],
+                                 CURRENT_NAME)
 
     def test_edition_14_resolves_to_indo_pacific_record(self):
         ident = resolve_identity({"issue_number": 14, "date": "2026-08-15"})
@@ -154,8 +177,8 @@ class TestPublicationTiming(unittest.TestCase):
                 self.assertEqual(parse_timing(value), TIMING_REGULAR)
 
     def test_historical_sidecars_lacking_timing_remain_accepted(self):
-        for path in sorted(POSTS.glob("*.json")):
-            sc = json.loads(path.read_text(encoding="utf-8"))
+        """Every pre-boundary sidecar predates the field and still loads."""
+        for sc in historical_sidecars():
             with self.subTest(edition=sc.get("issue_number")):
                 self.assertNotIn("publication_timing", sc)
                 self.assertFalse(resolve_identity(sc)["is_retrospective"])
@@ -477,9 +500,8 @@ class TestRerenderPathPreservesHistoricalEditions(RerenderCase):
         self.assertIn(HISTORICAL_NAME, self.citation(html))
         self.assertNotIn(CURRENT_NAME, self.citation(html))
 
-    def test_every_published_sidecar_rerenders_historical(self):
-        for path in sorted(POSTS.glob("*.json")):
-            sc = json.loads(path.read_text(encoding="utf-8"))
+    def test_every_pre_boundary_sidecar_rerenders_historical(self):
+        for sc in historical_sidecars():
             with self.subTest(edition=sc.get("issue_number")):
                 ctx, html = self.render(sc)
                 self.assertEqual(ctx["publication"], HISTORICAL_NAME)
