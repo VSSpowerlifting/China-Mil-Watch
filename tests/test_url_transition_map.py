@@ -322,7 +322,14 @@ class TestTheCandidateHonoursTheMap(unittest.TestCase):
             encoding="utf-8")
         self.assertIn("China Mil Watch", html)
         self.assertIn("preserved as published", html.lower())
-        self.assertIn("because it did not", html)
+        # Was `"because it did not"`, a phrase from prose that attributed every
+        # issue to the predecessor. The series now spans the rename, so the
+        # claim is scoped: earlier editions are named as the predecessor's, and
+        # no issue is presented under a masthead it did not carry.
+        self.assertIn("did not carry", html)
+        self.assertRegex(
+            html, r"\d+ earlier editions were published under China Mil Watch")
+        self.assertNotIn("Those issues were published by China Mil Watch", html)
 
     def test_every_new_route_the_map_advertises_is_actually_built(self):
         for advertised in self.map.new_routes:

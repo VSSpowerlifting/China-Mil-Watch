@@ -5673,3 +5673,121 @@ class TestPreviewEditionIdentity(unittest.TestCase):
         with self.assertRaises(IdentityError) as caught:
             gp.load_editions(tmp)
         self.assertIn("2026-08-15", str(caught.exception))
+
+
+class TestPlaWatchPageSpansTheRename(unittest.TestCase):
+    """
+    The series page describes the whole series, which now spans a publication
+    rename. Before this coverage it said, of every issue, that the series "was
+    published from 2026 under the predecessor masthead China Mil Watch", that
+    it "is a legacy series", and that "those issues were published by China Mil
+    Watch" with "nothing here rewritten to look as though it appeared under
+    Indo-Pacific Record, because it did not". All four became false when No. 14
+    was published under the current masthead.
+
+    Counts come from the edition view models; the template infers no boundary
+    and names no publication of its own.
+    """
+
+    HISTORICAL = "China Mil Watch"
+    CURRENT = "Indo-Pacific Record"
+
+    @classmethod
+    def setUpClass(cls):
+        from core.edition_identity import RETROSPECTIVE_LABEL
+        cls.RETRO = RETROSPECTIVE_LABEL
+        cls.editions = gp.load_editions(REPO_ROOT)
+        cls.hist = [e for e in cls.editions if e["era"] == "historical"]
+        cls.cur = [e for e in cls.editions if e["era"] == "current"]
+        cls.html = cls._render(cls.editions)
+
+    @classmethod
+    def _render(cls, editions):
+        """Build the real preview with a chosen edition set, in a temp tree."""
+        import shutil as _shutil
+        import tempfile as _tempfile
+        tmp = Path(_tempfile.mkdtemp(prefix="preview-plawatch-"))
+        real = gp.load_editions
+        gp.load_editions = lambda *a, **k: editions
+        try:
+            gp.build(tmp / "out", "Indo-Pacific Record", TRACKED_DB,
+                     snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+            html = (tmp / "out" / "pla-watch.html").read_text(encoding="utf-8")
+        finally:
+            gp.load_editions = real
+            _shutil.rmtree(tmp, ignore_errors=True)
+        return html
+
+    def test_the_page_does_not_call_the_whole_series_legacy(self):
+        self.assertNotIn("It is a legacy series", self.html)
+        self.assertNotIn("published from 2026 under the\npredecessor masthead",
+                         self.html)
+
+    def test_the_page_says_the_series_continues_across_the_rename(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertIn("continues across", text)
+        self.assertIn(self.HISTORICAL, text)
+        self.assertIn(self.CURRENT, text)
+
+    def test_the_counts_are_derived_not_hard_coded(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertIn("%d earlier editions" % len(self.hist), text)
+        self.assertIn("%d later" % len(self.cur), text)
+        # The literals must not be baked into the template.
+        src = (REPO_ROOT / "site" / "preview" / "templates"
+               / "pla_watch.html").read_text(encoding="utf-8")
+        for literal in ("13 editions", "13 issues", "the same 13 titles"):
+            with self.subTest(literal=literal):
+                self.assertNotIn(literal, src)
+
+    def test_only_historical_editions_are_attributed_to_the_predecessor(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertNotIn("Those issues were published by %s" % self.HISTORICAL,
+                         text)
+        self.assertIn("%d earlier editions were published under %s"
+                      % (len(self.hist), self.HISTORICAL), text)
+
+    def test_current_editions_are_attributed_to_the_current_publication(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertIn("published by %s" % self.CURRENT, text)
+
+    def test_each_issue_is_said_to_keep_its_own_publication_identity(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertIn("publication identity", text)
+        self.assertNotIn("because it did not", text)
+
+    def test_the_redirect_note_is_scoped_to_the_historical_editions(self):
+        text = re.sub(r"\s+", " ", self.html)
+        self.assertRegex(
+            text,
+            r"redirects to the \d+ editions published under that masthead")
+
+    def test_edition_14_row_shows_the_retrospective_label(self):
+        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-15.*?</tr>',
+                        self.html, re.S)
+        self.assertIsNotNone(row, "No. 14 row not found")
+        self.assertIn(self.RETRO, row.group(0))
+
+    def test_a_historical_edition_row_shows_no_retrospective_label(self):
+        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-08.*?</tr>',
+                        self.html, re.S)
+        self.assertIsNotNone(row)
+        self.assertNotIn(self.RETRO, row.group(0))
+
+    def test_an_all_historical_fixture_still_explains_the_predecessor(self):
+        html = self._render(self.hist)
+        text = re.sub(r"\s+", " ", html)
+        self.assertIn(self.HISTORICAL, text)
+        self.assertIn("%d earlier editions were published under %s"
+                      % (len(self.hist), self.HISTORICAL), text)
+        self.assertNotIn(self.RETRO, text)
+
+    def test_the_template_infers_no_boundary_and_names_no_publication(self):
+        src = (REPO_ROOT / "site" / "preview" / "templates"
+               / "pla_watch.html").read_text(encoding="utf-8")
+        for banned in ("issue > 13", "issue >= 14", "issue_number > 13",
+                       '"China Mil Watch"', '"Indo-Pacific Record"'):
+            with self.subTest(pattern=banned):
+                self.assertNotIn(banned, src)
+        # Era comes from the contract-resolved field.
+        self.assertIn("era", src)

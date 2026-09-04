@@ -311,6 +311,12 @@ class TestLegacyChinaRoutesSurvive(DeskCase):
         self.assertIn("China Mil Watch", html)
         self.assertIn("preserved as published", html.lower())
         self.assertIn("did not", html)
+        # The series spans the rename, so the predecessor attribution is scoped
+        # to the editions that actually carried that masthead rather than
+        # applied to all of them.
+        self.assertRegex(
+            html, r"\d+ earlier editions were published under China Mil Watch")
+        self.assertNotIn("Those issues were published by China Mil Watch", html)
 
     def test_the_prototype_never_writes_into_the_production_namespace(self):
         for reserved in ("article", "the-pla-watch"):
