@@ -751,6 +751,178 @@ class TestRetrospectiveCover(unittest.TestCase):
         self.assertLess(idx_resolve, idx_curated)
 
 
+
+class TestCoverCopyIdentity(unittest.TestCase):
+    """
+    The cover is a rendered surface like any other page element, so the parent
+    publication printed on it must be the edition's own. Before this coverage
+    the cover module hard-coded the predecessor identity in four places, which
+    would have put "China Mil Watch" on the No. 14 cover while its page, byline,
+    citation and masthead all said Indo-Pacific Record.
+
+    Behaviour is exercised, not source text: the HTML builder's real output is
+    parsed, and the PIL renderer is driven with a spy over its drawing call.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import scripts.generate_pla_watch_cover as cov
+        cls.cov = cov
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="pw-cover-copy-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+
+    SG13 = {"date": "2026-08-08", "issue_number": 13, "title": "T",
+            "week_ending": "2026-08-08", "n_articles": 1, "n_significant": 0}
+    SG14 = {"date": "2026-08-15", "issue_number": 14, "title": "T",
+            "week_ending": "2026-08-15", "n_articles": 137, "n_significant": 12}
+
+    # ── the shared copy helper ──
+    def test_the_copy_helper_resolves_each_era(self):
+        self.assertEqual(self.cov.cover_copy(self.SG13)["publication"],
+                         HISTORICAL_NAME)
+        self.assertEqual(self.cov.cover_copy(self.SG14)["publication"],
+                         CURRENT_NAME)
+
+    def test_edition_1_cover_copy_is_historical(self):
+        sc = sidecar("2026-05-09")
+        self.assertEqual(self.cov.cover_copy(sc)["publication"], HISTORICAL_NAME)
+
+    def test_the_series_title_is_unchanged_in_both_eras(self):
+        for sc in (self.SG13, self.SG14):
+            with self.subTest(issue=sc["issue_number"]):
+                self.assertEqual(self.cov.cover_copy(sc)["series_title"],
+                                 "THE PLA WATCH")
+
+    # ── the HTML / Playwright path ──
+    def html(self, sc):
+        return self.cov._build_html(sc)
+
+    def test_html_cover_uses_the_resolved_publication_in_eyebrow_and_footer(self):
+        hist = self.html(self.SG13)
+        self.assertIn(HISTORICAL_NAME, hist)
+        self.assertNotIn(CURRENT_NAME, hist)
+        self.assertIn(f'<div class="footer">{HISTORICAL_NAME}</div>', hist)
+
+        cur = self.html(self.SG14)
+        self.assertIn(CURRENT_NAME, cur)
+        self.assertNotIn(HISTORICAL_NAME, cur)
+        self.assertIn(f'<div class="footer">{CURRENT_NAME}</div>', cur)
+
+    def test_html_cover_keeps_the_series_title(self):
+        for sc in (self.SG13, self.SG14):
+            with self.subTest(issue=sc["issue_number"]):
+                self.assertIn('<div class="pub-title">THE PLA WATCH</div>',
+                              self.html(sc))
+
+    def test_the_publication_label_is_html_escaped(self):
+        """Injected like any other value, not concatenated raw."""
+        import inspect
+        src = inspect.getsource(self.cov._build_html)
+        self.assertIn("_PLACEHOLDER_PUBLICATION", src)
+        self.assertIn("html_lib.escape", src)
+
+    # ── the PIL fallback ──
+    def pil_strings(self, sc):
+        """Drive the real PIL renderer and capture every drawn string."""
+        # `_render_with_pil` imports PIL inside the function, so the spy goes on
+        # the PIL module itself. Every drawn string is captured and the real
+        # draw still runs, so this exercises the actual renderer.
+        from PIL import ImageDraw
+        cov = self.cov
+        drawn = []
+        real_draw = ImageDraw.Draw
+
+        class _Spy:
+            def __init__(self, inner):
+                self._inner = inner
+
+            def text(self, xy, text, *a, **k):
+                drawn.append(text)
+                return self._inner.text(xy, text, *a, **k)
+
+            def __getattr__(self, name):
+                return getattr(self._inner, name)
+
+        ImageDraw.Draw = lambda *a, **k: _Spy(real_draw(*a, **k))
+        try:
+            cov._render_with_pil(sc, self.tmp / "c.png")
+        finally:
+            ImageDraw.Draw = real_draw
+        return drawn
+
+    def test_pil_cover_draws_the_resolved_publication_twice(self):
+        hist = self.pil_strings(self.SG13)
+        self.assertIn(HISTORICAL_NAME.upper(), hist, "PIL eyebrow")
+        self.assertIn(HISTORICAL_NAME, hist, "PIL footer")
+        self.assertNotIn(CURRENT_NAME, hist)
+
+        cur = self.pil_strings(self.SG14)
+        self.assertIn(CURRENT_NAME.upper(), cur, "PIL eyebrow")
+        self.assertIn(CURRENT_NAME, cur, "PIL footer")
+        self.assertNotIn(HISTORICAL_NAME, cur)
+        self.assertNotIn(HISTORICAL_NAME.upper(), cur)
+
+    def test_pil_cover_keeps_the_series_title(self):
+        for sc in (self.SG13, self.SG14):
+            with self.subTest(issue=sc["issue_number"]):
+                self.assertIn("THE PLA WATCH", self.pil_strings(sc))
+
+    # ── the cover module does not re-declare identity ──
+    def test_the_generator_prompt_names_the_current_publication(self):
+        """
+        The system prompt tells the model which publication it writes for. Any
+        edition it generates is No. 14 or later, so naming the retired
+        publication there would seed the retired name into new prose.
+        """
+        import scripts.generate_pla_watch as gen
+        self.assertIn(CURRENT_NAME, gen.SYSTEM_PROMPT)
+        self.assertNotIn(HISTORICAL_NAME, gen.SYSTEM_PROMPT)
+        self.assertNotIn(HISTORICAL_NAME, gen.STYLE_EXTRACT)
+
+    def test_the_cover_module_holds_no_identity_constants_of_its_own(self):
+        src = (REPO_ROOT / "scripts"
+               / "generate_pla_watch_cover.py").read_text(encoding="utf-8")
+        body = src.replace("core.edition_identity", "")
+        self.assertNotIn('"China Mil Watch"', body)
+        self.assertNotIn('"CHINA MIL WATCH"', body)
+        self.assertNotIn('"Indo-Pacific Record"', body)
+
+    # ── fail closed before any side effect ──
+    def test_an_invalid_publication_fails_before_any_side_effect(self):
+        cov = self.cov
+        out = self.tmp / "never" / "c.png"
+        calls = []
+        real = {"fetch": cov._auto_fetch_source_image,
+                "curated": cov._first_image_in_dirs,
+                "html": cov._build_html,
+                "pil": cov._render_with_pil}
+        cov._auto_fetch_source_image = lambda *a, **k: calls.append("fetch")
+        cov._first_image_in_dirs = lambda *a, **k: calls.append("curated")
+        cov._build_html = lambda *a, **k: calls.append("html") or ""
+        cov._render_with_pil = lambda *a, **k: calls.append("pil")
+        try:
+            with self.assertRaises(IdentityError):
+                cov.render_cover({"date": "2026-08-15", "issue_number": 14,
+                                  "publication": "Some Other Outlet"}, out)
+        finally:
+            cov._auto_fetch_source_image = real["fetch"]
+            cov._first_image_in_dirs = real["curated"]
+            cov._build_html = real["html"]
+            cov._render_with_pil = real["pil"]
+        self.assertEqual(calls, [], "no helper may run before validation")
+        self.assertFalse(out.parent.exists(),
+                         "no directory may be created before validation")
+        self.assertFalse(out.exists())
+
+    def test_a_retrospective_14_cover_copy_is_current(self):
+        sc = dict(self.SG14, publication_timing=TIMING_RETROSPECTIVE)
+        self.assertEqual(self.cov.cover_copy(sc)["publication"], CURRENT_NAME)
+        self.assertIn(CURRENT_NAME, self.html(sc))
+        self.assertNotIn(HISTORICAL_NAME, self.html(sc))
+
+
 class TestNoNetworkOrProductionWrites(unittest.TestCase):
     """
     This module must stay offline and must not touch tracked output.
@@ -782,7 +954,8 @@ class TestNoNetworkOrProductionWrites(unittest.TestCase):
                    "tempfile", "unittest", "datetime", "pathlib",
                    "core.edition_identity", "ast", "importlib.util",
                    "scripts.generate_pla_watch", "scripts.rerender_pla_watch",
-                   "scripts.generate_pla_watch_cover", "scripts.pw_env"}
+                   "scripts.generate_pla_watch_cover", "scripts.pw_env",
+                   "PIL", "inspect"}
         self.assertTrue(self._imports() <= allowed,
                         "unexpected import(s): %s" % sorted(self._imports() - allowed))
 
