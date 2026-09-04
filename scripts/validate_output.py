@@ -38,6 +38,11 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.reconcile_db import read_only                      # noqa: E402
+# Stdlib-only (re, datetime): no network, no config, no model. Imported so the
+# deploy gate validates against the same contract the generator and the
+# re-renderer use, rather than a second copy of the allowed values.
+from core.edition_identity import (                            # noqa: E402
+    IdentityError, parse_timing, resolve_identity)
 
 #: The published origin. Deliberately a literal rather than `from config import
 #: SITE_ORIGIN`: this script is the deploy gate and the workflow runs it on the
@@ -416,6 +421,21 @@ def _validate_pla_watch(output_dir: Path, errors: list, warnings: list) -> None:
         except (json.JSONDecodeError, OSError) as exc:
             errors.append(f"{rel} does not parse: {exc}")
             continue
+
+        # Publication identity and timing, through the canonical contract. A
+        # sidecar that omits both is historical and stays valid; a value the
+        # repository cannot explain is an error, not a warning, because a page
+        # would otherwise render under a publication nobody declared.
+        if "publication" in sc:
+            try:
+                resolve_identity({"publication": sc.get("publication"),
+                                  "issue_number": sc.get("issue_number")})
+            except IdentityError as exc:
+                errors.append(f"{rel}: publication — {exc}")
+        try:
+            parse_timing(sc.get("publication_timing"))
+        except IdentityError as exc:
+            errors.append(f"{rel}: publication_timing — {exc}")
 
         missing = [f for f in PW_REQUIRED_FIELDS if not sc.get(f) and sc.get(f) != 0]
         if missing:

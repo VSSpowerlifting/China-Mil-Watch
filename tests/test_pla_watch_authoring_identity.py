@@ -408,19 +408,322 @@ class TestFixtureRenders(unittest.TestCase):
             with self.subTest(edition=name):
                 self.assertNotIn(RETROSPECTIVE_LABEL, self.render(sidecar(name)))
 
-    def test_rerendering_does_not_rebrand_historical_editions(self):
+    def test_the_rerenderers_current_defaults_are_not_the_predecessor(self):
         """
-        The requirement that survives `scripts/rerender_pla_watch.py`: its
-        identity now comes from the same contract, so a re-render of No. 13
-        reproduces the predecessor name rather than today's.
+        A narrow check on the re-renderer's module constants only. It does NOT
+        exercise the re-render path — `TestRerenderPath` below does that, and
+        an earlier version of this test claimed the coverage without having it.
         """
         import scripts.rerender_pla_watch as rr
         self.assertNotIn(HISTORICAL_NAME, rr.AUTHOR_TITLE)
-        for name in ("2026-05-09", "2026-08-08"):
-            with self.subTest(edition=name):
-                ident = resolve_identity(sidecar(name))
-                self.assertEqual(ident["publication"], HISTORICAL_NAME)
-                self.assertIn(HISTORICAL_NAME, self.render(sidecar(name)))
+        self.assertNotIn("incoming", rr.AUTHOR_BIO.lower())
+
+
+# ── the re-render path, exercised for real ───────────────────────────────────
+
+class RerenderCase(unittest.TestCase):
+    """
+    Renders through `scripts.rerender_pla_watch._build_post_context()` and the
+    real post template — the API-free path that actually rebuilds published
+    pages. Nothing here writes into the tracked tree.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import scripts.rerender_pla_watch as rr
+        from scripts.pw_env import make_pw_env
+        cls.rr = rr
+        cls.env = make_pw_env()
+
+    def context(self, sc):
+        return self.rr._build_post_context(dict(sc))
+
+    def render(self, sc):
+        ctx = self.context(sc)
+        return ctx, self.env.get_template("pla-watch-post.html").render(**ctx)
+
+    def masthead_tag(self, html):
+        m = re.search(r"A weekly publication of ([^<]+)", html)
+        return m.group(1).strip() if m else None
+
+    def citation(self, html):
+        m = re.search(r'id="pw-cite">(.*?)</div>', html, re.S)
+        return m.group(1) if m else ""
+
+
+class TestRerenderPathPreservesHistoricalEditions(RerenderCase):
+
+    def test_edition_1_rerenders_historical(self):
+        """
+        No. 1 stores no author fields. Before the fix this path gave it the
+        current author title, masthead and citation — a silent rebrand of a
+        published edition.
+        """
+        ctx, html = self.render(sidecar("2026-05-09"))
+        self.assertEqual(ctx["publication"], HISTORICAL_NAME)
+        self.assertEqual(ctx["publication_home_label"], HISTORICAL_NAME)
+        self.assertEqual(ctx["series_name"], SERIES_NAME)
+        self.assertIn(HISTORICAL_NAME, ctx["author_title"])
+        self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+        self.assertIn(HISTORICAL_NAME, self.citation(html))
+        self.assertNotIn(CURRENT_NAME, self.citation(html))
+        self.assertIn(f'>Visit {HISTORICAL_NAME}', html)
+
+    def test_edition_13_rerenders_historical(self):
+        ctx, html = self.render(sidecar("2026-08-08"))
+        self.assertEqual(ctx["publication"], HISTORICAL_NAME)
+        self.assertIn(HISTORICAL_NAME, ctx["author_title"])
+        self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+        self.assertIn(HISTORICAL_NAME, self.citation(html))
+        self.assertNotIn(CURRENT_NAME, self.citation(html))
+
+    def test_every_published_sidecar_rerenders_historical(self):
+        for path in sorted(POSTS.glob("*.json")):
+            sc = json.loads(path.read_text(encoding="utf-8"))
+            with self.subTest(edition=sc.get("issue_number")):
+                ctx, html = self.render(sc)
+                self.assertEqual(ctx["publication"], HISTORICAL_NAME)
+                self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+                self.assertIn(HISTORICAL_NAME, self.citation(html))
+                self.assertNotIn(RETROSPECTIVE_LABEL, html)
+
+    def test_site_chrome_stays_current_on_a_rerendered_historical_page(self):
+        _, html = self.render(sidecar("2026-08-08"))
+        self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
+        self.assertIn(f"{CURRENT_NAME} — Archive", html)
+
+
+class TestRerenderPathHandlesNewEditions(RerenderCase):
+
+    BASE = {"date": "2026-08-15", "issue_number": 14, "title": "T", "dek": "D",
+            "week_ending": "2026-08-15", "week_start": "2026-08-09"}
+
+    def test_a_retrospective_14_rerenders_with_every_surface(self):
+        sc = dict(self.BASE, publication_timing=TIMING_RETROSPECTIVE)
+        ctx, html = self.render(sc)
+        self.assertEqual(ctx["publication"], CURRENT_NAME)
+        self.assertTrue(ctx["is_retrospective"])
+        self.assertEqual(ctx["retrospective_label"], RETROSPECTIVE_LABEL)
+        self.assertEqual(ctx["publication_timing"], TIMING_RETROSPECTIVE)
+        self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
+        self.assertIn(CURRENT_NAME, self.citation(html))
+        # Every post-level retrospective surface: masthead line, badge, sidebar.
+        self.assertGreaterEqual(html.count(RETROSPECTIVE_LABEL), 3)
+        self.assertIn("pw-badge--retrospective", html)
+
+    def test_a_regular_14_has_no_retrospective_surface(self):
+        ctx, html = self.render(dict(self.BASE))
+        self.assertFalse(ctx["is_retrospective"])
+        self.assertEqual(ctx["retrospective_label"], "")
+        self.assertNotIn(RETROSPECTIVE_LABEL, html)
+        self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
+
+    def test_index_and_archive_badges_survive_the_rerender_path(self):
+        """The cards read `publication_timing` straight off the sidecar."""
+        sc = dict(self.BASE, publication_timing=TIMING_RETROSPECTIVE,
+                  edition_label="Routine")
+        for tpl, key in (("pla-watch-index.html", "latest_post"),
+                         ("pla-watch-archive.html", "posts")):
+            with self.subTest(template=tpl):
+                payload = {key: (sc if key == "latest_post" else [sc]),
+                           "root_path": "../", "archive_posts": []}
+                html = self.env.get_template(tpl).render(**payload)
+                self.assertIn(RETROSPECTIVE_LABEL, html)
+                self.assertIn("pw-badge--retrospective", html)
+
+
+class TestRerenderPathFailsClosedOnBadIdentity(RerenderCase):
+
+    def test_the_context_builder_refuses_an_unknown_publication(self):
+        with self.assertRaises(IdentityError):
+            self.context({"date": "2026-08-15", "issue_number": 14,
+                          "publication": "Some Other Outlet"})
+
+    def test_the_context_builder_refuses_an_unknown_timing(self):
+        with self.assertRaises(IdentityError):
+            self.context({"date": "2026-08-15", "issue_number": 14,
+                          "publication_timing": "backdated"})
+
+    def test_validation_happens_before_any_derivative_or_write(self):
+        """
+        One bad sidecar must stop the run before a single HTML or cover file is
+        produced, so a partial re-render cannot land.
+        """
+        good = dict(sidecar("2026-08-08"))
+        bad = {"date": "2026-08-15", "issue_number": 14,
+               "publication_timing": "whenever"}
+        with self.assertRaises(IdentityError) as caught:
+            self.rr.validate_sidecar_identities([good, bad])
+        self.assertIn("2026-08-15", str(caught.exception))
+
+    def test_valid_sidecars_pass_pre_validation(self):
+        loaded = [json.loads(p.read_text(encoding="utf-8"))
+                  for p in sorted(POSTS.glob("*.json"))]
+        loaded.append({"date": "2026-08-15", "issue_number": 14,
+                       "publication": CURRENT_NAME,
+                       "publication_timing": TIMING_RETROSPECTIVE})
+        self.rr.validate_sidecar_identities(loaded)   # must not raise
+
+    def test_in_memory_enrichment_uses_the_editions_own_identity(self):
+        """
+        Index and archive cards read the byline off the in-memory sidecar. It
+        may be enriched, but only from that edition's resolved identity — never
+        from the module's current constants.
+        """
+        src = (REPO_ROOT / "scripts" / "rerender_pla_watch.py").read_text(encoding="utf-8")
+        self.assertNotIn('setdefault("author_name", AUTHOR_NAME)', src)
+        self.assertNotIn('setdefault("author_title", AUTHOR_TITLE)', src)
+        self.assertIn('setdefault("author_name", _identity["author_name"])', src)
+
+    def test_a_historical_sidecar_enriches_to_its_own_byline(self):
+        sc = dict(sidecar("2026-05-09"))
+        ident = resolve_identity(sc)
+        sc.setdefault("author_title", ident["author_title"])
+        self.assertIn(HISTORICAL_NAME, sc["author_title"])
+
+
+class TestValidatorEnforcesTheContract(unittest.TestCase):
+    """`validate_output.py` is the deploy gate; the contract has to reach it."""
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "validate_output_contract", REPO_ROOT / "scripts" / "validate_output.py")
+        cls.vo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.vo)
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="pw-validate-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.posts = self.tmp / "the-pla-watch" / "posts"
+        self.posts.mkdir(parents=True)
+        for page in ("index.html", "archive.html"):
+            (self.tmp / "the-pla-watch" / page).write_text("", encoding="utf-8")
+        (self.tmp / "the-pla-watch" / "feed.xml").write_text(
+            "<?xml version='1.0'?><feed/>", encoding="utf-8")
+
+    def write(self, name, **extra):
+        sc = json.loads((POSTS / "2026-08-08.json").read_text(encoding="utf-8"))
+        sc.update(extra)
+        (self.posts / f"{name}.json").write_text(json.dumps(sc), encoding="utf-8")
+
+    def check(self):
+        errors, warnings = [], []
+        self.vo._validate_pla_watch(self.tmp, errors, warnings)
+        return errors, warnings
+
+    def test_a_historical_sidecar_without_the_fields_is_accepted(self):
+        self.write("2026-08-08")
+        errors, _ = self.check()
+        self.assertEqual([e for e in errors if "publication" in e], [])
+
+    def test_valid_values_are_accepted(self):
+        self.write("2026-08-08", publication=CURRENT_NAME,
+                   publication_timing=TIMING_RETROSPECTIVE)
+        errors, _ = self.check()
+        self.assertEqual([e for e in errors if "publication" in e], [])
+
+    def test_an_unknown_publication_is_an_error_naming_the_sidecar(self):
+        self.write("2026-08-08", publication="Some Other Outlet")
+        errors, _ = self.check()
+        hits = [e for e in errors if "publication" in e]
+        self.assertTrue(hits, "expected a publication error")
+        self.assertIn("2026-08-08.json", hits[0])
+
+    def test_an_unknown_timing_is_an_error_naming_the_sidecar(self):
+        self.write("2026-08-08", publication_timing="backdated")
+        errors, _ = self.check()
+        hits = [e for e in errors if "publication_timing" in e]
+        self.assertTrue(hits, "expected a timing error")
+        self.assertIn("2026-08-08.json", hits[0])
+
+    def test_the_validator_uses_the_contract_not_a_second_copy(self):
+        src = (REPO_ROOT / "scripts" / "validate_output.py").read_text(encoding="utf-8")
+        self.assertIn("core.edition_identity", src)
+
+
+class TestCoverTimingIsCanonical(unittest.TestCase):
+    """Cover selection, exercised with stubs. No network, no tracked writes."""
+
+    @classmethod
+    def setUpClass(cls):
+        import scripts.generate_pla_watch_cover as cov
+        cls.cov = cov
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="pw-cover-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.calls = []
+
+    def run_one(self, sidecar_fields, expect_raises=False):
+        cov = self.cov
+        path = self.tmp / "2026-08-15.json"
+        sc = {"date": "2026-08-15", "issue_number": 14, "title": "T",
+              "source_trail": [{"url": "https://example.invalid/a"}]}
+        sc.update(sidecar_fields)
+        path.write_text(json.dumps(sc), encoding="utf-8")
+
+        calls = self.calls
+        originals = {}
+
+        def spy(name, result=None):
+            def _fake(*a, **k):
+                calls.append(name)
+                return result
+            return _fake
+
+        for attr, result in (("_auto_fetch_source_image", None),
+                             ("_first_image_in_dirs", None)):
+            originals[attr] = getattr(cov, attr)
+            setattr(cov, attr, spy(attr, result))
+        originals["render_cover"] = cov.render_cover
+        originals["render_thumbnail"] = getattr(cov, "render_thumbnail", None)
+        cov.render_cover = spy("render_cover")
+        if originals["render_thumbnail"] is not None:
+            cov.render_thumbnail = spy("render_thumbnail")
+        originals["_cover_path_for"] = cov._cover_path_for
+        originals["_thumb_path_for"] = cov._thumb_path_for
+        cov._cover_path_for = lambda d: self.tmp / f"{d}.png"
+        cov._thumb_path_for = lambda d: self.tmp / f"{d}-thumb.png"
+        originals["_prev_issue_image"] = cov._prev_issue_image
+        cov._prev_issue_image = lambda d: None
+        try:
+            if expect_raises:
+                with self.assertRaises(IdentityError):
+                    cov.generate_one(path, force=True)
+                return None
+            cov.generate_one(path, force=True)
+            return json.loads(path.read_text(encoding="utf-8"))
+        finally:
+            for attr, value in originals.items():
+                if value is not None:
+                    setattr(cov, attr, value)
+
+    def test_retrospective_never_fetches_and_never_uses_curated(self):
+        sc = self.run_one({"publication_timing": TIMING_RETROSPECTIVE})
+        self.assertNotIn("_auto_fetch_source_image", self.calls)
+        self.assertNotIn("_first_image_in_dirs", self.calls)
+        self.assertEqual(sc["background_image_source"], "retrospective_gradient")
+
+    def test_a_regular_edition_still_consults_both_helpers(self):
+        self.run_one({})
+        self.assertIn("_auto_fetch_source_image", self.calls)
+        self.assertIn("_first_image_in_dirs", self.calls)
+
+    def test_an_invalid_timing_fails_before_any_helper_or_write(self):
+        self.run_one({"publication_timing": "backdated"}, expect_raises=True)
+        self.assertEqual(self.calls, [],
+                         "no helper or render may run before validation")
+
+    def test_an_approved_edition_image_still_wins_for_a_retrospective(self):
+        img = self.tmp / "approved.jpg"
+        img.write_bytes(b"\xff\xd8\xff\xe0stub")
+        sc = self.run_one({"publication_timing": TIMING_RETROSPECTIVE,
+                           "media_items": [{"src": str(img)}]})
+        self.assertNotEqual(sc["background_image_source"],
+                            "retrospective_gradient")
+        self.assertNotIn("_auto_fetch_source_image", self.calls)
 
 
 class TestRetrospectiveCover(unittest.TestCase):
@@ -428,8 +731,10 @@ class TestRetrospectiveCover(unittest.TestCase):
     SRC = (REPO_ROOT / "scripts"
            / "generate_pla_watch_cover.py").read_text(encoding="utf-8")
 
-    def test_retrospective_disables_the_network_fetch_and_curated_fallback(self):
-        self.assertIn('== "retrospective"', self.SRC)
+    def test_timing_is_validated_through_the_contract(self):
+        """Behaviour is covered by TestCoverTimingIsCanonical; this pins the
+        contract call so a raw string compare cannot creep back."""
+        self.assertIn("parse_timing(sidecar.get(\"publication_timing\"))", self.SRC)
         self.assertIn("fetch_source_image = False", self.SRC)
         self.assertIn("allow_curated = False", self.SRC)
 
@@ -475,20 +780,42 @@ class TestNoNetworkOrProductionWrites(unittest.TestCase):
     def test_this_module_imports_only_what_it_needs(self):
         allowed = {"__future__", "json", "re", "shutil", "subprocess", "sys",
                    "tempfile", "unittest", "datetime", "pathlib",
-                   "core.edition_identity", "ast",
+                   "core.edition_identity", "ast", "importlib.util",
                    "scripts.generate_pla_watch", "scripts.rerender_pla_watch",
-                   "scripts.generate_pla_watch_cover"}
+                   "scripts.generate_pla_watch_cover", "scripts.pw_env"}
         self.assertTrue(self._imports() <= allowed,
                         "unexpected import(s): %s" % sorted(self._imports() - allowed))
 
     def test_the_tracked_output_tree_is_never_written(self):
-        """Reads fixtures from output/, writes only into temp directories."""
+        """
+        Fixtures are read from `output/`; every write goes to a temp directory.
+        Asserted structurally: no write target in this module is derived from
+        `POSTS` or from a path rooted at the repository.
+        """
         import ast
+        src = Path(__file__).read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        for node in ast.walk(tree):
+            if not (isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr in ("write_text", "write_bytes", "mkdir")):
+                continue
+            target = ast.unparse(node.func.value)
+            with self.subTest(target=target):
+                self.assertFalse(
+                    target.startswith("POSTS") or "REPO_ROOT" in target,
+                    "write target %r is inside the repository" % target)
+
+    def test_fixtures_from_the_tracked_tree_are_only_read(self):
+        """`POSTS` is inside tracked output/, and is only ever read from."""
+        import ast
+        self.assertTrue(POSTS.is_relative_to(REPO_ROOT / "output"))
         tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
-        writes = [n for n in ast.walk(tree)
-                  if isinstance(n, ast.Attribute)
-                  and n.attr in ("write_text", "write_bytes", "mkdir", "unlink")]
-        self.assertEqual(writes, [], "this module must not write files")
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr in ("write_text", "write_bytes", "mkdir")):
+                self.assertNotIn("POSTS", ast.unparse(node.func.value))
 
 
 if __name__ == "__main__":

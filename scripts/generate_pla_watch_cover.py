@@ -34,6 +34,9 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
+from core.edition_identity import (  # noqa: E402
+    TIMING_RETROSPECTIVE, parse_timing)
+
 ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "output" / "the-pla-watch" / "posts"
 COVERS_DIR = ROOT / "output" / "the-pla-watch" / "covers"
@@ -1056,7 +1059,10 @@ def generate_one(json_path: Path, force: bool = False,
     # imagery it never had. Metadata-driven rather than flag-driven, so the
     # re-render path obeys it without the caller having to remember. A human may
     # still supply an edition-specific image later: priority 1 below still runs.
-    if (sidecar.get("publication_timing") or "").strip() == "retrospective":
+    # Through the canonical contract, not a raw string compare: an unreadable
+    # timing must stop the run here, before any network fetch, curated-image
+    # selection or write — not be silently treated as a regular edition.
+    if parse_timing(sidecar.get("publication_timing")) == TIMING_RETROSPECTIVE:
         fetch_source_image = False
         allow_curated = False
     else:
