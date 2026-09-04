@@ -230,12 +230,14 @@ h1[id], h2[id], h3[id], h4[id] { scroll-margin-top: 1.5rem; }
    aria-hidden and carries empty alt text.
 
    Sized in px, not em, and never below 48. The audit measured the canonical
-   artwork's two outer rings at 4 px strokes on a 500 px field — 0.38 device px
-   at 48 and still under one pixel at 64 — so the ring pair is the feature that
-   decides the floor. At 48 the gap between the rings first exceeds a pixel and
-   the mark reads as a compass; below it the rings merge into a grey halo. 56 is
-   the desktop size, 48 the compact one, and `radius: 2px` matches every other
-   surface on the site. */
+   artwork's two outer rings at 4 *source* pixels in a 500 px image, which is
+   0.38 CSS px at a 48 px box and 0.77 physical pixels at 2x — under the one
+   physical pixel a stroke needs. The ring pair is therefore the feature that
+   decides the floor: at 48 the gap between the two rings is what first clears
+   a pixel and lets the mark read as a compass, and below it the rings merge
+   into a grey halo. The floor was set by looking at renders; the arithmetic
+   explains them. 56 is the desktop size, 48 the compact one, and
+   `radius: 2px` matches every other surface on the site. */
 .brand-mark {
   width: 56px; height: 56px; flex: none;
   border-radius: 2px;

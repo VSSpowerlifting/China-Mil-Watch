@@ -187,9 +187,14 @@ One canonical mark, several derivatives, documented in full in
   no alpha, SHA-256 `7e3f3b60…45762f`. Never redrawn, recoloured, cropped or
   stretched. Never served directly.
 - **Measured floor: 48 CSS px.** The canonical artwork's two outer rings are
-  4 px strokes with an 11 px gap on a 500 px field. Below 48 px the rings merge
-  into a grey halo and the mark stops reading as a compass. Masthead is 56 px
-  desktop, 48 px compact; a test enforces the floor.
+  4 **source** pixels wide with an 11 source-pixel gap in a 500 × 500 image. A
+  4 px source feature drawn into an *s*-pixel box covers `4s/500` CSS pixels at
+  1×, and that again multiplied by the device-pixel ratio in physical pixels —
+  0.38 CSS px / 0.77 physical px at 48 on a 2× display. Below roughly 48 the
+  rings merge into a grey halo and the mark stops reading as a compass. The
+  floor was set by looking at renders; the arithmetic explains them. It is a
+  **CSS-pixel** floor and holds at any DPR. Masthead is 56 px desktop, 48 px
+  compact; a test enforces it.
 - **Simplified derivative:** `ipr-compass-mark-small.svg` covers favicon sizes
   (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
   never a replacement, and never presented as the mark at display size.
