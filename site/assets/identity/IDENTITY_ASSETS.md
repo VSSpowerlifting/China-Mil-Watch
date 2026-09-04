@@ -26,23 +26,34 @@ table — so replacing it has to be deliberate in all three.
 
 ## Why there are two marks
 
-The 2026-09-04 audit measured the canonical artwork's geometry against a 500 px
-field: two outer ring strokes of 4 px each, separated by an 11 px gap, with
-4 px diagonal ticks. Scaled down, a 4 px feature becomes:
+The 2026-09-04 audit measured the canonical artwork's geometry in **source
+pixels**: two outer ring strokes of 4 px each, separated by an 11 px gap, with
+4 px diagonal ticks, in a 500 × 500 image.
 
-| Render size | Ring stroke | Double-ring gap |
-|---|---|---|
-| 16 px | 0.13 px | 0.35 px |
-| 24 px | 0.19 px | 0.53 px |
-| 32 px | 0.26 px | 0.70 px |
-| 48 px | 0.38 px | 1.06 px |
-| 64 px | 0.51 px | 1.41 px |
-| 96 px | 0.77 px | 2.11 px |
+Three units are involved, and keeping them apart matters. A feature *w* source
+pixels wide, drawn into a box *s* CSS pixels across, covers `w × s / 500` **CSS
+pixels at 1×**, and `w × s / 500 × DPR` **physical device pixels** on a display
+with that device-pixel ratio.
 
-A stroke needs about one device pixel to exist and about 1.5 to read cleanly.
-The ring strokes reach 1.0 px only at 125 px; the gap between the two rings
-reaches it at 45 px. Below roughly 48 px the rings merge into a grey halo, the
-ticks disappear, and the mark stops reading as a compass.
+| Rendered box | Ring stroke @1× | Ring stroke @2× | Ring gap @1× | Ring gap @2× |
+|---|---|---|---|---|
+| 16 CSS px | 0.13 | 0.26 | 0.35 | 0.70 |
+| 24 CSS px | 0.19 | 0.38 | 0.53 | 1.06 |
+| 32 CSS px | 0.26 | 0.51 | 0.70 | 1.41 |
+| 48 CSS px | 0.38 | 0.77 | 1.06 | 2.11 |
+| 56 CSS px | 0.45 | 0.90 | 1.23 | 2.46 |
+| 64 CSS px | 0.51 | 1.02 | 1.41 | 2.82 |
+| 96 CSS px | 0.77 | 1.54 | 2.11 | 4.22 |
+
+(Figures are physical device pixels; the @1× column is also the CSS-pixel
+coverage.)
+
+A stroke needs about one physical pixel to exist and about 1.5 to read cleanly.
+At 1× the ring strokes reach 1.0 only at a 125 CSS px box; the gap between the
+two rings reaches it at 45. **The 48 px floor was set by looking at renders,
+not by arithmetic** — the arithmetic explains why the renders look the way they
+do. Below roughly 48 CSS px the rings merge into a grey halo, the ticks
+disappear, and the mark stops reading as a compass.
 
 So the canonical mark has a floor, and `ipr-compass-mark-small.svg` covers what
 is below it. The small mark is the same compass with the features that survive
@@ -65,7 +76,8 @@ canonical source and is never presented as the brand mark at display size.
 | Favicon (SVG) | small mark | scales |
 | Favicon (PNG) | small mark | 16 / 32 px |
 
-48 CSS px is the floor for the canonical mark, enforced by
+48 CSS px is the floor for the canonical mark — a CSS-pixel floor, independent
+of the viewer's device-pixel ratio — enforced by
 `test_the_mark_is_never_rendered_below_its_measured_floor`.
 
 ## Output routes
@@ -81,11 +93,25 @@ had because 3,950 published pages already reference it.
 .venv/bin/python scripts/build_identity_assets.py --check   # verify, write nothing
 ```
 
+Two kinds of derivative, verified two different ways.
+
 The vector mark and the PNG icons are computed from geometry and are
-byte-reproducible. The social card is rendered through Playwright from HTML and
-CSS, the same mechanism `scripts/generate_pla_watch_cover.py` uses for edition
-covers, so its bytes depend on the rendering platform; its digest is recorded
-above at the time of generation.
+**byte-reproducible** on any platform. `--check` regenerates them and compares
+bytes.
+
+The social card is rendered through Playwright from HTML and CSS — the same
+mechanism `scripts/generate_pla_watch_cover.py` uses for edition covers — so
+its bytes depend on the platform's font rasterisation and re-rendering it
+elsewhere can legitimately **differ**. It is therefore **pinned by its recorded
+digest** rather than regenerated: `--check` verifies the committed file against
+`SOCIAL_SHA256`, its 1200 × 630 geometry, and the 300 KB budget. Replacing it
+is a deliberate act that updates the digest here and in the builder — any other
+1200 × 630 PNG under budget will fail the check.
+
+The palette constants are pinned samples rather than live reads, with the
+canonical pixel each came from recorded beside it;
+`tests/test_identity_asset_builder.py` re-reads the artwork and fails if one
+stops matching.
 
 ## What is *not* here
 
