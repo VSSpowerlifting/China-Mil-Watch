@@ -21,11 +21,10 @@ than one place, by a value nobody can find.
 
 The launch switch
 -----------------
-`DEFAULT_SITE_MODE` below is the switch. It is `LEGACY` today. Publishing
-Indo-Pacific Record is, mechanically, changing that one constant — after the
-evidence and branding gates pass, which is an owner decision and not this
-module's business. Rolling back is changing it back. Nothing else in the tree
-selects a mode.
+`DEFAULT_SITE_MODE` below is the switch. It is `INDO_PACIFIC_RECORD`: the
+launch happened on 2026-08-27 and publishing was, mechanically, changing that
+one constant. Rolling back is changing it back to `LEGACY`. Nothing else in
+the tree selects a mode.
 
 Fail-closed rules, all tested
 -----------------------------
@@ -35,8 +34,10 @@ Fail-closed rules, all tested
     the production `output/` default, and `build()` refuses to write inside
     production output regardless — two independent guards, because one of them
     is the one that fails.
-  * The scheduled workflow sets nothing, so it resolves to legacy. A contract
-    test asserts the workflow does not set the variable.
+  * The scheduled workflow sets nothing, so it resolves to whatever
+    `DEFAULT_SITE_MODE` is — today, Indo-Pacific Record. A contract test
+    asserts the workflow does not set the variable, so the default stays the
+    single place a mode is chosen.
 """
 
 from __future__ import annotations

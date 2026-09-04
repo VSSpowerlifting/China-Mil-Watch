@@ -1,9 +1,13 @@
 # Design System — Indo-Pacific Record / The PLA Watch
 
-Durable doctrine. The tokens below are the live values in
-`site/templates/base.html` (Paper Ledger) and
-`site/templates/pla-watch-base.html` (Night Desk). If a template and this
-document disagree, reconcile deliberately — do not silently fork.
+Durable doctrine. The Night Desk tokens below are the live values in
+`site/templates/pla-watch-base.html`. The Paper Ledger table in §3 describes
+`site/templates/base.html`, which is the **legacy rollback renderer** — the
+live record site is rendered by `site/preview/generate_preview.py` and its
+tokens are in `site/preview/styles.css`, a related but distinct teal/ocean
+palette. That divergence is recorded in §3 rather than papered over. If a
+template and this document disagree, reconcile deliberately — do not silently
+fork.
 Motion and flagship visual components: docs/VISUAL_AND_MOTION_SYSTEM.md.
 
 ## 1. North star
@@ -38,7 +42,11 @@ in the Ledger. The inverse (light panels inside PW pages) is limited to print.
 
 ## 3. Color doctrine
 
-### Paper Ledger tokens (base.html)
+### Paper Ledger tokens (`site/templates/base.html` — legacy rollback renderer)
+
+**Not the live record site.** These are the predecessor's tokens, preserved
+because the rollback path must still render as it did. The production record
+surface is `site/preview/styles.css`, below.
 | Token | Value | Role |
 |---|---|---|
 | `--paper` | #F6F3EC | page ground |
@@ -71,6 +79,20 @@ in the Ledger. The inverse (light panels inside PW pages) is limited to print.
 
 The crimson differs by surface on purpose (#A31626 on paper, #B3132B/#D8354C
 on navy) — same family, tuned for contrast. Do not unify them numerically.
+
+### Live record-site tokens (`site/preview/styles.css`)
+| Token | Value | Role |
+|---|---|---|
+| `--paper` | #F5F8F6 | page ground |
+| `--ink` | #10252E | body text, dark bands (14.81 on paper) |
+| `--deep` | #123E4A | secondary text (10.83) |
+| `--ocean` | #176B87 | sole structural accent (5.63) |
+| `--turquoise` | #28B8A6 | decoration on paper; text on ink |
+| `--seaglass` | #CBEAE5 | fills, rules, marks — never text |
+| `--signal` | #9C4B36 | rust: machine-generated ONLY (5.65) |
+| `--abyss` | #0A1A22 | masthead ground, `theme-color` |
+| `--parchment` | #EDE9E0 | primary text on dark |
+| `--crimson` | (dark chrome only) | editorial accent, never on paper |
 
 ### Meaning rules
 - **Crimson = analytical signal only**: model-flagged markers, key-judgment
@@ -155,6 +177,34 @@ Defined in base templates or per-page `extra_styles`; reuse before inventing:
 - **Signal Field plate** (homepage "How the record is built") and **dark
   edition band** — flagship visuals, spec'd in VISUAL_AND_MOTION_SYSTEM.
 
+## 6a. Identity assets (added 2026-09-04)
+
+One canonical mark, several derivatives, documented in full in
+`site/assets/identity/IDENTITY_ASSETS.md` and built by
+`scripts/build_identity_assets.py`.
+
+- **Canonical:** `ipr-compass-logo.png` — owner-supplied, PNG 500 × 500, RGB,
+  no alpha, SHA-256 `7e3f3b60…45762f`. Never redrawn, recoloured, cropped or
+  stretched. Never served directly.
+- **Measured floor: 48 CSS px.** The canonical artwork's two outer rings are
+  4 **source** pixels wide with an 11 source-pixel gap in a 500 × 500 image. A
+  4 px source feature drawn into an *s*-pixel box covers `4s/500` CSS pixels at
+  1×, and that again multiplied by the device-pixel ratio in physical pixels —
+  0.38 CSS px / 0.77 physical px at 48 on a 2× display. Below roughly 48 the
+  rings merge into a grey halo and the mark stops reading as a compass. The
+  floor was set by looking at renders; the arithmetic explains them. It is a
+  **CSS-pixel** floor and holds at any DPR. Masthead is 56 px desktop, 48 px
+  compact; a test enforces it.
+- **Simplified derivative:** `ipr-compass-mark-small.svg` covers favicon sizes
+  (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
+  never a replacement, and never presented as the mark at display size.
+- **The brand gradient appears in exactly one place** — inside the mark itself.
+  The accent budget still forbids gradients as decoration anywhere else.
+- `logo-icon.png`, `logo-wordmark.png`, `og-image.png` and `favicon.svg` are
+  **retired**: the predecessor's eagle, its wordmark, and a screenshot of its
+  homepage. They remain in `output/` only because pages not yet re-rendered
+  reference them. They are not current identity assets.
+
 ## 7. Accessibility standards (permanent)
 
 - Semantic landmarks (`header/nav/main/footer`), one h1 per page, ordered
@@ -183,7 +233,11 @@ figures, which described the predecessor's static site:
 index 15.6 KB, `archive.html` 15.9 KB, coverage 17.3 KB, desks 13.3 KB,
 methodology 9.7 KB, largest generated week page 29.9 KB, largest record page
 64.7 KB, PLA Watch post 81.2 KB — all HTML with CSS inlined. JS ≈ 1 KB vanilla
-(IntersectionObserver); zero external libraries; 3 font families from Google.
+(IntersectionObserver); zero external libraries. **Fonts differ by surface:**
+The PLA Watch loads the three families from Google Fonts; the record site
+loads none at all and renders on its fallback stack (Georgia / system-ui /
+system mono). Unifying them is an open owner decision, deliberately not taken
+in the identity tranche.
 Covers remain ~8.5 MB total (~430 KB average) and are the one budget still
 missed.
 
