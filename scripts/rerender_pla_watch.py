@@ -149,6 +149,36 @@ def _cover_paths(sidecar: dict) -> tuple[str, str, str]:
     return rel, thumb, abs_url
 
 
+def _on_current_origin(url: str) -> str:
+    """
+    Re-base a stored absolute cover URL onto the current site origin.
+
+    Twelve sidecars record `cover_image_url` on `chinamilwatch.org`, captured
+    when that was the live domain. The address is a fact about where the site
+    lives, not a fact about the edition — the covers themselves moved with the
+    rest of the tree, and the predecessor domain is now a redirect-only Pages
+    site. Rendering that URL into `og:image` would point every link preview at
+    a redirect, which is how a social card silently stops resolving.
+
+    Only the origin is replaced; the path is the sidecar's. Sidecars are the
+    canonical edition record and are not edited to fix this — the renderer
+    reads them as published and states the current address itself.
+
+    Editions keep their historical *identity*; they do not keep a stale host.
+    """
+    if not url:
+        return url
+    from urllib.parse import urlsplit, urlunsplit
+    parts = urlsplit(url)
+    if not parts.scheme or not parts.netloc:
+        return url
+    current = urlsplit(SITE_ORIGIN)
+    if parts.netloc == current.netloc:
+        return url
+    return urlunsplit((current.scheme, current.netloc, parts.path,
+                       parts.query, parts.fragment))
+
+
 def _normalize_url(url: str) -> str:
     try:
         parsed = urlparse(url.strip())
@@ -242,7 +272,7 @@ def _build_post_context(sidecar: dict) -> dict:
     pw_veil = veil_for_edition(sidecar_date, sidecar=sidecar)
     cover_image = sidecar.get("cover_image") or ""
     cover_thumb = sidecar.get("cover_thumb") or ""
-    cover_image_url = sidecar.get("cover_image_url") or ""
+    cover_image_url = _on_current_origin(sidecar.get("cover_image_url") or "")
     if not cover_image or not cover_image_url:
         derived_rel, derived_thumb, derived_abs = _cover_paths(sidecar)
         cover_image = cover_image or derived_rel

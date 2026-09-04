@@ -15,7 +15,10 @@
   <meta property="og:url"          content="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
   <meta property="og:title"        content="{% block og_title %}The PLA Watch{% endblock %}">
   <meta property="og:description"  content="{% block og_description %}Weekly signals from Chinese military media, published by Indo-Pacific Record. Each edition covers the week ending Saturday.{% endblock %}">
-  <meta property="og:image"        content="{% block og_image %}{{ site_origin }}/og-image.png{% endblock %}">
+  {# The fallback card. `og-image.png` is a screenshot of the predecessor's
+     front page, masthead and all; an edition overrides this block with its own
+     cover, and everything else falls through to the current site card. #}
+  <meta property="og:image"        content="{% block og_image %}{{ site_origin }}/social-card.png{% endblock %}">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
 
@@ -25,8 +28,14 @@
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}">
   <meta name="twitter:image"       content="{% block twitter_image %}{{ self.og_image() }}{% endblock %}">
 
-  <link rel="icon" type="image/png" href="{{ root_path }}logo-icon.png">
-  <link rel="apple-touch-icon" href="{{ root_path }}logo-icon.png">
+  {# Site chrome, so the current identity — not the edition's. `logo-icon.png`
+     is the predecessor's eagle at 1254 px and 1.0 MB, which was both the wrong
+     mark and a megabyte fetched on every cold load. These routes are written
+     by the record renderer from `site/assets/identity/`. #}
+  <link rel="icon" type="image/svg+xml" href="{{ root_path }}mark.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ root_path }}icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ root_path }}icon-16.png">
+  <link rel="apple-touch-icon" href="{{ root_path }}apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="{{ site_origin }}/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +55,12 @@
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
       --color-text-muted:     #746E67;       /* quiet gray */
+      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
+         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
+         small text needs. This is the same warm family, lifted until it
+         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
+         its value for the non-essential metadata it was scoped to. */
+      --color-chrome-label:   #8E877E;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -181,7 +196,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       align-self: center;
     }
 
@@ -214,7 +229,16 @@
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
     .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
-    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
+    .pw-skip {
+      position: absolute; left: -9999px; top: 0; z-index: 100;
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      padding: 0.7rem 1.1rem; font-family: var(--sans); font-size: 0.85rem;
+      border: 1px solid var(--color-border); border-radius: 2px;
+    }
+    .pw-skip:focus { left: 0.75rem; top: 0.75rem; }
+    /* 5.32 on the masthead ground. `--color-brand-light` measures 4.12 there,
+       which passes for large text and not for an 11.5px nav link. */
+    .pw-nav .pw-nav-back { color: var(--signal-bright); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
@@ -226,7 +250,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
@@ -523,6 +547,10 @@
   </style>
 </head>
 <body>
+{# Parity with the record site, which has carried one since launch. Seven
+   navigation links and a masthead rule sit between the top of an edition and
+   its first paragraph. #}
+<a class="pw-skip" href="#main">Skip to content</a>
 
 {% block progress %}{% endblock %}
 
@@ -541,7 +569,7 @@
         <a href="{{ pw_root | default('') }}index.html" {% if active_page == 'index' %}class="active"{% endif %}>Latest Edition</a>
         <a href="{{ pw_root | default('') }}archive.html" {% if active_page == 'archive' %}class="active"{% endif %}>Archive</a>
         <a href="{{ pw_root | default('') }}terms.html" {% if active_page == 'terms' %}class="active"{% endif %}>Terms</a>
-        <span class="nav-sep">|</span>
+        <span class="nav-sep" aria-hidden="true">|</span>
         <a href="{{ root_path }}index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
@@ -554,7 +582,7 @@
 
 {% block hero %}{% endblock %}
 
-<main>
+<main id="main">
   {% block content %}{% endblock %}
 </main>
 
