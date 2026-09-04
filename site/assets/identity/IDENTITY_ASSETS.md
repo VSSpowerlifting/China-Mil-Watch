@@ -93,20 +93,26 @@ had because 3,950 published pages already reference it.
 .venv/bin/python scripts/build_identity_assets.py --check   # verify, write nothing
 ```
 
-Two kinds of derivative, verified two different ways.
+Two kinds of asset, verified two different ways — and the line is drawn by
+**file format**, not by how the pixels were computed.
 
-The vector mark and the PNG icons are computed from geometry and are
-**byte-reproducible** on any platform. `--check` regenerates them and compares
+`ipr-compass-mark-small.svg` is text generated from coordinates, so it is
+**byte-identical** anywhere CPython runs. `--check` regenerates it and compares
 bytes.
 
-The social card is rendered through Playwright from HTML and CSS — the same
-mechanism `scripts/generate_pla_watch_cover.py` uses for edition covers — so
-its bytes depend on the platform's font rasterisation and re-rendering it
-elsewhere can legitimately **differ**. It is therefore **pinned by its recorded
-digest** rather than regenerated: `--check` verifies the committed file against
-`SOCIAL_SHA256`, its 1200 × 630 geometry, and the 300 KB budget. Replacing it
-is a deliberate act that updates the digest here and in the builder — any other
-1200 × 630 PNG under budget will fail the check.
+Every raster is **pinned by its recorded digest** instead. **PNG encoding is
+not reproducible across platforms**: Pillow's encoder output depends on the
+Pillow and zlib build even when the pixels are identical, which CI demonstrated
+by regenerating `ipr-compass-icon-16.png` on Linux and getting a different file
+from the committed macOS one. The social card is further out again, since
+Playwright rasterises type against the platform's fonts.
+
+So `--check` verifies each committed PNG against `RASTER_SHA256` in the
+builder, plus the social card's 1200 × 630 geometry and 300 KB budget. That
+catches what matters — a file replaced or edited without the change being
+declared — without asserting a reproducibility this code does not have.
+Replacing any raster is a deliberate act that updates its digest in the builder
+and in the table above.
 
 The palette constants are pinned samples rather than live reads, with the
 canonical pixel each came from recorded beside it;

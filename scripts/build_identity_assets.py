@@ -38,22 +38,29 @@ at 56 CSS px, the touch icon at 180 px, the social card — and the audit's
 measured floor of 48 CSS px is what "room for it" means. The floor was set by
 looking at renders, not by arithmetic alone; the arithmetic explains it.
 
-Two kinds of derivative, and two kinds of verification
-------------------------------------------------------
-The vector mark and every PNG icon are computed from geometry with Pillow, so
-the same inputs give the same bytes on any platform. `--check` regenerates
-those and byte-compares them.
+What `--check` can honestly verify
+----------------------------------
+The geometry is deterministic. The file formats it is written into are not
+equally so, and the first version of this contract did not separate the two.
 
-The social card is not in that category and this file does not pretend it is.
-It is composed the way `scripts/generate_pla_watch_cover.py` composes an
-edition cover — Playwright over HTML and CSS, because that is how this
-repository already renders type into an image — and its bytes depend on the
-platform's font rasterisation. Re-rendering it on another machine can
-legitimately produce a different file. So `--check` does not regenerate it. It
-verifies the committed card against `SOCIAL_SHA256`, its 1200 x 630 geometry,
-and the documented byte budget, which means replacing the card is a deliberate
-act that updates a recorded digest rather than anything that happens to be a
-1200 x 630 PNG under 300 KB.
+The vector mark is text generated from that geometry — coordinates formatted
+and joined — so it is byte-identical anywhere CPython runs. `--check`
+regenerates it and byte-compares.
+
+The PNGs are not. Pillow's encoder output depends on the Pillow and zlib build,
+so the same pixels legitimately encode to different bytes on different
+platforms; CI proved this by regenerating `ipr-compass-icon-16.png` on Linux
+and getting a different file from the committed macOS one. The social card is
+further out still: Playwright rasterises type, and text rendering varies by
+platform font stack.
+
+So every raster here is **pinned by recorded digest** rather than regenerated
+under comparison. `--check` verifies each committed PNG against the digest in
+`RASTER_SHA256`, plus the social card's 1200 x 630 geometry and byte budget.
+That catches the thing worth catching — a file being replaced or edited without
+the change being declared — without asserting a reproducibility this code does
+not have. Replacing any raster is a deliberate act that updates its digest here
+and in `IDENTITY_ASSETS.md`.
 
 The palette constants are pinned samples, not live reads: taking them from the
 file at build time would let the artwork change the output silently.
@@ -100,6 +107,18 @@ SOCIAL = "ipr-social-card-1200x630.png"
 SOCIAL_SHA256 = (
     "ce570069851b03b2fb3a2bcee83e8aa73d6c7889106da92ba9d8a6694c4aba22")
 SOCIAL_SIZE = (1200, 630)
+
+#: Every committed raster, pinned. See the module docstring: PNG encoding is
+#: not reproducible across platforms even when the pixels are, so these are
+#: verified by digest rather than regenerated and diffed. Update an entry in
+#: the same commit that changes the file it names.
+RASTER_SHA256 = {
+    ICON_16: "76cf4a12c8c91a0121f475ee6b65dc36a1d33446527a89e523706778ab2e079c",
+    ICON_32: "365a5ecb2b43637eebdc427b4b9f750fe7f4280775f2bf08f31ab450091cdbd7",
+    MASTHEAD: "e5b1d4142c701454bf6835c8f3ab32ea7c8a7b9f8e798af7f6bc0e21cf5cb779",
+    TOUCH_180: "6c497b1e1dd738805528060a1bb603805f7dd3e00c0f533cff0ce633282df08b",
+    SOCIAL: SOCIAL_SHA256,
+}
 #: `docs/DESIGN_SYSTEM.md` section 8: og-image PNG <= 300 KB.
 SOCIAL_BYTE_BUDGET = 300 * 1024
 
@@ -327,33 +346,37 @@ def png_size(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", raw[16:24])
 
 
-def verify_social_card() -> list[str]:
+def verify_rasters() -> list[str]:
     """
-    Check the committed card without regenerating it.
+    Check every committed raster against its recorded digest, without
+    regenerating any of them.
 
-    Returns a list of problems, empty when the card is the one that was
-    recorded. Geometry and budget are checked as well as the digest because
-    they are the properties that matter at the point of use, and a reviewer
-    reading the output should see them stated rather than implied.
+    Returns a list of problems, empty when each file is the one recorded. The
+    social card additionally has its geometry and byte budget checked, because
+    those are the properties that matter where it is used and a reviewer should
+    see them stated rather than implied.
     """
-    path = IDENTITY_DIR / SOCIAL
     problems: list[str] = []
-    if not path.is_file():
-        return ["%s: missing" % SOCIAL]
-    actual = sha256_of(path)
-    if actual != SOCIAL_SHA256:
-        problems.append(
-            "%s: digest %s does not match the recorded %s — if the card was "
-            "replaced on purpose, update SOCIAL_SHA256 and IDENTITY_ASSETS.md"
-            % (SOCIAL, actual[:16], SOCIAL_SHA256[:16]))
-    size = png_size(path)
-    if size != SOCIAL_SIZE:
-        problems.append("%s: %dx%d, expected %dx%d"
-                        % ((SOCIAL,) + size + SOCIAL_SIZE))
-    written_bytes = path.stat().st_size
-    if written_bytes > SOCIAL_BYTE_BUDGET:
-        problems.append("%s: %d bytes, over the %d budget"
-                        % (SOCIAL, written_bytes, SOCIAL_BYTE_BUDGET))
+    for name, expected in RASTER_SHA256.items():
+        path = IDENTITY_DIR / name
+        if not path.is_file():
+            problems.append("%s: missing" % name)
+            continue
+        actual = sha256_of(path)
+        if actual != expected:
+            problems.append(
+                "%s: digest %s does not match the recorded %s — if this was "
+                "replaced on purpose, update RASTER_SHA256 and "
+                "IDENTITY_ASSETS.md" % (name, actual[:16], expected[:16]))
+    card = IDENTITY_DIR / SOCIAL
+    if card.is_file():
+        size = png_size(card)
+        if size != SOCIAL_SIZE:
+            problems.append("%s: %dx%d, expected %dx%d"
+                            % ((SOCIAL,) + size + SOCIAL_SIZE))
+        if card.stat().st_size > SOCIAL_BYTE_BUDGET:
+            problems.append("%s: %d bytes, over the %d budget"
+                            % (SOCIAL, card.stat().st_size, SOCIAL_BYTE_BUDGET))
     return problems
 
 
@@ -363,11 +386,22 @@ def build(check_only: bool = False) -> int:
 
     written: list[tuple[str, str]] = []
 
-    def emit(name: str, payload: bytes) -> None:
+    def emit(name: str, payload: bytes, byte_reproducible: bool = False) -> None:
+        """
+        Write a derivative, or under `--check` compare it.
+
+        Only assets marked `byte_reproducible` are compared byte-for-byte;
+        those are the ones generated as text from geometry. Rasters are
+        skipped here and verified by digest in `verify_rasters()` instead,
+        because PNG encoding is not stable across platforms and a byte
+        comparison would fail honestly-produced output.
+        """
         path = IDENTITY_DIR / name
         if check_only:
+            if not byte_reproducible:
+                return
             if not path.is_file() or path.read_bytes() != payload:
-                print("DRIFT: %s" % name)
+                print("DRIFT: %s (regenerated bytes differ)" % name)
                 emit.drift = True                       # type: ignore[attr-defined]
             return
         path.write_bytes(payload)
@@ -375,7 +409,8 @@ def build(check_only: bool = False) -> int:
 
     emit.drift = False                                  # type: ignore[attr-defined]
 
-    emit(SMALL_MARK, build_small_mark().encode("utf-8"))
+    emit(SMALL_MARK, build_small_mark().encode("utf-8"),
+         byte_reproducible=True)
 
     import io
 
@@ -386,22 +421,27 @@ def build(check_only: bool = False) -> int:
         image.save(buf, format="PNG", optimize=True, compress_level=9)
         return buf.getvalue()
 
+    if check_only:
+        # The rasters are not regenerated: nothing would be compared against
+        # the result, so producing them would only be slow.
+        drift = bool(emit.drift)                        # type: ignore[attr-defined]
+        problems = verify_rasters()
+        for problem in problems:
+            print("DRIFT: %s" % problem)
+        if not drift:
+            print("reproduced %s  byte-identical" % SMALL_MARK)
+        for name in RASTER_SHA256:
+            path = IDENTITY_DIR / name
+            if path.is_file() and not any(name in p for p in problems):
+                print("pinned     %-30s %dx%d  %d bytes  %s"
+                      % ((name,) + png_size(path)
+                         + (path.stat().st_size, RASTER_SHA256[name][:16])))
+        return 1 if (drift or problems) else 0
+
     emit(ICON_16, png_bytes(render_small_mark_png(16)))
     emit(ICON_32, png_bytes(render_small_mark_png(32)))
     emit(MASTHEAD, png_bytes(render_from_canonical(canonical, 112)))
     emit(TOUCH_180, png_bytes(render_from_canonical(canonical, 180)))
-
-    if check_only:
-        drift = bool(emit.drift)                        # type: ignore[attr-defined]
-        problems = verify_social_card()
-        for problem in problems:
-            print("DRIFT: %s" % problem)
-        if not problems:
-            path = IDENTITY_DIR / SOCIAL
-            print("pinned %s  %dx%d  %d bytes  %s"
-                  % ((SOCIAL,) + png_size(path)
-                     + (path.stat().st_size, SOCIAL_SHA256)))
-        return 1 if (drift or problems) else 0
 
     social = IDENTITY_DIR / SOCIAL
     if build_social_card(canonical, social):
@@ -420,10 +460,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--check", action="store_true",
-        help="write nothing; regenerate the geometry-computed derivatives and "
-             "byte-compare them, and verify the social card against its "
-             "recorded digest, size and budget (it is rendered through a "
-             "browser and is not byte-reproducible across platforms)")
+        help="write nothing; regenerate the vector mark and byte-compare it, "
+             "and verify every committed raster against its recorded digest "
+             "(PNG encoding is not reproducible across platforms, so the "
+             "rasters are pinned rather than diffed), plus the social card's "
+             "size and byte budget")
     args = parser.parse_args()
     return build(check_only=args.check)
 

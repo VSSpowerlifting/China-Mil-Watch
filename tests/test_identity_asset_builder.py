@@ -10,16 +10,25 @@ before reaching the social card, which is the one asset a reviewer is least
 able to eyeball. Meanwhile the inventory recorded a digest for it, so the
 documentation implied a check that did not run.
 
-The fix is not to pretend the social card is byte-reproducible. It is rendered
-through Playwright from HTML and CSS, and its bytes depend on the platform's
-font rasterisation, so regenerating it on a different machine legitimately
-produces different bytes. Two different properties are being asserted, and
-this module keeps them apart:
+The first attempt at fixing that over-corrected in the other direction: it
+claimed every geometry-computed derivative was byte-reproducible and compared
+all of them. CI disproved it immediately — regenerating
+`ipr-compass-icon-16.png` on Linux produces a different file from the committed
+macOS one, because Pillow's PNG encoder output depends on the Pillow and zlib
+build even when the pixels are identical.
 
-  * derivatives computed from geometry are **regenerated and byte-compared**;
-  * the social card is **pinned by recorded digest** and checked for the
-    properties that matter at the point of use — that it exists, is
-    1200 x 630, and stays inside the documented budget.
+So the line is not "computed from geometry" versus "rendered in a browser". It
+is what the *format* guarantees:
+
+  * the vector mark is text generated from coordinates, byte-identical
+    anywhere CPython runs, and is **regenerated and byte-compared**;
+  * every raster — the icons, the masthead asset, the touch icon and the
+    social card — is **pinned by recorded digest**, because no PNG here is
+    reproducible across platforms. The social card additionally has its
+    1200 x 630 geometry and byte budget checked.
+
+Digest pinning catches what actually matters: a file replaced or edited
+without the change being declared.
 
 The second claim was about colour. The builder said the palette was sampled
 from the canonical artwork "so the two cannot drift", while the values were
@@ -127,15 +136,32 @@ class TestCheckModeVerifiesWhatItClaims(unittest.TestCase):
         self.assertEqual(result.returncode, 0,
                          result.stdout + result.stderr)
 
-    def test_check_reports_on_the_social_card(self):
+    def test_check_reports_on_every_committed_raster(self):
         """
-        The gap this closes: the previous implementation returned before the
-        social card was looked at, so `--check` was silent about the one asset
-        it could not regenerate.
+        The gap this closes: the first implementation returned before the
+        social card was looked at, so `--check` was silent about the asset it
+        could not regenerate. It now names every raster it pinned.
         """
         result = self.run_check()
-        self.assertIn("ipr-social-card-1200x630.png",
-                      result.stdout + result.stderr)
+        combined = result.stdout + result.stderr
+        from scripts.build_identity_assets import RASTER_SHA256
+        for name in RASTER_SHA256:
+            with self.subTest(asset=name):
+                self.assertIn(name, combined)
+
+    def test_check_byte_compares_the_vector_mark(self):
+        """
+        The one asset whose format actually guarantees reproducibility.
+        """
+        result = self.run_check()
+        self.assertRegex(result.stdout,
+                         r"reproduced ipr-compass-mark-small\.svg\s+byte-identical")
+
+    def test_every_raster_digest_matches_its_committed_file(self):
+        from scripts.build_identity_assets import RASTER_SHA256
+        for name, expected in RASTER_SHA256.items():
+            with self.subTest(asset=name):
+                self.assertEqual(sha256_of(IDENTITY_DIR / name), expected)
 
     def test_the_social_card_digest_is_recorded_in_the_builder(self):
         mod = load_builder()
@@ -143,7 +169,7 @@ class TestCheckModeVerifiesWhatItClaims(unittest.TestCase):
 
     def test_a_replacement_card_of_the_right_shape_still_fails_check(self):
         """
-        The property that makes the digest worth recording. A 1200 x 630 PNG
+        The property that makes digest pinning worth doing. A 1200 x 630 PNG
         under budget is not automatically *this* card, and swapping one in
         without updating the recorded digest has to be caught.
         """
@@ -195,23 +221,25 @@ class TestTheDocumentedContractMatchesTheCode(unittest.TestCase):
         result = subprocess.run(
             [sys.executable, str(BUILDER), "--help"],
             cwd=str(REPO_ROOT), capture_output=True, text=True)
-        help_text = result.stdout.lower()
-        self.assertIn("byte", help_text)
+        help_text = " ".join(result.stdout.lower().split())
+        self.assertIn("byte-compare", help_text)
         self.assertIn("digest", help_text)
+        self.assertIn("not reproducible across platforms", help_text)
 
     def test_the_inventory_names_the_social_card_as_digest_pinned(self):
         self.assertIn("ipr-social-card-1200x630.png", self.inventory)
         self.assertRegex(self.inventory, r"(?i)pinned by (?:its )?recorded digest")
 
-    def test_the_inventory_does_not_claim_the_card_is_byte_reproducible(self):
-        lowered = self.inventory.lower()
-        self.assertIn("byte-reproducible", lowered)
-        # The claim must be scoped to the computed assets, and the card must be
-        # named as the exception rather than swept in with them.
+    def test_the_inventory_does_not_claim_any_png_is_byte_reproducible(self):
+        """
+        The inventory must scope reproducibility to the vector mark. Claiming
+        it for the PNGs is the error CI caught.
+        """
         self.assertRegex(
             self.inventory,
-            r"(?i)social card is rendered through Playwright.{0,200}?"
-            r"(?:platform|differ)")
+            r"(?i)ipr-compass-mark-small\.svg[^|]{0,120}?byte-identical")
+        self.assertRegex(self.inventory,
+                         r"(?i)PNG encoding is not reproducible across platforms")
 
 
 if __name__ == "__main__":
