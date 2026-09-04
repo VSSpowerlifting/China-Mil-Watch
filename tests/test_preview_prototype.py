@@ -2424,12 +2424,31 @@ class TestCorpusIndexMobileTables(PreviewCase):
 
 class TestCompactQueryIndex(PreviewCase):
 
+    #: The three reader-facing pages that describe the corpus itself, and so
+    #: the ones where a provenance value would most plausibly be printed.
+    #: `corpus.html` and `about.html` already carry the snapshot label; the
+    #: methodology page is where a reader is told how the corpus is bounded.
+    PROVENANCE_PAGES = ("corpus.html", "about.html", "methodology.html")
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.data = gp.load_corpus(TRACKED_DB)
         cls.raw = (cls.out / "corpus-index.json").read_bytes()
         cls.index = json.loads(cls.raw.decode("utf-8"))
+
+    def _governed_digests(self):
+        """
+        The two digests a build can ever be handed, as (source, digest) pairs.
+
+        `main` passes `DECLARED_SNAPSHOT` by default and `snapshot_from_corpus`
+        under `--snapshot-from-corpus`. Checking only the one this build was
+        given would leave the other free to leak.
+        """
+        return sorted({
+            "build": self.snapshot["logical_sha256"],
+            "declared": gp.DECLARED_SNAPSHOT["logical_sha256"],
+        }.items())
 
     def test_the_index_is_external_and_never_inlined(self):
         for path in sorted(self.out.rglob("*.html")):
@@ -2460,16 +2479,58 @@ class TestCompactQueryIndex(PreviewCase):
     def test_the_internal_fingerprint_is_never_exposed(self):
         blob = self.raw.decode("utf-8")
         self.assertNotIn(self.snapshot["logical_sha256"], blob)
+        self.assertNotIn(gp.DECLARED_SNAPSHOT["logical_sha256"], blob)
         # Not a bare "logical" search: stored titles legitimately contain
         # words like "technological". The digest and its key are what must
         # never ship.
         self.assertNotIn("logical_sha256", blob)
         self.assertNotIn("fingerprint", blob)
+        # Every generated artifact, against BOTH governed digests rather than
+        # only the one this build was handed: `main` passes DECLARED_SNAPSHOT
+        # by default and the corpus-derived snapshot under
+        # `--snapshot-from-corpus`, so a build could carry either and a leak of
+        # either would ship. The key name is checked too — naming the field is
+        # enough to present it as an identifier, whatever value follows it.
+        #
+        # The word "fingerprint" is deliberately NOT checked here, only in the
+        # index blob above: `record.html` labels the per-record `content_hash`
+        # a "Content fingerprint", which is a different value and legitimately
+        # public.
         for path in sorted(self.out.rglob("*")):
             if path.is_file() and path.suffix in (".html", ".js"):
-                with self.subTest(f=path.name):
-                    self.assertNotIn(self.snapshot["logical_sha256"],
-                                     path.read_text(encoding="utf-8"))
+                artifact = str(path.relative_to(self.out))
+                text = path.read_text(encoding="utf-8")
+                for source, digest in self._governed_digests():
+                    with self.subTest(f=artifact, snapshot=source):
+                        self.assertNotIn(digest, text)
+                with self.subTest(f=artifact, key="logical_sha256"):
+                    self.assertNotIn("logical_sha256", text)
+
+    def test_the_fingerprint_is_not_presented_as_a_public_identifier(self):
+        """
+        The digest is release bookkeeping, not a citable corpus identifier.
+
+        A reader cites the snapshot by date and record count — that is what
+        `snapshot_label` prints. The logical digest exists so `assert_snapshot`
+        can refuse a mislabelled release; printing it anywhere a reader looks
+        would invite them to quote it as the corpus's name.
+
+        Until 2026-09-04 this claim was tested against `REPO_ROOT / "preview"`,
+        a gitignored local build. That directory is absent in CI and in every
+        fresh clone, so the loop body never ran there — which hid the fact that
+        it referenced `self.snapshot` on a plain `TestCase` that never defines
+        it, and raised `AttributeError` on any checkout that had built one. It
+        now reads the temporary build `PreviewCase` makes, so it runs wherever
+        the suite runs, and asserts against a build whose snapshot is known.
+        """
+        for name in self.PROVENANCE_PAGES:
+            html = self.page(name)
+            for source, digest in self._governed_digests():
+                with self.subTest(page=name, snapshot=source):
+                    self.assertNotIn(digest, html)
+            # Naming the field is enough to present it as an identifier.
+            with self.subTest(page=name, key="logical_sha256"):
+                self.assertNotIn("logical_sha256", html)
 
     def test_prohibited_fields_are_absent(self):
         blob = self.raw.decode("utf-8")
@@ -3729,14 +3790,6 @@ class TestLogicalFingerprint(unittest.TestCase):
                          record_path="record/1.html")
         self.assertEqual(gp.corpus_fingerprint([plain]),
                          gp.corpus_fingerprint([decorated]))
-
-    def test_the_fingerprint_is_not_presented_as_a_public_identifier(self):
-        for name in ("corpus.html", "about.html", "methodology.html"):
-            path = REPO_ROOT / "preview" / name
-            if path.exists():
-                with self.subTest(page=name):
-                    self.assertNotIn(self.snapshot["logical_sha256"],
-                                     path.read_text(encoding="utf-8"))
 
     def test_snapshot_identity_is_not_derived_from_max_published_date(self):
         source = (REPO_ROOT / "site" / "preview"
