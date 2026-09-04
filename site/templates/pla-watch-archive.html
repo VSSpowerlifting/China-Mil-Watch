@@ -153,7 +153,7 @@
 
   <div class="arch-eyebrow">All editions</div>
   <h1 class="arch-display"><span class="italic">The</span>PLA Watch Archive</h1>
-  <p class="arch-stand">Every edition of The PLA Watch, newest first. Each issue is a single editorial brief drawn from the China Mil Watch daily archive — restrained where the week is routine, focused where something stands out.</p>
+  <p class="arch-stand">Every edition of The PLA Watch, newest first. Each issue is a single editorial brief drawn from the Indo-Pacific Record daily archive — restrained where the week is routine, focused where something stands out.</p>
 
   {% if posts %}
     <div class="entry-list">
@@ -168,6 +168,9 @@
         <div class="entry-body">
           <h2 class="entry-title">
             <a href="posts/{{ post.date }}.html">{{ post.title }}</a>
+            {% if post.publication_timing == 'retrospective' %}
+              <span class="pw-badge pw-badge--retrospective">Retrospective edition</span>
+            {% endif %}
             {% if post.edition_label and 'pilot' in (post.edition_label | lower) %}
               <span class="pw-badge pw-badge--pilot">{{ post.edition_label }}</span>
             {% elif post.edition_type == 'significant' %}

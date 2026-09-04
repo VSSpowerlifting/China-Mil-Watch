@@ -35,27 +35,23 @@ from scripts.pw_env import (
     veil_for_edition,
 )
 
-# Reuse author identity from the generator module without calling its main().
-# Guard against the anthropic import that generate_pla_watch.py performs at
-# module level — this script never calls the API.
-try:
-    from scripts.generate_pla_watch import (
-        AUTHOR_NAME, AUTHOR_TITLE, AUTHOR_BIO, AUTHOR_LINKS,
-    )
-except ImportError:
-    AUTHOR_NAME = "Benjamin Yang"
-    AUTHOR_TITLE = "Principal Analyst, China Mil Watch"
-    AUTHOR_BIO = (
-        "Benjamin Yang is the principal analyst at China Mil Watch and an incoming "
-        "International Affairs student at George Washington University's "
-        "Elliott School, focused on U.S.-China relations, public diplomacy, "
-        "and security affairs."
-    )
-    AUTHOR_LINKS = {
-        "LinkedIn":        "https://www.linkedin.com/in/benjamin-yang-42b525294",
-        "Email":           "mailto:ben.yang@gwmail.gwu.edu",
-        "China Mil Watch": "../../index.html",
-    }
+# Author identity comes from `core/edition_identity.py`, which is stdlib-only
+# and imports neither `anthropic` nor `config` — so there is no import to guard
+# against and no fallback copy to drift.
+#
+# The previous fallback here hard-coded the predecessor identity, which meant a
+# failed import silently rebranded every edition it touched to "Principal
+# Analyst, China Mil Watch" — the exact stale branding this contract exists to
+# stop reintroducing. A duplicated identity is a second source of truth; there
+# is now one.
+from core.edition_identity import (
+    AUTHOR_NAME, IdentityError, current_identity_fields, resolve_identity,
+)
+
+_CURRENT_IDENTITY = current_identity_fields()
+AUTHOR_TITLE = _CURRENT_IDENTITY["author_title"]
+AUTHOR_BIO = _CURRENT_IDENTITY["author_bio"]
+AUTHOR_LINKS = _CURRENT_IDENTITY["author_links"]
 from scripts.generate_pla_watch_cover import (
     render_cover,
     render_thumbnail,
@@ -266,6 +262,8 @@ def _build_post_context(sidecar: dict) -> dict:
         cover_image = ""
         cover_thumb = ""
 
+    identity = resolve_identity(sidecar)
+
     return {
         # Hero / metadata
         "issue_number":  sidecar.get("issue_number"),
@@ -310,11 +308,20 @@ def _build_post_context(sidecar: dict) -> dict:
         "cover_media_item": cover_media_item,
         "pw_veil": pw_veil,
 
-        # Author identity (graceful fallbacks: missing keys → chip omitted)
-        "author_name":  sidecar.get("author_name",  AUTHOR_NAME),
-        "author_title": sidecar.get("author_title", AUTHOR_TITLE),
-        "author_bio":   sidecar.get("author_bio",   AUTHOR_BIO),
-        "author_links": sidecar.get("author_links", AUTHOR_LINKS),
+        # Publication identity, resolved from the edition itself. Falling back
+        # to this module's *current* constants would rebrand every historical
+        # edition this path rebuilds — editions 1 and 2 store no author fields
+        # at all, so they would have taken the current identity wholesale.
+        "author_name":  identity["author_name"],
+        "author_title": identity["author_title"],
+        "author_bio":   identity["author_bio"],
+        "author_links": identity["author_links"],
+        "publication":            identity["publication"],
+        "publication_home_label": identity["publication_home_label"],
+        "series_name":            identity["series_name"],
+        "publication_timing":     identity["publication_timing"],
+        "is_retrospective":       identity["is_retrospective"],
+        "retrospective_label":    identity["retrospective_label"],
 
         "root_path": "../../",
         "page_url": (
@@ -328,6 +335,24 @@ BODY_FIELDS = (
     "opening_note", "what_stood_out", "why_it_matters",
     "what_was_routine", "what_im_watching_next",
 )
+
+
+def validate_sidecar_identities(sidecars: list) -> None:
+    """
+    Refuse the whole run before anything is written.
+
+    `resolve_identity` raises on an unreadable `publication` or
+    `publication_timing`. Checking every sidecar up front means one bad file
+    stops the re-render before a single derivative, cover or HTML page is
+    produced — a partial re-render would leave the published tree half in one
+    identity and half in another, which is worse than not running.
+    """
+    for sidecar in sidecars:
+        try:
+            resolve_identity(sidecar)
+        except IdentityError as exc:
+            raise IdentityError(
+                "sidecar %s: %s" % (sidecar.get("date") or "<undated>", exc))
 
 
 def _sidecar_has_body(sidecar: dict) -> bool:
@@ -356,6 +381,13 @@ def main() -> int:
     index_tmpl = env.get_template("pla-watch-index.html")
     archive_tmpl = env.get_template("pla-watch-archive.html")
 
+    # Read and validate every sidecar BEFORE creating a derivative, a cover or
+    # a page. One unreadable identity stops the run here rather than leaving a
+    # half-rebuilt tree in two identities.
+    loaded = [(path, json.loads(path.read_text(encoding="utf-8")))
+              for path in sorted(POSTS_DIR.glob("*.json"), reverse=True)]
+    validate_sidecar_identities([sc for _, sc in loaded])
+
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
     COVERS_DIR.mkdir(parents=True, exist_ok=True)
     ensure_editorial_derivatives()
@@ -365,12 +397,14 @@ def main() -> int:
     # Render every post sidecar.
     sidecars = []
     skipped: list = []
-    for json_path in sorted(POSTS_DIR.glob("*.json"), reverse=True):
-        sidecar = json.loads(json_path.read_text(encoding="utf-8"))
-        # Ensure the in-memory sidecar carries author metadata for the
-        # landing-page byline, even if the on-disk JSON predates this layer.
-        sidecar.setdefault("author_name", AUTHOR_NAME)
-        sidecar.setdefault("author_title", AUTHOR_TITLE)
+    for json_path, sidecar in loaded:
+        # The index and archive cards read the byline off the in-memory
+        # sidecar. Enrich it from *this edition's* resolved identity — seeding
+        # from the current constants would put today's byline on every
+        # historical card. Nothing here is written back to disk.
+        _identity = resolve_identity(sidecar)
+        sidecar.setdefault("author_name", _identity["author_name"])
+        sidecar.setdefault("author_title", _identity["author_title"])
 
         # Cover image — generate or refresh PNG + thumbnail, then ensure
         # sidecar carries the path fields so index/archive templates show them.

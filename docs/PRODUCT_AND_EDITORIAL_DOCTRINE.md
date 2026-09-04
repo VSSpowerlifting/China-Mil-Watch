@@ -178,6 +178,63 @@ role of automation, "what the pipeline is not," limitations (Party-controlled
 sources; model error modes), corrections policy, operator identity. Written
 in plain prose; never marketing.
 
+## 5a. Edition identity across the rename
+
+The project was renamed on 2026-08-27: *China Mil Watch* became *Indo-Pacific
+Record*. The series name, *The PLA Watch*, did not change. One module,
+`core/edition_identity.py`, decides which publication published a given edition;
+templates and scripts read it and never hard-code a name.
+
+**Editions 1–13 keep the predecessor identity.** An edition is a dated artifact
+of record. Re-rendering one must reproduce the page that was published — its
+masthead, its citation, its parent links and its stored author information — not
+restate it under whatever the project is called today.
+
+**Editions 14 onward are Indo-Pacific Record.** The boundary is the issue number
+(`LAST_HISTORICAL_ISSUE = 13`), not the week the edition covers. Edition 14
+covers the week ending 2026-08-15, which precedes the rename, but it is
+published now: the parent publication of an edition is the one that publishes
+it, not the one that existed during the week it describes. A retrospective
+edition is exactly the case where those diverge.
+
+**The site is always Indo-Pacific Record.** The series landing page, the
+archive, the terms page, navigation, and site-level metadata carry the current
+identity even though the archive lists historical editions. That is a property
+of the site the reader is on, not of any edition.
+
+**Author identity.** Stored sidecar fields win. Where a sidecar is silent — as
+editions 1 and 2 are — the era supplies the default, so a historical page cannot
+inherit the current identity by accident. New editions use the identity on the
+About page: Creator and Editor of Indo-Pacific Record, studying International
+Affairs at George Washington University's Elliott School. The retired "incoming
+student" wording survives only inside historical editions.
+
+### Publication timing
+
+`publication_timing` records **when an edition was written**, and is independent
+of `edition_type`, which records **what the week held**. Neither may be read off
+the other.
+
+| Value | Meaning |
+|---|---|
+| `regular` | published in its own week. The default; absent means this. |
+| `retrospective` | prepared after its week, for an earlier week. |
+
+A retrospective edition carries a visible, restrained `Retrospective edition`
+label on the post page and on its index and archive cards, so it cannot be
+mistaken for the current week's brief. Historical sidecars predate the field and
+remain valid without it; an unrecognised value is refused rather than guessed.
+
+A retrospective edition takes the deterministic abstract-gradient cover: it is
+written weeks after its week, so there is no contemporaneous photograph to
+fetch, and a curated stock asset would dress a back-dated edition in imagery it
+never had. A human may still supply an approved edition-specific image, which
+still wins.
+
+**Source concentration is standing methodology**, documented once in
+`METHODOLOGY.md` and on the Methodology page — not a disclaimer repeated in
+every edition.
+
 ## 6. Voice
 
 See style_guide.md for the full editorial voice. Summary: serious but
