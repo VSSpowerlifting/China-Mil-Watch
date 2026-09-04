@@ -149,22 +149,53 @@ def _cover_paths(sidecar: dict) -> tuple[str, str, str]:
     return rel, thumb, abs_url
 
 
+#: Hostnames this project has actually retired, and nothing else.
+#:
+#: The list is an allow-list rather than "any host that is not the current
+#: one", and the difference is the whole point. A future edition may host a
+#: cover somewhere this project does not control — a CDN, an archive, an
+#: institution's own server — and re-basing that URL onto
+#: `indopacificrecord.org` would invent an address nothing serves. A social
+#: card that 404s is worse than one that redirects.
+#:
+#: Evidence for the entries: `config.py` records the origin moving from
+#: `https://chinamilwatch.org` on 2026-08-27, and `PROJECT_STATE.md` and
+#: `DECISION_LOG.md` add that the old domain is now served by a separate
+#: redirect-only Pages repository. No other predecessor hostname appears
+#: anywhere in this repository, so no other one is listed. The `www.` variant
+#: is included because a redirect-only site answers both spellings and a
+#: sidecar could have recorded either.
+RETIRED_ORIGIN_HOSTS = frozenset({
+    "chinamilwatch.org",
+    "www.chinamilwatch.org",
+})
+
+
 def _on_current_origin(url: str) -> str:
     """
-    Re-base a stored absolute cover URL onto the current site origin.
+    Re-base a cover URL stored on a retired project origin onto the current one.
 
     Twelve sidecars record `cover_image_url` on `chinamilwatch.org`, captured
-    when that was the live domain. The address is a fact about where the site
-    lives, not a fact about the edition — the covers themselves moved with the
-    rest of the tree, and the predecessor domain is now a redirect-only Pages
-    site. Rendering that URL into `og:image` would point every link preview at
-    a redirect, which is how a social card silently stops resolving.
+    when that was the live domain. The address is a fact about where this
+    project's site lives, not a fact about the edition — the covers moved with
+    the rest of the tree, and the predecessor domain is now redirect-only.
+    Rendering that URL into `og:image` would point every link preview at a
+    redirect, which is how a social card quietly stops resolving.
 
-    Only the origin is replaced; the path is the sidecar's. Sidecars are the
-    canonical edition record and are not edited to fix this — the renderer
-    reads them as published and states the current address itself.
+    Only a host in `RETIRED_ORIGIN_HOSTS` is touched. Everything else is
+    returned byte-identical: the current origin, external hosts, relative
+    paths, empty values, and anything without both a scheme and a host. Host
+    matching is exact — a substring test would capture
+    `chinamilwatch.org.example.com`, which this project does not own.
 
-    Editions keep their historical *identity*; they do not keep a stale host.
+    When a retired host does match, the scheme moves with it (a stored
+    `http://` URL predates the current site and should not reach a link
+    preview), and the path, query and fragment are the sidecar's and survive
+    unchanged.
+
+    Sidecars are the canonical edition record and are not edited to fix this —
+    the renderer reads them as published and states the current address itself.
+    Editions keep their historical *identity*; they do not keep a retired host.
     """
     if not url:
         return url
@@ -172,9 +203,9 @@ def _on_current_origin(url: str) -> str:
     parts = urlsplit(url)
     if not parts.scheme or not parts.netloc:
         return url
-    current = urlsplit(SITE_ORIGIN)
-    if parts.netloc == current.netloc:
+    if parts.netloc.lower() not in RETIRED_ORIGIN_HOSTS:
         return url
+    current = urlsplit(SITE_ORIGIN)
     return urlunsplit((current.scheme, current.netloc, parts.path,
                        parts.query, parts.fragment))
 
