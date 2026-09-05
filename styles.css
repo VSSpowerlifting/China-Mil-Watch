@@ -210,18 +210,38 @@ input:focus-visible, summary:focus-visible {
 
 /* ── Masthead ─────────────────────────────────────────────────────────── */
 
+/* Removes the 300ms synthetic delay before a tap registers, and keeps the
+   tap flash deliberate rather than the browser's default blue block. */
+html { -webkit-tap-highlight-color: rgba(16, 37, 46, .12); }
+a, button, summary, label { touch-action: manipulation; }
+
+/* In-page anchors land under the heading they name rather than flush with the
+   viewport edge. The Corpus Guide, the record pages and Methodology all link
+   to their own headings. */
+:target { scroll-margin-top: 1.5rem; }
+h1[id], h2[id], h3[id], h4[id] { scroll-margin-top: 1.5rem; }
+
 .masthead { border-bottom: 2px solid var(--ink); padding: 1.35rem 0 0; }
 .brand {
   display: flex; align-items: center; gap: .6rem;
   text-decoration: none; color: inherit;
 }
-/* Decorative: the wordmark beside it is the accessible name, so the SVG is
-   aria-hidden and carries no title. Sized in em so it tracks the wordmark. */
-.brand-mark { width: 1.5em; height: 1.5em; flex: none; }
-.brand-mark .mark-field { fill: none; stroke: var(--ocean); stroke-width: 1.6; }
-.brand-mark .mark-rules { fill: none; stroke: var(--deep); stroke-width: 1.6;
-  stroke-linecap: square; }
-.brand-mark .mark-tide  { fill: none; stroke: var(--turquoise); stroke-width: 1.6; }
+/* Decorative: the wordmark beside it is the accessible name, so the mark is
+   aria-hidden and carries empty alt text.
+
+   Sized in px, not em, and never below 48. The audit measured the canonical
+   artwork's two outer rings at 4 *source* pixels in a 500 px image, which is
+   0.38 CSS px at a 48 px box and 0.77 physical pixels at 2x — under the one
+   physical pixel a stroke needs. The ring pair is therefore the feature that
+   decides the floor: at 48 the gap between the two rings is what first clears
+   a pixel and lets the mark read as a compass, and below it the rings merge
+   into a grey halo. The floor was set by looking at renders; the arithmetic
+   explains them. 56 is the desktop size, 48 the compact one, and
+   `radius: 2px` matches every other surface on the site. */
+.brand-mark {
+  width: 56px; height: 56px; flex: none;
+  border-radius: 2px;
+}
 /* Level 1. On the home page this is the h1; elsewhere a <p>, because the
    page's own heading is the h1 and two h1s per page is a real defect. */
 .brand-name {
@@ -1006,13 +1026,10 @@ footer.site a { color: var(--ocean); }
   letter-spacing: -0.011em;
   margin: 0;
 }
-/* The mark is drawn in the masthead's own parchment and the collection-health
-   turquoise. Crimson here was a fourth appearance of the accent on a surface
-   that already carries the top rule and the primary button — decorative use,
-   which is the thing the accent budget exists to prevent. */
-.masthead .brand-mark .mark-field { stroke: var(--parchment); }
-.masthead .brand-mark .mark-rules { stroke: var(--dark-muted); }
-.masthead .brand-mark .mark-tide  { stroke: var(--turquoise); }
+/* The compass carries its own field, so there is nothing to recolour here.
+   It is the one place on the site where the brand gradient appears, which is
+   the whole of its licence: the accent budget still forbids gradients as
+   decoration anywhere else. */
 .masthead .brand-sub {
   color: var(--dark-muted);
   margin: 0;
@@ -1074,6 +1091,9 @@ footer.site a { color: var(--ocean); }
 @media (max-width: 43.75rem) {
   .masthead .wrap { padding-top: .85rem; padding-bottom: .85rem; }
   .masthead .brand-sub { display: none; }
+  /* Still above the measured floor. The wordmark shrinks with the viewport;
+     the mark does not follow it below 48. */
+  .brand-mark { width: 48px; height: 48px; }
   .masthead nav.primary { border-top: 0; margin: 0; padding: 0; flex-basis: auto; }
   .nav-desktop { display: none; }
   .nav-mobile { display: block; }
