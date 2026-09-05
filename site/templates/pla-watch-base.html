@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {# The masthead ground, so a phone's browser chrome matches the page it is
+     framing instead of capping an ink-navy surface with a light bar. #}
+  <meta name="theme-color" content="#0A1019">
   <title>{% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from Indo-Pacific Record, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
 
@@ -54,13 +57,26 @@
       --color-bg-sidebar:     #18222F;       /* sidebar surface */
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
-      --color-text-muted:     #746E67;       /* quiet gray */
-      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
-         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
-         small text needs. This is the same warm family, lifted until it
-         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
-         its value for the non-essential metadata it was scoped to. */
-      --color-chrome-label:   #8E877E;
+      /* The quiet step of the ramp. #746E67 measured 3.64:1 on the ink navy
+         and 3.40 on the lifted card, and thirty-six of its thirty-eight
+         declarations set type between 9.3px and 12.5px — normal text, which
+         holds to 4.5. Lifted here to the first value in the same warm family
+         that clears 4.5 on every ground the weekly surfaces paint: 5.16 on
+         #0E1520, 4.83 on #131C29, 5.37 on #0A1019, 4.52 on #18222F.
+         Secondary still sits a clear step above it, at 7.24. */
+      --color-text-muted:     #8E877E;
+      /* Chrome labels were lifted to this value on their own, for the same
+         reason and to the same place. Now that the muted token clears AA the
+         two are one colour, and the alias says so rather than repeating the
+         literal and letting the pair drift apart again. */
+      --color-chrome-label:   var(--color-text-muted);
+      /* The original quiet gray, kept for the two declarations that are
+         genuinely large type — the nameplate's "The" and the archive display
+         italic. Both are >= 24px at every breakpoint (24.8 at the narrowest),
+         where 3.64:1 already clears the 3.0 large-text threshold. Lifting
+         them would have brightened the masthead for no legibility gain.
+         Never use this below 24px. */
+      --color-display-quiet:  #746E67;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -77,13 +93,21 @@
       --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
       --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
       --radius: 2px;
+      /* Comfortable touch target. WCAG 2.5.8 sets the floor at 24px; the
+         weekly surfaces hold standalone controls to 44 in their constrained
+         dimension. Links sitting inside a sentence of running text are
+         exempt, as 2.5.8 exempts them. */
+      --target-min: 44px;
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
       --shell: 1100px;
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; scroll-behavior: smooth; }
+    /* Declares the surface dark to the browser itself, so the scrollbar and
+       any form control render dark rather than painting a light strip down
+       the side of an ink-navy page. */
+    html { color-scheme: dark; font-size: 16px; scroll-behavior: smooth; }
 
     body {
       background-color: var(--color-bg);
@@ -102,6 +126,16 @@
     ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
 
     [lang="zh-Hans"] { font-family: var(--zh); }
+
+    /* The grown hit areas are what a thumb actually lands on, so they need to
+       behave like touch targets: without `touch-action` the browser holds
+       every tap for 300ms waiting to see a double-tap zoom, and the default
+       highlight flashes a system-blue box the size of the padded box rather
+       than the text inside it. */
+    a, button, summary, [role="button"] {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(224, 90, 109, 0.18);
+    }
 
     a { color: var(--color-brand-light); text-decoration: none; }
     a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -160,12 +194,19 @@
       justify-content: space-between;
       gap: 1.5rem;
     }
+    /* The wordmark reads at 28.5px tall, under the 44 a thumb wants. The
+       hit area is grown with padding and taken back with margin, so the
+       target is comfortable and the masthead is exactly as tall as before.
+       The expansion is weighted upward, into the masthead's own top padding,
+       so it cannot reach the nav links stacked beneath it on mobile. */
     .pw-nameplate {
       display: flex;
       align-items: baseline;
       gap: 0.85rem;
       color: inherit;
       text-decoration: none;
+      padding: 14px 0 2px;
+      margin: -14px 0 -2px;
     }
     .pw-nameplate:hover { text-decoration: none; }
     .pw-nameplate .pw-mark {
@@ -181,7 +222,7 @@
     .pw-nameplate .pw-mark .the {
       font-style: italic;
       font-weight: 400;
-      color: var(--color-text-muted);
+      color: var(--color-display-quiet);
       margin-right: 0.15em;
     }
     .pw-nameplate .pw-mark-rule {
@@ -209,7 +250,15 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 4px 0;
+      /* 0.9rem of padding lifts the target past 44 and the negative margin
+         hands the space straight back, so the masthead keeps its measured
+         159.3px. `min-height` was tried first and cost 35.7px of masthead,
+         pushing the headline down — the opposite of what this change is for.
+         The horizontal padding matters too: "Terms" is the shortest label in
+         the nav, and its width rather than its height is the constrained
+         dimension. */
+      padding: 0.9rem 0.35rem;
+      margin: -0.65rem -0.35rem;
       position: relative;
       white-space: nowrap;
       transition: color 150ms ease;
@@ -217,7 +266,7 @@
     .pw-nav a::after {
       content: "";
       position: absolute;
-      left: 0; right: 0; bottom: -2px;
+      left: 0.35rem; right: 0.35rem; bottom: calc(0.9rem - 2px);
       height: 2px;
       background: var(--color-brand);
       transform: scaleX(0);
@@ -349,6 +398,19 @@
       color: #E0A458;
       border: 1px solid rgba(224, 164, 88, 0.35);
     }
+    /* Timing, not significance — so it sits outside the warm/red family the
+       other three share, in the cool slate the print palette already gives
+       it. Until now this variant had no screen rule at all: it was declared
+       only inside `@media print`, so on screen it fell back to bare
+       `.pw-badge`, inherited the failing muted colour and drew no border,
+       while every sibling carried one. 6.22:1 on the ink navy, 5.45 on the
+       sidebar — the disclosure is the most important thing in the block and
+       was its least legible element. */
+    .pw-badge--retrospective {
+      background: transparent;
+      color: #8C97AB;
+      border: 1px solid rgba(140, 151, 171, 0.38);
+    }
 
     /* ── Utilities ──────────────────────────────────────────────────────── */
     .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
@@ -461,6 +523,7 @@
         --color-text-primary:   #111111;
         --color-text-secondary: #333333;
         --color-text-muted:     #555555;
+        --color-display-quiet:  #555555;
         --color-border:         #bbbbbb;
         --color-border-soft:    #dddddd;
       }

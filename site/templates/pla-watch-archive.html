@@ -35,7 +35,9 @@
   color: var(--color-text-primary);
   margin-bottom: 0.55rem;
 }
-.arch-display .italic { font-style: italic; font-weight: 600; color: var(--color-text-muted); margin-right: 0.18em; }
+/* Display type at 42.4px, 32 at mobile — large text either way, where the
+   original quiet gray already clears the 3.0 threshold. */
+.arch-display .italic { font-style: italic; font-weight: 600; color: var(--color-display-quiet); margin-right: 0.18em; }
 .arch-stand {
   font-family: var(--serif);
   font-style: italic;
@@ -94,7 +96,7 @@
   color: var(--color-text-primary);
   margin-bottom: 0.45rem;
 }
-.entry-title a { color: inherit; }
+.entry-title a { color: inherit; display: inline-block; }
 .entry-title a:hover { color: var(--color-brand); text-decoration: none; }
 .entry-title .pw-badge {
   font-size: 0.6rem;

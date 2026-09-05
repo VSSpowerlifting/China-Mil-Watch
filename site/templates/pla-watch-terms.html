@@ -148,7 +148,16 @@
   border-top: 1px solid var(--color-border-soft);
   padding-top: 0.7rem;
 }
-.term-entry-src a { color: var(--color-text-secondary); font-weight: 600; }
+/* The edition backlink is the one action on a glossary row and measured
+   14px tall. It is the row's own control, so it grows rather than borrowing
+   space from the definition above it. */
+.term-entry-src a {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
 .term-entry-src a:hover { color: var(--color-brand-light); }
 .terms-note {
   max-width: 760px;
