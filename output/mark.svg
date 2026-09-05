@@ -1,7 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Indo-Pacific Record">
   <title>Indo-Pacific Record</title>
-  <rect width="32" height="32" fill="#10252E"/>
-  <rect x="3" y="4" width="26" height="24" rx="2" fill="none" stroke="#CBEAE5" stroke-width="1.6"/>
-  <path d="M8 11h16M8 16h16M8 21h10" fill="none" stroke="#CBEAE5" stroke-width="1.6" stroke-linecap="square"/>
-  <path d="M3 25.5h26" fill="none" stroke="#28B8A6" stroke-width="1.6"/>
+  <defs>
+    <linearGradient id="ipr-field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4DAD99"/>
+      <stop offset="1" stop-color="#255E7A"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" fill="url(#ipr-field)"/>
+  <path d="M20.81 11.19L17.2 17.2L14.8 14.8Z" fill="#CBEAE5"/>
+  <path d="M20.81 20.81L14.8 17.2L17.2 14.8Z" fill="#CBEAE5"/>
+  <path d="M11.19 20.81L14.8 14.8L17.2 17.2Z" fill="#CBEAE5"/>
+  <path d="M11.19 11.19L17.2 14.8L14.8 17.2Z" fill="#CBEAE5"/>
+  <path d="M16 5.7L18.5 16L13.5 16Z" fill="#FFFFFF"/>
+  <path d="M26.3 16L16 18.5L16 13.5Z" fill="#FFFFFF"/>
+  <path d="M16 26.3L13.5 16L18.5 16Z" fill="#FFFFFF"/>
+  <path d="M5.7 16L16 13.5L16 18.5Z" fill="#FFFFFF"/>
+  <circle cx="16" cy="16" r="11" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>
 </svg>
