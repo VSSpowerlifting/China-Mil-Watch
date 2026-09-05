@@ -1839,7 +1839,22 @@ LEGACY_REDIRECT = """<!doctype html>
 def build(out_dir: Path, title: str, db_path: Path,
           snapshot: dict = DECLARED_SNAPSHOT,
           legacy_routes: bool = False, mode: str = BUILD_MODE,
-          site_origin: str = None, allow_test_origin: bool = False) -> dict:
+          site_origin: str = None, allow_test_origin: bool = False,
+          daily_run_date: str = None) -> dict:
+    """
+    Render the site into `out_dir`.
+
+    `daily_run_date` is the logical date of a daily-workflow run, when one is
+    rendering. It reaches "Last full update" instead of the persisted marker,
+    which is not written until after publication and therefore still names the
+    previous run at render time. `None` — the default, and every local and
+    manual build — reads the marker exactly as before.
+
+    Deliberately a parameter and not an environment read: this builder stays a
+    function of its arguments, so a variable left set in a shell cannot change
+    what a local build publishes. `site/render.py` is the single seam that
+    turns the workflow's environment into this argument.
+    """
     out_dir = Path(out_dir).resolve()
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -1951,7 +1966,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         # bare number in a template is indistinguishable from a frozen count.
         # Derived values carry no literal, so the collision cannot recur.
         "extraction_bars": extraction_bars(coverage_view.results),
-        "freshness": view.freshness(),
+        "freshness": view.freshness(daily_run_date=daily_run_date),
         "articles": data["recent"],
         "gaps": gaps,
         "source_facets": sorted(by_source.items()),

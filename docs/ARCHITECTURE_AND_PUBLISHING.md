@@ -92,6 +92,18 @@ scheduled windows report success each day and a scheduling guard admits one;
 the other four skip every step. Read the `Scheduling guard` step, which prints
 `should_run=true` or `should_run=false`.
 
+**The daily render is told which day it is.** `Last full update` comes from
+`.github/state/last_daily_run_date.txt`, which the workflow writes in its LAST
+step — after validation, commit and deploy — so that only a run that finished
+everything records one. The render happens well before that, so reading
+the marker there published the *previous* run's date. The scheduling
+guard's `today_ny` is passed to the pipeline as `PLA_WATCH_DAILY_RUN_DATE`,
+through `site/render.py` into `PublicView.freshness()`, and is used instead.
+The marker itself is unchanged, unwritten during the render, and still
+advances only at `Record successful run`. Builds with no run context
+(local, and every other workflow) keep reading the marker. Pinned by
+`tests/test_daily_render_freshness.py`.
+
 **Deploys publish what is committed on main.** There is no build step in
 Pages — `output/` must be committed for anything to go live. Nothing blocks
 a hand-commit to main; discipline lives in the validator + review flow.

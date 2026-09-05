@@ -4,6 +4,36 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-05 — The success marker stays at the success boundary
+
+The published `Last full update` was one day stale on every scheduled run. The
+render reads that date, the marker it read is written by the LAST step of
+`daily_update.yml`, and at render time the marker still holds the previous
+successful run. Every `Daily update: N` commit in the log shipped an
+`output/index.html` reading `N-1`.
+
+1. **The marker does not move earlier.** It is written after validation, the
+   commit and the deploy precisely so a failed pipeline, a failed validator, a
+   failed push or a failed deployment records nothing. Writing it before the
+   render would make the page correct by making the marker a lie, and would
+   also leave a dirty state file for the rebase and push steps to carry.
+
+2. **The scheduling guard is the authority on which day a run is.** It already
+   decides that, prints it as `today_ny`, and it is the same value the success
+   step will write. The workflow now hands it to the render through
+   `PLA_WATCH_DAILY_RUN_DATE`; `site/render.py` is the single seam that turns
+   it into an argument, and `core.viewmodel.PublicView.freshness()` uses it in
+   place of the marker.
+
+3. **No component derives that date from a clock.** The value is fixed when the
+   run is admitted, so an execution delayed by hours — or one that finishes
+   past New York midnight — still publishes the slot it was admitted for.
+
+4. **A supplied date that is unusable stops the build.** Falling back to the
+   marker would reinstate the stale date while reporting success, which is the
+   defect itself. Absent is not unusable: a local or manual render with no run
+   context reads the marker exactly as before.
+
 ## 2026-09-04 — No. 14 is drafted, not published
 
 The authoring blocker recorded on 2026-09-03 is resolved. PR #44 supplied the

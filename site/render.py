@@ -55,6 +55,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from config import OUTPUT_DIR, DB_PATH, SITE_ORIGIN             # noqa: E402
+from core.viewmodel import (                                    # noqa: E402
+    InvalidDailyRunDate, daily_run_date_from_env, normalize_daily_run_date,
+)
 
 #: The live site. Default, and the only mode that may write to `output/`.
 LEGACY = "legacy"
@@ -178,12 +181,19 @@ class MissingSiteOrigin(RuntimeError):
 
 def render_site(mode: str = None, output_dir=None, db_path=None,
                 environ=None, snapshot=None, site_origin=None,
-                allow_test_origin=False) -> dict:
+                allow_test_origin=False, daily_run_date=None) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
     Legacy renders to `output/` by default — the current behaviour, unchanged.
     The candidate has no default destination on purpose.
+
+    `daily_run_date` is the logical date of a daily-workflow run. This module
+    is the ONE seam that turns the workflow's environment into that value: an
+    explicit argument wins, otherwise `PLA_WATCH_DAILY_RUN_DATE` is read,
+    otherwise there is no run context and the render keeps reading the
+    persisted marker. See `core.viewmodel.daily_run_date_from_env` for why an
+    unusable value stops the build instead of falling back.
     """
     resolved = resolve_site_mode(mode, environ)
 
@@ -220,6 +230,15 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     # no sitemap is written, and that failure is silent — the build succeeds and
     # the damage only appears once crawlers obey it.
     env = os.environ if environ is None else environ
+
+    # The daily run's logical date, resolved once, here, and handed down as an
+    # argument. Resolved BEFORE the corpus is read and the tree is built, so a
+    # broken wire fails before any output exists rather than after.
+    if daily_run_date is None:
+        run_date = daily_run_date_from_env(env)
+    else:
+        run_date = normalize_daily_run_date(daily_run_date, "daily_run_date")
+
     origin = site_origin or env.get(SITE_ORIGIN_ENV) or SITE_ORIGIN
     if not origin.strip():
         raise MissingSiteOrigin(
@@ -276,7 +295,8 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
                         snapshot=effective_snapshot,
                         legacy_routes=True,
                         site_origin=origin,
-                        allow_test_origin=allow_test_origin)
+                        allow_test_origin=allow_test_origin,
+                        daily_run_date=run_date)
 
     if target == OUTPUT_DIR.resolve():
         with tempfile.TemporaryDirectory(prefix="ipr-publish-") as scratch:
@@ -285,12 +305,14 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
             carried, moved, listed = publish(staged, target, gp)
         report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
                   "snapshot_source": snapshot_source,
+                  "daily_run_date": run_date,
                   "carried_forward": carried, "moved_legacy_pages": moved,
                   "carried_pages_listed_in_sitemap": listed}
     else:
         result = _render(target)
         report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
-                  "snapshot_source": snapshot_source}
+                  "snapshot_source": snapshot_source,
+                  "daily_run_date": run_date}
 
     if isinstance(result, dict):
         report.update(result)
@@ -417,7 +439,7 @@ def main(argv=None) -> int:
         report = render_site(args.mode, args.out, args.db,
                              site_origin=args.site_origin,
                              allow_test_origin=args.allow_test_origin)
-    except (UnsupportedSiteMode, MissingSiteOrigin) as exc:
+    except (UnsupportedSiteMode, MissingSiteOrigin, InvalidDailyRunDate) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2
     print("mode   : %s" % report["mode"])
