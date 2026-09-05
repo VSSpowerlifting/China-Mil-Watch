@@ -4,6 +4,36 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-04 — No. 14 is drafted, not published
+
+The authoring blocker recorded on 2026-09-03 is resolved. PR #44 supplied the
+edition-identity contract, the `publication_timing` field and the corrected
+cover path, so a retrospective edition can now be authored and rendered without
+the model API and without the generator's `output/`-writing publish path.
+
+1. **No. 14 (w/e 2026-08-15) exists as a draft.** Sidecar, page, deterministic
+   gradient cover, thumbnail and LinkedIn companion are prepared on
+   `editorial/pla-watch-no-14-retrospective`. It is the first edition published
+   under Indo-Pacific Record and the first carrying
+   `publication_timing: retrospective`.
+
+2. **It is not approved and not published.** No human editorial checklist item
+   is complete, and none may be marked on Benjamin's behalf. The draft is
+   evidence of preparation, not of review.
+
+3. **The prose was written in-session, not generated.** `generate_pla_watch.py`
+   was not run and no model API was called, so the edition carries no
+   machine-generated text. Every claim traces to a stored record in the source
+   trail.
+
+4. **`edition_type` was chosen independently of timing.** It is `significant`
+   because of what the week held, not because the edition is retrospective. The
+   two fields answer different questions and neither may be read off the other.
+
+5. **The cover took the deterministic gradient**, with the network fetch and the
+   curated fallback proven unreached and `background_image_source` recorded as
+   `retrospective_gradient`.
+
 ## 2026-09-03 — Editions keep the name they were published under
 
 **Owner ruling.** Preparing the first post-rename edition surfaced that the
@@ -54,6 +84,48 @@ These rulings constrain future work.
 
 9. **Source concentration is standing methodology**, stated once, not injected
    as a repeated per-edition disclaimer.
+## 2026-09-03 — Cadence recovery: two retrospective editions, one ruled gap
+
+**Owner ruling, Benjamin Yang.** The analytical cadence lapsed after No. 13
+(w/e 2026-08-08). Three windows passed unpublished. This entry rules on all
+three and constrains future work; it authorizes *preparation and
+documentation only, and is not an authorization to publish.*
+
+1. **w/e 2026-08-15 and w/e 2026-08-22 will be prepared as retrospective
+   editions**, each subject individually to full human editorial review. No
+   draft carries approval from this ruling.
+
+2. **w/e 2026-08-29 is an explicit disclosed gap.** It is not to be
+   reconstructed. At audit (2026-09-03, corpus 3,802) 107 of its 244 records
+   had never been relevance-screened; re-measured against corpus 3,838 later
+   the same day the figure is **89 of 244 (36%)**, because the daily pipeline
+   continued screening in the interval. Either way, an edition drawn from the
+   screened remainder would rest on an unrepresentative slice, and no analyst
+   could honestly say what the unscreened remainder held. The ground is
+   **editorial representativeness and evidentiary integrity, not convenience** —
+   the week is analytically interesting, which is why publishing it on partial
+   screening would be the wrong call rather than a cheap one.
+
+3. **Normal cadence resumes with w/e 2026-09-05.**
+
+4. **No edition may be presented as contemporaneous when it was prepared
+   retrospectively.** Each retrospective edition states its retrospective
+   status, is written in past tense, and does not imply live watchfulness it
+   did not have.
+
+5. **A ruled gap is a disposition, not a defect.** The week ending 2026-07-25
+   was ruled and disclosed the same way. The validator's resulting cadence
+   warning at `2026-08-22 → 2026-09-05` is the record of this ruling and is
+   never suppressed; when it appears, the governed baseline in
+   `PROJECT_STATE.md` is updated to explain it, not to hide it.
+
+6. **w/e 2026-08-29 may still be published later** if the owner funds a scoped
+   screening pass — as an addition to a restored cadence, never as a
+   precondition for it.
+
+7. **This ruling pre-approves neither draft.** Each must clear
+   `EDITORIAL_QA_CHECKLIST.md` in full, including the source-to-claim trace and
+   the rendered-page review that editions No. 12 and No. 13 skipped.
 
 ## 2026-09-03 — A shadow run's date is its scheduled slot, not its execution date
 

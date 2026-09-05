@@ -223,16 +223,25 @@ desk has a record count; the others say what stops them rather than showing a ze
 </div>
 <article class="feature" data-reveal>
   <div class="feature-body">
-    <p class="feature-eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
+    <p class="feature-eyebrow">{{ lead_edition.series_name or predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
     <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
     {% if lead_edition.dek %}<p class="dek">{{ lead_edition.dek }}</p>{% endif %}
     {# `articles` is the sidecar's n_articles = the week's relevance-passing
        collected articles (generate_pla_watch.compute_stats -> total_articles).
        It is NOT the count of items the edition cites — that is the source_trail. #}
     <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+    {# The lead edition states its own publisher. The legacy explanation is
+       true of editions published under the predecessor masthead and false of
+       any edition published since the rename, so it is gated on the era the
+       identity contract resolved, never on an issue number written here. #}
+    {% if lead_edition.era == 'historical' %}
     <p class="legacy-note">A legacy China Desk series, published under the
       predecessor masthead {{ predecessor_name }} and preserved with its
       original issue numbers, titles and URLs.</p>
+    {% elif lead_edition.is_retrospective %}
+    <p class="legacy-note">{{ lead_edition.retrospective_label }}: prepared
+      after the week it covers, and published under the current masthead.</p>
+    {% endif %}
     <div class="feature-actions">
       <a class="btn btn--primary" href="{{ lead_edition.url }}" rel="noopener">Read this edition</a>
     </div>

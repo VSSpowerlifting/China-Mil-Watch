@@ -106,6 +106,10 @@ CORPUS_EYEBROW = "As published."
 #: and appear ONLY in archival context — a legacy series label, a historical
 #: issue, a note explaining the change. Neither is ever a masthead, a page
 #: title, or a description of what the project is now.
+# Stdlib-only: no network, no config, no model. The single authority on which
+# publication an edition was published under.
+from core.edition_identity import IdentityError, resolve_identity
+
 PREDECESSOR_NAME = "China Mil Watch"
 PREDECESSOR_SERIES = "The PLA Watch"
 
@@ -847,8 +851,32 @@ def load_editions(repo_root: Path):
             "url": "%s/the-pla-watch/posts/%s.html" % (LIVE_BASE, slug),
             "rendered_locally": rendered.is_file(),
             "cover": edition_cover(repo_root, slug, data),
+            # Publication identity, resolved from the edition itself. The
+            # preview states which masthead an edition was published under, so
+            # it must not restate names or a boundary of its own: editions 1-13
+            # are China Mil Watch and 14 onward are Indo-Pacific Record, and
+            # `core.edition_identity` is the only thing that decides which.
+            # An unreadable sidecar fails the build rather than rendering a
+            # page that names the wrong publisher.
+            **_edition_identity_fields(sidecar, data),
         })
     return editions
+
+
+def _edition_identity_fields(sidecar_path: Path, data: dict) -> dict:
+    try:
+        identity = resolve_identity(data)
+    except IdentityError as exc:
+        raise IdentityError("sidecar %s: %s" % (sidecar_path.name, exc))
+    return {
+        "publication": identity["publication"],
+        "publication_home_label": identity["publication_home_label"],
+        "series_name": identity["series_name"],
+        "era": identity["era"],
+        "publication_timing": identity["publication_timing"],
+        "is_retrospective": identity["is_retrospective"],
+        "retrospective_label": identity["retrospective_label"],
+    }
 
 
 def edition_cover(repo_root: Path, slug: str, sidecar: dict):

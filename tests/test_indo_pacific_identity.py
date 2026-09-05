@@ -251,18 +251,39 @@ class TestTheGuardIsNotARepositoryWideStringBan(unittest.TestCase):
 
     def test_the_published_editions_are_not_rewritten(self):
         """
-        The deployed pages keep the masthead they were published under. This
-        branch does not touch them, and nothing in the candidate does either.
+        Every edition keeps the masthead it was published under.
+
+        Scoped by the boundary in `core.edition_identity` rather than by "every
+        file present": editions 1-13 were published under the predecessor and
+        must still carry it, and editions 14 onward were published under the
+        current identity and must not. Before No. 14 existed those two claims
+        were indistinguishable, and asserting the first over the whole
+        directory would now fail on a correctly-branded new edition.
         """
+        import json
+        from core.edition_identity import LAST_HISTORICAL_ISSUE
+
         posts = REPO_ROOT / "output" / "the-pla-watch" / "posts"
         if not posts.is_dir():
             self.skipTest("no output/ in this tree")
-        rendered = sorted(posts.glob("*.html"))
-        self.assertGreaterEqual(len(rendered), 13)
-        carrying = [p for p in rendered
-                    if PREDECESSOR in p.read_text(encoding="utf-8")]
-        self.assertEqual(len(carrying), len(rendered),
-                         "a published edition lost its original masthead")
+
+        historical, current = [], []
+        for html in sorted(posts.glob("*.html")):
+            side = html.with_suffix(".json")
+            if not side.is_file():
+                continue
+            issue = json.loads(side.read_text(encoding="utf-8")).get("issue_number") or 0
+            (historical if issue <= LAST_HISTORICAL_ISSUE else current).append(html)
+
+        self.assertGreaterEqual(len(historical), 13)
+        for html in historical:
+            with self.subTest(edition=html.name):
+                self.assertIn(PREDECESSOR, html.read_text(encoding="utf-8"),
+                              "a published edition lost its original masthead")
+        for html in current:
+            with self.subTest(edition=html.name):
+                self.assertNotIn(PREDECESSOR, html.read_text(encoding="utf-8"),
+                                 "a post-rename edition carries the retired name")
 
     def test_the_site_mode_seam_defaults_to_the_launched_mode(self):
         r = load_render()

@@ -1,20 +1,27 @@
 {% extends "base.html" %}
-{% block title %}{{ predecessor_series }} — {{ title }}{% endblock %}
+{% block title %}{{ lead_edition.series_name if lead_edition else predecessor_series }} — {{ title }}{% endblock %}
 {% block content %}
+{# Era comes from `load_editions()`, which resolves each sidecar through
+   core.edition_identity. The page states which publication published which
+   issues, so it must not restate a name or infer a boundary of its own. #}
+{% set historical_editions = editions | selectattr('era', 'equalto', 'historical') | list %}
+{% set current_editions = editions | selectattr('era', 'equalto', 'current') | list %}
 <p class="meta"><a href="analysis.html">← Analysis</a></p>
-<h1>{{ predecessor_series }}</h1>
-<p class="lede">The weekly analytical series of the China Desk, published from 2026 under the
-predecessor masthead {{ predecessor_name }}. It is a legacy series in the archival sense — it
-was published under a name this project no longer uses — not a discontinued one.</p>
+<h1>{{ lead_edition.series_name if lead_edition else predecessor_series }}</h1>
+<p class="lede">The weekly analytical series of the China Desk. It continues across the
+project's publication rename:
+{% if historical_editions %}{{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, while {{ current_editions | length }} later {{ 'edition is' if current_editions | length == 1 else 'editions are' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions are published by {{ title }}{% endif %}.</p>
 
 <div class="notice">
   <h2 class="plain">These issues are preserved as published</h2>
-  <p>Every issue keeps the issue number, title, dek, byline and date it carried when it was
-  published, and keeps the path it was published at:
+  <p>Every issue keeps the issue number, title, dek, byline, date and publication identity it
+  carried when it was published, and keeps the path it was published at:
   <a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">the full archive</a>.
-  Those issues were published by China Mil Watch, and {{ predecessor_name }}'s own domain
-  redirects to them rather than dropping them. Nothing here is rewritten to look as though it
-  appeared under {{ title }}, because it did not.</p>
+  {% if historical_editions %}{{ predecessor_name }}'s own domain redirects to the
+  {{ historical_editions | length }} editions published under that masthead rather than dropping
+  them.{% endif %} No issue is rewritten to look as though it appeared under a masthead
+  it did not carry, in either direction. The series continues; only the masthead above it
+  changed, so this is a relabelled series and not a discontinued one.</p>
 </div>
 
 <h2>Editions</h2>
@@ -43,8 +50,9 @@ judgment.</p>
       <td class="ed-title">
         <a href="{{ e.url }}" rel="noopener">{{ e.title or e.slug }}</a>
         {% if e.label %}<br><span class="meta ed-label-wide">{{ e.label }}</span>{% endif %}
+        {% if e.is_retrospective %}<br><span class="meta ed-timing">{{ e.retrospective_label }}</span>{% endif %}
         {# The citation belongs to the edition it cites, not to a second list
-           of the same 13 titles. A native <details> opens, closes and takes
+           of the same titles. A native <details> opens, closes and takes
            keyboard focus with no script at all; only the copy button inside is
            enhancement, and it ships hidden. #}
         <details class="ed-cite">

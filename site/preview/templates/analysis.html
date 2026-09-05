@@ -19,13 +19,22 @@ separately.</p>
 <h2>Most recent edition</h2>
 <article class="feature">
   <div class="feature-body">
-    <p class="feature-eyebrow">{{ predecessor_series }}{% if lead_edition.issue is not none %} &middot; No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} &middot; week ending {{ lead_edition.date }}{% endif %}</p>
+    <p class="feature-eyebrow">{{ lead_edition.series_name or predecessor_series }}{% if lead_edition.issue is not none %} &middot; No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} &middot; week ending {{ lead_edition.date }}{% endif %}</p>
     <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
     {% if lead_edition.dek %}<p class="dek">{{ lead_edition.dek }}</p>{% endif %}
     <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} &middot; {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} &middot; {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+    {# The lead edition states its own publisher. The legacy explanation is
+       true of editions published under the predecessor masthead and false of
+       any edition published since the rename, so it is gated on the era the
+       identity contract resolved, never on an issue number written here. #}
+    {% if lead_edition.era == 'historical' %}
     <p class="legacy-note">A legacy China Desk series, published under the
       predecessor masthead {{ predecessor_name }} and preserved with its
       original issue numbers, titles and URLs.</p>
+    {% elif lead_edition.is_retrospective %}
+    <p class="legacy-note">{{ lead_edition.retrospective_label }}: prepared
+      after the week it covers, and published under the current masthead.</p>
+    {% endif %}
     <div class="feature-actions">
       <a class="btn btn--primary" href="{{ lead_edition.url }}" rel="noopener">Read this edition</a>
       <a class="btn btn--ghost" href="pla-watch.html">All {{ editions|length }} editions</a>
@@ -54,7 +63,7 @@ separately.</p>
   <thead><tr><th scope="col">Series</th><th scope="col">Desk</th><th scope="col">Status</th><th scope="col" class="num">Editions</th></tr></thead>
   <tbody>
     <tr>
-      <td data-label="Series"><a href="pla-watch.html">{{ predecessor_series }}</a><br><span class="meta">Published under the predecessor masthead {{ predecessor_name }}</span></td>
+      <td data-label="Series"><a href="pla-watch.html">{{ lead_edition.series_name or predecessor_series }}</a><br><span class="meta">{% set _hist = editions | selectattr('era', 'equalto', 'historical') | list %}{% if _hist | length == editions | length %}Published under the predecessor masthead {{ predecessor_name }}{% else %}{{ _hist | length }} published under the predecessor masthead {{ predecessor_name }}; later editions under {{ title }}{% endif %}</span></td>
       <td data-label="Desk">{% if desks.get('china') %}<a href="{{ desks.get('china').route }}">{{ desks.get('china').name }}</a>{% else %}China Desk{% endif %}</td>
       <td data-label="Status">Weekly, ongoing</td>
       <td data-label="Editions" class="num">{{ editions|length }}</td>
@@ -106,10 +115,13 @@ metadata.</p>
   </article>
 {% endfor %}
 </div>
-<p class="meta">Published under the predecessor masthead {{ predecessor_name }}
-and preserved as published — issue numbers, titles, bylines, dates and URLs
-unchanged. Nothing here is rewritten to look as though it appeared under
-{{ title }}.</p>
+{% set _hist = editions | selectattr('era', 'equalto', 'historical') | list %}
+<p class="meta">{% if _hist | length == editions | length %}Published under the
+predecessor masthead {{ predecessor_name }} and preserved as published{% else %}{{ _hist | length }}
+of these were published under the predecessor masthead {{ predecessor_name }};
+each is preserved as published{% endif %} — issue numbers, titles, bylines, dates
+and URLs unchanged. Nothing here is rewritten to look as though it appeared
+under a masthead it did not carry.</p>
 
 <h2>How analysis is kept apart from the record</h2>
 <ul>
