@@ -238,11 +238,28 @@ jobs:
       # actually ran. Without it the only signal available is job-scoped
       # failure(), which cannot tell "collection failed" from "collection never
       # started" — the defect that pushed 483d154 (DECISION_LOG 2026-08-14).
+      #
+      # `PLA_WATCH_DAILY_RUN_DATE` carries the guard's decision into the render
+      # (pipeline.py -> site/render.py -> the freshness view model). It is the
+      # SAME expression the success-marker step below writes at the end of the
+      # run, so the published "Last full update" and the marker that will be
+      # pushed cannot disagree.
+      #
+      # It exists because the marker must NOT move earlier. The render happens
+      # here, the marker is written only after validation, commit and deploy —
+      # so a render that read the marker read the PREVIOUS run's date and
+      # published it, one day stale, every day. Passing the date instead of
+      # advancing the marker keeps the success boundary exactly where it is: a
+      # failed pipeline, validation, push or deployment still records nothing.
+      #
+      # Nothing writes this date to disk during the render, so no marker file
+      # is left dirty for the rebase and push steps below to trip over.
       - name: Run pipeline
         id: pipeline
         if: steps.timecheck.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PLA_WATCH_DAILY_RUN_DATE: ${{ steps.timecheck.outputs.today_ny }}
         run: python pipeline.py
 
       # ── 5b. Validate rendered output (blocks deploy on failure) ───────────

@@ -29,12 +29,20 @@ What it deliberately does not do
 No wall clock. No network. No writes. No interpretation of an absence: a source
 that returned nothing carries the run status that says *why*, and this layer
 passes that status through rather than reducing it to a count of zero.
+
+`datetime.date` is imported below to PARSE a date this module is handed, never
+to ask what today is. Every date here arrives from the corpus, from a state
+file, or from a caller; `tests/test_daily_render_freshness.py` asserts the
+module contains no call that reads a clock.
 """
 
 from __future__ import annotations
 
+import os
+import re
 import sys
 from dataclasses import dataclass, field
+from datetime import date as _calendar_date
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -355,6 +363,78 @@ _STATE_CASE_SQL = (
 COMPLETED_RUN_MARKER = REPO_ROOT / ".github" / "state" / "last_daily_run_date.txt"
 
 
+#: How the daily workflow hands its scheduling guard's decision to the render.
+#:
+#: The guard admits at most one scheduled run per New York calendar day and
+#: prints the date it admitted as `today_ny`. That value is the authoritative
+#: logical date of the run in progress — the same value the success step will
+#: later write to `COMPLETED_RUN_MARKER`, if and only if the whole run finishes.
+#:
+#: The render deliberately happens BEFORE that step. The marker has to stay at
+#: the existing success boundary so that a failed pipeline, validation, push or
+#: deployment cannot falsely record success. The cost was that a scheduled
+#: render read the marker and found the PREVIOUS run's date, so every published
+#: "Last full update" was exactly one day stale. Passing the guard's own value
+#: down the rendering path removes the staleness without moving the marker one
+#: step earlier, and without any component reading a clock.
+DAILY_RUN_DATE_ENV = "PLA_WATCH_DAILY_RUN_DATE"
+
+#: `YYYY-MM-DD`, and nothing else. Shape first, then calendar validity, so an
+#: impossible day is refused as loudly as a malformed one.
+_RUN_DATE_SHAPE = re.compile(r"\A\d{4}-\d{2}-\d{2}\Z")
+
+
+class InvalidDailyRunDate(ValueError):
+    """
+    A daily-run date was supplied and is not a usable calendar date.
+
+    Raised rather than ignored, and never softened into a fallback. The only
+    writer of this value is the daily workflow, wired directly to the guard
+    output; an unusable value there means the wiring broke. Quietly reverting
+    to the marker would reinstate the stale date this whole path exists to
+    remove, and it would do it while reporting success.
+    """
+
+
+def normalize_daily_run_date(value, source: str) -> str:
+    """
+    Accept exactly `YYYY-MM-DD`, and only when it names a real day.
+
+    `source` names where the value came from so a failure says which wire is
+    broken rather than only that something was wrong.
+    """
+    text = value.strip() if isinstance(value, str) else value
+    if not isinstance(text, str) or not _RUN_DATE_SHAPE.match(text):
+        raise InvalidDailyRunDate(
+            "%s must be a YYYY-MM-DD calendar date; got %r" % (source, value))
+    try:
+        _calendar_date.fromisoformat(text)
+    except ValueError:
+        raise InvalidDailyRunDate(
+            "%s names no real day: %r" % (source, value)) from None
+    return text
+
+
+def daily_run_date_from_env(environ=None) -> Optional[str]:
+    """
+    The logical date of the daily run in progress, or `None` outside one.
+
+    `None` is the ordinary local and manual case: nothing set the variable, so
+    the caller keeps reading the persisted marker exactly as before. A variable
+    that is present but unusable — empty included — fails closed, because the
+    only thing that sets it is the workflow step wired to the guard.
+
+    Reads no clock. The value is fixed when the guard admits the run, so an
+    execution delayed by hours, or past midnight, still renders the slot date
+    it was admitted for rather than whatever day it finished on.
+    """
+    environ = os.environ if environ is None else environ
+    raw = environ.get(DAILY_RUN_DATE_ENV)
+    if raw is None:
+        return None
+    return normalize_daily_run_date(raw, DAILY_RUN_DATE_ENV)
+
+
 @dataclass(frozen=True)
 class FreshnessView:
     """
@@ -370,8 +450,11 @@ class FreshnessView:
           when analysis last ran, NOT that everything up to it was analysed;
           the backlog is reported separately and deliberately.
       last_full_update       — the last run that finished everything including
-          publication, from the workflow's own marker. A run that collected and
-          then failed at analysis never writes it, which is the point.
+          publication. A run that collected and then failed at analysis never
+          records one, which is the point. Ordinarily read from the workflow's
+          own marker file; during a scheduled run it is the logical date that
+          run was admitted for, handed in explicitly, because the marker is not
+          written until after publication and would otherwise name yesterday.
 
     Any of the three may be unknown. `None` means unmeasured, and the renderer
     is required to say so rather than substitute a plausible date.
@@ -689,23 +772,46 @@ class PublicView:
 
     # -- coverage -------------------------------------------------------------
 
-    def freshness(self, marker_path=None) -> FreshnessView:
+    def freshness(self, marker_path=None,
+                  daily_run_date=None) -> FreshnessView:
         """
         The three dates, each from its own authority or left unknown.
 
         Collection and analysis come from the single corpus read in `__init__`.
-        The full-update date comes from the workflow's own marker file, because
-        that is where a run records having finished everything — a run that
-        collected and then failed at analysis never writes it, which is the
-        distinction this whole view exists to preserve.
+
+        The full-update date has two authorities, and which one applies is a
+        fact about the caller rather than a preference:
+
+          daily_run_date given    a run of the daily workflow is rendering. Its
+              scheduling guard already decided which logical day this run is,
+              and the success step will record exactly that date once the run
+              finishes. Rendering anything else publishes a date the run is
+              about to contradict. Supplied explicitly — never inferred, never
+              taken from a clock — so a delayed execution keeps the slot date
+              it was admitted for.
+          daily_run_date omitted  an ordinary local or manual render with no
+              run context. Read the persisted marker, unchanged.
+
+        The marker is deliberately NOT written early to make the first case
+        work: it stays at the success boundary so a failed pipeline,
+        validation, push or deployment cannot record a success that did not
+        happen.
 
         A value that cannot be read stays `None`. A plausible substitute here
-        would be a fabricated claim about how current the record is.
+        would be a fabricated claim about how current the record is. A value
+        that was supplied and is unusable raises instead, because a caller that
+        asked for a specific date and silently got another one is worse than a
+        stop.
         """
+        if daily_run_date is None:
+            last_full_update = _marker_date(marker_path)
+        else:
+            last_full_update = normalize_daily_run_date(
+                daily_run_date, "daily_run_date")
         return FreshnessView(
             records_last_collected=self._last_collected,
             analysis_last_produced=self._last_analysed,
-            last_full_update=_marker_date(marker_path),
+            last_full_update=last_full_update,
         )
 
     def coverage(self) -> CoverageView:
