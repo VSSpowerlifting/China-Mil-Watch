@@ -25,8 +25,10 @@
   <meta name="twitter:description" content="The PLA&#39;s 99th founding anniversary was used to advance multiple simultaneous messaging lines: a named joint naval-air exercise at Scarborough Shoal timed to the Philippines&#39; baseline declaration, first footage of the Type 076&#39;s electromagnetic catapult, and a model-soldier roster that incidentally confirmed the Military Space Force&#39;s internal structure.">
   <meta name="twitter:image"       content="https://indopacificrecord.org/the-pla-watch/covers/2026-08-01.png">
 
-  <link rel="icon" type="image/png" href="../../logo-icon.png">
-  <link rel="apple-touch-icon" href="../../logo-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../../mark.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../icon-16.png">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://indopacificrecord.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +48,12 @@
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
       --color-text-muted:     #746E67;       /* quiet gray */
+      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
+         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
+         small text needs. This is the same warm family, lifted until it
+         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
+         its value for the non-essential metadata it was scoped to. */
+      --color-chrome-label:   #8E877E;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -181,7 +189,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       align-self: center;
     }
 
@@ -214,7 +222,16 @@
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
     .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
-    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
+    .pw-skip {
+      position: absolute; left: -9999px; top: 0; z-index: 100;
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      padding: 0.7rem 1.1rem; font-family: var(--sans); font-size: 0.85rem;
+      border: 1px solid var(--color-border); border-radius: 2px;
+    }
+    .pw-skip:focus { left: 0.75rem; top: 0.75rem; }
+    /* 5.32 on the masthead ground. `--color-brand-light` measures 4.12 there,
+       which passes for large text and not for an 11.5px nav link. */
+    .pw-nav .pw-nav-back { color: var(--signal-bright); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
@@ -226,7 +243,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
@@ -448,6 +465,7 @@
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+      .pw-badge--retrospective { color: #4a5568; background: transparent; border-color: #4a5568; }
     }
 
     /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
@@ -1250,6 +1268,7 @@
   </style>
 </head>
 <body>
+<a class="pw-skip" href="#main">Skip to content</a>
 
 <div class="progress-rail" aria-hidden="true"><b></b></div>
 
@@ -1265,8 +1284,8 @@
         <a href="../index.html" >Latest Edition</a>
         <a href="../archive.html" >Archive</a>
         <a href="../terms.html" >Terms</a>
-        <span class="nav-sep">|</span>
-        <a href="../../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
+        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="../../index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
     <div class="pw-masthead-rule">
@@ -1310,7 +1329,7 @@ No. 12 · Week ending 1 August 2026
   </div>
 </section>
 
-<main>
+<main id="main">
 <div class="post-wrap">
 
   <article class="post-main">
@@ -1572,15 +1591,15 @@ No. 12 · Week ending 1 August 2026
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
         Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="../../index.html">China Mil Watch — Daily Brief</a><br>
-      <a href="../../archive.html">China Mil Watch — Archive</a><br>
+      <a href="../../index.html">Indo-Pacific Record — Daily Brief</a><br>
+      <a href="../../archive.html">Indo-Pacific Record — Archive</a><br>
       <a href="../../signals.html">Signals &amp; Methodology</a><br>
       <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="../../the-pla-watch/feed.xml">Atom feed</a>

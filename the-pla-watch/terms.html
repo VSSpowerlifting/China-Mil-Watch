@@ -15,7 +15,7 @@
   <meta property="og:url"          content="https://indopacificrecord.org/the-pla-watch/terms.html">
   <meta property="og:title"        content="Terms to Know — The PLA Watch">
   <meta property="og:description"  content="A running glossary of Chinese military-media vocabulary, one term per weekly edition, explained in context.">
-  <meta property="og:image"        content="https://indopacificrecord.org/og-image.png">
+  <meta property="og:image"        content="https://indopacificrecord.org/social-card.png">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
 
@@ -23,10 +23,12 @@
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="Terms to Know — The PLA Watch">
   <meta name="twitter:description" content="A running glossary of Chinese military-media vocabulary, one term per weekly edition, explained in context.">
-  <meta name="twitter:image"       content="https://indopacificrecord.org/og-image.png">
+  <meta name="twitter:image"       content="https://indopacificrecord.org/social-card.png">
 
-  <link rel="icon" type="image/png" href="../logo-icon.png">
-  <link rel="apple-touch-icon" href="../logo-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../mark.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../icon-16.png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://indopacificrecord.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +48,12 @@
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
       --color-text-muted:     #746E67;       /* quiet gray */
+      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
+         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
+         small text needs. This is the same warm family, lifted until it
+         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
+         its value for the non-essential metadata it was scoped to. */
+      --color-chrome-label:   #8E877E;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -181,7 +189,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       align-self: center;
     }
 
@@ -214,7 +222,16 @@
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
     .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
-    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
+    .pw-skip {
+      position: absolute; left: -9999px; top: 0; z-index: 100;
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      padding: 0.7rem 1.1rem; font-family: var(--sans); font-size: 0.85rem;
+      border: 1px solid var(--color-border); border-radius: 2px;
+    }
+    .pw-skip:focus { left: 0.75rem; top: 0.75rem; }
+    /* 5.32 on the masthead ground. `--color-brand-light` measures 4.12 there,
+       which passes for large text and not for an 11.5px nav link. */
+    .pw-nav .pw-nav-back { color: var(--signal-bright); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
@@ -226,7 +243,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
@@ -448,6 +465,7 @@
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+      .pw-badge--retrospective { color: #4a5568; background: transparent; border-color: #4a5568; }
     }
 
     /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
@@ -678,6 +696,7 @@
   </style>
 </head>
 <body>
+<a class="pw-skip" href="#main">Skip to content</a>
 
 
 <header class="pw-masthead">
@@ -686,14 +705,14 @@
       <a href="index.html" class="pw-nameplate" aria-label="The PLA Watch home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
-        <span class="pw-tag">A weekly publication of China Mil Watch</span>
+        <span class="pw-tag">A weekly publication of Indo-Pacific Record</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
         <a href="index.html" >Latest Edition</a>
         <a href="archive.html" >Archive</a>
         <a href="terms.html" class="active">Terms</a>
-        <span class="nav-sep">|</span>
-        <a href="../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
+        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="../index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
     <div class="pw-masthead-rule">
@@ -704,7 +723,7 @@
 </header>
 
 
-<main>
+<main id="main">
 <div class="terms-head">
   <div class="terms-eyebrow">Running glossary</div>
   <h1 class="terms-title">Terms to Know</h1>
@@ -713,6 +732,14 @@
 
 <div class="terms-list">
   <article class="term-entry">
+<span class="term-ghost" lang="zh-Hans" aria-hidden="true">通航</span><span class="term-issue">No. 14</span>    <div class="term-entry-word">通航演练 (tōngháng yǎnliàn), passage exercise</div>
+    <div class="term-entry-expl">
+<p>A short drill run when two navies&#39; ships are in proximity, usually covering formation manoeuvring, communications and sometimes replenishment. It covers a limited set of activities and does not imply any standing arrangement between the two navies. Chinese reporting used this term for the August encounter with the Indonesian Navy rather than a term denoting a combined exercise, which is a distinction worth preserving when reading the coverage.</p>    </div>
+    <div class="term-entry-src">
+      From <a href="posts/2026-08-15.html">No. 14 · week ending 15 August 2026</a>
+    </div>
+  </article>
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">有理</span><span class="term-issue">No. 13</span>    <div class="term-entry-word">有理有力有节 (Yǒu lǐ yǒu lì yǒu jié)</div>
     <div class="term-entry-expl">
 <p>&#34;Justified, forceful, and measured.&#34; This three-part formulation appears in authoritative PLA commentary, this week in the &#34;Junsheng&#34; bylined piece on the Huangyan Island exercise, to frame coercive military action as legally grounded, credible, and calibrated rather than impulsive or escalatory. The phrase has a long history in Chinese political and military discourse, used to describe how the PRC should handle disputes without appearing either weak or reckless. When it appears in PLA Daily commentary alongside a named exercise, it functions as a public signal that the action was deliberate and sanctioned at a high level, and that Beijing is positioning the response within a rule-of-law narrative rather than acknowledging it as coercive pressure. Reading it as a legal argument would be a mistake; it is a rhetorical claim. But its presence documents that the institution considered the framing important enough to state explicitly.</p>    </div>
@@ -720,7 +747,7 @@
       From <a href="posts/2026-08-08.html">No. 13 · week ending 8 August 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 1;">
+  <article class="term-entry" data-reveal style="--ri: 2;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">实战</span><span class="term-issue">No. 12</span>    <div class="term-entry-word">实战化科目 (shízhàn huà kēmù)</div>
     <div class="term-entry-expl">
 <p>&#34;Live-combat-oriented subjects&#34; or &#34;combat-realistic training subjects.&#34; This is the label the PLA applies to training events designed to replicate actual combat conditions rather than scripted, predictable exercises. The Southern Theater Command used this exact phrase to describe what it was testing in the Scarborough Shoal exercise on August 1. In PLA media, the term is a quality marker: when an exercise is described using this phrase, the institution is claiming the training was evaluated against real-war standards rather than peacetime checklist criteria. It appears frequently enough that it has become somewhat formulaic, but its presence in an official exercise announcement tied to a specific geographic location and a named legal dispute gives it more weight than the same phrase in a routine training report. Worth noting alongside it is the companion concept 体系制胜 (&#34;system-of-systems victory&#34;), which appeared in the same Scarborough Shoal announcement and points to the PLA&#39;s doctrinal emphasis on winning through integrated joint capabilities rather than platform-by-platform performance.</p>    </div>
@@ -728,7 +755,7 @@
       From <a href="posts/2026-08-01.html">No. 12 · week ending 1 August 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 2;">
+  <article class="term-entry" data-reveal style="--ri: 3;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">制智</span><span class="term-issue">No. 11</span>    <div class="term-entry-word">制智权 (zhì zhì quán): &#34;Dominance of Intelligence&#34;</div>
     <div class="term-entry-expl">
 <p>A warfighting concept appearing in a July 14 PLA Daily doctrinal article on intelligentized command and control. The term sits alongside more familiar concepts like air superiority or maritime control, but applies to the cognitive and algorithmic domain: the ability to out-process, out-decide, and out-adapt an adversary in an information-saturated environment. The July 14 article frames it as an operational objective on par with kinetic dominance, and identifies three enabling priorities the PLA believes are required to achieve it: mastery of data, effective human-machine integration, and what the article calls &#34;algorithm confrontation&#34; (算法对抗), meaning the capacity to both exploit and defend against adversarial manipulation of AI-driven systems. The article&#39;s value is partly in what it acknowledges is not yet solved: data excess and contradiction under time pressure, incomplete information, and algorithm vulnerability to input perturbations. Dominance of intelligence is the PLA&#39;s stated goal. The article is also an honest account of how far the force still has to go to get there.</p>    </div>
@@ -736,7 +763,7 @@
       From <a href="posts/2026-07-18.html">No. 11 · week ending 18 July 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 3;">
+  <article class="term-entry" data-reveal style="--ri: 0;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">远海</span><span class="term-issue">No. 10</span>    <div class="term-entry-word">远海训练 (Yuǎn Hǎi Xùnliàn) — Far-Seas Training</div>
     <div class="term-entry-expl">
 <p>Far-seas training (远海训练) is the PLA Navy&#39;s term for operations beyond China&#39;s near-seas environment intended to build open-ocean competence. It commonly appears when PLAN deployments around Japan or elsewhere in the Western Pacific attract outside attention.</p><p>This week, the Ministry of National Defense used the term in response to Japanese reporting on a PLAN formation operating in waters around Japan. The official formulation was familiar: planned annual activity, consistent with international law, and not directed at any specific country. The phrase matters because it turns a visible deployment into a claim of normality. Tracking where Beijing applies that label, and how often, is one way to follow the expansion of the PLAN&#39;s operational footprint without treating every deployment as a crisis signal.</p>    </div>
@@ -744,7 +771,7 @@
       From <a href="posts/2026-07-11.html">No. 10 · week ending 11 July 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">战备</span><span class="term-issue">No. 9</span>    <div class="term-entry-word">战备警巡 (Zhànbèi Jǐngxún): Combat Readiness Patrol</div>
     <div class="term-entry-expl">
 <p>战备警巡 combines 战备, combat readiness or war preparedness, with 警巡, patrol-and-alert operations. In official PLA usage, the phrase marks an operation as a readiness posture rather than ordinary patrolling or training. It signals that the force is acting in response to a real or asserted security condition.</p><p>That distinction matters at Scarborough Shoal. Southern Theater Command did not describe the June activity as 巡逻, routine patrols, or 演习, exercises. It used language tied to territorial defense and operational readiness. The term does not prove the scale or frequency of the activity, but it does reveal the category Beijing chose for it.</p>    </div>
@@ -752,7 +779,7 @@
       From <a href="posts/2026-07-04.html">No. 9 · week ending 4 July 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 1;">
+  <article class="term-entry" data-reveal style="--ri: 2;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">系统</span><span class="term-issue">No. 8</span>    <div class="term-entry-word">系统对抗 (Xìtǒng Duìkàng): System-of-Systems Confrontation</div>
     <div class="term-entry-expl">
 <p>系统对抗 describes combat between integrated military systems rather than isolated platforms. In this frame, a carrier’s value depends on the wider network around it: sensors, communications, aircraft, escorts, land-based support, electronic warfare, and command nodes. When PLA Daily says Liaoning conducted “shore-sea joint system-of-systems confrontation drills,” the emphasis is on whether those parts can share information and act as one force while an opposing system tries to disrupt them. The term appears often because the PLA evaluates readiness at the level of the network, not only the ship, aircraft, or missile.</p>    </div>
@@ -760,7 +787,7 @@
       From <a href="posts/2026-06-27.html">No. 8 · week ending 27 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 2;">
+  <article class="term-entry" data-reveal style="--ri: 3;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">正确</span><span class="term-issue">No. 7</span>    <div class="term-entry-word">正确政绩观 (Zhèngquè Zhèngjì Guān)</div>
     <div class="term-entry-expl">
 <p>A term worth watching is 正确政绩观 itself. The phrase is often translated as “correct outlook on political achievement,” but in practice it functions as a Xi-era standard for evaluating cadre behavior. The campaign pushes officers to prioritize institutional mission and long-term effectiveness over visible metrics, careerism, or showcase projects. Increasingly, the language is appearing in discussions about logistics systems, research management, and operational administration rather than purely ideological discipline. That expansion matters.</p>    </div>
@@ -768,7 +795,7 @@
       From <a href="posts/2026-06-20.html">No. 7 · week ending 20 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 3;">
+  <article class="term-entry" data-reveal style="--ri: 0;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">远海</span><span class="term-issue">No. 6</span>    <div class="term-entry-word">远海训练 (Yuǎn Hǎi Xùnliàn)</div>
     <div class="term-entry-expl">
 <p>Literally &#34;far-seas training,&#34; this is the official PLA framing for carrier strike group and naval formation deployments beyond China&#39;s near-seas operating areas — typically into the Western Pacific, the Indian Ocean, or other waters well outside the first island chain. The phrase does two things simultaneously. Operationally, it describes a real training objective: PLA Navy formations genuinely use these deployments to accumulate blue-water experience in open-ocean navigation, logistics, communications, and multi-domain coordination that cannot be replicated in littoral exercises. Diplomatically, it functions as a deflection label — by characterizing a deployment as &#34;training,&#34; Beijing positions any foreign monitoring of the formation as an overreaction to a routine activity. When MND spokesperson Zhang Xiaogang used 远海训练 to describe the Liaoning strike group&#39;s current Western Pacific operations, he was invoking both functions at once: confirming the deployment is real while framing concern about it as politically motivated. The phrase is worth tracking because its use in official statements marks the threshold at which the PLA decides a deployment is significant enough to require public justification.</p>    </div>
@@ -776,7 +803,7 @@
       From <a href="posts/2026-06-13.html">No. 6 · week ending 13 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">训战</span><span class="term-issue">No. 5</span>    <div class="term-entry-word">训战脱节 (Xùn-zhàn tuōjié)</div>
     <div class="term-entry-expl">
 <p>“Training-combat gap” names the PLA’s recurring admission that training conditions, assessment habits, and unit routines do not fully reproduce combat demands. In PLA Daily, the phrase often appears when an article needs to justify a reform: scenario-based assessment, field-tempo support, simulator work, or more realistic launch procedures. In this week’s Rocket Force article, it helps frame the move away from cable-connector practice toward simulator-based crew training. The term should be read as both diagnosis and mandate. When a unit is described as solving 训战脱节, the article is usually showing a workaround, not closing the case. The PLA has been naming this problem publicly since the 2015 reform period, and its continued appearance in 2026 is part of the story.</p>    </div>
@@ -784,7 +811,7 @@
       From <a href="posts/2026-06-06.html">No. 5 · week ending 6 June 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 1;">
+  <article class="term-entry" data-reveal style="--ri: 2;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">思想</span><span class="term-issue">No. 4</span>    <div class="term-entry-word">思想整风 (Sīxiǎng Zhěngfēng) — Ideological Rectification</div>
     <div class="term-entry-expl">
 <p>思想整风 translates literally as &#34;rectification of thought&#34; or &#34;ideological rectification.&#34; It refers to a structured campaign within the CCP or PLA apparatus to correct ideological deviation, reinforce political loyalty, and bring cadre thinking into alignment with the Party&#39;s current line. The term carries historical weight: its most famous use was Mao Zedong&#39;s 1942–1944 Yan&#39;an Rectification Movement, which used criticism and self-criticism sessions to consolidate CCP authority over the Party apparatus. In the current PLA context, 思想整风 does not mean show trials or purges — it refers to mandatory study campaigns, self-criticism meetings, and supervision mechanisms aimed at senior officers. The CMC&#39;s May 28 directive invokes this term specifically in relation to the senior cadre corps, framing the post-purge response as requiring not just tighter procedures but a genuine change in how senior officers think about loyalty, discipline, and Party command. When you see this term in PLA Daily, it is a signal that the leadership considers the problem ideological in nature — not merely bureaucratic or procedural.</p>    </div>
@@ -792,7 +819,7 @@
       From <a href="posts/2026-05-30.html">No. 4 · week ending 30 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 2;">
+  <article class="term-entry" data-reveal style="--ri: 3;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">正确</span><span class="term-issue">No. 3</span>    <div class="term-entry-word">正确政绩观 (Zhèngquè Zhèngjì Guān) — &#34;Correct Outlook on Political Achievement&#34;</div>
     <div class="term-entry-expl">
 <p>This phrase names the PLA&#39;s campaign-level effort to redefine what counts as meritorious performance for officers and units. In practice, it targets a structural problem: incentive systems that reward visible, measurable outputs — meeting quotas, filing reports, producing training statistics — over harder-to-quantify results like combat readiness, soldier welfare or genuine institutional improvement. The campaign argues that real achievement means solving problems, not performing effort. It has appeared across the force since at least 2022, in contexts ranging from logistics administration to curriculum reform and grassroots Party branch management. This week it appeared in at least six separate articles. When the phrase appears in PLA Daily, the article is usually diagnosing a gap between formal compliance and substantive execution, then presenting a unit-level attempt to close it. Its frequency is a rough indicator of how seriously the institution thinks the underlying problem has resisted resolution.</p>    </div>
@@ -800,7 +827,7 @@
       From <a href="posts/2026-05-23.html">No. 3 · week ending 23 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 3;">
+  <article class="term-entry" data-reveal style="--ri: 0;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">四随</span><span class="term-issue">No. 2</span>    <div class="term-entry-word">四随机 — Four Randoms</div>
     <div class="term-entry-expl">
 <p>A Rocket Force training model that randomizes crew groupings, missile assignments, launch vehicles, and primary/backup frame designations during exercises.</p><p>The purpose is to prevent crews from becoming overly dependent on fixed pairings, familiar launch-frame roles, and predictable operating sequences. In this week’s PLA Daily article, the model appears as a practical answer to a specific failure: one launch frame lost its operators, and the mission collapsed.</p><p>That makes the term more than a slogan. It is a rare public description of how one Rocket Force unit is trying to build redundancy, adaptability, and cross-frame interoperability into the human architecture of missile operations.</p>    </div>
@@ -808,7 +835,7 @@
       From <a href="posts/2026-05-16.html">No. 2 · week ending 16 May 2026</a>
     </div>
   </article>
-  <article class="term-entry" data-reveal style="--ri: 0;">
+  <article class="term-entry" data-reveal style="--ri: 1;">
 <span class="term-ghost" lang="zh-Hans" aria-hidden="true">政治</span><span class="term-issue">No. 1</span>    <div class="term-entry-word">政治整训 — Political Rectification Training</div>
     <div class="term-entry-expl">
 <p>Political rectification training is a structured, CMC-directed campaign requiring PLA units and officers to undergo intensive ideological review, self-criticism, and loyalty reaffirmation. It is distinct from routine political education: rectification is launched in response to a specific perceived failure — in this case, the corruption scandals inside the Rocket Force and defense procurement establishment that became public in 2023.</p><p>The goal, as framed in official PLA sources, is to purge erroneous thinking, reinforce the principle that the Party commands the gun, and reassert CMC authority over the force. A May 8 NDU article describes the campaign as ongoing and links it to the PLA&#39;s 2027 centenary founding goal. In this edition&#39;s limited dataset, the term matters less as a new concept than as a sign that rectification remains an active institutional frame.</p>    </div>
@@ -825,15 +852,15 @@
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
         Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="../index.html">China Mil Watch — Daily Brief</a><br>
-      <a href="../archive.html">China Mil Watch — Archive</a><br>
+      <a href="../index.html">Indo-Pacific Record — Daily Brief</a><br>
+      <a href="../archive.html">Indo-Pacific Record — Archive</a><br>
       <a href="../signals.html">Signals &amp; Methodology</a><br>
       <a href="../the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="../the-pla-watch/feed.xml">Atom feed</a>

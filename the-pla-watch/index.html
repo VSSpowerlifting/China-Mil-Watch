@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The PLA Watch — Weekly signals from Chinese military media</title>
-  <meta name="description" content="The PLA Watch is the weekly analytical brief from China Mil Watch, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.">
+  <meta name="description" content="The PLA Watch is the weekly analytical brief from Indo-Pacific Record, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://indopacificrecord.org/the-pla-watch/">
@@ -14,19 +14,21 @@
   <meta property="og:site_name"    content="The PLA Watch">
   <meta property="og:url"          content="https://indopacificrecord.org/the-pla-watch/">
   <meta property="og:title"        content="The PLA Watch">
-  <meta property="og:description"  content="Weekly signals from Chinese military media. Published every Sunday by China Mil Watch.">
-  <meta property="og:image"        content="https://indopacificrecord.org/og-image.png">
+  <meta property="og:description"  content="Weekly signals from Chinese military media, published by Indo-Pacific Record. Each edition covers the week ending Saturday.">
+  <meta property="og:image"        content="https://indopacificrecord.org/social-card.png">
   <meta property="og:image:width"  content="1200">
   <meta property="og:image:height" content="630">
 
   <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="The PLA Watch">
-  <meta name="twitter:description" content="Weekly signals from Chinese military media. Published every Sunday by China Mil Watch.">
-  <meta name="twitter:image"       content="https://indopacificrecord.org/og-image.png">
+  <meta name="twitter:description" content="Weekly signals from Chinese military media, published by Indo-Pacific Record. Each edition covers the week ending Saturday.">
+  <meta name="twitter:image"       content="https://indopacificrecord.org/social-card.png">
 
-  <link rel="icon" type="image/png" href="../logo-icon.png">
-  <link rel="apple-touch-icon" href="../logo-icon.png">
+  <link rel="icon" type="image/svg+xml" href="../mark.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../icon-16.png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://indopacificrecord.org/the-pla-watch/feed.xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +48,12 @@
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
       --color-text-muted:     #746E67;       /* quiet gray */
+      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
+         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
+         small text needs. This is the same warm family, lifted until it
+         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
+         its value for the non-essential metadata it was scoped to. */
+      --color-chrome-label:   #8E877E;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -181,7 +189,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       align-self: center;
     }
 
@@ -214,7 +222,16 @@
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
     .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
-    .pw-nav .pw-nav-back { color: var(--color-brand-light); font-weight: 600; }
+    .pw-skip {
+      position: absolute; left: -9999px; top: 0; z-index: 100;
+      background: var(--color-bg-card); color: var(--color-text-primary);
+      padding: 0.7rem 1.1rem; font-family: var(--sans); font-size: 0.85rem;
+      border: 1px solid var(--color-border); border-radius: 2px;
+    }
+    .pw-skip:focus { left: 0.75rem; top: 0.75rem; }
+    /* 5.32 on the masthead ground. `--color-brand-light` measures 4.12 there,
+       which passes for large text and not for an 11.5px nav link. */
+    .pw-nav .pw-nav-back { color: var(--signal-bright); font-weight: 600; }
 
     .pw-masthead-rule {
       display: flex;
@@ -226,7 +243,7 @@
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-text-muted);
+      color: var(--color-chrome-label);
       font-variant-numeric: tabular-nums;
       border-top: 1px solid var(--color-border-soft);
       padding-top: 0.65rem;
@@ -448,6 +465,7 @@
       a { color: inherit; text-decoration: none; }
       .pw-badge--significant { color: #8B0E20; background: transparent; border-color: #8B0E20; }
       .pw-badge--pilot { color: #7a5320; background: transparent; border-color: #7a5320; }
+      .pw-badge--retrospective { color: #4a5568; background: transparent; border-color: #4a5568; }
     }
 
     /* ── Signal Veil — Night Desk (weekly post hero + index module) ─────
@@ -960,6 +978,7 @@ main { padding-top: 2rem; }
   </style>
 </head>
 <body>
+<a class="pw-skip" href="#main">Skip to content</a>
 
 
 <header class="pw-masthead">
@@ -968,62 +987,66 @@ main { padding-top: 2rem; }
       <a href="index.html" class="pw-nameplate" aria-label="The PLA Watch home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
-        <span class="pw-tag">A weekly publication of China Mil Watch</span>
+        <span class="pw-tag">A weekly publication of Indo-Pacific Record</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
         <a href="index.html" class="active">Latest Edition</a>
         <a href="archive.html" >Archive</a>
         <a href="terms.html" >Terms</a>
-        <span class="nav-sep">|</span>
-        <a href="../index.html" class="pw-nav-back">China Mil Watch &rarr;</a>
+        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="../index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
     <div class="pw-masthead-rule">
-      <span class="left"><span>Vol. I</span><span>Latest issue · 8 August 2026</span></span>
+      <span class="left"><span>Vol. I</span><span>Latest issue · 15 August 2026</span></span>
       <span class="right"><span>Source-grounded · Restrained · Weekly</span></span>
     </div>
   </div>
 </header>
 
 
-<main>
+<main id="main">
 <div class="cover-wrap">
 
   <div class="cover-main">
 
     <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
-    <p class="cover-stand">The weekly analytical brief from China Mil Watch — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
+    <p class="cover-stand">The weekly analytical brief from Indo-Pacific Record — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
 
       <div class="issue-cover">
-        <div class="card-veil" role="img" aria-label="Photograph published with the cited source article “Ministry of National Defense Routine Press Briefing, Early August 2026”, rendered as a duotone background." data-editorial-id="src-2026-08-08"
-             style="background-image:url('media/2026-08-08-veil.jpg'); background-position:50% 42%;"></div>
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
-No. 13 · Week ending 8 August 2026
-<span class="pw-badge pw-badge--significant">Significant</span>          </div>
+No. 14 · Week ending 15 August 2026
+<span class="pw-badge pw-badge--significant">Significant</span><span class="pw-badge pw-badge--retrospective">Retrospective edition</span>          </div>
         </div>
-        <h2 class="issue-cover-title"><a href="posts/2026-08-08.html">Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week</a></h2>
-        <p class="issue-cover-dek">The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.</p>
+        <h2 class="issue-cover-title"><a href="posts/2026-08-15.html">One Exercise, Five Reports East of Taiwan</a></h2>
+        <p class="issue-cover-dek">Five of the twelve records flagged in the week ending 15 August 2026 describe a single China-Indonesia naval passage exercise. They ran across three outlets on three publication dates, and every one of them put the operating area east of Taiwan in the headline.</p>
         <div class="issue-cover-byline">By <span class="byline-name">Benjamin Yang</span></div>
         <div class="issue-cover-meta">
-          <span class="stat"><span class="num">134</span> articles</span>
-          <span class="stat"><span class="num">11</span> model-flagged</span>
+          <span class="stat"><span class="num">137</span> articles</span>
+          <span class="stat"><span class="num">12</span> model-flagged</span>
 <span class="stat"><span class="num">7</span> days observed</span>        </div>
-        <div class="nd-tickrow" aria-hidden="true"><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i></i><i></i></div>
-        <div class="nd-tickrow-label">Source trail · 13 records · <b>11 model-flagged</b> · part of the monitored weekly record · of 134 articles analyzed</div>
+        <div class="nd-tickrow" aria-hidden="true"><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i><i class="sig"></i></div>
+        <div class="nd-tickrow-label">Source trail · 12 records · <b>12 model-flagged</b> · part of the monitored weekly record · of 137 articles analyzed</div>
         <div class="issue-cover-actions">
-          <a href="posts/2026-08-08.html" class="btn btn-primary">Read this edition</a>
+          <a href="posts/2026-08-15.html" class="btn btn-primary">Read this edition</a>
           <a href="archive.html" class="btn btn-ghost">All editions</a>
         </div>
-        <div class="card-veil-credit">IMG · <a href="http://www.81.cn/yw_208727/16478287.html" target="_blank" rel="noopener nofollow">PLA Daily (解放军报)</a> · Ministry of National Defense Routine Press Briefing, Early Augu… · Context, not evidence</div>
       </div>
 
       <div class="section-heading" data-reveal>
         <span>Previous editions</span>
-        <span class="count">12</span>
+        <span class="count">13</span>
       </div>
       <div class="archive-list">
+        <div class="archive-row" data-reveal>
+          <div class="archive-date">No. 13 · 8 August 2026</div>
+          <div class="archive-body">
+            <div class="archive-title"><a href="posts/2026-08-08.html">The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week</a></div>
+            <div class="archive-dek">The PLA&#39;s 99th founding anniversary produced a cluster of capability disclosures and a coordinated exercise response to Philippine legal moves at Huangyan Island, but reading them together requires separating deliberate messaging from institutional routine.</div>
+          </div>
+        </div>
         <div class="archive-row" data-reveal>
           <div class="archive-date">No. 12 · 1 August 2026</div>
           <div class="archive-body">
@@ -1119,7 +1142,7 @@ No. 13 · Week ending 8 August 2026
       <div class="sb-row"><span class="label">Cadence</span><span class="value">Weekly</span></div>
       <div class="sb-row"><span class="label">Published</span><span class="value">Sundays</span></div>
       <div class="sb-row"><span class="label">Format</span><span class="value">Editorial brief</span></div>
-      <div class="sb-row"><span class="label">Drawn from</span><span class="value">China Mil Watch</span></div>
+      <div class="sb-row"><span class="label">Drawn from</span><span class="value">Indo-Pacific Record</span></div>
       <p class="pub-note-foot">Every edition carries a source trail linking cited items to the original Chinese-language records. <a href="../methodology.html">Methodology</a></p>
     </div>
   </aside>
@@ -1127,9 +1150,9 @@ No. 13 · Week ending 8 August 2026
 </div>
 
 <section class="relate-band" data-reveal>
-  <div class="relate-eyebrow">China Mil Watch &amp; The PLA Watch</div>
+  <div class="relate-eyebrow">Indo-Pacific Record &amp; The PLA Watch</div>
   <div class="relate-cols">
-    <p><span class="accent-name">China Mil Watch</span> is the daily monitoring layer — every analyzed article from PRC military and security media, indexed and searchable.</p>
+    <p><span class="accent-name">Indo-Pacific Record</span> is the daily monitoring layer — every analyzed article from PRC military and security media, indexed and searchable.</p>
     <p><span class="accent-name">The PLA Watch</span> is the weekly reader-facing layer — a single editorial brief that picks out what stood out, what was routine, and what readers should not overread, drawing directly from that archive.</p>
   </div>
   <p class="relate-kicker">Same source corpus, different reading altitude.</p>
@@ -1140,15 +1163,15 @@ No. 13 · Week ending 8 August 2026
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from China Mil Watch — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
       <div class="footer-transparency">
         Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="../index.html">China Mil Watch — Daily Brief</a><br>
-      <a href="../archive.html">China Mil Watch — Archive</a><br>
+      <a href="../index.html">Indo-Pacific Record — Daily Brief</a><br>
+      <a href="../archive.html">Indo-Pacific Record — Archive</a><br>
       <a href="../signals.html">Signals &amp; Methodology</a><br>
       <a href="../the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="../the-pla-watch/feed.xml">Atom feed</a>
