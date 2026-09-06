@@ -97,7 +97,10 @@ main { padding-top: 2rem; }
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-.issue-cover-edition .pw-badge { margin-left: 0.5rem; }
+.issue-cover-edition .pw-badge { margin-left: 0.25rem; vertical-align: middle; }
+.issue-cover-edition .ed-no,
+.issue-cover-edition .ed-week { white-space: nowrap; }
+.issue-cover-edition .hero-status { display: inline; }
 .issue-cover-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -110,7 +113,14 @@ main { padding-top: 2rem; }
   z-index: 1;
   max-width: 640px;
 }
-.issue-cover-title a { color: inherit; }
+/* Grown to a comfortable target; the negative margin keeps the cover's
+   measured rhythm. */
+.issue-cover-title a {
+  color: inherit;
+  display: inline-block;
+  padding: 0.55rem 0;
+  margin: -0.55rem 0;
+}
 .issue-cover-title a:hover { color: var(--color-brand); text-decoration: none; }
 .issue-cover-dek {
   font-family: var(--serif);
@@ -157,7 +167,10 @@ main { padding-top: 2rem; }
   z-index: 1;
 }
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--target-min);
   padding: 0.65rem 1.25rem;
   border-radius: var(--radius);
   font-family: var(--sans);
@@ -286,7 +299,14 @@ main { padding-top: 2rem; }
   margin-bottom: 0.3rem;
   letter-spacing: -0.005em;
 }
-.archive-title a { color: inherit; }
+/* A single-line entry title measured 23px. Padded to a comfortable target
+   and given the space back, so the archive list keeps its density. */
+.archive-title a {
+  color: inherit;
+  display: inline-block;
+  padding: 0.72rem 0;
+  margin: -0.72rem 0;
+}
 .archive-title a:hover { color: var(--color-brand); text-decoration: none; }
 .archive-dek {
   font-size: 0.875rem;
@@ -465,8 +485,9 @@ main { padding-top: 2rem; }
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition">
-            {% if latest_post.issue_number %}No. {{ latest_post.issue_number }} · {% endif %}Week ending {{ latest_post.week_ending | format_date }}
-            {% if latest_post.edition_label %}{% set _lbl = latest_post.edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ latest_post.edition_label }}</span>{% endif %}{# A retrospective edition must not read as this week's brief on the landing page. #}{% if latest_post.publication_timing == 'retrospective' %}<span class="pw-badge pw-badge--retrospective">Retrospective edition</span>{% endif %}
+            {#- Same two groups as the edition hero: what edition, then what
+                kind. Grouped so the landing card wraps at the same joints. -#}
+            <span class="hero-edition-line">{% if latest_post.issue_number %}<span class="ed-no">No. {{ latest_post.issue_number }}</span> · {% endif %}<span class="ed-week">Week ending {{ latest_post.week_ending | format_date }}</span></span>{% if latest_post.edition_label or latest_post.publication_timing == 'retrospective' %} <span class="hero-status">{% if latest_post.edition_label %}{% set _lbl = latest_post.edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ latest_post.edition_label }}</span>{% endif %}{# A retrospective edition must not read as this week's brief on the landing page. #}{% if latest_post.publication_timing == 'retrospective' %} <span class="pw-badge pw-badge--retrospective">Retrospective edition</span>{% endif %}</span>{% endif %}
           </div>
         </div>
         {# Display-only prefix strip — the module labels itself; sidecar title stays canonical. #}
