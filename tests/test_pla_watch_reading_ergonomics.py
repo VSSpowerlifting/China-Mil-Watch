@@ -32,6 +32,23 @@ retrospective disclosure costs against an edition without one) hold whatever
 fonts resolve, because the offline suite has no network and falls back from
 Source Serif 4 and IBM Plex Mono.
 
+What these contrasts do NOT cover
+---------------------------------
+Every ratio asserted here is measured against a *token* ground. On an edition
+carrying a Signal Veil the hero renders inside `.nd-veil-band`, so the byline
+and the hero metadata sit over a photograph rather than over `--color-bg`.
+Sampling the real composited pixels behind that text on No. 13 at 375px:
+
+    .byline-title   ground rgb(85, 86, 88)   1.46:1 before -> 2.07:1 after
+    .hero-meta      ground rgb(62, 68, 77)   1.95:1 before -> 2.77:1 after
+
+Lifting the token improved both by about 42% and neither reaches AA, because
+no colour can: the ground is an image. Fixing it means a scrim behind the text
+column, which changes how the Signal Veil reads and is a decision about that
+system rather than about this token. It is deliberately out of scope here, and
+recorded so the passing assertions below are not mistaken for a guarantee that
+every muted glyph on every edition clears 4.5.
+
 Nothing here writes into `output/`, and nothing here touches `pla_watch.db`.
 """
 
