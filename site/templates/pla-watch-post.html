@@ -143,6 +143,135 @@
   .nd-band-inner { padding: 1.6rem 1.25rem; }
 }
 
+/* ── Signal Veil reading contrast — the Record Deck ──────────────────
+   The 2026-09-05 token lift reached every ground it could and said so:
+   on an edition carrying a veil the hero renders over a photograph, and
+   no colour fixes that. Measured on composited pixels across the eleven
+   editions that render this band, the merged templates failed 265 of 832
+   text runs at 375/768/1280 — the worst at 1.00:1, the desktop source
+   bracket on No. 2, which is not low contrast but invisible.
+
+   The band is divided by the rule `.hero-meta` already draws. Above it
+   the edition's face: the photograph and the display type. Below it the
+   record: the machine-readable counts, on the publication's own ground.
+   Evidence sits on paper, not on atmosphere — the visual half of the
+   evidence-vs-inference doctrine.
+
+   The deck is anchored to `.hero-meta` itself rather than to a fraction
+   of band height, because the byline starts anywhere between 60% and 71%
+   of the band depending on how the headline wraps; a fixed percentage
+   would cut into it on some editions and miss the metadata on others.
+
+   Rejected on measurement, recorded so they are not retried:
+     - Scrim alone, ink unchanged. Quiet gray needs a backdrop at or below
+       0.0117 relative luminance, which over a bright frame means roughly
+       74% opacity — the photograph stops being one.
+     - Re-aiming the veil's own mask to sit behind the headline. It passes,
+       but it repositions the curated crop and its focal point, which the
+       2026-08-12 traceability ruling governs, and it drags the headline to
+       3.39:1 against the 3:1 floor. */
+
+/* Scoped ink. Only inside this band, and only the small roles that land on
+   photography. The global tokens are untouched, so every edition without a
+   veil keeps exactly the hierarchy the design system defines. */
+.nd-veil-band {
+  --veil-ink:       var(--color-text-primary);
+  --veil-ink-quiet: #CFC9C0;
+}
+.nd-veil-band .hero-dek,
+.nd-veil-band .byline,
+.nd-veil-band .nd-src-inline,
+.nd-veil-band .nd-src-inline a,
+.nd-veil-band .nd-src-bracket .src-lines,
+.nd-veil-band .nd-src-bracket .src-lines a { color: var(--veil-ink); }
+.nd-veil-band .byline-title,
+.nd-veil-band .hero-edition { color: var(--veil-ink-quiet); }
+
+/* Badge chips are translucent by construction — `.pw-badge--significant`
+   and `--pilot` carry rgba fills — so a bright frame shows straight through
+   the chip. Put the page ground underneath and lay the same tint back on
+   top: identical on navy, no longer see-through over a photograph.
+   Never `opacity` here: it would re-composite the whole chip, ground and
+   all, against the image and undo this. */
+.nd-veil-band .pw-badge { background-color: var(--color-bg); background-image: none; }
+.nd-veil-band .pw-badge--significant { background-image: linear-gradient(rgba(179, 19, 43, 0.14) 0 100%); }
+.nd-veil-band .pw-badge--pilot { background-image: linear-gradient(rgba(224, 164, 88, 0.1) 0 100%); }
+
+/* The deck. `.nd-band-inner` already establishes a stacking context, so
+   `z-index: -1` paints behind the metadata's own text and border — the
+   1px rule survives — while still sitting above the veil and the wash.
+   The bleed is clipped by the band's `overflow: hidden`. */
+.nd-veil-band .hero-meta { position: relative; }
+.nd-veil-band .hero-meta::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -1px;
+  bottom: -40rem;
+  left: 50%;
+  margin-left: -50vw;
+  width: 100vw;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+/* The wash above the deck. The band ground at partial alpha, never a blur
+   and never a card: heaviest at the top edge, where the dateline and the
+   badges sit inside the image, then an even floor that buys the dek its
+   margin without dimming the focal subject. */
+.nd-veil-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(14, 21, 32, 0.72) 0%,
+    rgba(14, 21, 32, 0.46) 8%,
+    rgba(14, 21, 32, 0.3) 17%,
+    rgba(14, 21, 32, 0.3) 100%);
+}
+
+/* 701–900px had no protection at all: the mobile mask stops at 700px, so
+   the desktop mask ran across the full narrow band and every run sat on
+   photography. It is the worst range in the set and is invisible at both
+   375 and 1280. */
+@media (min-width: 701px) and (max-width: 900px) {
+  .nd-veil-band::after {
+    background: linear-gradient(to bottom,
+      rgba(14, 21, 32, 0.74) 0%,
+      rgba(14, 21, 32, 0.5) 8%,
+      rgba(14, 21, 32, 0.4) 17%,
+      rgba(14, 21, 32, 0.4) 100%);
+  }
+}
+
+/* ≥901px the text column vacates the right half, so the floor lifts. The
+   corner falloff is for the source bracket, which is positioned inside the
+   image by design and is the single worst run in the set without it. */
+@media (min-width: 901px) {
+  .nd-veil-band::after {
+    background:
+      linear-gradient(to bottom,
+        rgba(14, 21, 32, 0.6) 0%,
+        rgba(14, 21, 32, 0.34) 8%,
+        rgba(14, 21, 32, 0.24) 18%,
+        rgba(14, 21, 32, 0.24) 100%),
+      radial-gradient(50% 40% at 103% -4%,
+        rgba(14, 21, 32, 0.92) 0%,
+        rgba(14, 21, 32, 0.88) 46%,
+        rgba(14, 21, 32, 0.54) 70%,
+        rgba(14, 21, 32, 0.16) 86%,
+        rgba(14, 21, 32, 0) 97%);
+  }
+}
+
+/* Forced colours repaint text and ground but keep painted gradients, so the
+   two layers this change adds are withdrawn rather than left to sit under a
+   forced palette. Scoped to them; the veil itself is untouched here. */
+@media (forced-colors: active) {
+  .nd-veil-band::after, .nd-veil-band .hero-meta::before { content: none; }
+}
+
 /* ── Cover attribution — the cover PNG serves og:image duty only
      (DECISION_LOG 2026-07-11); no in-page cover figure renders. ─────── */
 .cover-credit-note {
@@ -754,6 +883,9 @@
 
 /* ── Print — single column brief ────────────────────────────────────── */
 @media print {
+  /* base.html already drops .nd-veil; the wash and the deck are keyed to it
+     and would otherwise print as dark blocks over nothing. */
+  .nd-veil-band::after, .nd-veil-band .hero-meta::before { content: none; }
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-credit-note, .visual-context { display: none; }
