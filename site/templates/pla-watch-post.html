@@ -44,10 +44,22 @@
   gap: 0.85rem;
   margin-bottom: 1.5rem;
 }
+/* A dateline, set as one run of inline text.
+
+   This was a flex row with no `flex-wrap`, which meant the rule, the edition
+   line and the status badges were locked onto a single line and each had to
+   shrink to fit. On No. 14 — the first edition to carry two badges — the date
+   was crushed into a four-line ragged column and the disclosure wrapped
+   inside itself, measuring 87.1px at 375px against 34.8 for No. 13 and
+   pushing the headline from 278.5px down to 328.1. Below 375 it overflowed
+   the viewport.
+
+   Inline flow wraps at word boundaries instead, so the badges fall to their
+   own line and the date stays whole. `flex-wrap: wrap` was tried first and
+   was worse: it pushed the badge onto a second line for every edition,
+   costing No. 13 16.5px to fix a defect it did not have. */
 .hero-edition {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: block;
   font-family: var(--mono);
   font-size: 0.66rem;
   font-weight: 500;
@@ -58,10 +70,19 @@
 }
 .hero-edition::before {
   content: "";
+  display: inline-block;
+  vertical-align: middle;
   width: 26px; height: 2px;
+  margin-right: 12px;
+  position: relative;
+  top: -1px;
   background: var(--color-brand);
 }
-.hero-edition .pw-badge { margin-left: 0.5rem; }
+/* Wrap between the parts, never inside one — the same rule the masthead
+   already keeps so "No. 9" cannot split across two lines. */
+.ed-no, .ed-week { white-space: nowrap; }
+.hero-status { display: inline; }
+.hero-edition .pw-badge { margin-left: 0.25rem; vertical-align: middle; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -573,6 +594,7 @@
 .author-chip {
   display: inline-flex;
   align-items: center;
+  min-height: var(--target-min);
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
   font-family: var(--sans);
@@ -632,7 +654,9 @@
 .toc-list li { border-bottom: 1px solid var(--color-border-soft); }
 .toc-list li:last-child { border-bottom: none; }
 .toc-list a {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: var(--target-min);
   padding: 0.5rem 0 0.5rem 0.85rem;
   font-family: var(--sans);
   font-size: 0.8rem;
@@ -718,7 +742,14 @@
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border-soft);
 }
-.post-nav a { color: var(--color-text-secondary); }
+/* Grown to a comfortable target and handed the space back, so the footer
+   rule sits where it did. */
+.post-nav a {
+  color: var(--color-text-secondary);
+  display: inline-block;
+  padding: 0.7rem 0;
+  margin: -0.7rem 0;
+}
 .post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
 /* ── Print — single column brief ────────────────────────────────────── */
@@ -760,8 +791,13 @@
 {% macro edition_head() %}
 <div class="hero-meta-top">
   <div class="hero-edition">
-    {% if issue_number %}No. {{ issue_number }} · {% endif %}Week ending {{ week_ending | format_date }}
-    {% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}{# Retrospective is independent of edition_type: it says when the edition was written, not what the week held. #}{% if is_retrospective %}<span class="pw-badge pw-badge--retrospective">{{ retrospective_label }}</span>{% endif %}
+    {#- Two groups, in the order they are read: what edition this is, then what
+        kind of edition it is. Same markup and same order at every viewport;
+        only where the line breaks changes. -#}
+    {#- The single spaces before each badge are load-bearing: they are the
+        word breaks a screen reader reads and the points the line is allowed
+        to wrap at. Without them the run says "2026SIGNIFICANT". -#}
+    <span class="hero-edition-line">{% if issue_number %}<span class="ed-no">No. {{ issue_number }}</span> · {% endif %}<span class="ed-week">Week ending {{ week_ending | format_date }}</span></span>{% if edition_label or is_retrospective %} <span class="hero-status">{% if edition_label %}{% set _lbl = edition_label | lower %}<span class="pw-badge {% if 'pilot' in _lbl %}pw-badge--pilot{% elif 'significant' in _lbl %}pw-badge--significant{% else %}pw-badge--routine{% endif %}">{{ edition_label }}</span>{% endif %}{# Retrospective is independent of edition_type: it says when the edition was written, not what the week held. #}{% if is_retrospective %} <span class="pw-badge pw-badge--retrospective">{{ retrospective_label }}</span>{% endif %}</span>{% endif %}
   </div>
 </div>
 <h1 class="hero-title">{{ _t.display }}</h1>
