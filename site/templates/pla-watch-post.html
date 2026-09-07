@@ -265,6 +265,20 @@
   }
 }
 
+/* Companion correction — the source bracket must be clickable.
+   `.nd-src-bracket` is positioned inside the image at the band's top right
+   and carries `z-index: 1`; `.nd-band-inner` carries the same z-index and
+   comes later in the DOM, so its box won the paint order and swallowed every
+   click on the one link that makes a veil traceable to the article it came
+   from. `elementFromPoint` over that link returned `.nd-band-inner`.
+
+   Raising the bracket alone would trade one swallowed region for another, so
+   the box is also shrunk to hug its own text. `max-width` already clamps the
+   wrap at 260px, so `width: max-content` resolves to the same width whenever
+   the content wraps and to a narrower box when it does not — the lines are
+   right-aligned against `right: 2rem` either way, so nothing moves. */
+.nd-veil-band .nd-src-bracket { z-index: 2; width: max-content; }
+
 /* Forced colours repaint text and ground but keep painted gradients, so the
    two layers this change adds are withdrawn rather than left to sit under a
    forced palette. Scoped to them; the veil itself is untouched here. */

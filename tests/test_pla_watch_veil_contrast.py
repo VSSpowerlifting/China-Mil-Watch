@@ -747,6 +747,88 @@ class TestOverlayStackingAndPointerEvents(BrowserVeilCase):
             self.assertEqual("none", value, "%s: the veil became clickable" % date)
 
 
+class TestSourceAttributionLinkIsClickable(BrowserVeilCase):
+    """
+    Companion correction, separate from the scrim.
+
+    At >= 901px the desktop source bracket is positioned inside the image at
+    the band's top right, and `.nd-band-inner` — same `z-index: 1`, later in
+    the DOM — covers it. `elementFromPoint` over the credit link therefore
+    returns `.nd-band-inner`, so the one link that makes the veil traceable
+    to its source article cannot be clicked. The 2026-08-12 ruling makes that
+    traceability a standing requirement, which a decorative-looking but dead
+    link does not satisfy.
+    """
+
+    def test_the_desktop_bracket_link_receives_its_own_clicks(self):
+        blocked = []
+        for date in self.veil_dates:
+            result = self.evaluate(date, 1280, r"""
+              () => {
+                const a = document.querySelector('.nd-src-bracket .src-lines a');
+                if (!a) return 'no bracket link';
+                // A wrapped inline's bounding box is the union of its line
+                // boxes, and its centre can fall in the gap between them --
+                // over the parent, not the link. Hit-test the line boxes.
+                const rects = [...a.getClientRects()].filter(r => r.width > 1
+                                                              && r.height > 1);
+                if (!rects.length) return 'bracket link has no box';
+                const misses = [];
+                for (const r of rects) {
+                  const el = document.elementFromPoint(r.x + r.width/2,
+                                                       r.y + r.height/2);
+                  if (!(el === a || a.contains(el)))
+                    misses.push('.' + String(el && el.className).trim());
+                }
+                return misses.length ? 'blocked by ' + misses.join(', ')
+                                     : 'clickable';
+              }
+            """)
+            if result != "clickable":
+                blocked.append("%s %s: %s" % (self.issue_of(date), date, result))
+        self.assertEqual([], blocked,
+                         "the source-attribution link must be clickable:\n  %s"
+                         % "\n  ".join(blocked))
+
+    def test_the_bracket_link_is_keyboard_reachable_and_shows_focus(self):
+        for date in self.veil_dates[:4]:
+            focus = self.evaluate(date, 1280, r"""
+              () => {
+                const a = document.querySelector('.nd-src-bracket .src-lines a');
+                if (!a) return null;
+                a.focus();
+                const cs = getComputedStyle(a);
+                return {focused: document.activeElement === a,
+                        width: cs.outlineWidth, style: cs.outlineStyle};
+              }
+            """)
+            self.assertIsNotNone(focus)
+            self.assertTrue(focus["focused"], "%s: link took no focus" % date)
+            self.assertNotEqual("none", focus["style"],
+                                "%s: focused link draws no outline" % date)
+            self.assertGreater(float(focus["width"].replace("px", "")), 0.0,
+                               "%s: focus outline has no width" % date)
+
+    def test_the_bracket_never_swallows_the_text_column(self):
+        # Raising the bracket must not trade one swallowed region for another:
+        # its box hugs its own text, so the headline beneath stays reachable.
+        for date in self.veil_dates[:4]:
+            for width in (960, 1280):
+                covered = self.evaluate(date, width, r"""
+                  () => {
+                    const h = document.querySelector('.hero-title');
+                    if (!h) return 'no headline';
+                    const r = h.getBoundingClientRect();
+                    const el = document.elementFromPoint(r.x + r.width/2,
+                                                         r.y + r.height/2);
+                    return el && el.closest('.nd-src-bracket')
+                      ? 'headline covered by the bracket' : 'clear';
+                  }
+                """)
+                self.assertEqual("clear", covered,
+                                 "%s at %dpx: %s" % (date, width, covered))
+
+
 # ── 7. print, reduced motion, identity ──────────────────────────────────────
 
 class TestVeilBandDegradesHonestly(BrowserVeilCase):
