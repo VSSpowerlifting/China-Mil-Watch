@@ -13,13 +13,16 @@ Offline. Renders into a temporary directory, never `preview/` and never
 
 from __future__ import annotations
 
+import ast
 import hashlib
+import inspect
 import json
 import re
 import shutil
 import sqlite3
 import sys
 import tempfile
+import textwrap
 import unittest
 import urllib.parse
 from collections import Counter, defaultdict
@@ -145,6 +148,35 @@ def _authored_text(html: str, path: str = "", literals=None) -> str:
         html = html.replace(str(markupsafe.escape(value)), " ")
         html = html.replace(value, " ")
     return html
+
+
+#: Claims Indo-Pacific Record may never make about its own corpus or service.
+#: The words themselves are not forbidden — a source may use any of them, and a
+#: machine summary may report that it did.
+_COVERAGE_CLAIMS = ("comprehensive coverage", "all chinese military",
+                    "complete picture", "real-time intelligence")
+
+
+def _own_coverage_claims(html: str, path: str = "", literals=None) -> list:
+    """The banned coverage claims a page makes *in the publication's voice*.
+
+    The rule this enforces is about ownership, not vocabulary: Indo-Pacific
+    Record must not tell a reader that its own coverage is comprehensive. The
+    same English words legitimately occur in a stored source text, and in a
+    machine summary reporting what that source said — a PLA Daily essay on
+    全面从严治党 lists "comprehensive coverage" as a pillar of party governance,
+    and a summary of that essay repeats it. Neither is this project describing
+    itself.
+
+    `_authored_text` already draws exactly that line for the intelligence
+    vocabulary guard: it removes stored source values and model output and
+    leaves what the publication wrote, chrome and caveats included. Scoping
+    this guard the same way means a record page is never exempt — only the
+    stored values on it are — and no record id, filename, source name or
+    remembered sentence is needed to keep the guard honest.
+    """
+    text = _authored_text(html, path, literals).lower()
+    return [claim for claim in _COVERAGE_CLAIMS if claim in text]
 
 
 def _tree_digest(root: Path) -> str:
@@ -408,11 +440,17 @@ class TestNoFabricatedCoverage(PreviewCase):
         self.assertIn("Desks", self.page("index.html"))
 
     def test_no_page_claims_comprehensive_coverage(self):
+        """
+        Scoped to the publication's own voice, like its sibling above. The
+        corpus quotes official Chinese doctrine, and that doctrine uses this
+        vocabulary; reading stored text as our own claim made the guard fire
+        on a machine summary of a PLA Daily essay. What may never appear is
+        Indo-Pacific Record saying it about itself — see `_own_coverage_claims`.
+        """
         for p in sorted(self.out.rglob("*.html")):
-            text = p.read_text(encoding="utf-8").lower()
-            for banned in ("comprehensive coverage", "all chinese military",
-                           "complete picture", "real-time intelligence"):
-                self.assertNotIn(banned, text, "%s: %r" % (p.name, banned))
+            rel = str(p.relative_to(self.out))
+            found = _own_coverage_claims(p.read_text(encoding="utf-8"), rel)
+            self.assertEqual(found, [], "%s: %r" % (p.name, found))
 
     def test_intelligence_vocabulary_is_absent(self):
         """House doctrine: never 'OSINT tool' or intelligence cosplay.
@@ -428,6 +466,168 @@ class TestNoFabricatedCoverage(PreviewCase):
             for banned in ("osint", "threat intelligence", "target package",
                            "order of battle", "war room"):
                 self.assertNotIn(banned, text, "%s: %r" % (p.name, banned))
+
+
+class TestCoverageClaimOwnership(unittest.TestCase):
+    """
+    What the coverage guard is actually for, pinned in isolation.
+
+    The rule is about *whose voice* makes the claim, not about which words
+    appear on a page. Indo-Pacific Record may never tell a reader that its own
+    corpus or service is comprehensive. A PLA Daily essay on 全面从严治党, and a
+    machine summary reporting what that essay said, may both use the same
+    English words — they are describing the source's doctrine, not this
+    project's reach.
+
+    These cases run on synthetic markup with injected literals, so they pin the
+    contract without depending on what the live corpus happens to contain
+    today.
+    """
+
+    CHROME = ('<footer><p>coverage is selective. publication records what an '
+              'institution said.</p></footer>')
+
+    def test_a_machine_summary_may_report_a_sources_own_doctrine(self):
+        summary = ("the essay is structured around four pillars: party "
+                   "leadership, comprehensive coverage, primacy of "
+                   "strictness, and governance through accountability.")
+        html = '<div class="interpretation"><p>%s</p></div>%s' % (
+            summary, self.CHROME)
+        self.assertEqual(
+            _own_coverage_claims(html, literals=[summary]), [],
+            "a model summary describing a source was read as our own claim")
+
+    def test_stored_source_text_may_contain_the_vocabulary(self):
+        body = ("the party requires comprehensive coverage of every "
+                "organisation and a complete picture of discipline work.")
+        html = '<div class="original-text"><p>%s</p></div>%s' % (
+            body, self.CHROME)
+        self.assertEqual(_own_coverage_claims(html, literals=[body]), [])
+
+    def test_a_first_party_claim_is_caught_beside_the_very_same_words(self):
+        """
+        The discriminating case. Both sentences contain the phrase; only one
+        is ours, and removing the stored value must not take our claim with
+        it.
+        """
+        stored = ("the essay lists comprehensive coverage as the second "
+                  "pillar of party governance.")
+        html = ('<div class="interpretation"><p>%s</p></div>'
+                '<p>our comprehensive coverage of the pla is unmatched.</p>%s'
+                % (stored, self.CHROME))
+        self.assertEqual(
+            _own_coverage_claims(html, literals=[stored]),
+            ["comprehensive coverage"])
+
+    def test_every_banned_claim_is_caught_in_our_own_voice(self):
+        for claim in _COVERAGE_CLAIMS:
+            with self.subTest(claim=claim):
+                html = '<p>indo-pacific record offers %s.</p>' % claim
+                self.assertEqual(_own_coverage_claims(html, literals=[]),
+                                 [claim])
+
+    @staticmethod
+    def _logic(*objects) -> str:
+        """Source with docstrings and comments removed — the executable part.
+
+        Prose may name the record that motivated a rule; logic may not. Only
+        the second would forgive that record next time.
+        """
+        out = []
+        for obj in objects:
+            tree = ast.parse(textwrap.dedent(inspect.getsource(obj)))
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef,
+                                     ast.ClassDef, ast.Module)):
+                    doc = ast.get_docstring(node, clean=False)
+                    if doc and node.body and isinstance(node.body[0], ast.Expr):
+                        node.body.pop(0)
+            out.append(ast.unparse(tree))
+        return "\n".join(out)
+
+    def test_the_guard_carries_no_allow_list(self):
+        """
+        Scoping is by ownership, and by nothing else. A record id, a filename,
+        a source name or a remembered sentence would each turn this guard into
+        a list of things already forgiven, and would go stale the moment the
+        corpus quoted the vocabulary somewhere new.
+        """
+        logic = self._logic(
+            _own_coverage_claims,
+            TestNoFabricatedCoverage.test_no_page_claims_comprehensive_coverage)
+        # `*.html` is how the guard enumerates pages, not a page it forgives.
+        # Everything else naming a file, a record or a section would be.
+        enumerated = logic.replace("'*.html'", "").replace('"*.html"', "")
+        self.assertNotRegex(enumerated, r"\b\d{3,}\b", "a record id appears")
+        for token in (".html", "pla daily", "pla_daily", "解放军报", "record/",
+                      "summary", "interpretation", "doctrin", "pillar",
+                      "skip", "exempt", "allow", "ignore", "continue"):
+            with self.subTest(token=token):
+                self.assertNotIn(token, enumerated.lower())
+        # The vocabulary itself is a policy list, not an exemption list: it
+        # says what may not be claimed, never who is forgiven for saying it.
+        self.assertEqual(len(_COVERAGE_CLAIMS), 4)
+
+
+class TestCoverageClaimScopeOnTheRealTree(PreviewCase):
+    """The same rule, against the tree the guard actually scans."""
+
+    def _record_pages_quoting_a_claim(self):
+        """
+        Record pages whose *stored* values carry a banned phrase, found from
+        the corpus rather than named here, so this keeps working when the
+        corpus changes and never becomes a list of forgiven records.
+        """
+        index = _corpus_index()
+        hits = []
+        for path in sorted(self.out.rglob("record/*.html")):
+            own = re.search(r"(\d+)\.html$", path.name)
+            if not own:
+                continue
+            record = index["by_id"].get(int(own.group(1)))
+            if not record:
+                continue
+            stored = " ".join(_record_literals(record, True)).lower()
+            if any(c in stored for c in _COVERAGE_CLAIMS):
+                hits.append(path)
+        return hits
+
+    def test_a_record_quoting_the_vocabulary_is_not_read_as_our_claim(self):
+        pages = self._record_pages_quoting_a_claim()
+        if not pages:
+            self.skipTest("no stored record currently quotes the vocabulary")
+        for path in pages:
+            with self.subTest(page=path.name):
+                html = path.read_text(encoding="utf-8")
+                rel = str(path.relative_to(self.out))
+                self.assertTrue(
+                    any(c in html.lower() for c in _COVERAGE_CLAIMS),
+                    "fixture no longer contains the phrase it exists to test")
+                self.assertEqual(_own_coverage_claims(html, rel), [])
+
+    def test_a_first_party_claim_on_a_record_page_is_still_caught(self):
+        """
+        Record pages are not exempt. Only the stored values on them are.
+        """
+        pages = sorted(self.out.rglob("record/*.html"))
+        self.assertTrue(pages, "no record pages were built")
+        path = pages[0]
+        rel = str(path.relative_to(self.out))
+        html = path.read_text(encoding="utf-8").replace(
+            "<footer", '<p>our comprehensive coverage of the pla.</p><footer', 1)
+        self.assertEqual(_own_coverage_claims(html, rel),
+                         ["comprehensive coverage"])
+
+    def test_a_first_party_claim_in_chrome_or_editorial_copy_is_still_caught(self):
+        for name in ("index.html", "methodology.html", "about.html",
+                     "coverage.html"):
+            with self.subTest(page=name):
+                html = self.page(name).replace(
+                    "<footer",
+                    '<p>indo-pacific record provides comprehensive coverage.'
+                    '</p><footer', 1)
+                self.assertEqual(_own_coverage_claims(html, name),
+                                 ["comprehensive coverage"])
 
 
 class TestCoverageHealthIsRendered(PreviewCase):
