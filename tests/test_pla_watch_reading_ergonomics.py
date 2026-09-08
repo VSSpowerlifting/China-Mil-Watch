@@ -631,15 +631,40 @@ class BrowserCase(WeeklySurfaces):
             cls.httpd.server_close()
         super().tearDownClass()
 
-    def measure(self, page_path: str, width: int, script: str):
+    def measure(self, page_path: str, width: int, script: str,
+                block_webfonts: bool = False, extra_css: str = None):
+        """
+        Measures one page at one width.
+
+        `block_webfonts` aborts the Google Fonts requests, which is the
+        condition the CI runner reproduces and a developer machine with a warm
+        font cache does not. A fresh context per call means a font cached by an
+        earlier measurement cannot leak in and quietly re-run the webfont path.
+
+        `extra_css` injects a stylesheet after load. It exists so a test can
+        restore a pre-fix condition and prove a diagnostic still names the
+        offender; it is not a way to invent geometry the product never has.
+        """
         ctx = self.browser.new_context(viewport={"width": width, "height": 900},
                                        device_scale_factor=1)
         page = ctx.new_page()
+        blocked = {"n": 0}
         try:
+            if block_webfonts:
+                def abort(route):
+                    blocked["n"] += 1
+                    route.abort()
+                page.route("**://fonts.googleapis.com/**", abort)
+                page.route("**://fonts.gstatic.com/**", abort)
             page.goto("http://127.0.0.1:%d/%s" % (self.port, page_path),
                       wait_until="load")
-            page.wait_for_timeout(120)
-            return page.evaluate(script)
+            if extra_css:
+                page.add_style_tag(content=extra_css)
+            page.wait_for_timeout(200 if block_webfonts else 120)
+            result = page.evaluate(script)
+            if isinstance(result, dict):
+                result["blockedFontRequests"] = blocked["n"]
+            return result
         finally:
             ctx.close()
 
@@ -777,6 +802,174 @@ class TestKeyboardFocusStaysVisible(BrowserCase):
                 self.assertTrue(visible,
                                 "no visible focus ring: %r" % (r,))
 
+
+# ── 8. source-trail domains wrap instead of overflowing ─────────────────────
+
+SOURCE_DOMAIN_JS = r"""
+() => {
+  const de = document.documentElement, view = de.clientWidth;
+  const cells = [...document.querySelectorAll('.source-card-domain')];
+  const clipsSomewhere = el => {
+    let a = el.parentElement;
+    while (a) { const cs = getComputedStyle(a);
+      if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') return true;
+      a = a.parentElement; }
+    return false;
+  };
+  const runs = [];
+  for (const cell of cells) {
+    const card = cell.closest('.source-card');
+    const box = cell.getBoundingClientRect();
+    const cardBox = card ? card.getBoundingClientRect() : null;
+    let right = -Infinity, lines = 0;
+    for (const n of cell.childNodes) {
+      if (n.nodeType !== 3 || !n.textContent.trim()) continue;
+      const r = document.createRange(); r.selectNodeContents(n);
+      for (const b of r.getClientRects()) { lines++; if (b.right > right) right = b.right; }
+    }
+    runs.push({
+      text: cell.textContent.trim(),
+      right: right === -Infinity ? null : +right.toFixed(4),
+      overView: right === -Infinity ? null : +(right - view).toFixed(4),
+      lines,
+      boxRight: +box.right.toFixed(4), boxWidth: +box.width.toFixed(2),
+      boxHeight: +box.height.toFixed(2),
+      visible: box.width > 0 && box.height > 0,
+      clipped: clipsSomewhere(cell),
+      cardRight: cardBox ? +cardBox.right.toFixed(4) : null,
+      insideCard: cardBox ? right <= cardBox.right + 0.5 : null,
+      // a monospace fingerprint: the same string measures differently under
+      // the webfont and under the fallback, which is how the test proves the
+      // fallback path was genuinely taken rather than assumed.
+    });
+  }
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;'
+                      + 'font-family:var(--mono);font-size:100px';
+  probe.textContent = 'MMMMMMMMMM';
+  document.body.appendChild(probe);
+  const monoWidth = +probe.getBoundingClientRect().width.toFixed(3);
+  probe.remove();
+  return {runs, view, scrollW: de.scrollWidth, clientW: de.clientWidth,
+          overflowX: de.scrollWidth > de.clientWidth, monoWidth};
+}
+"""
+
+
+class TestSourceTrailDomainsWrap(BrowserCase):
+    """
+    A source-trail domain is a single unbroken token. `.source-card-domain`
+    declared no wrapping behaviour, so a long one laid out past its own border
+    box and past the viewport: the element stayed 280px wide inside the card
+    while its text run reached 376.28px on a 375px viewport.
+
+    `documentElement.scrollWidth` rounds to the nearest integer, which is why
+    this surfaced as an intermittent defect rather than a constant one. Under
+    the webfont the run overhangs by 0.22px and 375.22 rounds back to 375;
+    under the fallback it overhangs by 1.28px and 376.28 rounds to 376. The
+    geometry is wrong in both cases — only one of them is visible to a
+    document-level assertion, and it is the one the CI runner hits.
+
+    So these tests block the webfont deliberately. A developer machine with a
+    warm font cache would otherwise measure the rounding-down case and call it
+    healthy.
+    """
+
+    PAGE = None       # resolved per-test: the retrospective edition (No. 14)
+
+    def page_for(self, date):
+        return "posts/%s.html" % date
+
+    def worst(self, runs):
+        real = [r for r in runs if r["right"] is not None]
+        return max(real, key=lambda r: r["right"]) if real else None
+
+    def test_the_fallback_font_path_is_actually_exercised(self):
+        """Guards the other tests: if blocking silently stopped working they
+        would pass against the webfont and prove nothing."""
+        date = self.retrospective[0]
+        warm = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS)
+        cold = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS,
+                            block_webfonts=True)
+        self.assertEqual(0, warm["blockedFontRequests"])
+        self.assertGreater(cold["blockedFontRequests"], 0,
+                           "no webfont request was intercepted; the fallback "
+                           "condition was never established")
+        self.assertNotEqual(
+            warm["monoWidth"], cold["monoWidth"],
+            "the monospace face measured identically with and without the "
+            "webfont (%s), so the fallback was not really in use"
+            % warm["monoWidth"])
+
+    def test_a_long_domain_does_not_push_the_document_wider_than_the_viewport(self):
+        for date in sorted(set(self.retrospective[:1] + sorted(self.control)[-1:])):
+            for block in (False, True):
+                with self.subTest(page=date, webfonts="blocked" if block else "on"):
+                    r = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS,
+                                     block_webfonts=block)
+                    worst = self.worst(r["runs"])
+                    self.assertIsNotNone(worst, "%s has no source domains" % date)
+                    self.assertFalse(
+                        r["overflowX"],
+                        "%s at 375px (webfonts %s): document scrollWidth %d "
+                        "exceeds clientWidth %d; worst domain run reaches "
+                        "%.4f (%+.4f past the viewport): %r"
+                        % (date, "blocked" if block else "on", r["scrollW"],
+                           r["clientW"], worst["right"], worst["overView"],
+                           worst["text"]))
+                    self.assertLessEqual(
+                        worst["right"], r["clientW"] + 0.5,
+                        "%s: a domain run reaches %.4f on a %d-wide viewport"
+                        % (date, worst["right"], r["clientW"]))
+
+    def test_every_domain_stays_inside_its_own_card(self):
+        for date in sorted(set(self.retrospective[:1] + sorted(self.control)[-1:])):
+            r = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS,
+                             block_webfonts=True)
+            for run in r["runs"]:
+                if run["right"] is None:
+                    continue
+                self.assertTrue(
+                    run["insideCard"],
+                    "%s: %r reaches %.4f but its card ends at %.4f"
+                    % (date, run["text"], run["right"], run["cardRight"]))
+
+    def test_the_domain_text_is_complete_visible_and_unclipped(self):
+        """The remedy must be wrapping, not hiding. Nothing may be truncated,
+        ellipsed, or tucked under a clipping ancestor."""
+        for date in sorted(set(self.retrospective[:1] + sorted(self.control)[-1:])):
+            r = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS,
+                             block_webfonts=True)
+            self.assertTrue(r["runs"], "%s renders no source domains" % date)
+            for run in r["runs"]:
+                self.assertTrue(run["visible"],
+                                "%s: %r is not visible" % (date, run["text"]))
+                self.assertFalse(
+                    run["clipped"],
+                    "%s: %r sits inside a clipping ancestor, so a wrapped "
+                    "second line could be hidden" % (date, run["text"]))
+                self.assertNotIn(
+                    "\u2026", run["text"],
+                    "%s: %r was truncated with an ellipsis" % (date, run["text"]))
+
+    def test_a_long_domain_wraps_rather_than_overhanging(self):
+        """The specific failing value, asserted by behaviour: the longest
+        domain on the page must occupy more than one line box and still end
+        inside the viewport."""
+        date = self.retrospective[0]
+        r = self.measure(self.page_for(date), 375, SOURCE_DOMAIN_JS,
+                         block_webfonts=True)
+        worst = self.worst(r["runs"])
+        self.assertIsNotNone(worst)
+        self.assertGreater(
+            worst["lines"], 1,
+            "%r fits on one line box at 375px, so this page no longer "
+            "exercises the wrapping path and the guard is not measuring "
+            "what it claims" % worst["text"])
+        self.assertLessEqual(worst["right"], worst["boxRight"] + 0.5,
+                             "%r overhangs its own border box: run ends at "
+                             "%.4f, box ends at %.4f"
+                             % (worst["text"], worst["right"], worst["boxRight"]))
 
 if __name__ == "__main__":
     unittest.main()

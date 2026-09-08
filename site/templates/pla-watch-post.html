@@ -664,6 +664,25 @@
   font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
+  /* A domain is one unbroken token, and this cell declared no wrapping
+     behaviour, so a long one laid out straight past its own border box: on
+     No. 14 at 375px the cell stayed 280px wide inside a card ending at 355
+     while its text reached 376.28 on a 375px viewport.
+
+     `documentElement.scrollWidth` rounds to the nearest integer, which is why
+     this read as intermittent. Under IBM Plex Mono the overhang is 0.22px and
+     375.22 rounds back to 375; under the fallback face it is 1.28px and
+     376.28 rounds to 376. The geometry was wrong either way — only the
+     fallback made it visible to a document-level assertion.
+
+     `break-word` rather than `anywhere` or `word-break: break-all`: all three
+     were measured and all three place the break identically here, so the one
+     that does not also alter intrinsic min-content sizing is the one that
+     cannot perturb the flex column around it. It breaks only a token that
+     would otherwise overflow, so short domains keep breaking normally. The
+     print stylesheet already breaks this same URL, and `.cite-text` already
+     carries the same treatment for the same reason. */
+  overflow-wrap: break-word;
 }
 .source-trail-cap {
   font-family: var(--sans);
