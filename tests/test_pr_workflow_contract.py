@@ -69,7 +69,11 @@ FORBIDDEN_COMMANDS = {
     "source liveness / collection": r"\bcheck_source_liveness\.py\b",
     "site generation": r"\bsite/generator\.py\b|\bgenerate_pla_watch\b|\brerender_pla_watch\b",
     "scraping backfill": r"\bbackfill_\w+\.py\b",
-    "playwright browser install": r"\bplaywright\s+install\b",
+    # `playwright install` was listed here while this job installed no browser.
+    # It is now the step that makes the browser-backed classes run at all, so a
+    # blanket ban would forbid the fix. The narrower property — that the install
+    # happens exactly once, as its own governed step — is asserted by
+    # TestBrowserBackedTestsActuallyRun below.
     "git commit": r"\bgit\s+commit\b",
     "git push": r"\bgit\s+push\b",
     "git tag": r"\bgit\s+tag\b",
@@ -567,6 +571,154 @@ class TestStepOrder(unittest.TestCase):
 
     def test_the_protection_step_is_last(self):
         self.assertEqual(self.guard, len(steps_of(self.doc)) - 1)
+
+
+class TestBrowserBackedTestsActuallyRun(unittest.TestCase):
+    """
+    The gap this closes: `requirements.txt` carries the playwright PACKAGE, so
+    the import in the fixtures always succeeded, but `pip install` fetches no
+    browser. `chromium.launch()` then failed and the fixtures turned that into
+    `SkipTest` — a class-level skip, which unittest counts as one entry and
+    whose test methods are never even reported. Thirteen browser-backed classes
+    left the run that way while the check stayed green (PR #51: `Ran 2045 tests
+    … OK (skipped=14)`); the daily run, which installs the browser, reported
+    `Ran 2091 tests … OK (skipped=1)` over the same tree.
+
+    Deliberately NOT asserted here: a total test count. Suites grow, and a
+    pinned 2091 would fail on the next honest test added. The durable contract
+    is that the browser is installed, proved to launch, and that both happen
+    before the suite — after which the fixtures have nothing to skip past.
+    """
+
+    INSTALL = re.compile(r"\bplaywright\s+install\s+chromium\b")
+    WITH_DEPS = re.compile(r"--with-deps\b")
+
+    def setUp(self):
+        self.doc = load_workflow()
+        self.bodies = run_bodies(self.doc)
+
+    def install_body(self) -> str:
+        matched = [b for b in self.bodies if self.INSTALL.search(b)]
+        self.assertEqual(len(matched), 1,
+                         "expected exactly one chromium install step, found %d"
+                         % len(matched))
+        return matched[0]
+
+    def smoke_body(self) -> str:
+        matched = [b for b in self.bodies if "chromium.launch()" in b]
+        self.assertEqual(len(matched), 1,
+                         "expected exactly one chromium launch smoke check, "
+                         "found %d" % len(matched))
+        return matched[0]
+
+    # ── the browser is there ──────────────────────────────────────────────
+    def test_it_installs_chromium(self):
+        self.install_body()
+
+    def test_it_installs_the_system_libraries_too(self):
+        """
+        Without `--with-deps` the download succeeds and the launch still fails
+        on a missing shared library — which is the same silent skip in a new
+        costume.
+        """
+        self.assertRegex(self.install_body(), self.WITH_DEPS)
+
+    def test_the_install_is_the_command_the_daily_run_already_proves(self):
+        """
+        Cross-checked against the workflow that has been running these classes
+        on Ubuntu all along, so the two runs cannot drift into two different
+        browser stories.
+        """
+        daily = (WORKFLOW_DIR / "daily_update.yml").read_text(encoding="utf-8")
+        self.assertIn(self.install_body().strip(), daily)
+
+    # ── and it actually starts ────────────────────────────────────────────
+    def test_the_smoke_check_launches_a_browser(self):
+        """
+        A path test would pass on a half-extracted download, a missing libnss3,
+        or a blocked sandbox — every one of which is a browser that will not
+        start, and so a silent skip. Only a launch distinguishes them.
+        """
+        body = self.smoke_body()
+        self.assertIn("sync_playwright", body)
+        self.assertIn("chromium.launch()", body)
+
+    def test_the_smoke_check_reports_the_version_it_launched(self):
+        """So a reviewer can read which browser ran, not just that one did."""
+        self.assertIn("browser.version", self.smoke_body())
+
+    def test_the_smoke_check_closes_the_browser(self):
+        self.assertIn("browser.close()", self.smoke_body())
+
+    def test_the_smoke_check_is_not_a_file_existence_probe(self):
+        body = self.smoke_body()
+        for probe in ("os.path.exists", "test -x", "test -f", "which chromium"):
+            self.assertNotIn(probe, body)
+
+    def test_the_smoke_check_fails_the_job_when_the_launch_fails(self):
+        """
+        No `|| true`, no swallowed exit status: an unstartable browser must
+        stop the run here rather than be absorbed into a skip downstream.
+        """
+        body = self.smoke_body()
+        for softener in ("|| true", "|| exit 0", "continue-on-error", "set +e"):
+            self.assertNotIn(softener, body)
+        self.assertIn("set -euo pipefail", body)
+
+    # ── before the suite, or it proves nothing ────────────────────────────
+    def test_the_browser_is_installed_and_proved_before_the_suite(self):
+        install = index_of(self.doc,
+                           lambda s: self.INSTALL.search(s.get("run", "")))
+        smoke = index_of(self.doc,
+                         lambda s: "chromium.launch()" in s.get("run", ""))
+        deps = index_of(self.doc,
+                        lambda s: "pip install" in s.get("run", ""))
+        suite = index_of(self.doc, lambda s: "unittest" in s.get("run", ""))
+        names = [s["name"] for s in steps_of(self.doc)]
+        self.assertLess(deps, install, names)     # playwright CLI must exist
+        self.assertLess(install, smoke, names)
+        self.assertLess(smoke, suite, names)
+
+    def test_the_job_allows_time_for_the_browser_assertions(self):
+        """
+        The browser classes add roughly three minutes on a hosted runner. The
+        old 15-minute ceiling was set against a run that skipped them; keeping
+        it would trade a silent skip for a timeout. Still bounded — a runaway
+        browser must not hold a runner indefinitely.
+        """
+        timeout = self.doc["jobs"]["offline-checks"]["timeout-minutes"]
+        self.assertGreaterEqual(timeout, 20)
+        self.assertLessEqual(timeout, 30)
+
+    # ── and none of it widens the job ─────────────────────────────────────
+    def test_the_browser_steps_introduce_no_action_and_no_secret(self):
+        """
+        The security posture is the reason this job may run PR-controlled code
+        at all; adding a browser must not spend any of it.
+        """
+        doc = self.doc
+        self.assertEqual(doc["permissions"], {"contents": "read"})
+        self.assertNotIn("pull_request_target", doc["on"])
+        checkout = [s for s in steps_of(doc)
+                    if s.get("uses", "").startswith("actions/checkout")][0]
+        self.assertIs(checkout["with"]["persist-credentials"], False)
+        for body in (self.install_body(), self.smoke_body()):
+            self.assertNotIn("secrets.", body)
+            self.assertNotIn("${{", body)
+
+    def test_the_browser_steps_are_plain_run_steps(self):
+        """No new action, and nothing downloaded outside the install itself."""
+        for step in steps_of(self.doc):
+            if step.get("run") in (self.install_body(), self.smoke_body()):
+                self.assertEqual(set(step), {"name", "run"})
+
+    def test_no_step_rewrites_a_workflow_file(self):
+        """
+        The daily and deployment workflows are out of this job's scope, and a
+        read-only job that edited one would be a contradiction worth catching.
+        """
+        for body in self.bodies:
+            self.assertNotRegex(body, r"\.github/workflows")
 
 
 class TestItProtectsProductionState(unittest.TestCase):

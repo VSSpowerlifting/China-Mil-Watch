@@ -11,6 +11,18 @@
 # changed nothing. It does not collect, migrate, reconcile, render, deploy,
 # commit, push, or read a secret.
 #
+# Chromium. `requirements.txt` carries the playwright PACKAGE, which is why
+# `from playwright.sync_api import ...` has always succeeded here — but `pip
+# install` fetches no browser binary. The browser fixtures catch the resulting
+# launch failure and turn it into `SkipTest`, so this job reported green while
+# thirteen browser-backed classes never ran (PR #51: `Ran 2045 tests … OK
+# (skipped=14)`, thirteen of them `chromium not available`). The daily run,
+# which installs the browser, executed the same tree as `Ran 2091 tests … OK
+# (skipped=1)`. A check that silently drops the browser contracts it claims to
+# cover is worse than no check, so the browser is installed below and then
+# LAUNCHED before the suite: an install can half-succeed, and a path that
+# exists is not a browser that starts.
+#
 # Trigger choice. `pull_request` runs the workflow definition taken from the
 # PR's merge commit (the base branch merged with the PR head), with the
 # permissions declared below. The alternative, `pull_request_target`, instead
@@ -51,7 +63,7 @@ concurrency:
 jobs:
   offline-checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       # No `ref:` — for a pull_request event this checks out the merge of the
@@ -90,6 +102,34 @@ jobs:
       # First execution of PR-controlled content.
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      # The browser binary, with its system libraries. Same command the daily
+      # workflow uses, so the two runs exercise one browser story rather than
+      # two. `--with-deps` shells out to the runner's package manager; it needs
+      # OS privileges on the ephemeral runner, never repository privileges, and
+      # the job token stays read-only.
+      - name: Install Chromium for the browser-backed tests
+        run: playwright install chromium --with-deps
+
+      # Launch it. The fixtures downgrade a launch failure to SkipTest, which
+      # is precisely the failure this job must not absorb, so the launch is
+      # proved here where a failure is a failure. A missing shared library, a
+      # partial download or a blocked sandbox all leave an executable on disk
+      # that will not start — testing for the path would miss every one.
+      #
+      # The heredoc is quoted (<<'PY'), so the shell performs no expansion on
+      # the script and no workflow expression is interpolated into it.
+      - name: Verify Chromium launches
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch()
+              print("chromium %s launched" % browser.version)
+              browser.close()
+          PY
 
       # The suite uses temporary databases and never touches the tracked file.
       # The assertion below is what makes that a fact rather than a claim.
