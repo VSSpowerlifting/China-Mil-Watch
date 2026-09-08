@@ -674,16 +674,86 @@ LAYOUT_JS = r"""
   const box = s => { const e = document.querySelector(s); if (!e) return null;
     const r = e.getBoundingClientRect();
     return { h:+r.height.toFixed(1), top:+(r.top+scrollY).toFixed(1) }; };
+  const label = e => e.tagName.toLowerCase() + '.' +
+      String(e.className || '').split(' ').filter(Boolean).slice(0,2).join('.');
+
+  // Element border boxes. Unchanged: this is what named the No. 14 metadata
+  // defect in 2026-09-05 and it stays the first thing a reader sees.
   const over = [...document.querySelectorAll('*')].filter(e => {
     const r = e.getBoundingClientRect();
     return r.width > 0 && (r.right > innerWidth + 1);
-  }).slice(0, 6).map(e => e.tagName.toLowerCase() + '.' +
-      String(e.className || '').split(' ').filter(Boolean).slice(0,2).join('.'));
+  }).slice(0, 6).map(label);
+
+  const overflowX = document.documentElement.scrollWidth > innerWidth;
+
+  // Inline text runs. An element's border box can sit entirely inside the
+  // viewport while the text inside it lays out past both the box and the
+  // viewport -- exactly the source-trail domain case, where the cell was
+  // 280px wide and its text reached 376.28 on a 375px viewport.
+  // getBoundingClientRect() cannot see that, scrollWidth can, and the
+  // difference is why this assertion used to fail with an empty list.
+  //
+  // Only walked when the document actually overflows: the passing path stays
+  // one integer comparison, so the browser suite does not get slower.
+  const textOver = [];
+  if (overflowX) {
+    const clipped = el => { let a = el && el.parentElement;
+      while (a) { const cs = getComputedStyle(a);
+        // Text under a clipping ancestor cannot grow the scrollable area, so
+        // naming it would send a reader after the wrong element.
+        if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') return true;
+        a = a.parentElement; }
+      return false; };
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = walker.nextNode()) && textOver.length < 6) {
+      if (!n.textContent.trim()) continue;
+      const parent = n.parentElement;
+      if (!parent || clipped(parent)) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      for (const b of range.getClientRects()) {
+        if (b.width > 0 && b.right > innerWidth + 0.01) {
+          textOver.push({
+            el: label(parent),
+            right: +b.right.toFixed(4),
+            past: +(b.right - innerWidth).toFixed(4),
+            text: n.textContent.trim().replace(/\s+/g, ' ').slice(0, 60),
+          });
+          break;
+        }
+      }
+    }
+  }
+
   return { meta: box('.hero-meta-top'), title: box('.hero-title'),
-           overflowX: document.documentElement.scrollWidth > innerWidth,
-           overflowers: over };
+           overflowX,
+           scrollW: document.documentElement.scrollWidth,
+           viewportW: innerWidth,
+           overflowers: over,
+           textOverflowers: textOver };
 }
 """
+
+
+def overflow_report(r):
+    """Renders LAYOUT_JS output as an assertion message that names something.
+
+    The element list alone printed `[]` whenever the overflow came from inline
+    text, which is the case that actually shipped.
+    """
+    parts = ["document scrollWidth %s vs viewport %s"
+             % (r.get("scrollW"), r.get("viewportW"))]
+    if r.get("overflowers"):
+        parts.append("element boxes past the viewport: %s" % (r["overflowers"],))
+    for t in r.get("textOverflowers") or []:
+        parts.append("inline text in %s reaches %.4f (%+.4f past the viewport): %r"
+                     % (t["el"], t["right"], t["past"], t["text"]))
+    if not r.get("overflowers") and not r.get("textOverflowers"):
+        parts.append("no element box and no unclipped text run exceeded the "
+                     "viewport; the overflow is sub-pixel or comes from a "
+                     "source this probe does not model")
+    return "; ".join(parts)
 
 TARGET_JS = r"""
 () => {
@@ -768,7 +838,8 @@ class TestMobileMetadataHierarchy(BrowserCase):
                     r = self.measure(page, width, LAYOUT_JS)
                     self.assertFalse(
                         r["overflowX"],
-                        "overflow at %dpx: %s" % (width, r["overflowers"]))
+                        "overflow at %dpx on %s: %s"
+                        % (width, page, overflow_report(r)))
 
 
 class TestActionableTargetsAreComfortable(BrowserCase):
@@ -970,6 +1041,72 @@ class TestSourceTrailDomainsWrap(BrowserCase):
                              "%r overhangs its own border box: run ends at "
                              "%.4f, box ends at %.4f"
                              % (worst["text"], worst["right"], worst["boxRight"]))
+
+
+class TestOverflowDiagnosticNamesInlineText(BrowserCase):
+    """
+    The companion to the wrapping fix.
+
+    Before it, `test_no_weekly_surface_overflows_horizontally` failed on No. 14
+    with the message `overflow at 375px: []`. The assertion was correct and the
+    diagnostic was useless: it listed element border boxes, every one of which
+    fitted, while the overflow came from a text run inside one of them.
+
+    Once the production fix lands the page no longer overflows, so the only
+    honest way to keep evidence that the diagnostic works is to restore the
+    pre-fix condition and re-measure. `overflow-wrap: normal` is not an
+    invented geometry -- it is exactly the declaration `.source-card-domain`
+    carried until this change.
+    """
+
+    PRE_FIX_CSS = ".source-card-domain { overflow-wrap: normal; }"
+
+    def test_the_fixed_page_reports_no_overflow(self):
+        r = self.measure("posts/%s.html" % self.retrospective[0], 375,
+                         LAYOUT_JS, block_webfonts=True)
+        self.assertFalse(r["overflowX"], overflow_report(r))
+        self.assertEqual([], r["textOverflowers"],
+                         "nothing should be walked when the document fits")
+
+    def test_restoring_the_pre_fix_rule_names_the_source_domain(self):
+        r = self.measure("posts/%s.html" % self.retrospective[0], 375,
+                         LAYOUT_JS, block_webfonts=True,
+                         extra_css=self.PRE_FIX_CSS)
+        self.assertTrue(
+            r["overflowX"],
+            "restoring overflow-wrap:normal no longer reproduces the overflow, "
+            "so this guard is not measuring the defect it documents")
+        self.assertEqual(
+            [], r["overflowers"],
+            "the element-box probe should still find nothing -- that is the "
+            "whole reason the inline probe exists")
+        self.assertTrue(
+            r["textOverflowers"],
+            "the inline-text probe reported nothing; the diagnostic would "
+            "still print an empty offender list")
+        first = r["textOverflowers"][0]
+        self.assertIn("source-card-domain", first["el"],
+                      "expected the source-trail domain to be named, got %r"
+                      % (first,))
+        self.assertGreater(first["past"], 0)
+        self.assertTrue(first["text"], "the offender was named with no excerpt")
+        self.assertLessEqual(len(first["text"]), 60,
+                             "the excerpt must stay short enough to read")
+        message = overflow_report(r)
+        self.assertNotEqual("[]", message)
+        self.assertIn("source-card-domain", message)
+
+    def test_the_probe_ignores_text_a_clipping_ancestor_contains(self):
+        """No. 13's veil sits ~0.4px past the viewport but `.nd-veil-band`
+        clips it, so it cannot grow the scrollable area. Naming it would send
+        a reader after the wrong element."""
+        for date in sorted(self.posts):
+            r = self.measure("posts/%s.html" % date, 375, LAYOUT_JS,
+                             block_webfonts=True)
+            for t in r["textOverflowers"] or []:
+                self.assertNotIn("nd-veil", t["el"],
+                                 "%s: clipped veil content was reported" % date)
+
 
 if __name__ == "__main__":
     unittest.main()
