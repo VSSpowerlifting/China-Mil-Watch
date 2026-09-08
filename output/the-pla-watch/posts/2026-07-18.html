@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A1019">
   <title>The PLA Watch: Joint Sea-2026, the Y-20B Abroad, and the Week&#39;s Quieter Signals — The PLA Watch</title>
   <meta name="description" content="China-Russia naval exercises concluded with a live-fire Pacific patrol component and fresh subsurface integration; separately, PLA Daily confirmed the Y-20B&#39;s first international flight and its regiment&#39;s combat patrol record across three maritime theaters.">
 
@@ -47,13 +48,26 @@
       --color-bg-sidebar:     #18222F;       /* sidebar surface */
       --color-text-primary:   #EDE9E0;       /* warm off-white */
       --color-text-secondary: #A8A29A;       /* mid warm gray */
-      --color-text-muted:     #746E67;       /* quiet gray */
-      /* Chrome labels are set in mono at 0.58-0.64rem, and at that size the
-         quiet gray measures 3.79:1 on the masthead ground — under the 4.5 that
-         small text needs. This is the same warm family, lifted until it
-         passes: 5.37 on #0A1019, 5.16 on #0E1520. `--color-text-muted` keeps
-         its value for the non-essential metadata it was scoped to. */
-      --color-chrome-label:   #8E877E;
+      /* The quiet step of the ramp. #746E67 measured 3.64:1 on the ink navy
+         and 3.40 on the lifted card, and thirty-six of its thirty-eight
+         declarations set type between 9.3px and 12.5px — normal text, which
+         holds to 4.5. Lifted here to the first value in the same warm family
+         that clears 4.5 on every ground the weekly surfaces paint: 5.16 on
+         #0E1520, 4.83 on #131C29, 5.37 on #0A1019, 4.52 on #18222F.
+         Secondary still sits a clear step above it, at 7.24. */
+      --color-text-muted:     #8E877E;
+      /* Chrome labels were lifted to this value on their own, for the same
+         reason and to the same place. Now that the muted token clears AA the
+         two are one colour, and the alias says so rather than repeating the
+         literal and letting the pair drift apart again. */
+      --color-chrome-label:   var(--color-text-muted);
+      /* The original quiet gray, kept for the two declarations that are
+         genuinely large type — the nameplate's "The" and the archive display
+         italic. Both are >= 24px at every breakpoint (24.8 at the narrowest),
+         where 3.64:1 already clears the 3.0 large-text threshold. Lifting
+         them would have brightened the masthead for no legibility gain.
+         Never use this below 24px. */
+      --color-display-quiet:  #746E67;
       --color-border:         #273040;       /* dark rule */
       --color-border-soft:    #1C2534;       /* softer dark rule */
       --color-accent:         #B3132B;
@@ -70,13 +84,21 @@
       --mono:  'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
       --zh:    'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
       --radius: 2px;
+      /* Comfortable touch target. WCAG 2.5.8 sets the floor at 24px; the
+         weekly surfaces hold standalone controls to 44 in their constrained
+         dimension. Links sitting inside a sentence of running text are
+         exempt, as 2.5.8 exempts them. */
+      --target-min: 44px;
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
       --shell: 1100px;
     }
 
     /* ── Reset ──────────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; scroll-behavior: smooth; }
+    /* Declares the surface dark to the browser itself, so the scrollbar and
+       any form control render dark rather than painting a light strip down
+       the side of an ink-navy page. */
+    html { color-scheme: dark; font-size: 16px; scroll-behavior: smooth; }
 
     body {
       background-color: var(--color-bg);
@@ -95,6 +117,16 @@
     ::selection { background: rgba(179, 19, 43, 0.35); color: #fff; }
 
     [lang="zh-Hans"] { font-family: var(--zh); }
+
+    /* The grown hit areas are what a thumb actually lands on, so they need to
+       behave like touch targets: without `touch-action` the browser holds
+       every tap for 300ms waiting to see a double-tap zoom, and the default
+       highlight flashes a system-blue box the size of the padded box rather
+       than the text inside it. */
+    a, button, summary, [role="button"] {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(224, 90, 109, 0.18);
+    }
 
     a { color: var(--color-brand-light); text-decoration: none; }
     a:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -153,12 +185,19 @@
       justify-content: space-between;
       gap: 1.5rem;
     }
+    /* The wordmark reads at 28.5px tall, under the 44 a thumb wants. The
+       hit area is grown with padding and taken back with margin, so the
+       target is comfortable and the masthead is exactly as tall as before.
+       The expansion is weighted upward, into the masthead's own top padding,
+       so it cannot reach the nav links stacked beneath it on mobile. */
     .pw-nameplate {
       display: flex;
       align-items: baseline;
       gap: 0.85rem;
       color: inherit;
       text-decoration: none;
+      padding: 14px 0 2px;
+      margin: -14px 0 -2px;
     }
     .pw-nameplate:hover { text-decoration: none; }
     .pw-nameplate .pw-mark {
@@ -174,7 +213,7 @@
     .pw-nameplate .pw-mark .the {
       font-style: italic;
       font-weight: 400;
-      color: var(--color-text-muted);
+      color: var(--color-display-quiet);
       margin-right: 0.15em;
     }
     .pw-nameplate .pw-mark-rule {
@@ -202,7 +241,15 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 4px 0;
+      /* 0.9rem of padding lifts the target past 44 and the negative margin
+         hands the space straight back, so the masthead keeps its measured
+         159.3px. `min-height` was tried first and cost 35.7px of masthead,
+         pushing the headline down — the opposite of what this change is for.
+         The horizontal padding matters too: "Terms" is the shortest label in
+         the nav, and its width rather than its height is the constrained
+         dimension. */
+      padding: 0.9rem 0.35rem;
+      margin: -0.65rem -0.35rem;
       position: relative;
       white-space: nowrap;
       transition: color 150ms ease;
@@ -210,7 +257,7 @@
     .pw-nav a::after {
       content: "";
       position: absolute;
-      left: 0; right: 0; bottom: -2px;
+      left: 0.35rem; right: 0.35rem; bottom: calc(0.9rem - 2px);
       height: 2px;
       background: var(--color-brand);
       transform: scaleX(0);
@@ -342,6 +389,19 @@
       color: #E0A458;
       border: 1px solid rgba(224, 164, 88, 0.35);
     }
+    /* Timing, not significance — so it sits outside the warm/red family the
+       other three share, in the cool slate the print palette already gives
+       it. Until now this variant had no screen rule at all: it was declared
+       only inside `@media print`, so on screen it fell back to bare
+       `.pw-badge`, inherited the failing muted colour and drew no border,
+       while every sibling carried one. 6.22:1 on the ink navy, 5.45 on the
+       sidebar — the disclosure is the most important thing in the block and
+       was its least legible element. */
+    .pw-badge--retrospective {
+      background: transparent;
+      color: #8C97AB;
+      border: 1px solid rgba(140, 151, 171, 0.38);
+    }
 
     /* ── Utilities ──────────────────────────────────────────────────────── */
     .empty-state { color: var(--color-text-muted); font-style: italic; padding: 2rem 0; }
@@ -454,6 +514,7 @@
         --color-text-primary:   #111111;
         --color-text-secondary: #333333;
         --color-text-muted:     #555555;
+        --color-display-quiet:  #555555;
         --color-border:         #bbbbbb;
         --color-border-soft:    #dddddd;
       }
@@ -562,10 +623,22 @@
   gap: 0.85rem;
   margin-bottom: 1.5rem;
 }
+/* A dateline, set as one run of inline text.
+
+   This was a flex row with no `flex-wrap`, which meant the rule, the edition
+   line and the status badges were locked onto a single line and each had to
+   shrink to fit. On No. 14 — the first edition to carry two badges — the date
+   was crushed into a four-line ragged column and the disclosure wrapped
+   inside itself, measuring 87.1px at 375px against 34.8 for No. 13 and
+   pushing the headline from 278.5px down to 328.1. Below 375 it overflowed
+   the viewport.
+
+   Inline flow wraps at word boundaries instead, so the badges fall to their
+   own line and the date stays whole. `flex-wrap: wrap` was tried first and
+   was worse: it pushed the badge onto a second line for every edition,
+   costing No. 13 16.5px to fix a defect it did not have. */
 .hero-edition {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: block;
   font-family: var(--mono);
   font-size: 0.66rem;
   font-weight: 500;
@@ -576,10 +649,19 @@
 }
 .hero-edition::before {
   content: "";
+  display: inline-block;
+  vertical-align: middle;
   width: 26px; height: 2px;
+  margin-right: 12px;
+  position: relative;
+  top: -1px;
   background: var(--color-brand);
 }
-.hero-edition .pw-badge { margin-left: 0.5rem; }
+/* Wrap between the parts, never inside one — the same rule the masthead
+   already keeps so "No. 9" cannot split across two lines. */
+.ed-no, .ed-week { white-space: nowrap; }
+.hero-status { display: inline; }
+.hero-edition .pw-badge { margin-left: 0.25rem; vertical-align: middle; }
 .hero-title {
   font-family: var(--serif);
   font-weight: 700;
@@ -638,6 +720,149 @@
 .nd-band-inner .hero-dek { max-width: 46ch; }
 @media (max-width: 900px) {
   .nd-band-inner { padding: 1.6rem 1.25rem; }
+}
+
+/* ── Signal Veil reading contrast — the Record Deck ──────────────────
+   The 2026-09-05 token lift reached every ground it could and said so:
+   on an edition carrying a veil the hero renders over a photograph, and
+   no colour fixes that. Measured on composited pixels across the eleven
+   editions that render this band, the merged templates failed 265 of 832
+   text runs at 375/768/1280 — the worst at 1.00:1, the desktop source
+   bracket on No. 2, which is not low contrast but invisible.
+
+   The band is divided by the rule `.hero-meta` already draws. Above it
+   the edition's face: the photograph and the display type. Below it the
+   record: the machine-readable counts, on the publication's own ground.
+   Evidence sits on paper, not on atmosphere — the visual half of the
+   evidence-vs-inference doctrine.
+
+   The deck is anchored to `.hero-meta` itself rather than to a fraction
+   of band height, because the byline starts anywhere between 60% and 71%
+   of the band depending on how the headline wraps; a fixed percentage
+   would cut into it on some editions and miss the metadata on others.
+
+   Rejected on measurement, recorded so they are not retried:
+     - Scrim alone, ink unchanged. Quiet gray needs a backdrop at or below
+       0.0117 relative luminance, which over a bright frame means roughly
+       74% opacity — the photograph stops being one.
+     - Re-aiming the veil's own mask to sit behind the headline. It passes,
+       but it repositions the curated crop and its focal point, which the
+       2026-08-12 traceability ruling governs, and it drags the headline to
+       3.39:1 against the 3:1 floor. */
+
+/* Scoped ink. Only inside this band, and only the small roles that land on
+   photography. The global tokens are untouched, so every edition without a
+   veil keeps exactly the hierarchy the design system defines. */
+.nd-veil-band {
+  --veil-ink:       var(--color-text-primary);
+  --veil-ink-quiet: #CFC9C0;
+}
+.nd-veil-band .hero-dek,
+.nd-veil-band .byline,
+.nd-veil-band .nd-src-inline,
+.nd-veil-band .nd-src-inline a,
+.nd-veil-band .nd-src-bracket .src-lines,
+.nd-veil-band .nd-src-bracket .src-lines a { color: var(--veil-ink); }
+.nd-veil-band .byline-title,
+.nd-veil-band .hero-edition { color: var(--veil-ink-quiet); }
+
+/* Badge chips are translucent by construction — `.pw-badge--significant`
+   and `--pilot` carry rgba fills — so a bright frame shows straight through
+   the chip. Put the page ground underneath and lay the same tint back on
+   top: identical on navy, no longer see-through over a photograph.
+   Never `opacity` here: it would re-composite the whole chip, ground and
+   all, against the image and undo this. */
+.nd-veil-band .pw-badge { background-color: var(--color-bg); background-image: none; }
+.nd-veil-band .pw-badge--significant { background-image: linear-gradient(rgba(179, 19, 43, 0.14) 0 100%); }
+.nd-veil-band .pw-badge--pilot { background-image: linear-gradient(rgba(224, 164, 88, 0.1) 0 100%); }
+
+/* The deck. `.nd-band-inner` already establishes a stacking context, so
+   `z-index: -1` paints behind the metadata's own text and border — the
+   1px rule survives — while still sitting above the veil and the wash.
+   The bleed is clipped by the band's `overflow: hidden`. */
+.nd-veil-band .hero-meta { position: relative; }
+.nd-veil-band .hero-meta::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -1px;
+  bottom: -40rem;
+  left: 50%;
+  margin-left: -50vw;
+  width: 100vw;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+/* The wash above the deck. The band ground at partial alpha, never a blur
+   and never a card: heaviest at the top edge, where the dateline and the
+   badges sit inside the image, then an even floor that buys the dek its
+   margin without dimming the focal subject. */
+.nd-veil-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(14, 21, 32, 0.72) 0%,
+    rgba(14, 21, 32, 0.46) 8%,
+    rgba(14, 21, 32, 0.3) 17%,
+    rgba(14, 21, 32, 0.3) 100%);
+}
+
+/* 701–900px had no protection at all: the mobile mask stops at 700px, so
+   the desktop mask ran across the full narrow band and every run sat on
+   photography. It is the worst range in the set and is invisible at both
+   375 and 1280. */
+@media (min-width: 701px) and (max-width: 900px) {
+  .nd-veil-band::after {
+    background: linear-gradient(to bottom,
+      rgba(14, 21, 32, 0.74) 0%,
+      rgba(14, 21, 32, 0.5) 8%,
+      rgba(14, 21, 32, 0.4) 17%,
+      rgba(14, 21, 32, 0.4) 100%);
+  }
+}
+
+/* ≥901px the text column vacates the right half, so the floor lifts. The
+   corner falloff is for the source bracket, which is positioned inside the
+   image by design and is the single worst run in the set without it. */
+@media (min-width: 901px) {
+  .nd-veil-band::after {
+    background:
+      linear-gradient(to bottom,
+        rgba(14, 21, 32, 0.6) 0%,
+        rgba(14, 21, 32, 0.34) 8%,
+        rgba(14, 21, 32, 0.24) 18%,
+        rgba(14, 21, 32, 0.24) 100%),
+      radial-gradient(50% 40% at 103% -4%,
+        rgba(14, 21, 32, 0.92) 0%,
+        rgba(14, 21, 32, 0.88) 46%,
+        rgba(14, 21, 32, 0.54) 70%,
+        rgba(14, 21, 32, 0.16) 86%,
+        rgba(14, 21, 32, 0) 97%);
+  }
+}
+
+/* Companion correction — the source bracket must be clickable.
+   `.nd-src-bracket` is positioned inside the image at the band's top right
+   and carries `z-index: 1`; `.nd-band-inner` carries the same z-index and
+   comes later in the DOM, so its box won the paint order and swallowed every
+   click on the one link that makes a veil traceable to the article it came
+   from. `elementFromPoint` over that link returned `.nd-band-inner`.
+
+   Raising the bracket alone would trade one swallowed region for another, so
+   the box is also shrunk to hug its own text. `max-width` already clamps the
+   wrap at 260px, so `width: max-content` resolves to the same width whenever
+   the content wraps and to a narrower box when it does not — the lines are
+   right-aligned against `right: 2rem` either way, so nothing moves. */
+.nd-veil-band .nd-src-bracket { z-index: 2; width: max-content; }
+
+/* Forced colours repaint text and ground but keep painted gradients, so the
+   two layers this change adds are withdrawn rather than left to sit under a
+   forced palette. Scoped to them; the veil itself is untouched here. */
+@media (forced-colors: active) {
+  .nd-veil-band::after, .nd-veil-band .hero-meta::before { content: none; }
 }
 
 /* ── Cover attribution — the cover PNG serves og:image duty only
@@ -1018,6 +1243,25 @@
   font-size: 0.62rem;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
+  /* A domain is one unbroken token, and this cell declared no wrapping
+     behaviour, so a long one laid out straight past its own border box: on
+     No. 14 at 375px the cell stayed 280px wide inside a card ending at 355
+     while its text reached 376.28 on a 375px viewport.
+
+     `documentElement.scrollWidth` rounds to the nearest integer, which is why
+     this read as intermittent. Under IBM Plex Mono the overhang is 0.22px and
+     375.22 rounds back to 375; under the fallback face it is 1.28px and
+     376.28 rounds to 376. The geometry was wrong either way — only the
+     fallback made it visible to a document-level assertion.
+
+     `break-word` rather than `anywhere` or `word-break: break-all`: all three
+     were measured and all three place the break identically here, so the one
+     that does not also alter intrinsic min-content sizing is the one that
+     cannot perturb the flex column around it. It breaks only a token that
+     would otherwise overflow, so short domains keep breaking normally. The
+     print stylesheet already breaks this same URL, and `.cite-text` already
+     carries the same treatment for the same reason. */
+  overflow-wrap: break-word;
 }
 .source-trail-cap {
   font-family: var(--sans);
@@ -1091,6 +1335,7 @@
 .author-chip {
   display: inline-flex;
   align-items: center;
+  min-height: var(--target-min);
   gap: 0.35rem;
   padding: 0.35rem 0.7rem;
   font-family: var(--sans);
@@ -1150,7 +1395,9 @@
 .toc-list li { border-bottom: 1px solid var(--color-border-soft); }
 .toc-list li:last-child { border-bottom: none; }
 .toc-list a {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: var(--target-min);
   padding: 0.5rem 0 0.5rem 0.85rem;
   font-family: var(--sans);
   font-size: 0.8rem;
@@ -1236,11 +1483,21 @@
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-border-soft);
 }
-.post-nav a { color: var(--color-text-secondary); }
+/* Grown to a comfortable target and handed the space back, so the footer
+   rule sits where it did. */
+.post-nav a {
+  color: var(--color-text-secondary);
+  display: inline-block;
+  padding: 0.7rem 0;
+  margin: -0.7rem 0;
+}
 .post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
 
 /* ── Print — single column brief ────────────────────────────────────── */
 @media print {
+  /* base.html already drops .nd-veil; the wash and the deck are keyed to it
+     and would otherwise print as dark blocks over nothing. */
+  .nd-veil-band::after, .nd-veil-band .hero-meta::before { content: none; }
   .post-wrap { display: block; }
   .post-sidebar, .edition-nav, .post-nav, .author-chips,
   .cover-credit-note, .visual-context { display: none; }
@@ -1308,9 +1565,7 @@ Spreading Wings, Sailing Far! Officers and Soldiers of an Air F…<br>      CONT
   <div class="nd-band-inner">
     <div class="nd-src-inline">IMG <a href="http://www.81.cn/yw_208727/16473227.html" target="_blank" rel="noopener nofollow">PLA Daily (解放军报)</a> · Spreading Wings, Sailing Far! Officers and Soldiers of an Air F… · Context, not evidence.</div>
     <div class="hero-meta-top">
-  <div class="hero-edition">
-No. 11 · Week ending 18 July 2026
-<span class="pw-badge pw-badge--significant">Significant</span>  </div>
+  <div class="hero-edition"><span class="hero-edition-line"><span class="ed-no">No. 11</span> · <span class="ed-week">Week ending 18 July 2026</span></span> <span class="hero-status"><span class="pw-badge pw-badge--significant">Significant</span></span>  </div>
 </div>
 <h1 class="hero-title">Joint Sea-2026, the Y-20B Abroad, and the Week&#39;s Quieter Signals</h1>
 <div class="hero-dek">China-Russia naval exercises concluded with a live-fire Pacific patrol component and fresh subsurface integration; separately, PLA Daily confirmed the Y-20B&#39;s first international flight and its regiment&#39;s combat patrol record across three maritime theaters.</div>
