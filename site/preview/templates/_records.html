@@ -1,0 +1,90 @@
+{# The home page's records, as pairs. Two macros, one decision.
+
+   English leads and is the linked heading; the original-language title sits
+   directly beneath it at secondary colour, which is the treatment
+   `docs/DESIGN_SYSTEM.md` §4 documents. The register renders the SAME pair the
+   lead plate does — production showed the original for its two lead cards and
+   left the register's rows without it, so the page displayed two of the six
+   originals the record actually holds.
+
+   Three rules this file exists to hold:
+
+   * the original renders only when the record genuinely has one AND has an
+     English title to lead with. A record with no translation shows its
+     original as the heading rather than repeating it beneath itself;
+   * `lang` carries `sources.language_tag` — the repository's own BCP 47 code —
+     and is omitted entirely when the source declares none. A default of `zh`
+     would tell a screen reader that a Japanese or English original is Chinese;
+   * repeated provenance collapses into one sentence only when `shared` says
+     every displayed non-lead record really does share a source, an institution
+     and a publication date. Otherwise each row carries its own. `shared` is
+     computed in `generate_preview.home_record_group()`, not here.
+
+   The macros take their records as arguments rather than reading the context,
+   so `tests/test_home_paired_records.py` can render them with controlled
+   records — including a record with no original title, which the builder
+   refuses to write into a corpus and which no fixture can otherwise reach. #}
+
+{% macro original_line(record) -%}
+{%- if record.title_english and record.title_original and record.title_original.strip() %}
+    <p class="original"{% if record.language_tag %} lang="{{ record.language_tag }}"{% endif %}>{{ record.title_original }}</p>
+{%- endif %}
+{%- endmacro %}
+
+{% macro lead_record(record) -%}
+{% if record %}
+<article class="lead-record" aria-labelledby="lead-record-title">
+  <p class="record-prov">
+    <span class="evidence evidence--record">Source record</span>
+    <span class="record-prov-source">{{ record.institution or record.source_name }}</span>
+    <time datetime="{{ record.published_date }}">{{ record.published_date }}</time>
+  </p>
+  <h2 class="record-headline" id="lead-record-title"><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
+  {{- original_line(record) }}
+  <p class="record-note">The English title is machine-produced and labeled as
+    such; the original is stored exactly as the institution published it.
+    <a href="record/{{ record.id }}.html">This record and its provenance <span class="arrow">&rarr;</span></a></p>
+</article>
+{% endif %}
+{%- endmacro %}
+
+{% macro record_register(records, shared) -%}
+{% if records %}
+{% if shared %}
+{# True of every row below, or absent. `shared` is set only when the source,
+   the institution and the publication date are identical across all of them —
+   the publication date, not the collection date, which the dateline states
+   separately and which belongs to a different calendar. #}
+{# This one span describes the whole register, so it agrees with the number of
+   rows the register actually holds — `shared.count`, the same number the
+   sentence beneath it counts. "Source record" over five rows was wrong; so is
+   "Source records" over the single row a two-record corpus leaves after the
+   lead is lifted out. The lead plate and the per-row provenance line describe
+   one record each and keep the singular unconditionally.
+
+   The date and the period that ends its clause are wrapped together in one
+   inline-block, because a bare "." arriving at the head of the next line is
+   the defect this replaced. The wrapper is the only nonbreaking construction
+   in the sentence — the sentence itself still wraps freely — so it cannot
+   push the page wider than the narrowest viewport. #}
+<p class="register-note"><span class="evidence evidence--record">Source record{{ '' if shared.count == 1 else 's' }}</span>
+  {% if shared.count == 1 %}One record, published by
+  {%- else %}{{ shared.count }} records, {{ 'both' if shared.count == 2 else 'all' }} published by
+  {%- endif %} {{ shared.institution }} on <span class="date-clause"><time datetime="{{ shared.date }}">{{ shared.date }}</time>.</span>
+  Each original-language title is shown as that institution published it.</p>
+{% endif %}
+<ul class="record-register" data-reveal>
+{% for a in records %}
+  <li class="register-item">
+    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
+    {{- original_line(a) }}
+    {% if not shared %}
+    <p class="register-meta"><span class="evidence evidence--record">Source record</span>
+      <span>{{ a.institution or a.source_name }}</span> &middot;
+      <time class="register-date" datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+{%- endmacro %}

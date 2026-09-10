@@ -417,14 +417,30 @@ class TestNoFabricatedCoverage(PreviewCase):
 
     def test_desk_directory_states_the_live_count_honestly(self):
         """
-        The claim lives in the persistent status strip and again on the home
-        page's own desk table, both derived from the same registry and the same
-        run — never typed in.
+        The claim lives on the home page's own desk introduction and again on
+        the desk table, both derived from the same registry and the same run —
+        never typed in.
+
+        The third assertion was `assertIn("1 of 4", ...)`, which matched the
+        coverage apron's plain-text phrasing. That paragraph stated the ratio a
+        second time and was deduplicated away, so the assertion now reads the
+        DERIVATION instead of one rendering of it: the ratio and the
+        enabled-source total must both equal what the view model computes. A
+        literal typed into the template cannot satisfy it, which the old string
+        match could not tell.
         """
         html = self.page("index.html")
         self.assertIn("1</b> collecting desk", html)
         self.assertIn("of <b>4</b> declared", html)
-        self.assertIn("1 of 4", " ".join(html.split()))
+
+        from core.viewmodel import PublicView
+        desks = PublicView(TRACKED_DB).desk_directory()
+        intro = html.split('<h2 id="desks">', 1)[1].split('class="cards', 1)[0]
+        self.assertIn("<b>%d</b> collecting desk" % desks.collecting_count,
+                      intro)
+        self.assertIn("of <b>%d</b> declared" % desks.declared_count, intro)
+        self.assertIn("<b>%d</b> enabled source" % desks.collecting_source_count,
+                      intro)
 
     def test_home_page_discloses_single_desk_coverage(self):
         """
@@ -1283,13 +1299,54 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         The regional expansion has to be legible from the home page without
         scrolling into it: what this is, what arrived, which desks exist and
         what they actually do, what was read into it, and what did not collect.
+
+        The ONLY thing that moved here is the anchor for "what this is". The
+        coverage apron that used to carry it was deduplicated into the
+        dateline, so `class="purpose"` no longer exists and the page's opening
+        prose is the claim band. The governed order it guards —
+        records, then desks, then analysis, then coverage — is unchanged, and
+        the sequence is now asserted with the opening and the lead record
+        included, so it is longer than it was rather than shorter.
         """
         html = self.page("index.html")
-        order = [html.index(marker) for marker in (
-            'class="purpose"', "Latest records", '<h2 id="desks">',
-            "Latest analysis", "What did not collect")]
+        markers = ('class="claim-band"', 'class="lead-record"',
+                   "Latest records", '<h2 id="desks">', "Latest analysis",
+                   "What did not collect")
+        for marker in markers:
+            self.assertIn(marker, html, "%s is missing from the home page"
+                          % marker)
+        order = [html.index(marker) for marker in markers]
         self.assertEqual(order, sorted(order),
                          "the home page sections are out of order")
+
+    def test_the_lead_record_opening_does_not_reorder_desks_and_analysis(self):
+        """
+        The regression this pass exists to prevent.
+
+        C1 lifts the LEAD record out of the reading column and into the
+        opening. That is the only structural move it is authorised to make.
+        An earlier revision of this candidate also swapped Desks and Latest
+        analysis, which is a different decision and was never taken: an
+        analysis section ahead of the desks that produce the record inverts
+        what this publication is.
+
+        Asserted on the folio marks as well as the headings, because the
+        folios are what a reader counts.
+        """
+        html = self.page("index.html")
+        self.assertLess(html.index('<h2 id="desks">'),
+                        html.index("Latest analysis"),
+                        "Desks must precede Latest analysis")
+        folios = re.findall(
+            r'<p class="section-index" aria-hidden="true">(\d+)</p>\s*'
+            r'<h2[^>]*>(.*?)</h2>', html, re.S)
+        self.assertEqual(
+            [(n, re.sub(r"\s+", " ", t).strip()) for n, t in folios],
+            [("01", "Latest records"),
+             ("02", "Desks"),
+             ("03", "Latest analysis"),
+             ("04", "Record and analysis are not the same thing"),
+             ("05", "What did not collect")])
 
     def test_home_leads_with_the_publication_not_a_readme_heading(self):
         html = self.page("index.html")
@@ -1303,10 +1360,32 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         A single headline number spanning desks that do not collect would be
         the central dishonesty available to this page. Every figure on it is
         attached to the desk it came from.
+
+        Re-anchored: the coverage apron this used to read was deduplicated, so
+        the page's opening prose is the claim band. The contract is unchanged
+        and is checked in three parts — the opening states no corpus total at
+        all; the dateline, which does state one, names the desk it belongs to;
+        and the desk ratio is stated where the topology is, not beside the
+        total it must not be multiplied by.
         """
         html = self.page("index.html")
-        purpose = html.split('class="purpose"', 1)[1].split("</section>", 1)[0]
-        self.assertNotRegex(purpose, r"\b\d[\d,]{3,}\b")
+        claim = html.split('class="claim-band"', 1)[1].split("</section>", 1)[0]
+        self.assertNotRegex(claim, r"\b\d[\d,]{3,}\b")
+
+        from core.viewmodel import PublicView
+        desks = PublicView(TRACKED_DB).desk_directory()
+        dateline = html.split("freshness-bar--lead", 1)[1].split("</div>\n</div>", 1)[0]
+        if desks.collecting_count == 1:
+            self.assertIn("Records held, %s" % desks.collecting[0].name,
+                          " ".join(dateline.split()),
+                          "the corpus total lost its desk attribution")
+        # The desk ratio belongs to Desks, and must not reappear in the band
+        # that carries the corpus total.
+        self.assertNotIn("Collecting desks", dateline)
+        self.assertNotIn("Collecting sources", dateline)
+        intro = html.split('<h2 id="desks">', 1)[1].split('class="cards', 1)[0]
+        self.assertIn("<b>%d</b> collecting desk" % desks.collecting_count,
+                      intro)
 
     # ── Corpus counts and labels ────────────────────────────────────────
 

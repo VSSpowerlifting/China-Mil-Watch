@@ -264,7 +264,15 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                         # prose, the card's own border and status chip already
                         # mark it as a target, and the rule restores the
                         # underline on hover.
+                        # `.record-headline a` joined on 2026-09-09 with the
+                        # C1 lead record. It is the same object the lead card's
+                        # `h3 a` was — a record heading, not prose — and it
+                        # meets the same condition: the 2px ink rule the band
+                        # opens on and the provenance line above it mark it as
+                        # the page's lead, and the rule restores an underline
+                        # on hover and on keyboard focus.
                         (".brand", "h3 a", "h2.plain a", ".lead-title",
+                         ".record-headline a",
                          ".editions", "nav.primary", ".skip")),
                     "%s removes the underline from prose links" % flat)
 

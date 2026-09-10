@@ -934,9 +934,67 @@ def edition_cover(repo_root: Path, slug: str, sidecar: dict):
     }
 
 
+#: How many records the home page publishes: one lead plate and the register
+#: beneath it. Declared once so the template cannot drift from the derivation.
+HOME_RECORD_COUNT = 6
+
+
+def home_record_group(records: list, count: int = HOME_RECORD_COUNT) -> dict:
+    """
+    The home page's records, and the one provenance question their layout
+    turns on: do the non-lead records genuinely share a source and a date?
+
+    The approved design collapses repeated institution/date metadata into a
+    single sentence, because the snapshot it was drawn from held six records
+    from one institution on one day. Production cannot assume that holds. When
+    the register really is homogeneous the sentence is true and the repetition
+    is noise; the moment any source, institution or publication date differs,
+    a summary would attribute one record's provenance to another — so `shared`
+    is None and every row states its own.
+
+    The test is the SOURCE, not the institution. `pla_daily` and
+    `china_mil_online` are two sources of one institution, so an
+    institution-only test would print "all five from CMC Political Work
+    Department" over a register that mixes two outlets. Source attribution is
+    never inferred across records.
+
+    `relevant_date` is the source-stated publication date. It is deliberately
+    not the collection date: they are different calendars and different
+    claims, and the dateline states the collection date separately.
+    """
+    selected = list(records[:count])
+    if not selected:
+        return {"lead": None, "rest": [], "shared": None}
+    rest = selected[1:]
+
+    def provenance(record):
+        return (record.get("source_slug"),
+                record.get("institution") or record.get("source_name"),
+                record.get("published_date"))
+
+    shared = None
+    if rest:
+        marks = {provenance(record) for record in rest}
+        if len(marks) == 1:
+            slug, institution, date = marks.pop()
+            # A summary may only stand in for facts that are all present. A
+            # missing institution or date is stated per row, never smoothed.
+            if institution and date:
+                shared = {"source_slug": slug, "institution": institution,
+                          "date": date, "count": len(rest)}
+    return {"lead": selected[0], "rest": rest, "shared": shared}
+
+
 #: The homepage atmospheric visual. One asset, chosen by the manifest's own
 #: `placement` field rather than by name here, so swapping it is a manifest
 #: edit and not a code edit.
+#:
+#: The home page no longer renders it: contrast measurement found eleven
+#: failing text cells where live type crossed the photograph, and the approved
+#: direction removes the image rather than re-tuning type over it. The entry,
+#: the asset, the derivative and the published `atmosphere.json` licence record
+#: are all left exactly as they are — "do not render it" is not "delete it",
+#: and the CC BY-SA chain has to remain intact wherever the asset is used.
 ATMOSPHERE_PLACEMENT = "homepage-atmosphere"
 
 #: Where the veil derivative is published, and therefore what `styles.css`
@@ -1968,6 +2026,11 @@ def build(out_dir: Path, title: str, db_path: Path,
         "extraction_bars": extraction_bars(coverage_view.results),
         "freshness": view.freshness(daily_run_date=daily_run_date),
         "articles": data["recent"],
+        # The home page's six, with the provenance question already answered.
+        # Derived here rather than in the template: whether a group summary is
+        # truthful is a fact about the records, and a template that computes it
+        # is a template that can be wrong quietly.
+        "home_records": home_record_group(data["recent"]),
         "gaps": gaps,
         "source_facets": sorted(by_source.items()),
         "status_prose": STATUS_PROSE,
