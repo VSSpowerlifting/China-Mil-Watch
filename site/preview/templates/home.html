@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_records.html" import lead_record, record_register %}
 {% block main_class %} class="leads-with-hero"{% endblock %}
 {# The publication's only scripted motion, on the only page that has any
    reveal targets. Synchronous and in the head on purpose: it adds the class
@@ -9,141 +10,82 @@
    case the class is never added and nothing is ever hidden. #}
 {% block head_scripts %}<script src="reveal.js"></script>{% endblock %}
 {% block hero %}
-{# The front door. What stood here was a paragraph of body copy directly under
-   an operational status strip — accurate, and no way in. A reader arriving
-   cold could not tell in one screen what this publication is, what it holds,
-   or what separates its record from its analysis. #}
-<section class="hero">
-  {# ── Signal Veil ───────────────────────────────────────────────────────
-     The atmospheric layer, carried over from the predecessor's Paper Ledger
-     system: a duotone crop keyed to the paper ground and shaped by a union of
-     soft radial masks, so no rectangle ever reads as a photo card. It is
-     publication identity, not illustration — it depicts no record, and the
-     bracket beside it says so in as many words.
+{# ── The opening ───────────────────────────────────────────────────────────
+   What stood here was an identity field: a statement, a three-row ledger and
+   a faded J-20 photograph sharing one band, followed by a freshness note and
+   a coverage lede. Measured, it put the first record 1,024px down at 1280 and
+   1,506px down at 375 — no readable record title in the first screen at any
+   viewport — and it set live type over the photograph, where eleven text
+   cells failed contrast.
 
-     The image is painted by the stylesheet rather than an inline style: a
-     built page may not carry `style="...background..."`, and the rule that
-     forbids it is the same one that keeps every colour measurable.
+   Three objects replace it, and the figures are distributed by kind rather
+   than pooled into one of them. The claim band states the publication's claim
+   once. The dateline in `base.html` carries time and corpus state — the three
+   dates, records held, of those analyzed. The collection topology the ledger
+   used to show, the collecting-desk ratio and the enabled-source total, is
+   stated once in the Desks introduction below. Then the record itself.
 
-     `role="img"` with the manifest's own alt text carries the accessible
-     description; the div is otherwise inert. #}
-  {% if atmosphere %}
-  <div class="pl-veil" role="img" aria-label="{{ atmosphere.alt }}"
-       data-editorial-id="{{ atmosphere.id }}"></div>
-  <div class="src-bracket">
-    <span class="bracket" aria-hidden="true"></span>
-    <p class="src-lines">
-      IMG · <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.source_id }}</a><br>
-      {% if atmosphere.subject %}{{ atmosphere.subject }}<br>{% endif %}
-      CONTEXT, NOT EVIDENCE
-    </p>
-  </div>
-  {% endif %}
-  <div class="wrap hero-grid{% if atmosphere %} has-veil{% endif %}">
-    <div class="hero-lede">
-      <p class="hero-eyebrow">Indo-Pacific defense and security record</p>
-      {# A paragraph, not a heading. The masthead wordmark is already this
-         page's single h1, and a second one would give the home page two
-         top-level headings — the exact regression the structure tests catch.
-         Its weight here is typographic, not semantic. #}
-      <p class="hero-statement">A record of what defense institutions publish
-        about themselves, <em>preserved as published</em> and read in context.</p>
-      <p class="hero-sub">{{ title }} keeps the original text, the date, the
+   The aircraft is not moved, re-cropped or bounded; it is not rendered. The
+   asset, its derivative, the manifest entry and the published licence record
+   are untouched, which is why the credit goes with it: an attribution for an
+   image the page does not show would be a claim about a page that no longer
+   exists. #}
+<section class="claim-band">
+  <div class="wrap">
+    {# A paragraph, not a heading. The masthead wordmark is already this
+       page's single h1, and the lead record's title is its h2. Its weight
+       here is typographic, not semantic. #}
+    <p class="claim">A record of what defense institutions publish about
+      themselves, <em>preserved as published</em> and read in context.</p>
+    <div class="claim-side">
+      <p class="claim-sub">{{ title }} keeps the original text, the date, the
         institution, and a per-run record of whether collection actually
         worked. Analysis is separate from the record, cites it, and is labeled
         as interpretation.</p>
-      <div class="hero-actions">
+      <p class="claim-cta">
         <a class="btn btn--primary" href="archive.html">Explore the record</a>
-        <a class="btn btn--quiet" href="analysis.html">Read analysis</a>
         <a class="btn btn--quiet" href="methodology.html">Methodology</a>
-      </div>
+      </p>
     </div>
-
-    {# ── Ledger rail ──────────────────────────────────────────────────────
-       The predecessor's ledger, not a row of statistic cards. Fine rules,
-       right-aligned figures in the serif, small monospace labels, and a
-       paper whisper behind the rows so a numeral never sits on the veil's
-       darkest mass.
-
-       Three figures, each attached to what it was measured on. A corpus count
-       beside a desk count invites "N records across four desks", which is
-       false: one desk collects and the other three hold nothing. Nothing here
-       is a literal — the count is the snapshot's, the source and desk figures
-       are summed from the registry at render time. #}
-    {% set collecting = desks | selectattr('status', 'equalto', 'live') | list %}
-    {% set collecting_sources = collecting | sum(attribute='enabled_source_count') %}
-    <aside class="hero-ledger" aria-labelledby="ledger-label">
-      <p class="hero-ledger-label" id="ledger-label">The record, as held</p>
-      <dl class="hero-ledger-rows">
-        <div class="hero-ledger-row">
-          <dt>Records{% if collecting|length == 1 %}, {{ collecting[0].name }}{% endif %}</dt>
-          <dd class="v">{{ snapshot.expected_records|count }}</dd></div>
-        <div class="hero-ledger-row">
-          <dt>Collecting sources</dt>
-          <dd class="v">{{ collecting_sources|count }}</dd></div>
-        <div class="hero-ledger-row">
-          <dt>Collecting desks</dt>
-          <dd class="v">{{ desks.collecting_count }}<span class="of">of {{ desks.declared_count }}</span></dd></div>
-      </dl>
-      <p class="hero-ledger-foot">{% if collecting|length == 1 %}{{ collecting[0].name }} is the only
-        desk collecting today. The other {{ desks.declared_count - 1 }} are
-        labeled by what they actually are on <a href="desks.html">Desks</a>.{% else %}Desk
-        states are on <a href="desks.html">Desks</a>.{% endif %}</p>
-    </aside>
   </div>
-  {% if atmosphere %}
-  {# Two metadata lines rather than a sentence. The first is the attribution
-     the licence requires, reading as a plate rather than a caption; the second
-     says what the image is and what it is not. Both links are kept: the asset
-     to its source page, the licence to its own text. The complete chain —
-     original URL, digest, acquisition date, adaptation note — stays in
-     atmosphere.json. #}
-  <p class="src-inline">
-    <span class="img-tag">IMG</span> · {{ atmosphere.subject_short }} ·
-    <a href="{{ atmosphere.source_page }}" rel="noopener nofollow">{{ atmosphere.creator }}</a> ·
-    <a href="{{ atmosphere.license_url }}" rel="noopener nofollow license">{{ atmosphere.license }}</a> ·
-    Wikimedia Commons<br>
-    <span class="src-inline-note">Duotone adaptation · Visual context, not evidence.</span>
-  </p>
-  {% endif %}
 </section>
-
-{# ── The apron ─────────────────────────────────────────────────────────────
-   The seam between the identity field and the archive. What stood here was
-   four separate openings on three grounds — the hero's hairline, then a
-   freshness note, then a lede paragraph, then a section rule — and the page
-   read as one component ending and another starting.
-
-   The same two sentences, unchanged, now close the hero instead: they keep
-   the hero's parchment, and the band ends on the 2px ink rule that the record
-   opens with. One seam. Full-bleed, so it belongs to the hero block rather
-   than to the reading column; the content block below is unchanged in order,
-   which is what `test_home_orders_purpose_records_desks_analysis_coverage`
-   reads. #}
+{% if home_records.lead %}
+{# The lead record, full-bleed, directly under the claim. This is the page's
+   first content and the thing the publication is; the section that follows
+   heads the rest of the register. #}
+<div class="lead-record-band">
+  <div class="wrap">
+{{ lead_record(home_records.lead) }}
+  </div>
+</div>
+{% endif %}
+{% if freshness.analysis_is_behind_collection %}
+{# The screening caveat, below the record rather than above it. The dateline
+   links here by fragment, and `tabindex="-1"` means following that link moves
+   focus as well as the viewport — a jump that moves only the scroll position
+   leaves a keyboard reader where they started. #}
 <div class="hero-apron">
   <div class="wrap">
-{% if freshness.analysis_is_behind_collection %}
     <p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
       collection; records after {{ freshness.analysis_last_produced }} await
       screening. <a href="methodology.html#freshness">What these dates mean</a>,
       and <a href="coverage.html">what each source returned</a>.</p>
-{% endif %}
-{# Section order is governed, not stylistic: purpose, then the record, then the
-   desks that produce it, then the reading of it, then what failed to collect.
-   The record leads. An analysis-first home page would make the weekly reading
-   the product and the record its supporting material, which is the reverse of
-   what this publication is. #}
-    <section class="purpose">
-      <p class="lede">Coverage is selective. {{ desks.collecting_count }} of
-      {{ desks.declared_count }} declared desks
-      {{ 'collects' if desks.collecting_count == 1 else 'collect' }} today; the rest
-      are labeled by what they actually are on <a href="desks.html">Desks</a>.</p>
-    </section>
   </div>
 </div>
+{% endif %}
 {% endblock %}
 {% block content %}
 
+{# Section order is governed, not stylistic: the record, then the desks that
+   produce it, then the reading of it, then the difference between the two,
+   then what failed to collect. The record leads. An analysis-first home page
+   would make the weekly reading the product and the record its supporting
+   material, which is the reverse of what this publication is.
+
+   C1 moves the LEAD record above this block, into the opening. It does not
+   reorder anything inside it: Desks still precedes Latest analysis, and
+   `test_home_orders_purpose_records_desks_analysis_coverage` still reads that
+   order. #}
 <div class="section-head">
   <p class="section-index" aria-hidden="true">01</p>
   <h2>Latest records</h2>
@@ -152,42 +94,7 @@
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
 <p class="meta">The most recent records from the desks that collect, with original-language titles
 preserved.</p>
-{# ── The density ladder ────────────────────────────────────────────────────
-   Six identical cards in two rows of three is the one card arrangement
-   DESIGN_SYSTEM §5 names as forbidden, and it said that six records were of
-   equal consequence — an opinion this page does not hold and cannot support.
-
-   Same six records, same order, same fields. The most recent takes the lead
-   plate; the next two support it; the last three are filed in a register of
-   ruled rows rather than boxes. The record a reader reaches is identical;
-   only the weight the page gives it changed. #}
-<div class="record-feed">
-{% for a in articles[:2] %}
-  <article class="card{{ ' card--lead' if loop.first }}" data-reveal style="--ri:{{ loop.index0 }}">
-    <p class="card-meta"><span class="evidence evidence--record">Source record</span>
-      <span>{{ a.institution or a.source_name }}</span>
-      <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
-    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
-    {% if a.title_english and a.title_original %}<p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>{% endif %}
-  </article>
-{% endfor %}
-</div>
-{% if articles[2:6] %}
-{# The evidence label is declared once for the register rather than repeated
-   on each row. It is the same claim the plates above make — these are stored
-   source records, not analysis — and the register is a single group, so
-   stamping it three more times would be repetition, not disclosure. #}
-<p class="register-head"><span class="evidence evidence--record">Source record</span></p>
-<ul class="record-register" data-reveal>
-{% for a in articles[2:6] %}
-  <li class="register-item">
-    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
-    <p class="register-meta">{{ a.institution or a.source_name }} ·
-      <time class="register-date" datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
-  </li>
-{% endfor %}
-</ul>
-{% endif %}
+{{ record_register(home_records.rest, home_records.shared) }}
 
 <div class="section-head">
   <p class="section-index" aria-hidden="true">02</p>
@@ -197,9 +104,21 @@ preserved.</p>
 <p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
 beside it is derived from configuration or from the corpus — never from intent. Only a collecting
 desk has a record count; the others say what stops them rather than showing a zero.</p>
-{# The claim the home page must keep making, in the markup the guard reads:
-   how many desks collect, out of how many are declared. Both derived. #}
-<p class="meta"><b>{{ desks.collecting_count }}</b> collecting desk{{ '' if desks.collecting_count == 1 else 's' }} of <b>{{ desks.declared_count }}</b> declared.</p>
+{# Collection topology, stated once and here.
+
+   The dateline above carries time and corpus state — three dates, what is
+   held, how much of it is analysed. It used to carry these two figures as
+   well, which put the shape of the collection apparatus in the loudest strip
+   on the page and then repeated the desk ratio in this paragraph. Each fact
+   now has one home: dates and totals in the dateline, topology in Desks.
+
+   Both figures are derived — `collecting_count` and `declared_count` from the
+   registry, `collecting_source_count` summed over the desks that actually
+   collect. A configured source on a desk that is not collecting reaches the
+   record through nothing and is not counted here; the per-desk cards below
+   still show each desk's own enabled sources, which is per-desk evidence
+   rather than a second aggregate claim. #}
+<p class="meta">{% if desks.collecting_count %}<b>{{ desks.collecting_count }}</b> collecting desk{{ '' if desks.collecting_count == 1 else 's' }} of <b>{{ desks.declared_count }}</b> declared, drawing on <b>{{ desks.collecting_source_count }}</b> enabled source{{ '' if desks.collecting_source_count == 1 else 's' }}.{% else %}<b>0</b> collecting desks of <b>{{ desks.declared_count }}</b> declared, and no enabled source behind them.{% endif %}</p>
 <div class="cards cards--desks" data-reveal>
 {% for d in desks %}
   <article class="card card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}">
@@ -223,13 +142,13 @@ desk has a record count; the others say what stops them rather than showing a ze
 </div>
 <article class="feature" data-reveal>
   <div class="feature-body">
-    <p class="feature-eyebrow">{{ lead_edition.series_name or predecessor_series }}{% if lead_edition.issue is not none %} · No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} · week ending {{ lead_edition.date }}{% endif %}</p>
+    <p class="feature-eyebrow">{{ lead_edition.series_name or predecessor_series }}{% if lead_edition.issue is not none %} &middot; No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} &middot; week ending {{ lead_edition.date }}{% endif %}</p>
     <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
     {% if lead_edition.dek %}<p class="dek">{{ lead_edition.dek }}</p>{% endif %}
     {# `articles` is the sidecar's n_articles = the week's relevance-passing
        collected articles (generate_pla_watch.compute_stats -> total_articles).
        It is NOT the count of items the edition cites — that is the source_trail. #}
-    <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} · {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} · {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+    <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} &middot; {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} &middot; {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
     {# The lead edition states its own publisher. The legacy explanation is
        true of editions published under the predecessor masthead and false of
        any edition published since the rename, so it is gated on the era the

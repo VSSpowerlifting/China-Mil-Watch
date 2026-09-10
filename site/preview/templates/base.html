@@ -45,7 +45,14 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
+{# The masthead is shared by every record-site page, so compressing it for the
+   home page is a modifier rather than an edit to the shell. The home page has
+   a claim band and a record directly beneath it and does not need the lockup
+   to introduce them a second time; an interior page opens on its own h1 and
+   keeps the taller masthead. If the owner wants one shell everywhere, that is
+   a second and wider change, and it is recorded for review rather than taken
+   here by implication. #}
+<header class="masthead{% if page == 'index.html' %} masthead--lead{% endif %}">
   <div class="wrap">
     <a class="brand" href="{{ '../' if nested else '' }}index.html">
       {# The compass, at 56 CSS px on desktop and 48 compact. Both are above
@@ -142,10 +149,21 @@
          They sit here rather than on the home page alone because the state of
          collection is a property of the publication, not of one surface, and
          a reader who lands on a record page deserves the same footing. #}
-      {% if corpus_total %}<div><dt>Records held</dt>
+      {# The corpus total carries its desk attribution on the home page, where
+         it stands beside a desk count. "N records across four desks" is the
+         central dishonesty available to this page while one desk collects, and
+         the label is what forecloses it. It was the hero ledger's wording and
+         it moves here with the figure rather than being dropped with the
+         rail. #}
+      {% if corpus_total %}<div><dt>Records held{% if page == 'index.html' and desks and desks.collecting_count == 1 %}, {{ desks.collecting[0].name }}{% endif %}</dt>
         <dd>{{ '{:,}'.format(corpus_total) }}</dd></div>{% endif %}
       {% if totals and totals.analyzed is not none %}<div><dt>Of those, analyzed</dt>
         <dd>{{ '{:,}'.format(totals.analyzed) }}</dd></div>{% endif %}
+      {# The dateline carries TIME and CORPUS STATE, and stops there. The
+         collecting-desk ratio and the enabled-source total are collection
+         topology, and they are stated once in the Desks introduction on the
+         home page — putting them here as well made this strip the loudest
+         claim on the page and printed the desk ratio twice. #}
     </dl>
     {# "Collection is current" was a claim the dates cannot support. All they
        show is that collection ran more recently than analysis — which is also

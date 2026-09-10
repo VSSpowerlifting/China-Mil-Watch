@@ -233,6 +233,19 @@ class DeskDirectory:
         return len(self.collecting)
 
     @property
+    def collecting_source_count(self) -> int:
+        """
+        Enabled sources belonging to the desks that actually collect.
+
+        Not "sources configured": a configured source on a desk that is not
+        collecting reaches the record through nothing, and counting it would
+        overstate the reach of the corpus by exactly the sources that are not
+        working. Derived here rather than summed in a template, so the figure
+        has one definition instead of one per surface that quotes it.
+        """
+        return sum(d.enabled_source_count for d in self.collecting)
+
+    @property
     def declared_count(self) -> int:
         return len(self.desks)
 
