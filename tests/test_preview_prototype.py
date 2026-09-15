@@ -1309,7 +1309,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         included, so it is longer than it was rather than shorter.
         """
         html = self.page("index.html")
-        markers = ('class="claim-band"', 'class="lead-record"',
+        markers = ('class="opening"', 'class="lead-record"',
                    "Latest records", '<h2 id="desks">', "Latest analysis",
                    "What did not collect")
         for marker in markers:
@@ -1369,7 +1369,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         total it must not be multiplied by.
         """
         html = self.page("index.html")
-        claim = html.split('class="claim-band"', 1)[1].split("</section>", 1)[0]
+        claim = html.split('class="opening"', 1)[1].split("</section>", 1)[0]
         self.assertNotRegex(claim, r"\b\d[\d,]{3,}\b")
 
         from core.viewmodel import PublicView

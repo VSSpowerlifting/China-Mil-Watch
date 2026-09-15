@@ -1066,6 +1066,92 @@ def home_atmosphere(repo_root: Path):
     }
 
 
+#: The Ocean Signal Veil's manifest placement, and where its two derivatives
+#: are published. Routes are fixed because the STYLESHEET references them: the
+#: stylesheet cannot carry an inline background —
+#: `tests/test_palette_and_accessibility.py` forbids `style="...background..."`
+#: on any built page, and it is right to. An inline paint is a colour nobody
+#: measured and nobody can retune.
+VEIL_PLACEMENT = "homepage-veil"
+VEIL_ROUTES = {
+    "webp": "atmosphere/veil-ocean.webp",
+    "jpg": "atmosphere/veil-ocean.jpg",
+}
+
+#: Where the credit's link points, and what the link is called. The source is
+#: public domain, so nothing compels attribution; the publication credits a
+#: photograph it shows anyway.
+VEIL_REPOSITORY_LABEL = "COMMONS"
+
+
+def home_veil(repo_root: Path):
+    """
+    The homepage Ocean Signal Veil, with the provenance that makes it usable.
+
+    Rights basis: a U.S. Navy photograph by MC3 Nathan Burke, prepared in the
+    course of official duties and therefore not subject to copyright in the
+    United States (17 U.S.C. § 105, tagged {{PD-USGov-Military}} on its
+    Commons file page). Public domain carries no attribution condition, and
+    the credit is rendered visibly regardless — a publication that shows a
+    photograph says whose it is.
+
+    Nothing is generated and nothing is sourced afresh: this returns the
+    derivatives already in the repository, or nothing at all. A missing file
+    renders no veil rather than a broken frame, which is also why the template
+    gates both the layer and the credit on this being truthy — an attribution
+    for an image the page does not show would be a claim about a page that
+    does not exist.
+
+    This does NOT replace `home_atmosphere`. That entry, its asset, its
+    derivative and its published licence record stay exactly as they are; the
+    J-20 veil was withdrawn from the homepage on contrast grounds and "do not
+    render it" was never "delete it".
+    """
+    manifest_path = repo_root / "site" / "assets" / "editorial" / "manifest.json"
+    if not manifest_path.is_file():
+        return None
+    raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entries = raw if isinstance(raw, list) else (
+        raw.get("assets") or raw.get("images") or [])
+    if isinstance(entries, dict):
+        entries = list(entries.values())
+    entry = next((e for e in entries
+                  if e.get("placement") == VEIL_PLACEMENT), None)
+    if not entry:
+        return None
+
+    deriv_dir = repo_root / "site" / "assets" / "editorial" / "derivatives"
+    files = {}
+    for kind, route in VEIL_ROUTES.items():
+        path = deriv_dir / Path(route).name
+        if not path.is_file():
+            return None
+        files[kind] = path
+
+    return {
+        "id": entry.get("id"),
+        "files": files,
+        "routes": dict(VEIL_ROUTES),
+        "sha256": {k: hashlib.sha256(v.read_bytes()).hexdigest()
+                   for k, v in files.items()},
+        "bytes": {k: v.stat().st_size for k, v in files.items()},
+        "credit": entry.get("credit", ""),
+        "creator": entry.get("creator", ""),
+        "license": entry.get("license", ""),
+        "license_url": entry.get("license_url", ""),
+        "license_basis": entry.get("license_basis", ""),
+        "source_page": entry.get("source_page", ""),
+        "original_url": entry.get("original_url", ""),
+        "downloaded_at": entry.get("downloaded_at", ""),
+        # The mono micro-label that names the photograph beside it, from the
+        # manifest rather than written into the template.
+        "source_id": entry.get("source_id", ""),
+        "subject": entry.get("subject", ""),
+        "repository_label": VEIL_REPOSITORY_LABEL,
+        "note": entry.get("note", ""),
+    }
+
+
 def extraction_bars(results) -> list:
     """
     Per-source extraction completeness for the Coverage bar chart.
@@ -1942,6 +2028,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
     atmosphere = home_atmosphere(REPO_ROOT)
+    veil = home_veil(REPO_ROOT)
 
     # The desk roster, derived. `view` reads the same database the corpus above
     # came from, so a desk figure and a corpus figure cannot describe different
@@ -2043,6 +2130,7 @@ def build(out_dir: Path, title: str, db_path: Path,
              "anchor": "cite-edition-%s" % edition["slug"]}
             for edition in editions],
         "atmosphere": atmosphere,
+        "veil": veil,
         "live_base": LIVE_BASE,
         "snapshot": snapshot,
         # Sources actually enabled for collection, summed from the desk
@@ -2243,6 +2331,52 @@ def build(out_dir: Path, title: str, db_path: Path,
         }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         written.append("cover/*.png")
         written.append("covers.json")
+
+    # ── Homepage Ocean Signal Veil ───────────────────────────────────────
+    # Published under `atmosphere/` beside the withdrawn J-20 derivative,
+    # because that is what the directory is for. Both derivatives are written:
+    # the stylesheet offers them through `image-set()`, so the browser takes
+    # the WebP where it can and the JPEG where it cannot, and exactly one is
+    # fetched. Neither is fetched below 901px — the `background-image` property
+    # is not declared at all under that width, which is stronger than
+    # `display: none` on a declared image.
+    if veil:
+        (out_dir / "atmosphere").mkdir(parents=True, exist_ok=True)
+        for kind, route in veil["routes"].items():
+            (out_dir / route).write_bytes(veil["files"][kind].read_bytes())
+            written.append(route)
+        # The licence record travels with the asset, as `atmosphere.json` does
+        # for the J-20. Public domain needs no permission trail, but a reader
+        # who wants to know where a photograph on a research publication came
+        # from should not have to read a stylesheet to find out.
+        (out_dir / "veil.json").write_text(json.dumps({
+            "_comment": ("The homepage Ocean Signal Veil. A duotone derivative "
+                         "of a public-domain U.S. Navy photograph, shown as a "
+                         "masked layer rather than as an image card. It "
+                         "illustrates no record and is not evidence of "
+                         "anything; the page says so beside it."),
+            "routes": {k: "/" + v for k, v in veil["routes"].items()},
+            "editorial_id": veil["id"],
+            "sha256": veil["sha256"],
+            "bytes": veil["bytes"],
+            "credit": veil["credit"],
+            "creator": veil["creator"],
+            "license": veil["license"],
+            "license_url": veil["license_url"],
+            "license_basis": veil["license_basis"],
+            "source_page": veil["source_page"],
+            "original_url": veil["original_url"],
+            "acquired_at": veil["downloaded_at"],
+            "derivative": ("cropped, resampled and duotoned against the paper "
+                           "ground by scripts/make_veil.py, whose effective "
+                           "crop is recorded in "
+                           "site/assets/editorial/derivatives/veil-ocean.json. "
+                           "The source is public domain, so the derivative "
+                           "carries no onward licence condition."),
+            "origin": "site/assets/editorial/derivatives/veil-ocean.{webp,jpg}",
+            "note": veil["note"],
+        }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        written.append("veil.json")
 
     # ── Homepage atmosphere ──────────────────────────────────────────────
     # Copied in with a recorded digest and a provenance manifest of its own.

@@ -435,8 +435,8 @@ class TestTheClaimIsStatedOnceAndThenTheRecord(HomeCase):
     CLAIM = ("A record of what defense institutions publish about themselves,")
 
     def test_the_claim_band_carries_the_statement_and_two_ways_in(self):
-        self.assertIn('class="claim-band"', self.home)
-        band = self.home.split('class="claim-band"', 1)[1].split("</section>", 1)[0]
+        self.assertIn('class="opening"', self.home)
+        band = self.home.split('class="opening"', 1)[1].split("</section>", 1)[0]
         self.assertIn(self.CLAIM, strip_tags(band))
         self.assertIn("Explore the record", band)
         self.assertIn("Methodology", band)
@@ -455,10 +455,10 @@ class TestTheClaimIsStatedOnceAndThenTheRecord(HomeCase):
         self.assertEqual(strip_tags(self.home).count("Coverage is selective"), 1)
 
     def test_the_lead_record_follows_the_claim_band_directly(self):
-        for marker in ('class="claim-band"', 'class="lead-record"'):
+        for marker in ('class="opening"', 'class="lead-record"'):
             self.assertIn(marker, self.home)
         order = [self.home.index(marker) for marker in (
-            'class="claim-band"', 'class="lead-record"')]
+            'class="opening"', 'class="lead-record"')]
         self.assertEqual(order, sorted(order))
         between = self.home[order[0]:order[1]]
         self.assertNotIn("<h2", between.split("</section>", 1)[-1],
@@ -473,7 +473,7 @@ class TestTheClaimIsStatedOnceAndThenTheRecord(HomeCase):
         C1 moves the LEAD record into the opening and changes nothing else
         about the sequence. Desks still precedes Latest analysis.
         """
-        markers = ('class="claim-band"', 'class="lead-record"',
+        markers = ('class="opening"', 'class="lead-record"',
                    "Latest records", '<h2 id="desks">', "Latest analysis",
                    "Record and analysis are not the same thing",
                    "What did not collect")
@@ -897,11 +897,11 @@ class TestTheLanguageMetadataIsTheRepositorysOwn(PairedRecordCase):
     def test_the_register_row_original_is_not_set_in_the_metadata_font(self):
         rows = homogeneous_rows()
         home, _selected, _ = build_fixture(self.tmp, rows, name="not-mono")
-        self.assertIn('class="record-register"', home)
-        register = home.split('class="record-register"', 1)[1]
+        self.assertIn('class="register"', home)
+        register = home.split('class="register"', 1)[1]
         register = register.split("</ul>", 1)[0]
         self.assertIn('class="original"', register)
-        self.assertNotRegex(register, r'class="register-meta"[^>]*>\s*第')
+        self.assertNotRegex(register, r'class="register-foot"[^>]*>\s*第')
 
 
 # ── The provenance ──────────────────────────────────────────────────────────
@@ -917,8 +917,8 @@ class TestProvenanceSurvivesAHeterogeneousRegister(PairedRecordCase):
         return strip_tags(match.group(1)) if match else None
 
     def register_rows(self, home: str) -> list:
-        assert 'class="record-register"' in home, "no register was rendered"
-        register = home.split('class="record-register"', 1)[1]
+        assert 'class="register"' in home, "no register was rendered"
+        register = home.split('class="register"', 1)[1]
         register = register.split("</ul>", 1)[0]
         return re.findall(r"<li[^>]*>(.*?)</li>", register, re.S)
 
@@ -1376,7 +1376,7 @@ class TestTheCompactDisclosureBehaves(BrowserCase):
         (`DESIGN_SYSTEM.md` §7). Everything this change touches is held to the
         stricter 44px figure the prototypes met, in both dimensions.
         """
-        selectors = (".nav-mobile > summary", ".claim-band .btn",
+        selectors = (".nav-mobile > summary", ".opening .btn",
                      ".freshness-bar--lead a")
         for width in (375, 768, 1280):
             context, page = self.page_at(width, 900)
@@ -1861,7 +1861,7 @@ class TestTheEvidenceLabelAgreesWithTheRowCount(PairedRecordCase):
             re.search(r'<p class="register-note">', home),
             "a mixed register must not carry a group summary")
         per_row = re.findall(
-            r'<p class="register-meta">\s*'
+            r'<p class="register-foot">\s*'
             r'<span class="evidence evidence--record">([^<]*)</span>', home)
         self.assertTrue(per_row, "no per-row provenance labels were rendered")
         for index, text in enumerate(per_row):
@@ -1929,10 +1929,10 @@ class TestTheOneRecordRegisterReadsCorrectly(BrowserCase):
                     overflowPx: document.documentElement.scrollWidth -
                                 document.documentElement.clientWidth,
                     emptyProvenance: [...document.querySelectorAll(
-                      '.register-item .register-meta')].filter(
+                      '.register-item .register-foot')].filter(
                         p => !p.textContent.trim()).length,
                     perRowProvenance: document.querySelectorAll(
-                      '.register-item .register-meta').length,
+                      '.register-item .register-foot').length,
                   };
                 }""")
                 with self.subTest(width=width):
@@ -2098,7 +2098,7 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
         section = section.split('class="section-head', 1)[0]
         self.assertIn(edition["title"], section)
         self.assertIn("Read this edition", section)
-        self.assertNotIn("feature-figure", section)
+        self.assertNotIn("<figure", section)
         self.assertNotIn("<img", section)
         self.assertNotIn("figure-credit", section)
 
@@ -2118,7 +2118,7 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
         html = self.build_with_editions([])
         self.assertNotIn('<h2>Latest analysis</h2>', html)
         for phrase in ("Read this edition", "figure-credit",
-                       "feature-figure", "legacy-note",
+                       "<figure", "legacy-note",
                        "Retrospective edition"):
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, html)

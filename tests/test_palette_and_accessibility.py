@@ -192,6 +192,21 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
             contrast(self.colour("crimson-mark"), self.colour("band")),
             AA_LARGE)
 
+    def test_rust_is_its_own_tone_and_not_the_attention_tone(self):
+        """
+        --signal means a model produced what it marks. --warning means a desk
+        is blocked. Collapsing them into one token — which an alias would do —
+        makes rust say two things at once, and the rust rule exists precisely
+        to stop that. It still has to clear AA on every ground it is used on.
+        """
+        self.assertNotEqual(self.colour("signal"), self.colour("warning"),
+                            "rust and the attention tone collapsed into one")
+        for ground in LIGHT_GROUNDS:
+            with self.subTest(ground=ground):
+                self.assertGreaterEqual(
+                    contrast(self.colour("signal"), self.colour(ground)),
+                    AA_BODY)
+
     def test_the_palette_header_states_what_was_measured(self):
         """
         A palette whose header stops describing it is one somebody retunes by
@@ -210,7 +225,7 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
         """
         aliases = ("paper", "deep", "graphite", "ocean", "text-muted",
                    "text-muted-tinted", "mist", "surface-2", "seaglass",
-                   "teal", "teal-text", "turquoise", "signal", "signal-rule",
+                   "teal", "teal-text", "turquoise",
                    "parchment-field", "line-soft", "abyss", "parchment",
                    "dark-muted")
         for name in aliases:
@@ -357,9 +372,18 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                         # opens on and the provenance line above it mark it as
                         # the page's lead, and the rule restores an underline
                         # on hover and on keyboard focus.
+                        # `.nav-rail-inner a`, `.nav-rail .nav-mobile a` and
+                        # `.btn` joined on 2026-09-15 with the CMW revival.
+                        # None is a prose link: the rail links are the
+                        # primary navigation and carry an accent underline
+                        # for the current page plus a rule on hover, and a
+                        # `.btn` is a bordered control whose border is its
+                        # affordance. All three keep a visible focus ring.
                         (".brand", "h3 a", "h2.plain a", ".lead-title",
-                         ".record-headline a",
-                         ".editions", "nav.primary", ".skip")),
+                         ".record-headline a", ".register-item h3 a",
+                         ".desks .card--desk h3 a", ".band .feature h3 a",
+                         ".nav-rail-inner a", ".nav-mobile a",
+                         ".btn", ".editions", "nav.primary", ".skip")),
                     "%s removes the underline from prose links" % flat)
 
 
