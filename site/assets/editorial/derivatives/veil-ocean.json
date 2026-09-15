@@ -1,0 +1,56 @@
+{
+  "source": "site/assets/editorial/reagan-jmsdf-2015.jpg",
+  "source_sha256": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+  "source_page": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+  "source_px": [
+    2500,
+    1663
+  ],
+  "subject": [
+    0.65,
+    0.57
+  ],
+  "width_frac": 0.58,
+  "aspect": 2.05,
+  "anchor": [
+    0.8,
+    0.75
+  ],
+  "effective_crop_frac": [
+    0.186,
+    0.25101,
+    0.766,
+    0.67633
+  ],
+  "effective_crop_px": [
+    465,
+    417,
+    1915,
+    1125
+  ],
+  "crop_px_size": [
+    1450,
+    708
+  ],
+  "clamped_edges": [],
+  "resample_scale": 1.0345,
+  "output_px": [
+    1500,
+    732
+  ],
+  "narrower_than_veil_box": true,
+  "paper_blend": 0.04,
+  "contrast": 1.16,
+  "clarity": 0.75,
+  "brightness": 1.0,
+  "knee": 0.54,
+  "blur": 0.4,
+  "bytes": {
+    "webp": 50480,
+    "jpg": 114403
+  },
+  "sha256": {
+    "webp": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+    "jpg": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3"
+  }
+}
