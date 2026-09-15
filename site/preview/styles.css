@@ -1053,7 +1053,12 @@ footer.site a { color: var(--ocean); }
   margin: 0;
   font-family: var(--mono);
   font-variant-numeric: tabular-nums lining-nums;
-  color: var(--teal-text);
+  /* Ink, matching the ledger this strip is the interior-page counterpart of.
+     It was `--teal-text`, which under the p1 palette resolves to --positive —
+     the tone that means "a desk that collects". A date is not a status, and a
+     corpus total is not good news; both are facts, and they take the same
+     colour the ledger's own values take. */
+  color: var(--ink);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -2662,14 +2667,6 @@ main.leads-with-hero { padding-top: 0; }
    Result: 6.68:1 against `--surface`, at every width, over any pixel the veil
    happens to put behind the panel. No negative margin is used and no hit area
    is faked — the link's 44px box is its own. */
-.ledger-note,
-.ledger-foot {
-  background: var(--surface);
-  width: max-content;
-  max-width: 100%;
-  padding: .1rem .45rem;
-  border-radius: var(--radius);
-}
 .ledger-foot a,
 .ledger-note a {
   display: inline-flex;
@@ -3084,6 +3081,26 @@ html.js-reveal.no-anim [data-reveal] {
   .opening-inner > .ledger {
     background-color: color-mix(in srgb, var(--surface) 90%, transparent);
     backdrop-filter: none;
+  }
+  /* The ledger's links get an opaque strip — but only here. The 90% fill
+     exists only inside this query, so below 901px the panel is already a flat
+     `--surface` and the ring already has one ground; adding the strip there
+     would cost 3px of first screen on a phone and buy nothing.
+
+     The strip, not just the link: the checker reads the ring's ground from a
+     band 1-3px OUTSIDE the link's rect as well as inside it. And at rest, not
+     on focus: the ring is derived by differencing a focused frame against an
+     unfocused one and the ground is read from pixels that did NOT change, so
+     a background arriving with the ring is part of the change and pushes the
+     sampling outward. Measured: `#faf8f3` holds 75% of the boundary at
+     6.68:1, where before no colour held 25% and no verdict was possible. */
+  .opening-inner > .ledger .ledger-note,
+  .opening-inner > .ledger .ledger-foot {
+    background: var(--surface);
+    width: max-content;
+    max-width: 100%;
+    padding: .1rem .45rem;
+    border-radius: var(--radius);
   }
 }
 

@@ -253,6 +253,14 @@ def _required_editorial_derivatives(entry: dict) -> set:
     """Derivative filenames this manifest entry's routes+treatment require
     (§0 naming contract — kept in sync with scripts/pw_env.py, duplicated
     here so this validator stays stdlib-only)."""
+    # An entry may name its own builder. The Ocean Signal Veil does: its
+    # derivative has an explicit crop contract, a duotone keyed to the p1
+    # tokens and a pinned digest, and it is published by the record-site
+    # renderer under `atmosphere/` rather than mirrored into
+    # `assets/editorial/` by the legacy one. None of that is this generic
+    # duotone naming contract's business.
+    if entry.get("derivative_builder"):
+        return set()
     match = entry.get("match") or {}
     routes = match.get("routes") or []
     treatment = entry.get("treatment") or "veil"
@@ -335,7 +343,13 @@ def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -
             if not (out_deriv / name).is_file():
                 errors.append(f"editorial: required derivative missing in output: "
                               f"assets/editorial/derivatives/{name} (entry {eid})")
-        if routes and entry.get("file"):
+        # The source image is mirrored into `output/assets/editorial/` for
+        # entries the LEGACY renderer paints, which is what builds `output/`.
+        # An entry with its own builder is consumed by the record-site
+        # renderer and published elsewhere, so requiring a copy here would
+        # fail on an image that is present, correct and simply not part of
+        # this pipeline.
+        if routes and entry.get("file") and not entry.get("derivative_builder"):
             if not (out_editorial / entry["file"]).is_file():
                 errors.append(f"editorial: source image missing in output: "
                               f"assets/editorial/{entry['file']} (entry {eid})")
