@@ -384,12 +384,22 @@ class TestTheCurrentMetadataIdentity(IdentityBuildCase):
                     '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">'
                     % up, head)
 
-    def test_every_page_declares_a_theme_colour_matching_the_masthead(self):
+    def test_every_page_declares_a_theme_colour_matching_the_band(self):
+        """
+        Derived from `--band` rather than pinned to a literal, so a palette
+        change cannot leave the browser chrome on the old colour — which is
+        exactly what a hard-coded value did until 2026-09-15.
+        """
+        css = (REPO_ROOT / "site" / "preview"
+               / "styles.css").read_text(encoding="utf-8")
+        root = css.split(":root {", 1)[1].split("\n}", 1)[0]
+        band = re.search(r"--band:\s*(#[0-9A-Fa-f]{6})\s*;", root)
+        self.assertIsNotNone(band, "--band is not a literal colour")
         for name, html in self.sample().items():
             with self.subTest(page=name):
-                self.assertRegex(
-                    self.head(html),
-                    r'<meta name="theme-color" content="#0A1A22">')
+                self.assertIn(
+                    '<meta name="theme-color" content="%s">' % band.group(1),
+                    self.head(html))
 
     def test_every_page_carries_open_graph_identity(self):
         for name, html in self.sample().items():

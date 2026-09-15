@@ -1,15 +1,25 @@
 """
-The oceanic palette, measured — and the accessibility rules it must not break.
+The p1 institutional palette, measured — and the accessibility rules it must
+not break.
 
-Contrast here is computed, never estimated. Three of the seed colours cannot
-carry body text against the page ground, and the point of computing rather than
-eyeballing is that they are demoted on purpose rather than shipped and
-apologised for later.
+Contrast here is computed, never estimated. The palette replaced the oceanic
+seed set on 2026-09-15 with the old China Mil Watch style revival; it is
+derived from the canonical compass logo, and unlike the set it replaced every
+one of its text tones clears AA on every ground it is used on. There is
+nothing to demote, so this file asserts the whole matrix rather than
+documenting exceptions.
+
+The two focus rings are the part most easily broken by a well-meaning edit.
+One flat colour cannot clear both the paper ground and the dark band at 3:1,
+so there are two, and each FAILS on the other's ground — 2.29 and 1.71. The
+tests below assert both the passes and those two failures, because a change
+that made one ring work everywhere would mean someone had flattened the
+distinction the scoping depends on.
 
 The other half of the rule matters more than the ratios: colour never carries
 meaning alone. Every desk status and every collection outcome has a text label
-and a distinct glyph, so a monochrome print, a colour-blind reader and a screen
-reader all get the same distinctions the palette draws.
+and a distinct glyph, so a monochrome print, a colour-blind reader and a
+screen reader all get the same distinctions the palette draws.
 
 Nothing here renders production or touches the tracked database.
 """
@@ -63,6 +73,17 @@ def tokens() -> dict:
     return found
 
 
+#: The grounds a light-surface text tone may legitimately sit on.
+LIGHT_GROUNDS = ("bg", "surface", "surface-inset", "accent-tint")
+
+#: Every token that carries text on a light ground.
+LIGHT_TEXT = ("ink", "ink-2", "muted", "link", "visited", "accent",
+              "accent-ink", "positive", "warning")
+
+#: Every token that carries text on the dark band.
+BAND_TEXT = ("band-ink", "band-muted", "accent-tint", "focus-band")
+
+
 class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
 
     def setUp(self):
@@ -74,64 +95,129 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
                          "--%s is not a literal colour" % name)
         return value
 
-    def test_body_text_on_paper_meets_aa(self):
-        self.assertGreaterEqual(
-            contrast(self.colour("ink"), self.colour("paper")), AA_BODY)
+    def test_every_light_text_tone_clears_aa_on_every_ground_it_uses(self):
+        """
+        The whole matrix — 9 tones against 4 grounds, 36 cells. The palette
+        this replaced had three tones that failed here and were documented as
+        demoted; this one has none, and the test is written so that
+        reintroducing one is a failure rather than a comment.
+        """
+        for text in LIGHT_TEXT:
+            for ground in LIGHT_GROUNDS:
+                with self.subTest(text=text, ground=ground):
+                    self.assertGreaterEqual(
+                        contrast(self.colour(text), self.colour(ground)),
+                        AA_BODY,
+                        "--%s on --%s" % (text, ground))
 
-    def test_secondary_and_muted_text_meet_aa_on_every_ground_they_use(self):
-        pairs = (
-            ("deep", "paper"), ("deep", "mist"),
-            ("text-muted", "paper"), ("text-muted", "mist"),
-            ("text-muted-tinted", "mist"), ("text-muted-tinted", "seaglass"),
-        )
-        for text, ground in pairs:
-            with self.subTest(text=text, ground=ground):
-                self.assertGreaterEqual(
-                    contrast(self.colour(text), self.colour(ground)), AA_BODY)
-
-    def test_the_structural_accent_meets_aa_wherever_links_sit(self):
-        for ground in ("paper", "mist", "seaglass"):
-            with self.subTest(ground=ground):
-                self.assertGreaterEqual(
-                    contrast(self.colour("ocean"), self.colour(ground)),
-                    AA_BODY)
-
-    def test_the_machine_output_signal_meets_aa(self):
-        for ground in ("paper", "mist"):
-            with self.subTest(ground=ground):
-                self.assertGreaterEqual(
-                    contrast(self.colour("signal"), self.colour(ground)),
-                    AA_BODY)
-
-    def test_the_desk_status_tone_meets_aa(self):
-        self.assertGreaterEqual(
-            contrast(self.colour("teal-text"), self.colour("paper")), AA_BODY)
-
-    def test_the_dark_band_text_meets_aa_on_ink(self):
-        for text in ("seaglass", "turquoise"):
+    def test_every_band_text_tone_clears_aa_on_the_band(self):
+        for text in BAND_TEXT:
             with self.subTest(text=text):
                 self.assertGreaterEqual(
-                    contrast(self.colour(text), self.colour("ink")), AA_BODY)
+                    contrast(self.colour(text), self.colour("band")),
+                    AA_BODY, "--%s on --band" % text)
 
-    def test_the_demoted_colours_are_documented_as_demoted(self):
+    def test_the_structural_accent_is_the_link_family(self):
         """
-        Three seed colours fail body contrast on paper. They are kept for marks
-        and fills, and the header comment has to say so — a colour that fails
-        silently is one somebody uses for text next month.
+        --accent is the sole structural accent and --accent-ink is the tone it
+        takes at text weight and on hover, so the second must be at least as
+        dark as the first. A hover state that lightens is a hover state that
+        can fail where the resting state passed.
+        """
+        self.assertGreater(
+            contrast(self.colour("accent-ink"), self.colour("bg")),
+            contrast(self.colour("accent"), self.colour("bg")))
+
+    def test_the_paper_focus_ring_clears_three_to_one_on_every_light_ground(self):
+        for ground in LIGHT_GROUNDS:
+            with self.subTest(ground=ground):
+                self.assertGreaterEqual(
+                    contrast(self.colour("focus"), self.colour(ground)),
+                    AA_LARGE, "--focus on --%s" % ground)
+
+    def test_the_band_focus_ring_clears_three_to_one_on_the_band(self):
+        self.assertGreaterEqual(
+            contrast(self.colour("focus-band"), self.colour("band")),
+            AA_LARGE)
+
+    def test_neither_focus_ring_works_on_the_other_ground(self):
+        """
+        The reason there are two rings, asserted rather than asserted-about.
+
+        If either of these starts passing, one ring has been made to work
+        everywhere — which would be good news, but it would also mean the
+        scoping rules in the stylesheet (`--focus-band` confined to `.band`
+        and the skip chip) are now arbitrary rather than required, and they
+        should be revisited deliberately instead of silently kept.
+
+        1.71:1 is the specific measurement that forbids the band ring on this
+        masthead, which is a LIGHT surface in this design.
+        """
+        self.assertLess(
+            contrast(self.colour("focus"), self.colour("band")), AA_LARGE,
+            "the paper ring now works on the band")
+        self.assertLess(
+            contrast(self.colour("focus-band"), self.colour("surface")),
+            AA_LARGE, "the band ring now works on a light surface")
+
+    def test_the_band_ring_is_scoped_to_the_band_and_the_skip_chip(self):
+        """
+        Item 24 of the implementation map. Measured at 1.71:1 across 71 cells
+        when it was applied to the light masthead.
         """
         css = CSS.read_text(encoding="utf-8")
-        for name, ceiling in (("teal", AA_BODY), ("turquoise", AA_BODY),
-                              ("seaglass", AA_BODY)):
-            with self.subTest(colour=name):
-                self.assertLess(
-                    contrast(self.colour(name), self.colour("paper")), ceiling)
-        header = css.split(":root {", 1)[0]
-        self.assertIn("demoted", header)
-        self.assertIn("OCEANIC PALETTE, MEASURED", header)
+        for selector in re.findall(
+                r"([^{}\n]*)\{[^{}]*outline-color:\s*var\(--focus-band\)", css):
+            flat = " ".join(selector.split())
+            with self.subTest(selector=flat):
+                self.assertTrue(
+                    ".band" in flat or ".skip" in flat,
+                    "the band focus ring is applied outside .band / .skip: %s"
+                    % flat)
 
-    def test_the_large_only_accent_still_clears_the_large_text_bar(self):
+    def test_the_crimson_family_stays_off_the_light_accent_scheme(self):
+        """
+        Crimson is confined to dark chrome. --crimson is a text tone on light
+        and a fill on dark; the two lifted tones are the dark-surface text.
+        """
         self.assertGreaterEqual(
-            contrast(self.colour("teal"), self.colour("paper")), AA_LARGE)
+            contrast(self.colour("crimson"), self.colour("bg")), AA_BODY)
+        self.assertLess(
+            contrast(self.colour("crimson"), self.colour("band")), AA_LARGE,
+            "--crimson must not be dark-surface text")
+        self.assertGreaterEqual(
+            contrast(self.colour("crimson-text"), self.colour("band")),
+            AA_BODY)
+        self.assertGreaterEqual(
+            contrast(self.colour("crimson-mark"), self.colour("band")),
+            AA_LARGE)
+
+    def test_the_palette_header_states_what_was_measured(self):
+        """
+        A palette whose header stops describing it is one somebody retunes by
+        eye next month.
+        """
+        header = CSS.read_text(encoding="utf-8").split(":root {", 1)[0]
+        self.assertIn("P1 INSTITUTIONAL PALETTE, MEASURED", header)
+        self.assertIn("TWO FOCUS RINGS", header)
+        self.assertIn("ACCENT DISCIPLINE", header)
+
+    def test_the_legacy_aliases_all_resolve_to_a_p1_token(self):
+        """
+        The interior pages still use the old semantic names. They are aliases,
+        so there is still exactly one place a colour is decided — a literal
+        that reappeared among them would be a second palette.
+        """
+        aliases = ("paper", "deep", "graphite", "ocean", "text-muted",
+                   "text-muted-tinted", "mist", "surface-2", "seaglass",
+                   "teal", "teal-text", "turquoise", "signal", "signal-rule",
+                   "parchment-field", "line-soft", "abyss", "parchment",
+                   "dark-muted")
+        for name in aliases:
+            with self.subTest(alias=name):
+                self.assertRegex(
+                    self.t["--" + name], r"^var\(--[a-z0-9-]+\)$",
+                    "--%s is a literal, not an alias onto a p1 token" % name)
 
 
 class TestColourIsCentralised(unittest.TestCase):

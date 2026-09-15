@@ -14,7 +14,9 @@
    sub-pixel below 32 px and dissolve into a halo at favicon size. The PNG
    pair is the fallback for clients that will not take an SVG icon.
    `site/assets/identity/IDENTITY_ASSETS.md` records which file is canonical. #}
-<meta name="theme-color" content="#0A1A22">
+{# Follows --band in styles.css. `tests/test_identity_assets.py`
+   reads the token rather than a literal, so the two cannot drift. #}
+<meta name="theme-color" content="#12222C">
 <link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ '../' if nested else '' }}icon-16.png">

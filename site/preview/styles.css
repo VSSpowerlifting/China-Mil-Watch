@@ -1,42 +1,56 @@
 /*
  * Indo-Pacific Record — candidate stylesheet.
  *
- * OCEANIC PALETTE, MEASURED
- * -------------------------
+ * P1 INSTITUTIONAL PALETTE, MEASURED
+ * ----------------------------------
  * Every pairing below was computed (WCAG 2.1 relative luminance), not
- * estimated, against the page ground `--paper #F5F8F6`. Three of the seed
- * colours cannot carry body text and are demoted rather than waved through:
+ * estimated. The palette is derived from the canonical compass logo
+ * (`ipr-compass-logo.png`): warm-neutral paper, deep slate ink, and the
+ * logo's own deep blue #255E7A as the sole structural accent. It replaced the
+ * oceanic seed set on 2026-09-15 with the old China Mil Watch style revival.
  *
- *   teal      #138A83   3.94 on paper -> large text and non-text marks only;
- *                                        text tone #0F726C (5.39)
- *   turquoise #28B8A6   2.31 on paper -> decoration only in light contexts;
- *                                        6.41 on ink, so it is a TEXT tone
- *                                        on the dark band and nowhere else
- *   sea glass #CBEAE5   1.19 on paper -> fills, rules and marks; never text,
- *                                        and never a ground for muted text
- *                                        (muted measures 4.38 on it, so a
- *                                        darker tinted tone exists instead)
+ * Text on light grounds (floor 4.5; every cell measured, none waved through):
+ *                    bg      surface  inset   tint
+ *   ink   #17262F   13.72    14.61    12.43   12.93
+ *   ink-2 #3D4952    8.17     8.70     7.41    7.71
+ *   muted #5A646D    5.34     5.69     4.84    5.04
+ *   link  #1F5A72    6.72     7.16     6.09    6.34
+ *   visit #4A4470    7.90     8.41     7.16    7.45
+ *   accnt #255E7A    6.28     6.68     5.69    5.92
+ *   acc-i #18445A    9.23     9.83     8.36    8.70
+ *   posit #1C6450    6.22     6.62     5.64    5.86
+ *   warn  #87511A    5.77     6.14     5.23    5.44
  *
- * Measured text pairings actually used (all >= 4.5 unless marked):
- *   ink        #10252E  14.81 paper · 13.98 mist
- *   deep       #123E4A  10.83 paper · 10.22 mist
- *   ocean      #176B87   5.63 paper ·  5.31 mist ·  4.71 sea glass
- *   teal-text  #0F726C   5.39 paper ·  5.09 mist ·  4.51 sea glass
- *   muted      #586B70   5.23 paper ·  4.94 mist
- *   muted-tint #4A5D62   6.11 mist   ·  5.42 sea glass
- *   signal     #9C4B36   5.65 paper ·  5.34 mist ·  4.73 sea glass
- *   sea glass  #CBEAE5  12.40 on ink  (text on the dark band)
- *   turquoise  #28B8A6   6.41 on ink  (accent text on the dark band)
+ * Text on the dark band #12222C (floor 4.5):
+ *   band-ink   #EDEAE2  13.53      band-muted #9AA6AE   6.54
+ *   focus-band #8FC9DE   8.97      accent-tint #E3ECF0 13.57
+ *
+ * TWO FOCUS RINGS, AND WHY
+ * ------------------------
+ * One flat ring colour cannot clear both grounds at 3:1, and this is measured
+ * rather than assumed:
+ *
+ *   --focus      #255E7A   6.28 on paper   ·   2.29 on the band   FAILS
+ *   --focus-band #8FC9DE   8.97 on the band ·  1.71 on --surface  FAILS
+ *
+ * So `--focus` is the paper ring and `--focus-band` is scoped to `.band` and
+ * to the skip chip, and to nothing else. The masthead is a LIGHT surface in
+ * this design, so the paper ring is the correct one there — applying the band
+ * ring to it measures 1.71:1. The skip chip is the one control whose ring has
+ * no single ground (it paints across the page ground above and the masthead
+ * below), so its ring is drawn inside the chip, giving it one ground: its own.
  *
  * ACCENT DISCIPLINE
  * -----------------
- *   --ocean   the SOLE structural accent: links, section marks, current nav,
- *             focus rings, official-claim labels.
- *   --teal    the desk/status family. It says what a collection scope IS; it
- *             never says whether something is good.
- *   --signal  rust, RESERVED for machine-generated or unreviewed material.
- *             Nothing else may use it — not callout rules, not failure states,
- *             not decoration. If rust appears, a model produced what it marks.
+ *   --accent   the SOLE structural accent: links, section marks, current nav,
+ *              focus rings, official-claim labels.
+ *   --positive the desk/status family. It says what a collection scope IS; it
+ *              never says whether something is good.
+ *   --warning  rust, RESERVED for machine-generated or unreviewed material and
+ *              for blocked access. Nothing else may use it — not callout
+ *              rules, not decoration.
+ *   --crimson  confined to DARK chrome (The PLA Watch). It does not join the
+ *              light-surface accent scheme; see the crimson block below.
  *
  * Colour never carries meaning alone: every desk status and every run outcome
  * has a text label and a distinct glyph, so a monochrome print stays complete.
@@ -46,73 +60,105 @@
  */
 
 :root {
-  --paper:        #F5F8F6;   /* page ground */
-  --white:        #FFFFFF;
-  --ink:          #10252E;   /* 14.81 on paper — body text, dark bands */
-  --deep:         #123E4A;   /* 10.83 on paper — secondary text */
-  --graphite:     #123E4A;   /* legacy alias for --deep; one tone, one value */
-  --ocean:        #176B87;   /* 5.63 — sole structural accent */
-  --teal:         #138A83;   /* 3.94 — large text and marks ONLY */
-  --teal-text:    #0F726C;   /* 5.39 — the teal that may carry small text */
-  --turquoise:    #28B8A6;   /* 2.31 on paper: decoration. 6.41 on ink: text */
-  --seaglass:     #CBEAE5;   /* fills, rules, marks — never text */
-  --mist:         #E8F3F2;   /* tinted surface */
+  /* ── P1 institutional palette — the definitions everything else resolves to.
+     Thirteen surface/text tokens plus link, accent, band, state and the two
+     focus rings. These are the ONLY literal colours on a light surface. */
+  --bg:            #F3F1EA;   /* page ground */
+  --surface:       #FAF8F3;   /* raised paper: masthead, ledger, footer */
+  --surface-inset: #EAE6DB;   /* recessed/tinted surface */
+  --ink:           #17262F;   /* 13.72 on bg — body text */
+  --ink-2:         #3D4952;   /*  8.17 — secondary text */
+  --muted:         #5A646D;   /*  5.34 — metadata, micro-labels */
+  --rule:          #CFC9BC;   /* hairline */
+  --rule-soft:     #E4DFD3;   /* lighter hairline, row separators */
+  --rule-hard:     #17262F;   /* the 2px editorial rule — ink, not a tint */
+  --link:          #1F5A72;   /*  6.72 */
+  --visited:       #4A4470;   /*  7.90 */
+  --accent:        #255E7A;   /*  6.28 — the logo's own deep blue */
+  --accent-ink:    #18445A;   /*  9.23 — accent at text weight / hover */
+  --accent-tint:   #E3ECF0;   /* accent fill; also text on the band (13.57) */
+  --band:          #12222C;   /* the dark analysis band */
+  --band-ink:      #EDEAE2;   /* 13.53 on band */
+  --band-muted:    #9AA6AE;   /*  6.54 on band */
+  --positive:      #1C6450;   /*  6.22 — a desk that collects */
+  --warning:       #87511A;   /*  5.77 — blocked, or machine-generated */
+  --focus:         #255E7A;   /* the PAPER focus ring */
+  --focus-band:    #8FC9DE;   /* the BAND focus ring — never on a light ground */
 
-  --text-muted:   #586B70;   /* 5.23 on paper, 4.94 on mist */
-  /* Muted text on the sea-glass ground. #586B70 measures 4.38 there — it
-     passes on paper and fails on sea glass, so tinted grounds get their own
-     tone rather than a colour that is only usually legible. 5.42 measured. */
-  --text-muted-tinted: #4A5D62;
-  --signal:       #9C4B36;   /* 5.65 on paper — machine-generated ONLY */
-  --signal-rule:  #A5533D;   /* 5.03 — rules and large marks in the same family */
+  --white:         #FFFFFF;
 
-  --rule:         #B8CFCC;
-  /* Signal Veil ground. A warmer paper for the identity field, carried over
-     from the predecessor's Paper Ledger. Measured: ink 14.80, deep 10.82,
-     text-muted 5.23, ocean 5.62, crimson 6.45 — every text token still AA. */
-  --parchment-field: #FAF7F0;
-  --line-soft:    #E4E0D6;
-  --rule-strong:  #8FB3AE;
+  /* ── Legacy semantic names, mapped onto p1 ─────────────────────────────
+     The revival is a homepage change; the record, archive, coverage and
+     methodology pages are not being restructured here. They are recoloured
+     with it, because a palette declared on `:root` is a property of the
+     publication rather than of one page — that is exactly what sequencing
+     step 1 means by "renders the current layout in the new colours".
 
-  /* ── DARK EDITORIAL SURFACES (added 2026-08-27) ────────────────────────
-     The publication had one voice: a light document canvas, correct for
-     reading a 4,000-character source text and wrong as a front door. These
-     are the grounds for chrome and for editorial furniture — masthead, hero,
-     feature — and nothing long-form is ever set on them. Long source texts
-     and CJK material stay on paper.
-
-     Measured against each ground, same method as above:
-       parchment  #EDE9E0  13.07 ink · 14.64 abyss · 11.40 slate
-       dark-muted #A8B6B8   7.58 ink ·  8.49 abyss ·  6.61 slate
-       seaglass   #CBEAE5  12.40 ink · 13.89 abyss · 10.82 slate
-       turquoise  #28B8A6   6.41 ink ·  7.18 abyss ·  5.59 slate  (status)
-       crimson-up #E8737F   5.42 ink ·  6.07 abyss ·  4.73 slate  (text)
-       crimson-mk #E05A6D   4.41 ink ·  4.94 abyss ·  3.85 slate  (large only)
+     These are aliases, not a second palette: every one resolves to a p1
+     token above, so there is still ONE place a colour is decided. They exist
+     so several hundred existing declarations keep their meaning instead of
+     being rewritten in a change that is not about them.
      ------------------------------------------------------------------- */
-  --abyss:        #0A1A22;   /* masthead ground */
-  --slate:        #16303B;   /* raised cards on a dark ground */
-  --parchment:    #EDE9E0;   /* primary text on dark */
-  --dark-muted:   #A8B6B8;   /* secondary text on dark */
+  --paper:             var(--bg);
+  --deep:              var(--ink-2);
+  --graphite:          var(--ink-2);
+  --ocean:             var(--accent);
+  --text-muted:        var(--muted);
+  --text-muted-tinted: var(--muted);      /* 4.84 inset · 5.04 tint */
+  --mist:              var(--surface-inset);
+  --surface-2:         var(--surface-inset);
+  --seaglass:          var(--accent-tint);
+  --teal:              var(--positive);
+  --teal-text:         var(--positive);
+  --turquoise:         var(--focus-band);  /* status text on the band */
+  --signal:            var(--warning);     /* machine-generated ONLY */
+  --signal-rule:       var(--warning);
+  --parchment-field:   var(--surface);
+  --line-soft:         var(--rule-soft);
+  /* The one slot p1 does not name: a rule heavier than --rule but not the
+     2px ink --rule-hard. Same warm-neutral family, 2.62 on bg — the same
+     non-text weight the token it replaces carried. */
+  --rule-strong:       #9E9584;
 
-  /* ── CRIMSON (added 2026-08-27) ────────────────────────────────────────
+  /* ── DARK EDITORIAL SURFACES ───────────────────────────────────────────
+     Grounds for chrome and editorial furniture. Nothing long-form is ever
+     set on them: long source texts and CJK material stay on paper.
+
+     `--slate` is the one dark value p1 does not supply — a raised card on the
+     band. Re-measured against the p1 band rather than carried over on faith:
+       band-ink   #EDEAE2  11.49 on slate
+       band-muted #9AA6AE   5.55 on slate
+       crimson-text        4.73 on slate
+     ------------------------------------------------------------------- */
+  --abyss:        var(--band);
+  --slate:        #16303B;   /* raised cards on a dark ground */
+  --parchment:    var(--band-ink);
+  --dark-muted:   var(--band-muted);
+
+  /* ── CRIMSON ───────────────────────────────────────────────────────────
      The editorial accent, taken from The PLA Watch, whose masthead is the
      quality benchmark for this work.
 
      It does NOT join the light-surface accent scheme, and that is the whole
-     of its discipline. On paper, --ocean remains the sole structural accent
-     and --signal rust keeps its exclusive meaning: if rust appears, a model
-     produced what it marks. Crimson is confined to DARK chrome, where rust
-     never appears, so the two can never be read against each other and the
-     rust rule stays exactly as true as it was.
+     of its discipline. On paper, --accent remains the sole structural accent
+     and --warning rust keeps its exclusive meaning. Crimson is confined to
+     DARK chrome, where rust never appears, so the two can never be read
+     against each other and the rust rule stays exactly as true as it was.
 
-     --crimson itself measures 6.45 on paper and 2.30 on ink: it is a text
-     tone on light and a FILL or RULE on dark, never dark-surface text. The
-     two lifted tones exist because of that.
+     Re-measured against the p1 grounds:
+       --crimson      6.10 on bg · 6.50 on surface · 2.36 on band
+       --crimson-text 5.57 on band · 4.73 on slate
+       --crimson-mark 4.53 on band · 3.85 on slate (large only)
+     So --crimson is a text tone on light and a FILL or RULE on dark, never
+     dark-surface text. The two lifted tones exist because of that.
      ------------------------------------------------------------------- */
-  --crimson:      #B3132B;   /* 6.45 on paper — brand mark, fills, rules */
+  --crimson:      #B3132B;   /* 6.10 on bg — brand mark, fills, rules */
   --crimson-text: #E8737F;   /* the crimson that may carry text on dark */
   --crimson-mark: #E05A6D;   /* large display text and rules on dark */
-  --surface-2:    #E8F3F2;   /* mist */
+
+  /* The CMW shell: 1180px, with the 2rem -> 1.25rem -> 1rem gutter ramp. */
+  --shell: 1180px;
+  --radius: 2px;
 
   /* ── Six-level type ladder (revision brief §4) ───────────────────────
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta
