@@ -39,8 +39,8 @@
    that used to open the line is gone — the eyebrow says "Source record" in
    the same mono micro-label system, so the chip was the same words twice. #}
 <article class="lead-record" aria-labelledby="lead-record-title" data-reveal>
-  <p class="lead-meta">Source record ·
-    <span class="who">{{ record.institution or record.source_name }}</span> ·
+  <p class="lead-meta"><span class="evidence evidence--record">Source record</span> &middot;
+    <span class="who">{{ record.institution or record.source_name }}</span> &middot;
     <time datetime="{{ record.published_date }}">{{ record.published_date }}</time></p>
   <h2 class="record-headline" id="lead-record-title"><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
   {{- original_line(record) }}
@@ -59,7 +59,7 @@
     <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
     {{- original_line(a) }}
     {% if not shared %}
-    <p class="register-foot"><span class="evidence">Source record</span>
+    <p class="register-foot"><span class="evidence evidence--record">Source record</span>
       {{ a.institution or a.source_name }} &middot;
       <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
     {% endif %}
@@ -100,7 +100,7 @@
      the defect this replaced. The wrapper is the only nonbreaking construction
      in the sentence — the sentence itself still wraps freely — so it cannot
      push the page wider than the narrowest viewport. #}
-  <p class="register-note"><span class="evidence">Source record{{ '' if shared.count == 1 else 's' }}</span>
+  <p class="register-note"><span class="evidence evidence--record">Source record{{ '' if shared.count == 1 else 's' }}</span>
     {% if shared.count == 1 %}One record, published by
     {%- else %} {{ shared.count }} records, {{ 'both' if shared.count == 2 else 'all' }} published by
     {%- endif %} {{ shared.institution }} on <span class="date-clause"><time datetime="{{ shared.date }}">{{ shared.date }}</time>.</span>

@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% from "_records.html" import lead_record, record_register, records_aside %}
+{# The opening is full-bleed editorial furniture and paints its own ground, so
+   the page opts out of the reading column's top padding. Without this the
+   reading column's 36px sits between the nav rail and the opening as a band
+   of page background. Opt-in per page rather than keyed to the home page's
+   name, so the next page to grow a hero gets it by saying so. #}
+{% block main_class %} class="leads-with-hero"{% endblock %}
 {# The publication's only scripted motion, on the only page that has any
    reveal targets. Synchronous and in the head on purpose: it adds the class
    the reveal start state is written under, and adding that class after first
@@ -77,6 +83,14 @@
         {% if totals and totals.analyzed is not none %}<div class="ledger-row"><dt>Of those, analyzed</dt>
           <dd>{{ '{:,}'.format(totals.analyzed) }}</dd></div>{% endif %}
       </dl>
+      {# The caveat belongs where the two dates that disagree are stated. A
+         reader who notices that collection ran after analysis did is looking
+         at these rows when they notice it; the full explanation is a screen
+         below, under the lead record, and this is the link to it. #}
+      {% if freshness.analysis_is_behind_collection %}
+      <p class="ledger-note"><a href="#freshness-note">Analysis trails
+        collection &rarr;</a></p>
+      {% endif %}
       <p class="ledger-foot"><a href="coverage.html">Run
         {{ run_status.run_id }} in full &rarr;</a></p>
     </div>

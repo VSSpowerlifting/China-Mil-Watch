@@ -221,6 +221,7 @@
       ]
     },
     "treatment": "veil",
+    "derivative_builder": "scripts/make_veil.py",
     "source_id": "U.S. NAVY · WIKIMEDIA COMMONS · PUBLIC DOMAIN",
     "subject": "RONALD REAGAN CSG · JMSDF · PHILIPPINE SEA",
     "placement": "homepage-veil",

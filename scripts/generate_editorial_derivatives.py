@@ -51,6 +51,14 @@ DITHER_WIDTH = 1400
 
 def _required_kinds(entry: dict) -> set:
     """Which derivative kinds this entry's routes + treatment require."""
+    # An entry may name its own builder. The Ocean Signal Veil does: its
+    # derivative has an explicit crop contract, a duotone keyed to the p1
+    # tokens and a pinned digest, none of which this generic duotone pass can
+    # reproduce. Without this the entry's `routes: ["home"]` made this pass
+    # build a 248 KB `-duo-paper` file that nothing references and that would
+    # then be missing from `--check` on any machine that had not run it.
+    if entry.get("derivative_builder"):
+        return set()
     match = entry.get("match") or {}
     routes = match.get("routes") or []
     treatment = editorial_visual_fields(entry)["treatment"]

@@ -187,10 +187,24 @@ class HomeCase(unittest.TestCase):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
     def dateline(self) -> str:
-        self.assertIn("freshness-bar--lead", self.home,
-                      "the home page has no consolidated dateline")
-        after = self.home.split("freshness-bar--lead", 1)[1]
-        return after.split("</div>\n</div>", 1)[0]
+        """
+        The home page's dateline is the opening's LEDGER.
+
+        It moved there with the CMW revival on 2026-09-15 and nothing else
+        about it changed: same view model, same five rows, same labels, same
+        run link as its footer. It is the opening's right-hand column now
+        instead of a strip above the content, so `base.html` skips the strip
+        on index.html and `home.html` renders the same context in its place.
+        Every interior page still gets the strip.
+
+        The contract below is unchanged, and that is the point of naming this
+        helper rather than the markup: consolidation is a layout change, not
+        permission to drop a disclosure.
+        """
+        self.assertIn('class="ledger"', self.home,
+                      "the home page has no dateline ledger")
+        after = self.home.split('class="ledger"', 1)[1]
+        return after.split("</section>", 1)[0]
 
 
 class TestTheHomePageIdentityIsPreserved(HomeCase):
@@ -206,21 +220,50 @@ class TestTheHomePageIdentityIsPreserved(HomeCase):
         self.assertIsNotNone(img, "the compass mark is gone from the masthead")
         self.assertIn('width="56"', img.group(0))
         self.assertIn('height="56"', img.group(0))
+        # Below the canonical mark's 48px floor the <picture> serves the
+        # sanctioned small derivative rather than shrinking the artwork.
+        self.assertIn('<source media="(max-width: 380px)"', self.home)
+        self.assertIn('srcset="mark.svg"', self.home)
 
-    def test_the_compressed_masthead_is_a_home_page_modifier(self):
+    def test_the_masthead_is_now_one_shell_on_every_page(self):
         """
-        The masthead is shared by every record-site page. Compressing it for
-        the home page may not silently recompose the archive, the record pages
-        or the desks. The modifier is the boundary, and an interior page must
-        not carry it.
+        This asserted the opposite: that the compressed masthead was a home
+        page MODIFIER, so compressing the home page could not silently
+        recompose the archive, the record pages or the desks.
+
+        The revival removes the modifier because it removes the thing it was
+        guarding. The home page no longer has a compressed shell to keep to
+        itself — it has the same editorial nameplate every other page has, and
+        the reason the modifier existed (the home page's opening repeated the
+        lockup) went with the claim band. What the old test protected was
+        interior pages from an unreviewed home page change; the protection now
+        is that there is nothing to diverge, and that is what is asserted.
         """
-        self.assertRegex(self.home, r'<header class="masthead[^"]*\bmasthead--lead\b')
+        self.assertNotIn("masthead--lead", self.home,
+                         "the compressed modifier is back without a decision")
+        opening = re.search(r"<header class=\"masthead\">(.*?)</header>",
+                            self.home, re.S)
+        self.assertIsNotNone(opening, "the home masthead is not the shell")
         for page in ("archive.html", "desks.html", "coverage.html",
                      "methodology.html", "about.html", "sources.html",
                      "analysis.html"):
             with self.subTest(page=page):
                 other = (self.out / page).read_text(encoding="utf-8")
                 self.assertNotIn("masthead--lead", other)
+                theirs = re.search(r"<header class=\"masthead\">(.*?)</header>",
+                                   other, re.S)
+                self.assertIsNotNone(theirs,
+                                     "%s does not carry the shell" % page)
+                # Same structure everywhere. The wordmark element differs by
+                # design — h1 on the home page, p elsewhere — and the current
+                # nav item differs, so the comparison is on the furniture.
+                # Class TOKENS, not whole attributes: `masthead-name-row`
+                # and `nav-rail-inner` both share their element with `wrap`.
+                for part in ("masthead-name-row", "brand-mark", "brand-text",
+                             "brand-sub", "nav-rail", "nav-rail-inner",
+                             "<picture>"):
+                    self.assertIn(part, theirs.group(1),
+                                  "%s is missing %s" % (page, part))
 
     def test_the_masthead_is_not_made_sticky(self):
         """
@@ -484,40 +527,89 @@ class TestTheClaimIsStatedOnceAndThenTheRecord(HomeCase):
                          "the home page sections are out of order")
 
 
-class TestTheAircraftIsGoneFromTheHomePage(HomeCase):
+class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
     """
-    Contrast method v2 measured 11 failing text cells on the home page, every
-    one of them where live type crosses the photograph — `a.btn--quiet` fails
-    at all four viewports, worst 2.92:1. The image is removed from the render;
-    the asset, its derivative and its licence record are untouched.
+    The J-20 is still gone, and a different photograph is back.
+
+    Contrast method v2 measured 11 failing text cells where live type crossed
+    the J-20, `a.btn--quiet` worst at 2.92:1. That image was removed and its
+    asset, derivative and licence record left in place, which is still true.
+
+    The T3 Wake treatment then reinstated a photographic layer deliberately,
+    with a different subject and public-domain rights — and the same hazard.
+    The guard that said "no image may sit behind text" was a PROXY for the
+    property that actually matters, and the proxy can no longer be used, so
+    the property is asserted directly instead: every text run over the veil is
+    measured from the pixels its glyphs actually cover, in
+    `tests/test_homepage_veil_contract.py`.
+
+    That is not a relaxation. A whole-box contrast sample reported the first
+    r3 build as passing when `.claim-sub` was genuinely at 2.22:1, because it
+    averaged in the empty box past the last glyph. Glyph-mask sampling is what
+    caught it. The image being present is now allowed; the contrast failure it
+    can cause is measured more strictly than it was when the image was banned.
     """
 
-    def test_the_home_page_renders_no_veil_and_no_aircraft_credit(self):
+    def test_the_j20_is_still_gone_from_the_home_page(self):
         for marker in ('class="pl-veil"', "src-bracket", "src-inline",
-                       "data-editorial-id", "atmosphere/", "emperornie",
-                       "CC BY-SA", "Wikimedia Commons",
+                       "data-editorial-id", "emperornie", "CC BY-SA",
                        "Duotone adaptation", "chengdu-j20"):
             with self.subTest(marker=marker):
                 self.assertNotIn(marker, self.home)
 
-    def test_no_stylesheet_rule_paints_a_photograph_behind_text(self):
+    def test_the_only_photograph_painted_behind_text_is_the_veil(self):
         """
-        The stylesheet painted the aircraft, so removing the markup is not
-        enough — the rule that put an image behind live text has to go too.
-        Matched on the declaration, not the block: every `background-image` in
-        this stylesheet other than a gradient is a raster file.
+        The stylesheet may paint exactly one raster, at exactly one route, and
+        only inside the desktop query. Any second one is a photograph nobody
+        measured.
         """
         css = CSS.read_text(encoding="utf-8")
         painted = [d.strip() for d in
                    re.findall(r"background-image:\s*([^;}]+)", css)
                    if "url(" in d]
-        self.assertEqual(painted, [], "an image is still painted behind text")
+        self.assertTrue(painted, "the veil is not painted at all")
+        urls = set(re.findall(r'url\("([^"]+)"\)', " ".join(painted)))
+        self.assertEqual(
+            urls, {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
+            "an unmeasured raster is painted behind text")
 
-    def test_the_asset_and_its_licence_record_are_left_in_place(self):
+    def test_the_veil_is_declared_only_inside_the_desktop_query(self):
+        """
+        Not `display: none` on a declared image — the PROPERTY must not exist
+        below 901px, or a narrow viewport may fetch it anyway.
+        """
+        css = CSS.read_text(encoding="utf-8")
+        for match in re.finditer(r"background-image:\s*[^;}]*url\(", css):
+            before = css[:match.start()]
+            opened = before.count("@media (min-width: 901px)")
+            with self.subTest(at=match.start()):
+                self.assertGreater(
+                    opened, 0,
+                    "a raster background is declared before the 901px query")
+
+    def test_the_veil_credit_names_the_rights_it_rests_on(self):
+        self.assertIn('class="veil-credit"', self.home)
+        credit = self.home.split('class="veil-credit"', 1)[1]
+        credit = credit.split("</p>", 1)[0]
+        self.assertIn("PUBLIC DOMAIN", credit.upper())
+        self.assertIn("U.S. NAVY", credit.upper())
+        self.assertIn("commons.wikimedia.org", credit)
+
+    def test_the_veil_provenance_record_is_published(self):
+        published = self.out / "veil.json"
+        self.assertTrue(published.is_file(), "no veil licence record written")
+        record = published.read_text(encoding="utf-8")
+        for field in ("license", "license_basis", "source_page",
+                      "original_url", "creator", "sha256"):
+            with self.subTest(field=field):
+                self.assertIn(field, record)
+
+    def test_the_j20_asset_and_its_licence_record_are_left_in_place(self):
         """
         "Do not render it" is not "delete it". The manifest, the source image
         and the derivative stay exactly as they are, and the build still
-        publishes the provenance record.
+        publishes the provenance record — unchanged by the arrival of a second
+        editorial image.
         """
         manifest = (REPO_ROOT / "site" / "assets" / "editorial"
                     / "manifest.json")
@@ -1064,11 +1156,11 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
 
         self.assertEqual(len(gp.load_corpus(db)["recent"]), len(keep))
         self.assertIn('class="lead-record"', home)
-        self.assertNotRegex(home, r'<li class="register-item">\s*</li>')
+        self.assertNotRegex(home, r'<li class="register-item"[^>]*>\s*</li>')
         for record_id in keep:
             with self.subTest(record=record_id):
                 self.assertIn("record/%d.html" % record_id, home)
-        rows = re.findall(r'<li class="register-item">', home)
+        rows = re.findall(r'<li class="register-item"[^>]*>', home)
         self.assertEqual(len(rows), len(keep) - 1)
 
     def test_every_displayed_record_keeps_a_route_to_its_own_page(self):
@@ -1249,46 +1341,66 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
         finally:
             context.close()
 
-    def test_no_live_text_intersects_an_image_backed_region(self):
+    def test_the_only_element_painting_a_raster_behind_text_is_the_veil(self):
         """
-        The defect the aircraft caused, stated as a property: no element that
-        paints a raster background may overlap an element that carries text.
+        This asserted that NO element painting a raster background may overlap
+        one carrying text. That was the right guard while the home page had no
+        photograph and the last one had put eleven text cells under AA.
+
+        T3 reinstates a photographic layer on purpose, so the blanket ban is
+        gone and two narrower properties stand in its place. Here: the veil is
+        the ONLY element allowed to paint behind text, and it is inert —
+        `pointer-events: none`, `aria-hidden`, and behind every text layer, so
+        it can never take a click or reach the accessibility tree.
+
+        The contrast property the ban existed to protect is measured directly,
+        from the pixels each glyph actually covers, in
+        `tests/test_homepage_veil_contract.py`.
         """
         for width in self.VIEWPORTS:
             context, page = self.page_at(width, 900)
             try:
-                overlaps = page.evaluate("""() => {
+                bad = page.evaluate("""() => {
                   const painted = [...document.querySelectorAll('*')].filter(
-                    el => {
-                      const bg = getComputedStyle(el).backgroundImage;
-                      return bg && bg.includes('url(');
-                    });
-                  const texts = [...document.querySelectorAll(
-                    'p,h1,h2,h3,h4,a,span,dt,dd,time,li,summary')]
-                    .filter(el => el.textContent.trim().length > 1);
-                  const hit = [];
-                  for (const p of painted) {
-                    const a = p.getBoundingClientRect();
-                    if (!a.width || !a.height) continue;
-                    for (const t of texts) {
-                      if (p.contains(t) || t.contains(p)) continue;
-                      const b = t.getBoundingClientRect();
-                      if (!b.width || !b.height) continue;
-                      if (a.left < b.right && b.left < a.right &&
-                          a.top < b.bottom && b.top < a.bottom) {
-                        hit.push(t.textContent.trim().slice(0, 40));
-                      }
-                    }
-                  }
-                  return hit;
+                    el => (getComputedStyle(el).backgroundImage || '')
+                            .includes('url('));
+                  return painted
+                    .filter(el => !el.classList.contains('veil'))
+                    .map(el => el.tagName + '.' + el.className);
                 }""")
                 with self.subTest(width=width):
-                    self.assertEqual(overlaps, [])
+                    self.assertEqual(
+                        bad, [], "something other than the veil paints a "
+                                 "raster behind the page")
+            finally:
+                context.close()
+
+    def test_the_veil_is_inert_and_cannot_be_reached(self):
+        for width in (1280, 1920):
+            context, page = self.page_at(width, 900)
+            try:
+                state = page.evaluate("""() => {
+                  const v = document.querySelector('.veil');
+                  if (!v) return null;
+                  const cs = getComputedStyle(v);
+                  return {events: cs.pointerEvents,
+                          hidden: v.getAttribute('aria-hidden'),
+                          text: v.textContent.trim().length,
+                          z: cs.zIndex};
+                }""")
+                with self.subTest(width=width):
+                    self.assertIsNotNone(state, "no veil at %d" % width)
+                    self.assertEqual(state["events"], "none")
+                    self.assertEqual(state["hidden"], "true")
+                    self.assertEqual(state["text"], 0)
             finally:
                 context.close()
 
     def test_the_identity_mark_renders_at_its_documented_size(self):
-        for width, expected in ((375, 48), (1280, 56)):
+        # 44 at 375 is deliberate and is not the canonical artwork: the
+        # <picture> serves `mark.svg` below 381px. Size AND asset are asserted
+        # together in `TestTheDatelineIsActuallyCompressed.MARK`.
+        for width, expected in ((375, 44), (1280, 56)):
             context, page = self.page_at(width, 900)
             try:
                 box = page.evaluate(
@@ -1377,7 +1489,7 @@ class TestTheCompactDisclosureBehaves(BrowserCase):
         stricter 44px figure the prototypes met, in both dimensions.
         """
         selectors = (".nav-mobile > summary", ".opening .btn",
-                     ".freshness-bar--lead a")
+                     ".ledger-foot a")
         for width in (375, 768, 1280):
             context, page = self.page_at(width, 900)
             try:
@@ -1516,7 +1628,25 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
     #: Top of the home page's first main-content child, by viewport.
     CHROME_CEILING = {375: 300, 768: 250, 1280: 220, 1920: 220}
     #: Top of the lead English headline.
-    HEADLINE_CEILING = {375: 700, 1280: 560}
+    #:
+    #: Raised on 2026-09-15 with the CMW revival, and this is a real loosening
+    #: rather than a re-anchor, so it is stated plainly. C1 reached 700/560 by
+    #: compressing the masthead to a single lockup row and consolidating the
+    #: dateline into a thin strip. T3 restores the full editorial nameplate
+    #: (mark, serif wordmark, mono kicker), puts the navigation on its own
+    #: rail, and gives the dateline back its five-row ledger panel beside the
+    #: claim. Each of those is the accepted design; together they cost the
+    #: headline about 130px at 1280.
+    #:
+    #: The approved r3 prototype measures 778.9 at 375 and 672.0 at 1280, and
+    #: this build measures 787.1 and 691.8 — the extra is production's longer
+    #: institution string wrapping `.lead-meta` onto a second line, which is
+    #: content rather than layout. The ceilings below sit ~40px above the
+    #: measured values so the gate still catches drift; the contract that the
+    #: record reaches the FIRST SCREEN is unchanged and is asserted at its
+    #: original values in `TestTheRecordReachesTheFirstViewport` (< 800 at
+    #: 375, and a complete title inside 1280x900), both of which still pass.
+    HEADLINE_CEILING = {375: 830, 1280: 730}
 
     def chrome_top(self, page):
         return page.evaluate(
@@ -1553,27 +1683,50 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
             finally:
                 context.close()
 
-    def test_the_run_link_never_occupies_a_row_alone_on_a_wide_screen(self):
+    def test_the_run_link_closes_the_ledger_below_its_last_row(self):
         """
-        At desktop widths the run link shares the figure list's own last row.
-        A link alone under a mostly empty band is the composition defect this
-        replaced. At 375 the list becomes a two-column label/value grid and the
-        link takes its own row deliberately — beside a grid row it lands flush
-        against a value and reads as part of it.
+        This asserted that the run link SHARES the figure list's last row: in
+        the horizontal dateline strip a link alone under a mostly empty band
+        was the composition defect the strip replaced.
+
+        The dateline is a vertical panel now. Sharing a row with a figure is
+        no longer possible and would be wrong if it were — the panel reads
+        label, rows, footer, top to bottom, which is the grammar the
+        historical ledger had. The property that carries over is that the link
+        belongs to the ledger and closes it: inside the panel, below every
+        row, overlapping none of them, and still a real 44px control.
+
+        Overlap is asserted separately and at every viewport in
+        `test_no_dateline_box_overlaps_another`.
         """
         for width in (768, 1280, 1920):
             height = 1080 if width == 1920 else 900
             context, page = self.page_at(width, height)
             try:
-                shares = page.evaluate("""() => {
-                  const link = document.querySelector(
-                    '.freshness-bar .detail a').getBoundingClientRect();
-                  const cells = [...document.querySelectorAll(
-                    '.freshness-bar dl > div')].map(d => d.getBoundingClientRect());
-                  return cells.some(c => link.top < c.bottom && c.top < link.bottom);
+                shape = page.evaluate("""() => {
+                  const led = document.querySelector('.ledger');
+                  const link = document.querySelector('.ledger-foot a');
+                  if (!led || !link) return null;
+                  const l = led.getBoundingClientRect();
+                  const a = link.getBoundingClientRect();
+                  const rows = [...document.querySelectorAll('.ledger-row')]
+                    .map(r => r.getBoundingClientRect());
+                  return {
+                    inside: a.top >= l.top && a.bottom <= l.bottom + 1 &&
+                            a.left >= l.left - 1 && a.right <= l.right + 1,
+                    belowEveryRow: rows.every(r => a.top >= r.bottom - 1),
+                    rows: rows.length,
+                    height: +a.height.toFixed(1),
+                  };
                 }""")
                 with self.subTest(width=width):
-                    self.assertTrue(shares, "the run link is alone on its row")
+                    self.assertIsNotNone(shape, "no ledger run link")
+                    self.assertGreater(shape["rows"], 0)
+                    self.assertTrue(shape["inside"],
+                                    "the run link is outside the ledger")
+                    self.assertTrue(shape["belowEveryRow"],
+                                    "the run link is not below the figures")
+                    self.assertGreaterEqual(shape["height"], 44)
             finally:
                 context.close()
 
@@ -1588,11 +1741,11 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
             try:
                 overlaps = page.evaluate("""() => {
                   const link = document.querySelector(
-                    '.freshness-bar .detail a');
+                    '.ledger-foot a');
                   if (!link) return [];
                   const lr = link.getBoundingClientRect();
                   return [...document.querySelectorAll(
-                      '.freshness-bar dl dt, .freshness-bar dl dd')]
+                      '.ledger-row dt, .ledger-row dd')]
                     .filter(e => { const r = e.getBoundingClientRect();
                       return lr.left < r.right && r.left < lr.right &&
                              lr.top < r.bottom && r.top < lr.bottom; })
@@ -1608,7 +1761,7 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
             context, page = self.page_at(width, 900)
             try:
                 bad = page.evaluate("""() => {
-                  const bar = document.querySelector('.freshness-bar');
+                  const bar = document.querySelector('.ledger');
                   const cs = getComputedStyle(bar);
                   const out = [];
                   if (cs.overflow === 'hidden') out.push('bar overflow hidden');
@@ -1635,24 +1788,42 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
             try:
                 box = page.evaluate(
                     "() => { const r = document.querySelector("
-                    "'.freshness-bar .detail a').getBoundingClientRect();"
+                    "'.ledger-foot a').getBoundingClientRect();"
                     " return [+r.width.toFixed(1), +r.height.toFixed(1)]; }")
                 with self.subTest(width=width):
                     self.assertGreaterEqual(min(box), 44, "box is %s" % box)
             finally:
                 context.close()
 
+    #: The mark's rendered size AND the asset it is served from, per width.
+    #: `IDENTITY_ASSETS.md` sets a 48 CSS px floor for the CANONICAL artwork:
+    #: below it the double ring merges into a grey halo and the mark stops
+    #: reading as a compass. At <=380px the masthead needs 44px, which is
+    #: under that floor, so the <picture> serves `mark.svg` — the sanctioned
+    #: derivative that exists for exactly this case, with one ring, eight
+    #: filled points and no diagonal ticks.
+    #:
+    #: Asserting the size alone would pass a build that had simply shrunk the
+    #: canonical artwork below its floor, which is the defect the swap exists
+    #: to prevent, so the asset is asserted with it.
+    MARK = {320: (44, "mark.svg"), 375: (44, "mark.svg"),
+            380: (44, "mark.svg"), 381: (48, "masthead-mark.png"),
+            768: (56, "masthead-mark.png"), 1280: (56, "masthead-mark.png"),
+            1920: (56, "masthead-mark.png")}
+
     def test_the_identity_mark_keeps_its_documented_floors(self):
-        for width, expected in ((375, 48), (768, 56), (1280, 56), (1920, 56)):
+        for width, (size, asset) in sorted(self.MARK.items()):
             height = 1080 if width == 1920 else 900
             context, page = self.page_at(width, height)
             try:
-                box = page.evaluate(
-                    "() => { const r = document.querySelector('.brand-mark')"
-                    ".getBoundingClientRect();"
-                    " return [Math.round(r.width), Math.round(r.height)]; }")
+                got = page.evaluate(
+                    "() => { const m = document.querySelector('.brand-mark');"
+                    " const r = m.getBoundingClientRect();"
+                    " return {box: [Math.round(r.width), Math.round(r.height)],"
+                    "         src: (m.currentSrc || '').split('/').pop()}; }")
                 with self.subTest(width=width):
-                    self.assertEqual(box, [expected, expected])
+                    self.assertEqual(got["box"], [size, size])
+                    self.assertEqual(got["src"], asset)
             finally:
                 context.close()
 
@@ -1697,8 +1868,10 @@ class TestTheGroupSummaryReadsCorrectly(PairedRecordCase):
                      "source_name": "PLA Daily", "source_slug": "pla_daily",
                      "published_date": "2026-09-20"} for n in range(count)]
             return env.from_string(
-                '{% from "_records.html" import record_register %}'
+                '{% from "_records.html" import record_register,'
+                ' records_aside %}'
                 "{{ record_register(records, shared) }}"
+                '{{ records_aside("As published.", shared) }}'
             ).render(records=rows,
                      shared={"source_slug": "pla_daily", "count": count,
                              "institution": "CMC Political Work Department",
@@ -1781,8 +1954,9 @@ class TestTheEvidenceLabelAgreesWithTheRowCount(PairedRecordCase):
                  "source_name": "PLA Daily", "source_slug": "pla_daily",
                  "published_date": "2026-09-20"} for n in range(count)]
         return env.from_string(
-            '{% from "_records.html" import record_register %}'
+            '{% from "_records.html" import record_register, records_aside %}'
             "{{ record_register(records, shared) }}"
+            '{{ records_aside("As published.", shared) }}'
         ).render(records=rows,
                  shared={"source_slug": "pla_daily", "count": count,
                          "institution": "CMC Political Work Department",
@@ -1821,7 +1995,7 @@ class TestTheEvidenceLabelAgreesWithTheRowCount(PairedRecordCase):
         """
         for count in range(1, HOME_RECORDS):
             markup = self.register(count)
-            rows = len(re.findall(r'<li class="register-item">', markup))
+            rows = len(re.findall(r'<li class="register-item"[^>]*>', markup))
             with self.subTest(rows=count):
                 self.assertEqual(rows, count, "fixture rendered the wrong "
                                               "number of rows")
@@ -1910,7 +2084,7 @@ class TestTheOneRecordRegisterReadsCorrectly(BrowserCase):
         home = (self.out / "index.html").read_text(encoding="utf-8")
         self.assertIn('class="lead-record"', home)
         self.assertEqual(
-            len(re.findall(r'<li class="register-item">', home)), 1)
+            len(re.findall(r'<li class="register-item"[^>]*>', home)), 1)
 
     def test_the_label_is_singular_and_the_sentence_agrees_at_every_width(self):
         for width in (320, 375, 768, 1280):
@@ -2184,8 +2358,27 @@ class TestNoProductionLiteralIsEmbedded(unittest.TestCase):
                     self.assertNotIn(literal, markup,
                                      "%s embeds the current %s" % (name, label))
 
-    def test_the_stylesheet_references_no_editorial_asset(self):
+    def test_the_stylesheet_references_only_the_veil_asset(self):
+        """
+        The stylesheet referenced no editorial asset at all while the home
+        page had no photograph. It references exactly one now — the veil's two
+        encodings, at a route `generate_preview.VEIL_ROUTES` owns — and still
+        nothing else. A stylesheet cannot carry an inline background here
+        (`test_no_page_carries_an_inline_colour`), so the route has to be in
+        the file; what must not creep in is a second asset, or the withdrawn
+        J-20, or a creator name that belongs in the manifest.
+        """
         css = CSS.read_text(encoding="utf-8")
-        for marker in ("atmosphere/", "chengdu", "j20", ".jpg", "emperornie"):
+        for marker in ("chengdu", "j20", "emperornie", "CC BY-SA"):
             with self.subTest(marker=marker):
                 self.assertNotIn(marker, css)
+        assets = set(re.findall(r'url\("([^"]+\.(?:jpg|jpeg|png|webp|avif))"\)',
+                                css))
+        self.assertEqual(
+            assets,
+            {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
+            "the stylesheet references an asset that is not the veil")
+        from generate_preview import VEIL_ROUTES
+        self.assertEqual(assets, set(VEIL_ROUTES.values()),
+                         "the stylesheet and the builder disagree on the "
+                         "veil's route")

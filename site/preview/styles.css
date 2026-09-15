@@ -2549,6 +2549,11 @@ a:hover { color: var(--accent-ink); }
 }
 .nav-rail .nav-mobile a[aria-current="page"] { color: var(--ink); }
 
+/* A page whose first child is full-bleed furniture opts out of the reading
+   column's top padding, or the opening opens on a band of page background
+   between it and the nav rule. Measured: 36px at every width. */
+main.leads-with-hero { padding-top: 0; }
+
 /* ── The opening — CMW hero grammar ──────────────────────────────────────── */
 .opening { border-bottom: 2px solid var(--rule-hard); background: var(--bg); }
 .opening-inner {
@@ -2601,7 +2606,11 @@ a:hover { color: var(--accent-ink); }
   margin: 0; font-family: var(--mono); font-size: .8125rem;
   font-weight: 600; color: var(--ink); white-space: nowrap;
 }
-.ledger-foot { margin: .85rem 0 0; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; }
+.ledger-note {
+  margin: .5rem 0 0; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .08em; color: var(--ink-2);
+}
+.ledger-foot { margin: .35rem 0 0; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; }
 
 /* The ledger's run link, and the one focus ring on this page that could not
    be ruled on.
@@ -2623,13 +2632,17 @@ a:hover { color: var(--accent-ink); }
    The padding is declared at rest, not added on focus, so nothing shifts when
    the ring appears. It is padding on the link itself — the hit area is the
    link's own box, and no negative margin is used to fake one. */
-.ledger-foot a {
-  display: inline-block;
+.ledger-foot a,
+.ledger-note a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: .2rem .4rem;
   margin-left: -.4rem;
   border-radius: var(--radius);
 }
-.ledger-foot a:focus-visible {
+.ledger-foot a:focus-visible,
+.ledger-note a:focus-visible {
   background: var(--surface);
   outline: 2px solid var(--focus);
   outline-offset: -2px;
@@ -2692,7 +2705,7 @@ a:hover { color: var(--accent-ink); }
 .lead-record .original,
 .register-item .original {
   margin: .6rem 0 0; font-size: .9375rem; line-height: 1.7;
-  color: var(--ink-2); font-style: normal; letter-spacing: normal;
+  color: var(--ink-2); font-style: normal;
 }
 .lead-note {
   margin: .75rem 0 0; font-family: var(--sans); font-size: .8125rem;
@@ -2719,7 +2732,8 @@ a:hover { color: var(--accent-ink); }
 }
 .records-aside p:last-child { margin-bottom: 0; }
 .records-aside .evidence,
-.register-foot .evidence {
+.register-foot .evidence,
+.lead-meta .evidence {
   display: inline; background: none; border: 0; padding: 0;
   font-family: var(--mono); font-size: .75rem; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase; color: var(--accent); white-space: nowrap;
@@ -3057,9 +3071,14 @@ html.js-reveal.no-anim [data-reveal] {
   .ledger-label { padding-bottom: .35rem; }
   .ledger-row dt { line-height: 1.25; }
   .ledger-row dd { line-height: 1.25; }
-  .ledger-foot { margin-top: .5rem; }
+  /* The run link is a 44px control at every width, so at <=600 the space it
+     needs comes out of the panel around it rather than out of the control.
+     Measured at 375: this is what keeps the lead headline inside the first
+     screen (813.1 -> 786.2 against a 800px ceiling). */
+  .ledger-foot { margin-top: 0; }
+  .ledger { padding-bottom: .3rem; }
 
-  .lead-record { padding-block: .85rem 1.05rem; }
+  .lead-record { padding-block: .7rem 1.05rem; }
   .lead-meta { margin-bottom: .45rem; }
 }
 
@@ -3090,7 +3109,14 @@ html.js-reveal.no-anim [data-reveal] {
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
   body { background: #fff; color: #000; }
   .masthead, .nav-rail { border: 0; }
-  .nav-rail, .claim-cta, .skip, .veil, .veil-credit { display: none; }
+  /* The nav rail, the skip chip and the veil LAYER come off the page: two are
+     controls with nothing to do on paper, and the third is a background image.
+     Nothing that carries text is hidden — not the two opening actions, whose
+     labels still say where the record and the methodology are, and not the
+     veil's credit, which is the rights statement for a photograph this
+     publication used and does not stop having used because the page was
+     printed. `test_print_hides_nothing_informational` holds this line. */
+  .nav-rail, .skip, .veil { display: none; }
   .band { background: #fff; color: #000; }
   .band .section-head h2, .band .feature h3 a, .band .dek { color: #000; }
   .band .byline, .band .legacy-note, .band .figure-credit { color: #333; }
