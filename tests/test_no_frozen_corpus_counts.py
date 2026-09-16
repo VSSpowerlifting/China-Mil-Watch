@@ -26,6 +26,11 @@ positive:
   * `re.findall(r"<h[123]...")`          a regex character class
   * an authority tier score of 100
 
+A tenth joined them on 2026-09-16: `[^|]{0,120}?` in a regex, read as the
+grouped numeral "0,120" and reported as the live count of records from
+`global_times_mil`. Fixed the same way as the other nine — by narrowing what
+counts as a grouped numeral, not by exempting the file or moving the literal.
+
 Not one was a frozen corpus total, and the guard was failing the very workflow
 step it exists to protect. A guard that cries wolf gets deleted, and deleting
 this one would give back the defect it was written for.
@@ -158,6 +163,32 @@ CORPUS_IDENTIFIERS = frozenset({
 
 GROUPED = re.compile(r"\b\d{1,3}(?:,\d{3})+\b")
 
+#: A regex repetition bound — `{0,120}`, `{1,3}` — is written with exactly the
+#: punctuation of a comma-grouped numeral, and `GROUPED` cannot tell them
+#: apart: it reads `{0,120}` as "0,120" and reports the corpus total 120.
+#:
+#: This is the tenth member of the false-positive family this file was
+#: rewritten to kill on 2026-08-28, and it arrived the same way the other nine
+#: did — an unrelated population happening to collide. The module's own
+#: docstring asserted "there are no comma-grouped status codes, byte offsets,
+#: caps or day counts", which was true and incomplete: there ARE comma-grouped
+#: repetition bounds, in every non-trivial regex in the suite.
+#:
+#: Two independent reasons a `{m,n}` match is not a grouped numeral, and both
+#: are applied because either alone leaves a gap:
+#:
+#:   * it is delimited by braces. `[^|]{0,120}?` is a quantifier wherever it
+#:     appears; no page ever prints `{4,186}` as a total;
+#:   * a thousands-grouped numeral never has a leading zero in its first
+#:     group. Nobody writes `0,120` for 120 — but `{0,n}` is the commonest
+#:     quantifier there is.
+#:
+#: Narrowing the DEFINITION of a grouped numeral, rather than exempting a file
+#: or rewriting the literal, is what keeps the guard's reach intact: a genuine
+#: `"4,186"` frozen into that very same test file is still caught.
+QUANTIFIER = re.compile(r"\{\d{1,3}(?:,\d{3})+\}")
+LEADING_ZERO_GROUP = re.compile(r"\b0,\d{3}\b")
+
 
 def grouped_literals(text: str):
     """
@@ -166,9 +197,17 @@ def grouped_literals(text: str):
     The form a corpus total takes when a reader sees it, and therefore the form
     it takes when someone freezes one into a page or into an assertion about a
     page. Nothing structural is written this way — there are no comma-grouped
-    status codes, byte offsets, caps or day counts.
+    status codes, byte offsets, caps or day counts. There ARE comma-grouped
+    regex repetition bounds (`{0,120}`), which share the punctuation exactly;
+    those are blanked before scanning. See `QUANTIFIER` above.
     """
-    return {int(m.replace(",", "")) for m in GROUPED.findall(text)}
+    # Blank the spans that are regex quantifiers before scanning, so `{0,120}`
+    # cannot be read as a total. Replaced with spaces rather than deleted, so
+    # every other offset in the string is unchanged and an adjacent genuine
+    # numeral is still found.
+    cleaned = QUANTIFIER.sub(lambda m: " " * len(m.group(0)), text)
+    cleaned = LEADING_ZERO_GROUP.sub(lambda m: " " * len(m.group(0)), cleaned)
+    return {int(m.replace(",", "")) for m in GROUPED.findall(cleaned)}
 
 
 def _docstring_node_ids(tree) -> set:
@@ -644,6 +683,13 @@ class TestTheKnownFalsePositivesAreGone(unittest.TestCase):
         ("a lookback in days", 'window = CollectionWindow(lookback_days=365)\n', 365),
         ("a regex character class", 'headings = re.findall(r"<h[123]>(.*?)</h[123]>", html)\n', 123),
         ("a timedelta", 'cutoff = today - timedelta(days=365)\n', 365),
+        # Added 2026-09-16. Verbatim from tests/test_identity_asset_builder.py,
+        # where it matched the live count of records from global_times_mil and
+        # failed CI. A repetition bound is punctuated exactly like a grouped
+        # numeral, which is why it slipped through a rule whose docstring said
+        # nothing structural is written that way.
+        ("a regex repetition bound",
+         'pat = r"ipr-compass-mark-small\\.svg[^|]{0,120}?byte-identical"\n', 120),
     )
 
     def test_none_of_the_real_world_literals_is_flagged(self):
@@ -657,12 +703,62 @@ class TestTheKnownFalsePositivesAreGone(unittest.TestCase):
         markup = '<span style="width: {{ (week.count * 100 / volume_max) }}%"></span>\n'
         self.assertNotIn(100, frozen_total_literals_from(markup, ".html"))
 
+    def test_a_repetition_bound_in_a_template_is_not_flagged(self):
+        """
+        Templates keep the raw scan — they have no docstrings and every number
+        in one is content a reader sees — so the quantifier narrowing has to
+        hold on that path too, not only on the parsed one.
+        """
+        markup = '<meta content="x{0,120}">\n'
+        self.assertNotIn(120, frozen_total_literals_from(markup, ".html"))
+
     def test_those_same_values_are_still_caught_as_corpus_totals(self):
         """The narrowing is about context, not about an exemption list."""
-        for value in (100, 123, 365):
+        for value in (100, 123, 365, 120):
             with self.subTest(value=value):
                 source = 'self.assertEqual(metrics.records, %d)\n' % value
                 self.assertIn(value, frozen_total_literals_from(source, ".py"))
+
+    def test_the_quantifier_narrowing_did_not_blunt_the_grouped_rule(self):
+        """
+        The specific risk the 2026-09-16 fix carries: blanking `{m,n}` spans
+        could have blanked real totals with them. It does not.
+
+        Each case holds a genuine grouped total, and three of them hold it in
+        the same string as a repetition bound — which is exactly the shape the
+        offending file had.
+        """
+        cases = (
+            ("a bare grouped total", 'self.assertIn("4,186", page)\n', 4186),
+            ("beside a quantifier",
+             'pat = re.compile(r"x{0,120}")\nself.assertIn("4,186", page)\n', 4186),
+            ("inside one string with a quantifier",
+             'self.assertRegex(page, r"records[^|]{0,120}4,186")\n', 4186),
+            ("a grouped total in a template",
+             '<dd>4,186</dd>\n', 4186),
+        )
+        for label, source, value in cases:
+            suffix = ".html" if "template" in label else ".py"
+            with self.subTest(case=label):
+                self.assertIn(
+                    value, frozen_total_literals_from(source, suffix),
+                    "%s is no longer caught — the quantifier narrowing went "
+                    "too far and the guard has stopped guarding" % label)
+
+    def test_a_frozen_total_in_the_very_file_that_collided_is_still_caught(self):
+        """
+        The narrowing is a rule change, not a file exemption. The file that
+        failed CI is still scanned like any other, and a real frozen total
+        written into it would still turn this suite red.
+        """
+        source = (TESTS_DIR / "test_identity_asset_builder.py").read_text(
+            encoding="utf-8")
+        clean = frozen_total_literals_from(source, ".py")
+        self.assertNotIn(120, clean, "the repetition bound is still flagged")
+        poisoned = source + '\nself.assertEqual(metrics.records, 4186)\n'
+        self.assertIn(
+            4186, frozen_total_literals_from(poisoned, ".py"),
+            "a genuine frozen total in this file is no longer caught")
 
 
 class TestGovernedConstantsAreNotCollateralDamage(FrozenCountCase):
