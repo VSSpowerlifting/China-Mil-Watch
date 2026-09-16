@@ -14,7 +14,7 @@
 <meta property="og:image:alt" content="Indo-Pacific Record">
 <meta name="twitter:image" content="https://indopacificrecord.org/social-card.png">
 <meta name="twitter:image:alt" content="Indo-Pacific Record">
-<meta name="theme-color" content="#0A1A22">
+<meta name="theme-color" content="#12222C">
 <link rel="icon" type="image/svg+xml" href="mark.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
@@ -31,15 +31,24 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
-  <div class="wrap">
+  <div class="wrap masthead-name-row">
     <a class="brand" href="index.html">
-      <img class="brand-mark" src="masthead-mark.png"
-           width="56" height="56" alt="" aria-hidden="true"
-           decoding="async" fetchpriority="high">
-      <p class="brand-name">Indo-Pacific Record</p>
+      <picture>
+        <source media="(max-width: 380px)"
+                srcset="mark.svg"
+                type="image/svg+xml">
+        <img class="brand-mark" src="masthead-mark.png"
+             width="56" height="56" alt="" aria-hidden="true"
+             decoding="async" fetchpriority="high">
+      </picture>
+      <span class="brand-text">
+        <p class="brand-name">Indo-Pacific Record</p>
+        <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
+      </span>
     </a>
-    <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
-    <nav class="primary nav-desktop" aria-label="Primary">
+  </div>
+  <div class="nav-rail">
+    <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
       <li><a href="archive.html">Record</a></li>
       <li><a href="desks.html">Desks</a></li>
@@ -50,10 +59,11 @@
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
-    <details class="nav-toggle nav-mobile">
-      <summary>Sections</summary>
-      <nav class="primary" aria-label="Primary">
-        <ul>
+    <div class="wrap">
+      <details class="nav-toggle nav-mobile">
+        <summary>Sections</summary>
+        <nav aria-label="Primary">
+          <ul>
       <li><a href="archive.html">Record</a></li>
       <li><a href="desks.html">Desks</a></li>
       <li><a href="sources.html">Sources</a></li>
@@ -62,8 +72,9 @@
       <li><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
-      </nav>
-    </details>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 <div class="freshness-bar">
@@ -507,6 +518,7 @@ so this is operational context, not a measure of coverage.</p>
 </main>
 <footer class="site">
   <div class="wrap">
+    <div class="footer-name">Indo-Pacific Record</div>
     <p>Indo-Pacific Record is an independent research project created and edited by
     Benjamin Yang ·
     <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
