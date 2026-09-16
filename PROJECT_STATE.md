@@ -19,6 +19,8 @@ Durable documents, and what each one governs:
 | `docs/ROADMAP.md` | current priority order |
 | `docs/SHADOW_COLLECTION.md`, `docs/SHADOW_REVIEW.md` | shadow desk isolation and human review procedure |
 | `DECISION_LOG.md` | durable decisions that constrain future work |
+| `docs/DESK_STRENGTH_CRITERIA.md` | what a desk must prove before it is called strong |
+| `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` | measured per-desk assessment and source-feasibility evidence |
 
 ---
 
@@ -67,21 +69,28 @@ methodology, and the legacy `/article/<id>.html` compatibility namespace.
 
 ## 3. Data and pipeline condition
 
-Measured 2026-09-02 from a read-only copy of the tracked `pla_watch.db`:
+Measured 2026-09-16 from a read-only copy of the tracked `pla_watch.db`:
 
-* **3,762 records**, 3,762 distinct URLs, max record id 3,768.
-* **127 scrape runs.** Run 127 completed 2026-09-01 17:15 UTC, `completed`,
-  47 scraped / 40 new / 30 analyzed. Run 125 (2026-08-29) is recorded `failed`.
-* **Freshness through 2026-09-01** (latest `published_date`).
-* Records by source: `pla_daily` 3,238; `china_mil_online` 388;
-  `global_times_mil` 106; `mod_china` 30; `xinhua_mil` **0**.
-* **Xinhua Military remains unimplemented.** The adapter is a documented stub —
-  the listing is JavaScript/API-rendered. It stays enabled so health reporting
-  shows it as `not_implemented` rather than hiding it.
-* 1,394 records analyzed; **903 never relevance-screened**; 4 relevant but
-  untranslated.
-* 48 records hold an empty body; 3 of those are relevant and unanalyzed, so
-  they re-enter the analysis queue on every run and can never clear. See §6.
+* **4,229 records**, 4,229 distinct URLs, max record id 4,235.
+* **140 scrape runs.** Run 140 completed 2026-09-16 17:46 UTC, `completed`,
+  72 scraped / 36 new / 20 analyzed.
+* **Freshness through 2026-09-16** (latest `published_date`).
+* Records by source: `pla_daily` 3,580; `china_mil_online` 445;
+  `global_times_mil` 121; `mod_china` 83; `xinhua_mil` **0**.
+* **Xinhua Military is still unimplemented, but no longer unimplementable.**
+  The stub's stated reason — a JavaScript/API-rendered listing — was
+  re-measured on 2026-09-16 and is **stale**: `https://www.news.cn/milpro/`
+  serves 200 with a server-rendered listing carrying 106 distinct article URLs,
+  and `robots.txt` reads `Allow: /`. It stays enabled and reporting
+  `not_implemented` — honest, and now a repair rather than a dead end. See
+  `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` §6.1.
+* **676 never relevance-screened** (down from 903 on 2026-09-02).
+* **87 records hold an empty or near-empty body** (up from 48); 5 of those
+  passed relevance and are unanalyzed, so they re-enter the analysis queue on
+  every run and can never clear. Record 2678 has now been retried on 28
+  separate runs. Three of the seven repeat offenders are a Global Times
+  **extraction defect**, not source silence — their pages serve 1,076–4,180
+  characters of body text. See §6 and the review document §6.2.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
