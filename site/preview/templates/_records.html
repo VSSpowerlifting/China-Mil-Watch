@@ -33,58 +33,78 @@
 
 {% macro lead_record(record) -%}
 {% if record %}
-<article class="lead-record" aria-labelledby="lead-record-title">
-  <p class="record-prov">
-    <span class="evidence evidence--record">Source record</span>
-    <span class="record-prov-source">{{ record.institution or record.source_name }}</span>
-    <time datetime="{{ record.published_date }}">{{ record.published_date }}</time>
-  </p>
+{# The brief-header idiom the historical design used: a mono eyebrow naming
+   the institution and the date, the serif headline, the original beneath it,
+   the standing note, and the 2px rule that closes it. The `.evidence` chip
+   that used to open the line is gone — the eyebrow says "Source record" in
+   the same mono micro-label system, so the chip was the same words twice. #}
+<article class="lead-record" aria-labelledby="lead-record-title" data-reveal>
+  <p class="lead-meta"><span class="evidence evidence--record">Source record</span> &middot;
+    <span class="who">{{ record.institution or record.source_name }}</span> &middot;
+    <time datetime="{{ record.published_date }}">{{ record.published_date }}</time></p>
   <h2 class="record-headline" id="lead-record-title"><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
   {{- original_line(record) }}
-  <p class="record-note">The English title is machine-produced and labeled as
+  <p class="lead-note">The English title is machine-produced and labeled as
     such; the original is stored exactly as the institution published it.
-    <a href="record/{{ record.id }}.html">This record and its provenance <span class="arrow">&rarr;</span></a></p>
+    <a href="record/{{ record.id }}.html">This record and its provenance &rarr;</a></p>
 </article>
 {% endif %}
 {%- endmacro %}
 
 {% macro record_register(records, shared) -%}
 {% if records %}
-{% if shared %}
-{# True of every row below, or absent. `shared` is set only when the source,
-   the institution and the publication date are identical across all of them —
-   the publication date, not the collection date, which the dateline states
-   separately and which belongs to a different calendar. #}
-{# This one span describes the whole register, so it agrees with the number of
-   rows the register actually holds — `shared.count`, the same number the
-   sentence beneath it counts. "Source record" over five rows was wrong; so is
-   "Source records" over the single row a two-record corpus leaves after the
-   lead is lifted out. The lead plate and the per-row provenance line describe
-   one record each and keep the singular unconditionally.
-
-   The date and the period that ends its clause are wrapped together in one
-   inline-block, because a bare "." arriving at the head of the next line is
-   the defect this replaced. The wrapper is the only nonbreaking construction
-   in the sentence — the sentence itself still wraps freely — so it cannot
-   push the page wider than the narrowest viewport. #}
-<p class="register-note"><span class="evidence evidence--record">Source record{{ '' if shared.count == 1 else 's' }}</span>
-  {% if shared.count == 1 %}One record, published by
-  {%- else %}{{ shared.count }} records, {{ 'both' if shared.count == 2 else 'all' }} published by
-  {%- endif %} {{ shared.institution }} on <span class="date-clause"><time datetime="{{ shared.date }}">{{ shared.date }}</time>.</span>
-  Each original-language title is shown as that institution published it.</p>
-{% endif %}
-<ul class="record-register" data-reveal>
+<ul class="register">
 {% for a in records %}
-  <li class="register-item">
+  <li class="register-item" data-reveal>
     <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
     {{- original_line(a) }}
     {% if not shared %}
-    <p class="register-meta"><span class="evidence evidence--record">Source record</span>
-      <span>{{ a.institution or a.source_name }}</span> &middot;
-      <time class="register-date" datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
+    <p class="register-foot"><span class="evidence evidence--record">Source record</span>
+      {{ a.institution or a.source_name }} &middot;
+      <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
     {% endif %}
   </li>
 {% endfor %}
 </ul>
 {% endif %}
+{%- endmacro %}
+
+{% macro records_aside(corpus_eyebrow, shared) -%}
+{# The context rail. Three things that used to stack above the list as
+   separate paragraphs, in the same order and with the same words: the corpus
+   eyebrow, the standing note about original-language titles, and — when it
+   applies — the shared-provenance sentence.
+
+   The `shared` sentence keeps its `.evidence` label span and its `<time>`
+   element, because `tests/test_home_paired_records.py` reads both and because
+   the label is what makes the sentence a provenance claim rather than prose.
+
+   `shared` is true of every row in the register, or absent. It is set only
+   when the source, the institution and the publication date are identical
+   across all of them — the publication date, not the collection date, which
+   the ledger states separately and which belongs to a different calendar. #}
+<aside class="records-aside">
+  <p class="aside-label">{{ corpus_eyebrow }}</p>
+  <p>The most recent records from the desks that collect, with
+  original-language titles preserved.</p>
+  {% if shared %}
+  {# This one span describes the whole register, so it agrees with the number
+     of rows the register actually holds — `shared.count`, the same number the
+     sentence beneath it counts. "Source record" over five rows was wrong; so
+     is "Source records" over the single row a two-record corpus leaves after
+     the lead is lifted out. The lead plate describes one record and keeps the
+     singular unconditionally.
+
+     The date and the period that ends its clause are wrapped together in one
+     inline-block, because a bare "." arriving at the head of the next line is
+     the defect this replaced. The wrapper is the only nonbreaking construction
+     in the sentence — the sentence itself still wraps freely — so it cannot
+     push the page wider than the narrowest viewport. #}
+  <p class="register-note"><span class="evidence evidence--record">Source record{{ '' if shared.count == 1 else 's' }}</span>
+    {% if shared.count == 1 %}One record, published by
+    {%- else %} {{ shared.count }} records, {{ 'both' if shared.count == 2 else 'all' }} published by
+    {%- endif %} {{ shared.institution }} on <span class="date-clause"><time datetime="{{ shared.date }}">{{ shared.date }}</time>.</span>
+    Each original-language title is shown as that institution published it.</p>
+  {% endif %}
+</aside>
 {%- endmacro %}

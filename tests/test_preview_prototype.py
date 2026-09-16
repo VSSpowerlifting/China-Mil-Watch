@@ -435,7 +435,7 @@ class TestNoFabricatedCoverage(PreviewCase):
 
         from core.viewmodel import PublicView
         desks = PublicView(TRACKED_DB).desk_directory()
-        intro = html.split('<h2 id="desks">', 1)[1].split('class="cards', 1)[0]
+        intro = html.split('<h2 id="desks">', 1)[1].split('class="desks"', 1)[0]
         self.assertIn("<b>%d</b> collecting desk" % desks.collecting_count,
                       intro)
         self.assertIn("of <b>%d</b> declared" % desks.declared_count, intro)
@@ -1309,7 +1309,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         included, so it is longer than it was rather than shorter.
         """
         html = self.page("index.html")
-        markers = ('class="claim-band"', 'class="lead-record"',
+        markers = ('class="opening"', 'class="lead-record"',
                    "Latest records", '<h2 id="desks">', "Latest analysis",
                    "What did not collect")
         for marker in markers:
@@ -1337,16 +1337,24 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertLess(html.index('<h2 id="desks">'),
                         html.index("Latest analysis"),
                         "Desks must precede Latest analysis")
-        folios = re.findall(
-            r'<p class="section-index" aria-hidden="true">(\d+)</p>\s*'
-            r'<h2[^>]*>(.*?)</h2>', html, re.S)
+        # The `01`-`05` folio marks are gone. The historical design had none,
+        # nothing referred to them, and Impeccable flags numbered section
+        # markers as editorial scaffold — the finding this removal cleared.
+        # What a reader actually counts is the headings, so the order is
+        # asserted on those, and their absence is asserted too so the
+        # scaffold cannot come back without a decision.
+        self.assertNotIn('class="section-index"', html)
+        self.assertNotRegex(
+            html, r'<p[^>]*aria-hidden="true"[^>]*>\s*0\d\s*</p>',
+            "numbered section markers are back")
+        sections = [re.sub(r"\s+", " ", t).strip() for t in
+                    re.findall(r'<div class="section-head">\s*<h2[^>]*>(.*?)</h2>',
+                               html, re.S)]
         self.assertEqual(
-            [(n, re.sub(r"\s+", " ", t).strip()) for n, t in folios],
-            [("01", "Latest records"),
-             ("02", "Desks"),
-             ("03", "Latest analysis"),
-             ("04", "Record and analysis are not the same thing"),
-             ("05", "What did not collect")])
+            sections,
+            ["Latest records", "Desks", "Latest analysis",
+             "Record and analysis are not the same thing",
+             "What did not collect"])
 
     def test_home_leads_with_the_publication_not_a_readme_heading(self):
         html = self.page("index.html")
@@ -1369,12 +1377,18 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         total it must not be multiplied by.
         """
         html = self.page("index.html")
-        claim = html.split('class="claim-band"', 1)[1].split("</section>", 1)[0]
+        # The CLAIM column, not the whole opening. The dateline moved into the
+        # opening as its ledger, and the ledger states a corpus total by
+        # design — with the desk attribution that is the whole point of it.
+        # What must carry no figure is the publication's statement of what it
+        # is, which is the left column.
+        opening = html.split('class="opening"', 1)[1].split("</section>", 1)[0]
+        claim = opening.split('class="ledger"', 1)[0]
         self.assertNotRegex(claim, r"\b\d[\d,]{3,}\b")
 
         from core.viewmodel import PublicView
         desks = PublicView(TRACKED_DB).desk_directory()
-        dateline = html.split("freshness-bar--lead", 1)[1].split("</div>\n</div>", 1)[0]
+        dateline = opening.split('class="ledger"', 1)[1]
         if desks.collecting_count == 1:
             self.assertIn("Records held, %s" % desks.collecting[0].name,
                           " ".join(dateline.split()),
@@ -1491,8 +1505,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         name a single desk now that the roster is derived.
         """
         html = self.page("index.html")
+        # Whitespace-normalised: the sentence moved into the records rail
+        # with the revival and wraps at a different column there. The contract
+        # is the words, not the column they happen to break at.
+        flat = " ".join(html.split())
         self.assertIn("The most recent records from the desks that collect, "
-                      "with original-language titles\npreserved.", html)
+                      "with original-language titles preserved.", flat)
         self.assertNotIn("in the language they were published in", html)
         self.assertNotIn("China Desk records", html)
 
@@ -4160,7 +4178,11 @@ class TestCorpusGuide(PreviewCase):
     def test_the_guide_adds_no_primary_navigation_item(self):
         """It is reachable contextually. The nav is unchanged."""
         for name, html in self._all_html().items():
-            nav = html.split('<nav class="primary"', 1)[1].split("</nav>", 1)[0]
+            # The primary navigation is the masthead's RAIL now. Both
+            # renderings of it live inside `.nav-rail`, so reading the rail
+            # covers the desktop list and the compact disclosure at once —
+            # where splitting on the first <nav> only ever read one of them.
+            nav = html.split('class="nav-rail"', 1)[1].split("</header>", 1)[0]
             with self.subTest(page=name):
                 self.assertNotIn("corpus-guide.html", nav)
                 self.assertNotIn("Corpus Guide", nav)
@@ -5697,7 +5719,17 @@ class TestStop4RoutesAreIntact(PreviewCase):
         self.assertEqual(len(files),
                          self.corpus_size + len(top) + len(sources)
                          + len(covers) + len(atmosphere))
-        self.assertLessEqual(len(atmosphere), 1,
+        # Three declared files since 2026-09-15: the withdrawn J-20 derivative,
+        # which stays published with its licence record because "do not render
+        # it" is not "delete it", and the Ocean Signal Veil's two encodings,
+        # offered through `image-set()` so exactly one is ever fetched. Their
+        # names are checked, not just their count — an extra image here would
+        # be an undeclared addition to the page.
+        self.assertEqual(
+            sorted(q.name for q in atmosphere),
+            ["chengdu-j20-duo-paper.jpg", "veil-ocean.jpg", "veil-ocean.webp"],
+            "an undeclared image joined atmosphere/")
+        self.assertLessEqual(len(atmosphere), 3,
                              "the veil is one asset; a second image here would "
                              "be an undeclared addition to the page")
         self.assertEqual(len(covers), len(gp.load_editions(REPO_ROOT)))

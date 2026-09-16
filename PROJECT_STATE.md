@@ -267,6 +267,51 @@ Two consequences of the source fix, both expected and neither retroactive:
     and a later "candidate renderer" reference all name the live production
     mode as a candidate.
 
+## 6a. Frontend: the old China Mil Watch style revival (T3 Wake)
+
+Branch `feat/ipr-cmw-revival-t3`, built on `origin/main` `53cc971c5`. Local
+only: not pushed, no PR, `output/` and `pla_watch.db` untouched, deploy gate
+still at its governed 10 warnings.
+
+**What landed.** The home page recovers the historical China Mil Watch grammar
+under the current identity: the light editorial nameplate with the navigation
+on its own rail, the two-column opening with the dateline rendered as its
+ledger, the lead record in the brief-header idiom, the register as hairline
+rows with a context rail, desks as status rows, and the dark analysis band.
+The `01`-`05` folio marks are gone. The site-wide palette is the p1
+institutional set, derived from the canonical compass logo; the old semantic
+names survive as aliases onto it so interior pages are recoloured without
+being restructured.
+
+**The Ocean Signal Veil is back, and measured.** A public-domain U.S. Navy
+photograph (MC3 Nathan Burke, 17 U.S.C. § 105), duotoned offline against the
+paper ground by `scripts/make_veil.py`, declared only inside
+`@media (min-width: 901px)` so no narrow viewport can fetch it. The previous
+veil was withdrawn because live type over it failed contrast; this one is
+sampled at the pixels each glyph actually covers, because both a colour check
+and a whole-box sample called a genuine 2.22:1 failure a pass. Mask lobe 1's
+horizontal radius is load-bearing at 45% and the stylesheet says so.
+
+**Verified locally.** 23/23 content parity against the current production
+render from the same database; focus traversal 421 stops across 12 states with
+0 WCAG 1.4.11 failures; 0 genuine target-size failures in 12 states; 0
+horizontal overflow across 29 widths 320-2560; interaction 177/177; Space on
+the disclosure 12/12; audit 80/86. Impeccable reports one finding
+(`em-dash-overuse`, pre-existing production copy at the same count), down from
+two on `main` — the `numbered-section-markers` finding went with the folios.
+
+**Known and accepted.** Three audit assertions fail here and on pinned
+production: the second record is below the first screen at 375 and 768, and
+the shell uses 58.13% of a 1920 viewport against a 60% target. Three more are
+parity assertions in the packet's own harness that pin its fixture's data
+(Run 137, `record/4117`); this build renders live data, which is the
+requirement. `HEADLINE_CEILING` in `tests/test_home_paired_records.py` was
+raised from 700/560 to 830/730: the restored nameplate, nav rail and ledger
+cost the lead headline about 130px at 1280, which is the accepted design. The
+first-screen contract itself is unchanged and still passes.
+
+**Not done here.** Not pushed, no PR, no deploy, no workflow dispatch.
+
 ## 7. Immediate priorities
 
 Full ordering and rationale in `docs/ROADMAP.md`. In short:

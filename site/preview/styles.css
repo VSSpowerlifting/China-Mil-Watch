@@ -1,42 +1,56 @@
 /*
  * Indo-Pacific Record — candidate stylesheet.
  *
- * OCEANIC PALETTE, MEASURED
- * -------------------------
+ * P1 INSTITUTIONAL PALETTE, MEASURED
+ * ----------------------------------
  * Every pairing below was computed (WCAG 2.1 relative luminance), not
- * estimated, against the page ground `--paper #F5F8F6`. Three of the seed
- * colours cannot carry body text and are demoted rather than waved through:
+ * estimated. The palette is derived from the canonical compass logo
+ * (`ipr-compass-logo.png`): warm-neutral paper, deep slate ink, and the
+ * logo's own deep blue #255E7A as the sole structural accent. It replaced the
+ * oceanic seed set on 2026-09-15 with the old China Mil Watch style revival.
  *
- *   teal      #138A83   3.94 on paper -> large text and non-text marks only;
- *                                        text tone #0F726C (5.39)
- *   turquoise #28B8A6   2.31 on paper -> decoration only in light contexts;
- *                                        6.41 on ink, so it is a TEXT tone
- *                                        on the dark band and nowhere else
- *   sea glass #CBEAE5   1.19 on paper -> fills, rules and marks; never text,
- *                                        and never a ground for muted text
- *                                        (muted measures 4.38 on it, so a
- *                                        darker tinted tone exists instead)
+ * Text on light grounds (floor 4.5; every cell measured, none waved through):
+ *                    bg      surface  inset   tint
+ *   ink   #17262F   13.72    14.61    12.43   12.93
+ *   ink-2 #3D4952    8.17     8.70     7.41    7.71
+ *   muted #5A646D    5.34     5.69     4.84    5.04
+ *   link  #1F5A72    6.72     7.16     6.09    6.34
+ *   visit #4A4470    7.90     8.41     7.16    7.45
+ *   accnt #255E7A    6.28     6.68     5.69    5.92
+ *   acc-i #18445A    9.23     9.83     8.36    8.70
+ *   posit #1C6450    6.22     6.62     5.64    5.86
+ *   warn  #87511A    5.77     6.14     5.23    5.44
  *
- * Measured text pairings actually used (all >= 4.5 unless marked):
- *   ink        #10252E  14.81 paper · 13.98 mist
- *   deep       #123E4A  10.83 paper · 10.22 mist
- *   ocean      #176B87   5.63 paper ·  5.31 mist ·  4.71 sea glass
- *   teal-text  #0F726C   5.39 paper ·  5.09 mist ·  4.51 sea glass
- *   muted      #586B70   5.23 paper ·  4.94 mist
- *   muted-tint #4A5D62   6.11 mist   ·  5.42 sea glass
- *   signal     #9C4B36   5.65 paper ·  5.34 mist ·  4.73 sea glass
- *   sea glass  #CBEAE5  12.40 on ink  (text on the dark band)
- *   turquoise  #28B8A6   6.41 on ink  (accent text on the dark band)
+ * Text on the dark band #12222C (floor 4.5):
+ *   band-ink   #EDEAE2  13.53      band-muted #9AA6AE   6.54
+ *   focus-band #8FC9DE   8.97      accent-tint #E3ECF0 13.57
+ *
+ * TWO FOCUS RINGS, AND WHY
+ * ------------------------
+ * One flat ring colour cannot clear both grounds at 3:1, and this is measured
+ * rather than assumed:
+ *
+ *   --focus      #255E7A   6.28 on paper   ·   2.29 on the band   FAILS
+ *   --focus-band #8FC9DE   8.97 on the band ·  1.71 on --surface  FAILS
+ *
+ * So `--focus` is the paper ring and `--focus-band` is scoped to `.band` and
+ * to the skip chip, and to nothing else. The masthead is a LIGHT surface in
+ * this design, so the paper ring is the correct one there — applying the band
+ * ring to it measures 1.71:1. The skip chip is the one control whose ring has
+ * no single ground (it paints across the page ground above and the masthead
+ * below), so its ring is drawn inside the chip, giving it one ground: its own.
  *
  * ACCENT DISCIPLINE
  * -----------------
- *   --ocean   the SOLE structural accent: links, section marks, current nav,
- *             focus rings, official-claim labels.
- *   --teal    the desk/status family. It says what a collection scope IS; it
- *             never says whether something is good.
- *   --signal  rust, RESERVED for machine-generated or unreviewed material.
- *             Nothing else may use it — not callout rules, not failure states,
- *             not decoration. If rust appears, a model produced what it marks.
+ *   --accent   the SOLE structural accent: links, section marks, current nav,
+ *              focus rings, official-claim labels.
+ *   --positive the desk/status family. It says what a collection scope IS; it
+ *              never says whether something is good.
+ *   --warning  rust, RESERVED for machine-generated or unreviewed material and
+ *              for blocked access. Nothing else may use it — not callout
+ *              rules, not decoration.
+ *   --crimson  confined to DARK chrome (The PLA Watch). It does not join the
+ *              light-surface accent scheme; see the crimson block below.
  *
  * Colour never carries meaning alone: every desk status and every run outcome
  * has a text label and a distinct glyph, so a monochrome print stays complete.
@@ -46,73 +60,112 @@
  */
 
 :root {
-  --paper:        #F5F8F6;   /* page ground */
-  --white:        #FFFFFF;
-  --ink:          #10252E;   /* 14.81 on paper — body text, dark bands */
-  --deep:         #123E4A;   /* 10.83 on paper — secondary text */
-  --graphite:     #123E4A;   /* legacy alias for --deep; one tone, one value */
-  --ocean:        #176B87;   /* 5.63 — sole structural accent */
-  --teal:         #138A83;   /* 3.94 — large text and marks ONLY */
-  --teal-text:    #0F726C;   /* 5.39 — the teal that may carry small text */
-  --turquoise:    #28B8A6;   /* 2.31 on paper: decoration. 6.41 on ink: text */
-  --seaglass:     #CBEAE5;   /* fills, rules, marks — never text */
-  --mist:         #E8F3F2;   /* tinted surface */
+  /* ── P1 institutional palette — the definitions everything else resolves to.
+     Thirteen surface/text tokens plus link, accent, band, state and the two
+     focus rings. These are the ONLY literal colours on a light surface. */
+  --bg:            #F3F1EA;   /* page ground */
+  --surface:       #FAF8F3;   /* raised paper: masthead, ledger, footer */
+  --surface-inset: #EAE6DB;   /* recessed/tinted surface */
+  --ink:           #17262F;   /* 13.72 on bg — body text */
+  --ink-2:         #3D4952;   /*  8.17 — secondary text */
+  --muted:         #5A646D;   /*  5.34 — metadata, micro-labels */
+  --rule:          #CFC9BC;   /* hairline */
+  --rule-soft:     #E4DFD3;   /* lighter hairline, row separators */
+  --rule-hard:     #17262F;   /* the 2px editorial rule — ink, not a tint */
+  --link:          #1F5A72;   /*  6.72 */
+  --visited:       #4A4470;   /*  7.90 */
+  --accent:        #255E7A;   /*  6.28 — the logo's own deep blue */
+  --accent-ink:    #18445A;   /*  9.23 — accent at text weight / hover */
+  --accent-tint:   #E3ECF0;   /* accent fill; also text on the band (13.57) */
+  --band:          #12222C;   /* the dark analysis band */
+  --band-ink:      #EDEAE2;   /* 13.53 on band */
+  --band-muted:    #9AA6AE;   /*  6.54 on band */
+  --positive:      #1C6450;   /*  6.22 — a desk that collects */
+  --warning:       #87511A;   /*  5.77 — blocked, or machine-generated */
+  --focus:         #255E7A;   /* the PAPER focus ring */
+  --focus-band:    #8FC9DE;   /* the BAND focus ring — never on a light ground */
 
-  --text-muted:   #586B70;   /* 5.23 on paper, 4.94 on mist */
-  /* Muted text on the sea-glass ground. #586B70 measures 4.38 there — it
-     passes on paper and fails on sea glass, so tinted grounds get their own
-     tone rather than a colour that is only usually legible. 5.42 measured. */
-  --text-muted-tinted: #4A5D62;
-  --signal:       #9C4B36;   /* 5.65 on paper — machine-generated ONLY */
-  --signal-rule:  #A5533D;   /* 5.03 — rules and large marks in the same family */
+  --white:         #FFFFFF;
 
-  --rule:         #B8CFCC;
-  /* Signal Veil ground. A warmer paper for the identity field, carried over
-     from the predecessor's Paper Ledger. Measured: ink 14.80, deep 10.82,
-     text-muted 5.23, ocean 5.62, crimson 6.45 — every text token still AA. */
-  --parchment-field: #FAF7F0;
-  --line-soft:    #E4E0D6;
-  --rule-strong:  #8FB3AE;
+  /* ── Legacy semantic names, mapped onto p1 ─────────────────────────────
+     The revival is a homepage change; the record, archive, coverage and
+     methodology pages are not being restructured here. They are recoloured
+     with it, because a palette declared on `:root` is a property of the
+     publication rather than of one page — that is exactly what sequencing
+     step 1 means by "renders the current layout in the new colours".
 
-  /* ── DARK EDITORIAL SURFACES (added 2026-08-27) ────────────────────────
-     The publication had one voice: a light document canvas, correct for
-     reading a 4,000-character source text and wrong as a front door. These
-     are the grounds for chrome and for editorial furniture — masthead, hero,
-     feature — and nothing long-form is ever set on them. Long source texts
-     and CJK material stay on paper.
-
-     Measured against each ground, same method as above:
-       parchment  #EDE9E0  13.07 ink · 14.64 abyss · 11.40 slate
-       dark-muted #A8B6B8   7.58 ink ·  8.49 abyss ·  6.61 slate
-       seaglass   #CBEAE5  12.40 ink · 13.89 abyss · 10.82 slate
-       turquoise  #28B8A6   6.41 ink ·  7.18 abyss ·  5.59 slate  (status)
-       crimson-up #E8737F   5.42 ink ·  6.07 abyss ·  4.73 slate  (text)
-       crimson-mk #E05A6D   4.41 ink ·  4.94 abyss ·  3.85 slate  (large only)
+     These are aliases, not a second palette: every one resolves to a p1
+     token above, so there is still ONE place a colour is decided. They exist
+     so several hundred existing declarations keep their meaning instead of
+     being rewritten in a change that is not about them.
      ------------------------------------------------------------------- */
-  --abyss:        #0A1A22;   /* masthead ground */
-  --slate:        #16303B;   /* raised cards on a dark ground */
-  --parchment:    #EDE9E0;   /* primary text on dark */
-  --dark-muted:   #A8B6B8;   /* secondary text on dark */
+  --paper:             var(--bg);
+  --deep:              var(--ink-2);
+  --graphite:          var(--ink-2);
+  --ocean:             var(--accent);
+  --text-muted:        var(--muted);
+  --text-muted-tinted: var(--muted);      /* 4.84 inset · 5.04 tint */
+  --mist:              var(--surface-inset);
+  --surface-2:         var(--surface-inset);
+  --seaglass:          var(--accent-tint);
+  --teal:              var(--positive);
+  --teal-text:         var(--positive);
+  --turquoise:         var(--focus-band);  /* status text on the band */
+  /* Rust is NOT an alias, and must not become one. --warning is p1's
+     attention tone and marks a blocked desk; --signal means a model produced
+     what it marks, and nothing else may use it. Aliasing the two would have
+     made rust say two things at once, which is the one thing the rust rule
+     exists to prevent. The tone is unchanged across the palette change
+     because it did not need to change: measured on the p1 grounds it is
+     5.35 on bg, 5.70 on surface, 4.85 on inset and 5.04 on tint. */
+  --signal:       #9C4B36;   /* 5.35 on bg — machine-generated ONLY */
+  --signal-rule:  #A5533D;   /* rules and large marks in the same family */
+  --parchment-field:   var(--surface);
+  --line-soft:         var(--rule-soft);
+  /* The one slot p1 does not name: a rule heavier than --rule but not the
+     2px ink --rule-hard. Same warm-neutral family, 2.62 on bg — the same
+     non-text weight the token it replaces carried. */
+  --rule-strong:       #9E9584;
 
-  /* ── CRIMSON (added 2026-08-27) ────────────────────────────────────────
+  /* ── DARK EDITORIAL SURFACES ───────────────────────────────────────────
+     Grounds for chrome and editorial furniture. Nothing long-form is ever
+     set on them: long source texts and CJK material stay on paper.
+
+     `--slate` is the one dark value p1 does not supply — a raised card on the
+     band. Re-measured against the p1 band rather than carried over on faith:
+       band-ink   #EDEAE2  11.49 on slate
+       band-muted #9AA6AE   5.55 on slate
+       crimson-text        4.73 on slate
+     ------------------------------------------------------------------- */
+  --abyss:        var(--band);
+  --slate:        #16303B;   /* raised cards on a dark ground */
+  --parchment:    var(--band-ink);
+  --dark-muted:   var(--band-muted);
+
+  /* ── CRIMSON ───────────────────────────────────────────────────────────
      The editorial accent, taken from The PLA Watch, whose masthead is the
      quality benchmark for this work.
 
      It does NOT join the light-surface accent scheme, and that is the whole
-     of its discipline. On paper, --ocean remains the sole structural accent
-     and --signal rust keeps its exclusive meaning: if rust appears, a model
-     produced what it marks. Crimson is confined to DARK chrome, where rust
-     never appears, so the two can never be read against each other and the
-     rust rule stays exactly as true as it was.
+     of its discipline. On paper, --accent remains the sole structural accent
+     and --warning rust keeps its exclusive meaning. Crimson is confined to
+     DARK chrome, where rust never appears, so the two can never be read
+     against each other and the rust rule stays exactly as true as it was.
 
-     --crimson itself measures 6.45 on paper and 2.30 on ink: it is a text
-     tone on light and a FILL or RULE on dark, never dark-surface text. The
-     two lifted tones exist because of that.
+     Re-measured against the p1 grounds:
+       --crimson      6.10 on bg · 6.50 on surface · 2.36 on band
+       --crimson-text 5.57 on band · 4.73 on slate
+       --crimson-mark 4.53 on band · 3.85 on slate (large only)
+     So --crimson is a text tone on light and a FILL or RULE on dark, never
+     dark-surface text. The two lifted tones exist because of that.
      ------------------------------------------------------------------- */
-  --crimson:      #B3132B;   /* 6.45 on paper — brand mark, fills, rules */
+  --crimson:      #B3132B;   /* 6.10 on bg — brand mark, fills, rules */
   --crimson-text: #E8737F;   /* the crimson that may carry text on dark */
   --crimson-mark: #E05A6D;   /* large display text and rules on dark */
-  --surface-2:    #E8F3F2;   /* mist */
+
+  /* The CMW shell: 1180px, with the 2rem -> 1.25rem -> 1rem gutter ramp. */
+  --shell: 1180px;
+  --radius: 2px;
 
   /* ── Six-level type ladder (revision brief §4) ───────────────────────
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta
@@ -221,57 +274,9 @@ a, button, summary, label { touch-action: manipulation; }
 :target { scroll-margin-top: 1.5rem; }
 h1[id], h2[id], h3[id], h4[id] { scroll-margin-top: 1.5rem; }
 
-.masthead { border-bottom: 2px solid var(--ink); padding: 1.35rem 0 0; }
-.brand {
-  display: flex; align-items: center; gap: .6rem;
-  text-decoration: none; color: inherit;
-}
-/* Decorative: the wordmark beside it is the accessible name, so the mark is
-   aria-hidden and carries empty alt text.
-
-   Sized in px, not em, and never below 48. The audit measured the canonical
-   artwork's two outer rings at 4 *source* pixels in a 500 px image, which is
-   0.38 CSS px at a 48 px box and 0.77 physical pixels at 2x — under the one
-   physical pixel a stroke needs. The ring pair is therefore the feature that
-   decides the floor: at 48 the gap between the two rings is what first clears
-   a pixel and lets the mark read as a compass, and below it the rings merge
-   into a grey halo. The floor was set by looking at renders; the arithmetic
-   explains them. 56 is the desktop size, 48 the compact one, and
-   `radius: 2px` matches every other surface on the site. */
-.brand-mark {
-  width: 56px; height: 56px; flex: none;
-  border-radius: 2px;
-}
-/* Level 1. On the home page this is the h1; elsewhere a <p>, because the
-   page's own heading is the h1 and two h1s per page is a real defect. */
-.brand-name {
-  font-family: var(--serif);
-  font-size: var(--step-wordmark);
-  line-height: 1.15; letter-spacing: -.005em; margin: 0; font-weight: 600;
-}
-.brand-sub {
-  font-family: var(--sans);
-  font-size: var(--step-meta); color: var(--text-muted);
-  margin: .3rem 0 .9rem; letter-spacing: .01em; max-width: 46ch;
-}
-
-nav.primary ul {
-  list-style: none; margin: 0; padding: 0;
-  display: flex; flex-wrap: wrap; gap: 0 1.5rem;
-}
-nav.primary a {
-  font-family: var(--sans);
-  font-size: .875rem; letter-spacing: .02em;
-  display: flex; align-items: center; padding: .6rem 0;
-  color: var(--graphite); text-decoration: none;
-  border-bottom: 3px solid transparent;
-  min-height: 44px;                     /* tap target */
-}
-nav.primary a:hover { color: var(--ocean); }
-/* Current section marked by weight + rule, never colour alone. */
-nav.primary a[aria-current="page"] {
-  color: var(--ink); font-weight: 600; border-bottom-color: var(--ink);
-}
+/* Original masthead, brand lockup and nav.primary: superseded
+   2026-09-15 by the CMW revival at the foot of this file.
+   `nav.primary` is no longer emitted by any template. */
 
 /* ── Status strip ─────────────────────────────────────────────────────────
    One quiet line, every value counted from source_run_results. Renders only
@@ -659,12 +664,13 @@ footer.site a { color: var(--ocean); }
 
 /* ── Responsive ───────────────────────────────────────────────────────── */
 
-/* Masthead footprint at the most constrained width. The tagline is carried on
-   the home lead and About, so dropping it here removes ~3 wrapped lines
-   without losing the statement. */
+/* The tagline is NOT dropped at narrow widths any more. It was, on the
+   reasoning that the home lead and About carry it anyway; the revival's
+   nameplate is the publication's statement of what it is, and an interior
+   page reached from a search result has neither of those. It now holds three
+   lines at 320 inside a 146.80px masthead, which is the geometry the r3
+   prototype measured and this build reproduces. */
 @media (max-width: 600px) {
-  .masthead { padding-top: 1rem; }
-  .brand-sub { display: none; }
   /* Six facts as two columns x three rows, in DOM order, so the strip stays a
      quiet band instead of six wrapped lines. Every fact keeps its own cell and
      its own wording; nothing is hidden, shortened or merged, and the type size
@@ -1003,149 +1009,11 @@ footer.site a { color: var(--ocean); }
    CJK source text stay exactly where they were, on paper.
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Masthead ─────────────────────────────────────────────────────────── */
-.masthead {
-  background: var(--abyss);
-  border-bottom: 0;
-  border-top: 3px solid var(--crimson);
-  padding: 0;
-  color: var(--parchment);
-}
-.masthead .wrap {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .75rem 2rem;
-  padding-top: 1.05rem;
-  padding-bottom: 1.05rem;
-}
-.masthead .brand { align-items: center; gap: .6rem; margin: 0; }
-.masthead .brand-name {
-  color: var(--parchment);
-  font-size: var(--step-wordmark);
-  letter-spacing: -0.011em;
-  margin: 0;
-}
-/* The compass carries its own field, so there is nothing to recolour here.
-   It is the one place on the site where the brand gradient appears, which is
-   the whole of its licence: the accent budget still forbids gradients as
-   decoration anywhere else. */
-.masthead .brand-sub {
-  color: var(--dark-muted);
-  margin: 0;
-  max-width: 30ch;
-  font-size: var(--step-meta);
-  line-height: 1.45;
-  flex: 1 1 16rem;
-}
-
-/* Navigation sits on its own rule below the lockup so seven items never
-   compete with the wordmark for the same line. */
-.masthead nav.primary {
-  flex: 1 0 100%;
-  border-top: 1px solid rgba(237, 233, 224, .14);
-  margin-top: .15rem;
-  padding-top: .1rem;
-}
-.masthead nav.primary ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.masthead nav.primary a {
-  display: block;
-  padding: .6rem 0;
-  color: var(--dark-muted);
-  font-family: var(--sans);
-  font-size: .8125rem;
-  font-weight: 500;
-  letter-spacing: .055em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-}
-.masthead nav.primary a:hover { color: var(--parchment); }
-.masthead nav.primary a[aria-current="page"] {
-  color: var(--parchment);
-  border-bottom-color: var(--crimson-mark);
-  background: none;
-}
-
-/* Two presentations, one of which exists at a time.
-
-   This used to be a single nav inside a closed <details>, revealed on desktop
-   with `display: block`. That does not work: a closed <details> hides its
-   contents through a mechanism a child's `display` cannot override, so the
-   desktop masthead rendered with no navigation while these rules claimed it
-   was visible. The lesson was not "find a better override" — it was to stop
-   asking a disclosure to be two things.
-
-   `display: none` is deliberate on the hidden one: it removes the element from
-   the accessibility tree as well as the layout, so a screen reader finds seven
-   links, never fourteen. */
-.nav-desktop { display: block; flex: 1 0 100%; }
-.nav-mobile { display: none; }
-@media (max-width: 43.75rem) {
-  .masthead .wrap { padding-top: .85rem; padding-bottom: .85rem; }
-  .masthead .brand-sub { display: none; }
-  /* Still above the measured floor. The wordmark shrinks with the viewport;
-     the mark does not follow it below 48. */
-  .brand-mark { width: 48px; height: 48px; }
-  .masthead nav.primary { border-top: 0; margin: 0; padding: 0; flex-basis: auto; }
-  .nav-desktop { display: none; }
-  .nav-mobile { display: block; }
-  .nav-toggle { flex: 0 0 auto; margin-left: auto; }
-  .nav-toggle[open] { flex: 1 0 100%; margin-left: 0; }
-  .nav-toggle[open] > summary { margin-left: auto; width: max-content; }
-  .nav-toggle > summary {
-    display: flex;
-    list-style: none;
-    cursor: pointer;
-    align-items: center;
-    gap: .45rem;
-    padding: .5rem .7rem;
-    color: var(--parchment);
-    font-family: var(--sans);
-    font-size: .75rem;
-    font-weight: 600;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(237, 233, 224, .3);
-    border-radius: 2px;
-  }
-  .nav-toggle > summary::-webkit-details-marker { display: none; }
-  .nav-toggle > summary::after {
-    content: "";
-    width: .5rem; height: .5rem;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
-    transform: translateY(-2px) rotate(45deg);
-  }
-  .nav-toggle[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
-  /* Open state, not active page. Crimson marks which page you are on; it does
-     not mark that a disclosure is expanded. */
-  .nav-toggle[open] > summary { border-color: rgba(237, 233, 224, .55); }
-  .masthead nav.primary ul {
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
-    padding-top: .35rem;
-  }
-  .masthead nav.primary li { border-top: 1px solid rgba(237, 233, 224, .12); }
-  .masthead nav.primary a {
-    padding: .8rem .2rem;
-    font-size: .875rem;
-    border-bottom: 0;
-    border-left: 3px solid transparent;
-    padding-left: .6rem;
-  }
-  .masthead nav.primary a[aria-current="page"] {
-    border-left-color: var(--crimson-mark);
-  }
-}
+/* Dark masthead and nav.primary: superseded 2026-09-15 by the CMW
+   revival's light nameplate and nav rail, at the foot of this file.
+   Removed rather than overridden — `.masthead .brand-sub` outspecifies
+   `.brand-sub`, and leaving it here set the kicker to 13px/234px and
+   hid it entirely below 700px. */
 
 /* ── Freshness bar ────────────────────────────────────────────────────────
    Replaces the multi-line operational strip that used to open every page.
@@ -1185,7 +1053,12 @@ footer.site a { color: var(--ocean); }
   margin: 0;
   font-family: var(--mono);
   font-variant-numeric: tabular-nums lining-nums;
-  color: var(--teal-text);
+  /* Ink, matching the ledger this strip is the interior-page counterpart of.
+     It was `--teal-text`, which under the p1 palette resolves to --positive —
+     the tone that means "a desk that collects". A date is not a status, and a
+     corpus total is not good news; both are facts, and they take the same
+     colour the ledger's own values take. */
+  color: var(--ink);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -1213,309 +1086,12 @@ footer.site a { color: var(--ocean); }
   .freshness-bar .detail { margin-left: 0; flex: 1 0 100%; }
 }
 
-/* ═══ THE HOME PAGE'S OWN CHROME ═════════════════════════════════════════
-   Two overrides, both scoped by a modifier the template only writes on
-   `index.html`. Interior pages keep the shell they have: `.masthead` and
-   `.freshness-bar` are shared by every record-site page, and compressing the
-   shell everywhere is a wider decision than this one.
-   ═══════════════════════════════════════════════════════════════════════ */
+/* The home page's own chrome — compressed masthead, dateline strip,
+   claim band, lead-record band: superseded 2026-09-15 by the opening,
+   the ledger and the veil. The dateline's VIEW MODEL is unchanged and
+   now renders as the opening's ledger; the `.freshness-bar` rules above
+   still serve every interior page, which keeps rendering it. */
 
-/* ── Compressed masthead, home page only ──────────────────────────────────
-   The height comes out of the padding and the gap between the lockup row and
-   the navigation rule, not out of the content: the tagline stays on the
-   lockup's own row, where it costs nothing, rather than being hidden with
-   `display: none`. Hiding it would take informational text off the page to
-   buy space, and this page has a claim band immediately below that can say
-   what the publication is properly.
-
-   The mark does NOT shrink: 56 CSS px desktop and 48 compact are the measured
-   floor of the canonical artwork (DESIGN_SYSTEM §6a), and a test enforces it.
-   ── */
-.masthead--lead .wrap { padding-top: .6rem; padding-bottom: 0; }
-.masthead--lead nav.primary { margin-top: .45rem; padding-top: 0; }
-.masthead--lead nav.primary a { padding: .55rem 0 .6rem; }
-
-/* ── The dateline ─────────────────────────────────────────────────────────
-   Everywhere else the freshness bar is a tinted band that separates the
-   masthead from the page. On the home page it is the dateline: it carries the
-   three dates, the held and analyzed counts, and the run link — time and
-   corpus state, and nothing else.
-
-   It does NOT carry the collecting-source or collecting-desk counts. Those are
-   collection topology and they are stated once, in the Desks introduction; a
-   dateline that also carried them made this strip the loudest claim on the
-   page and printed the desk ratio twice. What used to be split between this
-   strip, a three-row hero ledger and a coverage apron is now distributed by
-   kind: the publication's claim to the claim band, dates and corpus state
-   here, topology to Desks.
-
-   It takes the masthead's own ground rather than the page's, so the chrome
-   reads as one block and the paper starts where the publication's claim does.
-   Every colour here is a token measured against `--ink`: parchment 13.07:1,
-   the muted label 7.58:1, the turquoise link 6.41:1.
-   ── */
-.freshness-bar--lead {
-  background: var(--ink);
-  border-bottom: 0;
-  border-top: 1px solid rgba(237, 233, 224, .12);
-  font-family: var(--mono);
-  font-size: .6875rem;
-  letter-spacing: .02em;
-}
-/* One line group, not two stacked ones.
-
-   The shared bar gives its figure list `flex: 1 0 100%`, which forces the run
-   link onto a row of its own — deterministic, and on the home page it left the
-   link stranded under a mostly empty third row. Here the list is an ordinary
-   flex item that wraps INTERNALLY, so the link sits beside it on the same line
-   group at every desktop width and the band is as tall as the figures need
-   and no taller.
-
-   `align-items: flex-end` puts the link on the list's last row rather than its
-   first, which is where a reader looks for it. */
-.freshness-bar--lead .wrap {
-  align-items: flex-end;
-  padding-top: .45rem;
-  padding-bottom: .45rem;
-  gap: .1rem 1.25rem;
-}
-.freshness-bar--lead dl {
-  /* `flex-basis: 0`, and that is the whole mechanism.
-
-     The shared bar sets `flex: 1 0 100%`, which puts the figure list on a row
-     of its own by construction and leaves the run link stranded below it. But
-     `auto` does not fix it either: flex line-breaking places items at their
-     flex BASE size before any shrinking, and this list's max-content width is
-     about 1058px against 1008px of shell — so the list claimed the whole line
-     and only then shrank into it, with the link pushed to a second row.
-
-     A base of 0 lets both items share the line; the list then grows into
-     whatever the link leaves and wraps internally. Measured, not assumed: the
-     link now sits on the list's own last row at 768, 1280 and 1920. */
-  flex: 1 1 0;
-  min-width: 0;
-  gap: .1rem 1.25rem;
-}
-.freshness-bar--lead .detail { margin-left: auto; }
-.freshness-bar--lead dt { color: var(--dark-muted); }
-.freshness-bar--lead dd { color: var(--parchment); font-weight: 500; }
-.freshness-bar--lead .behind { color: var(--dark-muted); }
-.freshness-bar--lead .freshness-more a,
-.freshness-bar--lead .detail a { color: var(--turquoise); }
-/* Scoped, though `.freshness-more` is already gated to `index.html` in
-   `base.html`. An unscoped rule in a shared stylesheet is a rule that starts
-   applying somewhere else the moment the markup moves, and this pass exists
-   partly to stop that class of leak. */
-.freshness-bar--lead .freshness-more { margin: 0; }
-/* The run link and the freshness link are standalone controls, so they hold
-   the 44px floor in BOTH dimensions — a real box, not a hit area faked with
-   negative margin. It costs nothing here: the link now sits INSIDE the figure
-   row rather than under it, so the row is `max(figures, 44px)` tall instead of
-   figures plus a link row. */
-.freshness-bar--lead .freshness-more a,
-.freshness-bar--lead .detail a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
-  padding-inline: .35rem;
-}
-
-@media (max-width: 43.75rem) {
-  .masthead--lead .wrap { padding-top: .5rem; padding-bottom: 0; }
-  .freshness-bar--lead { font-size: .65rem; }
-  .freshness-bar--lead .wrap { padding-top: .45rem; padding-bottom: 0; }
-  /* At this width the figure list becomes a two-column label/value grid, and
-     the run link must NOT share its line: beside a grid row it lands flush
-     against the value and reads as part of "Last full update 2026-09-09". The
-     list takes the full row here and the link sits under it — wrapping is
-     acceptable at this width; an ambiguous label/value pair is not. */
-  .freshness-bar--lead dl { flex: 1 0 100%; gap: .05rem .7rem; }
-  /* The auxiliary links share one row rather than stacking. The band holds
-     five label/value pairs — three dates, records held, of those analyzed —
-     and below them the run link, plus the screening link on the runs where
-     analysis trails collection. Stacking those two would put four lines of
-     chrome above the claim, and the record has to start sooner than that.
-     Both selectors are written because either link may be absent: the run
-     link needs a run, the screening link needs the backlog condition. */
-  .freshness-bar--lead .freshness-more,
-  .freshness-bar--lead .detail { flex: 0 1 auto; margin-top: .1rem; }
-  .freshness-bar--lead .detail { margin-left: auto; }
-}
-
-/* The reading column's top padding would otherwise open a band of page
-   background above a full-bleed hero. Pages without one keep it. */
-main.leads-with-hero { padding-top: 0; }
-
-/* ── The opening: claim band, then the record ─────────────────────────────
-   What stood here was a Signal Veil identity field — a parchment band holding
-   an editorial statement, a three-row ledger and a duotone J-20 photograph,
-   with a masked crop and two credit treatments. It is removed rather than
-   re-tuned. Measured, it put the first record 1,024px down at 1280 and
-   1,506px down at 375, and contrast sampling of the rendered pixels found
-   eleven failing text cells where live type crossed the photograph — the
-   quiet buttons worst at 2.92:1.
-
-   The band that replaces it states the publication's claim once and hands the
-   page to the record. No background image, so nothing here can put type over
-   an image again; the accent stays a mark on the eyebrow rule, as it was.
-   ── */
-.claim-band {
-  background: var(--parchment-field);
-  border-bottom: 1px solid var(--line-soft);
-  color: var(--ink);
-}
-.claim-band .wrap {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-  padding-top: clamp(1.5rem, 3.2vw, 2.25rem);
-  padding-bottom: clamp(1.35rem, 2.8vw, 2rem);
-}
-/* The statement. `max-width` in characters does the work; the clamp only
-   keeps it from collapsing on a phone. */
-.claim {
-  flex: 1 1 22rem;
-  max-width: 30ch;
-  margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
-  line-height: 1.24;
-  letter-spacing: -0.016em;
-  font-weight: 600;
-  color: var(--ink);
-  text-wrap: balance;
-}
-.claim em { font-style: italic; font-weight: 600; color: var(--deep); }
-.claim-side {
-  flex: 1 1 22rem;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-.claim-sub {
-  margin: 0;
-  max-width: 56ch;
-  font-family: var(--sans);
-  font-size: .9375rem;
-  line-height: 1.6;
-  color: var(--text-muted-tinted);
-}
-.claim-cta { display: flex; flex-wrap: wrap; gap: .65rem; margin: 0; }
-/* The shared `.btn` takes its height from padding and lands at 43.6px, which
-   clears the record site's own 40px floor (DESIGN_SYSTEM §7) and misses the
-   44px figure the weekly surface holds standalone controls to. These two are
-   the buttons this change introduces, so they take the stricter number — in
-   both dimensions, which is the part a height-only floor misses. */
-.claim-cta .btn { min-height: 44px; min-width: 44px; }
-/* On the parchment field the primary action is ink, not a crimson slab: a
-   filled red block on paper is the "generic red button" this composition
-   exists to avoid. Carried over verbatim from the hero it replaces. */
-.claim-band .btn--primary { background: var(--ink); color: var(--parchment); }
-.claim-band .btn--primary:hover { background: var(--deep); color: var(--white); }
-.claim-band .btn--quiet { background: transparent; border-color: var(--rule-strong); }
-.claim-band .btn--quiet:hover { border-color: var(--ocean); background: var(--white); }
-
-/* ── The lead record ──────────────────────────────────────────────────────
-   Full-bleed, on the page's own paper, opening on the 2px ink rule the record
-   has always opened on. It is a record, not a hero: no plate, no frame, no
-   corner mark borrowed from a card system, and no image behind it.
-   ── */
-.lead-record-band {
-  background: var(--paper);
-  border-top: 2px solid var(--ink);
-  border-bottom: 1px solid var(--rule);
-}
-.lead-record-band > .wrap {
-  padding-top: clamp(1.5rem, 3vw, 2.4rem);
-  padding-bottom: clamp(1.4rem, 2.8vw, 2.1rem);
-}
-.lead-record { max-width: none; }
-.record-prov {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: .5rem .75rem;
-  margin: 0 0 var(--sp-3);
-  font-family: var(--sans);
-  font-size: .8125rem;
-  color: var(--text-muted);
-  max-width: none;
-}
-.record-prov time {
-  font-family: var(--mono);
-  font-size: .75rem;
-  font-variant-numeric: tabular-nums lining-nums;
-}
-/* The largest thing in the body, and the first thing a reader reads. */
-.record-headline {
-  margin: 0;
-  max-width: 42ch;
-  font-family: var(--serif);
-  font-size: clamp(1.5rem, 2.9vw, 2.05rem);
-  font-weight: 700;
-  line-height: 1.18;
-  letter-spacing: -0.018em;
-  text-wrap: balance;
-}
-.record-headline::before { content: none; }
-/* An inline link, so the underline follows the real line boxes of a headline
-   that wraps. A block link with a `min-height` — which is what the lab
-   prototype used to clear a target floor — collapses a two-line headline into
-   one hit area and stops the underline tracking the text. */
-.record-headline a {
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-  transition: border-color var(--dur-base) var(--ease-out);
-}
-.record-headline a:hover,
-.record-headline a:focus-visible { border-bottom-color: var(--ocean); }
-.record-note {
-  margin: var(--sp-4) 0 0;
-  max-width: var(--measure);
-  font-family: var(--sans);
-  font-size: .8125rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-}
-.record-note a { font-weight: 500; }
-/* The lead's original-language line: under the English, at secondary colour,
-   upright, untracked — the treatment DESIGN_SYSTEM §4 documents. */
-.lead-record .original {
-  margin: .7rem 0 0;
-  max-width: 46em;
-  font-size: 1.0625rem;
-  line-height: 1.9;
-  color: var(--deep);
-}
-
-@media (max-width: 43.75rem) {
-  .claim-band .wrap { padding-top: 1rem; padding-bottom: .9rem; }
-  .claim { font-size: clamp(1.2rem, 5.6vw, 1.45rem); max-width: none; }
-  .claim-sub { font-size: .875rem; line-height: 1.55; }
-  .lead-record-band > .wrap { padding-top: 1.1rem; padding-bottom: 1.1rem; }
-  .record-headline { font-size: clamp(1.25rem, 5.6vw, 1.5rem); max-width: none; }
-  .lead-record .original { font-size: .9375rem; line-height: 1.85; }
-}
-
-/* The explanation, below the hero. A note about the record, not a banner over
-   it. `tabindex="-1"` so following the link moves focus here as well as the
-   viewport — a jump that moves only the scroll position leaves a keyboard
-   reader where they started. */
-.freshness-note {
-  font-family: var(--sans);
-  font-size: .8125rem;
-  line-height: 1.6;
-  color: var(--text-muted-tinted);
-  max-width: var(--measure);
-  margin: 0 0 1.75rem;
-  padding-left: .8rem;
-  border-left: 2px solid var(--rule);
-}
-.freshness-note:focus-visible { outline: 2px solid var(--ocean); outline-offset: 4px; }
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -2090,9 +1666,11 @@ select, input, textarea, button { max-width: 100%; }
 /* On the dark feature and the masthead the ocean ring measures badly against
    ink. Turquoise is the token that was demoted to "text on ink" precisely
    because it is legible there. */
-.feature .btn:focus-visible,
-.masthead a:focus-visible,
-.masthead summary:focus-visible { outline-color: var(--turquoise); }
+/* The masthead lost its entry here on 2026-09-15. It is a LIGHT surface in
+   the revival, and the band ring measures 1.71:1 on it — the paper ring is
+   the correct one there and is inherited from the global rule. The dark
+   feature keeps the band ring, because it is still dark. */
+.band .feature .btn:focus-visible { outline-color: var(--focus-band); }
 .btn[aria-disabled="true"], .btn:disabled {
   opacity: .45;
   pointer-events: none;
@@ -2175,50 +1753,9 @@ select, input, textarea, button { max-width: 100%; }
   transform: translateX(3px);
 }
 
-/* ── Navigation ───────────────────────────────────────────────────────────
-   The current page is marked by a crimson rule that is simply THERE. Hover
-   draws a parchment rule in from the left over 240ms. The two are different
-   colours and different origins, so a hovered link never impersonates the
-   page you are on.
-   ── */
-.masthead nav.primary a {
-  position: relative;
-  transition: color var(--dur-fast) var(--ease-out);
-}
-/* ::before, not ::after, and deliberately.
-
-   `test_print_expands_only_absolute_urls` splits this stylesheet at its first
-   `@media print` and scans the whole remainder for an unscoped link-suffix
-   rule — the one that would print a URL beside every internal link. Every
-   block appended after that print block falls inside its scan, including this
-   one, and the scan is a plain text match: it fired on this comment too, in
-   an earlier wording that quoted the selector it looks for.
-
-   The rule below prints nothing (the print block hides `nav.primary`
-   outright) and the pseudo-element is empty and absolutely positioned, so the
-   two pseudo-elements are interchangeable here. Taking the one that does not
-   read like the defect keeps the guard doing its job. */
-.masthead nav.primary a::before {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: -2px;
-  height: 2px;
-  background: var(--dark-muted);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--dur-base) var(--ease-rule);
-}
-.masthead nav.primary a:hover::before,
-.masthead nav.primary a:focus-visible::before { transform: scaleX(1); }
-/* The active page's own rule is the border-bottom set earlier; it must not
-   be redrawn by a hover rule sitting on top of it. */
-.masthead nav.primary a[aria-current="page"]::before { content: none; }
-.nav-toggle > summary {
-  transition:
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
-}
-.nav-toggle > summary::after { transition: transform var(--dur-base) var(--ease-out); }
+/* Navigation: the nav.primary hover/current machinery is removed with
+   the masthead it belonged to. No template emits `nav.primary`; the
+   revival's rail marks the current page with an accent underline. */
 
 /* ═══ THE PLATE ══════════════════════════════════════════════════════════
    One card object, three densities, and an index rule at the top edge doing
@@ -2828,4 +2365,820 @@ main:not(.leads-with-hero) .cards--desks .card--desk > .card-meta { min-height: 
   .cards--desks .card--desk > h3,
   .cards--desks .card--desk > h2.plain,
   .cards--desks .card--desk > .card-meta { min-height: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   OLD CHINA MIL WATCH STYLE REVIVAL — added 2026-09-15
+   ───────────────────────────────────────────────────────────────────────
+   Structural source of truth: the China Mil Watch homepage as rendered at
+   output/index.html, commit 5aa12853c (2026-08-24). Every size, weight,
+   line-height, rule weight and breakpoint below is a value measured off that
+   rendering, not an approximation. The identity is current Indo-Pacific
+   Record; only the grammar is recovered.
+
+   POSITION: appended, like every block before it. Media queries add no
+   specificity; only position decides, and this overrides what precedes it.
+
+   SCOPE. The shell, the masthead, the nav rail, the focus rings, the buttons
+   and the colophon are the publication's chrome and change on every page —
+   that is the point of recovering them. The section grammar below is home-page
+   furniture and is scoped so it cannot reach interior pages that were not part
+   of this design:
+
+     .eyebrow      -> .section > .eyebrow      (only the home page has .section)
+     .feature      -> .band .feature           (analysis.html has its own)
+     .card--desk   -> .desks .card--desk       (desks.html keeps its cards)
+     .stat-row     -> .desk-stats .stat-row
+     .original     -> the lead record and the register only
+     .evidence     -> .records-aside .evidence
+
+   Deliberately NOT restored from the historical source:
+     - the --zh font token (current governance declares none; originals inherit)
+     - border-left accent side-tabs
+     - --ink-3 #7B746A muted ink (4.17:1 on paper — below AA)
+     - box-shadow, and radius above 2px
+     - the numbered 01-05 section markers
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── What the previous system painted, switched off here ────────────────────
+   Four rules from the component system survive in the cascade because they
+   are either more specific than a single class or attach to a bare element.
+   Each is switched off explicitly, at the point the revival takes the object
+   over, rather than left to be discovered as a visual difference:
+
+     h2::before          a 2.25rem accent bar above every h2. The revival
+                         marks a section with a full-width 2px rule under the
+                         head, so the bar arrives as a second, shorter rule
+                         floating over the record headline.
+     .register-item      a 2px ink wipe on hover along the row's top edge. The
+       ::before          register is a ruled list here and the rows do not
+                         respond to a pointer at all.
+     .btn--primary       a border-drawn chevron. The revival's buttons are an
+       ::after           ink/outline pair with no ornament.
+     main dl:not(...)    `margin-top: 1rem` on every dt, which is correct for
+       dt, dd            prose definition lists and adds 16px to every row of
+                         a five-row ledger.                                  */
+.lead-record .record-headline,
+.section-head h2,
+.band .feature h3 {
+  border-top: 0;
+  padding-top: 0;
+  position: static;
+}
+.lead-record .record-headline::before,
+.register-item::before,
+.btn--primary::after { content: none; }
+/* Two classes, not one: `main dl:not(.stat-rows) dt` scores (0,1,3) and a
+   one-class `.ledger dl dt` scores (0,1,2), so the prose-list margin won. */
+.ledger .ledger-row dt,
+.ledger .ledger-row dd { margin: 0; max-width: none; }
+.btn { letter-spacing: normal; }
+/* Both inherit from the bare `h3` rule, which is tuned for prose headings. */
+.notes .note h3 { line-height: 1.65; }
+.desks .card--desk h3 { letter-spacing: normal; }
+
+/* The CMW shell: 1180px, with the 2rem -> 1.25rem -> 1rem gutter ramp. */
+.wrap { max-width: var(--shell); margin: 0 auto; padding: 0 var(--gutter); }
+:root { --gutter: 2rem; }
+@media (max-width: 900px) { :root { --gutter: 1.25rem; } }
+@media (max-width: 600px) { :root { --gutter: 1rem; } }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+a { color: var(--link); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+a:visited { color: var(--visited); }
+a:hover { color: var(--accent-ink); }
+
+/* ── Focus ────────────────────────────────────────────────────────────────
+   Two rings, because one flat colour cannot clear both the paper ground and
+   the dark band at 3:1. Measured: --focus is 2.29 on the band, --focus-band
+   is 1.71 on --surface. The palette header carries the full matrix.
+
+   Unlike the masthead this replaces, THIS masthead is the light Paper Ledger
+   surface the historical design used, so the paper ring is the correct one
+   there. Applying the band ring to a light surface measured 1.71:1 across 71
+   cells, which is why it is scoped rather than global. */
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.band :where(a, button, summary):focus-visible { outline-color: var(--focus-band); }
+
+/* The skip chip is one of two controls whose ring has no single ground: it
+   paints across the page ground above and the masthead below. Drawing the ring
+   inside the chip gives it one ground — the chip's own. */
+.skip:focus, .skip:focus-visible { outline-color: var(--focus-band); outline-offset: -4px; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus {
+  position: static; display: inline-flex; align-items: center;
+  min-height: 44px; padding: .5rem 1rem;
+  background: var(--band); color: var(--band-ink);
+  font-family: var(--sans); font-size: .8125rem; font-weight: 600;
+}
+
+/* ── Masthead — the light editorial nameplate ────────────────────────────── */
+.masthead { background: var(--surface); border-bottom: 1px solid var(--rule); }
+.masthead-name-row {
+  display: flex; align-items: center; gap: 1.25rem;
+  padding-block: 1.15rem 1rem; flex-wrap: wrap;
+}
+.brand {
+  display: flex; align-items: center; gap: .9rem;
+  text-decoration: none; color: inherit; min-height: 44px;
+}
+/* `display: contents` keeps the IMG as the flex item, so the picture wrapper
+   changes no geometry. It also promotes the picture's children into the flex
+   row — and a `source` is not `display: none` by default. Without the second
+   rule it becomes a zero-width flex item and the row `gap` charges 9.6px for
+   it, narrowing the wordmark column enough to wrap `.brand-sub` onto a fourth
+   line at 320 and pushing the masthead from 146.80px to 164.19px. Silent, and
+   found only by measuring. */
+.brand picture { display: contents; }
+.brand picture source { display: none; }
+.brand-mark { display: block; width: 56px; height: 56px; border-radius: var(--radius); }
+.brand-text { display: block; }
+.brand-name {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(1.5rem, 3.2vw, 2rem); line-height: 1.1;
+  letter-spacing: -.022em; color: var(--ink);
+}
+.brand-sub {
+  margin: .26rem 0 0; font-family: var(--mono); font-size: .75rem;
+  font-weight: 500; letter-spacing: .11em; text-transform: uppercase;
+  color: var(--muted); max-width: 58ch; line-height: 1.55;
+}
+
+/* ── Nav rail — hairline above, uppercase links, accent underline current ── */
+.nav-rail { border-top: 1px solid var(--rule-soft); background: var(--surface); }
+.nav-rail-inner { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+.nav-rail-inner ul {
+  display: flex; gap: 1.6rem; flex-wrap: wrap;
+  list-style: none; margin: 0; padding: 0;
+}
+.nav-rail-inner a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--sans); font-size: .75rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-2); text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.nav-rail-inner a:hover { color: var(--ink); border-bottom-color: var(--rule); }
+.nav-rail-inner a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+.nav-rail .nav-mobile { display: none; }
+.nav-rail .nav-mobile > summary {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--sans); font-size: .75rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink); cursor: pointer; list-style: none;
+}
+.nav-rail .nav-mobile > summary::-webkit-details-marker { display: none; }
+.nav-rail .nav-mobile > summary::after {
+  content: ""; width: .5rem; height: .5rem; margin-left: .6rem;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+}
+.nav-rail .nav-mobile[open] > summary::after { transform: rotate(225deg) translateY(-2px); }
+.nav-rail .nav-mobile ul { list-style: none; margin: 0; padding: 0 0 .6rem; }
+.nav-rail .nav-mobile a {
+  display: flex; align-items: center; min-height: 44px;
+  font-family: var(--sans); font-size: .75rem; font-weight: 600;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-2); text-decoration: none;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.nav-rail .nav-mobile a[aria-current="page"] { color: var(--ink); }
+
+/* A page whose first child is full-bleed furniture opts out of the reading
+   column's top padding, or the opening opens on a band of page background
+   between it and the nav rule. Measured: 36px at every width. */
+main.leads-with-hero { padding-top: 0; }
+
+/* ── The opening — CMW hero grammar ──────────────────────────────────────── */
+.opening { border-bottom: 2px solid var(--rule-hard); background: var(--bg); }
+.opening-inner {
+  display: grid; grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
+  gap: 2.4rem; align-items: start; padding-block: 2.1rem 1.9rem;
+}
+.claim {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(1.6rem, 3.1vw, 2.45rem); line-height: 1.1;
+  letter-spacing: -.02em; color: var(--ink); text-wrap: balance; max-width: 19ch;
+}
+.claim em { font-style: italic; color: var(--accent); }
+.claim-sub {
+  margin: 1.25rem 0 0; font-family: var(--sans); font-size: 1rem;
+  line-height: 1.62; color: var(--ink-2); max-width: 62ch;
+}
+.claim-cta { display: flex; gap: .75rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+/* ── Buttons — an ink/outline pair, no fills, no shadows ─────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: .62rem 1.15rem; border-radius: var(--radius);
+  font-family: var(--sans); font-size: .8125rem; font-weight: 600;
+  text-decoration: none; border: 1px solid transparent;
+}
+.btn--primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn--primary:visited { color: var(--surface); }
+.btn--primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: var(--surface); }
+.btn--secondary { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn--secondary:visited { color: var(--ink); }
+.btn--secondary:hover { border-color: var(--ink); }
+
+/* ── The dateline ledger — CMW's "TODAY'S RECORD" panel ──────────────────── */
+.ledger {
+  border: 1px solid var(--rule); background: var(--surface);
+  border-radius: var(--radius); padding: .85rem 1.05rem .95rem;
+}
+.ledger-label {
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--accent);
+  padding-bottom: .6rem; border-bottom: 1px solid var(--rule);
+}
+.ledger dl { margin: 0; }
+.ledger-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; padding: .45rem 0; border-bottom: 1px solid var(--rule-soft);
+}
+.ledger-row dt { margin: 0; font-family: var(--sans); font-size: .8125rem; color: var(--ink-2); }
+.ledger-row dd {
+  margin: 0; font-family: var(--mono); font-size: .8125rem;
+  font-weight: 600; color: var(--ink); white-space: nowrap;
+}
+.ledger-note {
+  margin: .5rem 0 0; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .08em; color: var(--ink-2);
+}
+.ledger-foot { margin: .35rem 0 0; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; }
+
+/* The ledger's run link, and the one focus ring on this page that could not
+   be ruled on.
+
+   The panel is 90% opaque over the veil, so roughly a tenth of the photograph
+   reaches through it. Against that, a ring's boundary fragments into a dozen
+   colours — the largest holding 12.7% at 1280 — and a checker that requires
+   one adjacent colour to hold 25% of the boundary returns NO VERDICT rather
+   than a pass. Every colour sampled cleared 3:1 with margin (worst 5.98:1),
+   but 12-20% of the boundary was never sampled, so that is an argument and
+   not a measurement.
+
+   The fix gives the ring a deterministic ground without touching the 90% fill
+   or any part of T3: on focus the link paints an OPAQUE plate of its own and
+   the ring is drawn INSIDE it, so both sides of the boundary are --surface at
+   100% and the photograph is not in the sample at all. 6.68:1, at every
+   viewport width, over any pixel the veil happens to put there.
+
+   The padding is declared at rest, not added on focus, so nothing shifts when
+   the ring appears. It is padding on the link itself — the hit area is the
+   link's own box, and no negative margin is used to fake one. */
+/* The two ledger links, and the one focus ring on this page that could not be
+   ruled on.
+
+   The panel is 90% opaque over the veil, so roughly a tenth of the photograph
+   reaches through it. Against that the ring's boundary fragmented into a dozen
+   near-identical off-whites — the largest holding 12.7% at 1280 — and a
+   checker that needs one adjacent colour to hold 25% of the boundary returned
+   NO VERDICT rather than a pass. Every colour it sampled cleared 3:1 with
+   margin (worst 5.98:1), but 12-20% of the boundary was never sampled, so
+   that was an argument and not a measurement.
+
+   The ring's ground is made deterministic instead, without touching the 90%
+   fill or any part of T3. Three things, and each is load-bearing:
+
+     * the FOOT STRIP is opaque, not just the link. The checker reads the
+       ring's ground from a band 1-3px OUTSIDE the link's own rect as well as
+       inside it, so a plate that stopped at the link's edge left the outer
+       band on the photograph;
+     * it is opaque AT REST, not on focus. The ring is derived by differencing
+       a focused frame against an unfocused one and the ground is read from
+       pixels that did NOT change — a background arriving with the ring is
+       part of the change, and the sampling moves outward to find something
+       unchanged;
+     * the ring is drawn INSIDE the link (`outline-offset: -2px`), so both of
+       its sides land on the strip. Same remedy the skip chip uses, for the
+       same reason: give the ring one ground, its own.
+
+   Result: 6.68:1 against `--surface`, at every width, over any pixel the veil
+   happens to put behind the panel. No negative margin is used and no hit area
+   is faked — the link's 44px box is its own. */
+.ledger-foot a,
+.ledger-note a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .2rem 0;
+  border-radius: var(--radius);
+}
+.ledger-foot a:focus-visible,
+.ledger-note a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* ── Section furniture — eyebrow and rule, no numbered markers ───────────── */
+.section { padding-block: 1.8rem; }
+.section + .section { border-top: 1px solid var(--rule-soft); }
+/* `margin-top` and `padding-top` are zeroed explicitly. The component
+   system's own `.section-head` sets 72px and 13.6px, which is right for a
+   section head that opens a reading column and wrong for one inside a
+   `.section` that already carries its own 1.8rem block padding — 85.6px of
+   silent extra rhythm, which is what pushed the second record 24px below the
+   fold at 1280 while every individual rule looked correct. */
+.section-head {
+  display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+  margin-top: 0; padding-top: 0;
+  padding-bottom: .7rem; border-bottom: 2px solid var(--rule-hard); margin-bottom: 1.1rem;
+}
+.section-head h2 {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem); line-height: 1.15;
+  letter-spacing: -.014em; color: var(--ink);
+}
+.section-more { margin: 0 0 0 auto; font-family: var(--sans); font-size: .8125rem; font-weight: 600; }
+/* The accent rule is an INLINE-BLOCK, not a flex item. The prototype used a
+   flex row, which worked there because its eyebrow was one bare text run. In
+   production the sentence carries <b> around each derived figure, and in a
+   flex container every one of those becomes its own flex item with nothing to
+   wrap on — the line then refuses to break and forced 49px of horizontal
+   overflow at 320. Inline-block wraps like the text it belongs to. */
+.section > .eyebrow {
+  margin: 0 0 .5rem; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--accent);
+  line-height: 1.6;
+}
+.section > .eyebrow::before {
+  content: ""; display: inline-block; width: 1.6rem; height: 2px;
+  background: var(--accent); vertical-align: middle; margin-right: .55rem;
+}
+.section > .eyebrow b { color: var(--accent-ink); }
+.section-note {
+  margin: 0 0 1.35rem; font-family: var(--sans); font-size: .875rem;
+  line-height: 1.6; color: var(--ink-2); max-width: 72ch;
+}
+
+/* ── Lead source record — CMW brief-header grammar ───────────────────────── */
+.lead-record { padding-block: 1.45rem 1.35rem; border-bottom: 2px solid var(--rule-hard); }
+.lead-meta {
+  margin: 0 0 .55rem; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+}
+.lead-meta .who { color: var(--ink-2); }
+/* A date may not break mid-value. The line is allowed to wrap — the
+   institution name is long and the viewport is not negotiable — but
+   "2026-09-" on one line and "14" on the next is a broken value, not a
+   wrapped line. */
+.lead-meta time,
+.register-foot time { white-space: nowrap; }
+.record-headline {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(1.4rem, 2.5vw, 1.95rem); line-height: 1.18; letter-spacing: -.016em;
+}
+.record-headline a { color: var(--ink); text-decoration: none; }
+.record-headline a:visited { color: var(--ink); }
+.record-headline a:hover { text-decoration: underline; }
+.lead-record .original,
+.register-item .original {
+  margin: .6rem 0 0; font-size: .9375rem; line-height: 1.7;
+  color: var(--ink-2); font-style: normal;
+}
+.lead-note {
+  margin: .75rem 0 0; font-family: var(--sans); font-size: .8125rem;
+  line-height: 1.6; color: var(--muted); max-width: 76ch;
+}
+.freshness-note {
+  margin: 1rem 0 0; font-family: var(--sans); font-size: .8125rem;
+  line-height: 1.6; color: var(--ink-2); max-width: 76ch;
+}
+
+/* ── The register — hairline rows and a context rail, no cards ───────────── */
+.records-layout {
+  display: grid; grid-template-columns: minmax(0, 1fr) 18.5rem;
+  gap: 2.6rem; align-items: start;
+}
+.records-aside { border-top: 1px solid var(--rule); padding-top: 1.05rem; }
+.records-aside .aside-label {
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 .7rem;
+}
+.records-aside p {
+  margin: 0 0 .9rem; font-family: var(--sans); font-size: .8125rem;
+  line-height: 1.62; color: var(--ink-2);
+}
+.records-aside p:last-child { margin-bottom: 0; }
+.records-aside .evidence,
+.register-foot .evidence,
+.lead-meta .evidence {
+  display: inline; background: none; border: 0; padding: 0;
+  font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent); white-space: nowrap;
+}
+.records-aside .date-clause { display: inline-block; }
+.register { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.register-item { padding: .9rem 0; border-bottom: 1px solid var(--rule-soft); }
+.register-item:last-child { border-bottom: 0; }
+.register-item h3 {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: 1.3125rem; line-height: 1.28; letter-spacing: -.008em;
+}
+.register-item h3 a { color: var(--ink); text-decoration: none; }
+.register-item h3 a:visited { color: var(--ink); }
+.register-item h3 a:hover { text-decoration: underline; }
+.register-item .original { margin-top: .35rem; }
+.register-foot {
+  margin: .6rem 0 0; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── Desks — status rows: name, state chip, mono stats ───────────────────── */
+.desks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.desks .card--desk {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .4rem 1.25rem;
+  align-items: baseline; padding: .95rem 0;
+  border: 0; border-bottom: 1px solid var(--rule-soft);
+  background: none; border-radius: 0;
+}
+.desks .card--desk:last-child { border-bottom: 0; }
+.desks .card--desk h3 { margin: 0; font-family: var(--serif); font-weight: 700; font-size: 1.0625rem; line-height: 1.3; }
+.desks .card--desk h3 a { color: var(--ink); text-decoration: none; }
+.desks .card--desk h3 a:visited { color: var(--ink); }
+.desks .card--desk h3 a:hover { text-decoration: underline; }
+.desks .desk-state {
+  justify-self: end; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .11em; text-transform: uppercase; padding: .28rem .5rem;
+  border: 1px solid var(--rule); border-radius: var(--radius);
+  white-space: nowrap; color: var(--muted); background: none;
+}
+.desks .desk-state--live { color: var(--positive); border-color: var(--positive); }
+.desks .desk-state--shadow { color: var(--muted); }
+.desks .desk-state--access_blocked { color: var(--warning); border-color: var(--warning); }
+.desk-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: .1rem 0 0; padding: 0; list-style: none; }
+.desk-stats .stat-row {
+  display: block; padding: 0; border: 0;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; color: var(--muted);
+}
+.desk-stats .stat-row b { font-weight: 600; color: var(--ink-2); }
+.desk-foot { margin: .1rem 0 0; justify-self: end; font-family: var(--sans); font-size: .8125rem; }
+
+/* ── Latest analysis — the dark band ─────────────────────────────────────── */
+.band { background: var(--band); color: var(--band-ink); }
+.band .section-head { border-bottom-color: var(--band-muted); }
+.band .section-head h2 { color: var(--band-ink); }
+.band a, .band a:visited { color: var(--focus-band); }
+.band .section-note { color: var(--band-muted); }
+.band .feature {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 2.2rem; align-items: start;
+  background: none; border: 0; padding: 0;
+}
+.band .feature-eyebrow {
+  margin: 0 0 .55rem; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--band-muted);
+}
+.band .feature h3 {
+  margin: 0; font-family: var(--serif); font-weight: 700;
+  font-size: clamp(1.35rem, 2.6vw, 1.95rem); line-height: 1.18; letter-spacing: -.014em;
+}
+.band .feature h3 a { color: var(--band-ink); text-decoration: none; }
+.band .feature h3 a:visited { color: var(--band-ink); }
+.band .feature h3 a:hover { text-decoration: underline; }
+.band .dek {
+  margin: .85rem 0 0; font-family: var(--sans); font-size: .9375rem;
+  line-height: 1.65; color: var(--band-ink); max-width: 66ch;
+}
+.band .byline {
+  margin: .85rem 0 0; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .08em; color: var(--band-muted);
+}
+.band .legacy-note {
+  margin: .5rem 0 0; font-family: var(--sans); font-size: .8125rem;
+  line-height: 1.55; color: var(--band-muted); max-width: 60ch;
+}
+.band .feature .btn { margin-top: 1.2rem; }
+.band .btn--primary { background: var(--band-ink); color: var(--band); border-color: var(--band-ink); }
+.band .btn--primary:visited { color: var(--band); }
+.band .btn--primary:hover { background: var(--focus-band); border-color: var(--focus-band); color: var(--band); }
+.band .feature figure { margin: 0; }
+.band .feature figure img {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--band-muted); border-radius: var(--radius);
+}
+.band .figure-credit {
+  margin: .55rem 0 0; font-family: var(--mono); font-size: .75rem;
+  letter-spacing: .08em; color: var(--band-muted); line-height: 1.6;
+}
+
+/* ── Record vs analysis — label | prose readout rows, not cards ──────────── */
+.notes {
+  display: block; list-style: none; margin: 0; padding: 0;
+  border-top: 1px solid var(--rule); gap: 0;
+}
+.notes .note {
+  display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: .4rem 2rem;
+  padding: 1.15rem 0; border: 0; border-bottom: 1px solid var(--rule-soft);
+  background: none; border-radius: 0;
+}
+.notes .note:last-child { border-bottom: 0; }
+.notes .note h3 {
+  margin: 0; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding-top: .2rem;
+}
+.notes .card-prose {
+  margin: 0; font-family: var(--sans); font-size: .9375rem;
+  line-height: 1.68; color: var(--ink-2); max-width: 74ch;
+}
+.notes .card-foot {
+  margin: .5rem 0 0; grid-column: 2;
+  font-family: var(--sans); font-size: .8125rem; font-weight: 600;
+}
+
+/* ── What did not collect ────────────────────────────────────────────────── */
+.coverage-prose {
+  margin: 0; font-family: var(--sans); font-size: .9375rem;
+  line-height: 1.68; color: var(--ink-2); max-width: 78ch;
+}
+.coverage-foot { margin: .9rem 0 0; font-family: var(--sans); font-size: .8125rem; font-weight: 600; }
+
+/* ── Footer — the colophon ───────────────────────────────────────────────── */
+.site { background: var(--surface); border-top: 1px solid var(--rule); margin-top: 2.5rem; }
+.site .wrap { padding-block: 2.2rem 1.9rem; }
+.site .footer-name {
+  margin: 0 0 .85rem; font-family: var(--serif); font-weight: 700;
+  font-size: 1.25rem; letter-spacing: -.014em; color: var(--ink);
+}
+.site p {
+  margin: 0 0 .85rem; font-family: var(--sans); font-size: .8125rem;
+  line-height: 1.7; color: var(--ink-2); max-width: 66ch;
+}
+.site p:last-of-type {
+  margin: 0; padding-top: 1rem; border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .05em;
+  color: var(--muted); max-width: none; line-height: 1.75;
+}
+
+/* ── Responsive — CMW breakpoints: 900 / 720 / 600 ───────────────────────── */
+@media (max-width: 900px) {
+  body { font-size: .9375rem; }
+  .opening-inner, .records-layout, .band .feature { grid-template-columns: minmax(0, 1fr); }
+  .opening-inner { gap: 1.3rem; padding-block: 1.5rem 1.4rem; }
+  .records-layout { gap: 1.6rem; }
+  .records-aside { padding-top: .9rem; }
+  .band .feature { gap: 1.6rem; }
+  .band .feature figure { order: -1; }
+  .nav-rail .nav-desktop { display: none; }
+  .nav-rail .nav-mobile { display: block; }
+}
+@media (max-width: 720px) {
+  .notes .note { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+  .notes .card-foot { grid-column: 1; }
+  .brand-mark { width: 48px; height: 48px; }
+}
+@media (max-width: 600px) {
+  .desks .card--desk { grid-template-columns: minmax(0, 1fr); }
+  /* The chip stops being nowrap once it has a column of its own. Production's
+     status labels are full sentences — "Access blocked — not collecting" is
+     300px at this size — and a chip that will not wrap overflows its row by
+     12px at 320. The prototype did not see this because its fixture carried
+     the short labels. Wrapping keeps the whole label, which is the point of
+     not abbreviating a status. */
+  .desks .desk-state { justify-self: start; white-space: normal; }
+  .ledger { padding: .7rem .85rem .8rem; }
+  .ledger dl { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem .9rem; margin-top: .55rem; }
+  .ledger-row { display: block; padding: 0; border-bottom: 0; }
+  .ledger-row dt { font-size: .75rem; line-height: 1.3; color: var(--muted); }
+  .ledger-row dd { font-size: .8125rem; line-height: 1.3; }
+  .ledger-label { padding-bottom: .4rem; }
+  .ledger-foot { margin-top: .6rem; }
+  .brand-sub { letter-spacing: .08em; line-height: 1.45; }
+  .opening-inner { padding-block: .85rem .95rem; gap: .9rem; }
+  .claim { font-size: clamp(1.5rem, 7.2vw, 1.85rem); }
+  .lead-record { padding-block: 1.05rem 1.15rem; }
+  .claim-sub { margin-top: .9rem; }
+  .claim-cta { margin-top: 1.05rem; }
+}
+
+/* ── Motion: the deterministic-capture escape hatch ──────────────────────────
+   The production reveal mechanism is kept exactly as it is — the start state
+   lives under `html.js-reveal` AND under `no-preference`, so no-JS, reduced
+   motion and print all render the finished page without this stylesheet
+   having an opinion. This adds only the capture affordance the historical
+   page carried: a class a renderer can set to pin the finished state. */
+html.js-reveal.no-anim [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   OCEAN SIGNAL VEIL — T3 Wake
+   ───────────────────────────────────────────────────────────────────────
+   Restores the historical Signal Veil mechanism: an absolutely-positioned
+   right-side layer at 88% width, `background-size: cover`, shaped by the
+   UNION OF SOFT RADIAL MASKS "so no rectangle ever reads as a photo card",
+   duotoned offline against the paper ground.
+
+   Differences from the historical implementation, all deliberate:
+     - the subject is an ocean formation, not the J-20
+     - the duotone is baked into the asset by scripts/make_veil.py rather than
+       approximated with runtime CSS filters, so the browser runs no filter
+     - `background-image` is declared ONLY inside the >=901px query, so no
+       narrow viewport can fetch it at all
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.veil,
+.veil-credit { display: none; }
+
+@media (min-width: 901px) {
+  .opening { position: relative; isolation: isolate; }
+  /* Explicit placement, so the credit plate joins the right column instead of
+     displacing the ledger. Nothing here is `order`: every item keeps its DOM
+     position and each is placed into a named cell. */
+  .opening-inner { position: relative; z-index: 1; }
+  .opening-inner > div:first-of-type { grid-column: 1; grid-row: 1 / span 2; }
+  .opening-inner > .ledger { grid-column: 2; grid-row: 1; }
+  .veil-credit { grid-column: 2; grid-row: 2; }
+
+  .veil {
+    display: block;
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 88%;
+    z-index: 0;
+    pointer-events: none;
+    background-image: image-set(
+      url("atmosphere/veil-ocean.webp") type("image/webp"),
+      url("atmosphere/veil-ocean.jpg")  type("image/jpeg"));
+    background-image: -webkit-image-set(
+      url("atmosphere/veil-ocean.webp") type("image/webp"),
+      url("atmosphere/veil-ocean.jpg")  type("image/jpeg"));
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 100% 75%;
+    opacity: .82;
+    /* The union of soft radial masks the historical veil used: strongest at
+       the upper right, gone entirely at the left where the headline sits, and
+       never terminating on a straight edge.
+
+       Lobe 1's HORIZONTAL RADIUS IS LOAD-BEARING. At 86% the photograph
+       reached under `.claim-sub` and body copy measured 2.22:1 from the pixels
+       the glyphs actually cover. At 45% it measures 7.22:1 at 1280 and 7.66:1
+       at 1920. Do not widen it without re-running the glyph-pixel measurement
+       in tests/test_homepage_veil_contract.py — a whole-box contrast sample
+       under-reports this failure and very nearly shipped it. */
+    -webkit-mask-image:
+      radial-gradient(45% 78% at 78% 76%, #000 22%, rgba(0,0,0,.56) 48%, transparent 76%),
+      radial-gradient(50% 58% at 30% 6%, rgba(0,0,0,.26) 0%, transparent 64%);
+    mask-image:
+      radial-gradient(45% 78% at 78% 76%, #000 22%, rgba(0,0,0,.56) 48%, transparent 76%),
+      radial-gradient(50% 58% at 30% 6%, rgba(0,0,0,.26) 0%, transparent 64%);
+  }
+  /* Where masking is unavailable the layer fades instead of showing a
+     rectangle. A photo card is the one thing this mechanism exists to avoid. */
+  @supports not ((mask-image: none) or (-webkit-mask-image: none)) {
+    .veil { opacity: .3; }
+    .veil::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(to right, var(--bg) 8%, transparent 62%),
+        linear-gradient(to top, var(--bg) 6%, transparent 46%);
+    }
+  }
+
+  /* The documentary credit plate, in the established mono micro-label system.
+     It sits on a flat band of the page ground for two measured reasons: it
+     gives the credit's link a single ground so its focus ring can be ruled on
+     at all, and it keeps the credit legible over moving water. Flat — no
+     radius, no shadow, no card. */
+  .veil-credit {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    background: var(--bg);
+    padding: .2rem .45rem;
+    justify-self: end;
+    margin: .55rem 0 0;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: .75rem;
+    line-height: 1.55;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .veil-credit a { color: var(--accent-ink); }
+
+  /* The historical hero ledger was translucent over the veil — the J-20's
+     wing is visible through it in the 5aa12853c rendering. Restored at 90%,
+     which keeps the panel's own text well clear of AA over the veil's darkest
+     pixel: 6.40:1 at 1280 and 6.60:1 at 1920, measured from rendered pixels
+     rather than from token colours, because a colour-based check cannot see a
+     background image at all. */
+  .opening-inner > .ledger {
+    background-color: color-mix(in srgb, var(--surface) 90%, transparent);
+    backdrop-filter: none;
+  }
+  /* The ledger's links get an opaque strip — but only here. The 90% fill
+     exists only inside this query, so below 901px the panel is already a flat
+     `--surface` and the ring already has one ground; adding the strip there
+     would cost 3px of first screen on a phone and buy nothing.
+
+     The strip, not just the link: the checker reads the ring's ground from a
+     band 1-3px OUTSIDE the link's rect as well as inside it. And at rest, not
+     on focus: the ring is derived by differencing a focused frame against an
+     unfocused one and the ground is read from pixels that did NOT change, so
+     a background arriving with the ring is part of the change and pushes the
+     sampling outward. Measured: `#faf8f3` holds 75% of the boundary at
+     6.68:1, where before no colour held 25% and no verdict was possible. */
+  .opening-inner > .ledger .ledger-note,
+  .opening-inner > .ledger .ledger-foot {
+    background: var(--surface);
+    width: max-content;
+    max-width: 100%;
+    padding: .1rem .45rem;
+    border-radius: var(--radius);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE MASTHEAD AND FIRST SCREEN
+   ───────────────────────────────────────────────────────────────────────
+   The first screen at 375x800 has to reach the beginning of the actual lead
+   source record, and the 320 masthead has to keep the wordmark on one line.
+   Only spacing, the display-type clamp and the mark size move. No body copy
+   drops below the governed 12px / 1.5 floors, and no control loses its 44px.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  /* Masthead: a tighter block, with the kicker kept but stopped from
+     dominating the first screen. */
+  .masthead-name-row { padding-block: .8rem .7rem; gap: .85rem; }
+  .brand { gap: .7rem; }
+  .brand-name { font-size: clamp(1.32rem, 5.6vw, 1.6rem); }
+  .brand-sub { margin-top: .2rem; letter-spacing: .07em; line-height: 1.45; }
+
+  .opening-inner { padding-block: .7rem .8rem; gap: .8rem; }
+  .claim { font-size: clamp(1.45rem, 6.4vw, 1.7rem); }
+  .claim-sub { margin-top: .75rem; }
+  .claim-cta { margin-top: .85rem; gap: .55rem; }
+
+  .ledger { padding: .6rem .75rem .65rem; }
+  .ledger dl { gap: .25rem .8rem; margin-top: .45rem; }
+  .ledger-label { padding-bottom: .35rem; }
+  .ledger-row dt { line-height: 1.25; }
+  .ledger-row dd { line-height: 1.25; }
+  /* The run link is a 44px control at every width, so at <=600 the space it
+     needs comes out of the panel around it rather than out of the control.
+     Measured at 375: this is what keeps the lead headline inside the first
+     screen (813.1 -> 786.2 against a 800px ceiling). */
+  .ledger-foot { margin-top: 0; }
+  .ledger { padding-bottom: .3rem; }
+
+  .lead-record { padding-block: .7rem 1.05rem; }
+  .lead-meta { margin-bottom: .45rem; }
+}
+
+@media (max-width: 380px) {
+  /* At 320 the mark shrinks to the smallest size the identity guidance allows
+     before the wordmark would have to break; the wordmark is never
+     abbreviated. 44px is BELOW the canonical mark's 48px floor
+     (site/assets/identity/IDENTITY_ASSETS.md), so at this width the <picture>
+     in base.html serves mark.svg — `ipr-compass-mark-small.svg`, the
+     sanctioned derivative for sizes under the floor. Geometry is unchanged. */
+  .brand { gap: .6rem; }
+  .brand-mark { width: 44px; height: 44px; }
+  .brand-name { font-size: clamp(1.18rem, 6.1vw, 1.32rem); }
+  .brand-sub { letter-spacing: .06em; }
+}
+
+/* "Indo-Pacific Record" holds ONE line at 320. The floor is deliberate and is
+   NOT optional: below ~300px — which the 375 @200% zoom state reaches at an
+   effective 188px — `nowrap` would push the brand link past the viewport, so
+   there the wordmark is allowed to wrap instead. Keeping it on one line is a
+   320px requirement, not a licence to overflow narrower viewports. */
+@media (min-width: 300px) and (max-width: 380px) {
+  .brand-name { white-space: nowrap; }
+}
+
+/* ── Print ───────────────────────────────────────────────────────────────── */
+@media print {
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  body { background: #fff; color: #000; }
+  .masthead, .nav-rail { border: 0; }
+  /* The nav rail, the skip chip and the veil LAYER come off the page: two are
+     controls with nothing to do on paper, and the third is a background image.
+     Nothing that carries text is hidden — not the two opening actions, whose
+     labels still say where the record and the methodology are, and not the
+     veil's credit, which is the rights statement for a photograph this
+     publication used and does not stop having used because the page was
+     printed. `test_print_hides_nothing_informational` holds this line. */
+  .nav-rail, .skip, .veil { display: none; }
+  .band { background: #fff; color: #000; }
+  .band .section-head h2, .band .feature h3 a, .band .dek { color: #000; }
+  .band .byline, .band .legacy-note, .band .figure-credit { color: #333; }
+  .section, .lead-record { break-inside: avoid; }
 }

@@ -14,7 +14,9 @@
    sub-pixel below 32 px and dissolve into a halo at favicon size. The PNG
    pair is the fallback for clients that will not take an SVG icon.
    `site/assets/identity/IDENTITY_ASSETS.md` records which file is canonical. #}
-<meta name="theme-color" content="#0A1A22">
+{# Follows --band in styles.css. `tests/test_identity_assets.py`
+   reads the token rather than a literal, so the two cannot drift. #}
+<meta name="theme-color" content="#12222C">
 <link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ '../' if nested else '' }}icon-16.png">
@@ -45,71 +47,94 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-{# The masthead is shared by every record-site page, so compressing it for the
-   home page is a modifier rather than an edit to the shell. The home page has
-   a claim band and a record directly beneath it and does not need the lockup
-   to introduce them a second time; an interior page opens on its own h1 and
-   keeps the taller masthead. If the owner wants one shell everywhere, that is
-   a second and wider change, and it is recorded for review rather than taken
-   here by implication. #}
-<header class="masthead{% if page == 'index.html' %} masthead--lead{% endif %}">
-  <div class="wrap">
+{# The masthead is the light editorial nameplate the historical China Mil
+   Watch design used: mark, serif wordmark and mono kicker on `--surface`,
+   with the navigation on its own rail beneath a hairline. It replaced a dark
+   masthead band on 2026-09-15.
+
+   It is shared by every record-site page and is now the SAME on all of them.
+   The `masthead--lead` modifier that compressed it on the home page is gone:
+   the home page's opening is a claim, a ledger and a record, and none of them
+   repeats the lockup, so there was nothing left for the modifier to avoid
+   repeating. One shell everywhere. #}
+<header class="masthead">
+  <div class="wrap masthead-name-row">
     <a class="brand" href="{{ '../' if nested else '' }}index.html">
-      {# The compass, at 56 CSS px on desktop and 48 compact. Both are above
-         the 48 px floor the audit measured: below it the canonical artwork's
-         double ring merges and the mark stops reading as a compass. Delivered
-         at 112 px so a 2x screen has real pixels to use.
+      {# The compass, at 56 CSS px. `IDENTITY_ASSETS.md` sets a 48 CSS px floor
+         for the canonical artwork: below it the double ring merges into a grey
+         halo, the ticks disappear, and the mark stops reading as a compass.
 
-         Decorative, exactly as the glyph it replaces was — the wordmark
-         beside it is the accessible name, and announcing the graphic too
-         would make a screen reader say the publication twice. #}
-      <img class="brand-mark" src="{{ '../' if nested else '' }}masthead-mark.png"
-           width="56" height="56" alt="" aria-hidden="true"
-           decoding="async" fetchpriority="high">
-      {# The home page leads with the publication, so the wordmark is its h1
-         and the lead story is an h2. Every other page has its own h1. #}
-      {% if page == 'index.html' %}
-      <h1 class="brand-name">{{ title }}</h1>
-      {% else %}
-      <p class="brand-name">{{ title }}</p>
-      {% endif %}
+         At <=380px the masthead needs 44px, which is under that floor, so the
+         `source` serves `mark.svg` — `ipr-compass-mark-small.svg`, the
+         sanctioned derivative that exists precisely for sizes below the floor:
+         the same compass with one ring, eight filled points and no diagonal
+         ticks, in the canonical palette.
+
+         One element, one entry in the accessibility tree, exactly one asset
+         requested per width, and no script. Decorative, as the glyph it
+         replaced was — the wordmark beside it is the accessible name, and
+         announcing the graphic too would say the publication twice. #}
+      <picture>
+        <source media="(max-width: 380px)"
+                srcset="{{ '../' if nested else '' }}mark.svg"
+                type="image/svg+xml">
+        <img class="brand-mark" src="{{ '../' if nested else '' }}masthead-mark.png"
+             width="56" height="56" alt="" aria-hidden="true"
+             decoding="async" fetchpriority="high">
+      </picture>
+      {# The wordmark and the kicker are one block inside the link, so the
+         nameplate is a single target rather than a link with a caption
+         floating beside it. #}
+      <span class="brand-text">
+        {# The home page leads with the publication, so the wordmark is its h1
+           and the lead record is an h2. Every other page has its own h1. #}
+        {% if page == 'index.html' %}
+        <h1 class="brand-name">{{ title }}</h1>
+        {% else %}
+        <p class="brand-name">{{ title }}</p>
+        {% endif %}
+        <p class="brand-sub">{{ tagline }}</p>
+      </span>
     </a>
-    <p class="brand-sub">{{ tagline }}</p>
-    {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
-    {# Seven destinations, defined once and rendered twice.
+  </div>
+  {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
+  {# Seven destinations, defined once and rendered twice.
 
-       The previous version put the only nav inside a closed <details> and
-       relied on `display: block` to reveal it above the mobile breakpoint. It
-       does not: a closed <details> hides its contents through a mechanism a
-       child's `display` cannot override, so the desktop masthead shipped with
-       no navigation at all while the stylesheet claimed otherwise. That is not
-       fixable with a better override, and this does not try — it renders a
-       plain <nav> for desktop and a separate disclosure for mobile, from one
-       macro, so the two link sets cannot drift apart.
+     An earlier version put the only nav inside a closed <details> and relied
+     on `display: block` to reveal it above the mobile breakpoint. It does not:
+     a closed <details> hides its contents through a mechanism a child's
+     `display` cannot override, so the desktop masthead shipped with no
+     navigation at all while the stylesheet claimed otherwise. That is not
+     fixable with a better override, and this does not try — it renders a plain
+     <nav> for desktop and a separate disclosure for mobile, from one macro, so
+     the two link sets cannot drift apart.
 
-       Exactly one is in the document at a time: the other is `display: none`,
-       which removes it from the accessibility tree as well as from view, so
-       nothing is announced twice.
+     Exactly one is in the document at a time: the other is `display: none`,
+     which removes it from the accessibility tree as well as from view, so
+     nothing is announced twice.
 
-       The mobile presentation stays a <details> rather than a scripted menu —
-       keyboard operable, announced as expandable, and working with JavaScript
-       off, which the rest of this site also assumes. #}
-    {% macro nav_links() -%}
+     The mobile presentation stays a <details> rather than a scripted menu —
+     keyboard operable, announced as expandable, and working with JavaScript
+     off, which the rest of this site also assumes. #}
+  {% macro nav_links() -%}
     <ul>
       {% for href, label in nav %}
       <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
       {% endfor %}
     </ul>
-    {%- endmacro %}
-    <nav class="primary nav-desktop" aria-label="Primary">
+  {%- endmacro %}
+  <div class="nav-rail">
+    <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       {{ nav_links() }}
     </nav>
-    <details class="nav-toggle nav-mobile">
-      <summary>Sections</summary>
-      <nav class="primary" aria-label="Primary">
-        {{ nav_links() }}
-      </nav>
-    </details>
+    <div class="wrap">
+      <details class="nav-toggle nav-mobile">
+        <summary>Sections</summary>
+        <nav aria-label="Primary">
+          {{ nav_links() }}
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
 {# Three dates and, when they disagree, one sentence saying why.
@@ -127,8 +152,8 @@
    plausible neighbour. Rendered only when a real run exists: a fabricated zero
    would read as "all clear", which is the opposite of the truth when nothing
    ran. #}
-{% if run_status %}
-<div class="freshness-bar{% if page == 'index.html' %} freshness-bar--lead{% endif %}">
+{% if run_status and page != 'index.html' %}
+<div class="freshness-bar">
   <div class="wrap">
     {# The labels are not shortened. "Analysis" alone does not say whether it
        is the date analysis was produced or the date it covers, and these three
@@ -182,15 +207,11 @@
        stays self-contained: `tests/test_freshness_dates.py` extracts this
        fragment by finding the first `{% endif %}` after `class="behind"`, and
        an else branch would leave the extracted fragment unbalanced. #}
-    {% if freshness.analysis_is_behind_collection and page != 'index.html' %}
+    {% if freshness.analysis_is_behind_collection %}
     <p class="behind">Analysis trails collection; records after
       {{ freshness.analysis_last_produced }} await screening.
       <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
       these dates mean</a>.</p>
-    {% endif %}
-    {% if freshness.analysis_is_behind_collection and page == 'index.html' %}
-    <p class="freshness-more"><a href="#freshness-note">Freshness and screening
-      status &rarr;</a></p>
     {% endif %}
     <p class="detail"><a href="{{ '../' if nested else '' }}coverage.html">Run
       {{ run_status.run_id }} in full &rarr;</a></p>
@@ -208,6 +229,12 @@
   <div class="wrap">
 {% block content %}{% endblock %}
   </div>
+{# Full-bleed furniture BELOW the reading column — the dark analysis band is
+   the only user so far. It is a second block rather than more `hero` because
+   it has to come after the content, and a band that reached the full width by
+   breaking out of `.wrap` with negative margins would be a layout trick where
+   a block is the honest structure. #}
+{% block after_content %}{% endblock %}
 </main>
 <footer class="site">
   <div class="wrap">
@@ -217,6 +244,11 @@
        continued under its previous identity. PR #32 published this build, and
        from that moment every one of those statements was false on 3,680 live
        pages. Nothing here may describe the site as unpublished again. #}
+    {# The colophon opens on the publication's name, as the historical
+       footer did. A div rather than a heading: the page's heading outline is
+       complete without it and a sixth-level heading here would announce a
+       section that does not exist. #}
+    <div class="footer-name">{{ title }}</div>
     <p>{{ title }} is an independent research project created and edited by
     {{ maintainer.name }} ·
     <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>

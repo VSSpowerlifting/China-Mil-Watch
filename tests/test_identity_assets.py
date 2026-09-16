@@ -330,16 +330,37 @@ class TestTheMastheadCarriesTheCompass(IdentityBuildCase):
 
     def test_the_mark_is_never_rendered_below_its_measured_floor(self):
         """
-        The audit measured 48 CSS px as the size below which the compass stops
-        reading as a compass. The stylesheet may not go under it.
+        The audit measured 48 CSS px as the size below which the CANONICAL
+        compass stops reading as a compass: its double ring merges into a grey
+        halo and the ticks disappear.
+
+        The floor is on the ARTWORK, not on the box. The masthead needs 44px at
+        <=380px, and rather than shrink the canonical mark under its floor the
+        <picture> serves `mark.svg` — `ipr-compass-mark-small.svg`, the
+        sanctioned derivative drawn with the features that survive a downscale.
+        So a sub-48 rule is allowed only when that swap is in place, and
+        `tests/test_homepage_veil_contract.py` asserts size AND asset together,
+        per width, which is what proves the swap actually happens.
         """
         css = (REPO_ROOT / "site" / "preview" / "styles.css").read_text("utf-8")
+        base = (REPO_ROOT / "site" / "preview" / "templates"
+                / "base.html").read_text(encoding="utf-8")
         block = re.findall(r"\.brand-mark\s*\{[^}]*\}", css)
         self.assertTrue(block, ".brand-mark rule not found")
         for rule in block:
             for value in re.findall(r"(?:width|height)\s*:\s*([\d.]+)px", rule):
                 with self.subTest(rule=rule.strip()[:60]):
-                    self.assertGreaterEqual(float(value), 48.0)
+                    if float(value) < 48.0:
+                        self.assertIn(
+                            '<source media="(max-width: 380px)"', base,
+                            "the mark is rendered under its floor with no "
+                            "derivative served in its place")
+                        self.assertRegex(base, r'srcset="[^"]*mark\.svg"')
+                        self.assertGreaterEqual(
+                            float(value), 44.0,
+                            "even the small mark has a floor")
+                    else:
+                        self.assertGreaterEqual(float(value), 48.0)
 
 
 class TestTheLegacyRollbackMastheadIsUntouched(unittest.TestCase):
@@ -384,12 +405,22 @@ class TestTheCurrentMetadataIdentity(IdentityBuildCase):
                     '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">'
                     % up, head)
 
-    def test_every_page_declares_a_theme_colour_matching_the_masthead(self):
+    def test_every_page_declares_a_theme_colour_matching_the_band(self):
+        """
+        Derived from `--band` rather than pinned to a literal, so a palette
+        change cannot leave the browser chrome on the old colour — which is
+        exactly what a hard-coded value did until 2026-09-15.
+        """
+        css = (REPO_ROOT / "site" / "preview"
+               / "styles.css").read_text(encoding="utf-8")
+        root = css.split(":root {", 1)[1].split("\n}", 1)[0]
+        band = re.search(r"--band:\s*(#[0-9A-Fa-f]{6})\s*;", root)
+        self.assertIsNotNone(band, "--band is not a literal colour")
         for name, html in self.sample().items():
             with self.subTest(page=name):
-                self.assertRegex(
-                    self.head(html),
-                    r'<meta name="theme-color" content="#0A1A22">')
+                self.assertIn(
+                    '<meta name="theme-color" content="%s">' % band.group(1),
+                    self.head(html))
 
     def test_every_page_carries_open_graph_identity(self):
         for name, html in self.sample().items():
@@ -552,23 +583,36 @@ class TestTheCollectionStateRail(IdentityBuildCase):
     states with separate dates.
     """
 
+    def rail(self, html: str) -> str:
+        """
+        The collection-state rail, wherever the page puts it.
+
+        On the home page it is the opening's LEDGER — same view model, same
+        rows, same labels — and on every interior page it is still the
+        freshness strip above the content. The contract is about the figures
+        and the markup, not about which of the two a page uses.
+        """
+        for marker in ('class="ledger"', 'class="freshness-bar'):
+            if marker in html:
+                return html.split(marker, 1)[1].split("</dl>", 1)[0]
+        self.fail("the page carries no collection-state rail")
+
     def test_the_rail_states_the_corpus_scale(self):
-        html = self.page("index.html")
-        rail = html.split('class="freshness-bar', 1)[1].split("</dl>", 1)[0]
+        rail = self.rail(self.page("index.html"))
         self.assertIn("Records held", rail)
         self.assertIn("Of those, analyzed", rail)
 
     def test_collection_and_analysis_stay_distinguishable(self):
         for name, html in self.pages().items():
-            if 'class="freshness-bar' not in html:
+            if ('class="freshness-bar' not in html
+                    and 'class="ledger"' not in html):
                 continue
             with self.subTest(page=name):
                 self.assertIn("Records last collected", html)
                 self.assertIn("Analysis last produced", html)
 
     def test_the_rail_uses_description_list_markup(self):
-        html = self.page("index.html")
-        rail = html.split('class="freshness-bar', 1)[1].split("</dl>", 1)[0]
+        rail = self.rail(self.page("index.html"))
         self.assertIn("<dt>", rail)
         self.assertIn("<dd>", rail)
 
@@ -578,8 +622,7 @@ class TestTheCollectionStateRail(IdentityBuildCase):
         real count or says the value is not measured; it never prints 0 as a
         stand-in for unknown.
         """
-        html = self.page("index.html")
-        rail = html.split('class="freshness-bar', 1)[1].split("</dl>", 1)[0]
+        rail = self.rail(self.page("index.html"))
         self.assertNotRegex(rail, r"<dd>\s*0\s*</dd>")
 
 
