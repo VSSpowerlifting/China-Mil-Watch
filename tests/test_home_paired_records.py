@@ -1269,12 +1269,63 @@ class BrowserCase(unittest.TestCase):
         return context, page
 
 
-class TestTheRecordReachesTheFirstViewport(BrowserCase):
+#: A font stack every platform can resolve, forced at runtime so a geometry
+#: assertion does not silently depend on which faces a machine happens to have
+#: installed. Neither `Source Serif 4` nor `Inter` is installed on the CI
+#: runner OR on a typical development machine, and no webfont is embedded, so
+#: the page renders in whatever each platform's stack falls through to —
+#: Georgia / system-ui on macOS, DejaVu / Liberation on the Linux runner.
+#: Measured on one build, `.claim` is 5 lines under the first and 6 under the
+#: second, and the lead headline lands 77px lower.
+WIDE_STACK = ":root{--serif:serif !important;--sans:sans-serif !important;}"
 
-    #: Durable, not a snapshot of one capture. Production measures
-    #: `firstRecordY` 1,023.9 at 1280 and 1,505.9 at 375, with zero readable
-    #: record titles in the first 900px at any viewport.
-    LEAD_START_375 = 800
+
+class TestTheRecordReachesTheFirstViewport(BrowserCase):
+    """
+    How far down the page the record starts.
+
+    **C1's `< 800 at 375` constraint is superseded and is not asserted here.**
+    It was calibrated against C1's deliberately compressed chrome: a single
+    masthead lockup row and the dateline consolidated into a thin strip. The
+    r3 historical composition, approved 2026-09-15, restores the full
+    editorial nameplate, puts the navigation on its own rail and gives the
+    dateline back its five-row ledger panel. That is taller on purpose, and
+    the constraint did not survive the design it was measuring.
+
+    It is superseded rather than merely relaxed, and the evidence is that the
+    APPROVED r3 PROTOTYPE fails it too: rendered under the same forced generic
+    faces, `04-prototypes/ctrl-D-final` puts the headline at 805.3 at 375,
+    against this build's 813.5. The prototype is the authority, the prototype
+    exceeds 800, so 800 is a fact about C1 and not about r3.
+
+    What replaces it is below, in two layers:
+
+      * the tight, font-invariant layer — `TestTheOpeningHasNoUnexplainedSpace`
+        asserts that every pixel between the masthead and the headline is
+        accounted for by a declared padding or a rendered line box, so a
+        stray margin is caught to within a pixel no matter what fonts render;
+      * the coarse, font-tolerant layer — the ceilings here, which exist to
+        catch gross vertical drift and are calibrated on the widest faces
+        actually measured.
+    """
+
+    #: Lead headline top, per viewport. Calibrated on the WIDEST faces
+    #: measured, which are the Linux CI runner's, and carrying roughly one
+    #: wrapped line of headroom above the worst accepted state:
+    #:
+    #:            macOS native   local generic   CI (DejaVu)   ceiling
+    #:     375        787.1          813.5          864.4        910
+    #:    1280        691.8          734.9          744.9        785
+    #:
+    #: The margin is deliberately small — about one and a half body lines —
+    #: because this is a drift guard, not a licence. It is not the tight net:
+    #: a regression smaller than the font spread is caught structurally, by
+    #: `TestTheOpeningHasNoUnexplainedSpace`, not by these numbers.
+    HEADLINE_CEILING = {375: 910, 1280: 785}
+
+    #: Complete first English record title inside a 1280x900 viewport. CI's
+    #: worst measured bottom is ~782; 900 is the viewport itself and is what
+    #: the contract is actually about, so it is left where it was.
     FIRST_VIEWPORT = 900
 
     def lead_box(self, page):
@@ -1287,28 +1338,228 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             " lineHeight: parseFloat(getComputedStyle(h).lineHeight)}; }")
 
     def test_a_complete_record_title_is_visible_in_the_first_viewport(self):
-        context, page = self.page_at(1280, 900)
-        try:
-            box = self.lead_box(page)
-            self.assertIsNotNone(box, "no lead record headline was rendered")
-            self.assertLess(
-                box["bottom"], self.FIRST_VIEWPORT,
-                "no complete English record title fits in 1280x900")
-        finally:
-            context.close()
+        """Under the platform's own faces and under the forced wide stack."""
+        for wide in (False, True):
+            context, page = self.page_at(1280, 900)
+            try:
+                if wide:
+                    page.add_style_tag(content=WIDE_STACK)
+                    page.wait_for_timeout(120)
+                box = self.lead_box(page)
+                with self.subTest(stack="wide" if wide else "native"):
+                    self.assertIsNotNone(
+                        box, "no lead record headline was rendered")
+                    self.assertLess(
+                        box["bottom"], self.FIRST_VIEWPORT,
+                        "no complete English record title fits in 1280x900")
+            finally:
+                context.close()
 
-    def test_the_lead_headline_begins_early_on_a_phone(self):
-        context, page = self.page_at(375, 900)
-        try:
-            box = self.lead_box(page)
-            self.assertIsNotNone(box)
-            self.assertLess(box["top"], self.LEAD_START_375)
-            visible = min(box["bottom"], self.FIRST_VIEWPORT) - box["top"]
-            self.assertGreaterEqual(
-                visible, 2 * box["lineHeight"] - 1,
-                "fewer than two rendered lines of the headline are visible")
-        finally:
-            context.close()
+    def test_the_headline_stays_under_its_ceiling_on_either_font_stack(self):
+        for width, ceiling in sorted(self.HEADLINE_CEILING.items()):
+            for wide in (False, True):
+                context, page = self.page_at(width, 900)
+                try:
+                    if wide:
+                        page.add_style_tag(content=WIDE_STACK)
+                        page.wait_for_timeout(120)
+                    box = self.lead_box(page)
+                    with self.subTest(width=width,
+                                      stack="wide" if wide else "native"):
+                        self.assertIsNotNone(box)
+                        self.assertLessEqual(
+                            box["top"], ceiling,
+                            "headline at %.1f against a %d ceiling — if this "
+                            "is a font difference rather than drift, "
+                            "TestTheOpeningHasNoUnexplainedSpace will still "
+                            "be green and the ceiling is what needs "
+                            "re-measuring" % (box["top"], ceiling))
+                finally:
+                    context.close()
+
+    def test_two_rendered_lines_of_the_headline_are_visible_on_a_phone(self):
+        """
+        The part of C1's phone contract that survives the composition change.
+        It asks about the READER's view rather than about a pixel offset: once
+        the headline begins, enough of it has to be on screen to be read, and
+        that is true whatever the chrome above it costs.
+        """
+        for wide in (False, True):
+            context, page = self.page_at(375, 900)
+            try:
+                if wide:
+                    page.add_style_tag(content=WIDE_STACK)
+                    page.wait_for_timeout(120)
+                box = self.lead_box(page)
+                with self.subTest(stack="wide" if wide else "native"):
+                    self.assertIsNotNone(box)
+                    visible = min(box["bottom"], 900) - box["top"]
+                    self.assertGreaterEqual(
+                        visible, 2 * box["lineHeight"] - 1,
+                        "fewer than two rendered lines of the headline are "
+                        "visible at 375x900")
+            finally:
+                context.close()
+
+
+class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
+    """
+    The tight net, and the one that does not move with the fonts.
+
+    Every pixel between the top of the page and the lead headline belongs to
+    exactly one of three things: a declared padding, a rendered line box, or a
+    declared margin. This file cannot assert where the headline lands — that
+    is a function of how wide the reader's serif happens to be — but it can
+    assert that nothing is there which the stylesheet did not ask for, and
+    that is what actually catches drift.
+
+    Verified font-invariant: every figure below was identical under macOS's
+    Georgia/system-ui, under forced generic serif/sans-serif, and under a
+    forced sans-only stack, on both this build and the approved r3 prototype.
+    """
+
+    #: Box-model slack, in px. `.claim-cta`'s buttons are `inline-flex` with
+    #: `min-height: 44px`, and the line box that contains them carries a
+    #: descent the flex items themselves do not: the paragraph's border box
+    #: ends ~2px below its tallest child. That is the box model doing what it
+    #: is specified to do, not stray space, and it is deterministic — 1.99px
+    #: at both widths and on both font stacks. 3px leaves room for it and for
+    #: sub-pixel rounding while still catching anything a person would call a
+    #: margin: the smallest real regression this file has seen was 19.8px, and
+    #: the `main` padding it caught before that was 36px.
+    SLACK = 3.0
+
+    @staticmethod
+    def pin_reveal(page):
+        """
+        Freeze the scroll reveal before measuring.
+
+        `.lead-record` carries `data-reveal`, whose start state is
+        `translateY(10px)`. Measured mid-reveal the headline reads exactly
+        10px low, which looks like layout drift and is not — it is this file
+        racing an animation. `no-anim` is the capture affordance the
+        stylesheet ships for precisely this.
+        """
+        page.evaluate(
+            "() => document.documentElement.classList.add('no-anim')")
+
+    def geometry(self, page):
+        return page.evaluate("""() => {
+          const q = s => document.querySelector(s);
+          const box = e => { const r = e.getBoundingClientRect();
+            return {top: r.top + window.scrollY,
+                    bottom: r.bottom + window.scrollY, h: r.height}; };
+          const px = v => parseFloat(v) || 0;
+          const opening = q('.opening'), inner = q('.opening-inner');
+          const lead = q('.lead-record'), meta = q('.lead-meta');
+          const ics = getComputedStyle(inner), lcs = getComputedStyle(lead);
+          const mcs = getComputedStyle(meta);
+          // Rendered children only. A `display: none` box reports a rect of
+          // all zeros, and `.veil-credit` is display:none below 901px — left
+          // in, it drags `highestChild` to 0 and the arithmetic to nonsense.
+          const kids = [...inner.children].map(box).filter(k => k.h > 0);
+          return {
+            masthead: box(q('.masthead')),
+            opening: box(opening),
+            inner: box(inner),
+            innerPadTop: px(ics.paddingTop),
+            innerPadBottom: px(ics.paddingBottom),
+            lowestChild: Math.max(...kids.map(k => k.bottom)),
+            highestChild: Math.min(...kids.map(k => k.top)),
+            lead: box(lead),
+            leadPadTop: px(lcs.paddingTop),
+            meta: box(meta),
+            metaMarginBottom: px(mcs.marginBottom),
+            headline: box(q('.lead-record .record-headline')),
+          };
+        }""")
+
+    def test_every_pixel_above_the_headline_is_accounted_for(self):
+        for width in (375, 1280):
+            for wide in (False, True):
+                context, page = self.page_at(width, 900)
+                try:
+                    self.pin_reveal(page)
+                    if wide:
+                        page.add_style_tag(content=WIDE_STACK)
+                    page.wait_for_timeout(120)
+                    g = self.geometry(page)
+                    label = dict(width=width,
+                                 stack="wide" if wide else "native")
+
+                    with self.subTest(**label, gap="masthead->opening"):
+                        self.assertAlmostEqual(
+                            g["opening"]["top"], g["masthead"]["bottom"],
+                            delta=1.0,
+                            msg="a band of page ground opened between the "
+                                "masthead and the opening")
+
+                    with self.subTest(**label, gap="opening top padding"):
+                        self.assertAlmostEqual(
+                            g["highestChild"] - g["inner"]["top"],
+                            g["innerPadTop"], delta=self.SLACK,
+                            msg="the opening's first row does not start at "
+                                "its declared padding")
+
+                    with self.subTest(**label, gap="opening bottom padding"):
+                        self.assertAlmostEqual(
+                            g["opening"]["bottom"] - g["lowestChild"],
+                            g["innerPadBottom"], delta=self.SLACK,
+                            msg="the opening ends further below its tallest "
+                                "column than its declared padding")
+
+                    # The distance from the opening to the headline is the
+                    # lead record's own padding, plus the eyebrow's rendered
+                    # height, plus the eyebrow's margin. The eyebrow's HEIGHT
+                    # is allowed to move with the fonts and with how long an
+                    # institution's name is; the arithmetic is not.
+                    with self.subTest(**label, gap="opening->headline"):
+                        expected = (g["leadPadTop"] + g["meta"]["h"]
+                                    + g["metaMarginBottom"])
+                        actual = (g["headline"]["top"]
+                                  - g["opening"]["bottom"])
+                        self.assertAlmostEqual(
+                            actual, expected, delta=self.SLACK,
+                            msg="%.1fpx sits between the opening and the "
+                                "headline but only %.1f is declared — "
+                                "something added vertical space"
+                                % (actual, expected))
+                finally:
+                    context.close()
+
+    def test_the_nameplate_holds_its_line_budget(self):
+        """
+        The masthead's height is a function of two line counts, and those are
+        what the design fixed. Asserting the counts rather than the pixels
+        keeps this true on a platform whose faces wrap differently.
+        """
+        budget = {320: 3, 375: 3, 768: 2, 1280: 2}
+        for width, kicker_lines in sorted(budget.items()):
+            for wide in (False, True):
+                context, page = self.page_at(width, 900)
+                try:
+                    if wide:
+                        page.add_style_tag(content=WIDE_STACK)
+                        page.wait_for_timeout(120)
+                    got = page.evaluate("""() => {
+                      const lines = s => { const e =
+                        document.querySelector(s);
+                        return Math.round(e.getBoundingClientRect().height /
+                          parseFloat(getComputedStyle(e).lineHeight)); };
+                      return {name: lines('.brand-name'),
+                              sub: lines('.brand-sub')};
+                    }""")
+                    with self.subTest(width=width,
+                                      stack="wide" if wide else "native"):
+                        self.assertEqual(
+                            got["name"], 1,
+                            "the wordmark must hold one line and is never "
+                            "abbreviated")
+                        self.assertLessEqual(
+                            got["sub"], kicker_lines,
+                            "the kicker grew past its line budget")
+                finally:
+                    context.close()
 
 
 class TestTheHomePageHoldsItsShape(BrowserCase):
@@ -1627,26 +1878,12 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
 
     #: Top of the home page's first main-content child, by viewport.
     CHROME_CEILING = {375: 300, 768: 250, 1280: 220, 1920: 220}
-    #: Top of the lead English headline.
-    #:
-    #: Raised on 2026-09-15 with the CMW revival, and this is a real loosening
-    #: rather than a re-anchor, so it is stated plainly. C1 reached 700/560 by
-    #: compressing the masthead to a single lockup row and consolidating the
-    #: dateline into a thin strip. T3 restores the full editorial nameplate
-    #: (mark, serif wordmark, mono kicker), puts the navigation on its own
-    #: rail, and gives the dateline back its five-row ledger panel beside the
-    #: claim. Each of those is the accepted design; together they cost the
-    #: headline about 130px at 1280.
-    #:
-    #: The approved r3 prototype measures 778.9 at 375 and 672.0 at 1280, and
-    #: this build measures 787.1 and 691.8 — the extra is production's longer
-    #: institution string wrapping `.lead-meta` onto a second line, which is
-    #: content rather than layout. The ceilings below sit ~40px above the
-    #: measured values so the gate still catches drift; the contract that the
-    #: record reaches the FIRST SCREEN is unchanged and is asserted at its
-    #: original values in `TestTheRecordReachesTheFirstViewport` (< 800 at
-    #: 375, and a complete title inside 1280x900), both of which still pass.
-    HEADLINE_CEILING = {375: 830, 1280: 730}
+    # The lead headline's absolute ceiling moved to
+    # `TestTheRecordReachesTheFirstViewport`, where it is calibrated on the
+    # widest faces measured and asserted on both font stacks. Keeping a second
+    # copy here meant two numbers to re-measure and one of them was always
+    # stale. `CHROME_CEILING` stays: the masthead's height is genuinely
+    # bounded and does not move with the body font.
 
     def chrome_top(self, page):
         return page.evaluate(
@@ -1664,22 +1901,6 @@ class TestTheDatelineIsActuallyCompressed(BrowserCase):
                 with self.subTest(width=width):
                     self.assertLessEqual(top, ceiling,
                                          "chrome is %.1fpx at %d" % (top, width))
-            finally:
-                context.close()
-
-    def test_the_lead_headline_starts_above_its_ceiling(self):
-        for width, ceiling in sorted(self.HEADLINE_CEILING.items()):
-            context, page = self.page_at(width, 900)
-            try:
-                top = page.evaluate(
-                    "() => { const h = document.querySelector("
-                    "'.lead-record .record-headline'); return h ? "
-                    "+(h.getBoundingClientRect().top + window.scrollY)"
-                    ".toFixed(1) : null; }")
-                with self.subTest(width=width):
-                    self.assertIsNotNone(
-                        top, "no lead record headline is rendered")
-                    self.assertLessEqual(top, ceiling)
             finally:
                 context.close()
 
