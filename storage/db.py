@@ -259,14 +259,22 @@ def get_articles_pending_analysis() -> list[sqlite3.Row]:
     """
     Return articles that passed relevance but haven't been fully analyzed yet.
     Used to resume a pipeline that was interrupted after relevance scoring.
+
+    Records dispositioned `terminal` by `core.processing_state` are excluded:
+    they have either been declared prose-free by their adapter or exhausted the
+    retry budget, and re-queueing them is the loop migration 0007 exists to
+    stop. They are excluded, not deleted — the row keeps its reason, attempt
+    count and both timestamps, so "why did this stop" always has an answer.
     """
     with get_conn() as conn:
         return conn.execute(
             """
-            SELECT id, url, title_original, text_original
+            SELECT id, url, title_original, text_original,
+                   processing_attempts
               FROM articles
              WHERE passed_relevance = 1
                AND analyzed_at IS NULL
+               AND COALESCE(processing_state, '') <> 'terminal'
              ORDER BY id
             """
         ).fetchall()
@@ -285,9 +293,84 @@ def get_articles_unscored() -> list[sqlite3.Row]:
     with get_conn() as conn:
         return conn.execute(
             """
-            SELECT id, url, title_original, text_original, scraped_at
+            SELECT id, url, title_original, text_original, scraped_at,
+                   processing_attempts
               FROM articles
              WHERE passed_relevance IS NULL
+               AND COALESCE(processing_state, '') <> 'terminal'
+             ORDER BY id
+            """
+        ).fetchall()
+
+
+def record_processing_failure(article_id: int, disposition) -> None:
+    """
+    Record one observed analysis failure against a record.
+
+    Writes the state, the reason, the running attempt count and both
+    timestamps. `processing_first_failed_at` is set once and never overwritten,
+    so the history survives however many failures follow.
+
+    `disposition` is a `core.processing_state.Disposition`.
+    """
+    from core.processing_state import now_utc
+
+    stamp = now_utc()
+    with get_conn() as conn:
+        conn.execute(
+            """
+            UPDATE articles
+               SET processing_state           = ?,
+                   processing_reason          = ?,
+                   processing_attempts        = ?,
+                   processing_first_failed_at =
+                       COALESCE(processing_first_failed_at, ?),
+                   processing_last_failed_at  = ?
+             WHERE id = ?
+            """,
+            (disposition.state, disposition.reason, disposition.attempts,
+             stamp, stamp, article_id),
+        )
+
+
+def clear_processing_failure(article_id: int) -> None:
+    """
+    Forget a record's failure history once it has been analyzed successfully.
+
+    A record that succeeds is not carrying a failure any more, and leaving a
+    stale `retriable` state on it would misreport the corpus's health. Called
+    only on success, so a terminal record — which by construction never reaches
+    analysis again — keeps its history.
+    """
+    with get_conn() as conn:
+        conn.execute(
+            """
+            UPDATE articles
+               SET processing_state           = NULL,
+                   processing_reason          = NULL,
+                   processing_attempts        = NULL,
+                   processing_first_failed_at = NULL,
+                   processing_last_failed_at  = NULL
+             WHERE id = ?
+            """,
+            (article_id,),
+        )
+
+
+def get_terminal_articles() -> list:
+    """
+    Every record that has stopped being retried, with its reason.
+
+    This is the disposition queue: a human decides what to do with these, and
+    until somebody does they sit here visibly rather than vanishing.
+    """
+    with get_conn() as conn:
+        return conn.execute(
+            """
+            SELECT id, url, processing_reason, processing_attempts,
+                   processing_first_failed_at, processing_last_failed_at
+              FROM articles
+             WHERE processing_state = 'terminal'
              ORDER BY id
             """
         ).fetchall()
