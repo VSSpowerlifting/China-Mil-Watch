@@ -30,6 +30,7 @@ the tracked database for writing.
 
 from __future__ import annotations
 
+import datetime as dt
 import html as html_mod
 import re
 import shutil
@@ -53,6 +54,44 @@ CSS = REPO_ROOT / "site" / "preview" / "styles.css"
 
 #: How many records the home page publishes: one lead plate plus the register.
 HOME_RECORDS = 6
+
+#: The publication date a fixture stamps on its newest rewritten record.
+#:
+#: A rewritten row only becomes one of the six newest records if it outranks
+#: every real one, so this horizon has to sit later than the corpus's own
+#: freshness. It used to be the literal "2026-09-20", which was safe while the
+#: corpus ended well short of it. The corpus then advanced to 2026-09-16, the
+#: descending six-day series in `mixed_date_rows()` reached back to 09-15, and
+#: real records tied or beat the last two rows — which failed three provenance
+#: cases with "fixture did not become the newest records" and would have taken
+#: the homogeneous fixtures too on 2026-09-21.
+#:
+#: A literal horizon is a dated bomb in a corpus that grows every day, so it is
+#: derived instead, with HOME_RECORDS days of headroom so a descending series
+#: stays strictly newer than the whole corpus for its full length.
+_FIXTURE_HORIZON = None
+
+
+def fixture_date(offset: int = 0) -> str:
+    """`offset` days before the fixture horizon, as `YYYY-MM-DD`."""
+    global _FIXTURE_HORIZON
+    if _FIXTURE_HORIZON is None:
+        newest = None
+        if TRACKED_DB.exists():
+            con = sqlite3.connect(str(TRACKED_DB))
+            try:
+                newest = con.execute(
+                    "SELECT MAX(published_date) FROM articles "
+                    " WHERE published_date GLOB "
+                    "'[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'"
+                ).fetchone()[0]
+            finally:
+                con.close()
+        base = (dt.date.fromisoformat(newest[:10]) if newest
+                else dt.date(2026, 9, 14))
+        _FIXTURE_HORIZON = base + dt.timedelta(days=HOME_RECORDS)
+    return (_FIXTURE_HORIZON - dt.timedelta(days=offset)).isoformat()
+
 
 #: Two language tags that the desk configuration actually declares
 #: (`desks/china/manifest.json` -> supported_language_tags). Chinese and a
@@ -122,7 +161,8 @@ def build_fixture(tmp: Path, rows: list, name="fixture"):
 
     `rows` is newest-first. Each entry may set `title_english`,
     `title_original` (None or "" for a record that has none) and `source_slug`;
-    dates are assigned descending from a base later than the whole corpus, so
+    dates are assigned descending from `fixture_date()`, a horizon derived
+    from the corpus rather than hard-coded, so
     `dates=True` produces a mixed-date register and the default produces one
     date shared by all six.
     """
@@ -140,7 +180,7 @@ def build_fixture(tmp: Path, rows: list, name="fixture"):
             "UPDATE articles SET title_english = ?, title_original = ?, "
             "       published_date = ?, source_id = ? WHERE id = ?",
             (row["title_english"], row.get("title_original"),
-             row.get("published_date", "2026-09-20"),
+             row.get("published_date") or fixture_date(),
              sources[slug]["id"], record_id))
     con.commit()
     con.close()
@@ -162,7 +202,51 @@ def homogeneous_rows(count=HOME_RECORDS):
     return [{"title_english": "Record %d in English" % n,
              "title_original": "第%d号原文标题" % n,
              "source_slug": "pla_daily",
-             "published_date": "2026-09-20"} for n in range(count)]
+             "published_date": fixture_date()} for n in range(count)]
+
+
+class TestTheFixtureHorizonOutranksTheCorpus(unittest.TestCase):
+    """
+    The premise every controlled fixture in this file rests on.
+
+    `build_fixture` rewrites the six newest analyzed records and then verifies
+    that they really are the six the page selected. That verification can only
+    succeed while the dates the fixture stamps outrank every real publication
+    date in the corpus — including the OLDEST row of a descending series.
+
+    This was a literal (`2026-09-20`) until the corpus advanced to within six
+    days of it and three provenance cases failed with "fixture did not become
+    the newest records". The literal is gone; this case is what stops a derived
+    horizon from quietly drifting back into range.
+    """
+
+    def test_the_oldest_fixture_row_is_still_newer_than_the_whole_corpus(self):
+        if not TRACKED_DB.exists():
+            self.skipTest("tracked corpus not present")
+        con = sqlite3.connect(str(TRACKED_DB))
+        try:
+            newest = con.execute(
+                "SELECT MAX(published_date) FROM articles "
+                " WHERE published_date GLOB "
+                "'[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'").fetchone()[0]
+        finally:
+            con.close()
+        self.assertIsNotNone(newest, "corpus carries no usable published_date")
+        oldest_fixture_row = fixture_date(HOME_RECORDS - 1)
+        self.assertGreater(
+            oldest_fixture_row, newest[:10],
+            "the fixture horizon has drifted into the corpus: the oldest row "
+            "of a %d-day descending series (%s) no longer outranks the "
+            "corpus's newest record (%s), so build_fixture's own premise "
+            "check will fail" % (HOME_RECORDS, oldest_fixture_row, newest[:10]))
+
+    def test_the_horizon_is_derived_rather_than_written_down(self):
+        """A date literal here is the defect, not the fix."""
+        source = Path(__file__).read_text(encoding="utf-8")
+        body = source.split("class TestTheFixtureHorizon", 1)[0]
+        self.assertNotIn(
+            "published_date = '2026-", body,
+            "a corpus rewrite is stamping a hard-coded date again")
 
 
 # ── The opening ─────────────────────────────────────────────────────────────
@@ -938,9 +1022,9 @@ class TestTheLanguageMetadataIsTheRepositorysOwn(PairedRecordCase):
         for position, record_id in enumerate(ids):
             con.execute(
                 "UPDATE articles SET title_english = ?, title_original = ?, "
-                "       published_date = '2026-09-20' WHERE id = ?",
+                "       published_date = ? WHERE id = ?",
                 ("Record %d in English" % position,
-                 "第%d号原文标题" % position, record_id))
+                 "第%d号原文标题" % position, fixture_date(), record_id))
         # `sources.language` is NOT NULL and is the deprecated compatibility
         # mirror (migration m0005). Only the authoritative BCP 47 field is
         # cleared, which is the state a newly configured source can be in.
@@ -1042,7 +1126,7 @@ class TestProvenanceSurvivesAHeterogeneousRegister(PairedRecordCase):
     def mixed_date_rows():
         rows = homogeneous_rows()
         for index, row in enumerate(rows):
-            row["published_date"] = "2026-09-%02d" % (20 - index)
+            row["published_date"] = fixture_date(index)
         return rows
 
     def test_a_homogeneous_register_may_carry_a_truthful_group_summary(self):
@@ -1145,9 +1229,9 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
         for position, record_id in enumerate(keep):
             con.execute(
                 "UPDATE articles SET title_english = ?, title_original = ?, "
-                "       published_date = '2026-09-20' WHERE id = ?",
+                "       published_date = ? WHERE id = ?",
                 ("Short corpus record %d" % position,
-                 "短语料第%d条" % position, record_id))
+                 "短语料第%d条" % position, fixture_date(), record_id))
         con.commit()
         con.close()
         out = self.tmp / "short-build"
@@ -2327,9 +2411,9 @@ class TestTheOneRecordRegisterReadsCorrectly(BrowserCase):
         for position, record_id in enumerate(keep):
             con.execute(
                 "UPDATE articles SET title_english = ?, title_original = ?, "
-                "       published_date = '2026-09-20' WHERE id = ?",
+                "       published_date = ? WHERE id = ?",
                 ("Two record corpus %d" % position,
-                 "两条语料第%d条" % position, record_id))
+                 "两条语料第%d条" % position, fixture_date(), record_id))
         con.commit()
         con.close()
         return db
