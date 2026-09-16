@@ -233,10 +233,28 @@ class TestDisabledAndStub(unittest.TestCase):
                          "an acknowledged stub must not degrade every run")
         self.assertEqual(docs, [])
 
-    def test_real_xinhua_adapter_is_detected_as_stub(self):
+    def test_real_xinhua_adapter_is_no_longer_a_stub(self):
+        """
+        Inverted 2026-09-16, when the adapter was implemented.
+
+        This case used to assert the opposite, and it was right to: the source
+        was configured, enabled and incapable of collecting, and `IS_STUB` is
+        what stopped that reading as healthy silence in every run.
+
+        The stub's stated reason was that the listing rendered via JavaScript.
+        That was measured against `www.xinhuanet.com/mil/`. The agency's current
+        path, `www.news.cn/milpro/`, is server-rendered — 200, robots
+        `Allow: /`, 106 distinct article URLs in the HTML itself — so the
+        adapter collects without executing any JavaScript, and a marker saying
+        it cannot would now be the dishonest half.
+        """
         a = SourceRegistry().get_adapter("xinhua_mil")
-        self.assertFalse(a.implemented)
-        self.assertEqual(a.healthcheck().status, st.NOT_IMPLEMENTED)
+        self.assertTrue(a.implemented)
+        self.assertEqual(a.healthcheck().status, st.OK)
+
+    def test_the_stub_marker_is_gone_from_the_adapter_itself(self):
+        from scraper.sources.xinhua_mil import XinhuaMilScraper
+        self.assertFalse(getattr(XinhuaMilScraper, "IS_STUB", False))
 
 
 class TestHealthchecksAreOffline(unittest.TestCase):
@@ -251,7 +269,7 @@ class TestHealthchecksAreOffline(unittest.TestCase):
         registry = SourceRegistry()
         by_slug = {r.source_slug: r.status for r in registry.healthcheck_all()}
         for slug in ("pla_daily", "mod_china", "china_mil_online",
-                     "global_times_mil"):
+                     "global_times_mil", "xinhua_mil"):
             self.assertEqual(by_slug[slug], st.OK)
 
 

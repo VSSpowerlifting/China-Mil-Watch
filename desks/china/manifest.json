@@ -94,8 +94,9 @@
       "source_type": "state_news_agency",
       "originality": "syndicated",
       "expected_cadence_days": 1,
+      "silence_threshold_days": 7,
       "enabled": true,
-      "notes": "Adapter is a documented stub: the listing is JavaScript/API-rendered and returns stale 2020-era HTML to requests-based clients. Has contributed zero rows for the life of the project. Kept enabled so the health report shows it as not_implemented rather than hiding it.",
+      "notes": "Implemented 2026-09-16 against the agency's current path, https://www.news.cn/milpro/, whose listing is server-rendered: robots.txt reads Allow: /, the listing returns 200 with 106 distinct article URLs, and article pages return full prose. The previous stub described www.xinhuanet.com/mil/, which was JavaScript-rendered; that diagnosis was true of the path it named and stale for this one. base_url still reads www.xinhuanet.com because sync_desk_config() deliberately never re-points a live source's host - a config sync must not be able to move a source to a different host, so changing it is a governed production-data change and not this documentation edit. news.cn is the same agency's current domain. Article URLs carry the publication date and a 32-character identity, so canonical URL and date are pure functions of the discovered link. It has contributed zero rows to date and will read as a new source in the corpus until it has run.",
       "adapter": "scraper.sources.xinhua_mil:XinhuaMilScraper"
     },
     {
