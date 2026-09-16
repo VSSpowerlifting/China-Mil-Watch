@@ -14,7 +14,7 @@
 <meta property="og:image:alt" content="Indo-Pacific Record">
 <meta name="twitter:image" content="https://indopacificrecord.org/social-card.png">
 <meta name="twitter:image:alt" content="Indo-Pacific Record">
-<meta name="theme-color" content="#0A1A22">
+<meta name="theme-color" content="#12222C">
 <link rel="icon" type="image/svg+xml" href="mark.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
@@ -30,16 +30,25 @@
 <script src="reveal.js"></script></head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="masthead masthead--lead">
-  <div class="wrap">
+<header class="masthead">
+  <div class="wrap masthead-name-row">
     <a class="brand" href="index.html">
-      <img class="brand-mark" src="masthead-mark.png"
-           width="56" height="56" alt="" aria-hidden="true"
-           decoding="async" fetchpriority="high">
-      <h1 class="brand-name">Indo-Pacific Record</h1>
+      <picture>
+        <source media="(max-width: 380px)"
+                srcset="mark.svg"
+                type="image/svg+xml">
+        <img class="brand-mark" src="masthead-mark.png"
+             width="56" height="56" alt="" aria-hidden="true"
+             decoding="async" fetchpriority="high">
+      </picture>
+      <span class="brand-text">
+        <h1 class="brand-name">Indo-Pacific Record</h1>
+        <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
+      </span>
     </a>
-    <p class="brand-sub">Official defense and security texts, preserved as published and analyzed in context.</p>
-    <nav class="primary nav-desktop" aria-label="Primary">
+  </div>
+  <div class="nav-rail">
+    <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
       <li><a href="archive.html">Record</a></li>
       <li><a href="desks.html">Desks</a></li>
@@ -50,10 +59,11 @@
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
-    <details class="nav-toggle nav-mobile">
-      <summary>Sections</summary>
-      <nav class="primary" aria-label="Primary">
-        <ul>
+    <div class="wrap">
+      <details class="nav-toggle nav-mobile">
+        <summary>Sections</summary>
+        <nav aria-label="Primary">
+          <ul>
       <li><a href="archive.html">Record</a></li>
       <li><a href="desks.html">Desks</a></li>
       <li><a href="sources.html">Sources</a></li>
@@ -62,212 +72,222 @@
       <li><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
-      </nav>
-    </details>
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
-<div class="freshness-bar freshness-bar--lead">
-  <div class="wrap">
-    <dl>
-      <div><dt>Records last collected</dt>
-        <dd>2026-09-14</dd></div>
-      <div><dt>Analysis last produced</dt>
-        <dd>2026-09-14</dd></div>
-      <div><dt>Last full update</dt>
-        <dd>2026-09-14</dd></div>
-<div><dt>Records held, China Desk</dt>
-        <dd>4,186</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,733</dd></div>    </dl>
-    <p class="detail"><a href="coverage.html">Run
-      139 in full &rarr;</a></p>
-  </div>
-</div>
 <main id="main" class="leads-with-hero">
-<section class="claim-band">
-  <div class="wrap">
-    <p class="claim">A record of what defense institutions publish about
-      themselves, <em>preserved as published</em> and read in context.</p>
-    <div class="claim-side">
+<section class="opening" aria-label="What this publication is">
+  <div class="veil" aria-hidden="true"></div>
+  <div class="wrap opening-inner">
+    <div>
+      <p class="claim">A record of what defense institutions publish about
+        themselves, <em>preserved as published</em> and read in context.</p>
       <p class="claim-sub">Indo-Pacific Record keeps the original text, the date, the
         institution, and a per-run record of whether collection actually
         worked. Analysis is separate from the record, cites it, and is labeled
         as interpretation.</p>
       <p class="claim-cta">
         <a class="btn btn--primary" href="archive.html">Explore the record</a>
-        <a class="btn btn--quiet" href="methodology.html">Methodology</a>
+        <a class="btn btn--secondary" href="methodology.html">Methodology</a>
       </p>
+    </div>
+    <p class="veil-credit">IMG · U.S. NAVY, MC3 N. BURKE · PUBLIC DOMAIN
+      <a href="https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg">COMMONS</a></p>
+    <div class="ledger">
+      <div class="ledger-label">The record, today</div>
+      <dl>
+        <div class="ledger-row"><dt>Records last collected</dt>
+          <dd>2026-09-14</dd></div>
+        <div class="ledger-row"><dt>Analysis last produced</dt>
+          <dd>2026-09-14</dd></div>
+        <div class="ledger-row"><dt>Last full update</dt>
+          <dd>2026-09-14</dd></div>
+<div class="ledger-row"><dt>Records held, China Desk</dt>
+          <dd>4,186</dd></div><div class="ledger-row"><dt>Of those, analyzed</dt>
+          <dd>1,733</dd></div>      </dl>
+      <p class="ledger-foot"><a href="coverage.html">Run
+        139 in full &rarr;</a></p>
     </div>
   </div>
 </section>
-<div class="lead-record-band">
   <div class="wrap">
-<article class="lead-record" aria-labelledby="lead-record-title">
-  <p class="record-prov">
-    <span class="evidence evidence--record">Source record</span>
-    <span class="record-prov-source">CMC Political Work Department</span>
-    <time datetime="2026-09-14">2026-09-14</time>
-  </p>
+<article class="lead-record" aria-labelledby="lead-record-title" data-reveal>
+  <p class="lead-meta"><span class="evidence evidence--record">Source record</span> &middot;
+    <span class="who">CMC Political Work Department</span> &middot;
+    <time datetime="2026-09-14">2026-09-14</time></p>
   <h2 class="record-headline" id="lead-record-title"><a href="record/4187.html">China-Laos &#34;Peace Train-2026&#34; Joint Exercise Concludes Successfully</a></h2>    <p class="original" lang="zh-Hans">中老“和平列车-2026”联合演习圆满落幕</p>
-  <p class="record-note">The English title is machine-produced and labeled as
+  <p class="lead-note">The English title is machine-produced and labeled as
     such; the original is stored exactly as the institution published it.
-    <a href="record/4187.html">This record and its provenance <span class="arrow">&rarr;</span></a></p>
+    <a href="record/4187.html">This record and its provenance &rarr;</a></p>
 </article>
 
-  </div>
-</div>
-  <div class="wrap">
 
-<div class="section-head">
-  <p class="section-index" aria-hidden="true">01</p>
-  <h2>Latest records</h2>
-  <p class="more"><a href="archive.html">The full record <span class="arrow">&rarr;</span></a></p>
-</div>
-<p class="eyebrow eyebrow--corpus">As published.</p>
-<p class="meta">The most recent records from the desks that collect, with original-language titles
-preserved.</p>
-<p class="register-note"><span class="evidence evidence--record">Source records</span>
-5 records, all published by CMC Political Work Department on <span class="date-clause"><time datetime="2026-09-14">2026-09-14</time>.</span>
-  Each original-language title is shown as that institution published it.</p>
-<ul class="record-register" data-reveal>
-  <li class="register-item">
+<section class="section">
+  <div class="section-head">
+    <h2 id="records">Latest records</h2>
+    <p class="section-more"><a href="archive.html">The full record &rarr;</a></p>
+  </div>
+  <div class="records-layout">
+<ul class="register">
+  <li class="register-item" data-reveal>
     <h3><a href="record/4186.html">When &#34;Soldier Talk&#34; Becomes a Party Committee Agenda Item</a></h3>    <p class="original" lang="zh-Hans">当“兵言兵语”成为党委议题</p>
   </li>
-  <li class="register-item">
+  <li class="register-item" data-reveal>
     <h3><a href="record/4185.html">Strong Military Forum | Build a Solid Cybersecurity Defense Line for the Intelligent Age</a></h3>    <p class="original" lang="zh-Hans">强军论坛｜筑牢智能时代的网络安全防线</p>
   </li>
-  <li class="register-item">
+  <li class="register-item" data-reveal>
     <h3><a href="record/4179.html">*How to View Hot Theoretical Topics in Military Camps · 2026* Distributed to the Entire Military</a></h3>    <p class="original" lang="zh-Hans">《军营理论热点怎么看·2026》印发全军</p>
   </li>
-  <li class="register-item">
+  <li class="register-item" data-reveal>
     <h3><a href="record/4175.html">A Brigade of the 76th Group Army Conducts Live-Fire Rocket Artillery Training</a></h3>    <p class="original" lang="zh-Hans">第76集团军某旅开展火箭炮实弹射击训练</p>
   </li>
-  <li class="register-item">
+  <li class="register-item" data-reveal>
     <h3><a href="record/4174.html">Straight to the Training Ground: The PAP Liuzhou Detachment Conducts Multi-Subject Combat-Realistic Training</a></h3>    <p class="original" lang="zh-Hans">直击演训场，武警柳州支队开展多课目实战化训练</p>
   </li>
 </ul>
 
+<aside class="records-aside">
+  <p class="aside-label">As published.</p>
+  <p>The most recent records from the desks that collect, with
+  original-language titles preserved.</p>
+  <p class="register-note"><span class="evidence evidence--record">Source records</span>
+ 5 records, all published by CMC Political Work Department on <span class="date-clause"><time datetime="2026-09-14">2026-09-14</time>.</span>
+    Each original-language title is shown as that institution published it.</p>
+</aside>
+  </div>
+</section>
 
-<div class="section-head">
-  <p class="section-index" aria-hidden="true">02</p>
-  <h2 id="desks">Desks</h2>
-  <p class="more"><a href="desks.html">All desks and what blocks them <span class="arrow">&rarr;</span></a></p>
-</div>
-<p class="meta">A desk is a declared collection scope. Its status says what it is, and every figure
-beside it is derived from configuration or from the corpus — never from intent. Only a collecting
-desk has a record count; the others say what stops them rather than showing a zero.</p>
-<p class="meta"><b>1</b> collecting desk of <b>4</b> declared, drawing on <b>5</b> enabled sources.</p>
-<div class="cards cards--desks" data-reveal>
-  <article class="card card--desk is-collecting">
-    <h3><a href="china.html">China Desk</a></h3>
-    <p class="card-meta"><span class="desk-state desk-state--live">Live — collecting</span></p>
-    <dl class="stat-rows">
-      <div class="stat-row"><dt>Enabled sources</dt><dd>5</dd></div>
-      <div class="stat-row"><dt>Records</dt>
-        <dd>4,186</dd></div>
-    </dl>
-    <p class="card-foot"><a href="china.html">China Desk in full <span class="arrow">&rarr;</span></a></p>
-  </article>
-  <article class="card card--desk is-shadow">
-    <h3><a href="singapore.html">Singapore Desk</a></h3>
-    <p class="card-meta"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></p>
-    <dl class="stat-rows">
-      <div class="stat-row"><dt>Enabled sources</dt><dd>0</dd></div>
-      <div class="stat-row"><dt>Records</dt>
-        <dd><span class="stat-none">none — see status</span></dd></div>
-    </dl>
-    <p class="card-foot"><a href="singapore.html">Singapore Desk in full <span class="arrow">&rarr;</span></a></p>
-  </article>
-  <article class="card card--desk is-shadow">
-    <h3><a href="japan.html">Japan Desk</a></h3>
-    <p class="card-meta"><span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></p>
-    <dl class="stat-rows">
-      <div class="stat-row"><dt>Enabled sources</dt><dd>0</dd></div>
-      <div class="stat-row"><dt>Records</dt>
-        <dd><span class="stat-none">none — see status</span></dd></div>
-    </dl>
-    <p class="card-foot"><a href="japan.html">Japan Desk in full <span class="arrow">&rarr;</span></a></p>
-  </article>
-  <article class="card card--desk is-blocked">
-    <h3><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a></h3>
-    <p class="card-meta"><span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></p>
-    <dl class="stat-rows">
-      <div class="stat-row"><dt>Enabled sources</dt><dd>0</dd></div>
-      <div class="stat-row"><dt>Records</dt>
-        <dd><span class="stat-none">none — see status</span></dd></div>
-    </dl>
-    <p class="card-foot"><a href="us-indopacific.html">US Indo-Pacific Reference Desk in full <span class="arrow">&rarr;</span></a></p>
-  </article>
-</div>
+<section class="section">
+  <div class="section-head">
+    <h2 id="desks">Desks</h2>
+    <p class="section-more"><a href="desks.html">All desks and what blocks them &rarr;</a></p>
+  </div>
+  <p class="section-note">A desk is a declared collection scope. Its status says
+  what it is, and every figure beside it is derived from configuration or from
+  the corpus — never from intent. Only a collecting desk has a record count;
+  the others say what stops them rather than showing a zero.</p>
+  <p class="eyebrow"><b>1</b> collecting desk of <b>4</b> declared, drawing on <b>5</b> enabled sources.</p>
+  <ul class="desks">
+    <li class="card--desk is-collecting" data-reveal>
+      <h3><a href="china.html">China Desk</a></h3>
+      <span class="desk-state desk-state--live">Live — collecting</span>
+      <ul class="desk-stats">
+        <li class="stat-row">Enabled sources <b>5</b></li>
+        <li class="stat-row">Records
+          <b>4,186</b></li>
+      </ul>
+      <p class="desk-foot"><a href="china.html">China Desk in full &rarr;</a></p>
+    </li>
+    <li class="card--desk is-shadow" data-reveal>
+      <h3><a href="singapore.html">Singapore Desk</a></h3>
+      <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span>
+      <ul class="desk-stats">
+        <li class="stat-row">Enabled sources <b>0</b></li>
+        <li class="stat-row">Records
+          <b>none — see status</b></li>
+      </ul>
+      <p class="desk-foot"><a href="singapore.html">Singapore Desk in full &rarr;</a></p>
+    </li>
+    <li class="card--desk is-shadow" data-reveal>
+      <h3><a href="japan.html">Japan Desk</a></h3>
+      <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span>
+      <ul class="desk-stats">
+        <li class="stat-row">Enabled sources <b>0</b></li>
+        <li class="stat-row">Records
+          <b>none — see status</b></li>
+      </ul>
+      <p class="desk-foot"><a href="japan.html">Japan Desk in full &rarr;</a></p>
+    </li>
+    <li class="card--desk is-blocked" data-reveal>
+      <h3><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a></h3>
+      <span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span>
+      <ul class="desk-stats">
+        <li class="stat-row">Enabled sources <b>0</b></li>
+        <li class="stat-row">Records
+          <b>none — see status</b></li>
+      </ul>
+      <p class="desk-foot"><a href="us-indopacific.html">US Indo-Pacific Reference Desk in full &rarr;</a></p>
+    </li>
+  </ul>
+</section>
+  </div>
 
-<div class="section-head">
-  <p class="section-index" aria-hidden="true">03</p>
-  <h2>Latest analysis</h2>
-  <p class="more"><a href="analysis.html">All analysis <span class="arrow">&rarr;</span></a></p>
-</div>
-<article class="feature" data-reveal>
-  <div class="feature-body">
-    <p class="feature-eyebrow">The PLA Watch &middot; No. 14 &middot; week ending 2026-08-15</p>
-    <h3><a href="https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html" rel="noopener">The PLA Watch: One Exercise, Five Reports East of Taiwan</a></h3>
-<p class="dek">Five of the twelve records flagged in the week ending 15 August 2026 describe a single China-Indonesia naval passage exercise. They ran across three outlets on three publication dates, and every one of them put the operating area east of Taiwan in the headline.</p>    <p class="byline">Benjamin Yang, Creator and Editor &middot; 137 articles &middot; 12 model-flagged</p>
-    <p class="legacy-note">Retrospective edition: prepared
-      after the week it covers, and published under the current masthead.</p>
-    <div class="feature-actions">
-      <a class="btn btn--primary" href="https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html" rel="noopener">Read this edition</a>
+<section class="band section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="analysis">Latest analysis</h2>
+      <p class="section-more"><a href="analysis.html">All analysis &rarr;</a></p>
+    </div>
+    <div class="feature" data-reveal>
+      <div>
+        <p class="feature-eyebrow">The PLA Watch &middot; No. 14 &middot; week ending 2026-08-15</p>
+        <h3><a href="https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html" rel="noopener">The PLA Watch: One Exercise, Five Reports East of Taiwan</a></h3>
+<p class="dek">Five of the twelve records flagged in the week ending 15 August 2026 describe a single China-Indonesia naval passage exercise. They ran across three outlets on three publication dates, and every one of them put the operating area east of Taiwan in the headline.</p>        <p class="byline">Benjamin Yang, Creator and Editor &middot; 137 articles &middot; 12 model-flagged</p>
+        <p class="legacy-note">Retrospective edition: prepared
+          after the week it covers, and published under the current masthead.</p>
+        <p><a class="btn btn--primary" href="https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html" rel="noopener">Read this edition</a></p>
+      </div>
+      <figure>
+        <img src="cover/2026-08-15.png" alt="Cover of The PLA Watch No. 14, week ending 2026-08-15"
+             width="1200" height="630" loading="lazy" decoding="async">
+        <figcaption class="figure-credit">Original PLA Watch edition cover, preserved as published.</figcaption>
+      </figure>
     </div>
   </div>
-  <figure class="feature-figure">
-    <img src="cover/2026-08-15.png" alt="Cover of The PLA Watch No. 14, week ending 2026-08-15"
-         width="1200" height="630" loading="eager" decoding="async">
-  </figure>
-</article>
-<p class="figure-credit">Original PLA Watch edition cover, preserved as published.</p>
+</section>
 
-<div class="section-head section-head--quiet">
-  <p class="section-index" aria-hidden="true">04</p>
-  <h2>Record and analysis are not the same thing</h2>
-</div>
-<div class="notes">
-  <article class="note">
-    <h3>The record</h3>
-    <p class="card-prose">Every item is stored as its institution published it:
-    original language, original date, original URL, and a content fingerprint
-    taken at capture. English titles and summaries, where they exist, are
-    produced by machine and labeled as such. Nothing in the record asserts that
-    what an institution said is true.</p>
-    <p class="card-foot"><a href="archive.html">Explore the record <span class="arrow">&rarr;</span></a></p>
-  </article>
-  <article class="note">
-    <h3>The analysis</h3>
-    <p class="card-prose">Analysis is written by a person, cites the records it
-    rests on, and is labeled as interpretation. No model writes it and no script
-    derives it from the corpus. An edition is a reading of the week, not a
-    summary of the record.</p>
-    <p class="card-foot"><a href="analysis.html">Read analysis <span class="arrow">&rarr;</span></a></p>
-  </article>
-  <article class="note">
-    <h3>Methodology</h3>
-    <p class="card-prose">What this record can and cannot support, how each
-    field is derived, when a value may be absent, and where it stops being
-    reliable — stated once, in one place, rather than implied across pages.</p>
-    <p class="card-foot"><a href="methodology.html">Read the methodology <span class="arrow">&rarr;</span></a></p>
-  </article>
-</div>
-
-<div class="section-head section-head--quiet">
-  <p class="section-index" aria-hidden="true">05</p>
-  <h2>What did not collect</h2>
-  <p class="more"><a href="coverage.html">Coverage, per source, per run <span class="arrow">&rarr;</span></a></p>
-</div>
-<p>Run 139 executed 4
-collectors and recorded
-0 execution failures, alongside 1
-configured source with no working
-collector. An empty result has more than one cause and only one of them is healthy, so
-each source's own outcome is published rather than summarized away.</p>
+<div class="wrap">
+<section class="section">
+  <div class="section-head">
+    <h2 id="record-and-analysis">Record and analysis are not the same thing</h2>
   </div>
+  <ul class="notes">
+    <li class="note" data-reveal>
+      <h3>The record</h3>
+      <p class="card-prose">Every item is stored as its institution published it:
+      original language, original date, original URL, and a content fingerprint
+      taken at capture. English titles and summaries, where they exist, are
+      produced by machine and labeled as such. Nothing in the record asserts that
+      what an institution said is true.</p>
+      <p class="card-foot"><a href="archive.html">Explore the record &rarr;</a></p>
+    </li>
+    <li class="note" data-reveal>
+      <h3>The analysis</h3>
+      <p class="card-prose">Analysis is written by a person, cites the records it
+      rests on, and is labeled as interpretation. No model writes it and no script
+      derives it from the corpus. An edition is a reading of the week, not a
+      summary of the record.</p>
+      <p class="card-foot"><a href="analysis.html">Read analysis &rarr;</a></p>
+    </li>
+    <li class="note" data-reveal>
+      <h3>Methodology</h3>
+      <p class="card-prose">What this record can and cannot support, how each
+      field is derived, when a value may be absent, and where it stops being
+      reliable — stated once, in one place, rather than implied across pages.</p>
+      <p class="card-foot"><a href="methodology.html">Read the methodology &rarr;</a></p>
+    </li>
+  </ul>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <h2 id="coverage">What did not collect</h2>
+  </div>
+  <p class="coverage-prose">Run 139 executed 4
+  collectors and recorded
+  0 execution failures, alongside 1
+  configured source with no working
+  collector. An empty result has more than one cause and only one of them is healthy, so
+  each source's own outcome is published rather than summarized away.</p>
+  <p class="coverage-foot"><a href="coverage.html">Coverage, per source, per run &rarr;</a></p>
+</section>
+</div>
 </main>
 <footer class="site">
   <div class="wrap">
+    <div class="footer-name">Indo-Pacific Record</div>
     <p>Indo-Pacific Record is an independent research project created and edited by
     Benjamin Yang ·
     <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>

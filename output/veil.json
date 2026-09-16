@@ -1,0 +1,27 @@
+{
+  "_comment": "The homepage Ocean Signal Veil. A duotone derivative of a public-domain U.S. Navy photograph, shown as a masked layer rather than as an image card. It illustrates no record and is not evidence of anything; the page says so beside it.",
+  "routes": {
+    "webp": "/atmosphere/veil-ocean.webp",
+    "jpg": "/atmosphere/veil-ocean.jpg"
+  },
+  "editorial_id": "reagan-jmsdf-2015",
+  "sha256": {
+    "webp": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+    "jpg": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3"
+  },
+  "bytes": {
+    "webp": 50480,
+    "jpg": 114403
+  },
+  "credit": "MC3 Nathan Burke, U.S. Navy · public domain · via Wikimedia Commons",
+  "creator": "Mass Communication Specialist 3rd Class Nathan Burke, U.S. Navy",
+  "license": "Public domain",
+  "license_url": "https://www.copyright.gov/title17/92chap1.html#105",
+  "license_basis": "Work of the U.S. federal government prepared by a service member in the course of official duties: 17 U.S.C. § 105, tagged {{PD-USGov-Military}} on the Commons file page. Read from that page's own wikitext, not inferred from the subject.",
+  "source_page": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/00/Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force%2C_November_23%2C_2015.jpg",
+  "acquired_at": "2026-09-15T00:00:00Z",
+  "derivative": "cropped, resampled and duotoned against the paper ground by scripts/make_veil.py, whose effective crop is recorded in site/assets/editorial/derivatives/veil-ocean.json. The source is public domain, so the derivative carries no onward licence condition.",
+  "origin": "site/assets/editorial/derivatives/veil-ocean.{webp,jpg}",
+  "note": "Homepage Ocean Signal Veil (publication identity). Illustrates no record and is evidence of nothing; the page says so beside it. The derivative is cropped, resampled and duotoned against the paper ground by scripts/make_veil.py, whose effective crop is written to derivatives/veil-ocean.json. The source is public domain, so the derivative carries no ShareAlike obligation — the visible credit is kept anyway, because attribution for a photograph a publication shows is a standard this project holds itself to regardless of whether a licence compels it."
+}
