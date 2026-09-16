@@ -47,6 +47,7 @@ sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
 
 import generate_preview as gp                                    # noqa: E402
 from core.viewmodel import PublicView                            # noqa: E402
+from scripts.reconcile_db import read_only                       # noqa: E402
 
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
 TEMPLATES = REPO_ROOT / "site" / "preview" / "templates"
@@ -72,21 +73,30 @@ HOME_RECORDS = 6
 _FIXTURE_HORIZON = None
 
 
+def _corpus_freshness():
+    """
+    The tracked corpus's newest `published_date`, or None.
+
+    Read through `reconcile_db.read_only`, which copies the database and its
+    sidecars to a scratch directory and reads the copy. Never
+    `sqlite3.connect()` on the tracked file, even to read: it is WAL-mode, so an
+    open can leave a -wal/-shm beside it. That is the run-475 defect, and
+    `test_workflow_failure_paths` enforces the rule against this whole suite.
+    """
+    if not TRACKED_DB.exists():
+        return None
+    with read_only(str(TRACKED_DB)) as con:
+        return con.execute(
+            "SELECT MAX(published_date) FROM articles "
+            " WHERE published_date GLOB "
+            "'[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'").fetchone()[0]
+
+
 def fixture_date(offset: int = 0) -> str:
     """`offset` days before the fixture horizon, as `YYYY-MM-DD`."""
     global _FIXTURE_HORIZON
     if _FIXTURE_HORIZON is None:
-        newest = None
-        if TRACKED_DB.exists():
-            con = sqlite3.connect(str(TRACKED_DB))
-            try:
-                newest = con.execute(
-                    "SELECT MAX(published_date) FROM articles "
-                    " WHERE published_date GLOB "
-                    "'[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'"
-                ).fetchone()[0]
-            finally:
-                con.close()
+        newest = _corpus_freshness()
         base = (dt.date.fromisoformat(newest[:10]) if newest
                 else dt.date(2026, 9, 14))
         _FIXTURE_HORIZON = base + dt.timedelta(days=HOME_RECORDS)
@@ -223,14 +233,7 @@ class TestTheFixtureHorizonOutranksTheCorpus(unittest.TestCase):
     def test_the_oldest_fixture_row_is_still_newer_than_the_whole_corpus(self):
         if not TRACKED_DB.exists():
             self.skipTest("tracked corpus not present")
-        con = sqlite3.connect(str(TRACKED_DB))
-        try:
-            newest = con.execute(
-                "SELECT MAX(published_date) FROM articles "
-                " WHERE published_date GLOB "
-                "'[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'").fetchone()[0]
-        finally:
-            con.close()
+        newest = _corpus_freshness()
         self.assertIsNotNone(newest, "corpus carries no usable published_date")
         oldest_fixture_row = fixture_date(HOME_RECORDS - 1)
         self.assertGreater(
