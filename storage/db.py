@@ -259,14 +259,24 @@ def get_articles_pending_analysis() -> list[sqlite3.Row]:
     """
     Return articles that passed relevance but haven't been fully analyzed yet.
     Used to resume a pipeline that was interrupted after relevance scoring.
+
+    Records dispositioned `paused` or `terminal` by `core.processing_state`
+    are excluded. The two are not the same thing and must not be read as such:
+    `terminal` is a statement about the document (its adapter found media and
+    no prose), while `paused` only means the retry budget is spent and a human
+    should look — `resume_paused_article()` puts it straight back. Neither is
+    deleted; the row keeps its reason, attempt count and both timestamps, so
+    "why did this stop" always has an answer.
     """
     with get_conn() as conn:
         return conn.execute(
             """
-            SELECT id, url, title_original, text_original
+            SELECT id, url, title_original, text_original,
+                   processing_attempts
               FROM articles
              WHERE passed_relevance = 1
                AND analyzed_at IS NULL
+               AND COALESCE(processing_state, '') NOT IN ('paused', 'terminal')
              ORDER BY id
             """
         ).fetchall()
@@ -285,12 +295,132 @@ def get_articles_unscored() -> list[sqlite3.Row]:
     with get_conn() as conn:
         return conn.execute(
             """
-            SELECT id, url, title_original, text_original, scraped_at
+            SELECT id, url, title_original, text_original, scraped_at,
+                   processing_attempts
               FROM articles
              WHERE passed_relevance IS NULL
+               AND COALESCE(processing_state, '') NOT IN ('paused', 'terminal')
              ORDER BY id
             """
         ).fetchall()
+
+
+def record_processing_failure(article_id: int, disposition) -> None:
+    """
+    Record one observed analysis failure against a record.
+
+    Writes the state, the reason, the running attempt count and both
+    timestamps. `processing_first_failed_at` is set once and never overwritten,
+    so the history survives however many failures follow.
+
+    `disposition` is a `core.processing_state.Disposition`.
+    """
+    from core.processing_state import now_utc
+
+    stamp = now_utc()
+    with get_conn() as conn:
+        conn.execute(
+            """
+            UPDATE articles
+               SET processing_state           = ?,
+                   processing_reason          = ?,
+                   processing_attempts        = ?,
+                   processing_first_failed_at =
+                       COALESCE(processing_first_failed_at, ?),
+                   processing_last_failed_at  = ?
+             WHERE id = ?
+            """,
+            (disposition.state, disposition.reason, disposition.attempts,
+             stamp, stamp, article_id),
+        )
+
+
+def clear_processing_failure(article_id: int) -> None:
+    """
+    Forget a record's failure history once it has been analyzed successfully.
+
+    A record that succeeds is not carrying a failure any more, and leaving a
+    stale `retriable` state on it would misreport the corpus's health. Called
+    only on success, so a terminal record — which by construction never reaches
+    analysis again — keeps its history.
+    """
+    with get_conn() as conn:
+        conn.execute(
+            """
+            UPDATE articles
+               SET processing_state           = NULL,
+                   processing_reason          = NULL,
+                   processing_attempts        = NULL,
+                   processing_first_failed_at = NULL,
+                   processing_last_failed_at  = NULL
+             WHERE id = ?
+            """,
+            (article_id,),
+        )
+
+
+def get_articles_in_state(state: str) -> list:
+    """
+    Every record currently held in `state`, with its reason and history.
+
+    This is the review queue: a human decides what to do, and until somebody
+    does these sit here visibly rather than vanishing.
+    """
+    with get_conn() as conn:
+        return conn.execute(
+            """
+            SELECT id, url, processing_state, processing_reason,
+                   processing_attempts, processing_first_failed_at,
+                   processing_last_failed_at
+              FROM articles
+             WHERE processing_state = ?
+             ORDER BY id
+            """,
+            (state,),
+        ).fetchall()
+
+
+def get_terminal_articles() -> list:
+    """Records whose content cannot be analyzed. Not reversible here."""
+    return get_articles_in_state("terminal")
+
+
+def get_paused_articles() -> list:
+    """Records held for manual review because the retry budget ran out."""
+    return get_articles_in_state("paused")
+
+
+def resume_paused_article(article_id: int) -> bool:
+    """
+    Return one paused record to the automatic analysis queue.
+
+    The recovery path for a spend control. The attempt count is reset — the
+    budget is what paused it, so resuming without clearing it would pause the
+    record again on its next failure — while `processing_reason` and both
+    timestamps are **kept**, so the record still says it was paused once and
+    when.
+
+    Refuses a record that is not paused, and returns False rather than raising:
+    a terminal record is a statement about its content and is not un-made by
+    calling this, and a never-failed record has nothing to resume.
+    """
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT processing_state FROM articles WHERE id = ?",
+            (article_id,),
+        ).fetchone()
+        if row is None or row["processing_state"] != "paused":
+            return False
+        conn.execute(
+            """
+            UPDATE articles
+               SET processing_state    = 'retriable',
+                   processing_attempts = 0
+             WHERE id = ?
+            """,
+            (article_id,),
+        )
+        return True
 
 
 # ── Site-generation bulk fetch ────────────────────────────────────────────────

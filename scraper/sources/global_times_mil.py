@@ -110,12 +110,33 @@ class GlobalTimesMilScraper(BaseScraper):
         pub_date = self._extract_date(soup, url)
 
         return {
-            "url":            url,
-            "source_slug":    self.source_slug,
-            "title_original": title,
-            "text_original":  text,
-            "published_date": pub_date,
+            "url":             url,
+            "source_slug":     self.source_slug,
+            "title_original":  title,
+            "text_original":   text,
+            "published_date":  pub_date,
+            "content_verdict": self._content_verdict(soup, text),
         }
+
+    @staticmethod
+    def _content_verdict(soup: BeautifulSoup, text: str):
+        """
+        A deterministic statement about the document, or None.
+
+        `media_only` only when the body container was found (so the template is
+        still understood), it carries media, and it carries no prose. A missing
+        container is template drift and returns None — which is exactly the
+        case that produced records 3432, 3946 and 3948, and the reason an empty
+        body is never a permanent verdict on its own.
+        """
+        if text.strip():
+            return None
+        content_div = soup.find("div", class_="article_content")
+        if content_div is None:
+            return None                      # template drift — say nothing
+        if content_div.find(["img", "video", "iframe"]) is not None:
+            return "media_only"
+        return None
 
     def _extract_title(self, soup: BeautifulSoup) -> Optional[str]:
         div = soup.find("div", class_="article_title")

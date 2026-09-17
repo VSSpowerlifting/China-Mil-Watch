@@ -188,13 +188,42 @@ class XinhuaMilScraper(BaseScraper):
             self.logger.debug("No title found, skipping: %s", url)
             return None
 
+        text = self._extract_text(soup)
         return {
-            "url":            canonical_url(url) or url,
-            "source_slug":    self.source_slug,
-            "title_original": title,
-            "text_original":  self._extract_text(soup),
-            "published_date": self._extract_date(soup, url),
+            "url":             canonical_url(url) or url,
+            "source_slug":     self.source_slug,
+            "title_original":  title,
+            "text_original":   text,
+            "published_date":  self._extract_date(soup, url),
+            "content_verdict": self._content_verdict(soup, text),
         }
+
+    @staticmethod
+    def _content_verdict(soup: BeautifulSoup, text: str):
+        """
+        A deterministic statement about the document, or None.
+
+        Only the adapter can tell "this document has no prose" from "we can no
+        longer read this document", because only the adapter saw the markup.
+        `media_only` is reported when all three hold:
+
+          * the body container was found, so the template is still understood;
+          * it carries media;
+          * it carries no prose.
+
+        A **missing** container is template drift, not a photo set, and returns
+        None so the record stays retriable and loudly visible. That distinction
+        is what keeps an extractor regression from being filed as a permanent
+        property of the document — the Global Times defect of 2026-09-16.
+        """
+        if text.strip():
+            return None
+        detail = soup.find(id="detail")
+        if detail is None:
+            return None                      # template drift — say nothing
+        if detail.find(["img", "video", "iframe"]) is not None:
+            return "media_only"
+        return None
 
     def _extract_title(self, soup: BeautifulSoup) -> Optional[str]:
         for finder in (lambda: soup.find("h1"),

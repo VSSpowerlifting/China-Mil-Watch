@@ -50,6 +50,7 @@ from core.collection import status as collection_status
 from core.collection.contract import CollectionWindow
 from core.collection.health import aggregate_status, human_report
 from core.registry import get_registry
+from core import processing_state
 from storage import db
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -296,6 +297,47 @@ def run(
     logger.info("\n%s", human_report(source_results, run_id))
     logger.info("Collection aggregate status: %s", collection_agg)
 
+    def _record_failure(article_id: int, body: str, failure: str,
+                        history: dict, verdicts: dict) -> None:
+        """
+        Note one observed analysis failure and decide whether to keep trying.
+
+        A record that can never succeed used to re-enter this queue on every
+        run for ever — article 2678 was retried 28 times.
+
+        Three outcomes, and the difference between the last two matters:
+        `retriable` keeps its place; `paused` is a spend control a human can
+        undo with `db.resume_paused_article()`; `terminal` is a statement about
+        the document's content and is reached ONLY through an adapter's
+        deterministic verdict, never by an attempt counter. Five bad days for
+        the model API must not permanently dispose of a good document.
+
+        `verdicts` carries those adapter verdicts for records scraped this run,
+        where the parsed document is still in hand. A backlog record has none —
+        nothing stored it — so it can only ever be retriable or paused, which
+        is the conservative answer and is deliberate.
+        """
+        disposition = processing_state.classify(
+            attempts_before=history.get(article_id),
+            has_body=bool((body or "").strip()),
+            failure=failure,
+            content_verdict=verdicts.get(article_id),
+        )
+        history[article_id] = disposition.attempts
+        db.record_processing_failure(article_id, disposition)
+        if disposition.is_terminal:
+            logger.warning(
+                "  article %d will not be retried: %s (attempt %d)",
+                article_id, disposition.reason, disposition.attempts,
+            )
+        elif disposition.is_paused:
+            logger.warning(
+                "  article %d paused for manual review after %d attempts: %s "
+                "— resume with db.resume_paused_article(%d)",
+                article_id, disposition.attempts, disposition.reason,
+                article_id,
+            )
+
     # ── Stages 9–12: LLM analysis ────────────────────────────────────────────
     articles_analyzed      = 0
     passed_relevance_count = 0   # articles that passed relevance this run
@@ -334,6 +376,23 @@ def run(
         for r in pending_rows
         if r["id"] not in inserted_ids
     ]
+    # How many times each queued record has already been observed failing, so
+    # a failure this run advances the count rather than restarting it. Absent
+    # for records scraped this run: they have no history yet.
+    attempts_before: dict[int, int] = {
+        r["id"]: r["processing_attempts"]
+        for r in pending_rows
+        if r["processing_attempts"] is not None
+    }
+    # Deterministic content verdicts, available only for records scraped this
+    # run because only the adapter saw the markup and nothing stores the
+    # verdict. Absent for backlog records, which is why those can never reach a
+    # terminal state — see `_record_failure`.
+    content_verdicts: dict[int, str] = {
+        aid: a.get("content_verdict")
+        for aid, a in inserted
+        if a.get("content_verdict")
+    }
 
     queued_ids = inserted_ids | {aid for aid, *_ in pending}
     unscored_rows = [
@@ -464,6 +523,8 @@ def run(
                 msg = f"Analysis failed entirely for article {aid} ({url})"
                 logger.error(msg)
                 errors.append(msg)
+                _record_failure(aid, body_zh, "analysis_failed",
+                                attempts_before, content_verdicts)
                 continue
 
             # Always write relevance result
@@ -500,6 +561,7 @@ def run(
                     prompt_version         = result["prompt_version"],
                 )
                 articles_analyzed += 1
+                db.clear_processing_failure(aid)
 
                 if result.get("is_significant"):
                     logger.info(
@@ -521,6 +583,8 @@ def run(
                 )
                 logger.error(msg)
                 errors.append(msg)
+                _record_failure(aid, body_zh, "analysis_incomplete",
+                                attempts_before, content_verdicts)
 
     # ── Stage 13: Close run record ────────────────────────────────────────────
     # --no-analysis is a deliberate skip, not a failure: it must not trip the
