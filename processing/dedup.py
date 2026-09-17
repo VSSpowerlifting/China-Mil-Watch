@@ -75,9 +75,23 @@ _SOURCE_AUTHORITY_TIER: dict[str, str] = {
 #
 # Hosts are the ones sources actually serve, which are not always the manifest's
 # `base_url`: China Military Online is declared as english.chinamil.com.cn but
-# every one of its 331 stored articles is on eng.chinamil.com.cn. Both are
-# mapped. This mismatch is exactly why the destructive cleanup joins
-# articles→sources for the slug instead of inferring it from the URL.
+# every one of its stored articles is on eng.chinamil.com.cn (445 as of
+# 2026-09-16). Both are mapped. This mismatch is exactly why the destructive
+# cleanup joins articles→sources for the slug instead of inferring it from the
+# URL.
+#
+# This table is the project's sanctioned host-alias mechanism, and it is the
+# only one: a host absent from it ranks below every governed tier, so an
+# unmapped host can never displace a governed source as canonical. Adding an
+# alias here is a deliberate, reviewable act — it is not a redirect and it
+# grants no adapter permission to fetch from anywhere. Each adapter still
+# declares the hosts it will retrieve from, and
+# `tests/test_source_host_governance.py` asserts the two agree.
+#
+# `news.cn` is Xinhua's current domain and `xinhuanet.com` its predecessor.
+# Both are the same agency, both are mapped, and the manifest `base_url`
+# deliberately still reads xinhuanet.com because `sync_desk_config()` never
+# re-points a live source's host.
 _HOST_AUTHORITY_SLUG: dict[str, str] = {
     "www.mod.gov.cn":             "mod_china",
     "mod.gov.cn":                 "mod_china",
@@ -88,6 +102,8 @@ _HOST_AUTHORITY_SLUG: dict[str, str] = {
     "www.chinamil.com.cn":        "china_mil_online",
     "www.xinhuanet.com":          "xinhua_mil",
     "xinhuanet.com":              "xinhua_mil",
+    "www.news.cn":                "xinhua_mil",
+    "news.cn":                    "xinhua_mil",
     "www.globaltimes.cn":         "global_times_mil",
     "globaltimes.cn":             "global_times_mil",
 }

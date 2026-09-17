@@ -131,7 +131,32 @@ class GlobalTimesMilScraper(BaseScraper):
         return None
 
     def _extract_text(self, soup: BeautifulSoup) -> str:
-        # Use the first div.article_content (subsequent ones are related-article embeds)
+        """
+        The article's prose, or an empty string.
+
+        Three routes, tried in order, because the site serves two templates and
+        the older one still has to keep working.
+
+        1. **Paragraph markup.** `div.article_content` with real `<p>` bodies.
+           This is the original route and is unchanged, so every page that
+           extracted correctly before still takes exactly this path.
+        2. **Flow markup.** `div.article_content > div.article_right` carrying
+           the body as bare text nodes separated by `<br><br>`, with the only
+           `<p>` being `class="picture"` image captions. Measured 2026-09-16:
+           this is why records 3432, 3946 and 3948 were stored with empty
+           bodies while their pages served 359, 3,969 and 2,113 characters of
+           prose. Route 1 looked for `<p>` inside `article_content`, found only
+           captions, correctly refused to treat a caption as a body, and
+           returned nothing — so an extraction defect was recorded as source
+           silence. C5 in docs/DESK_STRENGTH_CRITERIA.md names that inversion.
+        3. **Bare paragraphs** anywhere on the page. The original fallback,
+           unchanged.
+
+        An empty string remains a real answer. A page that is genuinely a photo
+        set or a video shell has no prose, and this returns nothing rather than
+        promoting a caption or a headline into a body.
+        """
+        # Route 1 — paragraph markup, byte-for-byte the original behaviour.
         content_div = soup.find("div", class_="article_content")
         if content_div:
             paras = [
@@ -143,12 +168,19 @@ class GlobalTimesMilScraper(BaseScraper):
             if paras:
                 return "\n".join(paras)
 
-        # Fallback: all substantive <p> tags without class
+        # Route 2 — flow markup.
+        if content_div:
+            flow = _flow_text(content_div)
+            if flow:
+                return flow
+
+        # Route 3 — bare paragraphs, excluding related-article embeds.
         paragraphs = [
             p.get_text(strip=True)
             for p in soup.find_all("p")
             if not p.get("class")
                and len(p.get_text(strip=True)) > 40
+               and not _inside_embed(p)
         ]
         return "\n".join(paragraphs)
 
@@ -169,6 +201,69 @@ class GlobalTimesMilScraper(BaseScraper):
                 return self.target_date.isoformat()
 
         return self.target_date.isoformat()
+
+
+
+#: Containers that hold other articles' text on an article page: the related
+#: and recommended rails. The module docstring has always noted that repeated
+#: `div.article_content` elements are related-article embeds; route 3 did not
+#: act on it, and on a flow-markup page where route 1 finds nothing it swept
+#: thirty teaser paragraphs into the body. Measured 2026-09-16 on the PLA Navy
+#: missile-test page: 2,726 characters of other articles' first lines stored as
+#: this article's body, against a real body of 797. That is worse than an empty
+#: body — an empty body is a gap, and this was other reporting attributed to
+#: the wrong document.
+_EMBED_CLASSES = ("related_content", "related_article", "related_section",
+                  "recommend", "latest_news")
+
+
+def _inside_embed(tag) -> bool:
+    """True when this node sits inside a related/recommended rail."""
+    for parent in tag.parents:
+        classes = parent.get("class") if hasattr(parent, "get") else None
+        if classes and any(c in _EMBED_CLASSES for c in classes):
+            return True
+    return False
+
+
+#: Body text shorter than this is page furniture rather than a paragraph.
+#: Matches the threshold route 1 already applies to `<p>` bodies.
+_MIN_FLOW_PARAGRAPH_CHARS = 30
+
+
+def _flow_text(content_div) -> str:
+    """
+    Recover paragraphs from a body written as bare text nodes and `<br>`.
+
+    The container is copied before it is stripped, because these helpers run
+    against a soup the caller may still read — `_extract_date` walks the same
+    tree — and mutating shared state to compute a return value is how a second
+    defect gets introduced while fixing the first.
+
+    Image captions (`p.picture`), the images themselves and their `<center>`
+    wrappers are removed rather than flattened. A caption describes a
+    photograph; it is not a sentence the paper published as its report, and
+    letting one stand in for a body is the same invention this adapter refuses
+    everywhere else.
+    """
+    import copy
+
+    node = copy.copy(content_div)
+    for junk in node.find_all(["script", "style", "img", "center", "iframe"]):
+        junk.decompose()
+    for caption in node.find_all("p", class_="picture"):
+        caption.decompose()
+
+    for br in node.find_all("br"):
+        br.replace_with("\n")
+
+    text = node.get_text()
+    paragraphs = [
+        line.strip()
+        for line in text.split("\n")
+        if len(line.strip()) >= _MIN_FLOW_PARAGRAPH_CHARS
+    ]
+    return "\n".join(paragraphs)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
