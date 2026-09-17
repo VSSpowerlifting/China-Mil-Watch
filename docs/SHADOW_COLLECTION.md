@@ -49,7 +49,10 @@ prohibited regardless of how much coverage it would unlock.
 Four independent barriers, because one of them is the one that fails. Written
 below in terms of the Singapore desk, which established them; the Japan desk
 carries the same four, with `shadow/jp_mod/`, `scripts/shadow_collect_japan.py`
-and the `shadow/jp-mod` branch in the corresponding places.
+and the `shadow/jp-mod` branch in the corresponding places. The US desk carries
+the same four in code -- `shadow/us_indopacom/`,
+`scripts/shadow_collect_us.py` -- but **has not been launched**: it has no state
+branch, no workflow and no day zero. See "Built but not launched" below.
 
 1. **The manifest is not under `desks/`.** `core.manifests.load_all_desks()`
    globs `desks/*/manifest.json`. A shadow manifest placed there would be
@@ -73,7 +76,7 @@ coverage.
 
 ## Durable state
 
-Each desk's state lives on its own dedicated orphan branch —
+Each *launched* desk's state lives on its own dedicated orphan branch —
 **`shadow/singapore-mindef`** and **`shadow/jp-mod`** — with the same layout:
 
 ```
@@ -103,6 +106,35 @@ which is why the properties below are enforced rather than assumed.
 | No WAL/SHM | The publish step refuses to commit a sidecar |
 | Interrupted-run recovery | A failed run pushes nothing; the next clone is intact |
 | Non-fast-forward safety | A stale writer is **rejected**, never fast-forwarded over |
+
+## Built but not launched: the US Indo-Pacific desk
+
+The DVIDS collector exists, is tested and has been rehearsed, and **collects
+nothing**. There is no `shadow/us-indopacom` branch, no `us_shadow.yml`
+workflow, no `clock.json` and therefore no day zero. Launching it is a separate,
+deliberate act: creating the state branch and enabling a workflow on a cron
+clear of 21:10 and 22:40 UTC.
+
+Two things must stay true when it is launched, and neither is a formality.
+
+**The route is not the declared target.** `www.pacom.mil` and
+`www.defense.gov` still return HTTP 403 for `robots.txt` itself. DVIDS is a
+separate host with a readable policy; it is an alternative official route, not
+permission that pacom.mil withheld. The `us-indopacific` registry entry stays
+`access_blocked` until this desk has actually collected and been reviewed.
+
+**The feed is not what its name suggests.** It is unit-*tagged* public affairs,
+not a USINDOPACOM command-release wire. Measured 2026-09-17: 428 items, 171 of
+them `/news/`, and 15 of those 171 titles carry any Indo-Pacific keyword at all.
+The desk's scope text, the registry entry and any site copy must say what it
+collects rather than what its name implies. `shadow/us_indopacom/README.md`
+holds the measurement and `tests/test_us_source_scope.py` holds the prose to it.
+
+One thing differs from the other two desks and changes how a missed day is
+read: the DVIDS window is a fixed item count, not a date range. A collection gap
+is **permanent** -- those documents cannot be recovered from this route -- so
+`scripts/review_us_shadow_state.py` reports a gap as a failure rather than as
+lateness, and has its own reviewer rather than borrowing Singapore's.
 
 ## The ledger and the clock
 
