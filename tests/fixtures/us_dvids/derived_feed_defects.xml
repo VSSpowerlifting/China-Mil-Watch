@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED, NOT CAPTURED. Hand-written to exercise one rejection reason per
+     item. The real DVIDS feed emitted none of these defects on 2026-09-17;
+     this fixture exists so the collector's refusals are tested rather than
+     assumed. Item order matches the rejection taxonomy in
+     scraper/sources/us_dvids.py. -->
+<rss version="2.0">
+ <channel>
+  <title>DVIDS Search RSS Feed: unit</title>
+  <link>https://www.dvidshub.net</link>
+
+  <item><!-- ACCEPTED: the one good item, so a defective feed is not an empty one -->
+   <title>Valid item retained for contrast</title>
+   <link>https://www.dvidshub.net/news/500001/valid-item-retained-for-contrast</link>
+   <guid>news:500001</guid>
+   <pubDate>Tue, 15 Sep 2026 09:00:00 -0400</pubDate>
+   <author>MC1 Example</author>
+  </item>
+
+  <item><!-- duplicate_in_feed: same guid as the item above -->
+   <title>Valid item retained for contrast (repeated)</title>
+   <link>https://www.dvidshub.net/news/500001/valid-item-retained-for-contrast</link>
+   <guid>news:500001</guid>
+   <pubDate>Tue, 15 Sep 2026 09:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- identity_mismatch: guid says 500002, link says 500003 -->
+   <title>Feed disagrees with itself about which document this is</title>
+   <link>https://www.dvidshub.net/news/500003/identity-mismatch</link>
+   <guid>news:500002</guid>
+   <pubDate>Tue, 15 Sep 2026 10:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- missing_guid -->
+   <title>No stable identifier</title>
+   <link>https://www.dvidshub.net/news/500004/missing-guid</link>
+   <guid></guid>
+   <pubDate>Tue, 15 Sep 2026 11:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- foreign_host: never followed, never rewritten -->
+   <title>Off-host link</title>
+   <link>https://www.pacom.mil/news/500005/foreign-host</link>
+   <guid>news:500005</guid>
+   <pubDate>Tue, 15 Sep 2026 12:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- unparseable_url: permitted host, but not /news/<id>/<slug> -->
+   <title>Unrecognised path shape</title>
+   <link>https://www.dvidshub.net/news/not-a-number/unparseable-url</link>
+   <guid>news:500006</guid>
+   <pubDate>Tue, 15 Sep 2026 13:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- missing_link -->
+   <title>No link at all</title>
+   <guid>news:500007</guid>
+   <pubDate>Tue, 15 Sep 2026 14:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- missing_title -->
+   <title></title>
+   <link>https://www.dvidshub.net/news/500008/missing-title</link>
+   <guid>news:500008</guid>
+   <pubDate>Tue, 15 Sep 2026 15:00:00 -0400</pubDate>
+  </item>
+
+  <item><!-- missing_pubdate -->
+   <title>No publication date</title>
+   <link>https://www.dvidshub.net/news/500009/missing-pubdate</link>
+   <guid>news:500009</guid>
+  </item>
+
+  <item><!-- unparseable_pubdate: no offset, so the instant is unknowable -->
+   <title>Timestamp without an offset</title>
+   <link>https://www.dvidshub.net/news/500010/naive-pubdate</link>
+   <guid>news:500010</guid>
+   <pubDate>Tue, 15 Sep 2026 16:00:00</pubDate>
+  </item>
+
+  <item><!-- unparseable_pubdate: not a date in any readable form -->
+   <title>Timestamp that is not a date</title>
+   <link>https://www.dvidshub.net/news/500011/garbage-pubdate</link>
+   <guid>news:500011</guid>
+   <pubDate>sometime last Tuesday</pubDate>
+  </item>
+
+  <item><!-- not_news_media: a photo is not a document with a body -->
+   <title>Photo item</title>
+   <link>https://www.dvidshub.net/image/9900001/photo-item</link>
+   <guid>image:9900001</guid>
+   <pubDate>Tue, 15 Sep 2026 17:00:00 -0400</pubDate>
+  </item>
+
+ </channel>
+</rss>
