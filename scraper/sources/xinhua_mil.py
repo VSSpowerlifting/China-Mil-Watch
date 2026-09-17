@@ -69,6 +69,24 @@ from scraper.base import BaseScraper
 _BASE = "https://www.news.cn"
 _LISTING_URL = f"{_BASE}/milpro/"
 
+#: Every host this adapter is permitted to retrieve from. Declared, closed, and
+#: asserted against the project's host-alias registry by
+#: `tests/test_source_host_governance.py`.
+#:
+#: The manifest's `base_url` is `https://www.xinhuanet.com` and is NOT this.
+#: `base_url` is publisher identity — a legacy `sources` column that
+#: `sync_desk_config()` refuses to rewrite, because "a config sync must not be
+#: able to rename a live source or re-point it at a different host". It has
+#: never been a retrieval origin: China Military Online is declared as
+#: english.chinamil.com.cn and every one of its 445 stored records is on
+#: eng.chinamil.com.cn. An adapter owning its own endpoint is the existing
+#: contract, not an exception made for this source.
+#:
+#: What this tuple is, therefore, is the narrow boundary: not a redirect, not
+#: an arbitrary-host escape. `canonical_url` refuses every host outside it, so
+#: a link on the listing pointing anywhere else is not followed.
+PERMITTED_HOSTS = ("www.news.cn", "news.cn")
+
 #: Article path: /milpro/YYYYMMDD/<32 hex>/c.html
 _ARTICLE_PATH_RE = re.compile(r"^/milpro/(\d{8})/([0-9a-f]{32})/c\.html$")
 
@@ -99,7 +117,7 @@ def canonical_url(href: str, base: str = _LISTING_URL) -> Optional[str]:
     absolute = urljoin(base, href.strip())
     parts = urlsplit(absolute)
     host = parts.netloc.lower()
-    if host not in ("www.news.cn", "news.cn"):
+    if host not in PERMITTED_HOSTS:
         return None
     if not _ARTICLE_PATH_RE.match(parts.path):
         return None
