@@ -1,0 +1,91 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST \u2014 deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a US desk",
+    "and source into the tracked production database on the next migration run,",
+    "which would put a non-collecting desk into public counts. It lives here so",
+    "production discovery cannot see it by accident, and a test asserts that",
+    "desks/ contains only china.",
+    "",
+    "Nothing in this file is read by pipeline.py. Only the shadow runner reads",
+    "it, and the shadow runner writes only to the shadow state branch.",
+    "",
+    "The us-indopacific entry in desks/registry.json stays 'access_blocked'.",
+    "That status is about www.pacom.mil, which still returns HTTP 403 for its",
+    "own robots.txt, and it remains true until this desk has actually collected",
+    "The us-indopacific entry in desks/registry.json stays 'access_blocked'.",
+    "That status is about www.pacom.mil, which still returns HTTP 403 for its",
+    "own robots.txt. Shadow collection here evaluates whether the DVIDS",
+    "USINDOPACOM-tagged reference stream can support that desk later. It does",
+    "not rename, promote or stand in for it."
+  ],
+  "desk": {
+    "desk_id": "us_indopacific",
+    "display_name": "US Indo-Pacific Desk (shadow evaluation)",
+    "jurisdiction_code": "US",
+    "default_timezone": "America/New_York",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "shadow",
+    "active": false,
+    "_timezone_note": [
+      "America/New_York is the timezone the PUBLISHER emits in: every sampled",
+      "pubDate carried a US Eastern offset, because DVIDS is operated by",
+      "Defense Media Activity, not by the command in Hawaii.",
+      "It is NOT used to date records. Each item's publication date is read",
+      "from the offset that item itself declares, so a re-homed feed or a",
+      "daylight-saving change cannot silently re-date the corpus.",
+      "USINDOPACOM's own headquarters timezone is Pacific/Honolulu; the feed",
+      "does not publish in it, and claiming otherwise would be an invention."
+    ]
+  },
+  "institutions": [
+    {
+      "institution_id": "us_dma_dvids",
+      "display_name": "Defense Visual Information Distribution Service",
+      "name_original": "Defense Visual Information Distribution Service (DVIDS), Defense Media Activity",
+      "institution_type": "defense_media_service",
+      "notes": "DVIDS is a DoD field activity distribution platform. It is the PUBLISHER of the retrieved items; it is not U.S. Pacific Command, and an item appearing here is not thereby a command release."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "us_dvids_indopacom",
+      "display_name": "DVIDS USINDOPACOM-tagged reference stream",
+      "institution_id": "us_dma_dvids",
+      "base_url": "https://www.dvidshub.net",
+      "discovery_endpoints": [
+        "https://www.dvidshub.net/rss/unit/USINDOPACOM"
+      ],
+      "adapter": "scraper.sources.us_dvids:USDvidsAdapter",
+      "enabled": false,
+      "language_tags": [
+        "en"
+      ],
+      "authority_tier": "B",
+      "article_url_patterns": [
+        "^https://www\\.dvidshub\\.net/news/\\d+/[^/]+$"
+      ],
+      "declared_scope": [
+        "DVIDS USINDOPACOM-tagged reference stream.",
+        "A Tier B DoD media-service feed. The publisher is Defense Media Activity, not the command.",
+        "Unit tagging does not imply command authorship or comprehensive Indo-Pacific relevance.",
+        "It is NOT a complete USINDOPACOM command-release wire.",
+        "It is NOT presently a peer of the China Desk.",
+        "The public US Indo-Pacific Reference Desk remains access_blocked.",
+        "Shadow collection evaluates whether this source can support that desk later; it does not presuppose that it can.",
+        "Measured 2026-09-17, 428 items: news 171, audio 100, video 99, image 58.",
+        "Only the 171 /news/ items have retrievable prose. Image, video and audio items are counted and rejected.",
+        "Identity: the feed's own guid, form 'news:<id>', cross-checked against the id in the item link. 171/171 guids and 171/171 links unique in the measured feed.",
+        "Bodies come from the article page (div.news-body); the feed's description field is a teaser, median ~311 characters, and is not stored as a body.",
+        "The complete eligible /news/ stream is collected. No relevance filter is applied: filtering at collection would predetermine the usefulness question this shadow phase exists to measure."
+      ],
+      "notes": "Enabled is false and stays false: this source is under shadow evaluation and has never been part of a production run. Scope, inclusions, exclusions and measured limitations are in shadow/us_indopacom/README.md."
+    }
+  ]
+}

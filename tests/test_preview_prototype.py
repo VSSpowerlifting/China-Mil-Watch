@@ -302,6 +302,14 @@ class PreviewCase(unittest.TestCase):
         _data = gp.load_corpus(TRACKED_DB)
         cls.latest_run = _data["latest_run"]["id"] if isinstance(
             _data["latest_run"], dict) else _data["latest_run"]
+        # Derived, never pinned. These counts changed the moment `xinhua_mil`
+        # stopped being a stub and started collecting (run 141, 2026-09-17),
+        # and a literal "4 collectors executed" turned the whole Daily red for
+        # two days. What the strip must protect is that the four states stay
+        # apart -- not any particular number of them.
+        cls.run_status = gp.run_status_summary(
+            _data["latest_run"], _data["run_results"],
+            _data["collecting_desks"], _data["unmapped_executed"])
         cls.analyzed_count = sum(
             1 for r in _data["corpus"] if r.get("analyzed_at"))
         cls.week_count = len(_data["weeks"])
@@ -1044,21 +1052,36 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     # ── Status strip ────────────────────────────────────────────────────
 
     def test_status_strip_keeps_the_four_states_apart(self):
+        """
+        Four different things, never merged: a collector that executed, one
+        that failed, a configured source with no collector at all, and a desk
+        that actually collected.
+
+        The third is rendered only when such a source exists. Asserting it
+        unconditionally asserted that the project always has a broken source,
+        which stopped being true when `xinhua_mil` was implemented.
+        """
         html = self.page("coverage.html")
         self.assertIn("collectors executed", html)
         self.assertIn("execution failures", html)
-        self.assertIn("unimplemented adapter", html)
         self.assertIn("collecting desk", html)
+        if self.run_status["unimplemented"]:
+            self.assertIn("unimplemented adapter", html)
+        else:
+            self.assertNotIn("unimplemented adapter", html)
 
     def test_status_strip_shows_no_collector_denominator(self):
         """
-        "4 of 5 collectors executed" asserted five collectors exist. Four do;
-        the fifth configured source has no adapter, which this project's own
-        vocabulary calls "no working collector". The denominator was false.
+        "N of M collectors executed" asserts that M collectors exist. When a
+        configured source has no adapter, this project's own vocabulary calls
+        that "no working collector", so the denominator was false.
+
+        The invariant is the absent denominator, not the numerator. The
+        numerator is read from the run.
         """
         html = self.page("coverage.html")
-        self.assertIn("<b>4</b> collectors executed", html)
-        self.assertNotIn("of 5 collectors", html)
+        self.assertIn("<b>%d</b> collectors executed" % self.run_status["executed"],
+                      html)
         self.assertNotRegex(html, r"\d+\s+of\s+\d+\s+collectors")
 
     def test_status_counts_are_derived_from_the_stored_run_record(self):
@@ -1586,10 +1609,16 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                       "whether its\n    claims are true", html)
 
     def test_coverage_note_is_reader_language(self):
+        """
+        The not-implemented gloss is reader language when it appears. It
+        appears only when a configured source has no working collector, which
+        is a state the project is trying to leave, not to preserve.
+        """
         html = self.page("coverage.html")
-        self.assertIn("Configured, but no working collector exists.", html)
         self.assertIn("Every configured source has a result row for this run.",
                       html)
+        if self.run_status["unimplemented"]:
+            self.assertIn("Configured, but no working collector exists.", html)
 
     # ── Callouts and citations ──────────────────────────────────────────
 
@@ -1676,16 +1705,28 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         the strip carries the three freshness dates and links here.
         """
         html = self.page("coverage.html")
-        for phrase in ("Run <b>%s</b>" % self.latest_run, self.corpus_edge,
-                       "<b>4</b> collectors executed",
-                       "<b>0</b> execution failures",
-                       "<b>1</b> unimplemented adapter",
-                       "<b>1</b> collecting desk"):
+        st = self.run_status
+        expected = ["Run <b>%s</b>" % self.latest_run, self.corpus_edge,
+                    "<b>%d</b> collector%s executed"
+                    % (st["executed"], "" if st["executed"] == 1 else "s"),
+                    "<b>%d</b> execution failure%s"
+                    % (st["failed"], "" if st["failed"] == 1 else "s")]
+        # These two render only when the run actually has them. A fact that
+        # does not exist cannot be lost in the compaction.
+        for key, noun in (("unimplemented", "unimplemented adapter"),
+                          ("disabled", "disabled source")):
+            if st[key]:
+                expected.append("<b>%d</b> %s%s"
+                                % (st[key], noun,
+                                   "" if st[key] == 1 else "s"))
+        if st["desks"] is not None:
+            expected.append("<b>%d</b> collecting desk" % st["desks"])
+        for phrase in expected:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, html)
         self.assertIn('<ul class="status-facts">', html)
         strip = html.split('<ul class="status-facts">', 1)[1].split("</ul>", 1)[0]
-        self.assertEqual(strip.count("<li>"), 6)
+        self.assertEqual(strip.count("<li>"), len(expected))
         self.assertNotRegex(html, r"\d+\s+of\s+\d+\s+collectors")
 
     def test_about_does_not_claim_translation_for_every_text(self):
@@ -1795,11 +1836,24 @@ class CorpusCase(unittest.TestCase):
                     self.assertGreater(value["count"], 0)
 
     def test_a_configured_source_with_no_records_is_not_a_facet_value(self):
-        """`xinhua_mil` is configured and holds nothing."""
+        """
+        A facet value a reader can select must return something.
+
+        `xinhua_mil` was the standing example: configured, declared, and
+        holding nothing. It stopped being one on 2026-09-17 when it collected
+        its first 24 records, so the test now states the rule instead of
+        naming the source that happened to illustrate it. Pinning the example
+        rather than the rule is what turned this test red.
+        """
         keys = {f["key"] for f in self.data["facets"]["source"]}
-        self.assertNotIn("xinhua_mil", keys)
-        # It is still a configured source, so this is not simply absent data.
-        self.assertIn("xinhua_mil", {s["slug"] for s in self.data["sources"]})
+        with_records = {r["source_slug"] for r in self.corpus
+                        if r.get("source_slug")}
+        configured = {s["slug"] for s in self.data["sources"]}
+        self.assertTrue(keys <= with_records,
+                        "facet offers sources that hold no record: %s"
+                        % sorted(keys - with_records))
+        for empty in sorted(configured - with_records):
+            self.assertNotIn(empty, keys, empty)
 
     def test_source_and_institution_are_separate_dimensions(self):
         sources = self.data["facets"]["source"]
@@ -2923,10 +2977,20 @@ class TestCompactQueryIndex(PreviewCase):
                 for code, n in offered.items():
                     self.assertGreater(n, 0)
 
-    def test_xinhua_is_absent_from_the_source_facet(self):
+    def test_only_sources_holding_records_reach_the_source_facet(self):
+        """
+        Was `test_xinhua_is_absent_from_the_source_facet`. Xinhua was the
+        example of a configured-but-empty source until it started collecting
+        on 2026-09-17; the property the test protects is the general one, and
+        naming the example in the test name is what made a working collector
+        look like a regression.
+        """
         codes = {s["code"] for s in self.index["sources"]}
-        self.assertNotIn("xinhua_mil", codes)
-        self.assertIn("xinhua_mil", {s["slug"] for s in self.data["sources"]})
+        with_records = {r["source_slug"] for r in self.data["corpus"]
+                        if r.get("source_slug")}
+        self.assertTrue(codes <= with_records,
+                        "query index offers empty sources: %s"
+                        % sorted(codes - with_records))
 
     def test_source_and_institution_overlap_is_represented(self):
         by_inst = defaultdict(set)
