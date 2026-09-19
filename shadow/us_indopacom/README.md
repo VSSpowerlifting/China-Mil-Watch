@@ -4,15 +4,28 @@ Shadow evaluation only. This desk collects into an isolated state branch that
 reaches neither `pla_watch.db` nor `output/`, renders no records, and is
 counted nowhere. **A shadow desk is not a qualified desk.**
 
-## What this source is — and what it is not
+## What this source is
 
-The route is `https://www.dvidshub.net/rss/unit/USINDOPACOM`: the Defense
-Visual Information Distribution Service's **unit-tagged** feed for
-USINDOPACOM. DVIDS is operated by Defense Media Activity, a DoD field activity.
+**DVIDS USINDOPACOM-tagged reference stream.**
 
-It is **not** a USINDOPACOM command-release wire. The tag is applied by the
-submitting unit, not by the command's public affairs office acting as the
-command's voice. Measured on the live feed, 2026-09-17:
+* A **Tier B DoD media-service feed**. The publisher is Defense Media Activity,
+  a DoD field activity — not U.S. Pacific Command.
+* **Unit tagging does not imply command authorship or comprehensive
+  Indo-Pacific relevance.** The tag is applied by the submitting unit.
+* It is **not a complete USINDOPACOM command-release wire**.
+* It is **not presently a peer of the China Desk**.
+* **The public US Indo-Pacific Reference Desk remains `access_blocked`.**
+* **Shadow collection evaluates whether this source can support that desk
+  later.** It does not presuppose that it can, and reaching a day count does
+  not decide it.
+
+No record may be called Indo-Pacific-relevant merely because DVIDS tagged it to
+the unit. That inference is the specific error this framing exists to prevent.
+
+## Measured shape of the feed
+
+The route is `https://www.dvidshub.net/rss/unit/USINDOPACOM`. Measured on the
+live feed, 2026-09-17:
 
 | measure | value |
 |---|---|
@@ -68,6 +81,14 @@ The `us-indopacific` entry in `desks/registry.json` **stays `access_blocked`**.
 That status is about `pacom.mil` and remains true until this desk has actually
 collected through a route that is not `pacom.mil` and the result has been
 reviewed.
+
+## Collection policy: the complete eligible stream
+
+**No relevance filter is applied, by design.** Every eligible `/news/` item is
+collected. Filtering on title keywords at collection time would decide the
+usefulness question this shadow phase exists to measure, and would leave a
+corpus shaped by a guess rather than by the source. The keyword indicator in
+the checkpoint report is a **diagnostic**, never a gate and never dispositive.
 
 ## Included
 

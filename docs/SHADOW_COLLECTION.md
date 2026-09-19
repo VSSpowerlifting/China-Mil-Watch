@@ -123,12 +123,29 @@ separate host with a readable policy; it is an alternative official route, not
 permission that pacom.mil withheld. The `us-indopacific` registry entry stays
 `access_blocked` until this desk has actually collected and been reviewed.
 
-**The feed is not what its name suggests.** It is unit-*tagged* public affairs,
-not a USINDOPACOM command-release wire. Measured 2026-09-17: 428 items, 171 of
-them `/news/`, and 15 of those 171 titles carry any Indo-Pacific keyword at all.
-The desk's scope text, the registry entry and any site copy must say what it
-collects rather than what its name implies. `shadow/us_indopacom/README.md`
-holds the measurement and `tests/test_us_source_scope.py` holds the prose to it.
+**The feed is not what its name suggests.** The required framing, used
+everywhere the source is described, is the **DVIDS USINDOPACOM-tagged reference
+stream**:
+
+* a **Tier B DoD media-service feed**, published by Defense Media Activity;
+* **unit tagging does not imply command authorship or comprehensive
+  Indo-Pacific relevance**;
+* **not a complete USINDOPACOM command-release wire**;
+* **not presently a peer of the China Desk**;
+* the public **US Indo-Pacific Reference Desk remains `access_blocked`**;
+* shadow collection **evaluates whether this source can support that desk
+  later**, and does not presuppose that it can.
+
+Measured 2026-09-17: 428 items, 171 of them `/news/`, and 15 of those 171 titles
+carry any Indo-Pacific keyword at all. No record may be called
+Indo-Pacific-relevant merely because DVIDS tagged it to the unit.
+`shadow/us_indopacom/README.md` holds the measurement and
+`tests/test_us_source_scope.py` holds the prose to it.
+
+**The complete eligible stream is collected.** No relevance filter is applied.
+Filtering on title keywords at collection would decide the usefulness question
+the shadow phase exists to measure; the keyword indicator in the checkpoint
+report is a diagnostic, never a gate.
 
 One thing differs from the other two desks and changes how a missed day is
 read: the DVIDS window is a fixed item count, not a date range. A collection gap

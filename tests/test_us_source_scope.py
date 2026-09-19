@@ -49,11 +49,38 @@ OVERCLAIMS = (
 
 class TestTheManifestClaimsOnlyWhatTheFeedCarries(unittest.TestCase):
 
-    def test_the_declared_scope_says_the_feed_is_unit_tagged(self):
-        self.assertIn("tagged", SCOPE.lower())
+    #: The six statements the framing must make wherever the source is
+    #: described. Each is a separate claim; dropping any one of them lets the
+    #: desk be read as something it is not.
+    REQUIRED_FRAMING = (
+        ("named stream", r"dvids usindopacom-tagged reference stream"),
+        ("tier B media service", r"tier b dod media-service feed"),
+        ("tagging is not authorship",
+         r"unit tagging does not imply command authorship or comprehensive\s+"
+         r"indo-pacific relevance"),
+        ("not a command-release wire",
+         r"not a complete usindopacom command-release wire"),
+        ("not a China Desk peer", r"not presently a peer of the china desk"),
+        ("desk stays blocked",
+         r"us indo-pacific reference desk remains .?access_blocked"),
+        ("evaluates, does not presuppose",
+         r"evaluates whether this source can support that desk\s+later"),
+    )
 
-    def test_the_declared_scope_denies_being_a_command_release_wire(self):
-        self.assertRegex(SCOPE.lower(), r"not a usindopacom command-release")
+    def test_the_declared_scope_carries_every_required_framing_statement(self):
+        flat = re.sub(r"\s+", " ", SCOPE.lower())
+        for label, pattern in self.REQUIRED_FRAMING:
+            with self.subTest(statement=label):
+                self.assertRegex(flat, re.sub(r"\\s\+", " ", pattern))
+
+    def test_the_source_is_named_as_a_reference_stream(self):
+        self.assertEqual(SOURCE["display_name"],
+                         "DVIDS USINDOPACOM-tagged reference stream")
+
+    def test_the_declared_scope_states_that_no_filter_is_applied(self):
+        low = SCOPE.lower()
+        self.assertIn("no relevance filter is applied", low)
+        self.assertIn("complete eligible", low)
 
     def test_the_declared_scope_states_measured_counts(self):
         self.assertRegex(SCOPE, r"\b428\b")          # items in the feed
@@ -193,3 +220,125 @@ class TestNoEvasionMechanismExists(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTheFramingAppearsEverywhereTheSourceIsDescribed(unittest.TestCase):
+    """
+    One canonical framing, not six drifting paraphrases.
+
+    A description that lives in a manifest, a README, three module docstrings
+    and a shared doc will drift unless something checks all six. The claim most
+    likely to be softened first is the one that costs the most to keep: that
+    this is not presently a peer of the China Desk.
+    """
+
+    SURFACES = {
+        "manifest": SHADOW_DIR / "manifest.json",
+        "readme": SHADOW_DIR / "README.md",
+        "adapter": REPO_ROOT / "scraper" / "sources" / "us_dvids.py",
+        "runner": REPO_ROOT / "scripts" / "shadow_collect_us.py",
+        "reviewer": REPO_ROOT / "scripts" / "review_us_shadow_state.py",
+        "shared doc": REPO_ROOT / "docs" / "SHADOW_COLLECTION.md",
+    }
+
+    REQUIRED = (
+        ("named stream", "dvids usindopacom-tagged reference stream"),
+        ("tier B media service", "tier b dod media-service feed"),
+        ("tagging is not authorship",
+         "unit tagging does not imply command authorship or comprehensive "
+         "indo-pacific relevance"),
+        ("not a command-release wire",
+         "not a complete usindopacom command-release wire"),
+        ("not a China Desk peer", "not presently a peer of the china desk"),
+        ("desk stays blocked", "us indo-pacific reference desk remains"),
+        ("evaluates, does not presuppose",
+         "evaluates whether this source can support that desk later"),
+    )
+
+    @classmethod
+    def flat(cls, path):
+        return re.sub(r"\s+", " ", path.read_text(encoding="utf-8").lower())
+
+    def test_every_surface_carries_every_required_statement(self):
+        for surface, path in self.SURFACES.items():
+            text = self.flat(path)
+            for label, phrase in self.REQUIRED:
+                with self.subTest(surface=surface, statement=label):
+                    self.assertIn(phrase, text)
+
+    def test_access_blocked_is_stated_not_merely_implied(self):
+        for surface, path in self.SURFACES.items():
+            with self.subTest(surface=surface):
+                self.assertIn("access_blocked", self.flat(path))
+
+    #: Phrases that assert the thing the framing denies. A bare substring test
+    #: cannot be used for these: the README names several of them precisely to
+    #: call them misrepresentations, so a match is only a failure when it is
+    #: NOT inside a denial.
+    OVERCLAIMS = ("peer of the china desk", "counterpart to the china desk",
+                  "equivalent to the china desk", "promoted to public",
+                  "command releases from usindopacom")
+
+    #: Words that make the surrounding sentence a denial rather than a claim.
+    DENIALS = ("not ", "never", "misrepresentation", "must not", "cannot",
+               "would be", "rather than")
+
+    def test_no_surface_asserts_what_the_framing_denies(self):
+        for surface, path in self.SURFACES.items():
+            text = self.flat(path)
+            for phrase in self.OVERCLAIMS:
+                for sentence in text.split("."):
+                    if phrase not in sentence:
+                        continue
+                    with self.subTest(surface=surface, phrase=phrase):
+                        self.assertTrue(
+                            any(d in sentence for d in self.DENIALS),
+                            "%s asserts %r outside a denial: %r"
+                            % (surface, phrase, sentence.strip()[:160]))
+
+    def test_the_china_desk_comparison_is_always_a_denial(self):
+        # The claim most likely to be softened first, checked on its own.
+        readme = self.flat(SHADOW_DIR / "README.md")
+        self.assertIn("not presently a peer of the china desk", readme)
+        self.assertIn("misrepresentation", readme)
+
+
+class TestTheCompleteEligibleStreamIsCollected(unittest.TestCase):
+    """
+    No relevance filter, by explicit editorial decision.
+
+    Filtering on title keywords at collection would decide the usefulness
+    question the shadow phase exists to measure, and would leave a corpus
+    shaped by a guess rather than by the source. The keyword count is a
+    diagnostic in the checkpoint report; it is never a gate.
+    """
+
+    def test_the_adapter_has_no_keyword_list_at_all(self):
+        # A keyword list is the mechanism a filter would need. Its absence is
+        # easier to verify than the absence of filtering.
+        for token in ("keyword", "indo-pacific", "indopacific", "relevance"):
+            self.assertNotIn(token, ADAPTER_SRC.lower().split('"""', 2)[2],
+                             token)
+
+    def test_nothing_is_rejected_for_being_off_topic(self):
+        self.assertNotIn("off_topic", us.REJECTION_REASONS)
+        self.assertNotIn("not_relevant", us.REJECTION_REASONS)
+        for reason in us.REJECTION_REASONS:
+            self.assertNotIn("relevan", reason)
+
+    def test_every_rejection_reason_is_structural_not_editorial(self):
+        # Each reason names something absent, malformed, duplicated or
+        # non-textual -- never a judgement about what the document is about.
+        structural = {
+            us.R_NOT_NEWS_MEDIA, us.R_FOREIGN_HOST, us.R_UNPARSEABLE_URL,
+            us.R_MISSING_GUID, us.R_IDENTITY_MISMATCH, us.R_MISSING_LINK,
+            us.R_MISSING_TITLE, us.R_MISSING_PUBDATE,
+            us.R_UNPARSEABLE_PUBDATE, us.R_OUTSIDE_WINDOW,
+            us.R_DUPLICATE_IN_FEED,
+        }
+        self.assertEqual(set(us.REJECTION_REASONS), structural)
+
+    def test_the_readme_states_the_no_filter_policy(self):
+        low = README.lower()
+        self.assertIn("no relevance filter is applied", low)
+        self.assertIn("diagnostic", low)

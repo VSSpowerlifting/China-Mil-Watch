@@ -6,18 +6,26 @@ any production desk manifest: `shadow/us_indopacom/manifest.json` lives outside
 `desks/` precisely so `load_all_desks()` cannot find it, and the source is
 `enabled: false`. Nothing here can reach `pla_watch.db` or `output/`.
 
-WHAT THIS SOURCE ACTUALLY IS
-----------------------------
-`https://www.dvidshub.net/rss/unit/USINDOPACOM` is the Defense Visual
-Information Distribution Service's *unit-tagged* feed for USINDOPACOM. It is
-**not** a USINDOPACOM command-release wire, and this file must not be described
-as one. Items are public-affairs products that some unit associated the command
-tag with, and the measured feed contains material with no Indo-Pacific content
-at all — a Kosovo school pen-pal programme, a Fort McCoy retiree appreciation
-day, an Arkansas Air National Guard communications exercise. A desk built here
-collects *public affairs carrying a USINDOPACOM tag*, which is a narrower and
-different thing from what the command itself releases. Scope text that implies
-otherwise would be a misrepresentation of the corpus.
+WHAT THIS SOURCE IS
+-------------------
+**DVIDS USINDOPACOM-tagged reference stream.**
+
+  * a **Tier B DoD media-service feed** -- the publisher is Defense Media
+    Activity, a DoD field activity, not U.S. Pacific Command
+  * **unit tagging does not imply command authorship or comprehensive
+    Indo-Pacific relevance**; the tag is applied by the submitting unit
+  * it is **not a complete USINDOPACOM command-release wire**
+  * it is **not presently a peer of the China Desk**
+  * **the public US Indo-Pacific Reference Desk remains `access_blocked`**
+  * **shadow collection evaluates whether this source can support that desk
+    later** -- it does not presuppose that it can
+
+No record may be called Indo-Pacific-relevant merely because DVIDS tagged it
+to the unit. Measured 2026-09-17: 428 items, 171 of them `/news/`, and 15 of
+those 171 titles carry any Indo-Pacific keyword at all. The complete eligible
+`/news/` stream is collected and **no relevance filter is applied**: filtering
+at collection would predetermine the usefulness question this shadow phase
+exists to measure.
 
 WHY DVIDS AND NOT pacom.mil
 ---------------------------

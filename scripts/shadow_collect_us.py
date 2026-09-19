@@ -18,9 +18,29 @@ The day counter is derived from the ledger, never hard-coded: day 0 is the
 first run whose result is terminal-successful, recorded once in `clock.json`
 and never rewritten.
 
-What this collects is unit-TAGGED DVIDS public-affairs material, not a
-USINDOPACOM command-release wire. See `shadow/us_indopacom/README.md`; the
-distinction is not a footnote, it is the desk's scope.
+WHAT THIS SOURCE IS
+-------------------
+**DVIDS USINDOPACOM-tagged reference stream.**
+
+  * a **Tier B DoD media-service feed** -- the publisher is Defense Media
+    Activity, a DoD field activity, not U.S. Pacific Command
+  * **unit tagging does not imply command authorship or comprehensive
+    Indo-Pacific relevance**; the tag is applied by the submitting unit
+  * it is **not a complete USINDOPACOM command-release wire**
+  * it is **not presently a peer of the China Desk**
+  * **the public US Indo-Pacific Reference Desk remains `access_blocked`**
+  * **shadow collection evaluates whether this source can support that desk
+    later** -- it does not presuppose that it can
+
+No record may be called Indo-Pacific-relevant merely because DVIDS tagged it
+to the unit. Measured 2026-09-17: 428 items, 171 of them `/news/`, and 15 of
+those 171 titles carry any Indo-Pacific keyword at all. The complete eligible
+`/news/` stream is collected and **no relevance filter is applied**: filtering
+at collection would predetermine the usefulness question this shadow phase
+exists to measure.
+
+See `shadow/us_indopacom/README.md`. The distinction is not a footnote, it
+is the desk's scope.
 """
 
 from __future__ import annotations

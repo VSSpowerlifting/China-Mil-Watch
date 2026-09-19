@@ -2,6 +2,27 @@
 """
 US Indo-Pacific (DVIDS) shadow checkpoint review.
 
+WHAT THIS SOURCE IS
+-------------------
+**DVIDS USINDOPACOM-tagged reference stream.**
+
+  * a **Tier B DoD media-service feed** -- the publisher is Defense Media
+    Activity, a DoD field activity, not U.S. Pacific Command
+  * **unit tagging does not imply command authorship or comprehensive
+    Indo-Pacific relevance**; the tag is applied by the submitting unit
+  * it is **not a complete USINDOPACOM command-release wire**
+  * it is **not presently a peer of the China Desk**
+  * **the public US Indo-Pacific Reference Desk remains `access_blocked`**
+  * **shadow collection evaluates whether this source can support that desk
+    later** -- it does not presuppose that it can
+
+No record may be called Indo-Pacific-relevant merely because DVIDS tagged it
+to the unit. Measured 2026-09-17: 428 items, 171 of them `/news/`, and 15 of
+those 171 titles carry any Indo-Pacific keyword at all. The complete eligible
+`/news/` stream is collected and **no relevance filter is applied**: filtering
+at collection would predetermine the usefulness question this shadow phase
+exists to measure.
+
 Reads an explicit COPY of the `shadow/us-indopacom` state and reports what the
 ledger and the shadow corpus actually show. It answers a reviewer's questions
 with measurements, and it does not promote anything: there is no code path here
