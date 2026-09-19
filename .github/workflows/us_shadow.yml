@@ -1,0 +1,207 @@
+name: US Indo-Pacific Shadow Collection
+
+# Shadow evaluation only. This workflow collects the DVIDS USINDOPACOM-tagged
+# reference stream into an isolated state branch. It publishes nothing, deploys
+# nothing, and never writes to `main`.
+#
+# WHAT IT COLLECTS — a Tier B DoD media-service feed published by Defense Media
+# Activity. Unit tagging does not imply command authorship or comprehensive
+# Indo-Pacific relevance. It is not a complete USINDOPACOM command-release wire
+# and not presently a peer of the China Desk. The public US Indo-Pacific
+# Reference Desk remains access_blocked; this run evaluates whether the source
+# can support that desk later. See shadow/us_indopacom/README.md.
+#
+# Isolation, by construction:
+#   * state lives on `shadow/us-indopacom`, checked out into a directory
+#     OUTSIDE the repository working tree; the runner refuses to write inside it
+#   * `contents: write` is the only permission, and the only ref it pushes is
+#     the state branch
+#   * no Pages step, no call to the daily workflow, no output/ generation
+#   * pushes are non-force and fail on non-fast-forward, so a divergent state
+#     branch stops the run instead of being overwritten
+
+on:
+  schedule:
+    # 08:40 UTC. Chosen to clear the other three schedules given the lateness
+    # each has actually shown, not their nominal times:
+    #   * Japan      22:40 UTC, observed 1h50m-7h38m late  -> up to ~06:18 UTC
+    #   * Daily      12:23 UTC, observed ~4-5h late        -> ~17:00-18:30 UTC
+    #   * Singapore  21:10 UTC, observed ~2h late          -> ~23:00-00:00 UTC
+    # 08:40 sits in the one wide gap, ~2h20m after Japan's worst observed
+    # finish and ~3h40m before the Daily's nominal start.
+    #
+    # It also suits the source: DVIDS publishes on a US Eastern clock, so
+    # 08:40 UTC is 04:40 America/New_York and the previous Eastern publication
+    # day is closed. A collector that runs mid-publication-day would split days
+    # across runs for no benefit.
+    - cron: '40 8 * * *'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: >-
+          Logical collection date to record, YYYY-MM-DD in UTC. Leave empty to
+          record the UTC date this dispatch runs on. Set it to recover a
+          scheduled run that failed or was re-run: name the day that run was
+          meant to cover. A UI re-run cannot say which day it means and is
+          refused, so this input is the recovery path.
+        required: false
+        default: ''
+
+concurrency:
+  group: us-indopacom-shadow
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the collector
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r repo/requirements.txt
+
+      # The state branch is checked out as a sibling of the repository, never
+      # inside it. `scripts/shadow_collect_us.py` refuses any --state-dir under
+      # the repo root, so this layout is enforced on both sides.
+      - name: Check out shadow state
+        run: |
+          set -euo pipefail
+          git clone --branch shadow/us-indopacom --single-branch \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+            "${RUNNER_TEMP}/shadow-state" 2>/dev/null \
+          || {
+            echo "state branch absent — initialising an empty orphan"
+            git clone "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+              "${RUNNER_TEMP}/shadow-state"
+            cd "${RUNNER_TEMP}/shadow-state"
+            git checkout --orphan shadow/us-indopacom
+            git rm -rf . >/dev/null 2>&1 || true
+          }
+          echo "state at ${RUNNER_TEMP}/shadow-state"
+
+      - name: Assert the state checkout is not the repository
+        run: |
+          set -euo pipefail
+          case "${RUNNER_TEMP}/shadow-state" in
+            "${GITHUB_WORKSPACE}"/repo*)
+              echo "::error title=Isolation::shadow state resolved inside the collector checkout"
+              exit 1 ;;
+          esac
+          echo "Shadow state is outside the collector checkout."
+
+      - name: Record the ledger count before collection
+        id: before
+        run: |
+          set -euo pipefail
+          n=$(find "${RUNNER_TEMP}/shadow-state/state/ledger" -name '*.json' 2>/dev/null | wc -l | tr -d ' ')
+          echo "count=${n}" >> "${GITHUB_OUTPUT}"
+          echo "ledger entries before: ${n}"
+
+      - name: Run shadow collection
+        id: collect
+        working-directory: repo
+        env:
+          # Through the environment, never interpolated into the script body.
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          set -euo pipefail
+          # An absent or empty dispatch input must not reach argparse as an
+          # empty --target-date: "" is not a date, and a refusal here would be
+          # a refusal of every scheduled run.
+          if [ -n "${TARGET_DATE:-}" ]; then
+            set -- --target-date "${TARGET_DATE}"
+          else
+            set --
+          fi
+          # --event-name / --cron-utc give the collector the LOGICAL date of
+          # the nominal 08:40 UTC slot. Actions starts scheduled jobs late, and
+          # a run that crossed UTC midnight was previously stamped with the
+          # following day, leaving its own day with no ledger — the defect that
+          # produced both Singapore anomalies. Keep --cron-utc equal to the
+          # cron above.
+          #
+          # --lookback-days 3, not 30: the DVIDS window is a fixed item count,
+          # so a long lookback buys nothing a daily cadence does not already
+          # cover, and costs one article fetch per extra item every run.
+          python scripts/shadow_collect_us.py \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --lookback-days 3 \
+            --cap 40 \
+            --run-id "${GITHUB_RUN_ID}" \
+            --commit "${GITHUB_SHA}" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --cron-utc "08:40" \
+            "$@"
+
+      - name: Assert the ledger is append-only
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          # A run may ADD ledger entries. It may never modify or delete one:
+          # the ledger is the evidence chain, and an edited entry is an edited
+          # record of what happened.
+          changed=$(git diff --name-status -- state/ledger | grep -E '^(M|D|R)' || true)
+          if [ -n "${changed}" ]; then
+            echo "::error title=Ledger::an existing ledger entry was modified or deleted"
+            echo "${changed}"
+            exit 1
+          fi
+          after=$(find state/ledger -name '*.json' 2>/dev/null | wc -l | tr -d ' ')
+          before="${{ steps.before.outputs.count }}"
+          if [ "${after}" -lt "${before}" ]; then
+            echo "::error title=Ledger::entry count fell from ${before} to ${after}"
+            exit 1
+          fi
+          echo "ledger entries: ${before} -> ${after}, append-only"
+
+      # Only reached when collection succeeded: a failing run must not persist
+      # a half-written state, and `set -e` above already stopped the job.
+      - name: Publish shadow state
+        if: success()
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          if [ -e state/shadow.db-wal ] || [ -e state/shadow.db-shm ]; then
+            echo "::error title=Sidecar::refusing to commit a WAL/SHM sidecar"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          if git diff --cached --quiet; then
+            echo "No shadow state change to record."
+            exit 0
+          fi
+          git commit \
+            -m "shadow(us-indopacom): run ${GITHUB_RUN_ID}" \
+            -m "Recorded by ${GITHUB_WORKFLOW} at ${GITHUB_SHA}." \
+            -m "State only. Never merged to main."
+          # Non-force, and no --force-with-lease either. A divergent state
+          # branch means another writer got there first; this run must FAIL and
+          # be re-run against the new state, never overwrite it.
+          git push origin shadow/us-indopacom
+
+      - name: Upload the run ledger
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: us-indopacom-shadow-ledger-${{ github.run_id }}
+          path: ${{ runner.temp }}/shadow-state/state/ledger/
+          if-no-files-found: warn
+          retention-days: 90
