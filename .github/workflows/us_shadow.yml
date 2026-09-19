@@ -107,7 +107,16 @@ jobs:
         id: before
         run: |
           set -euo pipefail
-          n=$(find "${RUNNER_TEMP}/shadow-state/state/ledger" -name '*.json' 2>/dev/null | wc -l | tr -d ' ')
+          # On the FIRST run the state branch is a fresh orphan and
+          # state/ledger does not exist yet. `find` on a missing path exits
+          # non-zero, and under `set -o pipefail` that failed the step and
+          # skipped collection entirely. 2>/dev/null hides the message, not
+          # the exit code. Count only when the directory is there.
+          if [ -d "${RUNNER_TEMP}/shadow-state/state/ledger" ]; then
+            n=$(find "${RUNNER_TEMP}/shadow-state/state/ledger" -name '*.json' | wc -l | tr -d ' ')
+          else
+            n=0
+          fi
           echo "count=${n}" >> "${GITHUB_OUTPUT}"
           echo "ledger entries before: ${n}"
 
@@ -156,14 +165,30 @@ jobs:
           # A run may ADD ledger entries. It may never modify or delete one:
           # the ledger is the evidence chain, and an edited entry is an edited
           # record of what happened.
-          changed=$(git diff --name-status -- state/ledger | grep -E '^(M|D|R)' || true)
-          if [ -n "${changed}" ]; then
-            echo "::error title=Ledger::an existing ledger entry was modified or deleted"
-            echo "${changed}"
-            exit 1
+          #
+          # On the first run the branch is an unborn orphan with no commit, so
+          # there is nothing to diff against and nothing that COULD have been
+          # modified. Say so rather than failing.
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            changed=$(git diff --name-status -- state/ledger | grep -E '^(M|D|R)' || true)
+            if [ -n "${changed}" ]; then
+              echo "::error title=Ledger::an existing ledger entry was modified or deleted"
+              echo "${changed}"
+              exit 1
+            fi
+          else
+            echo "unborn state branch: no prior ledger entry can have been changed"
           fi
-          after=$(find state/ledger -name '*.json' 2>/dev/null | wc -l | tr -d ' ')
+          if [ -d state/ledger ]; then
+            after=$(find state/ledger -name '*.json' | wc -l | tr -d ' ')
+          else
+            after=0
+          fi
+          # Empty when the counting step itself failed. Treat that as 0 rather
+          # than letting `[ n -lt "" ]` raise a shell error that hides the
+          # real failure upstream.
           before="${{ steps.before.outputs.count }}"
+          before="${before:-0}"
           if [ "${after}" -lt "${before}" ]; then
             echo "::error title=Ledger::entry count fell from ${before} to ${after}"
             exit 1
