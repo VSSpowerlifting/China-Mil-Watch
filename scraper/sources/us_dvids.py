@@ -363,6 +363,47 @@ def document_title(html: str) -> Optional[str]:
     return None
 
 
+#: DVIDS renders a metadata table carrying `Location:` and links each item to
+#: the submitting unit at `/unit/<code>`. Both are the publisher's own
+#: structured fields, which is why they are read instead of a dateline regex:
+#: only one of three sampled bodies carried a parseable dateline at all.
+_LOCATION_RE = re.compile(r"Location:\s*(.+?)(?:\s+Web Views|\s+Downloads|$)")
+_UNIT_HREF_RE = re.compile(r"^/unit/([A-Za-z0-9._-]+)/?$")
+
+
+def document_location(html: str) -> Optional[str]:
+    """
+    The publisher's own `Location:` field, e.g. `FORT SMITH, ARKANSAS, US`.
+
+    Recorded for the checkpoint report, never to decide whether a record is
+    kept. Geography is evidence about what this stream carries; it is not a
+    filter, and treating it as one would decide the question the shadow phase
+    exists to measure.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    text = " ".join(tbl.get_text(" ", strip=True)
+                    for tbl in soup.find_all("table"))
+    match = _LOCATION_RE.search(text)
+    return match.group(1).strip() if match else None
+
+
+def document_units(html: str):
+    """
+    The submitting unit codes the page links to, e.g. `['188WG']`.
+
+    `/unit/` is permitted by DVIDS robots; these are read from links already
+    present on the retrieved page and are never followed. Like location, this
+    is reporting material, not a gate.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    found = set()
+    for anchor in soup.find_all("a", href=True):
+        match = _UNIT_HREF_RE.match(anchor["href"].strip())
+        if match:
+            found.add(match.group(1))
+    return sorted(found)
+
+
 def document_body(html: str) -> Tuple[str, bool]:
     """
     `(text, container_present)`.
@@ -594,6 +635,8 @@ class USDvidsAdapter(SourceAdapter):
                 "published_at_utc": item.published_at_utc,
                 "published_at_original": item.published_at_original,
                 "byline": item.author,
+                "location": document_location(capture.body),
+                "units": ",".join(document_units(capture.body)) or None,
                 "publication_kind": "public affairs release",
                 "content_sha256": hashlib.sha256(
                     body.encode("utf-8")).hexdigest(),

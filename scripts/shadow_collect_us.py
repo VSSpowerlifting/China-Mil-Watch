@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS shadow_records (
     published_at_utc      TEXT,
     published_at_original TEXT,
     byline                TEXT,
+    location              TEXT,
+    units                 TEXT,
     language_tag          TEXT NOT NULL,
     publication_kind      TEXT NOT NULL,
     content_sha256        TEXT NOT NULL,
@@ -225,14 +227,16 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                 "INSERT INTO shadow_records (url, source_identity, source_slug,"
                 " title_original, text_original, published_date,"
                 " published_at_utc, published_at_original, byline,"
+                " location, units,"
                 " language_tag, publication_kind, content_sha256,"
                 " capture_sha256, retrieved_at, first_seen_run)"
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (doc.url, identity, doc.source_slug, doc.title_original,
                  doc.text_original, doc.published_date,
                  doc.extra.get("published_at_utc"),
                  doc.extra.get("published_at_original"),
-                 doc.extra.get("byline"), doc.language_tag,
+                 doc.extra.get("byline"), doc.extra.get("location"),
+                 doc.extra.get("units"), doc.language_tag,
                  doc.extra["publication_kind"], doc.extra["content_sha256"],
                  doc.extra.get("capture_sha256"), doc.extra.get("retrieved_at"),
                  run_id))
