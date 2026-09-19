@@ -24,6 +24,68 @@ collect(){ # <statedir> <runid> <extra args...>
 }
 field(){ "$PY" -c "import json,sys;print(json.load(open(sys.argv[1])).get(sys.argv[2]))" "$1" "$2"; }
 
+# ---------------------------------------------------------------------------
+# 0. The workflow's OWN shell, run against an empty orphan.
+#
+# This scenario exists because 32/32 passed and the first real run still
+# failed. Everything below exercised the collector and git; nothing executed
+# the workflow's shell steps, so a bug in one of them survived the whole
+# rehearsal. `find state/ledger` on a fresh orphan exits non-zero, and under
+# `set -euo pipefail` that failed the step and skipped collection entirely.
+# ---------------------------------------------------------------------------
+echo "=== 0. workflow shell steps against an empty orphan ==="
+WF0="$REPO/.github/workflows/us_shadow.yml"
+if [ ! -f "$WF0" ]; then
+  no "workflow present for shell rehearsal"
+else
+  mkdir -p "$LAB/wf/shadow-state"
+  ( cd "$LAB/wf/shadow-state" && git init -q . && git checkout -q --orphan "$BRANCH" 2>/dev/null; true )
+  export RUNNER_TEMP="$LAB/wf"
+  export GITHUB_OUTPUT="$LAB/wf/gh_output"
+  : > "$GITHUB_OUTPUT"
+  extract(){ "$PY" - "$WF0" "$1" <<'P'
+import re,sys
+raw=open(sys.argv[1]).read(); want=sys.argv[2]
+blocks=re.split(r"^      - name: ", raw, flags=re.M)
+for b in blocks[1:]:
+    if b.splitlines()[0].strip()==want:
+        m=re.search(r"^        run: \|\n(.*?)(?=^      - name: |\Z)", b, re.M|re.S)
+        body=m.group(1)
+        body=re.sub(r"^          ", "", body, flags=re.M)
+        # Substitute the one GitHub expression these steps use.
+        body=body.replace("${{ steps.before.outputs.count }}", "$STEP_BEFORE_COUNT")
+        print(body); break
+P
+  }
+  extract "Record the ledger count before collection" > "$LAB/wf/step_before.sh"
+  extract "Assert the ledger is append-only"          > "$LAB/wf/step_append.sh"
+  if bash "$LAB/wf/step_before.sh" >"$LAB/wf/out1" 2>&1; then
+    ok "count step survives a missing state/ledger"
+  else
+    no "count step survives a missing state/ledger ($(tail -1 "$LAB/wf/out1"))"
+  fi
+  chk "it reports zero prior entries" "$(grep -o 'count=[0-9]*' "$GITHUB_OUTPUT" | tail -1)" "count=0"
+  STEP_BEFORE_COUNT=$(grep -o 'count=[0-9]*' "$GITHUB_OUTPUT" | tail -1 | cut -d= -f2)
+  export STEP_BEFORE_COUNT
+  if bash "$LAB/wf/step_append.sh" >"$LAB/wf/out2" 2>&1; then
+    ok "append-only step survives an unborn branch"
+  else
+    no "append-only step survives an unborn branch ($(tail -1 "$LAB/wf/out2"))"
+  fi
+  # And it must still FAIL when an entry really is removed.
+  mkdir -p "$LAB/wf/shadow-state/state/ledger"
+  echo '{}' > "$LAB/wf/shadow-state/state/ledger/a.json"
+  ( cd "$LAB/wf/shadow-state" && git add -A >/dev/null && git -c user.email=a@b -c user.name=a commit -qm seed )
+  rm "$LAB/wf/shadow-state/state/ledger/a.json"
+  STEP_BEFORE_COUNT=1; export STEP_BEFORE_COUNT
+  if bash "$LAB/wf/step_append.sh" >"$LAB/wf/out3" 2>&1; then
+    no "append-only step rejects a deleted entry"
+  else
+    ok "append-only step rejects a deleted entry"
+  fi
+  unset RUNNER_TEMP GITHUB_OUTPUT STEP_BEFORE_COUNT
+fi
+
 echo "=== 1. day-zero bootstrap ==="
 git clone --quiet "$LAB/origin.git" "$LAB/w1" 2>/dev/null
 ( cd "$LAB/w1" && git checkout --quiet --orphan "$BRANCH" && git rm -rqf . 2>/dev/null; true )
