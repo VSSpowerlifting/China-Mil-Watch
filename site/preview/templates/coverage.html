@@ -12,7 +12,8 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
 {# The aggregate status covers the whole pipeline, not collection alone.
 
    Rendered on its own it read as a contradiction: "aggregate failed" sitting
-   directly above "4 collectors executed / 0 execution failures". Both are
+   directly above the run's own "<n> collectors executed / <n> execution
+   failures". Both are
    true — collection succeeded and something after it did not — but a reader
    met the verdict first and the evidence second, and the obvious reading was
    that collection had failed.
@@ -42,8 +43,9 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
    failed, a configured source with no collector at all, and a desk that
    actually collected are four different things, and merging any two of them
    loses the distinction that makes an empty result readable. No denominator is
-   shown: "4 of 5 collectors executed" would assert that five collectors exist,
-   and the fifth configured source has no adapter to run. #}
+   shown: "N of M collectors executed" would assert that M collectors exist,
+   which is false whenever a configured source has no adapter to run. The
+   denominator stays absent even when every source does execute. #}
 {% if run_status %}
 <ul class="status-facts">
   <li>Run <b>{{ run_status.run_id }}</b></li>

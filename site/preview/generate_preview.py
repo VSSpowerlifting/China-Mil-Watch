@@ -1199,10 +1199,14 @@ def run_status_summary(latest_run, run_results, collecting_desks,
                                       relationship, NOT the desk registry,
                                       and NOT a count of sources.
 
-    No configured-source total is exposed as a collector denominator. Four
-    working collectors executed and a fifth configured source has no adapter;
-    "4 of 5 collectors" would assert five collectors exist, which is false in
-    this project's own vocabulary (`not_implemented` = "no working collector").
+    No configured-source total is exposed as a collector denominator. When a
+    configured source has no adapter, "N of M collectors" would assert that M
+    collectors exist, which is false in this project's own vocabulary
+    (`not_implemented` = "no working collector"). The denominator stays absent
+    even when every source does have a collector, because the reason it was
+    removed is about what the sentence claims, not about the current count.
+    (As of run 141, 2026-09-17, all five configured sources execute: the
+    Xinhua stub was implemented and `unimplemented` is now 0.)
 
     Returns None when there is no run, so the strip renders nothing rather than
     a zero that would read as "all clear". `desks` is None — and omitted by the
