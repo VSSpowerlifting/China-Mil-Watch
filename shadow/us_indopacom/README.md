@@ -133,6 +133,48 @@ how a parser bug becomes a permanent, invisible corpus defect.
 * **Isolation** — the runner refuses to write inside the repository working
   tree and never names `pla_watch.db` or `output/`.
 
+## Launch: what activating this desk actually does
+
+Nothing here is active. Activating it means three deliberate acts, in order:
+
+1. **Bootstrap the state branch.** `shadow/us-indopacom` does not exist. The
+   workflow creates it as an **orphan** on first run (`git checkout --orphan`,
+   `git rm -rf .`), so it shares no history with `main` and no PR can target
+   it. Until the first successful run there is no `clock.json`, and therefore
+   **no day zero**.
+2. **Enable `.github/workflows/us_shadow.yml`.** Its cron is `40 8 * * *`.
+   That slot is chosen against the lateness each other schedule has actually
+   shown, not their nominal times: Japan (22:40 UTC) has run 1h50m-7h38m late,
+   reaching ~06:18 UTC; the Daily (12:23 UTC) lands ~17:00-18:30 UTC;
+   Singapore (21:10 UTC) lands ~23:00-00:00 UTC. 08:40 UTC is the one wide
+   gap. It is also 04:40 America/New_York, so the DVIDS publication day being
+   collected is closed rather than half-written.
+3. **Nothing else.** The registry entry stays `access_blocked`, no source is
+   enabled, and no record reaches `pla_watch.db` or `output/`.
+
+### Retention is a count, and there is no backfill
+
+This is the single operational fact that makes a missed run different here
+than on the other two desks.
+
+The DVIDS feed carries a **fixed window of ~428 items across all media types**,
+not a date range. When measured on 2026-09-17 that was 171 `/news/` items
+spanning 16 days -- but volume is uneven (1 news item on 2026-09-05, 37 on
+2026-09-15), so the window is a count that **shortens as volume rises**.
+
+Consequences, stated plainly:
+
+* **A missed collecting day is permanent.** Items that fall out of the window
+  cannot be retrieved from this route, at any later time, by any means this
+  project permits.
+* **There is no historical backfill.** The feed is the only permitted
+  discovery endpoint; `/search/` and `/tags/` are `Disallow` in DVIDS robots.
+  No archive endpoint has been identified, and none may be improvised.
+* **Day one of collection is the earliest recoverable day.** Nothing published
+  before launch enters this corpus.
+* `scripts/review_us_shadow_state.py` therefore reports a gap between
+  collecting days as a **FAIL marked UNRECOVERABLE**, not as lateness.
+
 ## Known limitations
 
 1. **Scope.** ~9% of items announce Indo-Pacific content. See above. This is
