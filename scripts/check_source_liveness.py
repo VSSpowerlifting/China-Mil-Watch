@@ -40,14 +40,24 @@ from scripts.reconcile_db import read_only                      # noqa: E402
 
 DEFAULT_DB = REPO_ROOT / "pla_watch.db"
 
+# The fallback silence threshold, for any source without its own entry in
+# SILENCE_THRESHOLD_DAYS. Named so the tests can assert against the value the
+# gate actually uses rather than restating it.
+DEFAULT_MAX_SILENT_DAYS = 7
+
 # Sources whose silence is deliberate and documented. The value is the reason,
 # and it is printed in the report so nobody has to go spelunking for it.
-KNOWN_INERT = {
-    "xinhua_mil": (
-        "documented stub — listing page requires JS rendering; returns [] by "
-        "design (see scraper/sources/xinhua_mil.py, v2 roadmap P3)"
-    ),
-}
+#
+# Empty since 2026-09-20. `xinhua_mil` sat here from the era when the adapter
+# was a stub that returned [] by design. PR #56 replaced the stub with a real
+# server-rendered collector against www.news.cn/milpro/; the 2026-09-20 daily
+# run reported `xinhua_mil ok discovered=5 fetched=5 extracted=5 new=4`, and the
+# tracked database holds 29 Xinhua articles, most recent published 2026-09-19.
+# An entry here exempts a source from every recency threshold, so a producing
+# source left in this list is one whose death the gate would never report — the
+# exact blindness this check exists to remove. tests/test_source_liveness.py
+# fails if a slug that is still producing reappears here.
+KNOWN_INERT: dict[str, str] = {}
 
 # Per-source silence thresholds in days, overriding --max-silent-days. A source
 # that genuinely publishes twice a month is not sick after seven quiet days, and
@@ -122,7 +132,8 @@ def emit_github(unhealthy: list[tuple[str, str]], lines: list[str]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
-    parser.add_argument("--max-silent-days", type=int, default=7)
+    parser.add_argument("--max-silent-days", type=int,
+                        default=DEFAULT_MAX_SILENT_DAYS)
     parser.add_argument(
         "--today", type=lambda s: datetime.strptime(s, "%Y-%m-%d").date(),
         default=date.today(), help="override today's date (testing)",

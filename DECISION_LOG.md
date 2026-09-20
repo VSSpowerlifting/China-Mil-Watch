@@ -4,6 +4,45 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-20 — An exemption from the liveness gate expires when the source revives
+
+`xinhua_mil` was listed in `KNOWN_INERT` with the reason "documented stub —
+listing page requires JS rendering; returns [] by design". True when written.
+PR #56 replaced that stub with a real server-rendered collector against
+`www.news.cn/milpro/`; run 35522266773 (2026-09-20) reported `xinhua_mil ok
+discovered=5 fetched=5 extracted=5 dup=0 new=4 rejected=1`, and the tracked
+database holds 29 Xinhua articles, most recent published 2026-09-19. The
+exemption stayed behind for four days of a working source.
+
+1. **`KNOWN_INERT` is now empty, and Xinhua is gated like every other source.**
+   `classify()` returns INERT before any threshold is consulted, so the entry
+   was not cosmetic: Xinhua could have gone dark indefinitely and the gate would
+   still have printed "All non-inert sources are producing." The one source most
+   recently repaired was the one source nothing was watching.
+
+2. **Standing rule: an entry in `KNOWN_INERT` is a claim about the present, not
+   a permanent grant.** It says the silence is understood *now*. Whoever makes a
+   stub real removes its exemption in the same change; the list is read by
+   nobody on a normal day, so it cannot be trusted to age correctly on its own.
+
+3. **The rule is enforced, not documented.** `tests/test_source_liveness.py`
+   re-derives the claim from the tracked corpus: any active source still
+   producing inside its own silence threshold must not classify as INERT. It
+   anchors "today" to the corpus's newest collection date rather than the wall
+   clock, so it keeps asserting as the committed database ages instead of
+   drifting past every threshold and passing vacuously.
+
+4. **The exemption mechanism itself is pinned separately.** With the dict empty,
+   nothing else would notice if INERT broke, and the next genuinely inert source
+   would be reported UNHEALTHY forever — which is how a gate gets switched off.
+
+5. **Not fixed here.** `README.md`, `docs/v2_roadmap.md` (P3),
+   `docs/SOURCE_ADAPTER_CONTRACT.md` and `docs/ADR_NEUTRAL_CORE.md` still
+   describe Xinhua as a stub that has "produced zero rows for the life of the
+   project", and the README names the retired `xinhuanet.com` domain. Those are
+   prose surfaces with no gate behind them; they are stale for the same reason
+   and are tracked separately.
+
 ## 2026-09-05 — The success marker stays at the success boundary
 
 The published `Last full update` was one day stale on every scheduled run. The
