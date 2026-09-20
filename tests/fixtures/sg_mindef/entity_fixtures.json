@@ -18,5 +18,16 @@
     "hex_apostrophes_in_excerpt": 1,
     "utf8_right_quotes_in_excerpt": 0,
     "note": "Trimmed recording of the page as served: the real charset meta, og:title, h1 and a contiguous slice of the article body. Bytes are unmodified; only surrounding chrome was cut. The served Content-Type carries no charset, which is the whole point of the charset regression test."
+  },
+  "charset_undeclared_utf8.html": {
+    "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/31jul26-fr/",
+    "status": 200,
+    "content_type": "text/html",
+    "full_page_bytes": 460249,
+    "excerpt_bytes": 12948,
+    "requests_would_say": "ISO-8859-1",
+    "utf8_right_quotes_in_excerpt": 10,
+    "utf8_left_quotes_in_excerpt": 0,
+    "note": "Trimmed recording kept as BYTES. The server declares no charset on Content-Type, the document declares utf-8, and requests' RFC 2616 default would decode it as ISO-8859-1. A str fixture would erase exactly the defect under test."
   }
 }

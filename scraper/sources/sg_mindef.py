@@ -22,7 +22,9 @@ and reliability first.
 
 from __future__ import annotations
 
+import codecs
 import hashlib
+import logging
 import re
 import time
 import urllib.robotparser
@@ -108,6 +110,115 @@ def publication_kind(url: str) -> str:
     token = re.sub(r"^\d{1,2}[a-z]{3}\d{2}[-_]", "", tail)
     token = re.sub(r"\d+$", "", token)
     return KINDS.get(token, "other")
+
+
+#: How many leading bytes may declare an encoding. The HTML standard's own
+#: prescan limit; a declaration further in is not one a browser would honour.
+META_PRESCAN_BYTES = 1024
+
+#: Used only when nothing declares an encoding at all. Never a guess at the
+#: bytes — a documented default, and `decode_response` always says it used it.
+UNDECLARED_DEFAULT = "utf-8"
+
+_META_CHARSET_RE = re.compile(
+    rb"""<meta[^>]+charset\s*=\s*["']?\s*([A-Za-z0-9_:.-]+)""", re.I)
+_CT_CHARSET_RE = re.compile(r"""charset\s*=\s*["']?\s*([A-Za-z0-9_:.-]+)""", re.I)
+
+#: Byte-order marks, which outrank every declaration.
+_BOMS = ((b"\xef\xbb\xbf", "utf-8-sig"),
+         (b"\xff\xfe", "utf-16"),
+         (b"\xfe\xff", "utf-16"))
+
+
+def declared_encoding(raw: bytes, content_type: Optional[str] = None):
+    """`(encoding, source)` for a byte stream, by declaration only.
+
+    The order is the HTML standard's: a `charset` on the HTTP `Content-Type`
+    wins, then a byte-order mark, then a `<meta charset>` within the first
+    1024 bytes, then a documented default. `source` is one of `http-header`,
+    `bom`, `meta` or `undeclared`, and the caller is expected to surface it —
+    "we fell back" must be visible, not inferred.
+
+    Nothing here inspects the payload to guess. `requests` would answer
+    ISO-8859-1 for any `text/*` without a charset, per RFC 2616, which is how
+    mindef.gov.sg — `Content-Type: text/html`, no charset, `<meta charset=
+    utf-8>` — had every apostrophe and dash in the corpus mis-decoded.
+    """
+    if content_type:
+        m = _CT_CHARSET_RE.search(content_type)
+        if m:
+            return m.group(1).strip().lower(), "http-header"
+    for bom, enc in _BOMS:
+        if raw.startswith(bom):
+            return enc, "bom"
+    m = _META_CHARSET_RE.search(raw[:META_PRESCAN_BYTES])
+    if m:
+        return m.group(1).decode("ascii", "ignore").strip().lower(), "meta"
+    return UNDECLARED_DEFAULT, "undeclared"
+
+
+class DecodedResponse:
+    """Decoded text plus how the encoding was chosen, so a run can report it."""
+
+    __slots__ = ("text", "encoding", "source", "replacements")
+
+    def __init__(self, text, encoding, source, replacements):
+        self.text = text
+        self.encoding = encoding
+        self.source = source
+        #: U+FFFD introduced by a lossy fallback. Zero on a clean decode.
+        self.replacements = replacements
+
+    @property
+    def lossy(self) -> bool:
+        return self.replacements > 0
+
+
+def decode_response(raw: bytes, content_type: Optional[str] = None) -> DecodedResponse:
+    """Decode by declaration, strictly, and say so when that is not possible.
+
+    A declared encoding that the bytes contradict is not quietly swapped for a
+    better guess. The strict decode is attempted first; only if it raises does
+    this fall back to replacement characters, and the count comes back with the
+    text so a caller can refuse or log rather than store damage silently.
+    """
+    encoding, source = declared_encoding(raw, content_type)
+    try:
+        return DecodedResponse(raw.decode(encoding), encoding, source, 0)
+    except (UnicodeDecodeError, LookupError):
+        text = raw.decode(encoding, "replace") if _known(encoding) \
+            else raw.decode(UNDECLARED_DEFAULT, "replace")
+        return DecodedResponse(text, encoding, source, text.count("\ufffd"))
+
+
+def _known(encoding: str) -> bool:
+    """Whether Python has this codec.
+
+    `codecs.lookup`, not a trial decode: decoding an empty bytes object takes a
+    fast path that never consults the codec registry, so `b"".decode(junk)`
+    happily returns `""` and would report an unknown encoding as known.
+    """
+    try:
+        codecs.lookup(encoding)
+        return True
+    except LookupError:
+        return False
+
+
+def response_text(resp) -> str:
+    """The decoded body of a `requests` response, by declaration.
+
+    Deliberately not `resp.text`: that applies RFC 2616's ISO-8859-1 default to
+    any `text/*` served without a charset, which is exactly this ministry.
+    """
+    decoded = decode_response(resp.content or b"",
+                              (resp.headers or {}).get("Content-Type"))
+    if decoded.lossy:
+        logging.getLogger(__name__).warning(
+            "%s: %d byte(s) undecodable as %s (declared via %s); replaced",
+            getattr(resp, "url", "?"), decoded.replacements,
+            decoded.encoding, decoded.source)
+    return decoded.text
 
 
 def visible_text(markup: str) -> str:
@@ -247,7 +358,7 @@ class SGMindefAdapter(SourceAdapter):
                 return DiscoveryResult(
                     self.slug, st.LISTING_FAILURE,
                     error_detail="robots.txt returned HTTP %d" % robots.status_code)
-            self.assert_robots_allows(robots.text, SITEMAP)
+            self.assert_robots_allows(response_text(robots), SITEMAP)
         except RobotsDisallowed as exc:
             return DiscoveryResult(self.slug, st.AUTH_FAILURE,
                                    error_detail=str(exc))
@@ -271,7 +382,7 @@ class SGMindefAdapter(SourceAdapter):
                 self.slug, st.LISTING_FAILURE,
                 error_detail="sitemap returned HTTP %d" % resp.status_code)
 
-        entries = parse_sitemap(resp.text)
+        entries = parse_sitemap(response_text(resp))
         if not entries:
             # An empty parse of a 200 sitemap is a listing failure, not silence:
             # the ministry publishes thousands of URLs, so zero means the shape
@@ -303,7 +414,7 @@ class SGMindefAdapter(SourceAdapter):
             return CaptureResult(reference, st.FETCH_FAILURE, reference.url,
                                  http_status=resp.status_code,
                                  error_detail="HTTP %d" % resp.status_code)
-        body = resp.text or ""
+        body = response_text(resp) or ""
         payload = body.encode("utf-8", "ignore")
         if len(payload) > MAX_BODY_BYTES:
             return CaptureResult(reference, st.OVERSIZED_RESPONSE, reference.url,

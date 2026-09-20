@@ -45,8 +45,18 @@ def items():
 
 
 class FakeResponse:
-    def __init__(self, text="", status_code=200, headers=None, url=""):
+    """Serves bytes, like the real thing.
+
+    The adapter decodes `content` by declaration now, rather than trusting
+    `requests`' ISO-8859-1 default for a charset-less `text/html`. A fake that
+    only carried `.text` would let a decoding regression pass unnoticed, so
+    this one encodes and keeps both.
+    """
+
+    def __init__(self, text="", status_code=200, headers=None, url="",
+                 encoding="utf-8"):
         self.text = text
+        self.content = text.encode(encoding)
         self.status_code = status_code
         self.headers = headers or {"Content-Type": "text/html"}
         self.url = url
