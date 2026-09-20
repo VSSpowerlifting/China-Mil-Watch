@@ -157,7 +157,22 @@ class PLADailyScraper(BaseScraper):
             if match:
                 return match.group(1)
 
-        return date.today().isoformat()
+        # Nothing on the page says when this was published, so fall back to the
+        # date this run is collecting for — never to the wall clock.
+        #
+        # The two are the same on an ordinary same-day run, which is why
+        # `date.today()` stood here unnoticed. They diverge the moment the run
+        # is given an explicit `--date`, and that is exactly when the fallback
+        # matters: recovering 2026-09-18 stamped 7 of 10 records `2026-09-19`,
+        # the day the recovery happened to execute. 81.cn serves multimedia
+        # items (多媒体稿件) from a template with no `artichle-info` div, so the
+        # 发布 field cannot be read and this branch fires for real traffic, not
+        # just for malformed pages.
+        #
+        # `self.target_date` is set in `BaseScraper.__init__` and already
+        # defaults to today when no date was requested, so same-day behaviour
+        # is byte-for-byte unchanged.
+        return self.target_date.isoformat()
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
