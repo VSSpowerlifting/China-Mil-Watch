@@ -4,6 +4,53 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-20 — The liveness gate derives its expectations, it does not keep a list
+
+Xinhua Military was rewritten from a stub into a working adapter on 2026-09-16
+and delivered four new articles in the admitted daily run of 2026-09-20.
+`scripts/check_source_liveness.py` still carried it in a hand-maintained
+`KNOWN_INERT` dictionary, with the stub's obituary as the reason. An INERT
+source is exempt from every recency threshold, so the one gate that exists to
+notice a source dying was structurally blind to this one. No run failed. That
+is the defect, not a symptom of it.
+
+1. **The list is deleted, not corrected.** Removing `xinhua_mil` from
+   `KNOWN_INERT` would have fixed today and left the mechanism that produced
+   today intact. Inertness is now read from the adapter's own offline
+   `healthcheck()` — `NOT_IMPLEMENTED` for a class declaring `IS_STUB`,
+   `SKIPPED_DISABLED` for one the desk manifest disables. Both facts already
+   existed, were already correct about Xinhua, and were already what
+   `source_health_report.py` consulted. The liveness gate was the only reader
+   keeping a private second copy.
+
+2. **`SILENCE_THRESHOLD_DAYS` goes with it.** Per-source thresholds come from
+   `silence_threshold_days` in the desk manifest, which is where
+   `core.collection.health.silence_verdict` already reads them. MOD China's 21
+   days is unchanged and now has exactly one home.
+
+3. **Superseding 2026-08-09 §5.** Acknowledging a source's silence is no longer
+   "add the slug to `KNOWN_INERT` with a reason". It is: declare `IS_STUB` on
+   the adapter, or set `enabled: false` in the desk manifest. Both are
+   reviewable acts in the place that already governs the source, and neither
+   can disagree with what the collector actually does.
+
+4. **An adapter that will not import is UNHEALTHY, never INERT.** The old code
+   had no third case: anything not in the list was judged on corpus recency, so
+   a source whose adapter had been deleted would have reported HEALTHY for as
+   long as its stored articles stayed inside the threshold. A failing
+   `healthcheck()` now fails the gate on its own evidence.
+
+5. **A slug no manifest declares is not exempt.** Absence grants nothing.
+   Exemption is something configuration states, and a source the manifests have
+   forgotten is still expected to produce.
+
+6. **No test freezes a corpus count.** `tests/test_source_liveness_governed.py`
+   asserts relationships against the live database — no producing source is
+   ever INERT, every live source receives a verdict — and includes a guard that
+   parses its own source for integer literals equal to a live total. A test
+   that pins today's article count is a test that will be edited into
+   agreement with whatever it finds next month.
+
 ## 2026-09-05 — The success marker stays at the success boundary
 
 The published `Last full update` was one day stale on every scheduled run. The
@@ -568,8 +615,8 @@ broken. Two defects, both ours.
     sidecars and reads the copy. `--apply` still opens directly, because it is
     meant to write.
 
-12. **The 21-day alarm stands unchanged, and MOD China stays out of
-    `KNOWN_INERT`.** The gate measures `MAX(published_date)` per source; it
+12. **The 21-day alarm stands unchanged, and MOD China is not exempt.** The
+    gate measures `MAX(published_date)` per source; it
     fired correctly and was the only signal that caught this. A source that
     publishes on cadence is not inert because our canonical selection discarded
     it.
@@ -1000,6 +1047,9 @@ clean up after the first.
    fails the gate on any active, non-inert source silent past a threshold.
    Acknowledging silence means adding the slug to `KNOWN_INERT` **with a
    reason** — a deliberate, reviewable act, not a config toggle.
+   *(Superseded 2026-09-20: `KNOWN_INERT` is gone. Inertness is declared by
+   `IS_STUB` on the adapter or `enabled: false` in the desk manifest, and the
+   gate derives it.)*
 
 6. **An empty scrape had two meanings and recorded neither.** `get_article_urls()`
    catches listing-page fetch failures per section, logs a warning and

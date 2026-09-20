@@ -513,11 +513,12 @@ jobs:
           fi
 
           # ── Sources: has any non-inert source gone quiet? ──────────────────
-          # Writes its own annotations and step summary. Acknowledge a source
-          # whose silence is understood by adding it to KNOWN_INERT in the
-          # script, with the reason — that is a deliberate, reviewable act.
+          # Writes its own annotations and step summary. The script keeps no
+          # exemption list: a source is inert only when its adapter declares
+          # IS_STUB or its desk manifest disables it, so acknowledging silence
+          # is an edit in the place that already governs the source.
           if ! python scripts/check_source_liveness.py; then
-            echo "::error title=Source silent::A source has stopped producing articles. Fix the scraper, or add it to KNOWN_INERT in scripts/check_source_liveness.py with a documented reason."
+            echo "::error title=Source silent::A source has stopped producing articles. Fix the scraper; or, if the silence is expected, declare IS_STUB on its adapter or set enabled:false in its desk manifest."
             PROBLEMS=$((PROBLEMS + 1))
           fi
 
