@@ -421,8 +421,12 @@ class TestHealthGateUnweakened(unittest.TestCase):
         self.assertTrue(mod["enabled"])
 
     def test_mod_china_is_not_marked_inert(self):
-        from scripts.check_source_liveness import KNOWN_INERT
-        self.assertNotIn("mod_china", KNOWN_INERT)
+        """Exemption is derived now (2026-09-20), so assert the derivation."""
+        from scripts.check_source_liveness import expectations
+        expected = expectations()["mod_china"]
+        self.assertFalse(expected.inert)
+        self.assertFalse(expected.broken)
+        self.assertEqual(21, expected.threshold)
 
 
 if __name__ == "__main__":
