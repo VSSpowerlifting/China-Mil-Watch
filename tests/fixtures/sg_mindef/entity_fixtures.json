@@ -1,0 +1,22 @@
+{
+  "entity_hex_apostrophe.html": {
+    "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/25jul26-nr/",
+    "status": 200,
+    "content_type": "text/html",
+    "full_page_bytes": 493730,
+    "excerpt_bytes": 6874,
+    "hex_apostrophes_in_excerpt": 6,
+    "utf8_right_quotes_in_excerpt": 2,
+    "note": "Trimmed recording of the page as served: the real charset meta, og:title, h1 and a contiguous slice of the article body. Bytes are unmodified; only surrounding chrome was cut. The served Content-Type carries no charset, which is the whole point of the charset regression test."
+  },
+  "entity_body_apostrophes.html": {
+    "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/12sep26-nr/",
+    "status": 200,
+    "content_type": "text/html",
+    "full_page_bytes": 474143,
+    "excerpt_bytes": 3647,
+    "hex_apostrophes_in_excerpt": 1,
+    "utf8_right_quotes_in_excerpt": 0,
+    "note": "Trimmed recording of the page as served: the real charset meta, og:title, h1 and a contiguous slice of the article body. Bytes are unmodified; only surrounding chrome was cut. The served Content-Type carries no charset, which is the whole point of the charset regression test."
+  }
+}

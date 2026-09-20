@@ -27,6 +27,7 @@ import re
 import time
 import urllib.robotparser
 from datetime import date, datetime, timedelta, timezone
+from html import unescape
 from typing import List, Optional
 from urllib.parse import urlparse, urlunparse
 
@@ -109,21 +110,47 @@ def publication_kind(url: str) -> str:
     return KINDS.get(token, "other")
 
 
-def visible_text(html: str) -> str:
-    html = re.sub(r"(?is)<(script|style|nav|header|footer|form)[^>]*>.*?</\1>",
-                  " ", html)
-    text = re.sub(r"(?s)<[^>]+>", " ", html)
-    for ent, ch in (("&nbsp;", " "), ("&amp;", "&"), ("&#39;", "'"),
-                    ("&quot;", '"'), ("&lt;", "<"), ("&gt;", ">")):
-        text = text.replace(ent, ch)
+def visible_text(markup: str) -> str:
+    """Reader-visible text of an HTML fragment.
+
+    Entity decoding is `html.unescape`, not a hand-written table. The table
+    this replaced knew six entities and missed `&#x27;` — the hexadecimal
+    spelling of the apostrophe the ministry's CMS actually emits — which left
+    84 literal `&#x27;` sequences in 29 of the 59 Singapore shadow records.
+    It also decoded in table order rather than in one pass, so it rewrote
+    `&amp;` to `&` and then read the `&#39;` it had just manufactured: a page
+    that escaped an entity for display ("&amp;#39;") came out as an apostrophe
+    instead of the literal text `&#39;`. `unescape` scans once, left to right,
+    and does neither.
+
+    Order matters and is deliberate: tags are stripped *before* entities are
+    decoded, so markup a page escaped for display stays text and can never be
+    promoted into real markup.
+    """
+    markup = re.sub(r"(?is)<(script|style|nav|header|footer|form)[^>]*>.*?</\1>",
+                    " ", markup)
+    text = re.sub(r"(?s)<[^>]+>", " ", markup)
+    text = unescape(text)
+    # `\s` covers the U+00A0 that `&nbsp;` decodes to, so the collapse below
+    # still flattens non-breaking spaces the way the old table did.
     return re.sub(r"\s+", " ", text).strip()
 
 
-def document_title(html: str) -> Optional[str]:
-    m = re.search(r'<meta property="og:title" content="([^"]+)"', html)
+def document_title(markup: str) -> Optional[str]:
+    """The release's own title.
+
+    The `og:title` branch decodes entities too. An attribute value is escaped
+    by definition, so what the meta tag carries is never what a reader sees —
+    this branch used to return it raw, which is why four stored titles kept
+    `&#x27;`, `&quot;` and `&amp;` verbatim. The `<h1>` branch already decoded,
+    via `visible_text`; the two branches now agree.
+    """
+    m = re.search(r'<meta property="og:title" content="([^"]+)"', markup)
     if m and m.group(1).strip():
-        return m.group(1).strip()
-    m = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.S)
+        decoded = unescape(m.group(1)).strip()
+        if decoded:
+            return decoded
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", markup, re.S)
     if m:
         t = visible_text(m.group(1))
         if t:
