@@ -1,0 +1,18 @@
+{
+  "multimedia_no_pubdate.html": {
+    "url": "http://www.81.cn/fyr/16487250.html",
+    "status": 200,
+    "has_artichle_info": false,
+    "has_publication_marker": false,
+    "excerpt_chars": 835,
+    "note": "Trimmed recording of the page as served. The multimedia template genuinely carries no artichle-info div and no 发布 marker anywhere — that absence is the fixture's whole point, and it is why the date fallback fires for ordinary production traffic rather than only for malformed pages."
+  },
+  "ordinary_with_pubdate.html": {
+    "url": "http://www.81.cn/hj_208557/16487440.html",
+    "status": 200,
+    "has_artichle_info": true,
+    "has_publication_marker": true,
+    "excerpt_chars": 9237,
+    "note": "Trimmed recording of the page as served. The multimedia template genuinely carries no artichle-info div and no 发布 marker anywhere — that absence is the fixture's whole point, and it is why the date fallback fires for ordinary production traffic rather than only for malformed pages."
+  }
+}
