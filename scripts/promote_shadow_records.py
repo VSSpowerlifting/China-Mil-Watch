@@ -202,6 +202,30 @@ def ensure_source(con: sqlite3.Connection, manifest: dict) -> int:
     return cur.lastrowid
 
 
+def require_desk_manifest(path: Path) -> dict:
+    """`--manifest` is the desk's own manifest, not a packet.
+
+    Handing this the corrected-view packet is an easy mistake — both are JSON
+    beside each other in the same workflow — and without this it surfaces as a
+    `KeyError` or a `TypeError` several frames down, which reads like a bug in
+    the promoter rather than a wrong argument."""
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(doc, dict):
+        raise Refused("%s is not a desk manifest: it is a %s"
+                      % (path, type(doc).__name__))
+    desk = doc.get("desk")
+    if not isinstance(desk, dict) or not desk.get("desk_id"):
+        raise Refused(
+            "%s is not a desk manifest: it declares no desk.desk_id. Pass the "
+            "desk's manifest (shadow/<desk>/manifest.json), not a packet."
+            % path)
+    sources = doc.get("sources")
+    if not isinstance(sources, list) or not sources:
+        raise Refused("%s declares no sources, so no source row can be "
+                      "derived from it" % path)
+    return doc
+
+
 def promote(state: Path, state_repo: Optional[Path], manifest_path: Path,
             into: Path, dry_run: bool = False) -> dict:
     if into.resolve() == (REPO_ROOT / "pla_watch.db").resolve():
@@ -209,7 +233,7 @@ def promote(state: Path, state_repo: Optional[Path], manifest_path: Path,
             "refusing to promote into the tracked database. Promotion is an "
             "owner decision taken through the release path, not a side effect "
             "of running this program.")
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest = require_desk_manifest(manifest_path)
     rows, holds, overlay_sha, holds_sha = promotable(state, state_repo)
     bind = cc.binding(state, state_repo)
 

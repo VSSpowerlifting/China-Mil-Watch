@@ -295,6 +295,30 @@ class PromotionRefusesBeforeItWrites(PromotionBase):
             pr.promote(self.state, None, self.manifest,
                        REPO_ROOT / "pla_watch.db")
 
+    def test_it_refuses_a_packet_passed_as_the_manifest(self):
+        """The corrected-view packet and the desk manifest are both JSON in
+        the same workflow, and the packet's `desk` is a string. Without a
+        check the mistake surfaces as a TypeError deep inside the promoter."""
+        self.full_overlay()
+        packet = self.tmp / "corrected_view_packet.json"
+        packet.write_text(json.dumps(
+            {"schema": "corrected-view-packet/3", "desk": "singapore-mindef",
+             "records": []}), encoding="utf-8")
+        with self.assertRaises(SystemExit) as caught:
+            pr.promote(self.state, None, packet, self.into)
+        self.assertIn("not a desk manifest", str(caught.exception))
+        self.assertEqual(0, self.rows())
+
+    def test_it_refuses_a_manifest_that_declares_no_sources(self):
+        self.full_overlay()
+        bare = self.tmp / "bare.json"
+        bare.write_text(json.dumps({"desk": {"desk_id": "singapore"}}),
+                        encoding="utf-8")
+        with self.assertRaises(SystemExit) as caught:
+            pr.promote(self.state, None, bare, self.into)
+        self.assertIn("declares no sources", str(caught.exception))
+        self.assertEqual(0, self.rows())
+
 
 class PromotionIsDeterministicAndIdempotent(PromotionBase):
 
