@@ -135,18 +135,40 @@ class TheMechanismIsWhatWeThinkItIs(unittest.TestCase):
         self.assertEqual(2, header[18])
         self.assertEqual(2, header[19])
 
-    def test_a_plain_connect_and_read_creates_sidecars_that_close_leaves(self):
+    def test_a_plain_connect_and_read_creates_the_sidecars(self):
+        """The portable half of the premise. A plain read of a WAL database
+        writes two files next to it, everywhere, on every build."""
         con = sqlite3.connect(str(self.db))
+        self.addCleanup(con.close)
         con.execute("SELECT count(*) FROM articles").fetchone()
         self.assertEqual(sorted(SIDECARS), sorted(self.sides()),
                          "a plain read did not create the sidecars, so the "
                          "premise of the fix has changed")
+
+    def test_whether_close_removes_them_is_a_property_of_the_build(self):
+        """Not portable, and the reason the fix is not 'just close it'.
+
+        SQLite deletes the -wal and -shm when the last connection closes
+        cleanly — on the Linux CI runner it does. On the macOS builds this
+        project is developed against they survive the close and the process,
+        and that residue is what fails six assertions in the next suite run
+        in that checkout.
+
+        So this pins the two legitimate outcomes and rejects a third: a
+        half-state, one sidecar without the other, would mean something
+        stranger than a missed cleanup. Either way the database itself must
+        come back byte-identical, because this was only ever a read."""
+        before = hashlib.sha256(self.db.read_bytes()).hexdigest()
+        con = sqlite3.connect(str(self.db))
+        con.execute("SELECT count(*) FROM articles").fetchone()
         con.close()
-        self.assertEqual(
-            sorted(SIDECARS), sorted(self.sides()),
-            "close() removed the sidecars — if SQLite now cleans up, this "
-            "test should be revisited, but the read_only() copy is still the "
-            "documented rule")
+        left = sorted(self.sides())
+        self.assertIn(left, ([], sorted(SIDECARS)),
+                      "close() left %s — half a sidecar pair is neither "
+                      "cleanup nor residue" % (left,))
+        self.assertEqual(before,
+                         hashlib.sha256(self.db.read_bytes()).hexdigest(),
+                         "a read changed the database")
 
     def test_the_read_only_helper_creates_nothing(self):
         sys.path.insert(0, str(REPO_ROOT))
