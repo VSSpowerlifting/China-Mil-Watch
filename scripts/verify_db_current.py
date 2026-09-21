@@ -2,7 +2,9 @@
 """
 Verify that `pla_watch.db` is schema-current and structurally sound.
 
-Read-only by default. Used in two places in the daily workflow:
+Read-only by default, and read-only on disk: without `--repair` the database is
+read through `scripts.reconcile_db.read_only()`, which copies it, so the check
+cannot leave `-wal`/`-shm` beside the tracked file. Used in two places in the daily workflow:
 
   * **Before the pipeline**, after `--apply`, to confirm the migration actually
     landed.
@@ -29,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from contextlib import ExitStack, closing
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -38,6 +41,7 @@ if str(REPO_ROOT) not in sys.path:
 from migrations.runner import (                                   # noqa: E402
     apply_all, applied_versions, connect, discover, verify,
 )
+from scripts.reconcile_db import read_only                        # noqa: E402
 
 DEFAULT_DB = REPO_ROOT / "pla_watch.db"
 
@@ -133,8 +137,20 @@ def main() -> int:
         print("database not found: %s" % db_path, file=sys.stderr)
         return 2
 
-    conn = connect(db_path)
-    try:
+    # Read-only by default means read-only on disk too. `connect()` opens the
+    # tracked database read-write, and opening a WAL database that way creates
+    # `-wal`/`-shm` beside it which `close()` does NOT remove — they outlive
+    # the process. Every residue assertion in the suite then fails for the rest
+    # of the session, and a fresh clone grows two untracked files from a check
+    # that is documented as changing nothing (DECISION_LOG 2026-08-17).
+    #
+    # `--repair` genuinely writes, so it keeps the direct connection. Every
+    # other path reads a copy.
+    with ExitStack() as stack:
+        if args.repair:
+            conn = stack.enter_context(closing(connect(db_path)))
+        else:
+            conn = stack.enter_context(read_only(db_path))
         state = classify(conn)
         if not args.quiet:
             print("database state: %s" % state)
@@ -165,8 +181,6 @@ def main() -> int:
             print("OK: schema current, ledger complete, integrity and foreign "
                   "keys clean.")
         return 0
-    finally:
-        conn.close()
 
 
 if __name__ == "__main__":
