@@ -34,6 +34,7 @@ from config import DB_PATH                                    # noqa: E402
 from core.collection import status as st                      # noqa: E402
 from core.collection.health import silence_verdict            # noqa: E402
 from core.registry import get_registry                        # noqa: E402
+from scripts.reconcile_db import read_only                    # noqa: E402
 
 
 def _days_since(value) -> int:
@@ -48,8 +49,16 @@ def _days_since(value) -> int:
 
 
 def build_report(db_path, run_id=None) -> dict:
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
+    # "Read-only" has to mean the file system too. A plain connect() on a WAL
+    # database creates `-wal`/`-shm` beside it, and close() does not remove
+    # them — so a report documented as "safe to run anywhere" left two
+    # untracked files next to the tracked database every time it ran.
+    with read_only(db_path) as conn:
+        conn.row_factory = sqlite3.Row
+        return _build(conn, run_id)
+
+
+def _build(conn, run_id=None) -> dict:
 
     registry = get_registry()
     have_srr = conn.execute(
@@ -107,7 +116,6 @@ def build_report(db_path, run_id=None) -> dict:
             )
         sources.append(entry)
 
-    conn.close()
     return {
         "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "latest_run_id": run_id,
