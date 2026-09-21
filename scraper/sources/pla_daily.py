@@ -44,6 +44,24 @@ _SECTIONS: dict[str, str] = {
 
 _BASE = "http://www.81.cn"
 
+#: The class token both article templates put on the body container.
+_CONTENT_CLASS = "m-t-list"
+
+
+def _is_content_container(value) -> bool:
+    """Match the body container by CLASS TOKEN, not by substring.
+
+    BeautifulSoup hands a function matcher the raw attribute string, so the
+    obvious `"m-t-list" in value` also matches `m-t-listing-sidebar`. That was
+    survivable while only `<ul>` was eligible; widening the lookup to `<div>`
+    widens what a stray class can hijack, and a sidebar selected as the body
+    would produce plausible text from the wrong part of the page.
+    """
+    if not value:
+        return False
+    tokens = value if isinstance(value, list) else str(value).split()
+    return _CONTENT_CLASS in tokens
+
 
 class PLADailyScraper(BaseScraper):
     """Scrapes articles from PLA Daily (81.cn) for a given target date."""
@@ -120,9 +138,18 @@ class PLADailyScraper(BaseScraper):
         return None
 
     def _extract_text(self, soup: BeautifulSoup) -> str:
-        # Primary: paragraphs with class "ueditor-text-p_display"
-        # within the <ul class="row m-t-list"> content container
-        content_ul = soup.find("ul", class_=lambda c: c and "m-t-list" in c)
+        # Primary: paragraphs with class "ueditor-text-p_display" within the
+        # content container. The container carries `m-t-list` on both article
+        # templates, but only the ordinary one is a <ul class="row m-t-list">:
+        # the multimedia template uses <div class=" m-t-list">. Matching on the
+        # tag name meant every multimedia page skipped this path and fell
+        # through to the page-wide fallback below, which keeps only paragraphs
+        # longer than 30 characters. A photo item whose whole text is one short
+        # sentence and a caption therefore extracted to the empty string, and
+        # was stored as a metadata-only shell for a page that had prose on it.
+        # This is the same template whose missing 发布 marker produced the
+        # target-date defect (DECISION_LOG 2026-09-20).
+        content_ul = soup.find(["ul", "div"], class_=_is_content_container)
         if content_ul:
             paras = content_ul.find_all("p", class_=lambda c: c and "ueditor" in c)
             if paras:

@@ -1,0 +1,11 @@
+{
+  "multimedia_short_paragraphs.html": {
+    "url": "http://www.81.cn/bz_208549/16487441.html",
+    "status": 200,
+    "container_tag": "div",
+    "container_class": " m-t-list",
+    "prose_paragraph_chars": 24,
+    "caption_paragraph_chars": 14,
+    "note": "Trimmed recording of the page as served on 2026-09-20. The multimedia template puts the body in a DIV carrying m-t-list, not the UL the ordinary template uses, so the class-scoped paragraph path is skipped entirely. What remains is a page-wide fallback that keeps only <p> longer than 30 characters, and every paragraph this page carries is shorter than that — so a page with real prose and a real photo caption extracted to the empty string. The copyright block is kept in the fixture because it is the one long paragraph on the page, and a fix that reached it instead would look like success."
+  }
+}
