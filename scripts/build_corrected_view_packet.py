@@ -29,6 +29,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -36,10 +37,29 @@ if str(REPO_ROOT) not in sys.path:
 
 import scripts.correct_shadow_bodies as cc                     # noqa: E402
 
-PACKET_KIND = "singapore-corrected-view/2"
+PACKET_KIND = "singapore-corrected-view/3"
 
 
-def build(state: Path, state_repo: Path, out: Path, as_of: str) -> dict:
+def load_disposition(path: Optional[Path]) -> Optional[dict]:
+    """The owner's decision, recorded as data.
+
+    Recorded, never inferred, and deliberately separate from the checkpoint
+    sign-off: a disposition says what the owner decided about these records, a
+    sign-off says a human opened every page and checked it. This packet can
+    carry the first. Only a person can produce the second, and the packet says
+    so rather than filling it in.
+    """
+    if not path:
+        return None
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    for key in ("decided_by", "decided_utc", "decisions"):
+        if not doc.get(key):
+            raise SystemExit("owner disposition is missing %r" % key)
+    return doc
+
+
+def build(state: Path, state_repo: Path, out: Path, as_of: str,
+          disposition: Optional[Path] = None) -> dict:
     # Fail closed: verify before reading anything into a packet.
     if cc.verify(state, state_repo) != 0:
         raise SystemExit(
@@ -128,6 +148,7 @@ def build(state: Path, state_repo: Path, out: Path, as_of: str) -> dict:
             },
         },
         "changed_records": changed,
+        "owner_disposition": load_disposition(disposition),
         "promotion": {
             "holds_digest": cc.holds_digest(state),
             "held": {u: {"reason": h["reason"], "evidence": h["evidence"]}
@@ -171,8 +192,9 @@ def main(argv=None) -> int:
     ap.add_argument("--state-repo", required=True, type=Path)
     ap.add_argument("--out", required=True, type=Path)
     ap.add_argument("--as-of", default=datetime.now(timezone.utc).date().isoformat())
+    ap.add_argument("--owner-disposition", type=Path, default=None)
     a = ap.parse_args(argv)
-    p = build(a.state_dir, a.state_repo, a.out, a.as_of)
+    p = build(a.state_dir, a.state_repo, a.out, a.as_of, a.owner_disposition)
     print("\ncorrected-view packet")
     print("  overlay digest : %s" % p["overlay_digest"])
     print("  state commit   : %s" % p["binding"]["state_commit"])
