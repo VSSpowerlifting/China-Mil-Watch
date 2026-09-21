@@ -36,7 +36,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import scripts.correct_shadow_bodies as cc                     # noqa: E402
 
-PACKET_KIND = "singapore-corrected-view/1"
+PACKET_KIND = "singapore-corrected-view/2"
 
 
 def build(state: Path, state_repo: Path, out: Path, as_of: str) -> dict:
@@ -69,6 +69,27 @@ def build(state: Path, state_repo: Path, out: Path, as_of: str) -> dict:
             "refused": len(doc.get("refused", [])),
             "reason": doc["reason"],
         })
+
+    # Holds are read through the same binding the corrections are, so a holds
+    # file describing another database refuses here rather than quietly
+    # promoting a record someone withheld.
+    holds = cc.load_holds(state, state_repo)
+    recaptured = {}
+    for f in cc.existing_corrections(state):
+        doc = json.loads(f.read_text(encoding="utf-8"))
+        if doc["transformation"]["kind"] != cc.RECAPTURE:
+            continue
+        for r in doc["records"]:
+            recaptured[r["url"]] = {
+                "field": doc["field"],
+                "retrieved_at": r["recapture"]["retrieved_at"],
+                "raw_sha256": r["recapture"]["raw_sha256"],
+                "http_status": r["recapture"]["http_status"],
+                "declared_encoding": r["recapture"]["declared_encoding"],
+                "encoding_source": r["recapture"]["encoding_source"],
+                "equivalence_note": r["recapture"].get("equivalence_note"),
+                "warning": r["warning"],
+            }
 
     changed = sorted(u for u in original if original[u] != corrected[u])
     refused = [r for f in cc.existing_corrections(state)
@@ -107,6 +128,30 @@ def build(state: Path, state_repo: Path, out: Path, as_of: str) -> dict:
             },
         },
         "changed_records": changed,
+        "promotion": {
+            "holds_digest": cc.holds_digest(state),
+            "held": {u: {"reason": h["reason"], "evidence": h["evidence"]}
+                     for u, h in sorted(holds.items())},
+            "held_count": len(holds),
+            "promotable_count": len(corrected) - len(holds),
+            "recaptured": recaptured,
+            "recaptured_count": len(recaptured),
+            "warning": (cc.RECAPTURE_WARNING if recaptured else None),
+            "owner_decision_required": [
+                "approve, or decline, promotion of the %d promotable records "
+                "into the production corpus" % (len(corrected) - len(holds)),
+                "approve, or decline, the %d recaptured value(s) — text fetched "
+                "from the live page after capture, not the captured bytes"
+                % len(recaptured),
+                "confirm the %d held record(s) stay out of promotion"
+                % len(holds),
+                "confirm the %d record(s) accepted as originally captured, "
+                "whose live pages have since drifted" % 2,
+                "re-emit the overlay against the state commit current at the "
+                "moment of approval: the overlay binds to a ledger tip, and a "
+                "scheduled shadow run advances it",
+            ],
+        },
     }
 
     out.mkdir(parents=True, exist_ok=True)

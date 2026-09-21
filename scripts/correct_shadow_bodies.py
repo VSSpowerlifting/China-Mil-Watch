@@ -90,8 +90,8 @@ from pathlib import Path
 from typing import Optional
 
 TOOL = "scripts/correct_shadow_bodies.py"
-TOOL_VERSION = "2.0.0"
-SCHEMA = "shadow-correction-overlay/2"
+TOOL_VERSION = "3.0.0"
+SCHEMA = "shadow-correction-overlay/3"
 
 FIELDS = ("body", "title")
 COLUMN = {"body": "text_original", "title": "title_original"}
@@ -111,8 +111,33 @@ ORPHAN_NBSP = re.compile(chr(0xC2) + r"(?=\s|$)")
 C1 = re.compile("[" + chr(0x80) + "-" + chr(0x9F) + "]")
 
 APPROVED_KINDS = ("literal_replace_all", "html_unescape_once",
-                  "mojibake_latin1_utf8")
-EVIDENCE_TIERS = ("live-confirmed", "intrinsic")
+                  "mojibake_latin1_utf8", "recaptured_current_source")
+EVIDENCE_TIERS = ("live-confirmed", "intrinsic", "recaptured")
+
+#: The one kind whose corrected value is NOT derived from stored text. Every
+#: other transformation is a function of what was captured; this one replaces
+#: the captured value with text fetched from the live page later, because the
+#: whitespace collapse destroyed bytes that no transformation can restore.
+#: It is therefore the only kind that can disagree with the original capture
+#: about what the document said, and it is labelled so nothing downstream can
+#: mistake it for the capture.
+RECAPTURE = "recaptured_current_source"
+
+RECAPTURE_WARNING = (
+    "This value is a LATER RECAPTURE of the live page, not the original "
+    "captured byte stream. It is evidence of what the page says now. Where "
+    "the publisher has revised the document since capture, this text is the "
+    "revision — which is why a record whose prose is known to have drifted "
+    "must be held from promotion instead of recaptured."
+)
+
+#: What a recapture must carry before it is allowed to replace a capture.
+RECAPTURE_PROVENANCE = ("request_url", "retrieved_at", "http_status",
+                        "response_bytes", "raw_sha256", "declared_encoding",
+                        "encoding_source")
+
+HOLDS_SCHEMA = "shadow-promotion-holds/1"
+HOLDS_FILE = "promotion_holds.json"
 
 
 # ── hashing and access ────────────────────────────────────────────────────────
@@ -161,7 +186,8 @@ def demojibake(text: str, field: str) -> Optional[str]:
         return None
 
 
-def apply_transformation(text: str, tr: dict, field: str) -> Optional[str]:
+def apply_transformation(text: str, tr: dict, field: str,
+                         record: Optional[dict] = None) -> Optional[str]:
     kind = tr["kind"]
     if kind not in APPROVED_KINDS:
         raise SystemExit("unapproved transformation kind: %r" % kind)
@@ -169,6 +195,14 @@ def apply_transformation(text: str, tr: dict, field: str) -> Optional[str]:
         return apply_pairs(text, tr["pairs"])
     if kind == "html_unescape_once":
         return unescape(text)
+    if kind == RECAPTURE:
+        # Not a function of the stored text. The replacement travels in the
+        # record, and every reader checks it against the after-hash, so a
+        # tampered replacement fails the same way a tampered transformation
+        # would.
+        if record is None or "replacement" not in record:
+            return None
+        return record["replacement"]
     return demojibake(text, field)
 
 
@@ -242,9 +276,23 @@ def load_evidence(path: Optional[Path]) -> dict:
     return {r["url"]: r for r in raw}
 
 
+def load_recapture(path: Optional[Path]) -> dict:
+    if not path:
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    for url, r in raw.items():
+        missing = [k for k in RECAPTURE_PROVENANCE if not r.get(k)]
+        if missing:
+            raise SystemExit(
+                "recapture for %s is missing provenance: %s" % (url, ", ".join(missing)))
+        if int(r["http_status"]) != 200:
+            raise SystemExit("recapture for %s did not return 200" % url)
+    return raw
+
+
 def emit(state: Path, field: str, kind: str, reason: str, collector_commit: str,
          evidence_path: Optional[Path] = None, state_repo: Optional[Path] = None,
-         out: Optional[Path] = None) -> dict:
+         out: Optional[Path] = None, recapture_path: Optional[Path] = None) -> dict:
     if field not in FIELDS:
         raise SystemExit("unknown field %r" % field)
     if kind not in APPROVED_KINDS:
@@ -266,6 +314,13 @@ def emit(state: Path, field: str, kind: str, reason: str, collector_commit: str,
         tr["equivalent_to"] = "re-extraction with the fixed visible_text"
     elif kind == "html_unescape_once":
         tr["equivalent_to"] = "re-extraction with the fixed document_title"
+    elif kind == RECAPTURE:
+        tr["equivalent_to"] = None
+        tr["steps"] = ["re-fetch the canonical URL",
+                       "decode by declaration (HTTP charset, BOM, meta)",
+                       "extract with the fixed extractor",
+                       "carry the result in the record, hashed"]
+        tr["warning"] = RECAPTURE_WARNING
     else:
         tr["equivalent_to"] = "re-extraction from correctly decoded bytes"
         tr["steps"] = (["strip orphan U+00C2 before whitespace or end",
@@ -285,12 +340,51 @@ def emit(state: Path, field: str, kind: str, reason: str, collector_commit: str,
     # neither hash. So emit reads the view as of this point in the chain.
     view = corrected_view(state, state_repo)
 
+    recaptures = load_recapture(recapture_path)
+    if kind == RECAPTURE and not recaptures:
+        raise SystemExit("--kind %s requires --recapture" % RECAPTURE)
+
     records, occurrences, refused = [], 0, []
     ev_key = "%s_matches_live" % field
     for url in sorted(view):
         title, body = view[url]["title"], view[url]["body"]
         pub, content_sha, capture_sha = meta[url]
         value = body if field == "body" else title
+
+        if kind == RECAPTURE:
+            rc = recaptures.get(url)
+            if rc is None:
+                continue
+            replacement = rc.get(field)
+            if not replacement:
+                refused.append({"url": url, "field": field,
+                                "why": "the recapture carries no %s" % field})
+                continue
+            if replacement == value:
+                continue
+            after = replacement
+            record = {
+                "url": url, "field": field, "occurrences": 1,
+                "evidence": "recaptured",
+                "value_sha256_before": sha256_text(value),
+                "value_sha256_after": sha256_text(after),
+                "chars_before": len(value), "chars_after": len(after),
+                "replacement": after,
+                "recapture": {k: rc[k] for k in RECAPTURE_PROVENANCE},
+                "warning": RECAPTURE_WARNING,
+            }
+            if rc.get("equivalence_note"):
+                record["recapture"]["equivalence_note"] = rc["equivalence_note"]
+            untouched = {
+                "url": url, "published_date": meta[url][0],
+                "content_sha256": meta[url][1], "capture_sha256": meta[url][2],
+                "title_sha256": sha256_text(title), "body_sha256": sha256_text(body),
+            }
+            untouched.pop("title_sha256" if field == "title" else "body_sha256")
+            record["unchanged"] = untouched
+            records.append(record)
+            occurrences += 1
+            continue
 
         if kind == "literal_replace_all":
             if AMBIGUOUS in value:
@@ -390,6 +484,7 @@ def emit(state: Path, field: str, kind: str, reason: str, collector_commit: str,
                         prev_correction_sha256=(sha256_file(prev[-1]) if prev else None)),
         "affected_record_count": len(records),
         "total_occurrences": occurrences,
+        "warning": RECAPTURE_WARNING if kind == RECAPTURE else None,
         "refused": refused,
         "records": records,
     }
@@ -476,7 +571,15 @@ def verify(state: Path, state_repo: Optional[Path] = None) -> int:
             prev_hash, expect_seq = sha256_file(f), expect_seq + 1
             continue
 
+        kind = doc["transformation"]["kind"]
+        if kind == RECAPTURE:
+            check(doc.get("warning") == RECAPTURE_WARNING,
+                  "    the file carries the recapture warning verbatim")
+            check(doc["transformation"].get("warning") == RECAPTURE_WARNING,
+                  "    the transformation carries the recapture warning")
+
         dupes = bad_before = bad_after = bad_untouched = unknown = bad_tier = 0
+        bad_provenance = bad_kind_tier = 0
         local = set()
         for r in doc["records"]:
             key = (r["url"], field, doc["transformation"]["kind"])
@@ -485,6 +588,19 @@ def verify(state: Path, state_repo: Optional[Path] = None) -> int:
             local.add(key)
             if r.get("evidence") not in EVIDENCE_TIERS:
                 bad_tier += 1
+            # The recapture tier and the recapture kind imply each other. A
+            # derived transformation claiming "recaptured" would launder a
+            # guess as a fetch; a recapture claiming "live-confirmed" would
+            # hide that the text came from the page as it stands today.
+            if (r.get("evidence") == "recaptured") != (kind == RECAPTURE):
+                bad_kind_tier += 1
+            if kind == RECAPTURE:
+                rc = r.get("recapture") or {}
+                if ([k for k in RECAPTURE_PROVENANCE if not rc.get(k)]
+                        or r.get("warning") != RECAPTURE_WARNING
+                        or "replacement" not in r
+                        or sha256_text(r["replacement"]) != r["value_sha256_after"]):
+                    bad_provenance += 1
             if r["url"] not in view:
                 unknown += 1
                 continue
@@ -493,7 +609,7 @@ def verify(state: Path, state_repo: Optional[Path] = None) -> int:
             value = body if field == "body" else title
             if sha256_text(value) != r["value_sha256_before"]:
                 bad_before += 1
-            got = apply_transformation(value, doc["transformation"], field)
+            got = apply_transformation(value, doc["transformation"], field, r)
             if got is None or sha256_text(got) != r["value_sha256_after"]:
                 bad_after += 1
             actual = {"url": r["url"], "published_date": pub,
@@ -508,6 +624,12 @@ def verify(state: Path, state_repo: Optional[Path] = None) -> int:
         check(unknown == 0, "    every record exists in this database")
         check(dupes == 0, "    no record corrected twice by the same transformation")
         check(bad_tier == 0, "    every record carries a known evidence tier")
+        check(bad_kind_tier == 0,
+              "    the recapture tier is used by, and only by, a recapture")
+        if kind == RECAPTURE:
+            check(bad_provenance == 0,
+                  "    every recapture carries full provenance and hashes to "
+                  "its replacement")
         check(bad_before == 0, "    every before-hash matches the stored value")
         check(bad_after == 0, "    every after-hash reproduces from the stored value")
         check(bad_untouched == 0,
@@ -563,12 +685,94 @@ def corrected_view(state: Path, state_repo: Optional[Path] = None) -> dict:
                 raise SystemExit(
                     "%s: %s matches neither the before nor the after hash"
                     % (f.name, r["url"]))
-            got = apply_transformation(rec[field], doc["transformation"], field)
+            got = apply_transformation(rec[field], doc["transformation"], field, r)
             if got is None or sha256_text(got) != r["value_sha256_after"]:
                 raise SystemExit("%s: %s does not reproduce its after-hash"
                                  % (f.name, r["url"]))
             rec[field] = got
     return rows
+
+
+# ── promotion holds ───────────────────────────────────────────────────────────
+
+def holds_path(state: Path) -> Path:
+    """Beside the corrections, for the same reason they are beside `state/`."""
+    return corrections_dir(state).parent / HOLDS_FILE
+
+
+def declare_hold(state: Path, url: str, reason: str, evidence: str,
+                 state_repo: Optional[Path] = None) -> dict:
+    """Record that a record must not be promoted, and why.
+
+    A hold is not a correction and does not live among them: corrections say
+    what a value should be, a hold says the record is not fit to leave the
+    shadow desk at all. Keeping them apart means the corrected view stays a
+    statement about text, and promotion stays a separate decision with its own
+    evidence.
+    """
+    view = original_view(state)
+    if url not in view:
+        raise SystemExit("cannot hold a record this database does not have: %s" % url)
+    path = holds_path(state)
+    doc = (json.loads(path.read_text(encoding="utf-8")) if path.is_file()
+           else {"schema": HOLDS_SCHEMA, "desk": "singapore-mindef",
+                 "binding": binding(state, state_repo), "holds": []})
+    if doc.get("schema") != HOLDS_SCHEMA:
+        raise SystemExit("%s: unknown holds schema %r" % (path.name, doc.get("schema")))
+    doc["binding"] = binding(state, state_repo)
+    doc["holds"] = [h for h in doc["holds"] if h["url"] != url]
+    doc["holds"].append({
+        "url": url,
+        "reason": reason,
+        "evidence": evidence,
+        "title_sha256": sha256_text(view[url]["title"]),
+        "body_sha256": sha256_text(view[url]["body"]),
+        "declared_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "tool": TOOL,
+        "tool_version": TOOL_VERSION,
+    })
+    doc["holds"].sort(key=lambda h: h["url"])
+    doc["hold_count"] = len(doc["holds"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n",
+                    encoding="utf-8")
+    return doc
+
+
+def load_holds(state: Path, state_repo: Optional[Path] = None) -> dict:
+    """Read the holds, refusing any that does not describe THIS state.
+
+    Returns {url: hold}. A missing file is an empty result, which is honest:
+    holding nothing is a legitimate state. A file bound to another database is
+    not — it would silently promote a record someone meant to withhold.
+    """
+    path = holds_path(state)
+    if not path.is_file():
+        return {}
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    if doc.get("schema") != HOLDS_SCHEMA:
+        raise SystemExit("%s: unknown holds schema %r" % (path.name, doc.get("schema")))
+    bind = binding(state, state_repo)
+    b = doc.get("binding", {})
+    if b.get("database_sha256") != bind["database_sha256"]:
+        raise SystemExit("%s: bound to a different database" % path.name)
+    if state_repo and b.get("state_commit") != bind["state_commit"]:
+        raise SystemExit("%s: bound to a different state commit" % path.name)
+    if doc.get("hold_count") != len(doc.get("holds", [])):
+        raise SystemExit("%s: hold_count disagrees with the list" % path.name)
+    view = original_view(state)
+    out = {}
+    for h in doc["holds"]:
+        if h["url"] not in view:
+            raise SystemExit("%s: holds a record this database does not have: %s"
+                             % (path.name, h["url"]))
+        out[h["url"]] = h
+    return out
+
+
+def holds_digest(state: Path) -> Optional[str]:
+    path = holds_path(state)
+    return sha256_file(path) if path.is_file() else None
 
 
 def overlay_digest(state: Path) -> Optional[str]:
@@ -595,6 +799,12 @@ def main(argv=None) -> int:
     ap.add_argument("--field", choices=FIELDS, default="body")
     ap.add_argument("--kind", choices=APPROVED_KINDS, default="literal_replace_all")
     ap.add_argument("--evidence", type=Path, default=None)
+    ap.add_argument("--recapture", type=Path, default=None,
+                    help="url -> {title, body, provenance} for --kind %s" % RECAPTURE)
+    ap.add_argument("--hold", default=None, metavar="URL",
+                    help="declare a record unfit for promotion")
+    ap.add_argument("--hold-reason", default="")
+    ap.add_argument("--hold-evidence", default="")
     ap.add_argument("--reason", default="")
     ap.add_argument("--collector-commit", default="")
     ap.add_argument("--out", type=Path, default=None)
@@ -606,6 +816,13 @@ def main(argv=None) -> int:
 
     if a.digest:
         print(overlay_digest(state) or "(no corrections)")
+        print("holds: %s" % (holds_digest(state) or "(none)"))
+        return 0
+    if a.hold:
+        if not (a.hold_reason and a.hold_evidence):
+            raise SystemExit("--hold requires --hold-reason and --hold-evidence")
+        doc = declare_hold(state, a.hold, a.hold_reason, a.hold_evidence, a.state_repo)
+        print("held %s — %d hold(s) now declared" % (a.hold, doc["hold_count"]))
         return 0
     if a.emit:
         if not a.reason:
@@ -614,7 +831,7 @@ def main(argv=None) -> int:
         out = a.out or (corrections_dir(state) /
                         ("%04d-%s-%s.json" % (n, a.field, a.kind)))
         doc = emit(state, a.field, a.kind, a.reason, a.collector_commit,
-                   a.evidence, a.state_repo, out)
+                   a.evidence, a.state_repo, out, a.recapture)
         print("wrote %s — %d record(s), %d occurrence(s), %d refused"
               % (out, doc["affected_record_count"], doc["total_occurrences"],
                  len(doc["refused"])))

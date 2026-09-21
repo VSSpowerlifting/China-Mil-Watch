@@ -90,7 +90,93 @@ The same whitespace collapse ate a continuation byte *inside* CJK characters in
 two Mandarin passages — `15aug26-speech` and `16sep26-speech` — where the
 continuation byte was itself U+00A0. The original character is not recoverable
 from stored text by any transformation. `--emit` refuses both and records why.
-Re-capture is the only route, and that is an owner decision.
+Re-capture is the only route.
+
+### Both were re-fetched, and they did not get the same answer (2026-09-20)
+
+Both pages were fetched compliantly and compared with the stored capture on
+their **ASCII skeleton** — every character a mis-decode can neither invent nor
+destroy — using `difflib` with `autojunk=False`.
+
+| record | skeleton similarity | what the differences are | disposition |
+|---|---|---|---|
+| `15aug26-speech` | 0.998773 over 17125 vs 17095 chars | all six differing spans are `&#x27;`, the known entity defect, and nothing else | **recaptured** |
+| `16sep26-speech` | 0.999161 over 10725 vs 10733 chars | one span, and it is prose: stored `makes us feel less insecure`, live `makes us feel insecure all the more` | **held** |
+
+The second is the same document, and MINDEF has since revised a sentence in it
+— correcting a line that contradicted itself. Recapturing it would substitute
+text published after we captured, under a record whose `retrieved_at` says
+2026-09-16. The stored text cannot be repaired and the live text is not what
+was captured, so the record is held rather than guessed at or quietly dropped.
+
+### `recaptured_current_source`
+
+Schema `shadow-correction-overlay/3` adds one transformation kind. It is the
+only one whose corrected value is **not** a function of the stored bytes, so it
+is the only one that can disagree with the capture about what the document
+said. It is constrained accordingly:
+
+- the replacement travels inside the record and is checked against
+  `value_sha256_after`, so a tampered replacement fails exactly as a tampered
+  transformation would;
+- it must carry `request_url`, `retrieved_at`, `http_status`,
+  `response_bytes`, `raw_sha256`, `declared_encoding` and `encoding_source`,
+  and `--emit` refuses a recapture missing any of them or returning anything
+  but 200;
+- `equivalent_to` is explicitly `null`. Every other kind states what a correct
+  re-extraction would have produced. This one cannot, and must not pretend to;
+- it uses the evidence tier `recaptured`, and the verifier requires that tier
+  and that kind to imply each other in both directions — a derived correction
+  may not launder itself as a fetch, and a fetch may not present itself as
+  live-confirmed;
+- the warning that this is a later recapture and not the original byte stream
+  is stored verbatim on the file, on the transformation and on every record,
+  and verification fails if any copy is altered.
+
+## Holds: a record can be perfectly corrected and still unfit
+
+A hold is not a correction and does not live among them. Corrections say what a
+captured value should have been; a hold says the record must not leave the
+shadow desk at all. Keeping them apart means the corrected view stays a
+statement about text, and promotion stays a separate decision with its own
+evidence.
+
+`promotion_holds.json` sits beside `corrections/`, binds to the same database
+hash, ledger tip and state commit, and is refused if it describes anything
+else. Holding a record the database does not have is refused; a `hold_count`
+that disagrees with the list is refused.
+
+## Promotion, rehearsed
+
+`scripts/promote_shadow_records.py` materialises **only the corrected view**
+into a disposable production database. It refuses to run against the tracked
+one. Every promoted row is accompanied by a `shadow_promotions` row naming the
+capture it came from, the state commit and tree, the database hash, the overlay
+digest and the holds digest, so a promoted record can always be traced back to
+the byte stream it was built on and to the corrections applied to it. A record
+with no capture provenance is refused rather than promoted with a null.
+
+Rehearsed against the current tip: 59 records, 1 held, **58 promoted**. A second
+run inserts 0 and reports 58 already present. Two fresh promotions produce
+byte-identical rows. The shadow database is not written and grows no sidecars.
+
+Refusals proven: no overlay at all; a tampered recapture replacement; an
+overlay bound to another state commit; a correction file removed from the
+chain; a holds file bound to another database; the tracked database as a
+target; and a record without capture provenance. In every case the target
+database is left with zero promoted rows.
+
+### The overlay binds to a moving state, on purpose
+
+The scheduled shadow run of 2026-09-20 (`35543956283`, shadow day 32,
+`ok_all_duplicates`) appended a ledger entry and changed no records —
+`shadow.db` is byte-identical — but it advanced the state commit, the state
+tree, the ledger tip and the entry count. The overlay emitted against the
+previous commit then fails **twenty** binding checks and promotion refuses.
+That is correct: an overlay is a statement about one exact state, not about a
+branch. The operational consequence is that the overlay must be re-emitted
+against whatever commit is current at the moment of approval. Re-emitting is
+mechanical and reproduces the same record and occurrence counts.
 
 ## Evidence
 
@@ -168,6 +254,18 @@ The four exceptions, precisely:
 
 ## What still blocks applying this
 
-Owner approval. The overlay is built and rehearsed; it has not been written to
-the state branch, and the prospective extractor fix is what stops new records
-being corrupted in the meantime.
+Owner approval, and nothing else technical. The overlay is built, verified and
+rehearsed end to end through promotion; it has not been written to the state
+branch, and the prospective extractor fix is what stops new records being
+corrupted in the meantime.
+
+The decision has five parts, and the corrected-view packet states them:
+
+1. approve or decline promotion of the 58 promotable records;
+2. approve or decline the 1 recaptured value — text fetched from the live page
+   after capture, not the captured bytes;
+3. confirm the 1 held record stays out;
+4. confirm the 2 records accepted as originally captured, whose live pages have
+   since drifted;
+5. re-emit the overlay against the state commit current at the moment of
+   approval.
