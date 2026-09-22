@@ -215,13 +215,22 @@ class TestApply(MigrationTestCase):
         self.assertEqual(after["provenance"], self.before["provenance"])
 
     def test_all_sources_assigned_to_china_desk(self):
+        """
+        Every source this legacy fixture already held must land on `china` —
+        that is the property under test. `apply_all` also SYNCS the real
+        `desks/` manifests, which now declare Singapore too, so it correctly
+        inserts a new `sg_mindef_releases` row assigned to `singapore`; that
+        insertion is not a violation of this fixture's legacy rows.
+        """
         conn = self.open()
         apply_all(conn)
         rows = conn.execute("SELECT slug, desk_id FROM sources ORDER BY slug").fetchall()
         unassigned = [slug for slug, desk in rows if desk is None]
+        legacy_slugs = set(self.before["source_slugs"])
         conn.close()
         self.assertEqual(unassigned, [], "every legacy source must get a desk")
-        self.assertTrue(all(desk == "china" for _, desk in rows))
+        self.assertTrue(all(desk == "china"
+                            for slug, desk in rows if slug in legacy_slugs))
 
     def test_language_tags_backfilled_without_dropping_legacy_column(self):
         conn = self.open()
@@ -263,8 +272,8 @@ class TestApply(MigrationTestCase):
         desks = conn.execute("SELECT desk_id, public_status FROM desks").fetchall()
         insts = conn.execute("SELECT COUNT(*) FROM institutions").fetchone()[0]
         conn.close()
-        self.assertEqual(desks, [("china", "legacy")])
-        self.assertGreaterEqual(insts, 4)
+        self.assertEqual(sorted(desks), [("china", "legacy"), ("singapore", "public")])
+        self.assertGreaterEqual(insts, 5)
 
 
 class TestIdempotency(MigrationTestCase):
@@ -346,8 +355,10 @@ class TestReconcileReversion(MigrationTestCase):
         self.assertEqual(restored["article_ids"], migrated["article_ids"])
         self.assertEqual(restored["article_urls"], migrated["article_urls"])
         self.assertTrue(v["ok"])
-        self.assertEqual(desks, 1)
-        self.assertEqual(sources_with_desk, 5)
+        # Two desks now sync from the real desks/ manifests: china (this
+        # fixture's 5 legacy sources) and singapore (sg_mindef_releases).
+        self.assertEqual(desks, 2)
+        self.assertEqual(sources_with_desk, 6)
 
 
 class TestRollback(MigrationTestCase):
@@ -444,7 +455,13 @@ class TestPartialApplication(MigrationTestCase):
         after = fingerprint(conn)
         conn.close()
         self.assertEqual(after["article_ids"], self.before["article_ids"])
-        self.assertEqual(after["source_slugs"], self.before["source_slugs"])
+        # apply_all also syncs the real desks/ manifests, which now include
+        # Singapore, so `after` legitimately gains sg_mindef_releases; every
+        # slug this fixture already held must still be present.
+        legacy_slugs = set(self.before["source_slugs"])
+        self.assertEqual(
+            [s for s in after["source_slugs"] if s in legacy_slugs],
+            self.before["source_slugs"])
 
 
 class TestDegradedDetectionIsBehavioural(MigrationTestCase):
@@ -514,6 +531,12 @@ class TestLanguageConstraint(MigrationTestCase):
         self.assertEqual(got, ("ru", "ru-RU"))
 
     def test_existing_language_values_survive(self):
+        """
+        `before` is this fixture's 5 legacy rows, pre-sync. `apply_all` also
+        syncs the real `desks/` manifests — which now include Singapore — so
+        `after` legitimately gains a new `sg_mindef_releases` row; what must
+        still hold is that every pre-existing row's language is untouched.
+        """
         conn = self.open()
         before = conn.execute(
             "SELECT slug, language FROM sources ORDER BY slug").fetchall()
@@ -521,11 +544,17 @@ class TestLanguageConstraint(MigrationTestCase):
         after = conn.execute(
             "SELECT slug, language FROM sources ORDER BY slug").fetchall()
         conn.close()
-        self.assertEqual(before, after)
+        legacy_slugs = {slug for slug, _ in before}
+        self.assertEqual(before, [row for row in after if row[0] in legacy_slugs])
         self.assertEqual({lang for _, lang in after}, {"zh", "en"})
 
     def test_source_ids_preserved_across_the_rebuild(self):
-        """articles.source_id references these; a rebuild must not renumber."""
+        """
+        articles.source_id references these; a rebuild must not renumber.
+        `apply_all` also syncs the real `desks/` manifests — now including
+        Singapore — so `after` legitimately gains one new inserted row; every
+        id present `before` must keep its exact (id, slug) pairing.
+        """
         conn = self.open()
         before = conn.execute(
             "SELECT id, slug FROM sources ORDER BY id").fetchall()
@@ -534,7 +563,8 @@ class TestLanguageConstraint(MigrationTestCase):
             "SELECT id, slug FROM sources ORDER BY id").fetchall()
         report = verify(conn)
         conn.close()
-        self.assertEqual(before, after)
+        before_ids = {aid for aid, _ in before}
+        self.assertEqual(before, [row for row in after if row[0] in before_ids])
         self.assertEqual(report["orphans"]["articles_without_source"], 0)
 
     def test_language_still_not_null(self):

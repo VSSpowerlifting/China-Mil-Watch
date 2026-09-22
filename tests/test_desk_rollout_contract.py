@@ -174,8 +174,11 @@ class TestRosterMatchesConfiguration(DeskCase):
     def test_singapore_shows_no_stale_shadow_language(self):
         """
         A promoted desk's page must not still read as an unqualified shadow
-        evaluation: no elapsed-day counter, no qualification gate, no
-        "no verdict reached" disclaimer left over from before promotion.
+        evaluation under an active gate: no elapsed-day counter, no "still
+        gated" framing, no "no verdict reached" disclaimer. The qualification
+        record itself (required days, checkpoints) is retained as historical
+        evidence of how the desk reached live status — DECISION_LOG
+        2026-09-21 — and must still be disclosed, just not as an open gate.
         """
         html = self.page("singapore.html").lower()
         for counter in (r"day\s+\d+\s+of\s+30", r"\d+\s*/\s*30\s*days",
@@ -183,9 +186,13 @@ class TestRosterMatchesConfiguration(DeskCase):
             with self.subTest(pattern=counter):
                 self.assertNotRegex(html, counter)
         for stale in ("not a qualified desk", "no review has been completed",
-                      "no verdict has been reached", "consecutive days required"):
+                      "no verdict has been reached"):
             with self.subTest(claim=stale):
                 self.assertNotIn(stale, html)
+        # The historical record stays — a promoted desk is not a desk whose
+        # qualification history was deleted.
+        self.assertIn("consecutive days required</dt><dd>30", html)
+        self.assertRegex(re.sub(r"\s+", " ", html), "historical qualification evidence")
 
     def test_singapore_record_membership_matches_the_promotion(self):
         """

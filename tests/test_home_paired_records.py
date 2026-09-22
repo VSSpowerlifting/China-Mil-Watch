@@ -442,11 +442,16 @@ class TestTheDatelineCarriesEveryGovernedFigure(HomeCase):
             with self.subTest(fact=absent):
                 self.assertNotIn(absent, text)
         labels = re.findall(r"<dt>(.*?)</dt>", self.dateline(), re.S)
+        # Mirrors site/preview/templates/base.html: the desk-name suffix is
+        # deliberately shown only when exactly one desk collects — naming one
+        # desk while more than one contributes would be inaccurate, not just
+        # incomplete.
+        collecting = self.view.desk_directory().collecting
+        held_label = ("Records held, %s" % collecting[0].name
+                      if len(collecting) == 1 else "Records held")
         self.assertEqual([strip_tags(l) for l in labels],
                          ["Records last collected", "Analysis last produced",
-                          "Last full update",
-                          "Records held, %s" % self.view.desk_directory()
-                          .collecting[0].name,
+                          "Last full update", held_label,
                           "Of those, analyzed"])
 
     def test_the_desks_introduction_states_the_collection_topology_once(self):
