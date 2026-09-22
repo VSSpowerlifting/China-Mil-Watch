@@ -81,32 +81,42 @@
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-21</dd></div>
+        <dd>2026-09-22</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-21</dd></div>
+        <dd>2026-09-22</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-21</dd></div>
+        <dd>2026-09-22</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,410</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,818</dd></div>    </dl>
+        <dd>4,511</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>1,848</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      145 in full &rarr;</a></p>
+      146 in full &rarr;</a></p>
   </div>
 </div>
 <main id="main">
   <div class="wrap">
-<p class="desk-state desk-state--shadow">Shadow evaluation — not public</p>
+<p class="desk-state desk-state--live">Live — collecting</p>
 <h1>Singapore Desk</h1>
 <p class="lede">One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.</p>
-<p>Under shadow evaluation. It collects into an isolated state branch that reaches neither the production database nor the published site, renders no records, and is counted nowhere. A shadow desk is not a qualified desk.</p>
+<p>57 records from 1 sources across
+1 institutions, 2026-07-21 to 2026-09-19.</p>
+<p>Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus is a one-time governed promotion of 57 corrected shadow records, not yet the output of a running production collector: the adapter is the one the shadow collector has used since 2026-08-19, but no scheduled production workflow invokes it yet. Two records stay held out of the promotable set for unrepaired charset damage.</p>
 
+<h2 class="plain">The record, as it actually stands</h2>
+<p class="eyebrow eyebrow--corpus">As published.</p>
 <dl class="stat-rows">
-  <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+  <div class="stat-row"><dt>Source records</dt><dd>57</dd></div>
+  <div class="stat-row"><dt>Analyzed records</dt><dd>0</dd></div>
+  <div class="stat-row"><dt>Awaiting analysis</dt><dd>57</dd></div>
+  <div class="stat-row"><dt>Earliest item</dt><dd>2026-07-21</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>2026-09-19</dd></div>
+  <div class="stat-row"><dt>Last successful collection</dt><dd>None</dd></div>
   <div class="stat-row"><dt>Sources configured</dt><dd>1</dd></div>
-  <div class="stat-row"><dt>Sources enabled</dt><dd>0</dd></div>
+  <div class="stat-row"><dt>Sources enabled</dt><dd>1</dd></div>
 </dl>
-<p class="meta">This desk has collected nothing into the record. No count on this page describes
-material this project holds.</p>
+<p class="meta">Counts reflect the stored corpus at this snapshot. "Analyzed" means a model
+completed a reading of the record — it says nothing about publication. Records awaiting analysis
+remain part of the record.</p>
 
 <h2>Sources</h2>
 <div class="table-scroll">
@@ -117,10 +127,10 @@ material this project holds.</p>
   <tbody>
     <tr>
       <td data-label="Source"><a href="source/sg_mindef_releases.html">MINDEF Singapore — official releases</a></td>
-      <td data-label="Institution">—</td>
+      <td data-label="Institution">Ministry of Defence</td>
       <td data-label="Authority">A</td>
-      <td data-label="Enabled">No</td>
-      <td data-label="Records" class="num"><span class="meta">none</span></td>
+      <td data-label="Enabled">Yes</td>
+      <td data-label="Records" class="num">57</td>
     </tr>
   </tbody>
 </table>
@@ -130,19 +140,21 @@ that a working collector exists for it — see <a href="coverage.html">Coverage<
 source's own outcome is recorded every run.</p>
 
 <h2>What qualification requires</h2>
-<p>Qualification requires 30 consecutive days of shadow collection and governed checkpoint reviews. Elapsed days are held in the shadow ledger and are deliberately not restated here or on any page: a number copied out of the ledger goes stale the next day and would be read as a promise.</p>
+<p>Historical qualification record, retained after promotion rather than deleted: this is evidence for how the desk reached live status, not a current gate. Day zero was 2026-08-19T23:03:09Z. Day 7 and Day 14 human checkpoint reviews are complete, both pass_with_findings, published to review/singapore-mindef. No separate Day 30 human checkpoint review is on record; the review kit&#39;s computed Day-30 packet reproduces byte-for-byte and reports publishable: yes. Owner sign-off promoting the desk to live is recorded in DECISION_LOG.md, 2026-09-21.</p>
 <dl class="stat-rows">
   <div class="stat-row"><dt>Consecutive days required</dt><dd>30</dd></div>
   <div class="stat-row"><dt>Governed checkpoint reviews</dt><dd>3</dd></div>
 </dl>
-<p class="meta">No review has been completed and no verdict has been reached.</p>
+<p class="meta">This desk is live. The record above is retained as historical
+qualification evidence, not a current gate.</p>
 
 
 <h2>Limits of this desk, stated plainly</h2>
 <ul>
   <li>This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defense coverage.</li>
   <li>Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.</li>
-  <li>No review has been completed and no verdict has been reached.</li>
+  <li>The corpus is a one-time promotion, not a running daily collection: no scheduled production workflow collects new Singapore records yet, so the corpus will not grow until that is built as separate work.</li>
+  <li>Two records are held out of the promoted corpus: their CJK text was damaged by a historical extractor defect the correction overlay could not repair, and they are excluded rather than published with damaged text. See shadow/singapore_mindef/CORRECTIONS.md for which records and why.</li>
 </ul>
 <p class="meta">These are properties of the desk a reader needs before citing it — see
 <a href="coverage.html">Coverage</a> for what each collection run actually returned.</p>
