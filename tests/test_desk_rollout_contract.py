@@ -79,9 +79,9 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertIn("PublicView", source)
         self.assertTrue((REPO_ROOT / "desks" / "registry.json").is_file())
 
-    def test_china_is_the_only_collecting_desk(self):
+    def test_china_and_singapore_are_the_collecting_desks(self):
         live = [e for e in load_registry() if e.is_collecting]
-        self.assertEqual([e.slug for e in live], ["china"])
+        self.assertEqual(sorted(e.slug for e in live), ["china", "singapore"])
 
     def test_a_collecting_desk_must_have_an_enabled_source(self):
         """Derived, not declared: the count comes from the desk's manifest."""
@@ -98,12 +98,12 @@ class TestRosterMatchesConfiguration(DeskCase):
                 if not entry.is_collecting:
                     self.assertFalse(entry.has_production_records)
 
-    def test_the_only_desk_in_the_database_is_china(self):
+    def test_the_only_desks_in_the_database_are_china_and_singapore(self):
         with self.db() as con:
             desks = [r[0] for r in con.execute("SELECT desk_id FROM desks")]
-        self.assertEqual(sorted(desks), ["china"])
+        self.assertEqual(sorted(desks), ["china", "singapore"])
 
-    def test_every_enabled_source_belongs_to_the_china_desk(self):
+    def test_every_enabled_source_belongs_to_a_declared_collecting_desk(self):
         """A source enabled under any other desk would be collection this
         product has not declared."""
         with self.db() as con:
@@ -113,7 +113,7 @@ class TestRosterMatchesConfiguration(DeskCase):
         for slug, desk_id, active in rows:
             with self.subTest(source=slug):
                 if active:
-                    self.assertEqual(desk_id, "china")
+                    self.assertIn(desk_id, ("china", "singapore"))
 
     def test_no_japan_source_exists_or_is_enabled(self):
         with self.db() as con:
@@ -123,10 +123,11 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(japan, [])
 
     def test_no_japan_manifest_is_discoverable(self):
-        """The draft manifest lives under docs/ precisely so the loader cannot
-        find it. If it ever lands in desks/, collection starts by accident."""
+        """The draft manifest lives under shadow/ precisely so the loader
+        cannot find it. If it ever lands in desks/, collection starts by
+        accident."""
         discovered = {p.parent.name for p in MANIFESTS.glob("*/manifest.json")}
-        self.assertEqual(discovered, {"china"})
+        self.assertEqual(discovered, {"china", "singapore"})
 
     def test_the_us_is_not_a_live_desk(self):
         """
@@ -143,56 +144,101 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(us.enabled_source_count, 0)
         self.assertIn("not collecting", us.status_label.lower())
 
-    def test_singapore_is_shadow_and_is_never_promoted(self):
+    def test_singapore_is_live_and_promoted(self):
         """
-        The shadow desk is declared, labelled by its ledger status, and
-        counted nowhere. Its manifest is read for its sources — one, disabled —
-        and it may not claim a record count.
+        Promoted 2026-09-21 (DECISION_LOG owner sign-off). The desk is now
+        discoverable through the same production manifest glob as China, and
+        may show a record count.
         """
         sg = load_registry().get("singapore")
         self.assertIsNotNone(sg)
-        self.assertEqual(sg.status, "shadow")
-        self.assertFalse(sg.is_collecting)
+        self.assertEqual(sg.status, "live")
+        self.assertTrue(sg.is_collecting)
         self.assertEqual(sg.configured_source_count, 1)
-        self.assertEqual(sg.enabled_source_count, 0)
-        self.assertFalse(sg.may_show_record_count)
+        self.assertEqual(sg.enabled_source_count, 1)
+        self.assertTrue(sg.has_production_records)
+        self.assertTrue(sg.may_show_record_count)
 
-    def test_the_shadow_manifest_stays_outside_production_discovery(self):
+    def test_the_production_manifest_is_discoverable(self):
         """
-        Pointing the registry at the shadow manifest must not make it
-        discoverable. `load_all_desks()` globs `desks/*/manifest.json`; the
-        shadow manifest lives elsewhere and syncing configuration must never
-        write a Singapore desk into the tracked database.
+        `load_all_desks()` globs `desks/*/manifest.json`; the registry now
+        points at a manifest under `desks/`, and that is what makes syncing
+        configuration write a Singapore desk into the tracked database.
         """
         sg = load_registry().get("singapore")
-        self.assertEqual(sg.manifest_path, "shadow/singapore_mindef/manifest.json")
-        self.assertFalse((MANIFESTS / "singapore" / "manifest.json").exists())
+        self.assertEqual(sg.manifest_path, "desks/singapore/manifest.json")
+        self.assertTrue((MANIFESTS / "singapore" / "manifest.json").exists())
         discovered = {p.parent.name for p in MANIFESTS.glob("*/manifest.json")}
-        self.assertEqual(discovered, {"china"})
+        self.assertEqual(discovered, {"china", "singapore"})
 
-    def test_no_shadow_day_count_reaches_a_public_surface(self):
+    def test_singapore_shows_no_stale_shadow_language(self):
         """
-        A day counter copied out of the ledger is stale the next morning and
-        reads as a promise. The page states the requirement, never the elapsed
-        count.
+        A promoted desk's page must not still read as an unqualified shadow
+        evaluation under an active gate: no elapsed-day counter, no "still
+        gated" framing, no "no verdict reached" disclaimer. The qualification
+        record itself (required days, checkpoints) is retained as historical
+        evidence of how the desk reached live status — DECISION_LOG
+        2026-09-21 — and must still be disclosed, just not as an open gate.
         """
         html = self.page("singapore.html").lower()
         for counter in (r"day\s+\d+\s+of\s+30", r"\d+\s*/\s*30\s*days",
                         r"\d+\s+shadow\s+days?", r"shadow\s+day\s+\d+"):
             with self.subTest(pattern=counter):
                 self.assertNotRegex(html, counter)
-        # The requirement is stated; the elapsed count is not.
+        for stale in ("not a qualified desk", "no review has been completed",
+                      "no verdict has been reached"):
+            with self.subTest(claim=stale):
+                self.assertNotIn(stale, html)
+        # The historical record stays — a promoted desk is not a desk whose
+        # qualification history was deleted.
         self.assertIn("consecutive days required</dt><dd>30", html)
-        self.assertIn("not a qualified desk", html)
+        self.assertRegex(re.sub(r"\s+", " ", html), "historical qualification evidence")
 
-    def test_no_review_verdict_is_published(self):
-        html = self.page("singapore.html").lower()
-        self.assertIn("no review has been completed", html)
-        self.assertIn("no verdict has been reached", html)
-        for premature in ("is qualified", "has qualified", "verdict:",
-                          "approved for launch", "cleared for launch"):
-            with self.subTest(claim=premature):
-                self.assertNotIn(premature, html)
+    def test_singapore_record_membership_matches_the_promotion(self):
+        """
+        Pins the exact promotion this activation preserves: 57 records under
+        the desk's declared source identity, both charset-damaged records held
+        out, and the three named news releases present.
+        """
+        with self.db() as con:
+            count = con.execute(
+                "SELECT COUNT(*) FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "WHERE s.slug = 'sg_mindef_releases'").fetchone()[0]
+            desk_ids = {r[0] for r in con.execute(
+                "SELECT DISTINCT s.desk_id FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "WHERE s.slug = 'sg_mindef_releases'")}
+            held = con.execute(
+                "SELECT a.url FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "WHERE s.slug = 'sg_mindef_releases' "
+                "  AND (a.url LIKE '%15aug26-speech%' "
+                "       OR a.url LIKE '%16sep26-speech%')").fetchall()
+            required = {}
+            for token in ("29aug26-nr", "9sep26-nr", "19sep26-nr"):
+                required[token] = con.execute(
+                    "SELECT COUNT(*) FROM articles a "
+                    "JOIN sources s ON a.source_id = s.id "
+                    "WHERE s.slug = 'sg_mindef_releases' "
+                    "  AND a.url LIKE ?", ("%/" + token + "/",)).fetchone()[0]
+        self.assertEqual(count, 57)
+        self.assertEqual(desk_ids, {"singapore"})
+        self.assertEqual(held, [], "a held record reached the tracked database")
+        for token, n in required.items():
+            with self.subTest(record=token):
+                self.assertEqual(n, 1)
+
+    def test_held_records_reach_no_public_page(self):
+        """The two charset-damaged records must not be reachable through any
+        rendered record page, the desk page, or the source page — held means
+        held everywhere public, not merely excluded from the count."""
+        checked = ("singapore.html", "source/sg_mindef_releases.html",
+                   "archive.html", "corpus-guide.html")
+        for held_token in ("15aug26-speech", "16sep26-speech"):
+            for page in checked:
+                with self.subTest(page=page, token=held_token):
+                    self.assertNotIn(held_token, self.page(page))
 
     def test_counts_are_never_hard_coded_in_a_template(self):
         """Every figure a reader sees must come from the corpus."""
@@ -256,7 +302,7 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
 
     def test_no_planned_desk_is_counted_as_a_live_one(self):
         html = self.page("index.html")
-        self.assertIn("1</b> collecting desk", html)
+        self.assertIn("2</b> collecting desk", html)
         self.assertIn("of <b>4</b> declared", html)
 
 

@@ -360,7 +360,7 @@ class TestSidecarsCarryNoUnwrittenData(ByteStabilityCase):
             self.assertGreater(
                 conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0], 0)
             self.assertEqual(
-                conn.execute("SELECT COUNT(*) FROM desks").fetchone()[0], 1)
+                conn.execute("SELECT COUNT(*) FROM desks").fetchone()[0], 2)
         finally:
             conn.close()
 

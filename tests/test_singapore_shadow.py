@@ -109,20 +109,34 @@ class TestIsolationFromProduction(unittest.TestCase):
 
     def test_the_shadow_manifest_is_not_under_the_discovered_desks_path(self):
         """
-        `load_all_desks()` globs desks/*/manifest.json. A Singapore manifest
-        there would be synced into pla_watch.db by the next migration run.
+        `load_all_desks()` globs desks/*/manifest.json. This file — the
+        shadow evaluation's own manifest — is never one of the files that
+        glob finds, even though desks/singapore/manifest.json is now a
+        separate, production manifest for the same desk (promoted
+        2026-09-21, DECISION_LOG). The two files are distinct; only the
+        production one is discoverable.
         """
         self.assertTrue(MANIFEST.is_file())
         self.assertNotIn("desks", MANIFEST.relative_to(REPO_ROOT).parts[:1])
-        discovered = {p.parent.name for p in (REPO_ROOT / "desks").glob("*/manifest.json")}
-        self.assertEqual(discovered, {"china"})
+        discovered = {p.resolve()
+                      for p in (REPO_ROOT / "desks").glob("*/manifest.json")}
+        self.assertNotIn(MANIFEST.resolve(), discovered)
 
-    def test_production_discovery_does_not_find_singapore(self):
+    def test_production_discovery_reads_the_production_manifest_not_the_shadow_one(self):
+        """
+        Production discovery finds Singapore now, through
+        desks/singapore/manifest.json — never through this shadow file, whose
+        source stays declared `enabled: false` and unread by anything
+        production.
+        """
         from core.manifests import load_all_desks
         configs = load_all_desks()
-        self.assertEqual(sorted(configs), ["china"])
-        slugs = {s.slug for cfg in configs.values() for s in cfg.sources}
-        self.assertNotIn("sg_mindef_releases", slugs)
+        self.assertEqual(sorted(configs), ["china", "singapore"])
+        sg_sources = {s.slug: s for s in configs["singapore"].sources}
+        self.assertIn("sg_mindef_releases", sg_sources)
+        self.assertTrue(sg_sources["sg_mindef_releases"].enabled)
+        shadow_raw = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.assertFalse(shadow_raw["sources"][0]["enabled"])
 
     def test_the_shadow_source_is_disabled_in_its_own_manifest(self):
         cfg = json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -131,13 +145,25 @@ class TestIsolationFromProduction(unittest.TestCase):
             with self.subTest(source=source["slug"]):
                 self.assertFalse(source["enabled"])
 
-    def test_singapore_is_absent_from_the_tracked_database(self):
+    def test_singapore_reached_the_tracked_database_only_through_governed_promotion(self):
+        """
+        Singapore is no longer absent from the tracked database: it was
+        promoted 2026-09-21 (DECISION_LOG owner sign-off) via
+        scripts/promote_shadow_records.py, never by this shadow runner or by
+        the isolation boundary this class otherwise tests being crossed
+        silently. What must still hold is that the shadow state branch itself
+        has no write path here — that is exercised by
+        `test_the_runner_refuses_to_write_inside_the_repository` below.
+        """
         from scripts.reconcile_db import _read_only
         with _read_only(str(TRACKED_DB)) as con:
             desks = [r[0] for r in con.execute("SELECT desk_id FROM desks")]
-            slugs = [r[0] for r in con.execute("SELECT slug FROM sources")]
-        self.assertEqual(sorted(desks), ["china"])
-        self.assertNotIn("sg_mindef_releases", slugs)
+            count = con.execute(
+                "SELECT COUNT(*) FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "WHERE s.slug = 'sg_mindef_releases'").fetchone()[0]
+        self.assertEqual(sorted(desks), ["china", "singapore"])
+        self.assertEqual(count, 57)
 
     def test_the_runner_refuses_to_write_inside_the_repository(self):
         for bad in (REPO_ROOT, REPO_ROOT / "state", REPO_ROOT / "output" / "s"):

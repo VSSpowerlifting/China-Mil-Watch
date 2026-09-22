@@ -261,7 +261,7 @@ class TestHealthchecksAreOffline(unittest.TestCase):
     def test_every_configured_adapter_healthchecks_without_network(self):
         registry = SourceRegistry()
         results = registry.healthcheck_all()
-        self.assertEqual(len(results), 5)
+        self.assertEqual(len(results), 6)
         for r in results:
             self.assertIn(r.status, (st.OK, st.NOT_IMPLEMENTED, st.SKIPPED_DISABLED))
 

@@ -392,8 +392,13 @@ class TestNoFabricatedCoverage(PreviewCase):
     """
 
     def test_only_one_desk_is_marked_live(self):
+        """
+        Renamed in effect, not in name: China and Singapore are both live now
+        (DECISION_LOG 2026-09-21). Kept as the exact node id CI reported so the
+        fix is directly verifiable against the failing run.
+        """
         live = [e for e in load_registry() if e.is_collecting]
-        self.assertEqual([e.slug for e in live], ["china"])
+        self.assertEqual(sorted(e.slug for e in live), ["china", "singapore"])
 
     def test_non_collecting_desks_are_labelled_and_carry_no_record_count(self):
         """
@@ -438,7 +443,7 @@ class TestNoFabricatedCoverage(PreviewCase):
         match could not tell.
         """
         html = self.page("index.html")
-        self.assertIn("1</b> collecting desk", html)
+        self.assertIn("2</b> collecting desk", html)
         self.assertIn("of <b>4</b> declared", html)
 
         from core.viewmodel import PublicView
@@ -1430,12 +1435,17 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         """
         Five sources belong to four institutions: pla_daily and
         china_mil_online share cn_cmc_political_work. The page previously
-        called the source count an institution count.
+        called the source count an institution count. Scoped to China's own
+        sources: `data["sources"]`/`data["institutions"]` are corpus-wide and
+        now also carry Singapore's one source and one institution.
         """
         data = gp.load_corpus(TRACKED_DB)
-        self.assertEqual(len(data["sources"]), 5)
-        self.assertEqual(data["institutions"], 4)
-        self.assertNotEqual(len(data["sources"]), data["institutions"])
+        china_sources = [s for s in data["sources"] if s["desk_id"] == "china"]
+        china_institutions = {s["institution_id"] for s in china_sources
+                              if s["institution_id"]}
+        self.assertEqual(len(china_sources), 5)
+        self.assertEqual(len(china_institutions), 4)
+        self.assertNotEqual(len(china_sources), len(china_institutions))
         html = self.page("china.html")
         self.assertIn("5 sources across\n4 institutions", html)
         self.assertNotIn("from 5 institutions", html)
@@ -4331,6 +4341,33 @@ class TestCorpusGuide(PreviewCase):
                                  % (field["label"], missing))
                 self.assertIn("Never absent", rows[field["label"]]["absent"])
 
+    def test_promoted_singapore_records_are_described_without_fabricated_run_provenance(self):
+        """
+        The 57 Singapore records promoted through
+        scripts/promote_shadow_records.py carry no scrape_run_id — they were
+        never scraped by a pipeline run, and nothing here invents one. What
+        must be true is that the dictionary explains the absence accurately:
+        it names a real, governed cause (promotion, not loss), and the count
+        it quotes is measured from the corpus, not typed in.
+        """
+        sg = [r for r in self.corpus["corpus"]
+              if r["source_slug"] == "sg_mindef_releases"]
+        self.assertEqual(len(sg), 57)
+        self.assertTrue(all(r["scrape_run_id"] is None for r in sg),
+                        "a Singapore record carries a scrape_run_id — "
+                        "provenance would be fabricated if this ever ran "
+                        "through the daily pipeline undetected")
+        no_run = [r for r in self.corpus["corpus"] if r["scrape_run_id"] is None]
+        self.assertEqual({r["source_slug"] for r in no_run},
+                         {"sg_mindef_releases"})
+        self.assertEqual(self.stats["promoted_without_run"], len(no_run))
+
+        row = {r["label"]: r for r in gp.dictionary_rows(self.stats)}["Collection run"]
+        self.assertNotIn("Never absent", row["absent"])
+        self.assertIn("{:,}".format(len(no_run)), row["absent"])
+        self.assertIn("governed shadow promotion", row["absent"])
+        self.assertIn("promotion ledger", row["limitation"])
+
     def test_the_machine_assessment_row_never_prints_the_stored_column_name(self):
         """`is_significant` carries the one word the public label may never
         use. The row exists; the raw name does not."""
@@ -4476,8 +4513,8 @@ class TestCorpusGuide(PreviewCase):
         self.assertEqual((gaps[0]["from"], gaps[0]["to"]),
                          ("2026-07-17", "2026-07-24"))
         flat = re.sub(r"\s+", " ", self.text)
-        self.assertIn("No pipeline run is recorded on the UTC dates "
-                      "2026-07-17 through 2026-07-24", flat)
+        self.assertIn("No China Desk pipeline run is recorded on the UTC "
+                      "dates 2026-07-17 through 2026-07-24", flat)
 
     def test_the_changelog_refuses_to_quantify_what_was_missed(self):
         flat = re.sub(r"\s+", " ", self.text)
@@ -5135,28 +5172,61 @@ class TestInterruptionClaimIsMeasured(PreviewCase):
             r"<[^>]+>", " ", cls.page(cls, "corpus-guide.html")))
 
     def test_zero_records_carry_a_publication_date_in_the_window(self):
+        """
+        Scoped to China: the outage is a fact about China Desk's own
+        pipeline. China Desk has zero source-stated publication dates in the
+        window — that is the claim the rendered sentence makes and stands on.
+        """
         from scripts.reconcile_db import _read_only
         with _read_only(str(TRACKED_DB)) as con:
             n = con.execute(
-                "SELECT COUNT(*) FROM articles "
-                " WHERE published_date >= ? AND published_date <= ?",
+                "SELECT COUNT(*) FROM articles a "
+                "  JOIN sources s ON s.id = a.source_id "
+                " WHERE s.desk_id = 'china' "
+                "   AND a.published_date >= ? AND a.published_date <= ?",
                 (gp.OUTAGE_START, gp.OUTAGE_END)).fetchone()[0]
         self.assertEqual(n, 0)
-        self.assertEqual(self.stats["outage_records"], n)
+        self.assertEqual(self.stats["outage_records_china"], n)
+
+    def test_singapores_coincidental_dates_do_not_invalidate_the_china_claim(self):
+        """
+        Singapore holds records dated inside China's outage window — pure
+        calendar coincidence, unrelated to China's pipeline history. The
+        China-specific claim must hold regardless.
+        """
+        from scripts.reconcile_db import _read_only
+        with _read_only(str(TRACKED_DB)) as con:
+            sg_in_window = con.execute(
+                "SELECT COUNT(*) FROM articles a "
+                "  JOIN sources s ON s.id = a.source_id "
+                " WHERE s.desk_id = 'singapore' "
+                "   AND a.published_date >= ? AND a.published_date <= ?",
+                (gp.OUTAGE_START, gp.OUTAGE_END)).fetchone()[0]
+        self.assertGreater(sg_in_window, 0,
+                           "fixture no longer exercises the coincidence "
+                           "this test guards against")
+        self.assertEqual(self.stats["outage_records_china"], 0)
+        self.assertIn("No China Desk pipeline run is recorded", self.flat)
 
     def test_the_rendered_sentence_matches_the_measurement(self):
-        self.assertIn("No pipeline run is recorded on the UTC dates "
-                      "2026-07-17 through 2026-07-24, and no record in this "
-                      "snapshot carries a source-stated publication date "
-                      "inside that window.", self.flat)
+        self.assertIn("No China Desk pipeline run is recorded on the UTC "
+                      "dates 2026-07-17 through 2026-07-24, and no China "
+                      "Desk record in this snapshot carries a source-stated "
+                      "publication date inside that window.", self.flat)
+        # The claim is China Desk's, not the corpus's: the old, unscoped
+        # wording must not appear anywhere on the page.
+        self.assertNotIn("and no record in this snapshot carries a "
+                         "source-stated publication date", self.flat)
 
     def test_a_window_holding_records_changes_the_sentence(self):
-        """If the window ever holds records, claiming absence would be false."""
-        stats = dict(self.stats, outage_records=5)
+        """If the window ever holds China Desk records, claiming absence
+        would be false."""
+        stats = dict(self.stats, outage_records_china=5)
         entry = gp.changelog_entries(stats)[0]
         text = dict(entry["points"])["A recorded collection interruption"]
-        self.assertIn("nonetheless holds 5 records", text)
-        self.assertNotIn("no record in this snapshot carries", text)
+        self.assertIn("nonetheless holds 5 China Desk records", text)
+        self.assertNotIn("and no China Desk record in this snapshot "
+                         "carries", text)
 
 
 class TestHostileTitlesStayInertInCitations(unittest.TestCase):

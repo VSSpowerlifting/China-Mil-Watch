@@ -71,7 +71,12 @@ source's own outcome is recorded every run.</p>
   <div class="stat-row"><dt>Consecutive days required</dt><dd>{{ desk.qualification.required_consecutive_days }}</dd></div>
   <div class="stat-row"><dt>Governed checkpoint reviews</dt><dd>{{ desk.qualification.checkpoints }}</dd></div>
 </dl>
+{% if desk.is_collecting %}
+<p class="meta">This desk is live. The record above is retained as historical
+qualification evidence, not a current gate.</p>
+{% else %}
 <p class="meta">No review has been completed and no verdict has been reached.</p>
+{% endif %}
 {% endif %}
 
 {% if desk.research %}

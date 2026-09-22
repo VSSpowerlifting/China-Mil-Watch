@@ -521,7 +521,7 @@ def load_corpus(db_path: Path) -> dict:
             "       a.content_hash, a.scraped_at, a.scrape_run_id, "
             "       a.text_original, a.passed_relevance, "
             "       s.slug AS source_slug, s.display_name AS source_name, "
-            "       s.language_tag, s.institution_id, "
+            "       s.language_tag, s.institution_id, s.desk_id AS desk_id, "
             "       i.display_name AS institution, "
             "       " + STATE_CASE_SQL + " AS state "
             "  FROM articles a "
@@ -1417,12 +1417,18 @@ DICTIONARY_FIELDS = [
     {
         "label": "Collection run", "stored": "scrape_run_id",
         "origin": "Stored", "check": "scrape_run_id",
-        "meaning": "The pipeline run that stored the record.",
-        "absent": "Never absent.",
+        "meaning": "The pipeline run that stored the record, for records "
+                   "the daily pipeline collected.",
+        "absent": "Absent for {promoted_without_run} records: those arrived "
+                  "through a governed shadow promotion rather than a "
+                  "pipeline run, and carry no scrape_run_id by design.",
         "limitation": "Run history preserves no target publication date and no "
                       "historical source-level outcome, so a run identifier "
                       "does not establish which sources were reached or which "
-                      "dates were sought.",
+                      "dates were sought. A record with no run association was "
+                      "not necessarily uncollected — its provenance may "
+                      "instead be a promotion ledger entry, documented at the "
+                      "record's own source.",
     },
     {
         "label": "Collection timestamp", "stored": "scraped_at",
@@ -1494,12 +1500,19 @@ def corpus_guide_stats(corpus: list, run_days: list) -> dict:
     gaps = collection_gaps(run_days)
     total = len(corpus)
     english = english_output_sets(corpus)
-    # Records carrying a source-stated publication date inside the recorded
-    # interruption. The changelog claims material from that window is absent;
-    # this is the number that claim stands or falls on, so it is measured
-    # rather than assumed.
-    outage_records = sum(1 for r in corpus
-                         if OUTAGE_START <= r["published_date"] <= OUTAGE_END)
+    # China Desk records carrying a source-stated publication date inside the
+    # recorded interruption. The changelog claims China Desk material from
+    # that window is absent — that outage is a fact about China's own
+    # pipeline, not a corpus-wide one — so this is scoped to China and is the
+    # number that claim stands or falls on, measured rather than assumed.
+    # Another desk with no pipeline-run history of its own — its corpus a
+    # one-time governed promotion, not scrape_runs output — can hold
+    # coincidentally-dated records in the same calendar window without that
+    # bearing on China's claim at all.
+    outage_records_china = sum(
+        1 for r in corpus
+        if r.get("desk_id") == "china"
+        and OUTAGE_START <= r["published_date"] <= OUTAGE_END)
     return {
         "total": total,
         "max_id": max((r["id"] for r in corpus), default=0),
@@ -1519,7 +1532,13 @@ def corpus_guide_stats(corpus: list, run_days: list) -> dict:
         "no_model": len(english["empty_model"]),
         "non_analyzed": len(english["non_analyzed"]),
         "english_sets_identical": english["identical"],
-        "outage_records": outage_records,
+        "outage_records_china": outage_records_china,
+        # Records with no pipeline-run association at all. Ordinary collected
+        # records always carry one; a governed shadow promotion legitimately
+        # does not, and its provenance instead lives in the promotion ledger
+        # (scripts/promote_shadow_records.py), not scrape_run_id.
+        "promoted_without_run": sum(
+            1 for r in corpus if r.get("scrape_run_id") is None),
         "empty_text": sum(1 for r in corpus if _blank(r.get("text_original"))),
         "prompt_version_missing": sum(1 for r in analyzed
                                       if _blank(r.get("prompt_version"))),
@@ -1577,7 +1596,7 @@ def dictionary_rows(stats: dict) -> list:
 #: not generated.
 def changelog_entries(stats: dict) -> list:
     identical = stats["english_sets_identical"]
-    outage_records = stats["outage_records"]
+    outage_records_china = stats["outage_records_china"]
     stats = _display_stats(stats)
     outage = stats["outage"]
     if not outage:
@@ -1585,18 +1604,25 @@ def changelog_entries(stats: dict) -> list:
                         "stored run record.")
     else:
         window = {"from": outage["from"], "to": outage["to"]}
-        # The absence claim is measured, not assumed. If the window ever holds
-        # records, saying they are absent would be false, so the sentence
-        # reports what is actually there instead.
+        # The outage is a fact about China Desk's own pipeline, not a
+        # corpus-wide one, so the claim names China Desk explicitly rather
+        # than "this snapshot" — a desk with no pipeline-run history of its
+        # own can hold coincidentally-dated records in the same window
+        # without that bearing on this claim. The absence claim is measured,
+        # not assumed: if the window ever holds China Desk records, saying
+        # they are absent would be false, so the sentence reports what is
+        # actually there instead.
         interruption = (
-            "No pipeline run is recorded on the UTC dates {from} through {to}, "
-            "and no record in this snapshot carries a source-stated "
-            "publication date inside that window.".format(**window)
-            if outage_records == 0 else
-            "No pipeline run is recorded on the UTC dates {from} through {to}. "
-            "This snapshot nonetheless holds {n} records with source-stated "
-            "publication dates inside that window, collected outside it."
-            .format(n="{:,}".format(outage_records), **window))
+            "No China Desk pipeline run is recorded on the UTC dates {from} "
+            "through {to}, and no China Desk record in this snapshot "
+            "carries a source-stated publication date inside that window."
+            .format(**window)
+            if outage_records_china == 0 else
+            "No China Desk pipeline run is recorded on the UTC dates {from} "
+            "through {to}. This snapshot nonetheless holds {n} China Desk "
+            "records with source-stated publication dates inside that "
+            "window, collected outside it."
+            .format(n="{:,}".format(outage_records_china), **window))
 
     # One number covers three fields only when the three hold the same record
     # ids. Otherwise each is stated separately rather than averaged into a

@@ -83,11 +83,11 @@ class TestRegistryDrivesCollection(unittest.TestCase):
                 % (module, offenders),
             )
 
-    def test_registry_exposes_the_five_existing_sources(self):
+    def test_registry_exposes_the_declared_sources(self):
         self.assertEqual(
             SourceRegistry().slugs,
             ["china_mil_online", "global_times_mil", "mod_china",
-             "pla_daily", "xinhua_mil"],
+             "pla_daily", "sg_mindef_releases", "xinhua_mil"],
         )
 
     def test_slug_view_answers_membership_and_keys(self):
@@ -222,9 +222,10 @@ class TestNoSourceStarvesAnother(unittest.TestCase):
             result("china_mil_online", st.OK, new_documents=3),
             result("global_times_mil", st.OK, new_documents=1),
             result("xinhua_mil", st.NOT_IMPLEMENTED),
+            result("sg_mindef_releases", st.OK_NO_PUBLICATIONS),
         ]
         report = machine_report(results)
-        self.assertEqual(report["source_count"], 5)
+        self.assertEqual(report["source_count"], 6)
         self.assertEqual(
             sorted(s["source_slug"] for s in report["sources"]),
             SourceRegistry().slugs,
@@ -342,18 +343,24 @@ class TestConfigSyncIsIdempotent(unittest.TestCase):
     def test_sync_does_not_alter_legacy_source_columns(self):
         """
         A config sync must never be able to rename a live source or re-point it
-        at a different host.
+        at a different host. Scoped to the rows `build_legacy_db` seeds — a
+        sync against the real desks/ directory also INSERTS Singapore's source,
+        which is a new row, not an alteration of one of these.
         """
         conn = connect(self.db_path)
+        seeded_slugs = [r[0] for r in conn.execute(
+            "SELECT slug FROM sources ORDER BY slug")]
         before = conn.execute(
             "SELECT slug, display_name, base_url, language, is_active "
             "FROM sources ORDER BY slug"
         ).fetchall()
         apply_all(conn)
         sync_desk_config(conn)
+        placeholders = ",".join("?" * len(seeded_slugs))
         after = conn.execute(
             "SELECT slug, display_name, base_url, language, is_active "
-            "FROM sources ORDER BY slug"
+            "FROM sources WHERE slug IN (%s) ORDER BY slug" % placeholders,
+            seeded_slugs,
         ).fetchall()
         conn.close()
         self.assertEqual(before, after)
@@ -367,9 +374,9 @@ class TestConfigSyncIsIdempotent(unittest.TestCase):
         desks = conn.execute("SELECT COUNT(*) FROM desks").fetchone()[0]
         insts = conn.execute("SELECT COUNT(*) FROM institutions").fetchone()[0]
         conn.close()
-        self.assertEqual(n, 5)
-        self.assertEqual(desks, 1)
-        self.assertEqual(insts, 4)
+        self.assertEqual(n, 6)
+        self.assertEqual(desks, 2)
+        self.assertEqual(insts, 5)
 
     def test_sync_populates_authority_and_originality(self):
         conn = connect(self.db_path)
@@ -407,7 +414,7 @@ class TestScrapersSlugView(unittest.TestCase):
 
     def test_iteration_and_len(self):
         self.assertEqual(sorted(self.pipeline.SCRAPERS), SourceRegistry().slugs)
-        self.assertEqual(len(self.pipeline.SCRAPERS), 5)
+        self.assertEqual(len(self.pipeline.SCRAPERS), 6)
 
     def test_subscripting_raises_with_a_pointer_to_the_real_api(self):
         with self.assertRaises(TypeError) as ctx:
@@ -601,12 +608,12 @@ class TestNeutralLanguagePersistence(unittest.TestCase):
     def test_production_manifest_declares_no_russia_desk(self):
         configs = __import__("core.manifests", fromlist=["load_all_desks"]) \
             .load_all_desks()
-        self.assertEqual(list(configs), ["china"])
+        self.assertEqual(sorted(configs), ["china", "singapore"])
         for cfg in configs.values():
             for src in cfg.sources:
                 self.assertNotEqual(src.language_tag.split("-")[0], "ru")
 
-    def test_production_database_has_only_china_sources(self):
+    def test_production_database_has_only_china_and_singapore_sources(self):
         # Reads a scratch COPY, never the tracked file.
         #
         # A plain `sqlite3.connect()` on the tracked database is not a harmless
@@ -629,9 +636,10 @@ class TestNeutralLanguagePersistence(unittest.TestCase):
         with _read_only(str(prod)) as con:
             desks = {r[0] for r in con.execute("SELECT DISTINCT desk_id FROM desks")}
             slugs = {r[0] for r in con.execute("SELECT slug FROM sources")}
-        self.assertEqual(desks, {"china"})
+        self.assertEqual(desks, {"china", "singapore"})
         self.assertEqual(slugs, {"pla_daily", "mod_china", "xinhua_mil",
-                                 "global_times_mil", "china_mil_online"})
+                                 "global_times_mil", "china_mil_online",
+                                 "sg_mindef_releases"})
 
 
 class TestSyncAtomicityAtPersistence(unittest.TestCase):

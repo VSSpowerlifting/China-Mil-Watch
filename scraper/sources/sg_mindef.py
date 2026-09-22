@@ -468,7 +468,8 @@ class SGMindefAdapter(SourceAdapter):
             })
         return ExtractionResult(self.slug, st.OK, documents=[doc])
 
-    def healthcheck(self) -> SourceHealthResult:
-        return SourceHealthResult(
-            self.slug, st.SKIPPED_DISABLED,
-            "shadow evaluation; not enabled in any production desk")
+    # healthcheck() is inherited from SourceAdapter: OK when `implemented`
+    # and `source.enabled` both hold, SKIPPED_DISABLED when the desk manifest
+    # disables the source, offline either way. The override this replaced
+    # hardcoded "shadow evaluation; not enabled in any production desk",
+    # which was true only while this adapter had no production manifest.

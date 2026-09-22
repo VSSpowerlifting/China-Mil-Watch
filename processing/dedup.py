@@ -47,14 +47,14 @@ from urllib.parse import urlparse
 # text. MOD China contributed zero stored rows between 2026-07-10 and
 # 2026-08-17 while publishing on cadence throughout.
 #
-# Tiers mirror `authority_tier` in desks/china/manifest.json. They are a
+# Tiers mirror `authority_tier` in every desks/*/manifest.json. They are a
 # constant here rather than a manifest read on purpose: dedup_articles() is a
 # pure, low-level function on a list of dicts, called once per run inside the
 # pipeline's hot path, and giving it manifest or database I/O would invert the
 # layering — a batch-transform function would then depend on desk
 # configuration loading. The drift risk this creates is covered by
 # test_dedup_authority.py::test_tier_table_matches_manifest, which fails if
-# this table and the manifest ever disagree.
+# this table and any manifest ever disagree.
 _AUTHORITY_TIER_RANK: dict[str, int] = {
     "A": 400,   # authorized institutional position (ministry, CMC)
     "B": 300,   # service media / official mirror
@@ -63,11 +63,12 @@ _AUTHORITY_TIER_RANK: dict[str, int] = {
 }
 
 _SOURCE_AUTHORITY_TIER: dict[str, str] = {
-    "mod_china":        "A",
-    "pla_daily":        "B",
-    "china_mil_online": "B",
-    "xinhua_mil":       "C",
-    "global_times_mil": "D",
+    "mod_china":          "A",
+    "pla_daily":          "B",
+    "china_mil_online":   "B",
+    "xinhua_mil":         "C",
+    "global_times_mil":   "D",
+    "sg_mindef_releases": "A",
 }
 
 # Fallback only: used when an article dict carries no `source_slug` (the spec
