@@ -2,7 +2,7 @@
 Singapore scheduled production: the seam that lets the governed Singapore
 adapter run through the same scheduled pipeline China does.
 
-Three things this pins:
+Four things this pins:
 
   * `SourceAdapter.collect()` exists generically, so a scheduled `pipeline.py`
     run can call it for `sg_mindef_releases` without raising `AttributeError`
@@ -16,6 +16,15 @@ Three things this pins:
     only by the one-time historical promotion that already ran. MINDEF's own
     sitemap still lists both, so nothing but this filter stops a scheduled
     run from reintroducing them.
+  * A mid-collection failure -- one release fails to parse after an earlier
+    one in the same run already succeeded -- degrades that one release only.
+    `collect()` still returns every other successfully extracted document
+    from the same run; nothing already good is discarded because one later
+    record turned out bad. This depends on `extract()` converting an
+    unexpected parser exception into a clean `EXTRACTION_FAILURE` result
+    rather than letting it propagate and abort the whole `collect()` loop
+    (which would silently drop every already-extracted document from earlier
+    references in the same call, even though nothing would be corrupted).
 
 Everything here is offline: fake HTTP responses, no network, no tracked-
 database access.
@@ -25,6 +34,7 @@ from __future__ import annotations
 
 import sys
 import unittest
+import unittest.mock
 from datetime import date
 from pathlib import Path
 
@@ -234,6 +244,82 @@ class TestSingaporeFailureDegradesRunButNeverFailsIt(unittest.TestCase):
         aggregate_status([china, singapore])
         self.assertEqual(china.status, st.OK)
         self.assertEqual(china.new_documents, 3)
+
+
+class TestMidCollectionFailureLosesOnlyTheBadRecord(unittest.TestCase):
+    """
+    The exact scenario a partial-state review has to see proven, not argued:
+    discovery succeeds, an earlier release is fetched and extracted cleanly,
+    a LATER release then fails, and the run must still come back with the
+    earlier good document intact -- not lose it, and not raise past
+    `collect()` in a way that would discard it. `pipeline.py` (pipeline.py:
+    174-190) calls `adapter.collect(window)` inside a per-source
+    try/except: if `collect()` itself raises, `all_scraped.extend(...)` for
+    THIS source is never reached and every document `collect()` had already
+    accumulated -- including ones from earlier, successful references in the
+    very same call -- is lost. That is the failure mode this test rules out.
+    """
+
+    def test_a_later_unexpected_parser_crash_does_not_discard_earlier_documents(self):
+        good_url_1 = ("https://www.mindef.gov.sg/news-and-events/"
+                      "latest-releases/18sep26-nr1/")
+        bad_url = ("https://www.mindef.gov.sg/news-and-events/"
+                   "latest-releases/19sep26-nr1/")
+        good_url_2 = ("https://www.mindef.gov.sg/news-and-events/"
+                      "latest-releases/20sep26-nr1/")
+        sitemap = ("""<?xml version="1.0"?><urlset>
+<url><loc>%s</loc><lastmod>2026-09-18</lastmod></url>
+<url><loc>%s</loc><lastmod>2026-09-19</lastmod></url>
+<url><loc>%s</loc><lastmod>2026-09-20</lastmod></url>
+</urlset>""" % (good_url_1, bad_url, good_url_2))
+
+        adapter = sg_adapter(FakeSession(sitemap_text=sitemap))
+
+        # document_title() is what parses a fetched page's title. Forced to
+        # raise on the SECOND reference only -- an unexpected parser bug,
+        # not one of the "missing field" cases extract() already refuses
+        # cleanly -- to prove the failure boundary sits at that one record,
+        # not at the whole collect() call.
+        calls = {"n": 0}
+        real_title = sg.document_title
+
+        def flaky(markup):
+            calls["n"] += 1
+            if calls["n"] == 2:
+                raise RuntimeError("simulated unexpected parser crash")
+            return real_title(markup)
+
+        with unittest.mock.patch.object(sg, "document_title", side_effect=flaky):
+            result, documents = adapter.collect(window())
+
+        urls = [d.url for d in documents]
+        self.assertIn(good_url_1, urls)
+        self.assertIn(good_url_2, urls)
+        self.assertNotIn(bad_url, urls)
+        self.assertEqual(len(documents), 2)
+        # A degraded record among successes is OK, not a source failure --
+        # the same status logic that already protects a single-page markup
+        # drift from reading as a whole-source outage.
+        self.assertEqual(result.status, st.OK)
+        self.assertIn("1 of 3 fetched page(s) failed extraction",
+                      result.error_detail or "")
+
+    def test_extract_never_raises_it_returns_a_failure_result(self):
+        """
+        The narrower, direct proof: `extract()` itself must convert an
+        unexpected exception into `EXTRACTION_FAILURE`, not propagate it.
+        This is what makes the test above possible -- without it, `collect()`
+        has no way to keep looping past the bad reference at all.
+        """
+        adapter = sg_adapter()
+        capture_ok_but_unparseable = adapter.fetch(
+            sg.CandidateReference(url=ORDINARY_URL, source_slug=adapter.slug))
+        with unittest.mock.patch.object(
+                sg, "document_title",
+                side_effect=RuntimeError("simulated unexpected parser crash")):
+            result = adapter.extract(capture_ok_but_unparseable)
+        self.assertEqual(result.status, st.EXTRACTION_FAILURE)
+        self.assertIn("parser raised", result.error_detail or "")
 
 
 class TestSingaporeFreshnessLanguageIsUntouchedByThisChange(unittest.TestCase):

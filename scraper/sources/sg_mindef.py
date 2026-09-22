@@ -462,42 +462,65 @@ class SGMindefAdapter(SourceAdapter):
             body=body)
 
     def extract(self, capture: CaptureResult) -> ExtractionResult:
-        """One document or a refusal. Never a partial record."""
+        """One document or a refusal. Never a partial record.
+
+        Everything past the body check is wrapped in one try/except, matching
+        `adapters.legacy.LegacyScraperAdapter.extract()`'s established pattern
+        for the same reason: `collect()` (`core.collection.contract`) accumulates
+        documents from multiple references in one local list and only returns
+        it at the end of its loop. An uncaught exception here would not just
+        fail this one release -- it would abort that whole loop and discard
+        every already-extracted document from earlier references in the same
+        run, which is a real cost even though nothing is corrupted (a source
+        crash still degrades cleanly to ADAPTER_ERROR with zero documents
+        stored). The helpers below (`document_title`, `document_body`,
+        `slug_published_date`, `canonical_url`) are all written to return
+        `None`/short values rather than raise for the "missing field" cases
+        already handled explicitly; this catches only a genuinely unexpected
+        parser bug, the one case those explicit checks cannot anticipate.
+        """
         if not capture.ok or not capture.body:
             return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
                                     error_detail="no body to extract")
-        url = canonical_url(capture.reference.url)
-        if not url:
+        try:
+            url = canonical_url(capture.reference.url)
+            if not url:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="not a canonical release URL: %s"
+                                 % capture.reference.url)
+            title = document_title(capture.body)
+            if not title:
+                return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
+                                        error_detail="no title: %s" % url)
+            published = slug_published_date(url)
+            if not published:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="no publication date in the official slug: %s"
+                                 % url)
+            body = document_body(capture.body)
+            if len(body) < MIN_BODY_CHARS:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="body too short to be a published record "
+                                 "(%d chars): %s" % (len(body), url))
+            doc = ExtractedDocument(
+                url=url, source_slug=self.slug, title_original=title,
+                text_original=body, published_date=published, language_tag="en",
+                extra={
+                    "publication_kind": publication_kind(url),
+                    "content_sha256": hashlib.sha256(
+                        body.encode("utf-8")).hexdigest(),
+                    "capture_sha256": capture.payload_sha256,
+                    "retrieved_at": capture.retrieved_at,
+                })
+            return ExtractionResult(self.slug, st.OK, documents=[doc])
+        except Exception as exc:
             return ExtractionResult(
                 self.slug, st.EXTRACTION_FAILURE,
-                error_detail="not a canonical release URL: %s"
-                             % capture.reference.url)
-        title = document_title(capture.body)
-        if not title:
-            return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
-                                    error_detail="no title: %s" % url)
-        published = slug_published_date(url)
-        if not published:
-            return ExtractionResult(
-                self.slug, st.EXTRACTION_FAILURE,
-                error_detail="no publication date in the official slug: %s" % url)
-        body = document_body(capture.body)
-        if len(body) < MIN_BODY_CHARS:
-            return ExtractionResult(
-                self.slug, st.EXTRACTION_FAILURE,
-                error_detail="body too short to be a published record "
-                             "(%d chars): %s" % (len(body), url))
-        doc = ExtractedDocument(
-            url=url, source_slug=self.slug, title_original=title,
-            text_original=body, published_date=published, language_tag="en",
-            extra={
-                "publication_kind": publication_kind(url),
-                "content_sha256": hashlib.sha256(
-                    body.encode("utf-8")).hexdigest(),
-                "capture_sha256": capture.payload_sha256,
-                "retrieved_at": capture.retrieved_at,
-            })
-        return ExtractionResult(self.slug, st.OK, documents=[doc])
+                error_detail="parser raised: %s: %s"
+                             % (type(exc).__name__, str(exc)[:160]))
 
     # healthcheck() is inherited from SourceAdapter: OK when `implemented`
     # and `source.enabled` both hold, SKIPPED_DISABLED when the desk manifest
