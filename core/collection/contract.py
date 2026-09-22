@@ -28,10 +28,14 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import date
-from typing import Any, Dict, List, Optional
+from datetime import date, datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple
 
 from core.collection import status as st
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 
 # ── Value types ───────────────────────────────────────────────────────────────
@@ -308,3 +312,103 @@ class SourceAdapter(ABC):
                 self.slug, st.SKIPPED_DISABLED, "disabled in desk manifest",
             )
         return SourceHealthResult(self.slug, st.OK, "configured")
+
+    # ── generic whole-source collection ──────────────────────────────────────
+    #
+    # No `failed_fetches` property is declared here on purpose: at least one
+    # existing direct-contract adapter (`scraper.sources.jp_mod.JPModAdapter`)
+    # assigns `self.failed_fetches = [...]` as a plain writable instance
+    # attribute in `__init__`, which a read-only property on this base class
+    # would break (`AttributeError: can't set attribute`). `collect()` below
+    # reads it defensively instead, so every shape keeps working: a plain
+    # instance attribute, a subclass `@property` (`LegacyScraperAdapter`), or
+    # its absence (`SGMindefAdapter`, which reports failure only through
+    # `DiscoveryResult`/`CaptureResult` status).
+
+    def collect(
+        self, window: CollectionWindow
+    ) -> Tuple[SourceRunResult, List[ExtractedDocument]]:
+        """
+        Run discover -> fetch -> extract for this source.
+
+        Generic implementation for any adapter that implements only the three
+        abstract methods above. Mirrors
+        `adapters.legacy.LegacyScraperAdapter.collect` exactly, so a source's
+        collection semantics do not depend on which adapter shape it uses.
+        `LegacyScraperAdapter` defines its own `collect()` and is unaffected
+        by this method existing here.
+        """
+        started = _now()
+        result = SourceRunResult(
+            source_slug=self.slug,
+            status=st.OK,
+            desk_id=getattr(self.source, "desk_id", None),
+            started_at=started,
+        )
+
+        if not getattr(self.source, "enabled", True):
+            result.status = st.SKIPPED_DISABLED
+            result.completed_at = _now()
+            return result, []
+
+        discovery = self.discover(window)
+        result.references_discovered = len(discovery.references)
+
+        if not discovery.ok or not discovery.references:
+            result.status = discovery.status
+            result.error_detail = discovery.error_detail
+            result.failed_fetches = len(getattr(self, "failed_fetches", []))
+            result.completed_at = _now()
+            return result, []
+
+        documents: List[ExtractedDocument] = []
+        extraction_failures = 0
+        for ref in discovery.references:
+            capture = self.fetch(ref)
+            if not capture.ok:
+                continue
+            result.fetched += 1
+            extracted = self.extract(capture)
+            if extracted.status == st.OK and extracted.documents:
+                documents.extend(extracted.documents)
+            else:
+                extraction_failures += 1
+
+        result.extracted = len(documents)
+        unusable = [d for d in documents if not d.has_usable_text]
+        result.text_unavailable = len(unusable)
+        result.failed_fetches = len(getattr(self, "failed_fetches", []))
+        result.completed_at = _now()
+
+        notes = []
+        if extraction_failures:
+            notes.append("%d of %d fetched page(s) failed extraction"
+                         % (extraction_failures, result.fetched))
+
+        if documents and len(unusable) < len(documents):
+            result.status = st.OK
+            if unusable:
+                notes.append(
+                    "%d of %d parsed page(s) carried no usable text; their "
+                    "titles, URLs and dates were kept"
+                    % (len(unusable), len(documents)))
+        elif documents:
+            result.status = st.EXTRACTION_FAILURE
+            notes.append(
+                "%d page(s) parsed, none carried usable text — check for "
+                "source markup drift" % len(documents))
+        elif result.fetched == 0:
+            result.status = st.FETCH_FAILURE
+            result.error_detail = (
+                "%d reference(s) discovered, none could be fetched"
+                % result.references_discovered
+            )
+        else:
+            result.status = st.EXTRACTION_FAILURE
+            notes.append(
+                "%d page(s) fetched, none could be parsed — check for source "
+                "markup drift" % result.fetched)
+
+        if notes:
+            result.error_detail = "; ".join(notes)
+        return result, documents

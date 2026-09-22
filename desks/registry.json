@@ -50,14 +50,14 @@
    "route": "singapore.html",
    "scope": "One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.",
    "status": "live",
-   "status_explanation": "Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus is a one-time governed promotion of 57 corrected shadow records, not yet the output of a running production collector: the adapter is the one the shadow collector has used since 2026-08-19, but no scheduled production workflow invokes it yet. Two records stay held out of the promotable set for unrepaired charset damage.",
+   "status_explanation": "Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus began as a one-time governed promotion of 57 corrected shadow records; the same adapter, already run daily by the shadow collector since 2026-08-19, is now also invoked by the ordinary scheduled production pipeline, so the corpus grows from further scheduled runs going forward. Two records stay held out of the promotable set for unrepaired charset damage.",
    "public": true,
    "manifest": "desks/singapore/manifest.json",
    "has_production_records": true,
    "limits": [
     "This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defense coverage.",
     "Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.",
-    "The corpus is a one-time promotion, not a running daily collection: no scheduled production workflow collects new Singapore records yet, so the corpus will not grow until that is built as separate work.",
+    "The corpus began as a one-time governed promotion; new records are now collected by the ordinary scheduled production pipeline, subject to the same held-record exclusions.",
     "Two records are held out of the promoted corpus: their CJK text was damaged by a historical extractor defect the correction overlay could not repair, and they are excluded rather than published with damaged text. See shadow/singapore_mindef/CORRECTIONS.md for which records and why."
    ],
    "qualification": {

@@ -1,10 +1,14 @@
 """
-Singapore MINDEF official releases — shadow adapter.
+Singapore MINDEF official releases adapter.
 
-Conforms to `core.collection.contract.SourceAdapter`. It is NOT registered in
-any production desk manifest: `shadow/singapore_mindef/manifest.json` lives
-outside `desks/` precisely so `load_all_desks()` cannot find it, and the source
-is `enabled: false`. Nothing here can reach `pla_watch.db` or `output/`.
+Conforms to `core.collection.contract.SourceAdapter`. Registered in
+`desks/singapore/manifest.json`, which `load_all_desks()` discovers, so this
+adapter is reachable from `pla_watch.db` and `output/` through the ordinary
+scheduled pipeline (`pipeline.py`, invoked by `.github/workflows/daily_update.yml`)
+the same way every other source is. It is also still run, unchanged, by the
+separate shadow evaluation workflow (`scripts/shadow_collect.py`,
+`.github/workflows/singapore_shadow.yml`), which writes to isolated shadow
+state and never touches production.
 
 Scope, inclusions, exclusions and rules are in
 `shadow/singapore_mindef/README.md`. The rules that matter to this file:
@@ -14,10 +18,14 @@ Scope, inclusions, exclusions and rules are in
   * a missing title, date, body or identity is a refusal, not a partial record
   * robots policy is re-read every run and a disallow is a hard failure
   * an empty day is a success, and is never conflated with a listing failure
+  * two records, `15aug26-speech` and `16sep26-speech`, are held out of
+    everything this adapter discovers (see `HELD_RELEASE_SLUGS` below) — the
+    governed exclusion decided in DECISION_LOG.md, 2026-09-21, for unrepaired
+    CJK extraction damage, enforced here so a live run can never reintroduce
+    them even though MINDEF's own sitemap still lists both
 
 Deliberately absent: translation, classification, significance scoring and any
-editorial judgement. The shadow phase proves retrieval, identity, preservation
-and reliability first.
+editorial judgement.
 """
 
 from __future__ import annotations
@@ -46,6 +54,17 @@ SITEMAP = HOST + "/sitemap.xml"
 ROBOTS = HOST + "/robots.txt"
 RELEASE_RE = re.compile(
     r"^https://www\.mindef\.gov\.sg/news-and-events/latest-releases/[^/]+/$")
+
+#: Governed holds. Both records were promoted from the shadow corpus with
+#: unrepaired CJK-passage extraction damage the correction overlay could not
+#: fix, and DECISION_LOG.md (2026-09-21) held both out of the 57-record
+#: production promotion rather than publish damaged text. That promotion was
+#: a one-time batch write; it did not, and could not, stop a live collection
+#: run from rediscovering these same URLs through MINDEF's own sitemap, which
+#: still lists them. This set is the enforcement that closes that gap: any
+#: scheduled `discover()` call excludes them before a window or cap is ever
+#: applied, so neither can reach `fetch()`, `extract()`, or `pla_watch.db`.
+HELD_RELEASE_SLUGS = frozenset({"15aug26-speech", "16sep26-speech"})
 
 #: Honest identification. A ministry that wants to refuse this collector must be
 #: able to recognise it and say so in robots.txt.
@@ -103,6 +122,12 @@ def slug_published_date(url: str) -> Optional[str]:
         return date(2000 + int(m.group(3)), mon, int(m.group(1))).isoformat()
     except ValueError:
         return None
+
+
+def release_slug(url: str) -> Optional[str]:
+    """The path token that identifies a release, e.g. '15aug26-speech'."""
+    tail = url.rstrip("/").rsplit("/", 1)[-1]
+    return tail or None
 
 
 def publication_kind(url: str) -> str:
@@ -390,6 +415,12 @@ class SGMindefAdapter(SourceAdapter):
             return DiscoveryResult(
                 self.slug, st.LISTING_FAILURE,
                 error_detail="sitemap parsed to zero release URLs")
+
+        # Governed holds are removed before window/cap selection, not after:
+        # they must never occupy a cap slot or a window position that belongs
+        # to a publishable record.
+        entries = [(u, lastmod) for u, lastmod in entries
+                   if release_slug(u) not in HELD_RELEASE_SLUGS]
 
         selected = select_window(entries, window, self._cap)
         refs = [CandidateReference(url=u, source_slug=self.slug,
