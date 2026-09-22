@@ -116,6 +116,64 @@ class _SourceSlugView:
 SCRAPERS = _SourceSlugView()
 
 
+# ── Atomic-batch sources ─────────────────────────────────────────────────────
+#
+# Every source defaults to insert_article()'s per-article-own-commit design:
+# a bad record costs only itself, and the other 340 PLA Daily articles from
+# the same run are not held hostage by one. That default is deliberate and
+# stays in place for every source not named here.
+#
+# Singapore is named here instead, following a bounded review of PR #69
+# (2026-09-22): the corpus already holds two records a silent extraction
+# defect damaged badly enough to need a governed, human-reviewed exclusion
+# (DECISION_LOG.md, 2026-09-21) that SGMindefAdapter.extract()'s checks did
+# not catch when it happened. A live scheduled run gets no such review before
+# publishing, so for this source specifically, a batch commits completely or
+# not at all -- see storage.db.insert_articles_atomic() and
+# SGMindefAdapter.collect()'s own matching all-or-nothing gate.
+ATOMIC_BATCH_SLUGS = frozenset({"sg_mindef_releases"})
+
+
+def _store_atomic_batches(kw_passed: list, kw_rejected: list, run_id,
+                          atomic_slugs=ATOMIC_BATCH_SLUGS):
+    """
+    Insert every atomic-batch source's articles as one all-or-nothing
+    transaction per source, grouped from the combined (cross-source)
+    kw_passed/kw_rejected lists Stage 4-6 already produced.
+
+    Returns `(inserted, failed_slugs)`: `inserted` is the same
+    `[(article_id, article), ...]` shape the ordinary per-article loop
+    produces, for the articles that DID commit; `failed_slugs` names any
+    source whose whole batch was rolled back, so the caller can record that
+    source's run honestly instead of leaving it read as OK.
+    """
+    by_slug: dict = {}
+    for a in kw_passed:
+        slug = a.get("source_slug")
+        if slug in atomic_slugs:
+            by_slug.setdefault(slug, {"passed": [], "rejected": []})["passed"].append(a)
+    for a in kw_rejected:
+        slug = a.get("source_slug")
+        if slug in atomic_slugs:
+            by_slug.setdefault(slug, {"passed": [], "rejected": []})["rejected"].append(a)
+
+    inserted: list = []
+    failed_slugs: set = set()
+    for slug, groups in by_slug.items():
+        try:
+            inserted.extend(
+                db.insert_articles_atomic(groups["passed"], groups["rejected"], run_id)
+            )
+        except Exception as exc:
+            logger.error(
+                "%s: atomic batch insert failed — nothing from this run's "
+                "%d-record batch was committed: %s",
+                slug, len(groups["passed"]) + len(groups["rejected"]), exc,
+            )
+            failed_slugs.add(slug)
+    return inserted, failed_slugs
+
+
 # ── Pipeline ──────────────────────────────────────────────────────────────────
 
 def run(
@@ -245,17 +303,31 @@ def run(
 
 
     # ── Stage 7–8: Store articles ─────────────────────────────────────────────
+    # Atomic-batch sources (ATOMIC_BATCH_SLUGS) are pulled out first and
+    # inserted as their own all-or-nothing transaction; everything else goes
+    # through the exact same per-article loop as always -- unfiltered, this
+    # IS that original loop, just now only reached by the ~all~ articles when
+    # no source opts into the atomic path, which is every run before this.
     inserted: list[tuple[int, dict]] = []   # (article_id, article)
 
-    for article in kw_passed:
+    normal_kw_passed = [a for a in kw_passed
+                       if a.get("source_slug") not in ATOMIC_BATCH_SLUGS]
+    normal_kw_rejected = [a for a in kw_rejected
+                         if a.get("source_slug") not in ATOMIC_BATCH_SLUGS]
+
+    for article in normal_kw_passed:
         aid = db.insert_article(article, run_id)
         if aid is not None:
             inserted.append((aid, article))
 
-    for article in kw_rejected:
+    for article in normal_kw_rejected:
         aid = db.insert_article(article, run_id)
         if aid is not None:
             db.update_relevance(aid, 0.0, "failed keyword pre-filter", False)
+
+    atomic_inserted, atomic_failed_slugs = _store_atomic_batches(
+        kw_passed, kw_rejected, run_id)
+    inserted.extend(atomic_inserted)
 
     logger.info("Stored %d new articles (%d keyword-rejected, stored with passed=0)",
                 len(inserted), len(kw_rejected))
@@ -280,10 +352,21 @@ def run(
         result.new_documents      = inserted_by_source.get(slug, 0)
         result.relevance_rejected = rejected_by_source.get(slug, 0)
 
+        if slug in atomic_failed_slugs:
+            # The batch existed and was rejected as a whole -- record that
+            # honestly rather than letting new_documents == 0 read as
+            # OK_ALL_DUPLICATES/OK_ALL_FILTERED below, which would claim a
+            # storage failure was a healthy empty outcome.
+            result.status = collection_status.STORAGE_FAILURE
+            result.error_detail = (
+                (result.error_detail + "; " if result.error_detail else "")
+                + "atomic batch insert failed; no new records committed "
+                  "this run"
+            )
         # Refine a successful-but-empty outcome now that dedup and filtering
         # have run. Both are healthy states, and both are distinct from silence:
         # the source published, we simply kept none of it.
-        if result.status == collection_status.OK and result.new_documents == 0:
+        elif result.status == collection_status.OK and result.new_documents == 0:
             if result.duplicates > 0:
                 result.status = collection_status.OK_ALL_DUPLICATES
             elif result.relevance_rejected > 0:

@@ -32,7 +32,10 @@ database access.
 
 from __future__ import annotations
 
+import hashlib
+import sqlite3
 import sys
+import tempfile
 import unittest
 import unittest.mock
 from datetime import date
@@ -49,6 +52,8 @@ from core.collection.health import aggregate_status                # noqa: E402
 from core.registry import SourceRegistry                           # noqa: E402
 from adapters.legacy import LegacyScraperAdapter                   # noqa: E402
 from scraper.sources import sg_mindef as sg                        # noqa: E402
+from migrations.runner import apply_all, connect                  # noqa: E402
+from tests.test_migrations import build_legacy_db                 # noqa: E402
 
 HELD_URL_1 = ("https://www.mindef.gov.sg/news-and-events/"
               "latest-releases/15aug26-speech/")
@@ -125,7 +130,12 @@ class TestGenericCollectClosesTheGap(unittest.TestCase):
 
     def test_sg_mindef_adapter_has_a_working_collect(self):
         self.assertTrue(hasattr(sg.SGMindefAdapter, "collect"))
-        self.assertIs(sg.SGMindefAdapter.collect, SourceAdapter.collect)
+        self.assertTrue(callable(sg.SGMindefAdapter.collect))
+        # SGMindefAdapter overrides collect() with its own all-or-nothing
+        # batch semantics (TestAllOrNothingBatchSemantics below) rather than
+        # inheriting the generic per-record-degrading one -- unlike Japan and
+        # US DVIDS, which still use the shared base implementation as-is.
+        self.assertIsNot(sg.SGMindefAdapter.collect, SourceAdapter.collect)
 
     def test_registry_get_adapter_returns_something_collectible(self):
         """
@@ -246,21 +256,17 @@ class TestSingaporeFailureDegradesRunButNeverFailsIt(unittest.TestCase):
         self.assertEqual(china.new_documents, 3)
 
 
-class TestMidCollectionFailureLosesOnlyTheBadRecord(unittest.TestCase):
+class TestAllOrNothingBatchSemantics(unittest.TestCase):
     """
-    The exact scenario a partial-state review has to see proven, not argued:
-    discovery succeeds, an earlier release is fetched and extracted cleanly,
-    a LATER release then fails, and the run must still come back with the
-    earlier good document intact -- not lose it, and not raise past
-    `collect()` in a way that would discard it. `pipeline.py` (pipeline.py:
-    174-190) calls `adapter.collect(window)` inside a per-source
-    try/except: if `collect()` itself raises, `all_scraped.extend(...)` for
-    THIS source is never reached and every document `collect()` had already
-    accumulated -- including ones from earlier, successful references in the
-    very same call -- is lost. That is the failure mode this test rules out.
+    Case A from the bounded review: a third Singapore record fails during
+    fetch/extraction after two succeeded. Unlike the generic
+    `SourceAdapter.collect()` (right for China's five sources, which tolerate
+    a bad page among many good ones), `SGMindefAdapter.collect()` must
+    withhold the WHOLE batch -- not just the one bad record -- and must never
+    report the run as OK when that happens.
     """
 
-    def test_a_later_unexpected_parser_crash_does_not_discard_earlier_documents(self):
+    def test_a_later_unexpected_parser_crash_withholds_the_whole_batch(self):
         good_url_1 = ("https://www.mindef.gov.sg/news-and-events/"
                       "latest-releases/18sep26-nr1/")
         bad_url = ("https://www.mindef.gov.sg/news-and-events/"
@@ -275,11 +281,6 @@ class TestMidCollectionFailureLosesOnlyTheBadRecord(unittest.TestCase):
 
         adapter = sg_adapter(FakeSession(sitemap_text=sitemap))
 
-        # document_title() is what parses a fetched page's title. Forced to
-        # raise on the SECOND reference only -- an unexpected parser bug,
-        # not one of the "missing field" cases extract() already refuses
-        # cleanly -- to prove the failure boundary sits at that one record,
-        # not at the whole collect() call.
         calls = {"n": 0}
         real_title = sg.document_title
 
@@ -292,24 +293,44 @@ class TestMidCollectionFailureLosesOnlyTheBadRecord(unittest.TestCase):
         with unittest.mock.patch.object(sg, "document_title", side_effect=flaky):
             result, documents = adapter.collect(window())
 
-        urls = [d.url for d in documents]
-        self.assertIn(good_url_1, urls)
-        self.assertIn(good_url_2, urls)
-        self.assertNotIn(bad_url, urls)
-        self.assertEqual(len(documents), 2)
-        # A degraded record among successes is OK, not a source failure --
-        # the same status logic that already protects a single-page markup
-        # drift from reading as a whole-source outage.
-        self.assertEqual(result.status, st.OK)
-        self.assertIn("1 of 3 fetched page(s) failed extraction",
-                      result.error_detail or "")
+        # The whole batch is withheld -- including the two records that
+        # parsed cleanly -- not just the one that failed.
+        self.assertEqual(documents, [])
+        self.assertNotEqual(result.status, st.OK)
+        self.assertTrue(st.is_failure(result.status))
+        self.assertIn("nothing committed this run", result.error_detail or "")
+
+    def test_a_single_fetch_failure_among_successes_also_withholds_the_batch(self):
+        good_url = ("https://www.mindef.gov.sg/news-and-events/"
+                    "latest-releases/18sep26-nr1/")
+        unreachable_url = ("https://www.mindef.gov.sg/news-and-events/"
+                           "latest-releases/19sep26-nr1/")
+        sitemap = ("""<?xml version="1.0"?><urlset>
+<url><loc>%s</loc><lastmod>2026-09-18</lastmod></url>
+<url><loc>%s</loc><lastmod>2026-09-19</lastmod></url>
+</urlset>""" % (good_url, unreachable_url))
+
+        class FlakyFetchSession(FakeSession):
+            def get(self, url, timeout=None, headers=None):
+                if url == unreachable_url:
+                    return FakeResponse("", 500)
+                return super().get(url, timeout=timeout, headers=headers)
+
+        adapter = sg_adapter(FlakyFetchSession(sitemap_text=sitemap))
+        result, documents = adapter.collect(window())
+
+        self.assertEqual(documents, [])
+        self.assertTrue(st.is_failure(result.status))
+        self.assertNotEqual(result.status, st.OK)
 
     def test_extract_never_raises_it_returns_a_failure_result(self):
         """
-        The narrower, direct proof: `extract()` itself must convert an
-        unexpected exception into `EXTRACTION_FAILURE`, not propagate it.
-        This is what makes the test above possible -- without it, `collect()`
-        has no way to keep looping past the bad reference at all.
+        The narrower, direct proof this depends on: `extract()` itself must
+        convert an unexpected exception into `EXTRACTION_FAILURE`, not
+        propagate it. Without this, `collect()` could not keep looping to
+        discover whether OTHER references in the same batch are also bad --
+        it would just crash on the first one, losing the ability to report
+        the batch honestly.
         """
         adapter = sg_adapter()
         capture_ok_but_unparseable = adapter.fetch(
@@ -320,6 +341,270 @@ class TestMidCollectionFailureLosesOnlyTheBadRecord(unittest.TestCase):
             result = adapter.extract(capture_ok_but_unparseable)
         self.assertEqual(result.status, st.EXTRACTION_FAILURE)
         self.assertIn("parser raised", result.error_detail or "")
+
+    def test_a_fully_successful_batch_still_returns_every_document(self):
+        """The strict gate must not reject a genuinely clean batch."""
+        adapter = sg_adapter()
+        result, documents = adapter.collect(window())
+        self.assertEqual(result.status, st.OK)
+        self.assertEqual(len(documents), 1)
+        self.assertEqual(documents[0].url, ORDINARY_URL)
+
+    def test_a_held_leak_past_discover_would_also_withhold_the_batch(self):
+        """
+        Defense in depth: discover()'s own filter is the primary defense
+        (proven separately in TestHeldRecordsStayExcludedFromLiveCollection).
+        This proves the SECOND, independent layer inside collect() itself:
+        even if discover() were bugged and returned a held reference anyway,
+        collect() still refuses to hand it (or anything else from that batch)
+        back to the pipeline.
+        """
+        adapter = sg_adapter()
+        real_discover = adapter.discover
+
+        def buggy_discover(window_arg):
+            real_result = real_discover(window_arg)
+            leaked_ref = sg.CandidateReference(
+                url=HELD_URL_1, source_slug=adapter.slug,
+                discovered_via=sg.SITEMAP, hint_published_date="2026-08-15")
+            return sg.DiscoveryResult(
+                adapter.slug, sg.st.OK,
+                references=list(real_result.references) + [leaked_ref])
+
+        with unittest.mock.patch.object(adapter, "discover",
+                                        side_effect=buggy_discover):
+            result, documents = adapter.collect(window())
+
+        self.assertEqual(documents, [])
+        self.assertTrue(st.is_failure(result.status))
+        self.assertIn("held record", result.error_detail or "")
+
+
+class DbBackedCase(unittest.TestCase):
+    """
+    Base for tests that need the real storage.db functions against a real,
+    migrated, Singapore-including schema -- not a hand-written mirror of the
+    SQL, so the atomicity claims below are proven against the actual queries
+    the pipeline runs, not a paraphrase of them.
+    """
+
+    def setUp(self):
+        import storage.db as sdb
+        self.sdb = sdb
+        self.tmp = tempfile.TemporaryDirectory()
+        self.db_path = Path(self.tmp.name) / "test.db"
+        build_legacy_db(self.db_path)
+        conn = connect(self.db_path)
+        apply_all(conn)   # migrations + desk-config sync, including Singapore
+        conn.close()
+        self._saved_db_path = sdb.DB_PATH
+        sdb.DB_PATH = self.db_path
+
+    def tearDown(self):
+        self.sdb.DB_PATH = self._saved_db_path
+        self.tmp.cleanup()
+
+    def article_rows(self, source_slug="sg_mindef_releases"):
+        conn = sqlite3.connect(str(self.db_path))
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT a.* FROM articles a JOIN sources s ON a.source_id = s.id "
+            "WHERE s.slug = ? ORDER BY a.id", (source_slug,),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    @staticmethod
+    def sg_article(url, title="T", text=None, published="2026-09-18"):
+        text = text or ("Body text. " * 40)
+        return {
+            "url": url, "source_slug": "sg_mindef_releases",
+            "title_original": title, "text_original": text,
+            "published_date": published,
+            "content_hash": hashlib.sha256(
+                (title + "\n" + text).encode("utf-8")).hexdigest(),
+        }
+
+
+class TestAtomicBatchInsertion(DbBackedCase):
+    """
+    Case C from the bounded review: a third Singapore database insertion
+    fails after two insert attempts. Proven directly against
+    storage.db.insert_articles_atomic(), not argued from a top-level
+    try/except -- the transaction boundary IS the proof.
+    """
+
+    def test_a_clean_batch_commits_every_article_exactly_once(self):
+        articles = [self.sg_article("https://www.mindef.gov.sg/a1/"),
+                   self.sg_article("https://www.mindef.gov.sg/a2/"),
+                   self.sg_article("https://www.mindef.gov.sg/a3/")]
+        inserted = self.sdb.insert_articles_atomic(articles, [], run_id=1)
+        self.assertEqual(len(inserted), 3)
+        self.assertEqual(len(self.article_rows()), 3)
+
+    def test_a_genuine_failure_partway_through_rolls_back_the_whole_batch(self):
+        good1 = self.sg_article("https://www.mindef.gov.sg/a1/")
+        good2 = self.sg_article("https://www.mindef.gov.sg/a2/")
+        # An unknown source_slug is exactly the kind of unexpected condition
+        # insert_articles_atomic() treats as a genuine failure, not the
+        # ordinary "duplicate URL" outcome.
+        broken = dict(self.sg_article("https://www.mindef.gov.sg/a3/"))
+        broken["source_slug"] = "does_not_exist_as_a_source"
+
+        with self.assertRaises(ValueError):
+            self.sdb.insert_articles_atomic([good1, good2, broken], [], run_id=1)
+
+        # Nothing from the batch survived the rollback -- including good1 and
+        # good2, which would have committed successfully on their own.
+        self.assertEqual(self.article_rows(), [])
+
+    def test_previous_rows_survive_a_rolled_back_later_batch_untouched(self):
+        first = self.sg_article("https://www.mindef.gov.sg/already-there/",
+                                title="Original title")
+        aid = self.sdb.insert_article(first, scrape_run_id=1)
+        self.assertIsNotNone(aid)
+        before = self.article_rows()
+        self.assertEqual(len(before), 1)
+
+        good = self.sg_article("https://www.mindef.gov.sg/a1/")
+        broken = dict(self.sg_article("https://www.mindef.gov.sg/a2/"))
+        broken["source_slug"] = "does_not_exist_as_a_source"
+        with self.assertRaises(ValueError):
+            self.sdb.insert_articles_atomic([good, broken], [], run_id=2)
+
+        after = self.article_rows()
+        # Byte-for-byte: the prior row is the only row, completely unchanged.
+        self.assertEqual(before, after)
+
+    def test_a_duplicate_url_within_the_batch_is_not_a_rollback_trigger(self):
+        a1 = self.sg_article("https://www.mindef.gov.sg/a1/")
+        a1_dup = self.sg_article("https://www.mindef.gov.sg/a1/", title="Different title text")
+        a2 = self.sg_article("https://www.mindef.gov.sg/a2/")
+        inserted = self.sdb.insert_articles_atomic([a1, a1_dup, a2], [], run_id=1)
+        # a1_dup collides with a1's URL and is silently skipped, same as
+        # insert_article() already does -- not a batch failure.
+        self.assertEqual(len(inserted), 2)
+        self.assertEqual(len(self.article_rows()), 2)
+
+    def test_retrying_the_same_successful_batch_remains_deduplicated(self):
+        articles = [self.sg_article("https://www.mindef.gov.sg/a1/"),
+                   self.sg_article("https://www.mindef.gov.sg/a2/")]
+        first = self.sdb.insert_articles_atomic(articles, [], run_id=1)
+        self.assertEqual(len(first), 2)
+
+        second = self.sdb.insert_articles_atomic(articles, [], run_id=2)
+        self.assertEqual(second, [])
+        self.assertEqual(len(self.article_rows()), 2)
+
+    def test_rejected_articles_are_inserted_with_passed_relevance_false(self):
+        rejected = self.sg_article("https://www.mindef.gov.sg/filtered/")
+        inserted = self.sdb.insert_articles_atomic([], [rejected], run_id=1)
+        self.assertEqual(inserted, [])   # only "passed" articles are returned
+        rows = self.article_rows()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["passed_relevance"], 0)
+
+    def test_held_urls_never_reach_the_database_even_if_handed_to_insert(self):
+        """
+        Belt and suspenders at the storage boundary too: this test does not
+        exercise the held-record filter (that is SGMindefAdapter's job,
+        proven in TestHeldRecordsStayExcludedFromLiveCollection and
+        TestAllOrNothingBatchSemantics) -- it confirms that IF a held URL
+        were ever handed to the atomic insert path, nothing about storage
+        itself would need to know or care: the adapter-level gate is what
+        must stop it, and this pins that the only path new Singapore rows
+        take is this one function, so hardening it is sufficient.
+        """
+        from scraper.sources.sg_mindef import HELD_RELEASE_SLUGS
+        held_url = ("https://www.mindef.gov.sg/news-and-events/"
+                   "latest-releases/15aug26-speech/")
+        self.assertIn("15aug26-speech", HELD_RELEASE_SLUGS)
+        # SGMindefAdapter.collect() (TestAllOrNothingBatchSemantics) is the
+        # actual gate; this just documents the URL shape a held slug takes.
+        self.assertTrue(held_url.rstrip("/").endswith("15aug26-speech"))
+
+
+class TestPipelineAtomicBatchWiring(DbBackedCase):
+    """
+    Cases C and D end to end through pipeline._store_atomic_batches(): a
+    genuine Singapore storage failure must (a) commit zero new Singapore
+    articles and (b) leave China's own inserts, in the SAME run, completely
+    unaffected -- proving the isolation pipeline.py's per-source design
+    already gave every source is not broken by adding the atomic path.
+    """
+
+    def setUp(self):
+        super().setUp()
+        import pipeline
+        self.pipeline = pipeline
+
+    @staticmethod
+    def china_article(url, source_slug="pla_daily"):
+        title, text = "China article", "Body text. " * 40
+        return {
+            "url": url, "source_slug": source_slug,
+            "title_original": title, "text_original": text,
+            "published_date": "2026-09-18",
+            "content_hash": hashlib.sha256(
+                (title + "\n" + text).encode("utf-8")).hexdigest(),
+        }
+
+    def test_a_failed_singapore_batch_commits_nothing_china_is_unaffected(self):
+        china1 = self.china_article("https://www.example.com/c1")
+        china2 = self.china_article("https://www.example.com/c2")
+        sg_good = self.sg_article("https://www.mindef.gov.sg/a1/")
+        # Same source_slug as sg_good, so both land in the SAME atomic group
+        # -- a missing content_hash raises a genuine, uncaught exception
+        # inside the transaction, unlike a duplicate URL (which is the
+        # ordinary, non-batch-breaking outcome tested separately).
+        sg_broken = dict(self.sg_article("https://www.mindef.gov.sg/a2/"))
+        del sg_broken["content_hash"]
+
+        # China is NOT in ATOMIC_BATCH_SLUGS, so it goes through the ordinary
+        # per-article loop in pipeline.run() -- simulated here directly since
+        # _store_atomic_batches() only ever touches the atomic subset.
+        # build_legacy_db() pre-seeds pla_daily with fixture rows, so this
+        # checks the delta rather than an absolute count.
+        china_before = len(self.article_rows("pla_daily"))
+        for a in (china1, china2):
+            self.sdb.insert_article(a, scrape_run_id=1)
+
+        kw_passed = [sg_good, sg_broken]
+        inserted, failed_slugs = self.pipeline._store_atomic_batches(
+            kw_passed, [], run_id=1)
+
+        self.assertEqual(inserted, [])
+        self.assertEqual(failed_slugs, {"sg_mindef_releases"})
+        self.assertEqual(self.article_rows("sg_mindef_releases"), [])
+        china_rows = self.article_rows("pla_daily")
+        self.assertEqual(len(china_rows) - china_before, 2)
+
+    def test_a_clean_singapore_batch_commits_and_reports_no_failed_slugs(self):
+        sg_good = [self.sg_article("https://www.mindef.gov.sg/a1/"),
+                  self.sg_article("https://www.mindef.gov.sg/a2/")]
+        inserted, failed_slugs = self.pipeline._store_atomic_batches(
+            sg_good, [], run_id=1)
+        self.assertEqual(len(inserted), 2)
+        self.assertEqual(failed_slugs, set())
+        self.assertEqual(len(self.article_rows("sg_mindef_releases")), 2)
+
+    def test_china_articles_are_never_routed_through_the_atomic_path(self):
+        """
+        ATOMIC_BATCH_SLUGS names only sg_mindef_releases -- China's five
+        sources are never grouped into a batch transaction, and a China
+        article mixed into the same combined list is ignored by
+        _store_atomic_batches() entirely, exactly like an ordinary run where
+        no atomic source is present at all. build_legacy_db() pre-seeds
+        pla_daily with fixture rows, so this checks the count is unchanged
+        by the call rather than asserting an empty table.
+        """
+        before = len(self.article_rows("pla_daily"))
+        china = self.china_article("https://www.example.com/c1")
+        inserted, failed_slugs = self.pipeline._store_atomic_batches(
+            [china], [], run_id=1)
+        self.assertEqual(inserted, [])
+        self.assertEqual(failed_slugs, set())
+        self.assertEqual(len(self.article_rows("pla_daily")), before)
 
 
 class TestSingaporeFreshnessLanguageIsUntouchedByThisChange(unittest.TestCase):

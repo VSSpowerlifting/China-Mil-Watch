@@ -38,7 +38,7 @@ import time
 import urllib.robotparser
 from datetime import date, datetime, timedelta, timezone
 from html import unescape
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from urllib.parse import urlparse, urlunparse
 
 import requests
@@ -47,7 +47,12 @@ from core.collection import status as st
 from core.collection.contract import (
     CandidateReference, CaptureResult, CollectionWindow, DiscoveryResult,
     ExtractedDocument, ExtractionResult, SourceAdapter, SourceHealthResult,
+    SourceRunResult,
 )
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 HOST = "https://www.mindef.gov.sg"
 SITEMAP = HOST + "/sitemap.xml"
@@ -527,3 +532,102 @@ class SGMindefAdapter(SourceAdapter):
     # disables the source, offline either way. The override this replaced
     # hardcoded "shadow evaluation; not enabled in any production desk",
     # which was true only while this adapter had no production manifest.
+
+    def collect(
+        self, window: CollectionWindow
+    ) -> Tuple[SourceRunResult, List[ExtractedDocument]]:
+        """
+        All-or-nothing collection: this run's new documents are returned only
+        when every discovered reference collected cleanly.
+
+        The inherited generic `SourceAdapter.collect()`
+        (`core.collection.contract`) degrades gracefully per record -- exactly
+        right for China's five sources, where one bad PLA Daily page must not
+        cost the other fifty, and left unchanged there for that reason. This
+        adapter overrides it instead of using that default, because Singapore's
+        own history argues for the opposite: the corpus already holds two
+        records a silent extraction defect damaged badly enough to need a
+        governed, human-reviewed exclusion (DECISION_LOG.md, 2026-09-21) -- a
+        defect `extract()`'s own checks did not catch at the time it happened.
+        A live scheduled run gets no such review before publishing. So for
+        this adapter specifically, ANY trouble in a batch -- a fetch failure,
+        an extraction failure, or (defensively, on top of `discover()`'s own
+        filter) a held URL somehow present in the result -- withholds the
+        WHOLE batch rather than keeping the records that happened to succeed.
+        Nothing already published is touched, and nothing is lost long-term: a
+        withheld record is simply rediscovered and retried on the next
+        scheduled run, exactly as an adapter crash already was before this
+        change existed.
+        """
+        started = _now()
+        result = SourceRunResult(
+            source_slug=self.slug, status=st.OK,
+            desk_id=getattr(self.source, "desk_id", None), started_at=started,
+        )
+
+        if not getattr(self.source, "enabled", True):
+            result.status = st.SKIPPED_DISABLED
+            result.completed_at = _now()
+            return result, []
+
+        discovery = self.discover(window)
+        result.references_discovered = len(discovery.references)
+
+        if not discovery.ok or not discovery.references:
+            result.status = discovery.status
+            result.error_detail = discovery.error_detail
+            result.completed_at = _now()
+            return result, []
+
+        documents: List[ExtractedDocument] = []
+        fetch_failures = 0
+        extraction_failures = 0
+        for ref in discovery.references:
+            capture = self.fetch(ref)
+            if not capture.ok:
+                fetch_failures += 1
+                continue
+            result.fetched += 1
+            extracted = self.extract(capture)
+            if extracted.status == st.OK and extracted.documents:
+                documents.extend(extracted.documents)
+            else:
+                extraction_failures += 1
+
+        result.extracted = len(documents)
+        result.failed_fetches = fetch_failures
+        result.completed_at = _now()
+
+        # Defense in depth. discover() already filters HELD_RELEASE_SLUGS
+        # before window/cap selection, so this should never fire -- checked
+        # again here, against the actual documents about to be returned,
+        # because this is the last point inside the adapter before pipeline.py
+        # can reach pla_watch.db with them.
+        held_leak = [d.url for d in documents
+                     if release_slug(d.url) in HELD_RELEASE_SLUGS]
+
+        if fetch_failures or extraction_failures or held_leak:
+            notes = []
+            if fetch_failures or extraction_failures:
+                notes.append(
+                    "%d of %d discovered reference(s) failed fetch or "
+                    "extraction" % (fetch_failures + extraction_failures,
+                                    result.references_discovered))
+            if held_leak:
+                notes.append("held record(s) present in results: %s"
+                             % ", ".join(held_leak))
+            result.status = st.EXTRACTION_FAILURE
+            result.error_detail = ("; ".join(notes) +
+                                   " -- whole batch withheld, nothing "
+                                   "committed this run")
+            result.text_unavailable = None
+            return result, []
+
+        unusable = [d for d in documents if not d.has_usable_text]
+        result.text_unavailable = len(unusable)
+        if documents and unusable:
+            result.error_detail = (
+                "%d of %d parsed page(s) carried no usable text; their "
+                "titles, URLs and dates were kept"
+                % (len(unusable), len(documents)))
+        return result, documents

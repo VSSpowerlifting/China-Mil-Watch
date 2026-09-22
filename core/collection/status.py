@@ -98,6 +98,14 @@ specific failures above so an unclassified crash is never silently absorbed."""
 UNKNOWN_SOURCE = "unknown_source"
 """A slug was requested that no desk manifest declares."""
 
+STORAGE_FAILURE = "storage_failure"
+"""Collection produced a batch, but committing it to the database failed. Kept
+distinct from ADAPTER_ERROR because the adapter did nothing wrong -- this is
+the pipeline's own storage stage refusing a batch it could not commit
+atomically, for a source configured to require that (see pipeline.py's
+ATOMIC_BATCH_SLUGS). Reusing ADAPTER_ERROR here would misattribute a storage
+outage as a collector defect."""
+
 
 ALL_STATUSES: FrozenSet[str] = frozenset({
     OK, OK_NO_PUBLICATIONS, OK_ALL_DUPLICATES, OK_ALL_FILTERED,
@@ -106,6 +114,7 @@ ALL_STATUSES: FrozenSet[str] = frozenset({
     DISALLOWED_REDIRECT,
     UNEXPECTED_CONTENT_TYPE, OVERSIZED_RESPONSE, FETCH_FAILURE,
     EXTRACTION_FAILURE, ANALYSIS_FAILURE, ADAPTER_ERROR, UNKNOWN_SOURCE,
+    STORAGE_FAILURE,
 })
 
 SUCCESS_STATUSES: FrozenSet[str] = frozenset({
@@ -122,6 +131,7 @@ FAILURE_STATUSES: FrozenSet[str] = frozenset({
     DISALLOWED_REDIRECT,
     UNEXPECTED_CONTENT_TYPE, OVERSIZED_RESPONSE, FETCH_FAILURE,
     EXTRACTION_FAILURE, ANALYSIS_FAILURE, ADAPTER_ERROR, UNKNOWN_SOURCE,
+    STORAGE_FAILURE,
 })
 
 #: Outcomes where the source yielded no new stored document. Used by the health
