@@ -349,6 +349,14 @@ class SourceRegistry:
         Import happens here, at call time, from the manifest's dotted path —
         never at module scope in `core/`. That is what lets the core pipeline
         run with no knowledge of which country's scrapers exist.
+
+        The dotted path may name either an existing `scraper.base.BaseScraper`
+        subclass — the five China scrapers, wrapped in `LegacyScraperAdapter`
+        exactly as before — or a class already written directly against
+        `core.collection.contract.SourceAdapter` (`discover`/`fetch`/
+        `extract`), which is instantiated as itself. Legacy scrapers are never
+        `SourceAdapter` subclasses, so this cannot change which path an
+        existing manifest takes.
         """
         src = self.get_source(slug)
         if src is None:
@@ -360,8 +368,13 @@ class SourceRegistry:
             raise RegistryError(
                 "source %r declares no adapter in its desk manifest" % slug
             )
-        from adapters.legacy import LegacyScraperAdapter
-        return LegacyScraperAdapter(src)
+        from adapters.legacy import LegacyScraperAdapter, load_scraper_class
+        from core.collection.contract import SourceAdapter
+
+        cls = load_scraper_class(src.adapter)
+        if isinstance(cls, type) and issubclass(cls, SourceAdapter):
+            return cls(src)
+        return LegacyScraperAdapter(src, scraper_class=cls)
 
     def healthcheck_all(self) -> List:
         """Offline configuration healthcheck for every source."""

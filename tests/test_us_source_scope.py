@@ -125,7 +125,7 @@ class TestTheManifestClaimsOnlyWhatTheFeedCarries(unittest.TestCase):
         self.assertFalse((REPO_ROOT / "desks" / "us_indopacific").exists())
         discovered = {p.parent.name
                       for p in (REPO_ROOT / "desks").glob("*/manifest.json")}
-        self.assertEqual(discovered, {"china"})
+        self.assertEqual(discovered, {"china", "singapore"})
 
 
 class TestTheReadmeStatesTheDominantLimitation(unittest.TestCase):

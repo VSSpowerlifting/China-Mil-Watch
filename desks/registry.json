@@ -49,20 +49,16 @@
    "name": "Singapore Desk",
    "route": "singapore.html",
    "scope": "One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.",
-   "status": "shadow",
-   "status_explanation": "Under shadow evaluation. It collects into an isolated state branch that reaches neither the production database nor the published site, renders no records, and is counted nowhere. A shadow desk is not a qualified desk.",
+   "status": "live",
+   "status_explanation": "Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus is a one-time governed promotion of 57 corrected shadow records, not yet the output of a running production collector: the adapter is the one the shadow collector has used since 2026-08-19, but no scheduled production workflow invokes it yet. Two records stay held out of the promotable set for unrepaired charset damage.",
    "public": true,
-   "manifest": "shadow/singapore_mindef/manifest.json",
-   "has_production_records": false,
-   "qualification": {
-    "required_consecutive_days": 30,
-    "checkpoints": 3,
-    "explanation": "Qualification requires 30 consecutive days of shadow collection and governed checkpoint reviews. Elapsed days are held in the shadow ledger and are deliberately not restated here or on any page: a number copied out of the ledger goes stale the next day and would be read as a promise."
-   },
+   "manifest": "desks/singapore/manifest.json",
+   "has_production_records": true,
    "limits": [
     "This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defense coverage.",
     "Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.",
-    "No review has been completed and no verdict has been reached."
+    "The corpus is a one-time promotion, not a running daily collection: no scheduled production workflow collects new Singapore records yet, so the corpus will not grow until that is built as separate work.",
+    "Two records are held out of the promoted corpus: their CJK text was damaged by a historical extractor defect the correction overlay could not repair, and they are excluded rather than published with damaged text. See shadow/singapore_mindef/CORRECTIONS.md for which records and why."
    ]
   },
   {

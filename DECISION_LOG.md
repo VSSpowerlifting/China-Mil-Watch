@@ -4,6 +4,51 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-21 — Singapore MINDEF desk promoted: owner sign-off
+
+Owner decision (Benjamin Yang): **promote the Singapore MINDEF desk from
+`shadow` to `live`.** This is the desk-level sign-off `DECISION_LOG.md` has
+carried as outstanding since 2026-09-02 and restated on 2026-09-03: "Day 30,
+30 consecutive collecting days, and an owner sign-off recorded here all remain
+outstanding."
+
+What is recorded as true at the time of this decision:
+
+1. **Elapsed days.** Day zero `2026-08-19T23:03:09Z`; today is 2026-09-21 —
+   33 elapsed days, past the 30-day threshold. The state chain is unbroken
+   across the period (`shadow/singapore_mindef/CORRECTIONS.md` rehearsal:
+   32 ledgers, 0 breaks, `clock.json` unchanged).
+2. **Day 7 and Day 14 human checkpoint reviews are complete**, both
+   `pass_with_findings`, reviewer Benjamin Yang, published to
+   `review/singapore-mindef` (`403df921…3c3d89`, `10a28df1…e7b756`).
+3. **No separate Day 30 human checkpoint review is on record.** The review
+   kit's Day-30 packet is computed and reproduces byte-for-byte
+   (`4ad9a838…`, tree `ad97f27d…`, `publishable: yes`), which is a
+   computed-readiness signal, not a third completed human review. Owner
+   proceeds with sign-off without a distinct Day 30 review being written up.
+4. **Record-content promotion already happened, separately approved.**
+   `shadow/singapore_mindef/CORRECTIONS.md` records owner approval to apply
+   the correction overlay and promote 57 of 58 promotable records into
+   `pla_watch.db` (one held for unrepaired charset damage alongside
+   `16sep26-speech`, already excluded upstream); `915eb6194` is that commit.
+   That was approval of *data*, not of the desk's public status — this entry
+   is the second, desk-level decision.
+
+What this sign-off authorizes, and nothing beyond it:
+
+- `desks/singapore/manifest.json` becomes the production-discoverable
+  manifest (`core.manifests.load_all_desks()` globs `desks/*/manifest.json`),
+  with the `sg_mindef_releases` source `enabled: true`.
+- `desks/registry.json` records `singapore` as `status: "live"`,
+  `has_production_records: true`.
+- The 57 already-promoted records become visible through the standard desk
+  loader, corpus, coverage and search surfaces — no new collection behavior,
+  no template changes, no change to China's corpus or routes.
+
+Japan and US Indo-Pacific are unaffected by this entry and remain exactly as
+governed elsewhere in this document: neither is qualified, and this sign-off
+promotes Singapore alone.
+
 ## 2026-09-20 — The liveness gate derives its expectations, it does not keep a list
 
 Xinhua Military was rewritten from a stub into a working adapter on 2026-09-16

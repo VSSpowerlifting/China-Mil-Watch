@@ -1,0 +1,62 @@
+{
+  "manifest_version": 1,
+  "_comment": [
+    "Singapore Desk — production manifest.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json, so this file",
+    "makes the desk discoverable to sync_desk_config() and to the production",
+    "site build for the first time. It supersedes",
+    "shadow/singapore_mindef/manifest.json for every field it shares; that file",
+    "stays in place as the shadow evaluation's own record and is read by",
+    "nothing production once this manifest exists.",
+    "The desk's corpus is a one-time, governed promotion of 57 corrected shadow",
+    "records (DECISION_LOG 2026-09-21). The adapter, scraper/sources/sg_mindef.py",
+    ":SGMindefAdapter, is the same adapter the shadow collector has run daily",
+    "since 2026-08-19 — it is written directly against",
+    "core.collection.contract.SourceAdapter (discover/fetch/extract), not the",
+    "legacy BaseScraper interface the five China scrapers use, so",
+    "core.registry.SourceRegistry.get_adapter() was extended to instantiate a",
+    "SourceAdapter subclass directly instead of always wrapping it in",
+    "adapters.legacy.LegacyScraperAdapter."
+  ],
+  "desk": {
+    "desk_id": "singapore",
+    "display_name": "Singapore Desk",
+    "jurisdiction_code": "SG",
+    "default_timezone": "Asia/Singapore",
+    "default_calendar": "gregorian",
+    "supported_language_tags": ["en"],
+    "public_status": "public",
+    "active": true
+  },
+  "institutions": [
+    {
+      "institution_id": "sg_mindef",
+      "display_name": "Ministry of Defence",
+      "name_original": "Ministry of Defence, Singapore",
+      "institution_type": "defense_ministry",
+      "notes": "MINDEF publishes for itself and for the Singapore Armed Forces."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "sg_mindef_releases",
+      "institution_id": "sg_mindef",
+      "display_name": "MINDEF Singapore — official releases",
+      "base_url": "https://www.mindef.gov.sg",
+      "language_tag": "en",
+      "access_method": "html",
+      "authority_tier": "A",
+      "source_type": "ministry_website",
+      "originality": "original",
+      "enabled": true,
+      "listing_endpoints": [
+        "https://www.mindef.gov.sg/sitemap.xml"
+      ],
+      "article_url_patterns": [
+        "^https://www\\.mindef\\.gov\\.sg/news-and-events/latest-releases/[^/]+/$"
+      ],
+      "notes": "Tier A as the ministry's own authorized public position. The corpus is a one-time governed promotion of 57 corrected shadow records (DECISION_LOG 2026-09-21); two held records (15aug26-speech, 16sep26-speech) stay excluded for unrepaired charset damage. The adapter is the same one the shadow collector has run daily since 2026-08-19. Full scope documented in shadow/singapore_mindef/README.md.",
+      "adapter": "scraper.sources.sg_mindef:SGMindefAdapter"
+    }
+  ]
+}

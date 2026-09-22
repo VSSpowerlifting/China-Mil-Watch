@@ -333,11 +333,11 @@ class TestCandidateBuild(unittest.TestCase):
             self.assertIn('href="../record/%s.html"' % rec_id,
                           stub.read_text(encoding="utf-8"))
 
-    def test_china_is_the_only_collecting_desk_in_the_build(self):
+    def test_china_and_singapore_are_the_collecting_desks_in_the_build(self):
         html = (self.out / "desks.html").read_text(encoding="utf-8")
         self.assertIn("Live — collecting", html)
         self.assertIn("Access blocked — not collecting", html)
-        self.assertIn("1</b> collecting desk",
+        self.assertIn("2</b> collecting desk",
                       (self.out / "index.html").read_text(encoding="utf-8"))
 
     def test_japan_renders_with_no_records_and_no_sources(self):
