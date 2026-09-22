@@ -1504,9 +1504,9 @@ def corpus_guide_stats(corpus: list, run_days: list) -> dict:
     # recorded interruption. The changelog claims China Desk material from
     # that window is absent — that outage is a fact about China's own
     # pipeline, not a corpus-wide one — so this is scoped to China and is the
-    # number that claim stands or falls on, measured rather than assumed. A
-    # desk with no pipeline-run history of its own (Singapore's corpus is a
-    # one-time governed promotion, not scrape_runs output) can hold
+    # number that claim stands or falls on, measured rather than assumed.
+    # Another desk with no pipeline-run history of its own — its corpus a
+    # one-time governed promotion, not scrape_runs output — can hold
     # coincidentally-dated records in the same calendar window without that
     # bearing on China's claim at all.
     outage_records_china = sum(
