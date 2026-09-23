@@ -22,7 +22,6 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -119,12 +118,44 @@ class TestTheRenameBoundary(unittest.TestCase):
             HISTORICAL_NAME)
 
     def test_an_explicit_publication_wins_over_inference(self):
-        self.assertEqual(
-            resolve_identity({"issue_number": 2, "publication": CURRENT_NAME})["era"],
-            ERA_CURRENT)
-        self.assertEqual(
-            resolve_identity({"issue_number": 99, "publication": HISTORICAL_NAME})["era"],
-            ERA_HISTORICAL)
+        """
+        Each case is checked both ways on the same sidecar: the number alone
+        infers one era, and the explicit publication overrides it to the other.
+        Asserting only the explicit half would still pass against a resolver
+        that ignored issue numbers entirely.
+        """
+        cases = (
+            # A historical number, explicitly published under the current name.
+            (2, CURRENT_NAME, ERA_HISTORICAL, ERA_CURRENT),
+            # A current number, explicitly published under the predecessor
+            # name. No. 14 is the only number left for this direction: it is
+            # past the rename boundary, and every number after it must name
+            # its collection (next test).
+            (14, HISTORICAL_NAME, ERA_CURRENT, ERA_HISTORICAL),
+        )
+        for issue, publication, inferred, explicit in cases:
+            with self.subTest(issue=issue, publication=publication):
+                self.assertNotEqual(inferred, explicit)
+                self.assertEqual(
+                    resolve_identity({"issue_number": issue})["era"], inferred)
+                resolved = resolve_identity({"issue_number": issue,
+                                             "publication": publication})
+                self.assertEqual(resolved["era"], explicit)
+                self.assertEqual(resolved["publication"], publication)
+
+    def test_an_explicit_publication_does_not_admit_a_number_past_the_series(self):
+        """
+        This used to show the explicit field winning far from the boundary,
+        with a synthetic issue 99 published under the predecessor name. Since
+        2026-09-23 that sidecar is refused: an issue after No. 14 must name its
+        collection (DECISION_LOG 2026-09-23), and neither publication name
+        exempts it from that.
+        """
+        for publication in (HISTORICAL_NAME, CURRENT_NAME):
+            with self.subTest(publication=publication):
+                with self.assertRaises(IdentityError):
+                    resolve_identity({"issue_number": 99,
+                                      "publication": publication})
 
     def test_an_unknown_publication_is_refused(self):
         with self.assertRaises(IdentityError):
@@ -248,50 +279,27 @@ class TestGeneratorWiring(unittest.TestCase):
         self.assertIn("current_identity_fields(timing)", self.SRC)
 
 
-class TestWorkflowContract(unittest.TestCase):
+class TestTheDraftWorkflowIsRetired(unittest.TestCase):
+    """
+    `generate_pla_watch_draft.yml` did one thing: dispatch
+    `scripts/generate_pla_watch.py`, which since 2026-09-23 refuses before any
+    database read or API call. A dispatch button guaranteed to fail is retired,
+    not kept (DECISION_LOG 2026-09-23), and no other workflow may pick the
+    closed generator back up.
+    """
 
-    WF = (REPO_ROOT / ".github" / "workflows"
-          / "generate_pla_watch_draft.yml").read_text(encoding="utf-8")
+    WORKFLOWS = REPO_ROOT / ".github" / "workflows"
 
-    def test_the_workflow_describes_the_saturday_convention(self):
-        self.assertIn("Editions close on Saturday", self.WF)
-        self.assertNotIn("next Sunday", self.WF)
+    def test_the_draft_workflow_is_gone(self):
+        self.assertFalse((self.WORKFLOWS / "generate_pla_watch_draft.yml").exists())
 
-    def test_the_workflow_offers_a_retrospective_boolean(self):
-        self.assertRegex(self.WF, r"(?m)^      retrospective:$")
-        self.assertRegex(self.WF, r"(?m)^        type: boolean$")
-        self.assertRegex(self.WF, r"(?m)^        default: false$")
-
-    def test_inputs_reach_the_shell_through_the_environment(self):
-        self.assertIn("WEEK_ENDING: ${{ inputs.week_ending }}", self.WF)
-        self.assertIn("RETROSPECTIVE: ${{ inputs.retrospective }}", self.WF)
-        body = self.WF.split("run: |", 1)[-1]
-        self.assertNotIn("${{ inputs.", body)
-
-    def test_the_flag_is_passed_only_when_selected(self):
-        """The guard, executed as shell against every input combination."""
-        start = self.WF.index('set --\n')
-        end = self.WF.index('python scripts/generate_pla_watch.py', start)
-        guard = "\n".join(line[10:] for line in self.WF[start:end].splitlines())
-        script = ("set -euo pipefail\n" + guard
-                  + '\nprintf "%s" "$*"\n')
-
-        def run(env):
-            full = {"PATH": "/usr/bin:/bin"}
-            full.update(env)
-            out = subprocess.run(["bash", "-c", script], env=full,
-                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                 text=True)
-            self.assertEqual(out.returncode, 0, out.stdout)
-            return out.stdout.strip()
-
-        self.assertEqual(run({}), "")
-        self.assertEqual(run({"WEEK_ENDING": "", "RETROSPECTIVE": "false"}), "")
-        self.assertEqual(run({"WEEK_ENDING": "2026-08-15", "RETROSPECTIVE": "false"}),
-                         "--week-ending 2026-08-15")
-        self.assertEqual(run({"WEEK_ENDING": "2026-08-15", "RETROSPECTIVE": "true"}),
-                         "--week-ending 2026-08-15 --retrospective")
-        self.assertEqual(run({"RETROSPECTIVE": "true"}), "--retrospective")
+    def test_no_workflow_runs_the_closed_generator(self):
+        workflows = sorted(self.WORKFLOWS.glob("*.yml"))
+        self.assertTrue(workflows, "workflow directory moved")
+        for wf in workflows:
+            with self.subTest(workflow=wf.name):
+                self.assertNotIn("scripts/generate_pla_watch.py",
+                                 wf.read_text(encoding="utf-8"))
 
 
 class TestTemplateSurface(unittest.TestCase):
@@ -972,7 +980,7 @@ class TestNoNetworkOrProductionWrites(unittest.TestCase):
         self.assertEqual(self._imports() & forbidden, set())
 
     def test_this_module_imports_only_what_it_needs(self):
-        allowed = {"__future__", "json", "re", "shutil", "subprocess", "sys",
+        allowed = {"__future__", "json", "re", "shutil", "sys",
                    "tempfile", "unittest", "datetime", "pathlib",
                    "core.edition_identity", "ast", "importlib.util",
                    "scripts.generate_pla_watch", "scripts.rerender_pla_watch",

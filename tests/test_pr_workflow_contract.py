@@ -57,7 +57,6 @@ WORKFLOW = WORKFLOW_DIR / "pr_offline_checks.yml"
 ESTABLISHED_WORKFLOWS = (
     "daily_update.yml",
     "deploy_output_only.yml",
-    "generate_pla_watch_draft.yml",
 )
 
 # Commands whose presence would mean this job is no longer offline and inert.

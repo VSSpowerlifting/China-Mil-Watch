@@ -4,6 +4,75 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-23 — Indo-Pacific Record Briefs is the continuing collection; The PLA Watch is predecessor attribution
+
+**Owner direction, given in the 2026-09-23 working session.** It sets the
+editorial contract below and authorizes the source-level foundation that
+implements it: `core/brief_contract.py`, `scripts/author_brief.py`, and
+additive changes to `core/edition_identity.py` and `storage/db.py`. It
+authorizes no public route, renderer, template change, regenerated output or
+deployment, and it changes no existing issue.
+
+1. **One collection.** *Indo-Pacific Record Briefs* is the continuing
+   collection of evidence-led analysis. It includes the existing issues and
+   every future one. Every existing sidecar, published title, URL, feed entry ID
+   and original PLA Watch attribution stays as published; a unified collection
+   may display that provenance and never rewrites it. For future issues this
+   supersedes 2026-09-03 point 2 ("*The PLA Watch* remains the series name");
+   for the existing issues it changes nothing.
+2. **No new issue is published as The PLA Watch.** `SERIES_NAME` keeps its name
+   and value, because it names what the existing issues were published as. A
+   brief records `collection` explicitly; `is_brief()` refuses a brief-shaped
+   sidecar that does not, and any issue after No. 14 that names no collection.
+   `scripts/generate_pla_watch.py` now refuses before any database read or API
+   call, dry runs included. `generate_pla_watch_draft.yml`, whose only job was
+   to dispatch it, is retired rather than left as a button guaranteed to fail.
+3. **What a brief is.** The existing article anatomy, beginning with a concrete
+   Indo-Pacific development and comparing how the relevant governments or
+   institutions officially describe or respond to it. Evidence from at least
+   two live desks by default; a single-desk brief needs an explicitly approved
+   exception, recorded in the sidecar. No brief has to include every desk.
+4. **Desk and language are the record's own.** Candidates are selected by the
+   brief's named desks (`storage.db.get_articles_for_desks`). Screening state
+   is carried, not filtered on: the Singapore records have never been
+   relevance-screened, and the weekly generator's filter would have dropped the
+   whole desk. Each trail entry keeps its desk and its source's language tag,
+   with the original title in `title_original`; briefs do not write `title_zh`.
+5. **Cross-desk claims cite each desk.** Every cross-desk claim cites at least
+   one trail entry from each desk it compares. Coordination is never inferred
+   from similar timing; a claim of coordination names the cited record that
+   states it.
+6. **Numbers are stable once approved.** Assigned at approval from the highest
+   number already assigned, never from week-ending rank, and never reassigned.
+7. **No number is assigned while No. 14 is unreconciled** (point 9).
+   `core.brief_contract.UNRECONCILED_ISSUES` holds it; clearing it is an owner
+   ruling recorded here.
+8. **Regional Assessments** are a separate, longer format under Indo-Pacific
+   Record. Their boundary is `docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md` §5c;
+   nothing is built for them.
+9. **No. 14's status, verified 2026-09-23 and not changed here.** Proven: its
+   sidecar entered as a draft for review (`b67a29763`, 2026-09-03); PR #43
+   merged it to main (`36138b6ab`, 2026-09-05); an output-only deploy first
+   published it (`gh-pages` `57ca945f5`, 2026-09-05T16:27:58Z; redeployed in
+   `536ff6849`, 2026-09-08). The live page answers HTTP 200, byte-identical to
+   `gh-pages`, with its canonical address, its `Retrospective edition` label
+   and no `noindex`; the series index, archive, sitemap and feed link it. Not
+   proven: approval. No entry here records it, and no completed
+   `EDITORIAL_QA_CHECKLIST.md` record exists. Stale: the 2026-09-04 point 2
+   here ("not approved and not published") is contradicted on publication, as
+   are `PROJECT_STATE.md` §4 and `docs/ROADMAP.md` §1. Its status and its number
+   stay as they are until the owner rules.
+10. **Consequence for the cadence ruling.** 2026-09-03 point 1 prepared w/e
+    2026-08-22 as a retrospective edition of the predecessor series. It can no
+    longer be one. Whether that week becomes a brief (two desks, or an approved
+    exception) or a disclosed gap is the owner's decision.
+
+Found while building this, recorded and not fixed: 17 of the 172 `title_zh`
+values in existing trails are English — titles from the China Desk's two
+English-language sources, rendered under `lang="zh-Hans"`. The sidecars are
+not edited. A renderer that shows them should take the language from the
+source, not from the key.
+
 ## 2026-09-21 — Singapore MINDEF desk promoted: owner sign-off
 
 Owner decision (Benjamin Yang): **promote the Singapore MINDEF desk from

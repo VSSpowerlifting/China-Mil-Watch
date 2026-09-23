@@ -33,9 +33,10 @@ Durable documents, and what each one governs:
   a separate redirect-only Pages site
   (`VSSpowerlifting/chinamilwatch-legacy-redirects`) that sends every address
   the predecessor published to its counterpart on the current domain.
-* **"The PLA Watch" is current** — it is the name of the China Desk weekly
-  analytical series, and the thirteen published editions keep their addresses,
-  issue numbers and original masthead.
+* **Indo-Pacific Record Briefs is the continuing analytical collection**
+  (DECISION_LOG 2026-09-23). "The PLA Watch" is predecessor attribution: the
+  existing issues keep it, with their addresses, issue numbers and original
+  masthead, and no new issue is authored or published under it.
 * **Renderer:** `.venv/bin/python site/render.py`. `DEFAULT_SITE_MODE` is
   `indo-pacific-record`. `site/generator.py` is the `legacy` renderer and is
   the rollback path only — it is not the production renderer.
@@ -60,7 +61,7 @@ for its **sources**.
 | Desk | Status | Public meaning |
 |---|---|---|
 | China | `live` | Collecting daily into the production corpus. The only mature collection. |
-| Singapore | `shadow` | Isolated evaluation. No production records, no public counts. |
+| Singapore | `live` | Promoted 2026-09-21 (DECISION_LOG). One source, MINDEF releases; its 57 promoted records had not been relevance-screened when measured 2026-09-23. |
 | Japan | `shadow` | Isolated evaluation. No production records, no public counts. |
 | US Indo-Pacific | `access_blocked` | Declared scope only; `robots.txt` returns 403, so permission cannot be established. |
 
@@ -98,22 +99,35 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **13 editions published**, No. 1 (2026-05-09 pilot) through **No. 13, week
-  ending 2026-08-08**.
+* **Indo-Pacific Record Briefs: source-level foundation only** (2026-09-23). A
+  brief can be scaffolded and checked (`scripts/author_brief.py`,
+  `core/brief_contract.py`) but has no route, renderer or feed, and none is
+  numbered while No. 14 is unreconciled. `scripts/generate_pla_watch.py`
+  authors nothing new, so the 2026-09-03 plan for a w/e 2026-08-22
+  retrospective cannot proceed as The PLA Watch: brief or disclosed gap is the
+  owner's decision.
+* **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
+  published.** No. 14 is publicly served, with its status unreconciled (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
-  exists for the weeks ending 2026-08-15, 08-22 or 08-29. The owner ruling of
-  2026-09-03 (`DECISION_LOG.md`) prepares **08-15 and 08-22 as retrospective
+  exists for the weeks ending 2026-08-22 or 08-29; w/e 2026-08-15 is No. 14
+  (below). The owner ruling of 2026-09-03 (`DECISION_LOG.md`) prepares
+  **08-15 and 08-22 as retrospective
   editions**, rules **08-29 a disclosed gap** (36% of that window was never
   relevance-screened), and **resumes normal cadence at 09-05**. Restoring
   cadence remains the first priority in `docs/ROADMAP.md`.
-* **No. 14 is prepared as a draft and is not published or approved.** The
-  authoring blocker is resolved: the edition-identity, retrospective-timing and
-  cover contract merged with PR #44, so a retrospective edition can be authored
-  and rendered through the API-free path. The w/e 2026-08-15 draft exists on
-  `editorial/pla-watch-no-14-retrospective` with its sidecar, page, gradient
-  cover and LinkedIn companion, and **awaits Benjamin's editorial review**. No
-  human checklist item is complete and nothing is deployed.
-* **14 editions now exist in the tree, 13 published.** No. 14 is the first
+* **No. 14's publication status is unreconciled** (verified 2026-09-23;
+  DECISION_LOG 2026-09-23 point 9). Prepared as a draft for review (w/e
+  2026-08-15), it merged with PR #43 and has been publicly served since an
+  output-only deploy on 2026-09-05, linked from the series index, archive,
+  sitemap and feed. No approval and no completed `EDITORIAL_QA_CHECKLIST.md`
+  record exist. The 2026-09-04 ruling ("not published") is stale on
+  publication. Its status and number are unchanged until the owner rules.
+  Recommended path: an `EDITORIAL_QA_CHECKLIST.md` review of the page as
+  served, then a DECISION_LOG entry recording what the review found and the
+  owner's ruling. Approval is not recorded retroactively without that review,
+  and withdrawal is one option open to the owner, not a requirement.
+* **14 editions now exist in the tree, all publicly served** (No. 14 without
+  recorded approval, above). No. 14 is the first
   edition under the Indo-Pacific Record masthead and the first marked
   `publication_timing: retrospective`. Editions 1–13 keep the China Mil Watch
   identity on their own pages; site chrome is current throughout.
@@ -125,6 +139,10 @@ disclosed, and never backfilled.
   direction. That gap is recorded, not implied.
 
 ## 5. Shadow desks
+
+**Singapore was promoted to `live` on 2026-09-21** (DECISION_LOG); what follows
+about Singapore is its shadow-period record, kept as written. Japan remains in
+shadow evaluation.
 
 Neither desk is qualified, and neither may be described or promoted as
 qualified. Doctrine in `docs/SHADOW_COLLECTION.md`; review procedure in

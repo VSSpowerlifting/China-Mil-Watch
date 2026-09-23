@@ -53,12 +53,27 @@ Stored author fields still win over era defaults. The era supplies the default
 only when the sidecar is silent — which is what makes editions 1 and 2 correct
 by rule instead of by accident.
 
+The collection, and why membership is not attribution
+------------------------------------------------------
+Since 2026-09-23 (`DECISION_LOG.md`) every issue belongs to one continuing
+collection, *Indo-Pacific Record Briefs*: the existing issues and every issue
+published from now on. The existing issues stay *published as* The PLA Watch —
+their titles, pages, feed entries and stored identity say so, and a collection
+may display that provenance but never rewrite it. So `SERIES_NAME` keeps naming
+the predecessor series, and no new issue is published under it. A brief says it
+is a brief by recording `collection` explicitly; `is_brief()` refuses a sidecar
+that looks like a brief without saying so, and any issue after
+`LAST_PREDECESSOR_ISSUE` that names no collection, rather than reading either
+as The PLA Watch.
+
 What this module does *not* decide
 ----------------------------------
 The current site chrome — the series landing page, the archive, the terms page,
 navigation, and site-level metadata — is Indo-Pacific Record, always, even
 though the archive it lists contains historical editions. That is a property of
-the site, not of any edition, so it is not resolved per edition here.
+the site, not of any edition, so it is not resolved per edition here. Nor does
+it decide whether a brief satisfies its editorial contract or which number it
+takes: that is `core.brief_contract`.
 """
 
 from __future__ import annotations
@@ -74,8 +89,30 @@ LAST_HISTORICAL_ISSUE = 13
 #: date from README.md and DECISION_LOG.md.
 RENAME_DATE = date(2026, 8, 27)
 
-#: The series. Unchanged by the rename, and not era-dependent.
+#: The predecessor series. Every existing issue was published in it and keeps
+#: it. Unchanged by the rename, and not era-dependent. Since 2026-09-23 it is
+#: attribution only: no new issue is authored or published under it. The
+#: constant keeps its name because it names what those issues were published
+#: as; renaming it would invite exactly the silent re-attribution this module
+#: exists to prevent.
 SERIES_NAME = "The PLA Watch"
+
+#: The continuing collection. It includes every existing issue and every issue
+#: published from now on. Membership is not attribution: an existing issue is in
+#: the collection and is still published as The PLA Watch.
+COLLECTION_NAME = "Indo-Pacific Record Briefs"
+
+#: No issue numbered above this is published as The PLA Watch; every existing
+#: sidecar is at or below it. This records that the predecessor series is
+#: closed. It does not say No. 14 is published — its status is unreconciled,
+#: see `core.brief_contract.UNRECONCILED_ISSUES` — and it does not decide the
+#: next number.
+LAST_PREDECESSOR_ISSUE = 14
+
+#: Fields only a brief carries. A sidecar holding any of them without naming
+#: its collection is refused rather than read as The PLA Watch.
+BRIEF_ONLY_FIELDS = ("brief_schema", "desks", "development",
+                     "cross_desk_claims", "single_desk_exception")
 
 ERA_HISTORICAL = "historical"
 ERA_CURRENT = "current"
@@ -193,6 +230,53 @@ def era_for(sidecar: dict) -> str:
     return ERA_CURRENT
 
 
+def _issue_number(sidecar: dict):
+    issue = sidecar.get("issue_number")
+    if isinstance(issue, bool):
+        return None
+    if isinstance(issue, int):
+        return issue
+    if isinstance(issue, str) and issue.strip().isdigit():
+        return int(issue)
+    return None
+
+
+def is_brief(sidecar: dict) -> bool:
+    """
+    Whether a sidecar is an Indo-Pacific Record Brief rather than an issue
+    published as The PLA Watch.
+
+    An explicit `collection` decides, and only the collection's own name is
+    accepted: nothing new may declare itself The PLA Watch. Absent means an
+    issue published as The PLA Watch, because every sidecar written before the
+    collection existed lacks the field — but only up to
+    `LAST_PREDECESSOR_ISSUE`, and never for a sidecar carrying brief-only
+    fields. Those two cases are refused rather than guessed.
+    """
+    sidecar = sidecar or {}
+    explicit = (sidecar.get("collection") or "").strip()
+    if explicit:
+        if explicit == COLLECTION_NAME:
+            return True
+        raise IdentityError(
+            "collection must be %r, got %r. No new issue is published as %s, "
+            "and an existing issue records no collection at all."
+            % (COLLECTION_NAME, explicit, SERIES_NAME))
+
+    present = [f for f in BRIEF_ONLY_FIELDS if f in sidecar]
+    if present:
+        raise IdentityError(
+            "sidecar carries brief fields (%s) but names no collection; a "
+            "brief records collection=%r" % (", ".join(present), COLLECTION_NAME))
+
+    issue = _issue_number(sidecar)
+    if issue is not None and issue > LAST_PREDECESSOR_ISSUE:
+        raise IdentityError(
+            "issue %d names no collection, and no issue after No. %d is "
+            "published as %s" % (issue, LAST_PREDECESSOR_ISSUE, SERIES_NAME))
+    return False
+
+
 def resolve_identity(sidecar: dict) -> dict:
     """
     The publication identity for one edition.
@@ -200,8 +284,13 @@ def resolve_identity(sidecar: dict) -> dict:
     Stored author fields win; the era supplies defaults only where the sidecar
     is silent. `pw_root` is the relative path from a post page to the parent
     site root, matching the existing template convention.
+
+    `series_name` is what the issue was published as — The PLA Watch for every
+    existing issue, the collection's own name for a brief. `collection` is the
+    same for both: membership, not attribution.
     """
     sidecar = sidecar or {}
+    brief = is_brief(sidecar)
     era = era_for(sidecar)
     profile = _HISTORICAL if era == ERA_HISTORICAL else _CURRENT
     timing = parse_timing(sidecar.get("publication_timing"))
@@ -215,7 +304,9 @@ def resolve_identity(sidecar: dict) -> dict:
         "era": era,
         "publication": profile["publication"],
         "publication_home_label": profile["publication_home_label"],
-        "series_name": SERIES_NAME,
+        "series_name": COLLECTION_NAME if brief else SERIES_NAME,
+        "collection": COLLECTION_NAME,
+        "is_brief": brief,
         "publication_timing": timing,
         "is_retrospective": timing == TIMING_RETROSPECTIVE,
         "retrospective_label": (RETROSPECTIVE_LABEL
@@ -243,3 +334,20 @@ def current_identity_fields(timing: str = TIMING_REGULAR) -> dict:
         "author_bio": _CURRENT["author_bio"],
         "author_links": links,
     }
+
+
+def brief_identity_fields(timing: str = TIMING_REGULAR) -> dict:
+    """
+    The identity fields a new brief records explicitly: its collection and the
+    current publication and author identity, so nothing about it is inferred
+    from an absence.
+
+    `author_links` is left out on purpose. Stored links are relative to a
+    page's address, and a brief has no route yet; recording them now would
+    store links whose correctness depends on a decision nobody has made. The
+    renderer that gives briefs an address supplies them.
+    """
+    fields = current_identity_fields(timing)
+    del fields["author_links"]
+    fields["collection"] = COLLECTION_NAME
+    return fields

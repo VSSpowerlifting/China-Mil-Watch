@@ -6,6 +6,13 @@ Usage:
 
 Reads analyzed articles from the DB for the given week, calls the Claude API
 with structured tool_use output, and writes HTML + LinkedIn .txt files.
+
+Closed to new issues since 2026-09-23 (DECISION_LOG): no future issue is
+authored or published as The PLA Watch, so `main()` refuses before any database
+read or API call. Existing issues re-render from their sidecars with
+`scripts/rerender_pla_watch.py`; new issues are Indo-Pacific Record Briefs,
+scaffolded with `scripts/author_brief.py`. The module's functions stay
+importable for the code that shares them.
 """
 
 import argparse
@@ -24,6 +31,7 @@ sys.path.insert(0, str(ROOT))
 import anthropic
 
 from config import DB_PATH, ANTHROPIC_API_KEY, SITE_ORIGIN
+from core.brief_contract import refuse_predecessor_authoring  # noqa: E402
 from core.edition_identity import (                          # noqa: E402
     TIMING_REGULAR, TIMING_RETROSPECTIVE, current_identity_fields,
     resolve_identity)
@@ -681,6 +689,10 @@ def load_existing_posts(posts_dir: Path) -> list[dict]:
 
 def main():
     args = parse_args()
+    # Before any database read or API call: this path would author a new
+    # issue as The PLA Watch, which no future issue is (DECISION_LOG
+    # 2026-09-23). Dry runs included — a dry run is still a PLA Watch draft.
+    refuse_predecessor_authoring()
     week_ending = resolve_week_ending(args.week_ending)
     week_start = week_ending - timedelta(days=6)
 
