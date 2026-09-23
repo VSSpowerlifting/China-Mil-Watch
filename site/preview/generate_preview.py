@@ -233,6 +233,12 @@ STATUS_PROSE = {
     "unknown_source": ("Unknown source",
                        "A source was requested that no desk manifest "
                        "declares. This is a configuration fault, not silence."),
+    "storage_failure": ("Storage transaction failure",
+                        "The collected batch could not be committed to "
+                        "storage as a single transaction, so the attempt was "
+                        "rolled back in full. Nothing from it was partially "
+                        "saved, and any previously stored records for this "
+                        "source are unaffected."),
 }
 
 #: Statuses that describe an access refusal rather than a fault on our side.

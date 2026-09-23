@@ -1065,10 +1065,21 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         The third is rendered only when such a source exists. Asserting it
         unconditionally asserted that the project always has a broken source,
         which stopped being true when `xinhua_mil` was implemented.
+
+        The failure count's grammar is checked against the actual run, not
+        asserted as a fixed plural: a real run with exactly one execution
+        failure correctly renders "1 execution failure", not "...failures",
+        and a stale unconditional plural check would flag that as broken.
         """
         html = self.page("coverage.html")
         self.assertIn("collectors executed", html)
-        self.assertIn("execution failures", html)
+        failed = self.run_status["failed"]
+        match = re.search(r"<b>(\d+)</b> execution failure(s?)</li>", html)
+        self.assertIsNotNone(match, "execution-failure count line not found")
+        self.assertEqual(int(match.group(1)), failed,
+                         "rendered failure count does not match the run")
+        self.assertEqual(match.group(2), "" if failed == 1 else "s",
+                         "execution-failure grammar does not match its count")
         self.assertIn("collecting desk", html)
         if self.run_status["unimplemented"]:
             self.assertIn("unimplemented adapter", html)
@@ -1106,13 +1117,27 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         """
         Not from the DESKS presentation constant. A rename or a new entry in
         that literal must not be able to change what the strip reports.
+
+        China and Singapore are both governed, active collecting desks
+        (`desks` table: china/legacy/active, singapore/public/active since
+        "Activate Singapore MINDEF desk"). Which of them shows up in a given
+        run's derived set depends on which sources actually executed in the
+        latest recorded run -- that per-run variability is exactly what this
+        derivation exists to carry, so pinning it to one exact list would
+        defeat the point. What must always hold: China never drops out, and
+        nothing outside the currently governed desk set appears.
         """
         data = gp.load_corpus(TRACKED_DB)
         summary = gp.run_status_summary(
             data["latest_run"], data["run_results"],
             data["collecting_desks"], data["unmapped_executed"])
         self.assertEqual(summary["desks"], len(data["collecting_desks"]))
-        self.assertEqual(sorted(data["collecting_desks"]), ["china"])
+        governed_active_desks = {"china", "singapore"}
+        derived = set(data["collecting_desks"])
+        self.assertIn("china", derived)
+        self.assertTrue(derived.issubset(governed_active_desks),
+                        "collecting desk(s) outside the governed active set: "
+                        "%s" % sorted(derived - governed_active_desks))
 
     def test_desk_count_is_not_a_source_count(self):
         """
