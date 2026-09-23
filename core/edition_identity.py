@@ -1,16 +1,17 @@
 """
-Which publication published a given edition of The PLA Watch.
+Which publication published a given issue: an edition of The PLA Watch, or an
+Indo-Pacific Record Brief.
 
 Why this module exists
 ----------------------
 The project was renamed on 2026-08-27: *China Mil Watch* became *Indo-Pacific
 Record* (`README.md`, `DECISION_LOG.md`). The series name, *The PLA Watch*, did
-not change and is unaffected by any of this.
+not change with the rename; since 2026-09-23 it is closed to new issues (below).
 
 Editions 1–13 were published under the predecessor name. They keep it. An
 edition is a dated artifact of record: re-rendering one must reproduce the page
 that was published, not restate it under whatever the project is called today.
-Edition 14 onward are published by Indo-Pacific Record.
+No. 14 resolves to Indo-Pacific Record, and so does every brief.
 
 The hazard this closes
 ----------------------
@@ -38,10 +39,14 @@ where those two diverge, so a `week_ending < RENAME_DATE` test would get it
 backwards and put No. 14 under the retired name.
 
 `RENAME_DATE` is retained only as a documented fallback for a sidecar carrying
-no issue number at all, which no edition in this repository does.
+no issue number at all, which no edition in this repository does. It never
+applies to a brief: an unnumbered brief draft is current whatever week it
+covers.
 
 Resolution order
 ----------------
+  0. a brief (`is_brief()`) is always current, and may name no other
+     publication;
   1. an explicit `publication` recorded in the sidecar always wins — new
      sidecars record it, so a page can be reproduced without inferring anything;
   2. otherwise `issue_number` decides against `LAST_HISTORICAL_ISSUE`;
@@ -51,7 +56,9 @@ Resolution order
 
 Stored author fields still win over era defaults. The era supplies the default
 only when the sidecar is silent — which is what makes editions 1 and 2 correct
-by rule instead of by accident.
+by rule instead of by accident. A brief's stored author fields may not present
+The PLA Watch or China Mil Watch as a current role
+(`_predecessor_role_problems`); an existing issue's are never checked.
 
 The collection, and why membership is not attribution
 ------------------------------------------------------
@@ -78,6 +85,7 @@ takes: that is `core.brief_contract`.
 
 from __future__ import annotations
 
+import re
 from datetime import date
 
 #: The last edition published under the predecessor name. Editions at or below
@@ -113,6 +121,20 @@ LAST_PREDECESSOR_ISSUE = 14
 #: its collection is refused rather than read as The PLA Watch.
 BRIEF_ONLY_FIELDS = ("brief_schema", "desks", "development",
                      "cross_desk_claims", "single_desk_exception")
+
+#: The predecessor series and the predecessor publication, as a brief's stored
+#: author fields might name them. Case- and spacing-insensitive.
+PREDECESSOR_NAME_RE = re.compile(r"(?:the\s+)?PLA\s+Watch|China\s+Mil\s+Watch",
+                                 re.IGNORECASE)
+
+#: Words that mark a mention in a brief's `author_bio` as history rather than a
+#: current role. One must come *before* the name in the same sentence: "He
+#: previously wrote The PLA Watch" passes, "He writes The PLA Watch, formerly
+#: ..." does not. Bare "was" is not one — "was X and is principal analyst at
+#: China Mil Watch" would slip through.
+PAST_MARKER_RE = re.compile(
+    r"\b(?:formerly|previously|former|wrote|until|predecessor|originally|"
+    r"published\s+as)\b", re.IGNORECASE)
 
 ERA_HISTORICAL = "historical"
 ERA_CURRENT = "current"
@@ -150,9 +172,11 @@ _HISTORICAL = {
 #: Current author identity, derived from the About page rather than invented:
 #: "Benjamin Yang — Creator and Editor", "studies International Affairs at
 #: George Washington University's Elliott School, with interests in U.S.–China
-#: relations, public diplomacy, and security affairs. He writes The PLA Watch
-#: and maintains the project's collection pipeline." Note "studies", not
+#: relations, public diplomacy, and security affairs." Note "studies", not
 #: "incoming" — that wording is retired and survives only in historical editions.
+#: What he writes is Indo-Pacific Record Briefs (DECISION_LOG 2026-09-23); the
+#: About page's "He writes The PLA Watch" predates that ruling and is corrected
+#: with the site chrome, not here. No. 14 stores its own bio and keeps it.
 _CURRENT = {
     "era": ERA_CURRENT,
     "publication": "Indo-Pacific Record",
@@ -162,8 +186,8 @@ _CURRENT = {
         "Benjamin Yang is the creator and editor of Indo-Pacific Record. He "
         "studies International Affairs at George Washington University’s "
         "Elliott School, with interests in U.S.–China relations, public "
-        "diplomacy, and security affairs. He writes The PLA Watch and "
-        "maintains the project’s collection pipeline."
+        "diplomacy, and security affairs. He writes Indo-Pacific Record "
+        "Briefs and maintains the project’s collection pipeline."
     ),
 }
 
@@ -241,6 +265,35 @@ def _issue_number(sidecar: dict):
     return None
 
 
+def _predecessor_role_problems(sidecar: dict) -> list:
+    """
+    A brief's stored `author_title` / `author_bio` naming The PLA Watch or
+    China Mil Watch as a current publication or role. Applied to briefs only:
+    Nos. 3-13 store "Principal Analyst, China Mil Watch" and keep it.
+
+    A title is a current role, so it may not name either. A bio may, but only
+    as history: each sentence mentioning one must put a past marker
+    (`PAST_MARKER_RE`) before the name. Anything else about the author is the
+    author's own wording and is not checked.
+    """
+    problems = []
+    title = str(sidecar.get("author_title") or "")
+    found = PREDECESSOR_NAME_RE.search(title)
+    if found:
+        problems.append(
+            "a brief's author_title names %r; a title is a current role, and "
+            "no current role is held at a predecessor publication" % found.group(0))
+    bio = str(sidecar.get("author_bio") or "")
+    for sentence in re.split(r"(?<=[.!?;])\s+", bio):
+        for found in PREDECESSOR_NAME_RE.finditer(sentence):
+            if not PAST_MARKER_RE.search(sentence[:found.start()]):
+                problems.append(
+                    "a brief's author_bio presents %r as current in %r; mark "
+                    "it as history (e.g. 'previously', 'formerly') before the "
+                    "name" % (found.group(0), sentence.strip()))
+    return problems
+
+
 def is_brief(sidecar: dict) -> bool:
     """
     Whether a sidecar is an Indo-Pacific Record Brief rather than an issue
@@ -256,7 +309,8 @@ def is_brief(sidecar: dict) -> bool:
     A brief is published by Indo-Pacific Record, whatever week it covers, so a
     brief naming any other `publication` — the retired China Mil Watch
     included — is refused here, where the contract check and the resolver both
-    meet it.
+    meet it. So is a brief whose stored author fields present either
+    predecessor name as a current role (`_predecessor_role_problems`).
     """
     sidecar = sidecar or {}
     explicit = (sidecar.get("collection") or "").strip()
@@ -269,6 +323,9 @@ def is_brief(sidecar: dict) -> bool:
                     "the predecessor's name and stays on the issues published "
                     "under it." % (_CURRENT["publication"], publication,
                                    _HISTORICAL["publication"]))
+            problems = _predecessor_role_problems(sidecar)
+            if problems:
+                raise IdentityError("; ".join(problems))
             return True
         raise IdentityError(
             "collection must be %r, got %r. No new issue is published as %s, "

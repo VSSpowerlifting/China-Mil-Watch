@@ -253,6 +253,21 @@ class TestNothingNewIsPublishedAsThePlaWatch(unittest.TestCase):
                     self.assertEqual(identity["author_title"],
                                      sidecar["author_title"])
 
+    def test_the_legacy_author_fields_the_brief_rule_must_not_reach(self):
+        """
+        Makes the preservation test above bite: Nos. 3-13 really do store the
+        predecessor title and bio the brief rule refuses, and still resolve to
+        them unchanged.
+        """
+        legacy = [sc for sc in existing_sidecars().values()
+                  if "China Mil Watch" in (sc.get("author_title") or "")]
+        self.assertGreaterEqual(len(legacy), 11, "fixture assumption changed")
+        for sidecar in legacy:
+            with self.subTest(issue=sidecar["issue_number"]):
+                identity = resolve_identity(sidecar)
+                self.assertEqual(identity["author_title"], sidecar["author_title"])
+                self.assertEqual(identity["author_bio"], sidecar["author_bio"])
+
     def test_brief_identity_is_explicit_and_stores_no_route_bound_links(self):
         fields = brief_identity_fields()
         self.assertEqual(fields["collection"], COLLECTION_NAME)
@@ -269,6 +284,99 @@ class TestNothingNewIsPublishedAsThePlaWatch(unittest.TestCase):
                 generator.main()
         self.assertIn("No new issue is authored or published as The PLA Watch",
                       str(stopped.exception.code))
+
+
+class TestBriefAuthorIdentity(unittest.TestCase):
+    """
+    A brief's author fields may not present The PLA Watch or China Mil Watch
+    as a current publication or role — by default or as stored — and may still
+    say what the author did before.
+    """
+
+    #: The default bio before 2026-09-23, verbatim: the regression.
+    OLD_DEFAULT_BIO = (
+        "Benjamin Yang is the creator and editor of Indo-Pacific Record. He "
+        "studies International Affairs at George Washington University’s "
+        "Elliott School, with interests in U.S.–China relations, public "
+        "diplomacy, and security affairs. He writes The PLA Watch and "
+        "maintains the project’s collection pipeline.")
+
+    def refused(self, **fields):
+        sidecar = complete(**fields)
+        with self.assertRaises(IdentityError):
+            resolve_identity(sidecar)
+        problems = bc.validate_brief(sidecar, LIVE)
+        self.assertEqual(len(problems), 1, problems)
+        return problems[0]
+
+    def accepted(self, **fields):
+        sidecar = complete(**fields)
+        self.assertEqual(bc.validate_brief(sidecar, LIVE), [])
+        return resolve_identity(sidecar)
+
+    # The default path.
+
+    def test_the_default_bio_describes_briefs_not_the_predecessor(self):
+        for source, fields in (
+                ("recorded on a new brief", brief_identity_fields()),
+                ("resolved when the bio is empty",
+                 resolve_identity(complete(author_bio="")))):
+            with self.subTest(source=source):
+                self.assertIn("writes Indo-Pacific Record Briefs",
+                              fields["author_bio"])
+                self.assertNotIn("PLA Watch", fields["author_bio"])
+                self.assertNotIn("China Mil Watch", fields["author_bio"])
+                self.assertNotIn("PLA Watch", fields["author_title"])
+
+    def test_a_brief_built_from_the_defaults_passes(self):
+        self.accepted()
+
+    def test_the_old_default_bio_is_refused_on_a_brief(self):
+        message = self.refused(author_bio=self.OLD_DEFAULT_BIO)
+        self.assertIn("The PLA Watch", message)
+
+    # The stored-field path: refused.
+
+    def test_a_title_naming_a_predecessor_is_refused(self):
+        for title in ("Principal Analyst, China Mil Watch",
+                      "Editor, The PLA Watch",
+                      "Former editor, the pla watch"):
+            with self.subTest(title=title):
+                self.refused(author_title=title)
+
+    def test_a_bio_presenting_a_predecessor_as_current_is_refused(self):
+        for bio in (
+                "Benjamin Yang is the principal analyst at China Mil Watch.",
+                "He edits the  PLA   Watch each week.",
+                # A marker after the name does not make it history.
+                "He writes The PLA Watch, formerly a China Desk series.",
+                # History in one sentence does not cover the next.
+                "He previously wrote The PLA Watch. He now writes The PLA Watch.",
+                # Bare "was" is not a marker.
+                "He was a student and is an analyst at China Mil Watch."):
+            with self.subTest(bio=bio):
+                self.refused(author_bio=bio)
+
+    # The stored-field path: legitimate wording.
+
+    def test_author_specific_wording_is_left_alone(self):
+        identity = self.accepted(
+            author_title="Creator and Editor, Indo-Pacific Record",
+            author_bio="Benjamin Yang studies International Affairs and "
+                       "reads official defense publications in Mandarin.")
+        self.assertIn("reads official defense publications",
+                      identity["author_bio"])
+
+    def test_a_bio_may_state_predecessor_history(self):
+        for bio in (
+                "He previously wrote The PLA Watch, the China Desk's weekly "
+                "series.",
+                "Until 2026-08-27 the project was called China Mil Watch.",
+                "The project was formerly China Mil Watch; he writes "
+                "Indo-Pacific Record Briefs."):
+            with self.subTest(bio=bio):
+                self.assertEqual(self.accepted(author_bio=bio)["author_bio"],
+                                 bio)
 
 
 # ── Records from a scratch database ───────────────────────────────────────────

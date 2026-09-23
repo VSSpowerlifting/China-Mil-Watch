@@ -26,7 +26,11 @@ deployment, and it changes no existing issue.
    sidecar that does not, and any issue after No. 14 that names no collection.
    A brief is published by Indo-Pacific Record whatever week it covers: one
    naming another `publication`, China Mil Watch included, is refused, and a
-   brief's era is never inferred from its date.
+   brief's era is never inferred from its date. Its stored `author_title` may
+   not name The PLA Watch or China Mil Watch, and its `author_bio` may name
+   either only as history (a past marker such as "previously" before the name
+   in the same sentence). The default bio says he writes Indo-Pacific Record
+   Briefs; No. 14 stores its own bio and keeps it.
    `scripts/generate_pla_watch.py` now refuses before any database read or API
    call, dry runs included. `generate_pla_watch_draft.yml`, whose only job was
    to dispatch it, is retired rather than left as a button guaranteed to fail.

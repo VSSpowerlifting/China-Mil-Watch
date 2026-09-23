@@ -3,8 +3,9 @@ The PLA Watch keeps its history when the project changes its name.
 
 The project was renamed on 2026-08-27: China Mil Watch became Indo-Pacific
 Record. Editions 1-13 were published under the predecessor name and keep it;
-edition 14 onward are Indo-Pacific Record. The series name, The PLA Watch, is
-unchanged throughout and is not era-dependent.
+No. 14 is Indo-Pacific Record. The series name, The PLA Watch, is unchanged
+throughout and is not era-dependent; since 2026-09-23 no issue after No. 14 is
+published in it (new issues are Indo-Pacific Record Briefs).
 
 The specific regression these tests exist for: editions 1 and 2 store no author
 fields at all. They rendered the historical identity only because
