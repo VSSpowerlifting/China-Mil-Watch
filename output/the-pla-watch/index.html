@@ -818,16 +818,27 @@ main { padding-top: 2rem; }
   }
 }
 .issue-cover-eyebrow { position: relative; z-index: 1; }
+/* Solid scrim, not just a text color -- the credit sits on the masked
+   veil photograph, and text-muted alone measures well under 4.5:1
+   there regardless of what the image looks like underneath.
+   var(--color-bg) + chrome-label text is the same fix already used
+   for the masthead's small mono labels. */
 .card-veil-credit {
+  display: inline-block;
   font-family: var(--mono);
   font-size: .58rem;
   letter-spacing: .06em;
-  color: var(--color-text-muted);
+  line-height: 1.6;
+  color: var(--color-chrome-label);
+  background: var(--color-bg);
+  padding: .45rem .6rem;
+  border-radius: var(--radius);
   margin-top: 1rem;
+  max-width: 100%;
   position: relative;
   z-index: 1;
 }
-.card-veil-credit a { color: var(--color-text-muted); text-decoration: underline; text-decoration-color: var(--color-border); }
+.card-veil-credit a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
 .card-veil-credit a:hover { color: var(--color-brand-light); }
 .issue-cover .nd-tickrow, .issue-cover .nd-tickrow-label { position: relative; z-index: 1; }
 /* tighten the source-trail strip within the compact card so the primary
@@ -1095,6 +1106,8 @@ main { padding-top: 2rem; }
     <p class="cover-stand">The weekly analytical brief from Indo-Pacific Record — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
 
       <div class="issue-cover">
+        <div class="card-veil" role="img" aria-label="Photograph published with the cited source article “Chinese Navy Ship Honghe and Indonesian Navy Frigate &#34;Rê&#34; Successfully Complete Passage Exercise in Waters East of Taiwan Island”, rendered as a duotone background." data-editorial-id="src-2026-08-15"
+             style="background-image:url('media/2026-08-15-veil.jpg'); background-position:50% 42%;"></div>
         <div class="issue-cover-eyebrow">
           <div class="issue-cover-label">Latest Edition</div>
           <div class="issue-cover-edition"><span class="hero-edition-line"><span class="ed-no">No. 14</span> · <span class="ed-week">Week ending 15 August 2026</span></span> <span class="hero-status"><span class="pw-badge pw-badge--significant">Significant</span> <span class="pw-badge pw-badge--retrospective">Retrospective edition</span></span>          </div>
@@ -1112,6 +1125,7 @@ main { padding-top: 2rem; }
           <a href="posts/2026-08-15.html" class="btn btn-primary">Read this edition</a>
           <a href="archive.html" class="btn btn-ghost">All editions</a>
         </div>
+        <div class="card-veil-credit">IMG · <a href="http://www.81.cn/yw_208727/16479044.html" target="_blank" rel="noopener nofollow">PLA Daily (解放军报)</a> · Chinese Navy Ship Honghe and Indonesian Navy Frigate &#34;Rê&#34; Succe… · Context, not evidence</div>
       </div>
 
       <div class="section-heading" data-reveal>
