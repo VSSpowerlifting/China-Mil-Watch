@@ -108,7 +108,19 @@ CORPUS_EYEBROW = "As published."
 #: title, or a description of what the project is now.
 # Stdlib-only: no network, no config, no model. The single authority on which
 # publication an edition was published under.
-from core.edition_identity import IdentityError, resolve_identity
+from core.edition_identity import (                                  # noqa: E402
+    COLLECTION_NAME, IdentityError, resolve_identity)
+# The collection the existing issues belong to and every brief joins. Stdlib
+# and core only; it reads sidecars and holds them to the brief contract.
+from core.brief_collection import (                                  # noqa: E402
+    FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
+    ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
+    build_briefs_feed, load_collection)
+from core.desk_registry import load_registry                         # noqa: E402
+
+#: Where brief sidecars are kept: source at the repository root, never under
+#: `output/`. None exist yet; an absent directory is an empty collection.
+BRIEFS_SOURCE = REPO_ROOT / "briefs"
 
 PREDECESSOR_NAME = "China Mil Watch"
 PREDECESSOR_SERIES = "The PLA Watch"
@@ -129,7 +141,8 @@ MAINTAINER = {
     "bio": ("Benjamin Yang studies International Affairs at George Washington "
             "University’s Elliott School, with interests in U.S.–China "
             "relations, public diplomacy, and security affairs. He writes "
-            "The PLA Watch and maintains the project’s collection pipeline."),
+            "Indo-Pacific Record Briefs and maintains the project’s "
+            "collection pipeline."),
     "email": "ben.yang@gwmail.gwu.edu",
     "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
 }
@@ -2020,9 +2033,17 @@ def build(out_dir: Path, title: str, db_path: Path,
           snapshot: dict = DECLARED_SNAPSHOT,
           legacy_routes: bool = False, mode: str = BUILD_MODE,
           site_origin: str = None, allow_test_origin: bool = False,
-          daily_run_date: str = None) -> dict:
+          daily_run_date: str = None, briefs_dir: Path = None,
+          allow_synthetic_briefs: bool = False) -> dict:
     """
     Render the site into `out_dir`.
+
+    `briefs_dir` is where brief sidecars are read from; the default is
+    `briefs/` at the repository root. `allow_synthetic_briefs` admits the
+    synthetic rendering fixtures under `tests/fixtures/briefs/`. It is a
+    test-and-review switch only: no CLI flag reaches it, and it is refused
+    together with a site origin, because an origin is what lifts `noindex` and
+    writes the sitemap — a fixture must never be built into either.
 
     `daily_run_date` is the logical date of a daily-workflow run, when one is
     rendering. It reaches "Last full update" instead of the persisted marker,
@@ -2040,6 +2061,11 @@ def build(out_dir: Path, title: str, db_path: Path,
         raise SystemExit(
             "refusing to write inside production output/: %s\n"
             "The prototype must never alter the published site." % out_dir)
+    if allow_synthetic_briefs and (site_origin or "").strip():
+        raise SystemExit(
+            "refusing to build synthetic brief fixtures with a site origin: "
+            "an origin makes every page indexable and lists it in the "
+            "sitemap, and a fixture is not a published brief.")
 
     if out_dir.exists():
         shutil.rmtree(out_dir)
@@ -2060,6 +2086,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # dates, hashes, run numbers or source codes.
     env.filters["count"] = (
         lambda n: "{:,}".format(n) if isinstance(n, int) else n)
+    env.filters["reader_date"] = reader_date
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
@@ -2077,6 +2104,16 @@ def build(out_dir: Path, title: str, db_path: Path,
         snapshot_date=snapshot["date"], predecessor_name=PREDECESSOR_NAME)
     metrics = view.methodology_metrics()
     source_views = view.source_directory()
+
+    # Indo-Pacific Record Briefs: the existing issues, unchanged, plus every
+    # approved brief. With no brief this is exactly `editions`, in the same
+    # order, so every page that lists analysis renders as it did before. A
+    # sidecar that breaks the contract fails the build here.
+    briefs_dir = BRIEFS_SOURCE if briefs_dir is None else Path(briefs_dir)
+    collection = load_collection(editions, load_registry(),
+                                 briefs_dir=briefs_dir,
+                                 allow_synthetic=allow_synthetic_briefs)
+    briefs_feed = bool(collection.briefs) and bool((site_origin or "").strip())
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
     # render, so the guide cannot describe a different snapshot than the one
@@ -2115,6 +2152,13 @@ def build(out_dir: Path, title: str, db_path: Path,
             data["collecting_desks"], data["unmapped_executed"]),
         "status_run_note": STATUS_RUN_NOTE,
         "lead_edition": editions[0] if editions else None,
+        # The newest issue in the collection, brief or not. `lead_edition`
+        # stays the newest issue published as The PLA Watch, for that series'
+        # own page.
+        "latest_analysis": collection.lead,
+        "collection": collection,
+        "collection_name": COLLECTION_NAME,
+        "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
         "live_desk_count": desks.collecting_count,
         "developing_desk_count": desks.not_collecting_count,
@@ -2207,6 +2251,51 @@ def build(out_dir: Path, title: str, db_path: Path,
             env.get_template(template).render(page=target, **ctx),
             encoding="utf-8")
         written.append(target)
+
+    # ── One page per published brief ─────────────────────────────────────────
+    # `briefs/<slug>.html`, one level down, in the site's own shell: the
+    # Analysis page is the collection's landing page and stays the current
+    # navigation item. A brief's Signal Veil is copied beside it only when its
+    # provenance resolves (`brief_veil`); otherwise the hero is text-led. The
+    # stylesheet ships only when a brief does, so a site with no brief is
+    # byte-for-byte the site it was.
+    if collection.briefs:
+        brief_tmpl = env.get_template("brief.html")
+        desk_names = {d.slug: d.name for d in desks}
+        corpus_ids = {rec["id"] for rec in data["corpus"]}
+        (out_dir / BRIEFS_ROUTE_DIR).mkdir(parents=True, exist_ok=True)
+        for entry in collection.briefs:
+            slug = entry["slug"]
+            sidecar = collection.sidecars[slug]
+            veil_view = brief_veil(slug, sidecar, briefs_dir / BRIEFS_MEDIA)
+            if veil_view:
+                dest = out_dir / BRIEFS_ROUTE_DIR / veil_view["route"]
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(veil_view["file"].read_bytes())
+                written.append("%s/%s" % (BRIEFS_ROUTE_DIR, veil_view["route"]))
+            brief = brief_view(slug, sidecar, desk_names=desk_names,
+                               state_labels=STATE_LABELS,
+                               state_order=STATE_ORDER,
+                               language_label=language_label, veil=veil_view)
+            # A cited record this site preserves links to its record page; one
+            # it does not hold links only to the source.
+            for group in brief["trail_groups"]:
+                for t in group["entries"]:
+                    t["record_route"] = ("record/%d.html" % t["record_id"]
+                                         if t["record_id"] in corpus_ids else "")
+            # A fixture is cited by its relative route: it has no address on
+            # the live site and must not print one.
+            brief["citation"] = brief_citation(
+                brief, origin="" if brief["synthetic"] else LIVE_BASE)
+            (out_dir / brief["route"]).write_text(
+                brief_tmpl.render(page="analysis.html", nested=True,
+                                  brief=brief, **ctx),
+                encoding="utf-8")
+            written.append(brief["route"])
+        (out_dir / "briefs.css").write_text(
+            (Path(__file__).parent / "briefs.css").read_text(encoding="utf-8"),
+            encoding="utf-8")
+        written.append("briefs.css")
 
     # ── One page per declared desk, from the registry ────────────────────────
     # Every public desk gets a page, including the ones that collect nothing.
@@ -2506,6 +2595,18 @@ def build(out_dir: Path, title: str, db_path: Path,
                                         encoding="utf-8")
     written.append("robots.txt")
 
+    # ── The briefs feed ──────────────────────────────────────────────────
+    # Briefs only, and only once one exists: an empty feed would advertise a
+    # subscription with nothing in it. The existing issues stay in
+    # `the-pla-watch/feed.xml` under the IDs they were published with; this
+    # build neither reads nor rewrites that file. Absolute URLs need an origin,
+    # so like the sitemap the feed is written only when one is supplied.
+    if briefs_feed and origin:
+        (out_dir / BRIEFS_FEED_ROUTE).write_text(
+            build_briefs_feed(collection.briefs, origin=origin),
+            encoding="utf-8")
+        written.append(BRIEFS_FEED_ROUTE)
+
     # ── Indexability ─────────────────────────────────────────────────────
     # Every page carries `noindex, nofollow` from base.html, which is right for
     # a candidate: a preview tree that leaked must not be indexed. It is also
@@ -2599,6 +2700,9 @@ def build(out_dir: Path, title: str, db_path: Path,
             "sitemap_urls": sitemap_urls,
             "indexable_pages": indexable,
             "articles": len(data["recent"]), "editions": len(editions),
+            "briefs": len(collection.briefs),
+            "briefs_withheld": len(collection.withheld),
+            "briefs_feed": bool(briefs_feed and origin),
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
             "sources": len(source_views),
@@ -2649,6 +2753,9 @@ def main(argv=None):
     print("sources: %d source pages" % result["sources"])
     print("analysis: %d editions linked to the live archive (never copied)"
           % result["editions"])
+    print("briefs : %d published, %d drafts withheld, feed %s"
+          % (result["briefs"], result["briefs_withheld"],
+             "written" if result["briefs_feed"] else "not written"))
     if result["site_origin"]:
         print("index  : %d pages made indexable with canonicals at %s"
               % (result["indexable_pages"], result["site_origin"]))

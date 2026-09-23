@@ -188,7 +188,10 @@
 {% endblock %}
 {% block after_content %}
 
-{% if lead_edition %}
+{# The newest issue in the collection, brief or not; with no brief it is the
+   newest issue published as The PLA Watch, exactly as before. #}
+{% set lead = latest_analysis %}
+{% if lead %}
 {# The dark band. The publication's one crossover into the Night Desk surface,
    and the only place on this page where the weekly reading is the subject. #}
 <section class="band section">
@@ -199,34 +202,36 @@
     </div>
     <div class="feature" data-reveal>
       <div>
-        <p class="feature-eyebrow">{{ lead_edition.series_name or predecessor_series }}{% if lead_edition.issue is not none %} &middot; No. {{ lead_edition.issue }}{% endif %}{% if lead_edition.date %} &middot; week ending {{ lead_edition.date }}{% endif %}</p>
-        <h3><a href="{{ lead_edition.url }}" rel="noopener">{{ lead_edition.title or lead_edition.slug }}</a></h3>
-        {% if lead_edition.dek %}<p class="dek">{{ lead_edition.dek }}</p>{% endif %}
+        <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %} &middot; No. {{ lead.issue }}{% endif %}{% if lead.date %} &middot; week ending {{ lead.date }}{% endif %}</p>
+        <h3><a href="{{ lead.url }}" rel="noopener">{{ lead.title or lead.slug }}</a></h3>
+        {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
         {# `articles` is the sidecar's n_articles = the week's relevance-passing
            collected articles (generate_pla_watch.compute_stats -> total_articles).
            It is NOT the count of items the edition cites — that is the source_trail. #}
-        <p class="byline">{{ maintainer.name }}, {{ maintainer.role }}{% if lead_edition.articles is not none %} &middot; {{ lead_edition.articles|count }} articles{% endif %}{% if lead_edition.flagged is not none %} &middot; {{ lead_edition.flagged|count }} model-flagged{% endif %}</p>
+        <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.articles is not none %} &middot; {{ lead.articles|count }} articles{% endif %}{% if lead.flagged is not none %} &middot; {{ lead.flagged|count }} model-flagged{% endif %}</p>
         {# The lead edition states its own publisher. The legacy explanation is
            true of editions published under the predecessor masthead and false of
            any edition published since the rename, so it is gated on the era the
            identity contract resolved, never on an issue number written here. #}
-        {% if lead_edition.era == 'historical' %}
+        {% if lead.synthetic %}
+        <p class="legacy-note">Synthetic test fixture. Not a published brief.</p>
+        {% elif lead.era == 'historical' %}
         <p class="legacy-note">A legacy China Desk series, published under the
           predecessor masthead {{ predecessor_name }} and preserved with its
           original issue numbers, titles and URLs.</p>
-        {% elif lead_edition.is_retrospective %}
-        <p class="legacy-note">{{ lead_edition.retrospective_label }}: prepared
+        {% elif lead.is_retrospective %}
+        <p class="legacy-note">{{ lead.retrospective_label }}: prepared
           after the week it covers, and published under the current masthead.</p>
         {% endif %}
-        <p><a class="btn btn--primary" href="{{ lead_edition.url }}" rel="noopener">Read this edition</a></p>
+        <p><a class="btn btn--primary" href="{{ lead.url }}" rel="noopener">Read this {{ 'brief' if lead.series_name == collection_name else 'edition' }}</a></p>
       </div>
       {# Rendered only when the cover exists. An edition without one gets a
          one-column feature rather than an empty frame. #}
-      {% if lead_edition.cover %}
+      {% if lead.cover %}
       <figure>
-        <img src="{{ lead_edition.cover.route }}" alt="{{ lead_edition.cover.alt }}"
+        <img src="{{ lead.cover.route }}" alt="{{ lead.cover.alt }}"
              width="1200" height="630" loading="lazy" decoding="async">
-        <figcaption class="figure-credit">{{ lead_edition.cover.credit_note }}</figcaption>
+        <figcaption class="figure-credit">{{ lead.cover.credit_note }}</figcaption>
       </figure>
       {% endif %}
     </div>

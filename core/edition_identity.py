@@ -175,8 +175,8 @@ _HISTORICAL = {
 #: relations, public diplomacy, and security affairs." Note "studies", not
 #: "incoming" — that wording is retired and survives only in historical editions.
 #: What he writes is Indo-Pacific Record Briefs (DECISION_LOG 2026-09-23); the
-#: About page's "He writes The PLA Watch" predates that ruling and is corrected
-#: with the site chrome, not here. No. 14 stores its own bio and keeps it.
+#: About page's bio (`MAINTAINER` in site/preview/generate_preview.py) says the
+#: same. No. 14 stores its own bio and keeps it.
 _CURRENT = {
     "era": ERA_CURRENT,
     "publication": "Indo-Pacific Record",
@@ -414,9 +414,8 @@ def brief_identity_fields(timing: str = TIMING_REGULAR) -> dict:
     from an absence.
 
     `author_links` is left out on purpose. Stored links are relative to a
-    page's address, and a brief has no route yet; recording them now would
-    store links whose correctness depends on a decision nobody has made. The
-    renderer that gives briefs an address supplies them.
+    page's address, so the renderer supplies them for the address it gives
+    the brief (`core.brief_collection.brief_view`, for `briefs/<slug>.html`).
     """
     fields = current_identity_fields(timing)
     del fields["author_links"]

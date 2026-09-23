@@ -224,10 +224,18 @@ class TestRetiredNamesStayRetired(IdentityCase):
                               "Welcome to %s" % PREDECESSOR):
                     self.assertNotIn(claim, flat)
 
-    def test_the_pla_watch_series_is_not_retired_only_relabelled(self):
-        """The series continues; only the masthead above it changed."""
-        html = self.page("pla-watch.html")
-        self.assertIn("not a discontinued one", html)
+    def test_the_pla_watch_series_is_closed_to_new_issues(self):
+        """
+        Until 2026-09-23 this asserted the opposite: that the series continued
+        and was "not a discontinued one". DECISION_LOG 2026-09-23 closed it: no
+        new issue is published as The PLA Watch, and analysis continues as
+        Indo-Pacific Record Briefs. Its existing issues keep their attribution.
+        """
+        html = re.sub(r"\s+", " ", self.page("pla-watch.html"))
+        self.assertNotIn("not a discontinued one", html)
+        self.assertNotIn("The series continues", html)
+        self.assertIn("No new issue is published under this name", html)
+        self.assertIn("preserved as published", html)
 
 
 class TestTheGuardIsNotARepositoryWideStringBan(unittest.TestCase):

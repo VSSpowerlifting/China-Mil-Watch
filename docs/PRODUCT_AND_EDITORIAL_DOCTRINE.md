@@ -248,7 +248,13 @@ every edition.
 Owner direction, 2026-09-23 (`DECISION_LOG.md`). Implemented at source level by
 `core/edition_identity.py` (collection and attribution), `core/brief_contract.py`
 (the contract and numbering) and `scripts/author_brief.py` (scaffold and check).
-Briefs have no public route or renderer yet.
+The collection and its renderer are `core/brief_collection.py` and
+`site/preview/templates/brief.html`: a brief is published at
+`briefs/<slug>.html` from a source sidecar in `briefs/<slug>.json`; the Analysis
+page is the collection's landing page (no separate `briefs/index.html`); and
+`briefs/feed.xml` carries briefs only, while the existing issues keep
+`the-pla-watch/feed.xml` and its entry IDs. No real brief exists yet, and none is
+published while No. 14 is unreconciled.
 
 **One collection, provenance intact.** *Indo-Pacific Record Briefs* includes the
 existing issues and every future issue. Each existing issue keeps its sidecar,

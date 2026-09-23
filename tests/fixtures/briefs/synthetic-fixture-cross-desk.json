@@ -1,0 +1,87 @@
+{
+  "synthetic": true,
+  "fixture_note": "Synthetic rendering fixture for tests/test_briefs_collection.py. Every name, number, record, link and sentence is invented. It is not a brief, it is never published, and core.brief_collection refuses it unless allow_synthetic is passed.",
+  "collection": "Indo-Pacific Record Briefs",
+  "publication": "Indo-Pacific Record",
+  "publication_timing": "regular",
+  "author_name": "Fixture Author",
+  "author_title": "Synthetic byline for rendering tests",
+  "author_bio": "A synthetic author record. No real person wrote this fixture.",
+  "author_links": {"Indo-Pacific Record": "../index.html"},
+  "brief_schema": 1,
+  "editorial_status": "approved",
+  "issue_number": 9001,
+  "approval": {"approved_by": "Fixture reviewer (synthetic)", "approved_on": "2026-09-20"},
+  "desks": ["china", "singapore"],
+  "week_start": "2026-09-13",
+  "week_ending": "2026-09-19",
+  "title": "Synthetic fixture: two desks describe one development",
+  "dek": "A test-only brief. Every record, figure and link in it is invented to exercise the brief page, its source trail and its image credit.",
+  "signal": "Fixture signal line. It stands where a brief's single most important observation would.",
+  "edition_type": "Routine",
+  "development": {
+    "summary": "Fixture development paragraph one. A real brief opens with one concrete Indo-Pacific development and says where it was first recorded.\n\nFixture development paragraph two, citing one record from each desk.",
+    "citations": [9100001, 9100011]
+  },
+  "opening_note": "Fixture opening note. It frames what the brief compares and why.",
+  "what_stood_out": "Fixture paragraph for What stood out.\n\nA second paragraph, so paragraph splitting is exercised.",
+  "why_it_matters": "Fixture paragraph for Why it matters.",
+  "what_was_routine": "Fixture paragraph for the routine baseline.",
+  "term_to_know_term": "Fixture term",
+  "term_to_know_lang": "en",
+  "term_to_know_explanation": "Fixture explanation of a term. A real brief records the term's language rather than assuming it.",
+  "what_im_watching_next": "Fixture paragraph for What I'm watching next.",
+  "cross_desk_claims": [
+    {
+      "claim": "Fixture comparison. Record A2 and record B2 describe the same development in different terms; the difference is set side by side, not explained.",
+      "desks": ["china", "singapore"],
+      "basis": "comparison",
+      "citations": [9100002, 9100012]
+    },
+    {
+      "claim": "Fixture stated claim. Record B3 itself states that the two activities were coordinated; the brief reports that statement and does not infer it.",
+      "desks": ["china", "singapore"],
+      "basis": "stated_in_record",
+      "citations": [9100003, 9100013],
+      "stated_in": [9100013]
+    }
+  ],
+  "coverage_by_desk": {
+    "china": {
+      "records": 12,
+      "by_screening": {"analyzed": 8, "awaiting_screening": 4},
+      "model_flagged": 2,
+      "days_with_records": 6,
+      "sources": ["Fixture Source A1", "Fixture Source A2"],
+      "languages": ["en"]
+    },
+    "singapore": {
+      "records": 5,
+      "by_screening": {"awaiting_screening": 5},
+      "model_flagged": 0,
+      "days_with_records": 4,
+      "sources": ["Fixture Source B"],
+      "languages": ["en"]
+    }
+  },
+  "source_trail": [
+    {"record_id": 9100001, "desk": "china", "source_id": "fixture_a1", "source": "Fixture Source A1", "lang": "en",
+     "title_original": "Fixture record A1: an English-language statement", "title": "Fixture record A1: an English-language statement",
+     "url": "https://fixture-a.invalid/records/a1.html", "date": "2026-09-14", "screening": "analyzed", "is_significant": true},
+    {"record_id": 9100002, "desk": "china", "source_id": "fixture_a1", "source": "Fixture Source A1", "lang": "en",
+     "title_original": "Fixture record A2: a second statement", "title": "Fixture record A2: a second statement",
+     "url": "https://fixture-a.invalid/records/a2.html", "date": "2026-09-16", "screening": "analyzed", "is_significant": false},
+    {"record_id": 9100003, "desk": "china", "source_id": "fixture_a2", "source": "Fixture Source A2", "lang": "en",
+     "title_original": "Fixture record A3: not yet screened", "title": "",
+     "url": "https://fixture-a.invalid/records/a3.html", "date": "2026-09-18", "screening": "awaiting_screening", "is_significant": null},
+    {"record_id": 9100011, "desk": "singapore", "source_id": "fixture_b", "source": "Fixture Source B", "lang": "en",
+     "title_original": "Fixture record B1: a release with a photograph", "title": "Fixture record B1: a release with a photograph",
+     "url": "https://fixture-b.invalid/news/b1", "date": "2026-09-15", "screening": "awaiting_screening", "is_significant": null},
+    {"record_id": 9100012, "desk": "singapore", "source_id": "fixture_b", "source": "Fixture Source B", "lang": "en",
+     "title_original": "Fixture record B2: a speech", "title": "Fixture record B2: a speech",
+     "url": "https://fixture-b.invalid/news/b2", "date": "2026-09-17", "screening": "awaiting_screening", "is_significant": null},
+    {"record_id": 9100013, "desk": "singapore", "source_id": "fixture_b", "source": "Fixture Source B", "lang": "en",
+     "title_original": "Fixture record B3: a joint statement", "title": "Fixture record B3: a joint statement",
+     "url": "https://fixture-b.invalid/news/b3", "date": "2026-09-19", "screening": "awaiting_screening", "is_significant": null}
+  ]
+}

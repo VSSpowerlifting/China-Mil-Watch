@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
+
+    The existing article anatomy — edition head, signal, development, coverage,
+    the standing sections, term, what to watch, source trail, author, citation —
+    in the site's own shell, so a brief is published by Indo-Pacific Record and
+    reads as one. The hero is the sanctioned Night Desk crossover: the dark
+    band, with the Signal Veil when the brief's image provenance resolves
+    (`core.brief_collection.brief_veil`) and a text-led band when it does not.
+
+    Everything shown comes from `brief_view`, which composes nothing. Headings
+    are real headings. Nothing here requires JavaScript; `citation.js` only
+    adds a copy button to a citation that is already visible. -#}
+{% block title %}{{ brief.title }} — {{ title }}{% endblock %}
+{% block head_scripts %}
+<link rel="stylesheet" href="../briefs.css">
+{% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="../{{ briefs_feed_route }}">{% endif %}
+{% endblock %}
+{% block main_class %} class="leads-with-hero brief-page"{% endblock %}
+
+{% macro cites(entries, label='Cites') -%}
+{% if entries %}
+<p class="brief-cites"><span class="brief-cites-label">{{ label }}</span>
+{% for t in entries %}<a href="#{{ t.anchor }}">{{ t.desk_name }} · {{ t.source }}{% if t.date %}, {{ t.date }}{% endif %}</a>{% if not loop.last %}<span class="sep" aria-hidden="true"> ; </span>{% endif %}{% endfor %}</p>
+{% endif %}
+{%- endmacro %}
+
+{% block hero %}
+<section class="band brief-hero{% if brief.veil %} brief-hero--veil{% endif %}" aria-labelledby="brief-title">
+  {% if brief.veil %}
+  <div class="brief-veil" role="img" aria-label="{{ brief.veil.alt }}"
+       data-editorial-id="{{ brief.veil.id }}"
+       style="background-image:url('{{ brief.veil.route }}'); background-position:{{ brief.veil.mask_focus }};"></div>
+  {% endif %}
+  <div class="wrap brief-hero-inner">
+    {% if brief.synthetic %}
+    <p class="brief-fixture" role="note"><strong>Synthetic test fixture.</strong> Not a
+      published brief: its number, title, records and image are invented to test
+      rendering, and it never appears on the public site.</p>
+    {% endif %}
+    <p class="brief-eyebrow"><a href="../analysis.html">{{ brief.series_name }}</a></p>
+    <p class="brief-edition">{% if brief.number %}<span class="ed-no">No. {{ brief.number }}</span> · {% endif %}<span>Week ending <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></span>{% if brief.edition_type or brief.is_retrospective %} <span class="brief-status">{% if brief.edition_type %}<span class="brief-badge">{{ brief.edition_type }}</span>{% endif %}{% if brief.is_retrospective %} <span class="brief-badge">{{ brief.timing_label }}</span>{% endif %}</span>{% endif %}</p>
+    <h1 id="brief-title" class="brief-title">{{ brief.title }}</h1>
+    <p class="brief-dek">{{ brief.dek }}</p>
+    <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>
+    <ul class="brief-meta">
+      <li>Covers <time datetime="{{ brief.week_start }}">{{ brief.week_start|reader_date }}</time> – <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></li>
+      <li>{{ brief.desks | map(attribute='name') | join(' and ') if brief.desks | length < 3 else (brief.desks | length) ~ ' desks' }}</li>
+      <li>{{ brief.trail_count }} cited record{{ 's' if brief.trail_count != 1 }}</li>
+    </ul>
+    {% if brief.veil %}
+    <p class="brief-veil-credit">Image: <a href="{{ brief.veil.source_page }}" rel="noopener nofollow">{{ brief.veil.source }}</a>{% if brief.veil.subject %}, published with “{{ brief.veil.subject }}”{% endif %} (<a href="#{{ brief.veil.anchor }}">cited record {{ brief.veil.record_id }}</a>). Context, not evidence.</p>
+    {% endif %}
+  </div>
+  {% if brief.veil %}
+  {#- Desktop source mark, after the text so it is read and tabbed after the
+      headline; it is absolutely placed, so its position does not change. It
+      and the inline credit above are the same
+      attribution; exactly one is displayed at any width, and `display: none`
+      takes the other out of the accessibility tree. Both sit on a solid band
+      scrim, never on the photograph. -#}
+  <div class="brief-src-bracket">
+    <span class="bracket" aria-hidden="true"></span>
+    <p class="src-lines">IMG · <a href="{{ brief.veil.source_page }}" rel="noopener nofollow">{{ brief.veil.source }}</a><br>
+      <a href="#{{ brief.veil.anchor }}">Cited record {{ brief.veil.record_id }}</a><br>
+      Context, not evidence</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="brief-layout">
+  <nav class="brief-toc" aria-label="In this brief">
+    <p class="brief-toc-label">In this brief</p>
+    <ol>
+      <li><a href="#s-development">The development</a></li>
+      {% if brief.coverage %}<li><a href="#s-coverage">Coverage by desk</a></li>{% endif %}
+      {% for s in brief.sections_before %}<li><a href="#{{ s.id }}">{{ s.heading }}</a></li>{% endfor %}
+      {% if brief.claims %}<li><a href="#s-compare">Across desks</a></li>{% endif %}
+      {% for s in brief.sections_after %}<li><a href="#{{ s.id }}">{{ s.heading }}</a></li>{% endfor %}
+      {% if brief.term %}<li><a href="#s-term">Term to know</a></li>{% endif %}
+      {% if brief.watching %}<li><a href="#{{ brief.watching.id }}">{{ brief.watching.heading }}</a></li>{% endif %}
+      <li><a href="#s-sources">Source trail</a></li>
+      <li><a href="#s-cite">Cite this brief</a></li>
+    </ol>
+  </nav>
+
+  <article class="brief-main">
+    {% if brief.signal %}
+    <aside class="brief-signal" aria-label="The signal">
+      <p class="brief-signal-label">The signal</p>
+      <p>{{ brief.signal }}</p>
+    </aside>
+    {% endif %}
+
+    <section class="brief-section" id="s-development" aria-labelledby="h-development">
+      <h2 id="h-development">The development</h2>
+      {% for p in brief.development.paragraphs %}<p>{{ p }}</p>{% endfor %}
+      {{ cites(brief.development.citations) }}
+    </section>
+
+    {% if brief.coverage %}
+    <section class="brief-section" id="s-coverage" aria-labelledby="h-coverage">
+      <h2 id="h-coverage">Coverage by desk</h2>
+      <p class="section-note">Counted per desk and never added together: desks differ in
+        volume and in how far their records have been screened. Model-flagged counts
+        analyzed records only.</p>
+      <div class="table-scroll">
+      <table class="stacking brief-coverage">
+        <caption>Records each desk held for the week this brief covers.</caption>
+        <thead><tr><th scope="col">Desk</th><th scope="col" class="num">Records</th><th scope="col">Screening</th><th scope="col" class="num">Model-flagged</th><th scope="col" class="num">Days with records</th><th scope="col">Sources</th></tr></thead>
+        <tbody>
+        {% for c in brief.coverage %}
+          <tr>
+            <th scope="row" data-label="Desk">{{ c.name }}</th>
+            <td data-label="Records" class="num">{{ c.records if c.records is not none else '—' }}</td>
+            <td data-label="Screening">{% for label, n in c.screening %}{{ label }}: {{ n }}{% if not loop.last %}<br>{% endif %}{% else %}—{% endfor %}</td>
+            <td data-label="Model-flagged" class="num">{{ c.model_flagged if c.model_flagged is not none else '—' }}</td>
+            <td data-label="Days with records" class="num">{{ c.days if c.days is not none else '—' }}</td>
+            <td data-label="Sources">{{ c.sources | join(', ') or '—' }}{% if c.languages %}<br><span class="meta">{{ c.languages | join(', ') }}</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      {% if brief.single_desk_exception %}
+      <p class="meta">A single-desk brief, by approved exception: {{ brief.single_desk_exception.reason }}
+        ({{ brief.single_desk_exception.approved_by }}, {{ brief.single_desk_exception.approved_on }}).</p>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% for s in brief.sections_before %}
+    <section class="brief-section" id="{{ s.id }}" aria-labelledby="h-{{ s.id }}">
+      <h2 id="h-{{ s.id }}">{{ s.heading }}</h2>
+      {% for p in s.paragraphs %}<p>{{ p }}</p>{% endfor %}
+    </section>
+    {% endfor %}
+
+    {% if brief.claims %}
+    <section class="brief-section" id="s-compare" aria-labelledby="h-compare">
+      <h2 id="h-compare">Across desks</h2>
+      <p class="section-note">Each comparison cites a record from every desk it compares. A
+        claim that institutions acted together names the record that says so; none is
+        inferred from similar timing.</p>
+      {% for c in brief.claims %}
+      <div class="brief-claim">
+        <p class="brief-claim-basis">{{ c.basis_label }} · {{ c.desks | join(' and ') }}</p>
+        {% for p in c.paragraphs %}<p>{{ p }}</p>{% endfor %}
+        {{ cites(c.citations) }}
+        {% if c.stated_in %}{{ cites(c.stated_in, 'Stated in') }}{% endif %}
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% for s in brief.sections_after %}
+    <section class="brief-section" id="{{ s.id }}" aria-labelledby="h-{{ s.id }}">
+      <h2 id="h-{{ s.id }}">{{ s.heading }}</h2>
+      {% for p in s.paragraphs %}<p>{{ p }}</p>{% endfor %}
+    </section>
+    {% endfor %}
+
+    {% if brief.term %}
+    <section class="brief-section" id="s-term" aria-labelledby="h-term">
+      <h2 id="h-term">Term to know</h2>
+      <div class="brief-term">
+        <p class="brief-term-word" lang="{{ brief.term.lang }}">{{ brief.term.term }}</p>
+        {% for p in brief.term.paragraphs %}<p>{{ p }}</p>{% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if brief.watching %}
+    <section class="brief-section" id="{{ brief.watching.id }}" aria-labelledby="h-{{ brief.watching.id }}">
+      <h2 id="h-{{ brief.watching.id }}">{{ brief.watching.heading }}</h2>
+      {% for p in brief.watching.paragraphs %}<p>{{ p }}</p>{% endfor %}
+    </section>
+    {% endif %}
+
+    <section class="brief-section brief-trail" id="s-sources" aria-labelledby="h-sources">
+      <h2 id="h-sources">Source trail <span class="brief-count">{{ brief.trail_count }} record{{ 's' if brief.trail_count != 1 }}</span></h2>
+      <p class="section-note">Every record this brief cites, grouped by the desk that collected
+        it. Each keeps its own source language; the original is the authoritative text.</p>
+      {% for g in brief.trail_groups %}
+      <h3 class="brief-trail-desk">{{ g.name }}</h3>
+      <ol class="brief-trail-list">
+        {% for t in g.entries %}
+        <li id="{{ t.anchor }}" class="brief-record{% if t.model_flagged %} is-flagged{% endif %}">
+          <a class="brief-record-title" href="{{ t.url }}" rel="noopener" lang="{{ t.display_lang }}">{{ t.display_title }}</a>
+          {% if t.original %}<span class="brief-record-original" lang="{{ t.lang }}">{{ t.original }}</span>{% endif %}
+          <span class="brief-record-meta">{{ t.source }}{% if t.date %} · <time datetime="{{ t.date }}">{{ t.date }}</time>{% endif %}{% if t.lang_label %} · {{ t.lang_label }}{% endif %}{% if t.screening_label %} · {{ t.screening_label }}{% endif %}{% if t.model_flagged %} <span class="evidence evidence--model">Model-flagged</span>{% endif %}{% if t.record_route %} · <a href="../{{ t.record_route }}">Preserved record</a>{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% endfor %}
+    </section>
+
+    <section class="brief-author" aria-label="Author">
+      <p class="brief-author-label">Author</p>
+      <p class="brief-author-name">{{ brief.author_name }}</p>
+      {% if brief.author_title %}<p class="brief-author-title">{{ brief.author_title }}</p>{% endif %}
+      {% if brief.author_bio %}<p class="brief-author-bio">{{ brief.author_bio }}</p>{% endif %}
+      {% if brief.author_links %}
+      <ul class="brief-author-links">
+        {% for label, href in brief.author_links.items() %}<li><a href="{{ href }}"{% if href.startswith('http') %} rel="noopener"{% endif %}>{{ label }}</a></li>{% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+
+    <section class="brief-section" id="s-cite" aria-labelledby="h-cite">
+      <h2 id="h-cite">Cite this brief</h2>
+      <div class="ed-cite brief-cite">
+        <p class="cite-text" id="cite-{{ brief.slug }}">{{ brief.citation }}</p>
+        <button type="button" class="cite-copy" data-copy="cite-{{ brief.slug }}"
+                aria-label="Copy citation for {{ brief.series_name }}{% if brief.number %} number {{ brief.number }}{% endif %}" hidden>Copy</button>
+        <p class="cite-status" role="status" aria-live="polite"></p>
+      </div>
+      <p class="meta">Approved {{ brief.approval.approved_on|reader_date }}. Part of
+        {{ brief.series_name }}, which also holds the earlier issues published as
+        {{ predecessor_series }}, each as it was published.</p>
+    </section>
+
+    <p class="meta brief-back"><a href="../analysis.html">← All analysis</a></p>
+  </article>
+</div>
+{% endblock %}
+{% block scripts %}<script src="../citation.js" defer></script>{% endblock %}

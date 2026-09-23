@@ -6220,10 +6220,22 @@ class TestPreviewEditionIdentity(unittest.TestCase):
             with self.subTest(page=page):
                 self.assertIn(self.RETRO_LABEL, html)
 
+    @staticmethod
+    def lead_feature(html):
+        """The lead feature alone: from the feature block to the next heading.
+
+        Scoped since 2026-09-23. Analysis now lists every issue with where and
+        when it was published, so No. 14's own card says "Retrospective
+        edition" on the page whichever issue leads; what this class tests is
+        that the LEAD states only its own timing."""
+        start = html.index('class="feature')
+        end = html.find("<h2", start)
+        return html[start:end if end != -1 else len(html)]
+
     def test_a_historical_lead_shows_no_retrospective_label(self):
         for page, html in self.leads(13).items():
             with self.subTest(page=page):
-                self.assertNotIn(self.RETRO_LABEL, html)
+                self.assertNotIn(self.RETRO_LABEL, self.lead_feature(html))
 
     def test_the_series_is_not_called_wholly_legacy_once_a_current_edition_exists(self):
         """The archive spans two mastheads; the page must not flatten that."""
@@ -6304,9 +6316,16 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
         self.assertNotIn("published from 2026 under the\npredecessor masthead",
                          self.html)
 
-    def test_the_page_says_the_series_continues_across_the_rename(self):
+    def test_the_page_says_the_series_spanned_the_rename_and_is_closed(self):
+        """Since DECISION_LOG 2026-09-23 no new issue is published as The PLA
+        Watch. The page said the series "continues across" the rename; it now
+        says the series spanned it, and that analysis continues as the
+        collection instead."""
         text = re.sub(r"\s+", " ", self.html)
-        self.assertIn("continues across", text)
+        self.assertNotIn("continues across", text)
+        self.assertIn("spanned the project's publication rename", text)
+        self.assertIn("No new issue is published under this name", text)
+        self.assertIn("Indo-Pacific Record Briefs", text)
         self.assertIn(self.HISTORICAL, text)
         self.assertIn(self.CURRENT, text)
 
