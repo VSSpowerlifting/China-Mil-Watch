@@ -1266,13 +1266,15 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
 
     def test_no_current_edition_leaves_the_page_coherent(self):
         """
-        `lead_edition` is `None` when no sidecar exists. The analysis section
-        is then absent rather than an empty frame, and nothing above or below
-        it claims an edition.
+        The band's lead is `latest_analysis`, the collection's newest issue:
+        `None` when no sidecar and no brief exists. The analysis section is then
+        absent rather than an empty frame, and nothing above or below it claims
+        an edition. (Until 2026-09-23 the guard read `lead_edition`, the newest
+        PLA Watch issue; the band now leads with the collection.)
         """
         source = (TEMPLATES / "home.html").read_text(encoding="utf-8")
-        self.assertIn("{% if lead_edition %}", source)
-        analysis = source.split("{% if lead_edition %}", 1)[1]
+        self.assertIn("{% set lead = latest_analysis %}\n{% if lead %}", source)
+        analysis = source.split("{% if lead %}", 1)[1]
         self.assertIn("Latest analysis", analysis.split("{% endif %}")[0])
 
 
