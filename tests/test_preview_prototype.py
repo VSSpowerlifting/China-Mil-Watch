@@ -37,6 +37,8 @@ if str(REPO_ROOT) not in sys.path:
 sys.path.insert(0, str(REPO_ROOT / "site" / "preview"))
 import generate_preview as gp                                    # noqa: E402
 from core.desk_registry import load_registry                     # noqa: E402
+from migrations.runner import apply_all, connect                 # noqa: E402
+from tests.test_migrations import build_legacy_db                # noqa: E402
 
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
 PRODUCTION_OUT = REPO_ROOT / "output"
@@ -1118,26 +1120,82 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         Not from the DESKS presentation constant. A rename or a new entry in
         that literal must not be able to change what the strip reports.
 
-        China and Singapore are both governed, active collecting desks
-        (`desks` table: china/legacy/active, singapore/public/active since
-        "Activate Singapore MINDEF desk"). Which of them shows up in a given
-        run's derived set depends on which sources actually executed in the
-        latest recorded run -- that per-run variability is exactly what this
-        derivation exists to carry, so pinning it to one exact list would
-        defeat the point. What must always hold: China never drops out, and
-        nothing outside the currently governed desk set appears.
+        Built on an isolated, from-scratch database -- migrations.runner's
+        apply_all() over build_legacy_db()'s legacy schema, the same fixture
+        pattern tests/test_singapore_scheduled_production.py already uses --
+        rather than the tracked pla_watch.db. That tracked file is a live
+        production artifact, and this repository's pull_request CI jobs
+        check out a merge of the PR head with the current base branch, so
+        even which copy of it a given run sees is outside this branch's
+        control. A correctness check has no business depending on whichever
+        scrape run happens to be latest in whatever database a checkout
+        happens to present; requiring China and merely allowing Singapore
+        already let a missing Singapore mapping through unnoticed once.
         """
-        data = gp.load_corpus(TRACKED_DB)
-        summary = gp.run_status_summary(
-            data["latest_run"], data["run_results"],
-            data["collecting_desks"], data["unmapped_executed"])
-        self.assertEqual(summary["desks"], len(data["collecting_desks"]))
-        governed_active_desks = {"china", "singapore"}
-        derived = set(data["collecting_desks"])
-        self.assertIn("china", derived)
-        self.assertTrue(derived.issubset(governed_active_desks),
-                        "collecting desk(s) outside the governed active set: "
-                        "%s" % sorted(derived - governed_active_desks))
+        tmp = Path(tempfile.mkdtemp(prefix="collecting-desk-"))
+        try:
+            db_path = tmp / "fixture.db"
+            build_legacy_db(db_path)
+            conn = connect(db_path)
+            apply_all(conn)  # real migrations, including desk-config sync
+
+            china = conn.execute(
+                "SELECT desk_id FROM sources WHERE slug = 'pla_daily'"
+            ).fetchone()
+            singapore = conn.execute(
+                "SELECT desk_id FROM sources WHERE slug = 'sg_mindef_releases'"
+            ).fetchone()
+            self.assertEqual(china[0], "china")
+            self.assertEqual(singapore[0], "singapore",
+                             "desk-config sync did not map Singapore's own "
+                             "source; the fixture no longer represents the "
+                             "governed activation this test depends on")
+
+            # A third, genuinely mapped desk that never collects in this run
+            # -- proving an inactive mapping is excluded, not merely absent
+            # from the fixture.
+            conn.execute(
+                "INSERT INTO sources (slug, display_name, base_url, "
+                "language, desk_id) VALUES "
+                "('test_never_runs', 'Never Runs', "
+                "'https://never-runs.invalid', 'en', 'test_never_runs_desk')")
+
+            conn.execute(
+                "INSERT INTO scrape_runs (id, started_at, status) "
+                "VALUES (999, '2026-09-22 00:00:00', 'completed')")
+            conn.executemany(
+                "INSERT INTO source_run_results "
+                "(scrape_run_id, source_slug, status) VALUES (999, ?, ?)",
+                [("pla_daily", "ok"),
+                 ("sg_mindef_releases", "ok"),
+                 ("test_never_runs", "not_implemented")])
+            conn.commit()
+            conn.close()
+
+            data = gp.load_corpus(db_path)
+            summary = gp.run_status_summary(
+                data["latest_run"], data["run_results"],
+                data["collecting_desks"], data["unmapped_executed"])
+
+            self.assertEqual(sorted(data["collecting_desks"]),
+                             ["china", "singapore"])
+            self.assertEqual(summary["desks"], 2)
+            self.assertNotIn("test_never_runs_desk", data["collecting_desks"])
+
+            # Removing Singapore's own mapping removes Singapore, and only
+            # Singapore, from the result -- the derivation reacts to the
+            # stored mapping itself, not to a slug it happens to recognise.
+            conn = sqlite3.connect(str(db_path))
+            conn.execute("UPDATE sources SET desk_id = NULL "
+                        "WHERE slug = 'sg_mindef_releases'")
+            conn.commit()
+            conn.close()
+
+            data_after = gp.load_corpus(db_path)
+            self.assertEqual(sorted(data_after["collecting_desks"]),
+                             ["china"])
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
 
     def test_desk_count_is_not_a_source_count(self):
         """
