@@ -252,11 +252,23 @@ def is_brief(sidecar: dict) -> bool:
     collection existed lacks the field — but only up to
     `LAST_PREDECESSOR_ISSUE`, and never for a sidecar carrying brief-only
     fields. Those two cases are refused rather than guessed.
+
+    A brief is published by Indo-Pacific Record, whatever week it covers, so a
+    brief naming any other `publication` — the retired China Mil Watch
+    included — is refused here, where the contract check and the resolver both
+    meet it.
     """
     sidecar = sidecar or {}
     explicit = (sidecar.get("collection") or "").strip()
     if explicit:
         if explicit == COLLECTION_NAME:
+            publication = (sidecar.get("publication") or "").strip()
+            if publication and publication != _CURRENT["publication"]:
+                raise IdentityError(
+                    "a brief is published as %r, got publication=%r. %s is "
+                    "the predecessor's name and stays on the issues published "
+                    "under it." % (_CURRENT["publication"], publication,
+                                   _HISTORICAL["publication"]))
             return True
         raise IdentityError(
             "collection must be %r, got %r. No new issue is published as %s, "
@@ -291,7 +303,9 @@ def resolve_identity(sidecar: dict) -> dict:
     """
     sidecar = sidecar or {}
     brief = is_brief(sidecar)
-    era = era_for(sidecar)
+    # Never inferred for a brief: one covering a week before RENAME_DATE that
+    # records no publication would otherwise take the predecessor's identity.
+    era = ERA_CURRENT if brief else era_for(sidecar)
     profile = _HISTORICAL if era == ERA_HISTORICAL else _CURRENT
     timing = parse_timing(sidecar.get("publication_timing"))
 

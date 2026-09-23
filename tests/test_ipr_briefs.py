@@ -208,6 +208,51 @@ class TestNothingNewIsPublishedAsThePlaWatch(unittest.TestCase):
         self.assertEqual(identity["era"], ERA_CURRENT)
         self.assertEqual(identity["publication"], "Indo-Pacific Record")
 
+    def test_a_brief_cannot_be_published_as_the_predecessor(self):
+        for publication in ("China Mil Watch", "Some Other Outlet"):
+            sidecar = complete(publication=publication)
+            with self.subTest(publication=publication):
+                with self.assertRaises(IdentityError):
+                    resolve_identity(sidecar)
+                problems = bc.validate_brief(sidecar, LIVE)
+                self.assertEqual(len(problems), 1, problems)
+                self.assertIn(publication, problems[0])
+
+    def test_a_brief_on_a_pre_rename_week_is_still_current(self):
+        """
+        No `publication` stored and a week before the rename: the date rule
+        that places No. 1-13 would put this under China Mil Watch.
+        """
+        sidecar = complete(week_start="2026-08-16", week_ending="2026-08-22",
+                           date="2026-08-22")
+        del sidecar["publication"], sidecar["author_title"], sidecar["author_bio"]
+        identity = resolve_identity(sidecar)
+        self.assertEqual(identity["era"], ERA_CURRENT)
+        self.assertEqual(identity["publication"], "Indo-Pacific Record")
+        self.assertNotIn("China Mil Watch", identity["author_title"])
+        self.assertNotIn("China Mil Watch", identity["author_bio"])
+        self.assertEqual(bc.validate_brief(sidecar, LIVE), [])
+
+    def test_a_brief_naming_the_current_publication_is_accepted(self):
+        sidecar = complete(publication="Indo-Pacific Record")
+        self.assertEqual(resolve_identity(sidecar)["publication"],
+                         "Indo-Pacific Record")
+        self.assertEqual(bc.validate_brief(sidecar, LIVE), [])
+
+    def test_existing_issues_keep_their_published_publication(self):
+        """The brief rule reaches no existing sidecar: each keeps its publisher."""
+        for stem, sidecar in existing_sidecars().items():
+            with self.subTest(issue=stem):
+                identity = resolve_identity(sidecar)
+                expected = ("China Mil Watch"
+                            if sidecar["issue_number"] <= LAST_HISTORICAL_ISSUE
+                            else "Indo-Pacific Record")
+                self.assertEqual(identity["publication"], expected)
+                self.assertEqual(identity["series_name"], SERIES_NAME)
+                if sidecar.get("author_title"):
+                    self.assertEqual(identity["author_title"],
+                                     sidecar["author_title"])
+
     def test_brief_identity_is_explicit_and_stores_no_route_bound_links(self):
         fields = brief_identity_fields()
         self.assertEqual(fields["collection"], COLLECTION_NAME)

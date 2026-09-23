@@ -24,6 +24,9 @@ deployment, and it changes no existing issue.
    and value, because it names what the existing issues were published as. A
    brief records `collection` explicitly; `is_brief()` refuses a brief-shaped
    sidecar that does not, and any issue after No. 14 that names no collection.
+   A brief is published by Indo-Pacific Record whatever week it covers: one
+   naming another `publication`, China Mil Watch included, is refused, and a
+   brief's era is never inferred from its date.
    `scripts/generate_pla_watch.py` now refuses before any database read or API
    call, dry runs included. `generate_pla_watch_draft.yml`, whose only job was
    to dispatch it, is retired rather than left as a button guaranteed to fail.
