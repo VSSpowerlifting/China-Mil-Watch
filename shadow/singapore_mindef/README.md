@@ -1,7 +1,15 @@
 # Singapore Desk — shadow scope
 
-Shadow evaluation only. This desk collects nothing into production, appears in
-no public count, and is not rendered by either site mode.
+This document describes the shadow evaluation only. The shadow collector
+(`scripts/shadow_collect.py`, `.github/workflows/singapore_shadow.yml`)
+itself still collects nothing into production and writes only to isolated
+shadow state, as it always has. The Singapore desk as a whole is no longer
+shadow-only, though: `desks/singapore/manifest.json` holds a one-time governed
+promotion of 57 corrected shadow records (DECISION_LOG.md, 2026-09-21), is
+publicly rendered, and — as of the scheduled-production work referenced there
+— is collected going forward by the ordinary production pipeline, same as any
+other desk. See that manifest and `desks/registry.json` for current status;
+this file's scope stays the shadow collector's own rules.
 
 ## Institution
 

@@ -185,6 +185,98 @@ def insert_article(article: dict, scrape_run_id: int) -> Optional[int]:
         return None
 
 
+def insert_articles_atomic(
+    passed: list, rejected: list, run_id: int,
+) -> list:
+    """
+    Insert one source's whole batch (both keyword-passed and keyword-rejected
+    articles) as a single all-or-nothing transaction.
+
+    `insert_article()` above deliberately commits each article on its own
+    connection -- correct for sources that should tolerate losing only the
+    one bad record in a batch (pipeline.py's Stage 3 comment explains why).
+    This function exists for the opposite guarantee, for sources configured
+    into `pipeline.py`'s `ATOMIC_BATCH_SLUGS`: if ANY insert in the batch
+    hits a genuine, unexpected error, EVERY insert from this call is rolled
+    back -- including ones that had already succeeded earlier in the same
+    call -- so a mid-batch failure can never leave part of a batch committed
+    and the rest lost. A duplicate URL is not such a failure: it is the same
+    ordinary, expected outcome `insert_article()` already treats as "already
+    present, nothing to do", and does not roll back the batch.
+
+    Returns the `(article_id, article)` pairs actually inserted from `passed`
+    (mirroring what the caller's own per-article loop would have collected).
+    Raises on genuine failure -- the caller decides how to record that; this
+    function's only job is the transaction boundary.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    inserted: list = []
+    try:
+        conn.execute("PRAGMA foreign_keys = ON")
+        conn.execute("BEGIN IMMEDIATE")
+
+        def _insert_one(article: dict) -> Optional[int]:
+            source_id = _get_source_id_on(conn, article["source_slug"])
+            if source_id is None:
+                raise ValueError(
+                    "unknown source slug: %s" % article["source_slug"])
+            try:
+                cur = conn.execute(
+                    """
+                    INSERT INTO articles
+                        (url, content_hash, source_id, scrape_run_id,
+                         title_original, text_original, published_date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        article["url"], article["content_hash"], source_id,
+                        run_id, article.get("title_original"),
+                        article.get("text_original"),
+                        article.get("published_date"),
+                    ),
+                )
+                return cur.lastrowid
+            except sqlite3.IntegrityError:
+                # Duplicate URL: the ordinary outcome insert_article() also
+                # treats as "nothing to do", not a batch-breaking failure.
+                return None
+
+        for article in passed:
+            aid = _insert_one(article)
+            if aid is not None:
+                inserted.append((aid, article))
+
+        for article in rejected:
+            aid = _insert_one(article)
+            if aid is not None:
+                conn.execute(
+                    """
+                    UPDATE articles
+                       SET relevance_score     = ?,
+                           relevance_reasoning = ?,
+                           passed_relevance    = ?
+                     WHERE id = ?
+                    """,
+                    (0.0, "failed keyword pre-filter", 0, aid),
+                )
+
+        conn.commit()
+        return inserted
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def _get_source_id_on(conn: sqlite3.Connection, slug: str) -> Optional[int]:
+    row = conn.execute(
+        "SELECT id FROM sources WHERE slug = ?", (slug,)
+    ).fetchone()
+    return row["id"] if row else None
+
+
 def update_relevance(
     article_id: int,
     score: float,

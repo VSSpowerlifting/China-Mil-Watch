@@ -1,10 +1,14 @@
 """
-Singapore MINDEF official releases — shadow adapter.
+Singapore MINDEF official releases adapter.
 
-Conforms to `core.collection.contract.SourceAdapter`. It is NOT registered in
-any production desk manifest: `shadow/singapore_mindef/manifest.json` lives
-outside `desks/` precisely so `load_all_desks()` cannot find it, and the source
-is `enabled: false`. Nothing here can reach `pla_watch.db` or `output/`.
+Conforms to `core.collection.contract.SourceAdapter`. Registered in
+`desks/singapore/manifest.json`, which `load_all_desks()` discovers, so this
+adapter is reachable from `pla_watch.db` and `output/` through the ordinary
+scheduled pipeline (`pipeline.py`, invoked by `.github/workflows/daily_update.yml`)
+the same way every other source is. It is also still run, unchanged, by the
+separate shadow evaluation workflow (`scripts/shadow_collect.py`,
+`.github/workflows/singapore_shadow.yml`), which writes to isolated shadow
+state and never touches production.
 
 Scope, inclusions, exclusions and rules are in
 `shadow/singapore_mindef/README.md`. The rules that matter to this file:
@@ -14,10 +18,14 @@ Scope, inclusions, exclusions and rules are in
   * a missing title, date, body or identity is a refusal, not a partial record
   * robots policy is re-read every run and a disallow is a hard failure
   * an empty day is a success, and is never conflated with a listing failure
+  * two records, `15aug26-speech` and `16sep26-speech`, are held out of
+    everything this adapter discovers (see `HELD_RELEASE_SLUGS` below) — the
+    governed exclusion decided in DECISION_LOG.md, 2026-09-21, for unrepaired
+    CJK extraction damage, enforced here so a live run can never reintroduce
+    them even though MINDEF's own sitemap still lists both
 
 Deliberately absent: translation, classification, significance scoring and any
-editorial judgement. The shadow phase proves retrieval, identity, preservation
-and reliability first.
+editorial judgement.
 """
 
 from __future__ import annotations
@@ -30,7 +38,7 @@ import time
 import urllib.robotparser
 from datetime import date, datetime, timedelta, timezone
 from html import unescape
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from urllib.parse import urlparse, urlunparse
 
 import requests
@@ -39,13 +47,29 @@ from core.collection import status as st
 from core.collection.contract import (
     CandidateReference, CaptureResult, CollectionWindow, DiscoveryResult,
     ExtractedDocument, ExtractionResult, SourceAdapter, SourceHealthResult,
+    SourceRunResult,
 )
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 HOST = "https://www.mindef.gov.sg"
 SITEMAP = HOST + "/sitemap.xml"
 ROBOTS = HOST + "/robots.txt"
 RELEASE_RE = re.compile(
     r"^https://www\.mindef\.gov\.sg/news-and-events/latest-releases/[^/]+/$")
+
+#: Governed holds. Both records were promoted from the shadow corpus with
+#: unrepaired CJK-passage extraction damage the correction overlay could not
+#: fix, and DECISION_LOG.md (2026-09-21) held both out of the 57-record
+#: production promotion rather than publish damaged text. That promotion was
+#: a one-time batch write; it did not, and could not, stop a live collection
+#: run from rediscovering these same URLs through MINDEF's own sitemap, which
+#: still lists them. This set is the enforcement that closes that gap: any
+#: scheduled `discover()` call excludes them before a window or cap is ever
+#: applied, so neither can reach `fetch()`, `extract()`, or `pla_watch.db`.
+HELD_RELEASE_SLUGS = frozenset({"15aug26-speech", "16sep26-speech"})
 
 #: Honest identification. A ministry that wants to refuse this collector must be
 #: able to recognise it and say so in robots.txt.
@@ -103,6 +127,12 @@ def slug_published_date(url: str) -> Optional[str]:
         return date(2000 + int(m.group(3)), mon, int(m.group(1))).isoformat()
     except ValueError:
         return None
+
+
+def release_slug(url: str) -> Optional[str]:
+    """The path token that identifies a release, e.g. '15aug26-speech'."""
+    tail = url.rstrip("/").rsplit("/", 1)[-1]
+    return tail or None
 
 
 def publication_kind(url: str) -> str:
@@ -391,6 +421,12 @@ class SGMindefAdapter(SourceAdapter):
                 self.slug, st.LISTING_FAILURE,
                 error_detail="sitemap parsed to zero release URLs")
 
+        # Governed holds are removed before window/cap selection, not after:
+        # they must never occupy a cap slot or a window position that belongs
+        # to a publishable record.
+        entries = [(u, lastmod) for u, lastmod in entries
+                   if release_slug(u) not in HELD_RELEASE_SLUGS]
+
         selected = select_window(entries, window, self._cap)
         refs = [CandidateReference(url=u, source_slug=self.slug,
                                    discovered_via=SITEMAP,
@@ -431,45 +467,167 @@ class SGMindefAdapter(SourceAdapter):
             body=body)
 
     def extract(self, capture: CaptureResult) -> ExtractionResult:
-        """One document or a refusal. Never a partial record."""
+        """One document or a refusal. Never a partial record.
+
+        Everything past the body check is wrapped in one try/except, matching
+        `adapters.legacy.LegacyScraperAdapter.extract()`'s established pattern
+        for the same reason: `collect()` (`core.collection.contract`) accumulates
+        documents from multiple references in one local list and only returns
+        it at the end of its loop. An uncaught exception here would not just
+        fail this one release -- it would abort that whole loop and discard
+        every already-extracted document from earlier references in the same
+        run, which is a real cost even though nothing is corrupted (a source
+        crash still degrades cleanly to ADAPTER_ERROR with zero documents
+        stored). The helpers below (`document_title`, `document_body`,
+        `slug_published_date`, `canonical_url`) are all written to return
+        `None`/short values rather than raise for the "missing field" cases
+        already handled explicitly; this catches only a genuinely unexpected
+        parser bug, the one case those explicit checks cannot anticipate.
+        """
         if not capture.ok or not capture.body:
             return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
                                     error_detail="no body to extract")
-        url = canonical_url(capture.reference.url)
-        if not url:
+        try:
+            url = canonical_url(capture.reference.url)
+            if not url:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="not a canonical release URL: %s"
+                                 % capture.reference.url)
+            title = document_title(capture.body)
+            if not title:
+                return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
+                                        error_detail="no title: %s" % url)
+            published = slug_published_date(url)
+            if not published:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="no publication date in the official slug: %s"
+                                 % url)
+            body = document_body(capture.body)
+            if len(body) < MIN_BODY_CHARS:
+                return ExtractionResult(
+                    self.slug, st.EXTRACTION_FAILURE,
+                    error_detail="body too short to be a published record "
+                                 "(%d chars): %s" % (len(body), url))
+            doc = ExtractedDocument(
+                url=url, source_slug=self.slug, title_original=title,
+                text_original=body, published_date=published, language_tag="en",
+                extra={
+                    "publication_kind": publication_kind(url),
+                    "content_sha256": hashlib.sha256(
+                        body.encode("utf-8")).hexdigest(),
+                    "capture_sha256": capture.payload_sha256,
+                    "retrieved_at": capture.retrieved_at,
+                })
+            return ExtractionResult(self.slug, st.OK, documents=[doc])
+        except Exception as exc:
             return ExtractionResult(
                 self.slug, st.EXTRACTION_FAILURE,
-                error_detail="not a canonical release URL: %s"
-                             % capture.reference.url)
-        title = document_title(capture.body)
-        if not title:
-            return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
-                                    error_detail="no title: %s" % url)
-        published = slug_published_date(url)
-        if not published:
-            return ExtractionResult(
-                self.slug, st.EXTRACTION_FAILURE,
-                error_detail="no publication date in the official slug: %s" % url)
-        body = document_body(capture.body)
-        if len(body) < MIN_BODY_CHARS:
-            return ExtractionResult(
-                self.slug, st.EXTRACTION_FAILURE,
-                error_detail="body too short to be a published record "
-                             "(%d chars): %s" % (len(body), url))
-        doc = ExtractedDocument(
-            url=url, source_slug=self.slug, title_original=title,
-            text_original=body, published_date=published, language_tag="en",
-            extra={
-                "publication_kind": publication_kind(url),
-                "content_sha256": hashlib.sha256(
-                    body.encode("utf-8")).hexdigest(),
-                "capture_sha256": capture.payload_sha256,
-                "retrieved_at": capture.retrieved_at,
-            })
-        return ExtractionResult(self.slug, st.OK, documents=[doc])
+                error_detail="parser raised: %s: %s"
+                             % (type(exc).__name__, str(exc)[:160]))
 
     # healthcheck() is inherited from SourceAdapter: OK when `implemented`
     # and `source.enabled` both hold, SKIPPED_DISABLED when the desk manifest
     # disables the source, offline either way. The override this replaced
     # hardcoded "shadow evaluation; not enabled in any production desk",
     # which was true only while this adapter had no production manifest.
+
+    def collect(
+        self, window: CollectionWindow
+    ) -> Tuple[SourceRunResult, List[ExtractedDocument]]:
+        """
+        All-or-nothing collection: this run's new documents are returned only
+        when every discovered reference collected cleanly.
+
+        The inherited generic `SourceAdapter.collect()`
+        (`core.collection.contract`) degrades gracefully per record -- exactly
+        right for China's five sources, where one bad PLA Daily page must not
+        cost the other fifty, and left unchanged there for that reason. This
+        adapter overrides it instead of using that default, because Singapore's
+        own history argues for the opposite: the corpus already holds two
+        records a silent extraction defect damaged badly enough to need a
+        governed, human-reviewed exclusion (DECISION_LOG.md, 2026-09-21) -- a
+        defect `extract()`'s own checks did not catch at the time it happened.
+        A live scheduled run gets no such review before publishing. So for
+        this adapter specifically, ANY trouble in a batch -- a fetch failure,
+        an extraction failure, or (defensively, on top of `discover()`'s own
+        filter) a held URL somehow present in the result -- withholds the
+        WHOLE batch rather than keeping the records that happened to succeed.
+        Nothing already published is touched, and nothing is lost long-term: a
+        withheld record is simply rediscovered and retried on the next
+        scheduled run, exactly as an adapter crash already was before this
+        change existed.
+        """
+        started = _now()
+        result = SourceRunResult(
+            source_slug=self.slug, status=st.OK,
+            desk_id=getattr(self.source, "desk_id", None), started_at=started,
+        )
+
+        if not getattr(self.source, "enabled", True):
+            result.status = st.SKIPPED_DISABLED
+            result.completed_at = _now()
+            return result, []
+
+        discovery = self.discover(window)
+        result.references_discovered = len(discovery.references)
+
+        if not discovery.ok or not discovery.references:
+            result.status = discovery.status
+            result.error_detail = discovery.error_detail
+            result.completed_at = _now()
+            return result, []
+
+        documents: List[ExtractedDocument] = []
+        fetch_failures = 0
+        extraction_failures = 0
+        for ref in discovery.references:
+            capture = self.fetch(ref)
+            if not capture.ok:
+                fetch_failures += 1
+                continue
+            result.fetched += 1
+            extracted = self.extract(capture)
+            if extracted.status == st.OK and extracted.documents:
+                documents.extend(extracted.documents)
+            else:
+                extraction_failures += 1
+
+        result.extracted = len(documents)
+        result.failed_fetches = fetch_failures
+        result.completed_at = _now()
+
+        # Defense in depth. discover() already filters HELD_RELEASE_SLUGS
+        # before window/cap selection, so this should never fire -- checked
+        # again here, against the actual documents about to be returned,
+        # because this is the last point inside the adapter before pipeline.py
+        # can reach pla_watch.db with them.
+        held_leak = [d.url for d in documents
+                     if release_slug(d.url) in HELD_RELEASE_SLUGS]
+
+        if fetch_failures or extraction_failures or held_leak:
+            notes = []
+            if fetch_failures or extraction_failures:
+                notes.append(
+                    "%d of %d discovered reference(s) failed fetch or "
+                    "extraction" % (fetch_failures + extraction_failures,
+                                    result.references_discovered))
+            if held_leak:
+                notes.append("held record(s) present in results: %s"
+                             % ", ".join(held_leak))
+            result.status = st.EXTRACTION_FAILURE
+            result.error_detail = ("; ".join(notes) +
+                                   " -- whole batch withheld, nothing "
+                                   "committed this run")
+            result.text_unavailable = None
+            return result, []
+
+        unusable = [d for d in documents if not d.has_usable_text]
+        result.text_unavailable = len(unusable)
+        if documents and unusable:
+            result.error_detail = (
+                "%d of %d parsed page(s) carried no usable text; their "
+                "titles, URLs and dates were kept"
+                % (len(unusable), len(documents)))
+        return result, documents
