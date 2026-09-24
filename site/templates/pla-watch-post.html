@@ -11,7 +11,8 @@
 {% block og_description %}{{ dek }}{% endblock %}
 {% block og_image %}{% if cover_image_url %}{{ cover_image_url }}{% else %}{{ site_origin }}/og-image.png{% endif %}{% endblock %}
 
-{% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span><span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% if is_retrospective %}<span>{{ retrospective_label }}</span>{% endif %}{% endblock %}
+{#- The retrospective label follows the issue number, not the date. Spans wrap between, never inside, and the date span alone fills a 375px line, so trailing it cost a third masthead line (17.7px). -#}
+{% block masthead_left %}<span>Vol. I{% if issue_number %} · No. {{ issue_number }}{% endif %}</span>{% if is_retrospective %}<span>{{ retrospective_label }}</span>{% endif %}<span>{% if edition_label %}{{ edition_label }} · {% endif %}Week ending {{ week_ending | format_date }}</span>{% endblock %}
 
 {% block progress %}
 <div class="progress-rail" aria-hidden="true"><b></b></div>
