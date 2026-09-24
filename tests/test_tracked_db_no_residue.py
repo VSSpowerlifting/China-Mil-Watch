@@ -46,6 +46,9 @@ READ_ONLY_COMMANDS = (
     ("verify_db_current", ["scripts/verify_db_current.py", "--quiet"]),
     ("source_health_report", ["scripts/source_health_report.py"]),
     ("check_source_liveness", ["scripts/check_source_liveness.py"]),
+    ("author_brief", ["scripts/author_brief.py", "scaffold",
+                      "--desks", "china,singapore",
+                      "--week-ending", "2026-09-19"]),
 )
 
 

@@ -16,8 +16,11 @@ separation of evidence from inference — not story collection.
 **Naming.** The public identity is *Indo-Pacific Record*. "China Mil Watch" is
 the **retired predecessor name** (renamed 2026-08-27) and is correct only in
 historical statements — including on the thirteen editions published under it,
-which keep their original masthead. **"The PLA Watch" is current**: it is the
-name of the China Desk's analytical series and is not a legacy term.
+which keep their original masthead. **Indo-Pacific Record Briefs** is the
+continuing collection of analysis (2026-09-23). **"The PLA Watch" is
+predecessor attribution**: the name the existing issues (Nos. 1–14) were
+published as, which they keep for good. It is not a term to scrub from them,
+and no new issue is published under it.
 
 Two layers, one masthead:
 
@@ -25,9 +28,13 @@ Two layers, one masthead:
   verbatim, model translation/summaries/categorization, model flags. Every
   automatically assembled readout is labeled as pipeline output, never as
   analyst prose.
-- **The PLA Watch** — the *analysis*. The China Desk's weekly human-controlled
-  editorial brief (Vol. I, numbered editions, week ending Saturday, published
-  Sunday). Every claim traces to a source-trail record.
+- **Indo-Pacific Record Briefs** — the *analysis*. Numbered, human-controlled
+  briefs, each beginning with a concrete development and comparing how the
+  relevant institutions officially describe or respond to it (§5b). Every
+  claim traces to a source-trail record. The existing issues were published as
+  *The PLA Watch*, the China Desk's weekly brief (Vol. I, week ending Saturday,
+  published Sunday), and keep that attribution. **Regional Assessments** are a
+  separate, longer format (§5c).
 
 The project publishes through **desks**. A desk's status and public
 presentation are declared in `desks/registry.json`; its sources come from its
@@ -133,7 +140,8 @@ viewport. Depth is progressive; no overlong hero.
 
 ### PLA Watch edition (Night Desk surface)
 
-The China Desk's analytical series. Editions published before 2026-08-27 carry
+The page of the existing issues, published as the China Desk's series *The PLA
+Watch*; briefs use the same anatomy (§5b). Editions published before 2026-08-27 carry
 the predecessor masthead and keep their addresses; that is a preserved
 historical fact, not a naming inconsistency to correct.
 Hierarchy: edition identity (No., week ending, badge) → title + dek + byline
@@ -234,6 +242,76 @@ still wins.
 **Source concentration is standing methodology**, documented once in
 `METHODOLOGY.md` and on the Methodology page — not a disclaimer repeated in
 every edition.
+
+## 5b. Indo-Pacific Record Briefs
+
+Owner direction, 2026-09-23 (`DECISION_LOG.md`). Implemented at source level by
+`core/edition_identity.py` (collection and attribution), `core/brief_contract.py`
+(the contract and numbering) and `scripts/author_brief.py` (scaffold and check).
+Briefs have no public route or renderer yet.
+
+**One collection, provenance intact.** *Indo-Pacific Record Briefs* includes the
+existing issues and every future issue. Each existing issue keeps its sidecar,
+published title, URL, feed entry ID and original *The PLA Watch* attribution —
+and editions 1–13 their China Mil Watch masthead (§5a). A unified collection may
+display that provenance; it never rewrites it. Membership is not attribution: an
+existing issue is *in* the collection and still *published as* The PLA Watch.
+No new issue is authored or published as The PLA Watch. A brief says what it is
+by recording `collection: "Indo-Pacific Record Briefs"`; a sidecar that looks
+like a brief without saying so, or any issue after No. 14 that names no
+collection, is refused rather than read as The PLA Watch.
+
+**What a brief is.** It uses the existing article anatomy (§5, edition page) and
+begins with a concrete Indo-Pacific development, recorded as `development` with
+the trail entries that document it. It compares how the relevant governments or
+institutions officially describe or respond to that development. It is not a
+digest of a week's volume, and not one desk's round-up.
+
+**Desks.** A brief draws evidence from at least two live desks by default. A
+single-desk brief is an explicitly approved exception, recorded in the sidecar
+(`single_desk_exception`: who approved it, when, and why). No brief has to
+include every desk; a desk in shadow evaluation or access-blocked contributes
+nothing; every declared desk contributes at least one trail entry.
+
+**Source trail.** Candidates are selected by the brief's named desks, never by a
+query that assumes one corpus. Each entry keeps its record's actual desk and its
+source's language: the original title verbatim in `title_original`, its language
+in `lang`. Desk and language are independent — the China Desk collects two
+English-language sources — so briefs do not use `title_zh`. Screening state is
+shown per record, and the model flag only where a record was analyzed.
+
+**Cross-desk claims.** Every claim that compares desks cites at least one trail
+entry from each desk it compares. Coordination is never inferred from similar
+timing or similar wording: a claim of coordination rests on a cited record that
+states it. Coverage is shown per desk and never pooled; desks differ in volume
+and in how far their records have been screened.
+
+**Numbers.** Assigned at approval — one more than the highest number already
+assigned in the collection — and never reassigned. Not a rank by the week an
+issue covers: a retrospective brief approved later takes a later number and
+states its week. **No number is assigned while No. 14's publication status is
+unreconciled**, because the next number depends on that ruling.
+
+**Titles.** A brief's title does not begin with *The PLA Watch*. The title
+format for briefs is decided with their renderer.
+
+## 5c. Regional Assessments — the boundary
+
+A Regional Assessment is a separate, longer editorial format under Indo-Pacific
+Record. Only its boundary is defined here; nothing is built for it.
+
+| | Brief | Regional Assessment |
+|---|---|---|
+| Starts from | one concrete development | a question or pattern across developments |
+| Window | the development's week (retrospective allowed, labelled) | a longer, stated period |
+| Evidence | trail entries from two or more live desks, or an approved exception | the record across desks and over time; may cite briefs |
+| Form | the existing article anatomy | longer, with its own structure |
+| Numbering | the collection's single sequence | its own identity; never numbered as a brief |
+| Pipeline | `scripts/author_brief.py`, the brief contract, the QA checklist | its own renderer, route and review gate — not built |
+
+A brief that outgrows one development is an Assessment candidate, not a longer
+brief. An Assessment keeps the same evidence rules: desk and language preserved,
+cross-desk claims cited from each desk, no coordination inferred from timing.
 
 ## 6. Voice
 

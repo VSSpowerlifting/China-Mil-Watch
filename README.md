@@ -7,9 +7,11 @@ a 24-hour cycle. It is live at <https://indopacificrecord.org>.
 
 The project publishes through **desks**. The **China Desk** is the only mature
 collection: Mandarin-language military and security reporting from official and
-authoritative PRC sources. Its weekly human-written analytical series is **The
-PLA Watch**. Singapore and Japan are under private shadow evaluation and appear
-in no public count; a US Indo-Pacific reference desk is declared but
+authoritative PRC sources. The human-written analysis is **Indo-Pacific Record
+Briefs**, whose existing issues were published as *The PLA Watch*. The
+Singapore Desk went live on 2026-09-21; Japan is under private shadow
+evaluation and appears in no public count; a US Indo-Pacific reference desk is
+declared but
 access-blocked.
 
 *China Mil Watch* was this project's name until 2026-08-27. It is a legacy name
