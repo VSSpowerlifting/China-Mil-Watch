@@ -840,6 +840,40 @@ main { padding-top: 2rem; }
 }
 .card-veil-credit a { color: var(--color-text-secondary); text-decoration: underline; text-decoration-color: var(--color-border); }
 .card-veil-credit a:hover { color: var(--color-brand-light); }
+/* Card text over the veil. The photograph sits under the title column, so
+   text that clears 4.8:1 on the card ground measured as low as 2.9:1 on the
+   lit pixels behind it (No. 14, composited, worst glyph: dek 2.96, retrospective
+   badge 2.88, source-trail label 3.81 at 1440; "model-flagged" 3.49 at 375).
+   The same fix the article hero took (pla-watch-post.html, .nd-veil-band):
+   scoped ink for the small roles that land on photography, and the card's own
+   ground under the translucent chips. The veil's opacity, width, mask and focal
+   point are untouched (2026-08-12: image choice, not opacity, is the lever), and
+   nothing is painted over the card. Keyed to the class the template sets only
+   when a veil renders, so a text-led card keeps the design-system hierarchy. */
+.issue-cover--veil {
+  --veil-ink:       var(--color-text-primary);
+  --veil-ink-quiet: #CFC9C0;
+  --veil-flag:      #E8657A;
+}
+.issue-cover--veil .issue-cover-dek { color: var(--veil-ink); }
+.issue-cover--veil .issue-cover-edition,
+.issue-cover--veil .issue-cover-meta,
+.issue-cover--veil .nd-tickrow-label { color: var(--veil-ink-quiet); }
+.issue-cover--veil .nd-tickrow-label b { color: var(--veil-flag); }
+/* Chip fills are translucent by construction, so a bright frame shows straight
+   through. Ground underneath, the same tint laid back on top; never `opacity`,
+   which would re-composite the whole chip against the image. */
+.issue-cover--veil .pw-badge { background-color: var(--color-bg-card); background-image: none; }
+.issue-cover--veil .pw-badge--significant { background-image: linear-gradient(rgba(179, 19, 43, 0.14) 0 100%); }
+.issue-cover--veil .pw-badge--pilot { background-image: linear-gradient(rgba(224, 164, 88, 0.1) 0 100%); }
+@media print {
+  /* Print repaints the tokens for white paper; the light on-photograph inks
+     would print as pale grey on white. */
+  .issue-cover--veil { --veil-ink-quiet: var(--color-text-muted); --veil-flag: var(--signal-bright); }
+  .issue-cover--veil .pw-badge,
+  .issue-cover--veil .pw-badge--significant,
+  .issue-cover--veil .pw-badge--pilot { background: transparent; }
+}
 .issue-cover .nd-tickrow, .issue-cover .nd-tickrow-label { position: relative; z-index: 1; }
 /* tighten the source-trail strip within the compact card so the primary
    action clears the desktop fold (base .nd-tickrow spacing is post-hero) */
@@ -1105,7 +1139,7 @@ main { padding-top: 2rem; }
     <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
     <p class="cover-stand">The weekly analytical brief from Indo-Pacific Record — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
 
-      <div class="issue-cover">
+      <div class="issue-cover issue-cover--veil">
         <div class="card-veil" role="img" aria-label="Photograph published with the cited source article “Chinese Navy Ship Honghe and Indonesian Navy Frigate &#34;Rê&#34; Successfully Complete Passage Exercise in Waters East of Taiwan Island”, rendered as a duotone background." data-editorial-id="src-2026-08-15"
              style="background-image:url('media/2026-08-15-veil.jpg'); background-position:50% 42%;"></div>
         <div class="issue-cover-eyebrow">
