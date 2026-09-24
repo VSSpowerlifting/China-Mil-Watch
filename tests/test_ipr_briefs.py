@@ -602,11 +602,11 @@ class TestSourceLanguage(FixtureCase):
 
 class TestCrossDeskEvidence(unittest.TestCase):
 
-    def problems(self, sidecar, reg=LIVE):
-        return bc.validate_brief(sidecar, reg)
+    def problems(self, sidecar, reg=LIVE, **rules):
+        return bc.validate_brief(sidecar, reg, **rules)
 
-    def assertProblem(self, sidecar, fragment, reg=LIVE):
-        found = self.problems(sidecar, reg)
+    def assertProblem(self, sidecar, fragment, reg=LIVE, **rules):
+        found = self.problems(sidecar, reg, **rules)
         self.assertTrue(any(fragment in p for p in found),
                         "expected %r among %r" % (fragment, found))
 
@@ -678,13 +678,17 @@ class TestCrossDeskEvidence(unittest.TestCase):
                            "stated_in names no cited record")
 
     def test_an_approved_brief_is_a_comparison_that_begins_with_a_development(self):
+        # The anatomy of an approved brief, checked as if No. 14 were already
+        # reconciled — simulated, not ruled; the numbering gate has its own
+        # tests below.
+        ruled = {"unreconciled": frozenset()}
         approved = approve(complete(), collection=[])
-        self.assertEqual(self.problems(approved), [])
+        self.assertEqual(self.problems(approved, **ruled), [])
         self.assertProblem(dict(approved, cross_desk_claims=[]),
-                           "at least one cross-desk comparison")
+                           "at least one cross-desk comparison", **ruled)
         self.assertProblem(dict(approved, development={"summary": "",
                                                        "citations": []}),
-                           "begins with a concrete development")
+                           "begins with a concrete development", **ruled)
 
     def test_no_new_brief_is_titled_as_the_pla_watch(self):
         self.assertProblem(draft(title="The PLA Watch: a fixture"),
@@ -752,6 +756,81 @@ class TestStableNumbering(unittest.TestCase):
         self.assertEqual(len(bc.numbers_changed({"a": {"issue_number": 15}},
                                                 {"a": {"issue_number": 16}})),
                          1)
+
+
+class TestCheckCommandHoldsTheNumberingGate(unittest.TestCase):
+    """
+    `scripts/author_brief.py check` is the command an analyst runs until a brief
+    passes (docs/ARCHITECTURE_AND_PUBLISHING.md §7), and `approve()` is called by
+    no command. So the numbering rules are pinned through the command, on
+    briefs numbered by hand: it must never report one as valid while No. 14 is
+    unreconciled, or with a number an existing issue holds. Nothing here
+    assigns or approves a number; the fixtures are what the command must not
+    certify, and a simulated ruling stands in for one that has not been made.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+
+    def check(self, sidecar):
+        path = self.tmp / "brief.json"
+        path.write_text(json.dumps(sidecar), encoding="utf-8")
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = author_brief.main(["check", str(path)])
+        return code, out.getvalue() + err.getvalue()
+
+    @staticmethod
+    def numbered(number):
+        return complete(
+            editorial_status=bc.STATUS_APPROVED, issue_number=number,
+            approval={"approved_by": "Fixture (simulated)",
+                      "approved_on": "2026-09-27"})
+
+    def test_a_hand_numbered_brief_is_refused_while_no_14_is_unreconciled(self):
+        self.assertIn(14, bc.UNRECONCILED_ISSUES)
+        code, text = self.check(self.numbered(LAST_PREDECESSOR_ISSUE + 1))
+        self.assertEqual(code, 1, text)
+        self.assertIn("No. 14 has an unreconciled publication status", text)
+        self.assertNotIn("satisfies the brief contract", text)
+
+    def test_the_refusal_is_the_gate_and_nothing_else(self):
+        """With a ruling simulated, the same brief passes, so it was the gate."""
+        with mock.patch.object(bc, "UNRECONCILED_ISSUES", frozenset()):
+            code, text = self.check(self.numbered(LAST_PREDECESSOR_ISSUE + 1))
+        self.assertEqual(code, 0, text)
+
+    def test_an_existing_issue_number_is_refused_whether_or_not_the_gate_holds(self):
+        existing = sorted(sc["issue_number"]
+                          for sc in existing_sidecars().values())
+        self.assertEqual(existing, list(range(1, LAST_PREDECESSOR_ISSUE + 1)))
+        for gate in (bc.UNRECONCILED_ISSUES, frozenset()):
+            for number in existing:
+                with self.subTest(number=number, gate_in_force=bool(gate)):
+                    with mock.patch.object(bc, "UNRECONCILED_ISSUES", gate):
+                        code, text = self.check(self.numbered(number))
+                    self.assertEqual(code, 1, text)
+                    self.assertIn("issue number %d is already assigned to an "
+                                  "existing issue" % number, text)
+                    self.assertNotIn("satisfies the brief contract", text)
+
+    def test_a_valid_unnumbered_draft_still_passes(self):
+        for label, sidecar in (("complete", complete()), ("bare", draft())):
+            with self.subTest(label):
+                code, text = self.check(sidecar)
+                self.assertEqual(code, 0, text)
+                self.assertIn("satisfies the brief contract (draft)", text)
+
+    def test_a_number_is_not_passed_when_no_existing_issue_can_be_read(self):
+        empty = self.tmp / "no-issues"
+        empty.mkdir()
+        with mock.patch.object(author_brief, "POSTS_DIR", empty):
+            code, text = self.check(self.numbered(LAST_PREDECESSOR_ISSUE + 1))
+            self.assertEqual(code, 2, text)
+            self.assertIn("no existing issue sidecar was found", text)
+            code, text = self.check(complete())   # a draft needs none
+            self.assertEqual(code, 0, text)
 
 
 if __name__ == "__main__":

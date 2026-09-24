@@ -27,7 +27,10 @@ Mechanically, here:
     states it (`basis: "stated_in_record"`, `stated_in`) — it never rests on
     similar timing;
   * a draft carries no issue number; an approved brief carries one, with its
-    approval, and keeps it.
+    approval, and keeps it — but no brief may carry one while an existing
+    issue's publication status is unreconciled (`UNRECONCILED_ISSUES`), and
+    never one an existing issue already holds, whether it was assigned by
+    `approve` or written by hand.
 
 Editorially, in `EDITORIAL_QA_CHECKLIST.md`: whether the development is
 concrete, whether each claim says only what its citations support, whether each
@@ -42,6 +45,11 @@ A retrospective brief approved later takes a later number and states the week
 it covers. An approved number is never reassigned. And no number is assigned
 while an existing issue's publication status is unreconciled — see
 `UNRECONCILED_ISSUES`.
+
+`validate_brief` holds the same line for a number that arrived any other way,
+because it is what `scripts/author_brief.py check` runs: a hand-numbered brief
+is refused while the gate is in force, and refused for any number an existing
+issue holds. The caller supplies the existing issues as `collection`.
 """
 
 from __future__ import annotations
@@ -92,6 +100,15 @@ REQUIRED_SECTIONS = ("title", "dek", "opening_note", "what_stood_out",
 #: owner's ruling, recorded in DECISION_LOG — never an edit made to unblock a
 #: build.
 UNRECONCILED_ISSUES = frozenset({14})
+
+
+def _unreconciled(value) -> frozenset:
+    """
+    The issues whose status blocks numbering. `None` means the module's ruling,
+    read when called, so `UNRECONCILED_ISSUES` stays the one switch; a caller
+    may name another set to simulate a ruling that has not been made.
+    """
+    return UNRECONCILED_ISSUES if value is None else frozenset(value)
 
 #: Wording that asserts coordination between institutions. A tripwire only.
 _COORDINATION = re.compile(
@@ -236,8 +253,17 @@ def _exception_ok(exception) -> bool:
             and _iso_date(exception.get("approved_on")) is not None)
 
 
-def validate_brief(sidecar: Mapping, registry) -> list:
-    """Every way `sidecar` breaks the brief contract. Empty means it holds."""
+def validate_brief(sidecar: Mapping, registry, *,
+                   collection: Iterable[Mapping] = (),
+                   unreconciled=None) -> list:
+    """
+    Every way `sidecar` breaks the brief contract. Empty means it holds.
+
+    `collection` is the existing issues' sidecars: a number one of them holds is
+    refused. `unreconciled` defaults to `UNRECONCILED_ISSUES`; while it names
+    any issue, no brief may carry a number, however it got there.
+    """
+    collection = list(collection)
     try:
         if not is_brief(sidecar):
             return ["not a brief: it names no collection, so it reads as an "
@@ -392,8 +418,22 @@ def validate_brief(sidecar: Mapping, registry) -> list:
         problems.append("a draft carries no issue number; numbers are "
                         "assigned at approval")
     if approved:
-        if assigned_number(sidecar) is None:
+        number = assigned_number(sidecar)
+        if number is None:
             problems.append("an approved brief carries its issue number")
+        else:
+            blocked = _unreconciled(unreconciled)
+            if blocked:
+                problems.append(
+                    "an approved brief carries No. %d, but No. %s has an "
+                    "unreconciled publication status, so no issue number may "
+                    "be assigned yet; writing one by hand does not assign it. "
+                    "Clearing that is the owner's ruling, recorded in "
+                    "DECISION_LOG and by clearing UNRECONCILED_ISSUES"
+                    % (number, ", ".join(str(n) for n in sorted(blocked))))
+            if number in {assigned_number(issue) for issue in collection}:
+                problems.append("issue number %d is already assigned to an "
+                                "existing issue" % number)
         approval = sidecar.get("approval") or {}
         if (not _text(approval.get("approved_by"))
                 or _iso_date(approval.get("approved_on")) is None):
@@ -426,17 +466,18 @@ def check_numbering(collection: Iterable[Mapping]) -> list:
 
 
 def next_issue_number(collection: Iterable[Mapping], *,
-                      unreconciled=UNRECONCILED_ISSUES) -> int:
+                      unreconciled=None) -> int:
     """
     The number the next approved issue takes: one more than the highest number
     assigned anywhere in the collection. Dates play no part.
     """
-    if unreconciled:
+    blocked = _unreconciled(unreconciled)
+    if blocked:
         raise NumberingBlocked(
             "No. %s has an unreconciled publication status, so the next issue "
             "number is not known. Assigning one needs the owner's ruling, "
             "recorded in DECISION_LOG and by clearing UNRECONCILED_ISSUES."
-            % ", ".join(str(n) for n in sorted(unreconciled)))
+            % ", ".join(str(n) for n in sorted(blocked)))
     collection = list(collection)
     problems = check_numbering(collection)
     if problems:
@@ -447,7 +488,7 @@ def next_issue_number(collection: Iterable[Mapping], *,
 
 def approve(draft: Mapping, *, collection: Iterable[Mapping], registry,
             approved_by: str, approved_on: str,
-            unreconciled=UNRECONCILED_ISSUES) -> dict:
+            unreconciled=None) -> dict:
     """
     A copy of `draft` as an approved brief carrying its number. The draft and
     the collection are not modified. Refuses a brief that already has a number
@@ -459,6 +500,7 @@ def approve(draft: Mapping, *, collection: Iterable[Mapping], registry,
         raise BriefContractError([
             "this brief already carries No. %s; an approved number is never "
             "reassigned" % draft.get("issue_number")])
+    collection = list(collection)
     number = next_issue_number(collection, unreconciled=unreconciled)
     approved = dict(draft)
     approved.update({
@@ -466,7 +508,8 @@ def approve(draft: Mapping, *, collection: Iterable[Mapping], registry,
         "issue_number": number,
         "approval": {"approved_by": approved_by, "approved_on": approved_on},
     })
-    problems = validate_brief(approved, registry)
+    problems = validate_brief(approved, registry, collection=collection,
+                              unreconciled=unreconciled)
     if problems:
         raise BriefContractError(problems)
     return approved

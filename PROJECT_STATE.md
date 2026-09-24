@@ -102,7 +102,8 @@ disclosed, and never backfilled.
 * **Indo-Pacific Record Briefs: source-level foundation only** (2026-09-23). A
   brief can be scaffolded and checked (`scripts/author_brief.py`,
   `core/brief_contract.py`) but has no route, renderer or feed, and none is
-  numbered while No. 14 is unreconciled. `scripts/generate_pla_watch.py`
+  numbered while No. 14 is unreconciled: `check` refuses a hand-numbered brief
+  and any number an existing issue holds. `scripts/generate_pla_watch.py`
   authors nothing new, so the 2026-09-03 plan for a w/e 2026-08-22
   retrospective cannot proceed as The PLA Watch: brief or disclosed gap is the
   owner's decision.

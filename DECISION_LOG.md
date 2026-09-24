@@ -4,6 +4,40 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-24 — Clarifications to the 2026-09-23 Briefs ruling
+
+Recorded with PR #71 from repository state verified on 2026-09-24. This is not
+an owner ruling and decides nothing that is the owner's to decide.
+
+The 2026-09-23 entry below stands as written. Three of its statements need
+scoping; none changes a ruling.
+
+1. **Point 7 (no number while No. 14 is unreconciled) now holds for a number
+   written by hand.** It was enforced only inside `core.brief_contract.approve`,
+   which no command calls, so `scripts/author_brief.py check` reported an
+   approved brief numbered 15 as valid, and one numbered 3 or 14. `check` now
+   refuses a brief that carries an issue number while `UNRECONCILED_ISSUES`
+   names any issue, and any number an existing issue already holds; it reads the
+   existing sidecars under `output/the-pla-watch/posts/`, read only. The scope
+   is the same: this decides nothing about No. 14, marks no checklist complete
+   and infers no owner approval. An unnumbered draft is unaffected, and
+   `approve` is still wired to no command.
+2. **Point 4 ("the Singapore records have never been relevance-screened") is
+   true of the 57 records promoted on 2026-09-21 and no longer of the desk.**
+   Those 57 carry no `scrape_run_id` and no `passed_relevance`. The scheduled
+   2026-09-23 daily run collected one more (record 4561, scrape run 147), and
+   the pipeline screened it (`passed_relevance` 0, not analyzed). That is a
+   record screened and not selected, so a scaffold counts it in coverage and
+   leaves it out of the candidate trail unless `--include-not-selected` is
+   given. The rule in point 4 stands: screening state is carried per record,
+   never filtered on. Figures are from the tracked database on `main` at
+   `3cadff12d` (the 2026-09-23 daily update); the desk total is 58, of which 57
+   are the promoted batch, and the tests pin that batch, not the total.
+3. **Point 9's "Stale" list was accurate when written.** `PROJECT_STATE.md` §4
+   and `docs/ROADMAP.md` §1 were corrected in the same change (PR #71) and now
+   say No. 14 is publicly served with its approval unreconciled. Its status and
+   number are unchanged.
+
 ## 2026-09-23 — Indo-Pacific Record Briefs is the continuing collection; The PLA Watch is predecessor attribution
 
 **Owner direction, given in the 2026-09-23 working session.** It sets the

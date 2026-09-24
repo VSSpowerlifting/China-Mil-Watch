@@ -22,6 +22,12 @@ A single-desk brief is refused unless the exception is recorded with who
 approved it, when, and why. Issue numbers are not assigned here: a number is
 assigned at approval (`core.brief_contract.approve`), and none can be while
 No. 14's publication status is unreconciled.
+
+`check` holds that line for a number written by hand. It reads the existing
+issues' sidecars under `output/the-pla-watch/posts/` (read only) and reports a
+brief that carries an issue number while No. 14 is unreconciled, or a number an
+existing issue already holds, as breaking the contract. An unnumbered draft is
+unaffected.
 """
 
 from __future__ import annotations
@@ -48,6 +54,13 @@ from scripts.reconcile_db import read_only                     # noqa: E402
 from storage.db import get_articles_for_desks                  # noqa: E402
 
 OUTPUT_DIR = REPO_ROOT / "output"
+POSTS_DIR = OUTPUT_DIR / "the-pla-watch" / "posts"
+
+
+def existing_issues() -> list:
+    """The existing issues' sidecars, read only, for `check`'s number rules."""
+    return [json.loads(p.read_text(encoding="utf-8"))
+            for p in sorted(POSTS_DIR.glob("*.json"))]
 
 
 def build_draft(records, *, desks, week_start: str, week_ending: str,
@@ -174,7 +187,14 @@ def cmd_scaffold(args) -> int:
 def cmd_check(args) -> int:
     path = Path(args.path)
     sidecar = json.loads(path.read_text(encoding="utf-8"))
-    problems = validate_brief(sidecar, load_registry())
+    issues = existing_issues()
+    if sidecar.get("issue_number") is not None and not issues:
+        # A number cannot be checked against issues that cannot be read; say so
+        # rather than pass it. An unnumbered draft never needs them.
+        return _refuse("%s carries an issue number, but no existing issue "
+                       "sidecar was found under %s to check it against."
+                       % (path, POSTS_DIR))
+    problems = validate_brief(sidecar, load_registry(), collection=issues)
     if problems:
         print("%s breaks the brief contract:" % path)
         for problem in problems:
