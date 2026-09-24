@@ -196,11 +196,20 @@ class TestRosterMatchesConfiguration(DeskCase):
 
     def test_singapore_record_membership_matches_the_promotion(self):
         """
-        Pins the exact promotion this activation preserves: 57 records under
-        the desk's declared source identity, both charset-damaged records held
-        out, and the three named news releases present.
+        Pins the exact promotion this activation preserves: 57 promoted
+        records (the closed one-off batch, identified by carrying no
+        scrape_run_id) under the desk's declared source identity, both
+        charset-damaged records held out, and the three named news releases
+        present. Records the scheduled daily run has collected since carry a
+        run id and grow the desk's total; they neither join nor alter the
+        promoted batch, so the total is not pinned.
         """
         with self.db() as con:
+            promoted = con.execute(
+                "SELECT COUNT(*) FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "WHERE s.slug = 'sg_mindef_releases' "
+                "  AND a.scrape_run_id IS NULL").fetchone()[0]
             count = con.execute(
                 "SELECT COUNT(*) FROM articles a "
                 "JOIN sources s ON a.source_id = s.id "
@@ -222,7 +231,8 @@ class TestRosterMatchesConfiguration(DeskCase):
                     "JOIN sources s ON a.source_id = s.id "
                     "WHERE s.slug = 'sg_mindef_releases' "
                     "  AND a.url LIKE ?", ("%/" + token + "/",)).fetchone()[0]
-        self.assertEqual(count, 57)
+        self.assertEqual(promoted, 57)
+        self.assertGreaterEqual(count, promoted)
         self.assertEqual(desk_ids, {"singapore"})
         self.assertEqual(held, [], "a held record reached the tracked database")
         for token, n in required.items():
