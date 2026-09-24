@@ -22,7 +22,8 @@ Everything happens inside `~/pla-watch`. Never touch sibling repositories
 | Mode selection | — | **`site/render.py`** — the only place a frontend is chosen; `DEFAULT_SITE_MODE` is `indo-pacific-record` | dispatches to one of the two renderers below |
 | Record site (production) | `pla_watch.db` | `site/preview/generate_preview.py`, driven by `render_site()` | `output/index.html`, `record/*.html`, `archive.html`, `coverage.html`, `methodology.html`, desk pages, `article/*.html` compatibility stubs, `data/`, sitemap |
 | Legacy site (rollback only) | `pla_watch.db` | `site/generator.py` + `site/templates/{base,index,archive,article,signals,methodology}.html` | the predecessor's tree; **not** the production build |
-| Weekly edition (publish) | Claude API + week's DB records | `scripts/generate_pla_watch.py` (structured tool output) | `output/the-pla-watch/posts/{date}.{json,html}`, covers, LinkedIn txt, feed.xml |
+| Weekly edition (predecessor series) | — | `scripts/generate_pla_watch.py` — **closed to new issues since 2026-09-23**: refuses before any DB read or API call | nothing |
+| Brief (draft + contract check) | `pla_watch.db`, read through a scratch copy (`scripts.reconcile_db.read_only`) | `scripts/author_brief.py` + `core/brief_contract.py`; selection by desk via `storage.db.get_articles_for_desks` | a draft sidecar on stdout or `--out` (never under `output/`); no route or renderer yet |
 | Weekly re-render (no API) | **sidecar JSON** (canonical edition record: metadata + trail + full body) | `scripts/rerender_pla_watch.py` + `site/templates/pla-watch-*.html` | posts/index/archive/terms HTML + feed.xml |
 | Shared weekly env | `scripts/pw_env.py` — one Jinja environment (autoescape ON), `format_date`, `inline_markup` (whitelists bare `<strong>/<em>` only), `first_cjk`, `build_atom_feed` | both weekly renderers | — |
 | Deploy gate | `scripts/validate_output.py` (stdlib-only) | CI + local | non-zero exit blocks deploy |
@@ -43,7 +44,9 @@ validated migration scripts, never casually.
 .venv/bin/python scripts/validate_output.py              # deploy gate (also runs on system python3 — stdlib-only)
 .venv/bin/python site/render.py                          # PRODUCTION renderer: daily site from DB
 .venv/bin/python scripts/rerender_pla_watch.py --no-covers  # weekly pages from sidecars (refuses empty-body sidecars)
-.venv/bin/python scripts/generate_pla_watch.py           # PUBLISH a new edition (Claude API; only on explicit request)
+.venv/bin/python scripts/author_brief.py scaffold --desks china,singapore --week-ending YYYY-MM-DD --out PATH  # draft a brief (no API; read-only on disk)
+.venv/bin/python scripts/author_brief.py check PATH      # the brief contract (DECISION_LOG 2026-09-23)
+# scripts/generate_pla_watch.py authors nothing new: no issue is published as The PLA Watch after No. 14
 ```
 
 `site/render.py` resolves its mode by precedence — an explicit argument, then
@@ -71,8 +74,6 @@ screenshots at 1280 and 375 widths.
 - `deploy_output_only.yml` — manual: validates then publishes the
   already-committed `output/` from main, with the same CNAME. Use after local
   re-renders.
-- `generate_pla_watch_draft.yml` — manual, artifact-only draft; does not
-  commit or deploy.
 - `pr_offline_checks.yml` — offline checks on pull requests.
 - `singapore_shadow.yml`, `japan_shadow.yml` — daily shadow collection into
   isolated orphan state branches. They publish nothing, deploy nothing, and
@@ -142,14 +143,32 @@ week-span warning, three missing LinkedIn files for editions 1–3, and one
 cadence gap (2026-07-18 → 2026-08-01). Any new warning must be explained in
 PROJECT_STATE.md, and none is ever cleared by invention.
 
-## 7. Editorial production flow (weekly)
+## 7. Editorial production flow
 
-1. `generate_pla_watch.py` drafts from the week's DB records (or the draft
-   workflow produces an artifact).
-2. Analyst reviews/edits; EDITORIAL_QA_CHECKLIST.md is the gate (source-to-
-   claim tracing, banned superlatives, messaging-not-intent, mechanics).
-3. Validate → preview (desktop + 375px) → analyst approves.
-4. Commit source-of-record (sidecar + HTML + LinkedIn txt) on request;
-   deploy via push (daily workflow) or `deploy_output_only`.
-5. Update PROJECT_STATE.md (edition count, new gaps recorded not explained
-   away); log any constraining ruling in DECISION_LOG.md.
+**Indo-Pacific Record Briefs** (since 2026-09-23; doctrine §5b):
+
+1. `scripts/author_brief.py scaffold --desks … --week-ending …` drafts from the
+   named desks' records: explicit identity, per-desk coverage, a candidate
+   trail in which every entry keeps its record's desk and language, empty
+   analyst fields, no issue number. No API; the database is read through a
+   scratch copy; nothing is written under `output/`. Records screened and not
+   selected are counted but not offered (`--include-not-selected` offers them).
+2. The analyst keeps the trail entries the brief cites, records the
+   `development` and each cross-desk claim with its citations, and writes the
+   prose in the existing anatomy.
+3. `scripts/author_brief.py check` until it passes, then
+   EDITORIAL_QA_CHECKLIST.md in full, then owner approval. `check` also refuses
+   a brief that carries an issue number while No. 14's publication status is
+   unreconciled, and any number an existing issue already holds; an unnumbered
+   draft is unaffected.
+4. Approval assigns the issue number (`core.brief_contract.approve`). It is
+   blocked while No. 14's publication status is unreconciled, and is not wired
+   to a command until briefs have a route.
+5. Rendering, route, feed, sitemap and deploy for briefs are not built yet —
+   the next phase.
+
+**The existing issues** (published as *The PLA Watch*) re-render from their
+sidecars with `scripts/rerender_pla_watch.py`. `scripts/generate_pla_watch.py`
+authors nothing new, and `generate_pla_watch_draft.yml`, which only dispatched
+it, is retired (DECISION_LOG 2026-09-23). After any publication, update
+PROJECT_STATE.md and record constraining rulings in DECISION_LOG.md.

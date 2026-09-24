@@ -154,16 +154,32 @@ class TestIsolationFromProduction(unittest.TestCase):
         silently. What must still hold is that the shadow state branch itself
         has no write path here — that is exercised by
         `test_the_runner_refuses_to_write_inside_the_repository` below.
+
+        The promotion is a closed batch of 57 records that carry no
+        scrape_run_id. Since the desk went live, the scheduled daily pipeline
+        also collects Singapore releases; those are legitimate, grow the
+        total, and each must point at a real scrape_runs row, so the total is
+        not pinned.
         """
         from scripts.reconcile_db import _read_only
         with _read_only(str(TRACKED_DB)) as con:
             desks = [r[0] for r in con.execute("SELECT desk_id FROM desks")]
-            count = con.execute(
+            promoted = con.execute(
                 "SELECT COUNT(*) FROM articles a "
                 "JOIN sources s ON a.source_id = s.id "
-                "WHERE s.slug = 'sg_mindef_releases'").fetchone()[0]
+                "WHERE s.slug = 'sg_mindef_releases' "
+                "  AND a.scrape_run_id IS NULL").fetchone()[0]
+            orphaned = con.execute(
+                "SELECT COUNT(*) FROM articles a "
+                "JOIN sources s ON a.source_id = s.id "
+                "LEFT JOIN scrape_runs r ON a.scrape_run_id = r.id "
+                "WHERE s.slug = 'sg_mindef_releases' "
+                "  AND a.scrape_run_id IS NOT NULL AND r.id IS NULL"
+            ).fetchone()[0]
         self.assertEqual(sorted(desks), ["china", "singapore"])
-        self.assertEqual(count, 57)
+        self.assertEqual(promoted, 57)
+        self.assertEqual(orphaned, 0,
+                         "a Singapore record names a scrape run that does not exist")
 
     def test_the_runner_refuses_to_write_inside_the_repository(self):
         for bad in (REPO_ROOT, REPO_ROOT / "state", REPO_ROOT / "output" / "s"):

@@ -2,9 +2,12 @@
 
 Independent, source-grounded monitoring and analysis of official Indo-Pacific
 defense and security publication. Two layers under one masthead: the **record**
-(automated preservation and rendering from `pla_watch.db`) and **The PLA
-Watch** (the China Desk's human-controlled weekly analytical series). Never
-"OSINT tool," never intelligence cosplay.
+(automated preservation and rendering from `pla_watch.db`) and
+**Indo-Pacific Record Briefs** (the human-controlled analytical collection).
+Its existing issues were published as *The PLA Watch*, the China Desk's weekly
+series: that is predecessor attribution they keep, and no new issue is
+authored or published under it (DECISION_LOG 2026-09-23). Never "OSINT tool,"
+never intelligence cosplay.
 
 "China Mil Watch" is a **legacy name**: the predecessor identity, retired
 2026-08-27. Use it only when describing history.

@@ -169,11 +169,6 @@ class TestScheduledWorkflowCannotReachTheNewMode(unittest.TestCase):
         self.assertNotIn("DECLARED_RECORD", src)
         self.assertNotIn("declared-record", src)
 
-    def test_the_pla_watch_draft_workflow_still_runs_its_generator(self):
-        wf = (REPO_ROOT / ".github" / "workflows"
-              / "generate_pla_watch_draft.yml").read_text(encoding="utf-8")
-        self.assertIn("scripts/generate_pla_watch.py", wf)
-
 
 class TestTheRendererStillCannotOverwriteProductionDirectly(unittest.TestCase):
     """

@@ -5,8 +5,10 @@ repository (orientation, hard rules, commands, doc map). This file exists
 for tools that read AGENTS.md instead.
 
 The public identity is **Indo-Pacific Record**. "China Mil Watch" is the
-retired predecessor name and is used only when describing history. "The PLA
-Watch" is current: the China Desk's weekly analytical series.
+retired predecessor name and is used only when describing history.
+**Indo-Pacific Record Briefs** is the continuing analytical collection. "The
+PLA Watch" is the predecessor attribution its existing issues keep; no new
+issue is authored or published under it (DECISION_LOG 2026-09-23).
 
 Summary of the non-negotiables:
 

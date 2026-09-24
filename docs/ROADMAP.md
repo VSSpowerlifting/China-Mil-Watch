@@ -25,10 +25,15 @@ reorders around a frontend idea.
 
 ### 1. Restore the human analytical publication cadence
 
-The last edition is No. 13, week ending 2026-08-08. The weeks ending
-2026-08-15, 08-22 and 08-29 have no edition. This is the highest priority: the
-analytical series is the layer that distinguishes this publication from a
-scraper, and a lapsed cadence is visible to every reader.
+The last edition with a settled record is No. 13, week ending 2026-08-08.
+No. 14 (week ending 2026-08-15) has been publicly served since 2026-09-05, but
+no approval or completed `EDITORIAL_QA_CHECKLIST.md` record exists for it, so
+its status is unreconciled (DECISION_LOG 2026-09-23 point 9). Serving it is not
+approval, and approval is not recorded retroactively: its checklist review and
+an owner ruling come first, and they also gate the number of the next brief.
+The weeks ending 2026-08-22 and 08-29 have no edition. This is the highest
+priority: the analytical series is the layer that distinguishes this
+publication from a scraper, and a lapsed cadence is visible to every reader.
 
 Restoration means editions published through the full `EDITORIAL_QA_CHECKLIST.md`
 gate — source-to-claim tracing and a rendered-page review — not a catch-up

@@ -609,6 +609,9 @@ def get_articles_for_date_range(start_date: str, end_date: str) -> list[sqlite3.
     """
     Return all analyzed articles published between start_date and end_date (inclusive).
     Used by the weekly PLA Watch generator. Read-only.
+
+    Not desk-aware: it takes every source at once. Briefs select by desk with
+    `get_articles_for_desks()`.
     """
     with get_conn() as conn:
         return conn.execute(
@@ -721,6 +724,66 @@ def get_sources_with_desk_metadata() -> list:
              ORDER BY s.slug
             """
         ).fetchall()
+
+
+def get_articles_for_desks(start_date: str, end_date: str, desks,
+                           conn: Optional[sqlite3.Connection] = None) -> list:
+    """
+    Every stored record from the named desks' sources published between
+    start_date and end_date (inclusive), whatever its screening state.
+    Read-only.
+
+    The brief-authoring counterpart of `get_articles_for_date_range()`, which
+    serves the predecessor weekly and takes analyzed records from every source
+    at once. Here a desk contributes only if it is named. Each row carries the
+    desk that owns its source (`desk_id`) and that source's language
+    (`source_language_tag`, widening the legacy bare code exactly as
+    `get_source_language_tag()` does). The two are independent: the China Desk
+    collects two English-language sources.
+
+    Screening state is carried, not filtered on. Desks do not share one
+    pipeline — the Singapore records promoted on 2026-09-21 have never been
+    relevance-screened — so the weekly generator's `passed_relevance = 1 AND
+    analyzed_at IS NOT NULL` would silently drop a whole desk.
+
+    `conn` lets a caller read through `scripts.reconcile_db.read_only()`, so an
+    authoring run cannot leave `-wal`/`-shm` beside the tracked database.
+    """
+    desk_ids = sorted({str(d).strip() for d in (desks or ()) if str(d).strip()})
+    if not desk_ids:
+        raise ValueError("name at least one desk; selection is never unscoped")
+
+    def run(c):
+        if not _has_column(c, "sources", "desk_id"):
+            raise RuntimeError(
+                "sources has no desk_id (migration 0003 not applied): records "
+                "cannot be selected by desk, and their desk is not guessed")
+        legacy = "CASE s.language WHEN 'zh' THEN 'zh-Hans' ELSE s.language END"
+        tag = ("COALESCE(NULLIF(s.language_tag, ''), %s)" % legacy
+               if _has_column(c, "sources", "language_tag") else legacy)
+        cur = c.cursor()
+        cur.row_factory = sqlite3.Row
+        return cur.execute(
+            """
+            SELECT a.*,
+                   s.slug          AS source_slug,
+                   s.display_name  AS source_name,
+                   s.desk_id       AS desk_id,
+                   %s AS source_language_tag
+              FROM articles a
+              JOIN sources s ON s.id = a.source_id
+             WHERE s.desk_id IN (%s)
+               AND a.published_date >= ?
+               AND a.published_date <= ?
+             ORDER BY s.desk_id, a.published_date DESC, a.id DESC
+            """ % (tag, ",".join("?" * len(desk_ids))),
+            (*desk_ids, start_date, end_date),
+        ).fetchall()
+
+    if conn is not None:
+        return run(conn)
+    with get_conn() as c:
+        return run(c)
 
 
 # ── Per-source collection results ─────────────────────────────────────────────

@@ -1,24 +1,31 @@
 ---
-description: Weekly PLA Watch publish workflow — draft, editorial QA, validate, preview; stops before commit for analyst approval.
+description: Indo-Pacific Record Brief workflow — scaffold, contract check, editorial QA; stops before approval. Briefs have no renderer or route yet.
 ---
 
-Run the weekly edition publish workflow for The PLA Watch. Follow
-docs/ARCHITECTURE_AND_PUBLISHING.md §7 exactly.
+Run the Indo-Pacific Record Brief workflow. Follow
+docs/ARCHITECTURE_AND_PUBLISHING.md §7 and docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md
+§5b exactly. No new issue is authored or published as The PLA Watch
+(DECISION_LOG 2026-09-23); `scripts/generate_pla_watch.py` refuses.
 
-1. Confirm preconditions: week-ending Saturday date; issue number =
-   1 + count of existing sidecars; API key available. State them and stop
-   for confirmation if the analyst has not already specified the week.
-2. Generate the draft: `.venv/bin/python scripts/generate_pla_watch.py`
-   (or note the artifact from `generate_pla_watch_draft.yml` if provided).
-3. Run EDITORIAL_QA_CHECKLIST.md top to bottom. Delegate the source-to-claim
-   and Chinese-text checks to the `editorial-integrity-reviewer` agent and
-   include its verdict.
-4. `.venv/bin/python scripts/validate_output.py` — must pass; explain any
-   warning beyond the 9 historical ones.
-5. Re-render dependents: `.venv/bin/python scripts/rerender_pla_watch.py
-   --no-covers` (predecessor's "next" link, index, archive, terms, feed).
-6. Preview post + index + archive at desktop and 375px; provide screenshots.
-7. **Stop.** Present: QA results, validator output, LinkedIn text, preview
-   evidence. Do not commit, push, or deploy — the analyst decides. After an
-   approved publish lands, update PROJECT_STATE.md (edition count, any new
-   recorded gap).
+1. Confirm preconditions: the concrete development the brief begins with, its
+   week, and the live desks it draws on — two or more, or one desk with an
+   owner-approved exception (who, when, why). State them and stop for
+   confirmation if the analyst has not specified them.
+2. Scaffold: `.venv/bin/python scripts/author_brief.py scaffold --desks …
+   --week-ending YYYY-MM-DD --out <path outside output/>`.
+3. The analyst writes the brief: keeps the trail entries it cites, records
+   `development` and each cross-desk claim with its citations, and writes the
+   prose. Never compose prose, titles or translations on the analyst's behalf.
+4. `.venv/bin/python scripts/author_brief.py check <path>` — must pass.
+5. Run EDITORIAL_QA_CHECKLIST.md top to bottom. Delegate the source-to-claim
+   and original-language checks to the `editorial-integrity-reviewer` agent
+   and include its verdict.
+6. **Stop.** Present the check and QA results. Do not assign an issue number,
+   commit, push, or deploy — the analyst decides. Numbering is blocked while
+   No. 14's publication status is unreconciled, and briefs have no renderer or
+   route yet; rendering is the next phase.
+
+Existing issues are re-rendered, never re-authored:
+`.venv/bin/python scripts/rerender_pla_watch.py --no-covers`, then
+`.venv/bin/python scripts/validate_output.py` (governed baseline in
+PROJECT_STATE.md).
