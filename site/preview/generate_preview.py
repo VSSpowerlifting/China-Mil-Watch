@@ -132,7 +132,9 @@ PREDECESSOR_SERIES = "The PLA Watch"
 BUILD_MODE = "indo-pacific-record"
 
 #: Maintainer. Name, role, contact and biography are owner-approved
-#: (2026-08-15). The historical sidecar `author_bio` and `author_title` values
+#: (2026-08-15); the last sentence of the bio was updated on the owner's
+#: direction (PR #72) so that it no longer says he writes The PLA Watch, and
+#: says nothing of a brief. The historical sidecar `author_bio` and `author_title` values
 #: are NOT changed by this — they are the canonical record of what each
 #: published edition said at the time.
 MAINTAINER = {
@@ -140,8 +142,9 @@ MAINTAINER = {
     "role": "Creator and Editor",
     "bio": ("Benjamin Yang studies International Affairs at George Washington "
             "University’s Elliott School, with interests in U.S.–China "
-            "relations, public diplomacy, and security affairs. He writes "
-            "The PLA Watch and maintains the project’s collection pipeline."),
+            "relations, public diplomacy, and security affairs. He founded "
+            "Indo-Pacific Record, writes source-linked security and policy "
+            "analysis, and maintains the project’s collection pipeline."),
     "email": "ben.yang@gwmail.gwu.edu",
     "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
 }

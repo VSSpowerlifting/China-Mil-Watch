@@ -504,9 +504,17 @@ class TestSiteBuild(unittest.TestCase):
                               "writes Indo-Pacific Record Briefs",
                               "Briefs is continuing"):
                     self.assertNotIn(claim, text)
-        # The bio is what it was on main: nothing here rewrites it.
-        self.assertIn("He writes The PLA Watch",
-                      self.flat(self.page("plain", "about.html")))
+
+    def test_the_about_bio_describes_the_founder_and_claims_no_brief(self):
+        text = self.flat(self.page("plain", "about.html"))
+        self.assertIn("He founded Indo-Pacific Record, writes source-linked "
+                      "security and policy analysis, and maintains the "
+                      "project’s collection pipeline.", text)
+        self.assertNotIn("He writes The PLA Watch", text)
+        bio = text[text.index("Benjamin Yang studies"):]
+        bio = bio[:bio.index("pipeline.") + len("pipeline.")]
+        for word in ("Brief", "brief", "PLA Watch"):
+            self.assertNotIn(word, bio)
 
     def test_the_series_page_is_an_archive_and_says_nothing_of_briefs(self):
         text = self.flat(self.page("plain", "pla-watch.html"))
@@ -546,6 +554,63 @@ class TestSiteBuild(unittest.TestCase):
         feed = (self.root / "origin" / "briefs" / "feed.xml").read_text(
             encoding="utf-8")
         self.assertFalse(legacy & set(re.findall(r"<id>([^<]+)</id>", feed)))
+
+
+class TestUnapprovedBriefsStayOutOfPublicOutput(_Tmp):
+    """Built the way production builds (a site origin), a brief that is not
+    approved and numbered adds nothing: not a page, a row, a feed, a sitemap
+    entry or a byte to any other page."""
+
+    ORIGIN = dict(site_origin=TEST_ORIGIN, allow_test_origin=True)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = Path(tempfile.mkdtemp(prefix="briefs-unapproved-"))
+        build(cls.root / "plain", briefs_dir=cls.root / "no-briefs",
+              **cls.ORIGIN)
+        cls.plain = tree(cls.root / "plain")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.root, ignore_errors=True)
+
+    def draft(self, **over):
+        d = real_brief(fixture_sidecar())
+        d.update(editorial_status="draft", issue_number=None)
+        d.pop("approval")
+        d.update(over)
+        return d
+
+    def built(self, name, sidecar):
+        briefs = self.root / (name + "-src")
+        self.write_brief(briefs, "candidate", sidecar)
+        return build(self.root / name, briefs_dir=briefs, **self.ORIGIN)
+
+    def test_an_unnumbered_draft_leaves_the_public_output_unchanged(self):
+        self.built("draft", self.draft())
+        self.assertEqual(tree(self.root / "draft"), self.plain)
+        out = self.root / "draft"
+        self.assertFalse((out / "briefs").exists())
+        self.assertFalse((out / "briefs.css").exists())
+        self.assertNotIn("briefs/", (out / "sitemap.xml").read_text(encoding="utf-8"))
+
+    def test_a_draft_that_carries_a_number_is_still_withheld(self):
+        self.built("numbered-draft", self.draft(issue_number=15))
+        self.assertEqual(tree(self.root / "numbered-draft"), self.plain)
+
+    def test_an_approved_brief_with_no_number_stops_the_build(self):
+        unnumbered = real_brief(fixture_sidecar())
+        unnumbered["issue_number"] = None
+        with self.assertRaises(bc.CollectionError) as cm:
+            self.built("unnumbered", unnumbered)
+        self.assertIn("carries its issue number", str(cm.exception))
+        self.assertFalse((self.root / "unnumbered" / "briefs").exists())
+
+    def test_an_approved_numbered_brief_stops_the_build_while_no_14_is_unreconciled(self):
+        with self.assertRaises(bc.CollectionError) as cm:
+            self.built("numbered", real_brief(fixture_sidecar()))
+        self.assertIn("unreconciled", str(cm.exception))
+        self.assertFalse((self.root / "numbered" / "briefs").exists())
 
 
 if __name__ == "__main__":
