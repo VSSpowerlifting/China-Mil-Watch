@@ -1,7 +1,7 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Current operational snapshot and handoff. Shadow-desk state, protected refs
-and repository scope verified 2026-09-03 against `origin/main` `d10c6c4a`.
+**Current operational snapshot and handoff. Desk statuses checked 2026-09-25
+against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
 Production and corpus figures below carry their own measurement dates.**
 
 This file is state, not history. It is deliberately short and is rewritten
@@ -148,15 +148,15 @@ disclosed, and never backfilled.
   source-to-claim trace and without a rendered-page visual review, by analyst
   direction. That gap is recorded, not implied.
 
-## 5. Shadow desks
+## 5. Desk evaluation and review status
 
-**Singapore was promoted to `live` on 2026-09-21** (DECISION_LOG); what follows
-about Singapore is its shadow-period record, kept as written. Japan remains in
-shadow evaluation.
+**Singapore was promoted to `live` on 2026-09-21 by owner sign-off**
+(`DECISION_LOG.md`). The Singapore observations below describe its earlier
+shadow period, not its current desk status. Japan remains in shadow evaluation.
 
-Neither desk is qualified, and neither may be described or promoted as
-qualified. Doctrine in `docs/SHADOW_COLLECTION.md`; review procedure in
-`docs/SHADOW_REVIEW.md`.
+Neither desk is described as qualified: Singapore's live status is not a
+qualification claim, and Japan remains in shadow. Doctrine is in
+`docs/SHADOW_COLLECTION.md`; review procedure in `docs/SHADOW_REVIEW.md`.
 
 **Singapore MINDEF** — state branch `shadow/singapore-mindef`. Day zero
 2026-08-19T23:03:09Z. The 2026-09-02 run recorded `shadow_day` **14**, result
@@ -172,9 +172,10 @@ Benjamin Yang:
 | Day 7 (retrospective) | `f806335e` | `403df921…3c3d89` | complete corpus, 37 of 37 |
 | Day 14 | `5fa49c81` | `10a28df1…e7b756` | focused queue, 16 of 40 |
 
-**Day 30 remains required, and Singapore remains unqualified.** Two completed
-checkpoints qualify nothing: promotion still needs 30 consecutive collecting
-days, the Day 30 review, and an owner sign-off recorded in `DECISION_LOG.md`.
+**No distinct Day 30 human review is on record.** The 2026-09-21 owner decision
+records 33 elapsed shadow days and explicitly proceeds with promotion after
+the Day 7 and Day 14 reviews, without a separate Day 30 review. The two
+completed checkpoints do not establish a qualification claim.
 
 Both reviews disposed of the same class of finding — a scheduled run delayed
 across UTC midnight was stamped with its execution date, leaving its nominal
@@ -354,7 +355,7 @@ first-screen contract itself is unchanged and still passes.
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
 1. Restore the human analytical publication cadence.
-2. Complete Singapore's Day 7 / Day 14 human checkpoint reviews.
+2. Close Singapore's unrecorded Day 30 human-review evidence gap.
 3. Scoped screening/backfill for publication-ready windows only.
 4. Terminal processing states and retry budgets for poison and empty-body
    records.

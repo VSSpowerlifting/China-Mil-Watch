@@ -42,21 +42,23 @@ missed weeks are published retrospectively or recorded as a disclosed gap; a
 gap that is ruled and recorded is acceptable, a gap that is silently skipped is
 not.
 
-### 2. Complete Singapore's required human reviews — Day 30 remains
+### 2. Close Singapore's Day 30 review evidence gap
 
-**Day 7 and Day 14 are complete and published** to `review/singapore-mindef`,
-both `pass_with_findings` (completed-review ids `403df921…3c3d89` and
-`10a28df1…e7b756`). Day 7 was retrospective, against the historical state
-commit; Day 14 used a focused queue of 16 of 40 records with Day 7's decisions
-deliberately not carried forward.
+**Singapore has been live since the 2026-09-21 owner sign-off** in
+`DECISION_LOG.md`. The decision records 33 elapsed shadow days and completed
+Day 7 and Day 14 human reviews, and explicitly proceeds without a distinct
+Day 30 human review. The earlier reviews are published to
+`review/singapore-mindef`, both `pass_with_findings` (completed-review ids
+`403df921…3c3d89` and `10a28df1…e7b756`).
 
-**Day 30 is the remaining Singapore gate**, and it is a gate, not a formality:
-two completed checkpoints qualify nothing. What is still missing is 30
-consecutive collecting days, the Day 30 review, and an owner sign-off recorded
-in `DECISION_LOG.md`.
+**The Day 30 human review remains unrecorded.** This is an evidence gap, not
+a pending desk-status gate. To close it, complete a retrospective human review
+against the exact historical state and publish the actual review date. That
+would strengthen the record but would not make the review contemporaneous or
+establish that Singapore is qualified.
 
-Procedure is in `docs/SHADOW_REVIEW.md`. Nothing about this is automatable: an
-unfilled report is not evidence of a completed review.
+Procedure is in `docs/SHADOW_REVIEW.md`. An unfilled or computed packet is not
+evidence of a completed human review.
 
 **Being late does not close the checkpoint.** A Day 7 review that was not done
 on day 7 can still be completed retrospectively, against the exact historical
