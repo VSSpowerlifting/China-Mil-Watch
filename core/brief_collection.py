@@ -51,7 +51,11 @@ A sidecar with `"synthetic": true` exists to test rendering. The loader refuses
 it unless the caller passes `allow_synthetic=True`, and the site builder
 refuses that flag whenever a site origin is set, so a fixture can never be
 built into an indexable tree or a sitemap. A fixture is not a real issue and
-consumes no real number, so the unreconciled-number gate does not apply to it.
+consumes no real number, so the unreconciled-number gate does not apply to it,
+and only when that flag is passed: a real brief is refused while
+`UNRECONCILED_ISSUES` is non-empty and whenever it takes a number an existing
+issue holds. The flag is a test argument. `site/render.py` and the command line
+never set it, and the site builder refuses it with a site origin.
 """
 
 from __future__ import annotations
@@ -177,7 +181,15 @@ def load_briefs(briefs_dir: Optional[Path], registry, *,
             problems.append("%s: editorial_status must be %r or %r"
                             % (path.name, STATUS_DRAFT, STATUS_APPROVED))
             continue
-        found = validate_brief(sidecar, registry)
+        # A real brief is held to the whole contract, including the refusal of
+        # any number while an existing issue is unreconciled and of a number an
+        # existing issue holds. Only a fixture, and only here, where the caller
+        # has opted in with `allow_synthetic`, is exempt from the unreconciled
+        # gate: it consumes no real number. It is not exempt from the rest.
+        found = validate_brief(
+            sidecar, registry,
+            collection=[{"issue_number": n} for n in historical_numbers],
+            unreconciled=() if sidecar.get("synthetic") else unreconciled)
         for field_name in ("week_start", "week_ending"):
             if _iso(sidecar.get(field_name)) is None:
                 found.append("%s must be an ISO date" % field_name)
@@ -319,10 +331,9 @@ def brief_veil(slug: str, sidecar: Mapping, media_dir: Optional[Path]):
     A brief's Signal Veil: the photograph published inside one of the brief's
     own cited source articles, as a duotone derivative.
 
-    The same rule the existing issues follow (`scripts/pw_env.py`
-    `source_veil_for_edition`, tightened in PR #70): fetch metadata, a local
-    derivative, and an exact article-URL match into this brief's own source
-    trail. A file in the media directory is not provenance on its own. Any miss
+    Its own rule, independent of the code that renders the existing issues'
+    veils (`scripts/pw_env.py`): fetch metadata, a local derivative, and an
+    exact article-URL match into this brief's own source trail. A file in the media directory is not provenance on its own. Any miss
     returns None, which leaves the designed text-led hero.
     """
     if not media_dir:

@@ -175,8 +175,8 @@ _HISTORICAL = {
 #: relations, public diplomacy, and security affairs." Note "studies", not
 #: "incoming" — that wording is retired and survives only in historical editions.
 #: What he writes is Indo-Pacific Record Briefs (DECISION_LOG 2026-09-23); the
-#: About page's bio (`MAINTAINER` in site/preview/generate_preview.py) says the
-#: same. No. 14 stores its own bio and keeps it.
+#: About page's "He writes The PLA Watch" predates that ruling and is corrected
+#: with the site chrome, not here. No. 14 stores its own bio and keeps it.
 _CURRENT = {
     "era": ERA_CURRENT,
     "publication": "Indo-Pacific Record",

@@ -11,9 +11,8 @@
 <p class="lede">The China Desk's weekly analytical series, which spanned the project's
 publication rename:
 {% if historical_editions %}{{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, and {{ current_editions | length }} later {{ 'edition was' if current_editions | length == 1 else 'editions were' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions were published by {{ title }}{% endif %}.
-No new issue is published under this name. Analysis continues as
-<a href="analysis.html">{{ collection_name }}</a>, which holds these issues as they were
-published.</p>
+This page is an archive of those issues. For current analysis, see
+<a href="analysis.html">Analysis</a>.</p>
 
 <div class="notice">
   <h2 class="plain">These issues are preserved as published</h2>
@@ -23,9 +22,8 @@ published.</p>
   {% if historical_editions %}{{ predecessor_name }}'s own domain redirects to the
   {{ historical_editions | length }} editions published under that masthead rather than dropping
   them.{% endif %} No issue is rewritten to look as though it appeared under a masthead
-  it did not carry, in either direction. The series is closed to new issues: later analysis
-  is published as {{ collection_name }}, not under this series name, and none of these
-  issues is renamed, renumbered or moved to join it.</p>
+  it did not carry, in either direction. This page keeps them available as published, and none of
+  them is renamed, renumbered or moved.</p>
 </div>
 
 <h2>Editions</h2>

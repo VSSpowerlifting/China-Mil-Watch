@@ -6315,16 +6315,15 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
         self.assertNotIn("published from 2026 under the\npredecessor masthead",
                          self.html)
 
-    def test_the_page_says_the_series_spanned_the_rename_and_is_closed(self):
+    def test_the_page_says_the_series_spanned_the_rename_and_is_an_archive(self):
         """Since DECISION_LOG 2026-09-23 no new issue is published as The PLA
         Watch. The page said the series "continues across" the rename; it now
-        says the series spanned it, and that analysis continues as the
-        collection instead."""
+        says the series spanned it and that the page is an archive of its
+        issues."""
         text = re.sub(r"\s+", " ", self.html)
         self.assertNotIn("continues across", text)
         self.assertIn("spanned the project's publication rename", text)
-        self.assertIn("No new issue is published under this name", text)
-        self.assertIn("Indo-Pacific Record Briefs", text)
+        self.assertIn("This page is an archive of those issues", text)
         self.assertIn(self.HISTORICAL, text)
         self.assertIn(self.CURRENT, text)
 

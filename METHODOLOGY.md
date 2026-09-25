@@ -3,8 +3,8 @@
 This document describes the sourcing rationale, analytical framework, and known
 limitations of the **China Desk** of Indo-Pacific Record — the desk whose
 weekly analytical series was *The PLA Watch*. That series is closed to new
-issues; the desk's analysis continues in *Indo-Pacific Record Briefs*
-(DECISION_LOG 2026-09-23). ("China Mil Watch" was this project's name until
+issues; the desk's analysis is meant for *Indo-Pacific Record Briefs*, which
+is in development and has published no brief (DECISION_LOG 2026-09-23). ("China Mil Watch" was this project's name until
 2026-08-27 and is a legacy name only.)
 
 It is intended to be read alongside the output and before drawing any

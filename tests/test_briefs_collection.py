@@ -4,7 +4,8 @@ The Indo-Pacific Record Briefs collection and its page renderer.
 What is locked here:
 
   * the collection is the existing issues, unchanged and in the same order,
-    plus approved briefs; with no brief the site builds byte-for-byte as before;
+    plus approved briefs; with no brief the public copy says Briefs is in
+    development and The PLA Watch remains an archive;
   * drafts are withheld, a synthetic fixture never reaches a tree with an
     origin, and no real brief is published while No. 14 is unreconciled;
   * a brief's Signal Veil needs metadata, a derivative, and an exact
@@ -171,7 +172,68 @@ class TestLoading(_Tmp):
         with self.assertRaises(bc.CollectionError) as cm:
             bc.load_collection(self.editions, self.registry, briefs_dir=briefs,
                                allow_synthetic=True)
-        self.assertIn("assigned twice", str(cm.exception))
+        self.assertIn("already assigned to an existing issue", str(cm.exception))
+        # Not even the fixture's own opt-in exempts it from that rule.
+        self.assertNotIn("unreconciled", str(cm.exception))
+
+    def test_a_real_brief_cannot_take_an_existing_issue_number(self):
+        # With the owner's ruling simulated, so the unreconciled gate is not
+        # what refuses it: the number is.
+        for taken in sorted({e["issue"] for e in self.editions}):
+            with self.subTest(number=taken):
+                clash = real_brief(fixture_sidecar())
+                clash["issue_number"] = taken
+                briefs = self.tmp() / "briefs"
+                self.write_brief(briefs, "clash", clash)
+                with self.assertRaises(bc.CollectionError) as cm:
+                    bc.load_collection(self.editions, self.registry,
+                                       briefs_dir=briefs,
+                                       unreconciled=frozenset())
+                self.assertIn("already assigned to an existing issue",
+                              str(cm.exception))
+
+    def test_a_real_brief_with_a_new_number_is_still_refused_by_default(self):
+        # The refusal comes from the contract itself, not only from the
+        # loader's aggregate check, so a hand-numbered sidecar fails on its
+        # own line and no later step can wave it through.
+        briefs = self.tmp() / "briefs"
+        for number in (15, 9001):
+            with self.subTest(number=number):
+                brief = real_brief(fixture_sidecar())
+                brief["issue_number"] = number
+                self.write_brief(briefs, "hand-numbered", brief)
+                with self.assertRaises(bc.CollectionError) as cm:
+                    bc.load_collection(self.editions, self.registry,
+                                       briefs_dir=briefs)
+                self.assertIn("writing one by hand does not assign it",
+                              str(cm.exception))
+
+    def test_the_fixture_is_never_eligible_without_the_test_opt_in(self):
+        # Neither its 9001 nor the ruling simulated as made lets the loader
+        # publish a synthetic sidecar unless the caller passes allow_synthetic.
+        for kw in ({}, {"unreconciled": frozenset()}):
+            with self.subTest(kw=kw):
+                with self.assertRaises(bc.CollectionError) as cm:
+                    bc.load_collection(self.editions, self.registry,
+                                       briefs_dir=brief_fixtures.FIXTURE_DIR,
+                                       **kw)
+                self.assertIn("synthetic rendering fixture", str(cm.exception))
+        self.assertEqual(fixture_sidecar()["issue_number"], 9001)
+
+    def test_the_synthetic_exemption_reaches_no_real_brief(self):
+        # Marking a numbered brief "synthetic" is what the exemption needs, so
+        # the exemption's edge is the flag, and the flag is not a public path.
+        marked = fixture_sidecar()                         # synthetic: true, 9001
+        briefs = self.tmp() / "briefs"
+        self.write_brief(briefs, "marked", marked)
+        with self.assertRaises(bc.CollectionError):
+            bc.load_collection(self.editions, self.registry, briefs_dir=briefs)
+        unmarked = real_brief(marked)
+        self.write_brief(briefs, "marked", unmarked)
+        with self.assertRaises(bc.CollectionError) as cm:
+            bc.load_collection(self.editions, self.registry, briefs_dir=briefs,
+                               allow_synthetic=True)
+        self.assertIn("unreconciled", str(cm.exception))
 
 
 class TestProvenance(unittest.TestCase):
@@ -317,6 +379,16 @@ class TestSiteBuild(unittest.TestCase):
                   allow_test_origin=True)
         self.assertIn("synthetic", str(cm.exception))
 
+    def test_the_fixture_is_refused_by_the_build_with_and_without_an_origin(self):
+        # The public renderer is `build()` with an origin and no opt-in.
+        for kw in ({}, {"site_origin": TEST_ORIGIN, "allow_test_origin": True}):
+            with self.subTest(kw=sorted(kw)):
+                with self.assertRaises(bc.CollectionError) as cm:
+                    build(self.root / "refused-2",
+                          briefs_dir=brief_fixtures.FIXTURE_DIR, **kw)
+                self.assertIn("synthetic rendering fixture", str(cm.exception))
+                self.assertFalse((self.root / "refused-2" / "briefs").exists())
+
     def test_no_command_line_or_production_path_admits_fixtures(self):
         import inspect
         render = (REPO_ROOT / "site" / "render.py").read_text(encoding="utf-8")
@@ -387,6 +459,62 @@ class TestSiteBuild(unittest.TestCase):
     def test_the_series_page_is_not_changed_by_a_brief(self):
         self.assertEqual(self.page("plain", "pla-watch.html"),
                          self.page("fixture", "pla-watch.html"))
+
+    # The public copy, with no brief published.
+
+    @staticmethod
+    def flat(html):
+        return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
+
+    def test_with_no_brief_analysis_says_briefs_are_in_development(self):
+        text = self.flat(self.page("plain", "analysis.html"))
+        self.assertIn("Indo-Pacific Record Briefs is in development, and no "
+                      "brief has been published yet", text)
+        self.assertIn("published as The PLA Watch, remain available as an "
+                      "archive", text)
+        for claim in ("Continuing", "Weekly, ongoing", "Closed",
+                      "brief has been published.", "No new issue is published"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, text)
+        table = self.page("plain", "analysis.html")
+        collections = table[table.index("<h2>Collections</h2>"):
+                            table.index("<h2>Series</h2>")]
+        self.assertIn("In development", collections)
+        self.assertIn("Archive", collections)
+        self.assertIn('<td data-label="Issues" class="num">0</td>', collections)
+
+    def test_analysis_keeps_every_desk_row_and_adds_collections_apart(self):
+        html = self.page("plain", "analysis.html")
+        series = html[html.index("<h2>Series</h2>"):html.index("<h2 id=\"every-issue\">")]
+        self.assertLess(html.index("<h2>Collections</h2>"),
+                        html.index("<h2>Series</h2>"))
+        self.assertNotIn("<h2>Collections</h2>", series)
+        for desk in load_registry():
+            with self.subTest(desk=desk.slug):
+                self.assertIn('<a href="%s">%s</a>' % (desk.route, desk.name),
+                              series)
+        self.assertEqual(series.count("<tr>") - 1, len(load_registry()))
+
+    def test_no_page_claims_a_brief_is_being_written_or_published(self):
+        for route in ("about.html", "analysis.html", "pla-watch.html",
+                      "index.html"):
+            with self.subTest(route=route):
+                text = self.flat(self.page("plain", route))
+                for claim in ("He writes Indo-Pacific Record Briefs",
+                              "writes Indo-Pacific Record Briefs",
+                              "Briefs is continuing"):
+                    self.assertNotIn(claim, text)
+        # The bio is what it was on main: nothing here rewrites it.
+        self.assertIn("He writes The PLA Watch",
+                      self.flat(self.page("plain", "about.html")))
+
+    def test_the_series_page_is_an_archive_and_says_nothing_of_briefs(self):
+        text = self.flat(self.page("plain", "pla-watch.html"))
+        self.assertIn("This page is an archive of those issues", text)
+        for claim in ("The series continues", "not a discontinued one",
+                      "continues across", "in development", "Continuing"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, text)
 
     def test_no_number_after_14_is_shown_as_a_real_issue(self):
         for route in ("analysis.html", "index.html", "pla-watch.html"):

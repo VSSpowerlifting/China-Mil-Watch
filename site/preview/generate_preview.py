@@ -141,8 +141,7 @@ MAINTAINER = {
     "bio": ("Benjamin Yang studies International Affairs at George Washington "
             "University’s Elliott School, with interests in U.S.–China "
             "relations, public diplomacy, and security affairs. He writes "
-            "Indo-Pacific Record Briefs and maintains the project’s "
-            "collection pipeline."),
+            "The PLA Watch and maintains the project’s collection pipeline."),
     "email": "ben.yang@gwmail.gwu.edu",
     "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
 }
