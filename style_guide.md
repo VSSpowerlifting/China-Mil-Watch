@@ -2,9 +2,13 @@
 
 ## Project identity
 
-The PLA Watch is the reader-facing weekly publication of the China Desk of
-Indo-Pacific Record. ("China Mil Watch" was the project's name until
-2026-08-27; it is a legacy name, while *The PLA Watch* remains current.)
+The PLA Watch was the reader-facing weekly publication of the China Desk of
+Indo-Pacific Record. Its fourteen existing issues keep that attribution, and no
+new issue is authored or published under the name (DECISION_LOG 2026-09-23):
+analysis is meant for *Indo-Pacific Record Briefs*, which is in development and
+has published no brief; its structure is set by `core/brief_contract.py`. The voice rules below describe how the existing issues
+were written and still apply to briefs where they fit. ("China Mil Watch" was
+the project's name until 2026-08-27; it is a legacy name.)
 
 The record is the automated Mandarin-source preservation and analysis layer. The PLA Watch turns a week of that record into accessible analysis of Chinese military media, PLA politics, and U.S.-China security signals.
 

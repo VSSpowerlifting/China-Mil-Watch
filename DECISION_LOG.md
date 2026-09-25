@@ -38,6 +38,58 @@ scoping; none changes a ruling.
    say No. 14 is publicly served with its approval unreconciled. Its status and
    number are unchanged.
 
+## 2026-09-23 — Briefs collection page and renderer: proposed in a draft PR, not yet ruled
+
+**Owner direction, given in the 2026-09-23 working session:** build a reviewable
+collection and brief-page renderer on top of the source-level foundation below,
+in a draft PR, with synthetic test data only. The entry below
+authorizes no route. Merging this one is the owner's decision. Until it merges,
+every point here is a proposal, and each is open to change in review.
+
+1. **Routes.** A brief is published at `briefs/<slug>.html` from a source sidecar
+   `briefs/<slug>.json` at the repository root, never under `output/`. There is
+   no `briefs/index.html`. The Analysis page is the collection's landing page and
+   the navigation item a brief page marks as current. A second index would list
+   the same issues twice.
+2. **The existing issues stay where they are.** Analysis lists them in their
+   existing order, linking their published addresses. Each one states what it
+   was published as, derived from its stored identity. No page, sidecar, title,
+   number, URL or feed entry changes.
+3. **Feeds.** `briefs/feed.xml` carries briefs only. It is written only when at
+   least one brief exists and a site origin is set. `the-pla-watch/feed.xml`
+   is not read, rewritten or restated, so no entry ID appears in both feeds.
+4. **No. 14** is listed as it is stored: published as The PLA Watch, by
+   Indo-Pacific Record, retrospective. Nothing claims it was approved, and it is
+   not counted as a brief. `UNRECONCILED_ISSUES` is unchanged, and the loader
+   refuses to publish any real brief while it is non-empty.
+5. **Signal Veil.** A brief's veil requires fetch metadata, a local derivative
+   and an exact article-URL match into that brief's own source trail. It
+   applies its own rule and neither reads nor depends on the code that renders
+   the existing issues' veils (`scripts/pw_env.py`); PR #70 is a separate
+   change to those pages. Attribution sits on a solid band scrim. At ≤900 px
+   the veil is a strip below the text, so no glyph overlaps the photograph.
+6. **Fixtures.** `tests/fixtures/briefs/` is synthetic and labelled on the page.
+   The loader refuses it unless told otherwise. `build()` refuses it together
+   with a site origin, and no CLI flag or production path reaches it.
+7. **Public copy.** With no brief published, Analysis says that *Indo-Pacific
+   Record Briefs* is in development and that no brief has been published yet,
+   and that the issues published as The PLA Watch remain available as an
+   archive; the series page says the same. Analysis keeps its Series table and
+   every desk row, and adds a Collections table beside it. Neither page says a
+   brief exists, is continuing or is being written, and the About bio is not
+   changed here (it still reads as it did on `main`; correcting it is a
+   separate change once a brief exists). The wording changes with the first
+   published brief, which is the owner's decision. `METHODOLOGY.md` and `style_guide.md` say the series is
+   no longer authored, following that entry's point 2.
+8. **Not touched, and not dependent on #70.** The existing issue pages and the
+   predecessor index, archive and terms pages still carry "A weekly publication
+   of Indo-Pacific Record" and similar chrome. Its sources are
+   `pla-watch-base.html`, `scripts/pw_env.py` and `pla-watch-index.html`, and
+   the pages need an `output/` re-render. This PR changes none of them, reads
+   none of them, and needs nothing #70 changes: no file overlaps, and its tests
+   pass without #70. A later change to that chrome would touch files #70 also
+   touches and would reconcile with it then.
+
 ## 2026-09-23 — Indo-Pacific Record Briefs is the continuing collection; The PLA Watch is predecessor attribution
 
 **Owner direction, given in the 2026-09-23 working session.** It sets the

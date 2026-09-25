@@ -99,11 +99,20 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **Indo-Pacific Record Briefs: source-level foundation only** (2026-09-23). A
-  brief can be scaffolded and checked (`scripts/author_brief.py`,
-  `core/brief_contract.py`) but has no route, renderer or feed, and none is
-  numbered while No. 14 is unreconciled: `check` refuses a hand-numbered brief
-  and any number an existing issue holds. `scripts/generate_pla_watch.py`
+* **Indo-Pacific Record Briefs: foundation plus a proposed renderer**
+  (2026-09-23). A brief can be scaffolded and checked (`scripts/author_brief.py`,
+  `core/brief_contract.py`). The collection and page renderer
+  (`core/brief_collection.py`, `site/preview/templates/brief.html`) are in
+  review: routes are `briefs/<slug>.html`, Analysis is the landing page, and
+  `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23, collection
+  entry). No real brief exists. None is numbered or published while No. 14 is
+  unreconciled: `check` refuses a hand-numbered brief and any number an
+  existing issue holds. The only brief data is the synthetic test fixture.
+  Still open: the predecessor pages' shared chrome ("A weekly publication of
+  Indo-Pacific Record", "Published Sundays", weekly footer and meta
+  description) lives in single-owner `pla-watch-base.html` / `pw_env.py` and in
+  `pla-watch-index.html`, and changes only with an authorized `output/`
+  re-render. `scripts/generate_pla_watch.py`
   authors nothing new, so the 2026-09-03 plan for a w/e 2026-08-22
   retrospective cannot proceed as The PLA Watch: brief or disclosed gap is the
   owner's decision.

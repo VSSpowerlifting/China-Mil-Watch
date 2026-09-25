@@ -11,8 +11,9 @@ that keeps its own desk and language, per-desk coverage, empty analyst fields
 and no issue number. It is deterministic and read-only on disk: no model API,
 no network, and the database is read through a scratch copy
 (`scripts.reconcile_db.read_only`), so nothing is left beside the tracked file.
-Without `--out` the draft goes to stdout. It never writes inside `output/`: a
-brief has no public route yet.
+Without `--out` the draft goes to stdout. It never writes inside `output/`,
+which is generated: a brief's sidecar is source, kept in `briefs/` at the
+repository root, where `core/brief_collection.py` reads it (drafts are withheld).
 
 The candidate trail is a starting list, not a citation list. The analyst keeps
 the entries the brief cites, removes the rest, writes the prose, and runs
@@ -154,8 +155,8 @@ def cmd_scaffold(args) -> int:
 
     out = Path(args.out).resolve() if args.out else None
     if out is not None and (out == OUTPUT_DIR or OUTPUT_DIR in out.parents):
-        return _refuse("never write inside output/: a brief has no public "
-                       "route yet, and output/ is generated")
+        return _refuse("never write inside output/: it is generated, and a "
+                       "brief sidecar is source, kept in briefs/")
 
     with read_only(Path(args.db)) as conn:
         records = get_articles_for_desks(week_start.isoformat(),
