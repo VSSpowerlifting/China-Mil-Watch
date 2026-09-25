@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}Sources — {{ title }}{% endblock %}
 {% block content %}
+{{ breadcrumb([('Atlas', 'archive.html'), ('Sources', none)]) }}
 <h1>Source universe</h1>
+{{ spine(desks, snapshot, corpus_total) }}
 <p class="lede">Which institutions are collected, how they are positioned, and what authority their
 publications carry. Each source is declared in advance with an institution, source type, language
 and collection purpose, and belongs to exactly one desk.</p>

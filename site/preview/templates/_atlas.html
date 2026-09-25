@@ -1,0 +1,26 @@
+{# Shared Atlas context. All dates, counts and states come from the render
+   context; a shadow or blocked desk never receives a production count. #}
+{% macro breadcrumb(items) -%}
+<nav class="atlas-breadcrumb" aria-label="Breadcrumb">
+  <ol>
+  {% for label, href in items %}
+    <li>{% if href %}<a href="{{ href }}">{{ label }}</a>{% else %}<span aria-current="page">{{ label }}</span>{% endif %}</li>
+  {% endfor %}
+  </ol>
+</nav>
+{%- endmacro %}
+
+{% macro spine(desks, snapshot, corpus_total, nested=false, focus=none) -%}
+<aside class="atlas-spine" aria-label="Atlas status and provenance">
+  <p><strong>Research Atlas</strong> · Snapshot <time datetime="{{ snapshot.date }}">{{ snapshot.date }}</time>
+    · {% if focus %}{% if focus.record_count is not none %}{{ focus.record_count|count }} records held by this desk{% else %}no production record count for this desk{% endif %}{% else %}{{ corpus_total|count }} records held{% endif %} ·
+    <a href="{{ '../' if nested else '' }}coverage.html">collection evidence</a></p>
+  <ul aria-label="Desk collection states">
+  {% for desk in desks if not focus or desk.slug == focus.slug %}
+    <li><a href="{{ '../' if nested else '' }}{{ desk.route }}">{{ desk.name }}</a>
+      <span class="desk-state desk-state--{{ desk.status }}">{{ desk.status_label }}</span>{% if desk.record_count is not none %}
+      <span class="atlas-spine-count">{{ desk.record_count|count }} records</span>{% endif %}</li>
+  {% endfor %}
+  </ul>
+</aside>
+{%- endmacro %}

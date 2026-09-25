@@ -3285,14 +3285,14 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_top_level_navigation_matches_the_regional_information_model(self):
         """
-        Record · Desks · Sources · Analysis · Coverage · Methodology · About.
-        "Record" leads because the preserved text is the product; "Corpus" is
-        kept as methodological language and does not appear in navigation.
+        Atlas · Desks · Sources · Analysis · Coverage · Methodology · About.
+        Atlas leads to the preserved record; "Corpus" remains methodological
+        language rather than a top-level destination.
         """
         nav = self.page("archive.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Record", "Desks", "Sources", "Analysis",
+        self.assertEqual(labels, ["Atlas", "Desks", "Sources", "Analysis",
                                   "Coverage", "Methodology", "About"])
         self.assertNotIn("Corpus", labels)
         self.assertNotIn("Archive", labels)
@@ -3827,7 +3827,7 @@ class TestAuthoredProseStaysGuarded(PreviewCase):
         return _authored_text((self.out / rel).read_text(encoding="utf-8"), rel)
 
     def test_authored_corpus_index_h1_stays_guarded(self):
-        self.assertIn("China Desk Corpus — by publication week",
+        self.assertIn("Corpus by publication week",
                       self.authored("corpus.html"))
 
     def test_authored_non_record_titles_stay_guarded(self):

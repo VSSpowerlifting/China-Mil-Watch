@@ -97,7 +97,7 @@
       </span>
     </a>
   </div>
-  {% set nav = [('archive.html','Record'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
+  {% set nav = [('archive.html','Atlas'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
   {# Seven destinations, defined once and rendered twice.
 
      An earlier version put the only nav inside a closed <details> and relied
@@ -119,7 +119,8 @@
   {% macro nav_links() -%}
     <ul>
       {% for href, label in nav %}
-      <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if page == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
+      {% set current = page == href or (href == 'archive.html' and page in ['corpus.html', 'corpus-guide.html']) or (href == 'desks.html' and page in (desks | map(attribute='route') | list)) or (href == 'analysis.html' and page == 'pla-watch.html') %}
+      <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if current %} aria-current="page"{% endif %}>{{ label }}</a></li>
       {% endfor %}
     </ul>
   {%- endmacro %}
