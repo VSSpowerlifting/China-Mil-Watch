@@ -1295,6 +1295,8 @@ footer.site a { color: var(--ocean); }
   max-width: 46ch;
 }
 .feature-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: auto; }
+/* A lead with no cover — every brief — is one column, not a half-empty frame. */
+.feature--solo { grid-template-columns: minmax(0, 1fr); }
 .feature-figure { margin: 0; position: relative; background: var(--abyss); }
 .feature-figure img {
   display: block;
