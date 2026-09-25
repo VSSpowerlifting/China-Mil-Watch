@@ -106,7 +106,8 @@ disclosed, and never backfilled.
   review: routes are `briefs/<slug>.html`, Analysis is the landing page, and
   `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23, collection
   entry). No real brief exists. None is numbered or published while No. 14 is
-  unreconciled. The only brief data is the synthetic test fixture.
+  unreconciled: `check` refuses a hand-numbered brief and any number an
+  existing issue holds. The only brief data is the synthetic test fixture.
   Still open: the predecessor pages' shared chrome ("A weekly publication of
   Indo-Pacific Record", "Published Sundays", weekly footer and meta
   description) lives in single-owner `pla-watch-base.html` / `pw_env.py` and in

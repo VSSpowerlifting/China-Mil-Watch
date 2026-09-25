@@ -157,7 +157,10 @@ PROJECT_STATE.md, and none is ever cleared by invention.
    `development` and each cross-desk claim with its citations, and writes the
    prose in the existing anatomy.
 3. `scripts/author_brief.py check` until it passes, then
-   EDITORIAL_QA_CHECKLIST.md in full, then owner approval.
+   EDITORIAL_QA_CHECKLIST.md in full, then owner approval. `check` also refuses
+   a brief that carries an issue number while No. 14's publication status is
+   unreconciled, and any number an existing issue already holds; an unnumbered
+   draft is unaffected.
 4. Approval assigns the issue number (`core.brief_contract.approve`). It is
    blocked while No. 14's publication status is unreconciled, and is not wired
    to a command until briefs have a route.
