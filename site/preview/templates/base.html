@@ -32,6 +32,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ self.title() }}">
 <meta name="twitter:description" content="{{ tagline }}">
+{# The record and the historical Night Desk now use the same capped type
+   families. Fallback stacks in styles.css keep the record readable offline. #}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
 {# Head scripts, declared per page rather than inherited by all of them.
 

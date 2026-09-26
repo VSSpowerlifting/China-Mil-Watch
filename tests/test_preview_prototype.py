@@ -1892,6 +1892,12 @@ class CorpusCase(unittest.TestCase):
             sum(s["count"] for s in self.data["state_counts"]),
             self.snapshot["expected_records"])
 
+    def test_processing_chart_rejects_a_nonpartition_of_the_corpus(self):
+        states = [dict(state) for state in self.data["state_counts"]]
+        states[0]["count"] += 1
+        with self.assertRaisesRegex(ValueError, "do not sum"):
+            gp.processing_state_bars(states, len(self.corpus))
+
     def test_every_state_is_reported_even_when_small(self):
         """A state must not vanish from the vocabulary for being rare."""
         labels = {s["label"] for s in self.data["state_counts"]}
@@ -3207,14 +3213,32 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_no_raw_language_or_state_code_in_archive_authored_ui(self):
         html = self.page("archive.html")
-        body = html.split('id="browse"', 1)[1]
+        # Filter links may carry state codes in URLs; the authored text must
+        # still use reader-facing labels rather than exposing those codes.
+        body = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
+        body = re.sub(r"<[^>]+>", "", body)
         for code in ("zh-Hans", "en-US"):
             with self.subTest(code=code):
-                self.assertNotIn(">%s<" % code, body)
+                self.assertNotIn(code, body)
         for state in gp.STATE_ORDER:
             if "_" in state:
                 with self.subTest(state=state):
-                    self.assertNotIn(state, html)
+                    self.assertNotIn(state, body)
+
+    def test_processing_chart_names_scope_and_reaches_underlying_records(self):
+        html = self.page("archive.html")
+        figure = html.split('<figure class="processing-plate"', 1)[1]
+        figure = figure.split('</figure>', 1)[0]
+        self.assertIn(self.snapshot["date"], figure)
+        self.assertIn("stored, deduplicated records", figure)
+        self.assertIn("not institutional output, complete coverage", figure)
+        self.assertIn('href="corpus-guide.html#states"', figure)
+        self.assertIn('href="corpus.html"', figure)
+        for state in gp.load_corpus(TRACKED_DB)["state_counts"]:
+            with self.subTest(state=state["code"]):
+                self.assertIn(state["label"], figure)
+                self.assertIn(f'archive.html?status={state["code"]}#results-heading',
+                              figure)
 
     def test_the_language_control_names_its_provenance(self):
         html = re.sub(r"\s+", " ", self.page("archive.html"))
@@ -4518,9 +4542,11 @@ class TestCorpusGuide(PreviewCase):
         """Codes are internal. Labels are the only strings a reader sees."""
         enums = ("not_selected", "awaiting_screening", "analysis_incomplete")
         for name, html in self._all_html().items():
+            visible = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
+            visible = re.sub(r"<[^>]+>", "", visible)
             for enum in enums:
                 with self.subTest(page=name, enum=enum):
-                    self.assertNotIn(enum, html)
+                    self.assertNotIn(enum, visible)
 
     # ── Counts equal direct queries ─────────────────────────────────────
 

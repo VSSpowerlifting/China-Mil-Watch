@@ -22,7 +22,7 @@
 <dl class="stat-rows">
   <div class="stat-row"><dt>Source records</dt><dd>{{ desk.record_count|count }}</dd></div>
   <div class="stat-row"><dt>Analyzed records</dt><dd>{{ desk.analyzed_count|count }}</dd></div>
-  <div class="stat-row"><dt>Awaiting analysis</dt><dd>{{ (desk.record_count - desk.analyzed_count)|count }}</dd></div>
+  <div class="stat-row"><dt>Not analyzed</dt><dd>{{ (desk.record_count - desk.analyzed_count)|count }}</dd></div>
   <div class="stat-row"><dt>Earliest item</dt><dd>{{ desk.first_published or '—' }}</dd></div>
   <div class="stat-row"><dt>Latest item</dt><dd>{{ desk.last_published or '—' }}</dd></div>
   <div class="stat-row"><dt>Last successful collection</dt><dd>{{ desk.last_successful_run or 'None' }}</dd></div>
@@ -30,8 +30,9 @@
   <div class="stat-row"><dt>Sources enabled</dt><dd>{{ desk.enabled_source_count }}</dd></div>
 </dl>
 <p class="meta">Counts reflect the stored corpus at this snapshot. "Analyzed" means a model
-completed a reading of the record — it says nothing about publication. Records awaiting analysis
-remain part of the record.</p>
+completed a reading of the record — it says nothing about publication. "Not analyzed"
+includes records awaiting screening, screened out, and incomplete analysis;
+it is not an analysis queue. <a href="corpus-guide.html#states">Read the four processing states</a>.</p>
 {% else %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
