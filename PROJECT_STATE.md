@@ -70,28 +70,21 @@ methodology, and the legacy `/article/<id>.html` compatibility namespace.
 
 ## 3. Data and pipeline condition
 
-Measured 2026-09-16 from a read-only copy of the tracked `pla_watch.db`:
+Measured 2026-09-25 from the tracked `pla_watch.db` without writing to it:
 
-* **4,229 records**, 4,229 distinct URLs, max record id 4,235.
-* **140 scrape runs.** Run 140 completed 2026-09-16 17:46 UTC, `completed`,
-  72 scraped / 36 new / 20 analyzed.
-* **Freshness through 2026-09-16** (latest `published_date`).
-* Records by source: `pla_daily` 3,580; `china_mil_online` 445;
-  `global_times_mil` 121; `mod_china` 83; `xinhua_mil` **0**.
-* **Xinhua Military is still unimplemented, but no longer unimplementable.**
-  The stub's stated reason — a JavaScript/API-rendered listing — was
-  re-measured on 2026-09-16 and is **stale**: `https://www.news.cn/milpro/`
-  serves 200 with a server-rendered listing carrying 106 distinct article URLs,
-  and `robots.txt` reads `Allow: /`. It stays enabled and reporting
-  `not_implemented` — honest, and now a repair rather than a dead end. See
-  `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` §6.1.
-* **676 never relevance-screened** (down from 903 on 2026-09-02).
-* **87 records hold an empty or near-empty body** (up from 48); 5 of those
-  passed relevance and are unanalyzed, so they re-enter the analysis queue on
-  every run and can never clear. Record 2678 has now been retried on 28
-  separate runs. Three of the seven repeat offenders are a Global Times
-  **extraction defect**, not source silence — their pages serve 1,076–4,180
-  characters of body text. See §6 and the review document §6.2.
+* **4,625 stored records**, 4,625 distinct URLs, max record id 4,631.
+  The latest source-stated publication date is 2026-09-25.
+* **149 scrape runs.** Run 149 completed 2026-09-25 17:55 UTC with status
+  `completed`: 48 scraped / 19 new / 26 analyzed. Its two analysis errors
+  remain in the run record.
+* Records by source: `pla_daily` 3,782; `china_mil_online` 491;
+  `global_times_mil` 134; `mod_china` 103;
+  `sg_mindef_releases` 60; `xinhua_mil` 55. Xinhua is implemented and returned
+  an `ok` result in run 149; the 2026-09-16 feasibility note in
+  `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` describes an earlier state.
+* **689 records await relevance screening**; 8 passed screening without a
+  completed analysis. **56 records hold an empty body capture.** These counts
+  have different definitions from the older empty-or-near-empty review in §6.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
@@ -99,23 +92,18 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **Indo-Pacific Record Briefs: foundation plus a proposed renderer**
-  (2026-09-23). A brief can be scaffolded and checked (`scripts/author_brief.py`,
-  `core/brief_contract.py`). The collection and page renderer
-  (`core/brief_collection.py`, `site/preview/templates/brief.html`) are in
-  review: routes are `briefs/<slug>.html`, Analysis is the landing page, and
-  `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23, collection
-  entry). No real brief exists. None is numbered or published while No. 14 is
-  unreconciled: `check` refuses a hand-numbered brief and any number an
-  existing issue holds. The only brief data is the synthetic test fixture.
-  Still open: the predecessor pages' shared chrome ("A weekly publication of
-  Indo-Pacific Record", "Published Sundays", weekly footer and meta
-  description) lives in single-owner `pla-watch-base.html` / `pw_env.py` and in
-  `pla-watch-index.html`, and changes only with an authorized `output/`
-  re-render. `scripts/generate_pla_watch.py`
-  authors nothing new, so the 2026-09-03 plan for a w/e 2026-08-22
-  retrospective cannot proceed as The PLA Watch: brief or disclosed gap is the
-  owner's decision.
+* **Indo-Pacific Record Briefs: source foundation, no published brief.** A
+  brief can be scaffolded and checked (`scripts/author_brief.py`,
+  `core/brief_contract.py`); the collection and renderer use
+  `core/brief_collection.py` and `site/preview/templates/brief.html`. Routes
+  are `briefs/<slug>.html`, Analysis is the landing page, and
+  `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23). The only
+  brief data is a synthetic test fixture. No. 14 remains unreconciled, and
+  `check` refuses a hand-numbered brief or an existing issue number. The
+  predecessor pages' source chrome now identifies the series as historical
+  and points to continuing Briefs; public `output/` still requires a separate
+  authorized render and deploy. `scripts/generate_pla_watch.py` authors no
+  new issue. The owner must decide how to handle the w/e 2026-08-22 gap.
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
   published.** No. 14 is publicly served, with its status unreconciled (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
@@ -305,50 +293,27 @@ Two consequences of the source fix, both expected and neither retroactive:
     and a later "candidate renderer" reference all name the live production
     mode as a candidate.
 
-## 6a. Frontend: the old China Mil Watch style revival (T3 Wake)
+## 6a. Frontend source and public output
 
-Branch `feat/ipr-cmw-revival-t3`, built on `origin/main` `53cc971c5`. Local
-only: not pushed, no PR, `output/` and `pla_watch.db` untouched, deploy gate
-still at its governed 10 warnings.
+The reader interface uses Paper Ledger for the record and Night Desk for the
+historical *The PLA Watch* issues. The source templates now give long record,
+desk, source, coverage and methodology pages native section navigation;
+Analysis presents the issue sequence as a chronological reading ledger. The
+Sources chart measures stored, deduplicated records assigned to each source
+at the labeled snapshot and explicitly disclaims institutional output and
+coverage. Briefs remain unpublished until editorial approval. Historical
+issues keep their original attribution and have a clearer route to continuing
+analysis.
 
-**What landed.** The home page recovers the historical China Mil Watch grammar
-under the current identity: the light editorial nameplate with the navigation
-on its own rail, the two-column opening with the dateline rendered as its
-ledger, the lead record in the brief-header idiom, the register as hairline
-rows with a context rail, desks as status rows, and the dark analysis band.
-The `01`-`05` folio marks are gone. The site-wide palette is the p1
-institutional set, derived from the canonical compass logo; the old semantic
-names survive as aliases onto it so interior pages are recoloured without
-being restructured.
+The Ocean Signal Veil remains a desktop-only, credited public-domain image;
+the home page preserves its two-column opening and dated record ledger. The
+shared navigation and reading layout are usable without scripted motion.
 
-**The Ocean Signal Veil is back, and measured.** A public-domain U.S. Navy
-photograph (MC3 Nathan Burke, 17 U.S.C. § 105), duotoned offline against the
-paper ground by `scripts/make_veil.py`, declared only inside
-`@media (min-width: 901px)` so no narrow viewport can fetch it. The previous
-veil was withdrawn because live type over it failed contrast; this one is
-sampled at the pixels each glyph actually covers, because both a colour check
-and a whole-box sample called a genuine 2.22:1 failure a pass. Mask lobe 1's
-horizontal radius is load-bearing at 45% and the stylesheet says so.
-
-**Verified locally.** 23/23 content parity against the current production
-render from the same database; focus traversal 421 stops across 12 states with
-0 WCAG 1.4.11 failures; 0 genuine target-size failures in 12 states; 0
-horizontal overflow across 29 widths 320-2560; interaction 177/177; Space on
-the disclosure 12/12; audit 80/86. Impeccable reports one finding
-(`em-dash-overuse`, pre-existing production copy at the same count), down from
-two on `main` — the `numbered-section-markers` finding went with the folios.
-
-**Known and accepted.** Three audit assertions fail here and on pinned
-production: the second record is below the first screen at 375 and 768, and
-the shell uses 58.13% of a 1920 viewport against a 60% target. Three more are
-parity assertions in the packet's own harness that pin its fixture's data
-(Run 137, `record/4117`); this build renders live data, which is the
-requirement. `HEADLINE_CEILING` in `tests/test_home_paired_records.py` was
-raised from 700/560 to 830/730: the restored nameplate, nav rail and ledger
-cost the lead headline about 130px at 1280, which is the accepted design. The
-first-screen contract itself is unchanged and still passes.
-
-**Not done here.** Not pushed, no PR, no deploy, no workflow dispatch.
+This frontend pass changes templates and tests, not `pla_watch.db`, desk
+configuration, canonical edition sidecars, or production `output/`. A source
+merge alone does not show these changes on the public site: the authorized
+render-and-deploy workflow must generate and validate `output/` first. The
+deploy gate's governed baseline is 10 warnings.
 
 ## 7. Immediate priorities
 
@@ -361,8 +326,9 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    records.
 5. An explicit continue/pause decision on the Japan shadow desk.
 
-Further frontend polish and geographic promotion are deferred until the
-research and review gates are healthy.
+Further geographic promotion remains gated by research and review. Frontend
+work may proceed when explicitly authorized without changing desk status or
+editorial records.
 
 ## 8. Prohibited shortcuts and human-review gates
 
