@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}{{ week.start }} to {{ week.end }} — corpus — {{ title }}{% endblock %}
 {% block content %}
-<p class="meta"><a href="corpus.html">← Corpus by week</a></p>
+{{ breadcrumb([('Atlas', 'archive.html'), ('Records by week', 'corpus.html'), ('Publication week ' ~ week.start, none)]) }}
 
 <h1>Publication week {{ week.start }} to {{ week.end }}</h1>
 {# The space after `{% if paginated %}` is a LITERAL space inside the if body,
@@ -12,6 +13,7 @@
 <p class="lede">{{ page_count | count }} record{{ '' if page_count == 1 else 's' }}{% if paginated %} on this page,
 of {{ week.count | count }} in the week{% endif %}, by the publication date each
 source stated.</p>
+{{ spine(desks, snapshot, corpus_total) }}
 
 {% if week.annotation %}
 <p><b>{{ week.annotation }}.</b> {{ week.annotation_note }}</p>
@@ -35,6 +37,7 @@ so this is operational context, not a measure of coverage.</p>
 <article class="record">
   <div class="record-head">
     <span class="evidence evidence--record">Source record</span>
+    {% if desk_by_source.get(a.source_slug) %}<span class="meta"><a href="{{ desk_by_source.get(a.source_slug).route }}">{{ desk_by_source.get(a.source_slug).name }}</a></span>{% endif %}
     <span class="meta">{{ a.institution or a.source_name }} · {{ a.published_date }}</span>
   </div>
   <h3><a href="{{ a.record_path }}">{{ a.title_english or a.title_original }}</a></h3>

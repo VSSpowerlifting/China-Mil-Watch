@@ -48,7 +48,6 @@
     return true;
   }
 
-  /* URL state: reload, back/forward and copied links reproduce the view. */
   function readUrl() {
     var p = new URLSearchParams(location.search);
     els.q.value = p.get("q") || "";
@@ -84,7 +83,6 @@
     });
   }
 
-  /* All active filters combine conjunctively. */
   function matches(row) {
     var src = data.sources[row[IDX.source]];
     var q = els.q.value.trim().toLowerCase();
@@ -124,6 +122,11 @@
 
     var head = text("div", "record-head", "");
     head.appendChild(text("span", "evidence evidence--record", "Source record"));
+    if (src.desk) {
+      var deskLink = text("a", null, src.desk.label);
+      deskLink.href = src.desk.route;
+      head.appendChild(deskLink);
+    }
     head.appendChild(text("span", "meta",
       (inst ? inst.label : src.label) + " · " + row[IDX.date]));
     art.appendChild(head);
@@ -141,7 +144,7 @@
       art.appendChild(orig);
     }
 
-    /* Editorial language name, never the raw tag. */
+    /* Show the editorial language name. */
     art.appendChild(text("p", "meta", src.label + " · " +
       (lang ? lang.label : "—") + " · " + data.states[row[IDX.state]].label));
     return art;
@@ -169,7 +172,6 @@
         total.toLocaleString() + " records";
       els.range.textContent = summary + " · page " + page + " of " + pages;
     }
-    /* A genuine empty result set, distinct from an unavailable index. */
     els.empty.hidden = total !== 0;
     els.pager.hidden = total === 0;
     els.prev.disabled = page <= 1;
@@ -220,8 +222,7 @@
     els.error.hidden = false;
   }
 
-  /* Cache discriminator from PUBLIC snapshot facts only; the internal
-     fingerprint is a build guard, never shipped. */
+  /* Cache by public snapshot facts, never the private fingerprint. */
   fetch("corpus-index.json?s=" + encodeURIComponent(WANT_DATE) + "-" +
         WANT_COUNT, { credentials: "omit" })
     .then(function (r) {

@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}Coverage health — {{ title }}{% endblock %}
 {% block content %}
+{{ breadcrumb([('Atlas', 'archive.html'), ('Coverage', none)]) }}
 <h1>Coverage</h1>
+{{ spine(desks, snapshot, corpus_total) }}
 <p class="lede">What was collected, what was not, and which kind of "nothing" each source returned.
 This page exists because an empty result has more than one cause, and only one of them is healthy.</p>
 <p class="meta">Only desks that collect appear in a run. A desk that is planned, researched,

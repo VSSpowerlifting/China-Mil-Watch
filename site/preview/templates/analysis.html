@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}Analysis — {{ title }}{% endblock %}
 {% block head_scripts %}{% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
 {% block content %}
@@ -6,16 +7,33 @@
    separate briefs/index.html: it would list the same issues a second time, and
    Analysis is already the navigation item every brief page marks as current. #}
 {% set lead = latest_analysis %}
+{{ breadcrumb([('Atlas', 'archive.html'), ('Analysis', none)]) }}
 <h1>Analysis</h1>
-<p class="lede">Human-authored readings of what a period's collected record showed. Analysis is a
-separate layer from the record: it cites exact records, it is attributed, and it is never produced
-by a model. Each desk carries its own series under its own name, with its own coverage disclosed
-separately.
-{% if collection.briefs %}{{ collection_name }} publishes analysis that compares how the
-institutions this record follows describe the same development.
-{% else %}{{ collection_name }} is in development, and no brief has been published yet.
-{% endif %}The China Desk's weekly issues, published as {{ predecessor_series }}, remain available
-as an archive, exactly as they were published.</p>
+<p class="lede">Human-authored analysis cites preserved records and names its editor. Briefs enter
+this collection only after publication. The China Desk's weekly issues, published as
+{{ predecessor_series }}, remain available as an archive under their original identities.</p>
+
+<div class="analysis-paths">
+  <section aria-labelledby="briefs-development">
+    <h2 id="briefs-development">Briefs in development</h2>
+    <p>Draft Briefs are withheld from the public collection until approved. They have no public
+    page or feed entry here.</p>
+  </section>
+  <section aria-labelledby="briefs-published">
+    <h2 id="briefs-published">Published Briefs</h2>
+    {% if collection.briefs %}
+    <p>{{ collection.briefs|length }} published {{ 'Brief' if collection.briefs|length == 1 else 'Briefs' }} in {{ collection_name }}.</p>
+    <ul>{% for brief in collection.briefs %}<li><a href="{{ brief.url }}">{{ brief.title }}</a></li>{% endfor %}</ul>
+    {% else %}<p>{{ collection_name }} is in development, and no brief has been published yet.
+    The archive below contains published China Desk issues, not draft Briefs.</p>{% endif %}
+  </section>
+  <section aria-labelledby="historical-series">
+    <h2 id="historical-series">Historical {{ predecessor_series }} archive</h2>
+    <p>The China Desk's published issues keep their original identities and addresses.
+      <a href="pla-watch.html">Browse {{ predecessor_series }} editions</a>.</p>
+  </section>
+</div>
+{{ spine(desks, snapshot, corpus_total) }}
 
 {# The lead edition comes before the series table, and carries the cover.
 
@@ -26,7 +44,7 @@ as an archive, exactly as they were published.</p>
    cropped, and the cover above the text on a phone. No new asset: this is the
    edition's own preserved cover, already published with it. #}
 {% if lead %}
-<h2>Most recent</h2>
+<h2>Most recent published analysis</h2>
 <article class="feature{% if not lead.cover %} feature--solo{% endif %}">
   <div class="feature-body">
     <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %} &middot; No. {{ lead.issue }}{% endif %}{% if lead.date %} &middot; week ending {{ lead.date }}{% endif %}</p>

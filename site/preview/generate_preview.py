@@ -658,7 +658,7 @@ INDEX_FORBIDDEN_FIELDS = (
 )
 
 
-def corpus_index(corpus, sources, snapshot: dict) -> dict:
+def corpus_index(corpus, sources, snapshot: dict, desks=None) -> dict:
     """The compact external index behind the browser.
 
     Two economies, both structural rather than lossy:
@@ -675,6 +675,7 @@ def corpus_index(corpus, sources, snapshot: dict) -> dict:
                  if any(r["source_slug"] == s["slug"] for r in corpus)]
     src_pos = {slug: i for i, slug in enumerate(src_order)}
     by_slug = {s["slug"]: s for s in sources}
+    desk_by_slug = {d.slug: d for d in desks} if desks else {}
 
     inst_order, lang_order = [], []
     for slug in src_order:
@@ -717,6 +718,9 @@ def corpus_index(corpus, sources, snapshot: dict) -> dict:
         "sources": [
             {"code": slug,
              "label": by_slug[slug]["display_name"],
+             "desk": ({"label": desk_by_slug[by_slug[slug]["desk_id"]].name,
+                       "route": desk_by_slug[by_slug[slug]["desk_id"]].route}
+                      if by_slug[slug]["desk_id"] in desk_by_slug else None),
              "institution": inst_pos.get(by_slug[slug].get("institution_id")),
              "language": lang_pos.get(by_slug[slug].get("language_tag")),
              "count": counts["source"][slug]}
@@ -2362,7 +2366,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # assert_snapshot() has passed, so an index can never describe a corpus the
     # build refused to publish. Sorted keys and fixed separators keep it
     # byte-deterministic.
-    index = corpus_index(data["corpus"], data["sources"], snapshot)
+    index = corpus_index(data["corpus"], data["sources"], snapshot, desks)
     (out_dir / "corpus-index.json").write_text(
         json.dumps(index, ensure_ascii=False, sort_keys=True,
                    separators=(",", ":")) + "\n",

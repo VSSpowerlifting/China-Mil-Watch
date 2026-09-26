@@ -1,8 +1,13 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}{{ source.display_name }} — {{ title }}{% endblock %}
 {% block content %}
-<p class="meta"><a href="../sources.html">← Source universe</a></p>
+{% set path = [('Atlas', '../archive.html')] %}
+{% if source_desk %}{% set path = path + [(source_desk.name, '../' ~ source_desk.route)] %}{% endif %}
+{{ breadcrumb(path + [(source.display_name, none)]) }}
+<p class="meta"><a href="../sources.html">All sources</a></p>
 <h1>{{ source.display_name }}</h1>
+{{ spine(desks, snapshot, corpus_total, true, source_desk) }}
 <p class="lede">{% if source.institution %}Published by {{ source.institution }}{% if source.institution_original %} (<span lang="zh">{{ source.institution_original }}</span>){% endif %}. {% endif %}
 {% if source_desk %}Part of the <a href="../{{ source_desk.route }}">{{ source_desk.name }}</a>, currently {{ source_desk.status_label|lower }}.{% endif %}</p>
 

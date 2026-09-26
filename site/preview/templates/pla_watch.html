@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}{{ lead_edition.series_name if lead_edition else predecessor_series }} — {{ title }}{% endblock %}
 {% block content %}
 {# Era comes from `load_editions()`, which resolves each sidecar through
@@ -6,8 +7,9 @@
    issues, so it must not restate a name or infer a boundary of its own. #}
 {% set historical_editions = editions | selectattr('era', 'equalto', 'historical') | list %}
 {% set current_editions = editions | selectattr('era', 'equalto', 'current') | list %}
-<p class="meta"><a href="analysis.html">← Analysis</a></p>
+{{ breadcrumb([('Atlas', 'archive.html'), ('Analysis', 'analysis.html'), (predecessor_series, none)]) }}
 <h1>{{ lead_edition.series_name if lead_edition else predecessor_series }}</h1>
+{{ spine(desks, snapshot, corpus_total, false, desks.get('china')) }}
 <p class="lede">The China Desk's weekly analytical series, which spanned the project's
 publication rename:
 {% if historical_editions %}{{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, and {{ current_editions | length }} later {{ 'edition was' if current_editions | length == 1 else 'editions were' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions were published by {{ title }}{% endif %}.

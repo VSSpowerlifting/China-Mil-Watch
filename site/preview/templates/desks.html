@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}Desks — {{ title }}{% endblock %}
 {% block content %}
+{{ breadcrumb([('Atlas', 'archive.html'), ('Desks', none)]) }}
 <h1>Desks</h1>
+{{ spine(desks, snapshot, corpus_total) }}
 <p class="lede">A desk is a declared collection scope: one jurisdiction or institutional family,
 with its own sources, its own coverage record, and its own limits. A desk appears here as soon as
 its scope is declared, and is labeled according to what it actually does.</p>

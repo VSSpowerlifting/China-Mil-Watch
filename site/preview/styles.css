@@ -3166,6 +3166,53 @@ html.js-reveal.no-anim [data-reveal] {
   .brand-name { white-space: nowrap; }
 }
 
+/* ── Research Atlas context ───────────────────────────────────────────────
+   One source-derived status line across the record and analysis surfaces.
+   The rule and text carry hierarchy; state never depends on colour alone. */
+.atlas-breadcrumb { margin: 0 0 1rem; }
+.atlas-breadcrumb ol {
+  display: flex; flex-wrap: wrap; gap: .25rem .55rem;
+  list-style: none; padding: 0; margin: 0;
+  font-family: var(--sans); font-size: .8125rem; color: var(--muted);
+}
+.atlas-breadcrumb li { min-width: 0; overflow-wrap: anywhere; }
+.atlas-breadcrumb li + li::before { content: "›"; margin-right: .55rem; color: var(--muted); }
+.atlas-breadcrumb [aria-current="page"] { color: var(--ink); font-weight: 600; }
+.atlas-spine {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: .7rem 0 .75rem;
+  margin: 1.1rem 0 1.6rem;
+  font-family: var(--sans); font-size: .8125rem;
+}
+.atlas-spine p { max-width: none; margin: 0 0 .4rem; overflow-wrap: anywhere; }
+.atlas-spine strong { color: var(--ink); }
+.atlas-spine ul {
+  display: flex; flex-wrap: wrap; gap: .3rem 1.15rem;
+  list-style: none; padding: 0; margin: 0;
+}
+.atlas-spine li { min-width: 0; overflow-wrap: anywhere; }
+.atlas-spine .desk-state { font-size: .75rem; letter-spacing: 0; text-transform: none; }
+.atlas-spine-count { color: var(--muted); }
+.analysis-paths { border-top: 1px solid var(--rule); margin: 1.4rem 0 2rem; }
+.analysis-paths section { padding: .7rem 0; border-bottom: 1px solid var(--rule); }
+.analysis-paths h2 { border: 0; padding: 0; margin: 0 0 .2rem; font-size: 1.1rem; }
+.analysis-paths p, .analysis-paths ul { margin: 0; max-width: var(--measure); }
+.analysis-paths ul { padding-left: 1.4rem; margin-top: .35rem; }
+
+/* Wide tables scroll inside their own column. Long provenance and metadata
+   wrap where they are printed instead of widening the page. */
+.table-scroll { max-width: 100%; min-width: 0; overflow-x: auto; }
+main, main > .wrap, .record-layout, .record-main, .record-rail,
+.feature, .feature-body, .records-layout { min-width: 0; }
+.record-head, .record .meta, .register-desk, .lead-meta,
+.card-meta, .feature-eyebrow { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .atlas-spine { margin: .8rem 0 1.15rem; }
+  .atlas-spine li { flex-basis: 100%; }
+  .atlas-breadcrumb { margin-bottom: .75rem; }
+}
+
 /* ── Print ───────────────────────────────────────────────────────────────── */
 @media print {
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }

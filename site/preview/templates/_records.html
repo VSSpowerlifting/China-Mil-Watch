@@ -31,8 +31,9 @@
 {%- endif %}
 {%- endmacro %}
 
-{% macro lead_record(record) -%}
+{% macro lead_record(record, desk_by_source=none) -%}
 {% if record %}
+{% set desk = desk_by_source.get(record.source_slug) if desk_by_source else none %}
 {# The brief-header idiom the historical design used: a mono eyebrow naming
    the institution and the date, the serif headline, the original beneath it,
    the standing note, and the 2px rule that closes it. The `.evidence` chip
@@ -40,6 +41,7 @@
    the same mono micro-label system, so the chip was the same words twice. #}
 <article class="lead-record" aria-labelledby="lead-record-title" data-reveal>
   <p class="lead-meta"><span class="evidence evidence--record">Source record</span> &middot;
+    {% if desk %}<a href="{{ desk.route }}">{{ desk.name }}</a> &middot;{% endif %}
     <span class="who">{{ record.institution or record.source_name }}</span> &middot;
     <time datetime="{{ record.published_date }}">{{ record.published_date }}</time></p>
   <h2 class="record-headline" id="lead-record-title"><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
@@ -51,13 +53,15 @@
 {% endif %}
 {%- endmacro %}
 
-{% macro record_register(records, shared) -%}
+{% macro record_register(records, shared, desk_by_source=none) -%}
 {% if records %}
 <ul class="register">
 {% for a in records %}
+  {% set desk = desk_by_source.get(a.source_slug) if desk_by_source else none %}
   <li class="register-item" data-reveal>
     <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
     {{- original_line(a) }}
+    {% if desk %}<p class="register-desk meta"><a href="{{ desk.route }}">{{ desk.name }}</a></p>{% endif %}
     {% if not shared %}
     <p class="register-foot"><span class="evidence evidence--record">Source record</span>
       {{ a.institution or a.source_name }} &middot;

@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
 {% block content %}
+{{ breadcrumb([('Atlas', 'archive.html'), ('Desks', 'desks.html'), (desk.name, none)]) }}
 <p class="desk-state desk-state--{{ desk.status }}">{{ desk.status_label }}</p>
 <h1>{{ desk.name }}</h1>
+{{ spine(desks, snapshot, corpus_total, false, desk) }}
 <p class="lede">{{ desk.scope }}</p>
 {% if desk.record_count is not none %}
 <p>{{ desk.record_count|count }} records from {{ desk.configured_source_count }} sources across

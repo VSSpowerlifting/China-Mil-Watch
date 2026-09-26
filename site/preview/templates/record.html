@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb, spine %}
 {% set nested = true %}
 {# Display title: the machine translation when one exists, otherwise the
    original. Never a placeholder — a record with no English title shows its
@@ -6,7 +7,11 @@
 {% set display_title = record.title_english or record.title_original %}
 {% block title %}{{ display_title }} — {{ title }}{% endblock %}
 {% block content %}
-<p class="meta"><a href="../corpus.html">← Corpus by week</a></p>
+{% set path = [('Atlas', '../archive.html')] %}
+{% if record_desk %}{% set path = path + [(record_desk.name, '../' ~ record_desk.route)] %}{% endif %}
+{% set path = path + [(record.source_name, '../source/' ~ record.source_slug ~ '.html'), ('Record ' ~ record.id, none)] %}
+{{ breadcrumb(path) }}
+<p class="meta"><a href="../corpus.html">Browse records by week</a></p>
 
 <div class="record-head">
   <span class="evidence evidence--record">Source record</span>
@@ -14,6 +19,7 @@
 </div>
 
 <h1>{{ display_title }}</h1>
+{{ spine(desks, snapshot, corpus_total, true, record_desk) }}
 {% if record.title_english and record.title_original %}
 {# Two distinct machine outputs. The English TITLE is a translation; the
    summary below is a different artifact. Labelling them identically would

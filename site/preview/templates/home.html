@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_records.html" import lead_record, record_register, records_aside %}
+{% from "_atlas.html" import spine %}
 {# The opening is full-bleed editorial furniture and paints its own ground, so
    the page opts out of the reading column's top padding. Without this the
    reading column's 36px sits between the nav rail and the opening as a band
@@ -103,8 +104,9 @@
 {# The lead record, directly under the opening. This is the page's first
    content and the thing the publication is; the section that follows heads
    the rest of the register. #}
-{{ lead_record(home_records.lead) }}
+{{ lead_record(home_records.lead, desk_by_source) }}
 {% endif %}
+{{ spine(desks, snapshot, corpus_total) }}
 {% if freshness.analysis_is_behind_collection %}
 {# The screening caveat, below the record rather than above it. The ledger
    links here by fragment, and `tabindex="-1"` means following that link moves
@@ -139,7 +141,7 @@
      is the same content in the same order, moved into a rail beside the rows
      so the records themselves start at the top of the section. #}
   <div class="records-layout">
-{{ record_register(home_records.rest, home_records.shared) }}
+{{ record_register(home_records.rest, home_records.shared, desk_by_source) }}
 {{ records_aside(corpus_eyebrow, home_records.shared) }}
   </div>
 </section>
