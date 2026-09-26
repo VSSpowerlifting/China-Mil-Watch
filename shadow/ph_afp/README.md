@@ -129,6 +129,8 @@ How the run went, including what did not work first time:
    the 8 failures was **not recorded**: the ledger of that pass named only a
    count. That was a reporting gap in the runner, since fixed (`failure_log`).
    The timing is consistent with transient slowness and is not proven to be it.
+   Under the runner's original rule that pass **exited 0**; a partial run now
+   exits 1 and does not start the shadow clock (see "Running it").
 2. **Second pass, 8 of 8 recovered.** The runner now skips held articles older
    than the revision-watch window (`--revision-days`, default 14), so the retry
    requested only the 8 missing items plus the 9 held items inside the window.
@@ -149,9 +151,22 @@ How the run went, including what did not work first time:
    were rewritten directly in the scratch SQLite database, offline, from the
    preserved payloads, to the final definitions. Without the fingerprint
    migration, the 9 held items re-read in the second pass would have been
-   reported as revisions. The runner itself never overwrites a record. **A clean
-   run of the final code from an empty state has not been done**, and the
-   archive was deliberately not fetched a third time to do it.
+   reported as revisions. The runner itself never overwrites a record.
+4. **A clean start from empty state, with the final code, was then run
+   offline and reproduced the patched state exactly.** The final runner was
+   started against an empty state directory and a local mock serving the 11
+   real listing pages saved during the pilot and the 1,074 preserved real
+   payloads, with the socket layer patched to fail and confirmed unused (0
+   connection attempts, so no request reached the AFP). Result: 1,074 records,
+   health `ok`, 0 revisions, shadow clock started, and **no difference in any of
+   17 compared fields** (text, dates, UTC instants, identities, content
+   hashes, revision fingerprints, capture hashes) against the hand-patched
+   pilot state; capture hashes identical for all 1,074. That removes the need to
+   rely on the patched state. **What it does not show:** it replays preserved
+   responses, so the live listing and fetch path was not exercised against the
+   AFP again, and it is not a schedule-length test. The same property is
+   asserted in the test suite on a small paginated fixture
+   (`TestCleanStartFromEmptyState`).
 
 Observations kept as observations:
 
@@ -204,11 +219,17 @@ Observations kept as observations:
   --lookback-days 4000 --cap 0        # one-time full history
 ```
 
-The exit code is 0 for health `ok` and `partial` and 1 for `fail`, which is
-deliberately more lenient than the DVIDS runner (any non-`ok` exits 1): a
-partial run kept records and lost others. A zero exit is therefore **not**
-evidence the run was clean. Read the ledger (`health`, `fetch_failures`,
-`failure_log`). The first pass of the pilot exited 0 with 8 fetch failures.
+**Exit code and the shadow clock.** Only a clean run (health `ok`) exits 0 and
+only a clean run can start the shadow clock. A `partial` run, which kept some
+records and lost others (a fetch or extraction failure, an identity collision,
+a redirect refusal), exits **1**, and it neither starts nor advances the clock:
+a day counted on a run known to be incomplete would be counted as evidence. A
+`fail` run exits 1 as before. The ledger of a partial run records
+`shadow_day: null` and lists the affected items in `failure_log`. Records a
+partial run did keep are stored, and a later run requests only what is missing
+(below); day zero is the first run that finishes clean. Health `ok` includes an
+empty window and an all-duplicate run. The pilot's first pass ran under the
+original, more lenient rule (partial exited 0) and would now have exited 1.
 
 A re-run with the same state directory requests only what is missing plus the
 articles inside `--revision-days`; it does not fetch the archive again.

@@ -531,26 +531,258 @@ class TestFailureHandling(StateCase):
         self.assertEqual(e["aborted"], "consecutive_failures")
 
 
+class PatchedAdapter:
+    """Route `main()` to a fake session so the CLI is exercised offline."""
+
+    def __init__(self, sess, page_size=ph.PAGE_SIZE):
+        self.sess, self.page_size = sess, page_size
+        self._original = None
+
+    def __enter__(self):
+        self._original = runner.PHAfpAdapter
+        runner.PHAfpAdapter = lambda src, cap=100: S.adapter(
+            self.sess, cap=cap, page_size=self.page_size)
+        return self
+
+    def __exit__(self, *exc):
+        runner.PHAfpAdapter = self._original
+
+
+def cli(state, run_id, *extra):
+    return runner.main(["--state-dir", str(state), "--target-date",
+                        "2026-09-26", "--lookback-days", "4000", "--cap", "0",
+                        "--run-id", run_id] + list(extra))
+
+
+class TestPartialRunsAreNotClean(StateCase):
+    """
+    A partial run kept some records and lost others. It must not exit 0 and it
+    must not start the shadow clock: a day counted on a run known to be
+    incomplete would be counted as evidence.
+    """
+
+    def partial_session(self):
+        sess = S.session_for(details_ids=PRESS_IDS)
+        slug = S.detail_obj(1378)["slug"]
+        held_back = sess.details.pop(slug)
+        return sess, slug, held_back
+
+    def test_a_partial_first_pass_does_not_start_the_clock(self):
+        sess, _, _ = self.partial_session()
+        e = do_run(self.state, sess, run_id="p1")
+        self.assertEqual(e["health"], "partial")
+        self.assertEqual(e["inserted"], 7)
+        self.assertIsNone(e["shadow_day"])
+        self.assertNotIn("day_zero_utc", e)
+        self.assertFalse((self.state / "clock.json").exists())
+        self.assertEqual(len(self.ledgers()), 1)
+        # the records it did keep are kept
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM shadow_records")[0][0], 7)
+
+    def test_a_partial_first_pass_exits_nonzero_through_the_cli(self):
+        sess, _, _ = self.partial_session()
+        with PatchedAdapter(sess):
+            self.assertEqual(cli(self.state, "p1"), 1)
+        self.assertFalse((self.state / "clock.json").exists())
+
+    def test_a_partial_pass_then_a_clean_catch_up_pass(self):
+        sess, slug, held_back = self.partial_session()
+        e1 = do_run(self.state, sess, run_id="p1", revision_days=0)
+        self.assertEqual(e1["health"], "partial")
+        self.assertEqual(e1["fetch_failures"], 1)
+        self.assertFalse((self.state / "clock.json").exists())
+
+        sess.details[slug] = held_back                    # the AFP recovers
+        before = len(detail_calls(sess))
+        e2 = do_run(self.state, sess, run_id="p2", revision_days=0)
+
+        # the catch-up asked only for what was missing, and it was clean
+        self.assertEqual(len(detail_calls(sess)) - before, 1)
+        self.assertEqual((e2["inserted"], e2["skipped_held"]), (1, 7))
+        self.assertEqual(e2["health"], "ok")
+        self.assertEqual(e2["result"], st.OK)
+        self.assertEqual(e2["fetch_failures"], 0)
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM shadow_records")[0][0], 8)
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM captures")[0][0], 8)
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM revisions")[0][0], 0)
+
+        # the clock starts on the CLEAN pass, not on the partial one
+        clock = json.loads((self.state / "clock.json").read_text())
+        self.assertEqual(clock["day_zero_run_id"], "p2")
+        self.assertEqual(e2["shadow_day"], 0)
+        first, second = [json.loads(p.read_text()) for p in self.ledgers()]
+        by_run = {first["run_id"]: first, second["run_id"]: second}
+        self.assertIsNone(by_run["p1"]["shadow_day"])
+        self.assertNotIn("day_zero_utc", by_run["p1"])
+        self.assertEqual(by_run["p2"]["shadow_day"], 0)
+
+    def test_the_same_sequence_through_the_cli_exits_1_then_0(self):
+        sess, slug, held_back = self.partial_session()
+        with PatchedAdapter(sess):
+            self.assertEqual(cli(self.state, "p1"), 1)
+            self.assertFalse((self.state / "clock.json").exists())
+            sess.details[slug] = held_back
+            self.assertEqual(cli(self.state, "p2"), 0)
+        self.assertEqual(json.loads((self.state / "clock.json").read_text()
+                                    )["day_zero_run_id"], "p2")
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM shadow_records")[0][0], 8)
+
+    def test_a_partial_run_after_the_clock_started_does_not_advance_it(self):
+        do_run(self.state, S.session_for(details_ids=PRESS_IDS), run_id="c1")
+        clock_before = (self.state / "clock.json").read_text()
+        sess, _, _ = self.partial_session()
+        e2 = do_run(self.state, sess, run_id="c2")
+        self.assertEqual(e2["health"], "partial")
+        self.assertIsNone(e2["shadow_day"])
+        self.assertEqual((self.state / "clock.json").read_text(), clock_before)
+        self.assertEqual(e2["day_zero_utc"],
+                         json.loads(clock_before)["day_zero_utc"])
+
+    def test_every_partial_cause_blocks_the_clock_and_the_exit_code(self):
+        def drift(d):
+            if d["id"] == 1378:
+                d.pop("body_html")
+        causes = {
+            "fetch failure": lambda: self.partial_session()[0],
+            "extraction failure": lambda: S.session_for(
+                details_ids=PRESS_IDS, mutate=drift),
+        }
+        for name, make in causes.items():
+            with self.subTest(cause=name):
+                state = self.state / name.replace(" ", "_")
+                with PatchedAdapter(make()):
+                    self.assertEqual(cli(state, "x"), 1)
+                self.assertFalse((state / "clock.json").exists())
+
+    def test_a_clean_run_still_exits_zero_and_starts_the_clock(self):
+        with PatchedAdapter(S.session_for(details_ids=PRESS_IDS)):
+            self.assertEqual(cli(self.state, "ok1"), 0)
+        self.assertTrue((self.state / "clock.json").exists())
+
+    def test_an_empty_window_run_is_clean(self):
+        with PatchedAdapter(S.session_for(details_ids=(1384,))):
+            rc = runner.main(["--state-dir", str(self.state), "--target-date",
+                              "2020-01-01", "--lookback-days", "0", "--cap", "0"])
+        self.assertEqual(rc, 0)
+        self.assertTrue((self.state / "clock.json").exists())
+
+    def test_a_failed_run_still_exits_one(self):
+        with PatchedAdapter(S.FakeSession()):
+            self.assertEqual(cli(self.state, "f1"), 1)
+        self.assertFalse((self.state / "clock.json").exists())
+
+
+class TestCleanStartFromEmptyState(StateCase):
+    """
+    The final code, from a genuinely empty state, end to end, through the CLI,
+    against a local mock listing that paginates. No request may leave the
+    process: the socket layer is patched to fail loudly and asserted unused.
+    """
+
+    def paginated_session(self, page_size=3):
+        ids = PRESS_IDS + (949,)          # 949 is site furniture: one rejection
+        details, entries = {}, []
+        for i in ids:
+            d = S.detail_obj(i)
+            entries.append(S.list_entry(d))
+            details[d["slug"]] = json.dumps(d).encode("utf-8")
+        pages = {}
+        chunks = [entries[n:n + page_size]
+                  for n in range(0, len(entries), page_size)]
+        for n, chunk in enumerate(chunks, start=1):
+            nxt = ("https://api.afp.mil.ph/articles/?page_size=%d&page=%d"
+                   % (page_size, n + 1)) if n < len(chunks) else None
+            pages[S.page_url(n, page_size)] = S.list_page(
+                chunk, count=len(entries), next_url=nxt)
+        return S.FakeSession(pages=pages, details=details), len(chunks)
+
+    def run_offline(self, sess, page_size, run_id):
+        import socket
+        from unittest import mock
+        with mock.patch.object(socket.socket, "connect",
+                               side_effect=AssertionError("real network")) as net, \
+                PatchedAdapter(sess, page_size=page_size):
+            rc = cli(self.state, run_id)
+        net.assert_not_called()
+        return rc
+
+    def test_a_clean_start_from_empty_state(self):
+        self.assertFalse(self.state.exists())
+        sess, n_pages = self.paginated_session()
+        self.assertEqual(self.run_offline(sess, 3, "clean1"), 0)
+
+        e = json.loads(self.ledgers()[0].read_text())
+        self.assertIsNone(e["state_sha256_before"])         # it began empty
+        self.assertEqual((e["result"], e["health"]), (st.OK, "ok"))
+        self.assertEqual(e["observed"]["list_pages"], n_pages)
+        self.assertEqual(e["observed"]["listed_items"], 9)
+        self.assertEqual(e["observed"]["api_reported_count"], 9)
+        self.assertFalse(e["observed"]["count_mismatch"])
+        self.assertEqual(e["observed"]["listing_end"], "next_null")
+        self.assertEqual(e["rejections"][ph.R_NON_PRESS_CATEGORY], 1)
+        self.assertEqual((e["discovered"], e["retrieved"], e["inserted"]), (8, 8, 8))
+        self.assertEqual((e["fetch_failures"], e["extraction_failures"],
+                          e["revisions"], e["duplicates"]), (0, 0, 0, 0))
+        self.assertEqual(e["corpus_range"], ["2022-04-18", "2026-09-15"])
+        self.assertEqual(e["shadow_day"], 0)
+        self.assertEqual(json.loads((self.state / "clock.json").read_text()
+                                    )["day_zero_run_id"], "clean1")
+
+    def test_the_state_a_clean_run_writes_needs_no_patching(self):
+        """
+        Every stored fingerprint, text and hash must be exactly what the final
+        code derives from the preserved payload. This is the property the
+        pilot's hand-patched scratch state could not show.
+        """
+        sess, _ = self.paginated_session()
+        self.assertEqual(self.run_offline(sess, 3, "clean1"), 0)
+        caps = self.rows("SELECT source_identity, payload, payload_sha256,"
+                         " source_fingerprint FROM captures")
+        self.assertEqual(len(caps), 8)
+        recs = {r[0]: r for r in self.rows(
+            "SELECT source_identity, text_original, content_sha256,"
+            " source_fingerprint, capture_sha256, text_composition"
+            " FROM shadow_records")}
+        for ident, payload, sha, fp in caps:
+            raw = bytes(payload)
+            data = json.loads(raw.decode("utf-8"))
+            with self.subTest(identity=ident):
+                self.assertEqual(hashlib.sha256(raw).hexdigest(), sha)
+                self.assertEqual(ph.revision_fingerprint(data), fp)
+                _, text, content_sha, rec_fp, cap_sha, comp = recs[ident]
+                self.assertEqual(rec_fp, fp)
+                self.assertEqual(cap_sha, sha)
+                expected, how = ph.assemble_text(data["intro_html"],
+                                                 data["body_html"])
+                self.assertEqual(text, expected)
+                self.assertEqual(comp, how)
+                self.assertEqual(content_sha, hashlib.sha256(
+                    expected.encode("utf-8")).hexdigest())
+
+    def test_a_second_run_from_that_state_is_clean_and_adds_nothing(self):
+        sess, _ = self.paginated_session()
+        self.assertEqual(self.run_offline(sess, 3, "clean1"), 0)
+        self.assertEqual(self.run_offline(sess, 3, "clean2"), 0)
+        e2 = json.loads(self.ledgers()[-1].read_text())
+        self.assertEqual(e2["inserted"], 0)
+        self.assertEqual(e2["revisions"], 0)
+        self.assertEqual(e2["stored_total"], 8)
+        self.assertEqual(self.rows("SELECT COUNT(*) FROM captures")[0][0], 8)
+        self.assertEqual(json.loads((self.state / "clock.json").read_text()
+                                    )["day_zero_run_id"], "clean1")
+
+
 class TestCli(StateCase):
 
     def test_the_exit_code_follows_health(self):
         # main() builds its own adapter, so drive the mapping through a stub.
-        original = runner.PHAfpAdapter
-        try:
-            runner.PHAfpAdapter = lambda src, cap=100: S.adapter(
-                S.session_for(details_ids=(1384,)), cap=cap)
-            rc = runner.main(["--state-dir", str(self.state),
-                              "--target-date", "2026-09-26",
-                              "--lookback-days", "4000", "--cap", "0"])
-            self.assertEqual(rc, 0)
-            runner.PHAfpAdapter = lambda src, cap=100: S.adapter(
-                S.FakeSession(), cap=cap)
+        with PatchedAdapter(S.session_for(details_ids=(1384,))):
+            self.assertEqual(cli(self.state, "a"), 0)
+        with PatchedAdapter(S.FakeSession()):
             rc = runner.main(["--state-dir", str(self.state),
                               "--target-date", "2026-09-27",
                               "--lookback-days", "4000", "--cap", "0"])
             self.assertEqual(rc, 1)
-        finally:
-            runner.PHAfpAdapter = original
 
 
 if __name__ == "__main__":

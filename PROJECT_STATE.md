@@ -199,8 +199,10 @@ and not in `desks/registry.json`.** One full-history capture was run on 2026-09-
 local state directory that is on no state branch and is not retained: 1,074
 records dated 2021-01-21 to 2026-09-15 (1,049 with text, 25 metadata-only),
 with no item dated 2024-10-31 to 2026-06-12. The figures in
-`shadow/ph_afp/README.md` are the durable record, and that state was patched
-offline to the final code (disclosed there). The API host publishes no `robots.txt` and sends
+`shadow/ph_afp/README.md` are the durable record. That state was patched offline
+to the final code, and an offline clean start of the final code from an empty
+state reproduced it exactly (both disclosed there). A partial run exits 1 and
+does not start the shadow clock. The API host publishes no `robots.txt` and sends
 `X-Robots-Tag: noindex, nofollow`; whether to collect before asking the AFP
 Public Affairs Office for an official route is an open owner decision. Full
 measurements and limits: `shadow/ph_afp/README.md`.

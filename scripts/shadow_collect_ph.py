@@ -433,10 +433,14 @@ def _finish(entry, state_dir: Path, db_path: Path) -> dict:
     entry["finished_utc"] = _now()
     entry["state_sha256_after"] = file_sha256(db_path)
 
-    # Day 0 is the first terminal-successful run, written once.
+    # Day 0 is the first CLEAN run, written once. "Clean" is health `ok`, not
+    # merely a successful result status: a partial run kept some records and
+    # lost others, and a clock started by it would count a day on which
+    # collection was known to be incomplete. A partial or failed run neither
+    # starts the clock nor advances it.
     clock_path = state_dir / "clock.json"
-    terminal_ok = entry["result"] in (st.OK, st.OK_NO_PUBLICATIONS,
-                                      st.OK_ALL_DUPLICATES, st.OK_ALL_FILTERED)
+    terminal_ok = (entry["health"] == "ok" and entry["result"] in (
+        st.OK, st.OK_NO_PUBLICATIONS, st.OK_ALL_DUPLICATES, st.OK_ALL_FILTERED))
     if terminal_ok:
         if clock_path.exists():
             clock = json.loads(clock_path.read_text(encoding="utf-8"))
@@ -450,7 +454,6 @@ def _finish(entry, state_dir: Path, db_path: Path) -> dict:
         entry["shadow_day"] = (datetime.fromisoformat(entry["finished_utc"])
                                - d0).days
     else:
-        # A failed run neither starts nor advances the clock.
         if clock_path.exists():
             clock = json.loads(clock_path.read_text(encoding="utf-8"))
             entry["day_zero_utc"] = clock["day_zero_utc"]
@@ -524,8 +527,9 @@ def main(argv=None) -> int:
                       "access_failures", "redirect_refusals", "aborted",
                       "stored_total", "robots_status"):
                 fh.write("| %s | %s |\n" % (k, entry.get(k)))
-    # A failing run must fail the job.
-    return 0 if entry["health"] in ("ok", "partial") else 1
+    # Only a clean run exits 0. A partial run kept some records and lost
+    # others; a zero exit would let a job report green over a known loss.
+    return 0 if entry["health"] == "ok" else 1
 
 
 if __name__ == "__main__":
