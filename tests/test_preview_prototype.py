@@ -4717,7 +4717,7 @@ class TestSnapshotScopedCitations(PreviewCase):
     def test_the_corpus_citation_is_exact(self):
         self.assertEqual(
             gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT),
-            "Test Title. China Desk Corpus. Snapshot — "
+            "Test Title. Research Atlas corpus. Snapshot — "
             "%s. %s records. Benjamin Yang, Creator and Editor."
             % (gp.DECLARED_SNAPSHOT["date"],
                "{:,}".format(gp.DECLARED_SNAPSHOT["expected_records"])))

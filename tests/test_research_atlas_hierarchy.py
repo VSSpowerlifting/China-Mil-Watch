@@ -9,6 +9,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +90,47 @@ class ResearchAtlasHierarchy(unittest.TestCase):
         self.assertEqual(headings, sorted(headings))
         self.assertIn("Draft Briefs are withheld", page)
         self.assertIn('href="pla-watch.html"', page)
+
+    def test_public_citations_name_the_multi_desk_corpus(self):
+        guide = self.html("corpus-guide.html")
+        self.assertIn("Research Atlas corpus. Snapshot", guide)
+        self.assertNotIn("China Desk Corpus", guide)
+        singapore = next(row for row in self.index["records"]
+                         if self.index["sources"][row[2]]["code"] ==
+                         "sg_mindef_releases")
+        record = self.html("record/%d.html" % singapore[0])
+        self.assertIn("Research Atlas corpus, Record %d" % singapore[0],
+                      record)
+        self.assertNotIn("China Desk Corpus", record)
+
+    def test_source_chart_counts_stored_records_and_links_to_evidence(self):
+        source_page = self.html("sources.html")
+        counts = Counter(self.index["sources"][row[2]]["code"]
+                         for row in self.index["records"])
+        self.assertIn("does not measure an institution's output", source_page)
+        self.assertIn("records assigned to that source", source_page)
+        self.assertIn('href="corpus-guide.html#scope"', source_page)
+        self.assertNotIn("first-writer-wins", self.html("corpus-guide.html"))
+        self.assertIn("%s stored, deduplicated records" %
+                      format(len(self.index["records"]), ","), source_page)
+        for slug, count in counts.items():
+            with self.subTest(source=slug):
+                self.assertIn('href="source/%s.html"' % slug, source_page)
+                self.assertRegex(source_page,
+                                 r'class="contribution-value">%s\b' %
+                                 format(count, ","))
+
+    def test_long_reader_pages_link_to_real_sections(self):
+        record_route = "record/%d.html" % self.index["records"][0][0]
+        for route in ("coverage.html", "methodology.html", "sources.html",
+                      "desks.html", record_route):
+            page = self.html(route)
+            with self.subTest(route=route):
+                nav = re.search(r'<nav class="reader-contents".*?</nav>',
+                                page, re.S)
+                self.assertIsNotNone(nav)
+                for target in re.findall(r'href="#([^"]+)"', nav.group()):
+                    self.assertIn('id="%s"' % target, page)
 
     def test_accessibility_and_local_table_scrolling(self):
         css = (self.out / "styles.css").read_text(encoding="utf-8")

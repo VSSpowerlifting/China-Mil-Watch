@@ -204,7 +204,7 @@
     </div>
     <div class="feature" data-reveal>
       <div>
-        <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %} &middot; No. {{ lead.issue }}{% endif %}{% if lead.date %} &middot; week ending {{ lead.date }}{% endif %}</p>
+        <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %} &middot; No. {{ lead.issue }}{% endif %}{% if lead.date %} &middot; week ending {{ lead.date|reader_date }}{% endif %}</p>
         <h3><a href="{{ lead.url }}" rel="noopener">{{ lead.title or lead.slug }}</a></h3>
         {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
         {# `articles` is the sidecar's n_articles = the week's relevance-passing

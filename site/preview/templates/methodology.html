@@ -3,8 +3,14 @@
 {% block content %}
 <h1>Methodology and limitations</h1>
 <p class="lede">How a record gets here, and what it can and cannot support.</p>
+<nav class="reader-contents" aria-label="On this page">
+  <span>On this page</span>
+  <ul><li><a href="#scope">Scope</a></li><li><a href="#collection">Collection</a></li>
+      <li><a href="#freshness">Freshness</a></li><li><a href="#evidence">Evidence labels</a></li>
+      <li><a href="#limitations">Limits</a></li></ul>
+</nav>
 
-<h2>Scope</h2>
+<h2 id="scope">Scope</h2>
 <p>{{ title }} collects from declared desks, one jurisdiction or institutional family at a time.
 It does <strong>not</strong> monitor the Indo-Pacific comprehensively, and no page here should be
 read as claiming that it does. {{ desks.collecting_count }} of {{ desks.declared_count }} declared
@@ -23,7 +29,7 @@ labeled on <a href="desks.html">Desks</a> with what specifically blocks each one
 <p class="meta">Every figure above is a count over stored rows, computed at build time. None is an
 estimate, a rate or a projection.</p>
 
-<h2>Collection</h2>
+<h2 id="collection">Collection</h2>
 <p>Each source is declared in a desk manifest with its institution, language, listing endpoints and
 expected cadence. A scheduled run visits each listing, fetches items, extracts text, removes
 duplicates, and stores the original alongside metadata. Every source produces an explicit
@@ -43,9 +49,8 @@ story to tell.</p>
     &mdash; {{ freshness.analysis_last_produced or 'not yet recorded' }}</dt>
   <dd>The newest date on which any record was analyzed. It says when analysis
   last ran. It does <strong>not</strong> say that every record up to that date
-  has been analyzed &mdash; records awaiting screening are counted separately on
-  <a href="{{ '../' if nested else '' }}coverage.html">Coverage</a>, and that
-  count is the honest measure of the backlog.</dd>
+  has been analyzed &mdash; processing states, including records awaiting screening,
+  are counted in the <a href="corpus-guide.html#states">Corpus Guide</a>.</dd>
 
   <dt><strong>Last full update</strong>
     &mdash; {{ freshness.last_full_update or 'not yet recorded' }}</dt>
@@ -74,7 +79,8 @@ beside the original, never in place of it. Machine classifications are labeled
 <ul>
   <li>That a named institution published a specific item on a specific date.</li>
   <li>That we retrieved it at a specific time, and what the original text was.</li>
-  <li>Whether a source has published anything recently — and whether we successfully looked.</li>
+  <li>Whether a collection run reached a configured source, and whether this project
+      stored items from it. The run cannot establish everything that source published.</li>
 </ul>
 <h2>What it does not support</h2>
 <ul>
@@ -86,7 +92,7 @@ beside the original, never in place of it. Machine classifications are labeled
   <li>Any quantified confidence in an analytical judgment. No calibration method exists, so no
       number is offered.</li>
 </ul>
-<h2>How evidence is labeled</h2>
+<h2 id="evidence">How evidence is labeled</h2>
 <p>These are the labels a reader will encounter:</p>
 <ul>
   <li><span class="evidence evidence--record">Source record</span> the item as published, with
@@ -100,11 +106,12 @@ beside the original, never in place of it. Machine classifications are labeled
       <span class="evidence evidence--model">Model-flagged</span> classifications.</li>
 </ul>
 
-<h2>Known limitations</h2>
+<h2 id="limitations">Known limitations</h2>
 <ul>
   <li>Collection gaps are listed on <a href="coverage.html">Coverage</a> and are not smoothed over.</li>
   <li>Some records are collected but not yet analyzed; they are counted, not hidden.</li>
-  <li>One configured source has no working collector and is reported as such every run.</li>
+  <li>An enabled source can return no new records or fail to collect; each run's
+      per-source results are published on <a href="coverage.html">Coverage</a>.</li>
   <li>Desks that do not collect show no record count. Zero would say the record was checked and
       found empty; the truth is that no record exists to check.</li>
   <li>Institutional authority is a claim about position, not truthfulness. A tier-A source is

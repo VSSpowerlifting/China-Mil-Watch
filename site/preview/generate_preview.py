@@ -1206,6 +1206,48 @@ def extraction_bars(results) -> list:
     return bars
 
 
+def source_contribution_bars(source_views, corpus_total: int) -> list:
+    """Stored, deduplicated records credited to each production source.
+
+    A source with no production count is absent rather than assigned zero.
+    These proportions describe the stored corpus, never institutional output.
+    The unrounded value sets bar length; the view model's one-decimal value is
+    only the printed label.
+    """
+    if not corpus_total:
+        return []
+    return [
+        {"source": source,
+         "percent": round(source.record_count * 100 / corpus_total, 3),
+         "label": ("<0.1%" if source.record_count * 100 / corpus_total < 0.1
+                   else "%.1f%%" % (source.record_count * 100 / corpus_total))}
+        for source in sorted(
+            (s for s in source_views if s.record_count is not None and
+             s.record_count > 0),
+            key=lambda s: (-s.record_count, s.slug))
+    ]
+
+
+def public_desk_limits(desk, source_views) -> list:
+    """Do not publish a registry limitation disproved by this snapshot.
+
+    The China registry carries a historical unimplemented-source note. The
+    registry is left intact here; the public page omits that exact note once
+    every configured source has demonstrably contributed a stored record.
+    Per-run source outcomes remain available on Coverage.
+    """
+    configured = [s for s in source_views if s.desk_slug == desk.slug]
+    all_contributed = (len(configured) == desk.configured_source_count and
+                       all(s.record_count is not None and s.record_count > 0
+                           for s in configured))
+    stale_note = ("Not every Chinese official publication surface is "
+                  "implemented. One configured source has no working "
+                  "collector and is reported as such on every run rather "
+                  "than hidden.")
+    return [limit for limit in desk.limits
+            if not (all_contributed and limit == stale_note)]
+
+
 def run_status_summary(latest_run, run_results, collecting_desks,
                        unmapped_executed=0):
     """
@@ -1327,10 +1369,10 @@ DICTIONARY_FIELDS = [
         "meaning": "The outlet that published the item, taken from the "
                    "configured source that collected it.",
         "absent": "Never absent.",
-        "limitation": "De-duplication across sources is first-writer-wins, so "
-                      "an item carried by several outlets is held once, under "
-                      "whichever source stored it first. Outlet totals are "
-                      "counts of stored records, not of publication volume.",
+        "limitation": "When matching copies from several outlets are "
+                      "consolidated, one canonical source is assigned to the "
+                      "stored record. Outlet totals count stored records "
+                      "assigned to a source, not publication volume.",
     },
     {
         "label": "Publishing institution", "stored": "institutions.display_name",
@@ -1692,10 +1734,10 @@ def changelog_entries(stats: dict) -> list:
              "capture defect, not evidence that the page was "
              "blank.".format(**stats)),
             ("Repeats across outlets are held once",
-             "De-duplication across sources is first-writer-wins. An item "
-             "carried by more than one outlet is stored under whichever source "
-             "reached it first, so per-outlet totals count stored records "
-             "rather than how often something was published."),
+             "Matching copies from more than one outlet may be consolidated "
+             "into one stored record with a canonical source. Per-outlet "
+             "totals count records assigned to a source in this corpus, "
+             "not how often that outlet published."),
             ("Snapshot and size",
              "This snapshot is dated {last_date} and holds {total} records "
              "from {outlets} outlets and {institutions} institutions, with "
@@ -1762,7 +1804,7 @@ def corpus_citation(title: str, snapshot: dict, maintainer=MAINTAINER) -> str:
     count from the corpus as well would create a second source of truth for a
     value that is governed in exactly one place.
     """
-    return ("{title}. China Desk Corpus. Snapshot — {date}. "
+    return ("{title}. Research Atlas corpus. Snapshot — {date}. "
             "{records:,} records. {name}, {role}.").format(
                 title=title, date=snapshot["date"],
                 records=snapshot["expected_records"],
@@ -1814,7 +1856,7 @@ def record_citation(record: dict, title: str, snapshot: dict) -> dict:
                               "source-stated publication date", subject),
                 url=_require(record.get("url"), "original URL", subject)),
         "as_held":
-            "As held. {work}, China Desk Corpus, Record {id}, "
+            "As held. {work}, Research Atlas corpus, Record {id}, "
             "Snapshot — {date} ({records:,} records).".format(
                 work=title,
                 id=_require(record.get("id"), "record id", subject),
@@ -2170,6 +2212,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "developing_desk_count": desks.not_collecting_count,
         "metrics": metrics,
         "source_views": source_views,
+        "source_contributions": source_contribution_bars(
+            source_views, len(data["corpus"])),
         # slug -> DeskView, for surfaces that name a source's desk. Built from
         # the source's declared desk rather than from `source_run_results.
         # desk_id`, which is NULL on the historical rows: a dash in every cell
@@ -2309,7 +2353,9 @@ def build(out_dir: Path, title: str, db_path: Path,
     desk_tmpl = env.get_template("desk.html")
     for desk in desks:
         (out_dir / desk.route).write_text(
-            desk_tmpl.render(page=desk.route, desk=desk, **ctx),
+            desk_tmpl.render(page=desk.route, desk=desk,
+                             display_limits=public_desk_limits(
+                                 desk, source_views), **ctx),
             encoding="utf-8")
         written.append(desk.route)
 
