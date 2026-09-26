@@ -134,10 +134,10 @@ this page leaves a reader unable to tell whether it was solved or abandoned.</p>
 {% endif %}
 {% endif %}
 
-{% if desk.limits %}
+{% if display_limits %}
 <h2>Limits of this desk, stated plainly</h2>
 <ul>
-{% for limit in desk.limits %}
+{% for limit in display_limits %}
   <li>{{ limit }}</li>
 {% endfor %}
 </ul>

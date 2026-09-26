@@ -11,6 +11,36 @@ and collection purpose, and belongs to exactly one desk.</p>
 <p class="meta">{{ source_views|length }} sources declared across
 {{ desks.declared_count }} desks. A source with no record count has never been part of a
 production run — which is different from a source that ran and stored nothing.</p>
+<nav class="reader-contents" aria-label="On this page">
+  <span>On this page</span>
+  <ul>{% if source_contributions %}<li><a href="#contributions-title">Stored record chart</a></li>{% endif %}
+      <li><a href="#source-directory">Source directory</a></li>
+      <li><a href="#authority">Authority and status</a></li></ul>
+</nav>
+{% if source_contributions %}
+<figure class="source-contributions" aria-labelledby="contributions-title">
+  <figcaption>
+    <h2 id="contributions-title">Sources in the stored record</h2>
+    <p>{{ snapshot_label }} · {{ corpus_total|count }} stored, deduplicated records.
+    Each bar counts records assigned to that source in the stored corpus.
+    It does not measure an institution's output,
+    the share of its publications, or completeness of coverage.</p>
+  </figcaption>
+  <ol class="contribution-list">
+  {% for bar in source_contributions %}
+    <li>
+      <a href="{{ bar.source.route }}">{{ bar.source.display_name }}</a>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: {{ bar.percent }}%"></span></span>
+      <span class="contribution-value">{{ bar.source.record_count|count }} <small>({{ bar.label }})</small></span>
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="meta">The source directory below includes declared sources with no
+  production record count. <a href="archive.html">Search individual records</a> or
+  <a href="corpus-guide.html#scope">read the counting limits</a>.</p>
+</figure>
+{% endif %}
+<h2 id="source-directory">Declared source directory</h2>
 <div class="table-scroll">
 <table class="stacking">
   <thead><tr><th scope="col">Source</th><th scope="col">Desk</th><th scope="col">Institution</th><th scope="col">Type</th><th scope="col">Authority</th><th scope="col">Language</th><th scope="col" class="num">Records</th></tr></thead>
@@ -29,13 +59,13 @@ production run — which is different from a source that ran and stored nothing.
   </tbody>
 </table>
 </div>
-<h2>Authority tier is a claim about position, not truthfulness</h2>
+<h2 id="authority">Authority tier is a claim about position, not truthfulness</h2>
 <p>A tier-A source is closer to the institution that speaks. It is not more likely to be
 accurate, and nothing here treats it as such. Tier describes who is authorized to say a thing,
 never whether the thing is so.</p>
-<h2>Enabled is not implemented</h2>
-<p>A source is <em>enabled</em> when the pipeline is configured to visit it. Whether a working
-collector exists for it is a separate fact, recorded per run on
-<a href="coverage.html">Coverage</a> — one configured source here has never produced a record and
-is reported as unimplemented every run rather than hidden.</p>
+<h2>Enabled is not a result</h2>
+<p>A source is <em>enabled</em> when the pipeline is configured to visit it. Whether it
+ran, returned no new items, or could not be reached is a separate fact. Read the
+latest per-source result on <a href="coverage.html">Coverage</a> before interpreting an
+empty count or a quiet day.</p>
 {% endblock %}

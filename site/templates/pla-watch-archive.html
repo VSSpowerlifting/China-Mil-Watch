@@ -15,7 +15,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   margin-bottom: 0.85rem;
   display: flex;
   align-items: center;
@@ -39,14 +39,58 @@
    original quiet gray already clears the 3.0 threshold. */
 .arch-display .italic { font-style: italic; font-weight: 600; color: var(--color-display-quiet); margin-right: 0.18em; }
 .arch-stand {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.1rem;
+  font-family: var(--sans);
+  font-size: 0.98rem;
   color: var(--color-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
+  line-height: 1.7;
+  max-width: 67ch;
+  margin-bottom: 1.7rem;
+  padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--color-border);
+}
+.arch-stand a { color: var(--color-text-primary); text-decoration: underline; text-decoration-color: var(--signal-bright); }
+
+/* The register is ordinal: one link for each issue actually in the archive.
+   The text below it names what the equal spacing does and does not mean. */
+.issue-register { margin-bottom: 2.2rem; }
+.issue-register-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.75rem;
+}
+.issue-register ol {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.4rem;
+  list-style: none;
+}
+.issue-register a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--target-min);
+  border: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-text-muted);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.issue-register a:hover { background: var(--color-bg-sidebar); border-bottom-color: var(--signal-bright); }
+.issue-register-note {
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-top: 0.75rem;
 }
 
 /* ── Edition entries — large, magazine-archive feel ───────────────── */
@@ -97,7 +141,7 @@
   margin-bottom: 0.45rem;
 }
 .entry-title a { color: inherit; display: inline-block; }
-.entry-title a:hover { color: var(--color-brand); text-decoration: none; }
+.entry-title a:hover { color: var(--signal-bright); text-decoration: none; }
 .entry-title .pw-badge {
   font-size: 0.6rem;
   padding: 2px 7px;
@@ -113,11 +157,11 @@
   margin-bottom: 0.55rem;
 }
 .entry-meta {
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  color: var(--color-text-muted);
-  letter-spacing: 0.04em;
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
+  line-height: 1.65;
 }
 .entry-meta .sep::before { content: " · "; }
 
@@ -138,12 +182,13 @@
   color: var(--color-text-muted);
   font-style: italic;
   border: 1px dashed var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: var(--color-bg-card);
 }
 
 @media (max-width: 700px) {
   .arch-display { font-size: 2rem; }
+  .issue-register ol { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .entry { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; }
   .entry-date-col { padding-top: 0; }
   .entry-date-col .we-large { font-size: 1.05rem; display: inline; margin-right: 0.5rem; }
@@ -155,15 +200,24 @@
 
   <div class="arch-eyebrow">All editions</div>
   <h1 class="arch-display"><span class="italic">The</span>PLA Watch Archive</h1>
-  <p class="arch-stand">Every edition of The PLA Watch, newest first. Each issue is a single editorial brief drawn from the Indo-Pacific Record daily archive — restrained where the week is routine, focused where something stands out.</p>
+  <p class="arch-stand">The China Desk's historical issues, newest first. Each page keeps its own attribution and a trail of selected source records. Continuing analysis appears in <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
 
   {% if posts %}
+    <nav class="issue-register" aria-label="Browse The PLA Watch issues">
+      <span class="issue-register-label">Issue sequence · oldest to newest</span>
+      <ol>
+        {% for post in posts | reverse %}
+        <li><a href="posts/{{ post.date }}.html" aria-label="{% if post.issue_number %}Issue No. {{ post.issue_number }}, {% else %}Issue, {% endif %}week ending {{ post.week_ending | format_date }}">{% if post.issue_number %}{{ post.issue_number }}{% else %}&bull;{% endif %}</a></li>
+        {% endfor %}
+      </ol>
+      <p class="issue-register-note">One position per issue listed here; equal spacing does not represent elapsed time, source output, or complete weekly coverage. Select a number to read the issue and its source trail.</p>
+    </nav>
     <div class="entry-list">
       {% for post in posts %}
       <article class="entry"{% if loop.index0 > 1 %} data-reveal{% endif %}>
         <div class="entry-date-col">
           {% if post.issue_number %}<span class="entry-no">No. {{ post.issue_number }}</span>{% endif %}
-          <span class="we-date">Week ending<br>{{ post.week_ending | format_date }}</span>
+          <span class="we-date">Week ending<br><time datetime="{{ post.week_ending }}">{{ post.week_ending | format_date }}</time></span>
           {# Cover thumbs retired with the cover demotion (og:image only);
              the Edition Plate (ROADMAP T2) takes this slot when built. #}
         </div>
@@ -203,11 +257,11 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="empty-state-card">No editions published yet. Check back on Sunday.</div>
+    <div class="empty-state-card">No historical issues are listed here. Visit <a href="{{ root_path }}analysis.html">Analysis</a> for the current collection.</div>
   {% endif %}
 
   {% if posts %}
-  <p class="arch-note">“Model-flagged” counts are automated triage cues from the daily pipeline, not editorial judgments. Early editions predate per-item dates in the source trail; missing details are left missing rather than reconstructed. <a href="{{ root_path }}methodology.html#model-flagged">Methodology</a></p>
+  <p class="arch-note">Article and model-flagged counts describe each issue's analyzed set. They do not measure institutional output or complete collection. Model flags are automated triage cues, not editorial judgments. Early issues predate per-item dates in the source trail; missing details are left missing. <a href="{{ root_path }}methodology.html#model-flagged">Methodology</a></p>
   {% endif %}
 
 </div>

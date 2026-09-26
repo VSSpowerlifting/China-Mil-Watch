@@ -2,9 +2,9 @@
 {% set active_page = "index" %}
 {% set pw_root = "" %}
 
-{% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}
+{% block title %}The PLA Watch — Historical China Desk issues{% endblock %}
 
-{% block masthead_left %}<span>Vol. I</span><span>{% if latest_post and latest_post.week_ending %}Latest issue · {{ latest_post.week_ending | format_date }}{% else %}New publication{% endif %}</span>{% endblock %}
+{% block masthead_left %}<span>Vol. I</span><span>{% if latest_post and latest_post.week_ending %}Most recent issue · {{ latest_post.week_ending | format_date }}{% else %}Series archive{% endif %}</span>{% endblock %}
 
 {% block extra_styles %}
 /* Page-scoped: draw the lede up a touch so the latest edition clears the
@@ -53,6 +53,7 @@ main { padding-top: 2rem; }
   padding-top: 0.9rem;
   margin-bottom: 0.55rem;
 }
+.cover-stand a { color: var(--color-text-primary); text-decoration: underline; text-decoration-color: var(--signal-bright); }
 
 /* ── Latest issue card — magazine-style cover treatment ─────────────── */
 .issue-cover {
@@ -60,7 +61,7 @@ main { padding-top: 2rem; }
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.05rem 2.25rem 1.55rem;
   margin-bottom: 2rem;
   overflow: hidden;
@@ -79,7 +80,7 @@ main { padding-top: 2rem; }
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-brand);
+  color: var(--signal-bright);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -121,7 +122,7 @@ main { padding-top: 2rem; }
   padding: 0.55rem 0;
   margin: -0.55rem 0;
 }
-.issue-cover-title a:hover { color: var(--color-brand); text-decoration: none; }
+.issue-cover-title a:hover { color: var(--signal-bright); text-decoration: none; }
 .issue-cover-dek {
   font-family: var(--serif);
   font-size: 1.05rem;
@@ -307,7 +308,7 @@ main { padding-top: 2rem; }
   padding: 0.72rem 0;
   margin: -0.72rem 0;
 }
-.archive-title a:hover { color: var(--color-brand); text-decoration: none; }
+.archive-title a:hover { color: var(--signal-bright); text-decoration: none; }
 .archive-dek {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
@@ -319,7 +320,7 @@ main { padding-top: 2rem; }
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 2.5rem 2.25rem;
   margin-bottom: 1.5rem;
   position: relative;
@@ -359,11 +360,11 @@ main { padding-top: 2rem; }
 
 /* ── Publication note — one compact metadata rail (replaces the former
      three stacked documentation boxes) ───────────────────────────────── */
-.lede-rail { position: sticky; top: 1.5rem; }
+.lede-rail { position: static; }
 .pub-note {
   border: 1px solid var(--color-border);
   border-top: 2px solid var(--color-brand);
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 1.15rem 1.3rem 1.2rem;
   background: var(--color-bg-card);
 }
@@ -439,6 +440,7 @@ main { padding-top: 2rem; }
   color: var(--color-text-secondary);
   line-height: 1.65;
 }
+.relate-cols a { color: var(--color-text-primary); text-decoration: underline; text-decoration-color: var(--signal-bright); }
 .relate-cols .accent-name {
   font-family: var(--serif);
   font-weight: 700;
@@ -451,6 +453,59 @@ main { padding-top: 2rem; }
   font-size: 0.98rem;
   color: var(--color-text-secondary);
   margin-top: 1.1rem;
+}
+.archive-all {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  margin-top: 0.65rem;
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--signal-bright);
+  text-underline-offset: 3px;
+}
+.index-register {
+  border-top: 1px solid var(--color-border);
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+}
+.index-register-heading {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.55rem;
+}
+.index-register ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.65rem;
+  list-style: none;
+}
+.index-register a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+  padding: 0.4rem 0.2rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.index-register a:hover { border-bottom-color: var(--signal-bright); text-decoration: none; }
+.index-register-note {
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.6;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 900px) {
@@ -473,8 +528,8 @@ main { padding-top: 2rem; }
 
   <div class="cover-main">
 
-    <h1 class="cover-display">Weekly signals from <span class="italic">Chinese</span> military media.</h1>
-    <p class="cover-stand">The weekly analytical brief from Indo-Pacific Record — a week of original-Mandarin monitoring of official PRC military and security media, distilled into a single restrained read.</p>
+    <h1 class="cover-display">A China Desk series, <span class="italic">preserved.</span></h1>
+    <p class="cover-stand">The PLA Watch holds the China Desk's original weekly issues, with their dates, attribution and source trails. For continuing analysis, visit <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
 
     {% if latest_post %}
       <div class="issue-cover">
@@ -483,7 +538,7 @@ main { padding-top: 2rem; }
              style="background-image:url('{{ latest_veil.duo }}'); background-position:{{ latest_veil.mask_focus }};"></div>
         {% endif %}
         <div class="issue-cover-eyebrow">
-          <div class="issue-cover-label">Latest Edition</div>
+          <div class="issue-cover-label">Most recent issue in the archive</div>
           <div class="issue-cover-edition">
             {#- Same two groups as the edition hero: what edition, then what
                 kind. Grouped so the landing card wraps at the same joints. -#}
@@ -501,7 +556,7 @@ main { padding-top: 2rem; }
         <div class="issue-cover-byline">By <span class="byline-name">{{ latest_post.author_name }}</span></div>
         {% endif %}
         <div class="issue-cover-meta">
-          <span class="stat"><span class="num">{{ latest_post.n_articles }}</span> articles</span>
+          <span class="stat"><span class="num">{{ latest_post.n_articles }}</span> articles analyzed</span>
           <span class="stat"><span class="num">{{ latest_post.n_significant }}</span> model-flagged</span>
           {% if latest_post.days_covered %}<span class="stat"><span class="num">{{ latest_post.days_covered }}</span> days observed</span>{% endif %}
         </div>
@@ -510,8 +565,8 @@ main { padding-top: 2rem; }
         <div class="nd-tickrow-label">Source trail · {{ latest_post.source_trail | length }} record{{ 's' if latest_post.source_trail | length != 1 }}{% if latest_post.n_significant %} · <b>{{ latest_post.n_significant }} model-flagged</b>{% endif %} · part of the monitored weekly record{% if latest_post.source_trail | length < latest_post.n_articles %} · of {{ latest_post.n_articles }} articles analyzed{% endif %}</div>
         {% endif %}
         <div class="issue-cover-actions">
-          <a href="posts/{{ latest_post.date }}.html" class="btn btn-primary">Read this edition</a>
-          <a href="archive.html" class="btn btn-ghost">All editions</a>
+          <a href="posts/{{ latest_post.date }}.html" class="btn btn-primary">Read this issue</a>
+          <a href="archive.html" class="btn btn-ghost">All issues</a>
         </div>
         {% if latest_veil %}
         <div class="card-veil-credit">IMG · <a href="{{ latest_veil.source_page }}" target="_blank" rel="noopener nofollow">{{ latest_veil.source_id }}</a>{% if latest_veil.subject %} · {{ latest_veil.subject }}{% endif %} · Context, not evidence</div>
@@ -519,30 +574,39 @@ main { padding-top: 2rem; }
       </div>
 
       {% if archive_posts %}
-      <div class="section-heading" data-reveal>
-        <span>Previous editions</span>
-        <span class="count">{{ archive_posts | length }}</span>
-      </div>
+      <h2 class="section-heading" data-reveal>
+        <span>Recent issues</span>
+        <span class="count">{{ [archive_posts | length, 4] | min }} of {{ archive_posts | length }} earlier</span>
+      </h2>
       <div class="archive-list">
-        {% for post in archive_posts %}
-        <div class="archive-row" data-reveal>
-          <div class="archive-date">{% if post.issue_number %}No. {{ post.issue_number }} · {% endif %}{{ post.week_ending | format_date }}</div>
+        {% for post in archive_posts[:4] %}
+        <article class="archive-row" data-reveal>
+          <div class="archive-date">{% if post.issue_number %}No. {{ post.issue_number }} · {% endif %}<time datetime="{{ post.week_ending }}">{{ post.week_ending | format_date }}</time></div>
           <div class="archive-body">
-            <div class="archive-title"><a href="posts/{{ post.date }}.html">{{ post.title }}</a></div>
-            <div class="archive-dek">{{ post.dek }}</div>
+            <h3 class="archive-title"><a href="posts/{{ post.date }}.html">{{ post.title }}</a></h3>
+            <p class="archive-dek">{{ post.dek }}</p>
           </div>
-        </div>
+        </article>
         {% endfor %}
       </div>
+      <a class="archive-all" href="archive.html">Browse the full issue archive &rarr;</a>
+      <nav class="index-register" aria-labelledby="index-register-heading">
+        <h3 class="index-register-heading" id="index-register-heading">All earlier issues · oldest to newest</h3>
+        <ol>
+          {% for post in archive_posts | reverse %}
+          <li><a href="posts/{{ post.date }}.html" aria-label="{% if post.issue_number %}Issue No. {{ post.issue_number }}, {% else %}Issue, {% endif %}week ending {{ post.week_ending | format_date }}">{% if post.issue_number %}No. {{ post.issue_number }}{% else %}{{ post.week_ending | format_date }}{% endif %}</a></li>
+          {% endfor %}
+        </ol>
+        <p class="index-register-note">Links follow the listed issues; they do not imply uninterrupted weekly coverage. The archive has each issue's summary and source-trail context.</p>
+      </nav>
       {% endif %}
 
     {% else %}
       <div class="coming-card">
-        <div class="coming-label">Coming soon</div>
-        <h2 class="coming-title">The first weekly edition is in preparation.</h2>
+        <div class="coming-label">Archive unavailable</div>
+        <h2 class="coming-title">No historical issues are listed here.</h2>
         <div class="coming-body">
-          <p>The PLA Watch is the reader-facing publication from Indo-Pacific Record — a weekly synthesis that distills the Chinese-language signals collected each day into briefings written for policy readers, analysts, and journalists.</p>
-          <p>Editions appear on this page as they are published; each covers the week ending Saturday. Browse the daily brief and the full archive at <a href="{{ root_path }}index.html">Indo-Pacific Record</a>.</p>
+          <p>Visit <a href="{{ root_path }}analysis.html">Analysis</a> for the current collection, or browse the <a href="{{ root_path }}archive.html">Research Atlas</a>.</p>
         </div>
       </div>
     {% endif %}
@@ -551,23 +615,23 @@ main { padding-top: 2rem; }
 
   <aside class="lede-rail">
     <div class="pub-note">
-      <div class="pub-note-eyebrow">Publication</div>
-      <div class="sb-row"><span class="label">Cadence</span><span class="value">Weekly</span></div>
-      <div class="sb-row"><span class="label">Published</span><span class="value">Sundays</span></div>
-      <div class="sb-row"><span class="label">Format</span><span class="value">Editorial brief</span></div>
-      <div class="sb-row"><span class="label">Drawn from</span><span class="value">Indo-Pacific Record</span></div>
-      <p class="pub-note-foot">Every edition carries a source trail linking cited items to the original Chinese-language records. <a href="{{ root_path }}methodology.html">Methodology</a></p>
+      <div class="pub-note-eyebrow">Series register</div>
+      <div class="sb-row"><span class="label">Status</span><span class="value">Historical</span></div>
+      <div class="sb-row"><span class="label">Desk</span><span class="value">China</span></div>
+      <div class="sb-row"><span class="label">Issues listed</span><span class="value">{{ (archive_posts | length) + (1 if latest_post else 0) }}</span></div>
+      <div class="sb-row"><span class="label">Format</span><span class="value">Weekly analysis</span></div>
+      <p class="pub-note-foot">The issue dates describe the weeks covered. Source trails identify selected records, not every text an institution published. <a href="{{ root_path }}methodology.html">Methodology</a></p>
     </div>
   </aside>
 
 </div>
 
 <section class="relate-band" data-reveal>
-  <div class="relate-eyebrow">Indo-Pacific Record &amp; The PLA Watch</div>
+  <div class="relate-eyebrow">From the record to analysis</div>
   <div class="relate-cols">
-    <p><span class="accent-name">Indo-Pacific Record</span> is the daily monitoring layer — every analyzed article from PRC military and security media, indexed and searchable.</p>
-    <p><span class="accent-name">The PLA Watch</span> is the weekly reader-facing layer — a single editorial brief that picks out what stood out, what was routine, and what readers should not overread, drawing directly from that archive.</p>
+    <p><span class="accent-name">Indo-Pacific Record</span> preserves the monitored record and presents it with its collection limits. <a href="{{ root_path }}archive.html">Explore the Research Atlas</a>.</p>
+    <p><span class="accent-name">The PLA Watch</span> is the predecessor China Desk series. Its existing issues retain their original identity; <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a> carries the continuing analysis.</p>
   </div>
-  <p class="relate-kicker">Same source corpus, different reading altitude.</p>
+  <p class="relate-kicker">Read each issue with its source trail.</p>
 </section>
 {% endblock %}

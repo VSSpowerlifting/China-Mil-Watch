@@ -13,6 +13,12 @@ its scope is declared, and is labeled according to what it actually does.</p>
 {{ desks.not_collecting_count }} not collecting. Statuses and source counts come from the desk
 registry and the manifests it points at; record counts come from the corpus, and only a collecting
 desk has one.</p>
+<nav class="reader-contents" aria-label="On this page">
+  <span>On this page</span>
+  <ul><li><a href="#desk-directory">Declared desks</a></li>
+      <li><a href="#desk-comparison">Compare desks</a></li>
+      <li><a href="#desk-statuses">Status meanings</a></li></ul>
+</nav>
 
 {# Cards first for scanning, then the same four desks as a table for
    comparing them column by column. Both are generated from one loop over the
@@ -21,7 +27,7 @@ desk has one.</p>
    A desk that does not collect shows "None collected" and its blocking
    condition — never a zero. A zero in a records column would read as a
    measurement, and nothing measured it. #}
-<div class="cards cards--desks">
+<div id="desk-directory" class="cards cards--desks">
 {% for d in desks %}
   {# Still a `section.desk` element: the no-fabricated-coverage guards split
      this page on it to check each desk's block in isolation, and a card is a
@@ -42,7 +48,7 @@ desk has one.</p>
 {% endfor %}
 </div>
 
-<h2>Every desk, side by side</h2>
+<h2 id="desk-comparison">Every desk, side by side</h2>
 <div class="table-scroll">
 <table class="stacking desk-table">
   <caption>The same {{ desks.declared_count }} desks as the cards above. Only a
@@ -67,7 +73,7 @@ desk has one.</p>
 </table>
 </div>
 
-<h2>What a status means</h2>
+<h2 id="desk-statuses">What a status means</h2>
 <div class="table-scroll">
 <table class="stacking">
   <caption>What each desk status means, and what it implies about the record.</caption>

@@ -10,8 +10,13 @@ This page exists because an empty result has more than one cause, and only one o
 <p class="meta">Only desks that collect appear in a run. A desk that is planned, researched,
 access-blocked or under shadow evaluation contributes no rows here, and its absence is explained on
 <a href="desks.html">Desks</a> rather than shown as a failure.</p>
+<nav class="reader-contents" aria-label="On this page">
+  <span>On this page</span>
+  <ul><li><a href="#recent-run">Latest run</a></li><li><a href="#outcomes">Result meanings</a></li>
+      <li><a href="#collection-gaps">Collection gaps</a></li></ul>
+</nav>
 
-<h2>Most recent run</h2>
+<h2 id="recent-run">Most recent run</h2>
 {# The aggregate status covers the whole pipeline, not collection alone.
 
    Rendered on its own it read as a contradiction: "aggregate failed" sitting
@@ -143,7 +148,7 @@ the table below, per source, with its own reason.</p>
 </table>
 </div>
 
-<h2>What each result means</h2>
+<h2 id="outcomes">What each result means</h2>
 <p>Every outcome the pipeline can store has a plain-language meaning here. They are translated, not
 merged: two results that both produce zero records can mean opposite things, and the whole point of
 keeping seventeen of them apart is that they are seventeen different facts.</p>
@@ -168,7 +173,7 @@ and collection stops there. No browser impersonation, no challenge solving, no p
 institution that wants to refuse this collector must be able to recognise it and say so, and
 defeating a refusal would destroy the capability that rule protects.</p>
 
-<h2>Gaps in collection</h2>
+<h2 id="collection-gaps">Gaps in collection</h2>
 {% if gaps %}
 <p>Days with no collection run at all. These are outages, not quiet days —
 no attempt was made, so nothing can be said about what those days held.</p>

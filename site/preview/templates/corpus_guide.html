@@ -6,7 +6,7 @@
    the publication works, and this does not restate it. #}
 <p class="eyebrow">{{ corpus_eyebrow }}</p>
 <h1>Corpus Guide</h1>
-<p class="lede">What the China Desk corpus holds, what it cannot tell you, what
+<p class="lede">What the public record holds, what it cannot tell you, what
 each field means, and how to cite it. {{ snapshot_label }}.</p>
 
 <nav class="guide-contents" aria-label="Sections of this guide">
@@ -23,9 +23,10 @@ each field means, and how to cite it. {{ snapshot_label }}.</p>
 </nav>
 
 <h2 id="holds">What this corpus holds</h2>
-<p>The China Desk corpus is a stored record of {{ guide_stats.total | count }}
-items collected from official and authoritative Chinese defense and security
-publishers, held as they were captured. Each item keeps its original-language
+<p>This corpus holds {{ guide_stats.total | count }} items collected from the
+declared sources of desks that publish into the record, held as they were captured.
+It includes more than one desk; the <a href="desks.html">desk directory</a> names
+which desks contribute and which do not. Each item keeps its original-language
 title, the address it came from, the date its source stated, and the collection
 metadata that describes how it arrived.</p>
 <p>It is a record of what these institutions published. It is not a measure of
@@ -49,14 +50,14 @@ search and filters on the <a href="archive.html">the record</a>.</p>
 {{ guide_stats.institutions - 1 }} other institutions and
 {{ guide_stats.outlets }} outlets in total. Any comparison drawn across
 institutions in this corpus is a comparison of very unequal samples, and a
-pattern found here is a pattern in one publisher's output before it is anything
-else.</p>
+pattern found here is first a pattern in what this project stored from one
+publisher. It cannot establish the balance of that publisher's output.</p>
 
 <h3>Repeats across outlets are stored once</h3>
-<p>De-duplication across sources is first-writer-wins: when more than one
-configured outlet carries the same item, it is stored once, under whichever
-source reached it first. A per-outlet total therefore counts the records an
-outlet contributed to this corpus, not how often that outlet published. Source
+<p>When more than one configured outlet carries the same item, duplicate copies
+may be consolidated into one stored record. A per-outlet total counts the
+records assigned to that source in this corpus, not how often that outlet
+published. Source
 counts are not publication-volume counts, and they should not be read as market
 share, prominence, or emphasis.</p>
 

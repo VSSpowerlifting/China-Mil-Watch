@@ -876,16 +876,23 @@ footer.site a { color: var(--ocean); }
 
 /* Section contents. A plain list with a petrol rule above it, not a boxed
    navigation panel. */
-.guide-contents {
+.guide-contents, .reader-contents {
   border-top: 1px solid var(--rule);
-  margin: 1.75rem 0 0; padding-top: .9rem;
+  margin: 1.75rem 0 1.5rem; padding-top: .9rem;
 }
-.guide-contents ul {
+.guide-contents ul, .reader-contents ul {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: .35rem 1.5rem;
   font-family: var(--sans); font-size: var(--step-meta);
 }
-.guide-contents li { max-width: none; }
+.guide-contents li, .reader-contents li { max-width: none; }
+.reader-contents > span {
+  display: block; margin-bottom: .35rem;
+  color: var(--muted); font: 600 .6875rem var(--mono);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.reader-contents a { display: inline-flex; align-items: center; min-height: 40px; }
+main [id] { scroll-margin-top: 5rem; }
 
 /* Stored column name beside a reader-facing label. Metadata, one line, and
    never carrying prose. */
@@ -1411,6 +1418,36 @@ footer.site a { color: var(--ocean); }
 .filters .filter-actions { display: flex; align-items: flex-end; }
 
 /* ── Coverage bars — every graphic has a table beside it ──────────────── */
+.source-contributions {
+  margin: 2rem 0 2.5rem;
+  padding: 1.25rem 0 0;
+  border-top: 2px solid var(--rule-hard);
+}
+.source-contributions figcaption h2 { margin-top: 0; }
+.source-contributions figcaption p { max-width: 76ch; }
+.contribution-list { list-style: none; margin: 1.25rem 0 .75rem; padding: 0; }
+.contribution-list li {
+  display: grid;
+  grid-template-columns: minmax(10rem, 20rem) minmax(0, 1fr) 8rem;
+  gap: 1rem;
+  align-items: center;
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--sans);
+}
+.contribution-list a { font-weight: 600; }
+.contribution-track { display: block; height: .55rem; background: var(--rule-soft); }
+.contribution-fill { display: block; height: 100%; background: var(--accent); }
+.contribution-value { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.contribution-value small { color: var(--muted); }
+@media (max-width: 640px) {
+  .contribution-list li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .5rem 1rem;
+  }
+  .contribution-track { grid-column: 1 / -1; grid-row: 2; }
+  .contribution-value { grid-column: 2; grid-row: 1; }
+}
 .barset { margin: 1.25rem 0; display: grid; gap: .5rem; }
 .barset .bar-row {
   display: grid;
@@ -1532,6 +1569,23 @@ select, input, textarea, button { max-width: 100%; }
 }
 
 /* ── Issue cards ──────────────────────────────────────────────────────── */
+.issue-ledger { list-style: none; margin: 1.25rem 0 2.5rem; padding: 0; border-top: 2px solid var(--rule-hard); }
+.issue-ledger > li { margin: 0; border-bottom: 1px solid var(--rule); }
+.issue-ledger-row { display: grid; grid-template-columns: minmax(9rem, 12rem) minmax(0, 1fr); gap: 1.5rem; padding: 1.25rem 0 1.4rem; }
+.issue-ledger-meta { display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; font-size: .8125rem; }
+.issue-ledger-meta time { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.issue-ledger-meta .issue-label { margin-top: .2rem; }
+.issue-ledger-copy h3 { margin: 0; font-family: var(--serif); font-size: clamp(1.2rem, 1.6vw, 1.55rem); line-height: 1.25; }
+.issue-ledger-copy h3::before { content: none; }
+.issue-ledger-copy h3 a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: .15em; }
+.issue-ledger-copy h3 a:hover { color: var(--link); }
+.issue-ledger-copy p { max-width: 66ch; margin: .5rem 0 0; line-height: 1.55; }
+.issue-ledger-copy p.meta { margin-top: .6rem; }
+@media (max-width: 640px) {
+  .issue-ledger-row { grid-template-columns: minmax(0, 1fr); gap: .7rem; padding: 1rem 0 1.2rem; }
+  .issue-ledger-meta { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: .35rem .8rem; }
+  .issue-ledger-meta .issue-label { margin-top: 0; }
+}
 .cards--issues { grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
 .card--issue { padding: 0; overflow: hidden; }
 .card--issue > *:not(.issue-cover) { padding-left: 1.15rem; padding-right: 1.15rem; }
