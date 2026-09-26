@@ -309,6 +309,18 @@ The Ocean Signal Veil remains a desktop-only, credited public-domain image;
 the home page preserves its two-column opening and dated record ledger. The
 shared navigation and reading layout are usable without scripted motion.
 
+The Paper Ledger source pass loads the existing publication font trio on
+record routes, gives interior headings an editorial serif hierarchy, and
+compacts the repeated mobile dateline. Atlas adds a four-state chart sourced
+from the exhaustive stored-record processing partition, with a dated
+denominator, filter links, definitions, and a clear limit on what the counts
+mean. Sources bars and the Analysis reading paths have a stronger printed
+register treatment; Methodology presents its existing evidence labels as a
+specimen sheet. Fine etched lines are confined to the Atlas plate.
+Desk pages call the complement of analyzed records "Not analyzed" and explain
+that it includes screened-out and unscreened items, rather than presenting the
+whole group as an analysis queue.
+
 This frontend pass changes templates and tests, not `pla_watch.db`, desk
 configuration, canonical edition sidecars, or production `output/`. A source
 merge alone does not show these changes on the public site: the authorized
