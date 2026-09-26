@@ -100,13 +100,13 @@
 </section>
 {% endblock %}
 {% block content %}
-{{ spine(desks, snapshot, corpus_total) }}
 {% if home_records.lead %}
 {# The lead record, directly under the opening. This is the page's first
    content and the thing the publication is; the section that follows heads
    the rest of the register. #}
 {{ lead_record(home_records.lead, desk_by_source) }}
 {% endif %}
+{{ spine(desks, snapshot, corpus_total) }}
 {% if freshness.analysis_is_behind_collection %}
 {# The screening caveat, below the record rather than above it. The ledger
    links here by fragment, and `tabindex="-1"` means following that link moves

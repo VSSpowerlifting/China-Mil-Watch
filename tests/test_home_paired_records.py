@@ -380,7 +380,7 @@ class TestTheHomePageIdentityIsPreserved(HomeCase):
         self.assertNotRegex(
             self.home, r'<details class="nav-toggle nav-mobile"[^>]*\bopen\b',
             "the compact disclosure ships expanded")
-        for label in ("Record", "Desks", "Sources", "Analysis", "Coverage",
+        for label in ("Atlas", "Desks", "Sources", "Analysis", "Coverage",
                       "Methodology", "About"):
             with self.subTest(label=label):
                 self.assertIn(">%s</a>" % label, details)

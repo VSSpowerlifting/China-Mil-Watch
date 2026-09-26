@@ -172,7 +172,7 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         nav = self.page("index.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Record", "Desks", "Sources", "Analysis",
+        self.assertEqual(labels, ["Atlas", "Desks", "Sources", "Analysis",
                                   "Coverage", "Methodology", "About"])
 
 
