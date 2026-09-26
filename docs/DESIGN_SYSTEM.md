@@ -4,8 +4,8 @@ Durable doctrine. The Night Desk tokens below are the live values in
 `site/templates/pla-watch-base.html`. The Paper Ledger table in §3 describes
 `site/templates/base.html`, which is the **legacy rollback renderer** — the
 live record site is rendered by `site/preview/generate_preview.py` and its
-tokens are in `site/preview/styles.css`, a related but distinct teal/ocean
-palette. That divergence is recorded in §3 rather than papered over. If a
+tokens are in `site/preview/styles.css`, a warm paper and compass-blue
+palette. That distinction is recorded in §3 rather than papered over. If a
 template and this document disagree, reconcile deliberately — do not silently
 fork.
 Motion and flagship visual components: docs/VISUAL_AND_MOTION_SYSTEM.md.
@@ -83,22 +83,23 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 ### Live record-site tokens (`site/preview/styles.css`)
 | Token | Value | Role |
 |---|---|---|
-| `--paper` | #F5F8F6 | page ground |
-| `--ink` | #10252E | body text, dark bands (14.81 on paper) |
-| `--deep` | #123E4A | secondary text (10.83) |
-| `--ocean` | #176B87 | sole structural accent (5.63) |
-| `--turquoise` | #28B8A6 | decoration on paper; text on ink |
-| `--seaglass` | #CBEAE5 | fills, rules, marks — never text |
-| `--signal` | #9C4B36 | rust: machine-generated ONLY (5.65) |
-| `--abyss` | #0A1A22 | masthead ground, `theme-color` |
-| `--parchment` | #EDE9E0 | primary text on dark |
-| `--crimson` | (dark chrome only) | editorial accent, never on paper |
+| `--bg` | #F3F1EA | warm page ground |
+| `--surface` | #FAF8F3 | raised paper: masthead and data plates |
+| `--ink` | #17262F | body text and heavy editorial rules |
+| `--ink-2` | #3D4952 | secondary text |
+| `--rule` | #CFC9BC | hairline structure |
+| `--accent` | #255E7A | compass-blue links, chart marks, focus |
+| `--band` | #12222C | dark analysis band |
+| `--signal` | #9C4B36 | rust: machine-generated material only |
+| `--positive` | #1C6450 | live collecting status |
+| `--warning` | #87511A | blocked status and warnings |
+| `--crimson` | #B3132B | dark analytical chrome only |
 
 ### Meaning rules
-- **Crimson = analytical signal only**: model-flagged markers, key-judgment
-  emphasis, active nav, eyebrow dashes, the PW brand rule, primary CTAs on
-  dark. Never decorative fills, never large backgrounds (the signal-tint
-  readout panel is the ceiling), never body text.
+- **Crimson = Night Desk analytical signal only**: editorial emphasis, the
+  historical series rule, and primary actions on dark. The live Paper Ledger
+  uses compass blue for structure and rust for model output. Neither uses
+  crimson as a decorative paper accent or a data-chart fill.
 - **Evidence is neutral**: source-trail records, quotes, stats render in
   ink/gray. Inference and analyst emphasis may use crimson. This is the
   visual half of the evidence-vs-inference doctrine.
@@ -233,11 +234,13 @@ figures, which described the predecessor's static site:
 index 15.6 KB, `archive.html` 15.9 KB, coverage 17.3 KB, desks 13.3 KB,
 methodology 9.7 KB, largest generated week page 29.9 KB, largest record page
 64.7 KB, PLA Watch post 81.2 KB — all HTML with CSS inlined. JS ≈ 1 KB vanilla
-(IntersectionObserver); zero external libraries. **Fonts differ by surface:**
-The PLA Watch loads the three families from Google Fonts; the record site
-loads none at all and renders on its fallback stack (Georgia / system-ui /
-system mono). Unifying them is an open owner decision, deliberately not taken
-in the identity tranche.
+(IntersectionObserver); zero external libraries. **Typography was unified in
+the 2026-09-26 source pass:** the live record site now loads the same capped
+Source Serif 4, Inter, and IBM Plex Mono families as Night Desk, with
+`display=swap` and system fallbacks. The earlier identity tranche left the
+record site on fallbacks; this change resolves that open design choice without
+adding a font family. External font delivery remains a measured performance
+dependency, and the page must retain its layout and legibility when it fails.
 Covers remain ~8.5 MB total (~430 KB average) and are the one budget still
 missed.
 

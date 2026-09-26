@@ -9,6 +9,38 @@
 original-language title preserved on every one.</p>
 {{ spine(desks, snapshot, corpus_total) }}
 
+{# A server-derived chart of the four exhaustive processing states. The exact
+   figures remain text; bar widths are decorative and never the only evidence. #}
+<figure class="processing-plate" aria-labelledby="processing-title">
+  <figcaption class="processing-plate-head">
+    <span class="processing-kicker">Corpus / processing</span>
+    <h2 id="processing-title">Where each stored record stands</h2>
+    <p>{{ snapshot_label }} · {{ corpus_total|count }} stored, deduplicated records.
+    Every record is in exactly one of these states.</p>
+    <svg class="processing-engraving" viewBox="0 0 220 110" focusable="false" aria-hidden="true">
+      <path d="M-20 104C35 17 135 12 240 98M-20 87C38 4 139 0 240 83M-20 70C42-10 145-15 240 68M-20 53C45-27 148-31 240 53M-20 36C49-44 152-47 240 38"/>
+    </svg>
+  </figcaption>
+  <div class="processing-plate-body">
+    <ul class="processing-bars">
+    {% for state in processing_bars %}
+      <li>
+        <div class="processing-bar-label">
+          <a href="archive.html?status={{ state.code }}#results-heading">{{ state.label }}</a>
+          <strong>{{ state.count|count }}</strong>
+        </div>
+        <span class="processing-track" aria-hidden="true"><span class="processing-fill" style="width: {{ state.percent }}%"></span></span>
+        <span class="processing-share">{{ state.share_label }} of stored records</span>
+      </li>
+    {% endfor %}
+    </ul>
+    <p class="processing-limit">These are processing states in this selective corpus,
+    not institutional output, complete coverage, or an editorial judgment.
+    <a href="corpus-guide.html#states">Definitions and limits</a> ·
+    <a href="corpus.html">Browse every record by week</a>.</p>
+  </div>
+</figure>
+
 {# The complete path, always visible and never dependent on JavaScript. It comes
    first because it is the guarantee, not the fallback: the browser below is a
    convenience over a static structure that already reaches every record. #}

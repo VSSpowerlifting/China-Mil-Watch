@@ -940,7 +940,8 @@ class TestRenderedStructure(PreviewCase):
         left on the path being resolved. Stripping it is only half the fix — a
         deep link into the Corpus Guide is broken in exactly the way a reader
         notices when the file exists and the anchor does not, so the target id
-        is checked too.
+        is checked too. Query strings select an Atlas filter; they are not part
+        of the filename to resolve.
         """
         ids = {}
 
@@ -957,11 +958,11 @@ class TestRenderedStructure(PreviewCase):
                                    p.read_text(encoding="utf-8")):
                 if href.startswith(("http", "#", "mailto:")):
                     continue
-                path, _, fragment = href.partition("#")
-                target = (p.parent / path).resolve()
+                parts = urllib.parse.urlsplit(href)
+                target = (p.parent / parts.path).resolve()
                 if not target.exists():
                     broken.append("%s -> %s" % (p.name, href))
-                elif fragment and fragment not in anchors(target):
+                elif parts.fragment and parts.fragment not in anchors(target):
                     broken.append("%s -> %s (no such anchor)" % (p.name, href))
         self.assertEqual(broken, [])
 
@@ -1552,15 +1553,17 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         """
         html = self.page("china.html")
         for label in ("Source records", "Analyzed records",
-                      "Awaiting analysis"):
+                      "Not analyzed"):
             with self.subTest(label=label):
                 self.assertIn(label, html)
         self.assertNotIn("Analysed and published", html)
         self.assertNotIn("Analyzed and published", html)
         self.assertIn("Counts reflect the stored corpus at this snapshot.",
                       html)
-        self.assertIn("Records awaiting analysis\nremain part of the record.",
+        self.assertIn("includes records awaiting screening, screened out, and "
+                      "incomplete analysis;",
                       html)
+        self.assertIn("it is not an analysis queue.", html)
 
     def test_reader_facing_counts_use_thousands_separators(self):
         data = gp.load_corpus(TRACKED_DB)
@@ -1892,6 +1895,12 @@ class CorpusCase(unittest.TestCase):
             sum(s["count"] for s in self.data["state_counts"]),
             self.snapshot["expected_records"])
 
+    def test_processing_chart_rejects_a_nonpartition_of_the_corpus(self):
+        states = [dict(state) for state in self.data["state_counts"]]
+        states[0]["count"] += 1
+        with self.assertRaisesRegex(ValueError, "do not sum"):
+            gp.processing_state_bars(states, len(self.corpus))
+
     def test_every_state_is_reported_even_when_small(self):
         """A state must not vanish from the vocabulary for being rare."""
         labels = {s["label"] for s in self.data["state_counts"]}
@@ -2174,14 +2183,14 @@ class TestRecordPages(PreviewCase):
         """
         rec = next(r for r in self.data["corpus"] if not r["title_english"])
         html = self.record(rec["id"])
-        self.assertIn("<h1>", html)
+        self.assertIn('<h1 lang="%s">' % (rec["language_tag"] or "zh"), html)
         self.assertIn(str(markupsafe.escape(rec["title_original"][:20])), html)
 
     def test_exactly_one_h1_per_record_page(self):
         for state in gp.STATE_ORDER:
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
-                self.assertEqual(html.count("<h1>"), 1)
+                self.assertEqual(len(re.findall(r"<h1(?:\s[^>]*)?>", html)), 1)
 
     def test_heading_levels_are_not_skipped(self):
         html = self.record(self.first_in_state("analyzed"))
@@ -3207,14 +3216,32 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_no_raw_language_or_state_code_in_archive_authored_ui(self):
         html = self.page("archive.html")
-        body = html.split('id="browse"', 1)[1]
+        # Filter links may carry state codes in URLs; the authored text must
+        # still use reader-facing labels rather than exposing those codes.
+        body = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
+        body = re.sub(r"<[^>]+>", "", body)
         for code in ("zh-Hans", "en-US"):
             with self.subTest(code=code):
-                self.assertNotIn(">%s<" % code, body)
+                self.assertNotIn(code, body)
         for state in gp.STATE_ORDER:
             if "_" in state:
                 with self.subTest(state=state):
-                    self.assertNotIn(state, html)
+                    self.assertNotIn(state, body)
+
+    def test_processing_chart_names_scope_and_reaches_underlying_records(self):
+        html = self.page("archive.html")
+        figure = html.split('<figure class="processing-plate"', 1)[1]
+        figure = figure.split('</figure>', 1)[0]
+        self.assertIn(self.snapshot["date"], figure)
+        self.assertIn("stored, deduplicated records", figure)
+        self.assertIn("not institutional output, complete coverage", figure)
+        self.assertIn('href="corpus-guide.html#states"', figure)
+        self.assertIn('href="corpus.html"', figure)
+        for state in gp.load_corpus(TRACKED_DB)["state_counts"]:
+            with self.subTest(state=state["code"]):
+                self.assertIn(state["label"], figure)
+                self.assertIn(f'archive.html?status={state["code"]}#results-heading',
+                              figure)
 
     def test_the_language_control_names_its_provenance(self):
         html = re.sub(r"\s+", " ", self.page("archive.html"))
@@ -4518,9 +4545,11 @@ class TestCorpusGuide(PreviewCase):
         """Codes are internal. Labels are the only strings a reader sees."""
         enums = ("not_selected", "awaiting_screening", "analysis_incomplete")
         for name, html in self._all_html().items():
+            visible = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
+            visible = re.sub(r"<[^>]+>", "", visible)
             for enum in enums:
                 with self.subTest(page=name, enum=enum):
-                    self.assertNotIn(enum, html)
+                    self.assertNotIn(enum, visible)
 
     # ── Counts equal direct queries ─────────────────────────────────────
 

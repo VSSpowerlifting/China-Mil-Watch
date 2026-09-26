@@ -29,6 +29,7 @@ production run — which is different from a source that ran and stored nothing.
   <ol class="contribution-list">
   {% for bar in source_contributions %}
     <li>
+      <span class="contribution-index" aria-hidden="true">{{ '%02d'|format(loop.index) }}</span>
       <a href="{{ bar.source.route }}">{{ bar.source.display_name }}</a>
       <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: {{ bar.percent }}%"></span></span>
       <span class="contribution-value">{{ bar.source.record_count|count }} <small>({{ bar.label }})</small></span>
