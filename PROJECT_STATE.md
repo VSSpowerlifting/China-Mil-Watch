@@ -191,6 +191,20 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
+**Philippines AFP (pilot, no desk declared)** — `shadow/ph_afp/`,
+`scraper/sources/ph_afp.py`, `scripts/shadow_collect_ph.py`. An ingestion pilot of
+one source, the article stream of `www.afp.mil.ph` read from the site's own JSON
+backend `api.afp.mil.ph`. **Not scheduled, not enabled, in no production desk,
+and not in `desks/registry.json`.** One full-history capture was run on 2026-09-26 into a
+local state directory that is on no state branch and is not retained: 1,074
+records dated 2021-01-21 to 2026-09-15 (1,049 with text, 25 metadata-only),
+with no item dated 2024-10-31 to 2026-06-12. The figures in
+`shadow/ph_afp/README.md` are the durable record, and that state was patched
+offline to the final code (disclosed there). The API host publishes no `robots.txt` and sends
+`X-Robots-Tag: noindex, nofollow`; whether to collect before asking the AFP
+Public Affairs Office for an official route is an open owner decision. Full
+measurements and limits: `shadow/ph_afp/README.md`.
+
 **Japan MOD** — state branch `shadow/jp-mod`. Day zero
 2026-08-27T02:14:38Z. The 2026-09-03 run recorded `shadow_day` **6**, result
 `ok_all_duplicates`, health **`partial`**; 9 ledger entries. **Access-constrained:**
