@@ -30,6 +30,42 @@
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
 }
 
+/* The desktop contents rail moves below the article on phones. A short,
+   static set of native anchors keeps the long issue navigable there. */
+.post-jump { display: none; }
+@media (max-width: 900px) {
+  .post-jump {
+    display: block;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.65rem 0;
+    margin: 0 0 1.6rem;
+  }
+  .post-jump-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+  }
+  .post-jump-links { display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; }
+  .post-jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: var(--color-text-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border);
+    text-underline-offset: 3px;
+  }
+  .post-jump a:hover { text-decoration-color: var(--signal-bright); }
+}
+
 /* ── Edition header — briefing head, structured not decorated ───────── */
 .hero {
   position: relative;
@@ -433,7 +469,7 @@
 }
 .snapshot-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1.25rem;
 }
 .snap-stat .num {
@@ -631,12 +667,13 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
-.source-card-zh {
-  font-family: var(--zh);
+.source-card-original {
+  font-family: var(--sans);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   line-height: 1.55;
 }
+.source-card-original.is-zh { font-family: var(--zh); }
 .source-card-meta {
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -851,6 +888,7 @@
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  min-height: var(--target-min);
   padding: 0.35rem 0.8rem;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
@@ -913,6 +951,11 @@
   margin: -0.7rem 0;
 }
 .post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
+@media (max-width: 600px) {
+  .edition-nav { flex-direction: column; align-items: stretch; }
+  .edition-nav .next { text-align: left; margin-left: 0; }
+  .post-nav { flex-wrap: wrap; gap: 0.9rem 1.3rem; }
+}
 
 /* ── Print — single column brief ────────────────────────────────────── */
 @media print {
@@ -952,6 +995,7 @@
 {% for _pfx in ["The PLA Watch: ", "The PLA Watch — ", "The PLA Watch – "] %}
   {% if _t.display.startswith(_pfx) %}{% set _t.display = _t.display[(_pfx | length):] %}{% endif %}
 {% endfor %}
+{% set observed_sources = sources_seen if sources_seen else (articles | map(attribute='source') | select | unique | list) %}
 
 {% macro edition_head() %}
 <div class="hero-meta-top">
@@ -978,11 +1022,11 @@
   {% if days_covered %}<span class="meta-item"><span class="num">{{ days_covered }}</span> days observed</span>{% endif %}
   <span class="meta-item"><span class="num">{{ n_articles }}</span> articles analyzed</span>
   <span class="meta-item"><span class="num">{{ n_significant }}</span> model-flagged</span>
-  {% if sources_seen %}
-    {% if sources_seen | length > 2 %}
-    <span class="meta-item" title="{{ sources_seen | join(', ') }}"><span class="num">{{ sources_seen | length }}</span> sources</span>
+  {% if observed_sources %}
+    {% if observed_sources | length > 2 %}
+    <span class="meta-item" title="{{ observed_sources | join(', ') }}"><span class="num">{{ observed_sources | length }}</span> sources in the trail</span>
     {% else %}
-    <span class="meta-item">{{ sources_seen | join(', ') }}</span>
+    <span class="meta-item">{{ observed_sources | join(', ') }}</span>
     {% endif %}
   {% endif %}
 </div>
@@ -1026,6 +1070,16 @@
       {{ edition_head() }}
     </div>
     {% endif %}
+
+    <nav class="post-jump" aria-label="Jump within this issue">
+      <span class="post-jump-label">In this issue</span>
+      <div class="post-jump-links">
+        <a href="#s-snapshot">Snapshot</a>
+        {% if opening_note %}<a href="#s-opening">Analysis</a>{% elif what_stood_out %}<a href="#s-stood-out">Analysis</a>{% endif %}
+        <a href="#s-sources">Source trail</a>
+        <a href="#pw-cite">Citation</a>
+      </div>
+    </nav>
 
     {# ── Cover attribution — the cover PNG is og:image-only (DECISION_LOG
          2026-07-11 demotion); the note keeps its photo credited. ────── #}
@@ -1095,20 +1149,24 @@
           <div class="label">Model-flagged</div>
           <div class="sub">auto-flagged by the analysis model</div>
         </div>
+        {% if observed_sources %}
         <div class="snap-stat">
-          <div class="num">{{ sources_seen | length if sources_seen else 1 }}</div>
-          <div class="label">Source{{ 's' if sources_seen and sources_seen | length != 1 else '' }}</div>
-          <div class="sub">{{ sources_seen | join(', ') if sources_seen else 'PLA Daily' }}</div>
+          <div class="num">{{ observed_sources | length }}</div>
+          <div class="label">Source{{ 's' if observed_sources | length != 1 else '' }}</div>
+          <div class="sub">{{ observed_sources | join(', ') }} in the trail</div>
         </div>
+        {% endif %}
+        {% if days_covered %}
         <div class="snap-stat">
-          <div class="num">{{ days_covered if days_covered else 7 }}</div>
+          <div class="num">{{ days_covered }}</div>
           <div class="label">Days</div>
           <div class="sub">{{ week_start }} → {{ week_ending }}</div>
         </div>
+        {% endif %}
       </div>
       {% if n_articles %}
       <div class="snap-bar">
-        <div class="snap-bar-label">Model-flagged vs. routine coverage</div>
+        <div class="snap-bar-label">Model flagging within articles analyzed for this issue</div>
         <div class="snap-bar-track">
           {% set sig_pct = ((n_significant / n_articles) * 100) | round(1) %}
           <div class="snap-bar-fill" style="width: {{ sig_pct }}%;"></div>
@@ -1116,11 +1174,11 @@
         </div>
         <div class="snap-bar-legend">
           <span><span class="swatch swatch-sig"></span>Model-flagged ({{ n_significant }})</span>
-          <span><span class="swatch swatch-rest"></span>Routine ({{ n_articles - n_significant }})</span>
+          <span><span class="swatch swatch-rest"></span>Not model-flagged ({{ n_articles - n_significant }})</span>
         </div>
       </div>
       {% endif %}
-      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="{{ root_path }}methodology.html#model-flagged">How flagging works</a></p>
+      <p class="snap-note">These figures describe the articles analyzed for this issue, not institutional output or complete collection. “Model-flagged” is an automated triage cue, not an editorial judgment. The analysis in this issue is the analyst's. <a href="{{ root_path }}methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
     {# ── Body sections ──────────────────────────────────────────────── #}
@@ -1202,7 +1260,15 @@
           {% for article in articles %}
           <a class="source-card{% if article.is_significant %} is-significant{% endif %}" href="{{ article.url }}" target="_blank" rel="noopener" style="--ni: {{ loop.index0 }};">
             <div class="source-card-title">{{ article.title }}</div>
-            {% if article.title_zh %}<div class="source-card-zh" lang="zh-Hans">{{ article.title_zh }}</div>{% endif %}
+            {% if article.title_zh %}
+              {# Historical title_zh fields include English originals. Mark
+                 only strings containing actual CJK characters as Chinese. #}
+              {% set original = namespace(has_cjk=false) %}
+              {% for glyph in article.title_zh %}
+                {% if ('一' <= glyph and glyph <= '鿿') or ('㐀' <= glyph and glyph <= '䶿') %}{% set original.has_cjk = true %}{% endif %}
+              {% endfor %}
+              <div class="source-card-original{% if original.has_cjk %} is-zh{% endif %}"{% if original.has_cjk %} lang="zh-Hans"{% endif %}>{{ article.title_zh }}</div>
+            {% endif %}
             <div class="source-card-meta">
               {% if article.is_significant %}<span class="sig-tag">Model-flagged</span>{% endif %}
               <span>{{ article.source }}</span>
@@ -1262,6 +1328,7 @@
     {% endif %}
     <div class="post-nav{% if prev_post or next_post %} post-nav--tight{% endif %}">
       <a href="../archive.html">&larr; Back to Archive</a>
+      <a href="{{ root_path }}analysis.html">Analysis &amp; Briefs &rarr;</a>
       <a href="{{ root_path }}index.html">Visit {{ publication_home_label | default('Indo-Pacific Record') }} &rarr;</a>
     </div>
   </article>
@@ -1305,7 +1372,7 @@
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from {{ publication_home_label | default('Indo-Pacific Record') }}'s daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="{{ root_path }}methodology.html">Methodology</a>
+        This issue draws on daily monitoring. Its source trail lists selected linked records; it is not a complete account of the official record or a substitute for checking the original text. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>
     </div>
   </aside>

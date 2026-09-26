@@ -6,8 +6,8 @@
   {# The masthead ground, so a phone's browser chrome matches the page it is
      framing instead of capping an ink-navy surface with a light bar. #}
   <meta name="theme-color" content="#0A1019">
-  <title>{% block title %}The PLA Watch — Weekly signals from Chinese military media{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}The PLA Watch is the weekly analytical brief from Indo-Pacific Record, an independent project monitoring Chinese military and security reporting in the original Mandarin from official and authoritative PRC sources.{% endblock %}">
+  <title>{% block title %}The PLA Watch — Historical China Desk series{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}The PLA Watch is the historical China Desk series of Indo-Pacific Record. Read its original issues and source trails, then follow continuing analysis in Indo-Pacific Record Briefs.{% endblock %}">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
@@ -17,7 +17,7 @@
   <meta property="og:site_name"    content="The PLA Watch">
   <meta property="og:url"          content="{{ page_url | default(site_origin ~ '/the-pla-watch/') }}">
   <meta property="og:title"        content="{% block og_title %}The PLA Watch{% endblock %}">
-  <meta property="og:description"  content="{% block og_description %}Weekly signals from Chinese military media, published by Indo-Pacific Record. Each edition covers the week ending Saturday.{% endblock %}">
+  <meta property="og:description"  content="{% block og_description %}The historical China Desk issue archive of Indo-Pacific Record, preserved with each edition's original attribution and source trail. Each issue covers the week ending Saturday.{% endblock %}">
   {# The fallback card. `og-image.png` is a screenshot of the predecessor's
      front page, masthead and all; an edition overrides this block with its own
      cover, and everything else falls through to the current site card. #}
@@ -218,6 +218,7 @@
       color: var(--color-text-primary);
       line-height: 1.1;
       padding-bottom: 0.05em;
+      white-space: nowrap;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -241,7 +242,7 @@
       align-self: center;
     }
 
-    .pw-nav { display: flex; gap: 1.25rem; align-items: center; }
+    .pw-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; align-items: center; }
     .pw-nav a {
       color: var(--color-text-secondary);
       font-family: var(--sans);
@@ -277,7 +278,6 @@
     .pw-nav a:hover::after { transform: scaleX(1); }
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
-    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
     .pw-skip {
       position: absolute; left: -9999px; top: 0; z-index: 100;
       background: var(--color-bg-card); color: var(--color-text-primary);
@@ -343,6 +343,13 @@
       color: var(--color-text-secondary);
       line-height: 1.65;
       max-width: 520px;
+    }
+    .footer-desc a,
+    .footer-transparency a {
+      color: var(--color-text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--signal-bright);
+      text-underline-offset: 3px;
     }
     .footer-transparency {
       font-size: 0.78rem;
@@ -492,13 +499,17 @@
     }
     @media (max-width: 600px) {
       .pw-nameplate .pw-mark { font-size: 1.55rem; }
-      .pw-nav { gap: 0.85rem; }
-      .pw-nav a { font-size: 0.6rem; }
-      .pw-nav .nav-sep { display: none; }
-    }
-    @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active),
-      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
+      .pw-nav { gap: 0.1rem 0.3rem; width: 100%; }
+      .pw-nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--target-min);
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        padding: 0.55rem 0.35rem;
+        margin: 0;
+      }
+      .pw-nav a::after { bottom: 0.25rem; }
     }
 
     /* ── Reduced motion ─────────────────────────────────────────────────── */
@@ -561,7 +572,7 @@
       }
     }
     @media (prefers-reduced-motion: no-preference) {
-      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      .js:not(.no-anim) .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
       @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
     }
     /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
@@ -620,19 +631,19 @@
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
     <div class="pw-masthead-top">
-      <a href="{{ pw_root | default('') }}index.html" class="pw-nameplate" aria-label="The PLA Watch home">
+      <a href="{{ pw_root | default('') }}index.html" class="pw-nameplate" aria-label="The PLA Watch series home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
         {# The masthead states the publishing identity of the page it sits on, so on an
            edition page it is that edition's publisher. Index, archive and terms carry no
            edition context and fall through to the current identity. #}
-        <span class="pw-tag">A weekly publication of {{ publication | default('Indo-Pacific Record') }}</span>
+        <span class="pw-tag">{% if publication is defined %}A weekly publication of {{ publication }}{% else %}Historical series · Indo-Pacific Record{% endif %}</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
-        <a href="{{ pw_root | default('') }}index.html" {% if active_page == 'index' %}class="active"{% endif %}>Latest Edition</a>
-        <a href="{{ pw_root | default('') }}archive.html" {% if active_page == 'archive' %}class="active"{% endif %}>Archive</a>
-        <a href="{{ pw_root | default('') }}terms.html" {% if active_page == 'terms' %}class="active"{% endif %}>Terms</a>
-        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="{{ pw_root | default('') }}index.html" {% if active_page == 'index' %}class="active" aria-current="page"{% endif %}>Series</a>
+        <a href="{{ pw_root | default('') }}archive.html" {% if active_page == 'archive' %}class="active" aria-current="page"{% endif %}>Issues</a>
+        <a href="{{ pw_root | default('') }}terms.html" {% if active_page == 'terms' %}class="active" aria-current="page"{% endif %}>Terms</a>
+        <a href="{{ root_path }}analysis.html">Analysis</a>
         <a href="{{ root_path }}index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
@@ -653,13 +664,14 @@
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">The PLA Watch is the preserved China Desk series. Existing issues keep their original titles, issue numbers, and publishing attribution. Continuing analysis appears in <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a>.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="{{ root_path }}methodology.html">Methodology</a>
+        Each edition's source trail identifies selected records used in its analysis; it is not a complete account of institutional output or monitored coverage. Original sources remain authoritative. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
+      <a href="{{ root_path }}analysis.html">Analysis &amp; Briefs</a><br>
       <a href="{{ root_path }}index.html">Indo-Pacific Record — Daily Brief</a><br>
       <a href="{{ root_path }}archive.html">Indo-Pacific Record — Archive</a><br>
       <a href="{{ root_path }}signals.html">Signals &amp; Methodology</a><br>
