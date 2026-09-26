@@ -940,7 +940,8 @@ class TestRenderedStructure(PreviewCase):
         left on the path being resolved. Stripping it is only half the fix — a
         deep link into the Corpus Guide is broken in exactly the way a reader
         notices when the file exists and the anchor does not, so the target id
-        is checked too.
+        is checked too. Query strings select an Atlas filter; they are not part
+        of the filename to resolve.
         """
         ids = {}
 
@@ -957,11 +958,11 @@ class TestRenderedStructure(PreviewCase):
                                    p.read_text(encoding="utf-8")):
                 if href.startswith(("http", "#", "mailto:")):
                     continue
-                path, _, fragment = href.partition("#")
-                target = (p.parent / path).resolve()
+                parts = urllib.parse.urlsplit(href)
+                target = (p.parent / parts.path).resolve()
                 if not target.exists():
                     broken.append("%s -> %s" % (p.name, href))
-                elif fragment and fragment not in anchors(target):
+                elif parts.fragment and parts.fragment not in anchors(target):
                     broken.append("%s -> %s (no such anchor)" % (p.name, href))
         self.assertEqual(broken, [])
 
@@ -1552,15 +1553,17 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         """
         html = self.page("china.html")
         for label in ("Source records", "Analyzed records",
-                      "Awaiting analysis"):
+                      "Not analyzed"):
             with self.subTest(label=label):
                 self.assertIn(label, html)
         self.assertNotIn("Analysed and published", html)
         self.assertNotIn("Analyzed and published", html)
         self.assertIn("Counts reflect the stored corpus at this snapshot.",
                       html)
-        self.assertIn("Records awaiting analysis\nremain part of the record.",
+        self.assertIn("includes records awaiting screening, screened out, and "
+                      "incomplete analysis;",
                       html)
+        self.assertIn("it is not an analysis queue.", html)
 
     def test_reader_facing_counts_use_thousands_separators(self):
         data = gp.load_corpus(TRACKED_DB)
@@ -2180,14 +2183,14 @@ class TestRecordPages(PreviewCase):
         """
         rec = next(r for r in self.data["corpus"] if not r["title_english"])
         html = self.record(rec["id"])
-        self.assertIn("<h1>", html)
+        self.assertIn('<h1 lang="%s">' % (rec["language_tag"] or "zh"), html)
         self.assertIn(str(markupsafe.escape(rec["title_original"][:20])), html)
 
     def test_exactly_one_h1_per_record_page(self):
         for state in gp.STATE_ORDER:
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
-                self.assertEqual(html.count("<h1>"), 1)
+                self.assertEqual(len(re.findall(r"<h1(?:\s[^>]*)?>", html)), 1)
 
     def test_heading_levels_are_not_skipped(self):
         html = self.record(self.first_in_state("analyzed"))
