@@ -165,17 +165,8 @@ def _source_ids_by_tag(db: Path) -> dict:
     return {r["slug"]: dict(r) for r in rows}
 
 
-def build_fixture(tmp: Path, rows: list, name="fixture"):
-    """
-    Render a home page whose six newest analyzed records are exactly `rows`.
-
-    `rows` is newest-first. Each entry may set `title_english`,
-    `title_original` (None or "" for a record that has none) and `source_slug`;
-    dates are assigned descending from `fixture_date()`, a horizon derived
-    from the corpus rather than hard-coded, so
-    `dates=True` produces a mixed-date register and the default produces one
-    date shared by all six.
-    """
+def fixture_corpus(tmp: Path, rows: list, name="fixture"):
+    """Return a corpus copy whose newest analyzed records match `rows`."""
     db = tmp / ("%s.db" % name)
     shutil.copy2(TRACKED_DB, db)
     ids = _newest_analyzed_ids(db, len(rows))
@@ -195,16 +186,30 @@ def build_fixture(tmp: Path, rows: list, name="fixture"):
     con.commit()
     con.close()
 
-    out = tmp / ("%s-build" % name)
-    gp.build(out, gp.PUBLIC_TITLE, db, snapshot=gp.snapshot_from_corpus(db))
-    home = (out / "index.html").read_text(encoding="utf-8")
-
     # The fixture verifies its own premise: the records it rewrote are the ones
     # the page actually selected. Without this a mis-ordered fixture would make
     # every assertion below vacuously true.
     selected = gp.load_corpus(db)["recent"][:len(rows)]
     if [r["id"] for r in selected] != ids:
         raise AssertionError("fixture did not become the newest records")
+    return db, selected
+
+
+def build_fixture(tmp: Path, rows: list, name="fixture"):
+    """
+    Render a home page whose six newest analyzed records are exactly `rows`.
+
+    `rows` is newest-first. Each entry may set `title_english`,
+    `title_original` (None or "" for a record that has none) and `source_slug`;
+    dates are assigned descending from `fixture_date()`, a horizon derived
+    from the corpus rather than hard-coded, so
+    `dates=True` produces a mixed-date register and the default produces one
+    date shared by all six.
+    """
+    db, selected = fixture_corpus(tmp, rows, name)
+    out = tmp / ("%s-build" % name)
+    gp.build(out, gp.PUBLIC_TITLE, db, snapshot=gp.snapshot_from_corpus(db))
+    home = (out / "index.html").read_text(encoding="utf-8")
     return home, selected, out
 
 
@@ -2484,6 +2489,12 @@ class TestTheOneRecordRegisterReadsCorrectly(BrowserCase):
 
 
 class TestTheGroupSummaryHoldsItsLine(BrowserCase):
+
+    @classmethod
+    def corpus_for_build(cls, tmp: Path) -> Path:
+        db, _selected = fixture_corpus(
+            tmp, homogeneous_rows(), name="group-summary")
+        return db
 
     def test_the_period_never_starts_a_line_and_nothing_overflows(self):
         """
