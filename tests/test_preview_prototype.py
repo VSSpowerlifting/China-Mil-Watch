@@ -2145,7 +2145,9 @@ class TestRecordPages(PreviewCase):
         html = self.record(rec["id"])
         self.assertIn("Original text is unavailable in this stored record.",
                       html)
-        section = html.split("<h2>Stored source text</h2>", 1)[1].split("<h2", 1)[0]
+        section = html.split(
+            '<h2 id="record-text">Stored source text</h2>', 1)[1].split(
+                "<h2", 1)[0]
         for word in ("permanent", "permanently", "never", "irrecoverable",
                      "cannot be recovered"):
             with self.subTest(word=word):
@@ -2603,7 +2605,7 @@ class TestRecordSemantics(PreviewCase):
         for rec in self.data["corpus"][:200]:
             html = self.record(rec["id"])
             with self.subTest(id=rec["id"]):
-                self.assertIn("<h2>Stored source text</h2>", html)
+                self.assertIn('<h2 id="record-text">Stored source text</h2>', html)
                 self.assertNotIn("<h2>Original text</h2>", html)
 
     def test_the_extraction_caveat_renders_on_every_record(self):
@@ -2635,7 +2637,7 @@ class TestRecordSemantics(PreviewCase):
             r"permanently)\b", re.I)
         for rec in self.data["corpus"][:200]:
             section = self.record(rec["id"]).split(
-                "<h2>Stored source text</h2>", 1)[1].split("<h2", 1)[0]
+                '<h2 id="record-text">Stored source text</h2>', 1)[1].split("<h2", 1)[0]
             with self.subTest(id=rec["id"]):
                 self.assertIsNotNone(caveat.search(section))
                 # The stored capture has to be FOUND before it can be excluded.
@@ -2668,7 +2670,7 @@ class TestRecordSemantics(PreviewCase):
     def test_the_caveat_is_not_a_boxed_callout(self):
         rec = next(r for r in self.data["corpus"] if r["state"] == "analyzed")
         section = self.record(rec["id"]).split(
-            "<h2>Stored source text</h2>", 1)[1].split("<h2", 1)[0]
+            '<h2 id="record-text">Stored source text</h2>', 1)[1].split("<h2", 1)[0]
         self.assertNotIn("callout", section)
         self.assertIn('<p class="meta">Text captured from the source page.',
                       section)
@@ -4498,8 +4500,8 @@ class TestCorpusGuide(PreviewCase):
              "not a continuing integrity guarantee"),
             ("prompt version missing",
              "of the {:,} analyzed records".format(self.analyzed_count)),
-            ("first-writer-wins", "De-duplication across sources is "
-                                  "first-writer-wins"),
+            ("source attribution is based on stored records",
+             "records assigned to that source in this corpus"),
             ("source counts are not volume",
              "not publication-volume counts"),
             ("institution concentration", "The corpus is concentrated in one "
@@ -4510,6 +4512,7 @@ class TestCorpusGuide(PreviewCase):
         ):
             with self.subTest(warning=label):
                 self.assertIn(fragment, flat, "missing warning: %s" % label)
+        self.assertNotIn("first-writer-wins", flat)
 
     def test_no_raw_processing_enum_reaches_reader_facing_copy(self):
         """Codes are internal. Labels are the only strings a reader sees."""
