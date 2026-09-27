@@ -656,18 +656,20 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
 
     def test_the_only_photograph_painted_behind_text_is_the_veil(self):
         """
-        The stylesheet may paint exactly one raster, at exactly one route, and
-        only inside the desktop query. Any second one is a photograph nobody
-        measured.
+        The veil's two encodings are the only photographic URLs. The inline
+        SVG ruling is a vector pattern in the wide margins, not a photograph
+        whose contrast needs measuring over text.
         """
         css = CSS.read_text(encoding="utf-8")
-        painted = [d.strip() for d in
+        painted = [value for value in
                    re.findall(r"background-image:\s*([^;}]+)", css)
-                   if "url(" in d]
-        self.assertTrue(painted, "the veil is not painted at all")
-        urls = set(re.findall(r'url\("([^"]+)"\)', " ".join(painted)))
+                   if "url(" in value]
+        urls = re.findall(r'url\("([^"]+)"\)', " ".join(painted))
+        ruling = [url for url in urls if url.startswith("data:image/svg+xml,")]
+        self.assertEqual(len(ruling), 1, "expected one inline vector ruling")
         self.assertEqual(
-            urls, {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
+            set(urls) - set(ruling),
+            {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
             "an unmeasured raster is painted behind text")
 
     def test_the_veil_is_declared_only_inside_the_desktop_query(self):
@@ -676,13 +678,24 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
         below 901px, or a narrow viewport may fetch it anyway.
         """
         css = CSS.read_text(encoding="utf-8")
-        for match in re.finditer(r"background-image:\s*[^;}]*url\(", css):
-            before = css[:match.start()]
-            opened = before.count("@media (min-width: 901px)")
-            with self.subTest(at=match.start()):
-                self.assertGreater(
-                    opened, 0,
-                    "a raster background is declared before the 901px query")
+        start = css.index("@media (min-width: 901px) {")
+        depth = 0
+        end = None
+        for offset in range(css.index("{", start), len(css)):
+            depth += (css[offset] == "{") - (css[offset] == "}")
+            if depth == 0:
+                end = offset
+                break
+        self.assertIsNotNone(end, "the desktop veil query is unclosed")
+        for route in ("atmosphere/veil-ocean.webp",
+                      "atmosphere/veil-ocean.jpg"):
+            matches = list(re.finditer(re.escape('url("%s")' % route), css))
+            self.assertTrue(matches, "the veil is not painted at all")
+            for match in matches:
+                with self.subTest(route=route, at=match.start()):
+                    self.assertTrue(start < match.start() < end,
+                                    "a raster background is declared outside "
+                                    "the 901px query")
 
     def test_the_veil_credit_names_the_rights_it_rests_on(self):
         self.assertIn('class="veil-credit"', self.home)
@@ -1733,9 +1746,10 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
 
         T3 reinstates a photographic layer on purpose, so the blanket ban is
         gone and two narrower properties stand in its place. Here: the veil is
-        the ONLY element allowed to paint behind text, and it is inert —
+        the ONLY raster allowed to paint behind text, and it is inert —
         `pointer-events: none`, `aria-hidden`, and behind every text layer, so
-        it can never take a click or reach the accessibility tree.
+        it can never take a click or reach the accessibility tree. The new
+        vector ruling is allowed only on main, under opaque reading paper.
 
         The contrast property the ban existed to protect is measured directly,
         from the pixels each glyph actually covers, in
@@ -1745,17 +1759,61 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
             context, page = self.page_at(width, 900)
             try:
                 bad = page.evaluate("""() => {
-                  const painted = [...document.querySelectorAll('*')].filter(
-                    el => (getComputedStyle(el).backgroundImage || '')
-                            .includes('url('));
-                  return painted
-                    .filter(el => !el.classList.contains('veil'))
-                    .map(el => el.tagName + '.' + el.className);
+                  return [...document.querySelectorAll('*')]
+                    .map(el => ({el, image: getComputedStyle(el).backgroundImage}))
+                    .filter(({image}) => image.includes('url('))
+                    .filter(({el, image}) => !(
+                      (el.classList.contains('veil') &&
+                       image.includes('veil-ocean.')) ||
+                      (el.matches('main#main') &&
+                       image.includes('data:image/svg+xml'))))
+                    .map(({el}) => el.tagName + '.' + el.className);
                 }""")
                 with self.subTest(width=width):
                     self.assertEqual(
-                        bad, [], "something other than the veil paints a "
-                                 "raster behind the page")
+                        bad, [], "an unexpected image paints behind the page")
+            finally:
+                context.close()
+
+    def test_margin_ruling_stays_outside_reading_paper_and_phone(self):
+        for width in (1920, 375):
+            context, page = self.page_at(width, 900)
+            try:
+                state = page.evaluate("""() => {
+                  const main = document.querySelector('main#main');
+                  const mainBox = main.getBoundingClientRect();
+                  const wraps = [...main.querySelectorAll(':scope > .wrap')];
+                  return {
+                    image: getComputedStyle(main).backgroundImage,
+                    gridPainters: [...document.querySelectorAll('*')]
+                      .filter(el => getComputedStyle(el).backgroundImage
+                        .includes('data:image/svg+xml')).length,
+                    wraps: wraps.map(el => {
+                      const style = getComputedStyle(el);
+                      const box = el.getBoundingClientRect();
+                      const channels = style.backgroundColor.match(/[\\d.]+/g)
+                        .map(Number);
+                      return {
+                        image: style.backgroundImage,
+                        opaque: channels.length === 3 || channels[3] === 1,
+                        inset: box.left > mainBox.left &&
+                          box.right < mainBox.right
+                      };
+                    })
+                  };
+                }""")
+                with self.subTest(width=width):
+                    self.assertTrue(state["wraps"], "no reading paper")
+                    if width == 1920:
+                        self.assertIn("data:image/svg+xml", state["image"])
+                        self.assertEqual(state["gridPainters"], 1)
+                        self.assertTrue(all(w["opaque"] and w["inset"] and
+                                            w["image"] == "none"
+                                            for w in state["wraps"]),
+                                        "margin ruling reaches reading paper")
+                    else:
+                        self.assertEqual(state["image"], "none")
+                        self.assertEqual(state["gridPainters"], 0)
             finally:
                 context.close()
 
