@@ -1447,25 +1447,51 @@ main [id] { scroll-margin-top: 5rem; }
   .contribution-track { grid-column: 1 / -1; grid-row: 2; }
   .contribution-value { grid-column: 2; grid-row: 1; }
 }
-.barset { margin: 1.25rem 0; display: grid; gap: .5rem; }
+/* A run-scoped figure: labels and numbers remain text, with each label linked
+   to the source's exact result row below. The bars only repeat that evidence. */
+.extraction-figure {
+  margin: 2rem 0;
+  padding: 1rem 0 .4rem;
+  border-top: 2px solid var(--rule-hard);
+  border-bottom: 1px solid var(--rule);
+}
+.extraction-figure figcaption h3 { margin: 0 0 .35rem; }
+.extraction-figure figcaption .meta,
+.extraction-figure > .meta { max-width: 74ch; }
+.extraction-figure > .meta { margin-top: .9rem; }
+.barset { margin: 1.15rem 0; display: grid; gap: 0; }
 .barset .bar-row {
   display: grid;
-  grid-template-columns: minmax(6rem, 12rem) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(6rem, 12rem) minmax(0, 1fr) 8.5rem;
   gap: .75rem;
   align-items: center;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--rule-soft);
   font-family: var(--sans);
-  font-size: .8125rem;
+  font-size: .875rem;
 }
 .barset .bar-label { color: var(--ink); overflow-wrap: anywhere; }
-.barset .bar-track { background: var(--seaglass); height: .7rem; border-radius: 1px; }
-.barset .bar-fill { background: var(--teal); height: 100%; display: block; border-radius: 1px; }
-.barset .bar-fill.is-partial { background: var(--ocean); }
-.barset .bar-fill.is-none { background: var(--rule-strong); }
+.barset .bar-label a { font-weight: 600; }
+.barset .bar-track { grid-column: 2; background: var(--seaglass); height: .5rem; }
+.barset .bar-fill { background: var(--accent); height: 100%; display: block; }
 .barset .bar-value {
+  grid-column: 3;
+  text-align: right;
   font-family: var(--mono);
   font-variant-numeric: tabular-nums lining-nums;
   color: var(--text-muted-tinted);
   white-space: nowrap;
+}
+.stacking tr[id^="run-source-"]:target { background: var(--accent-tint); }
+@media (max-width: 640px) {
+  .barset .bar-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .3rem .6rem;
+    padding: .65rem 0;
+  }
+  .barset .bar-label { grid-column: 1; grid-row: 1; }
+  .barset .bar-value { grid-column: 2; grid-row: 1; }
+  .barset .bar-track { grid-column: 1 / -1; grid-row: 2; }
 }
 
 /* ── Utility ──────────────────────────────────────────────────────────── */
@@ -2506,6 +2532,20 @@ body {
   line-height: 1.65;
 }
 
+/* Fine ledger ruling lives only in wide outer margins. Reading surfaces,
+   evidence plates, and phone layouts stay on uninterrupted paper. */
+@media (min-width: 1320px) {
+  main {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Cpath d='M87.5 0V88M0 87.5H88' fill='none' stroke='%23CFC9BC' stroke-opacity='.36' stroke-width='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-position: top center;
+  }
+  main > .wrap {
+    background: var(--bg);
+    border-inline: 1px solid var(--rule-soft);
+  }
+}
+
 a { color: var(--link); text-underline-offset: .18em; text-decoration-thickness: 1px; }
 a:visited { color: var(--visited); }
 a:hover { color: var(--accent-ink); }
@@ -3267,6 +3307,21 @@ main h1 {
 }
 main h1:lang(zh) { font-family: var(--zh); letter-spacing: 0; }
 .record-head + h1 { font-size: clamp(2rem, 4vw, 3.25rem); max-width: 26ch; }
+.record-title-pair {
+  max-width: var(--measure);
+  margin: .9rem 0 1.4rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--rule);
+}
+.record-title-pair .original {
+  margin: 0 0 .45rem;
+  color: var(--ink-2);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.record-title-pair .original:lang(zh) { font-family: var(--zh); }
+.record-title-pair .meta { margin: 0; font-size: .8125rem; }
 main h2 { font-family: var(--serif); letter-spacing: -.02em; }
 main .lede {
   font-family: var(--serif);
@@ -3471,6 +3526,8 @@ main, main > .wrap, .record-layout, .record-main, .record-rail,
 @media print {
   [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
   body { background: #fff; color: #000; }
+  main { background-image: none; }
+  main > .wrap { background: transparent; border-inline: 0; }
   .masthead, .nav-rail { border: 0; }
   /* The nav rail, the skip chip and the veil LAYER come off the page: two are
      controls with nothing to do on paper, and the third is a background image.

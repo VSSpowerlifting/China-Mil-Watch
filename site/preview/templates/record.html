@@ -19,20 +19,22 @@
 </div>
 
 <h1{% if not record.title_english %} lang="{{ record.language_tag or 'zh' }}"{% endif %}>{{ display_title }}</h1>
+{% if record.title_english and record.title_original %}
+{# Two distinct machine outputs. The English TITLE is a translation; the
+   summary below is a different artifact. Labelling them identically would
+   merge two separate claims about what a model produced. #}
+<div class="record-title-pair">
+  <p class="original" lang="{{ record.language_tag or 'zh' }}">{{ record.title_original }}</p>
+  <p class="meta"><span class="evidence evidence--model">Machine translation</span>
+  The heading is a machine translation of the original title above. Not reviewed by a human.</p>
+</div>
+{% endif %}
 {{ spine(desks, snapshot, corpus_total, true, record_desk) }}
 <nav class="reader-contents" aria-label="On this record page">
   <span>In this record</span>
   <ul><li><a href="#record-status">Processing</a></li><li><a href="#record-provenance">Provenance</a></li>
       <li><a href="#record-text">Stored text</a></li><li><a href="#record-citation">Citation</a></li></ul>
 </nav>
-{% if record.title_english and record.title_original %}
-{# Two distinct machine outputs. The English TITLE is a translation; the
-   summary below is a different artifact. Labelling them identically would
-   merge two separate claims about what a model produced. #}
-<p class="original" lang="{{ record.language_tag or 'zh' }}">{{ record.title_original }}</p>
-<p class="meta"><span class="evidence evidence--model">Machine translation</span>
-The heading is a machine translation of the original title above. Not reviewed by a human.</p>
-{% endif %}
 
 {# ── Facts rail ────────────────────────────────────────────────────────
    The page already held all of this, spread across a nine-row provenance

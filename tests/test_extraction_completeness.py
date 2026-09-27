@@ -335,6 +335,27 @@ class TestTheCoverageSurfaceTellsThemApart(unittest.TestCase):
         self.assertIn("reachable but unreadable", html)
         self.assertIn("not measured", html)
 
+    def test_chart_links_to_its_source_result_and_omits_unmeasured_bar(self):
+        from jinja2 import Environment
+
+        source = self.template()
+        start = source.index('<div class="barset"')
+        end = source.index('{% endfor %}', start) + len('{% endfor %}')
+        chart = Environment(autoescape=True).from_string(source[start:end])
+        html = chart.render(extraction_bars=[
+            {"slug": "measured_source", "measured": True, "usable": 3,
+             "extracted": 5, "percent": 60, "partial": True},
+            {"slug": "unmeasured_source", "measured": False},
+        ])
+
+        self.assertIn('href="#run-source-measured_source"', html)
+        self.assertIn('3/5 &middot; 60%', html)
+        self.assertIn('href="#run-source-unmeasured_source"', html)
+        unmeasured = html.split('href="#run-source-unmeasured_source"', 1)[1]
+        self.assertIn("not measured", unmeasured)
+        self.assertNotIn('class="bar-track"', unmeasured)
+        self.assertIn('id="run-source-{{ r.source_slug }}"', source)
+
     def test_an_unmeasured_run_actually_renders_not_measured(self):
         """
         Rendered, not read from the template source.
