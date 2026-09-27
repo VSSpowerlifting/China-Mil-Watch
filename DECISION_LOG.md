@@ -4,6 +4,18 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-26 — Paper Ledger typography and chart scope
+
+**Owner direction in the frontend continuation:** make the site more visually
+designed, including elements, charts, textures, and a possible font change;
+the implementation choices were delegated to the agent. The Paper Ledger
+record routes use the same three capped font families already used by Night
+Desk. The added Atlas processing-state chart counts mutually exclusive states
+of records held at the labeled snapshot. Its bars and links must keep the
+denominator, definitions and limitations beside them: they measure this
+stored corpus, not institutional output or complete coverage. Texture remains
+subtle editorial furniture, never a data mark or a claim of precision.
+
 ## 2026-09-24 — Clarifications to the 2026-09-23 Briefs ruling
 
 Recorded with PR #71 from repository state verified on 2026-09-24. This is not

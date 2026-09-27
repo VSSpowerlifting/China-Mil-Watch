@@ -18,7 +18,7 @@
   <span class="meta">{{ record.institution or record.source_name }} · {{ record.published_date }}</span>
 </div>
 
-<h1>{{ display_title }}</h1>
+<h1{% if not record.title_english %} lang="{{ record.language_tag or 'zh' }}"{% endif %}>{{ display_title }}</h1>
 {{ spine(desks, snapshot, corpus_total, true, record_desk) }}
 <nav class="reader-contents" aria-label="On this record page">
   <span>In this record</span>

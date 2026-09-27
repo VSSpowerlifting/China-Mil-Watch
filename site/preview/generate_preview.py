@@ -590,6 +590,19 @@ def corpus_state_counts(corpus: list) -> list:
             for s in PROCESSING_STATES]
 
 
+def processing_state_bars(states: list, total: int) -> list:
+    """Chart-ready shares of this stored corpus, never source output rates."""
+    if sum(state["count"] for state in states) != total:
+        raise ValueError("processing states do not sum to the stored corpus")
+    bars = []
+    for state in states:
+        share = 100 * state["count"] / total if total else 0
+        bars.append({**state, "percent": round(share, 3),
+                     "share_label": ("under 0.1%" if 0 < share < 0.1 else
+                                     f"{share:.1f}%")})
+    return bars
+
+
 def corpus_facets(corpus: list) -> dict:
     """Facet values that actually have records. Nothing else is offered.
 
@@ -2271,6 +2284,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "enabled_source_count": sum(d.enabled_source_count for d in desks),
         "corpus_total": len(data["corpus"]),
         "state_counts": data["state_counts"],
+        "processing_bars": processing_state_bars(
+            data["state_counts"], len(data["corpus"])),
         "corpus_facets": data["facets"],
         "weeks": data["weeks"],
         "guide_stats": guide_stats,

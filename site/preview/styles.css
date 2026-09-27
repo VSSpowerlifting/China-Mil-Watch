@@ -179,10 +179,9 @@
 
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* Metadata only — stored column names and citation identifiers. Never
-     headings, never prose (DESIGN_SYSTEM §4). A system stack, so it downloads
-     nothing and adds no weight to the font budget. */
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Metadata only. This is the same capped family used by the Night Desk. */
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --zh: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
 
   --measure: 68ch;
   --gutter: clamp(1rem, 4vw, 2.5rem);
@@ -3253,6 +3252,207 @@ html.js-reveal.no-anim [data-reveal] {
 .analysis-paths h2 { border: 0; padding: 0; margin: 0 0 .2rem; font-size: 1.1rem; }
 .analysis-paths p, .analysis-paths ul { margin: 0; max-width: var(--measure); }
 .analysis-paths ul { padding-left: 1.4rem; margin-top: .35rem; }
+
+/* ── Editorial type and data plates ──────────────────────────────────────
+   The live record now loads the same three capped families as Night Desk.
+   Serif display restores the publication's hierarchy on interior routes;
+   original-language headings retain a CJK face when no translation exists. */
+main h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5.1vw, 4.1rem);
+  line-height: 1.06;
+  letter-spacing: -.03em;
+  max-width: 23ch;
+  text-wrap: balance;
+}
+main h1:lang(zh) { font-family: var(--zh); letter-spacing: 0; }
+.record-head + h1 { font-size: clamp(2rem, 4vw, 3.25rem); max-width: 26ch; }
+main h2 { font-family: var(--serif); letter-spacing: -.02em; }
+main .lede {
+  font-family: var(--serif);
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  line-height: 1.43;
+  max-width: 62ch;
+}
+
+/* One drawn plate in the Atlas. Its etched lines are purely decorative; the
+   state labels, exact counts, scope and evidence paths are ordinary text. */
+.processing-plate {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.35fr);
+  margin: 2rem 0 2.25rem;
+  background: var(--surface);
+  border-top: 2px solid var(--rule-hard);
+  border-bottom: 1px solid var(--rule);
+}
+.processing-plate-head {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1.6rem 1.5rem;
+  border-right: 1px solid var(--rule);
+}
+.processing-plate-head > :not(svg) { position: relative; z-index: 1; }
+.processing-kicker {
+  font-family: var(--mono); font-size: .6875rem; font-weight: 600;
+  letter-spacing: .11em; text-transform: uppercase; color: var(--accent);
+}
+.processing-plate h2 {
+  border: 0; padding: 0; margin: .7rem 0 .85rem;
+  font-size: clamp(1.65rem, 2.7vw, 2.4rem); line-height: 1.13;
+}
+.processing-plate h2::before { content: none; }
+.processing-plate-head p {
+  font-family: var(--sans); font-size: .875rem; line-height: 1.6;
+  color: var(--ink-2); max-width: 42ch;
+}
+.processing-engraving {
+  position: absolute; right: -1.5rem; bottom: -.7rem;
+  width: 80%; height: auto;
+  color: var(--accent); fill: none; stroke: currentColor;
+  stroke-width: 1; opacity: .14; pointer-events: none;
+}
+.processing-plate-body { padding: 1.05rem 1.5rem 1.2rem; }
+.processing-bars { list-style: none; margin: 0; padding: 0; }
+.processing-bars li {
+  max-width: none; padding: .42rem 0 .62rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.processing-bar-label {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .65rem;
+}
+.processing-bar-label a { font-size: .875rem; font-weight: 600; }
+.processing-bar-label strong {
+  font-family: var(--mono); font-size: .8125rem;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.processing-track {
+  display: block; height: .55rem; margin: .34rem 0 .12rem;
+  background: var(--surface-inset);
+}
+.processing-fill { display: block; height: 100%; background: var(--accent); }
+.processing-share { font-size: .72rem; color: var(--muted); }
+.processing-limit {
+  font-family: var(--sans); font-size: .78125rem; line-height: 1.6;
+  color: var(--ink-2); margin: .85rem 0 0; max-width: 68ch;
+}
+
+/* Sources and publication weeks share the same precise, quiet bar grammar. */
+.source-contributions {
+  padding: 1.3rem 1.4rem 1.1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+}
+.contribution-list li {
+  grid-template-columns: 1.75rem minmax(10rem, 20rem) minmax(0, 1fr) 8rem;
+  gap: .8rem;
+}
+.contribution-index {
+  font-family: var(--mono); font-size: .6875rem; color: var(--muted);
+}
+.contribution-track, .volume .v-bar {
+  height: .65rem; background: var(--surface-inset); border-radius: 0;
+}
+.contribution-fill, .volume .v-fill { border-radius: 0; }
+.volume tbody tr:hover { background: var(--surface); }
+
+/* Analysis routes read like an issue index, with one numbered margin and
+   asymmetric columns rather than a stack of identically weighted paragraphs. */
+.analysis-paths { counter-reset: analysis-path; }
+.analysis-paths section {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(11rem, 18rem) minmax(0, 1fr);
+  gap: .35rem 1rem;
+  align-items: start;
+  padding: 1.15rem 0;
+}
+.analysis-paths section::before {
+  counter-increment: analysis-path;
+  content: counter(analysis-path, decimal-leading-zero);
+  font-family: var(--mono); font-size: .75rem; color: var(--accent);
+  padding-top: .32rem;
+}
+.analysis-paths h2 {
+  grid-column: 2; margin: 0; font-family: var(--serif);
+  font-size: 1.35rem; line-height: 1.2;
+}
+.analysis-paths section > p,
+.analysis-paths section > ul { grid-column: 3; }
+
+/* The methodology's existing evidence definitions become a specimen sheet:
+   each label is shown beside its meaning, with print-like rules for scanning. */
+.evidence-specimens {
+  list-style: none;
+  counter-reset: evidence-specimen;
+  margin: 1.1rem 0 2rem;
+  padding: .25rem 1.3rem;
+  background: var(--surface);
+  border-top: 2px solid var(--rule-hard);
+  border-bottom: 1px solid var(--rule);
+}
+.evidence-specimens li {
+  counter-increment: evidence-specimen;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr);
+  gap: .75rem 1.1rem;
+  max-width: none;
+  margin: 0;
+  padding: 1rem 0 1rem 2.2rem;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.evidence-specimens li:last-child { border-bottom: 0; }
+.evidence-specimens li::before {
+  content: counter(evidence-specimen, decimal-leading-zero);
+  position: absolute; left: 0; top: 1.1rem;
+  font: 500 .6875rem var(--mono);
+  color: var(--muted);
+}
+.evidence-specimens .evidence-sample { align-self: start; }
+.evidence-specimens .evidence-definition { min-width: 0; }
+
+@media (max-width: 900px) {
+  .processing-plate { grid-template-columns: minmax(0, 1fr); }
+  .processing-plate-head { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .processing-engraving { width: 44%; }
+}
+@media (max-width: 640px) {
+  main h1 { font-size: clamp(2.15rem, 9vw, 2.8rem); }
+  .record-head + h1 { font-size: clamp(1.8rem, 7.7vw, 2.4rem); }
+  .processing-plate { margin: 1.4rem 0 1.6rem; }
+  .processing-plate-head, .processing-plate-body { padding-inline: 1rem; }
+  .source-contributions { padding-inline: 1rem; }
+  .contribution-list li {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    gap: .4rem .65rem;
+  }
+  .contribution-index { grid-column: 1; grid-row: 1; }
+  .contribution-list a { grid-column: 2; grid-row: 1; }
+  .contribution-track { grid-column: 2 / -1; grid-row: 2; }
+  .contribution-value { grid-column: 3; grid-row: 1; }
+  .analysis-paths section { grid-template-columns: 2rem minmax(0, 1fr); }
+  .analysis-paths section > p,
+  .analysis-paths section > ul { grid-column: 2; }
+  .evidence-specimens { padding-inline: 1rem; }
+  .evidence-specimens li { display: block; padding-left: 1.8rem; }
+  .evidence-specimens .evidence-sample { display: block; margin-bottom: .35rem; }
+}
+@media (max-width: 43.75rem) {
+  /* Five facts remain available, but form a compact two-column dateline so
+     the page title arrives sooner on a phone. Labels are never abbreviated. */
+  .freshness-bar .wrap { gap: .1rem .75rem; padding-block: .4rem; }
+  .freshness-bar dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .35rem .85rem;
+  }
+  .freshness-bar dl > div { display: block; min-width: 0; }
+  .freshness-bar dt { display: block; font-size: .6875rem; line-height: 1.2; white-space: normal; }
+  .freshness-bar dd { display: block; font-size: .75rem; line-height: 1.3; }
+  .freshness-bar .detail { margin: .15rem 0 0; flex: none; }
+}
 
 /* Wide tables scroll inside their own column. Long provenance and metadata
    wrap where they are printed instead of widening the page. */
