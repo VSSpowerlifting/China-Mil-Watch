@@ -2124,6 +2124,18 @@ class TestRecordPages(PreviewCase):
         self.assertIn("Machine summary", html)
         self.assertIn("distinct from the", html)
 
+    def test_original_title_and_translation_notice_follow_record_heading(self):
+        rec_id = self.first_in_state("analyzed")
+        html = self.record(rec_id)
+        self.assertRegex(html, r'</h1>\s*<div class="record-title-pair">')
+        self.assertLess(html.index('class="record-title-pair"'),
+                        html.index('aria-label="Atlas status and provenance"'))
+        self.assertLess(html.index("Machine translation"),
+                        html.index('aria-label="On this record page"'))
+
+        no_translation = self.record(self.first_in_state("awaiting_screening"))
+        self.assertNotIn('class="record-title-pair"', no_translation)
+
     def test_prompt_version_is_shown_when_stored(self):
         rec = next(r for r in self.data["corpus"] if r["prompt_version"])
         html = self.record(rec["id"])

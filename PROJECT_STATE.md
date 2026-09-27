@@ -321,6 +321,14 @@ Desk pages call the complement of analyzed records "Not analyzed" and explain
 that it includes screened-out and unscreened items, rather than presenting the
 whole group as an analysis queue.
 
+The next source pass adds faint ledger ruling only in wide outer margins;
+reading columns, data plates, mobile layouts, and print remain plain paper.
+Record pages place the stored original title and its existing machine
+translation notice immediately below the translated heading. Coverage labels
+its per-source chart with the run interval and Text read / Parsed measure,
+links each bar to its exact result row, and draws no bar for an unmeasured
+source. Its chart rows reflow for phone widths.
+
 This frontend pass changes templates and tests, not `pla_watch.db`, desk
 configuration, canonical edition sidecars, or production `output/`. A source
 merge alone does not show these changes on the public site: the authorized
