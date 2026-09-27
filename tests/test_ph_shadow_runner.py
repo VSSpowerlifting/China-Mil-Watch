@@ -16,6 +16,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest import mock
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -137,6 +138,57 @@ class TestIsolation(StateCase):
 
     def test_the_source_is_disabled_in_the_manifest_and_in_the_loaded_source(self):
         self.assertFalse(runner.load_source().enabled)
+
+    def test_a_state_dir_inside_a_different_worktree_of_this_repo_is_refused(self):
+        """The old guard checked only REPO_ROOT. A `--state-dir` inside a
+        SIBLING checkout of the same repository — another worktree, not this
+        one — must be refused too: it is still inside a working tree this
+        repository's own history reaches, sharing the same git objects and
+        stash stack (see the environment note on that sharing)."""
+        with tempfile.TemporaryDirectory() as other:
+            other_root = (Path(other) / "sibling-worktree").resolve()
+            other_root.mkdir()
+            with mock.patch.object(
+                    runner, "_repo_checkouts",
+                    return_value=[runner.REPO_ROOT, other_root]):
+                with self.assertRaises(SystemExit):
+                    runner.assert_isolated(other_root / "shadow_state")
+                # the guard still catches this checkout too
+                with self.assertRaises(SystemExit):
+                    runner.assert_isolated(runner.REPO_ROOT / "x")
+
+    def test_a_state_dir_outside_every_reported_checkout_is_still_accepted(self):
+        with tempfile.TemporaryDirectory() as other:
+            other_root = (Path(other) / "sibling-worktree").resolve()
+            other_root.mkdir()
+            with mock.patch.object(
+                    runner, "_repo_checkouts",
+                    return_value=[runner.REPO_ROOT, other_root]):
+                runner.assert_isolated(self.state)          # must not raise
+
+    def test_worktree_discovery_falls_back_to_this_checkout_alone_if_git_fails(self):
+        with mock.patch.object(runner.subprocess, "run",
+                               side_effect=OSError("no git")):
+            self.assertEqual(runner._repo_checkouts(runner.REPO_ROOT),
+                             [runner.REPO_ROOT])
+
+    def test_worktree_discovery_asks_git_from_the_real_repository_root(self):
+        """No mocking: this worktree really is one `git worktree` entry among
+        others, so the real command must at least find itself."""
+        self.assertIn(runner.REPO_ROOT,
+                      runner._repo_checkouts(runner.REPO_ROOT))
+
+    def test_the_cli_refuses_a_state_directory_inside_a_sibling_worktree(self):
+        with tempfile.TemporaryDirectory() as other:
+            other_root = (Path(other) / "sibling-worktree").resolve()
+            other_root.mkdir()
+            with mock.patch.object(
+                    runner, "_repo_checkouts",
+                    return_value=[runner.REPO_ROOT, other_root]):
+                with self.assertRaises(SystemExit):
+                    runner.main(["--state-dir", str(other_root / "state"),
+                                "--target-date", "2026-09-26"])
+            self.assertFalse((other_root / "state").exists())
 
 
 class TestFirstRun(StateCase):

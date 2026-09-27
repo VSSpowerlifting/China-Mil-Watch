@@ -37,9 +37,11 @@ import hashlib
 import json
 import os
 import sqlite3
+import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+from typing import List
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -136,13 +138,40 @@ def load_source():
     return ShadowSource(cfg["sources"][0])
 
 
+def _repo_checkouts(repo_root: Path) -> List[Path]:
+    """
+    Every working-tree checkout of this repository: `repo_root` itself, plus
+    every other one `git worktree list` reports (the main checkout and any
+    sibling worktree, all sharing this repository's objects and stash stack —
+    see the environment note on that sharing). `--state-dir` must be outside
+    all of them, not just this one; a run in one worktree could otherwise
+    write shadow state onto another worktree's ignored-but-present files.
+
+    Falls back to `[repo_root]` alone if git is unavailable, this is not a
+    git checkout, or the command fails for any reason — the single-checkout
+    guard still applies in that case; it just cannot see sibling checkouts.
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(repo_root), "worktree", "list", "--porcelain"],
+            capture_output=True, text=True, timeout=10, check=True,
+        ).stdout
+    except Exception:
+        return [repo_root]
+    found = [Path(line[len("worktree "):]).resolve()
+             for line in out.splitlines() if line.startswith("worktree ")]
+    return found or [repo_root]
+
+
 def assert_isolated(state_dir: Path) -> None:
     state_dir = state_dir.resolve()
-    if REPO_ROOT in state_dir.parents or state_dir == REPO_ROOT:
-        raise SystemExit(
-            "refusing to write shadow state inside the repository working "
-            "tree: %s\nShadow state belongs on its own state branch or "
-            "directory, checked out elsewhere." % state_dir)
+    for root in _repo_checkouts(REPO_ROOT):
+        if root in state_dir.parents or state_dir == root:
+            raise SystemExit(
+                "refusing to write shadow state inside a working-tree "
+                "checkout of this repository: %s is inside %s.\nShadow "
+                "state belongs on its own state branch or directory, "
+                "checked out elsewhere." % (state_dir, root))
 
 
 def file_sha256(path: Path):

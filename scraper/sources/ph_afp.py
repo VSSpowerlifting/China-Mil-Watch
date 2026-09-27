@@ -90,7 +90,7 @@ import urllib.robotparser
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -127,6 +127,13 @@ PAGE_SIZE = 100
 #: 1,076 items at 100 per page is 11 pages. A listing that needs more than
 #: this has changed shape, and stopping is safer than walking it.
 MAX_PAGES = 40
+#: HTTP redirect statuses this adapter will ever resolve itself. The HTTP
+#: client never auto-follows one (`allow_redirects=False` on every request):
+#: each is read off the `Location` header of the response already in hand,
+#: and a hop to any host outside PERMITTED_API_HOSTS / PERMITTED_SITE_HOSTS is
+#: refused there — its destination is never requested.
+REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
+MAX_REDIRECT_HOPS = 5
 
 #: Categories that carry press items. `uncategorised` is included because it
 #: holds real statements (`AFP Statement on the Appointment of Secretary
@@ -181,6 +188,18 @@ class ListingUnparseable(RuntimeError):
     """A listing response that is not the shape this adapter understands."""
 
 
+class DisallowedRedirect(RuntimeError):
+    """A redirect pointed outside this adapter's permitted hosts, or the
+    redirect chain ran past MAX_REDIRECT_HOPS. Its destination — the one
+    that failed the check, or the one that would have been the next hop —
+    was never requested."""
+
+    def __init__(self, from_url: str, to_url: str):
+        self.from_url = from_url
+        self.to_url = to_url
+        super().__init__("%s -> %s" % (from_url, to_url))
+
+
 # ── URLs ──────────────────────────────────────────────────────────────────────
 
 def canonical_url(slug: str) -> Optional[str]:
@@ -221,6 +240,30 @@ def is_permitted_api_url(url: str) -> bool:
     return (parts.scheme in ("http", "https")
             and parts.netloc.lower() in PERMITTED_API_HOSTS
             and parts.path.startswith("/articles/"))
+
+
+def _redirect_host(url: str) -> Optional[str]:
+    try:
+        parts = urlparse(url or "")
+    except ValueError:
+        return None
+    if parts.scheme not in ("http", "https"):
+        return None
+    return parts.netloc.lower()
+
+
+def is_permitted_api_host(url: str) -> bool:
+    """True for an http/https URL on the API host, any path. Used only to
+    permit a redirect HOP during a robots.txt or listing/detail request;
+    `is_permitted_api_url` (path-constrained) is what this adapter requests
+    directly."""
+    return _redirect_host(url) in PERMITTED_API_HOSTS
+
+
+def is_permitted_site_host(url: str) -> bool:
+    """True for an http/https URL on the public site host. Used only to
+    permit a redirect hop while reading `www`'s robots.txt."""
+    return _redirect_host(url) in PERMITTED_SITE_HOSTS
 
 
 def source_identity(article_id) -> Optional[str]:
@@ -511,11 +554,13 @@ class PHAfpAdapter(SourceAdapter):
 
     # -- transport ------------------------------------------------------------
 
-    def _get(self, url: str):
+    def _send_once(self, url: str):
         """
-        One polite request. Retries cover transport failures only: a 403 or a
-        404 is an answer, and asking again is how a collector turns a refusal
-        into a hammering.
+        One polite request to exactly `url`. The HTTP client never auto-
+        follows a redirect (`allow_redirects=False`): resolving one, or
+        refusing it, is `_get`'s job, not `requests`'. Retries cover
+        transport failures only: a 403 or a 404 is an answer, and asking
+        again is how a collector turns a refusal into a hammering.
         """
         wait = REQUEST_INTERVAL - (time.monotonic() - self._last_request)
         if wait > 0:
@@ -524,7 +569,7 @@ class PHAfpAdapter(SourceAdapter):
         for attempt in range(MAX_RETRIES + 1):
             try:
                 resp = self._session.get(
-                    url, timeout=REQUEST_TIMEOUT,
+                    url, timeout=REQUEST_TIMEOUT, allow_redirects=False,
                     headers={"User-Agent": USER_AGENT,
                              "Accept": "application/json, text/plain;q=0.5"})
                 self._last_request = time.monotonic()
@@ -535,6 +580,31 @@ class PHAfpAdapter(SourceAdapter):
                 if attempt < MAX_RETRIES:
                     self._sleep(max(REQUEST_INTERVAL, 2 ** attempt))
         raise last
+
+    def _get(self, url: str, permitted):
+        """
+        Resolve `url`, one hop at a time. A response that is not a redirect
+        is returned as-is. A redirect's destination is read off its
+        `Location` header and checked with `permitted(destination)` BEFORE
+        it is ever requested; a destination `permitted` rejects raises
+        `DisallowedRedirect` immediately; nothing off-host is fetched to find
+        that out. A redirect with no `Location`, or a chain longer than
+        MAX_REDIRECT_HOPS, is refused the same way rather than guessed at or
+        walked forever.
+        """
+        current = url
+        for _ in range(MAX_REDIRECT_HOPS):
+            resp = self._send_once(current)
+            if resp.status_code not in REDIRECT_STATUSES:
+                return resp
+            location = (getattr(resp, "headers", None) or {}).get("Location")
+            if not location:
+                raise DisallowedRedirect(current, "<no Location header>")
+            nxt = urljoin(current, location)
+            if not permitted(nxt):
+                raise DisallowedRedirect(current, nxt)
+            current = nxt
+        raise DisallowedRedirect(url, current)
 
     @staticmethod
     def _transport_status(exc: Exception) -> str:
@@ -558,8 +628,16 @@ class PHAfpAdapter(SourceAdapter):
         unavailable file is not a refusal); 401/403 and a challenge are hard
         failures; anything else means the policy could not be read.
         """
+        permitted = (is_permitted_site_host if label == "www"
+                     else is_permitted_api_host)
         try:
-            resp = self._get(url)
+            resp = self._get(url, permitted)
+        except DisallowedRedirect as exc:
+            return None, DiscoveryResult(
+                self.slug, st.DISALLOWED_REDIRECT,
+                error_detail="%s robots.txt redirected off the permitted "
+                             "host: %s -> %s"
+                             % (label, exc.from_url, exc.to_url))
         except Exception as exc:
             return None, DiscoveryResult(
                 self.slug, self._transport_status(exc),
@@ -641,7 +719,13 @@ class PHAfpAdapter(SourceAdapter):
                 break
             seen_urls.add(url)
             try:
-                resp = self._get(url)
+                resp = self._get(url, is_permitted_api_url)
+            except DisallowedRedirect as exc:
+                self.failed_fetches.append(url)
+                return self._list_failure(
+                    st.DISALLOWED_REDIRECT,
+                    "listing page %d redirected off the permitted host: "
+                    "%s -> %s" % (pages + 1, exc.from_url, exc.to_url))
             except Exception as exc:
                 self.failed_fetches.append(url)
                 return self._list_failure(
@@ -769,7 +853,14 @@ class PHAfpAdapter(SourceAdapter):
                 error_detail="refusing to retrieve a non-permitted URL: %s"
                              % reference.url)
         try:
-            resp = self._get(target)
+            resp = self._get(target, is_permitted_api_url)
+        except DisallowedRedirect as exc:
+            self.failed_fetches.append(target)
+            return CaptureResult(
+                reference, st.DISALLOWED_REDIRECT, target,
+                final_url=exc.to_url,
+                error_detail="redirected off the permitted host: %s -> %s"
+                             % (exc.from_url, exc.to_url))
         except Exception as exc:
             self.failed_fetches.append(target)
             return CaptureResult(

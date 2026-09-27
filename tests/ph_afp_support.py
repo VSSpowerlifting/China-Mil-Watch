@@ -130,16 +130,26 @@ class FakeSession:
             else {"Content-Type": "application/json"}
         self.final_url = final_url
         self.calls = []
+        #: One dict per call in `calls`, same index — what `get()` was asked
+        #: for besides the URL. Lets a test prove `allow_redirects=False`
+        #: was actually passed, not just that the code compiles.
+        self.call_kwargs = []
 
-    def get(self, url, timeout=None, headers=None):
+    def get(self, url, timeout=None, headers=None, allow_redirects=None):
         self.calls.append(url)
+        self.call_kwargs.append(
+            {"timeout": timeout, "allow_redirects": allow_redirects})
         for token, exc in self.raise_on.items():
             if token in url:
                 raise exc("connection reset")
         if url == ph.ROBOTS_WWW:
+            if isinstance(self.robots_www, FakeResponse):
+                return self.robots_www
             return FakeResponse(self.robots_www, self.robots_www_status,
                                 {"Content-Type": "text/plain"})
         if url == ph.ROBOTS_API:
+            if isinstance(self.robots_api, FakeResponse):
+                return self.robots_api
             return FakeResponse(self.robots_api, self.robots_api_status,
                                 dict(self.api_robots_headers))
         if url in self.pages:

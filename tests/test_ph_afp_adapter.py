@@ -303,6 +303,31 @@ class TestPolicy(unittest.TestCase):
         a, r = self.discover(sess)
         self.assertEqual(r.status, st.LISTING_FAILURE)
 
+    def test_a_www_robots_redirect_off_host_is_refused_before_any_request(self):
+        evil = "https://evil.test/robots.txt"
+        sess = S.session_for(robots_www=S.FakeResponse(
+            b"", 302, {"Content-Type": "text/plain", "Location": evil}))
+        a, r = self.discover(sess)
+        self.assertEqual(r.status, st.DISALLOWED_REDIRECT)
+        self.assertNotIn(evil, sess.calls)
+
+    def test_an_api_robots_redirect_off_host_is_refused_before_any_request(self):
+        evil = "https://evil.test/robots.txt"
+        sess = S.session_for(robots_api=S.FakeResponse(
+            b"", 302, {"Content-Type": "text/plain", "Location": evil}))
+        a, r = self.discover(sess)
+        self.assertEqual(r.status, st.DISALLOWED_REDIRECT)
+        self.assertNotIn(evil, sess.calls)
+
+    def test_every_request_disables_automatic_redirect_following(self):
+        """`requests` must never be left to auto-follow: this adapter decides
+        per redirect, before the destination is requested."""
+        sess = S.session_for()
+        self.discover(sess)
+        self.assertTrue(sess.call_kwargs)
+        for kwargs in sess.call_kwargs:
+            self.assertIs(kwargs["allow_redirects"], False)
+
 
 class TestDiscovery(unittest.TestCase):
 
@@ -364,6 +389,18 @@ class TestDiscovery(unittest.TestCase):
         r = S.adapter(sess).discover(WIDE)
         self.assertEqual(r.status, st.DISALLOWED_REDIRECT)
         self.assertNotIn("https://evil.test/articles/?page=2", sess.calls)
+
+    def test_an_http_redirect_on_a_listing_page_off_host_is_refused_before_any_request(self):
+        """Distinct from the `next`-field check above: this is a real 301/302
+        HTTP response, the kind `requests` would auto-follow if allowed to."""
+        evil = "https://evil.test/articles/?page=1"
+        sess = S.FakeSession(pages={
+            S.page_url(1): S.FakeResponse(
+                b"", 302, {"Content-Type": "application/json",
+                          "Location": evil})})
+        r = S.adapter(sess).discover(WIDE)
+        self.assertEqual(r.status, st.DISALLOWED_REDIRECT)
+        self.assertNotIn(evil, sess.calls)
 
     def test_a_looping_next_link_is_a_failure_not_an_endless_walk(self):
         url = S.page_url(1)
@@ -458,9 +495,10 @@ class TestDiscovery(unittest.TestCase):
         sess = S.session_for(raise_on={"articles/?": S.Boom})
         real_get = sess.get
 
-        def timed_get(url, timeout=None, headers=None):
+        def timed_get(url, timeout=None, headers=None, allow_redirects=None):
             stamps.append(clock[0])
-            return real_get(url, timeout=timeout, headers=headers)
+            return real_get(url, timeout=timeout, headers=headers,
+                            allow_redirects=allow_redirects)
         sess.get = timed_get
         a = ph.PHAfpAdapter(S.FakeSource(), session=sess, cap=0,
                             sleeper=lambda s: clock.__setitem__(0, clock[0] + s))
@@ -482,9 +520,10 @@ class TestDiscovery(unittest.TestCase):
         headers_seen = []
         real_get = sess.get
 
-        def spy(url, timeout=None, headers=None):
+        def spy(url, timeout=None, headers=None, allow_redirects=None):
             headers_seen.append(headers)
-            return real_get(url, timeout=timeout, headers=headers)
+            return real_get(url, timeout=timeout, headers=headers,
+                            allow_redirects=allow_redirects)
         sess.get = spy
         a = ph.PHAfpAdapter(S.FakeSource(), session=sess, cap=0,
                             sleeper=waits.append)
@@ -706,11 +745,60 @@ class TestFetch(unittest.TestCase):
         self.assertEqual(len(sess.calls) - before, 1)
 
     def test_a_redirect_off_the_permitted_host_is_refused(self):
+        """Defence in depth: even if `resp.url` reported an off-host final
+        location on an otherwise-200 response, it is still refused."""
         sess = S.session_for(final_url="https://evil.test/articles/x/")
         a = S.adapter(sess)
         cap = capture_for(a, 1384)
         self.assertEqual(cap.status, st.DISALLOWED_REDIRECT)
         self.assertIsNone(cap.body)
+
+    def test_an_http_redirect_on_a_detail_off_host_is_refused_before_any_request(self):
+        """The real vector: a 301/302 with an off-host `Location`, the kind
+        `requests` would auto-follow (making the off-host request) unless
+        told not to. This never even reaches the evil host."""
+        evil = "https://evil.test/articles/x/"
+        sess = S.session_for()
+        slug = S.detail_obj(1384)["slug"]
+        sess.details[slug] = S.FakeResponse(
+            b"", 302, {"Content-Type": "application/json", "Location": evil})
+        a = S.adapter(sess)
+        before = len(sess.calls)
+        cap = capture_for(a, 1384)
+        self.assertEqual(cap.status, st.DISALLOWED_REDIRECT)
+        self.assertNotIn(evil, sess.calls)
+        # exactly one request was made: the original, never the redirect target
+        self.assertEqual(len(sess.calls) - before, 1)
+
+    def test_an_http_redirect_on_a_detail_on_host_is_followed(self):
+        """A redirect that stays on the permitted host is not refused
+        automatically — only leaving the permitted host is."""
+        slug1 = S.detail_obj(1384)["slug"]
+        slug2 = S.detail_obj(1378)["slug"]
+        sess = S.session_for(details_ids=(1384, 1378))
+        real_target = sess.details[slug2]
+        sess.details[slug1] = S.FakeResponse(
+            b"", 301, {"Content-Type": "application/json",
+                      "Location": ph.detail_url(slug2)})
+        a = S.adapter(sess)
+        cap = capture_for(a, 1384)
+        self.assertEqual(cap.status, st.OK)
+        self.assertEqual(cap.body, real_target.decode("utf-8"))
+        self.assertIn(ph.detail_url(slug2), sess.calls)
+
+    def test_a_redirect_chain_longer_than_the_hop_limit_is_refused(self):
+        """A loop (or an unreasonably long chain) is refused rather than
+        walked forever; it never crosses into off-host territory to do so."""
+        slug = S.detail_obj(1384)["slug"]
+        url = ph.detail_url(slug)
+        sess = S.session_for()
+        sess.details[slug] = S.FakeResponse(
+            b"", 302, {"Content-Type": "application/json", "Location": url})
+        a = S.adapter(sess)
+        before = len(sess.calls)
+        cap = capture_for(a, 1384)
+        self.assertEqual(cap.status, st.DISALLOWED_REDIRECT)
+        self.assertEqual(len(sess.calls) - before, ph.MAX_REDIRECT_HOPS)
 
     def test_html_in_place_of_json_is_an_unexpected_content_type(self):
         sess = S.session_for()
