@@ -1,13 +1,17 @@
 {% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb %}
 {% block title %}Corpus Guide — {{ title }}{% endblock %}
 {% block content %}
 {# One page, stable anchors. The guide consolidates what a reader needs in order
    to use the corpus responsibly; Methodology stays the canonical account of how
    the publication works, and this does not restate it. #}
-<p class="eyebrow">{{ corpus_eyebrow }}</p>
+{{ breadcrumb([('Records', 'archive.html'), ('Corpus Guide', none)]) }}
+<header class="page-head">
+<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
 <h1>Corpus Guide</h1>
 <p class="lede">What the public record holds, what it cannot tell you, what
 each field means, and how to cite it. {{ snapshot_label }}.</p>
+</header>
 
 <nav class="guide-contents" aria-label="Sections of this guide">
   <ul>
@@ -37,7 +41,7 @@ sections below say where.</p>
 <p>Each record has its own page carrying every stored field described in the
 dictionary. Records are reachable
 <a href="corpus.html">by publication week</a> without JavaScript, and through
-search and filters on the <a href="archive.html">the record</a>.</p>
+search and filters on the <a href="archive.html">Records page</a>.</p>
 
 <h2 id="scope">Scope and limits</h2>
 <p>Four limits shape what any count from this corpus can support.</p>

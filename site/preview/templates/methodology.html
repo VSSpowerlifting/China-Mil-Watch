@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Methodology — {{ title }}{% endblock %}
 {% block content %}
+<header class="page-head">
 <h1>Methodology and limitations</h1>
 <p class="lede">How a record gets here, and what it can and cannot support.</p>
+</header>
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul><li><a href="#scope">Scope</a></li><li><a href="#collection">Collection</a></li>
@@ -10,6 +12,7 @@
       <li><a href="#limitations">Limits</a></li></ul>
 </nav>
 
+<div class="prose">
 <h2 id="scope">Scope</h2>
 <p>{{ title }} collects from declared desks, one jurisdiction or institutional family at a time.
 It does <strong>not</strong> monitor the Indo-Pacific comprehensively, and no page here should be
@@ -93,7 +96,9 @@ beside the original, never in place of it. Machine classifications are labeled
       number is offered.</li>
 </ul>
 <h2 id="evidence">How evidence is labeled</h2>
-<p>These are the labels a reader will encounter:</p>
+<p>These are the labels a reader will encounter. Each belongs to one of three layers —
+the source record, machine output, or human-controlled analysis — and every page marks the
+layer the same way.</p>
 <ul class="evidence-specimens">
   <li><span class="evidence-sample"><span class="evidence evidence--record">Source record</span></span>
       <span class="evidence-definition">the item as published, with its original language,
@@ -101,9 +106,22 @@ beside the original, never in place of it. Machine classifications are labeled
   <li><span class="evidence-sample"><span class="evidence evidence--claim">Official claim</span></span>
       <span class="evidence-definition">an assertion by the publishing institution — never
       rendered as established fact.</span></li>
-  <li><span class="evidence-sample"><span class="evidence evidence--model">Model-flagged</span></span>
-      <span class="evidence-definition">a machine classification or summary, always marked as
+  {# id="model-flagged": the address The PLA Watch pages link to as "How
+     flagging works" (pla-watch-post.html, pla-watch-archive.html). #}
+  <li id="model-flagged"><span class="evidence-sample"><span class="evidence evidence--model">Model-flagged</span></span>
+      <span class="evidence-definition">a machine classification, always marked as
       not reviewed by a human.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--model">Machine translation</span></span>
+      <span class="evidence-definition">an English rendering of a record's title, produced by
+      software and shown beside the original title, never in place of it. Not reviewed by a
+      human.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--model">Machine summary</span></span>
+      <span class="evidence-definition">a software reading of a record's stored text — a
+      separate output from the title's translation, and labeled separately. Not reviewed by a
+      human; a reading of what was published, not a verification of it.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--analysis">Analysis</span></span>
+      <span class="evidence-definition">a human-controlled issue or brief, citing the records
+      it rests on. It is interpretation, and labeled as such.</span></li>
   <li><span class="evidence-sample"><strong>Significant</strong> and <strong>Routine</strong></span>
       <span class="evidence-definition">describe the editor's judgment of a weekly edition.
       They are separate from article-level <span class="evidence evidence--model">Model-flagged</span>
@@ -123,4 +141,5 @@ beside the original, never in place of it. Machine classifications are labeled
 </ul>
 <p>Field-by-field definitions, the identifier and citation rules, and the corpus changelog are in
 the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+</div>
 {% endblock %}

@@ -385,7 +385,9 @@ class TestTheHomePageIdentityIsPreserved(HomeCase):
         self.assertNotRegex(
             self.home, r'<details class="nav-toggle nav-mobile"[^>]*\bopen\b',
             "the compact disclosure ships expanded")
-        for label in ("Atlas", "Desks", "Sources", "Analysis", "Coverage",
+        # "Records" was "Atlas" until 2026-09-27 (DECISION_LOG); same
+        # destination, same address.
+        for label in ("Records", "Desks", "Sources", "Analysis", "Coverage",
                       "Methodology", "About"):
             with self.subTest(label=label):
                 self.assertIn(">%s</a>" % label, details)
@@ -751,19 +753,28 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         self.assertIn(lead["url"], section)
         self.assertIn("No. %s" % lead["issue"], section)
 
-    def test_the_pla_watch_cover_still_renders_with_its_credit(self):
+    def test_the_lead_edition_is_drawn_as_its_plate_not_its_cover(self):
+        """
+        Replaced 2026-09-27 (DECISION_LOG, the edition plate). The home page
+        drew the lead issue's 435 KB cover photograph with its credit; it now
+        draws the issue's plate from its own sidecar, and the cover stays the
+        issue's link-preview image on its own page. What was guarded — the
+        edition shown is the real lead edition, whole — is guarded here on the
+        new component; the plate's figures are held to the sidecar in
+        `TestTheAnalysisSectionDegrades`.
+        """
         editions = gp.load_editions(REPO_ROOT)
-        if not editions or not editions[0].get("cover"):
-            self.skipTest("the leading edition has no cover")
-        cover = editions[0]["cover"]
-        self.assertIn(cover["route"], self.home)
-        self.assertIn(cover["alt"], self.home)
-        self.assertIn(cover["credit_note"], self.home)
-        img = re.search(r'<img[^>]+%s[^>]*>' % re.escape(cover["route"]),
-                        self.home)
-        self.assertIsNotNone(img)
-        self.assertIn('width="1200"', img.group(0))
-        self.assertIn('height="630"', img.group(0))
+        if not editions:
+            self.skipTest("no published edition to lead with")
+        lead = editions[0]
+        section = self.home.split(">Latest analysis</h2>", 1)[1]
+        section = section.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertEqual(section.count("<svg"), 1)
+        self.assertIn('role="img"', section)
+        self.assertIn("No. %s" % lead["issue"], section)
+        self.assertNotIn("<img", section)
+        if lead.get("cover"):
+            self.assertNotIn(lead["cover"]["route"], section)
 
     def test_the_analysis_section_is_still_labelled_interpretation(self):
         self.assertIn("Record and analysis are not the same thing", self.home)
@@ -2619,6 +2630,10 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
     reached by mutating the corpus — both live in `output/the-pla-watch/`,
     which is protected — so they are exercised where the decision is made:
     `edition_cover()` and the template's own guards.
+
+    Since 2026-09-27 the home page draws the lead issue as its edition plate
+    rather than its cover (DECISION_LOG), so the cover's absence changes
+    nothing there, and the plate is held to the issue's own sidecar.
     """
 
     def test_a_missing_cover_file_yields_no_cover_rather_than_a_gap(self):
@@ -2680,37 +2695,61 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
             self.skipTest("no published edition to lead with")
         return dict(editions[0])
 
-    def test_the_feature_renders_one_column_without_a_cover(self):
+    def test_a_missing_cover_changes_nothing_on_the_home_page(self):
         edition = self.real_edition()
         self.assertIsNotNone(edition.get("cover"),
                              "the fixture needs an edition that HAS a cover")
         edition["cover"] = None
         html = self.build_with_editions([edition])
-        section = html.split("Latest analysis", 1)[1]
+        section = html.split(">Latest analysis</h2>", 1)[1]
         section = section.split('class="section-head', 1)[0]
         self.assertIn(edition["title"], section)
         self.assertIn("Read this edition", section)
-        self.assertNotIn("<figure", section)
+        self.assertIn('class="plate"', section)
         self.assertNotIn("<img", section)
         self.assertNotIn("figure-credit", section)
 
-    def test_the_cover_renders_with_its_dimensions_and_credit(self):
+    def test_the_plate_draws_the_issues_own_source_trail(self):
+        """
+        One tick per source-trail entry, in trail order; a tick is flagged
+        exactly where the entry carries the model's `is_significant` flag.
+        The flag is machine output, so it is drawn in the machine layer's
+        rust (#D4845F) and never in the analysis crimson, which marks only
+        the issue itself (the one top rule). Read from the sidecar, so the
+        figures cannot be the template's own idea of the trail.
+        """
+        import json
         edition = self.real_edition()
-        if not edition.get("cover"):
-            self.skipTest("the leading edition has no cover")
+        sidecar = json.loads(
+            (REPO_ROOT / "output" / "the-pla-watch" / "posts"
+             / ("%s.json" % edition["slug"])).read_text(encoding="utf-8"))
+        trail = sidecar.get("source_trail") or []
+        flagged = [bool(e.get("is_significant")) for e in trail]
         html = self.build_with_editions([edition])
-        section = html.split("Latest analysis", 1)[1]
-        self.assertIn('src="%s"' % edition["cover"]["route"], section)
-        self.assertIn(edition["cover"]["alt"], section)
-        self.assertIn(edition["cover"]["credit_note"], section)
-        self.assertIn('width="1200"', section)
-        self.assertIn('height="630"', section)
+        section = html.split(">Latest analysis</h2>", 1)[1]
+        section = section.split('class="section-head', 1)[0]
+        svg = section.split("<svg", 1)[1].split("</svg>", 1)[0]
+        ticks = re.findall(r'<rect [^>]*class="(tick[^"]*)"', svg)
+        self.assertEqual(len(ticks), len(trail))
+        self.assertEqual(["tick--flagged" in t for t in ticks], flagged)
+        for rect in re.findall(r'<rect [^>]*class="tick tick--flagged"[^>]*>',
+                               svg):
+            self.assertIn('fill="#D4845F"', rect)
+        self.assertNotIn("#E05A6D", svg)
+        self.assertEqual(svg.count("#B3132B"), 1, "one crimson rule, for the issue")
+        self.assertIn("%d record%s in the source trail, %d of them "
+                      "model-flagged" % (len(trail), "" if len(trail) == 1
+                                         else "s", sum(flagged)), svg)
+        self.assertNotIn("<img", section)
 
     def test_no_current_edition_removes_the_section_without_a_claim(self):
         html = self.build_with_editions([])
-        self.assertNotIn('<h2>Latest analysis</h2>', html)
+        # `>…</h2>`: the heading carries an id, and a bare `<h2>` match
+        # would pass however the section rendered. The plate stands where
+        # `<figure` stood: the week strip on the same page is a figure too.
+        self.assertNotIn(">Latest analysis</h2>", html)
         for phrase in ("Read this edition", "figure-credit",
-                       "<figure", "legacy-note",
+                       'class="plate', 'viewBox="0 0 560 315"', "legacy-note",
                        "Retrospective edition"):
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, html)

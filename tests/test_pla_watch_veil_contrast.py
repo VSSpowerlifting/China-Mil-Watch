@@ -168,6 +168,44 @@ def scrim_rules() -> list:
                       strip_comments(veil_block()), re.S)
 
 
+# ── font settling ───────────────────────────────────────────────────────────
+
+# Nothing here is measured until every web font the page uses has settled.
+# `.nd-band-inner .hero-title` is `max-width: 24ch`, and `ch` is the advance of
+# "0" in whichever Source Serif 4 face is active when layout runs. While the
+# latin subset is in flight that is a fallback, or a subset with no "0" at
+# all, so boxes and glyph pixels taken mid-load belong to a page that is
+# about to change.
+#
+# `document.fonts.status` alone cannot say so: reading it runs no layout, so it
+# reads 'loaded' while pending style or layout work has yet to start a load.
+# Reading `document.fonts.ready` flushes style and layout first in Chromium,
+# so every load the page needs has begun before that promise is taken. Each
+# pass waits on it, renders a frame with what arrived, and flushes again; the
+# page has settled when nothing is loading after that. Only faces the page
+# uses ever load, so this covers every family in use. A face that failed has
+# settled too, so the offline suite still measures its fallbacks.
+FONTS_SETTLED_JS = r"""
+async (limitMs) => {
+  const deadline = performance.now() + limitMs;
+  const left = () => Math.max(0, deadline - performance.now());
+  const within = p => Promise.race([p, new Promise(r => setTimeout(r, left()))]);
+  const frame = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const loading = () => [...document.fonts].filter(f => f.status === 'loading');
+  do {
+    await within(document.fonts.ready);
+    await within(frame());
+    void document.fonts.ready;
+    if (document.fonts.status === 'loaded' && !loading().length) return null;
+  } while (left() > 0);
+  const faces = loading().map(f => [f.family, f.weight, f.style,
+                                    f.unicodeRange.split(',')[0]].join(' '));
+  return faces.length ? faces : ['document.fonts.status ' + document.fonts.status];
+}
+"""
+FONT_SETTLE_MS = 30000
+
+
 # ── fixtures ────────────────────────────────────────────────────────────────
 
 class VeilSurfaces(unittest.TestCase):
@@ -284,14 +322,27 @@ class BrowserVeilCase(VeilSurfaces):
         ctx = self.browser.new_context(
             viewport={"width": width, "height": 900},
             device_scale_factor=scale, reduced_motion=reduced)
-        page = ctx.new_page()
-        page.goto(self.url(date), wait_until="load")
         try:
-            page.wait_for_function("document.fonts.status === 'loaded'", timeout=6000)
-        except Exception:
-            pass
-        page.wait_for_timeout(200)
+            page = ctx.new_page()
+            page.goto(self.url(date), wait_until="load")
+            page.wait_for_timeout(200)
+            self.settle(page)
+        except BaseException:
+            ctx.close()
+            raise
         return ctx, page
+
+    def settle(self, page):
+        """
+        Blocks until the page's web fonts have settled. Call it again after
+        anything that restyles the page and before measuring or sampling.
+        Measuring mid-load is what this prevents, so a timeout fails.
+        """
+        pending = page.evaluate(FONTS_SETTLED_JS, FONT_SETTLE_MS)
+        if pending is not None:
+            self.fail("web fonts still loading after %ds, so nothing measured "
+                      "now would be comparable: %s"
+                      % (FONT_SETTLE_MS // 1000, "; ".join(pending)))
 
     def evaluate(self, date, width, script, scale=1):
         ctx, page = self.page(date, width, scale)
@@ -367,6 +418,7 @@ class ContrastMixin:
             shot_text = page.screenshot(clip=clip, full_page=True)
             page.add_style_tag(content=HIDE_GLYPHS_CSS)
             page.wait_for_timeout(120)
+            self.settle(page)
             shot_bg = page.screenshot(clip=clip, full_page=True)
         finally:
             ctx.close()
@@ -621,13 +673,22 @@ section.nd-veil-band .hero-meta { position: static !important; }
 
 class TestTreatmentMovesNothing(BrowserVeilCase):
 
-    def _geometry(self, date, width, disabled):
+    def _geometry(self, date, width):
+        """
+        Treatment on, then off, measured in one page. Settling is not enough
+        to compare two separate loads: depending on the order its subsets
+        arrive, Chromium can keep Source Serif 4 metrics from a slightly
+        different optical size for the life of a page, and `24ch` then
+        disagrees between loads by a font unit with every font loaded. One
+        page holds every font constant, so the treatment is the only change.
+        """
         ctx, page = self.page(date, width)
         try:
-            if disabled:
-                page.add_style_tag(content=DISABLE_TREATMENT_CSS)
-                page.wait_for_timeout(80)
-            return page.evaluate(GEOMETRY_JS)
+            on = page.evaluate(GEOMETRY_JS)
+            page.add_style_tag(content=DISABLE_TREATMENT_CSS)
+            page.wait_for_timeout(80)
+            self.settle(page)
+            return on, page.evaluate(GEOMETRY_JS)
         finally:
             ctx.close()
 
@@ -635,8 +696,7 @@ class TestTreatmentMovesNothing(BrowserVeilCase):
         drifted = []
         for date in self.veil_dates:
             for width in WIDTHS:
-                on = self._geometry(date, width, disabled=False)
-                off = self._geometry(date, width, disabled=True)
+                on, off = self._geometry(date, width)
                 self.assertFalse(
                     on["overflowX"],
                     "%s at %dpx overflows horizontally" % (date, width))
@@ -657,8 +717,7 @@ class TestTreatmentMovesNothing(BrowserVeilCase):
         # traceability ruling, so the veil's own geometry must be untouched.
         for date in self.veil_dates:
             for width in WIDTHS:
-                on = self._geometry(date, width, disabled=False)
-                off = self._geometry(date, width, disabled=True)
+                on, off = self._geometry(date, width)
                 self.assertEqual(
                     off["veil"], on["veil"],
                     "%s at %dpx: the veil's own mask, position or size moved"

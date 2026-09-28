@@ -318,7 +318,7 @@ class TestTemplateSurface(unittest.TestCase):
     def test_current_site_chrome_names_indo_pacific_record(self):
         base = self.read("pla-watch-base.html")
         self.assertIn(f"{CURRENT_NAME} &rarr;", base)
-        self.assertIn(f"{CURRENT_NAME} — Daily Brief", base)
+        self.assertIn(f"{CURRENT_NAME} — Home", base)
         self.assertNotIn(HISTORICAL_NAME, base)
 
     def test_site_metadata_does_not_claim_a_sunday_cadence(self):
@@ -397,8 +397,8 @@ class TestFixtureRenders(unittest.TestCase):
         """
         html = self.render(sidecar("2026-08-08"))
         self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
-        self.assertIn(f"{CURRENT_NAME} — Daily Brief", html)
-        self.assertIn(f"{CURRENT_NAME} — Archive", html)
+        self.assertIn(f"{CURRENT_NAME} — Home", html)
+        self.assertIn(f"{CURRENT_NAME} — Records", html)
 
     def test_an_early_edition_remains_historical(self):
         """No. 1 — the one with no stored author fields."""
@@ -521,7 +521,7 @@ class TestRerenderPathPreservesHistoricalEditions(RerenderCase):
     def test_site_chrome_stays_current_on_a_rerendered_historical_page(self):
         _, html = self.render(sidecar("2026-08-08"))
         self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
-        self.assertIn(f"{CURRENT_NAME} — Archive", html)
+        self.assertIn(f"{CURRENT_NAME} — Records", html)
 
 
 class TestRerenderPathHandlesNewEditions(RerenderCase):

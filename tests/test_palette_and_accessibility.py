@@ -177,8 +177,11 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
 
     def test_the_crimson_family_stays_off_the_light_accent_scheme(self):
         """
-        Crimson is confined to dark chrome. --crimson is a text tone on light
-        and a fill on dark; the two lifted tones are the dark-surface text.
+        Crimson is the analysis layer: on paper it marks and labels what a
+        person wrote (2026-09-27; it was confined to dark chrome before), and
+        it never joins the structural accent or fills a data mark. --crimson
+        is a text tone on light and a fill on dark; the two lifted tones are
+        the dark-surface text.
         """
         self.assertGreaterEqual(
             contrast(self.colour("crimson"), self.colour("bg")), AA_BODY)
@@ -234,6 +237,14 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
                     self.t["--" + name], r"^var\(--[a-z0-9-]+\)$",
                     "--%s is a literal, not an alias onto a p1 token" % name)
 
+    def test_every_custom_property_used_is_declared(self):
+        css = CSS.read_text(encoding="utf-8")
+        used = set(re.findall(r"var\((--[a-z0-9-]+)", css))
+        declared = set(self.t)
+        # Set inline per element by the templates, never on :root.
+        local = {"--ri", "--i", "--h"}
+        self.assertEqual(sorted(used - declared - local), [])
+
 
 class TestColourIsCentralised(unittest.TestCase):
 
@@ -248,7 +259,11 @@ class TestColourIsCentralised(unittest.TestCase):
         body = css.split(":root {", 1)[1].split("\n}", 1)[1]
         print_block = body.split("@media print", 1)[1]
         body_without_print = body.split("@media print", 1)[0]
-        literals = re.findall(r"#[0-9A-Fa-f]{3,6}\b", body_without_print)
+        # A mask's `#000` is an alpha value — "opaque here" — not a colour a
+        # reader sees; the Ocean Signal Veil's radial masks are the one place
+        # it appears, and they are measured in the veil contract, not here.
+        without_masks = re.sub(r"mask-image:[^;]*;", "", body_without_print)
+        literals = re.findall(r"#[0-9A-Fa-f]{3,6}\b", without_masks)
         self.assertEqual(literals, [], "colour literals outside :root: %s"
                          % literals)
         self.assertIn("#fff", print_block)
@@ -379,11 +394,18 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                         # for the current page plus a rule on hover, and a
                         # `.btn` is a bordered control whose border is its
                         # affordance. All three keep a visible focus ring.
+                        # `.footer-col a` and `.trail-tag` joined on
+                        # 2026-09-27. The footer columns are navigation lists
+                        # under their own headings, like the rail; a trail tag
+                        # is a bordered, tinted label whose border is its
+                        # affordance, like a `.btn`. Both keep a focus ring,
+                        # and the footer links underline on hover.
                         (".brand", "h3 a", "h2.plain a", ".lead-title",
                          ".record-headline a", ".register-item h3 a",
                          ".desks .card--desk h3 a", ".band .feature h3 a",
                          ".nav-rail-inner a", ".nav-mobile a",
-                         ".btn", ".editions", "nav.primary", ".skip")),
+                         ".btn", ".editions", "nav.primary", ".skip",
+                         ".footer-col a", ".trail-tag")),
                     "%s removes the underline from prose links" % flat)
 
 

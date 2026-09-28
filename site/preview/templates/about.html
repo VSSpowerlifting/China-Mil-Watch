@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}About — {{ title }}{% endblock %}
 {% block content %}
+<header class="page-head">
 <h1>About</h1>
 <p class="lede">{{ tagline }}</p>
-
+</header>
+<div class="prose">
 <h2 class="plain">What this project does</h2>
 <p>{{ title }} preserves official defense and security texts, with translations where available, and
 records what collection found, missed, or could not retrieve. Collection gaps are published because
@@ -44,4 +46,5 @@ patched on the rendered page.</p>
 established.</p>
 <p>Record-level and edition citation formats, the meaning of every stored field, and the corpus
 changelog are in the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+</div>
 {% endblock %}
