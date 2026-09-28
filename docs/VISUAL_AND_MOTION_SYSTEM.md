@@ -146,6 +146,38 @@ archive page weight drops (SVG replaces PNG thumbs).
 **Prohibited shortcuts.** Raster generation for in-page use; invented
 themes/glyphs; per-edition hand-tuning.
 
+**Built on the record site, 2026-09-27** (`site/preview/templates/_plate.html`,
+data from `generate_preview.edition_plate`): the home page's dark band and the
+head of Analysis draw the lead issue as its plate instead of its cover — 16:9,
+series name, week ending, "No." and the numeral, and the tick row. One
+deliberate departure from the spec above, recorded in DECISION_LOG: a
+model-flagged tick is drawn in the machine layer's rust (#D4845F) and at full
+height, not in crimson — the flag is the model's `is_significant`, and on the
+record surfaces crimson means analysis; the other ticks are short and grey, so
+the flag reads by shape as well as colour. Crimson marks only the issue's own
+top rule. The PW index, archive and post hero are not yet built (their
+renderer is in flight in PR #70). No badge and no CJK motif yet.
+
+### 3.2a Week strip (record site, 2026-09-27)
+
+**Purpose.** Stored records per publication week, as a row of links: the
+record's time index made navigable, and an honest disclosure of how much the
+record holds each week. **Placement.** The Records page (after the newest
+records), Corpus by week (above the table), each collecting desk's page
+(its own scale), each week page (the current week marked, no key), and the
+home page's Latest records. **Data.** `corpus_weeks` counts only; bar height
+is `count / largest week` on a shared scale. **Honesty.** The caption says
+collection volume — not activity, output or a rate — beside the bars; the
+governed outage week is hatched and the snapshot-boundary weeks are faint,
+under their governed labels only; every bar's accessible name carries the
+week, its exact count and its annotation. A desk's strip (`desk_week_counts`)
+begins at the week of that desk's first record, and it carries the outage
+hatch only if the desk was already collecting when the outage happened (its
+first record retrieved by 24 July 2026). A desk that began later, and
+backfilled records dated inside the window, was not interrupted. **Motion.** One draw-in per page
+(scaleY from the baseline, staggered), only under `js-reveal` and
+`no-preference`; static on week pages, in print and with reduced motion.
+
 ### 3.3 Continuity Strip (edition-to-edition) — phased
 
 **Purpose.** Serve the returning reader (journey #5): where does this

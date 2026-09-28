@@ -292,47 +292,84 @@ Two consequences of the source fix, both expected and neither retroactive:
   * `TestCandidateBuild`, its docstring, `test_the_build_reports_candidate_mode`
     and a later "candidate renderer" reference all name the live production
     mode as a candidate.
+* **The fix for the intermittent veil geometry test is included in the
+  record-surface overhaul.**
+  * **The cause.**
+    `test_pla_watch_veil_contrast` · `test_no_box_moves_and_no_page_overflows`
+    compared two separate page loads to 0.01px without waiting for the Google
+    Fonts faces. A title set in a late-arriving face measured about 0.14px
+    narrower, so the test failed intermittently, at HEAD `9aace937d` too.
+  * **The fix.** It came from a separate task and was applied unchanged:
+    patch sha256 `1d9addf8…0657849`, resulting blob `1e77235f6055…`. Every
+    measurement now waits until the page's fonts have settled, and a font
+    still loading after 30 s fails the test. The treatment is measured on and
+    off in one page load, so both measurements use the same fonts. The
+    tolerance and the assertions are unchanged.
+  * **The evidence.**
+    * Cloud: 20/20 fractional-width runs, 16/16 delayed-font runs.
+    * This Mac: before the fix, the test failed in 2 of the 7 full-suite
+      runs logged here, one of them at HEAD. After it, the geometry class
+      passed 20 consecutive fresh-process runs and the full suite passed
+      once. That shows no regression. The cloud's stress runs are the
+      evidence that the cause is gone.
 
 ## 6a. Frontend source and public output
 
 The reader interface uses Paper Ledger for the record and Night Desk for the
-historical *The PLA Watch* issues. The source templates now give long record,
-desk, source, coverage and methodology pages native section navigation;
-Analysis presents the issue sequence as a chronological reading ledger. The
-Sources chart measures stored, deduplicated records assigned to each source
-at the labeled snapshot and explicitly disclaims institutional output and
-coverage. Briefs remain unpublished until editorial approval. Historical
-issues keep their original attribution and have a clearer route to continuing
-analysis.
+historical *The PLA Watch* issues. The Ocean Signal Veil remains a
+desktop-only, credited public-domain image in the home page's two-column
+opening; The PLA Watch keeps its own veil. Briefs remain unpublished until
+editorial approval; historical issues keep their original attribution.
+Standing chart rules on the live pages: the Sources chart counts stored,
+deduplicated records per source at the labeled snapshot and disclaims
+institutional output and coverage; Coverage's per-source chart is Text read /
+Parsed for one labeled run and draws no bar for an unmeasured source; desk
+pages call the complement of analyzed records "Not analyzed" and say it is
+not a queue. Faint ledger ruling appears only in wide outer margins.
 
-The Ocean Signal Veil remains a desktop-only, credited public-domain image;
-the home page preserves its two-column opening and dated record ledger. The
-shared navigation and reading layout are usable without scripted motion.
+**Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
+(DECISION_LOG 2026-09-27). This change set covers source only —
+templates, `styles.css` (rewritten, 161 KB → 90 KB), `browse.js`,
+`citation.js`, `generate_preview.py`, tests and docs; no database, sidecar,
+desk, approval or `output/` change.
 
-The Paper Ledger source pass loads the existing publication font trio on
-record routes, gives interior headings an editorial serif hierarchy, and
-compacts the repeated mobile dateline. Atlas adds a four-state chart sourced
-from the exhaustive stored-record processing partition, with a dated
-denominator, filter links, definitions, and a clear limit on what the counts
-mean. Sources bars and the Analysis reading paths have a stronger printed
-register treatment; Methodology presents its existing evidence labels as a
-specimen sheet. Fine etched lines are confined to the Atlas plate.
-Desk pages call the complement of analyzed records "Not analyzed" and explain
-that it includes screened-out and unscreened items, rather than presenting the
-whole group as an analysis queue.
+* Records are grouped under the source-stated date, and every surface marks
+  the source record (ink), machine output (rust) and analysis (crimson). A
+  record page shows its custody (published, collected, machine reading,
+  analysis) and the issues whose source trail holds its exact URL.
+* Navigation: Records · Analysis · Desks · Sources · Coverage · Methodology ·
+  About ("Records" was "Atlas"; every address unchanged). The masthead
+  carries no search; the Records page does.
+* The Records finder renders the newest 50 records on the server, loads its
+  index on the first request (never on arrival), keeps its state in the
+  address, and on a refused index keeps the rows and shows the approved
+  message. It adds desk, order and "in a source trail" filters and removable
+  filter chips.
+* A week strip (records held per publication week, as links) heads Corpus by
+  week and appears on Records, desk and week pages. The edition plate replaces
+  the cover photograph on Home and Analysis.
+* Kept exactly: both veils and the veil contract, the phone masthead
+  geometry, the lead record in the first phone viewport, the approved
+  caveats and messages, the three font families, the margin ruling.
+* Not done here, deliberately: linking The PLA Watch source-trail entries to
+  record pages. That changes `pla-watch-post.html`, which PR #70 also edits;
+  it should follow that PR.
+* **Owner-approved copy corrections (DECISION_LOG 2026-09-27, "Three public
+  copy corrections"):**
+  * The home register blurb now says "The latest analyzed records". The home
+    page lists the 6 newest Analyzed records, and the Singapore Desk has none
+    analyzed yet.
+  * The 17–24 July outage note now reports the interruption without calling
+    the window empty. It states, from the corpus, that later collection added
+    9 Singapore Desk records dated 21–23 July 2026.
+  * The home page describes analysis as "human-controlled".
+  * Machine output is "published without human review" by the daily
+    pipeline, not "never reviewed".
+  * A desk's own week strip carries the outage hatch only if the desk was
+    collecting at the time.
 
-The next source pass adds faint ledger ruling only in wide outer margins;
-reading columns, data plates, mobile layouts, and print remain plain paper.
-Record pages place the stored original title and its existing machine
-translation notice immediately below the translated heading. Coverage labels
-its per-source chart with the run interval and Text read / Parsed measure,
-links each bar to its exact result row, and draws no bar for an unmeasured
-source. Its chart rows reflow for phone widths.
-
-This frontend pass changes templates and tests, not `pla_watch.db`, desk
-configuration, canonical edition sidecars, or production `output/`. A source
-merge alone does not show these changes on the public site: the authorized
-render-and-deploy workflow must generate and validate `output/` first. The
+A source merge alone does not change the public site: the authorized
+render-and-deploy workflow must regenerate and validate `output/` first. The
 deploy gate's governed baseline is 10 warnings.
 
 ## 7. Immediate priorities

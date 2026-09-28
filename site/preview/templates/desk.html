@@ -1,24 +1,32 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import breadcrumb %}
+{% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
 {% block content %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Desks', 'desks.html'), (desk.name, none)]) }}
-<p class="desk-state desk-state--{{ desk.status }}">{{ desk.status_label }}</p>
-<h1>{{ desk.name }}</h1>
-{{ spine(desks, snapshot, corpus_total, false, desk) }}
-<p class="lede">{{ desk.scope }}</p>
-{% if desk.record_count is not none %}
-<p>{{ desk.record_count|count }} records from {{ desk.configured_source_count }} sources across
-{{ desk.institution_count }} institutions, {{ desk.first_published }} to {{ desk.last_published }}.</p>
-{% endif %}
-<p>{{ desk.status_explanation }}</p>
+{{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
+<header class="page-head">
+  <h1>{{ desk.name }}</h1>
+  <p class="lede">{{ desk.scope }}</p>
+</header>
+
+{# The status, designed as the page's first fact rather than a footnote. A
+   desk that does not collect is a first-class state with its own reason, not
+   an empty version of a desk that does. #}
+<div class="status-panel status-panel--{{ desk.status }}">
+  <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
+  <div>
+    <h2>{{ desk.status_label }}</h2>
+    <p>{{ desk.status_explanation }}</p>
+  </div>
+</div>
 
 {% if desk.record_count is not none %}
 <h2 class="plain">The record, as it actually stands</h2>
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
-{# "Analyzed" is articles.analyzed_at IS NOT NULL — nothing about publication.
-   All source records are part of the published record, so "analyzed and
-   published" was two different claims wearing one label. #}
+<p>{{ desk.record_count|count }} records from {{ desk.configured_source_count }} sources across
+{{ desk.institution_count }} institutions, {{ desk.first_published }} to {{ desk.last_published }}.</p>
+{# "Analyzed" is articles.analyzed_at IS NOT NULL — nothing about
+   publication. "Not analyzed" is the complement and is not a queue. #}
 <dl class="stat-rows">
   <div class="stat-row"><dt>Source records</dt><dd>{{ desk.record_count|count }}</dd></div>
   <div class="stat-row"><dt>Analyzed records</dt><dd>{{ desk.analyzed_count|count }}</dd></div>
@@ -33,6 +41,14 @@
 completed a reading of the record — it says nothing about publication. "Not analyzed"
 includes records awaiting screening, screened out, and incomplete analysis;
 it is not an analysis queue. <a href="corpus-guide.html#states">Read the four processing states</a>.</p>
+<p><a class="btn btn--primary" href="archive.html?desk={{ desk.slug }}">Browse the {{ desk.name }}'s {{ desk.record_count|count }} records</a></p>
+
+{% set dweeks = desk_weeks.get(desk.slug) if desk_weeks else none %}
+{% if dweeks %}
+{# This desk's own weeks, on this desk's own scale: the tallest bar is this
+   desk's busiest week in the record, not the corpus's. #}
+{{ week_strip(dweeks, dweeks | map(attribute='count') | max, heading='h2', title=desk.name ~ ' by publication week', note="Records this desk holds per publication week, from the week of its first record. Collection volume, not activity or output; a short bar is a small week in this record, which can mean a quiet source or a collection gap. Each bar opens that week's page, which lists every desk's records.") }}
+{% endif %}
 {% else %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
@@ -57,7 +73,7 @@ material this project holds.</p>
       <td data-label="Institution">{{ s.institution or '—' }}</td>
       <td data-label="Authority">{{ s.authority_tier or '—' }}</td>
       <td data-label="Enabled">{{ 'Yes' if s.enabled else 'No' }}</td>
-      <td data-label="Records" class="num">{% if s.record_count is not none %}{{ s.record_count|count }}{% else %}<span class="meta">none</span>{% endif %}</td>
+      <td data-label="Records" class="num">{% if s.record_count is not none %}<a href="archive.html?source={{ s.slug }}">{{ s.record_count|count }}</a>{% else %}<span class="meta">none</span>{% endif %}</td>
     </tr>
   {% endfor %}
   </tbody>
@@ -115,7 +131,7 @@ not coverage, and nothing below has produced a record.</p>
 <p class="meta">{{ desk.research.volume_caveat }}</p>
 
 <h3>What has to be solved before this desk can collect</h3>
-<dl>
+<dl class="blockers">
 {% for head, body in desk.research.blockers %}
   <dt><strong>{{ head }}</strong></dt>
   <dd>{{ body }}</dd>
@@ -126,7 +142,7 @@ not coverage, and nothing below has produced a record.</p>
 <h3>What has already been solved</h3>
 <p class="meta">Recorded rather than deleted. A blocker that quietly disappears from
 this page leaves a reader unable to tell whether it was solved or abandoned.</p>
-<dl>
+<dl class="blockers">
 {% for head, body in desk.research.resolved %}
   <dt><strong>{{ head }}</strong></dt>
   <dd>{{ body }}</dd>
@@ -153,5 +169,5 @@ masthead {{ predecessor_name }}. Every issue keeps its original number, title, d
 see <a href="pla-watch.html">{{ predecessor_series }}</a>.</p>
 {% endif %}
 
-<p class="meta"><a href="desks.html">← All desks</a></p>
+<p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}

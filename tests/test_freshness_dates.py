@@ -378,22 +378,29 @@ class TestTheDatesAreReadableOnANarrowViewport(unittest.TestCase):
     def css(self):
         return (ROOT / "site" / "preview" / "styles.css").read_text("utf-8")
 
+    # The dateline became `.freshness-bar` (a <dl> of label/value pairs) on
+    # 2026-08-27; these rules follow it rather than the retired
+    # `.status-facts.freshness` list they were first written against.
+
+    def rule(self, selector):
+        match = re.search(re.escape(selector) + r"\s*\{([^}]*)\}", self.css)
+        self.assertIsNotNone(match, "no rule for %s" % selector)
+        return match.group(1)
+
     def test_the_date_value_is_kept_on_one_line(self):
-        block = self.css[self.css.index(".status-facts.freshness"):]
-        block = block[:block.index("}", block.index("> li > b")) + 1]
-        self.assertIn("white-space: nowrap", block)
+        # Each label/value pair is one unbreakable unit, so a date can never
+        # split into "2026-08-" / "24".
+        self.assertIn("white-space: nowrap",
+                      self.rule(".freshness-bar dl > div"))
 
     def test_the_rule_targets_the_value_not_the_whole_row(self):
         """
         Nowrapping the row would push it off-screen instead of wrapping between
-        items. Only the date itself may be unbreakable.
+        items. Only a label and its date may be unbreakable.
         """
-        rows = [l for l in self.css.splitlines()
-                if l.strip().startswith(".status-facts.freshness {")]
-        self.assertTrue(rows)
-        self.assertNotIn("nowrap", rows[0])
+        self.assertNotIn("nowrap", self.rule(".freshness-bar dl"))
+        self.assertNotIn("nowrap", self.rule(".freshness-bar .wrap"))
 
     def test_the_row_can_still_wrap_between_items(self):
-        base = self.css[self.css.index(".status-facts {"):]
-        base = base[:base.index("}") + 1]
-        self.assertIn("flex-wrap: wrap", base)
+        self.assertIn("flex-wrap: wrap", self.rule(".freshness-bar dl"))
+        self.assertIn("flex-wrap: wrap", self.rule(".freshness-bar .wrap"))

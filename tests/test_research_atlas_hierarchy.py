@@ -44,31 +44,42 @@ class ResearchAtlasHierarchy(unittest.TestCase):
         return (self.out / route).read_text(encoding="utf-8")
 
     def test_shared_navigation_and_breadcrumbs(self):
+        # The record's navigation item and breadcrumb root read "Records"
+        # since 2026-09-27 ("Atlas" was an unexplained name for the same
+        # destination; the address, archive.html, is unchanged).
         for route in ("index.html", "archive.html", "analysis.html",
                       "coverage.html", "desks.html", "sources.html"):
             with self.subTest(route=route):
                 self.assertIn('href="archive.html"', self.html(route))
-                self.assertIn('>Atlas</a>', self.html(route))
+                self.assertIn('>Records</a>', self.html(route))
+                self.assertNotIn('>Atlas</a>', self.html(route))
         record_id = self.index["records"][0][0]
         record = self.html("record/%d.html" % record_id)
         self.assertIn('aria-label="Breadcrumb"', record)
-        self.assertLess(record.index('>Atlas</a>'),
-                        record.index('>Record %d</span>' % record_id))
+        crumb = record.split('aria-label="Breadcrumb"', 1)[1]
+        self.assertLess(crumb.index('>Records</a>'),
+                        crumb.index('>Record %d</span>' % record_id))
         source = next(s for s in self.index["sources"] if s["desk"])
         source_page = self.html("source/%s.html" % source["code"])
         self.assertIn(source["desk"]["route"], source_page)
         self.assertIn('aria-current="page"', source_page)
 
     def test_atlas_spine_uses_declared_states_and_snapshot(self):
+        # The desk line is rendered where desk coverage is the subject —
+        # Records, Coverage, Desks — rather than repeated above every page.
+        # The home page names every desk's status in its own Desks section.
         snapshot = gp.snapshot_from_corpus(gp.TRACKED_DB)
-        for route in ("index.html", "archive.html", "coverage.html",
-                      "analysis.html", "desks.html"):
+        for route in ("archive.html", "coverage.html", "desks.html"):
             page = self.html(route)
             with self.subTest(route=route):
-                self.assertIn('aria-label="Atlas status and provenance"', page)
+                self.assertIn('aria-label="Desk collection status"', page)
                 self.assertIn(snapshot["date"], page)
                 for desk in load_registry().public_entries:
                     self.assertIn(desk.status_label, page)
+        home = self.html("index.html").split('<h2 id="desks">', 1)[1]
+        for desk in load_registry().public_entries:
+            with self.subTest(home_desk=desk.slug):
+                self.assertIn(desk.status_label, home)
         self.assertIn("Paused — collection stopped", self.html("desks.html"))
         self.assertIn("Planned — nothing collected", self.html("desks.html"))
 
@@ -78,7 +89,11 @@ class ResearchAtlasHierarchy(unittest.TestCase):
         for source in self.index["sources"]:
             self.assertIsNotNone(source["desk"])
             self.assertTrue((self.out / source["desk"]["route"]).is_file())
-        self.assertIn('src.desk.route', (self.out / "browse.js").read_text())
+        browse = (self.out / "browse.js").read_text()
+        self.assertIn('s.desk.route', browse)
+        self.assertIn('s.desk.code', browse)
+        for source in self.index["sources"]:
+            self.assertTrue(source["desk"]["code"])
         self.assertTrue(any('href="china.html"' in p.read_text(encoding="utf-8")
                             for p in self.out.glob("week-*.html")))
 

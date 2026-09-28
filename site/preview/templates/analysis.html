@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_plate.html" import edition_plate %}
 {% block title %}Analysis — {{ title }}{% endblock %}
 {% block head_scripts %}{% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
 {% block content %}
@@ -7,25 +7,25 @@
    separate briefs/index.html: it would list the same issues a second time, and
    Analysis is already the navigation item every brief page marks as current. #}
 {% set lead = latest_analysis %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Analysis', none)]) }}
+<header class="page-head">
+<p class="eyebrow"><span class="evidence evidence--analysis">Analysis</span></p>
 <h1>Analysis</h1>
 <p class="lede">Human-authored analysis cites preserved records and names its editor. Briefs enter
 this collection only after publication. The China Desk's weekly issues, published as
 {{ predecessor_series }}, remain available as an archive under their original identities.</p>
+</header>
 
-{{ spine(desks, snapshot, corpus_total) }}
-
-{# The lead edition comes before the series table, and carries the cover.
+{# The lead edition comes before the series table.
 
    An analysis index whose first screen is a status table reads as a systems
    report. The edition is the thing a reader came for, so it opens the page —
-   as the same `.feature` component the home page uses, which means equal
-   columns on desktop, the complete 1200x630 cover shown whole rather than
-   cropped, and the cover above the text on a phone. No new asset: this is the
-   edition's own preserved cover, already published with it. #}
+   as the same `.feature` component the home page uses, beside the issue's
+   edition plate (`_plate.html`), drawn from its own sidecar. The plate
+   replaces the cover photograph here and on the home page (DECISION_LOG
+   2026-09-27); the cover stays the issue's own link-preview image. #}
 {% if lead %}
 <h2>Most recent published analysis</h2>
-<article class="feature{% if not lead.cover %} feature--solo{% endif %}">
+<article class="feature feature--paper">
   <div class="feature-body">
     <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %} &middot; No. {{ lead.issue }}{% endif %}{% if lead.date %} &middot; week ending {{ lead.date|reader_date }}{% endif %}</p>
     <h3><a href="{{ lead.url }}" rel="noopener">{{ lead.title or lead.slug }}</a></h3>
@@ -50,18 +50,16 @@ this collection only after publication. The China Desk's weekly issues, publishe
       <a class="btn btn--ghost" href="#every-issue">All {{ collection.rows|length }} issues</a>
     </div>
   </div>
-  {# Rendered only when the cover exists. An issue without one gets a
-     one-column feature rather than an empty frame. #}
-  {% if lead.cover %}
-  <figure class="feature-figure">
-    <img src="{{ lead.cover.route }}" alt="{{ lead.cover.alt }}"
-         width="1200" height="630" loading="eager" decoding="async">
+  {# The issue drawn from its own sidecar. It replaces the cover photograph,
+     which remains the issue's link-preview image on its own page. #}
+  {% set plate = edition_plates.get(lead.slug) if edition_plates else none %}
+  {% if plate %}
+  <figure class="plate plate-paper">
+    {{ edition_plate(plate, 'plate-analysis-lead', lead.series_name or predecessor_series) }}
+    <figcaption>One mark per record in this issue's source trail. The tall rust marks are model-flagged: a software triage flag, not the editor's judgment.</figcaption>
   </figure>
   {% endif %}
 </article>
-{% if lead.cover %}
-<p class="figure-credit">{{ lead.cover.credit_note }}</p>
-{% endif %}
 {% else %}
 <p class="no-results">No edition records were found. Nothing is invented to fill the gap.</p>
 {% endif %}
@@ -139,8 +137,8 @@ placeholder would be an editorial claim nobody made.</p>
 <h2 id="every-issue">Every issue</h2>
 <p class="section-note">{{ collection.rows|length }} issues, newest first. Each keeps
 its issue number, title, date and original address, with its published attribution
-shown beside it. The cover appears on the lead issue above; the full sequence below
-is arranged for reading and comparison.</p>
+shown beside it. The full sequence below is arranged for reading and comparison;
+each title opens the issue as it was published.</p>
 <ol class="issue-ledger">
 {% for row in collection.rows %}
 {% set e = row.entry %}
@@ -181,7 +179,7 @@ the issues published as {{ predecessor_series }} keep
   <li><span class="evidence evidence--model">Model-flagged</span> a machine classification or
       summary, always marked as not reviewed by a human. It is not an editorial judgment and is
       never described as one.</li>
-  <li><strong>Editorial judgment</strong> the editor's own reading, attributed and signed. The
+  <li><span class="evidence evidence--analysis">Editorial judgment</span> the editor's own reading, attributed and signed. The
       edition label — Significant or Routine — is one of these, and is deliberately separate from
       the article-level machine flag beside it.</li>
 </ul>

@@ -1,54 +1,74 @@
-{# The home page's records, as pairs. Two macros, one decision.
+{# Records, as the site lists them. One vocabulary for every list of records:
+   the home page's lead and register, the Records page, the week pages and the
+   desk pages all render a record through the macros below, so a record looks
+   and reads the same wherever it appears.
 
-   English leads and is the linked heading; the original-language title sits
-   directly beneath it at secondary colour, which is the treatment
-   `docs/DESIGN_SYSTEM.md` §4 documents. The register renders the SAME pair the
-   lead plate does — production showed the original for its two lead cards and
-   left the register's rows without it, so the page displayed two of the six
-   originals the record actually holds.
+   Rules this file holds, whichever macro is used:
 
-   Three rules this file exists to hold:
-
-   * the original renders only when the record genuinely has one AND has an
-     English title to lead with. A record with no translation shows its
-     original as the heading rather than repeating it beneath itself;
+   * English leads and is the linked heading only when the record has a
+     machine translation; the original-language title sits directly beneath it
+     at the reading size. A record with no translation shows its original as
+     the heading rather than repeating it beneath itself, and nothing invents
+     an English title.
    * `lang` carries `sources.language_tag` — the repository's own BCP 47 code —
-     and is omitted entirely when the source declares none. A default of `zh`
-     would tell a screen reader that a Japanese or English original is Chinese;
-   * repeated provenance collapses into one sentence only when `shared` says
-     every displayed non-lead record really does share a source, an institution
-     and a publication date. Otherwise each row carries its own. `shared` is
-     computed in `generate_preview.home_record_group()`, not here.
+     and is omitted when the source declares none. A default of `zh` would tell
+     a screen reader that a Japanese or English original is Chinese.
+   * Provenance is per record. The home register's shared-provenance sentence
+     appears only when `shared` (computed in `home_record_group()`) says every
+     row genuinely shares a source, an institution and a publication date.
+   * Dates are the source-stated publication date. Collection time belongs to
+     the record page and the dateline, and is never shown as a list date.
 
-   The macros take their records as arguments rather than reading the context,
-   so `tests/test_home_paired_records.py` can render them with controlled
-   records — including a record with no original title, which the builder
-   refuses to write into a corpus and which no fixture can otherwise reach. #}
+   The home macros take their records as arguments rather than reading the
+   context, so `tests/test_home_paired_records.py` can render them with
+   controlled records. #}
 
+{# The original beneath the English — except when the two are the same
+   string (an English-language source whose stored "translation" repeats it),
+   where a second copy would only look like a second title. #}
 {% macro original_line(record) -%}
-{%- if record.title_english and record.title_original and record.title_original.strip() %}
+{%- if record.title_english and record.title_original and record.title_original.strip()
+      and record.title_original.strip() != record.title_english.strip() %}
     <p class="original"{% if record.language_tag %} lang="{{ record.language_tag }}"{% endif %}>{{ record.title_original }}</p>
 {%- endif %}
+{%- endmacro %}
+
+{# The heading text: the machine translation when one exists, otherwise the
+   original, which then carries its own language. #}
+{% macro title_attrs(record) -%}
+{%- if not record.title_english and record.language_tag %} lang="{{ record.language_tag }}"{% endif -%}
+{%- endmacro %}
+
+{# A list row says only THAT a record is in a published issue's source trail
+   (matched on its exact stored URL); its record page names and links the
+   issues. browse.js prints the same words, so a row reads the same whichever
+   renderer drew it. #}
+{% macro trail_tag(record) -%}
+{%- if record.in_trails %}<span class="trail-tag">In an analysis source trail</span>{% endif -%}
 {%- endmacro %}
 
 {% macro lead_record(record, desk_by_source=none) -%}
 {% if record %}
 {% set desk = desk_by_source.get(record.source_slug) if desk_by_source else none %}
-{# The brief-header idiom the historical design used: a mono eyebrow naming
-   the institution and the date, the serif headline, the original beneath it,
-   the standing note, and the 2px rule that closes it. The `.evidence` chip
-   that used to open the line is gone — the eyebrow says "Source record" in
-   the same mono micro-label system, so the chip was the same words twice. #}
+{# The newest analyzed record, directly under the opening: the page's first
+   content and the thing the publication is. A date block, the headline, the
+   original beneath it, and the standing note about which part a machine made. #}
 <article class="lead-record" aria-labelledby="lead-record-title" data-reveal>
-  <p class="lead-meta"><span class="evidence evidence--record">Source record</span> &middot;
-    {% if desk %}<a href="{{ desk.route }}">{{ desk.name }}</a> &middot;{% endif %}
-    <span class="who">{{ record.institution or record.source_name }}</span> &middot;
-    <time datetime="{{ record.published_date }}">{{ record.published_date }}</time></p>
-  <h2 class="record-headline" id="lead-record-title"><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
-  {{- original_line(record) }}
-  <p class="lead-note">The English title is machine-produced and labeled as
-    such; the original is stored exactly as the institution published it.
-    <a href="record/{{ record.id }}.html">This record and its provenance &rarr;</a></p>
+  {# No custom filter here: the tests render this macro in a bare environment. #}
+  {% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+  <p class="lead-date" aria-hidden="true"><span class="day-num">{{ record.published_date[8:10] | int }}</span>
+    <span class="day-month">{{ months[(record.published_date[5:7] | int) - 1] }} {{ record.published_date[:4] }}</span></p>
+  <div class="lead-body">
+    <p class="lead-meta"><span class="evidence evidence--record">Source record</span>
+      {% if desk %}<a href="{{ desk.route }}">{{ desk.name }}</a>{% endif %}
+      <span class="who">{{ record.institution or record.source_name }}</span>
+      <time datetime="{{ record.published_date }}">{{ record.published_date }}</time></p>
+    <h2 class="record-headline" id="lead-record-title"{{ title_attrs(record) }}><a href="record/{{ record.id }}.html">{{ record.title_english or record.title_original }}</a></h2>
+    {{- original_line(record) }}
+    <p class="lead-note">The English title is machine-produced and labeled as
+      such; the original is stored exactly as the institution published it.
+      <a href="record/{{ record.id }}.html">This record and its provenance</a></p>
+  </div>
 </article>
 {% endif %}
 {%- endmacro %}
@@ -58,13 +78,13 @@
 <ul class="register">
 {% for a in records %}
   {% set desk = desk_by_source.get(a.source_slug) if desk_by_source else none %}
-  <li class="register-item" data-reveal>
-    <h3><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
+  <li class="register-item" data-reveal style="--ri: {{ loop.index0 }}">
+    <h3{{ title_attrs(a) }}><a href="record/{{ a.id }}.html">{{ a.title_english or a.title_original }}</a></h3>
     {{- original_line(a) }}
     {% if desk %}<p class="register-desk meta"><a href="{{ desk.route }}">{{ desk.name }}</a></p>{% endif %}
     {% if not shared %}
     <p class="register-foot"><span class="evidence evidence--record">Source record</span>
-      {{ a.institution or a.source_name }} &middot;
+      {{ a.institution or a.source_name }}
       <time datetime="{{ a.published_date }}">{{ a.published_date }}</time></p>
     {% endif %}
   </li>
@@ -74,36 +94,16 @@
 {%- endmacro %}
 
 {% macro records_aside(corpus_eyebrow, shared) -%}
-{# The context rail. Three things that used to stack above the list as
-   separate paragraphs, in the same order and with the same words: the corpus
-   eyebrow, the standing note about original-language titles, and — when it
-   applies — the shared-provenance sentence.
-
-   The `shared` sentence keeps its `.evidence` label span and its `<time>`
-   element, because `tests/test_home_paired_records.py` reads both and because
-   the label is what makes the sentence a provenance claim rather than prose.
-
-   `shared` is true of every row in the register, or absent. It is set only
-   when the source, the institution and the publication date are identical
-   across all of them — the publication date, not the collection date, which
-   the ledger states separately and which belongs to a different calendar. #}
+{# The register's context rail: what these rows are, and — only when every row
+   genuinely shares it — their common provenance, stated once. The label counts
+   the rows it stands over; the date and its closing period travel together. #}
 <aside class="records-aside">
   <p class="aside-label">{{ corpus_eyebrow }}</p>
-  <p>The most recent records from the desks that collect, with
-  original-language titles preserved.</p>
+  {# Owner ruling 2026-09-27: "analyzed", because the list is the newest
+     records in the Analyzed state, and no claim about which desks appear —
+     a desk with nothing analyzed yet has no row here. #}
+  <p>The latest analyzed records, with original-language titles preserved.</p>
   {% if shared %}
-  {# This one span describes the whole register, so it agrees with the number
-     of rows the register actually holds — `shared.count`, the same number the
-     sentence beneath it counts. "Source record" over five rows was wrong; so
-     is "Source records" over the single row a two-record corpus leaves after
-     the lead is lifted out. The lead plate describes one record and keeps the
-     singular unconditionally.
-
-     The date and the period that ends its clause are wrapped together in one
-     inline-block, because a bare "." arriving at the head of the next line is
-     the defect this replaced. The wrapper is the only nonbreaking construction
-     in the sentence — the sentence itself still wraps freely — so it cannot
-     push the page wider than the narrowest viewport. #}
   <p class="register-note"><span class="evidence evidence--record">Source record{{ '' if shared.count == 1 else 's' }}</span>
     {% if shared.count == 1 %}One record, published by
     {%- else %} {{ shared.count }} records, {{ 'both' if shared.count == 2 else 'all' }} published by
@@ -111,4 +111,53 @@
     Each original-language title is shown as that institution published it.</p>
   {% endif %}
 </aside>
+{%- endmacro %}
+
+{# ── The almanac list: day groups ─────────────────────────────────────────
+   `records` arrive in the corpus's own order (publication date descending,
+   then id descending), so grouping preserves a deterministic order without a
+   second sort. `root` prefixes every link for pages one level down.
+
+   No custom filter anywhere in this file: tests render these macros in a
+   bare Jinja environment. The weekday and the language name therefore arrive
+   on the record (`generate_preview.build()` sets `weekday` and
+   `language_label`), and the month is spelled from the list below.
+
+   The row is the same one browse.js `card()` draws, field for field: who
+   published it, through which source and in what language, its desk and its
+   processing state. `tests/test_preview_prototype.py` holds the two to parity. #}
+{% macro record_row(r, desk_by_source=none, root='') -%}
+{% set desk = desk_by_source.get(r.source_slug) if desk_by_source else none %}
+<li class="record-row">
+  <div>
+    <h3{{ title_attrs(r) }}><a href="{{ root }}record/{{ r.id }}.html">{{ r.title_english or r.title_original }}</a></h3>
+    {{- original_line(r) }}
+    {% if r.state == 'analyzed' or r.in_trails %}
+    <p class="row-tags">{% if r.state == 'analyzed' %}<span class="state state--analyzed">{{ r.state_label }}</span>{% endif %}{{ trail_tag(r) }}</p>
+    {% endif %}
+  </div>
+  <p class="row-side"><span class="row-who">{{ r.institution or r.source_name }}</span>
+    <span class="row-via">{{ [r.source_name if r.institution else none, r.language_label] | select | join(' · ') }}</span>
+    {% if desk %}<a href="{{ root }}{{ desk.route }}">{{ desk.name }}</a>{% endif %}
+    {% if r.state != 'analyzed' %}<span class="state state--{{ r.state }}">{{ r.state_label }}</span>{% endif %}</p>
+</li>
+{%- endmacro %}
+
+{% macro record_days(records, desk_by_source=none, root='') -%}
+{% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+<div class="records-days">
+{% for date, group in records | groupby('published_date') | reverse %}
+  <section class="records-day">
+    <p class="day-date"><time datetime="{{ date }}"><span class="day-num">{{ date[8:10] | int }}</span>
+      <span class="day-month">{{ months[(date[5:7] | int) - 1] }} {{ date[:4] }}</span>
+      {%- if group[0].weekday %}
+      <span class="day-week">{{ group[0].weekday }}</span>{% endif %}</time></p>
+    <ul class="record-list">
+    {% for r in group | sort(attribute='id', reverse=true) %}
+      {{ record_row(r, desk_by_source, root) }}
+    {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
+</div>
 {%- endmacro %}

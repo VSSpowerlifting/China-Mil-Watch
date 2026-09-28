@@ -1,247 +1,245 @@
-/* Corpus browser — progressive enhancement; corpus.html reaches every record
- * without it. Two rules: corpus values use textContent only, and nothing is
- * revealed until the index is proved to be this page's declared snapshot.
- */
+/* Records finder. The index loads on first request, and only if it is
+ * this page's snapshot. State lives in the URL. */
 (function () {
   "use strict";
+  var $ = function (id) { return document.getElementById(id); },
+      root = $("browse"), A = Array.isArray;
+  if (!root || !window.fetch || !window.URLSearchParams) return;
+  var form = $("controls"), out = $("results"), range = $("result-range"),
+      live = $("result-live"), wait = $("index-state"), fail = $("index-error"),
+      none = $("no-results"), prev = $("page-prev"), next = $("page-next"),
+      chips = $("chips"), reset = $("f-reset");
+  var KEYS = "q desk source status sort institution language from to trail".split(" ");
+  var NAME = {q: "Title", from: "From", to: "To"}, F = {},
+      TR = "In an analysis source trail";
+  KEYS.forEach(function (k) { F[k] = $("f-" + k); });
+  var PER = 50, data, pending, view = [], page = 1, trail = {};
+  var WANT = root.getAttribute("data-snapshot-date"),
+      COUNT = parseInt(root.getAttribute("data-snapshot-records"), 10);
 
-  var root = document.getElementById("browse");
-  if (!root || !window.fetch) return;
-
-  var $ = function (id) { return document.getElementById(id); };
-  var els = {
-    q: $("f-q"), source: $("f-source"), institution: $("f-institution"),
-    language: $("f-language"), status: $("f-status"),
-    from: $("f-from"), to: $("f-to"), reset: $("f-reset"),
-    results: $("results"), range: $("result-range"), live: $("result-live"),
-    prev: $("page-prev"), next: $("page-next"), pager: $("pager"),
-    error: $("index-error"), empty: $("no-results"), controls: $("controls")
-  };
-
-  var PER_PAGE = 50;
-  var IDX = { id: 0, date: 1, source: 2, state: 3, en: 4, orig: 5 };
-  var FIELDS = ["id", "date", "source", "state", "title_en", "title_orig"];
-  var FACETS = ["source", "institution", "language", "status"];
-  var DICTS = ["sources", "institutions", "languages", "states"];
-  var data = null, view = [], page = 1;
-
-  /* The page states which snapshot it describes; the index must agree. */
-  var WANT_DATE = root.getAttribute("data-snapshot-date");
-  var WANT_COUNT = parseInt(root.getAttribute("data-snapshot-records"), 10);
-
+  /* Every row, never a sample. */
   function valid(d) {
-    if (!d || !d.snapshot || !Array.isArray(d.records)) return false;
-    if (d.snapshot.date !== WANT_DATE) return false;
-    if (d.snapshot.records !== WANT_COUNT) return false;
-    if (d.records.length !== WANT_COUNT) return false;
-    if (!Array.isArray(d.fields) || d.fields.join() !== FIELDS.join())
+    if (!d || !d.snapshot || !A(d.records)) return false;
+    if (d.snapshot.date !== WANT || d.snapshot.records !== COUNT ||
+        d.records.length !== COUNT || !A(d.fields) ||
+        d.fields.join() !== "id,date,source,state,title_en,title_orig")
       return false;
-    if (!DICTS.every(function (k) {
-      return Array.isArray(d[k]) && d[k].length;
-    })) return false;
-    /* Every row, not a sample: reject a malformed row here, not by throwing
-       later where it is indistinguishable from a validation decision. */
+    if (!["sources", "institutions", "languages", "states"].every(
+        function (k) { return A(d[k]) && d[k].length; }))
+      return false;
     for (var i = 0; i < d.records.length; i++) {
-      if (!Array.isArray(d.records[i]) ||
-          d.records[i].length !== FIELDS.length) return false;
+      var r = d.records[i];
+      if (!A(r) || r.length !== 6 || !d.sources[r[2]] ||
+          !d.states[r[3]]) return false;
     }
     return true;
   }
 
+  function get(k) {
+    var e = F[k];
+    return e.type === "checkbox" ? (e.checked ? "1" : "") : e.value.trim();
+  }
+  function put(k, v) {
+    var e = F[k];
+    if (e.type === "checkbox") e.checked = v === "1";
+    else e.value = v || (k === "sort" ? "new" : "");
+    if (e.selectedIndex < 0) e.selectedIndex = 0;
+  }
+  function filtered() {
+    return KEYS.some(function (k) { return k !== "sort" && get(k); });
+  }
+  function asked() { return filtered() || page > 1 || get("sort") === "old"; }
   function readUrl() {
     var p = new URLSearchParams(location.search);
-    els.q.value = p.get("q") || "";
-    FACETS.forEach(function (k) { els[k].value = p.get(k) || ""; });
-    els.from.value = p.get("from") || "";
-    els.to.value = p.get("to") || "";
+    KEYS.forEach(function (k) { put(k, p.get(k)); });
     page = Math.max(1, parseInt(p.get("page"), 10) || 1);
   }
-
   function writeUrl(push) {
     var p = new URLSearchParams();
-    var pairs = [["q", els.q.value.trim()], ["from", els.from.value],
-                 ["to", els.to.value], ["page", page > 1 ? String(page) : ""]];
-    FACETS.forEach(function (k) { pairs.push([k, els[k].value]); });
-    pairs.forEach(function (kv) { if (kv[1]) p.set(kv[0], kv[1]); });
-    var url = location.pathname + (p.toString() ? "?" + p.toString() : "");
-    history[push ? "pushState" : "replaceState"](null, "", url);
-  }
-
-  /* Only values with backing records are offered; labels come from the
-     index's single server-side mapping. */
-  function fillOptions(select, entries, allLabel) {
-    var first = document.createElement("option");
-    first.value = "";
-    first.textContent = allLabel;
-    select.appendChild(first);
-    entries.forEach(function (e) {
-      if (!e.count) return;
-      var o = document.createElement("option");
-      o.value = e.code;
-      o.textContent = e.label + " (" + e.count.toLocaleString() + ")";
-      select.appendChild(o);
+    KEYS.forEach(function (k) {
+      var v = get(k);
+      if (v && !(k === "sort" && v === "new")) p.set(k, v);
     });
+    if (page > 1) p.set("page", page);
+    p = p.toString();
+    history[push ? "pushState" : "replaceState"](null, "",
+      location.pathname + (p ? "?" + p : ""));
   }
 
-  function matches(row) {
-    var src = data.sources[row[IDX.source]];
-    var q = els.q.value.trim().toLowerCase();
-    if (q && (row[IDX.en] + " " + row[IDX.orig]).toLowerCase().indexOf(q) < 0)
-      return false;
-    if (els.source.value && src.code !== els.source.value) return false;
-    if (els.institution.value) {
-      var inst = data.institutions[src.institution];
-      if (!inst || inst.code !== els.institution.value) return false;
-    }
-    if (els.language.value) {
-      var lang = data.languages[src.language];
-      if (!lang || lang.code !== els.language.value) return false;
-    }
-    if (els.status.value &&
-        data.states[row[IDX.state]].code !== els.status.value) return false;
-    /* Inclusive both ends, on the source-stated publication date. */
-    if (els.from.value && row[IDX.date] < els.from.value) return false;
-    if (els.to.value && row[IDX.date] > els.to.value) return false;
-    return true;
+  function matches(r) {
+    var s = data.sources[r[2]], q = get("q").toLowerCase(), v;
+    if (q && (r[4] + " " + r[5]).toLowerCase().indexOf(q) < 0) return false;
+    if ((v = get("desk")) && !(s.desk && s.desk.code === v)) return false;
+    if ((v = get("source")) && s.code !== v) return false;
+    if ((v = get("institution")) &&
+        (data.institutions[s.institution] || {}).code !== v) return false;
+    if ((v = get("language")) &&
+        (data.languages[s.language] || {}).code !== v) return false;
+    if ((v = get("status")) && data.states[r[3]].code !== v) return false;
+    /* Inclusive, on the source-stated date. */
+    if ((v = get("from")) && r[1] < v) return false;
+    if ((v = get("to")) && r[1] > v) return false;
+    return !(get("trail") && !trail[r[0]]);
   }
 
-  function text(tag, cls, value) {
-    var el = document.createElement(tag);
-    if (cls) el.className = cls;
-    el.textContent = value;
-    return el;
+  function el(tag, cls, txt, kid) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    if (kid) e.appendChild(kid);
+    return e;
+  }
+  function n(x) { return x.toLocaleString("en-US"); }
+
+  /* _records.html record_row, field for field. */
+  function card(r) {
+    var s = data.sources[r[2]], lang = data.languages[s.language],
+        who = data.institutions[s.institution],
+        st = data.states[r[3]], a = el("a", null, r[4] || r[5]),
+        h = el("h3", null, null, a), main = el("div", null, null, h),
+        tags = el("p", "row-tags"), side = el("p", "row-side"),
+        li = el("li", "record-row", null, main);
+    a.href = "record/" + r[0] + ".html";
+    if (!r[4] && lang) h.setAttribute("lang", lang.code);
+    if (r[4] && r[5] && r[5].trim() !== r[4].trim()) {
+      var o = main.appendChild(el("p", "original", r[5]));
+      if (lang) o.setAttribute("lang", lang.code);
+    }
+    if (st.code === "analyzed")
+      tags.appendChild(el("span", "state state--analyzed", st.label));
+    if (trail[r[0]])
+      tags.appendChild(el("span", "trail-tag", TR));
+    if (tags.firstChild) main.appendChild(tags);
+    side.appendChild(el("span", "row-who", who ? who.label : s.label));
+    side.appendChild(el("span", "row-via",
+      [who && s.label, lang && lang.label].filter(Boolean).join(" · ")));
+    if (s.desk) side.appendChild(el("a", null, s.desk.label)).href = s.desk.route;
+    if (st.code !== "analyzed")
+      side.appendChild(el("span", "state state--" + st.code, st.label));
+    li.appendChild(side);
+    return li;
   }
 
-  function card(row) {
-    var src = data.sources[row[IDX.source]];
-    var inst = data.institutions[src.institution];
-    var lang = data.languages[src.language];
-
-    var art = document.createElement("article");
-    art.className = "record";
-
-    var head = text("div", "record-head", "");
-    head.appendChild(text("span", "evidence evidence--record", "Source record"));
-    if (src.desk) {
-      var deskLink = text("a", null, src.desk.label);
-      deskLink.href = src.desk.route;
-      head.appendChild(deskLink);
-    }
-    head.appendChild(text("span", "meta",
-      (inst ? inst.label : src.label) + " · " + row[IDX.date]));
-    art.appendChild(head);
-
-    var h3 = document.createElement("h3");
-    var a = document.createElement("a");
-    a.href = "record/" + row[IDX.id] + ".html";
-    a.textContent = row[IDX.en] || row[IDX.orig];
-    h3.appendChild(a);
-    art.appendChild(h3);
-
-    if (row[IDX.en] && row[IDX.orig]) {
-      var orig = text("p", "original", row[IDX.orig]);
-      orig.setAttribute("lang", lang ? lang.code : "zh");
-      art.appendChild(orig);
-    }
-
-    /* Show the editorial language name. */
-    art.appendChild(text("p", "meta", src.label + " · " +
-      (lang ? lang.label : "—") + " · " + data.states[row[IDX.state]].label));
-    return art;
+  function cal(date, o) {
+    o.timeZone = "UTC";
+    return new Date(date + "T00:00:00Z").toLocaleDateString("en-US", o);
+  }
+  function day(date) {
+    var mo = cal(date, {month: "long", year: "numeric"}),
+        t = el("time", null, null, el("span", "day-num", +date.slice(8, 10))),
+        sec = el("section", "records-day", null, el("p", "day-date", null, t));
+    t.setAttribute("datetime", date);
+    t.appendChild(el("span", "day-month", mo));
+    t.appendChild(el("span", "day-week", cal(date, {weekday: "long"})));
+    return sec;
   }
 
-  function render(announce) {
-    var total = view.length;
-    var pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  function render() {
+    var total = view.length, pages = Math.max(1, Math.ceil(total / PER));
     if (page > pages) page = pages;
-    var start = (page - 1) * PER_PAGE;
-    var slice = view.slice(start, start + PER_PAGE);
-
-    els.results.textContent = "";
-    var frag = document.createDocumentFragment();
-    slice.forEach(function (row) { frag.appendChild(card(row)); });
-    els.results.appendChild(frag);
-
-    var summary;
-    if (total === 0) {
-      summary = "No records match these filters.";
-      els.range.textContent = "";
-    } else {
-      summary = "Showing " + (start + 1).toLocaleString() + "–" +
-        (start + slice.length).toLocaleString() + " of " +
-        total.toLocaleString() + " records";
-      els.range.textContent = summary + " · page " + page + " of " + pages;
-    }
-    els.empty.hidden = total !== 0;
-    els.pager.hidden = total === 0;
-    els.prev.disabled = page <= 1;
-    els.next.disabled = page >= pages;
-    if (announce) els.live.textContent = summary;
+    var start = (page - 1) * PER, rows = view.slice(start, start + PER),
+        wrap = el("div", "records-days"), list, last = "";
+    wrap.setAttribute("data-from-index", "");
+    rows.forEach(function (r) {
+      if (r[1] !== last) {
+        last = r[1];
+        list = wrap.appendChild(day(r[1])).appendChild(el("ul", "record-list"));
+      }
+      list.appendChild(card(r));
+    });
+    out.textContent = "";
+    out.appendChild(wrap);
+    var msg = total ? "Showing " + n(start + 1) + "–" + n(start + rows.length) +
+      " of " + n(total) + (filtered() ? " matching records" : " records")
+      : "No records match these filters.";
+    range.textContent = total ? msg + (pages > 1 ? " · page " + page +
+      " of " + pages : "") : "";
+    live.textContent = msg;
+    none.hidden = total !== 0;
+    prev.hidden = next.hidden = pages < 2;
+    prev.disabled = page <= 1;
+    next.disabled = page >= pages;
   }
 
-  function update(push, resetPage) {
-    if (resetPage) page = 1;
-    view = data.records.filter(matches);
-    writeUrl(push);
-    render(true);
+  function drawChips() {
+    chips.textContent = "";
+    KEYS.forEach(function (k) {
+      var v = get(k), e = F[k];
+      if (!v || k === "sort") return;
+      var label = (NAME[k] ? NAME[k] + ": " : "") + (k === "trail"
+        ? TR : e.tagName === "SELECT"
+        ? e.options[e.selectedIndex].text.replace(/ \([\d,]+\)$/, "") : v);
+      var b = chips.appendChild(el("li")).appendChild(el("button", "chip", label));
+      b.type = "button";
+      b.setAttribute("aria-label", "Remove filter: " + label);
+      b.onclick = function () { put(k, ""); go(true, true); F.q.focus(); };
+    });
+    reset.hidden = !filtered();
   }
 
-  function wire() {
-    var debounce = null;
-    els.q.addEventListener("input", function () {
-      clearTimeout(debounce);
-      debounce = setTimeout(function () { update(false, true); }, 180);
-    });
-    FACETS.concat(["from", "to"]).forEach(function (k) {
-      els[k].addEventListener("change", function () { update(false, true); });
-    });
-    els.prev.addEventListener("click", function () {
-      if (page > 1) { page--; update(true, false); window.scrollTo(0, 0); }
-    });
-    els.next.addEventListener("click", function () {
-      page++; update(true, false); window.scrollTo(0, 0);
-    });
-    els.reset.addEventListener("click", function () {
-      els.q.value = els.from.value = els.to.value = "";
-      FACETS.forEach(function (k) { els[k].value = ""; });
-      update(true, true);
-      els.q.focus();
-    });
-    window.addEventListener("popstate", function () {
-      readUrl(); view = data.records.filter(matches); render(true);
-    });
-  }
-
+  /* An unusable index, never "0 results". */
   function unavailable() {
-    /* Never "0 results": the corpus is not empty, the index is unusable.
-       Restores the hidden state explicitly so a throw mid-render cannot
-       strand controls or partial cards. Week path and volume stay visible. */
-    els.controls.hidden = true;
-    root.hidden = true;
-    els.results.textContent = "";
-    els.error.hidden = false;
+    wait.hidden = root.hidden = prev.hidden = next.hidden = true;
+    out.classList.remove("is-updating");
+    fail.hidden = false;
   }
 
-  /* Cache by public snapshot facts, never the private fingerprint. */
-  fetch("corpus-index.json?s=" + encodeURIComponent(WANT_DATE) + "-" +
-        WANT_COUNT, { credentials: "omit" })
-    .then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
-    .then(function (json) {
-      if (!valid(json)) throw new Error("snapshot mismatch");
-      data = json;
-      fillOptions(els.source, data.sources, "All sources");
-      fillOptions(els.institution, data.institutions, "All institutions");
-      fillOptions(els.language, data.languages, "All original languages");
-      fillOptions(els.status, data.states, "All processing states");
-      readUrl();
-      els.controls.hidden = false;
-      root.hidden = false;
-      wire();
+  function load() {
+    if (!pending) {
+      wait.hidden = false;
+      /* Public snapshot facts only. */
+      pending = fetch("corpus-index.json?s=" + encodeURIComponent(WANT) + "-" +
+                      COUNT, {credentials: "omit"})
+        .then(function (r) { if (!r.ok) throw Error(r.status); return r.json(); })
+        .then(function (j) {
+          if (!valid(j)) throw Error("invalid index");
+          (j.trail_ids || []).forEach(function (id) { trail[id] = 1; });
+          wait.hidden = true;
+          return (data = j);
+        });
+      pending.catch(unavailable);
+    }
+    return pending;
+  }
+
+  function go(push, first) {
+    if (first) page = 1;
+    out.classList.add("is-updating");
+    load().then(function () {
       view = data.records.filter(matches);
-      render(false);
-    })
-    .catch(unavailable);
+      if (get("sort") === "old") view.reverse();
+      drawChips();
+      render();
+      writeUrl(push);
+      out.classList.remove("is-updating");
+    }, function () {});
+  }
+
+  var timer;
+  F.q.onfocus = function () { load().then(null, function () {}); };
+  F.q.oninput = function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () { go(false, true); }, 200);
+  };
+  KEYS.forEach(function (k) {
+    if (k !== "q") F[k].onchange = function () { go(true, true); };
+  });
+  form.onsubmit = function (e) { e.preventDefault(); go(true, true); };
+  reset.onclick = function () {
+    KEYS.forEach(function (k) { put(k, ""); });
+    go(true, true);
+    F.q.focus();
+  };
+  /* Focus the range line: a disabled button would drop focus. */
+  function turn(d) { page += d; go(true); range.focus(); }
+  prev.onclick = function () { if (page > 1) turn(-1); };
+  next.onclick = function () { turn(1); };
+  window.onpopstate = function () {
+    readUrl();
+    if (data || asked()) go(false);
+  };
+
+  root.hidden = form.hidden = next.hidden = false;
+  readUrl();
+  if (asked()) go(false);
 })();

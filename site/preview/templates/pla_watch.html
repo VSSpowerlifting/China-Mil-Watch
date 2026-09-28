@@ -7,14 +7,17 @@
    issues, so it must not restate a name or infer a boundary of its own. #}
 {% set historical_editions = editions | selectattr('era', 'equalto', 'historical') | list %}
 {% set current_editions = editions | selectattr('era', 'equalto', 'current') | list %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Analysis', 'analysis.html'), (predecessor_series, none)]) }}
+{{ breadcrumb([('Analysis', 'analysis.html'), (predecessor_series, none)]) }}
+<header class="page-head">
+<p class="eyebrow"><span class="evidence evidence--analysis">Analysis archive</span></p>
 <h1>{{ lead_edition.series_name if lead_edition else predecessor_series }}</h1>
-{{ spine(desks, snapshot, corpus_total, false, desks.get('china')) }}
 <p class="lede">The China Desk's weekly analytical series, which spanned the project's
 publication rename:
 {% if historical_editions %}{{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, and {{ current_editions | length }} later {{ 'edition was' if current_editions | length == 1 else 'editions were' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions were published by {{ title }}{% endif %}.
 This page is an archive of those issues. For current analysis, see
 <a href="analysis.html">Analysis</a>.</p>
+</header>
+{{ spine(desks, snapshot, corpus_total, false, desks.get('china')) }}
 
 <div class="notice">
   <h2 class="plain">These issues are preserved as published</h2>
@@ -77,7 +80,7 @@ judgment.</p>
 <p class="meta">The edition label is the editor's own classification of the week, not a machine
 output. The model-flagged column beside it is the pipeline's count, and the two are deliberately
 kept apart.</p>
-<p><a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">Full archive on the live site →</a></p>
+<p><a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">The series archive, as published</a></p>
 {% else %}
 <p class="no-results">No edition records were found in <code>output/the-pla-watch/posts/</code>.
 Nothing is invented to fill the gap.</p>

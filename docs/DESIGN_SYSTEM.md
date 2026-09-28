@@ -35,8 +35,11 @@ Two expressions of one publication, distinguished by editorial function:
   editions, PW index/archive, Terms. Focused and deliberate, not cinematic.
 
 Shared DNA that makes them one publication: identical type stack, one crimson
-signal family, mono micro-labels, 2px radius, the same ease curve and motion
-primitives, the same footer honesty language. The homepage's dark
+signal family, mono for metadata (the masthead kicker, issue numerals, hashes
+and ids), 2px radius, the same ease curve and motion primitives, the same
+footer honesty language. Since 2026-09-27 the record surfaces set their
+labels in the interface sans, sentence case, each marked by a short rule in
+its layer's colour; Night Desk keeps its mono caps labels (DECISION_LOG). The homepage's dark
 latest-edition band is the sanctioned crossover: Night Desk material embedded
 in the Ledger. The inverse (light panels inside PW pages) is limited to print.
 
@@ -91,15 +94,30 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 | `--accent` | #255E7A | compass-blue links, chart marks, focus |
 | `--band` | #12222C | dark analysis band |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
+| `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
 | `--warning` | #87511A | blocked status and warnings |
-| `--crimson` | #B3132B | dark analytical chrome only |
+| `--crimson` | #B3132B | the analysis layer: on paper a label and a rule only (6.10 on bg); fills and rules on dark |
+| `--crimson-ink` | #9E1830 | analysis text on paper (7.07 on bg) |
+
+Legacy names (`--paper`, `--graphite`, `--ocean`, `--text-muted` …) remain as
+aliases onto these tokens — one place a colour is decided, two names for it.
 
 ### Meaning rules
-- **Crimson = Night Desk analytical signal only**: editorial emphasis, the
-  historical series rule, and primary actions on dark. The live Paper Ledger
-  uses compass blue for structure and rust for model output. Neither uses
-  crimson as a decorative paper accent or a data-chart fill.
+- **Crimson = the analysis layer.** On Night Desk: editorial emphasis, the
+  historical series rule, and primary actions on dark. On the live Paper
+  Ledger (since 2026-09-27): the label and rule that mark the
+  human-controlled analysis layer, or point to it — the "Analysis" layer label, a record page's "In
+  analysis" panel and a record row's "In an analysis source trail" tag, the
+  custody line's analysis stage, the analysis column of the home page's
+  three-layer explainer, an issue's eyebrow — and nothing else.
+  The Ledger uses compass blue for structure and rust for model output.
+  Neither surface uses crimson as a decorative paper accent, a data-chart
+  fill, or for a machine flag: a model-flagged mark is rust.
+- **Three layers, marked the same way everywhere** on the record surfaces:
+  source record (ink), machine output (rust), analysis (crimson). A reader
+  can tell which layer a line belongs to without reading its label, and the
+  label is always there.
 - **Evidence is neutral**: source-trail records, quotes, stats render in
   ink/gray. Inference and analyst emphasis may use crimson. This is the
   visual half of the evidence-vs-inference doctrine.
@@ -177,6 +195,44 @@ Defined in base templates or per-page `extra_styles`; reuse before inventing:
 - **Prev/next edition nav**; **progress rail** (CSS scroll-timeline).
 - **Signal Field plate** (homepage "How the record is built") and **dark
   edition band** — flagship visuals, spec'd in VISUAL_AND_MOTION_SYSTEM.
+
+### Record surfaces (live record site, 2026-09-27 — "Almanac, with custody layers")
+
+One implementation (`site/preview/styles.css`, `site/preview/templates/`),
+and every component is on the maintenance gallery:
+`generate_preview.py --out <scratch dir> --snapshot-from-corpus --gallery`
+writes `gallery.html` beside a disposable build, from the corpus in the
+database. Without `--snapshot-from-corpus` the release guard refuses to build
+once the database has outgrown the declared snapshot. Never published.
+
+- **Day groups and the record row** (`_records.html` `record_days`,
+  `record_row`) — records under the source-stated date: a serif numeral,
+  the month and weekday. A row is the title (English when a machine
+  translation exists, the original otherwise, with its `lang`), the
+  original beneath at secondary colour, the processing state, "In an
+  analysis source trail" when that is true, and who published it, through
+  which source, in what language, from which desk. browse.js `card()` draws
+  the same row, field for field; a test holds the two to parity.
+- **Week strip** (`_weeks.html`) — stored records per publication week, as
+  links: navigation first, a disclosure of collection volume second (never
+  activity or output). Hatched: the governed outage; faint: snapshot
+  boundary. The key uses the governed labels only.
+- **Custody line** (record page) — Published → Collected → Machine reading →
+  Analysis, each from a stored field; a stage that did not happen says so.
+- **Layer labels** (`.evidence--record/--claim/--model/--analysis`) — a
+  short rule and sentence-case words, beside the heading they qualify.
+- **"In analysis" panel** (record rail) — the published issues whose source
+  trail holds this record's exact URL, with the entry's position.
+- **Records finder** — server-rendered newest 50; search, desk, source,
+  state, order, institution, language, dates and "in a source trail",
+  loaded on first request; state in the URL; chips to remove a filter. A
+  page turn moves focus to the range line, because the button pressed may
+  now be disabled. The address names the page actually shown, and a value no
+  option carries shows that control's default.
+- **Edition plate** (`_plate.html`) — an issue drawn from its sidecar
+  (VISUAL_AND_MOTION §3.2), on the home band and at the head of Analysis.
+- **Citations** — plain selectable text, never boxed; a copy control and a
+  visible status line that says what happened, including failure.
 
 ## 6a. Identity assets (added 2026-09-04)
 
@@ -262,3 +318,10 @@ Budgets for all future work:
   animation per page maximum.
 - No client-side rendering of primary content; the site must read fully
   with JS disabled.
+
+**Measured 2026-09-27 after the record-surface overhaul** (disposable build of
+the 2026-09-26 snapshot): `styles.css` 161 KB → 90 KB; the home page no longer
+loads the 435 KB cover PNG (the edition plate is inline SVG); `archive.html`
+no longer fetches the 668 KB / 269 KB-gzip search index on arrival (it loads
+on the first search or filter), and its newest 50 records are server-rendered.
+browse.js ≤ 9.5 KB, citation.js ≤ 5 KB; no library.

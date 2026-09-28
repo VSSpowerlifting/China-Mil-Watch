@@ -1,0 +1,63 @@
+{# The week strip: stored records per publication week, as a row of links.
+
+   It is navigation first — every bar opens that week's records — and a
+   disclosure second: bar height is the number of records this corpus HOLDS for
+   the week, which is collection volume. It is not institutional output, not
+   activity, and not a rate; the caption says so beside the bars, and the exact
+   figure for every week is in each link's accessible name and in the week
+   table the Records page carries.
+
+   Hatched bars are the weeks that overlap the governed collection outage
+   (17–24 July 2026); faint bars are the snapshot-boundary weeks, which cover
+   only part of their seven days. Both annotations come from
+   `generate_preview.week_annotation`, the only two a week may carry, and the
+   key uses their governed labels word for word: no generic "partial" label
+   (DECISION_LOG 2026-08-16 §6a).
+
+   No custom filter: tests render pages that import this macro in a bare
+   Jinja environment, so the axis dates are spelled from the list below.
+
+   `weeks` arrive newest first (`corpus_weeks`) and stay in that order in the
+   document, so a screen reader and a keyboard meet the newest week first, as
+   the week table lists them. The plot is laid out right to left (styles.css)
+   so it still reads oldest to newest across the page, and its scroller opens
+   on the newest weeks. Every bar is a link the full height of the plot and at
+   least 24px wide (WCAG 2.2 target size); when the weeks outnumber the width,
+   the plot scrolls inside its own frame rather than shrinking its targets.
+   `scale` is the largest week's count, so every strip on a page shares one
+   scale. #}
+{% macro week_strip(weeks, scale, root='', current=none, heading='h2', title='Records by publication week', note=none, reveal=true, key=true) -%}
+{% set ordered = weeks | list %}
+{% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+<figure class="week-strip"{% if reveal %} data-reveal{% endif %} aria-labelledby="week-strip-title-{{ heading }}">
+  <figcaption class="week-strip-head">
+    <{{ heading }} id="week-strip-title-{{ heading }}">{{ title }}</{{ heading }}>
+    <p>{{ note or 'Stored records per publication week. Bar height is collection volume — what this record holds — not activity, output or a rate.' }}</p>
+  </figcaption>
+  <div class="week-scroll">
+  <div class="week-plot">
+  <ol class="week-bars">
+  {% for w in ordered %}
+    <li class="{{ 'is-outage' if w.annotation == 'Known collection interruption' else 'is-edge' if w.annotation == 'Snapshot boundary' else '' }}">
+      <a href="{{ root }}{{ w.path }}" style="--h: {{ (w.count * 100 / (scale or 1)) | round(1) }}%; --i: {{ loop.revindex0 }}"
+         aria-label="Week of {{ w.start }}: {{ w.count | count }} record{{ '' if w.count == 1 else 's' }}{% if w.annotation %} ({{ w.annotation | lower }}){% endif %}"
+         title="{{ w.start }} to {{ w.end }} · {{ w.count | count }} records"{% if current and current == w.start %} aria-current="page"{% endif %}></a>
+    </li>
+  {% endfor %}
+  </ol>
+  {% if ordered %}
+  <p class="week-axis" aria-hidden="true">{% for d in [ordered[-1].start, ordered[0].start] %}<span>{{ d[8:10] | int }} {{ months[(d[5:7] | int) - 1] }} {{ d[:4] }}</span>{% endfor %}</p>
+  {% endif %}
+  </div>
+  </div>
+  {# A week page draws the strip without its key: there, "Snapshot boundary"
+     or "Known collection interruption" on the page must mean THIS week. The
+     bars still carry each week's own annotation in their accessible names. #}
+  {% if key %}
+  {% set notes = ordered | map(attribute='annotation') | list %}
+  <p class="week-key"><span><i aria-hidden="true"></i>Records held that week</span>
+    {% if 'Known collection interruption' in notes %}<span><i class="k-outage" aria-hidden="true"></i>Known collection interruption</span>{% endif %}
+    {% if 'Snapshot boundary' in notes %}<span><i class="k-edge" aria-hidden="true"></i>Snapshot boundary</span>{% endif %}</p>
+  {% endif %}
+</figure>
+{%- endmacro %}
