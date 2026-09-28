@@ -6004,6 +6004,9 @@ class TestCitationCopyBehaviour(PreviewCase):
         try:
             page = context.new_page()
             page.goto(self.url("pla-watch.html"), wait_until="load")
+            # Web fonts can settle after load and move a disclosure while
+            # Playwright scrolls to click it, especially on the Linux runner.
+            page.evaluate("() => document.fonts.ready")
             # The first row is whatever edition leads, not a pinned date.
             _lead_slug = gp.load_editions(REPO_ROOT)[0]["slug"]
             anchor = "#cite-edition-%s" % _lead_slug
@@ -6012,7 +6015,7 @@ class TestCitationCopyBehaviour(PreviewCase):
             _editions = len(gp.load_editions(REPO_ROOT))
             summaries = page.query_selector_all("details.ed-cite > summary")
             self.assertEqual(len(summaries), _editions)
-            page.click("details.ed-cite:first-of-type > summary")
+            page.locator("details.ed-cite > summary").first.click()
             self.assertTrue(page.is_visible(anchor))
             self.assertEqual(
                 page.eval_on_selector(anchor, "el => el.textContent"),
