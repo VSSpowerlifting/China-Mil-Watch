@@ -102,8 +102,10 @@ committed by `d17646aef` (sha256 `42f4e5a9…b501c`):
   therefore lost `22sep26-nr` and `22sep26-speech` after run 146's crash, and
   `23sep26-mq`, which was listed two days late. It is now handed seven slug
   dates (`production_lookback_days = 6`), and China's windows are unchanged.
-  The two `22sep26` releases are outside every future window and need an
-  authorized recovery.
+  One authorized run after merge,
+  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`,
+  has the window 09-22 → 09-28 and recovers all three; the held
+  `16sep26-speech` stays out.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
@@ -455,8 +457,8 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
 3. Scoped screening/backfill for publication-ready windows only, including a
    decision on Singapore's screening scope.
 4. Collection continuity:
-   - recover or disclose the 09-15 China gap and the two `22sep26` Singapore
-     releases;
+   - recover or disclose the 09-15 China gap;
+   - recover the three missed Singapore releases with one authorized run;
    - decide whether collection should depend on the pre-collection test
      gate.
 5. An explicit continue/pause decision on the Japan shadow desk, and its

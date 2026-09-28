@@ -93,15 +93,14 @@ nothing on its own.
 
 ### 3. Scoped screening and backfill for publication-ready windows
 
-903 records have never been relevance-screened. Draining the whole backlog is
-not the goal and never was — it is spend against material no edition cites.
+616 records have never been relevance-screened (measured 2026-09-28: China
+desk 566, Singapore 50). Draining the whole backlog is not the goal and never
+was — it is spend against material no edition cites.
 
 Screen **only** the window an edition will draw on, using
 `backfill_unscored.py --since X --until Y`, sequentially, never concurrently.
 Re-measure before estimating; pass rates move. This unblocks priority 1 and is
 sequenced behind it for that reason.
-
-Measured 2026-09-28: 616 unscreened records (China desk 566, Singapore 50).
 
 **Singapore needs a screening-scope decision first.** The relevance prompt and
 keyword prefilter are China-scoped: all 14 Singapore records screened so far
@@ -134,8 +133,10 @@ retriable, 0 terminal.
   `global_times_mil`.
 - Health and liveness reports read stored records, so they cannot see a day
   that never reached collection.
-- Singapore's single-day production window was fixed on 2026-09-28. The two
-  `22sep26` releases it lost still need an authorized recovery.
+- Singapore's single-day production window was fixed on 2026-09-28. The
+  three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) can
+  be recovered by one authorized run after merge:
+  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`.
 - To decide:
   - disclose or recover 09-15;
   - whether collection should depend on the test gate.

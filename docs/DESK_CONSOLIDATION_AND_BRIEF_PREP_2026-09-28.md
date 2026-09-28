@@ -13,7 +13,7 @@ historical ledger changed. Decisions that belong to the owner are listed in
 | Repository HEAD measured | `b3821b9a1` (PR #81 merge), equal to `origin/main` on 2026-09-28 |
 | Database | `pla_watch.db` as last committed by `d17646aef` ("Daily update: 2026-09-28"), blob `82dc83f9…`, sha256 `42f4e5a9…b501c` |
 | How it was read | a pinned, read-only copy (`mode=ro&immutable=1`); the tracked file's hash was checked unchanged before and after the test runs |
-| Shadow state | clones of `shadow/singapore-mindef` @ `66bb959de`, `shadow/jp-mod` @ `84edebfa6`, `shadow/us-indopacom` @ `a36f67aee`, `review/singapore-mindef` @ `e5cd42a5f` (unchanged on the remote at the end of the work) |
+| Shadow state | clones of `shadow/singapore-mindef` @ `66bb959de`, `shadow/jp-mod` @ `84edebfa6`, `shadow/us-indopacom` @ `a36f67aee`, `review/singapore-mindef` @ `e5cd42a5f` (all four unchanged on the remote at 21:38 UTC on 2026-09-28) |
 | Run history | `gh run list` / `gh run view` for `daily_update.yml` and the three shadow workflows |
 | Not done | no collection launched, no model call made, no workflow dispatched, no production database write, no `output/` regeneration, no request to `dvidshub.net` or any ministry site |
 
@@ -128,10 +128,16 @@ passes.
 - A run now re-fetches up to seven days of release pages, through the
   adapter's own rate-limited session. The shadow collector's daily 30-day
   lookback is already wider.
-- `23sep26-mq` is recovered automatically only if this change is on `main`
-  for the 2026-09-29 run, the last whose window contains 09-23.
-- The two `22sep26` releases fall outside every future window and need a
-  bounded manual recovery (§6).
+- Only `23sep26-mq` is within a future scheduled window: the 2026-09-29 run,
+  if this change is on `main` and that day's test gate passes. The two
+  `22sep26` releases are outside every future scheduled window.
+- **One run recovers all three.** A single authorized
+  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`
+  after merge has the window 09-22 → 09-28. It discovers `22sep26-nr`,
+  `22sep26-speech` and `23sep26-mq`, and the held `16sep26-speech` stays
+  out. This was checked offline with `production_window()` and the adapter's
+  discovery over a synthetic sitemap. Any target date from 09-23 to 09-28
+  also covers both dates (§6).
 
 ## 3. Singapore Day 30 — the evidence needed to close the review gap
 
@@ -419,15 +425,18 @@ and the 09-15 gap is disclosed.
 
 ## 6. Decisions that require the owner
 
-1. **Merge timing for the Singapore window fix.** `23sep26-mq` is recovered
-   automatically only if the fix is on `main` for the 2026-09-29 run.
-2. **Recovery of `22sep26-nr` and `22sep26-speech`.** Two routes are open:
-   - a bounded manual run: `pipeline.py --date 2026-09-22 --source
-     sg_mindef_releases --no-analysis`, with the fix in place. Its window
-     is 09-16 → 09-22, and the held `16sep26-speech` stays excluded;
-   - a governed promotion from the shadow corpus.
+1. **Recovery of the three missed Singapore releases.** After this change
+   merges, recover `22sep26-nr`, `22sep26-speech` and `23sep26-mq` with one
+   bounded run:
+   `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`.
+   Its window is 09-22 → 09-28, and the held `16sep26-speech` stays out.
 
-   Either writes to production and needs authorization.
+   The alternative is a governed promotion from the shadow corpus. Either
+   writes to production and needs authorization.
+
+   Without either, only `23sep26-mq` returns, through the 2026-09-29
+   scheduled run, and only if this change is on `main` by then.
+2. **Merge.** This change is a draft; the owner merges it.
 3. **The 09-15 China gap.** Record it as a disclosed gap, or authorize a
    bounded `pipeline.py --date 2026-09-15` recovery for the three sources
    affected. Whether they still list that date is unknown.
