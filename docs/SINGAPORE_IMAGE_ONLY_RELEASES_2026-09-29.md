@@ -52,8 +52,9 @@ attributes and are never read.
 **Length is not the test.** A short body is classed by what the container
 holds, never by its length. A page whose layout is not understood (an error
 page, a stub, a new template) has no container, so it stays a failure. That is
-the same rule the Xinhua and Global Times adapters use for `media_only`: report
-it only when the body container was found, so "we cannot read this" is never
+the same principle the Xinhua and Global Times adapters use for `media_only`
+(there for an empty body, here for a short one): report it only when the body
+container was found, so "we cannot read this" is never
 recorded as "there is nothing here".
 
 **Nothing already extracted changes.** A body of 200 characters or more never

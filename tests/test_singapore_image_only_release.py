@@ -450,6 +450,17 @@ class TestPipelineStoresTheRecovery(PipelineRunCase):
                           dry_run=False, no_analysis=True)
         return session
 
+    def results(self):
+        """The latest run's row per source. The base helper keys rows by slug
+        with no ordering among runs, which these multi-run tests cannot rely on."""
+        con = sqlite3.connect(str(self.db_path))
+        con.row_factory = sqlite3.Row
+        try:
+            return {r["source_slug"]: dict(r) for r in con.execute(
+                "SELECT * FROM source_run_results ORDER BY scrape_run_id")}
+        finally:
+            con.close()
+
     def rows(self):
         con = sqlite3.connect(str(self.db_path))
         con.row_factory = sqlite3.Row
