@@ -139,6 +139,9 @@ passes.
   discovery over a synthetic sitemap. Any target date from 09-23 to 09-28
   also covers both dates (§6).
 
+> **Corrected 2026-09-29 — this claim was false.** The authorized run failed and
+> stored nothing. See §7.
+
 ## 3. Singapore Day 30 — the evidence needed to close the review gap
 
 The 2026-09-21 sign-off proceeded **without** a distinct Day 30 human review
@@ -456,3 +459,75 @@ and the 09-15 gap is disclosed.
    collection; it cost 09-15, 09-18 and 09-19. Whether collection should run
    independently of the test gate is an architecture decision.
 9. **No. 14, w/e 08-22, the first brief's question, and its approval** (§4).
+
+## 7. Correction, 2026-09-29: the recovery run failed
+
+§2 and §6 item 1 said one run recovers all three releases. They were wrong.
+
+**What ran.** After #82 merged (`89e48a2fe`), the authorized
+`pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis` ran
+locally at 02:12 UTC on 2026-09-29.
+- The window was 09-22 → 09-28, as planned.
+- Discovery returned **11** releases. All 11 were fetched and 10 extracted.
+- `22sep26-infographic` extracted only 178 characters of text, which is
+  under the adapter's 200-character `MIN_BODY_CHARS`. That counts as an
+  extraction failure.
+- Singapore's batch is all-or-nothing, so the adapter withheld the whole
+  batch. Nothing was stored, including `22sep26-nr`, `22sep26-speech` and
+  `23sep26-mq`.
+- The run recorded itself as run 153, `degraded`, with
+  `sg_mindef_releases` at `extraction_failure` (`discovered=11 fetched=11
+  extracted=10`).
+
+**The local run was not landed.** It lived only in the worktree copy of
+`pla_watch.db`, which was restored to `main` (sha256 `42f4e5a9…b501c`). So
+production has no run 153 from it. The evidence was kept outside the
+repository: the post-run database copy and the run log.
+
+**A second fetch was made to diagnose the failure.** It re-fetched the
+sitemap and the same 11 pages through the adapter, with no database write.
+- The ten other pages extract.
+- The three missed releases match the shadow corpus's copies exactly, in body
+  length and body SHA-256: `22sep26-nr` (4,165 chars, `10866200805d…`),
+  `22sep26-speech` (13,417, `0c40feac8102…`) and `23sep26-mq` (391,
+  `2d0e1a352cba…`).
+- Both held records (`15aug26-speech`, `16sep26-speech`) fall outside the
+  window, so the window excluded them before the adapter's
+  `HELD_RELEASE_SLUGS` filter was reached. Neither is stored.
+
+**Why the rehearsal missed it.** It compared production against
+`shadow_records`, which holds only extractions that succeeded. The shadow
+ledgers already showed the page: `extraction_failures: 1` on every run from
+2026-09-22 onwards. Nobody read them. §2's residual-risk note named this
+failure mode, where a page that keeps failing inside the window withholds
+newer releases with it. It had already happened in the data.
+
+**Consequence of #82.**
+- Any Singapore production window that contains 09-22 withholds the whole
+  batch.
+- Scheduled runs are clear of it: the 2026-09-29 window is 09-23 → 09-29.
+- More generally, the seven-date window widens the all-or-nothing rule's
+  reach: one page that can never be extracted now blocks seven scheduled
+  runs instead of one.
+- `22sep26-nr` and `22sep26-speech` cannot be recovered by a production run
+  until the owner decides how an image-only release is handled.
+- `23sep26-mq` should return with the 2026-09-29 scheduled run, if that day's
+  test gate passes. It will be screened there under the China-scoped rules
+  (see `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md`).
+
+**Options for the owner** (none implemented):
+1. **Record it as text-unavailable.** The adapter already has a sanctioned
+   path for pages that parse but carry no usable text. It keeps the title,
+   URL and date and counts them in `source_run_results.text_unavailable`. The
+   infographic fails earlier, at `MIN_BODY_CHARS`, so it never reaches that
+   path. Routing a short body there would keep one image-only page from
+   blocking the batch, and would record that it exists.
+2. **Exclude infographic slugs at discovery.** That is a change to desk scope.
+3. **Return `production_lookback_days` to 0 until a ruling.** That brings back
+   the single-day losses #82 fixed.
+
+The Day-30 packet is bound to state from before 09-22 (latest ledger
+2026-09-19), so it does not show this. The reviewer should know that every
+shadow run since 09-22 records one extraction failure, and that it is this
+page.
+
