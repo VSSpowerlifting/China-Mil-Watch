@@ -53,12 +53,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html" aria-current="page">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html" aria-current="page">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -67,12 +67,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html" aria-current="page">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html" aria-current="page">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -80,26 +80,28 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-09-29</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-09-29</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-09-29</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,715</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,995</dd></div>    </dl>
+        <dd>4,753</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,025</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      152 in full &rarr;</a></p>
+      153 in full</a></p>
   </div>
-</div>
+</aside>
 <main id="main">
   <div class="wrap">
+<header class="page-head">
 <h1>Methodology and limitations</h1>
 <p class="lede">How a record gets here, and what it can and cannot support.</p>
+</header>
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul><li><a href="#scope">Scope</a></li><li><a href="#collection">Collection</a></li>
@@ -107,6 +109,7 @@
       <li><a href="#limitations">Limits</a></li></ul>
 </nav>
 
+<div class="prose">
 <h2 id="scope">Scope</h2>
 <p>Indo-Pacific Record collects from declared desks, one jurisdiction or institutional family at a time.
 It does <strong>not</strong> monitor the Indo-Pacific comprehensively, and no page here should be
@@ -114,14 +117,14 @@ read as claiming that it does. 2 of 4 declared
 desks collect today; the remainder are
 labeled on <a href="desks.html">Desks</a> with what specifically blocks each one.</p>
 <dl class="stat-rows">
-  <div class="stat-row"><dt>Records stored</dt><dd>4,715</dd></div>
-  <div class="stat-row"><dt>Records with stored original text</dt><dd>4,657</dd></div>
-  <div class="stat-row"><dt>Records with a machine translation of the title</dt><dd>1,995</dd></div>
-  <div class="stat-row"><dt>Records with a machine summary</dt><dd>1,995</dd></div>
-  <div class="stat-row"><dt>Collection runs recorded</dt><dd>152</dd></div>
+  <div class="stat-row"><dt>Records stored</dt><dd>4,753</dd></div>
+  <div class="stat-row"><dt>Records with stored original text</dt><dd>4,695</dd></div>
+  <div class="stat-row"><dt>Records with a machine translation of the title</dt><dd>2,025</dd></div>
+  <div class="stat-row"><dt>Records with a machine summary</dt><dd>2,025</dd></div>
+  <div class="stat-row"><dt>Collection runs recorded</dt><dd>153</dd></div>
   <div class="stat-row"><dt>Publishing institutions</dt><dd>5</dd></div>
   <div class="stat-row"><dt>Earliest item</dt><dd>2026-05-07</dd></div>
-  <div class="stat-row"><dt>Latest item</dt><dd>2026-09-28</dd></div>
+  <div class="stat-row"><dt>Latest item</dt><dd>2026-09-29</dd></div>
 </dl>
 <p class="meta">Every figure above is a count over stored rows, computed at build time. None is an
 estimate, a rate or a projection.</p>
@@ -138,19 +141,19 @@ analysis stops, and a single &ldquo;last updated&rdquo; line would have to pick 
 story to tell.</p>
 <dl>
   <dt><strong>Records last collected</strong>
-    &mdash; 2026-09-28</dt>
+    &mdash; 2026-09-29</dt>
   <dd>The newest document actually stored. Collection runs daily and is the
   part least likely to be interrupted.</dd>
 
   <dt><strong>Analysis last produced</strong>
-    &mdash; 2026-09-28</dt>
+    &mdash; 2026-09-29</dt>
   <dd>The newest date on which any record was analyzed. It says when analysis
   last ran. It does <strong>not</strong> say that every record up to that date
   has been analyzed &mdash; processing states, including records awaiting screening,
   are counted in the <a href="corpus-guide.html#states">Corpus Guide</a>.</dd>
 
   <dt><strong>Last full update</strong>
-    &mdash; 2026-09-28</dt>
+    &mdash; 2026-09-29</dt>
   <dd>The last run that finished everything, including publication. A run that
   collects and then fails part-way never records one, so this date can sit behind
   the other two. When it does, the difference is the outage.</dd>
@@ -190,7 +193,9 @@ beside the original, never in place of it. Machine classifications are labeled
       number is offered.</li>
 </ul>
 <h2 id="evidence">How evidence is labeled</h2>
-<p>These are the labels a reader will encounter:</p>
+<p>These are the labels a reader will encounter. Each belongs to one of three layers —
+the source record, machine output, or human-controlled analysis — and every page marks the
+layer the same way.</p>
 <ul class="evidence-specimens">
   <li><span class="evidence-sample"><span class="evidence evidence--record">Source record</span></span>
       <span class="evidence-definition">the item as published, with its original language,
@@ -198,9 +203,20 @@ beside the original, never in place of it. Machine classifications are labeled
   <li><span class="evidence-sample"><span class="evidence evidence--claim">Official claim</span></span>
       <span class="evidence-definition">an assertion by the publishing institution — never
       rendered as established fact.</span></li>
-  <li><span class="evidence-sample"><span class="evidence evidence--model">Model-flagged</span></span>
-      <span class="evidence-definition">a machine classification or summary, always marked as
+  <li id="model-flagged"><span class="evidence-sample"><span class="evidence evidence--model">Model-flagged</span></span>
+      <span class="evidence-definition">a machine classification, always marked as
       not reviewed by a human.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--model">Machine translation</span></span>
+      <span class="evidence-definition">an English rendering of a record's title, produced by
+      software and shown beside the original title, never in place of it. Not reviewed by a
+      human.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--model">Machine summary</span></span>
+      <span class="evidence-definition">a software reading of a record's stored text — a
+      separate output from the title's translation, and labeled separately. Not reviewed by a
+      human; a reading of what was published, not a verification of it.</span></li>
+  <li><span class="evidence-sample"><span class="evidence evidence--analysis">Analysis</span></span>
+      <span class="evidence-definition">a human-controlled issue or brief, citing the records
+      it rests on. It is interpretation, and labeled as such.</span></li>
   <li><span class="evidence-sample"><strong>Significant</strong> and <strong>Routine</strong></span>
       <span class="evidence-definition">describe the editor's judgment of a weekly edition.
       They are separate from article-level <span class="evidence evidence--model">Model-flagged</span>
@@ -220,15 +236,48 @@ beside the original, never in place of it. Machine classifications are labeled
 </ul>
 <p>Field-by-field definitions, the identifier and citation rules, and the corpus changelog are in
 the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+</div>
   </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Analysis</a></li>
+          <li><a href="pla-watch.html">The PLA Watch</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>
