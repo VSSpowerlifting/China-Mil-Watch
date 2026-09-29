@@ -131,8 +131,10 @@ const jsonLd = [
        headline, at the full width of the body and its rail where there is a rail to match. */
     !essay && (
       <figure class:list={[shell, 'mx-auto mt-8 px-4']}>
+        {/* IPR: a generated plate depicts nothing, so from sm up it runs as a wide band rather
+            than a 3:2 picture that pushes the body below the fold. */}
         <Image
-          class="aspect-[3/2] w-full object-cover"
+          class="aspect-[3/2] w-full object-cover sm:aspect-[21/9]"
           src={item.data.hero}
           alt={item.data.heroAlt}
           widths={[640, 960, 1400]}

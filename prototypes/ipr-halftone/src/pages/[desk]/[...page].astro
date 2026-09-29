@@ -35,21 +35,28 @@ const lines = first ? rest.slice(0, 2) : [];
 const cards = first ? rest.slice(2) : page.data;
 const ui = t(Astro.currentLocale ?? site.locale);
 const folio = `${span} · ${ui.pageOf(page.currentPage, page.lastPage)}`;
+// IPR: the label says what kind of desk this is, in the same terms as the Desks index, so an
+// editorial grouping is never presented as a collecting desk.
+const kinds = {
+  collecting: 'Collecting desk',
+  editorial: 'Editorial grouping',
+  archive: 'Record archive',
+} as const;
 ---
 
 <Base title={desk.data.name} description={desk.data.blurb} image={lead?.data.hero}>
   {first ? (
     <Plate
-      class="flex min-h-[32rem] flex-col justify-between gap-10 px-4 py-8 sm:min-h-[70vh] sm:py-12"
+      class="flex min-h-[32rem] flex-col justify-between gap-10 py-8 sm:min-h-[70vh] sm:py-12"
       image={lead.data.hero}
       alt={lead.data.heroAlt}
       credit={lead.data.heroCredit}
       focus={lead.data.heroFocus}
       priority
     >
-      <div class="max-w-wide mx-auto w-full">
+      <div class="max-w-wide mx-auto w-full px-4">
         <div class="max-w-[32rem]">
-          <p class="kicker">Desk</p>
+          <p class="kicker">{kinds[desk.data.kind]}</p>
           <h1 class="font-headline mt-3 text-[clamp(2.25rem,5vw,3.5rem)] leading-[1.05] font-bold tracking-[-0.01em]">
             {desk.data.name}
           </h1>
@@ -64,7 +71,7 @@ const folio = `${span} · ${ui.pageOf(page.currentPage, page.lastPage)}`;
         </div>
       </div>
 
-      <div class="max-w-wide mx-auto w-full">
+      <div class="max-w-wide mx-auto w-full px-4">
         {/* The desk name is the heading overhead, so a label box repeating it is dropped
               here and in the cover lines below; a piece with its own rubric keeps one. */}
         <PlateHead
@@ -116,7 +123,9 @@ const folio = `${span} · ${ui.pageOf(page.currentPage, page.lastPage)}`;
       </aside>
     )}
 
-    {first && (
+    {/* IPR: the folio and its rule head a list. A desk whose only piece is on the plate has no
+        list below and no second page, so it prints neither. */}
+    {first && (cards.length > 0 || page.lastPage > 1) && (
       <p class="text-muted mt-14 border-b border-current pb-2 font-mono text-xs sm:mt-20">
         {folio}
       </p>

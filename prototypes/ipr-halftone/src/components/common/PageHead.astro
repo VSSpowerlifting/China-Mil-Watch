@@ -4,7 +4,7 @@
 // indexes all open this way on purpose -- a magazine's back-of-book pages share a head, and
 // without one shared component four screens drift into four different openings.
 interface Props {
-  kicker: string;
+  kicker?: string; // IPR: omitted where it would only repeat the title
   title: string;
   lede: string;
   folio?: string; // the mono count line; omitted where there is nothing to count
@@ -14,8 +14,13 @@ const { kicker, title, lede, folio, class: className } = Astro.props;
 ---
 
 <div class:list={['max-w-content', className]}>
-  <span class="kicker">{kicker}</span>
-  <h1 class="font-headline mt-4 text-[clamp(2rem,4.2vw,3rem)] leading-[1.08] font-bold tracking-[-0.01em]">
+  {kicker && <span class="kicker">{kicker}</span>}
+  <h1
+    class:list={[
+      'font-headline text-[clamp(2rem,4.2vw,3rem)] leading-[1.08] font-bold tracking-[-0.01em]',
+      kicker && 'mt-4',
+    ]}
+  >
     {title}
   </h1>
   <p class="mt-5 text-[1.125rem] leading-relaxed sm:text-[1.25rem]">{lede}</p>
