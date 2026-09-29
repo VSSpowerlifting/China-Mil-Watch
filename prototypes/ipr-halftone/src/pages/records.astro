@@ -1,0 +1,59 @@
+---
+// IPR: the Records placeholder. The source records are the project's core infrastructure and
+// stay in the production system; this page says so and links to it.
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/common/PageHead.astro';
+import { site } from '../config';
+
+const links = [
+  { label: 'Archive', href: `${site.recordUrl}/archive.html`, line: 'The preserved record, on the production site.' },
+  { label: 'Corpus search', href: `${site.recordUrl}/corpus.html`, line: 'Search across the preserved record.' },
+  { label: 'Sources', href: `${site.recordUrl}/sources.html`, line: 'The official publishers the desks collect from.' },
+  { label: 'Methodology', href: `${site.recordUrl}/methodology.html`, line: 'How the record is collected, processed and labelled.' },
+];
+---
+
+<Base
+  title="Records"
+  description="Source records are Indo-Pacific Record's core infrastructure. They remain in the production system."
+>
+  <div class="max-w-content mx-auto px-4 pt-10 sm:pt-16">
+    <PageHead
+      kicker="Placeholder"
+      title="Records"
+      lede="Source records are the core of Indo-Pacific Record: official defense and security publication, collected from the institution that published it and kept as published. Every brief on this site stands on them."
+      folio="Prototype · this page does not render records"
+    />
+
+    <section class="mt-14 sm:mt-20" aria-labelledby="where">
+      <h2
+        id="where"
+        class="font-ui border-b border-current pb-2 text-[0.8125rem] font-semibold tracking-[0.12em] uppercase"
+      >
+        Where the records live
+      </h2>
+      <div class="article-body mt-7">
+        <p>
+          The records are held in the project's record database and rendered by the existing
+          production pipeline. This publication shell does not copy, re-index or re-render them.
+          Doing so would create a second version of the record that could drift from the first.
+        </p>
+        <p>
+          In a later phase a record page here would resolve a brief's source citation to its
+          production record by record id. Until then, the rail beside each prototype brief marks
+          its source slots as placeholders.
+        </p>
+      </div>
+      <ul class="mt-8">
+        {links.map((link) => (
+          <li class="border-border border-b py-4 first:pt-0">
+            <a class="font-headline hover:text-primary text-lg font-bold no-underline" href={link.href}>
+              {link.label} ↗
+            </a>
+            <p class="text-muted mt-1 text-[0.9375rem]">{link.line}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>

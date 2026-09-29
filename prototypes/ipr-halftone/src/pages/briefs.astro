@@ -1,0 +1,31 @@
+---
+// IPR: the Briefs index. Every brief and report across the desks, newest first. Indo-Pacific
+// Record Briefs is the analytical layer; in this prototype every entry is sample content.
+import Base from '../layouts/Base.astro';
+import Card from '../components/article/Card.astro';
+import PageHead from '../components/common/PageHead.astro';
+import { getArticles, presentAll } from '../lib/content';
+
+const items = await presentAll(await getArticles());
+---
+
+<Base
+  title="Briefs"
+  description="Indo-Pacific Record Briefs: human-controlled analysis, each claim traced to a preserved official record."
+>
+  <div class="max-w-article mx-auto px-4 pt-10 sm:pt-16">
+    <PageHead
+      kicker="Indo-Pacific Record Briefs"
+      title="Briefs"
+      lede="Each brief begins with a concrete development and compares how the relevant institutions officially describe or respond to it. Every claim traces to a preserved record, and inference is labelled as analyst judgment."
+      folio="Prototype · every entry below is sample content, not a published brief"
+    />
+    <ol class="mt-12">
+      {items.map((item) => (
+        <li class="border-border border-b py-7 first:pt-0">
+          <Card item={item} layout="row" />
+        </li>
+      ))}
+    </ol>
+  </div>
+</Base>

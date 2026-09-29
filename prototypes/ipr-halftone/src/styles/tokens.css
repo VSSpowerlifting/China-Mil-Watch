@@ -1,0 +1,93 @@
+/*
+  tokens.css -- the design tokens for this theme. These are the defaults;
+  to retheme the site, override any variable in src/styles/theme.css rather
+  than editing this file.
+
+  Colors use light-dark(): the first value applies in light mode, the second
+  in dark mode. Overriding a color with a plain value changes both modes at
+  once; use light-dark(<light>, <dark>) in an override to keep them apart.
+
+  Every color token is checked against WCAG AA by `pnpm check:contrast`.
+  Change a color, run it again.
+*/
+
+:root {
+  /* IPR: Night Desk is the default surface for the analytical layer; light is opt-in. */
+  color-scheme: dark;
+
+  /* Colors */
+  --background: light-dark(#f4f5f2, #0b121c); /* cool ledger paper / Night Desk navy */
+  --surface: light-dark(#e9ece8, #111b28);
+  --foreground: light-dark(#132130, #e3e9ec); /* ink-navy; cool off-white at night */
+  --muted: light-dark(#465463, #95a4af); /* bylines, folios, photo credits */
+  --border: light-dark(#c8cfd2, #22303f); /* hairline rules */
+  --primary: light-dark(#0a6b6a, #45c4bc); /* turquoise signal: kickers, rules, links */
+  --primary-hover: light-dark(#064d4d, #86dcd5);
+  --on-primary: light-dark(#ffffff, #0b121c);
+  --plate: light-dark(
+    #0b121c,
+    #0b121c
+  ); /* cover plates: the scrim floor over photographs. Same in both modes */
+  --on-plate: light-dark(#eef2f3, #eef2f3); /* cover lines set on a plate */
+  --on-plate-muted: light-dark(#b4c1c8, #b4c1c8); /* decks, credits on a plate */
+  --primary-on-plate: light-dark(
+    #5fcfc6,
+    #5fcfc6
+  ); /* the spot ON a plate. Plates are dark in both modes, so the light-mode red never applies there */
+  --focus-ring: var(--primary);
+
+  --font-display: var(--font-heading); /* wordmark + cover lines; set by astro.config fonts */
+
+  /* Layout */
+  --content-width: 42rem; /* article body, about 68ch */
+  --wide-width: 72rem; /* max container */
+  --radius: 0; /* print plates have square corners. Rules, not cards */
+  --rail-width: 15.5rem; /* the article rail, desktop only */
+  /* Body plus rail plus the gutter between them: the width an article page is set to. */
+  --article-width: calc(var(--content-width) + var(--rail-width) + 2.5rem);
+
+  /* Motion */
+  --transition-fast: 120ms ease;
+}
+
+/*
+  Type. The fonts block in astro.config.mjs defines --font-body, --font-heading and --font-mono
+  on :root when webfonts load; these stacks are the fallback. IPR fix: they sit in :where(:root)
+  (zero specificity) so the webfont declarations win whatever order the stylesheets load in.
+  Declared on plain :root, as upstream had them, they came later and masked the webfonts.
+*/
+:where(:root) {
+  --font-body: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-heading: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/*
+  Light-mode values for browsers without light-dark() (Safari < 17.5,
+  Chrome < 123). Must mirror the light values above.
+*/
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    color-scheme: light;
+    --background: #f4f5f2;
+    --surface: #e9ece8;
+    --foreground: #132130;
+    --muted: #465463;
+    --border: #c8cfd2;
+    --primary: #0a6b6a;
+    --primary-hover: #064d4d;
+    --on-primary: #ffffff;
+    --plate: #0b121c;
+    --on-plate: #eef2f3;
+    --on-plate-muted: #b4c1c8;
+    --primary-on-plate: #5fcfc6;
+  }
+}
+
+/* Theme switcher (ThemeToggle.astro). Without an explicit choice the OS decides. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
