@@ -280,6 +280,16 @@ class SourceAdapter(ABC):
     #: Set False by adapters that are documented stubs.
     implemented: bool = True
 
+    #: Days before the target date that the scheduled production pipeline
+    #: asks this adapter to discover, as `CollectionWindow.lookback_days`.
+    #: Zero, a single-day window, is the default and is what every China
+    #: source is handed; their legacy scrapers keep any window they need
+    #: internally (MOD China's seven dates, Xinhua's three). An adapter that
+    #: discovers strictly by the window it is given must set this, or a day
+    #: with no successful production run, and any document listed after the
+    #: date it is stamped with, is never collected at all.
+    production_lookback_days: int = 0
+
     def __init__(self, source) -> None:
         self.source = source            # core.domain.Source
         self.slug = source.slug

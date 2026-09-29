@@ -1,8 +1,11 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Current operational snapshot and handoff. Desk statuses checked 2026-09-25
+**Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
-Production and corpus figures below carry their own measurement dates.**
+Production and corpus figures below carry their own measurement dates. The
+2026-09-28 desk measurements, the Singapore Day-30 packet check and the
+first-brief research packet are in
+`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`.**
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -21,6 +24,7 @@ Durable documents, and what each one governs:
 | `DECISION_LOG.md` | durable decisions that constrain future work |
 | `docs/DESK_STRENGTH_CRITERIA.md` | what a desk must prove before it is called strong |
 | `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` | measured per-desk assessment and source-feasibility evidence |
+| `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions |
 
 ---
 
@@ -61,30 +65,47 @@ for its **sources**.
 | Desk | Status | Public meaning |
 |---|---|---|
 | China | `live` | Collecting daily into the production corpus. The only mature collection. |
-| Singapore | `live` | Promoted 2026-09-21 (DECISION_LOG). One source, MINDEF releases; its 57 promoted records had not been relevance-screened when measured 2026-09-23. |
+| Singapore | `live` | Promoted 2026-09-21 (DECISION_LOG). One source, MINDEF releases. Measured 2026-09-28: 64 records, none analyzed; 14 screened, all rejected by the China-scoped relevance screen; 50 await screening. |
 | Japan | `shadow` | Isolated evaluation. No production records, no public counts. |
-| US Indo-Pacific | `access_blocked` | Declared scope only; `robots.txt` returns 403, so permission cannot be established. |
+| US Indo-Pacific | `access_blocked` | Declared scope only; the command website's `robots.txt` returns 403, so permission cannot be established. A separate DVIDS route runs in shadow only (§5); it is not public coverage. |
 
 The site also publishes the record archive, per-record pages, coverage,
 methodology, and the legacy `/article/<id>.html` compatibility namespace.
 
 ## 3. Data and pipeline condition
 
-Measured 2026-09-25 from the tracked `pla_watch.db` without writing to it:
+Measured 2026-09-28 from a pinned read-only copy of `pla_watch.db` as
+committed by `d17646aef` (sha256 `42f4e5a9…b501c`):
 
-* **4,625 stored records**, 4,625 distinct URLs, max record id 4,631.
-  The latest source-stated publication date is 2026-09-25.
-* **149 scrape runs.** Run 149 completed 2026-09-25 17:55 UTC with status
-  `completed`: 48 scraped / 19 new / 26 analyzed. Its two analysis errors
-  remain in the run record.
-* Records by source: `pla_daily` 3,782; `china_mil_online` 491;
-  `global_times_mil` 134; `mod_china` 103;
-  `sg_mindef_releases` 60; `xinhua_mil` 55. Xinhua is implemented and returned
-  an `ok` result in run 149; the 2026-09-16 feasibility note in
-  `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` describes an earlier state.
-* **689 records await relevance screening**; 8 passed screening without a
-  completed analysis. **56 records hold an empty body capture.** These counts
-  have different definitions from the older empty-or-near-empty review in §6.
+* **4,715 stored records**, 4,715 distinct URLs, max record id 4,721.
+  The latest source-stated publication date is 2026-09-28.
+* **152 scrape runs.** Run 152 completed 2026-09-28 20:29 UTC with status
+  `completed`: 49 scraped / 38 new / 23 analyzed. Its four analysis errors
+  remain in the run record. Run 146 (2026-09-22) is `degraded`: Singapore
+  collection crashed (fixed by #69).
+* Records by source: `pla_daily` 3,845; `china_mil_online` 498;
+  `global_times_mil` 140; `mod_china` 105; `sg_mindef_releases` 64;
+  `xinhua_mil` 63. Xinhua has returned `ok` since run 141 (2026-09-17);
+  61 of its 63 records were rejected by the relevance screen.
+* **616 records await relevance screening** (China desk 566, Singapore 50);
+  10 passed screening without a completed analysis. **58 records hold an
+  empty body capture.** Processing states: 7 `paused`
+  (`retry_budget_exhausted`), 5 `retriable`, 0 `terminal`.
+* **Collection continuity, 2026-09-14 → 09-27:** 11 of 14 New York days had
+  an admitted daily run. On 09-15, 09-18 and 09-19 every window failed in
+  "Run offline test suite", before collection. 09-18/19 were recovered by
+  PR #66. **09-15 was not recovered:** `pla_daily`, `china_mil_online` and
+  `global_times_mil` hold no records dated 09-15. Health and liveness reports
+  measure stored records and do not see a day that never reached collection.
+* **Singapore's production window is fixed in source (2026-09-28).** A
+  scheduled run used to give every adapter a single-day window. Singapore
+  therefore lost `22sep26-nr` and `22sep26-speech` after run 146's crash, and
+  `23sep26-mq`, which was listed two days late. It is now handed seven slug
+  dates (`production_lookback_days = 6`), and China's windows are unchanged.
+  One authorized run after merge,
+  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`,
+  has the window 09-22 → 09-28 and recovers all three; the held
+  `16sep26-speech` stays out.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
@@ -104,6 +125,11 @@ disclosed, and never backfilled.
   and points to continuing Briefs; public `output/` still requires a separate
   authorized render and deploy. `scripts/generate_pla_watch.py` authors no
   new issue. The owner must decide how to handle the w/e 2026-08-22 gap.
+  First-brief candidate questions, record-level evidence and the remaining
+  human gates are in `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`
+  §4–5. The recommended candidate is Exercise Maritime Cooperation 2026 (China
+  + Singapore, 2026-09-03 → 09-14). Nothing there is a draft, thesis or
+  approval.
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
   published.** No. 14 is publicly served, with its status unreconciled (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
@@ -165,6 +191,18 @@ records 33 elapsed shadow days and explicitly proceeds with promotion after
 the Day 7 and Day 14 reviews, without a separate Day 30 review. The two
 completed checkpoints do not establish a qualification claim.
 
+**The Day 30 packet was verified on 2026-09-28 and has not been reviewed.**
+- Built formally from state commit `be52cc125` (32 ledgers, latest
+  `shadow_day` 30), it reproduces the recorded state tree `ad97f27d…`
+  exactly: 59 records, `publishable: yes`.
+- The recorded package id `4ad9a838…` cannot be regenerated, because its
+  `--as-of` and `--state-ref` were not recorded. A review binds to the packet
+  it actually builds.
+- The packet shows pre-overlay stored bytes, so the dispositioned entity
+  damage will be visible to the reviewer.
+- The exact invocations, scope options (59 complete, or 32 since Day 14) and
+  owner steps are in `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` §3.
+
 Both reviews disposed of the same class of finding — a scheduled run delayed
 across UTC midnight was stamped with its execution date, leaving its nominal
 day with no ledger (2026-08-26 and 2026-08-31).
@@ -191,15 +229,22 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
-**Japan MOD** — state branch `shadow/jp-mod`. Day zero
-2026-08-27T02:14:38Z. The 2026-09-03 run recorded `shadow_day` **6**, result
-`ok_all_duplicates`, health **`partial`**; 9 ledger entries. **Access-constrained:**
-RSS discovery works and PDF documents are retrieved in full, but HTML documents
-on the same host are returned behind an interactive challenge — 35 of 39
-selected items were challenged in that run. Challenged items are stored as
-titled, dated discovery records with no body and nothing inferred. The
-challenge is **never** to be bypassed; resolving this means requesting an
-official route.
+**Japan MOD** — state branch `shadow/jp-mod` (`84edebfa6`, measured
+2026-09-28). Day zero 2026-08-27T02:14:38Z.
+- 34 ledgers. Every recent run is `ok_all_duplicates`, health **`partial`**.
+- **Access-constrained, and discovery-only in practice.** Only 4 bodies have
+  ever been stored, all PDFs dated 08-27/08-28. 84 discovery records dated
+  08-27 → 09-17 have no body. HTML documents on the same host are returned
+  behind an interactive challenge.
+- Challenged items are stored as titled, dated discovery records, with no body
+  and nothing inferred. The challenge is **never** to be bypassed; resolving
+  this means requesting an official route.
+- **A selection defect hides new items.** Selection is capped at 40 per source,
+  oldest first, so the same challenged items and PDFs are re-selected every
+  run. Newer items are deferred and never recorded: 42 were deferred on 09-27,
+  and nothing published since about 09-18 has been captured.
+  `ok_all_duplicates` does not show this.
+- No checkpoint review is on record.
 
 **Every Japan ledger written so far carries an execution date, not a slot
 date.** Japan's cron sits at 22:40 UTC and Actions has started every scheduled
@@ -219,6 +264,21 @@ Two consequences of the source fix, both expected and neither retroactive:
   `finished_utc` against day zero, never from `target_date`, so no day count
   moves.
 
+**US Indo-Pacific, DVIDS route** — state branch `shadow/us-indopacom`
+(`a36f67aee`), `us_shadow.yml`, daily at 08:40 UTC. This route is distinct
+from the `access_blocked` command website and is not public coverage.
+- One successful manual dispatch: run 35476931301, 2026-09-19, 40 records
+  inserted.
+- Then **9 consecutive scheduled failures**, target dates 09-20 → 09-28. All
+  were `listing_failure`, caused by robots.txt returning HTTP 502/504, so
+  permission was undetermined. The cause is not established and was not
+  probed.
+
+**Failed shadow runs leave no ledger on the state branch.** The collectors exit
+non-zero when health is not `ok`, and every shadow workflow persists state
+only on success, so a failed run's ledger survives only as a 90-day Actions
+artifact. This applies to all three shadow desks.
+
 ## 6. Known technical debt
 
 * **Governed validator baseline: exactly 10 warnings.** Three
@@ -227,12 +287,25 @@ Two consequences of the source fix, both expected and neither retroactive:
   warning, three missing LinkedIn files (eds. 1–3), and one cadence gap
   (2026-07-18 → 2026-08-01). Any **new** warning must be explained here before
   it is accepted; none is ever fixed by invention.
-* **No terminal processing state.** A record with an empty body that passed
-  relevance is retried indefinitely. 3 records are in this state now. There is
-  no retry budget and no poison-record disposition.
-* **903 unscreened records** outside any published window. Not urgent — no
-  edition cites them — but this is the defect class that previously stranded
-  material. Drain only in scoped, windowed chunks.
+* **Processing states exist; paused records are not shown separately in
+  public.**
+  - The retry budget (5) and the `retriable`/`paused`/`terminal` states are
+    implemented (`core/processing_state.py`, 2026-09-16).
+  - `terminal` is reachable only through an adapter's content verdict, which
+    only `global_times_mil` and `xinhua_mil` supply.
+  - Measured 2026-09-28: 7 paused, 5 retriable, 0 terminal.
+  - Publicly, paused records are shown as `analysis_incomplete`.
+* **616 unscreened records** (China desk 566, Singapore 50). None of the China
+  ones is dated in 2026-09-14 → 09-27. This is not urgent, since no edition
+  cites them, but it is the defect class that previously stranded material.
+  Drain only in scoped, windowed chunks.
+* **The relevance screen is China-scoped.** Its prompt and keyword prefilter
+  assume Chinese military material, so every Singapore record screened so far
+  (14 of 14) was rejected. Whether and how Singapore is screened is an owner
+  decision.
+* **A pre-collection test failure cancels the day's collection.**
+  `daily_update.yml` runs the offline suite before collecting. That cost
+  09-15, 09-18 and 09-19, and 09-15 was not recovered.
 * **Rendering and preservation depend on LLM availability.** An analysis-stage
   billing or API failure has repeatedly degraded runs; collection now survives
   it, but the coupling is not fully removed.
@@ -376,12 +449,21 @@ deploy gate's governed baseline is 10 warnings.
 
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
-1. Restore the human analytical publication cadence.
-2. Close Singapore's unrecorded Day 30 human-review evidence gap.
-3. Scoped screening/backfill for publication-ready windows only.
-4. Terminal processing states and retry budgets for poison and empty-body
-   records.
-5. An explicit continue/pause decision on the Japan shadow desk.
+1. Restore the human analytical publication cadence. The first brief is
+   gated on the No. 14 ruling for its number and approval. Candidate
+   questions are prepared (`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`).
+2. Close Singapore's unrecorded Day 30 human-review evidence gap. The packet
+   is verified; the human review is not done.
+3. Scoped screening/backfill for publication-ready windows only, including a
+   decision on Singapore's screening scope.
+4. Collection continuity:
+   - recover or disclose the 09-15 China gap;
+   - recover the three missed Singapore releases with one authorized run;
+   - decide whether collection should depend on the pre-collection test
+     gate.
+5. An explicit continue/pause decision on the Japan shadow desk, and its
+   selection defect. Diagnose the DVIDS shadow failures without probing
+   around them.
 
 Further geographic promotion remains gated by research and review. Frontend
 work may proceed when explicitly authorized without changing desk status or

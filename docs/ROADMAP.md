@@ -60,6 +60,22 @@ establish that Singapore is qualified.
 Procedure is in `docs/SHADOW_REVIEW.md`. An unfilled or computed packet is not
 evidence of a completed human review.
 
+**Packet verified 2026-09-28; review not done.**
+- State commit `be52cc125` (32 ledgers, `shadow_day` 30) reproduces the
+  recorded state tree `ad97f27d…`: 59 records, `publishable: yes`.
+- The package id depends on `--as-of`, `--state-ref` and scope. The recorded
+  `4ad9a838…` did not record them, so the review binds to the packet it
+  actually builds, dated on the day of review.
+- What remains is the owner's:
+  - choose a scope: the complete corpus (59), or the queue since the Day 14
+    ledger (32);
+  - review against the live pages;
+  - sign;
+  - publish;
+  - record.
+- The invocations and the known pre-overlay and drift findings are in
+  `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` §3.
+
 **Being late does not close the checkpoint.** A Day 7 review that was not done
 on day 7 can still be completed retrospectively, against the exact historical
 state commit that the branch held at that checkpoint — that is what
@@ -77,41 +93,84 @@ nothing on its own.
 
 ### 3. Scoped screening and backfill for publication-ready windows
 
-903 records have never been relevance-screened. Draining the whole backlog is
-not the goal and never was — it is spend against material no edition cites.
+616 records have never been relevance-screened (measured 2026-09-28: China
+desk 566, Singapore 50). Draining the whole backlog is not the goal and never
+was — it is spend against material no edition cites.
 
 Screen **only** the window an edition will draw on, using
 `backfill_unscored.py --since X --until Y`, sequentially, never concurrently.
 Re-measure before estimating; pass rates move. This unblocks priority 1 and is
 sequenced behind it for that reason.
 
-### 4. Terminal processing states and retry budgets
+**Singapore needs a screening-scope decision first.** The relevance prompt and
+keyword prefilter are China-scoped: all 14 Singapore records screened so far
+were rejected, so screening Singapore's backlog as things stand would spend
+money to mark it not selected. A brief can cite `awaiting_screening` records
+as they are, since the brief contract carries each record's processing state
+and never filters on it.
 
-There is no terminal state for a record that cannot be processed. 48 records
-hold an empty body; 3 of those passed relevance and are unanalyzed, so they
-re-enter the analysis queue on every run and can never clear. A body that was
-never captured at scrape time is a collection defect, and no number of
-translation retries will fix it.
+### 4. Processing states and collection continuity
 
-What is needed: an explicit terminal disposition (recorded, not deleted, and
-distinguishable from "pending"), a bounded retry budget per record, and a count
-of terminal records on the coverage surface so the state is visible rather than
-silently absorbed. Empty-body records are also a scoring-path question — an
-article that passed relevance on its title alone should be identifiable.
+**Processing states are implemented** (`core/processing_state.py`,
+2026-09-16):
+- a retry budget of 5;
+- `retriable`, `paused` and `terminal` dispositions, recorded and never deleted.
+
+`terminal` is reachable only through an adapter's content verdict, currently
+from `global_times_mil` and `xinhua_mil`. Measured 2026-09-28: 7 paused, 5
+retriable, 0 terminal.
+
+**Remaining:**
+- Publicly, paused records are shown as `analysis_incomplete`. Whether the
+  coverage surface should show them separately is still open.
+- An article that passed relevance on its title alone should still be
+  identifiable.
+
+**Collection continuity is the newer gap.**
+- The daily workflow runs the offline test suite before collecting, so a test
+  failure cancels that day's collection. That happened on 09-15, 09-18 and
+  09-19. 09-15 is unrecovered for `pla_daily`, `china_mil_online` and
+  `global_times_mil`.
+- Health and liveness reports read stored records, so they cannot see a day
+  that never reached collection.
+- Singapore's single-day production window was fixed on 2026-09-28. The
+  three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) can
+  be recovered by one authorized run after merge:
+  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`.
+- To decide:
+  - disclose or recover 09-15;
+  - whether collection should depend on the test gate.
 
 ### 5. Japan shadow: an explicit continue or pause decision
 
-Japan is at shadow day 5 with health `partial`. RSS discovery works and PDF
-documents retrieve in full, but HTML documents on the same host are returned
-behind an interactive challenge — 28 of 32 selected items in the most recent
-run. The challenge is never to be bypassed, so the ceiling on this desk is set
-by the ministry, not by engineering.
+**Measured 2026-09-28.** Japan has 34 ledgers, health `partial` on every
+recent run.
+- Only 4 bodies have ever been stored, all PDFs.
+- HTML documents on the same host are returned behind an interactive
+  challenge. The challenge is never to be bypassed, so the ceiling on this
+  desk is set by the ministry, not by engineering.
+- Oldest-first selection under a 40-item cap re-selects the same challenged
+  items every run. Items published since about 09-18 are deferred and never
+  recorded, and the `ok_all_duplicates` label hides it. If the desk continues,
+  fix that and report the deferral and challenge counts, without any change to
+  access.
 
 The decision to take, and to record in `DECISION_LOG.md`: **continue** shadow
 collection as a discovery-only record with retrieval openly reported as
 partial, **pause** it pending a request for an official route, or **stop** it.
 Letting it run indefinitely without a ruling is the option to avoid — it
 accumulates evaluation days that cannot support a promotion argument.
+
+**US DVIDS shadow, same class of decision.**
+- The DVIDS route is separate from the `access_blocked` command website.
+- It has failed every scheduled run since 2026-09-20, all robots.txt 5xx, so
+  permission was undetermined. Its only success was a manual dispatch on
+  09-19.
+- The cause is not established. Any diagnosis is a single identified request,
+  never a workaround.
+- On every shadow desk, a failed run's ledger survives only as a 90-day
+  artifact, because state is persisted only on success. Whether to persist
+  failed-run ledgers is a decision for all three workflows together.
 
 ### 6. Decouple preservation and rendering from LLM availability
 

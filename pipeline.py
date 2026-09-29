@@ -134,6 +134,22 @@ SCRAPERS = _SourceSlugView()
 ATOMIC_BATCH_SLUGS = frozenset({"sg_mindef_releases"})
 
 
+def production_window(adapter, target_date: date) -> CollectionWindow:
+    """
+    The window a scheduled run hands one adapter: its target date plus the
+    adapter's own `production_lookback_days` (zero unless it declares more).
+
+    One window for every source used to be built here with no lookback. For
+    Singapore, whose adapter discovers strictly by the window it is given,
+    that meant a release was collectable on its slug date and never again, so
+    the first week of production lost three releases the shadow collector
+    still holds (see `SGMindefAdapter.production_lookback_days`).
+    """
+    return CollectionWindow(
+        target_date=target_date,
+        lookback_days=getattr(adapter, "production_lookback_days", 0))
+
+
 def _store_atomic_batches(kw_passed: list, kw_rejected: list, run_id,
                           atomic_slugs=ATOMIC_BATCH_SLUGS):
     """
@@ -215,7 +231,6 @@ def run(
     # recorded per source in `source_run_results` and reported before the run
     # closes.
     registry = get_registry()
-    window = CollectionWindow(target_date=target_date)
     source_results = []
 
     for slug in sources:
@@ -233,7 +248,8 @@ def run(
 
         try:
             adapter = registry.get_adapter(slug)
-            result, documents = adapter.collect(window)
+            result, documents = adapter.collect(
+                production_window(adapter, target_date))
         except Exception as exc:
             # An adapter that crashes must not take the run down with it: the
             # other sources' collection is still worth keeping.

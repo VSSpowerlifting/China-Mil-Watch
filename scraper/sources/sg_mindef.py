@@ -342,6 +342,21 @@ class SGMindefAdapter(SourceAdapter):
 
     implemented = True
 
+    #: The scheduled production window: the target date and the six slug
+    #: dates before it, seven in all -- MOD China's span, for MOD China's
+    #: reason. With no window, production lost three releases in its first
+    #: week that the shadow collector holds (compared 2026-09-28):
+    #: `22sep26-nr` and `22sep26-speech`, when the 2026-09-22 run's Singapore
+    #: collection crashed and the next run looked only at 2026-09-23; and
+    #: `23sep26-mq`, which the sitemap first listed two days after its slug
+    #: date (shadow run 36202893583, 2026-09-25). Across the 37 releases the
+    #: shadow collector saw published after it started, that is the longest
+    #: listing lag observed. Seven dates covers it and a short run of failed
+    #: days. It is not an outage remedy: a longer gap is recovered once, on
+    #: purpose, with `pipeline.py --date`. The shadow collector passes its
+    #: own window and is unaffected.
+    production_lookback_days = 6
+
     def __init__(self, source, session=None, cap: int = 40,
                  sleeper=time.sleep) -> None:
         super().__init__(source)
@@ -554,10 +569,12 @@ class SGMindefAdapter(SourceAdapter):
         an extraction failure, or (defensively, on top of `discover()`'s own
         filter) a held URL somehow present in the result -- withholds the
         WHOLE batch rather than keeping the records that happened to succeed.
-        Nothing already published is touched, and nothing is lost long-term: a
-        withheld record is simply rediscovered and retried on the next
-        scheduled run, exactly as an adapter crash already was before this
-        change existed.
+        Nothing already published is touched. A withheld record is
+        rediscovered and retried by every later scheduled run whose window
+        still holds its slug date -- seven runs, under
+        `production_lookback_days`. Before that window existed the next run
+        looked only at its own date, so a withheld or crashed day was lost to
+        production outright, which is what happened on 2026-09-22.
         """
         started = _now()
         result = SourceRunResult(
