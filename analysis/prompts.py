@@ -97,6 +97,79 @@ Body:
     return [{"role": "user", "content": user_content}]
 
 
+# ── Task 1, Singapore Desk: relevance against the desk's declared scope ──────
+# The China prompt above asks whether a Chinese-language article covers the PLA,
+# PAP, CCG or Chinese defence industry. Put to an English MINDEF release, that
+# question can only answer "no" — every Singapore record ever screened was
+# rejected with reasoning of the form "concerns the Singapore Armed Forces, not
+# Chinese military". These two builders ask the desk's own question instead.
+# Neither is used by a China record: processing.screening routes by desk, and
+# SYSTEM_PROMPT and build_relevance_messages are unchanged.
+
+SINGAPORE_RELEVANCE_PROMPT_VERSION = "sg-relevance-v1"
+
+
+def build_singapore_system_prompt(declared_scope: str) -> str:
+    """System prompt for Singapore Desk screening.
+
+    `declared_scope` is the desk's scope sentence from desks/registry.json,
+    passed in rather than restated here so the prompt cannot drift from it.
+    """
+    return (
+        "You screen official releases for the Singapore Desk of the Indo-Pacific "
+        "Record, an independent, source-grounded record of official defence and "
+        "security publication. The desk's declared scope is: "
+        f"{declared_scope}\n\n"
+        "Judge each release on its own text. Write with precision. Do not "
+        "editorialize beyond what the release itself states."
+    )
+
+
+def build_singapore_relevance_messages(title: str, body: str) -> list[dict]:
+    """Score how substantively a MINDEF release concerns defence or security."""
+    user_content = f"""\
+You will receive an English-language official release published by Singapore's \
+Ministry of Defence (MINDEF). Every release is inside the desk's collection scope \
+because MINDEF published it. Score how substantively this release concerns defence \
+or security matters, on a scale from 0.0 to 1.0.
+
+Defence or security matters here are: the Singapore Armed Forces and MINDEF's \
+defence agencies — their operations, exercises, training, readiness, personnel, \
+discipline, capability development and procurement; national service; Singapore's \
+defence policy; and Singapore's defence relations with other states and armed \
+forces, including visits, dialogues, agreements and combined exercises.
+
+Scoring rubric:
+
+0.9 to 1.0: The release is centrally about such matters and contains specific facts: \
+named units, platforms, exercises, officials, counterparts, dates, locations or \
+decisions. A minister's speech or written parliamentary reply qualifies at this \
+level when it is substantively about defence.
+
+0.6 to 0.8: Defence or security is the main subject, but the release is largely \
+ceremonial, commemorative or general rather than new information.
+
+0.3 to 0.5: Defence or security content is present but secondary to the release's \
+main subject.
+
+0.0 to 0.2: The release is not about defence or security in any meaningful way, \
+even though MINDEF published it (for example, a minister's speech on another \
+portfolio at a non-defence event).
+
+Do not score a release lower because it does not concern China or the People's \
+Liberation Army. Chinese involvement is neither required nor a reason to score higher.
+
+Return only the raw JSON object with two fields: "score" (float) and "reasoning" (one \
+sentence explaining the score). Do not wrap the response in markdown code fences or any \
+other formatting. Do not include any other text.
+
+Title: {title}
+
+Body:
+{body}"""
+    return [{"role": "user", "content": user_content}]
+
+
 # ── Task 2: Translation ───────────────────────────────────────────────────────
 
 TRANSLATION_SCHEMA: dict[str, Any] = {

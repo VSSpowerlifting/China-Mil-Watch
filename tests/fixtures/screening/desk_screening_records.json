@@ -1,0 +1,104 @@
+{
+ "_comment": [
+  "Excerpts of stored records from pla_watch.db (d17646aef), cut at 900 characters.",
+  "Labels were assigned by reading the stored text, not from any model verdict.",
+  "stored_* fields record what the China-scoped screen wrote for each record."
+ ],
+ "singapore": [
+  {
+   "id": 4466,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/",
+   "title_original": "The Republic of Singapore Navy and People’s Liberation Army (Navy) Commence Bilateral Maritime Exercise",
+   "text_original": "5 September 2026 The Republic of Singapore Navy (RSN) is in Zhanjiang, China from 5 to 9 September 2026 to participate in bilateral Exercise Maritime Cooperation (XMC) with the People’s Liberation Army (Navy) [PLA Navy]. Deputy Fleet Commander of the Republic of Singapore Navy, Colonel (COL) Ng Yen Meng (front row, third from left) and People's Liberation Army (Navy) Deputy Chief of Staff of Southern Theatre Command Navy, Rear Admiral Xia Ziming (front row, third from right) co-officiated the Opening Ceremony of Exercise Maritime Cooperation (XMC) 2026. Ng Yen Meng giving a speech at the Opening Ceremony of XMC 2026. The Republic of Singapore Navy (RSN) is in Zhanjiang, China from 5 to 9 September 2026 to participate in bilateral Exercise Maritime Cooperation (XMC) with the People’s Liberation Army (Navy) [PLA Navy]. RSN’s Deputy Fleet Commander Colonel Ng Yen Meng and PLA (Navy)’s South",
+   "label": "relevant",
+   "label_basis": "RSN and PLA(N) bilateral exercise: named navies, exercise, dates",
+   "stored_passed_relevance": null,
+   "stored_reasoning": null
+  },
+  {
+   "id": 4472,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/9sep26-nr/",
+   "title_original": "The Republic of Singapore Navy Successfully Concludes Exercise Maritime Cooperation with People’s Liberation Army (Navy)",
+   "text_original": "9 September 2026 The Republic of Singapore Navy (RSN) and the People’s Liberation Army (Navy) [PLA (Navy)] concluded the fifth edition of Exercise Maritime Cooperation (XMC) earlier today. Personnel from the Republic of Singapore Navy (RSN) RSS Steadfast (STF) with personnel from the People's Liberation Army (Navy)'s PLANS Dali during the planning and coordination meeting. RSS Steadfast and PLANS Dali conducting manoeuvring serials. An RSN personnel on the lookout for a simulated casualty during a search-and-rescue exercise. STF conducting the farewell sailpast with PLANS Dali. The Republic of Singapore Navy (RSN) and the People’s Liberation Army (Navy) [PLA (Navy)] concluded the fifth edition of Exercise Maritime Cooperation (XMC) earlier today. Held from 5 to 9 September 2026 in Zhanjiang, China, the exercise saw the participation of the RSN’s Formidable -class frigate RSS Steadfast , ",
+   "label": "relevant",
+   "label_basis": "conclusion of the same exercise: named ships and activities",
+   "stored_passed_relevance": null,
+   "stored_reasoning": null
+  },
+  {
+   "id": 4425,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/14sep26-nr/",
+   "title_original": "Minister for Defence to Visit China for the 13th Beijing Xiangshan Forum",
+   "text_original": "14 September 2026 Minister for Defence Chan Chun Sing will be visiting China from 15 to 17 September 2026 at the invitation of China Minister for National Defense Admiral (ADM) Dong Jun to attend the 13th Beijing Xiangshan Forum. Minister for Defence Chan Chun Sing will be visiting China from 15 to 17 September 2026 at the invitation of China Minister for National Defense Admiral (ADM) Dong Jun to attend the 13th Beijing Xiangshan Forum. As part of his visit, Minister Chan will meet ADM Dong and other senior Chinese and People’s Liberation Army (PLA) leaders, and speak at the 13th Beijing Xiangshan Forum. The Beijing Xiangshan Forum, co-hosted by the China Association for Military Sciences and the China Institute for International Strategic Studies, brings together high-level defence, military and foreign affairs leaders from around the world to discuss regional and international securit",
+   "label": "relevant",
+   "label_basis": "Minister for Defence visit to China for the Xiangshan Forum",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "Article is primarily an announcement of a diplomatic visit and forum attendance; while it names PLA leadership (ADM Dong Jun) and mentions the PLA, it contains no substantive information about military activities, decisions, developments, or security issues—only that a defense minister will attend a conference and meet with Chinese officials."
+  },
+  {
+   "id": 4426,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/16sep26-nr/",
+   "title_original": "Minister for Defence Speaks at 13th Beijing Xiangshan Forum and Meets China Minister for National Defense",
+   "text_original": "16 September 2026 Minister for Defence Chan Chun Sing attended the opening ceremony of the 13th Beijing Xiangshan Forum this morning and spoke at the first plenary session titled “International Order and Strategic Stability”. Minister for Defence Chan Chun Sing speaking at the first plenary session of the 13th Beijing Xiangshan Forum titled “International Order and Strategic Stability”. Minister Chan (left) met with China Minister of National Defense Admiral (ADM) Dong Jun (right). Minister Chan met with China Minister of National Defense Admiral (ADM) Dong Jun. Minister Chan at a dialogue with students from NDU. Minister for Defence Chan Chun Sing attended the opening ceremony of the 13th Beijing Xiangshan Forum this morning and spoke at the first plenary session titled “International Order and Strategic Stability”. In his speech, Minister Chan highlighted that growing technological com",
+   "label": "relevant",
+   "label_basis": "Minister for Defence speech and meeting with China's defence minister",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "Article is primarily about a Singapore defense minister's diplomatic visit and speeches at a Chinese forum; while it mentions PLA institutions (National Defense University, Strategic Support Force context) and names one PLA official (VADM Xia Zhihe), the substantive content focuses on bilateral relations, diplomatic messaging, and regional security dialogue rather than PLA activities, decisions, or military developments."
+  },
+  {
+   "id": 4721,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/28sep26-mq/",
+   "title_original": "Media Reply on 1SG N M Pranesh",
+   "text_original": "28 September 2026 The Singapore Armed Forces (SAF) holds its service personnel to high standards of discipline and integrity. Service personnel who commit offences will be dealt with in accordance with the law. 1SG N M Pranesh was convicted of offences committed before his enlistment. He had been suspended from all duties following his arrest in 2025. Following his conviction and sentencing, the SAF will initiate further action against him, which may include discharging him from service. Back to top",
+   "label": "relevant",
+   "label_basis": "SAF discipline: conviction and discharge action against a serviceman",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "failed keyword pre-filter"
+  },
+  {
+   "id": 4631,
+   "source_slug": "sg_mindef_releases",
+   "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/25sep26-speech/",
+   "title_original": "Speech by Coordinating Minister for Public Services and Minister for Defence Chan Chun Sing at St Luke’s Hospital’s 30th Anniversary Gala Dinner on 25 September 2026 at Shangri-La Singapore",
+   "text_original": "25 September 2026 Good evening, everyone. Congratulations to all for your 30th anniversary, 30 years of service. Tonight, the real Guests-of-Honour are all of you – the donors, the staff and the people who have contributed quietly behind-the-scenes. So, tonight I want to honour all of you. My parliamentary colleagues and I are here to honour you rather than for you to honour us. So, congratulations and thank you to all the Guests-of-Honour for your years of contributions and service, and a special shout out to the long-serving staff from St Luke's as well. I must congratulate you for your prescient foresight. You have chosen to talk about ageing on the day the population in brief was published, which double or triple confirms that Singapore has become a super-aged society. So, well done to the organisers for such great foresight. Now, jokes aside, this presents us both challenges and opp",
+   "label": "irrelevant",
+   "label_basis": "minister's speech at a hospital's 30th anniversary on ageing; no defence content",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "This is a speech by a Singapore government official about healthcare and aging policy; it contains no substantive coverage of Chinese military, security, or defense industry topics."
+  }
+ ],
+ "china": [
+  {
+   "id": 4708,
+   "source_slug": "pla_daily",
+   "url": "http://www.81.cn/yw_208727/16489825.html",
+   "title_original": "探寻西藏军区某边防团一名党员干部忠诚坚守的心路历程",
+   "text_original": "记者探寻西藏军区某边防团一名党员干部忠诚坚守的心路历程—— 风雪高原，像塔黄一样扎根 ■陈玮靖 解放军报记者 郭丰宽 鲁爱胜与塔黄合影。 鲁爱胜提供 “我撤回自己的转业申请。”初秋清晨，西藏军区某边防团少校参谋鲁爱胜急匆匆走进机关业务部门，声音有些颤抖，“我要继续留队服役，像驻地生长的塔黄一样，一辈子扎在高原，守好自己的战位。” 塔黄，是鲁爱胜所在部队驻地特有的一种高大草本植物，因开花时形似金色宝塔而得名。它生长在海拔4000多米的高山地区，一生只开一次花，用数十年积累的养分只为一次绽放，故被称为高山上的“温室植物”。 那年，鲁爱胜从国防科技大学毕业，被分配到西藏军区某边防团。和许多军校生一样，鲁爱胜毕业时，心里也燃着一团火：毕业后，去祖国最需要的地方建功立业。 可真到了西藏，他心中的那团火却慢慢冷却下来—— 雪域高原，风比想象中更硬，氧比想象中更稀薄，家比想象中还远。任排长时，在塌方的道路上背给养；任连长时，在-20℃的夜晚查哨。更让他心酸的是，和家人视频通话时，孩子哭喊着“爸爸你咋老是不回家”。妻子韩婷婷哭诉，自己一个人在山东老家带两个孩子，父母生病住院，连个搭把手的人都没有…… 鲁爱胜忽然感觉，自己兑现了当初卫国戍边的誓言，却对不起自己的家人。干部去留摸底时，他含泪写下转业申请：身体适应欠佳，家庭实际困难，恳请批准转业。 可笔尖压得纸面发凹，心底的苦楚始终没有吐露：“我不是不爱这身军装，我是怕再等下去，妻儿把我从心里……” 他把申请递交后，渐渐变得沉默寡言。 恰在此时，边疆军营开展政治整训。这次整训深入扎实、触及灵魂：动员部署、专题党课、军史研读、撰写对照检查、重温军人誓词。课表上有一行字——“拿先辈照自己，照出差距、照出惭愧、照出方向”。 那天晚上，鲁爱胜重温了十八军进藏的历史。1950年1月，邓小平接见十八军军长张国华，命他率部队挺进西藏。邓小平开门见山地说：“今天谈话凭党性！”张国华的回答干脆利落：“一切听从党安排！”进藏准备期间，张国华只有3岁的女儿不幸病逝，他强忍悲痛，继续投入进藏任务。 这段故事，让鲁爱胜脑子里“轰”的一声。他曾经拿“想娃”当退路，可张",
+   "stored_passed_relevance": 1,
+   "stored_reasoning": "Article is centrally about a PLA officer's decision to remain in service at a Tibet Military Region border defense unit, with named individual (Major Lu Aisheng), specific unit designation, location (4000+ meters elevation), and operational context, but the primary substance is motivational narrative and political education rather than new information about military activities, decisions, or developments."
+  },
+  {
+   "id": 4686,
+   "source_slug": "mod_china",
+   "url": "http://www.mod.gov.cn/gfbw/wzll/hj/16489845.html",
+   "title_original": "甲板上的教育课堂",
+   "text_original": "解放军报讯 记者毕笑天、特约记者王泽洲报道：9月的青岛，人潮涌动，海风裹挟着咸湿的气息拂过奥帆中心码头，北部战区海军在这里组织舰艇开放活动。现场，参观队伍井然有序，老人牵着孩童的手，年轻人举着相机，目光聚焦在两艘国产主战舰艇上。 碧波之上，我国自行研制建造的导弹驱逐舰开封舰、导弹护卫舰临沂舰，按海军最高礼仪悬挂满旗。据介绍，此次活动设置多个体验区域，参观人员可近距离接触海军装备、了解官兵日常。 在海军特色基础课目展示区，国际信号旗语教学台前围满好奇的孩子，官兵手把手教他们识别旗语含义；船艺绳结体验区，几位观众跟着年轻水兵学打绳结；消防战斗服和潜水装具体验区同样排着长队，参观群众轮流穿戴装备并拍照留念。",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "Article is primarily about a public outreach event featuring named PLA Navy vessels (Kaifeng and Linyi) and equipment demonstrations, but focuses on the civilian educational and entertainment aspects of the open-ship activity rather than military operations, capabilities, or developments."
+  },
+  {
+   "id": 4719,
+   "source_slug": "pla_daily",
+   "url": "http://www.81.cn/fyr/16489922.html",
+   "title_original": "外交部：中方愿同美方共同落实好两国元首重要共识",
+   "text_original": "新华社北京9月28日电（记者曹嘉玥、吴梦桐）外交部发言人郭嘉昆28日在例行记者会上说，9月23日至25日，应美国总统特朗普邀请，国家主席习近平成功对美国进行国事访问。两国元首就事关中美关系以及世界和平与发展的重大问题深入交换意见，就共同构建“基于尊重、公平、对等的中美建设性战略稳定关系”等达成一系列重要共识。双方同意相互支持对方办好亚太经合组织（APEC）领导人非正式会议和二十国集团（G20）领导人峰会。 “中方愿同美方共同努力，落实好两国元首重要共识，推动中美关系稳定、健康、可持续发展。”郭嘉昆说。",
+   "stored_passed_relevance": 0,
+   "stored_reasoning": "failed keyword pre-filter"
+  }
+ ]
+}

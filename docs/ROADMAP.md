@@ -102,10 +102,17 @@ Screen **only** the window an edition will draw on, using
 Re-measure before estimating; pass rates move. This unblocks priority 1 and is
 sequenced behind it for that reason.
 
-**Singapore needs a screening-scope decision first.** The relevance prompt and
-keyword prefilter are China-scoped: all 14 Singapore records screened so far
-were rejected, so screening Singapore's backlog as things stand would spend
-money to mark it not selected. A brief can cite `awaiting_screening` records
+**Singapore's screening is repaired in source; it is not yet run.**
+- The old rules were China-scoped, and all 14 screened Singapore records were
+  rejected.
+- Since 2026-09-29, Singapore is judged against its registry scope
+  (`processing/screening.py`).
+- It is held out of the daily queue until the owner rules on three things: the
+  rubric, a reviewed re-screening proposal (64 records, about $0.27 at most),
+  and what analysis follows a pass.
+- See `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md`.
+
+A brief can cite `awaiting_screening` records
 as they are, since the brief contract carries each record's processing state
 and never filters on it.
 
@@ -134,9 +141,13 @@ retriable, 0 terminal.
 - Health and liveness reports read stored records, so they cannot see a day
   that never reached collection.
 - Singapore's single-day production window was fixed on 2026-09-28. The
-  three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) can
-  be recovered by one authorized run after merge:
-  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`.
+  three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) were
+  not recovered.
+  - The authorized 09-28 run was withheld whole by `22sep26-infographic`,
+    whose 178 characters of text are under the adapter's minimum.
+  - `23sep26-mq` should return with the 09-29 schedule.
+  - The two `22sep26` releases need an owner ruling on image-only releases.
+    The options are in the consolidation packet §7.
 - To decide:
   - disclose or recover 09-15;
   - whether collection should depend on the test gate.

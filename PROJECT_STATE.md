@@ -5,7 +5,9 @@ against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
 Production and corpus figures below carry their own measurement dates. The
 2026-09-28 desk measurements, the Singapore Day-30 packet check and the
 first-brief research packet are in
-`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`.**
+`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` (its §7 corrects the
+Singapore recovery claim). The Singapore screening repair and re-screening
+plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md`.**
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -24,7 +26,8 @@ Durable documents, and what each one governs:
 | `DECISION_LOG.md` | durable decisions that constrain future work |
 | `docs/DESK_STRENGTH_CRITERIA.md` | what a desk must prove before it is called strong |
 | `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` | measured per-desk assessment and source-feasibility evidence |
-| `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions |
+| `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions; §7 the failed Singapore recovery |
+| `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` | Singapore screening defect, desk-scoped fix, re-screening plan (ids, cost, review path) |
 
 ---
 
@@ -65,7 +68,7 @@ for its **sources**.
 | Desk | Status | Public meaning |
 |---|---|---|
 | China | `live` | Collecting daily into the production corpus. The only mature collection. |
-| Singapore | `live` | Promoted 2026-09-21 (DECISION_LOG). One source, MINDEF releases. Measured 2026-09-28: 64 records, none analyzed; 14 screened, all rejected by the China-scoped relevance screen; 50 await screening. |
+| Singapore | `live` | Promoted 2026-09-21 (DECISION_LOG). One source, MINDEF releases. Measured 2026-09-28: 64 records, none analyzed; 14 screened, all rejected by the China-scoped relevance screen; 50 await screening. Desk-scoped screening is in source (2026-09-29); Singapore is held out of the daily model queue until the owner rules. |
 | Japan | `shadow` | Isolated evaluation. No production records, no public counts. |
 | US Indo-Pacific | `access_blocked` | Declared scope only; the command website's `robots.txt` returns 403, so permission cannot be established. A separate DVIDS route runs in shadow only (§5); it is not public coverage. |
 
@@ -102,10 +105,14 @@ committed by `d17646aef` (sha256 `42f4e5a9…b501c`):
   therefore lost `22sep26-nr` and `22sep26-speech` after run 146's crash, and
   `23sep26-mq`, which was listed two days late. It is now handed seven slug
   dates (`production_lookback_days = 6`), and China's windows are unchanged.
-  One authorized run after merge,
-  `pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis`,
-  has the window 09-22 → 09-28 and recovers all three; the held
-  `16sep26-speech` stays out.
+* **The authorized recovery run failed (2026-09-29 02:12 UTC) and stored
+  nothing.** Its window (09-22 → 09-28) contains `22sep26-infographic`, which
+  has 178 characters of text. That is under `MIN_BODY_CHARS`, so the
+  all-or-nothing batch was withheld. The local run was not landed.
+  `22sep26-nr` and `22sep26-speech` stay unrecovered pending an owner ruling
+  on image-only releases. `23sep26-mq` should return with the 09-29 scheduled
+  run. The seven-date window means one page that never extracts blocks seven
+  runs, not one. Details and options are in the packet §7.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
@@ -299,10 +306,15 @@ artifact. This applies to all three shadow desks.
   ones is dated in 2026-09-14 → 09-27. This is not urgent, since no edition
   cites them, but it is the defect class that previously stranded material.
   Drain only in scoped, windowed chunks.
-* **The relevance screen is China-scoped.** Its prompt and keyword prefilter
-  assume Chinese military material, so every Singapore record screened so far
-  (14 of 14) was rejected. Whether and how Singapore is screened is an owner
-  decision.
+* **Singapore was screened by China-scoped rules**, and all 14 of its screened
+  records were rejected.
+  - Fixed in source on 2026-09-29 (`processing/screening.py`): Singapore is
+    judged against its registry scope.
+  - Singapore records are held out of the daily queue and
+    `backfill_unscored.py`, because post-relevance analysis is China-only.
+  - No stored verdict changed.
+  - Re-screening the 64 affected records costs about $0.27 at most, and needs
+    authorization plus a human review of the proposal.
 * **A pre-collection test failure cancels the day's collection.**
   `daily_update.yml` runs the offline suite before collecting. That cost
   09-15, 09-18 and 09-19, and 09-15 was not recovered.
@@ -454,11 +466,13 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    questions are prepared (`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`).
 2. Close Singapore's unrecorded Day 30 human-review evidence gap. The packet
    is verified; the human review is not done.
-3. Scoped screening/backfill for publication-ready windows only, including a
-   decision on Singapore's screening scope.
+3. Scoped screening/backfill for publication-ready windows only. For
+   Singapore: rule on the new rubric, authorize and review a re-screening
+   proposal, and decide what analysis follows a Singapore pass.
 4. Collection continuity:
    - recover or disclose the 09-15 China gap;
-   - recover the three missed Singapore releases with one authorized run;
+   - rule on image-only Singapore releases (`22sep26-infographic` blocks any
+     window containing 09-22), then recover `22sep26-nr` and `22sep26-speech`;
    - decide whether collection should depend on the pre-collection test
      gate.
 5. An explicit continue/pause decision on the Japan shadow desk, and its
