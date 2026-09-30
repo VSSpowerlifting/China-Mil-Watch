@@ -1388,7 +1388,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_the_lead_edition_carries_a_byline(self):
         self.assertIn("%s, %s" % (gp.MAINTAINER["name"],
                                   gp.MAINTAINER["role"]),
-                      self.page("index.html"))
+                      self.page("analysis.html"))
 
     # ── Typography ──────────────────────────────────────────────────────
 
@@ -1610,7 +1610,9 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotEqual(n_articles, trail,
                             "the two fields must stay distinguishable")
 
-        html = self.page("index.html")
+        # The lead issue is drawn in the Analysis page's legacy archive
+        # (2026-09-30); the home band no longer draws it.
+        html = self.page("analysis.html")
         self.assertIn("%d articles" % n_articles, html)
         self.assertNotIn("records cited", html)
         self.assertNotIn("%d records" % n_articles, html)
@@ -6664,15 +6666,17 @@ class TestPreviewEditionIdentity(unittest.TestCase):
                     html)
 
     def test_a_historical_lead_keeps_the_legacy_note(self):
-        for page, html in self.leads(13).items():
-            with self.subTest(page=page):
-                self.assertIn("legacy China Desk series", html)
-                self.assertIn(self.HISTORICAL, html)
+        # Since 2026-09-30 the series' lead issue is drawn only in the
+        # Analysis page's legacy archive; the home band leads with Briefs.
+        pages = self.leads(13)
+        self.assertIn("legacy China Desk series", pages["analysis.html"])
+        self.assertIn(self.HISTORICAL, pages["analysis.html"])
+        self.assertNotIn("legacy China Desk series", pages["index.html"])
 
     def test_a_current_retrospective_lead_shows_the_canonical_label(self):
-        for page, html in self.leads(14).items():
-            with self.subTest(page=page):
-                self.assertIn(self.RETRO_LABEL, html)
+        pages = self.leads(14)
+        self.assertIn(self.RETRO_LABEL, pages["analysis.html"])
+        self.assertNotIn(self.RETRO_LABEL, pages["index.html"])
 
     @staticmethod
     def lead_feature(html):

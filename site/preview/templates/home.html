@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% from "_records.html" import lead_record, record_register, records_aside %}
 {% from "_weeks.html" import week_strip %}
-{% from "_plate.html" import edition_plate %}
 {# The opening paints its own ground, so the page opts out of the reading
    column's top padding. #}
 {% block main_class %} class="leads-with-hero"{% endblock %}
@@ -130,10 +129,13 @@
 </section>
 {% endblock %}
 {% block after_content %}
-{# The newest issue in the collection, brief or not; with no brief it is the
-   newest issue published as The PLA Watch. #}
-{% set lead = latest_analysis %}
-{% if lead %}
+{#- The analysis band states the same hierarchy as Analysis. It leads with
+    the current collection, Indo-Pacific Record Briefs: its newest brief, or,
+    with none published, its in-development state. It never leads with
+    `latest_analysis`, which with no brief is the newest issue published as
+    The PLA Watch. Those issues stand beside the lead as the archive they are,
+    in text only: no plate, no issue number, nothing that reads as the lead. -#}
+{% set lead = collection.briefs[0] if collection and collection.briefs else none %}
 <section class="band" aria-labelledby="analysis">
   <div class="wrap section">
     <div class="section-head">
@@ -141,38 +143,38 @@
       <p class="section-more"><a href="analysis.html">All analysis</a></p>
       <p class="section-kicker">Human-controlled, citing the records it rests on. Labeled as interpretation.</p>
     </div>
-    <div class="feature" data-reveal>
+    <div class="feature feature--briefs" data-reveal>
       <div>
-        <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
-        <h3><a href="{{ lead.url }}" rel="noopener">{{ lead.title or lead.slug }}</a></h3>
+        {% if lead %}
+        <p class="briefs-label">{{ collection_name }}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
+        <h3><a href="{{ lead.url }}">{{ lead.title or lead.slug }}</a></h3>
         {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
-        {# `articles` is the sidecar's n_articles: the week's relevance-passing
-           collected articles. It is NOT the count of items the edition cites —
-           that is the source trail, which the plate draws. #}
-        <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.articles is not none %} &middot; {{ lead.articles|count }} articles{% endif %}{% if lead.flagged is not none %} &middot; {{ lead.flagged|count }} model-flagged{% endif %}</p>
+        <p class="byline">{{ lead.author_name }}{% if lead.desks %} · {% for slug in lead.desks %}{% set d = desks.get(slug) %}{{ d.name if d else slug }}{% if not loop.last %}{{ ' and ' if loop.length == 2 else ', ' }}{% endif %}{% endfor %}{% endif %}</p>
         {% if lead.synthetic %}
         <p class="legacy-note">Synthetic test fixture. Not a published brief.</p>
-        {% elif lead.era == 'historical' %}
-        <p class="legacy-note">A legacy China Desk series, published under the
-          predecessor masthead {{ predecessor_name }} and preserved with its
-          original issue numbers, titles and URLs.</p>
-        {% elif lead.is_retrospective %}
-        <p class="legacy-note">{{ lead.retrospective_label }}: prepared
-          after the week it covers, and published under the current masthead.</p>
         {% endif %}
-        <p><a class="btn btn--primary" href="{{ lead.url }}" rel="noopener">Read this {{ 'brief' if lead.series_name == collection_name else 'edition' }}</a></p>
+        <p><a class="btn btn--primary" href="{{ lead.url }}">Read this Brief</a></p>
+        {% else %}
+        <p class="briefs-label">{{ collection_name }}</p>
+        <h3 id="briefs-development">Briefs in development</h3>
+        <p class="dek">{{ collection_name }} is in development, and no brief has been
+          published yet. Draft Briefs are withheld from the public collection until
+          approved.</p>
+        {% endif %}
       </div>
-      {% set plate = edition_plates.get(lead.slug) if edition_plates else none %}
-      {% if plate %}
-      <figure class="plate">
-        {{ edition_plate(plate, 'plate-lead', lead.series_name or predecessor_series) }}
-        <figcaption>One mark per record in this issue's source trail. The tall rust marks are model-flagged: a software triage flag, not the editor's judgment.</figcaption>
-      </figure>
+      {% if editions %}
+      <aside class="band-archive" aria-labelledby="home-archive">
+        <p class="eyebrow"><span class="evidence evidence--analysis">Legacy archive</span></p>
+        <h3 id="home-archive"><a href="pla-watch.html">{{ predecessor_series }}</a></h3>
+        <p>The China Desk's {{ editions|length }} weekly issues, published as
+          {{ predecessor_series }}, remain available as an archive under their
+          original identities and addresses.</p>
+        <p><a href="analysis.html#legacy-archive">Browse the archive</a></p>
+      </aside>
       {% endif %}
     </div>
   </div>
 </section>
-{% endif %}
 
 <div class="wrap">
 <section class="section" aria-labelledby="record-and-analysis">

@@ -477,23 +477,85 @@ class TestSiteBuild(unittest.TestCase):
             with self.subTest(claim=claim):
                 self.assertNotIn(claim, text)
         table = self.page("plain", "analysis.html")
-        collections = table[table.index("<h2>Collections</h2>"):
-                            table.index("<h2>Series</h2>")]
+        collections = table[table.index('<h3 id="collections">Collections</h3>'):
+                            table.index('<h3 id="series">Series</h3>')]
         self.assertIn("In development", collections)
         self.assertIn("Archive", collections)
         self.assertIn('<td data-label="Issues" class="num">0</td>', collections)
 
     def test_analysis_keeps_every_desk_row_and_adds_collections_apart(self):
         html = self.page("plain", "analysis.html")
-        series = html[html.index("<h2>Series</h2>"):html.index("<h2 id=\"every-issue\">")]
-        self.assertLess(html.index("<h2>Collections</h2>"),
-                        html.index("<h2>Series</h2>"))
-        self.assertNotIn("<h2>Collections</h2>", series)
+        start = html.index('<h3 id="series">Series</h3>')
+        series = html[start:html.index("</section>", start)]
+        self.assertLess(html.index('<h3 id="collections">Collections</h3>'), start)
+        self.assertNotIn('<h3 id="collections">', series)
         for desk in load_registry():
             with self.subTest(desk=desk.slug):
                 self.assertIn('<a href="%s">%s</a>' % (desk.route, desk.name),
                               series)
         self.assertEqual(series.count("<tr>") - 1, len(load_registry()))
+
+    def test_with_no_brief_analysis_leads_with_briefs_not_a_legacy_issue(self):
+        # With nothing published, the page opens on the Briefs masthead and
+        # its in-development state. The newest issue of the historical
+        # series is shown only inside the archive that follows.
+        html = self.page("plain", "analysis.html")
+        head = html[html.index('class="band briefs-head"'):
+                    html.index('id="briefs-method"')]
+        self.assertIn('id="briefs-development"', head)
+        self.assertNotIn("the-pla-watch/posts/", head)
+        self.assertNotIn("The PLA Watch", head)
+        self.assertNotIn('class="feature', head)
+        archive = html.index('id="legacy-archive"')
+        self.assertLess(html.index('id="briefs-development"'), archive)
+        self.assertLess(archive, html.index("the-pla-watch/posts/"))
+        self.assertNotIn('id="briefs-published"', html)
+
+    def test_a_brief_leads_and_the_archive_follows_without_it(self):
+        html = self.page("fixture", "analysis.html")
+        link = 'href="briefs/%s.html"' % SLUG
+        order = [html.index(marker) for marker in
+                 ('id="briefs-lead-title"', 'id="briefs-published"',
+                  'id="briefs-method"', 'id="legacy-archive"',
+                  'id="every-issue"', 'id="collections-and-desks"')]
+        self.assertEqual(order, sorted(order))
+        self.assertLess(html.index(link), html.index('id="legacy-archive"'))
+        archive = html[html.index('id="legacy-archive"'):
+                       html.index('id="collections-and-desks"')]
+        self.assertNotIn(link, archive)
+        self.assertIn('href="%s"' % gp.load_editions(REPO_ROOT)[0]["url"],
+                      archive)
+
+    @staticmethod
+    def home_band(html):
+        band = html[html.index('id="analysis"'):]
+        return band[:band.index('aria-labelledby="record-and-analysis"')]
+
+    def test_with_no_brief_the_home_band_leads_with_briefs_not_a_legacy_issue(self):
+        # The home page states the Analysis hierarchy: with nothing
+        # published, the current collection's in-development state leads,
+        # and the historical series is pointed to as an archive, in text,
+        # with no issue number, plate or issue link.
+        band = self.home_band(self.page("plain", "index.html"))
+        self.assertIn("Briefs in development", band)
+        for claim in ("the-pla-watch/posts/", "No. 14", "<svg", 'class="plate',
+                      "Read this edition"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, band)
+        archive = band.index('class="band-archive"')
+        self.assertLess(band.index("Briefs in development"), archive)
+        self.assertIn('href="pla-watch.html"', band[archive:])
+
+    def test_a_brief_leads_the_home_band_and_the_archive_stands_beside_it(self):
+        band = self.home_band(self.page("fixture", "index.html"))
+        link = 'href="briefs/%s.html"' % SLUG
+        self.assertIn(link, band)
+        self.assertIn("Read this Brief", band)
+        self.assertNotIn("Briefs in development", band)
+        self.assertNotIn("the-pla-watch/posts/", band)
+        archive = band.index('class="band-archive"')
+        self.assertLess(band.index(link), archive)
+        self.assertNotIn(link, band[archive:])
 
     def test_no_page_claims_a_brief_is_being_written_or_published(self):
         for route in ("about.html", "analysis.html", "pla-watch.html",

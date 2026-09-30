@@ -93,6 +93,8 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 | `--rule` | #CFC9BC | hairline structure |
 | `--accent` | #255E7A | compass-blue links, chart marks, focus |
 | `--band` | #12222C | dark analysis band |
+| `--focus-band` | #8FC9DE | turquoise, on the band only (8.97 on `--band`, 1.71 on paper): focus there, and the Briefs mark |
+| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks, and the Analysis page's legacy archive |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
 | `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
@@ -114,6 +116,18 @@ aliases onto these tokens — one place a colour is decided, two names for it.
   The Ledger uses compass blue for structure and rust for model output.
   Neither surface uses crimson as a decorative paper accent, a data-chart
   fill, or for a machine flag: a model-flagged mark is rust.
+- **Briefs identity (2026-09-30).** The current collection, Indo-Pacific
+  Record Briefs, is identified by turquoise (`--focus-band`) on the band and
+  compass blue (`--accent`) on paper: the Analysis page head, the home
+  page's analysis lead, a Brief's hero and its Signal rule. This is an
+  identity colour, not a replacement for the meaning rules above: crimson
+  still marks the human-analysis layer wherever that layer is labeled
+  (including on Briefs and their pages), rust still marks machine output,
+  and ink still marks the source record. What changes is only which colour
+  names the current product. The PLA Watch keeps the crimson it was
+  published with on its own pages and plate, and on the Analysis page and
+  the home band it appears as the legacy archive, beside or below the
+  current collection, never as its lead.
 - **Three layers, marked the same way everywhere** on the record surfaces:
   source record (ink), machine output (rust), analysis (crimson). A reader
   can tell which layer a line belongs to without reading its label, and the
@@ -230,7 +244,9 @@ once the database has outgrown the declared snapshot. Never published.
   now be disabled. The address names the page actually shown, and a value no
   option carries shows that control's default.
 - **Edition plate** (`_plate.html`) — an issue drawn from its sidecar
-  (VISUAL_AND_MOTION §3.2), on the home band and at the head of Analysis.
+  (VISUAL_AND_MOTION §3.2), at the head of the Analysis page's legacy
+  archive. The home band no longer draws it (2026-09-30): the band leads
+  with the current collection, and a plate there read as the current lead.
 - **Citations** — plain selectable text, never boxed; a copy control and a
   visible status line that says what happened, including failure.
 

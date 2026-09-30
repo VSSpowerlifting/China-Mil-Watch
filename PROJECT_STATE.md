@@ -137,6 +137,17 @@ disclosed, and never backfilled.
   §4–5. The recommended candidate is Exercise Maritime Cooperation 2026 (China
   + Singapore, 2026-09-03 → 09-14). Nothing there is a draft, thesis or
   approval.
+* **Analysis page presentation (2026-09-30, source only, not rendered).**
+  Analysis leads with the Briefs masthead and the newest published Brief, or,
+  with none published, an in-development state; it never promotes a PLA
+  Watch issue to the lead. Published Briefs and the labeling key follow, then
+  The PLA Watch as a bounded legacy archive (its No. 14 plate, every issue),
+  then the Collections and Series tables as closing reference. Briefs are
+  marked turquoise on the band and compass blue on paper (DESIGN_SYSTEM §3).
+  The home page's analysis band follows the same hierarchy (template seam
+  only; `latest_analysis` is no longer its lead): the newest Brief, or the
+  in-development state, with The PLA Watch as a linked archive aside. The
+  No. 14 plate is drawn only at the head of the Analysis legacy archive.
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
   published.** No. 14 is publicly served, with its status unreconciled (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
