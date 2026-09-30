@@ -98,10 +98,14 @@ class ResearchAtlasHierarchy(unittest.TestCase):
                             for p in self.out.glob("week-*.html")))
 
     def test_analysis_separates_draft_published_and_historical(self):
+        # The Briefs zone (a published lead, or the in-development state)
+        # comes first; the historical series follows as a bounded archive,
+        # and the collection tables close the page as reference.
         page = self.html("analysis.html")
         headings = [page.index(label) for label in
-                    ("Briefs in development", "Published Briefs",
-                     "Historical The PLA Watch archive")]
+                    ('id="briefs-title"', 'id="briefs-method"',
+                     'id="legacy-archive"', 'id="every-issue"',
+                     'id="collections-and-desks"')]
         self.assertEqual(headings, sorted(headings))
         self.assertIn("Draft Briefs are withheld", page)
         self.assertIn('href="pla-watch.html"', page)

@@ -742,16 +742,25 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         lead = lead.split("</section>", 1)[0]
         self.assertIn('class="evidence evidence--record">Source record', lead)
 
-    def test_the_latest_analysis_renders_the_actual_edition(self):
+    def test_the_latest_analysis_leads_with_briefs_not_a_legacy_issue(self):
+        """
+        Changed 2026-09-30. The band leads with the current collection. With no
+        brief published it states that Briefs are in development; the newest
+        issue published as The PLA Watch is not drawn as the lead, and the
+        series is pointed to as the archive it is.
+        """
         editions = gp.load_editions(REPO_ROOT)
         if not editions:
-            self.skipTest("no published edition to lead with")
+            self.skipTest("no published edition to point to")
         lead = editions[0]
-        section = self.home.split("Latest analysis", 1)[1]
+        section = self.home.split(">Latest analysis</h2>", 1)[1]
         section = section.split('class="section-head', 1)[0]
-        self.assertIn(lead["title"] or lead["slug"], section)
-        self.assertIn(lead["url"], section)
-        self.assertIn("No. %s" % lead["issue"], section)
+        self.assertIn("Briefs in development", section)
+        self.assertNotIn(lead["url"], section)
+        self.assertNotIn(lead["title"] or lead["slug"], section)
+        self.assertNotIn("No. %s" % lead["issue"], section)
+        self.assertLess(section.index("Briefs in development"),
+                        section.index('href="pla-watch.html"'))
 
     def test_the_lead_edition_is_drawn_as_its_plate_not_its_cover(self):
         """
@@ -767,8 +776,14 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         if not editions:
             self.skipTest("no published edition to lead with")
         lead = editions[0]
-        section = self.home.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('aria-labelledby="record-and-analysis"', 1)[0]
+        # Since 2026-09-30 the plate stands at the head of the Analysis
+        # page's legacy archive; the home band draws no plate at all.
+        band = self.home.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertNotIn("<svg", band)
+        analysis = (self.out / "analysis.html").read_text(encoding="utf-8")
+        section = analysis.split('id="legacy-archive"', 1)[1]
+        section = section.split('id="every-issue"', 1)[0]
         self.assertEqual(section.count("<svg"), 1)
         self.assertIn('role="img"', section)
         self.assertIn("No. %s" % lead["issue"], section)
@@ -1295,16 +1310,19 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
 
     def test_no_current_edition_leaves_the_page_coherent(self):
         """
-        The band's lead is `latest_analysis`, the collection's newest issue:
-        `None` when no sidecar and no brief exists. The analysis section is then
-        absent rather than an empty frame, and nothing above or below it claims
-        an edition. (Until 2026-09-23 the guard read `lead_edition`, the newest
-        PLA Watch issue; the band now leads with the collection.)
+        The band's lead is the newest published brief, never
+        `latest_analysis`, which with no brief is the newest PLA Watch issue.
+        With no brief the band states that Briefs are in development instead
+        of leading with an issue. (Until 2026-09-23 the guard read
+        `lead_edition`; until 2026-09-30 it read `latest_analysis`.)
         """
         source = (TEMPLATES / "home.html").read_text(encoding="utf-8")
-        self.assertIn("{% set lead = latest_analysis %}\n{% if lead %}", source)
-        analysis = source.split("{% if lead %}", 1)[1]
-        self.assertIn("Latest analysis", analysis.split("{% endif %}")[0])
+        self.assertIn("{% set lead = collection.briefs[0] if collection and "
+                      "collection.briefs else none %}", source)
+        self.assertNotIn("{% set lead = latest_analysis %}", source)
+        band = source.split('<section class="band" aria-labelledby="analysis">', 1)[1]
+        self.assertLess(band.index("Latest analysis"), band.index("{% if lead %}"))
+        self.assertIn("Briefs in development", band.split("</section>", 1)[0])
 
 
 if __name__ == "__main__":                                  # pragma: no cover
@@ -2631,9 +2649,11 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
     which is protected — so they are exercised where the decision is made:
     `edition_cover()` and the template's own guards.
 
-    Since 2026-09-27 the home page draws the lead issue as its edition plate
-    rather than its cover (DECISION_LOG), so the cover's absence changes
-    nothing there, and the plate is held to the issue's own sidecar.
+    Since 2026-09-27 the lead issue is drawn as its edition plate rather than
+    its cover (DECISION_LOG), so the cover's absence changes nothing, and the
+    plate is held to the issue's own sidecar. Since 2026-09-30 that plate
+    stands at the head of the Analysis page's legacy archive, not on the home
+    band, which leads with the current collection.
     """
 
     def test_a_missing_cover_file_yields_no_cover_rather_than_a_gap(self):
@@ -2662,7 +2682,14 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
                 with self.subTest(key=key):
                     self.assertTrue(real[key])
 
-    def build_with_editions(self, editions):
+    @staticmethod
+    def archive_lead(analysis):
+        """The Analysis page's legacy archive, up to its issue list: where
+        the series' newest issue is drawn as its plate."""
+        section = analysis.split('id="legacy-archive"', 1)[1]
+        return section.split('id="every-issue"', 1)[0]
+
+    def build_with_editions(self, editions, page="index.html"):
         """
         A real build whose edition list is exactly `editions`.
 
@@ -2682,7 +2709,7 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
                      snapshot=gp.snapshot_from_corpus(TRACKED_DB))
         finally:
             gp.load_editions = original
-        return (out / "index.html").read_text(encoding="utf-8")
+        return (out / page).read_text(encoding="utf-8")
 
     def real_edition(self):
         """
@@ -2695,17 +2722,16 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
             self.skipTest("no published edition to lead with")
         return dict(editions[0])
 
-    def test_a_missing_cover_changes_nothing_on_the_home_page(self):
+    def test_a_missing_cover_changes_nothing_where_the_issue_is_drawn(self):
         edition = self.real_edition()
         self.assertIsNotNone(edition.get("cover"),
                              "the fixture needs an edition that HAS a cover")
         edition["cover"] = None
-        html = self.build_with_editions([edition])
-        section = html.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('class="section-head', 1)[0]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
         self.assertIn(edition["title"], section)
         self.assertIn("Read this edition", section)
-        self.assertIn('class="plate"', section)
+        self.assertIn('class="plate', section)
         self.assertNotIn("<img", section)
         self.assertNotIn("figure-credit", section)
 
@@ -2725,9 +2751,8 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
              / ("%s.json" % edition["slug"])).read_text(encoding="utf-8"))
         trail = sidecar.get("source_trail") or []
         flagged = [bool(e.get("is_significant")) for e in trail]
-        html = self.build_with_editions([edition])
-        section = html.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('class="section-head', 1)[0]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
         svg = section.split("<svg", 1)[1].split("</svg>", 1)[0]
         ticks = re.findall(r'<rect [^>]*class="(tick[^"]*)"', svg)
         self.assertEqual(len(ticks), len(trail))
@@ -2744,10 +2769,15 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
 
     def test_no_current_edition_removes_the_section_without_a_claim(self):
         html = self.build_with_editions([])
-        # `>…</h2>`: the heading carries an id, and a bare `<h2>` match
-        # would pass however the section rendered. The plate stands where
-        # `<figure` stood: the week strip on the same page is a figure too.
-        self.assertNotIn(">Latest analysis</h2>", html)
+        # Since 2026-09-30 the band states the current collection whether or
+        # not an issue exists, so it stays; with no issue it has no archive
+        # to point to, and it claims no edition. `>…</h2>`: the heading
+        # carries an id, and a bare `<h2>` match would pass however the
+        # section rendered.
+        band = html.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertIn("Briefs in development", band)
+        self.assertNotIn('class="band-archive"', band)
         for phrase in ("Read this edition", "figure-credit",
                        'class="plate', 'viewBox="0 0 560 315"', "legacy-note",
                        "Retrospective edition"):

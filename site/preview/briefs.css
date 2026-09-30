@@ -9,11 +9,16 @@
  * existing issues use (pla-watch-base.html `.nd-veil`), keyed to --band. Text
  * never depends on the photograph for contrast: the mask keeps the text column
  * on clean band, and every attribution sits on a solid band scrim.
+ *
+ * The collection's own mark is turquoise on the band (--focus-band) and
+ * compass blue on paper (--accent), as on the Analysis landing. Crimson stays
+ * what it is elsewhere, the analysis layer's label, and marks nothing here by
+ * way of identity: the series that carried it is the archive.
  */
 
 /* ── Hero ──────────────────────────────────────────────────────────────── */
 .brief-page { padding-top: 0; }
-.brief-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--band-muted); }
+.brief-hero { position: relative; overflow: hidden; border-top: 3px solid var(--focus-band); border-bottom: 1px solid var(--band-muted); }
 .brief-hero-inner { position: relative; z-index: 1; padding-top: 2.5rem; padding-bottom: 2.25rem; }
 .brief-hero-inner > * { max-width: 40rem; }
 
@@ -47,7 +52,7 @@
 }
 .brief-src-bracket .bracket {
   display: inline-block; width: 56px; height: 22px; margin-bottom: .5rem;
-  border-right: 2px solid var(--crimson-mark); border-top: 2px solid var(--crimson-mark);
+  border-right: 2px solid var(--focus-band); border-top: 2px solid var(--focus-band);
 }
 .brief-src-bracket .src-lines {
   margin: 0; padding: .45rem .6rem; background: var(--band); border-radius: var(--radius);
@@ -56,7 +61,7 @@
 }
 .brief-veil-credit {
   display: none; margin: 1.25rem 0 0; padding: .5rem .65rem;
-  background: var(--band); border-left: 2px solid var(--crimson-mark);
+  background: var(--band); border-left: 2px solid var(--focus-band);
   font-family: var(--sans); font-size: .8125rem; line-height: 1.55; color: var(--band-ink);
 }
 /* Narrow widths: the text column spans the band, so the veil moves wholly
@@ -81,9 +86,11 @@
   line-height: 1.5; color: var(--band-ink); background: var(--band);
 }
 .brief-eyebrow {
-  margin: 0 0 .35rem; font-family: var(--sans); font-size: .75rem; font-weight: 600;
+  display: flex; align-items: center; gap: .6rem;
+  margin: 0 0 .5rem; font-family: var(--sans); font-size: .75rem; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
 }
+.brief-eyebrow::before { content: ""; width: 1.125rem; height: 2px; background: var(--focus-band); flex: none; }
 .band .brief-eyebrow a { color: var(--band-ink); text-decoration-color: var(--band-muted); }
 .brief-edition {
   margin: 0 0 .9rem; font-family: var(--mono); font-size: .75rem;
@@ -114,6 +121,7 @@
 .brief-meta li { margin: 0; }
 
 /* ── Body ──────────────────────────────────────────────────────────────── */
+.brief-page .atlas-breadcrumb { margin-top: 1.1rem; }
 .brief-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-top: 1.75rem; }
 @media (min-width: 1024px) {
   .brief-layout { grid-template-columns: minmax(0, 1fr) 14rem; gap: 3rem; }
@@ -138,14 +146,19 @@
 .brief-signal + .brief-section h2 { margin-top: 1.5rem; }
 .brief-section p { font-family: var(--serif); font-size: var(--step-body); line-height: 1.65; }
 .brief-section .section-note { font-family: var(--sans); font-size: .875rem; line-height: 1.55; color: var(--ink-2); }
+.brief-section p.meta { font-family: var(--sans); font-size: var(--step-meta); line-height: 1.55; }
+/* A right-aligned count sits beside a left-aligned column; the site's table
+   rule gives a count no right padding, so the two ran together. */
+.brief-coverage th.num, .brief-coverage td.num { padding-right: 1.1rem; }
+.brief-coverage th:last-child, .brief-coverage td:last-child { padding-right: 0; }
 
 .brief-signal {
-  margin: 0; padding: 1rem 1.15rem; background: var(--surface);
-  border: 1px solid var(--rule); border-left: 3px solid var(--crimson); border-radius: var(--radius);
+  margin: 0; padding: 1rem 1.15rem 1.1rem; background: var(--surface);
+  border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: var(--radius);
 }
 .brief-signal-label {
   margin: 0 0 .35rem; font-family: var(--sans); font-size: .6875rem; font-weight: 600;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink);
 }
 .brief-signal p:last-child { margin: 0; font-family: var(--serif); font-size: 1.125rem; line-height: 1.5; }
 
@@ -200,10 +213,11 @@
 @media (forced-colors: active) {
   .brief-veil { display: none; }
   .brief-src-bracket .src-lines, .brief-veil-credit { border: 1px solid CanvasText; }
+  .brief-eyebrow::before { background: CanvasText; }
 }
 @media print {
   .brief-veil, .brief-src-bracket, .brief-toc, .cite-copy { display: none !important; }
-  .brief-hero, .brief-term { background: none !important; color: #000 !important; }
+  .brief-hero, .brief-term { background: none !important; color: #000 !important; border-color: #999 !important; }
   .brief-hero *, .brief-term * { color: #000 !important; }
   .brief-veil-credit { display: block; background: none; border-left-color: #000; }
   .brief-layout { display: block; }
