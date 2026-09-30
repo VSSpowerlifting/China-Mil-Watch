@@ -3354,11 +3354,21 @@ class TestCompactQueryIndex(PreviewCase):
             self.assertIsInstance(row[3], int)
 
     def test_no_raw_enum_or_model_flag_facet_reaches_the_page(self):
+        # Scoped to the filter UI: record titles may legitimately contain
+        # words such as "Routine"; the invariant is that raw enum/model-flag
+        # values are not offered as filter controls.
         html = self.page("archive.html")
+        match = re.search(r'<form id="controls".*?</form>', html, re.S)
+        self.assertIsNotNone(match, "Records filter form not found")
+        controls = match.group(0)
+        for control in ("f-desk", "f-source", "f-status", "f-institution",
+                        "f-language", "chips"):
+            with self.subTest(control=control):
+                self.assertIn(control, controls)
         for token in ("is_significant", "model-flag", "Model-flagged",
                       "Significant", "Routine", "model_flagged"):
             with self.subTest(token=token):
-                self.assertNotIn(token, html)
+                self.assertNotIn(token, controls)
         blob = self.raw.decode("utf-8")
         self.assertNotIn("is_significant", blob)
 
