@@ -1231,8 +1231,105 @@ html.js .nojs-note { display: none; }
   .provenance th[scope="row"] { width: auto; font-size: .8125rem; color: var(--text-muted); border: 0; padding: 0; }
   .provenance td { border: 0; padding: .15rem 0 0; }
 }
-.analysis-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; list-style: none; margin: 1rem 0 2rem; padding: 0; }
-.analysis-paths > li { border-top: 3px solid var(--ink); padding-top: .8rem; max-width: none; }
+/* ═══ Analysis: the Briefs landing ═══════════════════════════════════════
+   Two zones in reading priority (DESIGN_SYSTEM §3, meaning rules). The
+   current collection opens on the Night Desk band, marked by a turquoise
+   rule (--focus-band, 8.97 on the band): the Briefs' own mark, the same one
+   a brief's hero carries. The issues published as The PLA Watch sit below
+   in a bounded archive on recessed paper, where the series keeps its
+   crimson. Turquoise never appears on paper (1.71 on --surface); there the
+   Briefs' structure is compass blue. */
+.briefs-head { border-top: 3px solid var(--focus-band); }
+.briefs-head-inner { padding-block: 2.4rem 2.6rem; }
+.briefs-kicker {
+  display: flex; align-items: center; gap: .6rem; margin: 0 0 .8rem;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--band-muted);
+}
+.briefs-kicker::before { content: ""; width: 1.125rem; height: 2px; background: var(--focus-band); flex: none; }
+.briefs-head h1 { margin: 0; color: var(--band-ink); }
+.briefs-lede {
+  margin: .8rem 0 0; max-width: 44ch; font-family: var(--serif);
+  font-size: clamp(1.125rem, 1rem + .5vw, 1.3rem); line-height: 1.55; color: var(--band-dek);
+}
+.briefs-lead, .briefs-empty { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--band-rule); max-width: 46rem; }
+.briefs-label { margin: 0 0 .6rem; font-size: .875rem; font-weight: 600; color: var(--focus-band); }
+.briefs-lead h2 {
+  margin: 0; padding: 0; border: 0; max-width: 26ch; text-wrap: balance;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); line-height: 1.15; letter-spacing: -.015em;
+}
+.band .briefs-lead h2 a {
+  color: var(--band-ink); text-decoration-thickness: 1px; text-underline-offset: .18em;
+  text-decoration-color: var(--band-muted);
+}
+.band .briefs-lead h2 a:hover { text-decoration-color: var(--focus-band); }
+.briefs-lead-dek { margin: .85rem 0 0; max-width: 58ch; font-family: var(--serif); font-size: 1.125rem; line-height: 1.55; color: var(--band-dek); }
+.briefs-lead-byline, .briefs-lead-note { margin: .85rem 0 0; font-size: .875rem; color: var(--band-muted); }
+.briefs-lead-note { margin-top: .35rem; font-size: .8125rem; }
+.briefs-empty h2 { margin: 0; padding: 0; border: 0; font-size: 1.25rem; color: var(--band-ink); }
+.briefs-empty p { margin: .55rem 0 0; max-width: 62ch; color: var(--band-dek); }
+.band .briefs-empty a { color: var(--focus-band); }
+
+/* Wide screens: the masthead and the lead share the band as two columns,
+   title block beside the thing it introduces, instead of one narrow stack
+   with the band's right half empty. Both columns open on the same line. */
+@media (min-width: 960px) {
+  .briefs-head-inner {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 0 clamp(2.5rem, 5vw, 4.5rem); align-items: start;
+  }
+  .briefs-lead, .briefs-empty { margin-top: .2rem; }
+}
+/* Phones: a little less air above and between, so the lead's title and dek
+   sit higher; the type sizes are the lede and dek steps, not the title. */
+@media (max-width: 600px) {
+  .briefs-head-inner { padding-block: 1.8rem 2.1rem; }
+  .briefs-lede, .briefs-lead-dek { font-size: 1.0625rem; line-height: 1.5; }
+  .briefs-lead, .briefs-empty { margin-top: 1.4rem; padding-top: 1.2rem; }
+  .briefs-lead-dek { margin-top: .7rem; }
+  .briefs-lead-byline { margin-top: .7rem; }
+  .briefs-lead > p:last-child { margin: 1.1rem 0 0; }
+  .band .briefs-lead .btn--primary { margin-top: 0; }
+}
+
+/* Home: the analysis band keeps its section head and feature grid, and
+   states the Analysis hierarchy. The current collection leads in its own
+   mark; the historical series stands beside it, text only, where the series
+   keeps its crimson (--crimson-text is the band's crimson, for contrast). */
+.feature--briefs h3 { margin: 0; }
+.band-archive { max-width: 32rem; }
+@media (max-width: 900px) { .band-archive { padding-top: 1rem; border-top: 1px solid var(--band-rule); } }
+.band-archive .eyebrow { margin: 0 0 .5rem; }
+.band .band-archive .evidence--analysis { color: var(--crimson-text); }
+.band .band-archive .evidence--analysis::before { background: var(--crimson-text); }
+.feature--briefs .band-archive h3 { font-size: 1.35rem; max-width: none; }
+.band-archive p { margin: .5rem 0 0; font-size: .9375rem; line-height: 1.55; color: var(--band-dek); }
+.band-archive p:last-child a { display: inline-block; padding-block: .3rem; }
+
+.issue-ledger--briefs { border-top-color: var(--accent); }
+.issue-ledger--briefs .issue-no { color: var(--accent-ink); }
+.layer-key { list-style: none; margin: 1.1rem 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 2.4rem; max-width: 60rem; }
+.layer-key > li { margin: 0; max-width: none; color: var(--ink-2); }
+.layer-key .evidence { display: flex; margin-bottom: .3rem; }
+
+/* The archive: a full-width recessed band that begins with a heavy rule, so
+   the change of era is a change of ground, not only of heading. */
+.archive-zone { margin-top: 3.5rem; padding-block: 2.6rem 3rem; background: var(--surface-inset); border-top: 2px solid var(--rule-hard); }
+.archive-head { max-width: 64ch; }
+.archive-head h2 { margin: 0; padding: 0; border: 0; font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); letter-spacing: -.014em; }
+.archive-lede { margin: .6rem 0 0; font-family: var(--serif); font-size: 1.0625rem; line-height: 1.55; color: var(--ink-2); }
+.archive-links { margin: .7rem 0 0; font-size: var(--step-meta); }
+.archive-links span { color: var(--rule-strong); margin: 0 .3rem; }
+.archive-links a { display: inline-block; padding-block: .3rem; }
+.archive-zone .feature--paper { margin-top: 1.8rem; }
+.feature--archive h3 { font-size: clamp(1.35rem, 1.15rem + .8vw, 1.75rem); }
+.archive-zone .issue-ledger-row { border-bottom-color: var(--rule-strong); }
+.archive-zone .issue-label { border-color: var(--rule-strong); }
+
+.briefs-reference { padding-top: .5rem; }
+.briefs-reference h2 { font-size: 1.25rem; }
+.briefs-reference h3 { margin: 1.6rem 0 .2rem; font-family: var(--sans); font-size: .9375rem; font-weight: 600; }
+.briefs-reference table { font-size: .875rem; }
 
 /* ═══ Methodology, Corpus Guide ══════════════════════════════════════════ */
 .evidence-specimens { list-style: none; padding: 0; display: grid; gap: 0; margin: 1rem 0 1.6rem; border-top: 2px solid var(--rule-hard); max-width: 52rem; }
@@ -1395,7 +1492,8 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-grid > :first-child { grid-column: 1 / -1; }
   .finder { position: static; }
-  .analysis-paths { grid-template-columns: minmax(0, 1fr); }
+  .layer-key { grid-template-columns: minmax(0, 1fr); }
+  .archive-zone { margin-top: 2.6rem; padding-block: 2rem 2.4rem; }
 }
 @media (max-width: 760px) {
   :root { --gutter-date: 100%; }
@@ -1507,6 +1605,8 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .band { background: #fff; color: #000; }
   .band .section-head h2, .band .feature h3 a, .band .feature .dek, .band a { color: #000; }
   .band .byline, .band .legacy-note, .band .plate figcaption { color: #333; }
+  .briefs-head, .briefs-head * { color: #000 !important; border-color: #999 !important; }
+  .archive-zone { background: #fff; }
   /* A button prints as a link: dark fills and the printed address below would not mix. */
   .btn { background: none !important; color: #000 !important; border: 0; padding: 0; min-height: 0; transition: none; }
   .record-page { grid-template-columns: minmax(0, 1fr); }
