@@ -256,9 +256,10 @@ needed; the largest of them is under 30 KB against the DS §8 budget of 300 KB.
 There is no present defect to fix. Re-open the question only on a measured
 budget crossing — an archive index over 300 KB, a single generated week page
 over 300 KB, or a week index that no longer fits one screen of scanning — and
-re-measure before asserting one. The **PLA Watch edition archive** is a
-separate surface with its own shape, and month grouping there at ~20+ editions
-remains a legitimate later consideration.
+re-measure before asserting one. The earlier PLA Watch issues are rows of the one Briefs catalog on Analysis
+(DECISION_LOG 2026-09-30), and month grouping there at ~20+ items remains a
+legitimate later consideration. Brief feed ordering (`build_briefs_feed` sorts
+by issue number, which is unsafe for unnumbered Briefs) is future work.
 
 Also deferred, carried forward from the superseded plan and still valid when
 the gates above are healthy:

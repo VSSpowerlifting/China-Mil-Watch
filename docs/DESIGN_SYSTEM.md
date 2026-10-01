@@ -94,7 +94,7 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 | `--accent` | #255E7A | compass-blue links, chart marks, focus |
 | `--band` | #12222C | dark analysis band |
 | `--focus-band` | #8FC9DE | turquoise, on the band only (8.97 on `--band`, 1.71 on paper): focus there, and the Briefs mark |
-| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks, and the Analysis page's legacy archive |
+| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks (the Analysis page's former legacy-archive ground was retired 2026-09-30) |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
 | `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
@@ -124,10 +124,21 @@ aliases onto these tokens — one place a colour is decided, two names for it.
   still marks the human-analysis layer wherever that layer is labeled
   (including on Briefs and their pages), rust still marks machine output,
   and ink still marks the source record. What changes is only which colour
-  names the current product. The PLA Watch keeps the crimson it was
-  published with on its own pages and plate, and on the Analysis page and
-  the home band it appears as the legacy archive, beside or below the
-  current collection, never as its lead.
+  names the publication.
+- **One analysis publication (2026-09-30).** The PLA Watch has been absorbed
+  into Indo-Pacific Record Briefs as the historical portion of one unified
+  analysis publication. Historical publication metadata and URLs are
+  preserved for provenance and compatibility, but the site does not present
+  The PLA Watch as a separate archive product. On the Analysis page and the
+  home band the earlier issues are rows of the same catalog; the newest item
+  of the whole collection leads, whichever series it began in; and where an
+  issue was first published is a secondary line of restrained metadata
+  ("From the former series The PLA Watch · published under …"), never a section, a
+  boundary, a second masthead or a second colour identity. There is no
+  legacy-archive band, no recessed "archive" ground and no large crimson
+  section on either surface. The issues' own pages keep the crimson they
+  were published with, and the lead's edition plate keeps its governed
+  marks (one crimson rule, rust ticks).
 - **Three layers, marked the same way everywhere** on the record surfaces:
   source record (ink), machine output (rust), analysis (crimson). A reader
   can tell which layer a line belongs to without reading its label, and the

@@ -4,6 +4,46 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-09-30 — The PLA Watch is absorbed into Indo-Pacific Record Briefs: one publication, no visible second archive
+
+**Owner direction (Ben, 2026-09-30).** Indo-Pacific Record Briefs is the single
+analysis publication. The PLA Watch is not a visibly separate archive or
+product: its existing issues are the earlier part of the same catalog, and
+their historical identity is provenance metadata, not a second hierarchy.
+This implements point 1 of the 2026-09-23 ruling ("a unified collection may
+display that provenance and never rewrites it") and reverses the presentation
+PR #86 gave it, which set the issues apart in a legacy-archive section and
+refused to let one lead.
+
+1. **One list.** The Analysis page and the home band use `collection.rows`:
+   native Briefs and earlier issues together, newest first by number, then week,
+   then address, each item once (a duplicate number, address or slug fails the
+   build). There is no "Historical PLA Watch Archive", "Legacy archive" or other
+   separated collection on either surface.
+2. **The newest item leads, by publication date.** `collection.lead` is the
+   item with the latest week ending, whichever series it began in and whether or
+   not it is numbered; issue number then slug only break ties. Today that is
+   No. 14. "Briefs in development" appears
+   only when the collection holds no item at all, never because there is no
+   native Brief. PR #86's rule that a PLA Watch issue may not lead is revoked.
+3. **Provenance is secondary metadata.** An earlier issue carries
+   "From the former series The PLA Watch · published under China Mil Watch" (or
+   "published by Indo-Pacific Record" for No. 14, from its stored publication
+   field, with its retrospective label). Stored
+   sidecars, titles, issue numbers, bylines, dates, source trails, citation
+   targets and URLs are unchanged; nothing is renumbered or rewritten.
+4. **Routes.** `/pla-watch.html` still resolves, because it is an established
+   address and alone carries each issue's citation. It is a compatibility bridge ("The PLA Watch is now part of Indo-Pacific
+   Record Briefs"): it points to Analysis, keeps the preservation notice and a
+   collapsed block of citation text under the anchors it always had, and lists
+   no issues of its own. No page, navigation or footer links to it. The feeds are unchanged: `briefs/feed.xml` carries native Briefs,
+   `the-pla-watch/feed.xml` keeps the earlier issues.
+5. **What this does not change.** No. 14's publication status is still
+   unreconciled (2026-09-23 point 9), and it now leads the page without a
+   recorded approval, which is an editorial exposure the owner should rule on.
+   `UNRECONCILED_ISSUES` and every Brief approval gate are untouched. The
+   historical pages' rendered output is not regenerated here.
+
 ## 2026-09-27 — Three public copy corrections, owner-approved
 
 **Owner ruling (Ben, 2026-09-27):** approve the corrections an independent

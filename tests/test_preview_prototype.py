@@ -779,8 +779,9 @@ class TestPlaWatchContinuity(PreviewCase):
         # index rather than being the Analysis index.
         self.assertIn("China Desk", html)
         self.assertIn('href="analysis.html"', html)
+        # Since 2026-09-30 nothing links to this compatibility page.
         index = self.page("analysis.html")
-        self.assertIn('href="pla-watch.html"', index)
+        self.assertNotIn('href="pla-watch.html"', index)
         # And the argument itself must be gone, not merely moved.
         for governance in ("predates", "Proposed hierarchy",
                            "does not make the parent product China-only"):
@@ -801,14 +802,18 @@ class TestPlaWatchContinuity(PreviewCase):
         expected_issues = [e["issue"] for e in canonical]
         expected_urls = {e["url"] for e in canonical}
 
-        html = self.page("pla-watch.html")
+        # The issues are browsed, and so linked, on Analysis (2026-09-30); the
+        # compatibility page links none of them and only cites them.
+        html = self.page("analysis.html")
         links = re.findall(r'href="(https://[^"]*?/the-pla-watch/posts/[^"]+)"',
                            html)
-        self.assertEqual(len(links), len(canonical))
+        # The lead is linked again from its own heading and button.
+        self.assertEqual(len(set(links)), len(canonical))
         self.assertEqual(set(links), expected_urls,
                          "a linked edition is not a canonical sidecar")
         # Issue numbers descend with nothing inserted or skipped.
-        numbers = [int(n) for n in re.findall(r'class="num ed-no">(\d+)<', html)]
+        numbers = [int(n) for n in re.findall(r'class="issue-no">No\. (\d+)<',
+                                              html)]
         self.assertEqual(numbers, expected_issues)
         self.assertEqual(numbers, sorted(numbers, reverse=True))
         self.assertEqual(len(set(numbers)), len(numbers), "duplicate issue number")
@@ -1610,14 +1615,14 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotEqual(n_articles, trail,
                             "the two fields must stay distinguishable")
 
-        # The lead issue is drawn in the Analysis page's legacy archive
-        # (2026-09-30); the home band no longer draws it.
-        html = self.page("analysis.html")
-        self.assertIn("%d articles" % n_articles, html)
-        self.assertNotIn("records cited", html)
-        self.assertNotIn("%d records" % n_articles, html)
-        # The trail count must not be presented as the article count.
-        self.assertNotIn("%d articles" % trail, html)
+        # Neither Analysis nor the compatibility page restates the count as a
+        # citation figure, and the trail count is never offered as it.
+        for name in ("pla-watch.html", "analysis.html"):
+            page = self.page(name)
+            with self.subTest(page=name):
+                self.assertNotIn("records cited", page)
+                self.assertNotIn("%d records" % n_articles, page)
+                self.assertNotIn("%d articles" % trail, page)
 
     def test_latest_records_blurb_does_not_deny_translation(self):
         """
@@ -1788,17 +1793,13 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     # ── Mobile treatments ───────────────────────────────────────────────
 
-    def test_editions_get_an_editorial_mobile_treatment(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
-        self.assertIn(".editions", css)
+    def test_the_compatibility_page_carries_no_edition_table(self):
+        # Replaced 2026-09-30: the editions table is gone from this page; the
+        # catalog on Analysis is the one place the issues are listed.
         html = self.page("pla-watch.html")
-        # the generic key/value stacking must not apply to this table
-        self.assertNotIn('<table class="stacking">', html)
-        self.assertIn('<table class="editions">', html)
-        for cls in ("ed-no", "ed-date", "ed-title", "ed-articles",
-                    "ed-flagged"):
-            with self.subTest(cls=cls):
-                self.assertIn(cls, html)
+        self.assertNotIn("<table", html)
+        self.assertNotIn('class="editions"', html)
+        self.assertIn('class="cite-list"', html)
 
     def test_edition_label_is_rendered_once_visually(self):
         """Emitted twice, but exactly one is display:none at any width."""
@@ -3798,7 +3799,7 @@ class TestCoverageTableSemantics(PreviewCase):
         # separate cards. Both are `<thead>` column headers; neither is a
         # promoted body cell, which is what this guard is actually protecting.
         expected = {"china.html": 5, "japan.html": 8, "sources.html": 7,
-                    "desks.html": 8, "pla-watch.html": 5}
+                    "desks.html": 8}
         for name, count in expected.items():
             html = (self.out / name).read_text(encoding="utf-8")
             with self.subTest(page=name):
@@ -3806,7 +3807,7 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
                 outside = re.sub(r"<thead>.*?</thead>", " ", html, flags=re.S)
                 self.assertNotIn("<th", outside)
-        self.assertEqual(sum(expected.values()), 33)
+        self.assertEqual(sum(expected.values()), 28)
 
     def test_source_pages_label_rows_not_columns(self):
         for path in sorted(self.out.glob("source/*.html")):
@@ -5511,11 +5512,11 @@ class TestSnapshotScopedCitations(PreviewCase):
 
 
 class TestEditionCitationsAreIntegrated(PreviewCase):
-    """One citation per existing edition entry, and no second bibliography.
+    """One citation per existing edition, in one collapsed block.
 
-    The first STOP 4 build rendered the 13-edition archive and then repeated
-    all 13 as a standalone citation list — the same titles twice on one page.
-    The citations now live inside the rows they cite.
+    Since 2026-09-30 the compatibility page lists no issues: the catalog on
+    Analysis does. Each citation keeps the anchor it has always had, inside a
+    single native disclosure, with no title list or table beside it.
     """
 
     @classmethod
@@ -5523,40 +5524,32 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         super().setUpClass()
         cls.html = cls.page(cls, "pla-watch.html")
         cls.editions = gp.load_editions(REPO_ROOT)
-        cls.table = cls.html.split('<table class="editions">', 1)[1].split(
-            "</table>", 1)[0]
+        cls.block = cls.html.split('<details class="ed-cite cite-all">', 1)[1]\
+            .split("</details>", 1)[0]
 
-    def test_every_edition_row_owns_exactly_one_citation(self):
-        # Scoped to <tbody>: the header row is a <tr> too, and counting it
-        # would report one edition too many. The expected row count is derived
-        # from the canonical sidecars rather than pinned to a literal.
-        body = self.table.split("<tbody>", 1)[1].split("</tbody>", 1)[0]
-        rows = re.findall(r"<tr>.*?</tr>", body, re.S)
-        self.assertEqual(len(rows), len(self.editions))
-        self.assertEqual(len(self.editions), len(gp.load_editions(REPO_ROOT)))
-        for row, edition in zip(rows, self.editions):
+    def test_every_edition_owns_exactly_one_citation(self):
+        items = re.findall(r"<li>.*?</li>", self.block, re.S)
+        self.assertEqual(len(items), len(self.editions))
+        for item, edition in zip(items, self.editions):
             with self.subTest(edition=edition["slug"]):
-                self.assertEqual(row.count("<details class=\"ed-cite\">"), 1)
-                self.assertEqual(row.count('class="cite-text"'), 1)
-                self.assertEqual(row.count("data-copy="), 1)
+                self.assertEqual(item.count('class="cite-text"'), 1)
+                self.assertEqual(item.count("data-copy="), 1)
                 self.assertIn(markupsafe.escape(gp.edition_citation(edition)),
-                              row)
-                self.assertIn('id="cite-edition-%s"' % edition["slug"], row)
+                              item)
+                self.assertIn('id="cite-edition-%s"' % edition["slug"], item)
 
-    def test_no_citation_renders_outside_the_edition_table(self):
-        outside = self.html.replace(self.table, "")
+    def test_no_citation_renders_outside_the_block(self):
+        outside = self.html.replace(self.block, "")
         self.assertNotIn('class="cite-text"', outside)
         self.assertNotIn("data-copy=", outside)
         self.assertNotIn("cite-block", self.html)
 
-    def test_no_second_list_of_edition_titles_exists(self):
-        """Each title appears once as a link, and once inside its own
-        citation — never a third time as a separate bibliography entry."""
+    def test_the_page_lists_no_edition_titles_of_its_own(self):
+        """A title appears once, inside its own citation, and nowhere else."""
         for edition in self.editions:
             escaped = str(markupsafe.escape(edition["title"]))
             with self.subTest(edition=edition["slug"]):
-                self.assertEqual(self.html.count(escaped), 2)
-        self.assertNotIn("Citing an edition", self.html)
+                self.assertEqual(self.html.count(escaped), 1)
         self.assertNotIn('id="edition-citations"', self.html)
 
     def test_the_page_keeps_one_h1_and_its_heading_order(self):
@@ -5565,25 +5558,10 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         for a, b in zip(levels, levels[1:]):
             self.assertLessEqual(b, a + 1)
 
-    def test_existing_edition_semantics_are_untouched(self):
-        """Order, links, labels and the mobile card classes all survive."""
-        issues = [int(n) for n in
-                  re.findall(r'<td class="num ed-no">(\d+)</td>', self.table)]
+    def test_citations_follow_the_collection_order(self):
+        issues = [int(n) for n in re.findall(
+            r"The PLA Watch, No\. (\d+),", self.block)]
         self.assertEqual(issues, [e["issue"] for e in self.editions])
-        self.assertEqual(issues, sorted(issues, reverse=True))
-        for edition in self.editions:
-            with self.subTest(edition=edition["slug"]):
-                self.assertIn('href="%s"' % edition["url"], self.table)
-                if edition["label"]:
-                    self.assertIn(edition["label"], self.table)
-        for cls in ("ed-no", "ed-date", "ed-title", "ed-articles",
-                    "ed-flagged", "ed-label-inline", "ed-label-wide"):
-            with self.subTest(cls=cls):
-                self.assertIn(cls, self.html)
-        # ISO dates stay in the table; day-month-year belongs to the citation.
-        for edition in self.editions:
-            self.assertIn('<td class="ed-date">%s' % edition["date"],
-                          self.table)
 
     def test_the_disclosure_is_native_and_unscripted(self):
         js = (self.out / "citation.js").read_text(encoding="utf-8")
@@ -5591,7 +5569,7 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         for token in ("details", "summary", "open"):
             with self.subTest(token=token):
                 self.assertNotIn(token, code)
-        self.assertIn("<summary>Cite this issue</summary>", self.html)
+        self.assertIn("<summary>Citation text for the", self.html)
 
     def test_the_disclosure_carries_no_box_and_no_rust(self):
         css = (self.out / "styles.css").read_text(encoding="utf-8")
@@ -6026,7 +6004,8 @@ class TestCitationCopyBehaviour(PreviewCase):
             self.assertFalse(page.is_visible(anchor))
             _editions = len(gp.load_editions(REPO_ROOT))
             summaries = page.query_selector_all("details.ed-cite > summary")
-            self.assertEqual(len(summaries), _editions)
+            # One collapsed block holds every citation (the page is a bridge).
+            self.assertEqual(len(summaries), 1)
             page.locator("details.ed-cite > summary").first.click()
             self.assertTrue(page.is_visible(anchor))
             self.assertEqual(
@@ -6040,7 +6019,7 @@ class TestCitationCopyBehaviour(PreviewCase):
             page.eval_on_selector_all(
                 "details.ed-cite", "els => els.forEach(e => e.open = true)")
             self.assertEqual(page.eval_on_selector_all(
-                "details.ed-cite > .cite-text",
+                "details.ed-cite .cite-text",
                 "els => els.filter(e => e.offsetParent !== null).length"),
                 _editions)
         finally:
@@ -6675,43 +6654,39 @@ class TestPreviewEditionIdentity(unittest.TestCase):
                     "predecessor masthead %s and preserved with its" % self.HISTORICAL,
                     html)
 
-    def test_a_historical_lead_keeps_the_legacy_note(self):
-        # Since 2026-09-30 the series' lead issue is drawn only in the
-        # Analysis page's legacy archive; the home band leads with Briefs.
-        pages = self.leads(13)
-        self.assertIn("legacy China Desk series", pages["analysis.html"])
-        self.assertIn(self.HISTORICAL, pages["analysis.html"])
-        self.assertNotIn("legacy China Desk series", pages["index.html"])
+    # Since 2026-09-30 the newest item of one unified collection leads, so an
+    # issue cannot be forced to lead: ordering is deterministic. Identity now
+    # shows as each row's provenance line, taken from the collection.
+
+    def _provenance(self):
+        from core import brief_collection as bc
+        c = bc.load_collection(self.editions, {})
+        return {r["entry"].get("issue"): r["provenance"]
+                for r in c.rows if r["kind"] == "issue"}
+
+    def test_the_lead_issue_states_its_provenance_on_both_pages(self):
+        pages = self.leads(14)
+        for page, html in pages.items():
+            with self.subTest(page=page):
+                self.assertIn("From the former series", html)
+                self.assertNotIn("legacy China Desk series", html)
 
     def test_a_current_retrospective_lead_shows_the_canonical_label(self):
-        pages = self.leads(14)
-        self.assertIn(self.RETRO_LABEL, pages["analysis.html"])
-        self.assertNotIn(self.RETRO_LABEL, pages["index.html"])
-
-    @staticmethod
-    def lead_feature(html):
-        """The lead feature alone: from the feature block to the next heading.
-
-        Scoped since 2026-09-23. Analysis now lists every issue with where and
-        when it was published, so No. 14's own card says "Retrospective
-        edition" on the page whichever issue leads; what this class tests is
-        that the LEAD states only its own timing."""
-        start = html.index('class="feature')
-        end = html.find("<h2", start)
-        return html[start:end if end != -1 else len(html)]
-
-    def test_a_historical_lead_shows_no_retrospective_label(self):
-        for page, html in self.leads(13).items():
+        for page, html in self.leads(14).items():
             with self.subTest(page=page):
-                self.assertNotIn(self.RETRO_LABEL, self.lead_feature(html))
+                self.assertIn(self.RETRO_LABEL, html)
 
-    def test_the_series_is_not_called_wholly_legacy_once_a_current_edition_exists(self):
-        """The archive spans two mastheads; the page must not flatten that."""
-        html = self.leads(14)["analysis.html"]
-        self.assertNotIn(
-            "Published under the predecessor masthead %s\nand preserved" % self.HISTORICAL,
-            html)
-        self.assertIn("published under the predecessor masthead", html.lower())
+    def test_a_historical_issue_shows_no_retrospective_label(self):
+        prov = self._provenance()
+        self.assertNotIn(self.RETRO_LABEL, prov[13])
+        self.assertIn(self.RETRO_LABEL, prov[14])
+
+    def test_provenance_names_each_issues_own_masthead(self):
+        """The collection spans two mastheads; neither is flattened."""
+        prov = self._provenance()
+        self.assertIn(self.HISTORICAL, prov[13])
+        self.assertIn(self.CURRENT, prov[14])
+        self.assertNotIn(self.HISTORICAL, prov[14])
 
     def test_invalid_identity_metadata_fails_the_build_naming_the_sidecar(self):
         import json as _json
@@ -6784,15 +6759,16 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
         self.assertNotIn("published from 2026 under the\npredecessor masthead",
                          self.html)
 
-    def test_the_page_says_the_series_spanned_the_rename_and_is_an_archive(self):
-        """Since DECISION_LOG 2026-09-23 no new issue is published as The PLA
-        Watch. The page said the series "continues across" the rename; it now
-        says the series spanned it and that the page is an archive of its
-        issues."""
+    def test_the_page_says_the_series_spanned_the_rename_and_holds_citations(self):
+        """Since DECISION_LOG 2026-09-30 the issues are earlier Briefs in one
+        collection; this page is their citation and provenance record, not a
+        second archive."""
         text = re.sub(r"\s+", " ", self.html)
         self.assertNotIn("continues across", text)
         self.assertIn("spanned the project's publication rename", text)
-        self.assertIn("This page is an archive of those issues", text)
+        self.assertIn("These issues are preserved as published", text)
+        self.assertIn("is now part of Indo-Pacific Record Briefs", text)
+        self.assertNotIn("This page is an archive of those issues", text)
         self.assertIn(self.HISTORICAL, text)
         self.assertIn(self.CURRENT, text)
 
@@ -6829,17 +6805,12 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
             text,
             r"redirects to the \d+ editions published under that masthead")
 
-    def test_edition_14_row_shows_the_retrospective_label(self):
-        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-15.*?</tr>',
-                        self.html, re.S)
-        self.assertIsNotNone(row, "No. 14 row not found")
-        self.assertIn(self.RETRO, row.group(0))
-
-    def test_a_historical_edition_row_shows_no_retrospective_label(self):
-        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-08.*?</tr>',
-                        self.html, re.S)
-        self.assertIsNotNone(row)
-        self.assertNotIn(self.RETRO, row.group(0))
+    def test_the_citation_block_covers_every_issue_and_adds_no_label(self):
+        for e in self.editions:
+            with self.subTest(slug=e["slug"]):
+                self.assertIn('id="cite-edition-%s"' % e["slug"], self.html)
+        # Timing is provenance on the catalog, not restated on the bridge.
+        self.assertNotIn(self.RETRO, self.html)
 
     def test_an_all_historical_fixture_still_explains_the_predecessor(self):
         html = self._render(self.hist)

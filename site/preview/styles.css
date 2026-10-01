@@ -1062,6 +1062,8 @@ html.js .nojs-note { display: none; }
 .ed-cite { margin: .45rem 0 0; font-size: .875rem; }
 .ed-cite > summary { cursor: pointer; color: var(--link); font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; }
 .ed-cite .cite-text { margin: .5rem 0; font-size: .875rem; }
+.cite-list { list-style: none; margin: .5rem 0 0; padding: 0; }
+.cite-list li { padding: .5rem 0; border-top: 1px solid var(--rule); }
 .ed-label-inline { display: none; }
 .ed-timing { color: var(--ink-2); }
 .band .btn--primary { background: var(--band-ink); color: var(--band); border-color: var(--band-ink); margin-top: 1.2rem; }
@@ -1235,9 +1237,8 @@ html.js .nojs-note { display: none; }
    Two zones in reading priority (DESIGN_SYSTEM §3, meaning rules). The
    current collection opens on the Night Desk band, marked by a turquoise
    rule (--focus-band, 8.97 on the band): the Briefs' own mark, the same one
-   a brief's hero carries. The issues published as The PLA Watch sit below
-   in a bounded archive on recessed paper, where the series keeps its
-   crimson. Turquoise never appears on paper (1.71 on --surface); there the
+   a brief's hero carries. The earlier issues, first published as The PLA
+   Watch, are rows of the same catalog below it. Turquoise never appears on paper (1.71 on --surface); there the
    Briefs' structure is compass blue. */
 .briefs-head { border-top: 3px solid var(--focus-band); }
 .briefs-head-inner { padding-block: 2.4rem 2.6rem; }
@@ -1266,6 +1267,10 @@ html.js .nojs-note { display: none; }
 .briefs-lead-dek { margin: .85rem 0 0; max-width: 58ch; font-family: var(--serif); font-size: 1.125rem; line-height: 1.55; color: var(--band-dek); }
 .briefs-lead-byline, .briefs-lead-note { margin: .85rem 0 0; font-size: .875rem; color: var(--band-muted); }
 .briefs-lead-note { margin-top: .35rem; font-size: .8125rem; }
+/* An earlier Brief that leads is drawn from its own sidecar. The plate was
+   drawn for paper, so it stands on a paper panel inside the band. */
+.briefs-lead-plate { margin: 1.6rem 0 0; padding: 1rem 1.1rem .9rem; background: var(--surface); max-width: 34rem; }
+.briefs-lead-plate figcaption { margin-top: .6rem; }
 .briefs-empty h2 { margin: 0; padding: 0; border: 0; font-size: 1.25rem; color: var(--band-ink); }
 .briefs-empty p { margin: .55rem 0 0; max-width: 62ch; color: var(--band-dek); }
 .band .briefs-empty a { color: var(--focus-band); }
@@ -1292,39 +1297,17 @@ html.js .nojs-note { display: none; }
   .band .briefs-lead .btn--primary { margin-top: 0; }
 }
 
-/* Home: the analysis band keeps its section head and feature grid, and
-   states the Analysis hierarchy. The current collection leads in its own
-   mark; the historical series stands beside it, text only, where the series
-   keeps its crimson (--crimson-text is the band's crimson, for contrast). */
+/* Home: the analysis band keeps its section head and states the same model
+   as Analysis: one publication, led by the newest item of the collection. A
+   single column, because nothing stands beside the lead. */
+.feature--briefs { grid-template-columns: minmax(0, 46rem); }
 .feature--briefs h3 { margin: 0; }
-.band-archive { max-width: 32rem; }
-@media (max-width: 900px) { .band-archive { padding-top: 1rem; border-top: 1px solid var(--band-rule); } }
-.band-archive .eyebrow { margin: 0 0 .5rem; }
-.band .band-archive .evidence--analysis { color: var(--crimson-text); }
-.band .band-archive .evidence--analysis::before { background: var(--crimson-text); }
-.feature--briefs .band-archive h3 { font-size: 1.35rem; max-width: none; }
-.band-archive p { margin: .5rem 0 0; font-size: .9375rem; line-height: 1.55; color: var(--band-dek); }
-.band-archive p:last-child a { display: inline-block; padding-block: .3rem; }
 
 .issue-ledger--briefs { border-top-color: var(--accent); }
 .issue-ledger--briefs .issue-no { color: var(--accent-ink); }
 .layer-key { list-style: none; margin: 1.1rem 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 2.4rem; max-width: 60rem; }
 .layer-key > li { margin: 0; max-width: none; color: var(--ink-2); }
 .layer-key .evidence { display: flex; margin-bottom: .3rem; }
-
-/* The archive: a full-width recessed band that begins with a heavy rule, so
-   the change of era is a change of ground, not only of heading. */
-.archive-zone { margin-top: 3.5rem; padding-block: 2.6rem 3rem; background: var(--surface-inset); border-top: 2px solid var(--rule-hard); }
-.archive-head { max-width: 64ch; }
-.archive-head h2 { margin: 0; padding: 0; border: 0; font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); letter-spacing: -.014em; }
-.archive-lede { margin: .6rem 0 0; font-family: var(--serif); font-size: 1.0625rem; line-height: 1.55; color: var(--ink-2); }
-.archive-links { margin: .7rem 0 0; font-size: var(--step-meta); }
-.archive-links span { color: var(--rule-strong); margin: 0 .3rem; }
-.archive-links a { display: inline-block; padding-block: .3rem; }
-.archive-zone .feature--paper { margin-top: 1.8rem; }
-.feature--archive h3 { font-size: clamp(1.35rem, 1.15rem + .8vw, 1.75rem); }
-.archive-zone .issue-ledger-row { border-bottom-color: var(--rule-strong); }
-.archive-zone .issue-label { border-color: var(--rule-strong); }
 
 .briefs-reference { padding-top: .5rem; }
 .briefs-reference h2 { font-size: 1.25rem; }
@@ -1493,7 +1476,6 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .footer-grid > :first-child { grid-column: 1 / -1; }
   .finder { position: static; }
   .layer-key { grid-template-columns: minmax(0, 1fr); }
-  .archive-zone { margin-top: 2.6rem; padding-block: 2rem 2.4rem; }
 }
 @media (max-width: 760px) {
   :root { --gutter-date: 100%; }
@@ -1606,7 +1588,6 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .band .section-head h2, .band .feature h3 a, .band .feature .dek, .band a { color: #000; }
   .band .byline, .band .legacy-note, .band .plate figcaption { color: #333; }
   .briefs-head, .briefs-head * { color: #000 !important; border-color: #999 !important; }
-  .archive-zone { background: #fff; }
   /* A button prints as a link: dark fills and the printed address below would not mix. */
   .btn { background: none !important; color: #000 !important; border: 0; padding: 0; min-height: 0; transition: none; }
   .record-page { grid-template-columns: minmax(0, 1fr); }

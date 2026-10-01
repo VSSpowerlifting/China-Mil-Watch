@@ -147,10 +147,11 @@ archive page weight drops (SVG replaces PNG thumbs).
 themes/glyphs; per-edition hand-tuning.
 
 **Built on the record site, 2026-09-27** (`site/preview/templates/_plate.html`,
-data from `generate_preview.edition_plate`): the head of the Analysis page's
-legacy archive draws the series' newest issue as its plate instead of its
-cover (the home band drew it too until 2026-09-30, when the band began leading
-with Indo-Pacific Record Briefs; DESIGN_SYSTEM §3) — 16:9,
+data from `generate_preview.edition_plate`): when the newest item of the one Briefs
+collection is an earlier issue, the Analysis page's latest-Brief lead draws it
+as its plate, on a paper panel inside the Night Desk band, instead of its
+cover (the home band drew it too until 2026-09-30 and now draws none;
+DESIGN_SYSTEM §3; there is no separate legacy archive to head) — 16:9,
 series name, week ending, "No." and the numeral, and the tick row. One
 deliberate departure from the spec above, recorded in DECISION_LOG: a
 model-flagged tick is drawn in the machine layer's rust (#D4845F) and at full
