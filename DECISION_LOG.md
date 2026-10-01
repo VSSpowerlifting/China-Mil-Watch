@@ -4,6 +4,50 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-01 — Briefs-band Signal Veil: one decorative gradient exception on the home analysis band
+
+**Approved owner ruling (Ben, 2026-10-01).** The treatment and the exception
+below are accepted; the current visual treatment is the approved review
+baseline and is not to be strengthened or redesigned without a new direction.
+Owner direction: the dark "Latest analysis" band on the home page leaves its
+right side empty; give it a restrained, Indo-Pacific-Record atmosphere without
+changing layout, content or hierarchy.
+
+1. **What it is.** Two pseudo-elements on `.band[aria-labelledby="analysis"]`
+   in `site/preview/styles.css`: layered translucent swells with thin edge
+   lines, a dotted mesh and faint contours, painted from the band's own tokens
+   (`--accent`, `--focus-band`) with `color-mix`. No image, no `url()`, no
+   `<svg>`, no template change, no new token, no crimson, no motion.
+2. **Narrow exception to a standing rule.** `docs/DESIGN_SYSTEM.md` §6 says
+   the accent budget forbids gradients as decoration anywhere but the mark. This
+   veil is a gradient used as decoration, and the owner has approved it as an
+   exception scoped **only to the homepage Indo-Pacific Record Briefs band**
+   (`.band[aria-labelledby="analysis"]`). It does not repeal the general rule:
+   gradients remain forbidden as decoration on every other surface, including
+   other bands, the Analysis page and the Briefs pages, and any further use
+   needs its own ruling. The Ocean Signal Veil's masked photograph is a
+   different, already-sanctioned mechanism.
+3. **Constraints it keeps.** Inert (`pointer-events: none`, `z-index: -1` in
+   the band's own stacking context), inside the band's box (cannot overflow),
+   dropped in print and forced-colours. The full veil runs from 720px, in the
+   space the lead's column leaves free; below 720px that space is under 150px,
+   so only a quiet corner of fills remains (no lines, no mesh). No geographic
+   or radar imagery: every arc is centred off the box, and a coastline or map
+   is not attempted in CSS.
+4. **Measured, not judged.** Every text run in the band clears AA at the pixels
+   its glyphs cover at 375, 390, 430, 719, 720, 768, 900, 1024, 1280 and 1440,
+   and a long desk list in the byline and label (they have no measure of their
+   own) still clears it at 720, 768, 1024 and 1280. From 720px up the body runs
+   measure the same as the unveiled band (6.54:1 for the muted tone; the long
+   byline stress 6.04:1 at worst) and "All analysis" 8.67:1 against 8.97:1. The
+   weakest figure is the quiet corner on phones: the legacy note at 375 measures
+   5.52:1 against 6.54:1 unveiled. `tests/test_home_briefs_band_veil.py` holds
+   this, reusing the Ocean Signal Veil's glyph-pixel method.
+5. **Reversal.** Withdrawing the exception means deleting the "BRIEFS-BAND SIGNAL
+   VEIL" block in `styles.css`, `tests/test_home_briefs_band_veil.py`, and the
+   matching lines in `docs/DESIGN_SYSTEM.md` §6 and `PROJECT_STATE.md` §6a;
+   nothing else depends on them.
+
 ## 2026-09-30 — The PLA Watch is absorbed into Indo-Pacific Record Briefs: one publication, no visible second archive
 
 **Owner direction (Ben, 2026-09-30).** Indo-Pacific Record Briefs is the single

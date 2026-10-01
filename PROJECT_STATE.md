@@ -430,7 +430,10 @@ artifact. This applies to all three shadow desks.
 The reader interface uses Paper Ledger for the record and Night Desk for the
 historical *The PLA Watch* issues. The Ocean Signal Veil remains a
 desktop-only, credited public-domain image in the home page's two-column
-opening; The PLA Watch keeps its own veil. Briefs remain unpublished until
+opening; The PLA Watch keeps its own veil. The home "Latest analysis" band
+carries a CSS-only Signal Veil in its empty right side (owner-approved
+2026-10-01 as a narrow exception to the gradient rule; DECISION_LOG). Briefs
+remain unpublished until
 editorial approval; historical issues keep their original attribution.
 Standing chart rules on the live pages: the Sources chart counts stored,
 deduplicated records per source at the labeled snapshot and disclaims
