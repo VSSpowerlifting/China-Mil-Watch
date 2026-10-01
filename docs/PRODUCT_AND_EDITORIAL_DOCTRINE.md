@@ -175,10 +175,14 @@ only from real sidecar data.
   per-week surfaces, paginated where a week is large. It is not a flat
   all-records page and carries no known weight or grouping defect; the
   measurement and the threshold for revisiting it are in docs/ROADMAP.md.
-- PLA Watch archive: a **separate surface** — the issue-anchored edition list,
-  with distinct-source counts and an honest limitations footnote. At ~20+
-  editions, month grouping is worth reconsidering. Do not conflate this with
-  the record archive above; they have different shapes and different budgets.
+- PLA Watch archive (superseded 2026-09-30, DECISION_LOG): The PLA Watch is
+  the former series whose issues now form the earlier portion of one
+  Indo-Pacific Record Briefs publication, browsed in the single catalog on
+  `analysis.html`. It is not presented as a separate browsable product. Its
+  issues keep their numbers, URLs, publication identity and provenance, and
+  `/the-pla-watch/archive.html` and `/pla-watch.html` keep resolving as
+  preserved and compatibility addresses. Do not conflate the record archive
+  above with that catalog; they have different shapes and different budgets.
 
 ### Methodology
 The credibility centerpiece: pipeline description, five-layer ladder,

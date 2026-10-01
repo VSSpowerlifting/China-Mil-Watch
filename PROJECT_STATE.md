@@ -137,17 +137,33 @@ disclosed, and never backfilled.
   §4–5. The recommended candidate is Exercise Maritime Cooperation 2026 (China
   + Singapore, 2026-09-03 → 09-14). Nothing there is a draft, thesis or
   approval.
-* **Analysis page presentation (2026-09-30, source only, not rendered).**
-  Analysis leads with the Briefs masthead and the newest published Brief, or,
-  with none published, an in-development state; it never promotes a PLA
-  Watch issue to the lead. Published Briefs and the labeling key follow, then
-  The PLA Watch as a bounded legacy archive (its No. 14 plate, every issue),
-  then the Collections and Series tables as closing reference. Briefs are
-  marked turquoise on the band and compass blue on paper (DESIGN_SYSTEM §3).
-  The home page's analysis band follows the same hierarchy (template seam
-  only; `latest_analysis` is no longer its lead): the newest Brief, or the
-  in-development state, with The PLA Watch as a linked archive aside. The
-  No. 14 plate is drawn only at the head of the Analysis legacy archive.
+* **One analysis publication (2026-09-30, source only, not rendered).**
+  The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
+  historical portion of one unified analysis publication. Historical
+  publication metadata and URLs are preserved for provenance and
+  compatibility, but the site does not present The PLA Watch as a separate
+  archive product (DECISION_LOG 2026-09-30). Analysis opens on the Briefs
+  masthead and the latest Brief, which is the newest item of the whole
+  collection by publication date (week ending), never by issue number: with
+  no newer native Brief that is No. 14. The catalog, "All Briefs", lists every
+  item newest first (number then slug only break ties), the earlier issues
+  among them with "From the former series The PLA Watch · published under/by
+  <masthead>" as a secondary line; there is no
+  legacy-archive section. The labeling key follows, then the Collections and
+  Series tables as closing reference (every desk row kept). The home band
+  leads with the same item and links into Analysis. "Briefs in development"
+  appears only when the collection holds no item at all. `/pla-watch.html`
+  still resolves as a compatibility bridge ("The PLA Watch is now part of
+  Indo-Pacific Record Briefs": a pointer to Analysis, the preservation notice
+  and a collapsed block of citation text under the original anchors, no issue
+  list). No page, navigation or footer links to it. The historical issue pages' shared
+  footer (`site/templates/pla-watch-base.html`) now calls each an earlier
+  Brief in Indo-Pacific Record Briefs; that is a source change only, and the
+  pages are not re-rendered: public `output/` needs a separate authorized
+  render and deploy. No. 14 leads
+  without a recorded approval; its status is still unreconciled and is not
+  changed here. Briefs are marked turquoise on the band and compass blue on
+  paper (DESIGN_SYSTEM §3).
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
   published.** No. 14 is publicly served, with its status unreconciled (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition

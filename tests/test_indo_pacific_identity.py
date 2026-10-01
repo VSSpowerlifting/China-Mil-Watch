@@ -238,7 +238,9 @@ class TestRetiredNamesStayRetired(IdentityCase):
         html = re.sub(r"\s+", " ", self.page("pla-watch.html"))
         self.assertNotIn("not a discontinued one", html)
         self.assertNotIn("The series continues", html)
-        self.assertIn("This page is an archive of those issues", html)
+        # 2026-09-30: no longer a second archive; the issues are earlier Briefs.
+        self.assertNotIn("This page is an archive of those issues", html)
+        self.assertIn("is now part of Indo-Pacific Record Briefs", html)
         self.assertIn("preserved as published", html)
 
 
