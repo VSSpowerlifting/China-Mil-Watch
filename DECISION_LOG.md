@@ -4,6 +4,269 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-01 — Briefs-band Signal Veil: one decorative gradient exception on the home analysis band
+
+**Approved owner ruling (Ben, 2026-10-01).** The treatment and the exception
+below are accepted; the current visual treatment is the approved review
+baseline and is not to be strengthened or redesigned without a new direction.
+Owner direction: the dark "Latest analysis" band on the home page leaves its
+right side empty; give it a restrained, Indo-Pacific-Record atmosphere without
+changing layout, content or hierarchy.
+
+1. **What it is.** Two pseudo-elements on `.band[aria-labelledby="analysis"]`
+   in `site/preview/styles.css`: layered translucent swells with thin edge
+   lines, a dotted mesh and faint contours, painted from the band's own tokens
+   (`--accent`, `--focus-band`) with `color-mix`. No image, no `url()`, no
+   `<svg>`, no template change, no new token, no crimson, no motion.
+2. **Narrow exception to a standing rule.** `docs/DESIGN_SYSTEM.md` §6 says
+   the accent budget forbids gradients as decoration anywhere but the mark. This
+   veil is a gradient used as decoration, and the owner has approved it as an
+   exception scoped **only to the homepage Indo-Pacific Record Briefs band**
+   (`.band[aria-labelledby="analysis"]`). It does not repeal the general rule:
+   gradients remain forbidden as decoration on every other surface, including
+   other bands, the Analysis page and the Briefs pages, and any further use
+   needs its own ruling. The Ocean Signal Veil's masked photograph is a
+   different, already-sanctioned mechanism.
+3. **Constraints it keeps.** Inert (`pointer-events: none`, `z-index: -1` in
+   the band's own stacking context), inside the band's box (cannot overflow),
+   dropped in print and forced-colours. The full veil runs from 720px, in the
+   space the lead's column leaves free; below 720px that space is under 150px,
+   so only a quiet corner of fills remains (no lines, no mesh). No geographic
+   or radar imagery: every arc is centred off the box, and a coastline or map
+   is not attempted in CSS.
+4. **Measured, not judged.** Every text run in the band clears AA at the pixels
+   its glyphs cover at 375, 390, 430, 719, 720, 768, 900, 1024, 1280 and 1440,
+   and a long desk list in the byline and label (they have no measure of their
+   own) still clears it at 720, 768, 1024 and 1280. From 720px up the body runs
+   measure the same as the unveiled band (6.54:1 for the muted tone; the long
+   byline stress 6.04:1 at worst) and "All analysis" 8.67:1 against 8.97:1. The
+   weakest figure is the quiet corner on phones: the legacy note at 375 measures
+   5.52:1 against 6.54:1 unveiled. `tests/test_home_briefs_band_veil.py` holds
+   this, reusing the Ocean Signal Veil's glyph-pixel method.
+5. **Reversal.** Withdrawing the exception means deleting the "BRIEFS-BAND SIGNAL
+   VEIL" block in `styles.css`, `tests/test_home_briefs_band_veil.py`, and the
+   matching lines in `docs/DESIGN_SYSTEM.md` §6 and `PROJECT_STATE.md` §6a;
+   nothing else depends on them.
+
+## 2026-09-30 — The PLA Watch is absorbed into Indo-Pacific Record Briefs: one publication, no visible second archive
+
+**Owner direction (Ben, 2026-09-30).** Indo-Pacific Record Briefs is the single
+analysis publication. The PLA Watch is not a visibly separate archive or
+product: its existing issues are the earlier part of the same catalog, and
+their historical identity is provenance metadata, not a second hierarchy.
+This implements point 1 of the 2026-09-23 ruling ("a unified collection may
+display that provenance and never rewrites it") and reverses the presentation
+PR #86 gave it, which set the issues apart in a legacy-archive section and
+refused to let one lead.
+
+1. **One list.** The Analysis page and the home band use `collection.rows`:
+   native Briefs and earlier issues together, newest first by number, then week,
+   then address, each item once (a duplicate number, address or slug fails the
+   build). There is no "Historical PLA Watch Archive", "Legacy archive" or other
+   separated collection on either surface.
+2. **The newest item leads, by publication date.** `collection.lead` is the
+   item with the latest week ending, whichever series it began in and whether or
+   not it is numbered; issue number then slug only break ties. Today that is
+   No. 14. "Briefs in development" appears
+   only when the collection holds no item at all, never because there is no
+   native Brief. PR #86's rule that a PLA Watch issue may not lead is revoked.
+3. **Provenance is secondary metadata.** An earlier issue carries
+   "From the former series The PLA Watch · published under China Mil Watch" (or
+   "published by Indo-Pacific Record" for No. 14, from its stored publication
+   field, with its retrospective label). Stored
+   sidecars, titles, issue numbers, bylines, dates, source trails, citation
+   targets and URLs are unchanged; nothing is renumbered or rewritten.
+4. **Routes.** `/pla-watch.html` still resolves, because it is an established
+   address and alone carries each issue's citation. It is a compatibility bridge ("The PLA Watch is now part of Indo-Pacific
+   Record Briefs"): it points to Analysis, keeps the preservation notice and a
+   collapsed block of citation text under the anchors it always had, and lists
+   no issues of its own. No page, navigation or footer links to it. The feeds are unchanged: `briefs/feed.xml` carries native Briefs,
+   `the-pla-watch/feed.xml` keeps the earlier issues.
+5. **What this does not change.** No. 14's publication status is still
+   unreconciled (2026-09-23 point 9), and it now leads the page without a
+   recorded approval, which is an editorial exposure the owner should rule on.
+   `UNRECONCILED_ISSUES` and every Brief approval gate are untouched. The
+   historical pages' rendered output is not regenerated here.
+
+## 2026-09-27 — Three public copy corrections, owner-approved
+
+**Owner ruling (Ben, 2026-09-27):** approve the corrections an independent
+review recommended for the three items the overhaul entry below flagged,
+and replace the home page's blanket "never reviewed by a human". Each new
+statement was checked against the database and the doctrine before it was
+written. No record, sidecar, desk status or approval changed.
+
+1. **Home register blurb.** Before: "The most recent records from the desks
+   that collect, with original-language titles preserved." After: "The latest
+   analyzed records, with original-language titles preserved." The home page
+   lists the 6 newest records in the Analyzed state. All 6 are China Desk
+   records, because the Singapore Desk holds 60 records and none is analyzed
+   (50 awaiting screening, 10 not selected). The list's query now selects by
+   the same state derivation every label uses (`STATE_CASE_SQL`) instead of
+   `analyzed_at IS NOT NULL`. No record in the database has `analyzed_at` set
+   without passing screening, so the rendered page is unchanged.
+2. **Outage note on the weeks of 13 and 20 July 2026.** Before: "…Records for
+   those dates are absent from this snapshot; they were not collected, and
+   their absence is not evidence that nothing was published." After: "This
+   week overlaps the recorded collection interruption of 17–24 July 2026.
+   Records published on those dates were not collected at the time, and a
+   missing record is not evidence that nothing was published. Later
+   collection added 9 Singapore Desk records dated 21–23 July 2026 to this
+   snapshot." Evidence:
+   * No collection run is recorded between run 90 (16 July) and run 91
+     (25 July).
+   * No China Desk record is dated inside the window.
+   * The Singapore Desk holds 9 records dated inside it (5 dated 21 July, 4
+     dated 23 July). All 9 were retrieved on 19 August 2026 (UTC) and entered
+     the corpus by the governed promotion of 22 September.
+   The last sentence is derived at build time from the corpus and the desk
+   registry, so it follows the data:
+   * It says "Later collection added" only if every record it counts was
+     retrieved after 24 July. Otherwise it only states what is held.
+   * It names no desk that holds nothing in the window.
+   * It never attributes a record whose source has no declared desk.
+   The code cites a ruling "2026-08-16 §6a" for the week annotations, but
+   this log has never held a 2026-08-16 entry. This entry is the first
+   ruling on the note's wording recorded here. The two annotation labels and
+   the rule for which weeks carry them are unchanged.
+3. **Home analysis explanation.** Before: "Analysis is written by a person,
+   cites the records it rests on, and is labeled as interpretation. No model
+   writes it and no script derives it from the corpus." After: "Analysis is
+   human-controlled, cites the records it rests on, and is labeled as
+   interpretation." "Human-controlled" is the doctrine's word
+   (PRODUCT_AND_EDITORIAL_DOCTRINE §1). The removed sentence was false for
+   the existing issues. `scripts/generate_pla_watch.py` drafted them by
+   reading analyzed articles from the database and calling the Claude API,
+   under human control. The Methodology page's "a person's analysis", copy
+   new to the overhaul, now reads "human-controlled analysis".
+4. **Machine output.** Before: "…are produced by software, labeled wherever
+   they appear, and never reviewed by a human." After: "…are produced by
+   software, and the daily pipeline publishes them without human review.
+   They can be wrong." The daily workflow (`.github/workflows/daily_update.yml`)
+   runs on a schedule and goes from collection and analysis through render,
+   validation, commit and deploy with no human step. "Never" claimed more
+   than that, because a person may still read machine text, for example
+   inside an issue. "Labeled wherever they appear" is dropped too:
+   * list rows show a machine-translated title with no per-row label;
+   * a record's screening state carries no machine label.
+   "Can be wrong" is the doctrine's own (§4.2). The per-item labels "Not
+   reviewed by a human" on record pages are approved copy and unchanged.
+
+Tests pin each new sentence, test that each removed claim is absent, and
+check that every home record is in the Analyzed state. They also check that
+every page of both outage weeks carries the note, with the count and dates
+derived from the database.
+
+## 2026-09-27 — Record-site frontend overhaul: "Almanac, with custody layers"
+
+**Owner direction, 2026-09-27 brief:** overhaul the IPR frontend with a much
+higher design ambition, preserving the Ocean Signal Veil (home page) and The
+PLA Watch Signal Veil exactly; everything else in the frontend is open to
+reconsideration; no commit, merge or deploy under the brief. The design
+decisions below were delegated to the agent and are recorded because they
+constrain later work. None is an editorial ruling, none changes a record, an
+edition, a sidecar, a desk's status or an approval, and none changes a URL.
+
+1. **Direction.** Three directions were prototyped against real records and
+   a real issue — A, Almanac (time-first); B, Parallel Text (original
+   language first); C, Custody (the trust layers made visible) — and the
+   record surfaces take A with C's layers: records are grouped under the
+   source-stated publication date, and every surface marks which of three
+   layers a reader is looking at — the source record (ink), machine output
+   (rust, `--signal`) and human-controlled analysis (crimson). A record page states its
+   custody in four stages it can prove from stored fields: published,
+   collected, machine reading, analysis.
+2. **Navigation.** "Atlas" is relabelled **Records**: the same destination
+   (`archive.html`), every address unchanged. The order is Records · Analysis
+   · Desks · Sources · Coverage · Methodology · About — the two layers a
+   reader comes for, the collection that produces the record, the method.
+   The Records page keeps its title, "The record"; "Corpus" stays
+   methodological language ("Corpus by week"), not a destination. The PLA
+   Watch pages link to `methodology.html#model-flagged` ("How flagging
+   works"). The record site's Methodology had no such id, so those links
+   opened at the top of the page. The id now sits on the "Model-flagged"
+   definition. The footer links the series glossary by its own title, "Terms
+   to Know", at the live address, as the site links every issue. The
+   Records page keeps the earlier page's anchors, `#guide-link` and
+   `#volume-jump`, on the same two links.
+3. **No site-wide masthead search.** Tried and withdrawn: it added 58px to
+   the measured phone masthead (146.80 → 205.34 at 320), pushed the lead
+   record below the first phone viewport, printed a record count on the
+   reference desk's page, and did nothing with JavaScript off. Search lives
+   on the Records page. The masthead carries no controls.
+4. **The Records finder.** The newest 50 records are rendered on the server
+   and read with no script. The search index (≈270 KB compressed) loads on a
+   reader's first request — a search, a filter, an order, a page, or an
+   address that asks for one — never on arrival. It is refused unless it
+   proves it is this page's snapshot, and a refused index never draws a row:
+   the finder withdraws, the server's rows stay, and the approved failure
+   message is shown. Filters live in the address (back and forward restore
+   them); a record's own URL never carries parameters; "Back to search
+   results" returns through history only when the reader came from this
+   site's search or week lists.
+5. **Record ↔ analysis.** A record page names the published issues whose
+   source trail holds its exact stored URL (no normalisation, no fuzzy
+   match), in the words "in the source trail of" — never "cited for". List
+   rows say only "In an analysis source trail". Nothing reads or changes an
+   issue.
+6. **The edition plate replaces the cover photograph** on the home page and
+   on Analysis (VISUAL_AND_MOTION §3.2), drawn from the issue's own sidecar.
+   A tick is drawn per source-trail entry; a model-flagged entry is drawn in
+   the machine layer's rust and at full height, not in crimson as §3.2 first
+   specified — the flag is the model's (`is_significant`), and crimson on
+   these surfaces means analysis. Crimson marks only the issue's top rule.
+   The cover remains the issue's link-preview image.
+7. **Crimson on paper** marks the analysis layer — its label, the record
+   page's "In analysis" panel and a record row's "In an analysis source
+   trail" tag, the custody line's analysis stage, the analysis column of the
+   home page's three-layer explainer, an issue's eyebrow — and nothing else:
+   never a decorative accent, a data fill, or a machine flag. The editor's
+   "Significant" / "Routine" labels on Analysis stay neutral. This extends the 2026-09-26 meaning rule to paper and is
+   the visual half of the evidence-versus-inference doctrine.
+8. **Typography is unchanged:** Source Serif 4, Inter and IBM Plex Mono, per
+   2026-09-26. A trial of IBM Plex Sans for the record site was withdrawn
+   because it would have split the publication's sans across its two
+   surfaces. The type ladder keeps its six named levels.
+9. **Labels on the record surfaces** are set in the interface sans, in
+   sentence case, each marked by a short rule in its layer's colour. Mono
+   stays for metadata — the masthead kicker, issue numerals, hashes and ids
+   (DESIGN_SYSTEM §4). Night Desk keeps its mono caps labels.
+10. **Measured contracts hold as measured.** The phone masthead (146.80px at
+   320, 148.58px at 375), the lead record inside the first phone viewport,
+   the veil's glyph contrast and the approved caveats and messages are kept
+   exactly; the design moved around them, not through them.
+11. **A desk's week strip is that desk's record.** It begins at the week of
+   the desk's first record, so no week before its record began reads "0
+   records". It carries the corpus's outage hatch only if the desk was
+   collecting when the outage happened (first record retrieved by 24 July
+   2026). Each bar still opens the corpus week page, which works without
+   JavaScript, and the strip's caption says that page lists every desk.
+
+Not changed, and flagged for the owner. All three are now resolved by the
+owner-approved entry above; the flags are kept as written:
+
+- The home page's register is the most recent *analyzed* records, and its
+  approved blurb reads "The most recent records from the desks that collect".
+  At this snapshot none of Singapore's 60 records is analyzed, so all 60
+  register rows are China desk records. The blurb is kept verbatim; whether it
+  should say "analyzed", or name the desk, is the owner's call.
+  *Resolved (item 1 above). One correction: the home page lists 6 records
+  (a lead and 5 register rows), drawn from the 60 newest analyzed records.
+  "All 60 register rows" overstated the list.*
+- The governed outage note (2026-08-16 §6a) on the week of 20 July 2026 says
+  "Records for those dates are absent from this snapshot". Singapore's
+  backfill has since stored 9 records dated 21–23 July, and that week's pages
+  list them under the note. The note is left as ruled; rewording it is the
+  owner's call. The desk strips are handled here (item 11).
+  *Resolved (item 2 above). The same note also stood on the week of 13 July.*
+- Home's approved copy says analysis "is written by a person". The doctrine's
+  term is "human-controlled", and the existing issues were drafted through the
+  model (`scripts/generate_pla_watch.py`) under human control. Copy new to
+  this overhaul says "human-controlled"; the approved sentence is unchanged
+  and is the owner's to revisit.
+  *Resolved (items 3 and 4 above).*
+
+
 ## 2026-09-26 — Paper Ledger typography and chart scope
 
 **Owner direction in the frontend continuation:** make the site more visually

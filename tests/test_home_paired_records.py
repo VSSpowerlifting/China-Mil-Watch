@@ -385,7 +385,9 @@ class TestTheHomePageIdentityIsPreserved(HomeCase):
         self.assertNotRegex(
             self.home, r'<details class="nav-toggle nav-mobile"[^>]*\bopen\b',
             "the compact disclosure ships expanded")
-        for label in ("Atlas", "Desks", "Sources", "Analysis", "Coverage",
+        # "Records" was "Atlas" until 2026-09-27 (DECISION_LOG); same
+        # destination, same address.
+        for label in ("Records", "Desks", "Sources", "Analysis", "Coverage",
                       "Methodology", "About"):
             with self.subTest(label=label):
                 self.assertIn(">%s</a>" % label, details)
@@ -540,11 +542,19 @@ class TestTheDatelineCarriesEveryGovernedFigure(HomeCase):
         # `records_last_collected` is MAX(scraped_at) and
         # `analysis_last_produced` is MAX(analyzed_at). Collecting one record
         # after the last analysis ran is exactly the state the caveat exists
-        # for, and it is the smallest change that produces it.
+        # for, and it is the smallest change that produces it. Freshness is
+        # compared by calendar day (the first ten characters), so the
+        # collection time is derived from the copied corpus as one day after
+        # its newest analysis, never a fixed date, and stays "after" as the
+        # tracked corpus advances.
         con = sqlite3.connect(str(db))
         newest = _newest_analyzed_ids(db, 1)[0]
-        con.execute("UPDATE articles SET scraped_at = '2026-09-30 06:00:00' "
-                    " WHERE id = ?", (newest,))
+        collected_after = con.execute(
+            "SELECT datetime(MAX(analyzed_at), '+1 day') FROM articles "
+            " WHERE analyzed_at IS NOT NULL").fetchone()[0]
+        self.assertIsNotNone(collected_after, "the corpus has no analysis")
+        con.execute("UPDATE articles SET scraped_at = ? WHERE id = ?",
+                    (collected_after, newest))
         con.commit()
         con.close()
         out = tmp / "behind-build"
@@ -656,18 +666,20 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
 
     def test_the_only_photograph_painted_behind_text_is_the_veil(self):
         """
-        The stylesheet may paint exactly one raster, at exactly one route, and
-        only inside the desktop query. Any second one is a photograph nobody
-        measured.
+        The veil's two encodings are the only photographic URLs. The inline
+        SVG ruling is a vector pattern in the wide margins, not a photograph
+        whose contrast needs measuring over text.
         """
         css = CSS.read_text(encoding="utf-8")
-        painted = [d.strip() for d in
+        painted = [value for value in
                    re.findall(r"background-image:\s*([^;}]+)", css)
-                   if "url(" in d]
-        self.assertTrue(painted, "the veil is not painted at all")
-        urls = set(re.findall(r'url\("([^"]+)"\)', " ".join(painted)))
+                   if "url(" in value]
+        urls = re.findall(r'url\("([^"]+)"\)', " ".join(painted))
+        ruling = [url for url in urls if url.startswith("data:image/svg+xml,")]
+        self.assertEqual(len(ruling), 1, "expected one inline vector ruling")
         self.assertEqual(
-            urls, {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
+            set(urls) - set(ruling),
+            {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
             "an unmeasured raster is painted behind text")
 
     def test_the_veil_is_declared_only_inside_the_desktop_query(self):
@@ -676,13 +688,24 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
         below 901px, or a narrow viewport may fetch it anyway.
         """
         css = CSS.read_text(encoding="utf-8")
-        for match in re.finditer(r"background-image:\s*[^;}]*url\(", css):
-            before = css[:match.start()]
-            opened = before.count("@media (min-width: 901px)")
-            with self.subTest(at=match.start()):
-                self.assertGreater(
-                    opened, 0,
-                    "a raster background is declared before the 901px query")
+        start = css.index("@media (min-width: 901px) {")
+        depth = 0
+        end = None
+        for offset in range(css.index("{", start), len(css)):
+            depth += (css[offset] == "{") - (css[offset] == "}")
+            if depth == 0:
+                end = offset
+                break
+        self.assertIsNotNone(end, "the desktop veil query is unclosed")
+        for route in ("atmosphere/veil-ocean.webp",
+                      "atmosphere/veil-ocean.jpg"):
+            matches = list(re.finditer(re.escape('url("%s")' % route), css))
+            self.assertTrue(matches, "the veil is not painted at all")
+            for match in matches:
+                with self.subTest(route=route, at=match.start()):
+                    self.assertTrue(start < match.start() < end,
+                                    "a raster background is declared outside "
+                                    "the 901px query")
 
     def test_the_veil_credit_names_the_rights_it_rests_on(self):
         self.assertIn('class="veil-credit"', self.home)
@@ -727,30 +750,57 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         lead = lead.split("</section>", 1)[0]
         self.assertIn('class="evidence evidence--record">Source record', lead)
 
-    def test_the_latest_analysis_renders_the_actual_edition(self):
+    def test_the_latest_analysis_band_leads_with_the_newest_unified_brief(self):
+        """
+        Changed 2026-09-30 (DECISION_LOG): the earlier issues are Briefs in the
+        one collection, so the band leads with the newest item of it, which
+        with no native Brief is the newest earlier issue. It says where that
+        issue was first published as a secondary line, draws no plate, and
+        stands alone: no archive aside, no "in development" state.
+        """
         editions = gp.load_editions(REPO_ROOT)
         if not editions:
             self.skipTest("no published edition to lead with")
         lead = editions[0]
-        section = self.home.split("Latest analysis", 1)[1]
-        section = section.split('class="section-head', 1)[0]
-        self.assertIn(lead["title"] or lead["slug"], section)
+        section = self.home.split(">Latest analysis</h2>", 1)[1]
+        section = section.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertNotIn("Briefs in development", section)
         self.assertIn(lead["url"], section)
+        self.assertIn(lead["title"] or lead["slug"], section)
         self.assertIn("No. %s" % lead["issue"], section)
+        self.assertIn("From the former series The PLA Watch", section)
+        self.assertIn("Read this Brief", section)
+        self.assertNotIn("band-archive", section)
+        self.assertNotIn('href="pla-watch.html"', section)
 
-    def test_the_pla_watch_cover_still_renders_with_its_credit(self):
+    def test_the_lead_edition_is_drawn_as_its_plate_not_its_cover(self):
+        """
+        Replaced 2026-09-27 (DECISION_LOG, the edition plate). The home page
+        drew the lead issue's 435 KB cover photograph with its credit; it now
+        draws the issue's plate from its own sidecar, and the cover stays the
+        issue's link-preview image on its own page. What was guarded — the
+        edition shown is the real lead edition, whole — is guarded here on the
+        new component; the plate's figures are held to the sidecar in
+        `TestTheAnalysisSectionDegrades`.
+        """
         editions = gp.load_editions(REPO_ROOT)
-        if not editions or not editions[0].get("cover"):
-            self.skipTest("the leading edition has no cover")
-        cover = editions[0]["cover"]
-        self.assertIn(cover["route"], self.home)
-        self.assertIn(cover["alt"], self.home)
-        self.assertIn(cover["credit_note"], self.home)
-        img = re.search(r'<img[^>]+%s[^>]*>' % re.escape(cover["route"]),
-                        self.home)
-        self.assertIsNotNone(img)
-        self.assertIn('width="1200"', img.group(0))
-        self.assertIn('height="630"', img.group(0))
+        if not editions:
+            self.skipTest("no published edition to lead with")
+        lead = editions[0]
+        # Since 2026-09-30 the plate stands in the latest-Brief lead on the
+        # Analysis page; the home band draws no plate at all.
+        band = self.home.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertNotIn("<svg", band)
+        analysis = (self.out / "analysis.html").read_text(encoding="utf-8")
+        section = analysis.split('class="band briefs-head"', 1)[1]
+        section = section.split('id="briefs-published"', 1)[0]
+        self.assertEqual(section.count("<svg"), 1)
+        self.assertIn('role="img"', section)
+        self.assertIn("No. %s" % lead["issue"], section)
+        self.assertNotIn("<img", section)
+        if lead.get("cover"):
+            self.assertNotIn(lead["cover"]["route"], section)
 
     def test_the_analysis_section_is_still_labelled_interpretation(self):
         self.assertIn("Record and analysis are not the same thing", self.home)
@@ -1271,16 +1321,20 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
 
     def test_no_current_edition_leaves_the_page_coherent(self):
         """
-        The band's lead is `latest_analysis`, the collection's newest issue:
-        `None` when no sidecar and no brief exists. The analysis section is then
-        absent rather than an empty frame, and nothing above or below it claims
-        an edition. (Until 2026-09-23 the guard read `lead_edition`, the newest
-        PLA Watch issue; the band now leads with the collection.)
+        The band's lead is `collection.lead`: the newest published item of the
+        one collection, an earlier issue included. The in-development state
+        stays in the template for the case where the collection is empty.
+        (Until 2026-09-30 the lead was the newest native brief only, and before
+        that `latest_analysis` or `lead_edition`.)
         """
         source = (TEMPLATES / "home.html").read_text(encoding="utf-8")
-        self.assertIn("{% set lead = latest_analysis %}\n{% if lead %}", source)
-        analysis = source.split("{% if lead %}", 1)[1]
-        self.assertIn("Latest analysis", analysis.split("{% endif %}")[0])
+        self.assertIn("{% set lead = collection.lead if collection else none %}",
+                      source)
+        self.assertNotIn("collection.briefs[0]", source)
+        self.assertNotIn("{% set lead = latest_analysis %}", source)
+        band = source.split('<section class="band" aria-labelledby="analysis">', 1)[1]
+        self.assertLess(band.index("Latest analysis"), band.index("{% if lead %}"))
+        self.assertIn("Briefs in development", band.split("</section>", 1)[0])
 
 
 if __name__ == "__main__":                                  # pragma: no cover
@@ -1733,9 +1787,10 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
 
         T3 reinstates a photographic layer on purpose, so the blanket ban is
         gone and two narrower properties stand in its place. Here: the veil is
-        the ONLY element allowed to paint behind text, and it is inert —
+        the ONLY raster allowed to paint behind text, and it is inert —
         `pointer-events: none`, `aria-hidden`, and behind every text layer, so
-        it can never take a click or reach the accessibility tree.
+        it can never take a click or reach the accessibility tree. The new
+        vector ruling is allowed only on main, under opaque reading paper.
 
         The contrast property the ban existed to protect is measured directly,
         from the pixels each glyph actually covers, in
@@ -1745,17 +1800,61 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
             context, page = self.page_at(width, 900)
             try:
                 bad = page.evaluate("""() => {
-                  const painted = [...document.querySelectorAll('*')].filter(
-                    el => (getComputedStyle(el).backgroundImage || '')
-                            .includes('url('));
-                  return painted
-                    .filter(el => !el.classList.contains('veil'))
-                    .map(el => el.tagName + '.' + el.className);
+                  return [...document.querySelectorAll('*')]
+                    .map(el => ({el, image: getComputedStyle(el).backgroundImage}))
+                    .filter(({image}) => image.includes('url('))
+                    .filter(({el, image}) => !(
+                      (el.classList.contains('veil') &&
+                       image.includes('veil-ocean.')) ||
+                      (el.matches('main#main') &&
+                       image.includes('data:image/svg+xml'))))
+                    .map(({el}) => el.tagName + '.' + el.className);
                 }""")
                 with self.subTest(width=width):
                     self.assertEqual(
-                        bad, [], "something other than the veil paints a "
-                                 "raster behind the page")
+                        bad, [], "an unexpected image paints behind the page")
+            finally:
+                context.close()
+
+    def test_margin_ruling_stays_outside_reading_paper_and_phone(self):
+        for width in (1920, 375):
+            context, page = self.page_at(width, 900)
+            try:
+                state = page.evaluate("""() => {
+                  const main = document.querySelector('main#main');
+                  const mainBox = main.getBoundingClientRect();
+                  const wraps = [...main.querySelectorAll(':scope > .wrap')];
+                  return {
+                    image: getComputedStyle(main).backgroundImage,
+                    gridPainters: [...document.querySelectorAll('*')]
+                      .filter(el => getComputedStyle(el).backgroundImage
+                        .includes('data:image/svg+xml')).length,
+                    wraps: wraps.map(el => {
+                      const style = getComputedStyle(el);
+                      const box = el.getBoundingClientRect();
+                      const channels = style.backgroundColor.match(/[\\d.]+/g)
+                        .map(Number);
+                      return {
+                        image: style.backgroundImage,
+                        opaque: channels.length === 3 || channels[3] === 1,
+                        inset: box.left > mainBox.left &&
+                          box.right < mainBox.right
+                      };
+                    })
+                  };
+                }""")
+                with self.subTest(width=width):
+                    self.assertTrue(state["wraps"], "no reading paper")
+                    if width == 1920:
+                        self.assertIn("data:image/svg+xml", state["image"])
+                        self.assertEqual(state["gridPainters"], 1)
+                        self.assertTrue(all(w["opaque"] and w["inset"] and
+                                            w["image"] == "none"
+                                            for w in state["wraps"]),
+                                        "margin ruling reaches reading paper")
+                    else:
+                        self.assertEqual(state["image"], "none")
+                        self.assertEqual(state["gridPainters"], 0)
             finally:
                 context.close()
 
@@ -2561,6 +2660,11 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
     reached by mutating the corpus — both live in `output/the-pla-watch/`,
     which is protected — so they are exercised where the decision is made:
     `edition_cover()` and the template's own guards.
+
+    Since 2026-09-27 the lead issue is drawn as its edition plate rather than
+    its cover (DECISION_LOG), so the cover's absence changes nothing, and the
+    plate is held to the issue's own sidecar. Since 2026-09-30 that plate
+    is drawn in the Analysis lead when an issue leads, not on the home band.
     """
 
     def test_a_missing_cover_file_yields_no_cover_rather_than_a_gap(self):
@@ -2589,7 +2693,14 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
                 with self.subTest(key=key):
                     self.assertTrue(real[key])
 
-    def build_with_editions(self, editions):
+    @staticmethod
+    def archive_lead(analysis):
+        """The Analysis page's latest-Brief lead, up to the catalog: where
+        the newest item, when it is an earlier issue, is drawn as its plate."""
+        section = analysis.split('class="band briefs-head"', 1)[1]
+        return section.split('id="briefs-published"', 1)[0]
+
+    def build_with_editions(self, editions, page="index.html"):
         """
         A real build whose edition list is exactly `editions`.
 
@@ -2609,7 +2720,7 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
                      snapshot=gp.snapshot_from_corpus(TRACKED_DB))
         finally:
             gp.load_editions = original
-        return (out / "index.html").read_text(encoding="utf-8")
+        return (out / page).read_text(encoding="utf-8")
 
     def real_edition(self):
         """
@@ -2622,37 +2733,64 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
             self.skipTest("no published edition to lead with")
         return dict(editions[0])
 
-    def test_the_feature_renders_one_column_without_a_cover(self):
+    def test_a_missing_cover_changes_nothing_where_the_issue_is_drawn(self):
         edition = self.real_edition()
         self.assertIsNotNone(edition.get("cover"),
                              "the fixture needs an edition that HAS a cover")
         edition["cover"] = None
-        html = self.build_with_editions([edition])
-        section = html.split("Latest analysis", 1)[1]
-        section = section.split('class="section-head', 1)[0]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
         self.assertIn(edition["title"], section)
-        self.assertIn("Read this edition", section)
-        self.assertNotIn("<figure", section)
+        self.assertIn("Read this Brief", section)
+        self.assertIn('class="plate', section)
         self.assertNotIn("<img", section)
         self.assertNotIn("figure-credit", section)
 
-    def test_the_cover_renders_with_its_dimensions_and_credit(self):
+    def test_the_plate_draws_the_issues_own_source_trail(self):
+        """
+        One tick per source-trail entry, in trail order; a tick is flagged
+        exactly where the entry carries the model's `is_significant` flag.
+        The flag is machine output, so it is drawn in the machine layer's
+        rust (#D4845F) and never in the analysis crimson, which marks only
+        the issue itself (the one top rule). Read from the sidecar, so the
+        figures cannot be the template's own idea of the trail.
+        """
+        import json
         edition = self.real_edition()
-        if not edition.get("cover"):
-            self.skipTest("the leading edition has no cover")
-        html = self.build_with_editions([edition])
-        section = html.split("Latest analysis", 1)[1]
-        self.assertIn('src="%s"' % edition["cover"]["route"], section)
-        self.assertIn(edition["cover"]["alt"], section)
-        self.assertIn(edition["cover"]["credit_note"], section)
-        self.assertIn('width="1200"', section)
-        self.assertIn('height="630"', section)
+        sidecar = json.loads(
+            (REPO_ROOT / "output" / "the-pla-watch" / "posts"
+             / ("%s.json" % edition["slug"])).read_text(encoding="utf-8"))
+        trail = sidecar.get("source_trail") or []
+        flagged = [bool(e.get("is_significant")) for e in trail]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
+        svg = section.split("<svg", 1)[1].split("</svg>", 1)[0]
+        ticks = re.findall(r'<rect [^>]*class="(tick[^"]*)"', svg)
+        self.assertEqual(len(ticks), len(trail))
+        self.assertEqual(["tick--flagged" in t for t in ticks], flagged)
+        for rect in re.findall(r'<rect [^>]*class="tick tick--flagged"[^>]*>',
+                               svg):
+            self.assertIn('fill="#D4845F"', rect)
+        self.assertNotIn("#E05A6D", svg)
+        self.assertEqual(svg.count("#B3132B"), 1, "one crimson rule, for the issue")
+        self.assertIn("%d record%s in the source trail, %d of them "
+                      "model-flagged" % (len(trail), "" if len(trail) == 1
+                                         else "s", sum(flagged)), svg)
+        self.assertNotIn("<img", section)
 
     def test_no_current_edition_removes_the_section_without_a_claim(self):
         html = self.build_with_editions([])
-        self.assertNotIn('<h2>Latest analysis</h2>', html)
+        # Since 2026-09-30 the band states the current collection whether or
+        # not an issue exists, so it stays; with no issue it has no archive
+        # to point to, and it claims no edition. `>…</h2>`: the heading
+        # carries an id, and a bare `<h2>` match would pass however the
+        # section rendered.
+        band = html.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertIn("Briefs in development", band)
+        self.assertNotIn('class="band-archive"', band)
         for phrase in ("Read this edition", "figure-credit",
-                       "<figure", "legacy-note",
+                       'class="plate', 'viewBox="0 0 560 315"', "legacy-note",
                        "Retrospective edition"):
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, html)

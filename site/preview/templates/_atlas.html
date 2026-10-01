@@ -1,5 +1,5 @@
-{# Shared Atlas context. All dates, counts and states come from the render
-   context; a shadow or blocked desk never receives a production count. #}
+{# Shared record-site furniture. All dates, counts and states come from the
+   render context; a shadow or blocked desk never receives a production count. #}
 {% macro breadcrumb(items) -%}
 <nav class="atlas-breadcrumb" aria-label="Breadcrumb">
   <ol>
@@ -10,11 +10,16 @@
 </nav>
 {%- endmacro %}
 
+{# The desk line: which declared desks contribute to the record, in their own
+   words, beside the snapshot it describes. Rendered where desk coverage is
+   the subject — Records, Desks, Coverage and a desk's own page — rather than
+   repeated above every page. A desk that does not collect is named with its
+   status and no count, never a zero. #}
 {% macro spine(desks, snapshot, corpus_total, nested=false, focus=none) -%}
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="{{ snapshot.date }}">{{ snapshot.date }}</time>
-    · {% if focus %}{% if focus.record_count is not none %}{{ focus.record_count|count }} records held by this desk{% else %}no production record count for this desk{% endif %}{% else %}{{ corpus_total|count }} records held{% endif %} ·
-    <a href="{{ '../' if nested else '' }}coverage.html">collection evidence</a></p>
+<aside class="atlas-spine" aria-label="Desk collection status">
+  <p><strong>Snapshot <time datetime="{{ snapshot.date }}">{{ snapshot.date }}</time></strong>
+    · {% if focus %}{% if focus.record_count is not none %}{{ focus.record_count|count }} records held by this desk{% else %}no production record count for this desk{% endif %}{% else %}{{ corpus_total|count }} records held{% endif %}
+    · <a href="{{ '../' if nested else '' }}coverage.html">collection evidence</a></p>
   <ul aria-label="Desk collection states">
   {% for desk in desks if not focus or desk.slug == focus.slug %}
     <li><a href="{{ '../' if nested else '' }}{{ desk.route }}">{{ desk.name }}</a>

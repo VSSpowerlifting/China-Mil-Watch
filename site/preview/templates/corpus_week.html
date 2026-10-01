@@ -1,22 +1,26 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import breadcrumb %}
+{% from "_records.html" import record_days %}
+{% from "_weeks.html" import week_strip %}
 {% block title %}{{ week.start }} to {{ week.end }} — corpus — {{ title }}{% endblock %}
 {% block content %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Records by week', 'corpus.html'), ('Publication week ' ~ week.start, none)]) }}
+{{ breadcrumb([('Records', 'archive.html'), ('Records by week', 'corpus.html'), ('Publication week ' ~ week.start, none)]) }}
+<header class="page-head">
+  <h1>Publication week <span class="nowrap">{{ week.start }}</span> to <span class="nowrap">{{ week.end }}</span></h1>
+  {# The space after `{% if paginated %}` is a LITERAL space inside the if
+     body, and it has to be: `trim_blocks` removes the newline that follows a
+     block tag, which once glued "records" to "on this page" on every shard. #}
+  <p class="lede">{{ page_count | count }} record{{ '' if page_count == 1 else 's' }}{% if paginated %} on this page,
+  of {{ week.count | count }} in the week{% endif %}, by the publication date each
+  source stated.</p>
+</header>
 
-<h1>Publication week {{ week.start }} to {{ week.end }}</h1>
-{# The space after `{% if paginated %}` is a LITERAL space inside the if body,
-   and it has to be. The environment sets `trim_blocks`, which removes the
-   newline that follows a block tag — so a line break here glued "records" to
-   "on this page" on all 74 shards. The later newline is ordinary template
-   text, not a block boundary, so it survives as whitespace. #}
-<p class="lede">{{ page_count | count }} record{{ '' if page_count == 1 else 's' }}{% if paginated %} on this page,
-of {{ week.count | count }} in the week{% endif %}, by the publication date each
-source stated.</p>
-{{ spine(desks, snapshot, corpus_total) }}
-
+{# A governed annotation is a plain paragraph, not a callout: the site's two
+   callouts are spent elsewhere, and 21 boxed week pages would spend the
+   treatment until it meant nothing. #}
 {% if week.annotation %}
-<p><b>{{ week.annotation }}.</b> {{ week.annotation_note }}</p>
+<p class="week-annotation"><b>{{ week.annotation }}.</b> {{ week.annotation_note }}
+{%- if week.annotation == 'Known collection interruption' and outage_held_note %} {{ outage_held_note }}{% endif %}</p>
 {% endif %}
 
 <p class="meta">{{ week.run_dates }} recorded run date{{ '' if week.run_dates == 1 else 's' }} (UTC)
@@ -33,29 +37,23 @@ so this is operational context, not a measure of coverage.</p>
 
 <h2>Records</h2>
 <div id="records">
-{% for a in records %}
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-    {% if desk_by_source.get(a.source_slug) %}<span class="meta"><a href="{{ desk_by_source.get(a.source_slug).route }}">{{ desk_by_source.get(a.source_slug).name }}</a></span>{% endif %}
-    <span class="meta">{{ a.institution or a.source_name }} · {{ a.published_date }}</span>
-  </div>
-  <h3><a href="{{ a.record_path }}">{{ a.title_english or a.title_original }}</a></h3>
-  {% if a.title_english and a.title_original %}
-  <p class="original" lang="{{ a.language_tag or 'zh' }}">{{ a.title_original }}</p>
-  {% endif %}
-  <p class="meta">{{ a.source_name }} · {{ a.language_tag or '—' }} · {{ a.state_label }}</p>
-</article>
-{% endfor %}
+{{ record_days(records, desk_by_source) }}
 </div>
 
 {% if paginated %}
-<nav class="pager" aria-label="Pages within this week">
+{# The same links again after the records: a group, not a second
+   navigation landmark with the same name. #}
+<div class="pager" role="group" aria-label="Pages within this week">
   <p>Page {{ page_no }} of {{ page_total }}{% if prev_path %} ·
   <a href="{{ prev_path }}">Previous page</a>{% endif %}{% if next_path %} ·
   <a href="{{ next_path }}">Next page</a>{% endif %}</p>
-</nav>
+</div>
 {% endif %}
 
-<p class="meta"><a href="corpus.html">← All publication weeks</a></p>
+{# The strip is plain links and bars: no script, which the shards promise.
+   After the records, so a week's own entries come first for every reader. #}
+{{ week_strip(weeks, volume_max, current=week.start, heading='h2', title='All publication weeks', note='Stored records per publication week; this week is drawn in ink. Hatched and faint weeks are explained on Corpus by week.', reveal=false, key=false) }}
+
+<p class="records-foot"><a href="corpus.html">All publication weeks, in figures</a>
+  <a href="archive.html">Search the records</a></p>
 {% endblock %}

@@ -11,8 +11,7 @@
 <meta name="robots" content="noindex, nofollow">
 {# Identity. The compass is the publication's mark; `mark.svg` is the
    simplified derivative, because the canonical artwork's 4 px rings are
-   sub-pixel below 32 px and dissolve into a halo at favicon size. The PNG
-   pair is the fallback for clients that will not take an SVG icon.
+   sub-pixel below 32 px and dissolve into a halo at favicon size.
    `site/assets/identity/IDENTITY_ASSETS.md` records which file is canonical. #}
 {# Follows --band in styles.css. `tests/test_identity_assets.py`
    reads the token rather than a literal, so the two cannot drift. #}
@@ -21,10 +20,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}icon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ '../' if nested else '' }}icon-16.png">
 <link rel="apple-touch-icon" href="{{ '../' if nested else '' }}apple-touch-icon.png">
-{# Link-preview identity. Title and description are the page's own; the
-   absolute URL and image need an origin the template does not have, so they
-   are written in the same post-processing pass that writes the canonical —
-   one source of truth for a page's address, and no hard-coded domain. #}
+{# Link-preview identity. The absolute URL and image need an origin the
+   template does not have, so they are written in the post-processing pass
+   that writes the canonical — one source of truth for a page's address. #}
 <meta property="og:site_name" content="{{ title }}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{{ self.title() }}">
@@ -32,67 +30,48 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ self.title() }}">
 <meta name="twitter:description" content="{{ tagline }}">
-{# The record and the historical Night Desk now use the same capped type
-   families. Fallback stacks in styles.css keep the record readable offline. #}
+{# The publication's three families, weights capped, shared with Night Desk
+   (DECISION_LOG 2026-09-26): Source Serif 4 (the voice), Inter (the
+   interface) and IBM Plex Mono (metadata: the masthead kicker, hashes, ids).
+   Fallback stacks in styles.css keep every page readable when the font
+   service is unreachable. #}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
-{# Head scripts, declared per page rather than inherited by all of them.
-
-   `reveal.js` lived here first and that was wrong twice over. The week
-   shards carry a contract — `test_no_javascript_is_required_by_the_shards` —
-   that they ship no <script> at all, and putting a tag in the shared head
-   broke it on every one of them. It would also have shipped 2 KB to every
-   record page in the corpus, none of which has anything to reveal, against
-   a per-page script budget that already has browse.js in it.
-
-   A page that wants scripted behaviour asks for it. Today exactly one does. #}
+{# Head scripts, declared per page rather than inherited by all of them. The
+   week shards carry a contract that they ship no <script> at all, and the
+   record pages carry no bytes for behaviour they do not have. #}
 {% block head_scripts %}{% endblock %}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-{# The masthead is the light editorial nameplate the historical China Mil
-   Watch design used: mark, serif wordmark and mono kicker on `--surface`,
-   with the navigation on its own rail beneath a hairline. It replaced a dark
-   masthead band on 2026-09-15.
-
-   It is shared by every record-site page and is now the SAME on all of them.
-   The `masthead--lead` modifier that compressed it on the home page is gone:
-   the home page's opening is a claim, a ledger and a record, and none of them
-   repeats the lockup, so there was nothing left for the modifier to avoid
-   repeating. One shell everywhere. #}
+{% set root = '../' if nested else '' %}
+{# The masthead: one shell on every record-site page, light and static, with
+   no controls. Search lives on the Records page, first in the navigation. A
+   site-wide search box here was tried and withdrawn (DECISION_LOG 2026-09-27):
+   it added 58px to the measured phone masthead, pushed the lead record below
+   the first viewport, put a record count on pages that must carry none, and
+   did nothing without JavaScript. #}
 <header class="masthead">
   <div class="wrap masthead-name-row">
-    <a class="brand" href="{{ '../' if nested else '' }}index.html">
-      {# The compass, at 56 CSS px. `IDENTITY_ASSETS.md` sets a 48 CSS px floor
-         for the canonical artwork: below it the double ring merges into a grey
-         halo, the ticks disappear, and the mark stops reading as a compass.
-
-         At <=380px the masthead needs 44px, which is under that floor, so the
-         `source` serves `mark.svg` — `ipr-compass-mark-small.svg`, the
-         sanctioned derivative that exists precisely for sizes below the floor:
-         the same compass with one ring, eight filled points and no diagonal
-         ticks, in the canonical palette.
-
-         One element, one entry in the accessibility tree, exactly one asset
-         requested per width, and no script. Decorative, as the glyph it
-         replaced was — the wordmark beside it is the accessible name, and
-         announcing the graphic too would say the publication twice. #}
+    <a class="brand" href="{{ root }}index.html">
+      {# The compass, at 56 CSS px (48 compact). Below the 48 CSS px floor in
+         `IDENTITY_ASSETS.md` the canonical double ring merges into a halo, so
+         at <=380px the `source` serves `mark.svg`, the sanctioned simplified
+         derivative. One element, one asset per width, no script. Decorative:
+         the wordmark beside it is the accessible name. #}
       <picture>
         <source media="(max-width: 380px)"
-                srcset="{{ '../' if nested else '' }}mark.svg"
+                srcset="{{ root }}mark.svg"
                 type="image/svg+xml">
-        <img class="brand-mark" src="{{ '../' if nested else '' }}masthead-mark.png"
+        <img class="brand-mark" src="{{ root }}masthead-mark.png"
              width="56" height="56" alt="" aria-hidden="true"
              decoding="async" fetchpriority="high">
       </picture>
-      {# The wordmark and the kicker are one block inside the link, so the
-         nameplate is a single target rather than a link with a caption
-         floating beside it. #}
       <span class="brand-text">
-        {# The home page leads with the publication, so the wordmark is its h1
-           and the lead record is an h2. Every other page has its own h1. #}
+        {# The home page leads with the publication, so the wordmark is its h1.
+           Every other page has its own h1. #}
         {% if page == 'index.html' %}
         <h1 class="brand-name">{{ title }}</h1>
         {% else %}
@@ -102,30 +81,27 @@
       </span>
     </a>
   </div>
-  {% set nav = [('archive.html','Atlas'),('desks.html','Desks'),('sources.html','Sources'),('analysis.html','Analysis'),('coverage.html','Coverage'),('methodology.html','Methodology'),('about.html','About')] %}
-  {# Seven destinations, defined once and rendered twice.
+  {# Seven destinations in three groups, defined once and rendered twice:
+     reading (Records, Analysis), the collection (Desks, Sources, Coverage) and
+     the method (Methodology, About). "Records" was "Atlas" until 2026-09-27;
+     the destination and its address are unchanged (DECISION_LOG).
 
-     An earlier version put the only nav inside a closed <details> and relied
-     on `display: block` to reveal it above the mobile breakpoint. It does not:
-     a closed <details> hides its contents through a mechanism a child's
-     `display` cannot override, so the desktop masthead shipped with no
-     navigation at all while the stylesheet claimed otherwise. That is not
-     fixable with a better override, and this does not try — it renders a plain
-     <nav> for desktop and a separate disclosure for mobile, from one macro, so
-     the two link sets cannot drift apart.
-
-     Exactly one is in the document at a time: the other is `display: none`,
-     which removes it from the accessibility tree as well as from view, so
-     nothing is announced twice.
-
-     The mobile presentation stays a <details> rather than a scripted menu —
-     keyboard operable, announced as expandable, and working with JavaScript
-     off, which the rest of this site also assumes. #}
+     Exactly one presentation is in the document at a time: the other is
+     `display: none`, which removes it from the accessibility tree as well.
+     The compact one stays a <details> — keyboard operable, announced as
+     expandable, and working with JavaScript off. #}
+  {% set nav = [('archive.html','Records',false),('analysis.html','Analysis',false),('desks.html','Desks',true),('sources.html','Sources',false),('coverage.html','Coverage',false),('methodology.html','Methodology',true),('about.html','About',false)] %}
+  {% set desk_routes = desks | map(attribute='route') | list if desks else [] %}
+  {% macro is_current(href) -%}
+    {{- 'y' if (page == href
+        or (href == 'archive.html' and page in ['corpus.html', 'corpus-guide.html'])
+        or (href == 'desks.html' and page in desk_routes)
+        or (href == 'analysis.html' and page == 'pla-watch.html')) else '' -}}
+  {%- endmacro %}
   {% macro nav_links() -%}
     <ul>
-      {% for href, label in nav %}
-      {% set current = page == href or (href == 'archive.html' and page in ['corpus.html', 'corpus-guide.html']) or (href == 'desks.html' and page in (desks | map(attribute='route') | list)) or (href == 'analysis.html' and page == 'pla-watch.html') %}
-      <li><a href="{{ '../' if nested else '' }}{{ href }}"{% if current %} aria-current="page"{% endif %}>{{ label }}</a></li>
+      {% for href, label, group in nav %}
+      <li{% if group %} class="nav-group-start"{% endif %}><a href="{{ root }}{{ href }}"{% if is_current(href) %} aria-current="page"{% endif %}>{{ label }}</a></li>
       {% endfor %}
     </ul>
   {%- endmacro %}
@@ -143,28 +119,16 @@
     </div>
   </div>
 </header>
-{# Three dates and, when they disagree, one sentence saying why.
-
-   What stood here was a run-status strip: collectors executed, execution
-   failures, unimplemented adapters, disabled sources, collecting desks — six
-   operational facts, in the loudest position on every page, above the
-   publication itself. They are real and they are published, but "1
-   unimplemented adapter" is implementation language and it was the first thing
-   a reader met. It now lives on Coverage, per source and per run, in full.
-
-   The three dates stay, because they come apart during a provider failure —
-   collection continues while analysis stops — and a single "last updated"
-   would have to pick a story. An unknown value says so rather than borrowing a
-   plausible neighbour. Rendered only when a real run exists: a fabricated zero
-   would read as "all clear", which is the opposite of the truth when nothing
-   ran. #}
+{# Three dates and, when they disagree, one sentence saying why. They come
+   apart during a provider failure — collection continues while analysis stops
+   — so a single "last updated" would have to pick a story. An unknown value
+   says so rather than borrowing a plausible neighbour. One quiet line under
+   the navigation; the home page states the same view in its opening ledger. #}
 {% if run_status and page != 'index.html' %}
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
-    {# The labels are not shortened. "Analysis" alone does not say whether it
-       is the date analysis was produced or the date it covers, and these three
-       dates exist precisely because they come apart. Compaction is a layout
-       change; it is not permission to make a date ambiguous. #}
+    {# The labels are not shortened: these three dates exist precisely because
+       they come apart, and compaction is not permission to make one ambiguous. #}
     <dl>
       <div><dt>Records last collected</dt>
         <dd>{{ freshness.records_last_collected or 'not measured' }}</dd></div>
@@ -172,93 +136,75 @@
         <dd>{{ freshness.analysis_last_produced or 'not yet recorded' }}</dd></div>
       <div><dt>Last full update</dt>
         <dd>{{ freshness.last_full_update or 'not yet recorded' }}</dd></div>
-      {# Scale, beside the dates that qualify it. Both figures are already in
-         this template's context — no query exists for them — and both are
-         counts of things the corpus actually holds, so neither can print a
-         zero that would read as "collection failed".
-
-         They sit here rather than on the home page alone because the state of
-         collection is a property of the publication, not of one surface, and
-         a reader who lands on a record page deserves the same footing. #}
-      {# The corpus total carries its desk attribution on the home page, where
-         it stands beside a desk count. "N records across four desks" is the
-         central dishonesty available to this page while one desk collects, and
-         the label is what forecloses it. It was the hero ledger's wording and
-         it moves here with the figure rather than being dropped with the
-         rail. #}
-      {% if corpus_total %}<div><dt>Records held{% if page == 'index.html' and desks and desks.collecting_count == 1 %}, {{ desks.collecting[0].name }}{% endif %}</dt>
+      {% if corpus_total %}<div><dt>Records held</dt>
         <dd>{{ '{:,}'.format(corpus_total) }}</dd></div>{% endif %}
       {% if totals and totals.analyzed is not none %}<div><dt>Of those, analyzed</dt>
         <dd>{{ '{:,}'.format(totals.analyzed) }}</dd></div>{% endif %}
-      {# The dateline carries TIME and CORPUS STATE, and stops there. The
-         collecting-desk ratio and the enabled-source total are collection
-         topology, and they are stated once in the Desks introduction on the
-         home page — putting them here as well made this strip the loudest
-         claim on the page and printed the desk ratio twice. #}
     </dl>
-    {# "Collection is current" was a claim the dates cannot support. All they
-       show is that collection ran more recently than analysis — which is also
-       true of a corpus whose last successful collection was a month ago. The
-       sentence now states the relationship it can actually see, and the
-       ordering: analysis trails collection, and everything after the analysis
-       date is stored but unscreened. #}
-    {# The sentence stays on every page that has room for it. The home page
-       does not: above the hero it made the freshness block a paragraph of
-       administrative prose between the masthead and the publication. There it
-       becomes one link, and the full explanation moves to just below the
-       hero — same words, a screen later, where a reader who wants them is
-       looking for them.
-
-       Written as two separate conditions rather than an if/else so the block
+    {# Written as two separate conditions rather than an if/else so the block
        stays self-contained: `tests/test_freshness_dates.py` extracts this
-       fragment by finding the first `{% endif %}` after `class="behind"`, and
-       an else branch would leave the extracted fragment unbalanced. #}
+       fragment by finding the first `{% endif %}` after `class="behind"`. #}
     {% if freshness.analysis_is_behind_collection %}
     <p class="behind">Analysis trails collection; records after
       {{ freshness.analysis_last_produced }} await screening.
-      <a href="{{ '../' if nested else '' }}methodology.html#freshness">What
+      <a href="{{ root }}methodology.html#freshness">What
       these dates mean</a>.</p>
     {% endif %}
-    <p class="detail"><a href="{{ '../' if nested else '' }}coverage.html">Run
-      {{ run_status.run_id }} in full &rarr;</a></p>
+    <p class="detail"><a href="{{ root }}coverage.html">Run
+      {{ run_status.run_id }} in full</a></p>
   </div>
-</div>
+</aside>
 {% endif %}
-{# A page whose first child is full-bleed editorial furniture opts out of the
-   reading column's top padding, or the dark hero opens with a band of page
-   background above it. Opt-in per page rather than keyed to the home page's
-   name, so the next page to grow a hero gets it by saying so. #}
 <main id="main"{% block main_class %}{% endblock %}>
-{# Full-bleed editorial furniture goes here, inside the main landmark but
-   outside the reading column. Only the home page uses it so far. #}
 {% block hero %}{% endblock %}
   <div class="wrap">
 {% block content %}{% endblock %}
   </div>
-{# Full-bleed furniture BELOW the reading column — the dark analysis band is
-   the only user so far. It is a second block rather than more `hero` because
-   it has to come after the content, and a band that reached the full width by
-   breaking out of `.wrap` with negative margins would be a layout trick where
-   a block is the honest structure. #}
 {% block after_content %}{% endblock %}
 </main>
 <footer class="site">
   <div class="wrap">
-    {# Permanent footer. The three sentences that stood here until 2026-08-27
-       described a build that had not been published — "Release candidate",
-       "not published or deployed", and a promise that the public site
-       continued under its previous identity. PR #32 published this build, and
-       from that moment every one of those statements was false on 3,680 live
-       pages. Nothing here may describe the site as unpublished again. #}
-    {# The colophon opens on the publication's name, as the historical
-       footer did. A div rather than a heading: the page's heading outline is
-       complete without it and a sixth-level heading here would announce a
-       section that does not exist. #}
-    <div class="footer-name">{{ title }}</div>
-    <p>{{ title }} is an independent research project created and edited by
-    {{ maintainer.name }} ·
-    <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    {# The colophon opens on the publication's name. A div rather than a
+       heading: the page's outline is complete without it. Nothing here may
+       describe the site as unpublished; PR #32 published it. #}
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">{{ title }}</div>
+        <p>{{ title }} is an independent research project created and edited by
+        {{ maintainer.name }} · <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="{{ root }}archive.html">Records</a></li>
+          <li><a href="{{ root }}corpus.html">Records by week</a></li>
+          <li><a href="{{ root }}corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="{{ root }}desks.html">Desks</a></li>
+          <li><a href="{{ root }}sources.html">Sources</a></li>
+          <li><a href="{{ root }}coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="{{ root }}analysis.html">{{ collection_name }}</a></li>
+          {# The series glossary lives with the published issues, which this
+             site links to on the live origin (as it links every issue). #}
+          <li><a href="{{ live_base }}/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="{{ root }}methodology.html">Methodology</a></li>
+          <li><a href="{{ root }}about.html">About</a></li>
+          <li><a href="{{ root }}corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

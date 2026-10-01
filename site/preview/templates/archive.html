@@ -1,20 +1,166 @@
 {% extends "base.html" %}
+{% from "_records.html" import record_days %}
+{% from "_weeks.html" import week_strip %}
 {% from "_atlas.html" import spine %}
 {% block title %}The record — {{ title }}{% endblock %}
 {% block content %}
-<h1>The record</h1>
-<p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
-<p class="lede">Every stored record in this snapshot — all
-{{ corpus_total | count }} of them — searchable and filterable, with the
-original-language title preserved on every one.</p>
+<header class="page-head">
+  <h1>The record</h1>
+  <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
+  <p class="lede">Every stored record in this snapshot — all
+  {{ corpus_total | count }} of them — searchable and filterable, with the
+  original-language title preserved on every one.</p>
+  {# guide-link and volume-jump are the earlier page's anchors, kept for links into it. #}
+  <p class="meta" id="guide-link">What this corpus holds, what each stored field means, and where
+  its counts stop being reliable: <a href="corpus-guide.html">Corpus Guide</a>.
+  <span id="volume-jump"><a href="#volume-heading">View records by publication week</a>.</span></p>
+</header>
 {{ spine(desks, snapshot, corpus_total) }}
 
+{# The finder. `#browse` and the form both ship `hidden`; browse.js reveals
+   them, so with JavaScript off no control ever appears operative when nothing
+   can operate it. The newest records below are rendered on the server and
+   need no script at all.
+
+   The search index is fetched only when a reader asks for it — by searching,
+   filtering, changing the order or paging — never on arrival: it is 4,000+
+   titles in two languages, and most visits read the newest records and
+   leave. It is refused unless it proves it describes this page's snapshot
+   (`data-snapshot-*`, public facts only), and a refused index never draws a
+   row: the server's rows stay and the message below says why. The form is a
+   plain GET, so a query survives in the address and the back button restores
+   it. (DECISION_LOG 2026-09-27, the Records finder.) #}
+<div id="browse" data-snapshot-date="{{ snapshot.date }}"
+     data-snapshot-records="{{ corpus_total }}" hidden>
+  <form id="controls" class="finder" role="search" action="archive.html" method="get" hidden>
+    <div class="finder-row">
+      <div class="finder-field finder-field--q">
+        <label for="f-q">Title contains</label>
+        <input id="f-q" name="q" type="search" autocomplete="off"
+               placeholder="English or original title">
+      </div>
+      <div class="finder-field">
+        <label for="f-desk">Desk</label>
+        <select id="f-desk" name="desk">
+          <option value="">All desks</option>
+          {% for d in desks if d.record_count %}<option value="{{ d.slug }}">{{ d.name }} ({{ d.record_count | count }})</option>{% endfor %}
+        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-source">Source outlet</label>
+        <select id="f-source" name="source">
+          <option value="">All sources</option>
+          {% for s in corpus_facets.source %}<option value="{{ s.key }}">{{ s.label }} ({{ s.count | count }})</option>{% endfor %}
+        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-status">Processing status</label>
+        <select id="f-status" name="status">
+          <option value="">All processing states</option>
+          {% for s in corpus_facets.state %}<option value="{{ s.code }}">{{ s.label }} ({{ s.count | count }})</option>{% endfor %}
+        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-sort">Order</label>
+        <select id="f-sort" name="sort">
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+        </select>
+      </div>
+      <details class="finder-more">
+        <summary>More filters</summary>
+        <div class="finder-more-body">
+          <div class="finder-field">
+            <label for="f-institution">Publishing institution</label>
+            <select id="f-institution" name="institution">
+              <option value="">All institutions</option>
+              {% for s in corpus_facets.institution %}<option value="{{ s.key }}">{{ s.label }} ({{ s.count | count }})</option>{% endfor %}
+            </select>
+          </div>
+          <div class="finder-field">
+            <label for="f-language">Original language (source attribute)</label>
+            <select id="f-language" name="language">
+              <option value="">All original languages</option>
+              {% for s in corpus_facets.language %}<option value="{{ s.key }}">{{ s.key | language_label }} ({{ s.count | count }})</option>{% endfor %}
+            </select>
+          </div>
+          <div class="finder-field">
+            <label for="f-from">Source-stated date from</label>
+            <input id="f-from" name="from" type="date" min="{{ totals.first_date }}" max="{{ totals.last_date }}">
+          </div>
+          <div class="finder-field">
+            <label for="f-to">Source-stated date to</label>
+            <input id="f-to" name="to" type="date" min="{{ totals.first_date }}" max="{{ totals.last_date }}">
+          </div>
+          <div class="finder-field">
+            <label for="f-trail"><input id="f-trail" name="trail" type="checkbox" value="1">
+              Only records in an analysis source trail ({{ trail_record_count | count }})</label>
+          </div>
+        </div>
+      </details>
+      <button type="submit" class="btn btn--primary">Search</button>
+    </div>
+    <div class="finder-status">
+      <ul class="chips" id="chips" aria-label="Active filters"></ul>
+      <button type="button" class="chip-clear" id="f-reset" hidden>Clear all filters</button>
+    </div>
+    <p class="finder-note">Search covers titles only — the English title where one
+    exists, and the original title always. It does not search machine summaries
+    or stored source text.</p>
+    <details class="finder-about">
+      <summary>How the filters count</summary>
+      <p>Source outlets and publishing institutions overlap: one institution can
+      publish through more than one source, so their counts are not mutually
+      exclusive categories. Original language is an attribute of the source, not
+      something asserted independently for each record. Counts are stored,
+      deduplicated records, not an institution's output.</p>
+    </details>
+  </form>
+</div>
+
+<p id="index-state" class="index-state index-state--loading" role="status" hidden>Loading
+the search index for {{ corpus_total | count }} records…</p>
+{# Shown only when the index fails to load or fails validation. Rendering
+   "0 results" there would describe an empty corpus when the truth is a failed
+   fetch. Outside `#browse`, so it can be seen when the finder is withdrawn. #}
+<p id="index-error" class="index-state index-state--error" role="status" aria-live="polite" hidden>The
+search index could not be loaded or did not match this snapshot, so search and
+filters are unavailable. The records held in this snapshot remain
+accessible through the week-by-week browse above.</p>
+
+<h2 id="results-heading" class="visually-hidden">Records</h2>
+{# tabindex="-1": a page turn moves focus here (browse.js `turn`), because
+   the button pressed may have become disabled. #}
+<p class="result-range" id="result-range" tabindex="-1">The newest {{ archive_first | length }} of {{ corpus_total | count }} records</p>
+<p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
+<div id="results">
+  {{ record_days(archive_first, desk_by_source) }}
+</div>
+
+<div id="no-results" class="no-results" hidden><p><b>No records match these filters.</b>
+Remove a filter, widen the date range, or try the original-language title.</p></div>
+
+<nav id="pager" class="pager" aria-label="Result pages">
+  <button type="button" id="page-prev" hidden>Previous page</button>
+  <button type="button" id="page-next" hidden>Next page</button>
+  <p id="nojs-path">Every record is also reachable by publication week:
+  <a href="corpus.html">browse the corpus by week</a>. No JavaScript required.</p>
+</nav>
+
+{# Browse by time, after the newest records: search and results come first
+   for every reader, and a keyboard does not cross 21 week links to reach
+   them. #}
+{{ week_strip(weeks, volume_max, heading='h2', title='Records by publication week') }}
+
+<noscript><p class="nojs-note">Search and filters need JavaScript. The newest
+records above, and every record by publication week, do not.</p></noscript>
+
 {# A server-derived chart of the four exhaustive processing states. The exact
-   figures remain text; bar widths are decorative and never the only evidence. #}
+   figures are text; bar widths are decorative and never the only evidence. #}
 <figure class="processing-plate" aria-labelledby="processing-title">
   <figcaption class="processing-plate-head">
-    <span class="processing-kicker">Corpus / processing</span>
-    <h2 id="processing-title">Where each stored record stands</h2>
+    <span class="processing-kicker">Where each stored record stands</span>
+    <h2 id="processing-title">Processing states</h2>
     <p>{{ snapshot_label }} · {{ corpus_total|count }} stored, deduplicated records.
     Every record is in exactly one of these states.</p>
     <svg class="processing-engraving" viewBox="0 0 220 110" focusable="false" aria-hidden="true">
@@ -40,96 +186,6 @@ original-language title preserved on every one.</p>
     <a href="corpus.html">Browse every record by week</a>.</p>
   </div>
 </figure>
-
-{# The complete path, always visible and never dependent on JavaScript. It comes
-   first because it is the guarantee, not the fallback: the browser below is a
-   convenience over a static structure that already reaches every record. #}
-<p id="volume-jump"><a href="#volume-heading">View records by publication week ↓</a></p>
-
-<p id="nojs-path">Every record is also reachable by publication week:
-<a href="corpus.html">browse the corpus by week →</a> No JavaScript required.</p>
-
-{# Contextual, not a navigation item. A reader filtering a corpus needs to know
-   what its counts can support before the counts mean anything. #}
-<p id="guide-link">What this corpus holds, what each stored field means, and
-where its counts stop being reliable:
-<a href="corpus-guide.html">Corpus Guide →</a></p>
-
-{# Shown only when the index fails to load. Rendering "0 results" there would
-   describe an empty corpus when the truth is a failed fetch. #}
-<p id="index-error" class="meta" role="status" aria-live="polite" hidden>The
-search index could not be loaded or did not match this snapshot, so search and
-filters are unavailable. The records held in this snapshot remain
-accessible through the week-by-week browse above.</p>
-
-{# Both wrappers start hidden. With JavaScript off they stay hidden, so no
-   control ever appears operative when nothing can operate it. #}
-{# The page states which snapshot it describes. browse.js proves the fetched
-   index agrees before revealing a single control, so a stale cached index
-   cannot render beneath these numbers. Public facts only — the internal
-   logical fingerprint never reaches a reader. #}
-<div id="browse" data-snapshot-date="{{ snapshot.date }}"
-     data-snapshot-records="{{ corpus_total }}" hidden>
-  <div id="controls" hidden>
-    <h2>Search and filter</h2>
-    <p class="meta">Source outlets and publishing institutions overlap: one
-    institution can publish through more than one source, so their counts are
-    not mutually exclusive categories. Original language is an attribute of
-    the source, not something asserted independently for each record.</p>
-
-    <div class="filters">
-      <div>
-        <label for="f-q">Title contains</label>
-        <input id="f-q" type="search" autocomplete="off"
-               placeholder="English or original title">
-      </div>
-      <div>
-        <label for="f-source">Source outlet</label>
-        <select id="f-source"></select>
-      </div>
-      <div>
-        <label for="f-institution">Publishing institution</label>
-        <select id="f-institution"></select>
-      </div>
-      <div>
-        <label for="f-language">Original language (source attribute)</label>
-        <select id="f-language"></select>
-      </div>
-      <div>
-        <label for="f-status">Processing status</label>
-        <select id="f-status"></select>
-      </div>
-      <div>
-        <label for="f-from">Source-stated date from</label>
-        <input id="f-from" type="date">
-      </div>
-      <div>
-        <label for="f-to">Source-stated date to</label>
-        <input id="f-to" type="date">
-      </div>
-      <div class="filter-action">
-        <button type="button" id="f-reset">Reset filters</button>
-      </div>
-    </div>
-    <p class="meta">Search covers titles only — the English title where one
-    exists, and the original title always. It does not search machine summaries
-    or stored source text.</p>
-  </div>
-
-  <h2 id="results-heading">Records</h2>
-  <p class="meta" id="result-range"></p>
-  <p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
-
-  <div id="results"></div>
-
-  <p id="no-results" hidden>No records match these filters. Widen the date range
-  or reset the filters above.</p>
-
-  <nav id="pager" class="pager" aria-label="Result pages" hidden>
-    <button type="button" id="page-prev">Previous page</button>
-    <button type="button" id="page-next">Next page</button>
-  </nav>
-</div>
 
 {% include "_volume.html" %}
 {% endblock %}

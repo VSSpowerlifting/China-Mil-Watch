@@ -130,6 +130,7 @@ class Analyzer:
         temperature: float,
         model: Optional[str] = None,
         stream: bool = False,
+        system: Optional[list] = None,
     ) -> str:
         """
         Single API call. Returns raw text. Raises AnalysisError on failure.
@@ -145,7 +146,7 @@ class Analyzer:
         used_model = model or ANALYSIS_MODEL
         kwargs = dict(
             model=used_model,
-            system=self._SYSTEM_WITH_CACHE,
+            system=system if system is not None else self._SYSTEM_WITH_CACHE,
             messages=messages,
             max_tokens=max_tokens,
             temperature=temperature,
@@ -309,14 +310,28 @@ class Analyzer:
 
     # ── Individual task methods ───────────────────────────────────────────────
 
-    def score_relevance(self, title: str, body: str) -> tuple[float, str]:
+    def score_relevance(
+        self, title: str, body: str, profile=None,
+    ) -> tuple[float, str]:
         """
         Returns (score, reasoning).
         Score is clamped to [0.0, 1.0] as a safeguard against out-of-range values.
         Uses RELEVANCE_MODEL (Haiku) — cheaper first-pass binary classifier.
+
+        `profile` is a processing.screening.ScreeningProfile. None, or the China
+        profile, sends exactly the China prompt and system prompt as always; a
+        desk profile sends that desk's prompt and its own system prompt.
         """
-        messages = build_relevance_messages(title, body)
-        raw  = self._call(messages, max_tokens=500, temperature=0.0, model=RELEVANCE_MODEL)
+        if profile is None:
+            messages, system = build_relevance_messages(title, body), None
+        else:
+            messages = profile.build_messages(title, body)
+            desk_system = profile.system_prompt
+            system = (None if desk_system is None else
+                      [{"type": "text", "text": desk_system,
+                        "cache_control": {"type": "ephemeral"}}])
+        raw  = self._call(messages, max_tokens=500, temperature=0.0,
+                          model=RELEVANCE_MODEL, system=system)
         data = self._parse_json(raw)
         score = float(max(0.0, min(1.0, data["score"])))
         return score, str(data.get("reasoning", ""))

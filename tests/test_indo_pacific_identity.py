@@ -172,7 +172,11 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         nav = self.page("index.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Atlas", "Desks", "Sources", "Analysis",
+        # Grouped by what a reader is doing (2026-09-27): reading (Records,
+        # Analysis), the collection (Desks, Sources, Coverage) and the method
+        # (Methodology, About). "Records" is the destination formerly labelled
+        # "Atlas"; its address is unchanged.
+        self.assertEqual(labels, ["Records", "Analysis", "Desks", "Sources",
                                   "Coverage", "Methodology", "About"])
 
 
@@ -234,7 +238,9 @@ class TestRetiredNamesStayRetired(IdentityCase):
         html = re.sub(r"\s+", " ", self.page("pla-watch.html"))
         self.assertNotIn("not a discontinued one", html)
         self.assertNotIn("The series continues", html)
-        self.assertIn("This page is an archive of those issues", html)
+        # 2026-09-30: no longer a second archive; the issues are earlier Briefs.
+        self.assertNotIn("This page is an archive of those issues", html)
+        self.assertIn("is now part of Indo-Pacific Record Briefs", html)
         self.assertIn("preserved as published", html)
 
 

@@ -117,6 +117,7 @@ from core.brief_collection import (                                  # noqa: E40
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
     build_briefs_feed, load_collection)
 from core.desk_registry import load_registry                         # noqa: E402
+from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
 #: Where brief sidecars are kept: source at the repository root, never under
 #: `output/`. None exist yet; an absent directory is an empty collection.
@@ -504,6 +505,9 @@ def load_corpus(db_path: Path) -> dict:
 
         # Recent analyzed articles for the archive surface. Bounded: the
         # prototype is a design artifact, not the production archive.
+        # "Analyzed" is the state derivation every label uses, so the home
+        # page's "latest analyzed records" is true of every row by
+        # construction, not merely because `analyzed_at` implies screening.
         recent = con.execute(
             "SELECT a.id, a.url, a.title_original, a.title_english, "
             "       a.published_date, a.summary_english, a.analyzed_at, "
@@ -514,7 +518,7 @@ def load_corpus(db_path: Path) -> dict:
             "  FROM articles a "
             "  JOIN sources s ON s.id = a.source_id "
             "  LEFT JOIN institutions i ON i.institution_id = s.institution_id "
-            " WHERE a.analyzed_at IS NOT NULL "
+            " WHERE " + STATE_CASE_SQL + " = 'analyzed' "
             " ORDER BY a.published_date DESC, a.id DESC LIMIT 60").fetchall()
 
         # Collection continuity: which calendar days have a run. The published
@@ -731,7 +735,8 @@ def corpus_index(corpus, sources, snapshot: dict, desks=None) -> dict:
         "sources": [
             {"code": slug,
              "label": by_slug[slug]["display_name"],
-             "desk": ({"label": desk_by_slug[by_slug[slug]["desk_id"]].name,
+             "desk": ({"code": by_slug[slug]["desk_id"],
+                       "label": desk_by_slug[by_slug[slug]["desk_id"]].name,
                        "route": desk_by_slug[by_slug[slug]["desk_id"]].route}
                       if by_slug[slug]["desk_id"] in desk_by_slug else None),
              "institution": inst_pos.get(by_slug[slug].get("institution_id")),
@@ -744,11 +749,20 @@ def corpus_index(corpus, sources, snapshot: dict, desks=None) -> dict:
         "languages": [
             {"code": code, "label": language_label(code),
              "count": counts["language"][code]} for code in lang_order],
+        # Every state, in STATE_ORDER, zero counts included: a record's state
+        # is stored as its position in STATE_ORDER, so dropping an empty state
+        # from this list would shift every later state onto the wrong label.
+        # The finder offers only states with records; that is a display rule.
         "states": [
             {"code": code, "label": STATE_LABELS[code],
              "count": counts["state"][code]}
-            for code in STATE_ORDER if counts["state"][code]],
+            for code in STATE_ORDER],
         "records": rows,
+        # Ids of records listed in a published issue's source trail, matched on
+        # the exact stored URL at build time. A public fact about published
+        # issues, shipped as ids only; the URLs themselves never enter the
+        # index (INDEX_FORBIDDEN_FIELDS).
+        "trail_ids": sorted(r["id"] for r in corpus if r.get("in_trails")),
     }
 
 
@@ -787,18 +801,76 @@ def week_annotation(week: dict, first_start: str, last_start: str):
     never a coverage denominator. A week is annotated only when the reason is
     independently governed — it is the edge of the snapshot, or it overlaps the
     recorded outage.
+
+    The note says what the interruption did — nothing was collected on those
+    dates at the time — and not that no record from them exists: a desk whose
+    collection began later can hold records its sources dated inside the
+    window (owner ruling 2026-09-27). The week page states those holdings
+    after this note, from `outage_holdings_note()`.
     """
     if week["start"] <= OUTAGE_END and week["end"] >= OUTAGE_START:
         return ("Known collection interruption",
                 "This week overlaps the recorded collection interruption of "
-                "17–24 July 2026. Records for those dates are absent from this "
-                "snapshot; they were not collected, and their absence is not "
-                "evidence that nothing was published.")
+                "17–24 July 2026. Records published on those dates were not "
+                "collected at the time, and a missing record is not evidence "
+                "that nothing was published.")
     if week["start"] in (first_start, last_start):
         return ("Snapshot boundary",
                 "This week sits at the edge of the snapshot, so it covers only "
                 "part of its seven days.")
     return None
+
+
+def outage_holdings(corpus: list, desk_of_source: dict, desk_names: dict) -> list:
+    """What this snapshot holds from inside the recorded interruption, by desk.
+
+    One entry per desk holding any record whose source-stated publication date
+    falls inside the window, in desk-name order: the desk's registry name, the
+    count, the first and last dates, and whether every one was retrieved after
+    the window closed. A record whose source maps to no declared desk is never
+    attributed to one, so it is left out rather than named.
+    """
+    held = defaultdict(list)
+    for record in corpus:
+        if OUTAGE_START <= record["published_date"][:10] <= OUTAGE_END:
+            name = desk_names.get(desk_of_source.get(record["source_slug"]))
+            if name:
+                held[name].append(record)
+    return [{"desk": name,
+             "count": len(records),
+             "first": min(r["published_date"][:10] for r in records),
+             "last": max(r["published_date"][:10] for r in records),
+             "later": all((r.get("scraped_at") or "")[:10] > OUTAGE_END
+                          for r in records)}
+            for name, records in sorted(held.items())]
+
+
+def outage_holdings_note(holdings: list):
+    """The sentence a week page adds after the interruption note, or None.
+
+    "Later collection added" is said only when every record it counts was
+    retrieved after the window closed. Otherwise the sentence states what is
+    held and makes no claim about when it was collected.
+    """
+    if not holdings:
+        return None
+
+    def span(first, last):
+        if first == last:
+            return reader_date(first)
+        if first[:7] == last[:7]:
+            return "%d–%s" % (int(first[8:10]), reader_date(last))
+        return "%s–%s" % (reader_date(first), reader_date(last))
+
+    parts = ["{:,} {} record{} dated {}".format(
+                 h["count"], h["desk"], "" if h["count"] == 1 else "s",
+                 span(h["first"], h["last"]))
+             for h in holdings]
+    held = (parts[0] if len(parts) == 1
+            else ", ".join(parts[:-1]) + " and " + parts[-1])
+    if all(h["later"] for h in holdings):
+        return "Later collection added %s to this snapshot." % held
+    return "This snapshot holds %s." % held
 
 
 def corpus_weeks(corpus: list, run_days: list) -> list:
@@ -899,6 +971,128 @@ def load_editions(repo_root: Path):
             **_edition_identity_fields(sidecar, data),
         })
     return editions
+
+
+def trail_citations(repo_root: Path, editions: list) -> tuple:
+    """
+    Which stored records appear in a published issue's source trail.
+
+    Read from the canonical sidecars, matched on the EXACT stored URL and
+    nothing else — no normalisation, no title matching, no fuzzy join. A trail
+    entry whose URL is not held verbatim in the corpus simply links nowhere.
+    Returns two maps:
+
+    * url -> the issues whose trail lists it, oldest first, each with the
+      entry's position in that trail. A record page states the record's own
+      stored flag; it does not repeat the flag the sidecar froze, which can
+      disagree with it when a record was rescored after the issue;
+    * edition slug -> that trail's flags in trail order, for the edition plate
+      (one tick per trail entry; the plate draws what the trail holds).
+
+    The wording on the page is "in the source trail of", never "cited for":
+    a trail lists the records an issue drew on, and which claim rests on which
+    record is stated in the issue, not inferred here.
+    """
+    posts = repo_root / "output" / "the-pla-watch" / "posts"
+    by_slug = {e["slug"]: e for e in editions}
+    by_url, flags = {}, {}
+    for sidecar in sorted(posts.glob("*.json")):
+        edition = by_slug.get(sidecar.stem)
+        if edition is None:
+            continue
+        try:
+            data = json.loads(sidecar.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        marks = []
+        for position, entry in enumerate(data.get("source_trail") or [], 1):
+            flagged = bool(entry.get("is_significant"))
+            marks.append(flagged)
+            url = entry.get("url")
+            if not url:
+                continue
+            refs = by_url.setdefault(url, [])
+            if any(ref["slug"] == edition["slug"] for ref in refs):
+                continue
+            refs.append({
+                "slug": edition["slug"], "issue": edition["issue"],
+                "date": edition["date"], "title": edition["title"],
+                "url": edition["url"], "series_name": edition["series_name"],
+                "publication": edition["publication"],
+                "position": position,
+            })
+        flags[edition["slug"]] = marks
+    return by_url, flags
+
+
+def desk_week_counts(corpus: list, weeks: list, desk_of_source: dict) -> dict:
+    """
+    Stored records per publication week, per desk, aligned to `weeks`.
+
+    The same bucketing as `corpus_weeks` (Monday-starting, source-stated
+    publication date), so a desk's bars always sum to that desk's record count
+    and never to anything else. Collection volume, not activity: the chart
+    that draws these says so beside it.
+
+    A desk's weeks begin at the week of its own first record. Before that the
+    desk holds nothing because its record had not begun, and a bar reading
+    "0 records" would say the week was checked and found empty.
+
+    The outage annotation is the corpus's, and it is carried onto a desk only
+    if that desk was already collecting when the interruption happened: its
+    first stored record was retrieved on or before the window's last day. A
+    desk that began collecting later was not interrupted. Its records for
+    those dates, where it holds any, were retrieved afterwards, so hatching
+    them as a collection interruption would be false for that desk.
+    """
+    per_desk = defaultdict(Counter)
+    first_retrieved = {}
+    for record in corpus:
+        desk = desk_of_source.get(record["source_slug"])
+        if desk is not None:
+            per_desk[desk][week_start(record["published_date"])] += 1
+            retrieved = (record.get("scraped_at") or "")[:10]
+            if retrieved and retrieved < first_retrieved.get(desk, "9999"):
+                first_retrieved[desk] = retrieved
+    out = {}
+    for desk, counts in per_desk.items():
+        first_week = min(counts)
+        interrupted = first_retrieved.get(desk, "9999") <= OUTAGE_END
+        out[desk] = [
+            {"start": w["start"], "end": w["end"], "path": w["path"],
+             "annotation": (None if w.get("annotation") == "Known collection interruption"
+                            and not interrupted else w.get("annotation")),
+             "count": counts.get(w["start"], 0)}
+            for w in weeks if w["start"] >= first_week]
+    return out
+
+
+def edition_plate(edition: dict, marks: list) -> dict:
+    """
+    The typographic plate for one issue, in place of its cover photograph.
+
+    Everything drawn comes from the issue's own sidecar: its number, the week
+    it covers, and one tick per source-trail entry, in trail order, flagged
+    where the entry carries the model's `is_significant` flag — machine
+    output, so the plate draws it in the machine layer's rust, never in the
+    analysis crimson. Deterministic — the same sidecar always draws the same
+    plate — and nothing is invented: an issue with no trail draws no ticks,
+    one with no number draws no numeral.
+    """
+    return {
+        "issue": edition.get("issue"),
+        "date": edition.get("date"),
+        "ticks": list(marks or []),
+        "flagged": sum(1 for m in (marks or []) if m),
+        "series_name": edition.get("series_name"),
+    }
+
+
+#: The Records page renders its first page of results on the server, so the
+#: newest records are readable before — and without — the search index. The
+#: same size as a page of client-side results, so enhancing the page never
+#: changes how many rows a reader is looking at.
+ARCHIVE_FIRST_PAGE = 50
 
 
 def _edition_identity_fields(sidecar_path: Path, data: dict) -> dict:
@@ -1791,6 +1985,37 @@ def reader_date(iso: str) -> str:
     return "%d %s %d" % (day, MONTHS[month - 1], year)
 
 
+def script_lang(text) -> str:
+    """
+    A `lang` value for a stored original name, read from its own characters.
+
+    Institution names are stored in whatever script the institution uses, and
+    not all of them are Chinese — some are English. Marking every one
+    `zh` told a screen reader to read English with a Chinese voice. Kana means
+    Japanese; Han without kana is taken as Simplified Chinese, the only Han
+    script this corpus's desks declare; anything else gets no tag and inherits
+    the page's English.
+    """
+    text = text or ""
+    if any("\u3040" <= ch <= "\u30ff" for ch in text):
+        return "ja"
+    if any("\u4e00" <= ch <= "\u9fff" or "\u3400" <= ch <= "\u4dbf"
+           for ch in text):
+        return "zh-Hans"
+    return ""
+
+
+WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+            "Saturday", "Sunday")
+
+
+def weekday(iso: str) -> str:
+    """`2026-09-26` -> `Saturday`, from the calendar, never from a locale."""
+    from datetime import date
+    year, month, day = (int(part) for part in iso.split("-"))
+    return WEEKDAYS[date(year, month, day).weekday()]
+
+
 class CitationDataMissing(SystemExit):
     """A value a citation requires is absent.
 
@@ -2095,7 +2320,7 @@ def build(out_dir: Path, title: str, db_path: Path,
           legacy_routes: bool = False, mode: str = BUILD_MODE,
           site_origin: str = None, allow_test_origin: bool = False,
           daily_run_date: str = None, briefs_dir: Path = None,
-          allow_synthetic_briefs: bool = False) -> dict:
+          allow_synthetic_briefs: bool = False, gallery: bool = False) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2148,11 +2373,27 @@ def build(out_dir: Path, title: str, db_path: Path,
     env.filters["count"] = (
         lambda n: "{:,}".format(n) if isinstance(n, int) else n)
     env.filters["reader_date"] = reader_date
+    env.filters["language_label"] = language_label
+    env.filters["script_lang"] = script_lang
+    env.filters["weekday"] = weekday
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
     atmosphere = home_atmosphere(REPO_ROOT)
     veil = home_veil(REPO_ROOT)
+
+    # Record <-> analysis, both ways, on the exact stored URL only. A record
+    # page names the issues whose source trail lists it; the Records search can
+    # narrow to those records. Nothing here reads or changes an issue.
+    trail_by_url, trail_marks = trail_citations(REPO_ROOT, editions)
+    # A list row's weekday and language name travel on the record, so the
+    # `_records.html` macros need no custom filter (tests render them in a
+    # bare Jinja environment). Both are derived, never stored.
+    for rec in data["corpus"] + data["recent"]:
+        rec["in_trails"] = trail_by_url.get(rec["url"], [])
+        rec["weekday"] = weekday(rec["published_date"])
+        rec["language_label"] = (language_label(rec["language_tag"])
+                                 if rec["language_tag"] else "")
 
     # The desk roster, derived. `view` reads the same database the corpus above
     # came from, so a desk figure and a corpus figure cannot describe different
@@ -2165,6 +2406,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         snapshot_date=snapshot["date"], predecessor_name=PREDECESSOR_NAME)
     metrics = view.methodology_metrics()
     source_views = view.source_directory()
+    desk_of_source = {s.slug: s.desk_slug for s in source_views}
+    desk_weeks = desk_week_counts(data["corpus"], data["weeks"], desk_of_source)
+    outage_held_note = outage_holdings_note(outage_holdings(
+        data["corpus"], desk_of_source, {d.slug: d.name for d in desks}))
 
     # Indo-Pacific Record Briefs: the existing issues, unchanged, plus every
     # approved brief. With no brief this is exactly `editions`, in the same
@@ -2288,6 +2533,9 @@ def build(out_dir: Path, title: str, db_path: Path,
             data["state_counts"], len(data["corpus"])),
         "corpus_facets": data["facets"],
         "weeks": data["weeks"],
+        # Appended after the interruption note on the weeks that carry it,
+        # rather than written into the shared week dicts.
+        "outage_held_note": outage_held_note,
         "guide_stats": guide_stats,
         "dictionary": dictionary_rows(guide_stats),
         "changelog": changelog_entries(guide_stats),
@@ -2296,6 +2544,18 @@ def build(out_dir: Path, title: str, db_path: Path,
         # rate the data cannot support.
         "volume_max": max((w["count"] for w in data["weeks"]),
                           default=1),
+        # The Records page's server-rendered first page: the newest stored
+        # records, in the corpus's own order, readable with no script at all.
+        "archive_first": data["corpus"][:ARCHIVE_FIRST_PAGE],
+        "archive_page_size": ARCHIVE_FIRST_PAGE,
+        # Records listed in any published issue's source trail (exact URL).
+        "trail_record_count": sum(1 for r in data["corpus"]
+                                  if r["in_trails"]),
+        "desk_weeks": desk_weeks,
+        # One typographic plate per published issue, keyed by slug. Drawn only
+        # from that issue's own sidecar; replaces the cover photograph in page.
+        "edition_plates": {e["slug"]: edition_plate(e, trail_marks.get(e["slug"]))
+                           for e in editions},
     }
 
     pages = {
@@ -2316,6 +2576,40 @@ def build(out_dir: Path, title: str, db_path: Path,
             env.get_template(template).render(page=target, **ctx),
             encoding="utf-8")
         written.append(target)
+
+    # ── The component and state gallery (maintenance only) ────────────────
+    # Off by default and never requested by `site/render.py`, so no published
+    # tree carries it. It renders the production macros with real records so
+    # every state can be reviewed without provoking it; see
+    # docs/DESIGN_SYSTEM.md, "Component gallery".
+    if gallery:
+        by_id = {r["id"]: r for r in data["corpus"]}
+        wanted = [next((r for r in data["corpus"] if r["in_trails"]), None),
+                  next((r for r in data["corpus"]
+                        if r["state"] == "not_selected"), None),
+                  next((r for r in data["corpus"]
+                        if r["language_tag"] == "en" and r["title_original"]), None),
+                  next((r for r in data["corpus"]
+                        if r["state"] == "awaiting_screening"), None)]
+        specimens = sorted({r["id"]: r for r in wanted if r}.values(),
+                           key=lambda r: (r["published_date"], r["id"]),
+                           reverse=True)
+        slugs = [e["slug"] for e in editions]
+        (out_dir / "gallery.html").write_text(
+            env.get_template("gallery.html").render(
+                page="gallery.html",
+                specimen_records=specimens,
+                specimen_cite=record_citation(
+                    specimens[0], title, snapshot)["source_text"]
+                    if specimens else "",
+                states=data["state_counts"],
+                desk_statuses=[(code, DESK_STATUS_LABELS[code])
+                               for code in DESK_STATUSES],
+                plate_a=ctx["edition_plates"].get(slugs[0]) if slugs else None,
+                plate_b=ctx["edition_plates"].get(slugs[1]) if len(slugs) > 1 else None,
+                **ctx),
+            encoding="utf-8")
+        written.append("gallery.html")
 
     # ── One page per published brief ─────────────────────────────────────────
     # `briefs/<slug>.html`, one level down, in the site's own shell: the
@@ -2800,6 +3094,9 @@ def main(argv=None):
                          "publication must name a real domain.")
     ap.add_argument("--serve", action="store_true",
                     help="serve the result on localhost:8770")
+    ap.add_argument("--gallery", action="store_true",
+                    help="also render the component and state gallery "
+                         "(gallery.html). Maintenance only; never published.")
     args = ap.parse_args(argv)
 
     snapshot = (snapshot_from_corpus(Path(args.db))
@@ -2808,7 +3105,8 @@ def main(argv=None):
     result = build(Path(args.out), args.title, Path(args.db),
                    snapshot=snapshot, legacy_routes=args.legacy_routes,
                    site_origin=args.site_origin,
-                   allow_test_origin=args.allow_test_origin)
+                   allow_test_origin=args.allow_test_origin,
+                   gallery=args.gallery)
     print("build  : %d files -> %s" % (len(result["files"]), result["out_dir"]))
     print("mode   : %s (candidate; the public site builds under legacy)"
           % result["mode"])

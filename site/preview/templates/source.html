@@ -2,14 +2,17 @@
 {% from "_atlas.html" import breadcrumb, spine %}
 {% block title %}{{ source.display_name }} — {{ title }}{% endblock %}
 {% block content %}
-{% set path = [('Atlas', '../archive.html')] %}
+{% set path = [('Sources', '../sources.html')] %}
 {% if source_desk %}{% set path = path + [(source_desk.name, '../' ~ source_desk.route)] %}{% endif %}
 {{ breadcrumb(path + [(source.display_name, none)]) }}
-<p class="meta"><a href="../sources.html">All sources</a></p>
+<header class="page-head">
+<p class="eyebrow">{% if source_desk %}<span class="desk-state desk-state--{{ source_desk.status }}">{{ source_desk.name }} · {{ source_desk.status_label }}</span>{% else %}Source{% endif %}</p>
 <h1>{{ source.display_name }}</h1>
-{{ spine(desks, snapshot, corpus_total, true, source_desk) }}
-<p class="lede">{% if source.institution %}Published by {{ source.institution }}{% if source.institution_original %} (<span lang="zh">{{ source.institution_original }}</span>){% endif %}. {% endif %}
+<p class="lede">{% if source.institution %}Published by {{ source.institution }}{% if source.institution_original %} (<span{% if source.institution_original|script_lang %} lang="{{ source.institution_original|script_lang }}"{% endif %}>{{ source.institution_original }}</span>){% endif %}. {% endif %}
 {% if source_desk %}Part of the <a href="../{{ source_desk.route }}">{{ source_desk.name }}</a>, currently {{ source_desk.status_label|lower }}.{% endif %}</p>
+{% if source.record_count %}<p><a class="btn btn--secondary" href="../archive.html?source={{ source.slug }}">Browse its {{ source.record_count|count }} records</a></p>{% endif %}
+</header>
+{{ spine(desks, snapshot, corpus_total, true, source_desk) }}
 
 <div class="table-scroll">
 <table class="provenance">

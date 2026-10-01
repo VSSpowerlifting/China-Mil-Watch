@@ -10,8 +10,12 @@ who published an issue. Neither gives a brief an address. This module is the
 seam between them and the site builder (`site/preview/generate_preview.py`):
 
   * `load_collection` reads brief sidecars, holds every one to the contract,
-    and returns the existing issues and the briefs as one list, newest number
-    first, each row carrying where it was published;
+    and returns the existing issues and the briefs as one list, newest
+    publication first, each row carrying where it was published. The existing issues are
+    the earlier part of the same publication (DECISION_LOG 2026-09-30): the
+    list is the one the site presents, with no separate legacy section, and
+    "from the former series The PLA Watch" is provenance on a row, not a
+    second collection;
   * `brief_view` prepares one brief for its page: everything displayed is
     derived from the sidecar, and nothing is composed;
   * `brief_veil` resolves a brief's Signal Veil under the same provenance rule
@@ -262,7 +266,10 @@ def provenance(entry: Mapping) -> str:
         text = "Published as an %s brief" % COLLECTION_NAME.replace(
             " Briefs", "")
     else:
-        text = "Published as %s %s %s" % (
+        # An earlier issue belongs to the former series. The masthead is the
+        # one the identity contract resolved for this entry (stored where the
+        # sidecar states it), quoted rather than assumed per issue.
+        text = "From the former series %s · published %s %s" % (
             entry.get("series_name"),
             "under" if entry.get("era") == ERA_HISTORICAL else "by",
             entry.get("publication"))
@@ -273,7 +280,7 @@ def provenance(entry: Mapping) -> str:
 
 @dataclass(frozen=True)
 class Collection:
-    """`rows` newest number first; `briefs` the brief entries; `withheld` drafts."""
+    """`rows` newest publication first; `briefs` the brief entries; `withheld` drafts."""
     rows: tuple
     briefs: tuple
     withheld: tuple
@@ -281,8 +288,57 @@ class Collection:
 
     @property
     def lead(self):
-        """The newest issue. With no brief, exactly the site's current lead."""
+        """
+        The newest published item of the one collection, whichever series it
+        first appeared in. It leads the Analysis page and the home band, and
+        the "in development" state is shown only when this is None.
+        """
         return self.rows[0]["entry"] if self.rows else None
+
+    @property
+    def lead_row(self):
+        """`lead` with its kind and provenance, for a surface that states them."""
+        return self.rows[0] if self.rows else None
+
+
+def _neg_date(value) -> int:
+    """Newer weeks sort first; an unreadable date sorts last."""
+    day = _iso(value)
+    return -day.toordinal() if day else 0
+
+
+def _order_key(entry) -> tuple:
+    """Newest week first; then higher number (unnumbered last); then slug."""
+    return (_neg_date(entry.get("date")), -(entry.get("issue") or 0),
+            entry["slug"])
+
+
+def order_rows(rows) -> list:
+    """The collection order: newest week first, then number, then slug."""
+    return sorted(rows, key=lambda r: _order_key(r["entry"]))
+
+
+def _refuse_duplicates(rows) -> None:
+    """
+    One issue appears once. Combining the two sources must not list an issue
+    twice, whether it arrived as a sidecar brief and an existing edition or as
+    the same edition twice: the number, the address and the slug are each
+    unique across the collection.
+    """
+    problems = []
+    for field_name in ("issue", "url", "slug"):
+        seen = {}
+        for r in rows:
+            value = r["entry"].get(field_name)
+            if value is None:
+                continue
+            if value in seen:
+                problems.append("%s %r appears twice in the collection "
+                                "(%s and %s)" % (field_name, value,
+                                                 seen[value], r["kind"]))
+            seen[value] = r["kind"]
+    if problems:
+        raise CollectionError(problems)
 
 
 def load_collection(editions: list, registry, *,
@@ -304,13 +360,18 @@ def load_collection(editions: list, registry, *,
         briefs = [brief_entry(slug, sc) for slug, sc in published]
     except IdentityError as exc:
         raise CollectionError([str(exc)])
-    briefs.sort(key=lambda e: -(e.get("issue") or 0))
-    # Briefs come first because every brief is numbered after every existing
-    # issue; the existing issues keep exactly the order the site already has.
+    briefs.sort(key=_order_key)
     rows = ([{"entry": e, "kind": "brief", "provenance": provenance(e)}
              for e in briefs]
             + [{"entry": e, "kind": "issue", "provenance": provenance(e)}
                for e in editions])
+    # Publication chronology decides the order and so the lead: newest week
+    # first, whatever the item's number. A brief may be unnumbered, and an
+    # issue number cannot be assigned while one is unreconciled, so a number
+    # says nothing safe about recency. Number then slug only break ties, which
+    # makes the order total: the same inputs always give the same list.
+    rows = order_rows(rows)
+    _refuse_duplicates(rows)
     return Collection(rows=tuple(rows), briefs=tuple(briefs),
                       withheld=tuple(withheld),
                       sidecars={slug: sc for slug, sc in published})

@@ -47,13 +47,28 @@ def passes_keyword_filter(article: dict) -> bool:
     return False
 
 
+def passes_desk_prefilter(article: dict) -> bool:
+    """
+    Stage 1 as the article's own desk defines it (processing.screening).
+
+    China-desk articles, and any article whose source maps to no desk, get
+    passes_keyword_filter() exactly as before. A desk whose source is its
+    declared scope (Singapore) skips the keyword lists and goes on to the
+    model stage.
+    """
+    from processing.screening import profile_for_source
+    if not profile_for_source(article.get("source_slug")).keyword_prefilter:
+        return True
+    return passes_keyword_filter(article)
+
+
 def keyword_filter(articles: list[dict]) -> tuple[list[dict], list[dict]]:
     """Split into (passed, rejected). Logs counts at INFO level."""
     passed:   list[dict] = []
     rejected: list[dict] = []
 
     for article in articles:
-        (passed if passes_keyword_filter(article) else rejected).append(article)
+        (passed if passes_desk_prefilter(article) else rejected).append(article)
 
     logger.info(
         "Keyword filter: %d in → %d passed, %d rejected",

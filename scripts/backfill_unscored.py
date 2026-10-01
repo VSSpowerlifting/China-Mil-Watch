@@ -85,9 +85,30 @@ def fetch_unscored(limit=None, since=None, until=None):
         rows = conn.execute(
             UNSCORED_QUERY.format(where=" AND ".join(where)), params
         ).fetchall()
+        rows = _without_held_desks(conn, rows)
     finally:
         conn.close()
     return rows[:limit] if limit else rows
+
+
+def _without_held_desks(conn, rows):
+    """
+    Drop records of a desk whose screening is not run by the daily pipeline
+    (processing/screening.py). This script runs the same China-only
+    `Analyzer.analyze()` path, so a Singapore record would be screened by the
+    China prompt and, on a pass, translated "from Chinese". Such a desk is
+    screened with scripts/rescreen_desk.py instead.
+    """
+    from processing.screening import profile_for_desk
+    desks = dict(conn.execute(
+        "SELECT a.id, s.desk_id FROM articles a "
+        "JOIN sources s ON s.id = a.source_id").fetchall())
+    kept = [r for r in rows if profile_for_desk(desks.get(r["id"])).daily_queue]
+    if len(kept) != len(rows):
+        logger.info(
+            "Skipping %d record(s) from desks screened only by "
+            "scripts/rescreen_desk.py.", len(rows) - len(kept))
+    return kept
 
 
 def process(analyzer, row):

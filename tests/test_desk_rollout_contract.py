@@ -475,9 +475,14 @@ class TestPrintAndStateLegibility(unittest.TestCase):
                 self.assertIn(selector, block)
 
     def test_print_keeps_a_record_whole_across_a_page_break(self):
+        # Record rows are `li.record-row` since the 2026-09-27 overhaul (every
+        # list — Records, week pages, the client-rendered results — renders
+        # the one `_records.html` row); `article.record` no longer exists.
         block = self.css().split("@media print", 1)[1]
         self.assertIn("break-inside: avoid", block)
-        self.assertIn("article.record", block)
+        rule = re.search(r"([^{}]*)\{[^}]*break-inside:\s*avoid", block)
+        self.assertIsNotNone(rule)
+        self.assertIn(".record-row", rule.group(1))
 
     def test_print_keeps_a_column_header_with_its_rows(self):
         """A `thead` stranded at the foot of a page labels nothing."""
@@ -487,6 +492,15 @@ class TestPrintAndStateLegibility(unittest.TestCase):
     def test_print_does_not_clip_a_scrolling_table(self):
         block = self.css().split("@media print", 1)[1]
         self.assertRegex(block, r"\.table-scroll\s*\{[^}]*overflow:\s*visible")
+
+    def test_print_draws_a_button_as_black_text_on_the_page(self):
+        """A primary button's dark fill under a printed grey address was
+        unreadable, so in print a button loses its fill and is black text."""
+        block = self.css().split("@media print", 1)[1]
+        rule = re.search(r"\n\s*\.btn\s*\{([^}]*)\}", block)
+        self.assertIsNotNone(rule)
+        self.assertRegex(rule.group(1), r"background:\s*none")
+        self.assertRegex(rule.group(1), r"color:\s*#000")
 
 
 if __name__ == "__main__":

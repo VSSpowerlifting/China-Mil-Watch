@@ -1,194 +1,221 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import breadcrumb %}
 {% set nested = true %}
 {# Display title: the machine translation when one exists, otherwise the
    original. Never a placeholder — a record with no English title shows its
-   Chinese title as the heading rather than inventing a substitute. #}
+   original title as the heading rather than inventing a substitute. #}
 {% set display_title = record.title_english or record.title_original %}
+{% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
 {% block title %}{{ display_title }} — {{ title }}{% endblock %}
 {% block content %}
-{% set path = [('Atlas', '../archive.html')] %}
+{# "Back to results" appears only when the reader arrived from a search or a
+   week list on this site (citation.js reads the referrer). The record's own
+   address never carries query parameters, so a copied link stays canonical. #}
+<p class="back-link" id="back-link" hidden><a href="../archive.html">Back to results</a></p>
+{% set path = [('Records', '../archive.html')] %}
 {% if record_desk %}{% set path = path + [(record_desk.name, '../' ~ record_desk.route)] %}{% endif %}
 {% set path = path + [(record.source_name, '../source/' ~ record.source_slug ~ '.html'), ('Record ' ~ record.id, none)] %}
 {{ breadcrumb(path) }}
-<p class="meta"><a href="../corpus.html">Browse records by week</a></p>
 
-<div class="record-head">
-  <span class="evidence evidence--record">Source record</span>
-  <span class="meta">{{ record.institution or record.source_name }} · {{ record.published_date }}</span>
-</div>
+<article class="record-page">
+  {# The almanac's date block: the date the institution stated, which is the
+     record's place in time. Collection time is a different calendar and is
+     stated in the custody line and the provenance table. #}
+  <div class="record-date">
+    <time datetime="{{ record.published_date }}"><span class="day-num">{{ record.published_date[8:10] | int }}</span>
+      <span class="day-month">{{ months[(record.published_date[5:7] | int) - 1] }} {{ record.published_date[:4] }}</span></time>
+    <span class="day-week">{{ record.published_date | weekday }}</span>
+    <span class="day-note">Source-stated publication date</span>
+    <p class="record-institution">{{ record.institution or record.source_name }}{% if record.institution %}<br>via <a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a>{% endif %}</p>
+  </div>
 
-<h1{% if not record.title_english %} lang="{{ record.language_tag or 'zh' }}"{% endif %}>{{ display_title }}</h1>
-{{ spine(desks, snapshot, corpus_total, true, record_desk) }}
-<nav class="reader-contents" aria-label="On this record page">
-  <span>In this record</span>
-  <ul><li><a href="#record-status">Processing</a></li><li><a href="#record-provenance">Provenance</a></li>
-      <li><a href="#record-text">Stored text</a></li><li><a href="#record-citation">Citation</a></li></ul>
-</nav>
-{% if record.title_english and record.title_original %}
-{# Two distinct machine outputs. The English TITLE is a translation; the
-   summary below is a different artifact. Labelling them identically would
-   merge two separate claims about what a model produced. #}
-<p class="original" lang="{{ record.language_tag or 'zh' }}">{{ record.title_original }}</p>
-<p class="meta"><span class="evidence evidence--model">Machine translation</span>
-The heading is a machine translation of the original title above. Not reviewed by a human.</p>
-{% endif %}
-
-{# ── Facts rail ────────────────────────────────────────────────────────
-   The page already held all of this, spread across a nine-row provenance
-   table and two prose sections further down. A reader who wanted to know
-   which institution published this, when, in what language, and whether a
-   human had looked at it had to read most of the page to find out.
-
-   Nothing here is new and nothing here is a summary in the editorial sense —
-   every value is the same field the provenance table below states in full,
-   restated once at the top where it answers the question a reader actually
-   arrives with. The full table stays: this is an index to it, not a
-   replacement for it.
-   ── #}
-<div class="record-layout">
-<div class="record-main">
-
-<h2 id="record-status">Processing status</h2>
-<p class="record-state"><b>{{ record.state_label }}</b></p>
-<p>{{ state_definition }}</p>
-{# The common label is neutral. Labelling a NOT-flagged record "Model-flagged"
-   asserted the opposite of the value it was reporting; "Model-flagged" may now
-   appear only when the flag is actually true. Both outcomes are machine
-   output, so rust is correct for either. #}
-{% if record.model_flagged is not none %}
-<p class="meta"><span class="evidence evidence--model">Machine assessment</span>
-{% if record.model_flagged %}Model-flagged for closer review. This is a software
-triage cue, not an editorial judgment.{% else %}Not flagged for closer review.
-This is a software triage result, not an editorial judgment.{% endif %}</p>
-{% endif %}
-
-<h2 id="record-provenance">Provenance</h2>
-<div class="table-scroll">
-<table class="provenance">
-  <caption>What is known about this record and where each part came from.</caption>
-  <tbody>
-    <tr><th scope="row">Desk</th><td class="prov-value">{% if record_desk %}<a href="../{{ record_desk.route }}">{{ record_desk.name }}</a>{% else %}—{% endif %}</td></tr>
-    <tr><th scope="row">Publishing institution</th><td class="prov-value">{{ record.institution or '—' }}</td></tr>
-    <tr><th scope="row">Source outlet</th><td class="prov-value"><a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a> <span class="meta">({{ record.source_slug }})</span></td></tr>
-    <tr><th scope="row">Source language</th><td class="prov-value">{{ record.language_tag or '—' }} <span class="meta">— an attribute of the source, not of this record</span></td></tr>
-    <tr><th scope="row">Source-stated publication date</th><td class="prov-value">{{ record.published_date }}</td></tr>
-    <tr><th scope="row">Original URL</th><td class="prov-value"><a href="{{ record.url }}" rel="noopener nofollow">{{ record.url }}</a></td></tr>
-    <tr><th scope="row">Collected at</th><td class="prov-value">{{ record.scraped_at }} <span class="meta">— collection metadata, not a publication time</span></td></tr>
-    <tr><th scope="row">Content fingerprint</th><td class="prov-value"><span class="token">{{ record.content_hash }}</span> <span class="meta">— taken when the record was captured, over the stored original title and text</span></td></tr>
-    {% if record.scrape_run_id is not none %}
-    <tr><th scope="row">Collection run</th><td class="prov-value">{{ record.scrape_run_id }}</td></tr>
+  <div class="record-body">
+    {# The institution and the date are the date block's, beside this. #}
+    <div class="record-head">
+      <span class="evidence evidence--record">Source record</span>
+    </div>
+    <h1{% if not record.title_english %} lang="{{ record.language_tag or 'zh' }}"{% endif %}>{{ display_title }}</h1>
+    {% if record.title_english and record.title_original %}
+    {# Two distinct machine outputs. The English TITLE is a translation; the
+       summary below is a different artifact. Labelling them identically would
+       merge two separate claims about what a model produced. #}
+    <div class="record-title-pair">
+      <p class="original" lang="{{ record.language_tag or 'zh' }}">{{ record.title_original }}</p>
+      <p class="meta"><span class="evidence evidence--model">Machine translation</span>
+      The heading is a machine translation of the original title above. Not reviewed by a human.</p>
+    </div>
     {% endif %}
-    {% if record.model_id %}
-    <tr><th scope="row">Analysis model</th><td class="prov-value">{{ record.model_id }}</td></tr>
+
+    {# The custody line: four real stages, in the order they happened. Each is
+       drawn from a stored field; a stage that did not happen says so. #}
+    <ol class="custody" aria-label="How this record reached this page">
+      <li><b>Published</b>{{ record.published_date | reader_date }}, by {{ record.institution or record.source_name }}</li>
+      <li><b>Collected</b>{{ record.scraped_at }}{% if record.scraped_at | length == 19 %} UTC{% endif %}{% if record.scrape_run_id is not none %}, run {{ record.scrape_run_id }}{% endif %}</li>
+      <li class="{{ 'is-machine' if record.state in ['analyzed', 'not_selected', 'analysis_incomplete'] else 'is-absent' }}"><b>Machine reading</b>{{ record.state_label }}</li>
+      <li class="{{ 'is-analysis' if record.in_trails else 'is-absent' }}"><b>Analysis</b>{% if record.in_trails %}In the source trail of {% for ref in record.in_trails %}{{ ref.series_name }} No. {{ ref.issue }}{{ ', ' if not loop.last }}{% endfor %}{% else %}Not in a published issue's source trail{% endif %}</li>
+    </ol>
+
+    <nav class="reader-contents" aria-label="On this record page">
+      <span>In this record</span>
+      <ul>{% if record.summary_english %}<li><a href="#record-summary">Summary</a></li>{% endif %}
+          <li><a href="#record-text">Stored text</a></li><li><a href="#record-status">Processing</a></li>
+          <li><a href="#record-provenance">Provenance</a></li><li><a href="#record-citation">Citation</a></li></ul>
+    </nav>
+
+    {% if record.summary_english %}
+    <section class="record-section" id="record-summary" aria-labelledby="summary-heading">
+      <div class="layer-head"><h2 id="summary-heading">Summary</h2>
+        <span class="evidence evidence--model">Machine summary</span></div>
+      <div class="interpretation">
+        <p>{{ record.summary_english }}</p>
+      </div>
+      <p class="meta">Machine-generated from the original text, and distinct from the
+      machine translation of the title. Not reviewed by a human. It is a reading of
+      what was published, not a verification of it.</p>
+    </section>
     {% endif %}
-    {% if record.prompt_version %}
-    <tr><th scope="row">Prompt version</th><td class="prov-value">{{ record.prompt_version }}</td></tr>
-    {% elif record.model_id %}
-    <tr><th scope="row">Prompt version</th><td class="prov-value">Prompt version is unavailable for this record.</td></tr>
+
+    <section class="record-section" aria-labelledby="record-text">
+      <div class="layer-head"><h2 id="record-text">Stored source text</h2>
+        <span class="evidence evidence--record">Source record</span></div>
+      {# "Original text" claimed a fidelity the capture does not have:
+         extraction can drop material and pull in page furniture. The stored
+         bytes are never cleaned to match the claim; the claim is corrected. #}
+      <p class="meta">Text captured from the source page. Extraction may omit material
+      or include unrelated page elements; consult the original URL when exact wording
+      or completeness matters.</p>
+      {% if record.has_text %}
+      <div class="original-text" lang="{{ record.language_tag or 'zh' }}">
+      {% for para in record.text_original.split('\n') %}
+      {% if para.strip() %}<p>{{ para.strip() }}</p>
+      {% endif %}
+      {% endfor %}
+      </div>
+      {% else %}
+      {# Ruled wording. Deliberately not "permanently unavailable": recovery or
+         re-capture remains possible and this page must not foreclose it. #}
+      <p>Original text is unavailable in this stored record.</p>
+      {% endif %}
+    </section>
+
+    <section class="record-section" aria-labelledby="record-status">
+      <h2 id="record-status">Processing status</h2>
+      <p class="record-state">{{ record.state_label }}</p>
+      <p>{{ state_definition }}</p>
+      {# "Model-flagged" appears only when the flag is actually true. Both
+         outcomes are machine output, so both carry the machine label. #}
+      {% if record.model_flagged is not none %}
+      <p class="meta"><span class="evidence evidence--model">Machine assessment</span>
+      {% if record.model_flagged %}Model-flagged for closer review. This is a software
+      triage cue, not an editorial judgment.{% else %}Not flagged for closer review.
+      This is a software triage result, not an editorial judgment.{% endif %}</p>
+      {% endif %}
+    </section>
+
+    <section class="record-section" aria-labelledby="record-provenance">
+      <h2 id="record-provenance">Provenance</h2>
+      <div class="table-scroll">
+      <table class="provenance">
+        <caption>What is known about this record and where each part came from.</caption>
+        <tbody>
+          <tr><th scope="row">Desk</th><td class="prov-value">{% if record_desk %}<a href="../{{ record_desk.route }}">{{ record_desk.name }}</a>{% else %}—{% endif %}</td></tr>
+          <tr><th scope="row">Publishing institution</th><td class="prov-value">{{ record.institution or '—' }}</td></tr>
+          <tr><th scope="row">Source outlet</th><td class="prov-value"><a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a> <span class="meta">({{ record.source_slug }})</span></td></tr>
+          <tr><th scope="row">Source language</th><td class="prov-value">{{ record.language_tag or '—' }} <span class="meta">— an attribute of the source, not of this record</span></td></tr>
+          <tr><th scope="row">Source-stated publication date</th><td class="prov-value">{{ record.published_date }}</td></tr>
+          <tr><th scope="row">Original URL</th><td class="prov-value"><a href="{{ record.url }}" rel="noopener nofollow">{{ record.url }}</a></td></tr>
+          <tr><th scope="row">Collected at</th><td class="prov-value">{{ record.scraped_at }} <span class="meta">— collection metadata, not a publication time</span></td></tr>
+          <tr><th scope="row">Content fingerprint</th><td class="prov-value"><span class="token">{{ record.content_hash }}</span> <span class="meta">— taken when the record was captured, over the stored original title and text</span></td></tr>
+          {% if record.scrape_run_id is not none %}
+          <tr><th scope="row">Collection run</th><td class="prov-value">{{ record.scrape_run_id }}</td></tr>
+          {% endif %}
+          {% if record.model_id %}
+          <tr><th scope="row">Analysis model</th><td class="prov-value">{{ record.model_id }}</td></tr>
+          {% endif %}
+          {% if record.prompt_version %}
+          <tr><th scope="row">Prompt version</th><td class="prov-value">{{ record.prompt_version }}</td></tr>
+          {% elif record.model_id %}
+          <tr><th scope="row">Prompt version</th><td class="prov-value">Prompt version is unavailable for this record.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+      </div>
+      <p class="meta">Every field above is defined in the
+      <a href="../corpus-guide.html#dictionary">data dictionary</a> — what it means,
+      when it may be absent, and where it stops being reliable.</p>
+    </section>
+
+    <section class="record-section" aria-labelledby="supports-heading">
+      <h2 id="supports-heading">What this record supports</h2>
+      <ul class="supports">
+        <li><span class="evidence evidence--record">Source record</span> This item was published at the URL above on the date the source stated.</li>
+        <li><span class="evidence evidence--claim">Official claim</span> Its contents are that institution's assertions.</li>
+      </ul>
+      <p>It does not establish that the described events occurred, that any capability exists, or that
+      the institution's stated position is its actual policy.</p>
+    </section>
+
+    <section class="record-section" aria-labelledby="record-citation">
+      <h2 id="record-citation">Cite this record</h2>
+      {# Two claims, two blocks: the item as its publisher issued it, and the
+         record as this corpus holds it. Both are plain selectable text; the
+         copy buttons do not exist without JavaScript. #}
+      <p class="meta">Two separate claims, cited separately: the item as its publisher
+      issued it, and the record as this corpus holds it.</p>
+      <div class="cite-block">
+        <p class="cite-text" id="cite-source-text">{{ cite.source_text }}</p>
+        <button type="button" class="cite-copy" data-copy="cite-source-text" hidden>Copy source text</button>
+        <p class="cite-status" role="status" aria-live="polite"></p>
+      </div>
+      <div class="cite-block">
+        <p class="cite-text" id="cite-as-held">{{ cite.as_held }}</p>
+        <button type="button" class="cite-copy" data-copy="cite-as-held" hidden>Copy as held</button>
+        <p class="cite-status" role="status" aria-live="polite"></p>
+      </div>
+      <p class="meta"><b>Processing note.</b> {{ cite.note }}</p>
+      <p class="meta">The record number and this record path are locators inside
+      the {{ snapshot.date }} snapshot. Neither is a DOI, accession number, permanent
+      identifier, public permalink, or published route. See
+      <a href="../corpus-guide.html#citation">identifiers and citation guidance</a>.</p>
+    </section>
+  </div>
+
+  <aside class="record-rail" aria-labelledby="rail-heading">
+    <div class="rail-block">
+      <h2 id="rail-heading">This record at a glance</h2>
+      <dl>
+        <div><dt>Publishing institution</dt><dd>{{ record.institution or '—' }}</dd></div>
+        <div><dt>Source outlet</dt><dd><a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a></dd></div>
+        <div><dt>Source-stated date</dt><dd><time datetime="{{ record.published_date }}">{{ record.published_date }}</time></dd></div>
+        <div><dt>Source language</dt><dd>{{ record.language_tag | language_label if record.language_tag else '—' }}</dd></div>
+        <div><dt>Processing state</dt><dd>{{ record.state_label }}</dd></div>
+        <div><dt>Translation</dt><dd>{% if record.title_english %}Machine-translated title, not reviewed by a human{% else %}No English title held{% endif %}</dd></div>
+        <div><dt>Desk</dt><dd>{% if record_desk %}<a href="../{{ record_desk.route }}">{{ record_desk.name }}</a>{% else %}—{% endif %}</dd></div>
+      </dl>
+      <a class="original-link" href="{{ record.url }}" rel="noopener nofollow">Read the original page</a>
+    </div>
+    {% if record.in_trails %}
+    {# Listed in a published issue's source trail, matched on this record's
+       exact stored URL. The issue says which claim rests on it; this does not. #}
+    <div class="rail-block trail-panel">
+      <h2>In analysis</h2>
+      <ul>
+      {% for ref in record.in_trails %}
+        <li><a href="{{ ref.url }}" rel="noopener">{{ ref.title }}</a>
+          <span class="meta">{{ ref.series_name }} No. {{ ref.issue }} · week ending {{ ref.date | reader_date }} · source-trail entry {{ ref.position }}</span></li>
+      {% endfor %}
+      </ul>
+    </div>
     {% endif %}
-  </tbody>
-</table>
-</div>
-<p class="meta">Every field above is defined in the
-<a href="../corpus-guide.html#dictionary">data dictionary</a> — what it means,
-when it may be absent, and where it stops being reliable.</p>
-
-<h2 id="record-text">Stored source text</h2>
-{# "Original text" claimed a fidelity the capture does not have: extraction can
-   drop material and can pull in unrelated page furniture. The stored bytes are
-   never cleaned to match the claim — the claim is corrected instead. #}
-<p class="meta">Text captured from the source page. Extraction may omit material
-or include unrelated page elements; consult the original URL when exact wording
-or completeness matters.</p>
-{% if record.has_text %}
-<div class="original-text" lang="{{ record.language_tag or 'zh' }}">
-{% for para in record.text_original.split('\n') %}
-{% if para.strip() %}<p>{{ para.strip() }}</p>
-{% endif %}
-{% endfor %}
-</div>
-{% else %}
-{# Ruled wording. Deliberately not "permanently unavailable": recovery or
-   re-capture remains possible and this page must not foreclose it. #}
-<p>Original text is unavailable in this stored record.</p>
-{% endif %}
-
-{% if record.summary_english %}
-<h2>Summary</h2>
-<div class="interpretation">
-  <p><span class="evidence evidence--model">Machine summary</span></p>
-  <p>{{ record.summary_english }}</p>
-  <p class="meta">Machine-generated from the original text, and distinct from the
-  machine translation of the title. Not reviewed by a human. It is a reading of
-  what was published, not a verification of it.</p>
-</div>
-{% endif %}
-
-<h2>What this record supports</h2>
-<ul>
-  <li><span class="evidence evidence--record">Source record</span> This item was published at the URL above on the date the source stated.</li>
-  <li><span class="evidence evidence--claim">Official claim</span> Its contents are that institution's assertions.</li>
-</ul>
-<p>It does not establish that the described events occurred, that any capability exists, or that
-the institution's stated position is its actual policy.</p>
-
-<h2 id="record-citation">Cite this record</h2>
-{# Two claims, two blocks. The source text is the publisher's; the record is
-   this corpus's holding of it. Merging them into one string would let a reader
-   cite the corpus as though it were the publisher. Both are plain selectable
-   text — the copy buttons below them do not exist without JavaScript. #}
-<p class="meta">Two separate claims, cited separately: the item as its publisher
-issued it, and the record as this corpus holds it.</p>
-
-<div class="cite-block">
-  <p class="cite-text" id="cite-source-text">{{ cite.source_text }}</p>
-  <button type="button" class="cite-copy" data-copy="cite-source-text" hidden>Copy source text</button>
-  <p class="cite-status" role="status" aria-live="polite"></p>
-</div>
-
-<div class="cite-block">
-  <p class="cite-text" id="cite-as-held">{{ cite.as_held }}</p>
-  <button type="button" class="cite-copy" data-copy="cite-as-held" hidden>Copy as held</button>
-  <p class="cite-status" role="status" aria-live="polite"></p>
-</div>
-
-{# Selected from this record's actual state. One blanket machine-output
-   sentence across all four states would claim model output for records that
-   have none, and a screening judgment for records never screened. #}
-<p class="meta"><b>Processing note.</b> {{ cite.note }}</p>
-
-{# One paragraph, both distinctions. Two adjacent caveats each carried half the
-   warning and repeated the other half, so the record NUMBER and this page's
-   ADDRESS are now named together and every denial is kept. #}
-<p class="meta">The record number and this record path are locators inside
-the {{ snapshot.date }} snapshot. Neither is a DOI, accession number, permanent
-identifier, public permalink, or published route. See
-<a href="../corpus-guide.html#citation">identifiers and citation guidance</a>.</p>
-
-</div><!-- /.record-main -->
-<aside class="record-rail" aria-labelledby="rail-heading">
-  <h2 id="rail-heading">This record at a glance</h2>
-  <dl>
-    <div><dt>Publishing institution</dt>
-      <dd>{{ record.institution or '—' }}</dd></div>
-    <div><dt>Source outlet</dt>
-      <dd><a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a></dd></div>
-    <div><dt>Source-stated date</dt>
-      <dd><time datetime="{{ record.published_date }}">{{ record.published_date }}</time></dd></div>
-    <div><dt>Source language</dt>
-      <dd>{{ record.language_tag or '—' }}</dd></div>
-    <div><dt>Processing state</dt>
-      <dd>{{ record.state_label }}</dd></div>
-    <div><dt>Translation</dt>
-      <dd>{% if record.title_english %}Machine-translated title, not reviewed by a
-        human{% else %}No English title held{% endif %}</dd></div>
-    <div><dt>Desk</dt>
-      <dd>{% if record_desk %}<a href="../{{ record_desk.route }}">{{ record_desk.name }}</a>{% else %}—{% endif %}</dd></div>
-    <div><dt>Original</dt>
-      <dd><a href="{{ record.url }}" rel="noopener nofollow">Source page &rarr;</a></dd></div>
-  </dl>
-</aside>
-</div><!-- /.record-layout -->
+    <div class="rail-block">
+      <h2>Share this record</h2>
+      <div class="cite-actions">
+        <button type="button" class="link-copy" data-copy-link hidden>Copy link</button>
+        <a href="#record-citation">Citation</a>
+      </div>
+      <p class="cite-status link-status" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
+</article>
 {% endblock %}
 {% block scripts %}<script src="../citation.js" defer></script>{% endblock %}

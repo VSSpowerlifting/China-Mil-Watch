@@ -397,6 +397,32 @@ def get_articles_unscored() -> list[sqlite3.Row]:
         ).fetchall()
 
 
+def get_article_desks(article_ids) -> dict:
+    """
+    `{article_id: desk_id}` for the given records, from each record's source.
+
+    Kept apart from the two analysis-queue queries above so their SQL (and the
+    China queue it builds) is untouched; pipeline.py uses this to route queued
+    records by desk (processing/screening.py). A record whose source has no
+    desk maps to None.
+    """
+    ids = list(article_ids)
+    if not ids:
+        return {}
+    out: dict = {}
+    with get_conn() as conn:
+        for start in range(0, len(ids), 500):
+            chunk = ids[start:start + 500]
+            rows = conn.execute(
+                "SELECT a.id, s.desk_id FROM articles a "
+                "LEFT JOIN sources s ON s.id = a.source_id "
+                "WHERE a.id IN (%s)" % ",".join("?" * len(chunk)),
+                chunk,
+            ).fetchall()
+            out.update({r["id"]: r["desk_id"] for r in rows})
+    return out
+
+
 def record_processing_failure(article_id: int, disposition) -> None:
     """
     Record one observed analysis failure against a record.

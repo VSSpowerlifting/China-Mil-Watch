@@ -35,8 +35,11 @@ Two expressions of one publication, distinguished by editorial function:
   editions, PW index/archive, Terms. Focused and deliberate, not cinematic.
 
 Shared DNA that makes them one publication: identical type stack, one crimson
-signal family, mono micro-labels, 2px radius, the same ease curve and motion
-primitives, the same footer honesty language. The homepage's dark
+signal family, mono for metadata (the masthead kicker, issue numerals, hashes
+and ids), 2px radius, the same ease curve and motion primitives, the same
+footer honesty language. Since 2026-09-27 the record surfaces set their
+labels in the interface sans, sentence case, each marked by a short rule in
+its layer's colour; Night Desk keeps its mono caps labels (DECISION_LOG). The homepage's dark
 latest-edition band is the sanctioned crossover: Night Desk material embedded
 in the Ledger. The inverse (light panels inside PW pages) is limited to print.
 
@@ -90,16 +93,56 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 | `--rule` | #CFC9BC | hairline structure |
 | `--accent` | #255E7A | compass-blue links, chart marks, focus |
 | `--band` | #12222C | dark analysis band |
+| `--focus-band` | #8FC9DE | turquoise, on the band only (8.97 on `--band`, 1.71 on paper): focus there, and the Briefs mark |
+| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks (the Analysis page's former legacy-archive ground was retired 2026-09-30) |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
+| `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
 | `--warning` | #87511A | blocked status and warnings |
-| `--crimson` | #B3132B | dark analytical chrome only |
+| `--crimson` | #B3132B | the analysis layer: on paper a label and a rule only (6.10 on bg); fills and rules on dark |
+| `--crimson-ink` | #9E1830 | analysis text on paper (7.07 on bg) |
+
+Legacy names (`--paper`, `--graphite`, `--ocean`, `--text-muted` …) remain as
+aliases onto these tokens — one place a colour is decided, two names for it.
 
 ### Meaning rules
-- **Crimson = Night Desk analytical signal only**: editorial emphasis, the
-  historical series rule, and primary actions on dark. The live Paper Ledger
-  uses compass blue for structure and rust for model output. Neither uses
-  crimson as a decorative paper accent or a data-chart fill.
+- **Crimson = the analysis layer.** On Night Desk: editorial emphasis, the
+  historical series rule, and primary actions on dark. On the live Paper
+  Ledger (since 2026-09-27): the label and rule that mark the
+  human-controlled analysis layer, or point to it — the "Analysis" layer label, a record page's "In
+  analysis" panel and a record row's "In an analysis source trail" tag, the
+  custody line's analysis stage, the analysis column of the home page's
+  three-layer explainer, an issue's eyebrow — and nothing else.
+  The Ledger uses compass blue for structure and rust for model output.
+  Neither surface uses crimson as a decorative paper accent, a data-chart
+  fill, or for a machine flag: a model-flagged mark is rust.
+- **Briefs identity (2026-09-30).** The current collection, Indo-Pacific
+  Record Briefs, is identified by turquoise (`--focus-band`) on the band and
+  compass blue (`--accent`) on paper: the Analysis page head, the home
+  page's analysis lead, a Brief's hero and its Signal rule. This is an
+  identity colour, not a replacement for the meaning rules above: crimson
+  still marks the human-analysis layer wherever that layer is labeled
+  (including on Briefs and their pages), rust still marks machine output,
+  and ink still marks the source record. What changes is only which colour
+  names the publication.
+- **One analysis publication (2026-09-30).** The PLA Watch has been absorbed
+  into Indo-Pacific Record Briefs as the historical portion of one unified
+  analysis publication. Historical publication metadata and URLs are
+  preserved for provenance and compatibility, but the site does not present
+  The PLA Watch as a separate archive product. On the Analysis page and the
+  home band the earlier issues are rows of the same catalog; the newest item
+  of the whole collection leads, whichever series it began in; and where an
+  issue was first published is a secondary line of restrained metadata
+  ("From the former series The PLA Watch · published under …"), never a section, a
+  boundary, a second masthead or a second colour identity. There is no
+  legacy-archive band, no recessed "archive" ground and no large crimson
+  section on either surface. The issues' own pages keep the crimson they
+  were published with, and the lead's edition plate keeps its governed
+  marks (one crimson rule, rust ticks).
+- **Three layers, marked the same way everywhere** on the record surfaces:
+  source record (ink), machine output (rust), analysis (crimson). A reader
+  can tell which layer a line belongs to without reading its label, and the
+  label is always there.
 - **Evidence is neutral**: source-trail records, quotes, stats render in
   ink/gray. Inference and analyst emphasis may use crimson. This is the
   visual half of the evidence-vs-inference doctrine.
@@ -178,6 +221,46 @@ Defined in base templates or per-page `extra_styles`; reuse before inventing:
 - **Signal Field plate** (homepage "How the record is built") and **dark
   edition band** — flagship visuals, spec'd in VISUAL_AND_MOTION_SYSTEM.
 
+### Record surfaces (live record site, 2026-09-27 — "Almanac, with custody layers")
+
+One implementation (`site/preview/styles.css`, `site/preview/templates/`),
+and every component is on the maintenance gallery:
+`generate_preview.py --out <scratch dir> --snapshot-from-corpus --gallery`
+writes `gallery.html` beside a disposable build, from the corpus in the
+database. Without `--snapshot-from-corpus` the release guard refuses to build
+once the database has outgrown the declared snapshot. Never published.
+
+- **Day groups and the record row** (`_records.html` `record_days`,
+  `record_row`) — records under the source-stated date: a serif numeral,
+  the month and weekday. A row is the title (English when a machine
+  translation exists, the original otherwise, with its `lang`), the
+  original beneath at secondary colour, the processing state, "In an
+  analysis source trail" when that is true, and who published it, through
+  which source, in what language, from which desk. browse.js `card()` draws
+  the same row, field for field; a test holds the two to parity.
+- **Week strip** (`_weeks.html`) — stored records per publication week, as
+  links: navigation first, a disclosure of collection volume second (never
+  activity or output). Hatched: the governed outage; faint: snapshot
+  boundary. The key uses the governed labels only.
+- **Custody line** (record page) — Published → Collected → Machine reading →
+  Analysis, each from a stored field; a stage that did not happen says so.
+- **Layer labels** (`.evidence--record/--claim/--model/--analysis`) — a
+  short rule and sentence-case words, beside the heading they qualify.
+- **"In analysis" panel** (record rail) — the published issues whose source
+  trail holds this record's exact URL, with the entry's position.
+- **Records finder** — server-rendered newest 50; search, desk, source,
+  state, order, institution, language, dates and "in a source trail",
+  loaded on first request; state in the URL; chips to remove a filter. A
+  page turn moves focus to the range line, because the button pressed may
+  now be disabled. The address names the page actually shown, and a value no
+  option carries shows that control's default.
+- **Edition plate** (`_plate.html`) — an issue drawn from its sidecar
+  (VISUAL_AND_MOTION §3.2), at the head of the Analysis page's legacy
+  archive. The home band no longer draws it (2026-09-30): the band leads
+  with the current collection, and a plate there read as the current lead.
+- **Citations** — plain selectable text, never boxed; a copy control and a
+  visible status line that says what happened, including failure.
+
 ## 6a. Identity assets (added 2026-09-04)
 
 One canonical mark, several derivatives, documented in full in
@@ -200,7 +283,10 @@ One canonical mark, several derivatives, documented in full in
   (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
   never a replacement, and never presented as the mark at display size.
 - **The brand gradient appears in exactly one place** — inside the mark itself.
-  The accent budget still forbids gradients as decoration anywhere else.
+  The accent budget still forbids gradients as decoration anywhere else, with
+  one owner-approved exception (DECISION_LOG 2026-10-01): the Signal Veil
+  behind the home Indo-Pacific Record Briefs band, pure CSS, token colours,
+  inert, never on another surface. It does not repeal this rule elsewhere.
 - `logo-icon.png`, `logo-wordmark.png`, `og-image.png` and `favicon.svg` are
   **retired**: the predecessor's eagle, its wordmark, and a screenshot of its
   homepage. They remain in `output/` only because pages not yet re-rendered
@@ -262,3 +348,10 @@ Budgets for all future work:
   animation per page maximum.
 - No client-side rendering of primary content; the site must read fully
   with JS disabled.
+
+**Measured 2026-09-27 after the record-surface overhaul** (disposable build of
+the 2026-09-26 snapshot): `styles.css` 161 KB → 90 KB; the home page no longer
+loads the 435 KB cover PNG (the edition plate is inline SVG); `archive.html`
+no longer fetches the 668 KB / 269 KB-gzip search index on arrival (it loads
+on the first search or filter), and its newest 50 records are server-rendered.
+browse.js ≤ 9.5 KB, citation.js ≤ 5 KB; no library.

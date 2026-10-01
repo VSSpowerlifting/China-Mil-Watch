@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import spine %}
 {% block title %}Desks — {{ title }}{% endblock %}
 {% block content %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Desks', none)]) }}
+<header class="page-head">
 <h1>Desks</h1>
-{{ spine(desks, snapshot, corpus_total) }}
 <p class="lede">A desk is a declared collection scope: one jurisdiction or institutional family,
 with its own sources, its own coverage record, and its own limits. A desk appears here as soon as
 its scope is declared, and is labeled according to what it actually does.</p>
@@ -13,6 +12,8 @@ its scope is declared, and is labeled according to what it actually does.</p>
 {{ desks.not_collecting_count }} not collecting. Statuses and source counts come from the desk
 registry and the manifests it points at; record counts come from the corpus, and only a collecting
 desk has one.</p>
+</header>
+{{ spine(desks, snapshot, corpus_total) }}
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul><li><a href="#desk-directory">Declared desks</a></li>
@@ -43,7 +44,7 @@ desk has one.</p>
       <div class="stat-row"><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
       <div class="stat-row"><dt>Last successful collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
     </dl>
-    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full →</a></p>
+    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full</a>{% if d.record_count %} · <a href="archive.html?desk={{ d.slug }}">Browse its records</a>{% endif %}</p>
   </section>
 {% endfor %}
 </div>

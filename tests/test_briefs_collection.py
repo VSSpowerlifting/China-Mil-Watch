@@ -3,9 +3,11 @@ The Indo-Pacific Record Briefs collection and its page renderer.
 
 What is locked here:
 
-  * the collection is the existing issues, unchanged and in the same order,
-    plus approved briefs; with no brief the public copy says Briefs is in
-    development and The PLA Watch remains an archive;
+  * the collection is one list: the existing issues, unchanged and in the same
+    order, plus approved briefs. The issues first published as The PLA Watch
+    are earlier Briefs in it, not a second collection (DECISION_LOG
+    2026-09-30): the newest item leads, whichever series it began in, and
+    "in development" appears only when the list is empty;
   * drafts are withheld, a synthetic fixture never reaches a tree with an
     origin, and no real brief is published while No. 14 is unreconciled;
   * a brief's Signal Veil needs metadata, a derivative, and an exact
@@ -236,6 +238,166 @@ class TestLoading(_Tmp):
         self.assertIn("unreconciled", str(cm.exception))
 
 
+class TestUnifiedCollection(unittest.TestCase):
+    """
+    The earlier issues and the native Briefs are one list (DECISION_LOG
+    2026-09-30): newest first, each item once, the newest item leading
+    whichever series it began in, and empty only when nothing is published.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.editions = gp.load_editions(REPO_ROOT)
+        cls.registry = load_registry()
+
+    def collection(self, **kw):
+        return bc.load_collection(self.editions, self.registry,
+                                  briefs_dir=None, **kw)
+
+    def test_the_newest_earlier_issue_is_the_lead_when_no_brief_exists(self):
+        c = self.collection()
+        self.assertIs(c.lead, self.editions[0])
+        self.assertEqual(c.lead["issue"], 14)
+        self.assertEqual(c.lead_row["kind"], "issue")
+
+    def test_a_brief_numbered_after_the_issues_leads_and_they_follow(self):
+        stage = brief_fixtures.stage(Path(tempfile.mkdtemp(prefix="unify-")))
+        self.addCleanup(shutil.rmtree, stage.parent, True)
+        c = bc.load_collection(self.editions, self.registry, briefs_dir=stage,
+                               allow_synthetic=True)
+        self.assertEqual(c.lead["slug"], SLUG)
+        self.assertEqual([r["kind"] for r in c.rows],
+                         ["brief"] + ["issue"] * len(self.editions))
+
+    def test_ordering_is_newest_first_and_deterministic(self):
+        c = self.collection()
+        dates = [r["entry"]["date"] for r in c.rows]
+        self.assertEqual(dates, sorted(dates, reverse=True))
+        shuffled = list(reversed(self.editions))
+        again = bc.load_collection(shuffled, self.registry, briefs_dir=None)
+        self.assertEqual([r["entry"]["slug"] for r in again.rows],
+                         [r["entry"]["slug"] for r in c.rows])
+
+    # Chronology, not numbering, decides the lead (owner ruling 2026-09-30):
+    # a brief may be unnumbered, and no number can be assigned while an issue
+    # is unreconciled, so a number says nothing safe about recency.
+
+    @staticmethod
+    def row(slug, date, issue=None, kind="brief"):
+        return {"kind": kind, "provenance": "",
+                "entry": {"slug": slug, "date": date, "issue": issue}}
+
+    def test_a_newer_unnumbered_brief_leads_an_older_numbered_issue(self):
+        rows = [self.row("issue-14", "2026-08-15", 14, "issue"),
+                self.row("newer-unnumbered", "2026-09-19")]
+        ordered = bc.order_rows(rows)
+        self.assertEqual([r["entry"]["slug"] for r in ordered],
+                         ["newer-unnumbered", "issue-14"])
+        self.assertIsNone(ordered[0]["entry"]["issue"])
+
+    def test_an_older_unnumbered_brief_does_not_lead_a_newer_issue(self):
+        rows = [self.row("older-unnumbered", "2026-08-01"),
+                self.row("issue-14", "2026-08-15", 14, "issue")]
+        self.assertEqual([r["entry"]["slug"] for r in bc.order_rows(rows)],
+                         ["issue-14", "older-unnumbered"])
+
+    def test_the_same_week_breaks_ties_by_number_then_slug(self):
+        rows = [self.row("b-tie", "2026-08-15"),
+                self.row("issue-14", "2026-08-15", 14, "issue"),
+                self.row("a-tie", "2026-08-15")]
+        want = ["issue-14", "a-tie", "b-tie"]
+        for arrangement in (rows, rows[::-1], rows[1:] + rows[:1]):
+            self.assertEqual(
+                [r["entry"]["slug"] for r in bc.order_rows(arrangement)], want)
+
+    def test_an_unreadable_date_sorts_last_not_first(self):
+        rows = [self.row("undated", "not-a-date"),
+                self.row("dated", "2026-08-15")]
+        self.assertEqual([r["entry"]["slug"] for r in bc.order_rows(rows)],
+                         ["dated", "undated"])
+
+    def test_a_numbered_brief_that_is_newer_leads_by_date_not_number(self):
+        stage = brief_fixtures.stage(Path(tempfile.mkdtemp(prefix="order-")))
+        self.addCleanup(shutil.rmtree, stage.parent, True)
+        c = bc.load_collection(self.editions, self.registry, briefs_dir=stage,
+                               allow_synthetic=True)
+        self.assertEqual(c.lead["slug"], SLUG)
+        self.assertGreater(c.lead["date"], self.editions[0]["date"])
+
+    def test_no_issue_appears_twice(self):
+        c = self.collection()
+        for field_name in ("issue", "url", "slug"):
+            values = [r["entry"][field_name] for r in c.rows]
+            with self.subTest(field=field_name):
+                self.assertEqual(len(values), len(set(values)))
+
+    def test_combining_the_sources_refuses_a_duplicate(self):
+        doubled = list(self.editions) + [dict(self.editions[0])]
+        with self.assertRaises(bc.CollectionError) as cm:
+            bc.load_collection(doubled, self.registry, briefs_dir=None)
+        self.assertIn("appears twice", str(cm.exception))
+
+    def test_numbering_and_stored_identity_are_exactly_the_sidecars(self):
+        c = self.collection()
+        expected = {e["slug"]: (e["issue"], e["title"], e["date"], e["url"],
+                                e["era"], e["series_name"], e["publication"])
+                    for e in self.editions}
+        got = {r["entry"]["slug"]: (r["entry"]["issue"], r["entry"]["title"],
+                                    r["entry"]["date"], r["entry"]["url"],
+                                    r["entry"]["era"], r["entry"]["series_name"],
+                                    r["entry"]["publication"])
+               for r in c.rows}
+        self.assertEqual(got, expected)
+        self.assertEqual(sorted(n for n, *_ in got.values()),
+                         list(range(1, len(self.editions) + 1)))
+
+    def test_the_collection_is_empty_only_with_no_issue_and_no_brief(self):
+        empty = bc.load_collection([], self.registry, briefs_dir=None)
+        self.assertIsNone(empty.lead)
+        self.assertIsNone(empty.lead_row)
+        self.assertEqual(empty.rows, ())
+        self.assertIsNotNone(self.collection().lead)
+
+
+class TestZeroStateOnlyWhenTheCollectionIsEmpty(unittest.TestCase):
+    """A real build whose edition list is exactly what the test injects."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = Path(tempfile.mkdtemp(prefix="briefs-zero-"))
+        original = gp.load_editions
+        gp.load_editions = lambda root: []
+        try:
+            build(cls.root / "empty", briefs_dir=cls.root / "no-briefs")
+        finally:
+            gp.load_editions = original
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.root, ignore_errors=True)
+
+    def page(self, route):
+        return (self.root / "empty" / route).read_text(encoding="utf-8")
+
+    def test_analysis_says_briefs_are_in_development(self):
+        html = self.page("analysis.html")
+        self.assertIn('id="briefs-development"', html)
+        self.assertIn("Briefs in development", html)
+        self.assertNotIn('id="briefs-lead-title"', html)
+        self.assertNotIn('id="briefs-published"', html)
+        collections = html[html.index('<h3 id="collections">Collections</h3>'):
+                           html.index('<h3 id="series">Series</h3>')]
+        self.assertIn("In development", collections)
+        self.assertIn('<td data-label="Briefs" class="num">0</td>', collections)
+
+    def test_the_home_band_says_briefs_are_in_development(self):
+        home = self.page("index.html")
+        band = home[home.index('id="analysis"'):]
+        band = band[:band.index('aria-labelledby="record-and-analysis"')]
+        self.assertIn("Briefs in development", band)
+        self.assertNotIn("Read this Brief", band)
+
+
 class TestProvenance(unittest.TestCase):
 
     @classmethod
@@ -250,19 +412,21 @@ class TestProvenance(unittest.TestCase):
             with self.subTest(issue=e["issue"]):
                 if e["era"] == "historical":
                     self.assertEqual(row["provenance"],
-                                     "Published as The PLA Watch under "
-                                     "China Mil Watch")
+                                     "From the former series The PLA Watch "
+                                     "· published under China Mil Watch")
                 else:
                     self.assertTrue(row["provenance"].startswith(
-                        "Published as The PLA Watch by Indo-Pacific Record"))
+                        "From the former series The PLA Watch "
+                        "· published by Indo-Pacific Record"))
 
     def test_no_14_keeps_its_stored_identity_and_claims_no_approval(self):
         row = next(r for r in self.collection.rows
                    if r["entry"]["issue"] == 14)
         self.assertEqual(row["kind"], "issue")
         self.assertEqual(row["provenance"],
-                         "Published as The PLA Watch by Indo-Pacific Record"
-                         " · Retrospective edition")
+                         "From the former series The PLA Watch "
+                         "· published by Indo-Pacific Record "
+                         "· Retrospective edition")
         self.assertNotIn("approv", row["provenance"].lower())
 
     def test_a_brief_says_it_is_a_brief(self):
@@ -466,34 +630,161 @@ class TestSiteBuild(unittest.TestCase):
     def flat(html):
         return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
 
-    def test_with_no_brief_analysis_says_briefs_are_in_development(self):
+    def test_with_earlier_issues_and_no_native_brief_analysis_is_not_empty(self):
+        # The earlier issues are published Briefs. The zero-state is for a
+        # collection with nothing in it, so it must not appear here.
         text = self.flat(self.page("plain", "analysis.html"))
-        self.assertIn("Indo-Pacific Record Briefs is in development, and no "
-                      "brief has been published yet", text)
-        self.assertIn("published as The PLA Watch, remain available as an "
-                      "archive", text)
-        for claim in ("Continuing", "Weekly, ongoing", "Closed",
-                      "brief has been published.", "No new issue is published"):
+        self.assertNotIn("Briefs in development", text)
+        self.assertNotIn("in development, and no Brief has been published", text)
+        self.assertIn("Latest Brief", text)
+        for claim in ("Weekly, ongoing", "Closed", "Continuing",
+                      "No new issue is published"):
             with self.subTest(claim=claim):
                 self.assertNotIn(claim, text)
-        table = self.page("plain", "analysis.html")
-        collections = table[table.index("<h2>Collections</h2>"):
-                            table.index("<h2>Series</h2>")]
-        self.assertIn("In development", collections)
-        self.assertIn("Archive", collections)
-        self.assertIn('<td data-label="Issues" class="num">0</td>', collections)
+        html = self.page("plain", "analysis.html")
+        collections = html[html.index('<h3 id="collections">Collections</h3>'):
+                           html.index('<h3 id="series">Series</h3>')]
+        n = len(gp.load_editions(REPO_ROOT))
+        self.assertIn("Published", collections)
+        self.assertNotIn("In development", collections)
+        self.assertIn('<td data-label="Briefs" class="num">%d</td>' % n,
+                      collections)
+        # One collection row, not one per name it was published under.
+        self.assertEqual(collections.count("<tr>") - 1, 1)
 
     def test_analysis_keeps_every_desk_row_and_adds_collections_apart(self):
         html = self.page("plain", "analysis.html")
-        series = html[html.index("<h2>Series</h2>"):html.index("<h2 id=\"every-issue\">")]
-        self.assertLess(html.index("<h2>Collections</h2>"),
-                        html.index("<h2>Series</h2>"))
-        self.assertNotIn("<h2>Collections</h2>", series)
+        start = html.index('<h3 id="series">Series</h3>')
+        series = html[start:html.index("</section>", start)]
+        self.assertLess(html.index('<h3 id="collections">Collections</h3>'), start)
+        self.assertNotIn('<h3 id="collections">', series)
         for desk in load_registry():
             with self.subTest(desk=desk.slug):
                 self.assertIn('<a href="%s">%s</a>' % (desk.route, desk.name),
                               series)
         self.assertEqual(series.count("<tr>") - 1, len(load_registry()))
+
+    def test_the_newest_earlier_issue_leads_analysis_as_the_latest_brief(self):
+        # With no native brief the newest item of the one collection is the
+        # newest earlier issue, and it leads: No. 14 is the latest Brief.
+        html = self.page("plain", "analysis.html")
+        head = html[html.index('class="band briefs-head"'):
+                    html.index('id="briefs-published"')]
+        lead = gp.load_editions(REPO_ROOT)[0]
+        self.assertIn('id="briefs-lead-title"', head)
+        self.assertNotIn('id="briefs-development"', html)
+        self.assertIn("Latest Brief · No. %d" % lead["issue"], head)
+        self.assertIn('href="%s"' % lead["url"], head)
+        self.assertIn("Read this Brief", head)
+        # Where it was first published is a secondary line, not the heading.
+        self.assertIn("From the former series The PLA Watch", head)
+        h1 = re.search(r"<h1[^>]*>(.*?)</h1>", head, re.S).group(1)
+        self.assertEqual(h1.strip(), "Indo-Pacific Record Briefs")
+
+    def test_analysis_has_no_separate_archive_of_the_earlier_issues(self):
+        for name in ("plain", "fixture"):
+            with self.subTest(build=name):
+                html = self.page(name, "analysis.html")
+                text = self.flat(html)
+                for marker in ('id="legacy-archive"', 'class="archive-zone"',
+                               'id="every-issue"', "feature--archive"):
+                    self.assertNotIn(marker, html)
+                for phrase in ("Legacy archive", "Historical PLA Watch",
+                               "Previous publication", "The series page",
+                               "Analysis archive"):
+                    self.assertNotIn(phrase, text)
+                self.assertEqual(html.count("<h1"), 1)
+
+    def test_every_earlier_issue_is_in_the_one_catalog(self):
+        html = self.page("plain", "analysis.html")
+        catalog = html[html.index('id="briefs-published"'):
+                       html.index('id="briefs-method"')]
+        editions = gp.load_editions(REPO_ROOT)
+        self.assertGreaterEqual(len(editions), 13)
+        for e in editions:
+            with self.subTest(issue=e["issue"]):
+                self.assertEqual(catalog.count('href="%s"' % e["url"]), 1)
+                self.assertIn("No. %d" % e["issue"], catalog)
+                self.assertIn(e["title"], catalog.replace("&#39;", "'"))
+        # One list: a single ordered list of every row, no second ledger.
+        self.assertEqual(catalog.count("<ol "), 1)
+        self.assertEqual(catalog.count('class="issue-ledger-row"'),
+                         len(editions))
+        self.assertIn("%d published Briefs, newest first" % len(editions),
+                      self.flat(catalog))
+
+    def test_the_catalog_is_newest_first_and_carries_each_issues_provenance(self):
+        html = self.page("plain", "analysis.html")
+        catalog = html[html.index('id="briefs-published"'):
+                       html.index('id="briefs-method"')]
+        numbers = [int(n) for n in re.findall(r'class="issue-no">No\. (\d+)<',
+                                              catalog)]
+        self.assertEqual(numbers, sorted(numbers, reverse=True))
+        self.assertEqual(numbers, [e["issue"]
+                                   for e in gp.load_editions(REPO_ROOT)])
+        for e in gp.load_editions(REPO_ROOT):
+            expected = bc.provenance(e)
+            self.assertTrue(expected.startswith("From the former series "))
+            self.assertIn(expected, catalog)
+
+    def test_the_operational_tables_stay_below_the_catalog_and_the_key(self):
+        html = self.page("plain", "analysis.html")
+        order = [html.index(marker) for marker in
+                 ('id="briefs-lead-title"', 'id="briefs-published"',
+                  'id="briefs-method"', 'id="collections-and-desks"')]
+        self.assertEqual(order, sorted(order))
+
+    @staticmethod
+    def home_band(html):
+        band = html[html.index('id="analysis"'):]
+        return band[:band.index('aria-labelledby="record-and-analysis"')]
+
+    def test_the_home_band_shows_the_newest_unified_brief_not_a_zero_state(self):
+        # Earlier issues are published Briefs, so with no native brief the band
+        # leads with the newest of them and never says "in development".
+        band = self.home_band(self.page("plain", "index.html"))
+        lead = gp.load_editions(REPO_ROOT)[0]
+        self.assertNotIn("Briefs in development", band)
+        self.assertIn("Indo-Pacific Record Briefs, No. %d" % lead["issue"], band)
+        self.assertIn('href="%s"' % lead["url"], band)
+        self.assertIn("Read this Brief", band)
+        self.assertIn("From the former series The PLA Watch", band)
+        for claim in ('class="band-archive"', "Legacy archive",
+                      "Browse the archive", "<svg", 'class="plate',
+                      "Read this edition", 'href="pla-watch.html"'):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, band)
+
+    def test_a_brief_leads_the_home_band_and_nothing_stands_beside_it(self):
+        band = self.home_band(self.page("fixture", "index.html"))
+        link = 'href="briefs/%s.html"' % SLUG
+        self.assertIn(link, band)
+        self.assertIn("Read this Brief", band)
+        self.assertNotIn("Briefs in development", band)
+        self.assertNotIn("the-pla-watch/posts/", band)
+        self.assertNotIn('class="band-archive"', band)
+
+    def test_a_brief_leads_analysis_then_the_catalog_holds_it_with_the_issues(self):
+        html = self.page("fixture", "analysis.html")
+        link = 'href="briefs/%s.html"' % SLUG
+        order = [html.index(marker) for marker in
+                 ('id="briefs-lead-title"', 'id="briefs-published"',
+                  'id="briefs-method"', 'id="collections-and-desks"')]
+        self.assertEqual(order, sorted(order))
+        self.assertLess(html.index(link), html.index('id="briefs-published"'))
+        catalog = html[html.index('id="briefs-published"'):
+                       html.index('id="briefs-method"')]
+        # The fixture (9001) is first, then every earlier issue, in one list.
+        self.assertEqual(catalog.count(link), 1)
+        self.assertLess(catalog.index(link), catalog.index("the-pla-watch/posts/"))
+        editions = gp.load_editions(REPO_ROOT)
+        for e in editions:
+            self.assertEqual(catalog.count('href="%s"' % e["url"]), 1)
+        self.assertEqual(catalog.count('class="issue-ledger-row"'),
+                         len(editions) + 1)
+        head = html[html.index('class="band briefs-head"'):
+                    html.index('id="briefs-published"')]
+        self.assertNotIn("the-pla-watch/posts/", head)
 
     def test_no_page_claims_a_brief_is_being_written_or_published(self):
         for route in ("about.html", "analysis.html", "pla-watch.html",
@@ -516,13 +807,44 @@ class TestSiteBuild(unittest.TestCase):
         for word in ("Brief", "brief", "PLA Watch"):
             self.assertNotIn(word, bio)
 
-    def test_the_series_page_is_an_archive_and_says_nothing_of_briefs(self):
-        text = self.flat(self.page("plain", "pla-watch.html"))
-        self.assertIn("This page is an archive of those issues", text)
-        for claim in ("The series continues", "not a discontinued one",
-                      "continues across", "in development", "Continuing"):
+    def test_the_old_series_route_is_a_compatibility_bridge_only(self):
+        # `pla-watch.html` stays because inbound links to it are established
+        # and its citation anchors are cited. It is not a second collection: it
+        # says the issues are now Briefs, sends readers to Analysis, and lists
+        # no issue of its own.
+        html = self.page("plain", "pla-watch.html")
+        text = self.flat(html)
+        self.assertIn("The PLA Watch is now part of Indo-Pacific Record Briefs",
+                      text)
+        self.assertIn('href="analysis.html"', html)
+        self.assertIn("Read the Briefs", html)
+        self.assertNotIn('<table', html)
+        for e in gp.load_editions(REPO_ROOT):
+            self.assertNotIn('href="%s"' % e["url"], html)
+        for claim in ("Analysis archive", "This page is an archive of those issues",
+                      "The series continues", "Continuing", "in development",
+                      "Earlier Briefs"):
             with self.subTest(claim=claim):
                 self.assertNotIn(claim, text)
+
+    def test_the_compatibility_route_keeps_every_citation_anchor(self):
+        html = self.page("plain", "pla-watch.html")
+        for e in gp.load_editions(REPO_ROOT):
+            with self.subTest(slug=e["slug"]):
+                self.assertIn('id="cite-edition-%s"' % e["slug"], html)
+        # Collapsed by default: it reads as a bridge, not a list.
+        self.assertIn('<details class="ed-cite cite-all">', html)
+        self.assertNotIn("<details class=\"ed-cite cite-all\" open", html)
+
+    def test_no_page_links_to_the_old_series_route(self):
+        # One analysis destination: the compatibility route is linked from no
+        # navigation, footer or page body. It only resolves.
+        for route in ("index.html", "analysis.html", "archive.html",
+                      "desks.html", "china.html", "about.html",
+                      "coverage.html", "methodology.html", "sources.html"):
+            with self.subTest(route=route):
+                html = self.page("plain", route)
+                self.assertNotIn('href="pla-watch.html"', html)
 
     def test_no_number_after_14_is_shown_as_a_real_issue(self):
         for route in ("analysis.html", "index.html", "pla-watch.html"):

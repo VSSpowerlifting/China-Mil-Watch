@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import spine %}
 {% block title %}Sources — {{ title }}{% endblock %}
 {% block content %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Sources', none)]) }}
-<h1>Source universe</h1>
-{{ spine(desks, snapshot, corpus_total) }}
+<header class="page-head">
+<h1>Sources</h1>
 <p class="lede">Which institutions are collected, how they are positioned, and what authority their
 publications carry. Each source is declared in advance with an institution, source type, language
 and collection purpose, and belongs to exactly one desk.</p>
 <p class="meta">{{ source_views|length }} sources declared across
 {{ desks.declared_count }} desks. A source with no record count has never been part of a
 production run — which is different from a source that ran and stored nothing.</p>
+</header>
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul>{% if source_contributions %}<li><a href="#contributions-title">Stored record chart</a></li>{% endif %}
@@ -29,10 +29,10 @@ production run — which is different from a source that ran and stored nothing.
   <ol class="contribution-list">
   {% for bar in source_contributions %}
     <li>
-      <span class="contribution-index" aria-hidden="true">{{ '%02d'|format(loop.index) }}</span>
-      <a href="{{ bar.source.route }}">{{ bar.source.display_name }}</a>
+      <span class="bar-label"><a href="{{ bar.source.route }}">{{ bar.source.display_name }}</a>
+        <span class="contribution-value">{{ bar.source.record_count|count }} <small>({{ bar.label }})</small></span></span>
       <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: {{ bar.percent }}%"></span></span>
-      <span class="contribution-value">{{ bar.source.record_count|count }} <small>({{ bar.label }})</small></span>
+      <a class="contribution-browse" href="archive.html?source={{ bar.source.slug }}">Browse these records</a>
     </li>
   {% endfor %}
   </ol>
@@ -50,7 +50,7 @@ production run — which is different from a source that ran and stored nothing.
     <tr>
       <td data-label="Source"><a href="source/{{ s.slug }}.html">{{ s.display_name }}</a><br><span class="meta token">{{ s.slug }}</span></td>
       <td data-label="Desk">{% if desks.get(s.desk_slug) %}<a href="{{ desks.get(s.desk_slug).route }}">{{ desks.get(s.desk_slug).name }}</a>{% else %}{{ s.desk_slug or '—' }}{% endif %}</td>
-      <td data-label="Institution">{{ s.institution or '—' }}{% if s.institution_original %}<br><span class="meta" lang="zh">{{ s.institution_original }}</span>{% endif %}</td>
+      <td data-label="Institution">{{ s.institution or '—' }}{% if s.institution_original %}<br><span class="meta"{% if s.institution_original|script_lang %} lang="{{ s.institution_original|script_lang }}"{% endif %}>{{ s.institution_original }}</span>{% endif %}</td>
       <td data-label="Type">{{ s.source_type|source_type_label }}</td>
       <td data-label="Authority">{{ s.authority_tier or '—' }}</td>
       <td data-label="Language">{{ s.language_tag or '—' }}</td>

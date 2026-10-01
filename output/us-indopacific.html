@@ -26,6 +26,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="US Indo-Pacific Reference Desk — Indo-Pacific Record">
 <meta name="twitter:description" content="Official defense and security texts, preserved as published and analyzed in context.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -50,12 +53,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html" aria-current="page">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -64,12 +67,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html" aria-current="page">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -77,44 +80,42 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,644</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,944</dd></div>    </dl>
+        <dd>4,823</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,076</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      150 in full &rarr;</a></p>
+      155 in full</a></p>
   </div>
-</div>
+</aside>
 <main id="main">
   <div class="wrap">
 <nav class="atlas-breadcrumb" aria-label="Breadcrumb">
   <ol>
-    <li><a href="archive.html">Atlas</a></li>
     <li><a href="desks.html">Desks</a></li>
     <li><span aria-current="page">US Indo-Pacific Reference Desk</span></li>
   </ol>
 </nav>
-<p class="desk-state desk-state--access_blocked">Access blocked — not collecting</p>
-<h1>US Indo-Pacific Reference Desk</h1>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-26">2026-09-26</time>
-    · no production record count for this desk ·
-    <a href="coverage.html">collection evidence</a></p>
-  <ul aria-label="Desk collection states">
-    <li><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a>
-      <span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></li>
-  </ul>
-</aside>
-<p class="lede">Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks&#39; framing against a US framing of the same events. It is not a feed of US defense releases.</p>
-<p>Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.</p>
+<header class="page-head">
+  <h1>US Indo-Pacific Reference Desk</h1>
+  <p class="lede">Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks&#39; framing against a US framing of the same events. It is not a feed of US defense releases.</p>
+</header>
+
+<div class="status-panel status-panel--access_blocked">
+  <span class="status-glyph desk-state desk-state--access_blocked" aria-hidden="true"></span>
+  <div>
+    <h2>Access blocked — not collecting</h2>
+    <p>Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.</p>
+  </div>
+</div>
 
 <dl class="stat-rows">
   <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
@@ -138,16 +139,47 @@ material this project holds.</p>
 <a href="coverage.html">Coverage</a> for what each collection run actually returned.</p>
 
 
-<p class="meta"><a href="desks.html">← All desks</a></p>
+<p class="records-foot"><a href="desks.html">All desks</a></p>
   </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

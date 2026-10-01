@@ -26,6 +26,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Japan Desk — Indo-Pacific Record">
 <meta name="twitter:description" content="Official defense and security texts, preserved as published and analyzed in context.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -50,12 +53,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html" aria-current="page">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -64,12 +67,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html" aria-current="page">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html" aria-current="page">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -77,44 +80,42 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,644</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,944</dd></div>    </dl>
+        <dd>4,823</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,076</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      150 in full &rarr;</a></p>
+      155 in full</a></p>
   </div>
-</div>
+</aside>
 <main id="main">
   <div class="wrap">
 <nav class="atlas-breadcrumb" aria-label="Breadcrumb">
   <ol>
-    <li><a href="archive.html">Atlas</a></li>
     <li><a href="desks.html">Desks</a></li>
     <li><span aria-current="page">Japan Desk</span></li>
   </ol>
 </nav>
-<p class="desk-state desk-state--shadow">Shadow evaluation — not public</p>
-<h1>Japan Desk</h1>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-26">2026-09-26</time>
-    · no production record count for this desk ·
-    <a href="coverage.html">collection evidence</a></p>
-  <ul aria-label="Desk collection states">
-    <li><a href="japan.html">Japan Desk</a>
-      <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></li>
-  </ul>
-</aside>
-<p class="lede">Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.</p>
-<p>Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.</p>
+<header class="page-head">
+  <h1>Japan Desk</h1>
+  <p class="lede">Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.</p>
+</header>
+
+<div class="status-panel status-panel--shadow">
+  <span class="status-glyph desk-state desk-state--shadow" aria-hidden="true"></span>
+  <div>
+    <h2>Shadow evaluation — not public</h2>
+    <p>Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.</p>
+  </div>
+</div>
 
 <dl class="stat-rows">
   <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
@@ -211,7 +212,7 @@ not coverage, and nothing below has produced a record.</p>
 <p class="meta">These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only documents published as PDF carry text; on the news feed that was 8 of 142 items on 2026-08-26.</p>
 
 <h3>What has to be solved before this desk can collect</h3>
-<dl>
+<dl class="blockers">
   <dt><strong>Documents published as HTML cannot be retrieved.</strong></dt>
   <dd>The ministry&#39;s RSS feeds and its PDF documents are served normally, but HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route.</dd>
   <dt><strong>Collection-health thresholds remain unset.</strong></dt>
@@ -221,7 +222,7 @@ not coverage, and nothing below has produced a record.</p>
 <h3>What has already been solved</h3>
 <p class="meta">Recorded rather than deleted. A blocker that quietly disappears from
 this page leaves a reader unable to tell whether it was solved or abandoned.</p>
-<dl>
+<dl class="blockers">
   <dt><strong>Official discovery access — resolved 2026-08-26.</strong></dt>
   <dd>The listing pages remain challenged, but the ministry publishes two official RSS feeds that are served normally and support conditional requests. Discovery no longer depends on the challenged pages.</dd>
   <dt><strong>PDF text extraction wired to a collector — resolved 2026-08-26.</strong></dt>
@@ -241,16 +242,47 @@ this page leaves a reader unable to tell whether it was solved or abandoned.</p>
 <a href="coverage.html">Coverage</a> for what each collection run actually returned.</p>
 
 
-<p class="meta"><a href="desks.html">← All desks</a></p>
+<p class="records-foot"><a href="desks.html">All desks</a></p>
   </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

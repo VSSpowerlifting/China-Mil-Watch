@@ -779,8 +779,9 @@ class TestPlaWatchContinuity(PreviewCase):
         # index rather than being the Analysis index.
         self.assertIn("China Desk", html)
         self.assertIn('href="analysis.html"', html)
+        # Since 2026-09-30 nothing links to this compatibility page.
         index = self.page("analysis.html")
-        self.assertIn('href="pla-watch.html"', index)
+        self.assertNotIn('href="pla-watch.html"', index)
         # And the argument itself must be gone, not merely moved.
         for governance in ("predates", "Proposed hierarchy",
                            "does not make the parent product China-only"):
@@ -801,14 +802,18 @@ class TestPlaWatchContinuity(PreviewCase):
         expected_issues = [e["issue"] for e in canonical]
         expected_urls = {e["url"] for e in canonical}
 
-        html = self.page("pla-watch.html")
+        # The issues are browsed, and so linked, on Analysis (2026-09-30); the
+        # compatibility page links none of them and only cites them.
+        html = self.page("analysis.html")
         links = re.findall(r'href="(https://[^"]*?/the-pla-watch/posts/[^"]+)"',
                            html)
-        self.assertEqual(len(links), len(canonical))
+        # The lead is linked again from its own heading and button.
+        self.assertEqual(len(set(links)), len(canonical))
         self.assertEqual(set(links), expected_urls,
                          "a linked edition is not a canonical sidecar")
         # Issue numbers descend with nothing inserted or skipped.
-        numbers = [int(n) for n in re.findall(r'class="num ed-no">(\d+)<', html)]
+        numbers = [int(n) for n in re.findall(r'class="issue-no">No\. (\d+)<',
+                                              html)]
         self.assertEqual(numbers, expected_issues)
         self.assertEqual(numbers, sorted(numbers, reverse=True))
         self.assertEqual(len(set(numbers)), len(numbers), "duplicate issue number")
@@ -1388,7 +1393,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_the_lead_edition_carries_a_byline(self):
         self.assertIn("%s, %s" % (gp.MAINTAINER["name"],
                                   gp.MAINTAINER["role"]),
-                      self.page("index.html"))
+                      self.page("analysis.html"))
 
     # ── Typography ──────────────────────────────────────────────────────
 
@@ -1610,28 +1615,68 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotEqual(n_articles, trail,
                             "the two fields must stay distinguishable")
 
-        html = self.page("index.html")
-        self.assertIn("%d articles" % n_articles, html)
-        self.assertNotIn("records cited", html)
-        self.assertNotIn("%d records" % n_articles, html)
-        # The trail count must not be presented as the article count.
-        self.assertNotIn("%d articles" % trail, html)
+        # Neither Analysis nor the compatibility page restates the count as a
+        # citation figure, and the trail count is never offered as it.
+        for name in ("pla-watch.html", "analysis.html"):
+            page = self.page(name)
+            with self.subTest(page=name):
+                self.assertNotIn("records cited", page)
+                self.assertNotIn("%d records" % n_articles, page)
+                self.assertNotIn("%d articles" % trail, page)
 
     def test_latest_records_blurb_does_not_deny_translation(self):
         """
         The blurb may not imply the titles are untranslated — most of them
         carry a machine translation, shown above the original. It also may not
-        name a single desk now that the roster is derived.
+        name a single desk now that the roster is derived, nor imply that
+        every collecting desk appears: a desk with nothing analyzed has no row
+        (owner ruling 2026-09-27).
         """
         html = self.page("index.html")
         # Whitespace-normalised: the sentence moved into the records rail
         # with the revival and wraps at a different column there. The contract
         # is the words, not the column they happen to break at.
         flat = " ".join(html.split())
-        self.assertIn("The most recent records from the desks that collect, "
-                      "with original-language titles preserved.", flat)
+        self.assertIn("The latest analyzed records, with original-language "
+                      "titles preserved.", flat)
+        self.assertNotIn("from the desks that collect", flat)
         self.assertNotIn("in the language they were published in", html)
         self.assertNotIn("China Desk records", html)
+
+    def test_every_home_record_is_in_the_analyzed_state(self):
+        """The blurb says "analyzed", so every record the home page lists —
+        the lead and the register — must be, by the state derivation every
+        label uses."""
+        html = self.page("index.html")
+        body = html.split('aria-labelledby="lead-record-title"', 1)[1]
+        body = body.split('aria-labelledby="coverage"', 1)[0]
+        body = body.split('id="analysis"', 1)[0]
+        ids = [int(i) for i in dict.fromkeys(
+            re.findall(r'href="record/(\d+)\.html"', body))]
+        self.assertEqual(len(ids), gp.HOME_RECORD_COUNT)
+        from scripts.reconcile_db import read_only
+        with read_only(str(TRACKED_DB)) as con:
+            states = dict(con.execute(
+                "SELECT a.id, " + gp.STATE_CASE_SQL + " FROM articles a "
+                " WHERE a.id IN (%s)" % ",".join("?" * len(ids)), ids))
+        self.assertEqual(set(states.values()), {"analyzed"})
+
+    def test_the_layer_explainer_claims_only_what_holds(self):
+        """Owner ruling 2026-09-27. Analysis is "human-controlled" — the
+        doctrine's word — because the existing issues were drafted through a
+        model under human control. Machine output is published without human
+        review by the daily pipeline; nothing claims no person ever saw it."""
+        flat = " ".join(re.sub(r"<[^>]+>", " ",
+                               self.page("index.html")).split())
+        self.assertIn("Analysis is human-controlled, cites the records it "
+                      "rests on, and is labeled as interpretation.", flat)
+        self.assertIn("the daily pipeline publishes them without human "
+                      "review. They can be wrong.", flat)
+        for claim in ("No model writes it", "no script derives it",
+                      "written by a person", "never reviewed by a human",
+                      "labeled wherever they appear"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, flat)
 
     # ── Reader-facing language ──────────────────────────────────────────
 
@@ -1748,17 +1793,13 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     # ── Mobile treatments ───────────────────────────────────────────────
 
-    def test_editions_get_an_editorial_mobile_treatment(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
-        self.assertIn(".editions", css)
+    def test_the_compatibility_page_carries_no_edition_table(self):
+        # Replaced 2026-09-30: the editions table is gone from this page; the
+        # catalog on Analysis is the one place the issues are listed.
         html = self.page("pla-watch.html")
-        # the generic key/value stacking must not apply to this table
-        self.assertNotIn('<table class="stacking">', html)
-        self.assertIn('<table class="editions">', html)
-        for cls in ("ed-no", "ed-date", "ed-title", "ed-articles",
-                    "ed-flagged"):
-            with self.subTest(cls=cls):
-                self.assertIn(cls, html)
+        self.assertNotIn("<table", html)
+        self.assertNotIn('class="editions"', html)
+        self.assertIn('class="cite-list"', html)
 
     def test_edition_label_is_rendered_once_visually(self):
         """Emitted twice, but exactly one is display:none at any width."""
@@ -2124,6 +2165,20 @@ class TestRecordPages(PreviewCase):
         self.assertIn("Machine summary", html)
         self.assertIn("distinct from the", html)
 
+    def test_original_title_and_translation_notice_follow_record_heading(self):
+        rec_id = self.first_in_state("analyzed")
+        html = self.record(rec_id)
+        self.assertRegex(html, r'</h1>\s*<div class="record-title-pair">')
+        # The desk line no longer runs on record pages (2026-09-27); the
+        # custody line is what now follows the title pair.
+        self.assertLess(html.index('class="record-title-pair"'),
+                        html.index('class="custody"'))
+        self.assertLess(html.index("Machine translation"),
+                        html.index('aria-label="On this record page"'))
+
+        no_translation = self.record(self.first_in_state("awaiting_screening"))
+        self.assertNotIn('class="record-title-pair"', no_translation)
+
     def test_prompt_version_is_shown_when_stored(self):
         rec = next(r for r in self.data["corpus"] if r["prompt_version"])
         html = self.record(rec["id"])
@@ -2325,8 +2380,13 @@ class TestWeekShards(PreviewCase):
                 self.assertNotIn(token, index)
 
     def test_weeks_are_newest_first_and_records_keep_corpus_order(self):
+        # The table, not the week strip above it: the strip is a chart whose
+        # axis runs oldest to newest, left to right (2026-09-27).
         index = self.page("corpus.html")
-        listed = re.findall(r'href="(week-\d{4}-\d{2}-\d{2}\.html)"', index)
+        table = index.split('<table class="corpus-weeks">', 1)[1]
+        table = table.split("</table>", 1)[0]
+        listed = re.findall(r'href="(week-\d{4}-\d{2}-\d{2}\.html)"', table)
+        self.assertTrue(listed)
         self.assertEqual(listed, sorted(listed, reverse=True))
         for week in self.weeks:
             keys = [(r["published_date"], r["id"]) for r in week["records"]]
@@ -2415,6 +2475,52 @@ class TestWeekShards(PreviewCase):
         self.assertIn("17–24 July 2026", html)
         self.assertIn("not evidence that nothing was published", html)
 
+    def test_the_outage_note_states_what_the_window_holds(self):
+        """
+        Owner ruling 2026-09-27: the note reports the interruption and no
+        longer calls every record from those dates absent. What the snapshot
+        does hold from the window is derived here from the tracked database,
+        desk by desk, and must appear on every page of every week carrying
+        the note — the week of 20 July paginates, and its later page is the
+        one that lists the records the sentence counts.
+        """
+        from scripts.reconcile_db import read_only
+        with read_only(str(TRACKED_DB)) as con:
+            rows = con.execute(
+                "SELECT d.display_name, COUNT(*), MIN(a.published_date), "
+                "       MAX(a.published_date), MIN(substr(a.scraped_at, 1, 10)) "
+                "  FROM articles a JOIN sources s ON s.id = a.source_id "
+                "  JOIN desks d ON d.desk_id = s.desk_id "
+                " WHERE a.published_date BETWEEN ? AND ? "
+                " GROUP BY d.display_name ORDER BY d.display_name",
+                (GOVERNED_OUTAGE_START, GOVERNED_OUTAGE_END)).fetchall()
+        expected = gp.outage_holdings_note(
+            [{"desk": name, "count": n, "first": first, "last": last,
+              "later": earliest > GOVERNED_OUTAGE_END}
+             for name, n, first, last, earliest in rows])
+        noted = [w for w in self.weeks
+                 if w["annotation"] == "Known collection interruption"]
+        self.assertTrue(noted)
+        for week in noted:
+            pages = [name for name in self.shard_html
+                     if name == week["path"]
+                     or name.startswith("week-%s-" % week["start"])]
+            self.assertTrue(pages)
+            for name in pages:
+                with self.subTest(page=name):
+                    flat = " ".join(self.shard_html[name].split())
+                    self.assertIn("recorded collection interruption of "
+                                  "17–24 July 2026", flat)
+                    if expected:
+                        self.assertIn(expected, flat)
+                    else:
+                        self.assertNotIn("Later collection added", flat)
+
+    def test_no_week_calls_the_interruption_window_empty(self):
+        for name, html in self.shard_html.items():
+            with self.subTest(page=name):
+                self.assertNotIn("Records for those dates are absent", html)
+
     def test_no_generic_partial_or_days_observed_language(self):
         pages = dict(self.shard_html)
         pages["corpus.html"] = self.page("corpus.html")
@@ -2501,6 +2607,126 @@ class TestWeekShards(PreviewCase):
 
     def test_the_new_corpus_path_is_exposed_for_review(self):
         self.assertIn('href="corpus.html"', self.page("archive.html"))
+
+
+class TestDeskWeeks(unittest.TestCase):
+    """
+    A desk's week strip draws that desk's record, not the corpus's.
+
+    Synthetic rows, so the case this guards against is present whatever the
+    corpus holds: a desk that began collecting after the recorded outage and
+    backfilled records dated inside it. The corpus annotates that week as a
+    collection interruption. On the late desk's own strip the annotation would
+    be false, because the desk was not collecting then, and its records for
+    those dates exist.
+    """
+
+    def setUp(self):
+        def rec(source, published, retrieved):
+            return {"source_slug": source, "published_date": published,
+                    "scraped_at": retrieved}
+        self.corpus = [
+            rec("early", "2026-05-05", "2026-05-06 01:00:00"),
+            rec("early", "2026-07-14", "2026-07-15 01:00:00"),
+            rec("early", "2026-07-26", "2026-07-26 01:00:00"),
+            rec("late", "2026-07-21", "2026-08-19T23:01:44+00:00"),
+            rec("late", "2026-07-23", "2026-08-19T23:01:44+00:00"),
+            rec("late", "2026-08-12", "2026-08-19T23:01:44+00:00"),
+        ]
+        self.weeks = gp.corpus_weeks(self.corpus, [])
+        self.desk_weeks = gp.desk_week_counts(
+            self.corpus, self.weeks, {"early": "early-desk", "late": "late-desk"})
+
+    def test_the_corpus_annotates_the_outage_week(self):
+        annotated = {w["start"]: w["annotation"] for w in self.weeks}
+        self.assertEqual(annotated["2026-07-20"], "Known collection interruption")
+
+    def test_a_desk_collecting_before_the_outage_keeps_its_annotation(self):
+        early = {w["start"]: w["annotation"] for w in self.desk_weeks["early-desk"]}
+        self.assertEqual(early["2026-07-13"], "Known collection interruption")
+        self.assertEqual(early["2026-07-20"], "Known collection interruption")
+
+    def test_a_desk_that_began_later_is_not_marked_as_interrupted(self):
+        late = self.desk_weeks["late-desk"]
+        self.assertTrue(late)
+        for w in late:
+            with self.subTest(week=w["start"]):
+                self.assertNotEqual(w["annotation"], "Known collection interruption")
+
+    def test_a_desk_strip_begins_at_the_desks_first_record(self):
+        late = self.desk_weeks["late-desk"]
+        self.assertEqual(min(w["start"] for w in late), "2026-07-20")
+        early = self.desk_weeks["early-desk"]
+        self.assertEqual(min(w["start"] for w in early), "2026-05-04")
+
+    def test_each_desks_bars_sum_to_that_desks_records(self):
+        for desk, source in (("early-desk", "early"), ("late-desk", "late")):
+            with self.subTest(desk=desk):
+                self.assertEqual(
+                    sum(w["count"] for w in self.desk_weeks[desk]),
+                    sum(1 for r in self.corpus if r["source_slug"] == source))
+
+
+class TestOutageHoldingsNote(unittest.TestCase):
+    """
+    The sentence a week page adds after the interruption note (owner ruling
+    2026-09-27): what the snapshot holds from inside the window, by desk.
+    Synthetic rows, so every branch is exercised whatever the corpus holds.
+    """
+
+    NAMES = {"a-desk": "A Desk", "b-desk": "B Desk"}
+    DESK_OF = {"a1": "a-desk", "a2": "a-desk", "b1": "b-desk", "loose": None}
+
+    @staticmethod
+    def rec(source, published, retrieved="2026-08-19T23:01:44+00:00"):
+        return {"source_slug": source, "published_date": published,
+                "scraped_at": retrieved}
+
+    def note(self, corpus):
+        return gp.outage_holdings_note(
+            gp.outage_holdings(corpus, self.DESK_OF, self.NAMES))
+
+    def test_nothing_held_adds_nothing(self):
+        self.assertIsNone(self.note([]))
+        self.assertIsNone(self.note([self.rec("a1", "2026-07-16"),
+                                     self.rec("a1", "2026-07-25")]))
+
+    def test_one_record_is_singular(self):
+        self.assertEqual(
+            self.note([self.rec("a1", "2026-07-21")]),
+            "Later collection added 1 A Desk record dated 21 July 2026 to "
+            "this snapshot.")
+
+    def test_two_desks_are_named_in_order_with_their_own_dates(self):
+        self.assertEqual(
+            self.note([self.rec("b1", "2026-07-18"),
+                       self.rec("a2", "2026-07-23"),
+                       self.rec("a1", "2026-07-21")]),
+            "Later collection added 2 A Desk records dated 21–23 July 2026 "
+            "and 1 B Desk record dated 18 July 2026 to this snapshot.")
+
+    def test_later_is_said_only_when_every_record_came_after_the_window(self):
+        note = self.note([self.rec("a1", "2026-07-21"),
+                          self.rec("a1", "2026-07-22", "2026-07-22 14:00:00")])
+        self.assertEqual(note, "This snapshot holds 2 A Desk records dated "
+                               "21–22 July 2026.")
+        self.assertIsNone(re.search(r"later", note, re.I))
+
+    def test_a_record_with_no_declared_desk_is_never_attributed(self):
+        self.assertIsNone(self.note([self.rec("loose", "2026-07-21")]))
+        self.assertEqual(
+            self.note([self.rec("loose", "2026-07-21"),
+                       self.rec("b1", "2026-07-21")]),
+            "Later collection added 1 B Desk record dated 21 July 2026 to "
+            "this snapshot.")
+
+    def test_the_interruption_note_no_longer_calls_the_window_empty(self):
+        week = {"start": "2026-07-20", "end": "2026-07-26"}
+        label, text = gp.week_annotation(week, "2026-05-04", "2026-09-21")
+        self.assertEqual(label, "Known collection interruption")
+        self.assertIn("17–24 July 2026", text)
+        self.assertIn("not evidence that nothing was published", text)
+        self.assertNotIn("absent from this snapshot", text)
 
 
 # ── Tranche 2 remediation: record and archive semantics ──────────────────────
@@ -2731,10 +2957,14 @@ class TestShardRecordLimit(PreviewCase):
 
     def test_no_shard_page_exceeds_the_record_ceiling(self):
         self.assertEqual(gp.SHARD_MAX_RECORDS, 50)
+        # `<li class="record-row">` since 2026-09-27 (the one row macro in
+        # `_records.html`); counted as > 0 too, so a markup change cannot turn
+        # this ceiling into a check that passes on nothing.
         for name, html in self.shards.items():
             with self.subTest(shard=name):
-                self.assertLessEqual(html.count('<article class="record">'),
-                                     gp.SHARD_MAX_RECORDS)
+                rows = html.count('<li class="record-row">')
+                self.assertGreater(rows, 0)
+                self.assertLessEqual(rows, gp.SHARD_MAX_RECORDS)
 
     def test_no_shard_page_exceeds_the_byte_budget(self):
         for name, html in self.shards.items():
@@ -3125,11 +3355,21 @@ class TestCompactQueryIndex(PreviewCase):
             self.assertIsInstance(row[3], int)
 
     def test_no_raw_enum_or_model_flag_facet_reaches_the_page(self):
+        # Scoped to the filter UI: record titles may legitimately contain
+        # words such as "Routine"; the invariant is that raw enum/model-flag
+        # values are not offered as filter controls.
         html = self.page("archive.html")
+        match = re.search(r'<form id="controls".*?</form>', html, re.S)
+        self.assertIsNotNone(match, "Records filter form not found")
+        controls = match.group(0)
+        for control in ("f-desk", "f-source", "f-status", "f-institution",
+                        "f-language", "chips"):
+            with self.subTest(control=control):
+                self.assertIn(control, controls)
         for token in ("is_significant", "model-flag", "Model-flagged",
                       "Significant", "Routine", "model_flagged"):
             with self.subTest(token=token):
-                self.assertNotIn(token, html)
+                self.assertNotIn(token, controls)
         blob = self.raw.decode("utf-8")
         self.assertNotIn("is_significant", blob)
 
@@ -3203,16 +3443,18 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_result_cards_use_the_label_not_the_raw_tag(self):
         js = (self.out / "browse.js").read_text(encoding="utf-8")
-        card = js.split("function card(", 1)[1].split("function render", 1)[0]
-        self.assertIn("lang.label", card)
-        # `lang.code` survives only as the `lang` attribute on the original
-        # title, which is where a BCP 47 tag belongs.
-        for hit in re.findall(r"lang\.code", card):
-            pass
-        self.assertIn('orig.setAttribute("lang", lang ? lang.code : "zh")',
-                      card)
-        meta = card.split('art.appendChild(text("p", "meta"', 1)[1]
-        self.assertNotIn("lang.code", meta)
+        card = js.split("function card(", 1)[1].split("function cal", 1)[0]
+        # The reader sees the editorial name...
+        self.assertIn("lang && lang.label", card)
+        # ...and `lang.code` survives only as a `lang` attribute, which is
+        # where a BCP 47 tag belongs. No default: a tag the source does not
+        # declare is not guessed.
+        uses = re.findall(r"[^\n]*lang\.code[^\n]*", card)
+        self.assertTrue(uses)
+        for line in uses:
+            with self.subTest(line=line.strip()):
+                self.assertIn('setAttribute("lang", lang.code)', line)
+        self.assertNotIn('"zh"', card)
 
     def test_no_raw_language_or_state_code_in_archive_authored_ui(self):
         html = self.page("archive.html")
@@ -3260,6 +3502,17 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertIn("View records by publication week", html)
         self.assertIn('id="volume-heading"', html)
 
+    def test_the_earlier_page_anchors_still_land_on_the_same_links(self):
+        # Links into the page before the redesign may carry these fragments.
+        html = self.page("archive.html")
+        for anchor in ("guide-link", "volume-jump"):
+            with self.subTest(anchor=anchor):
+                self.assertEqual(html.count('id="%s"' % anchor), 1)
+        guide = html.split('id="guide-link"', 1)[1].split("</p>", 1)[0]
+        self.assertIn('href="corpus-guide.html"', guide)
+        jump = html.split('id="volume-jump"', 1)[1].split("</span>", 1)[0]
+        self.assertIn('href="#volume-heading"', jump)
+
     def test_the_volume_section_offers_a_route_back(self):
         html = self.page("archive.html")
         self.assertIn('<a href="#results-heading">', html)
@@ -3271,6 +3524,22 @@ class TestCorpusBrowserMarkup(PreviewCase):
         for target in re.findall(r'href="#([a-z-]+)"', html):
             with self.subTest(target=target):
                 self.assertIn('id="%s"' % target, html)
+
+    def test_the_pla_watch_pages_land_on_methodology_anchors_that_exist(self):
+        """The PLA Watch templates link to this site's Methodology by
+        fragment ("How flagging works" is `#model-flagged`). A missing id
+        still opens the page, so a file-level link check passes while the
+        reader lands at the top instead of on the definition."""
+        templates = sorted((REPO_ROOT / "site" / "templates").glob("pla-watch-*.html"))
+        wanted = set()
+        for path in templates:
+            wanted |= set(re.findall(r'methodology\.html#([A-Za-z0-9_-]+)',
+                                     path.read_text(encoding="utf-8")))
+        self.assertIn("model-flagged", wanted)
+        html = self.page("methodology.html")
+        for fragment in sorted(wanted):
+            with self.subTest(fragment=fragment):
+                self.assertIn('id="%s"' % fragment, html)
 
     def test_browse_javascript_keeps_meaningful_headroom(self):
         size = (self.out / "browse.js").stat().st_size
@@ -3288,9 +3557,14 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertIn("[hidden] { display: none !important; }", css)
 
     def test_the_empty_state_is_stated_once(self):
+        # The range line is emptied when nothing matches, so "No records
+        # match" is said once, by #no-results (and once to a screen reader,
+        # by the live region). Behaviourally:
+        # TestBrowserRejectsMalformedIndex.test_an_empty_result_is_stated_once.
         js = (self.out / "browse.js").read_text(encoding="utf-8")
-        zero = js.split("if (total === 0) {", 1)[1].split("} else {", 1)[0]
-        self.assertIn('els.range.textContent = "";', zero)
+        body = js.split("function render(", 1)[1].split("\n  }", 1)[0]
+        self.assertRegex(body, r'range\.textContent = total \?[^;]*: "";')
+        self.assertIn("none.hidden = total !== 0", body)
 
     def test_the_live_region_is_polite(self):
         html = self.page("archive.html")
@@ -3314,14 +3588,18 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_top_level_navigation_matches_the_regional_information_model(self):
         """
-        Atlas · Desks · Sources · Analysis · Coverage · Methodology · About.
-        Atlas leads to the preserved record; "Corpus" remains methodological
+        Records · Analysis · Desks · Sources · Coverage · Methodology · About.
+
+        Re-ordered and relabelled 2026-09-27 (DECISION_LOG): the two layers a
+        reader comes for first, then the collection that produces the record,
+        then the method. "Records" was "Atlas" — the same destination at the
+        same address, named for what it holds. "Corpus" remains methodological
         language rather than a top-level destination.
         """
         nav = self.page("archive.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Atlas", "Desks", "Sources", "Analysis",
+        self.assertEqual(labels, ["Records", "Analysis", "Desks", "Sources",
                                   "Coverage", "Methodology", "About"])
         self.assertNotIn("Corpus", labels)
         self.assertNotIn("Archive", labels)
@@ -3390,20 +3668,24 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_every_index_row_shape_is_validated_not_a_sample(self):
         js = (self.out / "browse.js").read_text(encoding="utf-8")
+        self.assertIn("A = Array.isArray", js)
         block = js.split("function valid(", 1)[1].split("\n  }", 1)[0]
         self.assertIn("for (var i = 0; i < d.records.length; i++)", block)
-        self.assertIn("!Array.isArray(d.records[i])", block)
-        self.assertIn("d.records[i].length !== FIELDS.length", block)
+        self.assertIn("var r = d.records[i];", block)
+        self.assertIn("!A(r) || r.length !== 6", block)
+        self.assertIn('"id,date,source,state,title_en,title_orig"', block)
         # No slicing or early exit that would turn this into a sample.
         self.assertNotIn(".slice(", block)
 
     def test_unavailable_restores_the_safe_hidden_state(self):
+        # Since 2026-09-27 the newest records are server-rendered, and a
+        # refused index never draws a row, so the safe state withdraws the
+        # finder and keeps those rows: it must NOT clear the results.
         js = (self.out / "browse.js").read_text(encoding="utf-8")
         block = js.split("function unavailable(", 1)[1].split("\n  }", 1)[0]
-        self.assertIn("els.controls.hidden = true", block)
-        self.assertIn("root.hidden = true", block)
-        self.assertIn('els.results.textContent = ""', block)
-        self.assertIn("els.error.hidden = false", block)
+        self.assertRegex(block, r"root\.hidden = [^;]*= true;")
+        self.assertIn("fail.hidden = false", block)
+        self.assertNotIn("textContent", block)
 
     def test_the_page_declares_the_snapshot_the_index_must_match(self):
         html = self.page("archive.html")
@@ -3415,24 +3697,29 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertNotIn(self.snapshot["logical_sha256"], html)
 
     def test_the_browser_validates_the_index_before_revealing_controls(self):
+        # Since 2026-09-27 the controls are revealed on arrival and the
+        # index loads on the first request (DECISION_LOG). What the check
+        # guards is unchanged: nothing is drawn from an index until it has
+        # proved it is this page's snapshot.
         js = (self.out / "browse.js").read_text(encoding="utf-8")
-        for check in ("d.snapshot.date !== WANT_DATE",
-                      "d.snapshot.records !== WANT_COUNT",
-                      "d.records.length !== WANT_COUNT",
-                      "d.fields.join() !== FIELDS.join()"):
+        for check in ("d.snapshot.date !== WANT",
+                      "d.snapshot.records !== COUNT",
+                      "d.records.length !== COUNT",
+                      'd.fields.join() !== "id,date,source,state,title_en,title_orig"'):
             with self.subTest(check=check):
                 self.assertIn(check, js)
-        # Validation must gate the reveal, not follow it.
-        body = js.split(".then(function (json) {", 1)[1]
-        self.assertLess(body.index("if (!valid(json))"),
-                        body.index("root.hidden = false"))
+        # Validation gates the data every render reads.
+        body = js.split(".then(function (j) {", 1)[1]
+        self.assertLess(body.index("if (!valid(j))"), body.index("(data = j)"))
         self.assertIn(".catch(unavailable)", js)
+        go = js.split("function go(", 1)[1].split("\n  }", 1)[0]
+        self.assertLess(go.index("load().then("), go.index("render()"))
 
     def test_the_cache_discriminator_uses_public_facts_only(self):
         js = (self.out / "browse.js").read_text(encoding="utf-8")
         request = js.split('fetch("corpus-index.json', 1)[1].split("{", 1)[0]
-        self.assertIn("WANT_DATE", request)
-        self.assertIn("WANT_COUNT", request)
+        self.assertIn("WANT", request)
+        self.assertIn("COUNT", request)
         self.assertNotIn("logical", request)
 
     def test_the_failure_copy_is_the_approved_wording(self):
@@ -3512,7 +3799,7 @@ class TestCoverageTableSemantics(PreviewCase):
         # separate cards. Both are `<thead>` column headers; neither is a
         # promoted body cell, which is what this guard is actually protecting.
         expected = {"china.html": 5, "japan.html": 8, "sources.html": 7,
-                    "desks.html": 8, "pla-watch.html": 5}
+                    "desks.html": 8}
         for name, count in expected.items():
             html = (self.out / name).read_text(encoding="utf-8")
             with self.subTest(page=name):
@@ -3520,7 +3807,7 @@ class TestCoverageTableSemantics(PreviewCase):
                 self.assertEqual(len(re.findall(r'scope="row"', html)), 0)
                 outside = re.sub(r"<thead>.*?</thead>", " ", html, flags=re.S)
                 self.assertNotIn("<th", outside)
-        self.assertEqual(sum(expected.values()), 33)
+        self.assertEqual(sum(expected.values()), 28)
 
     def test_source_pages_label_rows_not_columns(self):
         for path in sorted(self.out.glob("source/*.html")):
@@ -3756,15 +4043,28 @@ class TestBrowserRejectsMalformedIndex(PreviewCase):
                            lambda r, q=None, b=body: r.fulfill(
                                status=200, content_type="application/json",
                                body=b))
+            requested = []
+            page.on("request", lambda r: requested.append(r.url)
+                    if "corpus-index.json" in r.url else None)
             page.goto("http://127.0.0.1:%d/archive.html" % self.port,
                       wait_until="load")
-            page.wait_for_timeout(600)
+            page.wait_for_timeout(300)
+            on_arrival = len(requested)
+            # The index loads on a reader's first request (DECISION_LOG
+            # 2026-09-27): here, submitting the finder as it stands.
+            page.focus("#f-q")
+            page.keyboard.press("Enter")
+            page.wait_for_timeout(800)
             return {
                 "error": page.is_visible("#index-error"),
                 "controls": page.is_visible("#controls"),
                 "root": page.is_visible("#browse"),
-                "cards": page.eval_on_selector_all("#results .record",
-                                                   "e => e.length"),
+                "cards": page.eval_on_selector_all(
+                    "#results [data-from-index] .record-row", "e => e.length"),
+                "server_rows": page.eval_on_selector_all(
+                    "#results .records-days:not([data-from-index]) .record-row",
+                    "e => e.length"),
+                "fetched_on_arrival": on_arrival,
                 "week_path": page.is_visible("#nojs-path"),
                 "volume": page.is_visible("#volume-heading"),
             }
@@ -3773,18 +4073,151 @@ class TestBrowserRejectsMalformedIndex(PreviewCase):
 
     def assert_rejected(self, state):
         self.assertTrue(state["error"], "unavailable message must be shown")
-        self.assertFalse(state["controls"], "controls must stay hidden")
-        self.assertFalse(state["root"], "browser root must stay hidden")
-        self.assertEqual(state["cards"], 0, "no result card may render")
+        self.assertFalse(state["controls"], "controls must be withdrawn")
+        self.assertFalse(state["root"], "browser root must be withdrawn")
+        self.assertEqual(state["cards"], 0, "no row may be drawn from it")
+        self.assertEqual(state["server_rows"], 50,
+                         "the server-rendered records must remain")
         self.assertTrue(state["week_path"], "the no-JS path must remain")
         self.assertTrue(state["volume"], "the volume table must remain")
 
     def test_a_valid_index_renders_normally(self):
         state = self.state()
+        self.assertEqual(state["fetched_on_arrival"], 0,
+                         "the index loads on request, never on arrival")
         self.assertFalse(state["error"])
         self.assertTrue(state["controls"])
         self.assertTrue(state["root"])
         self.assertEqual(state["cards"], 50)
+        self.assertEqual(state["server_rows"], 0,
+                         "index rows replace the server's rows, not join them")
+
+    def test_an_empty_result_is_stated_once(self):
+        page = self.browser.new_page(viewport={"width": 1280, "height": 900})
+        try:
+            page.goto("http://127.0.0.1:%d/archive.html?q=%s"
+                      % (self.port, "zzqxjvk-no-such-title"), wait_until="load")
+            page.wait_for_timeout(900)
+            self.assertTrue(page.is_visible("#no-results"))
+            self.assertEqual(page.inner_text("#result-range").strip(), "")
+            self.assertEqual(page.text_content("#result-live"),
+                             "No records match these filters.")
+            self.assertFalse(page.is_visible("#page-next"))
+        finally:
+            page.close()
+
+    def test_the_client_row_matches_the_server_row(self):
+        """browse.js `card()` draws the row `_records.html` renders: the same
+        words, links and language attributes, for the same record."""
+        page = self.browser.new_page(viewport={"width": 1280, "height": 900})
+        grab = """el => ({
+            text: el.innerText.replace(/\\s+/g, ' ').trim(),
+            links: [...el.querySelectorAll('a')].map(a => a.getAttribute('href')),
+            langs: [...el.querySelectorAll('[lang]')].map(e => e.getAttribute('lang')),
+            classes: [...el.querySelectorAll('[class]')].map(e => e.className)})"""
+        try:
+            page.goto("http://127.0.0.1:%d/archive.html" % self.port,
+                      wait_until="load")
+            page.wait_for_timeout(300)
+            server = page.eval_on_selector_all(
+                "#results .record-row", "els => els.slice(0, 12).map(%s)" % grab)
+            page.focus("#f-q")
+            page.keyboard.press("Enter")
+            page.wait_for_timeout(900)
+            client = page.eval_on_selector_all(
+                "#results [data-from-index] .record-row",
+                "els => els.slice(0, 12).map(%s)" % grab)
+            self.assertEqual(len(server), 12)
+            self.assertEqual(client, server)
+        finally:
+            page.close()
+
+    def test_the_client_day_heading_matches_the_server_heading(self):
+        """browse.js `day()` draws the day heading `record_days` renders: the
+        same date attribute and the same words, down to an unpadded day
+        numeral ("7 September", never "07"). The newest days may all be two
+        digits, so each renderer is also read on days 1-9: the server on the
+        week of 31 August, the client with the finder ending on 9 September."""
+        page = self.browser.new_page(viewport={"width": 1280, "height": 900})
+        grab = """el => ({
+            datetime: el.querySelector('time').getAttribute('datetime'),
+            num: el.querySelector('.day-num').textContent,
+            text: el.innerText.replace(/\\s+/g, ' ').trim()})"""
+        base = "http://127.0.0.1:%d/" % self.port
+        try:
+            page.goto(base + "archive.html", wait_until="load")
+            page.wait_for_timeout(300)
+            server = page.eval_on_selector_all(
+                "#results .day-date", "els => els.slice(0, 4).map(%s)" % grab)
+            page.focus("#f-q")
+            page.keyboard.press("Enter")
+            page.wait_for_timeout(900)
+            client = page.eval_on_selector_all(
+                "#results [data-from-index] .day-date",
+                "els => els.slice(0, 4).map(%s)" % grab)
+            self.assertTrue(server)
+            self.assertEqual(client, server)
+
+            page.goto(base + "week-2026-08-31.html", wait_until="load")
+            server_early = page.eval_on_selector_all(
+                ".day-date", "els => els.map(%s)" % grab)
+            page.goto(base + "archive.html?to=2026-09-09", wait_until="load")
+            page.wait_for_timeout(900)
+            client_early = page.eval_on_selector_all(
+                "#results [data-from-index] .day-date", "els => els.map(%s)" % grab)
+            for drawn, name in ((server_early, "server"), (client_early, "client")):
+                self.assertTrue(any(h["datetime"][8] == "0" for h in drawn),
+                                "%s drew no day 1-9; the check would be vacuous" % name)
+            for heading in server_early + client_early:
+                with self.subTest(date=heading["datetime"]):
+                    self.assertEqual(heading["num"],
+                                     str(int(heading["datetime"][8:10])))
+        finally:
+            page.close()
+
+    def test_a_page_turn_keeps_focus_and_the_address_names_the_page(self):
+        """Pressing Next onto the last page disables Next, and a disabled
+        button drops focus to the body. Focus goes to the range line
+        instead. And an address past the last page is rewritten to the page
+        actually shown."""
+        page = self.browser.new_page(viewport={"width": 1280, "height": 900})
+        base = "http://127.0.0.1:%d/archive.html" % self.port
+        try:
+            page.goto(base + "?page=999", wait_until="load")
+            page.wait_for_timeout(900)
+            last = int(re.search(r"[?&]page=(\d+)", page.url).group(1))
+            self.assertLess(last, 999)
+            self.assertIn("page %d of %d" % (last, last),
+                          page.inner_text("#result-range"))
+            page.goto(base + "?page=%d" % (last - 1), wait_until="load")
+            page.wait_for_timeout(900)
+            page.focus("#page-next")
+            page.keyboard.press("Enter")
+            page.wait_for_timeout(600)
+            self.assertTrue(page.is_disabled("#page-next"))
+            self.assertEqual(page.evaluate("document.activeElement.id"),
+                             "result-range")
+            self.assertIn("page=%d" % last, page.url)
+        finally:
+            page.close()
+
+    def test_an_unknown_filter_value_shows_the_default(self):
+        """A select set to a value no option carries shows a blank control;
+        the finder shows the default option instead, and filters nothing."""
+        page = self.browser.new_page(viewport={"width": 1280, "height": 900})
+        try:
+            page.goto("http://127.0.0.1:%d/archive.html?desk=nope&sort=nope"
+                      % self.port, wait_until="load")
+            page.wait_for_timeout(300)
+            for select in ("#f-desk", "#f-sort"):
+                with self.subTest(select=select):
+                    self.assertEqual(
+                        page.eval_on_selector(select, "e => e.selectedIndex"), 0)
+            self.assertEqual(
+                page.eval_on_selector_all("#results .record-row", "e => e.length"),
+                50)
+        finally:
+            page.close()
 
     def test_a_row_missing_only_the_original_title_is_rejected(self):
         """Truncated after title_en, so source and state indices stay valid.
@@ -5079,11 +5512,11 @@ class TestSnapshotScopedCitations(PreviewCase):
 
 
 class TestEditionCitationsAreIntegrated(PreviewCase):
-    """One citation per existing edition entry, and no second bibliography.
+    """One citation per existing edition, in one collapsed block.
 
-    The first STOP 4 build rendered the 13-edition archive and then repeated
-    all 13 as a standalone citation list — the same titles twice on one page.
-    The citations now live inside the rows they cite.
+    Since 2026-09-30 the compatibility page lists no issues: the catalog on
+    Analysis does. Each citation keeps the anchor it has always had, inside a
+    single native disclosure, with no title list or table beside it.
     """
 
     @classmethod
@@ -5091,40 +5524,32 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         super().setUpClass()
         cls.html = cls.page(cls, "pla-watch.html")
         cls.editions = gp.load_editions(REPO_ROOT)
-        cls.table = cls.html.split('<table class="editions">', 1)[1].split(
-            "</table>", 1)[0]
+        cls.block = cls.html.split('<details class="ed-cite cite-all">', 1)[1]\
+            .split("</details>", 1)[0]
 
-    def test_every_edition_row_owns_exactly_one_citation(self):
-        # Scoped to <tbody>: the header row is a <tr> too, and counting it
-        # would report one edition too many. The expected row count is derived
-        # from the canonical sidecars rather than pinned to a literal.
-        body = self.table.split("<tbody>", 1)[1].split("</tbody>", 1)[0]
-        rows = re.findall(r"<tr>.*?</tr>", body, re.S)
-        self.assertEqual(len(rows), len(self.editions))
-        self.assertEqual(len(self.editions), len(gp.load_editions(REPO_ROOT)))
-        for row, edition in zip(rows, self.editions):
+    def test_every_edition_owns_exactly_one_citation(self):
+        items = re.findall(r"<li>.*?</li>", self.block, re.S)
+        self.assertEqual(len(items), len(self.editions))
+        for item, edition in zip(items, self.editions):
             with self.subTest(edition=edition["slug"]):
-                self.assertEqual(row.count("<details class=\"ed-cite\">"), 1)
-                self.assertEqual(row.count('class="cite-text"'), 1)
-                self.assertEqual(row.count("data-copy="), 1)
+                self.assertEqual(item.count('class="cite-text"'), 1)
+                self.assertEqual(item.count("data-copy="), 1)
                 self.assertIn(markupsafe.escape(gp.edition_citation(edition)),
-                              row)
-                self.assertIn('id="cite-edition-%s"' % edition["slug"], row)
+                              item)
+                self.assertIn('id="cite-edition-%s"' % edition["slug"], item)
 
-    def test_no_citation_renders_outside_the_edition_table(self):
-        outside = self.html.replace(self.table, "")
+    def test_no_citation_renders_outside_the_block(self):
+        outside = self.html.replace(self.block, "")
         self.assertNotIn('class="cite-text"', outside)
         self.assertNotIn("data-copy=", outside)
         self.assertNotIn("cite-block", self.html)
 
-    def test_no_second_list_of_edition_titles_exists(self):
-        """Each title appears once as a link, and once inside its own
-        citation — never a third time as a separate bibliography entry."""
+    def test_the_page_lists_no_edition_titles_of_its_own(self):
+        """A title appears once, inside its own citation, and nowhere else."""
         for edition in self.editions:
             escaped = str(markupsafe.escape(edition["title"]))
             with self.subTest(edition=edition["slug"]):
-                self.assertEqual(self.html.count(escaped), 2)
-        self.assertNotIn("Citing an edition", self.html)
+                self.assertEqual(self.html.count(escaped), 1)
         self.assertNotIn('id="edition-citations"', self.html)
 
     def test_the_page_keeps_one_h1_and_its_heading_order(self):
@@ -5133,25 +5558,10 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         for a, b in zip(levels, levels[1:]):
             self.assertLessEqual(b, a + 1)
 
-    def test_existing_edition_semantics_are_untouched(self):
-        """Order, links, labels and the mobile card classes all survive."""
-        issues = [int(n) for n in
-                  re.findall(r'<td class="num ed-no">(\d+)</td>', self.table)]
+    def test_citations_follow_the_collection_order(self):
+        issues = [int(n) for n in re.findall(
+            r"The PLA Watch, No\. (\d+),", self.block)]
         self.assertEqual(issues, [e["issue"] for e in self.editions])
-        self.assertEqual(issues, sorted(issues, reverse=True))
-        for edition in self.editions:
-            with self.subTest(edition=edition["slug"]):
-                self.assertIn('href="%s"' % edition["url"], self.table)
-                if edition["label"]:
-                    self.assertIn(edition["label"], self.table)
-        for cls in ("ed-no", "ed-date", "ed-title", "ed-articles",
-                    "ed-flagged", "ed-label-inline", "ed-label-wide"):
-            with self.subTest(cls=cls):
-                self.assertIn(cls, self.html)
-        # ISO dates stay in the table; day-month-year belongs to the citation.
-        for edition in self.editions:
-            self.assertIn('<td class="ed-date">%s' % edition["date"],
-                          self.table)
 
     def test_the_disclosure_is_native_and_unscripted(self):
         js = (self.out / "citation.js").read_text(encoding="utf-8")
@@ -5159,7 +5569,7 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         for token in ("details", "summary", "open"):
             with self.subTest(token=token):
                 self.assertNotIn(token, code)
-        self.assertIn("<summary>Cite this issue</summary>", self.html)
+        self.assertIn("<summary>Citation text for the", self.html)
 
     def test_the_disclosure_carries_no_box_and_no_rust(self):
         css = (self.out / "styles.css").read_text(encoding="utf-8")
@@ -5584,6 +5994,9 @@ class TestCitationCopyBehaviour(PreviewCase):
         try:
             page = context.new_page()
             page.goto(self.url("pla-watch.html"), wait_until="load")
+            # Web fonts can settle after load and move a disclosure while
+            # Playwright scrolls to click it, especially on the Linux runner.
+            page.evaluate("() => document.fonts.ready")
             # The first row is whatever edition leads, not a pinned date.
             _lead_slug = gp.load_editions(REPO_ROOT)[0]["slug"]
             anchor = "#cite-edition-%s" % _lead_slug
@@ -5591,8 +6004,9 @@ class TestCitationCopyBehaviour(PreviewCase):
             self.assertFalse(page.is_visible(anchor))
             _editions = len(gp.load_editions(REPO_ROOT))
             summaries = page.query_selector_all("details.ed-cite > summary")
-            self.assertEqual(len(summaries), _editions)
-            page.click("details.ed-cite:first-of-type > summary")
+            # One collapsed block holds every citation (the page is a bridge).
+            self.assertEqual(len(summaries), 1)
+            page.locator("details.ed-cite > summary").first.click()
             self.assertTrue(page.is_visible(anchor))
             self.assertEqual(
                 page.eval_on_selector(anchor, "el => el.textContent"),
@@ -5605,7 +6019,7 @@ class TestCitationCopyBehaviour(PreviewCase):
             page.eval_on_selector_all(
                 "details.ed-cite", "els => els.forEach(e => e.open = true)")
             self.assertEqual(page.eval_on_selector_all(
-                "details.ed-cite > .cite-text",
+                "details.ed-cite .cite-text",
                 "els => els.filter(e => e.offsetParent !== null).length"),
                 _editions)
         finally:
@@ -5723,7 +6137,7 @@ class TestShardLedeGrammar(PreviewCase):
 
     def _page_count(self, path: Path) -> int:
         html = path.read_text(encoding="utf-8")
-        return len(re.findall(r'<article class="record"', html))
+        return len(re.findall(r'<li class="record-row"', html))
 
     def test_every_shard_lede_is_exactly_the_authored_sentence(self):
         """Every shard, reconstructed from its own real page count."""
@@ -6240,41 +6654,39 @@ class TestPreviewEditionIdentity(unittest.TestCase):
                     "predecessor masthead %s and preserved with its" % self.HISTORICAL,
                     html)
 
-    def test_a_historical_lead_keeps_the_legacy_note(self):
-        for page, html in self.leads(13).items():
+    # Since 2026-09-30 the newest item of one unified collection leads, so an
+    # issue cannot be forced to lead: ordering is deterministic. Identity now
+    # shows as each row's provenance line, taken from the collection.
+
+    def _provenance(self):
+        from core import brief_collection as bc
+        c = bc.load_collection(self.editions, {})
+        return {r["entry"].get("issue"): r["provenance"]
+                for r in c.rows if r["kind"] == "issue"}
+
+    def test_the_lead_issue_states_its_provenance_on_both_pages(self):
+        pages = self.leads(14)
+        for page, html in pages.items():
             with self.subTest(page=page):
-                self.assertIn("legacy China Desk series", html)
-                self.assertIn(self.HISTORICAL, html)
+                self.assertIn("From the former series", html)
+                self.assertNotIn("legacy China Desk series", html)
 
     def test_a_current_retrospective_lead_shows_the_canonical_label(self):
         for page, html in self.leads(14).items():
             with self.subTest(page=page):
                 self.assertIn(self.RETRO_LABEL, html)
 
-    @staticmethod
-    def lead_feature(html):
-        """The lead feature alone: from the feature block to the next heading.
+    def test_a_historical_issue_shows_no_retrospective_label(self):
+        prov = self._provenance()
+        self.assertNotIn(self.RETRO_LABEL, prov[13])
+        self.assertIn(self.RETRO_LABEL, prov[14])
 
-        Scoped since 2026-09-23. Analysis now lists every issue with where and
-        when it was published, so No. 14's own card says "Retrospective
-        edition" on the page whichever issue leads; what this class tests is
-        that the LEAD states only its own timing."""
-        start = html.index('class="feature')
-        end = html.find("<h2", start)
-        return html[start:end if end != -1 else len(html)]
-
-    def test_a_historical_lead_shows_no_retrospective_label(self):
-        for page, html in self.leads(13).items():
-            with self.subTest(page=page):
-                self.assertNotIn(self.RETRO_LABEL, self.lead_feature(html))
-
-    def test_the_series_is_not_called_wholly_legacy_once_a_current_edition_exists(self):
-        """The archive spans two mastheads; the page must not flatten that."""
-        html = self.leads(14)["analysis.html"]
-        self.assertNotIn(
-            "Published under the predecessor masthead %s\nand preserved" % self.HISTORICAL,
-            html)
-        self.assertIn("published under the predecessor masthead", html.lower())
+    def test_provenance_names_each_issues_own_masthead(self):
+        """The collection spans two mastheads; neither is flattened."""
+        prov = self._provenance()
+        self.assertIn(self.HISTORICAL, prov[13])
+        self.assertIn(self.CURRENT, prov[14])
+        self.assertNotIn(self.HISTORICAL, prov[14])
 
     def test_invalid_identity_metadata_fails_the_build_naming_the_sidecar(self):
         import json as _json
@@ -6347,15 +6759,16 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
         self.assertNotIn("published from 2026 under the\npredecessor masthead",
                          self.html)
 
-    def test_the_page_says_the_series_spanned_the_rename_and_is_an_archive(self):
-        """Since DECISION_LOG 2026-09-23 no new issue is published as The PLA
-        Watch. The page said the series "continues across" the rename; it now
-        says the series spanned it and that the page is an archive of its
-        issues."""
+    def test_the_page_says_the_series_spanned_the_rename_and_holds_citations(self):
+        """Since DECISION_LOG 2026-09-30 the issues are earlier Briefs in one
+        collection; this page is their citation and provenance record, not a
+        second archive."""
         text = re.sub(r"\s+", " ", self.html)
         self.assertNotIn("continues across", text)
         self.assertIn("spanned the project's publication rename", text)
-        self.assertIn("This page is an archive of those issues", text)
+        self.assertIn("These issues are preserved as published", text)
+        self.assertIn("is now part of Indo-Pacific Record Briefs", text)
+        self.assertNotIn("This page is an archive of those issues", text)
         self.assertIn(self.HISTORICAL, text)
         self.assertIn(self.CURRENT, text)
 
@@ -6392,17 +6805,12 @@ class TestPlaWatchPageSpansTheRename(unittest.TestCase):
             text,
             r"redirects to the \d+ editions published under that masthead")
 
-    def test_edition_14_row_shows_the_retrospective_label(self):
-        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-15.*?</tr>',
-                        self.html, re.S)
-        self.assertIsNotNone(row, "No. 14 row not found")
-        self.assertIn(self.RETRO, row.group(0))
-
-    def test_a_historical_edition_row_shows_no_retrospective_label(self):
-        row = re.search(r'<tr>(?:(?!</tr>).)*?2026-08-08.*?</tr>',
-                        self.html, re.S)
-        self.assertIsNotNone(row)
-        self.assertNotIn(self.RETRO, row.group(0))
+    def test_the_citation_block_covers_every_issue_and_adds_no_label(self):
+        for e in self.editions:
+            with self.subTest(slug=e["slug"]):
+                self.assertIn('id="cite-edition-%s"' % e["slug"], self.html)
+        # Timing is provenance on the catalog, not restated on the bridge.
+        self.assertNotIn(self.RETRO, self.html)
 
     def test_an_all_historical_fixture_still_explains_the_predecessor(self):
         html = self._render(self.hist)

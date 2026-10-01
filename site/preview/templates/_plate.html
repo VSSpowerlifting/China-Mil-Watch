@@ -1,0 +1,43 @@
+{# The edition plate: an issue drawn from its own sidecar, in place of a cover
+   photograph (docs/VISUAL_AND_MOTION_SYSTEM.md §3.2).
+
+   Everything on it is a value the edition itself carries — the series it was
+   published as, its number, the week it covers, and one tick per source-trail
+   entry. A tick is a record the issue listed; it is not a measure of anything
+   else. A model-flagged entry (`is_significant`, the software's triage flag,
+   never the editor's judgment) is drawn in the machine layer's rust and at
+   full height, so the flag reads by shape as well as colour; the others are
+   short and grey. Crimson appears only as the rule at the top: the issue
+   itself is the analysis. Same sidecar in, same plate out: nothing here is
+   random and nothing is invented. An issue with no number draws no numeral;
+   one with no trail draws no ticks.
+
+   Inline SVG, so it costs a few hundred bytes where the cover PNG it replaces
+   on the home page cost 435 KB. Night Desk ground, because it is a piece of
+   the analysis surface set into the record's page. Measured on #0E1520: rust
+   #D4845F 6.34, grey #5C6570 3.10, and 2.05 between the two. #}
+{% macro edition_plate(plate, label_id, title_text) -%}
+{% if plate %}
+{% set n = plate.ticks | length %}
+{% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
+{% set week = (plate.date[8:10] | int) ~ ' ' ~ months[(plate.date[5:7] | int) - 1] ~ ' ' ~ plate.date[:4] if plate.date else '' %}
+<svg viewBox="0 0 560 315" role="img" aria-labelledby="{{ label_id }}" focusable="false">
+  <title id="{{ label_id }}">{{ title_text }}{% if plate.issue is not none %}, No. {{ plate.issue }}{% endif %}{% if week %}, week ending {{ week }}{% endif %}: {{ n }} record{{ '' if n == 1 else 's' }} in the source trail, {{ plate.flagged }} of them model-flagged.</title>
+  <rect width="560" height="315" fill="#0E1520"/>
+  <rect width="560" height="4" fill="#B3132B"/>
+  <text x="30" y="52" fill="#EDE9E0" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">{{ plate.series_name or title_text }}</text>
+  {% if week %}<text x="530" y="52" fill="#A8A29A" font-family="Inter, system-ui, sans-serif" font-size="14" text-anchor="end">Week ending {{ week }}</text>{% endif %}
+  {% if plate.issue is not none %}
+  <text x="30" y="118" fill="#A8A29A" font-family="Inter, system-ui, sans-serif" font-size="15">No.</text>
+  <text x="24" y="232" fill="#EDE9E0" font-family="'Source Serif 4', Georgia, serif" font-size="132" font-weight="600" letter-spacing="-4">{{ plate.issue }}</text>
+  {% endif %}
+  {% if n %}
+  {% set span = 500 %}
+  {% set step = span / n %}
+  {% for flagged in plate.ticks %}
+  <rect x="{{ (30 + loop.index0 * step) | round(2) }}" y="{{ 258 if flagged else 270 }}" width="{{ [step - 4, 3] | max | round(2) if step < 14 else 8 }}" height="{{ 30 if flagged else 18 }}" fill="{{ '#D4845F' if flagged else '#5C6570' }}" class="{{ 'tick tick--flagged' if flagged else 'tick' }}"/>
+  {% endfor %}
+  {% endif %}
+</svg>
+{% endif %}
+{%- endmacro %}

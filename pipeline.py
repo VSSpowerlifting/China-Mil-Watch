@@ -46,6 +46,7 @@ from processing.relevance import (
     keyword_filter,
     llm_relevance_check,
 )
+from processing.screening import desk_for_source, profile_for_desk
 from core.collection import status as collection_status
 from core.collection.contract import CollectionWindow
 from core.collection.health import aggregate_status, human_report
@@ -134,6 +135,22 @@ SCRAPERS = _SourceSlugView()
 ATOMIC_BATCH_SLUGS = frozenset({"sg_mindef_releases"})
 
 
+def production_window(adapter, target_date: date) -> CollectionWindow:
+    """
+    The window a scheduled run hands one adapter: its target date plus the
+    adapter's own `production_lookback_days` (zero unless it declares more).
+
+    One window for every source used to be built here with no lookback. For
+    Singapore, whose adapter discovers strictly by the window it is given,
+    that meant a release was collectable on its slug date and never again, so
+    the first week of production lost three releases the shadow collector
+    still holds (see `SGMindefAdapter.production_lookback_days`).
+    """
+    return CollectionWindow(
+        target_date=target_date,
+        lookback_days=getattr(adapter, "production_lookback_days", 0))
+
+
 def _store_atomic_batches(kw_passed: list, kw_rejected: list, run_id,
                           atomic_slugs=ATOMIC_BATCH_SLUGS):
     """
@@ -215,7 +232,6 @@ def run(
     # recorded per source in `source_run_results` and reported before the run
     # closes.
     registry = get_registry()
-    window = CollectionWindow(target_date=target_date)
     source_results = []
 
     for slug in sources:
@@ -233,7 +249,8 @@ def run(
 
         try:
             adapter = registry.get_adapter(slug)
-            result, documents = adapter.collect(window)
+            result, documents = adapter.collect(
+                production_window(adapter, target_date))
         except Exception as exc:
             # An adapter that crashes must not take the run down with it: the
             # other sources' collection is still worth keeping.
@@ -439,6 +456,21 @@ def run(
     # that was false — the queue was concatenated and truncated to the cap, and
     # since every run scrapes more than the cap, the backlog got zero slots and
     # never drained at all (DECISION_LOG 2026-07-30).
+    #
+    # A desk whose screening profile is not in the daily queue (Singapore: its
+    # records would be screened, then translated, summarised and categorised by
+    # China-only prompts) is held out of all three sources of the queue. Its
+    # records keep passed_relevance NULL, "awaiting screening", until a
+    # reviewed desk-scoped screening (scripts/rescreen_desk.py) — see
+    # processing/screening.py.
+    held_desks: dict[str, int] = {}
+
+    def _in_daily_queue(desk_id: Optional[str]) -> bool:
+        if profile_for_desk(desk_id).daily_queue:
+            return True
+        held_desks[desk_id] = held_desks.get(desk_id, 0) + 1
+        return False
+
     # Format: (article_id, title_zh, body_zh, url)
     new_queue: list[tuple[int, str, str, str]] = [
         (aid,
@@ -446,11 +478,17 @@ def run(
          a.get("text_original",  ""),
          a.get("url", "?"))
         for aid, a in inserted
+        if _in_daily_queue(desk_for_source(a.get("source_slug")))
     ]
 
     inserted_ids = {aid for aid, _ in inserted}
 
-    pending_rows = db.get_articles_pending_analysis()
+    pending_all  = db.get_articles_pending_analysis()
+    unscored_all = db.get_articles_unscored()
+    backlog_desks = db.get_article_desks(
+        {r["id"] for r in pending_all} | {r["id"] for r in unscored_all})
+    pending_rows = [r for r in pending_all
+                    if _in_daily_queue(backlog_desks.get(r["id"]))]
     pending: list[tuple[int, str, str, str]] = [
         (r["id"],
          r["title_original"] or "",
@@ -479,8 +517,17 @@ def run(
 
     queued_ids = inserted_ids | {aid for aid, *_ in pending}
     unscored_rows = [
-        r for r in db.get_articles_unscored() if r["id"] not in queued_ids
+        r for r in unscored_all
+        if r["id"] not in queued_ids
+        and _in_daily_queue(backlog_desks.get(r["id"]))
     ]
+    for desk_id, held in sorted(held_desks.items(), key=lambda kv: str(kv[0])):
+        logger.info(
+            "Held out of the daily analysis queue: %d %s-desk record(s) — the "
+            "desk's screening is not run by the daily pipeline "
+            "(processing/screening.py); they stay awaiting screening.",
+            held, desk_id,
+        )
 
     # Unscored articles are NOT drained in plain FIFO order. Oldest-first buries
     # whatever is recency-critical: on 2026-08-02 the recovered 07-30/07-31

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% from "_records.html" import record_days, trail_tag %}
+{% from "_weeks.html" import week_strip %}
+{% from "_plate.html" import edition_plate %}
+{% from "_atlas.html" import spine %}
+{# The component and state gallery. A maintenance page, never published:
+   `generate_preview.py --gallery` renders it into a disposable build, and a
+   production build without that flag never writes it. Every specimen uses the
+   production stylesheet and the production macros. Records, weeks, desks,
+   issues, the custody line and the citation are real data from the corpus
+   the build read. The finder's chips and the copy-state buttons are the
+   interface's own words in states a reader rarely sees (loading, failure,
+   empty, copied, copy failed), shown so they can be reviewed without
+   provoking them; their values are this snapshot's. #}
+{% block title %}Component gallery — {{ title }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <p class="eyebrow">Maintenance · not published</p>
+  <h1>Component and state gallery</h1>
+  <p class="lede">The record surfaces' components, in every state they can take, rendered
+  with the production stylesheet and macros from the {{ snapshot.date }} corpus. Doctrine:
+  <code>docs/DESIGN_SYSTEM.md</code>.</p>
+</header>
+<nav class="reader-contents" aria-label="Gallery sections">
+  <span>Sections</span>
+  <ul><li><a href="#g-colour">Colour</a></li><li><a href="#g-type">Type</a></li><li><a href="#g-layers">Layers</a></li>
+      <li><a href="#g-records">Record rows</a></li><li><a href="#g-weeks">Week strip</a></li><li><a href="#g-finder">Finder states</a></li>
+      <li><a href="#g-controls">Controls</a></li><li><a href="#g-status">Status</a></li><li><a href="#g-record-page">Record page parts</a></li>
+      <li><a href="#g-plate">Edition plate</a></li></ul>
+</nav>
+
+<h2 id="g-colour">Colour</h2>
+<p class="meta">Tokens on <code>:root</code>. The first three are the Ocean Signal Veil's duotone ends and are not free to change.</p>
+<ul class="g-swatches">
+{% for name, role in [('bg','page ground · veil highlight'),('surface','raised paper'),('surface-inset','recessed'),('ink','text'),('ink-2','secondary text'),('muted','metadata'),('rule','hairline'),('accent','structure · veil mid-tone'),('link','links'),('band','dark band · veil shadow'),('positive','collecting desk'),('warning','blocked · attention'),('signal','machine layer'),('crimson','analysis layer'),('crimson-ink','analysis text on paper'),('crimson-text','analysis text on band')] %}
+  <li><span class="g-chip" style="background: var(--{{ name }})"></span><code>--{{ name }}</code><span class="meta">{{ role }}</span></li>
+{% endfor %}
+</ul>
+
+<h2 id="g-type">Type</h2>
+<div class="g-type">
+  <p class="g-t4">Source Serif 4 · display · --step-display</p>
+  <p class="g-t3">Source Serif 4 · a record's title</p>
+  <p class="g-t2">Source Serif 4 · section heads · --step-section</p>
+  <p class="g-t1">Source Serif 4 · titles in lists, decks · --step-deck</p>
+  <p>Inter · interface, lists and figures · 16px / 1.6 — {{ corpus_total | count }} records · {{ snapshot.date }}</p>
+  <p class="meta">Inter · metadata · 14px</p>
+  <p class="brand-sub">IBM Plex Mono · the masthead kicker</p>
+  {% if specimen_records %}<p><span class="token">IBM Plex Mono · hashes and ids · {{ specimen_records[0].content_hash }}</span></p>{% endif %}
+</div>
+
+<h2 id="g-layers">Layers</h2>
+<p class="meta">Every surface marks which layer the reader is looking at, the same way.</p>
+<ul class="supports">
+  <li><span class="evidence evidence--record">Source record</span> the stored item, as published</li>
+  <li><span class="evidence evidence--claim">Official claim</span> an institution's assertion</li>
+  <li><span class="evidence evidence--model">Machine summary</span> produced by software, not reviewed by a human</li>
+  <li><span class="evidence evidence--analysis">Analysis</span> human-controlled, citing the records it rests on</li>
+</ul>
+<p>{% for s in states %}<span class="state state--{{ s.code }}">{{ s.label }}</span> {% endfor %}
+  <span class="trail-tag">In an analysis source trail</span></p>
+<p>{% for code, label in desk_statuses %}<span class="desk-state desk-state--{{ code }}">{{ label }}</span>&nbsp;&nbsp; {% endfor %}</p>
+
+<h2 id="g-records">Record rows</h2>
+<p class="meta">One row macro renders every list: server pages and client results. Variants: analyzed and in a source trail; screened, no translation; English-language source; awaiting screening.</p>
+{{ record_days(specimen_records, desk_by_source) }}
+
+<h2 id="g-weeks">Week strip</h2>
+{{ week_strip(weeks, volume_max, heading='h3', title='Records by publication week', reveal=false) }}
+{{ week_strip(weeks, volume_max, current=weeks[3].start, heading='h4', title='With the current week marked (a week page)', reveal=false) }}
+
+<h2 id="g-finder">Finder states</h2>
+<p class="index-state index-state--loading" role="presentation">Loading the search index for {{ corpus_total | count }} records…</p>
+<p class="index-state index-state--error" role="presentation">The search index could not be loaded or did not match this snapshot, so search and filters are unavailable. The newest records and the week-by-week browse remain.</p>
+{% set pages = (corpus_total + 49) // 50 %}
+<p class="result-range">Showing 1–50 of {{ corpus_total | count }} records · page 1 of {{ pages }}</p>
+<div class="finder-status">
+  <ul class="chips"><li><button type="button" class="chip">{{ (desks | first).name }}</button></li><li><button type="button" class="chip">In an analysis source trail</button></li></ul>
+  <button type="button" class="chip-clear">Clear all filters</button></div>
+<div class="no-results"><p><b>No records match these filters.</b> Remove a filter, widen the date range, or try the original-language title.</p></div>
+
+<h2 id="g-controls">Controls</h2>
+<p class="g-row"><a class="btn btn--primary" href="#g-controls">Primary</a> <a class="btn btn--secondary" href="#g-controls">Secondary</a>
+  <button type="button" class="btn btn--quiet">Quiet</button> <button type="button" class="btn btn--primary" disabled>Disabled</button></p>
+<div class="cite-block"><p class="cite-text">{{ specimen_cite }}</p>
+  <div class="cite-actions"><button type="button" class="cite-copy">Copy source text</button>
+    <button type="button" class="cite-copy is-done">Copied</button>
+    <button type="button" class="cite-copy is-failed">Copy failed</button></div>
+  <p class="cite-status">Copy failed. The citation text is selectable — select it and copy it manually.</p></div>
+<p class="back-link"><a href="#g-controls">Back to search results</a></p>
+
+<h2 id="g-status">Status</h2>
+{% for d in desks %}
+<div class="status-panel status-panel--{{ d.status }}">
+  <span class="status-glyph desk-state desk-state--{{ d.status }}" aria-hidden="true"></span>
+  <div><h3>{{ d.name }} · {{ d.status_label }}</h3><p>{{ d.status_explanation }}</p></div>
+</div>
+{% endfor %}
+{{ spine(desks, snapshot, corpus_total) }}
+
+<h2 id="g-record-page">Record page parts</h2>
+{# The same four stages record.html draws, from two real specimens: one in a
+   published issue's source trail, one not yet screened. #}
+{% for r in specimen_records if r.in_trails or r.state == 'awaiting_screening' %}
+<ol class="custody" aria-label="Custody of record {{ r.id }}">
+  <li><b>Published</b>{{ r.published_date }}, by {{ r.institution or r.source_name }}</li>
+  <li><b>Collected</b>{{ r.scraped_at }}{% if r.scrape_run_id is not none %}, run {{ r.scrape_run_id }}{% endif %}</li>
+  <li class="{{ 'is-machine' if r.state in ['analyzed', 'not_selected', 'analysis_incomplete'] else 'is-absent' }}"><b>Machine reading</b>{{ r.state_label }}</li>
+  <li class="{{ 'is-analysis' if r.in_trails else 'is-absent' }}"><b>Analysis</b>{% if r.in_trails %}In the source trail of {% for ref in r.in_trails %}{{ ref.series_name }} No. {{ ref.issue }}{{ ', ' if not loop.last }}{% endfor %}{% else %}Not in a published issue's source trail{% endif %}</li>
+</ol>
+{% endfor %}
+{% set summarised = specimen_records | selectattr('summary_english') | first %}
+{% if summarised %}<div class="interpretation"><p>{{ summarised.summary_english }}</p></div>{% endif %}
+
+<h2 id="g-plate">Edition plate</h2>
+<div class="g-plates">
+  <figure class="plate plate-paper">{{ edition_plate(plate_a, 'g-plate-a', 'The PLA Watch') }}<figcaption>On paper (Analysis page).</figcaption></figure>
+  <div class="band g-band"><figure class="plate">{{ edition_plate(plate_b, 'g-plate-b', 'The PLA Watch') }}<figcaption>On the band (home page).</figcaption></figure></div>
+</div>
+{% endblock %}
+{% block scripts %}<style>
+/* Gallery-only layout. Never shipped: this page is not part of a build. */
+.g-swatches { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .6rem 1.2rem; }
+.g-swatches li { display: grid; grid-template-columns: 2.4rem 1fr; grid-template-rows: auto auto; column-gap: .7rem; align-items: center; max-width: none; }
+.g-chip { grid-row: 1 / span 2; width: 2.4rem; height: 2.4rem; border: 1px solid var(--rule); border-radius: 2px; }
+.g-type p { margin: .3rem 0; max-width: none; }
+.g-t4 { font-family: var(--serif); font-size: var(--step-display); line-height: 1.1; }
+.g-t3 { font-family: var(--serif); font-size: clamp(1.85rem, 1.35rem + 1.7vw, 2.55rem); line-height: 1.15; }
+.g-t2 { font-family: var(--serif); font-size: var(--step-section); }
+.g-t1 { font-family: var(--serif); font-size: var(--step-deck); font-weight: 600; }
+.g-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+.g-plates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem; align-items: start; }
+.g-band { padding: 1rem; }
+@media (max-width: 760px) { .g-plates { grid-template-columns: minmax(0, 1fr); } }
+</style>{% endblock %}

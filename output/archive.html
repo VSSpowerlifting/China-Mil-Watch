@@ -26,6 +26,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The record — Indo-Pacific Record">
 <meta name="twitter:description" content="Official defense and security texts, preserved as published and analyzed in context.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -50,12 +53,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html" aria-current="page">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html" aria-current="page">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -64,12 +67,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html" aria-current="page">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html" aria-current="page">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -77,38 +80,42 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-26</dd></div>
+        <dd>2026-10-01</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,644</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,944</dd></div>    </dl>
+        <dd>4,823</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,076</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      150 in full &rarr;</a></p>
+      155 in full</a></p>
   </div>
-</div>
+</aside>
 <main id="main">
   <div class="wrap">
-<h1>The record</h1>
-<p class="eyebrow eyebrow--corpus">As published.</p>
-<p class="lede">Every stored record in this snapshot — all
-4,644 of them — searchable and filterable, with the
-original-language title preserved on every one.</p>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-26">2026-09-26</time>
-    · 4,644 records held ·
-    <a href="coverage.html">collection evidence</a></p>
+<header class="page-head">
+  <h1>The record</h1>
+  <p class="eyebrow eyebrow--corpus">As published.</p>
+  <p class="lede">Every stored record in this snapshot — all
+  4,823 of them — searchable and filterable, with the
+  original-language title preserved on every one.</p>
+  <p class="meta" id="guide-link">What this corpus holds, what each stored field means, and where
+  its counts stop being reliable: <a href="corpus-guide.html">Corpus Guide</a>.
+  <span id="volume-jump"><a href="#volume-heading">View records by publication week</a>.</span></p>
+</header>
+<aside class="atlas-spine" aria-label="Desk collection status">
+  <p><strong>Snapshot <time datetime="2026-10-01">2026-10-01</time></strong>
+    · 4,823 records held    · <a href="coverage.html">collection evidence</a></p>
   <ul aria-label="Desk collection states">
     <li><a href="china.html">China Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">4,584 records</span></li>
+      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">4,755 records</span></li>
     <li><a href="singapore.html">Singapore Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">60 records</span></li>
+      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">68 records</span></li>
     <li><a href="japan.html">Japan Desk</a>
       <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></li>
     <li><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a>
@@ -116,88 +123,724 @@ original-language title preserved on every one.</p>
   </ul>
 </aside>
 
-<p id="volume-jump"><a href="#volume-heading">View records by publication week ↓</a></p>
+<div id="browse" data-snapshot-date="2026-10-01"
+     data-snapshot-records="4823" hidden>
+  <form id="controls" class="finder" role="search" action="archive.html" method="get" hidden>
+    <div class="finder-row">
+      <div class="finder-field finder-field--q">
+        <label for="f-q">Title contains</label>
+        <input id="f-q" name="q" type="search" autocomplete="off"
+               placeholder="English or original title">
+      </div>
+      <div class="finder-field">
+        <label for="f-desk">Desk</label>
+        <select id="f-desk" name="desk">
+          <option value="">All desks</option>
+<option value="china">China Desk (4,755)</option><option value="singapore">Singapore Desk (68)</option>        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-source">Source outlet</label>
+        <select id="f-source" name="source">
+          <option value="">All sources</option>
+<option value="pla_daily">PLA Daily (解放军报) (3,916)</option><option value="china_mil_online">China Military Online (EN) (512)</option><option value="global_times_mil">Global Times — Defense (143)</option><option value="mod_china">MOD China (国防部) (108)</option><option value="xinhua_mil">Xinhua Military (新华军事) (76)</option><option value="sg_mindef_releases">MINDEF Singapore — official releases (68)</option>        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-status">Processing status</label>
+        <select id="f-status" name="status">
+          <option value="">All processing states</option>
+<option value="analyzed">Analyzed (2,076)</option><option value="not_selected">Not selected for analysis (2,189)</option><option value="awaiting_screening">Awaiting screening (548)</option><option value="analysis_incomplete">Analysis incomplete (10)</option>        </select>
+      </div>
+      <div class="finder-field">
+        <label for="f-sort">Order</label>
+        <select id="f-sort" name="sort">
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+        </select>
+      </div>
+      <details class="finder-more">
+        <summary>More filters</summary>
+        <div class="finder-more-body">
+          <div class="finder-field">
+            <label for="f-institution">Publishing institution</label>
+            <select id="f-institution" name="institution">
+              <option value="">All institutions</option>
+<option value="cn_cmc_political_work">CMC Political Work Department (4,428)</option><option value="cn_peoples_daily_group">People&#39;s Daily Group (143)</option><option value="cn_mnd">Ministry of National Defense (108)</option><option value="cn_xinhua">Xinhua News Agency (76)</option><option value="sg_mindef">Ministry of Defence (68)</option>            </select>
+          </div>
+          <div class="finder-field">
+            <label for="f-language">Original language (source attribute)</label>
+            <select id="f-language" name="language">
+              <option value="">All original languages</option>
+<option value="zh-Hans">Simplified Chinese (4,100)</option><option value="en">English (723)</option>            </select>
+          </div>
+          <div class="finder-field">
+            <label for="f-from">Source-stated date from</label>
+            <input id="f-from" name="from" type="date" min="2026-05-07" max="2026-10-01">
+          </div>
+          <div class="finder-field">
+            <label for="f-to">Source-stated date to</label>
+            <input id="f-to" name="to" type="date" min="2026-05-07" max="2026-10-01">
+          </div>
+          <div class="finder-field">
+            <label for="f-trail"><input id="f-trail" name="trail" type="checkbox" value="1">
+              Only records in an analysis source trail (172)</label>
+          </div>
+        </div>
+      </details>
+      <button type="submit" class="btn btn--primary">Search</button>
+    </div>
+    <div class="finder-status">
+      <ul class="chips" id="chips" aria-label="Active filters"></ul>
+      <button type="button" class="chip-clear" id="f-reset" hidden>Clear all filters</button>
+    </div>
+    <p class="finder-note">Search covers titles only — the English title where one
+    exists, and the original title always. It does not search machine summaries
+    or stored source text.</p>
+    <details class="finder-about">
+      <summary>How the filters count</summary>
+      <p>Source outlets and publishing institutions overlap: one institution can
+      publish through more than one source, so their counts are not mutually
+      exclusive categories. Original language is an attribute of the source, not
+      something asserted independently for each record. Counts are stored,
+      deduplicated records, not an institution's output.</p>
+    </details>
+  </form>
+</div>
 
-<p id="nojs-path">Every record is also reachable by publication week:
-<a href="corpus.html">browse the corpus by week →</a> No JavaScript required.</p>
-
-<p id="guide-link">What this corpus holds, what each stored field means, and
-where its counts stop being reliable:
-<a href="corpus-guide.html">Corpus Guide →</a></p>
-
-<p id="index-error" class="meta" role="status" aria-live="polite" hidden>The
+<p id="index-state" class="index-state index-state--loading" role="status" hidden>Loading
+the search index for 4,823 records…</p>
+<p id="index-error" class="index-state index-state--error" role="status" aria-live="polite" hidden>The
 search index could not be loaded or did not match this snapshot, so search and
 filters are unavailable. The records held in this snapshot remain
 accessible through the week-by-week browse above.</p>
 
-<div id="browse" data-snapshot-date="2026-09-26"
-     data-snapshot-records="4644" hidden>
-  <div id="controls" hidden>
-    <h2>Search and filter</h2>
-    <p class="meta">Source outlets and publishing institutions overlap: one
-    institution can publish through more than one source, so their counts are
-    not mutually exclusive categories. Original language is an attribute of
-    the source, not something asserted independently for each record.</p>
-
-    <div class="filters">
-      <div>
-        <label for="f-q">Title contains</label>
-        <input id="f-q" type="search" autocomplete="off"
-               placeholder="English or original title">
-      </div>
-      <div>
-        <label for="f-source">Source outlet</label>
-        <select id="f-source"></select>
-      </div>
-      <div>
-        <label for="f-institution">Publishing institution</label>
-        <select id="f-institution"></select>
-      </div>
-      <div>
-        <label for="f-language">Original language (source attribute)</label>
-        <select id="f-language"></select>
-      </div>
-      <div>
-        <label for="f-status">Processing status</label>
-        <select id="f-status"></select>
-      </div>
-      <div>
-        <label for="f-from">Source-stated date from</label>
-        <input id="f-from" type="date">
-      </div>
-      <div>
-        <label for="f-to">Source-stated date to</label>
-        <input id="f-to" type="date">
-      </div>
-      <div class="filter-action">
-        <button type="button" id="f-reset">Reset filters</button>
-      </div>
-    </div>
-    <p class="meta">Search covers titles only — the English title where one
-    exists, and the original title always. It does not search machine summaries
-    or stored source text.</p>
+<h2 id="results-heading" class="visually-hidden">Records</h2>
+<p class="result-range" id="result-range" tabindex="-1">The newest 50 of 4,823 records</p>
+<p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
+<div id="results">
+  <div class="records-days">
+  <section class="records-day">
+    <p class="day-date"><time datetime="2026-10-01"><span class="day-num">1</span>
+      <span class="day-month">October 2026</span>      <span class="day-week">Thursday</span></time></p>
+    <ul class="record-list">
+      <li class="record-row">
+  <div>
+    <h3 lang="en"><a href="record/4829.html">Minister for Defence Chan Chun Sing Agrees with German Federal Minister of Defence to Further Strengthen Defence Relationship</a></h3>
   </div>
-
-  <h2 id="results-heading">Records</h2>
-  <p class="meta" id="result-range"></p>
-  <p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
-
-  <div id="results"></div>
-
-  <p id="no-results" hidden>No records match these filters. Widen the date range
-  or reset the filters above.</p>
-
-  <nav id="pager" class="pager" aria-label="Result pages" hidden>
-    <button type="button" id="page-prev">Previous page</button>
-    <button type="button" id="page-next">Next page</button>
-  </nav>
+  <p class="row-side"><span class="row-who">Ministry of Defence</span>
+    <span class="row-via">MINDEF Singapore — official releases · English</span>
+<a href="singapore.html">Singapore Desk</a><span class="state state--awaiting_screening">Awaiting screening</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4828.html">今年国庆升旗仪式上的升旗手，是他！中国军号独家专访→</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4827.html">多国人士祝贺新中国成立七十七周年 期待深化对华合作</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4826.html">与太阳同频丨走，一起去听听国旗护卫队的幕后故事吧</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4825.html">胜利的方向丨从泸定桥的摇晃里，读懂十三根铁索上的浴血冲锋</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4824.html">国旗与太阳一同升起！我爱你，中国！</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="en"><a href="record/4823.html">Flag-raising ceremony held at Tian&#39;anmen Square to mark 77th founding anniversary of PRC</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">China Military Online (EN) · English</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4822.html">俄外交部就丹麦军机“危险抵近”俄舰提出抗议</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4821.html">英国称伊朗涉空军基地袭击图谋 伊方再否认</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4820.html">俄罗斯向北约发出“核警告”有何考量</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4819.html">习近平总书记在庆祝中华人民共和国成立77周年招待会上的重要讲话激励亿万人民踔厉奋发、勇毅前行</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4818.html">PLA Daily Editorial: Hold Firm Confidence, Continue the Struggle, and Faithfully Fulfill the Mission Tasks Entrusted by the Party and the People</a></h3>    <p class="original" lang="zh-Hans">解放军报社论：坚定信心 接续奋斗 忠实履行党和人民赋予的使命任务</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4817.html">人民日报评论员：坚定信心、锚定目标，一步一步扎实往前走</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4816.html">Shenzhou-23 Astronauts Send Video Blessings to the Motherland, Wishing China&#39;s Space Cause New Glory</a></h3>    <p class="original" lang="zh-Hans">神舟二十三号航天员视频祝福祖国 祝福中国航天事业再创辉煌</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4815.html">以奋斗之姿书写时代华章——习近平总书记在庆祝中华人民共和国成立77周年招待会上的重要讲话汇聚团结奋进力量</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4814.html">Chinese Navy Hospital Ship &#34;Jixiang Fangzhou&#34; Concludes Visit to Senegal</a></h3>    <p class="original" lang="zh-Hans">中国海军“吉祥方舟”号医院船结束访问塞内加尔</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4813.html">山河壮阔启新程——献给人民共和国77周年华诞</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4812.html">中部战区空军机关及所属部队隆重举行升国旗仪式，祝福伟大祖国！</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4811.html">PLA Daily Commentator: Achievements That Have Captured the World&#39;s Attention, a Future of Incomparable Brightness</a></h3>    <p class="original" lang="zh-Hans">解放军报评论员：举世瞩目的成就 无比光明的前景</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4810.html">Chinese FK-2000 air defense system showcased at Turkmenistan parade: media reports</a></h3>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">People&#39;s Daily Group</span>
+    <span class="row-via">Global Times — Defense · English</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4809.html">Navy Pilots Conduct Security Patrol during Holidays</a></h3>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">China Military Online (EN) · English</span>
+<a href="china.html">China Desk</a></p>
+</li>
+    </ul>
+  </section>
+  <section class="records-day">
+    <p class="day-date"><time datetime="2026-09-30"><span class="day-num">30</span>
+      <span class="day-month">September 2026</span>      <span class="day-week">Wednesday</span></time></p>
+    <ul class="record-list">
+      <li class="record-row">
+  <div>
+    <h3 lang="en"><a href="record/4808.html">Crown Prince of Brunei Darussalam Visits SAFTI City</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Ministry of Defence</span>
+    <span class="row-via">MINDEF Singapore — official releases · English</span>
+<a href="singapore.html">Singapore Desk</a><span class="state state--awaiting_screening">Awaiting screening</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="en"><a href="record/4807.html">Minister for Defence Chan Chun Sing Reaffirms Strong and Broad-Based Defence Relationship with France</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Ministry of Defence</span>
+    <span class="row-via">MINDEF Singapore — official releases · English</span>
+<a href="singapore.html">Singapore Desk</a><span class="state state--awaiting_screening">Awaiting screening</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4806.html">红色血脉代代传，强军初心永不变</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4805.html">军校形象代言人现场教学！一发子弹，双目标狙杀！</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4804.html">细节·长征丨冲破封锁，他让世界看到红色中国</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4803.html">烈士纪念日主题宣传片《使命》</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4802.html">他们无名，却从未被忘记</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4801.html">胜利的方向丨大渡河畔激流咆哮，见证安顺场渡口之上的奋勇强渡</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4800.html">纪念是为了更好出征</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4799.html">外交部：中方祝贺俄罗斯成功举行第九届国家杜马选举</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4798.html">91年前的船工号子，今天在乌江畔再次唱响！</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4797.html">八一锐评｜传承英雄气 奋进强军路</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4796.html">外交部：中国始终将自身发展置于全球发展的坐标系</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4795.html">俄远东地区一图-95轰炸机坠毁致6人死亡</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4794.html">乌克兰首都等多地遭空袭</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4793.html">伊朗革命卫队称波斯湾已无美军舰船</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4792.html">“伟大远征”长征主题专列正式首发 流动红色课堂开进北京地铁</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">Xinhua News Agency</span>
+    <span class="row-via">Xinhua Military (新华军事) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4791.html">信念不移 冲锋不止——“时代楷模”王戟同志先进事迹引发热烈反响</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4790.html">《求是》杂志发表习近平总书记重要文章《加强普惠性、基础性、兜底性民生建设》</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4789.html">Lazikou: Seeking Victory Through Danger, Forging a Path to Survival</a></h3>    <p class="original" lang="zh-Hans">腊子口：向险求胜闯生路</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4788.html">Carry Forward the Spirit of Martyrs, Strive to Be Worthy Heirs of Heroes</a></h3>    <p class="original" lang="zh-Hans">传承英烈精神 争当英雄传人</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4787.html">Real Competition, Real Stakes! The PAP Ziyang Detachment Organizes a Mass Military Training Competition</a></h3>    <p class="original" lang="zh-Hans">真比实拼！武警资阳支队组织群众性练兵比武竞赛</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4786.html">外交部：中俄将不断开创两国关系更加广阔的未来</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4785.html">为什么要在国庆前一天，怀念他们</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4784.html">Special Issue Commemorating the 90th Anniversary of the Victory of the Chinese Workers&#39; and Peasants&#39; Red Army&#39;s Long March | Iron Courage Conquers the Mighty Pass — A Deadly Barrier Becomes an Open Road</a></h3>    <p class="original" lang="zh-Hans">纪念中国工农红军长征胜利90周年特刊｜铁胆克雄关 天险变通途</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4783.html">All Military Units Welcome National Day Amid Combat Training and War Preparedness</a></h3>    <p class="original" lang="zh-Hans">全军部队在练兵备战中迎接国庆</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4782.html">搭建友好桥梁 促进民心相通——习近平主席国事访问推动中美人民友谊之树向更深处扎根</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/4781.html">今日我心，念念不忘</a></h3>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/4780.html">&#34;We Cannot Advance Without Annihilating This Enemy&#34;</a></h3>    <p class="original" lang="zh-Hans">“非消灭该敌不能前进”</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
+  </div>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+    </ul>
+  </section>
+</div>
 </div>
 
-<h2 id="volume-heading">Records by publication week</h2>
+<div id="no-results" class="no-results" hidden><p><b>No records match these filters.</b>
+Remove a filter, widen the date range, or try the original-language title.</p></div>
+
+<nav id="pager" class="pager" aria-label="Result pages">
+  <button type="button" id="page-prev" hidden>Previous page</button>
+  <button type="button" id="page-next" hidden>Next page</button>
+  <p id="nojs-path">Every record is also reachable by publication week:
+  <a href="corpus.html">browse the corpus by week</a>. No JavaScript required.</p>
+</nav>
+
+<figure class="week-strip" data-reveal aria-labelledby="week-strip-title-h2">
+  <figcaption class="week-strip-head">
+    <h2 id="week-strip-title-h2">Records by publication week</h2>
+    <p>Stored records per publication week. Bar height is collection volume — what this record holds — not activity, output or a rate.</p>
+  </figcaption>
+  <div class="week-scroll">
+  <div class="week-plot">
+  <ol class="week-bars">
+    <li class="is-edge">
+      <a href="week-2026-09-28.html" style="--h: 55.4%; --i: 21"
+         aria-label="Week of 2026-09-28: 148 records (snapshot boundary)"
+         title="2026-09-28 to 2026-10-04 · 148 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-21.html" style="--h: 95.5%; --i: 20"
+         aria-label="Week of 2026-09-21: 255 records"
+         title="2026-09-21 to 2026-09-27 · 255 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-14.html" style="--h: 82.8%; --i: 19"
+         aria-label="Week of 2026-09-14: 221 records"
+         title="2026-09-14 to 2026-09-20 · 221 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-07.html" style="--h: 82.4%; --i: 18"
+         aria-label="Week of 2026-09-07: 220 records"
+         title="2026-09-07 to 2026-09-13 · 220 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-31.html" style="--h: 100.0%; --i: 17"
+         aria-label="Week of 2026-08-31: 267 records"
+         title="2026-08-31 to 2026-09-06 · 267 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-24.html" style="--h: 82.8%; --i: 16"
+         aria-label="Week of 2026-08-24: 221 records"
+         title="2026-08-24 to 2026-08-30 · 221 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-17.html" style="--h: 56.6%; --i: 15"
+         aria-label="Week of 2026-08-17: 151 records"
+         title="2026-08-17 to 2026-08-23 · 151 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-10.html" style="--h: 88.8%; --i: 14"
+         aria-label="Week of 2026-08-10: 237 records"
+         title="2026-08-10 to 2026-08-16 · 237 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-03.html" style="--h: 89.1%; --i: 13"
+         aria-label="Week of 2026-08-03: 238 records"
+         title="2026-08-03 to 2026-08-09 · 238 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-07-27.html" style="--h: 93.3%; --i: 12"
+         aria-label="Week of 2026-07-27: 249 records"
+         title="2026-07-27 to 2026-08-02 · 249 records"></a>
+    </li>
+    <li class="is-outage">
+      <a href="week-2026-07-20.html" style="--h: 26.6%; --i: 11"
+         aria-label="Week of 2026-07-20: 71 records (known collection interruption)"
+         title="2026-07-20 to 2026-07-26 · 71 records"></a>
+    </li>
+    <li class="is-outage">
+      <a href="week-2026-07-13.html" style="--h: 55.1%; --i: 10"
+         aria-label="Week of 2026-07-13: 147 records (known collection interruption)"
+         title="2026-07-13 to 2026-07-19 · 147 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-07-06.html" style="--h: 98.1%; --i: 9"
+         aria-label="Week of 2026-07-06: 262 records"
+         title="2026-07-06 to 2026-07-12 · 262 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-29.html" style="--h: 95.1%; --i: 8"
+         aria-label="Week of 2026-06-29: 254 records"
+         title="2026-06-29 to 2026-07-05 · 254 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-22.html" style="--h: 95.9%; --i: 7"
+         aria-label="Week of 2026-06-22: 256 records"
+         title="2026-06-22 to 2026-06-28 · 256 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-15.html" style="--h: 77.5%; --i: 6"
+         aria-label="Week of 2026-06-15: 207 records"
+         title="2026-06-15 to 2026-06-21 · 207 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-08.html" style="--h: 99.6%; --i: 5"
+         aria-label="Week of 2026-06-08: 266 records"
+         title="2026-06-08 to 2026-06-14 · 266 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-01.html" style="--h: 95.1%; --i: 4"
+         aria-label="Week of 2026-06-01: 254 records"
+         title="2026-06-01 to 2026-06-07 · 254 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-25.html" style="--h: 99.3%; --i: 3"
+         aria-label="Week of 2026-05-25: 265 records"
+         title="2026-05-25 to 2026-05-31 · 265 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-18.html" style="--h: 97.4%; --i: 2"
+         aria-label="Week of 2026-05-18: 260 records"
+         title="2026-05-18 to 2026-05-24 · 260 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-11.html" style="--h: 93.3%; --i: 1"
+         aria-label="Week of 2026-05-11: 249 records"
+         title="2026-05-11 to 2026-05-17 · 249 records"></a>
+    </li>
+    <li class="is-edge">
+      <a href="week-2026-05-04.html" style="--h: 46.8%; --i: 0"
+         aria-label="Week of 2026-05-04: 125 records (snapshot boundary)"
+         title="2026-05-04 to 2026-05-10 · 125 records"></a>
+    </li>
+  </ol>
+  <p class="week-axis" aria-hidden="true"><span>4 May 2026</span><span>28 September 2026</span></p>
+  </div>
+  </div>
+  <p class="week-key"><span><i aria-hidden="true"></i>Records held that week</span>
+<span><i class="k-outage" aria-hidden="true"></i>Known collection interruption</span><span><i class="k-edge" aria-hidden="true"></i>Snapshot boundary</span></p>
+</figure>
+
+<noscript><p class="nojs-note">Search and filters need JavaScript. The newest
+records above, and every record by publication week, do not.</p></noscript>
+
+<figure class="processing-plate" aria-labelledby="processing-title">
+  <figcaption class="processing-plate-head">
+    <span class="processing-kicker">Where each stored record stands</span>
+    <h2 id="processing-title">Processing states</h2>
+    <p>Snapshot — 2026-10-01 · 4,823 stored, deduplicated records.
+    Every record is in exactly one of these states.</p>
+    <svg class="processing-engraving" viewBox="0 0 220 110" focusable="false" aria-hidden="true">
+      <path d="M-20 104C35 17 135 12 240 98M-20 87C38 4 139 0 240 83M-20 70C42-10 145-15 240 68M-20 53C45-27 148-31 240 53M-20 36C49-44 152-47 240 38"/>
+    </svg>
+  </figcaption>
+  <div class="processing-plate-body">
+    <ul class="processing-bars">
+      <li>
+        <div class="processing-bar-label">
+          <a href="archive.html?status=analyzed#results-heading">Analyzed</a>
+          <strong>2,076</strong>
+        </div>
+        <span class="processing-track" aria-hidden="true"><span class="processing-fill" style="width: 43.044%"></span></span>
+        <span class="processing-share">43.0% of stored records</span>
+      </li>
+      <li>
+        <div class="processing-bar-label">
+          <a href="archive.html?status=not_selected#results-heading">Not selected for analysis</a>
+          <strong>2,189</strong>
+        </div>
+        <span class="processing-track" aria-hidden="true"><span class="processing-fill" style="width: 45.387%"></span></span>
+        <span class="processing-share">45.4% of stored records</span>
+      </li>
+      <li>
+        <div class="processing-bar-label">
+          <a href="archive.html?status=awaiting_screening#results-heading">Awaiting screening</a>
+          <strong>548</strong>
+        </div>
+        <span class="processing-track" aria-hidden="true"><span class="processing-fill" style="width: 11.362%"></span></span>
+        <span class="processing-share">11.4% of stored records</span>
+      </li>
+      <li>
+        <div class="processing-bar-label">
+          <a href="archive.html?status=analysis_incomplete#results-heading">Analysis incomplete</a>
+          <strong>10</strong>
+        </div>
+        <span class="processing-track" aria-hidden="true"><span class="processing-fill" style="width: 0.207%"></span></span>
+        <span class="processing-share">0.2% of stored records</span>
+      </li>
+    </ul>
+    <p class="processing-limit">These are processing states in this selective corpus,
+    not institutional output, complete coverage, or an editorial judgment.
+    <a href="corpus-guide.html#states">Definitions and limits</a> ·
+    <a href="corpus.html">Browse every record by week</a>.</p>
+  </div>
+</figure>
+
+<h2 id="volume-heading">Every publication week, in figures</h2>
 
 <div class="table-scroll">
 <table class="volume">
-  <caption>21 publication weeks, newest first. Bar length shows the record
+  <caption>22 publication weeks, newest first. Bar length shows the record
   count only.</caption>
   <thead>
     <tr>
@@ -209,13 +852,22 @@ accessible through the week-by-week browse above.</p>
   </thead>
   <tbody>
     <tr>
+      <th scope="row"><a href="week-2026-09-28.html"><span class="c-range">2026-09-28 to 2026-10-04</span></a></th>
+      <td class="v-count">
+        <span class="v-figure">148</span><span class="c-unit"> records</span>
+        <span class="v-bar" aria-hidden="true"><span class="v-fill" style="width: 55.4%"></span></span>
+      </td>
+      <td class="c-runs">4<span class="c-unit"> recorded run dates (UTC)</span></td>
+      <td class="c-note">Snapshot boundary</td>
+    </tr>
+    <tr>
       <th scope="row"><a href="week-2026-09-21.html"><span class="c-range">2026-09-21 to 2026-09-27</span></a></th>
       <td class="v-count">
-        <span class="v-figure">224</span><span class="c-unit"> records</span>
-        <span class="v-bar" aria-hidden="true"><span class="v-fill" style="width: 83.9%"></span></span>
+        <span class="v-figure">255</span><span class="c-unit"> records</span>
+        <span class="v-bar" aria-hidden="true"><span class="v-fill" style="width: 95.5%"></span></span>
       </td>
-      <td class="c-runs">6<span class="c-unit"> recorded run dates (UTC)</span></td>
-      <td class="c-note">Snapshot boundary</td>
+      <td class="c-runs">7<span class="c-unit"> recorded run dates (UTC)</span></td>
+      <td class="c-note"></td>
     </tr>
     <tr>
       <th scope="row"><a href="week-2026-09-14.html"><span class="c-range">2026-09-14 to 2026-09-20</span></a></th>
@@ -408,15 +1060,46 @@ calendar dates with at least one recorded pipeline run. Because run records do n
 target publication dates or historical source-level outcomes, it is operational context—not a
 coverage denominator.</p>
 
-<p id="volume-return"><a href="#results-heading">↑ Back to record search</a></p>  </div>
+<p id="volume-return" class="records-foot"><a href="#results-heading">Back to record search</a></p>  </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

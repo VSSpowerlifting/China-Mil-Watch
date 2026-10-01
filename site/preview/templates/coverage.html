@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
+{% from "_atlas.html" import spine %}
 {% block title %}Coverage health — {{ title }}{% endblock %}
 {% block content %}
-{{ breadcrumb([('Atlas', 'archive.html'), ('Coverage', none)]) }}
+<header class="page-head">
 <h1>Coverage</h1>
-{{ spine(desks, snapshot, corpus_total) }}
 <p class="lede">What was collected, what was not, and which kind of "nothing" each source returned.
 This page exists because an empty result has more than one cause, and only one of them is healthy.</p>
 <p class="meta">Only desks that collect appear in a run. A desk that is planned, researched,
 access-blocked or under shadow evaluation contributes no rows here, and its absence is explained on
 <a href="desks.html">Desks</a> rather than shown as a failure.</p>
+</header>
+{{ spine(desks, snapshot, corpus_total) }}
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul><li><a href="#recent-run">Latest run</a></li><li><a href="#outcomes">Result meanings</a></li>
@@ -83,22 +84,24 @@ access-blocked or under shadow evaluation contributes no rows here, and its abse
        reading of the evidence and never the only one;
      * colour is not the signal. Each bar states its own figures beside it.
    ── #}
-<h3 class="plain">Extraction completeness</h3>
-<p class="meta">Of the documents each source returned in this run, how many
-carried readable text. Same figures as the <em>Parsed</em> and
-<em>Text read</em> columns below.</p>
-<div class="barset">
+<figure class="extraction-figure" aria-labelledby="extraction-title">
+<figcaption>
+  <h3 class="plain" id="extraction-title">Extraction completeness</h3>
+  <p class="meta">Text read / Parsed, among documents the parser returned for each source in
+  this run. Run {{ latest_run.id }} · {{ latest_run.started_at }} → {{ latest_run.completed_at }}.
+  Select a source to inspect the same figures and its outcome in the table.</p>
+</figcaption>
+<div class="barset" role="list" aria-label="Readable text among parsed documents by source">
 {% for bar in extraction_bars %}
-  <div class="bar-row">
-    <span class="bar-label">{{ bar.slug }}</span>
+  <div class="bar-row" role="listitem">
+    <span class="bar-label"><a href="#run-source-{{ bar.slug }}">{{ bar.slug }}</a></span>
     {% if bar.measured %}
-    <span class="bar-track">
+    <span class="bar-track" aria-hidden="true">
       <span class="bar-fill{% if bar.partial %} is-partial{% endif %}"
             style="width: {{ bar.percent }}%"></span>
     </span>
     <span class="bar-value">{{ bar.usable }}/{{ bar.extracted }} &middot; {{ bar.percent }}%</span>
     {% else %}
-    <span class="bar-track"></span>
     <span class="bar-value">not measured</span>
     {% endif %}
   </div>
@@ -108,6 +111,7 @@ carried readable text. Same figures as the <em>Parsed</em> and
 there is nothing to express as a proportion, and a zero-length bar would look
 like a measured failure rather than an absent measurement. Their outcome is in
 the table below, per source, with its own reason.</p>
+</figure>
 <div class="table-scroll">
 <table class="stacking">
   <caption>Every configured source has a result row for this run. A missing row would be a defect. The desk shown is the source's declared desk.</caption>
@@ -124,7 +128,7 @@ the table below, per source, with its own reason.</p>
   <tbody>
   {% for r in run_results %}
     {% set kind = 'fail' if r.is_failure else ('note' if r.status == 'not_implemented' else ('quiet' if r.new_documents == 0 else 'ok')) %}
-    <tr>
+    <tr id="run-source-{{ r.source_slug }}">
       <td data-label="Source"><a href="source/{{ r.source_slug }}.html">{{ r.source_slug }}</a></td>
       <td data-label="Desk">{% if desk_by_source.get(r.source_slug) %}<a href="{{ desk_by_source[r.source_slug].route }}">{{ desk_by_source[r.source_slug].name }}</a>{% else %}—{% endif %}</td>
       <td data-label="Result">
