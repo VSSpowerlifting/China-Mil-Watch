@@ -542,11 +542,19 @@ class TestTheDatelineCarriesEveryGovernedFigure(HomeCase):
         # `records_last_collected` is MAX(scraped_at) and
         # `analysis_last_produced` is MAX(analyzed_at). Collecting one record
         # after the last analysis ran is exactly the state the caveat exists
-        # for, and it is the smallest change that produces it.
+        # for, and it is the smallest change that produces it. Freshness is
+        # compared by calendar day (the first ten characters), so the
+        # collection time is derived from the copied corpus as one day after
+        # its newest analysis, never a fixed date, and stays "after" as the
+        # tracked corpus advances.
         con = sqlite3.connect(str(db))
         newest = _newest_analyzed_ids(db, 1)[0]
-        con.execute("UPDATE articles SET scraped_at = '2026-09-30 06:00:00' "
-                    " WHERE id = ?", (newest,))
+        collected_after = con.execute(
+            "SELECT datetime(MAX(analyzed_at), '+1 day') FROM articles "
+            " WHERE analyzed_at IS NOT NULL").fetchone()[0]
+        self.assertIsNotNone(collected_after, "the corpus has no analysis")
+        con.execute("UPDATE articles SET scraped_at = ? WHERE id = ?",
+                    (collected_after, newest))
         con.commit()
         con.close()
         out = tmp / "behind-build"
