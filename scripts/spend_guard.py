@@ -28,17 +28,18 @@ with article length and how many pass relevance.
 
 import logging
 import sys
+from pathlib import Path
 
 logger = logging.getLogger("spend_guard")
 
-# USD per million tokens, from the Anthropic pricing docs (checked 2026-07-31).
-# Verify against platform.claude.com/docs/en/pricing before trusting a large
-# estimate — an out-of-date table here reproduces the original failure.
-PRICING_USD_PER_MTOK = {
-    "claude-sonnet-4-6":          {"input": 3.00, "output": 15.00},
-    "claude-haiku-4-5":           {"input": 1.00, "output":  5.00},
-    "claude-haiku-4-5-20251001":  {"input": 1.00, "output":  5.00},
-}
+# USD per million tokens. The table lives in analysis/pricing.py so the run-level
+# usage telemetry reads the same numbers; the name is re-exported here because
+# _price() and scripts/rescreen_desk.py refer to it. Verify against
+# platform.claude.com/docs/en/pricing before trusting a large estimate — an
+# out-of-date table reproduces the original failure.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from analysis.pricing import PRICING_USD_PER_MTOK  # noqa: E402,F401
 
 # Chinese text tokenizes at roughly one token per character — far denser than
 # English (~4 chars/token). Estimating Chinese input at 4 chars/token is the

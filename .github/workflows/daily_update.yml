@@ -254,12 +254,18 @@ jobs:
       #
       # Nothing writes this date to disk during the render, so no marker file
       # is left dirty for the rebase and push steps below to trip over.
+      #
+      # `LLM_USAGE_RECORD_PATH` points the run's LLM usage record (analysis/
+      # usage.py) at a file under $RUNNER_TEMP, outside the repository. The
+      # pipeline writes ONLY there, so no tracked file is dirty while the rebase
+      # steps below run; step 8b appends that one record to the tracked history.
       - name: Run pipeline
         id: pipeline
         if: steps.timecheck.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PLA_WATCH_DAILY_RUN_DATE: ${{ steps.timecheck.outputs.today_ny }}
+          LLM_USAGE_RECORD_PATH: ${{ runner.temp }}/llm_usage_record.json
         run: python pipeline.py
 
       # ── 5b. Validate rendered output (blocks deploy on failure) ───────────
@@ -477,6 +483,87 @@ jobs:
             echo "State file already up to date."
           else
             git commit -m "State: mark daily run ${TODAY_NY}"
+            git push origin main
+          fi
+
+      # ── 8b. Commit LLM usage telemetry ─────────────────────────────────────
+      # The pipeline writes one JSON record per run that made model calls to a
+      # runtime file under $RUNNER_TEMP (LLM_USAGE_RECORD_PATH, set on the
+      # pipeline step). It never touches the tracked history. THIS step is the
+      # only thing that does: it appends that record, as one line, to
+      # .github/state/llm_usage.jsonl via scripts/append_llm_usage.py, which
+      # validates it first. Operational accounting only: counts and an estimated
+      # cost, never article text, and under .github/state/, never output/, so it
+      # is not published (analysis/usage.py).
+      #
+      # WHY APPEND HERE. The tracked file is dirty only inside this step, after
+      # the rebase, so no earlier `git pull --rebase --autostash` ever has to
+      # carry it and a local pipeline run cannot dirty production state.
+      #
+      # WHY A STEP OF ITS OWN. It does not belong in the DB-and-output commit
+      # (step 6): that step's responsibility is the publishable record and it is
+      # gated on success(). It does not belong in the success marker (step 8),
+      # whose documented scope is one file whose staging is the "run is done"
+      # signal. And it must not ride on the billing-failure marker's commit.
+      # Placed AFTER publication and after the success marker, it cannot affect
+      # what was deployed or whether the day counts as done.
+      #
+      # WHEN. always() with the same positive proof the persist step uses: the
+      # pipeline step ran and either succeeded or failed. A run that hit the
+      # spend limit is exactly the run whose usage is worth keeping, and a
+      # failed validation still spent money. Nothing happens when the runtime
+      # record does not exist (no model calls, or no API key).
+      #
+      # FAILURE. continue-on-error: a telemetry commit that cannot be pushed
+      # shows as a failed step with a warning annotation, but it must never turn
+      # a published run red, rewrite a marker, or skip the Health gate below.
+      #
+      # SCOPE. Verify, never repair, as in the other marker-only steps. Only
+      # the telemetry file may be staged; anything else fails the step.
+      - name: Commit LLM usage telemetry
+        if: >
+          always() &&
+          steps.timecheck.outputs.should_run == 'true' &&
+          (steps.pipeline.outcome == 'success' ||
+           steps.pipeline.outcome == 'failure')
+        continue-on-error: true
+        env:
+          TODAY_NY: ${{ steps.timecheck.outputs.today_ny }}
+          PIPELINE_OUTCOME: ${{ steps.pipeline.outcome }}
+          LLM_USAGE_RECORD_PATH: ${{ runner.temp }}/llm_usage_record.json
+        run: |
+          set -eu
+          FILE=".github/state/llm_usage.jsonl"
+          RECORD="$LLM_USAGE_RECORD_PATH"
+          trap 'rc=$?; if [ "$rc" -ne 0 ]; then echo "::warning title=LLM usage telemetry not persisted::the usage record for ${TODAY_NY} was not committed; publication is unaffected."; fi' EXIT
+          if [ ! -s "$RECORD" ]; then
+            # A normal day with nothing to analyze has no record. A pipeline
+            # that FAILED and left none may have made model calls it could not
+            # account for (every deliberate failing exit happens after the
+            # record is written), so that case is loud rather than silent.
+            if [ "$PIPELINE_OUTCOME" = "failure" ]; then
+              echo "::warning title=LLM usage not recorded::the pipeline step failed and left no usage record for ${TODAY_NY}; any model calls it made before failing are unaccounted for."
+            else
+              echo "No LLM usage record this run."
+            fi
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --autostash origin main
+          python scripts/verify_db_current.py
+
+          python scripts/append_llm_usage.py "$RECORD" "$FILE"
+          git add "$FILE"
+          STAGED=$(git diff --cached --name-only)
+          if [ "$STAGED" != "$FILE" ] && [ -n "$STAGED" ]; then
+            echo "::error title=Scope violation::The telemetry step staged more than the usage file: $STAGED"
+            exit 1
+          fi
+          if git diff --cached --quiet; then
+            echo "Usage record already committed."
+          else
+            git commit -m "State: LLM usage ${TODAY_NY}"
             git push origin main
           fi
 

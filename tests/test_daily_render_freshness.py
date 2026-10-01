@@ -550,8 +550,13 @@ class TestTheWorkflowHandsTheGuardsDateToTheRender(WorkflowCase):
     def test_the_pipeline_step_gained_nothing_else(self):
         pipeline = self.step("Run pipeline")
         env_keys = re.findall(r"^          (\w+):", pipeline, re.M)
+        # LLM_USAGE_RECORD_PATH points the usage telemetry at a file under
+        # $RUNNER_TEMP (DECISION_LOG 2026-10-01). It is accounting only, but
+        # this list exists to make a new pipeline input a deliberate act, so it
+        # moves with a ruling.
         self.assertEqual(sorted(env_keys),
-                         ["ANTHROPIC_API_KEY", "PLA_WATCH_DAILY_RUN_DATE"])
+                         ["ANTHROPIC_API_KEY", "LLM_USAGE_RECORD_PATH",
+                          "PLA_WATCH_DAILY_RUN_DATE"])
         self.assertIn("run: python pipeline.py", pipeline)
         self.assertIn("id: pipeline", pipeline)
         self.assertIn("if: steps.timecheck.outputs.should_run == 'true'",
@@ -676,7 +681,10 @@ class TestSurroundingSemanticsAreIntact(WorkflowCase):
     def test_every_rebase_is_still_an_autostash_rebase_onto_main(self):
         rebases = [line.strip() for line in self.text.splitlines()
                    if line.strip().startswith("git pull")]
-        self.assertEqual(len(rebases), 4, "a rebase step appeared or vanished")
+        # Five: persist, billing marker, data commit, success marker, and the
+        # LLM usage telemetry step (DECISION_LOG 2026-10-01). The count exists
+        # to make a new rebase a deliberate act, so it moves with a ruling.
+        self.assertEqual(len(rebases), 5, "a rebase step appeared or vanished")
         for line in rebases:
             with self.subTest(line=line):
                 self.assertEqual(line,

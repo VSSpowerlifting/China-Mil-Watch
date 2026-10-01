@@ -4,6 +4,57 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-01 — Run-level LLM usage telemetry: accounting only, no behavior change
+
+Owner direction after the 2026-10-01 cost audit, which found that token usage
+existed only in a DEBUG log line and so production kept nothing: the audit had
+to reconstruct volumes from stored text lengths.
+
+1. **What it is.** `Analyzer` counts calls, failures and the four token
+   fields the API reports (input, output, cache creation, cache read) per
+   `(task, model)`, with explicit task labels `relevance`, `translation`,
+   `summary`, `categorization`. After the analysis stage `pipeline.py` logs one
+   INFO summary and writes one JSON record for the run to a runtime file
+   (`analysis/usage.py`; see 4). No article text, title, URL, prompt or key is
+   recorded; there is no per-article breakdown.
+2. **It changes nothing the pipeline does.** No model, prompt, threshold,
+   routing, queue, cap, retry or schema change, and nothing in `output/`.
+   Exception behavior of `_call` and `_call_tool` is preserved, including
+   `FatalAPIError`. The summary-versus-categorization merge and Haiku
+   categorization are **not** decided here; this exists so that decision can
+   rest on measurements.
+3. **Estimates, not invoices.** Cost comes from the table in
+   `analysis/pricing.py` (Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5 per MTok; 5-minute
+   cache write 1.25x and cache read 0.10x of input; verified 2026-10-01 against
+   the provider's pricing page). `scripts/spend_guard.py` now imports that table
+   instead of keeping its own. Nothing is fetched at run time, so a provider
+   price change is invisible until the table is edited. A model with no price
+   is listed in `unpriced_models` and the total is then an under-count.
+4. **Persistence: runtime file first, tracked file only in its own step.**
+   The pipeline never writes the tracked history. If `LLM_USAGE_RECORD_PATH`
+   names a file it writes the run's one record there, and the workflow points
+   it under `$RUNNER_TEMP`, outside the repository; if it is unset, which is
+   every local run, the summary is logged and nothing is written. So a local
+   run cannot dirty production state, and no tracked file is dirty while the
+   workflow's `git pull --rebase --autostash` steps run. A dedicated step
+   ("Commit LLM usage telemetry") runs after deploy and after the success
+   marker: it rebases, verifies the database without repairing it, appends the
+   validated runtime record as one line to `.github/state/llm_usage.jsonl`
+   (`scripts/append_llm_usage.py`), stages only that file and fails if anything
+   else is staged. The file is under `.github/state/`, not `output/`, so it is
+   never published. The step is `continue-on-error`: a telemetry commit that
+   cannot be pushed is a visible warning, never a red run, a rewritten marker
+   or a skipped Health gate. It runs on a failed pipeline too, because a run
+   that hit the spend limit is the run whose usage is worth keeping.
+5. **Failure semantics.** Ledger methods and `record_run_usage()` swallow their
+   own errors and log one warning; they never raise into analysis. The cost of
+   that choice is that a telemetry bug is a log warning, not a red run, so an
+   absent record in `llm_usage.jsonl` is the signal to look. A run that made no
+   model call writes no record, and a run that dies on an unhandled exception
+   before the analysis stage closes writes none either. Retries inside the
+   Anthropic SDK are not visible to the ledger.
+6. **Growth.** About 1.5 KB per run (about 0.5 MB a year at one record a day).
+
 ## 2026-10-01 — Briefs-band Signal Veil: one decorative gradient exception on the home analysis band
 
 **Approved owner ruling (Ben, 2026-10-01).** The treatment and the exception
