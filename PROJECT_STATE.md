@@ -321,6 +321,14 @@ artifact. This applies to all three shadow desks.
   warning, three missing LinkedIn files (eds. 1–3), and one cadence gap
   (2026-07-18 → 2026-08-01). Any **new** warning must be explained here before
   it is accepted; none is ever fixed by invention.
+* **LLM usage is now recorded per run (2026-10-01), but no record exists
+  yet.** `.github/state/llm_usage.jsonl` is appended by the workflow's own
+  telemetry step on the first CI run after the telemetry lands (the pipeline
+  writes only a runtime file, so local runs never touch it). It is operational
+  accounting with estimated cost from a pinned price table
+  (`analysis/pricing.py`), not an invoice. Two decisions wait on it: whether to
+  merge summary and categorization into one call, and whether categorization
+  can move to the relevance model. Neither is decided (DECISION_LOG 2026-10-01).
 * **Processing states exist; paused records are not shown separately in
   public.**
   - The retry budget (5) and the `retriable`/`paused`/`terminal` states are

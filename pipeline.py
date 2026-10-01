@@ -30,6 +30,7 @@ Usage:
 
 import argparse
 import logging
+import os
 import sys
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
@@ -444,6 +445,9 @@ def run(
     # Set when the run aborts on an account-level API failure (spend limit,
     # exhausted credit, bad credentials) rather than a per-article one.
     account_blocked: Optional[str] = None
+    # Stays None when no model call was attempted (no key, --no-analysis, empty
+    # queue); the usage telemetry below is recorded only when it was created.
+    analyzer = None
 
     # Build the analysis queue, newest-first so fresh scrapes are never starved:
     #   1. inserted — scraped this run (passed_relevance NULL)
@@ -804,6 +808,13 @@ def run(
             status            = run_status,
         )
 
+    # Operational accounting only (analysis/usage.py): counts what the API
+    # reported, changes nothing above or below, and cannot raise.
+    if analyzer is not None and not dry_run:
+        _record_llm_usage(analyzer, run_status=run_status,
+                          articles_queued=len(queue),
+                          articles_fully_analyzed=articles_analyzed)
+
     elapsed = (datetime.now() - start_time).total_seconds()
     db_total = db.get_total_analyzed_count() if not dry_run else 0
     _print_summary(all_scraped, new_articles, kw_passed, inserted, errors, dry_run,
@@ -869,6 +880,39 @@ def run(
         except Exception as exc:
             logger.error("Site generation failed: %s", exc)
             sys.exit(1)
+
+
+# ── LLM usage telemetry ───────────────────────────────────────────────────────
+
+def _record_llm_usage(analyzer, *, run_status: str, articles_queued: int,
+                      articles_fully_analyzed: int) -> None:
+    """
+    Log one usage summary and, when LLM_USAGE_RECORD_PATH is set, write this
+    run's record to that runtime file.
+
+    Observability only. It runs after the analysis stage and the run record are
+    closed, so it cannot change what was analyzed, stored, published or retried;
+    and it never raises, so a telemetry fault cannot fail a run that succeeded.
+    It never writes a tracked file: the workflow's dedicated step appends the
+    runtime record to the tracked history (daily_update.yml). Unset, as in every
+    local run, it is log-only.
+    """
+    try:
+        from analysis.usage import RECORD_PATH_ENV, record_run_usage
+        from core.workflow_day import workflow_day_string
+        record_run_usage(
+            analyzer.usage,
+            path=os.environ.get(RECORD_PATH_ENV) or None,
+            run_date=workflow_day_string(),
+            recorded_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            run_status=run_status,
+            analysis_model=ANALYSIS_MODEL,
+            relevance_model=RELEVANCE_MODEL,
+            articles_queued=articles_queued,
+            articles_fully_analyzed=articles_fully_analyzed,
+        )
+    except Exception as exc:  # noqa: BLE001 — see the docstring
+        logger.warning("LLM usage telemetry NOT recorded: %s", exc)
 
 
 # ── Billing-failure marker ────────────────────────────────────────────────────

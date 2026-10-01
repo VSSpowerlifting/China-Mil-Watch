@@ -33,6 +33,13 @@ from analysis.prompts import (
     build_summary_messages,
     build_translation_messages,
 )
+from analysis.usage import (
+    TASK_CATEGORIZATION,
+    TASK_RELEVANCE,
+    TASK_SUMMARY,
+    TASK_TRANSLATION,
+    UsageLedger,
+)
 from config import (
     ANALYSIS_MODEL,
     ANTHROPIC_API_KEY,
@@ -107,6 +114,21 @@ class Analyzer:
                 "ANTHROPIC_API_KEY is not set. Add it to .env or export it."
             )
         self._client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        self._usage = UsageLedger()
+
+    @property
+    def usage(self) -> UsageLedger:
+        """
+        Run-level usage counters (analysis/usage.py). Observability only.
+
+        Created lazily as well as in __init__: tests build an Analyzer with
+        `Analyzer.__new__` and set only `_client`, and recording must not turn
+        those into AttributeErrors.
+        """
+        ledger = self.__dict__.get("_usage")
+        if ledger is None:
+            ledger = self.__dict__["_usage"] = UsageLedger()
+        return ledger
 
     # ── Core API call ─────────────────────────────────────────────────────────
 
@@ -131,6 +153,8 @@ class Analyzer:
         model: Optional[str] = None,
         stream: bool = False,
         system: Optional[list] = None,
+        *,
+        task: str,
     ) -> str:
         """
         Single API call. Returns raw text. Raises AnalysisError on failure.
@@ -142,6 +166,9 @@ class Analyzer:
         the truncation. Before 2026-07-30 this fell through to `_parse_json`,
         which reported a generic parse failure and hid a systematic length
         limit for months (DECISION_LOG 2026-07-30).
+
+        `task` is the usage-telemetry label (analysis/usage.py). It only names
+        the ledger row; it changes nothing about the request.
         """
         used_model = model or ANALYSIS_MODEL
         kwargs = dict(
@@ -157,34 +184,46 @@ class Analyzer:
                     response = s.get_final_message()
             else:
                 response = self._client.messages.create(**kwargs)
-
-            usage = getattr(response, "usage", None)
-            if usage:
-                logger.debug(
-                    "  [%s] tokens in=%d out=%d cache_read=%d cache_write=%d",
-                    used_model,
-                    getattr(usage, "input_tokens", 0),
-                    getattr(usage, "output_tokens", 0),
-                    getattr(usage, "cache_read_input_tokens", 0),
-                    getattr(usage, "cache_creation_input_tokens", 0),
-                )
-
-            if response.stop_reason == "max_tokens":
-                raise AnalysisError(
-                    f"Response truncated at the {max_tokens}-token ceiling "
-                    f"(stop_reason=max_tokens, model={used_model}). The output is "
-                    f"incomplete, not malformed — raise the ceiling rather than "
-                    f"loosening the parser."
-                )
-            if not response.content:
-                raise AnalysisError(
-                    f"Empty response content (stop_reason={response.stop_reason})"
-                )
-            return response.content[0].text
         except anthropic.APIStatusError as exc:
+            self.usage.record_failure(task, used_model)
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
+            self.usage.record_failure(task, used_model)
             raise AnalysisError(f"API connection error: {exc}") from exc
+        except Exception:
+            self.usage.record_failure(task, used_model)
+            raise
+
+        usage = getattr(response, "usage", None)
+        if usage:
+            logger.debug(
+                "  [%s] tokens in=%d out=%d cache_read=%d cache_write=%d",
+                used_model,
+                getattr(usage, "input_tokens", 0),
+                getattr(usage, "output_tokens", 0),
+                getattr(usage, "cache_read_input_tokens", 0),
+                getattr(usage, "cache_creation_input_tokens", 0),
+            )
+
+        truncated = response.stop_reason == "max_tokens"
+        empty = not response.content
+        # The response exists, so its reported tokens are real spend even when
+        # the output is then rejected below.
+        self.usage.record_response(task, used_model, usage,
+                                   failed=truncated or empty)
+
+        if truncated:
+            raise AnalysisError(
+                f"Response truncated at the {max_tokens}-token ceiling "
+                f"(stop_reason=max_tokens, model={used_model}). The output is "
+                f"incomplete, not malformed — raise the ceiling rather than "
+                f"loosening the parser."
+            )
+        if empty:
+            raise AnalysisError(
+                f"Empty response content (stop_reason={response.stop_reason})"
+            )
+        return response.content[0].text
 
     # The translation is the one task whose output contains long free prose, and
     # prose is exactly where hand-rolled JSON breaks: the prompt asks the model
@@ -221,12 +260,15 @@ class Analyzer:
         tool: dict,
         max_tokens: int,
         temperature: float,
+        *,
+        task: str,
     ) -> dict:
         """
         Forced-tool call. Returns the tool input already parsed by the SDK.
 
         Streams, because the callers that need a tool are the ones producing
         long output. Raises AnalysisError on truncation or a missing tool block.
+        `task` is the usage-telemetry label; see `_call`.
         """
         try:
             with self._client.messages.stream(
@@ -240,18 +282,33 @@ class Analyzer:
             ) as s:
                 response = s.get_final_message()
         except anthropic.APIStatusError as exc:
+            self.usage.record_failure(task, ANALYSIS_MODEL)
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
+            self.usage.record_failure(task, ANALYSIS_MODEL)
             raise AnalysisError(f"API connection error: {exc}") from exc
+        except Exception:
+            self.usage.record_failure(task, ANALYSIS_MODEL)
+            raise
 
-        if response.stop_reason == "max_tokens":
+        tool_block = next(
+            (b for b in response.content
+             if b.type == "tool_use" and b.name == tool["name"]),
+            None,
+        )
+        truncated = response.stop_reason == "max_tokens"
+        # Reported tokens are real spend even if the output is rejected below.
+        self.usage.record_response(
+            task, ANALYSIS_MODEL, getattr(response, "usage", None),
+            failed=truncated or tool_block is None)
+
+        if truncated:
             raise AnalysisError(
                 f"Response truncated at the {max_tokens}-token ceiling "
                 f"(stop_reason=max_tokens). Output is incomplete — raise the ceiling."
             )
-        for block in response.content:
-            if block.type == "tool_use" and block.name == tool["name"]:
-                return dict(block.input)
+        if tool_block is not None:
+            return dict(tool_block.input)
         raise AnalysisError(
             f"Model returned no `{tool['name']}` tool call "
             f"(stop_reason={response.stop_reason})"
@@ -308,6 +365,17 @@ class Analyzer:
                 f"JSON parse failed. Raw output was:\n{raw[:400]}"
             ) from exc
 
+    def _parse_task_json(self, raw: str, task: str, model: str) -> dict:
+        """
+        `_parse_json`, plus usage telemetry: output the API returned but that
+        does not parse is a failed call whose tokens were still spent.
+        """
+        try:
+            return self._parse_json(raw)
+        except AnalysisError:
+            self.usage.mark_failed(task, model)
+            raise
+
     # ── Individual task methods ───────────────────────────────────────────────
 
     def score_relevance(
@@ -331,8 +399,9 @@ class Analyzer:
                       [{"type": "text", "text": desk_system,
                         "cache_control": {"type": "ephemeral"}}])
         raw  = self._call(messages, max_tokens=500, temperature=0.0,
-                          model=RELEVANCE_MODEL, system=system)
-        data = self._parse_json(raw)
+                          model=RELEVANCE_MODEL, system=system,
+                          task=TASK_RELEVANCE)
+        data = self._parse_task_json(raw, TASK_RELEVANCE, RELEVANCE_MODEL)
         score = float(max(0.0, min(1.0, data["score"])))
         return score, str(data.get("reasoning", ""))
 
@@ -349,9 +418,11 @@ class Analyzer:
             self._TRANSLATION_TOOL,
             max_tokens=TRANSLATION_MAX_TOKENS,
             temperature=0.3,
+            task=TASK_TRANSLATION,
         )
         title_en, body_en = str(data.get("title_en", "")), str(data.get("body_en", ""))
         if not title_en or not body_en:
+            self.usage.mark_failed(TASK_TRANSLATION, ANALYSIS_MODEL)
             raise AnalysisError(
                 "Translation tool returned an empty title_en or body_en"
             )
@@ -359,8 +430,9 @@ class Analyzer:
 
     def summarize(self, title_en: str, body_en: str) -> str:
         messages = build_summary_messages(title_en, body_en)
-        raw  = self._call(messages, max_tokens=1000, temperature=0.3)
-        data = self._parse_json(raw)
+        raw  = self._call(messages, max_tokens=1000, temperature=0.3,
+                          task=TASK_SUMMARY)
+        data = self._parse_task_json(raw, TASK_SUMMARY, ANALYSIS_MODEL)
         return str(data["summary"])
 
     def categorize(
@@ -372,8 +444,9 @@ class Analyzer:
         values returned by the model are silently dropped to prevent bad DB writes.
         """
         messages = build_category_messages(title_en, body_en)
-        raw  = self._call(messages, max_tokens=500, temperature=0.0)
-        data = self._parse_json(raw)
+        raw  = self._call(messages, max_tokens=500, temperature=0.0,
+                          task=TASK_CATEGORIZATION)
+        data = self._parse_task_json(raw, TASK_CATEGORIZATION, ANALYSIS_MODEL)
 
         categories = [c for c in data.get("categories", []) if c in VALID_CATEGORIES]
         is_significant = bool(data.get("significance", False))
