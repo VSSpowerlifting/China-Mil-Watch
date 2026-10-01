@@ -283,7 +283,10 @@ One canonical mark, several derivatives, documented in full in
   (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
   never a replacement, and never presented as the mark at display size.
 - **The brand gradient appears in exactly one place** — inside the mark itself.
-  The accent budget still forbids gradients as decoration anywhere else.
+  The accent budget still forbids gradients as decoration anywhere else, with
+  one owner-approved exception (DECISION_LOG 2026-10-01): the Signal Veil
+  behind the home Indo-Pacific Record Briefs band, pure CSS, token colours,
+  inert, never on another surface. It does not repeal this rule elsewhere.
 - `logo-icon.png`, `logo-wordmark.png`, `og-image.png` and `favicon.svg` are
   **retired**: the predecessor's eagle, its wordmark, and a screenshot of its
   homepage. They remain in `output/` only because pages not yet re-rendered

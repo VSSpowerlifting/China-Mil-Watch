@@ -1303,6 +1303,75 @@ html.js .nojs-note { display: none; }
 .feature--briefs { grid-template-columns: minmax(0, 46rem); }
 .feature--briefs h3 { margin: 0; }
 
+/* ═══ BRIEFS-BAND SIGNAL VEIL — the home analysis band's empty right ═══════
+   The lead's column is 46rem, so on a wide band the right side is bare Night
+   Desk ground. This fills it with atmosphere, not content: layered translucent
+   swells with fine edge lines, a dotted mesh and faint contours, every centre
+   OFF the box so no arc reads as a radar sweep. Pure gradients painted from
+   the band's own tokens: no image, no `url()`, nothing to fetch.
+
+   Selected by the section's `aria-labelledby` because the template string
+   `<section class="band" aria-labelledby="analysis">` is pinned by a test;
+   Analysis and every other band are untouched. Both layers are pseudo-elements
+   inside the band's own box, `z-index: -1` in the band's own stacking context,
+   `pointer-events: none`: nothing overflows, no focus ring is clipped, no link
+   is covered, the type is never repositioned.
+
+   From 720px the box starts 34rem in from the lead's left edge, just past the
+   widest line of type (the dek's 58ch measure; the column itself is 46rem,
+   kept in step with `.feature--briefs` above) and runs to the band's edge; the
+   mask fades its left side to nothing, so no box edge shows. The strong part
+   sits low and right, clear of the section head ("All analysis" is
+   `--focus-band`, the veil's own hue). Below 720 that leaves under 150px, so
+   the veil becomes a quieter corner of fills only: no lines, no mesh.
+   Static: no motion to gate. Measured at the glyphs in
+   tests/test_home_briefs_band_veil.py. */
+.band[aria-labelledby="analysis"] { position: relative; isolation: isolate; }
+.band[aria-labelledby="analysis"]::before,
+.band[aria-labelledby="analysis"]::after {
+  content: ""; position: absolute; inset: 0 0 0 auto; z-index: -1; pointer-events: none;
+  width: calc(100% - max(var(--gutter), (100% - var(--shell)) / 2 + var(--gutter)) - 34rem);
+}
+.band[aria-labelledby="analysis"]::before {
+  background:
+    radial-gradient(ellipse 130% 112% at 112% 128%,
+      color-mix(in srgb, var(--accent) 10%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 18%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 100% 74% at 96% 142%,
+      color-mix(in srgb, var(--accent) 24%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 34%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 120% 90% at 82% 136%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 24%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 110% 66% at 58% 152%,
+      color-mix(in srgb, var(--accent) 22%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 28%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 80% 90% at 90% 66%,
+      color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 82% 64% at 84% 68%, #000 26%, rgba(0,0,0,.55) 56%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 82% 64% at 84% 68%, #000 26%, rgba(0,0,0,.55) 56%, transparent 100%);
+}
+.band[aria-labelledby="analysis"]::after {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--focus-band) 42%, transparent) 0 1px, transparent 1.5px) 0 0 / 18px 18px,
+    repeating-radial-gradient(ellipse 150% 100% at 100% 150%,
+      transparent 0 21px, color-mix(in srgb, var(--focus-band) 15%, transparent) 21px 22px);
+  -webkit-mask-image:
+    radial-gradient(ellipse 66% 62% at 88% 74%, #000 12%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 66% 62% at 88% 74%, #000 12%, transparent 100%);
+}
+@media (max-width: 719px) {
+  .band[aria-labelledby="analysis"]::before { width: 100%; background:
+    radial-gradient(ellipse 80% 62% at 104% 118%, color-mix(in srgb, var(--accent) 12%, transparent) 0 98.4%, transparent 100%),
+    radial-gradient(ellipse 100% 78% at 96% 128%, color-mix(in srgb, var(--accent) 9%, transparent) 0 98.4%, transparent 100%),
+    radial-gradient(ellipse 56% 42% at 102% 104%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 72%);
+    -webkit-mask-image: none; mask-image: none; }
+  .band[aria-labelledby="analysis"]::after { display: none; }
+}
+@media print, (forced-colors: active) {
+  .band[aria-labelledby="analysis"]::before,
+  .band[aria-labelledby="analysis"]::after { display: none; }
+}
+
 .issue-ledger--briefs { border-top-color: var(--accent); }
 .issue-ledger--briefs .issue-no { color: var(--accent-ink); }
 .layer-key { list-style: none; margin: 1.1rem 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 2.4rem; max-width: 60rem; }
