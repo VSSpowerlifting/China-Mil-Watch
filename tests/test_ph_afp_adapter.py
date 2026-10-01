@@ -329,11 +329,259 @@ class TestPolicy(unittest.TestCase):
             self.assertIs(kwargs["allow_redirects"], False)
 
 
+class TestAccessStopRegression(unittest.TestCase):
+    def test_html_challenge_script_stops_even_without_standard_title(self):
+        sess = S.session_for(details_ids=(1384,))
+        slug = S.detail_obj(1384)["slug"]
+        html = ('<!doctype html><html><head><title>Checking your browser</title>'
+                '<script>var route = "/cdn-cgi/challenge-platform/test";</script>'
+                '</head><body></body></html>')
+        sess.details[slug] = S.FakeResponse(html, 200, {"Content-Type": "text/html"})
+        self.assertEqual(capture_for(S.adapter(sess), 1384).status, st.ACCESS_CHALLENGED)
+
+    def test_valid_json_with_challenge_words_in_title_or_body_is_accepted(self):
+        for field in ("title", "body_html"):
+            with self.subTest(field=field):
+                sess = S.session_for(details_ids=(1384,), mutate=lambda item:
+                                     item.update({field: "Just a moment of reflection"}))
+                adapter = S.adapter(sess)
+                capture = capture_for(adapter, 1384)
+                self.assertEqual(capture.status, st.OK)
+                self.assertEqual(adapter.extract(capture).status, st.OK)
+
+    def test_challenges_stop_before_robots_redirects_or_empty_listing_parsing(self):
+        for location in ("www", "api", "listing"):
+            for code in (200, 404, 302):
+                with self.subTest(location=location, code=code):
+                    sess = S.session_for()
+                    response = S.FakeResponse(
+                        b'{"count":0,"next":null,"results":[]}', code,
+                        {"Content-Type": "application/json", "cf-mitigated": "challenge",
+                         "Location": ph.LIST_URL + "?page=99"})
+                    if location == "www":
+                        sess.robots_www = response
+                    elif location == "api":
+                        sess.robots_api = response
+                    else:
+                        sess.pages[S.page_url(1)] = response
+                    result = S.adapter(sess).discover(WIDE)
+                    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+                    self.assertEqual(result.references, [])
+                    self.assertNotIn(ph.LIST_URL + "?page=99", sess.calls)
+
+    def test_a_200_html_detail_challenge_is_not_an_extraction_failure(self):
+        sess = S.session_for(details_ids=(1384,))
+        slug = S.detail_obj(1384)["slug"]
+        sess.details[slug] = S.FakeResponse(S.CHALLENGE_HTML, 200,
+                                          {"Content-Type": "text/html"})
+        capture = capture_for(S.adapter(sess), 1384)
+        self.assertEqual(capture.status, st.ACCESS_CHALLENGED)
+        self.assertEqual(capture.http_status, 200)
+        self.assertIsNone(capture.body)
+
+    def test_contract_collection_stops_after_a_challenged_article(self):
+        sess = S.session_for(details_ids=(1384, 1378, 1312))
+        refused = S.detail_obj(1378)["slug"]
+        untouched = ph.detail_url(S.detail_obj(1312)["slug"])
+        sess.details[refused] = S.FakeResponse(S.CHALLENGE_HTML, 200,
+                                             {"Content-Type": "text/html"})
+        adapter = ph.PHAfpAdapter(S.EnabledFakeSource(), session=sess,
+                                 sleeper=lambda _: None)
+        result, documents = adapter.collect(WIDE)
+        self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+        self.assertEqual(len(documents), 1)
+        self.assertNotIn(untouched, sess.calls)
+
+
+class TestPathPolicyRegression(unittest.TestCase):
+    def test_later_matching_group_denies_article_and_redirect_destination(self):
+        slug = S.detail_obj(1384)["slug"]
+        target = ph.detail_url(slug)
+        token = ph.USER_AGENT.split("/")[0]
+        for redirect in (False, True):
+            with self.subTest(redirect=redirect):
+                sess = S.session_for(details_ids=(1384, 1378))
+                sess.robots_api_status = 200
+                sess.robots_api = ("User-agent: " + token.lower() + "\nAllow: /\n\n"
+                                   "User-agent: " + token.upper() + "\nDisallow: /articles/" + slug + "/\n")
+                if redirect:
+                    source = S.detail_obj(1378)["slug"]
+                    sess.details[source] = S.FakeResponse(b"", 302, {"Location": target})
+                    ident = 1378
+                else:
+                    ident = 1384
+                capture = capture_for(S.adapter(sess), ident)
+                self.assertEqual(capture.status, st.AUTH_FAILURE)
+                self.assertNotIn(target, sess.calls)
+
+    def test_combined_groups_use_longest_match_and_allow_on_equal_specificity(self):
+        token = ph.USER_AGENT.split("/")[0]
+        slug = S.detail_obj(1384)["slug"]
+        path = "/articles/" + slug + "/"
+        for first, later, expected in (
+                ("Allow: /", "Disallow: " + path, st.AUTH_FAILURE),
+                ("Disallow: /articles/afp-", "Allow: " + path, st.OK),
+                ("Disallow: " + path, "Allow: " + path, st.OK),
+                ("Allow: " + path, "Disallow: " + path, st.OK)):
+            with self.subTest(first=first, later=later):
+                sess = S.session_for(details_ids=(1384,), robots_api_status=200,
+                    robots_api="User-agent: " + token + "\n" + first + "\n\n"
+                               "User-agent: " + token + "\n" + later + "\n")
+                capture = capture_for(S.adapter(sess), 1384)
+                self.assertEqual(capture.status, expected)
+                self.assertEqual(ph.detail_url(slug) in sess.calls, expected == st.OK)
+
+    def test_wildcard_groups_are_fallback_and_are_combined(self):
+        token = ph.USER_AGENT.split("/")[0]
+        slug = S.detail_obj(1384)["slug"]
+        for specific, expected in ((False, st.AUTH_FAILURE), (True, st.OK)):
+            with self.subTest(specific=specific):
+                rules = ("User-agent: OtherCollector\nDisallow: /\n\n"
+                         "User-agent: *\nAllow: /\n\n"
+                         "User-agent: *\nDisallow: /articles/" + slug + "/\n")
+                if specific:
+                    rules += "\nUser-agent: " + token + "\nAllow: /\n"
+                sess = S.session_for(details_ids=(1384,), robots_api_status=200, robots_api=rules)
+                self.assertEqual(capture_for(S.adapter(sess), 1384).status, expected)
+                self.assertEqual(ph.detail_url(slug) in sess.calls, expected == st.OK)
+
+    def test_rules_beyond_stdlib_prefix_matching_stop_before_articles(self):
+        slug = S.detail_obj(1384)["slug"]
+        for pattern in ("/articles/*/", "/articles/" + slug + "/$"):
+            with self.subTest(pattern=pattern):
+                sess = S.session_for(details_ids=(1384,))
+                sess.robots_api_status = 200
+                sess.robots_api = "User-agent: *\nDisallow: " + pattern + "\n"
+                capture = capture_for(S.adapter(sess), 1384)
+                self.assertEqual(capture.status, st.AUTH_FAILURE)
+                self.assertNotIn(ph.detail_url(slug), sess.calls)
+
+    def test_disallowed_article_never_requested_including_discover_free_fetch(self):
+        slug = S.detail_obj(1384)["slug"]
+        target = ph.detail_url(slug)
+        for discover in (False, True):
+            for site in (False, True):
+                with self.subTest(discover=discover, site=site):
+                    rule = "User-agent: *\nAllow: /\nDisallow: " + (
+                        "/news/" if site else "/articles/") + slug + "/\n"
+                    # The canonical website path has no trailing slash.
+                    if site:
+                        rule = rule.rstrip("\n/") + "\n"
+                    sess = S.session_for(details_ids=(1384,))
+                    if site:
+                        sess.robots_www = rule
+                    else:
+                        sess.robots_api_status, sess.robots_api = 200, rule
+                    adapter = S.adapter(sess)
+                    if discover:
+                        self.assertEqual(adapter.discover(WIDE).status, st.OK)
+                    result = capture_for(adapter, 1384)
+                    self.assertEqual(result.status, st.AUTH_FAILURE)
+                    self.assertNotIn(target, sess.calls)
+                    self.assertIsNone(result.http_status)
+
+    def test_required_next_page_disallow_stops_before_request(self):
+        target = ph.LIST_URL + "?page=2"
+        sess = S.session_for(details_ids=(1384,))
+        sess.pages[S.page_url(1)] = S.list_page(
+            S.real_list_from_details((1384,)), count=2, next_url=target)
+        sess.robots_api_status = 200
+        sess.robots_api = "User-agent: *\nDisallow: /articles/?page=2\n"
+        result = S.adapter(sess).discover(WIDE)
+        self.assertEqual(result.status, st.AUTH_FAILURE)
+        self.assertNotIn(target, sess.calls)
+
+    def test_robots_disallowed_redirect_destinations_are_not_requested(self):
+        target = ph.detail_url(S.detail_obj(1378)["slug"])
+        for listing in (False, True):
+            with self.subTest(listing=listing):
+                sess = S.session_for(details_ids=(1384, 1378))
+                sess.robots_api_status = 200
+                sess.robots_api = "User-agent: *\nDisallow: /articles/" + S.detail_obj(1378)["slug"] + "/\n"
+                response = S.FakeResponse(b"", 302, {"Location": target})
+                if listing:
+                    sess.pages[S.page_url(1)] = response
+                    result = S.adapter(sess).discover(WIDE)
+                else:
+                    sess.details[S.detail_obj(1384)["slug"]] = response
+                    result = capture_for(S.adapter(sess), 1384)
+                self.assertEqual(result.status, st.AUTH_FAILURE)
+                self.assertNotIn(target, sess.calls)
+
+
+class TestPaginationCompletenessRegression(unittest.TestCase):
+    def test_repeated_content_or_identity_cannot_satisfy_reported_count(self):
+        entries = S.real_list_from_details((1384, 1378))
+        second_url = ph.LIST_URL + "?page=2"
+        for kind in ("same content", "same identity", "within page", "unusable repeated content"):
+            with self.subTest(kind=kind):
+                first = entries[:1] if kind != "unusable repeated content" else [{"invalid": True}]
+                second = json.loads(json.dumps(first))
+                if kind == "same identity":
+                    second[0]["title"] += " (changed)"
+                    second[0]["slug"] += "-changed"
+                if kind == "within page":
+                    pages = {S.page_url(1): S.list_page(first + second, count=2)}
+                else:
+                    pages = {S.page_url(1): S.list_page(first, count=2, next_url=second_url),
+                             second_url: S.list_page(second, count=2)}
+                adapter = S.adapter(S.FakeSession(pages=pages))
+                result = adapter.discover(WIDE)
+                self.assertEqual(result.status, st.LISTING_FAILURE)
+                self.assertEqual(result.references, [])
+                self.assertEqual(adapter.observed["listing_end"], "incomplete")
+                self.assertTrue(result.error_detail)
+
+    def test_missing_failed_malformed_or_looping_required_pages_are_incomplete(self):
+        entries = S.real_list_from_details((1384, 1378))
+        next_url = ph.LIST_URL + "?page=2"
+        good = {"count": 2, "next": None, "results": entries[1:]}
+        missing_next = dict(good)
+        del missing_next["next"]
+        missing_count = dict(good)
+        del missing_count["count"]
+        responses = {
+            "invalid page": S.FakeResponse((S.FIX / "list_page_invalid.json").read_bytes(), 404),
+            "missing route": S.FakeResponse("Missing route", 404),
+            "server failure": S.FakeResponse("Unavailable", 503),
+            "bad JSON": b"{",
+            "missing next": json.dumps(missing_next).encode(),
+            "missing count": json.dumps(missing_count).encode(),
+            "empty next": json.dumps(dict(good, next="")).encode(),
+            "invalid count": json.dumps(dict(good, count=True)).encode(),
+            "changed count": json.dumps(dict(good, count=3)).encode(),
+            "empty required page": S.list_page([], count=2),
+            "loop": S.list_page(entries[1:], count=2, next_url=S.page_url(1)),
+        }
+        for label, response in responses.items():
+            with self.subTest(label=label):
+                sess = S.FakeSession(pages={
+                    S.page_url(1): S.list_page(entries[:1], count=2, next_url=next_url),
+                    next_url: response})
+                adapter = S.adapter(sess)
+                result = adapter.discover(WIDE)
+                self.assertFalse(result.ok)
+                self.assertEqual(result.references, [])
+                self.assertEqual(adapter.observed["listed_items"], 1 if label != "loop" else 2)
+                self.assertTrue(result.error_detail)
+
+    def test_a_terminal_page_cannot_hide_a_count_mismatch(self):
+        sess = S.session_for(details_ids=(1384,))
+        sess.pages[S.page_url(1)] = S.list_page(S.real_list_from_details((1384,)), count=99)
+        adapter = S.adapter(sess)
+        result = adapter.discover(WIDE)
+        self.assertEqual(result.status, st.LISTING_FAILURE)
+        self.assertTrue(adapter.observed["count_mismatch"])
+        self.assertEqual(result.references, [])
+
+
 class TestDiscovery(unittest.TestCase):
 
-    def test_the_real_first_page_yields_references_with_hint_dates(self):
+    def test_a_complete_page_derived_from_the_fixture_yields_hint_dates(self):
+        page = json.loads((S.FIX / "list_page_default.json").read_bytes())
+        page.update(count=12, next=None)  # derive a complete small listing
         sess = S.FakeSession(pages={
-            S.page_url(1): (S.FIX / "list_page_default.json").read_bytes()})
+            S.page_url(1): json.dumps(page).encode()})
         a = S.adapter(sess)
         r = a.discover(WIDE)
         self.assertEqual(r.status, st.OK)
@@ -341,13 +589,15 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(r.references[0].hint_published_date, "2026-09-15")
         self.assertTrue(all(x.url.startswith("https://www.afp.mil.ph/news/")
                             for x in r.references))
-        self.assertEqual(a.observed["api_reported_count"], 1076)
+        self.assertEqual(a.observed["api_reported_count"], 12)
 
     def test_pagination_follows_next_and_stops_on_the_real_last_page(self):
-        first = (S.FIX / "list_page_default.json").read_bytes()
-        last = (S.FIX / "list_page_last.json").read_bytes()
-        sess = S.FakeSession(pages={S.page_url(1): first,
-                                    "https://api.afp.mil.ph/articles/?page=2": last})
+        first = json.loads((S.FIX / "list_page_default.json").read_bytes())
+        last = json.loads((S.FIX / "list_page_last.json").read_bytes())
+        # Retained pages are nonadjacent: derive a complete 20-item listing.
+        first["count"] = last["count"] = 20
+        sess = S.FakeSession(pages={S.page_url(1): json.dumps(first).encode(),
+                                    "https://api.afp.mil.ph/articles/?page=2": json.dumps(last).encode()})
         a = S.adapter(sess)
         r = a.discover(WIDE)
         self.assertEqual(r.status, st.OK)
@@ -356,13 +606,14 @@ class TestDiscovery(unittest.TestCase):
         self.assertEqual(a.observed["listing_end"], "next_null")
         self.assertEqual(len(r.references), 20)
 
-    def test_the_real_invalid_page_404_ends_the_list_and_is_not_a_failure(self):
+    def test_a_required_page_404_is_incomplete_not_an_end_of_listing(self):
         first = (S.FIX / "list_page_default.json").read_bytes()
         sess = S.FakeSession(pages={S.page_url(1): first})   # page 2 -> real 404
         a = S.adapter(sess)
         r = a.discover(WIDE)
-        self.assertEqual(r.status, st.OK)
-        self.assertEqual(a.observed["listing_end"], "invalid_page")
+        self.assertEqual(r.status, st.LISTING_FAILURE)
+        self.assertEqual(a.observed["listing_end"], "incomplete")
+        self.assertEqual(r.references, [])
 
     def test_the_api_total_does_not_stand_in_for_what_was_listed(self):
         first = (S.FIX / "list_page_default.json").read_bytes()
@@ -411,9 +662,10 @@ class TestDiscovery(unittest.TestCase):
 
     def test_a_listing_longer_than_the_page_cap_is_a_failure(self):
         pages = {}
+        entries = S.real_list_from_details((1384, 1378, 1312, 1211, 1331))
         for n in range(1, 6):
             pages[S.page_url(n)] = S.list_page(
-                S.real_list_from_details((1384,)),
+                entries[n - 1:n], count=5,
                 next_url="https://api.afp.mil.ph/articles/?page_size=100&page=%d" % (n + 1))
         a = S.adapter(S.FakeSession(pages=pages), max_pages=3)
         r = a.discover(WIDE)
@@ -622,15 +874,16 @@ class TestWindowAndRejections(unittest.TestCase):
                                    category_slug="uncategorised")])
         self.assertEqual(len(a.discover(WIDE).references), 1)
 
-    def test_a_duplicate_id_or_slug_within_the_list_is_kept_once(self):
+    def test_a_duplicate_id_or_slug_within_the_list_is_inconsistent_discovery(self):
         a = self.build([
             self.entry(1, "2026-09-15T10:00:00+08:00"),
             self.entry(1, "2026-09-15T10:00:00+08:00", slug="other-slug"),
             self.entry(2, "2026-09-15T10:00:00+08:00", slug="item-1"),
         ])
         r = a.discover(WIDE)
-        self.assertEqual(len(r.references), 1)
-        self.assertEqual(a.rejections[ph.R_DUPLICATE_IN_LIST], 2)
+        self.assertEqual(r.status, st.LISTING_FAILURE)
+        self.assertEqual(r.references, [])
+        self.assertEqual(a.rejections[ph.R_DUPLICATE_IN_LIST], 1)
 
     def test_each_malformed_entry_is_counted_under_exactly_one_reason(self):
         good = self.entry(1, "2026-09-15T10:00:00+08:00")
@@ -742,7 +995,7 @@ class TestFetch(unittest.TestCase):
         a = S.adapter(sess)
         before = len(sess.calls)
         self.assertEqual(capture_for(a, 1384).status, st.FETCH_FAILURE)
-        self.assertEqual(len(sess.calls) - before, 1)
+        self.assertEqual(sess.calls.count(ph.detail_url(slug)), 1)
 
     def test_a_redirect_off_the_permitted_host_is_refused(self):
         """Defence in depth: even if `resp.url` reported an off-host final
@@ -768,7 +1021,7 @@ class TestFetch(unittest.TestCase):
         self.assertEqual(cap.status, st.DISALLOWED_REDIRECT)
         self.assertNotIn(evil, sess.calls)
         # exactly one request was made: the original, never the redirect target
-        self.assertEqual(len(sess.calls) - before, 1)
+        self.assertEqual(sess.calls.count(ph.detail_url(slug)), 1)
 
     def test_an_http_redirect_on_a_detail_on_host_is_followed(self):
         """A redirect that stays on the permitted host is not refused
@@ -798,7 +1051,7 @@ class TestFetch(unittest.TestCase):
         before = len(sess.calls)
         cap = capture_for(a, 1384)
         self.assertEqual(cap.status, st.DISALLOWED_REDIRECT)
-        self.assertEqual(len(sess.calls) - before, ph.MAX_REDIRECT_HOPS)
+        self.assertEqual(sess.calls.count(url), ph.MAX_REDIRECT_HOPS)
 
     def test_html_in_place_of_json_is_an_unexpected_content_type(self):
         sess = S.session_for()

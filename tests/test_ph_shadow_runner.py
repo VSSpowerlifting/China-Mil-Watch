@@ -78,6 +78,59 @@ class StateCase(unittest.TestCase):
         return sorted((self.state / "ledger").glob("*.json"))
 
 
+class TestAccessStopRegression(StateCase):
+    def test_repeated_pagination_never_advances_successful_run_state(self):
+        do_run(self.state, S.session_for(details_ids=(1384,)), run_id="clean")
+        database = (self.state / "shadow.db").read_bytes()
+        clock = (self.state / "clock.json").read_bytes()
+        entries = S.real_list_from_details((1384,))
+        second = ph.LIST_URL + "?page=2"
+        sess = S.session_for(details_ids=(1384,))
+        sess.pages = {S.page_url(1): S.list_page(entries, count=2, next_url=second),
+                      second: S.list_page(entries, count=2)}
+        entry = do_run(self.state, sess, run_id="repeat")
+        self.assertEqual(entry["result"], st.LISTING_FAILURE)
+        self.assertEqual(entry["health"], "fail")
+        self.assertIsNone(entry["shadow_day"])
+        self.assertEqual((self.state / "shadow.db").read_bytes(), database)
+        self.assertEqual((self.state / "clock.json").read_bytes(), clock)
+        self.assertEqual(detail_calls(sess), [])
+
+    def test_a_200_detail_challenge_preserves_kept_records_but_stops_the_run(self):
+        sess = S.session_for(details_ids=(1384, 1378, 1312))
+        refused = S.detail_obj(1378)["slug"]
+        sess.details[refused] = S.FakeResponse(S.CHALLENGE_HTML, 200,
+                                             {"Content-Type": "text/html"})
+        entry = do_run(self.state, sess)
+        self.assertEqual(entry["result"], st.ACCESS_CHALLENGED)
+        self.assertEqual(entry["health"], "fail")
+        self.assertEqual(entry["inserted"], 1)
+        self.assertEqual(entry["access_failures"], 1)
+        self.assertIsNone(entry["shadow_day"])
+        self.assertFalse((self.state / "clock.json").exists())
+        self.assertEqual(len(detail_calls(sess)), 2)
+        self.assertEqual(entry["failure_log"][0]["status"], st.ACCESS_CHALLENGED)
+        self.assertEqual(entry["failure_log"][0]["http_status"], 200)
+
+    def test_incomplete_discovery_keeps_the_existing_state_and_clock_unchanged(self):
+        do_run(self.state, S.session_for(details_ids=(1384,)), run_id="clean")
+        database = (self.state / "shadow.db").read_bytes()
+        clock = (self.state / "clock.json").read_bytes()
+        sess = S.session_for(details_ids=(1378,))
+        sess.pages[S.page_url(1)] = S.list_page(
+            S.real_list_from_details((1378,)), count=2,
+            next_url=ph.LIST_URL + "?page=2")
+        entry = do_run(self.state, sess, run_id="incomplete")
+        self.assertEqual(entry["result"], st.LISTING_FAILURE)
+        self.assertEqual(entry["health"], "fail")
+        self.assertIsNone(entry["shadow_day"])
+        self.assertEqual((self.state / "shadow.db").read_bytes(), database)
+        self.assertEqual((self.state / "clock.json").read_bytes(), clock)
+        self.assertEqual(detail_calls(sess), [])
+        self.assertEqual(entry["observed"]["listed_items"], 1)
+        self.assertEqual(entry["observed"]["listing_http_status"], 404)
+
+
 class TestIsolation(StateCase):
 
     def test_a_state_directory_inside_the_repository_is_refused(self):

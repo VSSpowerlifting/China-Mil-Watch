@@ -9,6 +9,28 @@ This is a pilot of one ingestion route. It is not a Philippines desk, it does
 not declare one (`desks/registry.json` is untouched), and it makes no claim of
 coverage beyond the measured figures below.
 
+## Offline repair — 2026-10-01
+
+Challenge and robots refusals stop retrieval consistently. Discovery succeeds
+only after explicit terminal pagination with a stable, reconciled item count;
+a missing, failed, malformed or looping required page fails the run and does
+not advance its successful-run clock. Earlier safe records may remain when a
+later article is refused, but the run is failed.
+
+The historical full-corpus figures below are producer-reported and remain
+unverified; their original scratch corpus was discarded. Fixture verification
+is not collection readiness or institutional endorsement. See the
+[repair evidence](../../docs/AFP_PR79_OFFLINE_REPAIR_2026-10-01.md).
+
+**Review follow-up:** matching robots groups are combined, with longest-path
+precedence and Allow on equal specificity; wildcard user-agent groups are used
+only when no collector-specific group matches. Repeated page content or article
+identities (including duplicates within one page) fail discovery. This replaces
+the earlier behavior that silently dropped listing duplicates. Explicit challenge
+headers and recognizable HTML challenge pages still stop access; challenge words
+inside valid JSON are accepted. Main is now integrated locally; the offline repair is verified
+for draft PR review. See the follow-up at the top of the repair receipt.
+
 ## What the source is
 
 The article stream of **www.afp.mil.ph**, the official website of the Armed
@@ -54,7 +76,8 @@ own robots.txt**, which is treated as no permission (`scraper/sources/us_dvids.p
 Here the rules file is simply absent on the API host, and the institution's
 own host states `Allow: /`. A 401/403 on either host is a hard failure, an
 edge challenge is `access_challenged` and is never retried or solved, and a
-disallow stops the run before any listing request.
+disallow stops the run before the affected request, including article paths
+and redirect destinations. A challenge stops before parsing, even on HTTP 200.
 
 **Open point for the owner.** `X-Robots-Tag: noindex, nofollow` is a search-
 indexing directive, not an access rule, but it is a signal that the API was

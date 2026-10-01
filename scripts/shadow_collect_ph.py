@@ -360,6 +360,11 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
             # A refusal is an answer. Stop asking.
             entry["access_failures"] += 1
             entry["aborted"] = "access_refused"
+            if len(entry["failure_log"]) < MAX_FAILURE_LOG:
+                entry["failure_log"].append({
+                    "url": ref.url, "status": capture.status,
+                    "http_status": capture.http_status,
+                    "detail": capture.error_detail})
             break
         if capture.status == st.DISALLOWED_REDIRECT:
             entry["redirect_refusals"] += 1
@@ -419,7 +424,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
     kept = (entry["inserted"] or entry["duplicates"] or entry["revisions"]
             or entry["skipped_held"])
     if entry["aborted"] == "access_refused":
-        entry.update(result=st.AUTH_FAILURE, health="fail",
+        entry.update(result=capture.status, health="fail",
                      error_detail="an item request was refused or challenged; "
                                   "the run stopped rather than ask again")
     elif entry["aborted"] == "consecutive_failures":

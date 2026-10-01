@@ -279,6 +279,20 @@ does not start the shadow clock. The API host publishes no `robots.txt` and send
 Public Affairs Office for an official route is an open owner decision. Full
 measurements and limits: `shadow/ph_afp/README.md`.
 
+**Offline repair, 2026-10-01:** access challenges stop before response parsing
+or redirects; each content request/redirect is checked against the host's
+combined applicable robots rules; repeated pagination content/identities and
+incomplete pagination fail discovery, never becoming a successful run.
+Valid JSON containing challenge-related words is accepted; recognizable HTML
+challenge pages and explicit challenge headers still stop collection. Regression checks use retained fixtures only, with network connections prohibited.
+Current main is integrated locally; the offline repair is verified for draft PR review.
+Historical full-corpus figures above remain producer-reported and unverified;
+the original scratch capture was discarded. This is an offline repair, not
+collection readiness: identity/proxy handling, periodic access, reuse conditions
+and a clean live rehearsal remain separate gates. No desk, schedule or human
+checkpoint review is created. Research evidence remains in the separate
+`codex/philippines-pia-feasibility-20261001` worktree.
+
 **Japan MOD** — state branch `shadow/jp-mod` (`84edebfa6`, measured
 2026-09-28). Day zero 2026-08-27T02:14:38Z.
 - 34 ledgers. Every recent run is `ok_all_duplicates`, health **`partial`**.

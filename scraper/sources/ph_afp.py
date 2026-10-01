@@ -184,6 +184,14 @@ class RobotsDisallowed(RuntimeError):
     """The published policy no longer permits the listing or an article path."""
 
 
+class AccessRefused(RuntimeError):
+    """An access result carried through the private transport boundary."""
+
+    def __init__(self, status, url, detail, http_status=None):
+        self.status, self.url, self.http_status = status, url, http_status
+        super().__init__(detail)
+
+
 class ListingUnparseable(RuntimeError):
     """A listing response that is not the shape this adapter understands."""
 
@@ -454,11 +462,15 @@ def parse_list_page(text: str) -> Tuple[List[dict], Optional[str], Optional[int]
     if not isinstance(data, dict) or not isinstance(data.get("results"), list):
         raise ListingUnparseable(
             "listing has no `results` array — shape changed")
-    nxt = data.get("next")
-    if nxt is not None and not isinstance(nxt, str):
-        raise ListingUnparseable("listing `next` is not a string or null")
+    if "next" not in data:
+        raise ListingUnparseable("listing lacks required `next`")
+    nxt = data["next"]
+    if nxt is not None and (not isinstance(nxt, str) or not nxt.strip()):
+        raise ListingUnparseable("listing `next` is not a nonempty string or null")
     count = data.get("count")
-    return data["results"], nxt, count if isinstance(count, int) else None
+    if type(count) is not int or count < 0:
+        raise ListingUnparseable("listing `count` is not a nonnegative integer")
+    return data["results"], nxt, count
 
 
 def classify_list_item(raw, rejections: Dict[str, int]) -> Optional[ListItem]:
@@ -526,7 +538,10 @@ def looks_challenged(resp) -> bool:
     if str(headers.get("cf-mitigated", "")).lower() == "challenge":
         return True
     head = (getattr(resp, "text", "") or "")[:4000].lower()
-    return "just a moment" in head or "challenge-platform" in head
+    if not re.match(r"\s*(?:<!doctype\s+html\b[^>]*>\s*)?<html\b", head):
+        return False
+    return bool(re.search(r"<title\b[^>]*>\s*just a moment[^<]*</title>", head)
+                or ("<script" in head and "/cdn-cgi/challenge-platform/" in head))
 
 
 # ── The adapter ───────────────────────────────────────────────────────────────
@@ -551,6 +566,24 @@ class PHAfpAdapter(SourceAdapter):
         self.rejections: Dict[str, int] = {r: 0 for r in REJECTION_REASONS}
         self.observed: Dict[str, object] = {}
         self.failed_fetches: List[str] = []
+        self._refusal = None
+        self._rules = {}
+        self._policy_checked = False
+        self._policy_failure = None
+
+    def collect(self, window: CollectionWindow):
+        result, documents = super().collect(window)
+        if result.status != st.SKIPPED_DISABLED and self._refusal is not None:
+            result.status = self._refusal.status
+            result.error_detail = str(self._refusal)
+        return result, documents
+
+    def _stop_access(self, status, url, detail, http_status=None):
+        self._refusal = AccessRefused(status, url, detail, http_status)
+        self.observed["access_refusal"] = {
+            "url": url, "status": status, "http_status": http_status,
+            "detail": detail}
+        raise self._refusal
 
     # -- transport ------------------------------------------------------------
 
@@ -581,7 +614,7 @@ class PHAfpAdapter(SourceAdapter):
                     self._sleep(max(REQUEST_INTERVAL, 2 ** attempt))
         raise last
 
-    def _get(self, url: str, permitted):
+    def _get(self, url: str, permitted, policy=True):
         """
         Resolve `url`, one hop at a time. A response that is not a redirect
         is returned as-is. A redirect's destination is read off its
@@ -594,7 +627,27 @@ class PHAfpAdapter(SourceAdapter):
         """
         current = url
         for _ in range(MAX_REDIRECT_HOPS):
+            if self._refusal is not None:
+                raise self._refusal
+            if policy:
+                failure = self._check_policy()
+                if failure:
+                    self._stop_access(failure.status, current, failure.error_detail)
+                try:
+                    self.assert_robots_allow(self._rules[urlparse(current).netloc], current)
+                except RobotsDisallowed as exc:
+                    self._stop_access(st.AUTH_FAILURE, current, str(exc))
             resp = self._send_once(current)
+            if urlparse(current).netloc == "api.afp.mil.ph":
+                self._note_api_headers(resp)
+            if looks_challenged(resp):
+                self._stop_access(st.ACCESS_CHALLENGED, current,
+                                  "access challenge; not retried, not solved",
+                                  resp.status_code)
+            if resp.status_code in (401, 403):
+                self._stop_access(st.AUTH_FAILURE, current,
+                                  "access refused: HTTP %d" % resp.status_code,
+                                  resp.status_code)
             if resp.status_code not in REDIRECT_STATUSES:
                 return resp
             location = (getattr(resp, "headers", None) or {}).get("Location")
@@ -631,7 +684,12 @@ class PHAfpAdapter(SourceAdapter):
         permitted = (is_permitted_site_host if label == "www"
                      else is_permitted_api_host)
         try:
-            resp = self._get(url, permitted)
+            resp = self._get(url, permitted, policy=False)
+        except AccessRefused as exc:
+            self.observed["%s_robots_status" % label] = exc.http_status
+            return None, DiscoveryResult(
+                self.slug, exc.status, failed_endpoints=[exc.url],
+                error_detail=str(exc))
         except DisallowedRedirect as exc:
             return None, DiscoveryResult(
                 self.slug, st.DISALLOWED_REDIRECT,
@@ -651,16 +709,6 @@ class PHAfpAdapter(SourceAdapter):
             return resp.text or "", None
         if code in (404, 410):
             return None, None
-        if code in (401, 403):
-            if looks_challenged(resp):
-                return None, DiscoveryResult(
-                    self.slug, st.ACCESS_CHALLENGED,
-                    error_detail="%s robots.txt answered with an access "
-                                 "challenge; not retried, not solved" % label)
-            return None, DiscoveryResult(
-                self.slug, st.AUTH_FAILURE,
-                error_detail="%s robots.txt returned HTTP %d; no basis to "
-                             "conclude collection is permitted" % (label, code))
         return None, DiscoveryResult(
             self.slug, st.LISTING_FAILURE,
             error_detail="%s robots.txt returned HTTP %d" % (label, code))
@@ -668,38 +716,72 @@ class PHAfpAdapter(SourceAdapter):
     def assert_robots_allow(self, rules: Optional[str], url: str) -> None:
         if rules is None:
             return
+        # ponytail: stdlib prefix rules only; stop until a pattern-aware parser is needed.
+        for line in rules.splitlines():
+            directive, _, value = line.partition("#")[0].partition(":")
+            if directive.strip().lower() in ("allow", "disallow") and any(
+                    char in value for char in ("*", "$")):
+                raise RobotsDisallowed("robots.txt has unsupported path patterns; stopping")
         rp = urllib.robotparser.RobotFileParser()
+        # Keep all groups: stdlib otherwise discards repeated wildcard groups.
+        rp._add_entry = rp.entries.append
         rp.parse(rules.splitlines())
+        token = USER_AGENT.split("/")[0].lower()
+        groups = [entry for entry in rp.entries if any(
+            agent.lower() == token for agent in entry.useragents)]
+        if not groups:
+            groups = [entry for entry in rp.entries if "*" in entry.useragents]
+        merged = urllib.robotparser.Entry()
+        merged.rulelines = sorted(
+            [rule for entry in groups for rule in entry.rulelines],
+            key=lambda rule: (len(rule.path), rule.allowance), reverse=True)
+        # Use stdlib URL normalization and prefix matching on the combined rules.
+        rp.entries = []
+        rp.default_entry = merged
         if not rp.can_fetch(USER_AGENT, url):
             raise RobotsDisallowed(
                 "robots.txt disallows %s for this collector" % url)
 
     def _check_policy(self) -> Optional[DiscoveryResult]:
+        if self._policy_checked:
+            return self._policy_failure
+        self._policy_checked = True
         www_rules, failure = self._read_policy(ROBOTS_WWW, "www")
         if failure:
+            self._policy_failure = failure
             return failure
+        self._rules[urlparse(WWW).netloc] = www_rules
         api_rules, failure = self._read_policy(ROBOTS_API, "api")
         if failure:
+            self._policy_failure = failure
             return failure
+        self._rules[urlparse(API).netloc] = api_rules
         try:
             self.assert_robots_allow(www_rules, WWW + "/news/")
             self.assert_robots_allow(api_rules, LIST_URL)
-            self.assert_robots_allow(api_rules, API + "/articles/x/")
         except RobotsDisallowed as exc:
-            return DiscoveryResult(self.slug, st.AUTH_FAILURE,
-                                   error_detail=str(exc))
+            self._policy_failure = DiscoveryResult(
+                self.slug, st.AUTH_FAILURE, error_detail=str(exc))
+            return self._policy_failure
         return None
 
     # -- discovery ------------------------------------------------------------
 
     def _list_failure(self, status: str, detail: str) -> DiscoveryResult:
-        return DiscoveryResult(self.slug, status, error_detail=detail)
+        self.observed.setdefault("listing_end", "incomplete")
+        return DiscoveryResult(self.slug, status,
+                               failed_endpoints=list(self.failed_fetches),
+                               error_detail=detail)
 
     def discover(self, window: CollectionWindow) -> DiscoveryResult:
         self.rejections = {r: 0 for r in REJECTION_REASONS}
         self.observed = {}
         self.failed_fetches = []
         self._by_slug = {}
+        self._refusal = None
+        self._rules = {}
+        self._policy_checked = False
+        self._policy_failure = None
 
         failure = self._check_policy()
         if failure:
@@ -709,17 +791,25 @@ class PHAfpAdapter(SourceAdapter):
         reported_count: Optional[int] = None
         url = "%s?page_size=%d&page=1" % (LIST_URL, self._page_size)
         seen_urls = set()
+        seen_page_contents, listed_ids, listed_slugs = set(), set(), set()
         pages = 0
         truncated = False
-        end_by_invalid_page = False
 
         while url:
+            self.observed.update(
+                list_pages=pages, listed_items=len(raw_items),
+                api_reported_count=reported_count, listing_url=url,
+                listing_end="incomplete",
+                count_mismatch=reported_count is not None and reported_count != len(raw_items))
             if url in seen_urls or pages >= self._max_pages:
                 truncated = True
                 break
             seen_urls.add(url)
             try:
                 resp = self._get(url, is_permitted_api_url)
+            except AccessRefused as exc:
+                self.failed_fetches.append(exc.url)
+                return self._list_failure(exc.status, str(exc))
             except DisallowedRedirect as exc:
                 self.failed_fetches.append(url)
                 return self._list_failure(
@@ -734,31 +824,14 @@ class PHAfpAdapter(SourceAdapter):
                     % (pages + 1, type(exc).__name__))
             code = resp.status_code
             self._note_api_headers(resp)
-            if code == 404 and pages > 0:
-                # DRF answers `{"detail": "Invalid page."}` past the end. That
-                # is the end of the list, not a failure.
-                end_by_invalid_page = True
-                break
-            if code in (401, 403):
-                self.failed_fetches.append(url)
-                if looks_challenged(resp):
-                    return self._list_failure(
-                        st.ACCESS_CHALLENGED,
-                        "listing answered with an access challenge; not "
-                        "retried, not solved")
-                return self._list_failure(
-                    st.AUTH_FAILURE, "listing returned HTTP %d" % code)
+            self.observed.update(
+                listing_http_status=code,
+                listing_payload_sha256=hashlib.sha256(resp.content or b"").hexdigest())
             if code != 200:
                 self.failed_fetches.append(url)
                 return self._list_failure(
                     st.LISTING_FAILURE,
                     "listing page %d returned HTTP %d" % (pages + 1, code))
-            if looks_challenged(resp):
-                self.failed_fetches.append(url)
-                return self._list_failure(
-                    st.ACCESS_CHALLENGED,
-                    "listing answered with an access challenge; not "
-                    "retried, not solved")
             ctype = (getattr(resp, "headers", None) or {}).get(
                 "Content-Type", "")
             if "json" not in ctype.lower():
@@ -777,10 +850,36 @@ class PHAfpAdapter(SourceAdapter):
             except (ListingUnparseable, UnicodeDecodeError) as exc:
                 self.failed_fetches.append(url)
                 return self._list_failure(st.LISTING_FAILURE, str(exc))
+            if reported_count is not None and count != reported_count:
+                self.observed["listing_page_count"] = count
+                self.failed_fetches.append(url)
+                return self._list_failure(st.LISTING_FAILURE,
+                                          "listing count changed during pagination")
+            page_hash = hashlib.sha256(json.dumps(
+                page_items, sort_keys=True).encode("utf-8")).hexdigest()
+            if page_hash in seen_page_contents:
+                self.failed_fetches.append(url)
+                return self._list_failure(st.LISTING_FAILURE,
+                                          "required pagination repeats listing content")
+            seen_page_contents.add(page_hash)
+            for raw in page_items:
+                if not isinstance(raw, dict):
+                    continue
+                ident = source_identity(raw.get("id"))
+                slug = raw.get("slug") if canonical_url(raw.get("slug")) else None
+                if (ident is not None and ident in listed_ids) or (
+                        slug is not None and slug in listed_slugs):
+                    self.rejections[R_DUPLICATE_IN_LIST] += 1
+                    self.failed_fetches.append(url)
+                    return self._list_failure(st.LISTING_FAILURE,
+                                              "required listing repeats article identity or slug")
+                if ident is not None:
+                    listed_ids.add(ident)
+                if slug is not None:
+                    listed_slugs.add(slug)
             pages += 1
             raw_items.extend(page_items)
-            if count is not None:
-                reported_count = count
+            reported_count = count
             if nxt and not is_permitted_api_url(nxt):
                 # A `next` that points elsewhere is a refusal, not a link.
                 return self._list_failure(
@@ -791,33 +890,30 @@ class PHAfpAdapter(SourceAdapter):
         self.observed.update(
             list_pages=pages, listed_items=len(raw_items),
             api_reported_count=reported_count,
-            listing_end="invalid_page" if end_by_invalid_page
-            else "truncated" if truncated else "next_null")
+            listing_end="truncated" if truncated else "next_null")
 
         if truncated:
             return self._list_failure(
                 st.LISTING_FAILURE,
                 "listing did not terminate within %d pages or looped; the "
                 "window cannot be reported as covered" % self._max_pages)
+        self.observed["count_mismatch"] = reported_count != len(raw_items)
+        if self.observed["count_mismatch"]:
+            self.observed["listing_end"] = "incomplete"
+            return self._list_failure(
+                st.LISTING_FAILURE,
+                "listing ended with %d of %d reported items" % (len(raw_items), reported_count))
         if not raw_items:
             # ~1,000 items are listed continuously; an empty array is a shape
             # change or an outage, not a quiet day.
             return self._list_failure(
                 st.LISTING_FAILURE, "listing parsed to zero items")
-        self.observed["count_mismatch"] = (
-            reported_count is not None and reported_count != len(raw_items))
 
-        seen_ids, seen_slugs = set(), set()
         valid: List[ListItem] = []
         for raw in raw_items:
             item = classify_list_item(raw, self.rejections)
             if item is None:
                 continue
-            if item.identity in seen_ids or item.slug in seen_slugs:
-                self.rejections[R_DUPLICATE_IN_LIST] += 1
-                continue
-            seen_ids.add(item.identity)
-            seen_slugs.add(item.slug)
             valid.append(item)
 
         dates = sorted(i.published_date for i in valid)
@@ -853,7 +949,21 @@ class PHAfpAdapter(SourceAdapter):
                 error_detail="refusing to retrieve a non-permitted URL: %s"
                              % reference.url)
         try:
+            failure = self._check_policy()
+            if failure:
+                self._stop_access(failure.status, target, failure.error_detail)
+            try:
+                self.assert_robots_allow(self._rules[urlparse(WWW).netloc], reference.url)
+            except RobotsDisallowed as exc:
+                self._stop_access(st.AUTH_FAILURE, reference.url, str(exc))
             resp = self._get(target, is_permitted_api_url)
+        except AccessRefused as exc:
+            if exc.url not in self.failed_fetches:
+                self.failed_fetches.append(exc.url)
+            return CaptureResult(
+                reference, exc.status, target, final_url=exc.url,
+                http_status=exc.http_status if target == exc.url else None,
+                error_detail=str(exc))
         except DisallowedRedirect as exc:
             self.failed_fetches.append(target)
             return CaptureResult(
@@ -869,13 +979,6 @@ class PHAfpAdapter(SourceAdapter):
                 else st.FETCH_FAILURE, target,
                 error_detail="%s" % type(exc).__name__)
         code = resp.status_code
-        if code in (401, 403):
-            self.failed_fetches.append(target)
-            return CaptureResult(
-                reference,
-                st.ACCESS_CHALLENGED if looks_challenged(resp)
-                else st.AUTH_FAILURE, target, http_status=code,
-                error_detail="item returned HTTP %d" % code)
         if code != 200:
             self.failed_fetches.append(target)
             return CaptureResult(
