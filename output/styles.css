@@ -144,6 +144,9 @@
   --accent-rule:    #BFD2DB;
   --band-dek:       #D6D2C8;
 
+  /* Homepage-only decorative vector, consumed only by .home-atlas. */
+  --home-atlas: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221000%22%20height%3D%22640%22%20viewBox%3D%220%200%201000%20640%22%3E%3Cpath%20d%3D%22M410%200H1000V640H735L635%20460%20770%20305%20565%20185Z%22%20fill%3D%22%23dce8eb%22%20fill-opacity%3D%22.48%22%2F%3E%3Cpath%20d%3D%22M755%200H1000V640H875L795%20440%20935%20245Z%22%20fill%3D%22%23cbdfe3%22%20fill-opacity%3D%22.32%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23668f9e%22%20stroke-opacity%3D%22.28%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2064C858%2027%20688.5%2056.5%20642.5%20161S674.5%20337.5%20575%20420%20477%20553%20545.5%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2083C866%2046%20707%2068%20663%20168S694%20343%20597%20427%20501%20558%20566%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20102.5C872%2067.5%20726.5%2080.5%20684%20176.5S716.5%20350.5%20619%20435%20525%20566%20586.5%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20122C878%2089%20746%2093%20705%20185S739%20358%20641%20443%20549%20574%20607%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20143C889%20111%20767%20106%20727.5%20196.5S761%20364%20663.5%20453%20574%20580.5%20629%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20164C900%20133%20788%20119%20750%20208S783%20370%20686%20463%20599%20587%20651%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20187C913%20156.5%20809%20135%20773.5%20222.5S805.5%20379.5%20709.5%20475%20624.5%20595.5%20674.5%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20210C926%20180%20830%20151%20797%20237S828%20389%20733%20487%20650%20604%20698%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20234.5C938%20203.5%20852.5%20171.5%20822%20256S852.5%20402%20759%20501.5%20676.5%20612.5%20723%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20259C950%20227%20875%20192%20847%20275S877%20415%20785%20516%20703%20621%20748%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20286C962.5%20256.5%20899.5%20216%20875%20297.5S905%20431%20813%20532.5%20734%20626%20776.5%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20313C975%20286%20924%20240%20903%20320S933%20447%20841%20549%20765%20631%20805%20640%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+
   /* ── Type ── */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -971,6 +974,24 @@ html.js .nojs-note { display: none; }
   }
 }
 
+/* Homepage atlas experiment: compact abstract contours in paper margins.
+   Opaque hero and Briefs grounds keep both Signal Veils free of the atlas.
+   One non-repeating vector; no coordinates, borders, raster or motion. */
+main.home-atlas .opening::before { display: none; }
+@media (min-width: 901px) {
+  main.home-atlas .veil { opacity: .32; }
+}
+@media (min-width: 1200px) {
+  main.home-atlas {
+    background-image: linear-gradient(to bottom, transparent 800px, var(--bg) 1200px), var(--home-atlas);
+    background-repeat: no-repeat;
+    background-position: right top, right 360px;
+    background-size: 100% 1200px, 640px 840px;
+  }
+  /* The atlas lives outside reading surfaces, including below the hero. */
+  main.home-atlas > .wrap { background: var(--bg); }
+}
+
 /* ═══ Home: the lead record and the register ═════════════════════════════
    The almanac on the front page: the newest analyzed record under a large
    date block, directly below the opening, then the rest as a register with
@@ -1672,4 +1693,9 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   thead { break-after: avoid; break-inside: avoid; }
   .table-scroll { overflow: visible; }
   h1, h2, h3 { break-after: avoid; }
+}
+
+@media print, (forced-colors: active) {
+  main.home-atlas { background-image: none; }
+  main.home-atlas .opening::before { display: none; }
 }
