@@ -325,15 +325,30 @@ and incomplete attempts cannot push. This prevents an all-fetch-failure batch
 from consuming the same first cap on every run. These Japan workflow changes
 are not activated here.
 
-**Philippines NSC official statements: disabled adapter in draft PR #93; bounded live
-rehearsal passed 2026-10-02.** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`
-(manifest `enabled: false`; no desk, registry entry, workflow or schedule) and
-`tests/test_ph_nsc_adapter.py`, against byte-preserved captures in
-`tests/fixtures/ph_nsc/`. The dedicated offline suite is 101 tests. The adapter
-extracts canonical URL, title, publisher-local publication date, hosting
-attribution and the whole `entry-content` body while excluding the "Latest
-Post" sidebar. It fails closed on challenges, anomalous pages, pagination
-ambiguity and unprovable window coverage.
+**Philippines NSC official statements: adapter merged in PR #93; isolated
+runner/workflow prepared for review (2026-10-02), hard-disabled.**
+`scripts/shadow_collect_ph_nsc.py`, `ph_nsc_shadow.yml`, prospective seven-date
+windows, proposed state branch `shadow/ph-nsc`, daily 10:10 UTC plus explicit
+manual `target_date` recovery via `core/shadow_schedule.py`. The manifest is
+now enabled only under `shadow/ph_nsc/`; no Philippines production manifest
+or registry entry exists. State remains outside the checkout, captures retain
+exact bytes and hashes, ledgers preserve adapter window/policy evidence and
+post-ID provenance, and failed attempts push nothing. The dedicated adapter
+suite remains 101 tests; additional runner/workflow tests exercise fixtures
+and a local bare remote. Neither output nor the production database is changed.
+The job's literal-false guard disables both scheduled and manual runs, including
+after merge. Future failed attempts retain complete state and logs in artifacts.
+
+**Activation decisions remain open:** retain the successful
+`ChinaMilWatch-ShadowCollector/0.1` identity for scheduled use (recommendation,
+not an owner ruling), and resolve privacy. GitHub reports this repository is
+public, so a state branch here is isolated from production but publicly
+readable. Truly private state requires a private remote. No branch, live run,
+day zero or multi-day evidence has been created by this implementation.
+The unchanged full header is `ChinaMilWatch-ShadowCollector/0.1
+(+https://chinamilwatch.org; research archive; contact via site)`. The decision
+is approval of that rehearsed identity for periodic NSC use; no new contact
+details or owner ruling are introduced.
 
 An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
 robots.txt and the category returned HTTP 200; discovery for 2026-06-16 through

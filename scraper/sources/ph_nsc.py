@@ -3,8 +3,8 @@ Philippines National Security Council — official-statements shadow adapter.
 
 Conforms to `core.collection.contract.SourceAdapter`. It is NOT registered in
 any production desk manifest: `shadow/ph_nsc/manifest.json` lives outside
-`desks/` so `load_all_desks()` cannot find it, the source is `enabled: false`,
-and there is no runner, workflow or schedule. Nothing here can reach
+`desks/` so `load_all_desks()` cannot find it. The source is enabled only for
+its isolated shadow runner and workflow. Nothing here can reach
 `pla_watch.db` or `output/`. It was built and tested offline against four
 captures from 2026-10-01. On 2026-10-02 an authorized bounded live rehearsal
 used this module's `requests` transport successfully against robots.txt, the
@@ -95,8 +95,8 @@ CATEGORY_CLASS = "category-official-statements"
 #: The identity under which the 2026-10-01 captures were taken, character for
 #: character (the `user_agent` field of tests/fixtures/ph_nsc/requests.json).
 #: It is NOT the identity stated in the AFP correspondence, `ChinaMilWatch/1.0`.
-#: Which one a live rehearsal uses is an open owner decision; changing this line
-#: is the whole code change, and the fixture test will say so.
+#: The successful rehearsal used this unchanged string. Approval for scheduled
+#: NSC use under the repository's broader identity convention remains open.
 USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
               "(+https://chinamilwatch.org; research archive; contact via site)")
 
@@ -797,5 +797,5 @@ class PHNscAdapter(SourceAdapter):
 
     def healthcheck(self) -> SourceHealthResult:
         return SourceHealthResult(
-            self.slug, st.SKIPPED_DISABLED,
-            "shadow evaluation; not enabled in any production desk")
+            self.slug, st.OK if self.source.enabled is True else st.SKIPPED_DISABLED,
+            "isolated shadow configuration; no production desk")
