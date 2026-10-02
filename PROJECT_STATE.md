@@ -313,6 +313,30 @@ non-zero when health is not `ok`, and every shadow workflow persists state
 only on success, so a failed run's ledger survives only as a 90-day Actions
 artifact. This applies to all three shadow desks.
 
+**Philippines NSC official statements: one disabled adapter, built offline
+(2026-10-01, uncommitted).** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`
+(manifest `enabled: false`; no desk, registry entry, workflow or schedule) and
+`tests/test_ph_nsc_adapter.py`, against byte-preserved captures in
+`tests/fixtures/ph_nsc/`. It extracts the canonical URL, title, publication date
+(publisher-local, offset required), attribution and the whole `entry-content`
+body, leaving out the "Latest Post" sidebar that sits inside `<main>`. It stops
+on challenge or anomalous pages, checks robots before every request, and fails
+the whole run on repeated, looping, skipped, off-host, mis-ordered or
+window-unprovable pagination (none was visible in the captured category). This work made
+no request to NSC. **Gates still open:** repository-client compatibility,
+reliable periodic access, reuse permission, discovery completeness, the
+unresolved gambling-content anomaly, collector identity
+(`ChinaMilWatch-ShadowCollector/0.1` against `ChinaMilWatch/1.0`) and a live
+remeasurement with the repository client. Two robots matchers will exist once
+draft PR #79 (AFP, untouched) lands; unify them then. Gate wording, evidence
+and review receipt: `shadow/ph_nsc/README.md`,
+`docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
+Offline continuation adds regressions for legitimate challenge-like statement
+text, malformed-page failure results, spacing after streamed-body failures and
+hosting attribution. Review also repaired repeated URLs with changed post IDs
+across required pages, and active challenge markup on pages retaining the theme.
+The adapter remains disabled and all live gates remain open.
+
 ## 6. Known technical debt
 
 * **Governed validator baseline: exactly 10 warnings.** Three
