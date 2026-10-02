@@ -188,10 +188,17 @@ class TestRunner(RunnerCase):
         self.assertEqual(capture.read_bytes(), b"derived corruption")
 
     def test_state_is_refused_inside_worktree_primary_checkout_or_symlink(self):
-        primary = Path(__file__).resolve().parents[3]
-        for path in (ROOT, ROOT / "state", primary / "state"):
+        for path in (ROOT, ROOT / "state"):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 runner.assert_isolated(path)
+        primary = Path(self.tmp.name).resolve() / "primary"
+        (primary / ".git").mkdir(parents=True)
+        nested = primary / ".worktrees" / "collector"
+        nested.mkdir(parents=True)
+        with mock.patch.object(runner, "REPO_ROOT", nested):
+            with self.assertRaises(ValueError):
+                runner.assert_isolated(primary / "state")
+            runner.assert_isolated(Path(self.tmp.name) / "external-state")
         link = Path(self.tmp.name) / "inside"
         link.symlink_to(ROOT, target_is_directory=True)
         with self.assertRaises(ValueError):
