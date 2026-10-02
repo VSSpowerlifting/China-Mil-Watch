@@ -128,6 +128,34 @@ Japanese ministry releases reuse titles legitimately — 「日米合同委員�
 ついて」 recurs whenever the Joint Committee agrees anything — and title-level
 deduplication would collapse a year of distinct agreements into one record.
 
+## Post-merge operational measurement — 2026-10-02
+
+[Run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
+collector `30b7169c892a48049efe538f02f8fcc2aff6d481`, explicitly targeted
+2026-10-02 after PR #95 merged. It persisted
+[state commit 138c4e20b7b06ba766bab063cc544c2d132e7791](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/138c4e20b7b06ba766bab063cc544c2d132e7791).
+**54 previously unrecorded URLs received cap space** (31 news, 23 site updates),
+including September 29–October 2 items. **Zero new usable bodies** were inserted;
+the four previously stored PDFs remain unchanged. Result `ok_all_duplicates`
+was accompanied by health `partial` and **140 outstanding gaps**: 68 news,
+71 site updates and one historical source-unassigned challenge. Globally these
+are 137 challenges, one oversized response and two PDFs without a text layer.
+
+All 86 prior gap rows retained their original title/date/reason/first-seen
+provenance; old ledgers, clock and bootstrap were unchanged. The collector
+checkout stayed clean and production DB/output were unchanged against the
+**7,209-file** baseline used for the earlier verification. The later NSC run's
+**7,254-file** snapshot is a separate baseline, not a shadow-created increase.
+No challenge bypass or retrieval-limit change was made.
+
+This run had zero deferred or carried-pending URLs. Feed-eviction persistence
+and deferred priority over retries/revalidation are demonstrated by regression
+tests, **not this live run**. Observed selection recovery does not establish
+complete document coverage or recover URL identities missing from old deferral
+counts. Review admission, backlog/gaps and usable-body yield around
+**2026-10-09** after ordinary scheduled runs; this is an evidence review date,
+not a qualification threshold. No checkpoint review is on record.
+
 ## Selection and recorded backlog
 
 The 40-item per-source cap remains a rate ceiling. Previously it was applied
