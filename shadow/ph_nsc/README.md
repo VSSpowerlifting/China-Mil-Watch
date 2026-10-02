@@ -1,14 +1,16 @@
 # Philippines — National Security Council, Official Statements
 
-**Isolated shadow collector prepared for review. Bounded live adapter rehearsal passed
-2026-10-02; scheduled collection has not been activated by this change.**
+**Public, nonproduction shadow settings approved by Ben on 2026-10-02.**
+This activation change enables scheduled/manual collection in source; it takes
+effect only after its PR merges. No NSC workflow has been dispatched or operational
+state created during preparation. Bounded adapter rehearsal passed 2026-10-02.
 
 | | |
 |---|---|
 | Adapter | `scraper/sources/ph_nsc.py` (`PHNscAdapter`) |
 | Manifest | `shadow/ph_nsc/manifest.json` (`enabled: true` for shadow only, deliberately not under `desks/`) |
 | Runner / workflow | `scripts/shadow_collect_ph_nsc.py` / `ph_nsc_shadow.yml` |
-| Proposed state branch / schedule | `shadow/ph-nsc` / daily 10:10 UTC, plus manual dispatch; job hard-disabled |
+| Public state branch / schedule | `shadow/ph-nsc` in this repository / daily 10:10 UTC, plus manual dispatch; enabled by the activation PR after merge |
 | Tests | `tests/test_ph_nsc_adapter.py` (offline; a socket guard fails any real connection) |
 | Fixtures | `tests/fixtures/ph_nsc/` (byte-exact copies, hash-pinned by the tests) |
 | Review receipt | `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md` |
@@ -60,7 +62,7 @@ production-state writes.
 The raw page hashes changed from the October 1 captures while identities, dates, titles and
 extracted body lengths remained stable, consistent with non-content page-shell drift.
 
-## Open gates
+## Evidence and remaining gates
 
 1. **Repository-client compatibility: measured successfully for the owner's Mac environment.**
    GitHub Actions egress and other network environments remain unmeasured.
@@ -74,14 +76,11 @@ extracted body lengths remained stable, consistent with non-content page-shell d
    to fail closed rather than claim historical completeness.
 5. **Category anomaly: unresolved but not reproduced on 2026-10-02.** The earlier gambling-content
    observation is neither dismissed nor treated as proof of compromise.
-6. **Collector identity: undecided for scheduled use.** The successful rehearsal used
-   `ChinaMilWatch-ShadowCollector/0.1`. The runner retains that exact adapter identity,
-   including its existing project URL and scope suffix. Recommendation: approve it unchanged
-   for this evaluation; an explicit owner decision is still needed before activation.
-   The exact unresolved decision is approval of
-   `ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`
-   for periodic NSC collection under the repository's broader identity convention.
-   No new contact details are proposed and no owner ruling is recorded here.
+6. **Collector identity: owner-approved unchanged for scheduled use (2026-10-02).**
+   Ben chose the existing full rehearsed header:
+   `ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`.
+   The runner and adapter retain it character for character. No contact details,
+   private remote or new credentials are introduced (DECISION_LOG 2026-10-02).
 7. **Live remeasurement with the repository client: completed successfully on 2026-10-02.**
    This closes the original Mac-environment live-measurement gate, not the periodic-reliability
    or GitHub Actions egress gates.
@@ -212,20 +211,59 @@ An empty manual input uses the actual UTC date. A scheduled first attempt uses
 the most recent 10:10 UTC slot. A UI re-run without an explicit date is refused.
 Recovery writes a new ledger, never edits the failed attempt's evidence.
 
-**Privacy limitation:** `VSSpowerlifting/China-Mil-Watch` is public (checked
-2026-10-02), so `shadow/ph-nsc` here is publicly readable Git state. This
-architecture is isolated from the public site, not confidential storage. If
-the owner requires genuinely private evidence, activation must instead wait
-for a private state remote and its credentials; none has been invented here.
-No state branch, scheduled run, day zero or reliability interval is claimed
-by these source changes. Identity and privacy decisions precede activation;
-Actions egress, multi-day reliability and reuse review remain open afterwards.
+**Chosen visibility:** Ben approved publicly readable `shadow/ph-nsc` state in
+`VSSpowerlifting/China-Mil-Watch` on 2026-10-02. “Private” in earlier planning
+meant nonproduction, not a confidentiality requirement. The state branch and
+Actions artifacts are not confidential; they remain excluded from the published
+site, production collection and public corpus counts. Use the existing repository
+and workflow token, with no private remote or new credentials.
 
-**Hard activation guard:** `jobs.shadow.if: ${{ false }}` disables both scheduled
-and manual collection, including after merge. Workflow defaults are read-only;
-the disabled job alone declares the contents-write permission needed for future
-state persistence. Removing the guard requires a separately reviewed owner
-decision on identity and storage. The configured same-repository remote would
-write a publicly readable branch and must be replaced before any confidential
-collection. Neither state branches nor Actions artifacts are claimed to provide
-confidentiality. No private remote or credentials have been created.
+The activation PR removes the literal-false job guard; until it merges, main
+remains disabled. Workflow defaults stay read-only and contents-write stays scoped
+to the collector job. No run, state branch, day zero or reliability interval is
+claimed by this preparation. Reliability, Actions egress, reuse/republishing,
+historical completeness and the earlier anomaly remain open. The October 1
+adapter review receipt records the earlier decisions and is historical evidence;
+it is not rewritten by this ruling.
+
+## Bounded verification after activation merges
+
+1. Fetch main and verify it contains the activation merge. Record its SHA, the
+   current `shadow/ph-nsc` ref (or confirmed absence), and production DB/output
+   hashes. Inspect recent `ph_nsc_shadow.yml` runs and ledgers first: use an
+   existing post-merge scheduled run for the chosen logical date if available.
+   If one is queued or running, wait; do not dispatch a duplicate.
+2. Otherwise authorize one normal manual run on main, naming the current UTC
+   date explicitly (replace `YYYY-MM-DD`, never request historical backfill):
+
+   ```bash
+   gh workflow run ph_nsc_shadow.yml --repo VSSpowerlifting/China-Mil-Watch \
+     --ref main -f target_date=YYYY-MM-DD
+   ```
+
+   The unchanged runner uses seven publication dates (`lookback_days=6`) and a
+   cap of 40. It reads robots and the Official Statements listing, follows only
+   published pagination (at most 20 listing pages), and fetches only in-window
+   statements: at most 61 NSC requests (one robots, 20 listings, 40 statements).
+   More than 40 candidates or unprovable coverage fails before body
+   fetches. Requests keep the full approved identity, fixed two-second spacing,
+   no redirects, retries, challenge bypass or supplemental archive probing.
+3. Record the run URL/attempt, actual collector SHA, logical target date/source,
+   request/status counts and health. Verify robots/listing/window evidence,
+   discovered/selected/retrieved/inserted/duplicate/failure counts, and exact
+   capture/document hashes if bodies were collected. A quiet window may validly
+   return `ok_no_publications`; that measures listing egress, not body egress,
+   completeness before June 3, multi-day reliability or reuse permission.
+4. On success, record the new public state commit and verify it changes only
+   `state/`, binds to that run/collector, has no WAL/SHM files, preserves old
+   ledgers/clock and matches ledger state hashes. Confirm the workflow's clean
+   collector check and unchanged production DB/output. On collection failure,
+   verify no state push occurred and download the complete attempt-state/log artifact
+   (90-day retention). Preserve refusal/challenge evidence; do not retry to
+   defeat it. If a later workflow step fails, inspect whether state was already
+   published rather than assuming no commit. Divergence is a failure, never
+   permission to force-push.
+5. If recovery is needed, review the failure first and use a new manual run
+   with its intended `target_date`, not an ambiguous UI re-run. Continue ordinary
+   scheduled evidence gathering and human review; no automatic promotion or
+   qualification follows from the first successful run.

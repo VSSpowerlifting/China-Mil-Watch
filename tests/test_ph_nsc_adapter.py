@@ -1445,7 +1445,7 @@ class TestTheGatesAreRecorded(unittest.TestCase):
                 "reuse permission: not reviewed",
                 "discovery completeness: prospectively bounded",
                 "category anomaly: unresolved but not reproduced on 2026-10-02",
-                "collector identity: undecided for scheduled use",
+                "collector identity: owner-approved unchanged for scheduled use",
                 "live remeasurement with the repository client: completed successfully on 2026-10-02",
                 "880e330b594709fe722d952abb2a6b7ce150b83dcd7cf5fbe8dbc4b06e237b54",
         ):

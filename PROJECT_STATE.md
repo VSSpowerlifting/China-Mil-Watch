@@ -326,29 +326,29 @@ from consuming the same first cap on every run. These Japan workflow changes
 are not activated here.
 
 **Philippines NSC official statements: adapter merged in PR #93; isolated
-runner/workflow prepared for review (2026-10-02), hard-disabled.**
+runner/workflow merged in PR #94; activation PR prepared (2026-10-02).**
 `scripts/shadow_collect_ph_nsc.py`, `ph_nsc_shadow.yml`, prospective seven-date
-windows, proposed state branch `shadow/ph-nsc`, daily 10:10 UTC plus explicit
-manual `target_date` recovery via `core/shadow_schedule.py`. The manifest is
+windows, owner-approved public state branch `shadow/ph-nsc`, daily 10:10 UTC
+plus explicit manual `target_date` recovery via `core/shadow_schedule.py`. The manifest is
 now enabled only under `shadow/ph_nsc/`; no Philippines production manifest
 or registry entry exists. State remains outside the checkout, captures retain
 exact bytes and hashes, ledgers preserve adapter window/policy evidence and
 post-ID provenance, and failed attempts push nothing. The dedicated adapter
 suite remains 101 tests; additional runner/workflow tests exercise fixtures
 and a local bare remote. Neither output nor the production database is changed.
-The job's literal-false guard disables both scheduled and manual runs, including
-after merge. Future failed attempts retain complete state and logs in artifacts.
+Main remains hard-disabled until the separate activation PR merges. The prepared
+change removes only that job guard and updates tests/documentation; state
+isolation, logical-date recovery, failed-run artifacts and divergence-safe
+non-force pushes are preserved.
 
-**Activation decisions remain open:** retain the successful
-`ChinaMilWatch-ShadowCollector/0.1` identity for scheduled use (recommendation,
-not an owner ruling), and resolve privacy. GitHub reports this repository is
-public, so a state branch here is isolated from production but publicly
-readable. Truly private state requires a private remote. No branch, live run,
-day zero or multi-day evidence has been created by this implementation.
-The unchanged full header is `ChinaMilWatch-ShadowCollector/0.1
-(+https://chinamilwatch.org; research archive; contact via site)`. The decision
-is approval of that rehearsed identity for periodic NSC use; no new contact
-details or owner ruling are introduced.
+**Owner settings approved 2026-10-02:** public shadow state in the existing
+repository, excluded from the published site and production collection, with
+the unchanged full header `ChinaMilWatch-ShadowCollector/0.1
+(+https://chinamilwatch.org; research archive; contact via site)`. “Private” was
+planning wording, not a confidentiality requirement. No private remote, new
+credentials or contact details are introduced. No NSC branch, workflow dispatch,
+day zero or reliability evidence is claimed by this preparation. The exact
+bounded post-merge verification procedure is in `shadow/ph_nsc/README.md`.
 
 An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
 robots.txt and the category returned HTTP 200; discovery for 2026-06-16 through
@@ -359,9 +359,10 @@ through 2026-07-08 and no pagination. The sitemap contains only the homepage;
 the two-page author archive exposes those same six Official Statements and
 page 3 is 404. **Still open:** multi-day access reliability, reuse permission,
 pre-2026-06-03 historical completeness, the unresolved-but-not-reproduced
-gambling-content anomaly, scheduled collector identity and GitHub Actions
-egress. Two robots matchers will exist once draft PR #79 (AFP, untouched)
-lands; unify them then. Gate wording and evidence:
+gambling-content anomaly and GitHub Actions egress. Scheduled collector identity
+and public state visibility are owner-approved; reuse/republishing remains open.
+Two robots matchers will exist once draft PR #79 (AFP, untouched) lands; unify
+them then. Gate wording and evidence:
 `shadow/ph_nsc/README.md` and
 `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
 

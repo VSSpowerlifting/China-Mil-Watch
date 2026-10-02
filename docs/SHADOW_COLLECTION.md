@@ -13,13 +13,15 @@ public promotion, and neither may be described as coverage.
 | **Singapore MINDEF** | `shadow/singapore-mindef` | `scripts/shadow_collect.py` | `singapore_shadow.yml` | `shadow/singapore_mindef/README.md` |
 | **Japan MOD** | `shadow/jp-mod` | `scripts/shadow_collect_japan.py` | `japan_shadow.yml` | `shadow/jp_mod/README.md` |
 
-The Philippines NSC runner/workflow is prepared in source for an isolated
-`shadow/ph-nsc` branch (`scripts/shadow_collect_ph_nsc.py`,
-`ph_nsc_shadow.yml`). Its job is hard-disabled for both schedule and dispatch,
-including after merge. Scheduled
-identity and state privacy still require owner decisions; see
-`shadow/ph_nsc/README.md`. A branch in this public repository is publicly
-readable, even though no shadow record enters the public site.
+Ben approved public Philippines NSC shadow state in this repository on
+2026-10-02, using `shadow/ph-nsc`, `scripts/shadow_collect_ph_nsc.py` and
+`ph_nsc_shadow.yml`, with the existing full collector identity unchanged. The
+activation PR enables scheduled/manual collection in source; main remains
+disabled until that PR merges. “Private” was planning shorthand for nonproduction,
+not a confidentiality requirement: Git state and Actions artifacts are public,
+and no shadow record enters the published site or production collection. No
+private remote or new credentials are needed. The bounded post-merge verification
+procedure and remaining evidence gates are in `shadow/ph_nsc/README.md`.
 
 Each desk's manifest is authoritative for its sources; `desks/registry.json` is
 authoritative for its status and public presentation. Both are declared

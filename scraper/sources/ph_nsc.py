@@ -95,8 +95,8 @@ CATEGORY_CLASS = "category-official-statements"
 #: The identity under which the 2026-10-01 captures were taken, character for
 #: character (the `user_agent` field of tests/fixtures/ph_nsc/requests.json).
 #: It is NOT the identity stated in the AFP correspondence, `ChinaMilWatch/1.0`.
-#: The successful rehearsal used this unchanged string. Approval for scheduled
-#: NSC use under the repository's broader identity convention remains open.
+#: The successful rehearsal used this unchanged string. Ben approved retaining
+#: the full identity for periodic NSC shadow collection on 2026-10-02.
 USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
               "(+https://chinamilwatch.org; research archive; contact via site)")
 
