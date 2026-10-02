@@ -13,6 +13,14 @@ public promotion, and neither may be described as coverage.
 | **Singapore MINDEF** | `shadow/singapore-mindef` | `scripts/shadow_collect.py` | `singapore_shadow.yml` | `shadow/singapore_mindef/README.md` |
 | **Japan MOD** | `shadow/jp-mod` | `scripts/shadow_collect_japan.py` | `japan_shadow.yml` | `shadow/jp_mod/README.md` |
 
+The Philippines NSC runner/workflow is prepared in source for an isolated
+`shadow/ph-nsc` branch (`scripts/shadow_collect_ph_nsc.py`,
+`ph_nsc_shadow.yml`). Its job is hard-disabled for both schedule and dispatch,
+including after merge. Scheduled
+identity and state privacy still require owner decisions; see
+`shadow/ph_nsc/README.md`. A branch in this public repository is publicly
+readable, even though no shadow record enters the public site.
+
 Each desk's manifest is authoritative for its sources; `desks/registry.json` is
 authoritative for its status and public presentation. Both are declared
 `shadow` there. Elapsed shadow days live in each desk's ledger and are
@@ -58,9 +66,12 @@ branch, no workflow and no day zero. See "Built but not launched" below.
    globs `desks/*/manifest.json`. A shadow manifest placed there would be
    written into the tracked database by `sync_desk_config()` on the next
    migration run, putting a non-collecting desk into public counts. It lives
-   under `shadow/` instead, and a test asserts `desks/` contains only `china`.
-2. **The source is `enabled: false`** in its own manifest, and its
-   `healthcheck()` reports `skipped_disabled`.
+   under `shadow/` instead; tests assert Japan and Philippines are absent
+   from production discovery.
+2. **Shadow enablement is separate from production admission.** Enabling a
+   source in a manifest outside `desks/` cannot admit it to production. Each
+   runner's source-participation rules are in its own scope document. The
+   structural production barrier is the manifest path, not an enabled flag.
 3. **The runner refuses to write inside the repository.**
    `scripts/shadow_collect.py` raises if `--state-dir` resolves under the repo
    root, so a state file cannot be committed to `main` by accident.

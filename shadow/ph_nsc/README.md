@@ -1,16 +1,19 @@
 # Philippines — National Security Council, Official Statements
 
-**Shadow adapter. Disabled. Built offline from captures; bounded live rehearsal passed 2026-10-02.**
+**Isolated shadow collector prepared for review. Bounded live adapter rehearsal passed
+2026-10-02; scheduled collection has not been activated by this change.**
 
 | | |
 |---|---|
 | Adapter | `scraper/sources/ph_nsc.py` (`PHNscAdapter`) |
-| Manifest | `shadow/ph_nsc/manifest.json` (`enabled: false`, deliberately not under `desks/`) |
+| Manifest | `shadow/ph_nsc/manifest.json` (`enabled: true` for shadow only, deliberately not under `desks/`) |
+| Runner / workflow | `scripts/shadow_collect_ph_nsc.py` / `ph_nsc_shadow.yml` |
+| Proposed state branch / schedule | `shadow/ph-nsc` / daily 10:10 UTC, plus manual dispatch; job hard-disabled |
 | Tests | `tests/test_ph_nsc_adapter.py` (offline; a socket guard fails any real connection) |
 | Fixtures | `tests/fixtures/ph_nsc/` (byte-exact copies, hash-pinned by the tests) |
 | Review receipt | `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md` |
 
-There is no runner, workflow or schedule. `desks/registry.json` declares no Philippines desk and
+`desks/registry.json` declares no Philippines desk and
 `load_all_desks()` still returns only `china` and `singapore`. Nothing here qualifies this source:
 no shadow collecting day has accrued, and none may be described as qualified (DECISION_LOG).
 
@@ -72,8 +75,13 @@ extracted body lengths remained stable, consistent with non-content page-shell d
 5. **Category anomaly: unresolved but not reproduced on 2026-10-02.** The earlier gambling-content
    observation is neither dismissed nor treated as proof of compromise.
 6. **Collector identity: undecided for scheduled use.** The successful rehearsal used
-   `ChinaMilWatch-ShadowCollector/0.1`; the repository's broader identity convention still needs
-   an explicit owner decision before scheduling.
+   `ChinaMilWatch-ShadowCollector/0.1`. The runner retains that exact adapter identity,
+   including its existing project URL and scope suffix. Recommendation: approve it unchanged
+   for this evaluation; an explicit owner decision is still needed before activation.
+   The exact unresolved decision is approval of
+   `ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`
+   for periodic NSC collection under the repository's broader identity convention.
+   No new contact details are proposed and no owner ruling is recorded here.
 7. **Live remeasurement with the repository client: completed successfully on 2026-10-02.**
    This closes the original Mac-environment live-measurement gate, not the periodic-reliability
    or GitHub Actions egress gates.
@@ -159,7 +167,8 @@ its requested and final URL, status, retrieval time and SHA-256.
 
 - The manifest is under `shadow/`, so `load_all_desks()` cannot find it, and no code in
   `pipeline.py`, `core/` or `desks/` imports the adapter.
-- No database, `output/` path or workflow is touched. The tests assert no socket is opened.
+- Only the dedicated shadow runner/workflow reads this manifest. State is outside the collector
+  checkout, never in the production database or rendered output. Offline tests refuse real sockets.
 - The fixtures are copies of the packet's bytes. `tests/fixtures/ph_nsc/.gitattributes` marks them
   `binary` because the HTML contains carriage returns that Git would otherwise normalise on some
   configurations; the tests pin each file's sha256 to the packet's own ledger. Do not re-encode,
@@ -169,5 +178,54 @@ its requested and final URL, status, retrieval time and SHA-256.
 ## Running the tests
 
 ```bash
-.venv/bin/python -m unittest tests.test_ph_nsc_adapter -v
+.venv/bin/python -m unittest tests.test_ph_nsc_adapter tests.test_ph_nsc_shadow_runner -v
 ```
+
+## Shadow operation and recovery
+
+The runner uses the existing collection contract and `core/shadow_schedule.py`.
+Its normal window is seven source publication dates (`lookback_days=6`). It
+does not backfill the category's history. Coverage must be proven by an item
+older than the requested start; a window reaching 2026-06-03 or earlier still
+fails closed on the observed category. More than 40 candidates also fails
+before fetching, with every candidate URL recorded, rather than sampling.
+
+Successful runs store `state/shadow.db`, append-only `state/ledger/*.json`, a
+write-once `state/clock.json`, and hash-addressed exact statement responses in
+`state/captures/`. Records preserve `nsc:<id>`, canonical URL, publisher-local
+and UTC publication times, hosting byline (not issuer), text and capture hashes,
+retrieval time and HTTP provenance. Every run records target-date provenance,
+collector commit and identity, adapter robots/listing/window evidence, counts
+and failures. Repeated identities are deduplicated without overwriting the
+first stored text; re-capture hashes and bytes remain evidence of any change.
+
+The workflow clones or bootstraps only `shadow/ph-nsc` outside the checkout,
+pushes without force, and fails on divergence. Network/authentication errors
+are not treated as an absent branch. Failed collection pushes nothing; the
+complete attempt state and console log are retained as Actions artifacts for
+90 days, including failed ledgers and successful captures from a partial run.
+The collector checkout must stay clean; existing ledgers and clock cannot
+change. There is no analysis, rendering, Pages or promotion step.
+
+Recovery is **Run workflow → target_date = the intended logical UTC date**.
+An empty manual input uses the actual UTC date. A scheduled first attempt uses
+the most recent 10:10 UTC slot. A UI re-run without an explicit date is refused.
+Recovery writes a new ledger, never edits the failed attempt's evidence.
+
+**Privacy limitation:** `VSSpowerlifting/China-Mil-Watch` is public (checked
+2026-10-02), so `shadow/ph-nsc` here is publicly readable Git state. This
+architecture is isolated from the public site, not confidential storage. If
+the owner requires genuinely private evidence, activation must instead wait
+for a private state remote and its credentials; none has been invented here.
+No state branch, scheduled run, day zero or reliability interval is claimed
+by these source changes. Identity and privacy decisions precede activation;
+Actions egress, multi-day reliability and reuse review remain open afterwards.
+
+**Hard activation guard:** `jobs.shadow.if: ${{ false }}` disables both scheduled
+and manual collection, including after merge. Workflow defaults are read-only;
+the disabled job alone declares the contents-write permission needed for future
+state persistence. Removing the guard requires a separately reviewed owner
+decision on identity and storage. The configured same-repository remote would
+write a publicly readable branch and must be replaced before any confidential
+collection. Neither state branches nor Actions artifacts are claimed to provide
+confidentiality. No private remote or credentials have been created.

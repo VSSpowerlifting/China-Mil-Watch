@@ -10,8 +10,9 @@
     "counts. It lives here so production discovery cannot see it by accident,",
     "and tests assert that desks/ contains only china and singapore.",
     "",
-    "Nothing in this file is read by pipeline.py. No runner, workflow or",
-    "schedule exists for this source; only the offline tests read it.",
+    "Nothing in this file is read by pipeline.py. Only the isolated NSC",
+    "shadow runner and offline tests read it. shadow/ph-nsc is a proposed",
+    "state branch; the workflow job is hard-disabled pending owner decisions.",
     "",
     "desks/registry.json declares no Philippines desk and is not touched by",
     "this adapter. Declaring one is a public-presentation decision for the",
@@ -60,7 +61,7 @@
         "https://nsc.gov.ph/category/official-statements/"
       ],
       "adapter": "scraper.sources.ph_nsc:PHNscAdapter",
-      "enabled": false,
+      "enabled": true,
       "language_tags": [
         "en"
       ],
@@ -81,7 +82,7 @@
         "No relevance filter is applied at collection. The category name is the only scope.",
         "Bounded accessibility only. Four generic-client requests on 2026-10-01 were followed by an authorized 2026-10-02 live rehearsal with the repository requests transport: robots.txt, the category and two statement pages were read successfully and both statements extracted. This establishes repository-client compatibility for that Mac environment, not reliable periodic access, GitHub Actions egress, permission to reuse text, or pre-2026-06-03 historical completeness. The open gates are listed in shadow/ph_nsc/README.md."
       ],
-      "notes": "Enabled is false and stays false: this source is under shadow evaluation and has never been part of a production run. An authorized bounded live rehearsal on 2026-10-02 successfully exercised the adapter without database, output or production-state writes. Scope, live evidence, the robots position, remaining gates and owner decisions are in shadow/ph_nsc/README.md."
+      "notes": "Enabled is true for the isolated shadow runner only. This manifest stays outside desks/ and has never been part of a production run. An authorized bounded live rehearsal on 2026-10-02 successfully exercised the adapter without database, output or production-state writes. Scope, live evidence, the robots position, remaining gates and owner decisions are in shadow/ph_nsc/README.md."
     }
   ]
 }

@@ -161,7 +161,7 @@ class FakeSource:
 
 
 class EnabledSource(FakeSource):
-    """A test double only. The manifest's `enabled` stays false."""
+    """An enabled source for exercising the public adapter contract."""
     enabled = True
 
 
@@ -1225,9 +1225,9 @@ class TestContract(unittest.TestCase):
 
 class TestProductionIsolation(unittest.TestCase):
 
-    def test_the_manifest_is_a_disabled_shadow_manifest_outside_desks(self):
+    def test_the_manifest_is_enabled_only_in_a_shadow_manifest_outside_desks(self):
         self.assertIs(MANIFEST["_shadow"], True)
-        self.assertIs(SOURCE["enabled"], False)
+        self.assertIs(SOURCE["enabled"], True)
         self.assertEqual(MANIFEST["desk"]["public_status"], "shadow")
         self.assertIs(MANIFEST["desk"]["active"], False)
         self.assertFalse((REPO_ROOT / "desks" / "philippines").exists())
@@ -1250,6 +1250,9 @@ class TestProductionIsolation(unittest.TestCase):
         files += list((REPO_ROOT / "scraper").glob("*.py")) + [REPO_ROOT / "pipeline.py",
                                                                REPO_ROOT / "scraper" / "sources" / "__init__.py"]
         for path in files:
+            if path in (REPO_ROOT / "scripts" / "shadow_collect_ph_nsc.py",
+                        REPO_ROOT / ".github" / "workflows" / "ph_nsc_shadow.yml"):
+                continue
             if path.exists():
                 text = path.read_text(encoding="utf-8", errors="replace")
                 self.assertNotIn("ph_nsc", text, path)
