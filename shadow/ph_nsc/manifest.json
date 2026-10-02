@@ -79,9 +79,9 @@
         "Listing: only pagination links the page itself publishes are followed, and a page URL is never guessed. The captured listing showed six items and no pagination markup at all, so how older statements are reached is unobserved. A run therefore proves coverage of the window it was given (the oldest item listed must be older than the window start) or fails with no references at all.",
         "A page is accepted only if it positively looks like an NSC WordPress page with every expected element present exactly once. A challenge, a parked or spam page, a maintenance page or a changed template is refused and is never stored as a document.",
         "No relevance filter is applied at collection. The category name is the only scope.",
-        "Bounded accessibility only. Four requests on 2026-10-01 through a generic client show that the site answered under the shadow identity. They do not establish compatibility with the repository's own client, reliable periodic access, or permission to reuse the text. The open gates are listed in shadow/ph_nsc/README.md."
+        "Bounded accessibility only. Four generic-client requests on 2026-10-01 were followed by an authorized 2026-10-02 live rehearsal with the repository requests transport: robots.txt, the category and two statement pages were read successfully and both statements extracted. This establishes repository-client compatibility for that Mac environment, not reliable periodic access, GitHub Actions egress, permission to reuse text, or pre-2026-06-03 historical completeness. The open gates are listed in shadow/ph_nsc/README.md."
       ],
-      "notes": "Enabled is false and stays false: this source is under shadow evaluation, has never been part of a production run, and this adapter has never made a request to the live site. Scope, the robots position, evidence, the open gates and the owner decisions are in shadow/ph_nsc/README.md."
+      "notes": "Enabled is false and stays false: this source is under shadow evaluation and has never been part of a production run. An authorized bounded live rehearsal on 2026-10-02 successfully exercised the adapter without database, output or production-state writes. Scope, live evidence, the robots position, remaining gates and owner decisions are in shadow/ph_nsc/README.md."
     }
   ]
 }

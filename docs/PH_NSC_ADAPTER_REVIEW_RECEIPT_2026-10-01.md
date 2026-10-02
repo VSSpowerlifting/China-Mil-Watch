@@ -1,10 +1,11 @@
 # Philippines NSC adapter — review receipt
 
-**2026-10-01 · branch `claude/pnsc-adapter-build-eae248` · based on main `61b96cdce` · nothing committed, nothing pushed**
+**Initial review snapshot: 2026-10-01 · branch `claude/pnsc-adapter-build-eae248` · based on main `61b96cdce` · nothing committed, nothing pushed at that snapshot**
 
-One disabled adapter for the National Security Council's *Official Statements* category, built
-offline against four preserved captures. It has never made a request to the live site, and no
-production path can reach it. This change closes none of the open gates below.
+One disabled adapter for the National Security Council's *Official Statements* category, originally
+built offline against four preserved captures. It was subsequently committed, opened as draft
+PR #93, and exercised in an authorized bounded live rehearsal on 2026-10-02. No production path
+can reach it; the rehearsal wrote no database, output or production state.
 
 ## Verdict
 
@@ -153,29 +154,36 @@ the real form of NSC's pagination if it ever has one. The multi-page tests use s
 the standard WordPress query-pagination markup, built around the real listing; that NSC would emit
 this form is an assumption.
 
-## Open gates
+## Gate status after authorized live rehearsal (2026-10-02)
 
-None is closed by this change. Wording and evidence: `shadow/ph_nsc/README.md`.
+Current wording and evidence: `shadow/ph_nsc/README.md`.
 
-1. Repository-client compatibility: unmeasured.
+1. Repository-client compatibility: **measured successfully from the owner's Mac environment**.
 2. Reliable periodic access: unmeasured.
 3. Reuse permission: not reviewed.
-4. Discovery completeness: unobserved.
-5. Category anomaly: unresolved. A one-off gambling-content response in the packet is neither
-   dismissed nor treated as a compromise.
-6. Collector identity: undecided.
-7. Live remeasurement with the repository client: not performed. The packet asks for it; the
-   brief forbade live requests.
+4. Discovery completeness: **prospectively bounded**. The live category exposes six statements
+   from 2026-06-03 through 2026-07-08 and no pagination. The sitemap exposes only the homepage.
+   The two-page author archive exposes the same six Official Statements; page 3 is 404.
+   Pre-2026-06-03 historical completeness remains unestablished.
+5. Category anomaly: unresolved, but it did not reproduce during the 2026-10-02 bounded probes.
+6. Collector identity: undecided for scheduled use; the successful rehearsal used
+   `ChinaMilWatch-ShadowCollector/0.1`.
+7. Live remeasurement with the repository client: **completed successfully on 2026-10-02**.
+
+The adapter rehearsal read robots.txt, the category and two statements. Discovery for the
+2026-06-16 through 2026-07-08 window returned exactly the expected two references. Both statement
+fetches returned HTTP 200 and both extractions returned `ok`, with identities `nsc:3108` and
+`nsc:2269` and body lengths 1272 and 1808 characters. Nothing was stored or published.
 
 ## Remaining action
 
-1. Review this local diff, including the offline continuation below: `git diff PROJECT_STATE.md` for the one tracked change, and for each new
-   path above `git diff --no-index /dev/null <path>`, which reads an untracked file without staging it.
-2. If it passes, authorize a commit on this branch and a **draft** PR, separate from PR #79.
-3. Owner decision on gate 6 (identity). Then, only if authorized, one bounded live rehearsal under
-   that identity with the window stated in advance: robots, the listing, two statements. That
-   measures gates 1, 4, 5 and 7; gates 2 and 3 need a multi-day observation and a terms review.
-
+1. Keep PR #93 inert: no desk registration, runner, workflow, schedule or production activation.
+2. Choose the collector identity for scheduled shadow use.
+3. Review reuse/republishing terms.
+4. After PR #93 is merged, build a separate private shadow runner and measure multi-day access
+   reliability before considering public desk activation.
+5. Treat pre-2026-06-03 backfill as a separate discovery problem; do not weaken fail-closed
+   completeness to manufacture coverage.
 
 ## Offline continuation in ChatGPT (2026-10-01 New York)
 
@@ -197,13 +205,15 @@ Two further failures were reproduced and repaired:
   `ok` (two failing subcases). These structural indicators now stop access regardless of theme
   classes. Plain quoted phrases and legitimate titles remain accepted.
 
-**Fresh NSC verification:** all 100 tests pass, with socket connections and DNS prohibited by
+**Fresh NSC verification at that continuation checkpoint:** the suite had 100 passing tests, with socket connections and DNS prohibited by
 its module guard. Seven explicit in-memory mutations are detected: unrestricted challenge text
 scan (6 failures), whole-document spam scan (2), theme suppressing active challenge structures
 (2), missing listing parse boundary (1 error), missing extraction parse boundary (1 error),
 spacing from headers only (2 failures), and checking pagination post IDs only (1 failure). These
 are deliberately restored behaviors, not a recovered historical Git version of the adapter.
 The reproducible harness and transcripts are included in the standalone continuation packet.
+A later canonical-pagination regression brought the dedicated suite to **101 tests**, all passing
+before PR #93 was pushed and again after the 2026-10-02 live rehearsal.
 
 **Scope:** five files differ from the exported checkpoint: adapter, test module, PROJECT_STATE,
 shadow README and this receipt. The exported manifest and all nine fixture-directory files

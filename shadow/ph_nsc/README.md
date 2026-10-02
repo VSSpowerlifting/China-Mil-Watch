@@ -1,6 +1,6 @@
 # Philippines — National Security Council, Official Statements
 
-**Shadow adapter. Disabled. Built offline from captures. Never run against the live site.**
+**Shadow adapter. Disabled. Built offline from captures; bounded live rehearsal passed 2026-10-02.**
 
 | | |
 |---|---|
@@ -33,50 +33,50 @@ worker, at least two seconds between requests, no redirects followed, no retries
 environment proxy handling, identity `ChinaMilWatch-ShadowCollector/0.1 (…)`. All four returned
 HTTP 200 with the expected structure.
 
-They do **not** establish repository-client compatibility, reliable periodic access, or permission
-to reuse the text. Those are the gates below. Nothing in this branch narrows them.
+Those captures alone did **not** establish repository-client compatibility, reliable periodic
+access, or permission to reuse the text. Repository-client compatibility was subsequently measured
+successfully in the authorized 2026-10-02 live rehearsal. Periodic reliability and reuse
+permission remain open.
+
+## Live rehearsal — 2026-10-02
+
+An authorized read-only rehearsal used the adapter's own `requests` transport from the owner's
+Mac under `ChinaMilWatch-ShadowCollector/0.1`. It made no database, output, workflow, manifest or
+production-state writes.
+
+- `robots.txt`: HTTP 200, `text/plain`, 65 bytes.
+- Official Statements category: HTTP 200, UTF-8 HTML, 149374 bytes.
+- Discovery for 2026-06-16 through 2026-07-08: `ok`; six listed items and exactly two references.
+- Post `3108` (2026-07-08): fetch `ok`, extraction `ok`, 1272 body characters.
+- Post `2269` (2026-06-17): fetch `ok`, extraction `ok`, 1808 body characters.
+- The sitemap returned HTTP 200 but advertised only `https://nsc.gov.ph/`.
+- The author archive exposed 10 posts / 4 Official Statements on page 1 and 7 posts / 2 Official
+  Statements on page 2. Those were the same six statements on the category page; page 3 was 404.
+- The previously observed gambling-content anomaly did not reproduce during these bounded probes.
+
+The raw page hashes changed from the October 1 captures while identities, dates, titles and
+extracted body lengths remained stable, consistent with non-content page-shell drift.
 
 ## Open gates
 
-None of these is closed by this change. Each needs a decision or a measurement that this task did
-not authorize (no live request, no schedule, no activation).
-
-1. **Repository-client compatibility: unmeasured.** The adapter's `requests` transport has never
-   made a request to nsc.gov.ph; the captures used urllib. The adapter narrows the difference
-   (same User-Agent, `Accept-Encoding: identity` as urllib sent, no redirects, no cookie ever
-   replayed) but `requests` still adds its own `Accept` and `Connection` defaults, and TLS,
-   header order and connection reuse are unmeasured. The site sets a tracking cookie
-   (`slimstat_tracking_code`) on listing and statement responses; the adapter clears its cookie
-   jar after every response, so it is neither stored nor sent back.
-2. **Reliable periodic access: unmeasured.** One session, four requests over twenty-six seconds,
-   from one environment, through whatever proxy that environment applied (its identity is
-   unmeasured). No repeat run, no CI-runner egress, no observation of rate limits or blocking.
+1. **Repository-client compatibility: measured successfully for the owner's Mac environment.**
+   GitHub Actions egress and other network environments remain unmeasured.
+2. **Reliable periodic access: unmeasured.** One successful bounded session is not evidence of
+   multi-day reliability, scheduled-run stability or rate-limit behaviour.
 3. **Reuse permission: not reviewed.** robots.txt is an access signal, not a licence for the text.
-   No terms-of-use or copyright review has been done for storing or republishing statement text.
-4. **Discovery completeness: unobserved.** The captured listing shows six items, date-descending,
-   and **no pagination markup of any kind**. Whether older statements exist, and how a client
-   reaches them, is not known. The adapter follows only links the listing itself publishes and
-   never guesses a page URL. Consequence: with the captured listing (oldest item 2026-06-03),
-   any window that reaches back to that date or earlier fails with `LISTING_FAILURE` and no
-   references, because coverage cannot be proven. robots.txt declares a sitemap
-   (`https://nsc.gov.ph/sitemap.xml`); it was not captured, is not used, and whether it
-   enumerates the category with dates is unmeasured.
-5. **Category anomaly: unresolved.** The packet records that one web-tool retrieval of the
-   category URL returned gambling content, while a later retrieval and the urllib capture
-   returned the expected page. This is not a finding that the site is compromised, and the
-   observation is not discarded. The adapter's defence is positive: a page is accepted only with
-   the expected title, body classes and each required element exactly once, and a known marker
-   list is a tripwire only (it was named about a page that was never captured). Whether the
-   anomaly reproduces for the repository client or under this identity can only be learned live.
-6. **Collector identity: undecided.** The captures and this adapter present
-   `ChinaMilWatch-ShadowCollector/0.1`. The October 1 AFP inquiry stated `ChinaMilWatch/1.0`, which
-   is also the identity pinned by `tests/test_user_agent_identity.py`. Which one a live rehearsal
-   uses is an owner decision. Changing it here is one line (`USER_AGENT` in the adapter), and
-   the fixture test, which ties it to the ledger, will fail until that decision is recorded.
-7. **Live remeasurement with the repository client: not performed.** The packet's engineering
-   next action asks for it; the task brief forbade live requests, so it stays open. A first
-   rehearsal should be one bounded run: robots, the listing, two statements, under the
-   identity chosen in gate 6, with the window stated in advance.
+4. **Discovery completeness: prospectively bounded; pre-2026-06-03 history remains unestablished.**
+   The category exposes six statements from 2026-06-03 through 2026-07-08 and no pagination.
+   The sitemap exposes only the homepage. The two-page author archive exposes the same six
+   Official Statements and page 3 is 404. Windows reaching to 2026-06-03 or earlier continue
+   to fail closed rather than claim historical completeness.
+5. **Category anomaly: unresolved but not reproduced on 2026-10-02.** The earlier gambling-content
+   observation is neither dismissed nor treated as proof of compromise.
+6. **Collector identity: undecided for scheduled use.** The successful rehearsal used
+   `ChinaMilWatch-ShadowCollector/0.1`; the repository's broader identity convention still needs
+   an explicit owner decision before scheduling.
+7. **Live remeasurement with the repository client: completed successfully on 2026-10-02.**
+   This closes the original Mac-environment live-measurement gate, not the periodic-reliability
+   or GitHub Actions egress gates.
 
 Smaller items, none a blocker for review:
 

@@ -1436,11 +1436,16 @@ class TestTheGatesAreRecorded(unittest.TestCase):
 
     def test_the_readme_states_each_open_gate_and_the_packet_identity(self):
         readme = (SHADOW / "README.md").read_text(encoding="utf-8").lower()
-        for gate in ("repository-client compatibility: unmeasured", "reliable periodic access: unmeasured",
-                     "reuse permission: not reviewed", "discovery completeness: unobserved",
-                     "category anomaly: unresolved", "collector identity: undecided",
-                     "live remeasurement with the repository client: not performed",
-                     "880e330b594709fe722d952abb2a6b7ce150b83dcd7cf5fbe8dbc4b06e237b54"):
+        for gate in (
+                "repository-client compatibility: measured successfully for the owner's mac environment",
+                "reliable periodic access: unmeasured",
+                "reuse permission: not reviewed",
+                "discovery completeness: prospectively bounded",
+                "category anomaly: unresolved but not reproduced on 2026-10-02",
+                "collector identity: undecided for scheduled use",
+                "live remeasurement with the repository client: completed successfully on 2026-10-02",
+                "880e330b594709fe722d952abb2a6b7ce150b83dcd7cf5fbe8dbc4b06e237b54",
+        ):
             self.assertIn(gate, readme)
         for row in LEDGER.values():
             self.assertIn(row["sha256"], readme)

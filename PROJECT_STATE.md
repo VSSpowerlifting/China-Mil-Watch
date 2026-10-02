@@ -313,29 +313,30 @@ non-zero when health is not `ok`, and every shadow workflow persists state
 only on success, so a failed run's ledger survives only as a 90-day Actions
 artifact. This applies to all three shadow desks.
 
-**Philippines NSC official statements: one disabled adapter, built offline
-(2026-10-01, uncommitted).** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`
+**Philippines NSC official statements: disabled adapter in draft PR #93; bounded live
+rehearsal passed 2026-10-02.** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`
 (manifest `enabled: false`; no desk, registry entry, workflow or schedule) and
 `tests/test_ph_nsc_adapter.py`, against byte-preserved captures in
-`tests/fixtures/ph_nsc/`. It extracts the canonical URL, title, publication date
-(publisher-local, offset required), attribution and the whole `entry-content`
-body, leaving out the "Latest Post" sidebar that sits inside `<main>`. It stops
-on challenge or anomalous pages, checks robots before every request, and fails
-the whole run on repeated, looping, skipped, off-host, mis-ordered or
-window-unprovable pagination (none was visible in the captured category). This work made
-no request to NSC. **Gates still open:** repository-client compatibility,
-reliable periodic access, reuse permission, discovery completeness, the
-unresolved gambling-content anomaly, collector identity
-(`ChinaMilWatch-ShadowCollector/0.1` against `ChinaMilWatch/1.0`) and a live
-remeasurement with the repository client. Two robots matchers will exist once
-draft PR #79 (AFP, untouched) lands; unify them then. Gate wording, evidence
-and review receipt: `shadow/ph_nsc/README.md`,
+`tests/fixtures/ph_nsc/`. The dedicated offline suite is 101 tests. The adapter
+extracts canonical URL, title, publisher-local publication date, hosting
+attribution and the whole `entry-content` body while excluding the "Latest
+Post" sidebar. It fails closed on challenges, anomalous pages, pagination
+ambiguity and unprovable window coverage.
+
+An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
+robots.txt and the category returned HTTP 200; discovery for 2026-06-16 through
+2026-07-08 returned exactly two expected references; both statement fetches and
+extractions succeeded (`nsc:3108`, `nsc:2269`) with no database, output or
+production writes. The live category exposes six statements from 2026-06-03
+through 2026-07-08 and no pagination. The sitemap contains only the homepage;
+the two-page author archive exposes those same six Official Statements and
+page 3 is 404. **Still open:** multi-day access reliability, reuse permission,
+pre-2026-06-03 historical completeness, the unresolved-but-not-reproduced
+gambling-content anomaly, scheduled collector identity and GitHub Actions
+egress. Two robots matchers will exist once draft PR #79 (AFP, untouched)
+lands; unify them then. Gate wording and evidence:
+`shadow/ph_nsc/README.md` and
 `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
-Offline continuation adds regressions for legitimate challenge-like statement
-text, malformed-page failure results, spacing after streamed-body failures and
-hosting attribution. Review also repaired repeated URLs with changed post IDs
-across required pages, and active challenge markup on pages retaining the theme.
-The adapter remains disabled and all live gates remain open.
 
 ## 6. Known technical debt
 

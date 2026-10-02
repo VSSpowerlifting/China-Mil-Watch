@@ -5,8 +5,11 @@ Conforms to `core.collection.contract.SourceAdapter`. It is NOT registered in
 any production desk manifest: `shadow/ph_nsc/manifest.json` lives outside
 `desks/` so `load_all_desks()` cannot find it, the source is `enabled: false`,
 and there is no runner, workflow or schedule. Nothing here can reach
-`pla_watch.db` or `output/`. It has never made a request to the live site: it
-was built and tested only against the four captures of 2026-10-01.
+`pla_watch.db` or `output/`. It was built and tested offline against four
+captures from 2026-10-01. On 2026-10-02 an authorized bounded live rehearsal
+used this module's `requests` transport successfully against robots.txt, the
+Official Statements listing and two statement pages. Nothing was written to
+the database, output tree or production state.
 
 WHAT THIS SOURCE IS
 -------------------
@@ -20,12 +23,20 @@ a title or a body.
 
 WHAT THE CAPTURES ESTABLISH, AND WHAT THEY DO NOT
 -------------------------------------------------
-Four requests through a generic urllib probe, one afternoon: bounded
-accessibility under the identity in `USER_AGENT`. They do NOT establish
-compatibility with this module's `requests` transport, reliable periodic
-access, proxy behaviour, or permission to reuse the text. The listing showed
-six items and no pagination markup at all, so how the site paginates is
-unobserved. The gaps are enforced rather than assumed (see "pagination").
+Four generic urllib requests on 2026-10-01 established bounded
+accessibility under the identity in `USER_AGENT`. An authorized 2026-10-02
+live rehearsal then established compatibility with this module's `requests`
+transport from the owner's Mac environment: robots.txt and the listing returned
+HTTP 200, discovery succeeded, and two statement pages fetched and extracted
+successfully. This does NOT establish multi-day reliability, GitHub Actions
+egress, proxy equivalence, or permission to reuse the text.
+
+The live category still exposed six items, newest 2026-07-08 and oldest
+2026-06-03, with no pagination. Its sitemap exposed only the homepage. The
+two-page author archive exposed the same six Official Statements and page 3
+returned 404. Prospective windows beginning after 2026-06-03 can therefore be
+proven from the category page; historical completeness before that date remains
+unestablished. The gaps are enforced rather than assumed (see "pagination").
 
 RULES THAT MATTER TO THIS FILE
 ------------------------------
