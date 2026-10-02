@@ -1751,6 +1751,48 @@ class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
 
 class TestTheHomePageHoldsItsShape(BrowserCase):
 
+    def test_home_atlas_is_inert_responsive_and_scoped_to_home(self):
+        for width in (375, 390, 430, 900, 1280, 1440):
+            context, page = self.page_at(width, 900)
+            try:
+                state = page.evaluate("""() => {
+                  const opening = document.querySelector('.opening');
+                  const field = getComputedStyle(opening, '::before');
+                  return {
+                    image: field.backgroundImage,
+                    display: field.display,
+                    heroGround: getComputedStyle(opening).backgroundColor,
+                    atlas: getComputedStyle(document.querySelector('main')).backgroundImage,
+                    bannerGround: getComputedStyle(document.querySelector('.band')).backgroundColor,
+                    overflow: document.documentElement.scrollWidth -
+                      document.documentElement.clientWidth,
+                    tiled: getComputedStyle(document.querySelector('main')).backgroundRepeat
+                  };
+                }""")
+                with self.subTest(width=width):
+                    self.assertEqual(state['display'], 'none')
+                    self.assertNotEqual(state['heroGround'], 'rgba(0, 0, 0, 0)')
+                    self.assertNotEqual(state['bannerGround'], 'rgba(0, 0, 0, 0)')
+                    self.assertLessEqual(state['overflow'], 0)
+                    self.assertEqual(state['image'], 'none')
+                    if width < 1200:
+                        self.assertEqual(state['atlas'], 'none')
+                    else:
+                        self.assertIn('data:image/svg+xml', state['atlas'])
+                    if width >= 1200:
+                        self.assertTrue(all(v.strip() == 'no-repeat'
+                                            for v in state['tiled'].split(',')))
+                page.emulate_media(media='print')
+                self.assertEqual(page.evaluate("""() => getComputedStyle(
+                  document.querySelector('.opening'), '::before').display"""), 'none')
+                page.goto('http://127.0.0.1:%d/analysis.html' % self.port, wait_until='load')
+                self.assertEqual(page.locator('main.home-atlas').count(), 0)
+                self.assertNotIn('668f9e', page.evaluate("""() => getComputedStyle(
+                  document.querySelector('main')).backgroundImage"""))
+            finally:
+                context.close()
+
+
     def test_no_horizontal_overflow_from_320_to_2560(self):
         for width in (320, 375, 768, 1280, 1920, 2560):
             context, page = self.page_at(width, 900)

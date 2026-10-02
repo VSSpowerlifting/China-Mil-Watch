@@ -450,6 +450,16 @@ Parsed for one labeled run and draws no bar for an unmeasured source; desk
 pages call the complement of analyzed records "Not analyzed" and say it is
 not a queue. Faint ledger ruling appears only in wide outer margins.
 
+**Homepage atlas experiment (2026-10-01):**
+`styles.css` replaces the home page's margin grid with a compact pale blue-gray
+vector field: thirteen closely spaced abstract contours and two polygon fills.
+The field is confined to paper margins at >=1200px; opaque hero and Briefs
+backgrounds separate it from both Signal Veils. The Ocean Veil keeps its crop
+at reduced opacity. Narrower screens keep plain paper. No content, layout,
+database or `output/` change. Direction approved 2026-10-01; source
+implementation complete. Production output has not been regenerated or
+deployed.
+
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —
 templates, `styles.css` (rewritten, 161 KB → 90 KB), `browse.js`,
