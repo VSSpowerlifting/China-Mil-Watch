@@ -273,16 +273,24 @@ re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 - Challenged items are stored as titled, dated discovery records, with no body
   and nothing inferred. The challenge is **never** to be bypassed; resolving
   this means requesting an official route.
-- **A selection defect hides new items.** Selection is capped at 40 per source,
-  oldest first, so the same challenged items and PDFs are re-selected every
-  run. Newer items are deferred and never recorded: 42 were deferred on 09-27,
-  and nothing published since about 09-18 has been captured.
-  `ok_all_duplicates` does not show this.
+- **Selection repair prepared in source (2026-10-02), not yet deployed.** The
+  two reachable Japanese RSS sources are explicitly enabled for shadow; the
+  runner now excludes disabled and `_not_collected` entries. The same 40-item
+  cap processes unprocessed/deferred URLs before failed retries and stored PDF
+  revalidation. Known challenges consume no slot or new fetch; future overflow
+  is recorded by URL in `shadow_unretrieved` and survives feed turnover.
+  Historical ledgers, cutoff and gap provenance are preserved. The measured
+  defect remains evidence: 42 items were deferred on 09-27 and nothing since
+  about 09-18 was captured; old `ok_all_duplicates` results did not disclose
+  that starvation. No historical recovery or new remote collection is claimed.
+  Run health now includes off-feed outstanding gaps and mixed feed/fetch/parse
+  failures. Legacy gaps without a source slug stay explicitly unassigned;
+  a URL alone cannot establish which feed originally listed them.
 - No checkpoint review is on record.
 
-**Every Japan ledger written so far carries an execution date, not a slot
-date.** Japan's cron sits at 22:40 UTC and Actions has started every scheduled
-Japan run late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
+**All nine Japan ledgers inspected on 2026-09-03 carried an execution
+date, not a slot date.** Japan's cron sits at 22:40 UTC; the inspected
+scheduled runs started late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
 Verified 2026-09-03 against `shadow/jp-mod`: all 9 ledgers are stamped one day
 after the slot they belong to, most recently run `33700195896` (started
 2026-09-03T00:36:36Z, stamped 2026-09-03, nominal 2026-09-02). Japan's
@@ -308,10 +316,14 @@ from the `access_blocked` command website and is not public coverage.
   permission was undetermined. The cause is not established and was not
   probed.
 
-**Failed shadow runs leave no ledger on the state branch.** The collectors exit
-non-zero when health is not `ok`, and every shadow workflow persists state
-only on success, so a failed run's ledger survives only as a 90-day Actions
-artifact. This applies to all three shadow desks.
+**Failure evidence is not a healthy-body claim.** Singapore and US
+workflows push state only after successful collection; failed attempts
+survive in 90-day Actions artifacts. Japan's workflow repair also persists
+completed failure ledgers/gap rows after validating the collector commit,
+closed-state hash and immutable history, then marks the job failed. Crashes
+and incomplete attempts cannot push. This prevents an all-fetch-failure batch
+from consuming the same first cap on every run. These Japan workflow changes
+are not activated here.
 
 **Philippines NSC official statements: disabled adapter in draft PR #93; bounded live
 rehearsal passed 2026-10-02.** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`

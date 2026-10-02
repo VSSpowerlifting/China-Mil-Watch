@@ -1,9 +1,14 @@
 # Japan MOD / Joint Staff — shadow collection
 
 Shadow evaluation. Nothing here is live, published, or counted in any public
-figure. The Japan desk's public status is `shadow`; its source is `enabled:
-false`; and `desks/` deliberately does not contain a `japan/` directory, so
+figure. The Japan desk's public status is `shadow`; the two reachable Japanese
+RSS sources are explicitly `enabled: true` for this shadow runner only; and
+`desks/` deliberately does not contain a `japan/` directory, so
 production desk discovery cannot see this manifest by accident.
+
+The runner honors `enabled`: false or absent excludes a source, as does
+`_not_collected: true` regardless of enabled state. `jp_joint_staff_en` and
+`jp_mod_press_en` remain disabled, not collected and without adapters.
 
 ## What the two feeds actually are
 
@@ -117,10 +122,62 @@ the PDFs starting to be challenged too (`access_challenged`, `degraded`).
 
 ## Deduplication
 
-By canonical URL, and by content hash of the extracted text. **Never by title.**
+By canonical URL, with extracted-text content hashes retained for provenance.
+**Never by title.**
 Japanese ministry releases reuse titles legitimately — 「日米合同委員会合意に
 ついて」 recurs whenever the Joint Committee agrees anything — and title-level
 deduplication would collapse a year of distinct agreements into one record.
+
+## Selection and recorded backlog
+
+The 40-item per-source cap remains a rate ceiling. Previously it was applied
+oldest first before checking state, repeatedly selecting old challenges and
+stored PDFs while newer items waited indefinitely. The runner now processes
+never-processed URLs (including deferred URLs) first, oldest first within that
+group. Previously failed retrievals follow, then stored PDF revalidation with
+the existing HTTP validators uses only spare capacity. A known challenge is
+counted as `known_challenged` and its observation is updated without calling
+fetch again. `challenged` counts newly selected refusals; neither is hidden by
+an `ok_all_duplicates` result, and health remains partial or degraded.
+
+Overflow is stored in the existing `shadow_unretrieved` table with reason
+`deferred_cap`, source slug, original feed title and date. It remains queued
+even after it leaves the RSS feed. The table receives a nullable source-slug
+column forward-only; old gap identities, titles, dates and first-seen runs
+are preserved. Recovered rows remain as historical gap provenance, excluded
+from the current unretrieved total when a body is stored. Old ledgers and the
+bootstrap cutoff are untouched. The ledger names deferred URLs and counts
+off-feed pending items and postponed revalidation separately.
+
+Health is based on the entire outstanding gap table, not just today's feed.
+An off-feed challenge still contributes to `outstanding_challenged` and cannot
+turn into a healthy empty run. Mixed feed/fetch/extraction failures remain
+partial even when some PDFs succeed; an open PDF route failure is not masked
+by a new HTML challenge. A 304 counts as a duplicate only if a stored body
+exists, and orphan validators are not loaded.
+
+Historical gap rows without a source slug remain unassigned until an actual
+feed observation supplies it. Off-feed legacy rows are retained and named in
+`unassigned_gap_urls`, contribute to unhealthy coverage, and are not assigned
+to a feed from URL shape. Their dates, titles and first-seen provenance are not
+rewritten. This preserves the migration limitation rather than hiding it.
+
+Keeping 40 is appropriate for this repair: new work now gets that entire
+budget before revalidation. Raising it would increase requests without fixing
+selection fairness. Sustained arrivals above the ceiling would still grow a
+visible backlog and require a later human rate decision; nothing is sampled.
+No historical deferred item absent from today's feeds can be reconstructed
+from an old count alone. The repair makes future deferrals durable, not a
+claim that the old loss was recovered. No checkpoint review is on record.
+
+The workflow now preserves completed failed attempts as state evidence before
+reporting job failure. It requires one ledger for the exact run/attempt, the
+actual collector commit and a matching closed-database hash, and refuses
+changes to old ledgers, clock or bootstrap. A crash has no completed ledger
+and cannot push. This distinction matters: discarding every all-fetch-failure
+attempt discarded its gap rows too, allowing the same failures to monopolize
+the next run. The workflow remains failed when collection fails; preserving
+evidence does not change the result or advance the clock.
 
 ## What this does not establish
 
