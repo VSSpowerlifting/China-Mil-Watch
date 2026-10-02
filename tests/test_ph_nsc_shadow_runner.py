@@ -265,11 +265,14 @@ class TestSchedule(RunnerCase):
 
 
 class TestWorkflow(unittest.TestCase):
-    def test_collection_is_hard_disabled_pending_owner_decisions(self):
+    def test_collection_is_enabled_for_owner_approved_public_shadow(self):
         self.assertRegex(RAW, r"(?m)^permissions:\n  contents: read$")
-        job = RAW.split("jobs:\n  shadow:\n", 1)[1].split("    runs-on:", 1)[0]
-        self.assertIn("    if: ${{ false }}\n", job)
+        job = RAW.split("jobs:\n  shadow:\n", 1)[1]
+        self.assertNotRegex(job, r"(?m)^    if:")
         self.assertIn("    permissions:\n      contents: write\n", job)
+        self.assertEqual(runner.USER_AGENT,
+                         "ChinaMilWatch-ShadowCollector/0.1 "
+                         "(+https://chinamilwatch.org; research archive; contact via site)")
 
     def test_only_shadow_state_can_be_pushed_without_force(self):
         code = "\n".join(line for line in RAW.splitlines() if not line.lstrip().startswith("#"))

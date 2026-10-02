@@ -1,10 +1,10 @@
 name: Philippines NSC Shadow Collection
 
-# Isolated prospective evaluation only. Proposed state is on shadow/ph-nsc, outside
+# Isolated prospective evaluation only. Public state is on shadow/ph-nsc, outside
 # the collector checkout. No production collection, analysis or deployment.
 # This repository is public: its state branch is not confidential storage.
-# Activation awaits the owner's scheduled-identity decision; retain the
-# adapter's ChinaMilWatch-ShadowCollector/0.1 identity without alteration.
+# Owner-approved settings (2026-10-02): same-repository public shadow state and
+# the adapter's existing full ChinaMilWatch-ShadowCollector/0.1 identity unchanged.
 
 on:
   schedule:
@@ -29,10 +29,6 @@ permissions:
 
 jobs:
   shadow:
-    # Hard activation guard: both scheduled and manual jobs stay disabled.
-    # Remove only in a reviewed change after identity and confidential-storage
-    # decisions. The remote below is public and must not hold confidential state.
-    if: ${{ false }}
     permissions:
       contents: write
     runs-on: ubuntu-latest

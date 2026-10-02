@@ -4,6 +4,26 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-02 — NSC public shadow settings; activation requires a separate PR
+
+**Owner ruling (Ben, 2026-10-02).** “Private” was earlier planning wording,
+not a confidentiality requirement. Use public `shadow/ph-nsc` state in the
+existing `VSSpowerlifting/China-Mil-Watch` repository, excluded from the
+published site, production collection and public corpus counts. Do not create
+a private remote or new credentials.
+
+Retain the existing full identity unchanged:
+`ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`.
+This approves that rehearsed header for periodic NSC shadow collection; it
+does not invent contact details or change the wider identity convention.
+
+Prepare, test and publish a separate activation PR removing the literal-false
+guard, with the bounded verification procedure in `shadow/ph_nsc/README.md`.
+Do not merge that PR or dispatch NSC during preparation. No run or day zero is
+claimed. Reliability, Actions egress, reuse/republishing review, historical
+completeness before 2026-06-03 and the earlier unresolved anomaly remain open.
+There is no promotion, public desk admission or qualification decision.
+
 ## 2026-10-01 — Run-level LLM usage telemetry: accounting only, no behavior change
 
 Owner direction after the 2026-10-01 cost audit, which found that token usage
