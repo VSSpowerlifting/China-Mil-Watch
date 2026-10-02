@@ -313,6 +313,31 @@ non-zero when health is not `ok`, and every shadow workflow persists state
 only on success, so a failed run's ledger survives only as a 90-day Actions
 artifact. This applies to all three shadow desks.
 
+**Philippines NSC official statements: disabled adapter in draft PR #93; bounded live
+rehearsal passed 2026-10-02.** `scraper/sources/ph_nsc.py`, `shadow/ph_nsc/`
+(manifest `enabled: false`; no desk, registry entry, workflow or schedule) and
+`tests/test_ph_nsc_adapter.py`, against byte-preserved captures in
+`tests/fixtures/ph_nsc/`. The dedicated offline suite is 101 tests. The adapter
+extracts canonical URL, title, publisher-local publication date, hosting
+attribution and the whole `entry-content` body while excluding the "Latest
+Post" sidebar. It fails closed on challenges, anomalous pages, pagination
+ambiguity and unprovable window coverage.
+
+An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
+robots.txt and the category returned HTTP 200; discovery for 2026-06-16 through
+2026-07-08 returned exactly two expected references; both statement fetches and
+extractions succeeded (`nsc:3108`, `nsc:2269`) with no database, output or
+production writes. The live category exposes six statements from 2026-06-03
+through 2026-07-08 and no pagination. The sitemap contains only the homepage;
+the two-page author archive exposes those same six Official Statements and
+page 3 is 404. **Still open:** multi-day access reliability, reuse permission,
+pre-2026-06-03 historical completeness, the unresolved-but-not-reproduced
+gambling-content anomaly, scheduled collector identity and GitHub Actions
+egress. Two robots matchers will exist once draft PR #79 (AFP, untouched)
+lands; unify them then. Gate wording and evidence:
+`shadow/ph_nsc/README.md` and
+`docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
+
 ## 6. Known technical debt
 
 * **Governed validator baseline: exactly 10 warnings.** Three

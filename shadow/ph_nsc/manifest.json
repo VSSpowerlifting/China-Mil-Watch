@@ -1,0 +1,87 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST — deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a",
+    "Philippines desk and source into the tracked production database on the",
+    "next migration run, which would put a non-collecting desk into public",
+    "counts. It lives here so production discovery cannot see it by accident,",
+    "and tests assert that desks/ contains only china and singapore.",
+    "",
+    "Nothing in this file is read by pipeline.py. No runner, workflow or",
+    "schedule exists for this source; only the offline tests read it.",
+    "",
+    "desks/registry.json declares no Philippines desk and is not touched by",
+    "this adapter. Declaring one is a public-presentation decision for the",
+    "owner, and it is not implied by this file existing.",
+    "",
+    "The desk block below repeats the functional fields of the Philippines desk",
+    "block in the AFP shadow manifest (draft PR #79), which is not merged and",
+    "was not modified. Which file keeps the desk block once both sources are",
+    "declared is a decision for the owner, not for this adapter."
+  ],
+  "desk": {
+    "desk_id": "philippines",
+    "display_name": "Philippines Desk (shadow evaluation)",
+    "jurisdiction_code": "PH",
+    "default_timezone": "Asia/Manila",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "shadow",
+    "active": false,
+    "_timezone_note": [
+      "Asia/Manila is UTC+08:00 with no daylight saving. It is NOT used to",
+      "date records: each statement's publication date is read from the offset",
+      "that statement's own timestamp declares, and the UTC instant is stored",
+      "beside it. Every timestamp in the 2026-10-01 captures carried +08:00.",
+      "A timestamp that carries no offset is refused, not assumed to be Manila."
+    ]
+  },
+  "institutions": [
+    {
+      "institution_id": "ph_nsc",
+      "display_name": "National Security Council",
+      "name_original": "National Security Council (Philippines)",
+      "institution_type": "security_council",
+      "notes": "The website nsc.gov.ph is the Council's own. Its Official Statements category also hosts statements issued by other offices, such as the National Security Adviser and the National Task Force for the West Philippine Sea, under one site byline, 'National Security Council'. The byline names the publisher that hosts the page, not the office that issued the statement; no issuing office is derived from a title or a body. A statement appearing here is not thereby a position of the Department of National Defense, the Armed Forces of the Philippines, the Philippine Coast Guard or the Philippine News Agency."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "ph_nsc_official_statements",
+      "display_name": "NSC website — Official Statements",
+      "institution_id": "ph_nsc",
+      "base_url": "https://nsc.gov.ph",
+      "discovery_endpoints": [
+        "https://nsc.gov.ph/category/official-statements/"
+      ],
+      "adapter": "scraper.sources.ph_nsc:PHNscAdapter",
+      "enabled": false,
+      "language_tags": [
+        "en"
+      ],
+      "authority_tier": "A",
+      "article_url_patterns": [
+        "^https://nsc\\.gov\\.ph/\\d{4}/\\d{2}/\\d{2}/[a-z0-9]+(?:-[a-z0-9]+)*/$"
+      ],
+      "declared_scope": [
+        "The Official Statements category of the Philippine National Security Council's website, and the individual statement pages it links. Nothing else on the site is requested: not the updates page, not the social media cards, not the policy pages.",
+        "A Tier A first-party source in the sense that the page is on the institution's own domain. Tier A is the proposed tier for a government domain, not an authority ruling, and it says nothing about which office issued a given statement.",
+        "Hosting is not issuing. The category hosts statements by several offices under one site byline, which is stored as site_byline and never as the author. No issuing office is derived from a title or a body.",
+        "It is NOT evas.nsc.gov.ph, a different host that the listing links to. Only https://nsc.gov.ph permalinks of the form /YYYY/MM/DD/slug/ are requested.",
+        "Identity: the WordPress post id, 'nsc:<id>', cross-checked between the listing item, the article body class, the shortlink and the canonical link. Statements recur under one title with a -2 or -3 slug suffix, so titles and slugs are never an identity or a dedupe key.",
+        "Dates are as the page states them, in the offset the page declares, with the UTC instant stored beside it. The body's own dateline (for example 'Manila, Philippines') is part of the body and is not parsed into metadata.",
+        "Preserved original: the exact response bytes of the statement page, with requested URL, final URL, HTTP status, retrieval time and SHA-256. The text is the entry-content block only; the Latest Post sidebar, navigation and footer are excluded.",
+        "Listing: only pagination links the page itself publishes are followed, and a page URL is never guessed. The captured listing showed six items and no pagination markup at all, so how older statements are reached is unobserved. A run therefore proves coverage of the window it was given (the oldest item listed must be older than the window start) or fails with no references at all.",
+        "A page is accepted only if it positively looks like an NSC WordPress page with every expected element present exactly once. A challenge, a parked or spam page, a maintenance page or a changed template is refused and is never stored as a document.",
+        "No relevance filter is applied at collection. The category name is the only scope.",
+        "Bounded accessibility only. Four generic-client requests on 2026-10-01 were followed by an authorized 2026-10-02 live rehearsal with the repository requests transport: robots.txt, the category and two statement pages were read successfully and both statements extracted. This establishes repository-client compatibility for that Mac environment, not reliable periodic access, GitHub Actions egress, permission to reuse text, or pre-2026-06-03 historical completeness. The open gates are listed in shadow/ph_nsc/README.md."
+      ],
+      "notes": "Enabled is false and stays false: this source is under shadow evaluation and has never been part of a production run. An authorized bounded live rehearsal on 2026-10-02 successfully exercised the adapter without database, output or production-state writes. Scope, live evidence, the robots position, remaining gates and owner decisions are in shadow/ph_nsc/README.md."
+    }
+  ]
+}
