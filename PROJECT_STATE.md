@@ -263,6 +263,36 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
+**Philippines AFP (pilot, no desk declared)** — `shadow/ph_afp/`,
+`scraper/sources/ph_afp.py`, `scripts/shadow_collect_ph.py`. An ingestion pilot of
+one source, the article stream of `www.afp.mil.ph` read from the site's own JSON
+backend `api.afp.mil.ph`. **Not scheduled, not enabled, in no production desk,
+and not in `desks/registry.json`.** One full-history capture was run on 2026-09-26 into a
+local state directory that is on no state branch and is not retained: 1,074
+records dated 2021-01-21 to 2026-09-15 (1,049 with text, 25 metadata-only),
+with no item dated 2024-10-31 to 2026-06-12. The figures in
+`shadow/ph_afp/README.md` are the durable record. That state was patched offline
+to the final code, and an offline clean start of the final code from an empty
+state reproduced it exactly (both disclosed there). A partial run exits 1 and
+does not start the shadow clock. The API host publishes no `robots.txt` and sends
+`X-Robots-Tag: noindex, nofollow`; whether to collect before asking the AFP
+Public Affairs Office for an official route is an open owner decision. Full
+measurements and limits: `shadow/ph_afp/README.md`.
+
+**Offline repair, 2026-10-01:** access challenges stop before response parsing
+or redirects; each content request/redirect is checked against the host's
+combined applicable robots rules; repeated pagination content/identities and
+incomplete pagination fail discovery, never becoming a successful run.
+Valid JSON containing challenge-related words is accepted; recognizable HTML
+challenge pages and explicit challenge headers still stop collection. Regression checks use retained fixtures only, with network connections prohibited.
+Current main is integrated locally; the offline repair is verified for draft PR review.
+Historical full-corpus figures above remain producer-reported and unverified;
+the original scratch capture was discarded. This is an offline repair, not
+collection readiness: identity/proxy handling, periodic access, reuse conditions
+and a clean live rehearsal remain separate gates. No desk, schedule or human
+checkpoint review is created. Research evidence remains in the separate
+`codex/philippines-pia-feasibility-20261001` worktree.
+
 **Japan MOD** — state branch `shadow/jp-mod` (`84edebfa6`, measured
 2026-09-28). Day zero 2026-08-27T02:14:38Z.
 - 34 ledgers. Every recent run is `ok_all_duplicates`, health **`partial`**.

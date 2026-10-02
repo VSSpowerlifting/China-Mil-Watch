@@ -1,0 +1,27 @@
+Registered repair checkout
+Socket connect/connect_ex forbidden.
+Ran 274 tests in 3.009s
+
+OK
+
+Current main + PR overlay (one real Git checkout test excluded)
+Socket connect/connect_ex forbidden.
+Ran 273 tests in 1.790s
+
+OK
+
+Static/preservation checks: git diff --check passed; 29 research inventory SHA-256 values and research HEAD unchanged; production paths/shared core/retained fixtures/disabled manifest unchanged from repair HEAD; receipt links resolve. No live requests, CI, production regeneration or human attestations.
+
+Review follow-up: actual registered combined branch, merge 1b8df308 with uncommitted repair. Socket connect/connect_ex prohibited.
+----------------------------------------------------------------------
+Ran 281 tests in 3.100s
+
+OK
+
+Final follow-up preservation: all29 research paths/hash values match; current main PROJECT_STATE restored exactly by removing AFP block, Signal Veil preserved; production delta vs main729857a6 empty. git diff --check and receipt links passed. Focused installed review: Standards no blocking findings; Spec zero findings, independently reran281tests and preservation.
+
+Authorized update preparation: integrated main60a6c1cc; real registered checkout; socket connect/connect_ex forbidden.
+----------------------------------------------------------------------
+Ran 281 tests in 3.127s
+
+OK

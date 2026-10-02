@@ -1,0 +1,534 @@
+Offline regression transcripts, 2026-10-01. Fake sessions and retained fixtures; no live AFP requests.
+
+HTTP challenge regression before fix
+====================================
+/Users/benjaminyang/pla-watch/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+FFF
+======================================================================
+FAIL: test_a_200_html_detail_challenge_is_not_an_extraction_failure (tests.test_ph_afp_adapter.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 359, in test_a_200_html_detail_challenge_is_not_an_extraction_failure
+    self.assertEqual(capture.status, st.ACCESS_CHALLENGED)
+AssertionError: 'unexpected_content_type' != 'access_challenged'
+- unexpected_content_type
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='www', code=200)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='www', code=404)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='www', code=302)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'disallowed_redirect' != 'access_challenged'
+- disallowed_redirect
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='api', code=200)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='api', code=404)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='api', code=302)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='listing', code=404)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'listing_failure' != 'access_challenged'
+- listing_failure
++ access_challenged
+
+
+======================================================================
+FAIL: test_challenges_stop_before_robots_redirects_or_empty_listing_parsing (tests.test_ph_afp_adapter.TestAccessStopRegression) (location='listing', code=302)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 349, in test_challenges_stop_before_robots_redirects_or_empty_listing_parsing
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'listing_failure' != 'access_challenged'
+- listing_failure
++ access_challenged
+
+
+======================================================================
+FAIL: test_contract_collection_stops_after_a_challenged_article (tests.test_ph_afp_adapter.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 372, in test_contract_collection_stops_after_a_challenged_article
+    self.assertEqual(result.status, st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+======================================================================
+FAIL: test_a_200_detail_challenge_preserves_kept_records_but_stops_the_run (tests.test_ph_shadow_runner.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_shadow_runner.py", line 88, in test_a_200_detail_challenge_preserves_kept_records_but_stops_the_run
+    self.assertEqual(entry["result"], st.ACCESS_CHALLENGED)
+AssertionError: 'ok' != 'access_challenged'
+- ok
++ access_challenged
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.108s
+
+FAILED (failures=11)
+
+Path policy regression before fix
+=================================
+/Users/benjaminyang/pla-watch/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+F
+======================================================================
+FAIL: test_disallowed_article_never_requested_including_discover_free_fetch (tests.test_ph_afp_adapter.TestPathPolicyRegression) (discover=False, site=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 398, in test_disallowed_article_never_requested_including_discover_free_fetch
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_disallowed_article_never_requested_including_discover_free_fetch (tests.test_ph_afp_adapter.TestPathPolicyRegression) (discover=False, site=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 398, in test_disallowed_article_never_requested_including_discover_free_fetch
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_disallowed_article_never_requested_including_discover_free_fetch (tests.test_ph_afp_adapter.TestPathPolicyRegression) (discover=True, site=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 398, in test_disallowed_article_never_requested_including_discover_free_fetch
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_disallowed_article_never_requested_including_discover_free_fetch (tests.test_ph_afp_adapter.TestPathPolicyRegression) (discover=True, site=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 398, in test_disallowed_article_never_requested_including_discover_free_fetch
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_required_next_page_disallow_stops_before_request (tests.test_ph_afp_adapter.TestPathPolicyRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 410, in test_required_next_page_disallow_stops_before_request
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_robots_disallowed_redirect_destinations_are_not_requested (tests.test_ph_afp_adapter.TestPathPolicyRegression) (listing=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 427, in test_robots_disallowed_redirect_destinations_are_not_requested
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_robots_disallowed_redirect_destinations_are_not_requested (tests.test_ph_afp_adapter.TestPathPolicyRegression) (listing=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 427, in test_robots_disallowed_redirect_destinations_are_not_requested
+    self.assertEqual(result.status, st.AUTH_FAILURE)
+AssertionError: 'listing_failure' != 'auth_failure'
+- listing_failure
++ auth_failure
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.008s
+
+FAILED (failures=7)
+
+Pagination regression before fix
+================================
+/Users/benjaminyang/pla-watch/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+FF
+======================================================================
+ERROR: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='server failure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 462, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertEqual(adapter.observed["listed_items"], 1 if label != "loop" else 2)
+KeyError: 'listed_items'
+
+======================================================================
+ERROR: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='bad JSON')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 462, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertEqual(adapter.observed["listed_items"], 1 if label != "loop" else 2)
+KeyError: 'listed_items'
+
+======================================================================
+FAIL: test_a_terminal_page_cannot_hide_a_count_mismatch (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 470, in test_a_terminal_page_cannot_hide_a_count_mismatch
+    self.assertEqual(result.status, st.LISTING_FAILURE)
+AssertionError: 'ok' != 'listing_failure'
+- ok
++ listing_failure
+
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='invalid page')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='missing route')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='missing next')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='missing count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='empty next')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='invalid count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='changed count')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_missing_failed_malformed_or_looping_required_pages_are_incomplete (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (label='empty required page')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 460, in test_missing_failed_malformed_or_looping_required_pages_are_incomplete
+    self.assertFalse(result.ok)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_incomplete_discovery_keeps_the_existing_state_and_clock_unchanged (tests.test_ph_shadow_runner.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_shadow_runner.py", line 107, in test_incomplete_discovery_keeps_the_existing_state_and_clock_unchanged
+    self.assertEqual(entry["result"], st.LISTING_FAILURE)
+AssertionError: 'ok' != 'listing_failure'
+- ok
++ listing_failure
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.132s
+
+FAILED (failures=10, errors=2)
+
+
+Unsupported stdlib rule patterns, before fail-closed guard
+/Users/benjaminyang/pla-watch/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+
+======================================================================
+FAIL: test_rules_beyond_stdlib_prefix_matching_stop_before_articles (tests.test_ph_afp_adapter.TestPathPolicyRegression) (pattern='/articles/*/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 386, in test_rules_beyond_stdlib_prefix_matching_stop_before_articles
+    self.assertEqual(capture.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_rules_beyond_stdlib_prefix_matching_stop_before_articles (tests.test_ph_afp_adapter.TestPathPolicyRegression) (pattern='/articles/afp-advances-chr-leadership-with-first-civilian-director-i/$')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 386, in test_rules_beyond_stdlib_prefix_matching_stop_before_articles
+    self.assertEqual(capture.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=2)
+
+Review follow-up: six new tests against the previous repair, before focused fixes
+test_valid_json_with_challenge_words_in_title_or_body_is_accepted (tests.test_ph_afp_adapter.TestAccessStopRegression) ... test_later_matching_group_denies_article_and_redirect_destination (tests.test_ph_afp_adapter.TestPathPolicyRegression) ... test_combined_groups_use_longest_match_and_allow_on_equal_specificity (tests.test_ph_afp_adapter.TestPathPolicyRegression) ... test_wildcard_groups_are_fallback_and_are_combined (tests.test_ph_afp_adapter.TestPathPolicyRegression) ... test_repeated_content_or_identity_cannot_satisfy_reported_count (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) ... test_repeated_pagination_never_advances_successful_run_state (tests.test_ph_shadow_runner.TestAccessStopRegression) ... FAIL
+
+======================================================================
+FAIL: test_valid_json_with_challenge_words_in_title_or_body_is_accepted (tests.test_ph_afp_adapter.TestAccessStopRegression) (field='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 340, in test_valid_json_with_challenge_words_in_title_or_body_is_accepted
+    self.assertEqual(capture.status, st.OK)
+AssertionError: 'access_challenged' != 'ok'
+- access_challenged
++ ok
+
+
+======================================================================
+FAIL: test_valid_json_with_challenge_words_in_title_or_body_is_accepted (tests.test_ph_afp_adapter.TestAccessStopRegression) (field='body_html')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 340, in test_valid_json_with_challenge_words_in_title_or_body_is_accepted
+    self.assertEqual(capture.status, st.OK)
+AssertionError: 'access_challenged' != 'ok'
+- access_challenged
++ ok
+
+
+======================================================================
+FAIL: test_later_matching_group_denies_article_and_redirect_destination (tests.test_ph_afp_adapter.TestPathPolicyRegression) (redirect=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 405, in test_later_matching_group_denies_article_and_redirect_destination
+    self.assertEqual(capture.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_later_matching_group_denies_article_and_redirect_destination (tests.test_ph_afp_adapter.TestPathPolicyRegression) (redirect=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 405, in test_later_matching_group_denies_article_and_redirect_destination
+    self.assertEqual(capture.status, st.AUTH_FAILURE)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_combined_groups_use_longest_match_and_allow_on_equal_specificity (tests.test_ph_afp_adapter.TestPathPolicyRegression) (first='Allow: /', later='Disallow: /articles/afp-advances-chr-leadership-with-first-civilian-director-i/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 422, in test_combined_groups_use_longest_match_and_allow_on_equal_specificity
+    self.assertEqual(capture.status, expected)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_combined_groups_use_longest_match_and_allow_on_equal_specificity (tests.test_ph_afp_adapter.TestPathPolicyRegression) (first='Disallow: /articles/', later='Allow: /articles/afp-advances-chr-leadership-with-first-civilian-director-i/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 422, in test_combined_groups_use_longest_match_and_allow_on_equal_specificity
+    self.assertEqual(capture.status, expected)
+AssertionError: 'auth_failure' != 'ok'
+- auth_failure
++ ok
+
+
+======================================================================
+FAIL: test_combined_groups_use_longest_match_and_allow_on_equal_specificity (tests.test_ph_afp_adapter.TestPathPolicyRegression) (first='Disallow: /articles/afp-advances-chr-leadership-with-first-civilian-director-i/', later='Allow: /articles/afp-advances-chr-leadership-with-first-civilian-director-i/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 422, in test_combined_groups_use_longest_match_and_allow_on_equal_specificity
+    self.assertEqual(capture.status, expected)
+AssertionError: 'auth_failure' != 'ok'
+- auth_failure
++ ok
+
+
+======================================================================
+FAIL: test_wildcard_groups_are_fallback_and_are_combined (tests.test_ph_afp_adapter.TestPathPolicyRegression) (specific=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 436, in test_wildcard_groups_are_fallback_and_are_combined
+    self.assertEqual(capture_for(S.adapter(sess), 1384).status, expected)
+AssertionError: 'ok' != 'auth_failure'
+- ok
++ auth_failure
+
+
+======================================================================
+FAIL: test_repeated_content_or_identity_cannot_satisfy_reported_count (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (kind='same content')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 521, in test_repeated_content_or_identity_cannot_satisfy_reported_count
+    self.assertEqual(result.status, st.LISTING_FAILURE)
+AssertionError: 'ok' != 'listing_failure'
+- ok
++ listing_failure
+
+
+======================================================================
+FAIL: test_repeated_content_or_identity_cannot_satisfy_reported_count (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (kind='same identity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 521, in test_repeated_content_or_identity_cannot_satisfy_reported_count
+    self.assertEqual(result.status, st.LISTING_FAILURE)
+AssertionError: 'ok' != 'listing_failure'
+- ok
++ listing_failure
+
+
+======================================================================
+FAIL: test_repeated_content_or_identity_cannot_satisfy_reported_count (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (kind='within page')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 521, in test_repeated_content_or_identity_cannot_satisfy_reported_count
+    self.assertEqual(result.status, st.LISTING_FAILURE)
+AssertionError: 'ok' != 'listing_failure'
+- ok
++ listing_failure
+
+
+======================================================================
+FAIL: test_repeated_content_or_identity_cannot_satisfy_reported_count (tests.test_ph_afp_adapter.TestPaginationCompletenessRegression) (kind='unusable repeated content')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 521, in test_repeated_content_or_identity_cannot_satisfy_reported_count
+    self.assertEqual(result.status, st.LISTING_FAILURE)
+AssertionError: 'ok_no_publications' != 'listing_failure'
+- ok_no_publications
++ listing_failure
+
+
+======================================================================
+FAIL: test_repeated_pagination_never_advances_successful_run_state (tests.test_ph_shadow_runner.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_shadow_runner.py", line 92, in test_repeated_pagination_never_advances_successful_run_state
+    self.assertEqual(entry["result"], st.LISTING_FAILURE)
+AssertionError: 'ok_all_duplicates' != 'listing_failure'
+- ok_all_duplicates
++ listing_failure
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.117s
+
+FAILED (failures=13)
+
+Additional recognizable HTML script challenge, before structural-script fix
+/Users/benjaminyang/pla-watch/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+F
+======================================================================
+FAIL: test_html_challenge_script_stops_even_without_standard_title (tests.test_ph_afp_adapter.TestAccessStopRegression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/benjaminyang/pla-watch/.worktrees/afp-pr79-offline-repair-20261001/tests/test_ph_afp_adapter.py", line 340, in test_html_challenge_script_stops_even_without_standard_title
+    self.assertEqual(capture_for(S.adapter(sess), 1384).status, st.ACCESS_CHALLENGED)
+AssertionError: 'unexpected_content_type' != 'access_challenged'
+- unexpected_content_type
++ access_challenged
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
