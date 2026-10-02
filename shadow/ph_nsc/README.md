@@ -1,23 +1,23 @@
 # Philippines — National Security Council, Official Statements
 
 **Public, nonproduction shadow settings approved by Ben on 2026-10-02.**
-This activation change enables scheduled/manual collection in source; it takes
-effect only after its PR merges. No NSC workflow has been dispatched or operational
-state created during preparation. Bounded adapter rehearsal passed 2026-10-02.
+Activation merged in PR #96. The first bounded manual run on 2026-10-02
+verified robots/listing egress and initial public state persistence in a quiet
+window; it made zero article requests. Ordinary scheduling remains in place.
 
 | | |
 |---|---|
 | Adapter | `scraper/sources/ph_nsc.py` (`PHNscAdapter`) |
 | Manifest | `shadow/ph_nsc/manifest.json` (`enabled: true` for shadow only, deliberately not under `desks/`) |
 | Runner / workflow | `scripts/shadow_collect_ph_nsc.py` / `ph_nsc_shadow.yml` |
-| Public state branch / schedule | `shadow/ph-nsc` in this repository / daily 10:10 UTC, plus manual dispatch; enabled by the activation PR after merge |
+| Public state branch / schedule | `shadow/ph-nsc` in this repository / daily 10:10 UTC, plus manual dispatch; active after PR #96 |
 | Tests | `tests/test_ph_nsc_adapter.py` (offline; a socket guard fails any real connection) |
 | Fixtures | `tests/fixtures/ph_nsc/` (byte-exact copies, hash-pinned by the tests) |
 | Review receipt | `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md` |
 
 `desks/registry.json` declares no Philippines desk and
 `load_all_desks()` still returns only `china` and `singapore`. Nothing here qualifies this source:
-no shadow collecting day has accrued, and none may be described as qualified (DECISION_LOG).
+one quiet manual run is not periodic reliability, and none may be described as qualified (DECISION_LOG).
 
 ## What the captures establish, and what they do not
 
@@ -62,12 +62,43 @@ production-state writes.
 The raw page hashes changed from the October 1 captures while identities, dates, titles and
 extracted body lengths remained stable, consistent with non-content page-shell drift.
 
+## Post-merge operational measurement — 2026-10-02
+
+[Run 37072106688](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
+used collector `302a74555a3503ea344351b1c99c64c128911104` and the unchanged
+full approved identity below. Target `2026-10-02` was explicit
+(`target_date_source=explicit`); the window was September 26–October 2.
+Result `ok_no_publications`, health `ok`: one robots read and one successful
+category listing, six older items, zero in-window references, zero article
+requests and zero retrieved/inserted/duplicate/failure counts. The accepted
+robots/listing paths require HTTP 200; request counts are derived from the
+adapter path and ledger telemetry, not a separately preserved wire trace.
+
+Public state was initialized at
+[commit 2dd38f1bcfc598f1eca66082b626146023edf7e7](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/2dd38f1bcfc598f1eca66082b626146023edf7e7):
+one ledger, clock and empty database. The
+[attempt artifact](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688/artifacts/11254829602)
+matched all state bytes; the ledger's database hash matched the closed SQLite
+file, integrity was `ok`, and no WAL/SHM/journal files remained. No article
+capture hashes exist because no articles were requested. The workflow's clean
+collector check passed. Production DB/output file lists and Git blob hashes
+were unchanged against this run's own **7,254-file** baseline, distinct from
+the earlier **7,209-file** reviewed-branch/Japan snapshot.
+
+This verifies Actions robots/listing egress and initial state persistence only.
+Article-body egress, extraction and capture preservation in Actions remain
+unobserved. Review around **2026-10-09** after ordinary scheduled runs; this is
+an evidence review date, not a qualification threshold. No checkpoint review
+is on record.
+
 ## Evidence and remaining gates
 
 1. **Repository-client compatibility: measured successfully for the owner's Mac environment.**
-   GitHub Actions egress and other network environments remain unmeasured.
+   Actions robots/listing egress is now measured; article-body egress in Actions
+   and other network environments remain unmeasured.
 2. **Reliable periodic access: unmeasured.** One successful bounded session is not evidence of
-   multi-day reliability, scheduled-run stability or rate-limit behaviour.
+   multi-day reliability, scheduled-run stability or rate-limit behaviour, even
+   with the subsequent successful quiet manual run.
 3. **Reuse permission: not reviewed.** robots.txt is an access signal, not a licence for the text.
 4. **Discovery completeness: prospectively bounded; pre-2026-06-03 history remains unestablished.**
    The category exposes six statements from 2026-06-03 through 2026-07-08 and no pagination.
@@ -83,7 +114,8 @@ extracted body lengths remained stable, consistent with non-content page-shell d
    private remote or new credentials are introduced (DECISION_LOG 2026-10-02).
 7. **Live remeasurement with the repository client: completed successfully on 2026-10-02.**
    This closes the original Mac-environment live-measurement gate, not the periodic-reliability
-   or GitHub Actions egress gates.
+   or Actions article-body egress gates. The later quiet Actions run establishes
+   only robots/listing egress and initial state persistence.
 
 Smaller items, none a blocker for review:
 
@@ -218,13 +250,12 @@ Actions artifacts are not confidential; they remain excluded from the published
 site, production collection and public corpus counts. Use the existing repository
 and workflow token, with no private remote or new credentials.
 
-The activation PR removes the literal-false job guard; until it merges, main
-remains disabled. Workflow defaults stay read-only and contents-write stays scoped
-to the collector job. No run, state branch, day zero or reliability interval is
-claimed by this preparation. Reliability, Actions egress, reuse/republishing,
-historical completeness and the earlier anomaly remain open. The October 1
-adapter review receipt records the earlier decisions and is historical evidence;
-it is not rewritten by this ruling.
+PR #96 removed the literal-false job guard. Workflow defaults stay read-only
+and contents-write stays scoped to the collector job. Initial quiet state
+persistence is measured above; periodic reliability, Actions article-body
+retrieval/extraction/capture evidence, reuse/republishing, historical
+completeness, the earlier anomaly and human checkpoint review remain open.
+The October 1 adapter review receipt is historical evidence and is not rewritten.
 
 ## Bounded verification after activation merges
 

@@ -263,30 +263,33 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
-**Japan MOD** — state branch `shadow/jp-mod` (`84edebfa6`, measured
-2026-09-28). Day zero 2026-08-27T02:14:38Z.
-- 34 ledgers. Every recent run is `ok_all_duplicates`, health **`partial`**.
-- **Access-constrained, and discovery-only in practice.** Only 4 bodies have
-  ever been stored, all PDFs dated 08-27/08-28. 84 discovery records dated
-  08-27 → 09-17 have no body. HTML documents on the same host are returned
-  behind an interactive challenge.
-- Challenged items are stored as titled, dated discovery records, with no body
-  and nothing inferred. The challenge is **never** to be bypassed; resolving
-  this means requesting an official route.
-- **Selection repair prepared in source (2026-10-02), not yet deployed.** The
-  two reachable Japanese RSS sources are explicitly enabled for shadow; the
-  runner now excludes disabled and `_not_collected` entries. The same 40-item
-  cap processes unprocessed/deferred URLs before failed retries and stored PDF
-  revalidation. Known challenges consume no slot or new fetch; future overflow
-  is recorded by URL in `shadow_unretrieved` and survives feed turnover.
-  Historical ledgers, cutoff and gap provenance are preserved. The measured
-  defect remains evidence: 42 items were deferred on 09-27 and nothing since
-  about 09-18 was captured; old `ok_all_duplicates` results did not disclose
-  that starvation. No historical recovery or new remote collection is claimed.
-  Run health now includes off-feed outstanding gaps and mixed feed/fetch/parse
-  failures. Legacy gaps without a source slug stay explicitly unassigned;
-  a URL alone cannot establish which feed originally listed them.
-- No checkpoint review is on record.
+**Japan MOD** — selection repair merged in PR #95; measured post-merge on
+2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
+collector `30b7169c892a48049efe538f02f8fcc2aff6d481`. State branch `shadow/jp-mod`:
+[commit 138c4e20b7b06ba766bab063cc544c2d132e7791](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/138c4e20b7b06ba766bab063cc544c2d132e7791).
+Day zero remains 2026-08-27T02:14:38Z.
+- **Selection recovery observed; document coverage remains partial.** 54
+  previously unrecorded URLs received cap space (31 news, 23 site updates),
+  including September 29–October 2 items. Zero new usable bodies were inserted;
+  the four previously stored PDFs remain unchanged. Result `ok_all_duplicates`
+  accompanies health **`partial`**, not a full-coverage success.
+- 140 outstanding gaps: 68 news, 71 site updates and one historical
+  source-unassigned challenge. These comprise 137 challenges, one oversized
+  response and two PDFs without a text layer. All 86 prior gap rows and their
+  original title/date/reason/first-seen provenance remain preserved.
+- The two reachable Japanese RSS sources are explicitly enabled for shadow;
+  disabled and `_not_collected` entries are excluded. Known challenges consume
+  no fetch slot; new/deferred URLs precede retries and PDF revalidation under
+  the unchanged 40-item per-source ceiling. Challenges are never bypassed.
+- This run had zero deferred or carried-pending URLs. Persistence across feed
+  eviction and priority over retries/revalidation are **regression-test
+  guarantees, not live observations from this run**. Sustained arrivals above
+  the ceiling would grow a visible backlog. Historical evidence remains:
+  42 items were deferred on 09-27 and nothing since about 09-18 had been captured;
+  old counts cannot reconstruct the missing deferred URLs. No historical loss
+  recovery is claimed. Old ledgers, cutoff and date-misattribution evidence
+  are untouched; legacy gaps remain unassigned unless observed in a feed.
+- No checkpoint review is on record; Japan remains shadow and unqualified.
 
 **All nine Japan ledgers inspected on 2026-09-03 carried an execution
 date, not a slot date.** Japan's cron sits at 22:40 UTC; the inspected
@@ -322,11 +325,11 @@ survive in 90-day Actions artifacts. Japan's workflow repair also persists
 completed failure ledgers/gap rows after validating the collector commit,
 closed-state hash and immutable history, then marks the job failed. Crashes
 and incomplete attempts cannot push. This prevents an all-fetch-failure batch
-from consuming the same first cap on every run. These Japan workflow changes
-are not activated here.
+from consuming the same first cap on every run. These changes merged in PR #95;
+the successful post-merge run above did not exercise the failed-attempt path.
 
 **Philippines NSC official statements: adapter merged in PR #93; isolated
-runner/workflow merged in PR #94; activation PR prepared (2026-10-02).**
+runner/workflow merged in PR #94; activation merged in PR #96 (2026-10-02).**
 `scripts/shadow_collect_ph_nsc.py`, `ph_nsc_shadow.yml`, prospective seven-date
 windows, owner-approved public state branch `shadow/ph-nsc`, daily 10:10 UTC
 plus explicit manual `target_date` recovery via `core/shadow_schedule.py`. The manifest is
@@ -336,18 +339,23 @@ exact bytes and hashes, ledgers preserve adapter window/policy evidence and
 post-ID provenance, and failed attempts push nothing. The dedicated adapter
 suite remains 101 tests; additional runner/workflow tests exercise fixtures
 and a local bare remote. Neither output nor the production database is changed.
-Main remains hard-disabled until the separate activation PR merges. The prepared
-change removes only that job guard and updates tests/documentation; state
-isolation, logical-date recovery, failed-run artifacts and divergence-safe
-non-force pushes are preserved.
+[Run 37072106688](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
+used collector `302a74555a3503ea344351b1c99c64c128911104`, explicit target
+2026-10-02 and the September 26–October 2 window. Result `ok_no_publications`,
+health `ok`: robots/listing egress and initial public state persistence were
+verified, with zero article requests and zero discovered/selected/retrieved/
+inserted records. State branch `shadow/ph-nsc` was initialized at
+[commit 2dd38f1bcfc598f1eca66082b626146023edf7e7](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/2dd38f1bcfc598f1eca66082b626146023edf7e7).
+The artifact matched state hashes; the collector checkout stayed clean and
+no SQLite sidecars remained. A quiet window establishes no article-body egress.
 
 **Owner settings approved 2026-10-02:** public shadow state in the existing
 repository, excluded from the published site and production collection, with
 the unchanged full header `ChinaMilWatch-ShadowCollector/0.1
 (+https://chinamilwatch.org; research archive; contact via site)`. “Private” was
 planning wording, not a confidentiality requirement. No private remote, new
-credentials or contact details are introduced. No NSC branch, workflow dispatch,
-day zero or reliability evidence is claimed by this preparation. The exact
+credentials or contact details are introduced. Ordinary 10:10 UTC scheduling
+remains in place; one manual run establishes no multi-day reliability. The exact
 bounded post-merge verification procedure is in `shadow/ph_nsc/README.md`.
 
 An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
@@ -359,12 +367,25 @@ through 2026-07-08 and no pagination. The sitemap contains only the homepage;
 the two-page author archive exposes those same six Official Statements and
 page 3 is 404. **Still open:** multi-day access reliability, reuse permission,
 pre-2026-06-03 historical completeness, the unresolved-but-not-reproduced
-gambling-content anomaly and GitHub Actions egress. Scheduled collector identity
+gambling-content anomaly, article-body egress/extraction/capture persistence in
+Actions and human checkpoint review. Scheduled collector identity
 and public state visibility are owner-approved; reuse/republishing remains open.
 Two robots matchers will exist once draft PR #79 (AFP, untouched) lands; unify
 them then. Gate wording and evidence:
 `shadow/ph_nsc/README.md` and
 `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
+
+**Production preservation uses separate baselines.** The earlier reviewed
+branches/Japan verification used a 7,209-file production DB/output snapshot;
+the later NSC run used its own 7,254-file before/after Git blob and file-list
+snapshot. Each remained unchanged against its own baseline. These counts are
+not a shared snapshot or a change caused by shadow collection.
+
+**Next evidence review: around 2026-10-09**, after ordinary scheduled runs.
+Review NSC logical-date continuity, robots/listing/refusal health and body
+retrieval/capture evidence only if publications appear; review Japan admission,
+backlog/gap persistence and usable-body yield separately. This is a human
+review date, not a qualification threshold. Neither desk is promoted.
 
 ## 6. Known technical debt
 

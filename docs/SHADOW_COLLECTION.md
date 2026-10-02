@@ -16,8 +16,10 @@ public promotion, and neither may be described as coverage.
 Ben approved public Philippines NSC shadow state in this repository on
 2026-10-02, using `shadow/ph-nsc`, `scripts/shadow_collect_ph_nsc.py` and
 `ph_nsc_shadow.yml`, with the existing full collector identity unchanged. The
-activation PR enables scheduled/manual collection in source; main remains
-disabled until that PR merges. “Private” was planning shorthand for nonproduction,
+activation merged in PR #96; scheduled/manual collection is enabled. The first
+[post-merge run](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
+verified robots/listing egress and initial state persistence with zero article
+requests in a quiet window. “Private” was planning shorthand for nonproduction,
 not a confidentiality requirement: Git state and Actions artifacts are public,
 and no shadow record enters the published site or production collection. No
 private remote or new credentials are needed. The bounded post-merge verification
