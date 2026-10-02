@@ -25,7 +25,7 @@
     <tr><th scope="row">Authority tier</th><td class="prov-value">{{ source.authority_tier or '—' }}</td></tr>
     <tr><th scope="row">Original language</th><td class="prov-value">{{ source.language_tag or '—' }}</td></tr>
     <tr><th scope="row">Official base URL</th><td class="prov-value">{% if source.base_url %}<a href="{{ source.base_url }}" rel="noopener nofollow">{{ source.base_url }}</a>{% else %}Not declared{% endif %}</td></tr>
-    <tr><th scope="row">Enabled for collection</th><td class="prov-value">{{ 'Yes' if source.enabled else 'No' }}</td></tr>
+    <tr><th scope="row">{{ 'Enabled for collection' if source.contract_validated else 'Enabled for shadow collection' }}</th><td class="prov-value">{{ 'Yes' if source.enabled else 'No' }}</td></tr>
     <tr><th scope="row">Records held</th><td class="prov-value">{% if source.record_count is not none %}{{ source.record_count|count }}{% else %}None — this source has never been part of a production run{% endif %}</td></tr>
     {% if source.share_of_record is not none %}
     <tr><th scope="row">Share of the whole record</th><td class="prov-value">{{ source.share_of_record }}% <span class="meta">— derived from the stored counts, not declared</span></td></tr>
@@ -42,7 +42,8 @@
 {% if not source.contract_validated %}
 <h2>Declared outside production configuration</h2>
 <p>This source is declared in a shadow manifest, which is deliberately not discoverable by the
-production configuration loader. It is not part of the collection contract, it is not enabled, and
+production configuration loader. It is not part of the production collection contract.
+Shadow enablement does not admit it to production, and
 nothing it reaches enters the record. Fields the shadow manifest does not declare are shown as
 undeclared rather than filled in.</p>
 {% endif %}

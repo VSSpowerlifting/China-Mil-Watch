@@ -100,10 +100,10 @@ class TestTheManifestClaimsOnlyWhatTheFeedsCarry(unittest.TestCase):
         self.assertFalse(en[0]["enabled"])
         self.assertIsNone(en[0]["adapter"])
 
-    def test_nothing_is_enabled(self):
+    def test_only_the_two_reachable_rss_sources_are_enabled(self):
         for s in MANIFEST["sources"]:
             with self.subTest(slug=s["slug"]):
-                self.assertFalse(s["enabled"])
+                self.assertEqual(s["enabled"], not s.get("_not_collected", False))
 
     def test_the_access_notes_state_the_retrieval_fraction(self):
         notes = " ".join(MANIFEST["access_notes"])

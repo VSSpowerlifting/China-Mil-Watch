@@ -267,11 +267,15 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
         self.assertTrue((self.out / "japan.html").is_file())
         self.assertIn('href="japan.html"', self.page("desks.html"))
 
-    def test_the_japan_page_states_zero_records_and_zero_sources(self):
+    def test_the_japan_page_states_no_production_records_and_two_shadow_sources(self):
         html = self.page("japan.html")
         self.assertIn("Records</dt><dd>None collected", html)
-        self.assertIn("Sources enabled</dt><dd>0", html)
+        self.assertIn("Sources enabled in shadow</dt><dd>2", html)
         self.assertIn("No source is enabled in production.", html)
+        self.assertIn("participate only in isolated shadow collection", html)
+        source = self.page("source/jp_mod_news_ja.html")
+        self.assertIn("Enabled for shadow collection</th>", source)
+        self.assertIn("Shadow enablement does not admit it to production", source)
 
     def test_the_japan_page_shows_no_collection_statistic(self):
         """Observed publication volume describes the ministry's output, not

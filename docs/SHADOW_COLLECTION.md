@@ -26,6 +26,10 @@ challenge. Those items are stored as titled, dated discovery records with no
 body and nothing inferred. Partial retrieval is not coverage, and the challenge
 is never to be defeated — see §Access below.
 
+Japan enables only `jp_mod_news_ja` and `jp_mod_siteupdate_ja` in its shadow
+manifest. Its runner excludes disabled sources and `_not_collected` entries.
+The English MOD and Joint Staff sources remain disabled and not collected.
+
 ---
 
 ## Access
@@ -58,9 +62,12 @@ branch, no workflow and no day zero. See "Built but not launched" below.
    globs `desks/*/manifest.json`. A shadow manifest placed there would be
    written into the tracked database by `sync_desk_config()` on the next
    migration run, putting a non-collecting desk into public counts. It lives
-   under `shadow/` instead, and a test asserts `desks/` contains only `china`.
-2. **The source is `enabled: false`** in its own manifest, and its
-   `healthcheck()` reports `skipped_disabled`.
+   under `shadow/` instead; tests assert Japan and Philippines are absent
+   from production discovery.
+2. **Shadow enablement is separate from production admission.** Enabling a
+   source in a manifest outside `desks/` cannot admit it to production. Each
+   runner's source-participation rules are in its own scope document. The
+   structural production barrier is the manifest path, not an enabled flag.
 3. **The runner refuses to write inside the repository.**
    `scripts/shadow_collect.py` raises if `--state-dir` resolves under the repo
    root, so a state file cannot be committed to `main` by accident.
