@@ -15,7 +15,10 @@ Scope, inclusions, exclusions and rules are in
 
   * identity is the canonical URL, never a title or a listing position
   * the publication date comes from the ministry's own slug, never `lastmod`
-  * a missing title, date, body or identity is a refusal, not a partial record
+  * a missing title, date, body or identity is a refusal, not a partial record;
+    the one exception is a release whose article is only an image, which the
+    scheduled collection keeps as a text-unavailable record (see
+    `article_evidence` and `_extract`)
   * robots policy is re-read every run and a disallow is a hard failure
   * an empty day is a success, and is never conflated with a listing failure
   * two records, `15aug26-speech` and `16sep26-speech`, are held out of
@@ -42,6 +45,7 @@ from typing import List, Optional, Tuple
 from urllib.parse import urlparse, urlunparse
 
 import requests
+from bs4 import BeautifulSoup
 
 from core.collection import status as st
 from core.collection.contract import (
@@ -304,6 +308,81 @@ def document_body(html: str) -> str:
     return visible_text(trimmed) or visible_text(html)
 
 
+#: The ministry's own furniture at the foot of an article: a bold "More
+#: Resources" label above links to related releases. It is page structure, not
+#: the release's text, so it never counts as prose.
+RESOURCES_LABEL = "more resources"
+
+
+class ArticleEvidence:
+    """What the article container of a release page holds.
+
+    `prose_chars` counts the release's own words: the lede and every block in
+    the container except the resources label and paragraphs that are only
+    links. `images` counts `<img>` elements with a source. Alt text and file
+    names are attributes, not text, and are never read.
+    """
+
+    __slots__ = ("prose_chars", "images")
+
+    def __init__(self, prose_chars: int, images: int) -> None:
+        self.prose_chars = prose_chars
+        self.images = images
+
+    @property
+    def is_image_only(self) -> bool:
+        return self.images > 0 and self.prose_chars == 0
+
+    @property
+    def has_prose(self) -> bool:
+        return self.prose_chars > 0
+
+
+def _has_class(tag, *names) -> bool:
+    classes = tag.get("class") or []
+    return all(n in classes for n in names)
+
+
+def article_evidence(markup: str) -> Optional[ArticleEvidence]:
+    """Read the release container, or None when this is not the known layout.
+
+    The container is the `overflow-x-auto break-words` `<div>` after the page's
+    `<h1>`. Finding it is the whole basis on which a page may be called
+    anything other than a failure: when it is missing (a new template, an error
+    page, a stub) this returns None, and the caller treats the page as it always
+    did. "We cannot read this" must never be filed as "there is nothing here".
+    """
+    soup = BeautifulSoup(markup, "html.parser")
+    h1 = soup.find("h1")
+    if h1 is None:
+        return None
+    container = h1.find_next(
+        lambda t: t.name == "div"
+        and _has_class(t, "overflow-x-auto", "break-words"))
+    if container is None:
+        return None
+    # The lede sits between the heading and the container. Walk to the
+    # container rather than search the page, so a later paragraph that happens
+    # to share the class cannot be mistaken for it.
+    lede = ""
+    for node in h1.next_elements:
+        if node is container:
+            break
+        if getattr(node, "name", None) == "p" and _has_class(node, "prose-title-lg"):
+            lede = node.get_text(" ", strip=True)
+            break
+    prose = lede
+    images = len([i for i in container.find_all("img") if i.get("src")])
+    for block in container.find_all("p"):
+        text = block.get_text(" ", strip=True)
+        anchors = " ".join(a.get_text(" ", strip=True)
+                           for a in block.find_all("a"))
+        if text.casefold() == RESOURCES_LABEL or (text and text == anchors):
+            block.decompose()
+    prose = (prose + " " + container.get_text(" ", strip=True)).strip()
+    return ArticleEvidence(len(prose), images)
+
+
 def parse_sitemap(xml: str):
     """(canonical_url, lastmod) for release documents. Order is the file's."""
     out = []
@@ -499,6 +578,19 @@ class SGMindefAdapter(SourceAdapter):
         already handled explicitly; this catches only a genuinely unexpected
         parser bug, the one case those explicit checks cannot anticipate.
         """
+        return self._extract(capture, structural=False)
+
+    def _extract(self, capture: CaptureResult, structural: bool
+                 ) -> ExtractionResult:
+        """`extract()`, optionally reading the page's structure when the body
+        is under `MIN_BODY_CHARS`.
+
+        `structural=False` is `extract()` exactly as it has always been, and is
+        what the shadow collector runs: a short body is a refusal, so the
+        shadow corpus and its ledgers do not change. `collect()` passes True.
+        A body of `MIN_BODY_CHARS` or more never reaches the structural branch,
+        so every record this adapter extracted before is extracted identically.
+        """
         if not capture.ok or not capture.body:
             return ExtractionResult(self.slug, st.EXTRACTION_FAILURE,
                                     error_detail="no body to extract")
@@ -520,21 +612,43 @@ class SGMindefAdapter(SourceAdapter):
                     error_detail="no publication date in the official slug: %s"
                                  % url)
             body = document_body(capture.body)
+            verdict = None
             if len(body) < MIN_BODY_CHARS:
-                return ExtractionResult(
-                    self.slug, st.EXTRACTION_FAILURE,
-                    error_detail="body too short to be a published record "
-                                 "(%d chars): %s" % (len(body), url))
+                evidence = article_evidence(capture.body) if structural else None
+                if evidence is not None and evidence.is_image_only:
+                    # The container is found, holds an image, and holds no
+                    # words of the release. What `document_body` returned is
+                    # the page's date line and links, which are not this
+                    # release's text and must not be stored as if they were.
+                    # The title, URL and date are the ministry's own. The image
+                    # is not read: nothing is transcribed or inferred from it.
+                    body, verdict = "", "media_only"
+                elif evidence is not None and evidence.has_prose:
+                    # The container is found and holds prose: a genuinely
+                    # short release, not a page we failed to read. Kept as
+                    # text, exactly as a long one is.
+                    pass
+                else:
+                    detail = ("body too short to be a published record "
+                              "(%d chars): %s" % (len(body), url))
+                    if evidence is not None:
+                        detail = ("article container holds neither prose nor "
+                                  "an image (%d chars): %s" % (len(body), url))
+                    return ExtractionResult(
+                        self.slug, st.EXTRACTION_FAILURE, error_detail=detail)
+            extra = {
+                "publication_kind": publication_kind(url),
+                "content_sha256": hashlib.sha256(
+                    body.encode("utf-8")).hexdigest(),
+                "capture_sha256": capture.payload_sha256,
+                "retrieved_at": capture.retrieved_at,
+            }
+            if verdict:
+                extra["content_verdict"] = verdict
             doc = ExtractedDocument(
                 url=url, source_slug=self.slug, title_original=title,
                 text_original=body, published_date=published, language_tag="en",
-                extra={
-                    "publication_kind": publication_kind(url),
-                    "content_sha256": hashlib.sha256(
-                        body.encode("utf-8")).hexdigest(),
-                    "capture_sha256": capture.payload_sha256,
-                    "retrieved_at": capture.retrieved_at,
-                })
+                extra=extra)
             return ExtractionResult(self.slug, st.OK, documents=[doc])
         except Exception as exc:
             return ExtractionResult(
@@ -605,7 +719,7 @@ class SGMindefAdapter(SourceAdapter):
                 fetch_failures += 1
                 continue
             result.fetched += 1
-            extracted = self.extract(capture)
+            extracted = self._extract(capture, structural=True)
             if extracted.status == st.OK and extracted.documents:
                 documents.extend(extracted.documents)
             else:
@@ -640,6 +754,9 @@ class SGMindefAdapter(SourceAdapter):
             result.text_unavailable = None
             return result, []
 
+        # An image-only release (`_extract`) is such a document: its title,
+        # URL and date are kept and its body is empty. It is counted here, not
+        # treated as a failure, so it never withholds an otherwise sound batch.
         unusable = [d for d in documents if not d.has_usable_text]
         result.text_unavailable = len(unusable)
         if documents and unusable:

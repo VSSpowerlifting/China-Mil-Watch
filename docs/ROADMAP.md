@@ -144,10 +144,13 @@ retriable, 0 terminal.
   three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) were
   not recovered.
   - The authorized 09-28 run was withheld whole by `22sep26-infographic`,
-    whose 178 characters of text are under the adapter's minimum.
+    an image-only page whose 178 characters of text are page furniture.
+  - A repair is in draft: an image-only release is stored as a text-unavailable
+    record and no longer blocks the batch
+    (`docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`). After review and
+    merge, one Singapore-only, no-analysis recovery for the 09-22 window
+    stores `22sep26-nr`, `22sep26-speech` and the infographic.
   - `23sep26-mq` should return with the 09-29 schedule.
-  - The two `22sep26` releases need an owner ruling on image-only releases.
-    The options are in the consolidation packet §7.
 - To decide:
   - disclose or recover 09-15;
   - whether collection should depend on the test gate.

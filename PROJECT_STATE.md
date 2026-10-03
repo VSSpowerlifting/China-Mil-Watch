@@ -7,7 +7,9 @@ Production and corpus figures below carry their own measurement dates. The
 first-brief research packet are in
 `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` (its §7 corrects the
 Singapore recovery claim). The Singapore screening repair and re-screening
-plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md`.**
+plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` (merged, PR #84).
+The image-only-release repair is in
+`docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`.**
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -28,6 +30,7 @@ Durable documents, and what each one governs:
 | `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` | measured per-desk assessment and source-feasibility evidence |
 | `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions; §7 the failed Singapore recovery |
 | `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` | Singapore screening defect, desk-scoped fix, re-screening plan (ids, cost, review path) |
+| `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` | Why `22sep26-infographic` blocked the batch, the structural rule that fixes it, what stays fail-closed, residual risks |
 
 ---
 
@@ -106,13 +109,19 @@ committed by `d17646aef` (sha256 `42f4e5a9…b501c`):
   `23sep26-mq`, which was listed two days late. It is now handed seven slug
   dates (`production_lookback_days = 6`), and China's windows are unchanged.
 * **The authorized recovery run failed (2026-09-29 02:12 UTC) and stored
-  nothing.** Its window (09-22 → 09-28) contains `22sep26-infographic`, which
-  has 178 characters of text. That is under `MIN_BODY_CHARS`, so the
-  all-or-nothing batch was withheld. The local run was not landed.
-  `22sep26-nr` and `22sep26-speech` stay unrecovered pending an owner ruling
-  on image-only releases. `23sep26-mq` should return with the 09-29 scheduled
-  run. The seven-date window means one page that never extracts blocks seven
-  runs, not one. Details and options are in the packet §7.
+  nothing.** Its window (09-22 → 09-28) contains `22sep26-infographic`, a page
+  whose article is one image; its 178 characters of "text" are page furniture,
+  under `MIN_BODY_CHARS`, so the all-or-nothing batch was withheld. The local
+  run was not landed. `22sep26-nr` and `22sep26-speech` stay unrecovered;
+  `23sep26-mq` should return with the 09-29 scheduled run.
+* **Image-only releases: repair in draft (2026-09-29, not yet merged).** On the
+  scheduled path only, a short body whose article container holds an image and
+  no prose is stored as a text-unavailable record (official title, URL, date;
+  empty body), and no longer withholds the batch. Short prose is kept as text;
+  an unreadable layout still fails the whole batch; the two held records are
+  still excluded; the shadow collector is unchanged. The recovery for 09-22 is
+  **not** run: it waits for review and merge. Residual risks and owner
+  decisions are in `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` §7.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,
@@ -593,8 +602,10 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    proposal, and decide what analysis follows a Singapore pass.
 4. Collection continuity:
    - recover or disclose the 09-15 China gap;
-   - rule on image-only Singapore releases (`22sep26-infographic` blocks any
-     window containing 09-22), then recover `22sep26-nr` and `22sep26-speech`;
+   - review and merge the image-only repair (`22sep26-infographic` blocks any
+     window containing 09-22 until then), run the one Singapore-only,
+     no-analysis recovery for the 09-22 window, and rule on the residual
+     risks in `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` §7;
    - decide whether collection should depend on the pre-collection test
      gate.
 5. An explicit continue/pause decision on the Japan shadow desk, and its
