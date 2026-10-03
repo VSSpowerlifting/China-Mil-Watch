@@ -1,0 +1,41 @@
+{
+ "access_failures": 0,
+ "cap": 40,
+ "collector_commit": "620572457b0ec4598954683e140d624cb22520c5",
+ "content_hashes": [
+  "f77ad9f6b4a7ab4a1c88a86b6a9b1fc67b4fd2b4205c89023452a834d090b269",
+  "ced43fd969de5301f2297ec64867b7a2a88e2870b071d743a540ac1e1cb2ef77",
+  "6ade2add7c9d738b63f6ee2b100b4d33d6f4bf67fc5d1cdab29232134d6fa224",
+  "fc8fba52b8e07d5da932d232555e5d64ae083b44c346d6627a762c4864c45164",
+  "7ce913df49bc0fa40aed8a6d75169d8d412d7f12dc00b111fc4944de678decc7",
+  "a7a5647f9a5062ec52e7e28538016b423d74c407e8ee188445885a117ee983bb"
+ ],
+ "corpus_range": [
+  "2026-07-21",
+  "2026-10-02"
+ ],
+ "day_zero_utc": "2026-08-19T23:03:09+00:00",
+ "discovered": 38,
+ "duplicates": 31,
+ "error_detail": null,
+ "extraction_failures": 1,
+ "fetch_failures": 0,
+ "filtered": 0,
+ "finished_utc": "2026-10-03T00:28:39+00:00",
+ "health": "ok",
+ "inserted": 6,
+ "listing_status": "ok",
+ "lookback_days": 30,
+ "result": "ok",
+ "retrieved": 38,
+ "robots_status": "allowed",
+ "run_id": "37082076114",
+ "selected": 38,
+ "shadow_day": 44,
+ "started_utc": "2026-10-03T00:26:58+00:00",
+ "state_sha256_after": "15975d133d21e05c8c1ec6bb819cdd8bd001fcffe19455233bb7dd29b6d0238c",
+ "state_sha256_before": "435cec8a5341e723a2d05e4375f4ac4306946b60c6a7151ad5a9a3c2237263b4",
+ "stored_total": 78,
+ "target_date": "2026-10-02",
+ "target_date_source": "schedule-slot"
+}
