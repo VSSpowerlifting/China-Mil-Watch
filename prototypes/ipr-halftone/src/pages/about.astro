@@ -1,0 +1,90 @@
+---
+// IPR: About and methodology. Replaces the theme's colophon. The standing text is written here
+// on purpose; its substance follows the project's published methodology and doctrine.
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/common/PageHead.astro';
+import { site } from '../config';
+
+const sections = [
+  {
+    id: 'what',
+    title: 'What this is',
+    body: [
+      `${site.name} is an independent, source-grounded project that preserves and analyses official Indo-Pacific defense and security publication. It has two layers under one masthead: the record, an automated preservation of what official institutions publish, and Indo-Pacific Record Briefs, a human-controlled analytical collection.`,
+      'Its readers are people who need to know what a government actually said and when: researchers, policy staff, analysts and journalists.',
+    ],
+  },
+  {
+    id: 'preservation',
+    title: 'Source preservation',
+    body: [
+      'Each item is collected from the institution that published it and stored as published. The original-language text is the authoritative record in every case.',
+      'The collector identifies itself, respects robots.txt and does not defeat access challenges. A source that cannot be reached on those terms is recorded as blocked, not worked around.',
+    ],
+  },
+  {
+    id: 'layers',
+    title: 'Record, processing and analysis',
+    body: [
+      'Translation, summary and categorisation are model processing. They are labelled as automated and can be wrong. Items a model has flagged for attention are labelled model-flagged: a triage cue from software, not an editorial judgment.',
+      'Analysis is human and labelled as such. In a brief, every claim traces to a source record, and inference is set apart from evidence.',
+    ],
+  },
+  {
+    id: 'desks',
+    title: 'Desks',
+    body: [
+      'Collection is organised by desk. China and Singapore are live desks, collecting into the public record. Other desks may collect privately in shadow while they are evaluated; a shadow desk is not promoted automatically and is not described as qualified until it has met the stated criteria and been signed off.',
+      'Regional Security is an editorial grouping that reads across the collecting desks. The Archive desk points to the production record system.',
+    ],
+  },
+  {
+    id: 'editorial',
+    title: 'Editorial notes and corrections',
+    body: [
+      'Gaps in the record are recorded as warnings. They are not filled in from memory or from secondary reporting. Nothing is invented: not text, titles, dates, units, ranks or claims.',
+    ],
+  },
+  {
+    id: 'limits',
+    title: 'Limitations',
+    body: [
+      'The record can only hold what institutions publish. Official outlets do not report what their governments choose not to publicise, so the absence of coverage is a data point, not evidence that nothing happened.',
+      'The record is only as wide as its live desks. Governments without a live desk are outside it, and briefs say so rather than filling the gap.',
+    ],
+  },
+];
+---
+
+<Base
+  title="About & methodology"
+  description={`What ${site.name} is, how the record is kept, and where it stops.`}
+>
+  <div class="max-w-content mx-auto px-4 pt-10 sm:pt-16">
+    <PageHead
+      title="About & methodology"
+      lede="A source-linked record and analysis project focused on Indo-Pacific security, defense messaging, official records, and regional policy."
+      folio="Prototype page · the full methodology is published on the production site"
+    />
+
+    {sections.map((section) => (
+      <section class="mt-14 sm:mt-20" aria-labelledby={section.id}>
+        <h2
+          id={section.id}
+          class="font-ui border-b border-current pb-2 text-[0.8125rem] font-semibold tracking-[0.12em] uppercase"
+        >
+          {section.title}
+        </h2>
+        <div class="article-body mt-7">
+          {section.body.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </section>
+    ))}
+
+    <p class="mt-14 font-mono text-xs uppercase">
+      <a class="hover:text-primary" href={`${site.recordUrl}/methodology.html`}>
+        Full methodology on the production site ↗
+      </a>
+    </p>
+  </div>
+</Base>

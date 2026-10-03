@@ -1,0 +1,39 @@
+[
+  {
+    "id": "china",
+    "name": "China",
+    "blurb": "Official Chinese defense publication, preserved as published: PLA Daily, the Ministry of National Defense and state-linked military outlets.",
+    "order": 1,
+    "kind": "collecting"
+  },
+  {
+    "id": "singapore",
+    "name": "Singapore",
+    "blurb": "Singapore's Ministry of Defence as a publisher: releases, speeches and records, collected from MINDEF's own site.",
+    "order": 2,
+    "kind": "collecting"
+  },
+  {
+    "id": "regional-security",
+    "name": "Regional Security",
+    "blurb": "Cross-desk analysis of Indo-Pacific security statements and policy. An editorial grouping: it reads from the collecting desks and collects nothing of its own.",
+    "order": 3,
+    "kind": "editorial"
+  },
+  {
+    "id": "archive",
+    "name": "Archive",
+    "blurb": "How the record is kept, and where to search it. The archive itself is the production Indo-Pacific Record system.",
+    "order": 4,
+    "kind": "archive",
+    "notice": {
+      "title": "The archive stays where it is",
+      "body": "This prototype is a publication shell only. The Indo-Pacific Record archive, corpus search and source registry are the existing production system, rendered from the preserved record database, and are not re-implemented here. In this prototype they are reached by link; a later phase decides how the two connect.",
+      "links": [
+        { "label": "Archive", "href": "https://indopacificrecord.org/archive.html" },
+        { "label": "Corpus search", "href": "https://indopacificrecord.org/corpus.html" },
+        { "label": "Sources", "href": "https://indopacificrecord.org/sources.html" }
+      ]
+    }
+  }
+]

@@ -1,0 +1,43 @@
+---
+// IPR: the desk index. What each desk is in record terms, so a reader can tell a collecting
+// desk from an editorial grouping before trusting anything filed under it.
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/common/PageHead.astro';
+import { deskHref, getArticles, getDesks } from '../lib/content';
+import { t } from '../i18n';
+
+const desks = await getDesks();
+const articles = await getArticles();
+const ui = t(Astro.currentLocale);
+const kinds = {
+  collecting: 'Collecting desk · feeds the production record',
+  editorial: 'Editorial grouping · collects nothing of its own',
+  archive: 'Archive · links to the production record system',
+} as const;
+---
+
+<Base title="Desks" description="The Indo-Pacific Record desks, and what each one collects.">
+  <div class="max-w-content mx-auto px-4 pt-10 sm:pt-16">
+    <PageHead
+      kicker="Collection"
+      title="Desks"
+      lede="Collection is organised by desk. A collecting desk preserves one government's official defense publication; an editorial grouping reads across them. Status comes from the desk registry, never from this page."
+    />
+    <ol class="mt-12">
+      {desks.map((desk) => (
+        <li class="border-border border-b py-7 first:pt-0">
+          <p class="text-muted font-mono text-[0.6875rem] uppercase">{kinds[desk.data.kind]}</p>
+          <h2 class="font-headline mt-2 text-2xl font-bold">
+            <a class="hover:text-primary no-underline" href={deskHref(desk.id)}>
+              {desk.data.name}
+            </a>
+          </h2>
+          {desk.data.blurb && <p class="mt-2 leading-relaxed">{desk.data.blurb}</p>}
+          <p class="text-muted mt-3 font-mono text-[0.6875rem] uppercase">
+            {ui.stories(articles.filter((a) => a.data.desk.id === desk.id).length)} in this prototype
+          </p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</Base>

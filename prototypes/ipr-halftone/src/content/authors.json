@@ -1,0 +1,9 @@
+[
+  {
+    "id": "ipr-editors",
+    "name": "Indo-Pacific Record editors",
+    "role": "Editors",
+    "bio": "Prototype byline. Indo-Pacific Record publishes under an editorial byline; individual analyst credits are not modelled in this prototype.",
+    "order": 1
+  }
+]
