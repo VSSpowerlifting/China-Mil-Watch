@@ -822,6 +822,24 @@ class TestMobileMetadataHierarchy(BrowserCase):
             "headline starts at %.1fpx against a %.1fpx control"
             % (r["title"]["top"], c["title"]["top"]))
 
+    def test_the_masthead_disclosure_does_not_add_a_line_at_375(self):
+        """
+        The masthead's retrospective label used to trail the date span, which
+        alone fills a 375px line, so it wrapped onto a third line and pushed
+        the headline down 17.7px. The headline check above only caught it once
+        the retrospective page carried the same attribution row as the control:
+        until then the missing row cancelled the extra line by coincidence.
+        This pins the mechanism, so that cancellation cannot hide it again.
+        """
+        retro, control = self._dates()
+        mast = "() => document.querySelector('header.pw-masthead')" \
+               ".getBoundingClientRect().height"
+        r = self.measure("posts/%s.html" % retro, 375, mast)
+        c = self.measure("posts/%s.html" % control, 375, mast)
+        self.assertLessEqual(
+            r, c + 1.0,
+            "retrospective masthead is %.1fpx against a %.1fpx control" % (r, c))
+
     def test_the_metadata_block_stays_within_three_lines_at_375(self):
         retro, _ = self._dates()
         r = self.measure("posts/%s.html" % retro, 375, LAYOUT_JS)

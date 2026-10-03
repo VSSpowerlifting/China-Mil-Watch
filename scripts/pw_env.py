@@ -337,6 +337,11 @@ def source_veil_for_edition(date: str, sidecar=None,
             trail_hit = item
             break
 
+    # A file in this edition's media directory is insufficient provenance.
+    # Its article must also appear in this edition's own source trail.
+    if not trail_hit:
+        return None
+
     title = (trail_hit.get("title") or "").strip()
     subject = title if len(title) <= 64 else title[:63].rstrip() + "…"
     source_id = (trail_hit.get("source") or "").strip() or \

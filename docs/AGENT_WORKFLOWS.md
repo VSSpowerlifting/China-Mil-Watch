@@ -78,6 +78,8 @@ architecture.
 | **awesome-design-md / skillui** | keeping design documentation synchronized after approved visual changes | generating auto-extracted token dumps as doctrine (the 2026-07 skillui extraction was inaccurate and was retired — DESIGN_SYSTEM.md is authoritative) |
 | **Journalism skills** (fact-check-workflow, source-verification, newsroom-style, ai-writing-detox/humanizer) | editorial passes on edition prose, headline/dek treatment, corrections handling, evidence presentation | rewriting published editions without the analyst |
 | **graphify** | architecture/where-should-I-edit questions (`graphify-out/GRAPH_REPORT.md` first, then targeted rg); refresh with `graphify update .` after structural changes | decorative relationship visuals for the site |
+| **pla-watch-signal-veil** (project skill) | edition image selection, exact-article provenance, veil implementation and rendered contrast checks | borrowing a topical image or rewriting edition source data |
+| **ipr-design-references** (project skill) | bounded research on Refero, ChinaPower, Bellingcat, Impresso and institutional patterns before frontend tickets | copying another site's design or adding its dependencies |
 | **Ruflo (swarm)** | genuinely parallel work only — e.g., one agent per route family in a multi-route implementation, or research/verification/QA role separation on a publish | single-file fixes, nav changes, README edits, routine build errors |
 | **Headroom / TokenSave** | compressing long validator logs, screenshot batches, repeated repo inspection | authoritative reading of Chinese text, translations, dates, ranks, claims |
 

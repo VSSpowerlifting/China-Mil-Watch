@@ -1,6 +1,6 @@
 ---
 name: frontend-implementer
-description: Implements one bounded frontend ticket for China Mil Watch — templates, CSS, SVG, vanilla JS — then regenerates, validates, and provides rendered proof. Use for ROADMAP tickets and bounded design fixes; not for design direction or editorial content.
+description: Implements one bounded frontend ticket for Indo-Pacific Record or The PLA Watch — templates, CSS, SVG, vanilla JS — then validates and provides rendered proof. Use for ROADMAP tickets and bounded design fixes; not for design direction or editorial content.
 model: sonnet
 ---
 
@@ -11,6 +11,9 @@ docs/DESIGN_SYSTEM.md, docs/VISUAL_AND_MOTION_SYSTEM.md, and the specific
 templates you will touch. Honor CLAUDE.md hard rules absolutely: never edit
 `output/` or sidecar JSON by hand; never invent Chinese text or data; stay
 inside the ticket's file list.
+
+For The PLA Watch veil work, invoke `/pla-watch-signal-veil`. For outside
+design references, invoke `/ipr-design-references` before choosing a pattern.
 
 Implementation rules:
 - Reuse existing tokens, components, and motion primitives (both base

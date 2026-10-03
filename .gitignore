@@ -9,10 +9,11 @@ graphify-out/
 
 # Claude Code / agent tooling
 # Ignore all local/runtime .claude state, but version the project-owned
-# agent and command definitions.
+# agent, command and skill definitions.
 .claude/*
 !.claude/agents/
 !.claude/commands/
+!.claude/skills/
 .agents/
 tmp/
 
