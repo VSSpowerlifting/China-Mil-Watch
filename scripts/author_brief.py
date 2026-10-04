@@ -22,11 +22,11 @@ the entries the brief cites, removes the rest, writes the prose, and runs
 A single-desk brief is refused unless the exception is recorded with who
 approved it, when, and why. Issue numbers are not assigned here: a number is
 assigned at approval (`core.brief_contract.approve`), and none can be while
-No. 14's publication status is unreconciled.
+an existing issue's publication status is unreconciled.
 
 `check` holds that line for a number written by hand. It reads the existing
 issues' sidecars under `output/the-pla-watch/posts/` (read only) and reports a
-brief that carries an issue number while No. 14 is unreconciled, or a number an
+brief that carries an issue number while an existing issue is unreconciled, or a number an
 existing issue already holds, as breaking the contract. An unnumbered draft is
 unaffected.
 """

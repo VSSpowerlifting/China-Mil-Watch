@@ -91,15 +91,13 @@ REQUIRED_SECTIONS = ("title", "dek", "opening_note", "what_stood_out",
                      "why_it_matters", "what_was_routine",
                      "what_im_watching_next")
 
-#: Existing issues whose publication status the editorial record and the
-#: deployed site disagree on. No. 14: DECISION_LOG 2026-09-04 and PROJECT_STATE
-#: §4 record it as drafted and not published; the deployed site has served it
-#: since 2026-09-05 (gh-pages 57ca945f5), linked from the series index, archive,
-#: sitemap and feed, and no approval is on record. While any issue is listed
-#: here the next number is not known, so none is assigned. Clearing it is the
-#: owner's ruling, recorded in DECISION_LOG — never an edit made to unblock a
-#: build.
-UNRECONCILED_ISSUES = frozenset({14})
+#: Existing issues whose editorial record and deployed status disagree.
+#: No. 14 was served from 2026-09-05 without recorded approval. The owner
+#: approved its reviewed corrections on 2026-10-03 (DECISION_LOG), retaining
+#: its number and historical publication metadata. That ruling reconciles
+#: No. 14; it does not backdate approval. Any future unresolved issue listed
+#: here still blocks numbering until an owner ruling is recorded.
+UNRECONCILED_ISSUES = frozenset()
 
 
 def _unreconciled(value) -> frozenset:
