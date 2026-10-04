@@ -29,6 +29,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -106,8 +107,9 @@ class TestLoading(_Tmp):
         self.assertFalse(any(gp.BRIEFS_SOURCE.glob("*.json")),
                          "a real brief sidecar exists; this PR adds none")
 
-    def test_no_14_stays_unreconciled(self):
-        self.assertEqual(UNRECONCILED_ISSUES, frozenset({14}))
+    def test_owner_approval_reconciles_no_14(self):
+        self.assertEqual(UNRECONCILED_ISSUES, frozenset())
+        self.assertEqual(max(e["issue"] for e in self.editions), 14)
 
     def test_a_synthetic_fixture_is_refused_by_default(self):
         with self.assertRaises(bc.CollectionError) as cm:
@@ -128,7 +130,8 @@ class TestLoading(_Tmp):
         briefs = self.tmp() / "briefs"
         self.write_brief(briefs, "real-brief", real_brief(fixture_sidecar()))
         with self.assertRaises(bc.CollectionError) as cm:
-            bc.load_collection(self.editions, self.registry, briefs_dir=briefs)
+            bc.load_collection(self.editions, self.registry, briefs_dir=briefs,
+                               unreconciled=frozenset({14}))
         self.assertIn("unreconciled", str(cm.exception))
         self.assertIn("real-brief", str(cm.exception))
         # The owner's ruling, simulated: the same brief then loads.
@@ -194,7 +197,7 @@ class TestLoading(_Tmp):
                 self.assertIn("already assigned to an existing issue",
                               str(cm.exception))
 
-    def test_a_real_brief_with_a_new_number_is_still_refused_by_default(self):
+    def test_a_real_brief_with_a_new_number_is_refused_by_an_unresolved_gate(self):
         # The refusal comes from the contract itself, not only from the
         # loader's aggregate check, so a hand-numbered sidecar fails on its
         # own line and no later step can wave it through.
@@ -206,7 +209,7 @@ class TestLoading(_Tmp):
                 self.write_brief(briefs, "hand-numbered", brief)
                 with self.assertRaises(bc.CollectionError) as cm:
                     bc.load_collection(self.editions, self.registry,
-                                       briefs_dir=briefs)
+                                       briefs_dir=briefs, unreconciled=frozenset({14}))
                 self.assertIn("writing one by hand does not assign it",
                               str(cm.exception))
 
@@ -234,7 +237,7 @@ class TestLoading(_Tmp):
         self.write_brief(briefs, "marked", unmarked)
         with self.assertRaises(bc.CollectionError) as cm:
             bc.load_collection(self.editions, self.registry, briefs_dir=briefs,
-                               allow_synthetic=True)
+                               allow_synthetic=True, unreconciled=frozenset({14}))
         self.assertIn("unreconciled", str(cm.exception))
 
 
@@ -929,8 +932,10 @@ class TestUnapprovedBriefsStayOutOfPublicOutput(_Tmp):
         self.assertFalse((self.root / "unnumbered" / "briefs").exists())
 
     def test_an_approved_numbered_brief_stops_the_build_while_no_14_is_unreconciled(self):
-        with self.assertRaises(bc.CollectionError) as cm:
-            self.built("numbered", real_brief(fixture_sidecar()))
+        with mock.patch.object(gp, "load_collection",
+                               functools.partial(bc.load_collection, unreconciled=frozenset({14}))):
+            with self.assertRaises(bc.CollectionError) as cm:
+                self.built("numbered", real_brief(fixture_sidecar()))
         self.assertIn("unreconciled", str(cm.exception))
         self.assertFalse((self.root / "numbered" / "briefs").exists())
 

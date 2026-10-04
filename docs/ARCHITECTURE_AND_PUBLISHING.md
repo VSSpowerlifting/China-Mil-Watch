@@ -158,11 +158,11 @@ PROJECT_STATE.md, and none is ever cleared by invention.
    prose in the existing anatomy.
 3. `scripts/author_brief.py check` until it passes, then
    EDITORIAL_QA_CHECKLIST.md in full, then owner approval. `check` also refuses
-   a brief that carries an issue number while No. 14's publication status is
+   a brief that carries an issue number while an existing issue's publication status is
    unreconciled, and any number an existing issue already holds; an unnumbered
    draft is unaffected.
 4. Approval assigns the issue number (`core.brief_contract.approve`). It is
-   blocked while No. 14's publication status is unreconciled, and is not wired
+   blocked while any existing issue's publication status is unreconciled, and is not wired
    to a command until briefs have a route.
 5. Rendering, route, feed, sitemap and deploy for briefs are not built yet —
    the next phase.
