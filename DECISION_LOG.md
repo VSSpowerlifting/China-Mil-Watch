@@ -4,6 +4,30 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-03 — No. 14 approved; reviewed corrections authorized for publication
+
+**Owner ruling (Ben, 2026-10-03, America/Chicago).** “approve No. 14 and
+publish the corrections.” Approval was received at 20:25:46 CDT
+(2026-10-04 01:25:46 UTC), after the completed review and corrected draft.
+
+Retain No. 14, its title, week ending 2026-08-15, retrospective designation,
+masthead attribution and existing URL. Publish the bounded migration in
+`scripts/correct_no14.py` and the matching companion text, with a visible
+correction note dated 3 October 2026. The preparation and source checks are
+recorded in `docs/NO14_CORRECTION_PREPARATION_2026-10-03.md`.
+
+The approved corrections remove unsupported vessel classification, exercise
+baseline/definition and footage attribution claims; distinguish preserved
+titles from defective Global Times bodies; attribute ministry-stated aims;
+state China Desk corpus scope; and show all four sources. Historical source
+bodies, Chinese titles, URLs and publication dates remain evidence as captured.
+
+This ruling reconciles the mismatch between the earlier draft-only record
+and the page served since 2026-09-05. Approval is recorded now, not backdated.
+Clear No. 14 from `UNRECONCILED_ISSUES`; 15 becomes the next available number,
+assigned only on a subsequent Brief's approval. No new Brief is approved here.
+The separate week-ending 2026-08-22 decision remains open.
+
 ## 2026-10-02 — NSC public shadow settings; activation requires a separate PR
 
 **Owner ruling (Ben, 2026-10-02).** “Private” was earlier planning wording,

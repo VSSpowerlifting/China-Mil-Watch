@@ -64,7 +64,7 @@ prose remain human-controlled.
 - [ ] edition_type (significant/routine) matches what the prose argues.
 - [ ] Week-ending date is the Saturday. The issue number is assigned at
       approval — never in a draft, never reassigned, never read off the
-      week, and not at all while No. 14 is unreconciled
+      week, and not at all while any existing issue is unreconciled
       (`core/brief_contract.py`).
 - [ ] Cover image credit present and marked "visual context only".
 - [ ] LinkedIn .txt written, ends with the standing corrections invitation,

@@ -126,8 +126,10 @@ disclosed, and never backfilled.
   `core/brief_collection.py` and `site/preview/templates/brief.html`. Routes
   are `briefs/<slug>.html`, Analysis is the landing page, and
   `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23). The only
-  brief data is a synthetic test fixture. No. 14 remains unreconciled, and
-  `check` refuses a hand-numbered brief or an existing issue number. The
+  brief data is a synthetic test fixture. No. 14 was approved with corrections
+  on 2026-10-03 (DECISION_LOG); 15 is available for the next approved Brief.
+  `check` continues to refuse an existing issue number and enforces any future
+  unresolved publication gate. The
   predecessor pages' source chrome now identifies the series as historical
   and points to continuing Briefs; public `output/` still requires a separate
   authorized render and deploy. `scripts/generate_pla_watch.py` authors no
@@ -137,7 +139,8 @@ disclosed, and never backfilled.
   §4–5. The recommended candidate is Exercise Maritime Cooperation 2026 (China
   + Singapore, 2026-09-03 → 09-14). Nothing there is a draft, thesis or
   approval.
-* **One analysis publication (2026-09-30, source only, not rendered).**
+* **One analysis publication (source ruling 2026-09-30; render authorized
+  with No. 14 corrections on 2026-10-03).**
   The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
   historical portion of one unified analysis publication. Historical
   publication metadata and URLs are preserved for provenance and
@@ -158,14 +161,12 @@ disclosed, and never backfilled.
   and a collapsed block of citation text under the original anchors, no issue
   list). No page, navigation or footer links to it. The historical issue pages' shared
   footer (`site/templates/pla-watch-base.html`) now calls each an earlier
-  Brief in Indo-Pacific Record Briefs; that is a source change only, and the
-  pages are not re-rendered: public `output/` needs a separate authorized
-  render and deploy. No. 14 leads
-  without a recorded approval; its status is still unreconciled and is not
-  changed here. Briefs are marked turquoise on the band and compass blue on
+  Brief in Indo-Pacific Record Briefs; these source changes are included in the
+  authorized correction render. No. 14 leads with the owner approval recorded
+  on 2026-10-03. Briefs are marked turquoise on the band and compass blue on
   paper (DESIGN_SYSTEM §3).
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
-  published.** No. 14 is publicly served, with its status unreconciled (below).
+  published.** No. 14 is approved with corrections (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
   exists for the weeks ending 2026-08-22 or 08-29; w/e 2026-08-15 is No. 14
   (below). The owner ruling of 2026-09-03 (`DECISION_LOG.md`) prepares
@@ -173,19 +174,16 @@ disclosed, and never backfilled.
   editions**, rules **08-29 a disclosed gap** (36% of that window was never
   relevance-screened), and **resumes normal cadence at 09-05**. Restoring
   cadence remains the first priority in `docs/ROADMAP.md`.
-* **No. 14's publication status is unreconciled** (verified 2026-09-23;
-  DECISION_LOG 2026-09-23 point 9). Prepared as a draft for review (w/e
-  2026-08-15), it merged with PR #43 and has been publicly served since an
-  output-only deploy on 2026-09-05, linked from the series index, archive,
-  sitemap and feed. No approval and no completed `EDITORIAL_QA_CHECKLIST.md`
-  record exist. The 2026-09-04 ruling ("not published") is stale on
-  publication. Its status and number are unchanged until the owner rules.
-  Recommended path: an `EDITORIAL_QA_CHECKLIST.md` review of the page as
-  served, then a DECISION_LOG entry recording what the review found and the
-  owner's ruling. Approval is not recorded retroactively without that review,
-  and withdrawal is one option open to the owner, not a requirement.
-* **14 editions now exist in the tree, all publicly served** (No. 14 without
-  recorded approval, above). No. 14 is the first
+* **No. 14 approved with corrections (owner ruling 2026-10-03).** The
+  reviewed draft and correction packet are approved for publication with the
+  visible correction date 3 October 2026; see DECISION_LOG and
+  `docs/NO14_CORRECTION_PREPARATION_2026-10-03.md`. It retains number 14,
+  existing URL, week ending 2026-08-15 and retrospective identity. Its earlier
+  unapproved service since 2026-09-05 remains historical provenance; approval
+  is not backdated. The numbering gate is cleared; 15 is available but has
+  not been assigned. Publication verification belongs in the release record.
+* **14 editions now exist in the tree, all publicly served** (No. 14 now
+  approved with corrections, above). No. 14 is the first
   edition under the Indo-Pacific Record masthead and the first marked
   `publication_timing: retrospective`. Editions 1–13 keep the China Mil Watch
   identity on their own pages; site chrome is current throughout.
@@ -584,7 +582,8 @@ deploy gate's governed baseline is 10 warnings.
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
 1. Restore the human analytical publication cadence. The first brief is
-   gated on the No. 14 ruling for its number and approval. Candidate
+   ready for drafting after the No. 14 approval; it still needs its own
+   editorial review and approval before number 15 is assigned. Candidate
    questions are prepared (`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`).
 2. Close Singapore's unrecorded Day 30 human-review evidence gap. The packet
    is verified; the human review is not done.
