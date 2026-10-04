@@ -209,6 +209,7 @@
       color: var(--color-text-primary);
       line-height: 1.1;
       padding-bottom: 0.05em;
+      white-space: nowrap;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -232,7 +233,7 @@
       align-self: center;
     }
 
-    .pw-nav { display: flex; gap: 1.25rem; align-items: center; }
+    .pw-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; align-items: center; }
     .pw-nav a {
       color: var(--color-text-secondary);
       font-family: var(--sans);
@@ -268,7 +269,6 @@
     .pw-nav a:hover::after { transform: scaleX(1); }
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
-    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
     .pw-skip {
       position: absolute; left: -9999px; top: 0; z-index: 100;
       background: var(--color-bg-card); color: var(--color-text-primary);
@@ -334,6 +334,13 @@
       color: var(--color-text-secondary);
       line-height: 1.65;
       max-width: 520px;
+    }
+    .footer-desc a,
+    .footer-transparency a {
+      color: var(--color-text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--signal-bright);
+      text-underline-offset: 3px;
     }
     .footer-transparency {
       font-size: 0.78rem;
@@ -483,13 +490,17 @@
     }
     @media (max-width: 600px) {
       .pw-nameplate .pw-mark { font-size: 1.55rem; }
-      .pw-nav { gap: 0.85rem; }
-      .pw-nav a { font-size: 0.6rem; }
-      .pw-nav .nav-sep { display: none; }
-    }
-    @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active),
-      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
+      .pw-nav { gap: 0.1rem 0.3rem; width: 100%; }
+      .pw-nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--target-min);
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        padding: 0.55rem 0.35rem;
+        margin: 0;
+      }
+      .pw-nav a::after { bottom: 0.25rem; }
     }
 
     /* ── Reduced motion ─────────────────────────────────────────────────── */
@@ -552,7 +563,7 @@
       }
     }
     @media (prefers-reduced-motion: no-preference) {
-      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      .js:not(.no-anim) .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
       @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
     }
     /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
@@ -607,6 +618,42 @@
 .post-main { min-width: 0; }
 @media (max-width: 900px) {
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+}
+
+/* The desktop contents rail moves below the article on phones. A short,
+   static set of native anchors keeps the long issue navigable there. */
+.post-jump { display: none; }
+@media (max-width: 900px) {
+  .post-jump {
+    display: block;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.65rem 0;
+    margin: 0 0 1.6rem;
+  }
+  .post-jump-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+  }
+  .post-jump-links { display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; }
+  .post-jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: var(--color-text-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border);
+    text-underline-offset: 3px;
+  }
+  .post-jump a:hover { text-decoration-color: var(--signal-bright); }
 }
 
 /* ── Edition header — briefing head, structured not decorated ───────── */
@@ -1012,7 +1059,7 @@
 }
 .snapshot-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1.25rem;
 }
 .snap-stat .num {
@@ -1210,12 +1257,13 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
-.source-card-zh {
-  font-family: var(--zh);
+.source-card-original {
+  font-family: var(--sans);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   line-height: 1.55;
 }
+.source-card-original.is-zh { font-family: var(--zh); }
 .source-card-meta {
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -1430,6 +1478,7 @@
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  min-height: var(--target-min);
   padding: 0.35rem 0.8rem;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
@@ -1492,6 +1541,11 @@
   margin: -0.7rem 0;
 }
 .post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
+@media (max-width: 600px) {
+  .edition-nav { flex-direction: column; align-items: stretch; }
+  .edition-nav .next { text-align: left; margin-left: 0; }
+  .post-nav { flex-wrap: wrap; gap: 0.9rem 1.3rem; }
+}
 
 /* ── Print — single column brief ────────────────────────────────────── */
 @media print {
@@ -1532,16 +1586,16 @@
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
     <div class="pw-masthead-top">
-      <a href="../index.html" class="pw-nameplate" aria-label="The PLA Watch home">
+      <a href="../index.html" class="pw-nameplate" aria-label="The PLA Watch series home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
         <span class="pw-tag">A weekly publication of China Mil Watch</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
-        <a href="../index.html" >Latest Edition</a>
-        <a href="../archive.html" >Archive</a>
+        <a href="../index.html" >Series</a>
+        <a href="../archive.html" >Issues</a>
         <a href="../terms.html" >Terms</a>
-        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="../../analysis.html">Analysis</a>
         <a href="../../index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
@@ -1576,6 +1630,7 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
   <span class="meta-item">Covers <span class="num">28 June 2026</span> → <span class="num">4 July 2026</span></span>
 <span class="meta-item"><span class="num">7</span> days observed</span>  <span class="meta-item"><span class="num">40</span> articles analyzed</span>
   <span class="meta-item"><span class="num">1</span> model-flagged</span>
+    <span class="meta-item">PLA Daily (解放军报)</span>
 </div>
 <div class="nd-tickrow" aria-hidden="true">
 <i class="sig"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -1589,6 +1644,15 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
 
   <article class="post-main">
 
+
+    <nav class="post-jump" aria-label="Jump within this issue">
+      <span class="post-jump-label">In this issue</span>
+      <div class="post-jump-links">
+        <a href="#s-snapshot">Snapshot</a>
+<a href="#s-opening">Analysis</a>        <a href="#s-sources">Source trail</a>
+        <a href="#pw-cite">Citation</a>
+      </div>
+    </nav>
 
     <div class="cover-credit-note">
       <span class="label">Edition cover (link-preview image):</span>
@@ -1620,7 +1684,7 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
         <div class="snap-stat">
           <div class="num">1</div>
           <div class="label">Source</div>
-          <div class="sub">PLA Daily</div>
+          <div class="sub">PLA Daily (解放军报) in the trail</div>
         </div>
         <div class="snap-stat">
           <div class="num">7</div>
@@ -1629,17 +1693,17 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
         </div>
       </div>
       <div class="snap-bar">
-        <div class="snap-bar-label">Model-flagged vs. routine coverage</div>
+        <div class="snap-bar-label">Model flagging within articles analyzed for this issue</div>
         <div class="snap-bar-track">
           <div class="snap-bar-fill" style="width: 2.5%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
         <div class="snap-bar-legend">
           <span><span class="swatch swatch-sig"></span>Model-flagged (1)</span>
-          <span><span class="swatch swatch-rest"></span>Routine (39)</span>
+          <span><span class="swatch swatch-rest"></span>Not model-flagged (39)</span>
         </div>
       </div>
-      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
+      <p class="snap-note">These figures describe the articles analyzed for this issue, not institutional output or complete collection. “Model-flagged” is an automated triage cue, not an editorial judgment. The analysis in this issue is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
     <div class="post-body">
@@ -1688,91 +1752,104 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
         <div class="source-cards">
           <a class="source-card is-significant" href="http://www.81.cn/yw_208727/16470666.html" target="_blank" rel="noopener" style="--ni: 0;">
             <div class="source-card-title">PLA Southern Theater Command Organizes Combat Readiness Patrol (战备警巡) over Territorial Waters, Airspace, and Surrounding Areas of China&#39;s Huangyan Island</div>
-<div class="source-card-zh" lang="zh-Hans">中国人民解放军南部战区位中国黄岩岛领海领空及周边区域组织战备警巡</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">中国人民解放军南部战区位中国黄岩岛领海领空及周边区域组织战备警巡</div>
+            <div class="source-card-meta">
 <span class="sig-tag">Model-flagged</span>              <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470666.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16471664.html" target="_blank" rel="noopener" style="--ni: 1;">
             <div class="source-card-title">&#39;Two Excellents, One Advanced&#39; Profiles | National Outstanding Communist Party Member He Xianda: Writing Loyalty and Commitment Beneath the Launch Tower</div>
-<div class="source-card-zh" lang="zh-Hans">“两优一先”风采录丨全国优秀共产党员何贤达：发射架下书写忠诚担当</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">“两优一先”风采录丨全国优秀共产党员何贤达：发射架下书写忠诚担当</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471664.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16470320.html" target="_blank" rel="noopener" style="--ni: 2;">
             <div class="source-card-title">A Certain Army Aviation Brigade of the 73rd Group Army Focuses on System-Wide Training (体系练兵) and Builds a Learning and Exchange Platform</div>
-<div class="source-card-zh" lang="zh-Hans">第73集团军某陆航旅聚焦体系练兵搭建学习交流平台</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">第73集团军某陆航旅聚焦体系练兵搭建学习交流平台</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-29</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470320.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16471332.html" target="_blank" rel="noopener" style="--ni: 3;">
             <div class="source-card-title">What Are the Moving Stories Behind Two Honor Flags?</div>
-<div class="source-card-zh" lang="zh-Hans">两面荣誉旗帜的背后，有怎样的动人故事？</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">两面荣誉旗帜的背后，有怎样的动人故事？</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-03</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471332.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/wj_208567/16471235.html" target="_blank" rel="noopener" style="--ni: 4;">
             <div class="source-card-title">Marching Toward War! A Direct Look at the People&#39;s Armed Police Field Garrison Training Site</div>
-<div class="source-card-zh" lang="zh-Hans">向战而行！直击武警野外驻训现场</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">向战而行！直击武警野外驻训现场</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-02</span>            </div>
             <div class="source-card-domain">www.81.cn/wj_208567/16471235.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16470999.html" target="_blank" rel="noopener" style="--ni: 5;">
             <div class="source-card-title">Today, Naval Vessel Formation Departs for Hong Kong to Organize Open Visiting and Exchange Activities</div>
-<div class="source-card-zh" lang="zh-Hans">今日，海军舰艇编队起航赴香港组织开放参观交流活动</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">今日，海军舰艇编队起航赴香港组织开放参观交流活动</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470999.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16470917.html" target="_blank" rel="noopener" style="--ni: 6;">
             <div class="source-card-title">Raising the Banner and Leading in Battle: The Time Is Right to Forge the Joint Sword</div>
-<div class="source-card-zh" lang="zh-Hans">擎旗领战，联合砺剑正当时</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">擎旗领战，联合砺剑正当时</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-01</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470917.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16470596.html" target="_blank" rel="noopener" style="--ni: 7;">
             <div class="source-card-title">A Naval Aviation Unit Drives the Combat-Oriented Transformation of Aircraft Maintenance and Support——One Second Faster in Emergency Repair, One Point More in the Odds of Victory</div>
-<div class="source-card-zh" lang="zh-Hans">海军航空兵某部推动战机维修保障向战转型</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">海军航空兵某部推动战机维修保障向战转型</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-30</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470596.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16470176.html" target="_blank" rel="noopener" style="--ni: 8;">
             <div class="source-card-title">Golden Horn Bay Witnesses a New Voyage of Sino-Russian Naval Friendship</div>
-<div class="source-card-zh" lang="zh-Hans">金角湾见证中俄海军友谊新航程</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">金角湾见证中俄海军友谊新航程</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-06-28</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16470176.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16471727.html" target="_blank" rel="noopener" style="--ni: 9;">
             <div class="source-card-title">Chinese Naval Vessel Formation to Visit Vietnam</div>
-<div class="source-card-zh" lang="zh-Hans">中国海军舰艇编队将访问越南</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">中国海军舰艇编队将访问越南</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471727.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16471662.html" target="_blank" rel="noopener" style="--ni: 10;">
             <div class="source-card-title">A Certain Base of the Southern Theater Command Air Force Explores and Implements a New Model for Trainee Soldier Assignment</div>
-<div class="source-card-zh" lang="zh-Hans">南部战区空军某基地探索推行学兵分配新模式</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">南部战区空军某基地探索推行学兵分配新模式</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471662.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16471667.html" target="_blank" rel="noopener" style="--ni: 11;">
             <div class="source-card-title">One Case Reveals the Prevailing Winds; One Incident Rectifies the Soldiers&#39; Hearts</div>
-<div class="source-card-zh" lang="zh-Hans">一案鉴风向，一事正兵心</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">一案鉴风向，一事正兵心</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16471667.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/wj_208567/16471714.html" target="_blank" rel="noopener" style="--ni: 12;">
             <div class="source-card-title">In This Round of NCO Selection and Promotion, the Mobile Detachment of the PAP Chongqing General Corps Continues to Strengthen Conduct Building</div>
-<div class="source-card-zh" lang="zh-Hans">这次警士选晋，武警重庆总队机动支队持续强化风气建设</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">这次警士选晋，武警重庆总队机动支队持续强化风气建设</div>
+            <div class="source-card-meta">
               <span>PLA Daily (解放军报)</span>
 <span class="sep">·</span><span>2026-07-04</span>            </div>
             <div class="source-card-domain">www.81.cn/wj_208567/16471714.html ↗</div>
@@ -1805,6 +1882,7 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
     </div>
     <div class="post-nav post-nav--tight">
       <a href="../archive.html">&larr; Back to Archive</a>
+      <a href="../../analysis.html">Analysis &amp; Briefs &rarr;</a>
       <a href="../../index.html">Visit China Mil Watch &rarr;</a>
     </div>
   </article>
@@ -1835,7 +1913,7 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="../../methodology.html">Methodology</a>
+        This issue draws on daily monitoring. Its source trail lists selected linked records; it is not a complete account of the official record or a substitute for checking the original text. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
   </aside>
@@ -1846,16 +1924,17 @@ SCARBOROUGH SHOAL (HUANGYAN)<br>      CONTEXT, NOT EVIDENCE
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">This issue is an earlier Brief in <a href="../../analysis.html">Indo-Pacific Record Briefs</a>, originally published as The PLA Watch. Existing issues keep their original titles, issue numbers, and publishing attribution.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
+        Each edition's source trail identifies selected records used in its analysis; it is not a complete account of institutional output or monitored coverage. Original sources remain authoritative. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="../../index.html">Indo-Pacific Record — Daily Brief</a><br>
-      <a href="../../archive.html">Indo-Pacific Record — Archive</a><br>
-      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../analysis.html">Analysis &amp; Briefs</a><br>
+      <a href="../../index.html">Indo-Pacific Record — Home</a><br>
+      <a href="../../archive.html">Indo-Pacific Record — Records</a><br>
+      <a href="../../methodology.html">Methodology</a><br>
       <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="../../the-pla-watch/feed.xml">Atom feed</a>
     </div>
