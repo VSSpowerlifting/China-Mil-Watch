@@ -335,7 +335,9 @@ now enabled only under `shadow/ph_nsc/`; no Philippines production manifest
 or registry entry exists. State remains outside the checkout, captures retain
 exact bytes and hashes, ledgers preserve adapter window/policy evidence and
 post-ID provenance, and failed attempts push nothing. The dedicated adapter
-suite remains 101 tests; additional runner/workflow tests exercise fixtures
+suite is 103 tests (a 2026-10-04 focused review added two: markup the parser
+rejects is a status, not a raise; a repeated post ID under a new URL fails
+pagination); additional runner/workflow tests exercise fixtures
 and a local bare remote. Neither output nor the production database is changed.
 [Run 37072106688](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
 used collector `302a74555a3503ea344351b1c99c64c128911104`, explicit target

@@ -63,8 +63,8 @@ RULES THAT MATTER TO THIS FILE
 
 Deliberately absent: relevance filtering, translation, classification and any
 editorial judgement. Absent for later, with the reason recorded in
-`shadow/ph_nsc/README.md`: a runner, retries, `Crawl-delay`, percent-decoding
-of robots paths.
+`shadow/ph_nsc/README.md`: retries, `Crawl-delay`, percent-decoding of robots
+paths.
 """
 
 from __future__ import annotations
@@ -310,12 +310,19 @@ def looks_challenged(headers: Dict[str, str], text: str) -> bool:
     """
     if headers.get("cf-mitigated", "").lower() == "challenge":
         return True
-    soup = BeautifulSoup(text, "html.parser")
-    if soup.select("form#challenge-form, #cf-browser-verification"):
-        return True
-    if any(re.search(r"\b(?:window\.)?_cf_chl_opt\s*=", script.get_text(), re.I)
-           for script in soup.find_all("script")):
-        return True
+    try:
+        soup = BeautifulSoup(text, "html.parser")
+        if soup.select("form#challenge-form, #cf-browser-verification"):
+            return True
+        if any(re.search(r"\b(?:window\.)?_cf_chl_opt\s*=", script.get_text(), re.I)
+               for script in soup.find_all("script")):
+            return True
+    except Exception:
+        # bs4 raises ParserRejectedMarkup when html.parser refuses a body outright
+        # (`<![foo[` on CPython 3.9.6). That is no evidence of a challenge, and
+        # every caller reaches here before it can handle an exception; `extract`
+        # and the robots check still refuse the body on their own terms.
+        pass
     return not _THEME_BODY_RE.search(text) and bool(_CHALLENGE_RE.search(text))
 
 
@@ -510,7 +517,7 @@ class PHNscAdapter(SourceAdapter):
         self._last_request: Optional[float] = None
         self._rules: Optional[List[Tuple[bool, str]]] = None
         self._listing_ids: Dict[str, str] = {}
-        #: Populated by `discover()`; a runner would write it to the ledger.
+        #: Populated by `discover()`; the shadow runner writes it to the ledger.
         self.robots_status: Optional[str] = None
         self.listing_report: Dict[str, object] = {}
 
