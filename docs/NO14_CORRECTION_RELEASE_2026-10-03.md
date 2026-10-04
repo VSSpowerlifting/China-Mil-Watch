@@ -42,4 +42,19 @@ weekly pages onto the already-merged templates; it authors no new edition.
 The generated visual-context derivatives come from the repository's existing
 licensed editorial asset. Docs, source and output are separate commits.
 
-Publication verification and final CI result will be recorded after deployment.
+## Publication verification
+
+PR #98 merged to `main` as `5182c67bab92f8d9cba2bab78c59dd578ebec6aa` after the
+required GitHub Actions offline check passed all 3,087 tests. The validated
+rendered output was published to `gh-pages` at
+`40f47089addfbe47475238f169a5c591f955e533` with a non-force ref update from
+the prior deployment.
+
+The deployed raw edition at
+`https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html` was
+rechecked after the ref update: it contains “Correction — 3 October 2026,”
+the four-source China Desk snapshot, “Chinese Navy ship Honghe,” and the
+bounded language about preserved titles. It no longer contains the unsupported
+“replenishment ship Honghe” classification or the earlier blanket intent
+sentence. The existing No. 14 URL, number, dates and retrospective identity
+remain intact.
