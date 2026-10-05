@@ -105,8 +105,9 @@ Minimum useful set — three agents plus one human-in-the-loop role:
 
 ## 4. Project commands (`.claude/commands/`)
 
-- **/publish-edition** — the brief workflow end to end (scaffold → contract
-  check → editorial QA → stop before approval; briefs are not rendered yet).
+- **/publish-edition** — the brief workflow end to end (scaffold → schema/readiness
+  checks → editorial QA/private rendered review → authorized approval → render
+  and existing release path; stop only when actual approval is missing).
 - **/release-check** — the release-qa sweep on demand.
 
 Commands encode the repeatable workflow; agents supply the reviewer roles.
