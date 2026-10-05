@@ -45,6 +45,10 @@ originating institution's terms, not with this repository's.
 **Nothing here is a claim that government or ministry material is owned by this
 project.** It is not.
 
+**Map base.** The Desks-page map is drawn from Natural Earth country
+boundaries, which are in the public domain. The generalized geometry derived
+from them is part of the software under §1; it carries no boundary claim.
+
 ## 4. Underlying facts — owned by nobody
 
 Indo-Pacific Record claims no ownership over the underlying public facts: that
