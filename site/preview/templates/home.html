@@ -7,8 +7,12 @@
 {# The page's scripted motion: the home sections arriving, once. Synchronous
    in the head so the start-state class lands before first paint; it bails,
    leaving the finished page, without IntersectionObserver or when the reader
-   asks for reduced motion. #}
-{% block head_scripts %}<script src="reveal.js"></script>{% endblock %}
+   asks for reduced motion.
+
+   intro.js is the opening title (VISUAL_AND_MOTION_SYSTEM §1.1): this page
+   only, first in the head so its cover lands before first paint. It builds
+   everything it shows, so without JavaScript the page is simply the page. #}
+{% block head_scripts %}<script src="intro.js"></script><script src="reveal.js"></script>{% endblock %}
 {% block hero %}
 {# ── The opening (protected) ──────────────────────────────────────────────
    A display claim on the left, the dateline ledger on the right, and the

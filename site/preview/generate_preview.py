@@ -2774,6 +2774,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         encoding="utf-8")
     written.append("reveal.js")
 
+    # The homepage's opening title. Requested by home.html alone; no other
+    # page carries it.
+    (out_dir / "intro.js").write_text(
+        (Path(__file__).parent / "intro.js").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("intro.js")
+
     (out_dir / "corpus.html").write_text(
         env.get_template("corpus_weeks.html").render(page="corpus.html", **ctx),
         encoding="utf-8")
