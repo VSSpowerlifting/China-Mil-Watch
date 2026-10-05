@@ -78,6 +78,7 @@ from jinja2 import Environment, FileSystemLoader                    # noqa: E402
 from core.viewmodel import PublicView                               # noqa: E402
 from core.topography import topography_style                         # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
+from scripts.desk_map import layout as desk_map_layout              # noqa: E402
 
 TEMPLATES = Path(__file__).parent / "templates"
 DEFAULT_OUT = REPO_ROOT / "preview"
@@ -2492,6 +2493,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
+        # Where each desk's plate hangs on the Desks-page map; geography only.
+        "desk_map": desk_map_layout(desks),
         "live_desk_count": desks.collecting_count,
         "developing_desk_count": desks.not_collecting_count,
         "metrics": metrics,
@@ -2775,6 +2778,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "reveal.js").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("reveal.js")
+
+    # The homepage's opening title. Requested by home.html alone; no other
+    # page carries it.
+    (out_dir / "intro.js").write_text(
+        (Path(__file__).parent / "intro.js").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("intro.js")
 
     (out_dir / "corpus.html").write_text(
         env.get_template("corpus_weeks.html").render(page="corpus.html", **ctx),

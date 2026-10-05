@@ -555,6 +555,20 @@ Parsed for one labeled run and draws no bar for an unmeasured source; desk
 pages call the complement of analyzed records "Not analyzed" and say it is
 not a queue. Faint ledger ruling appears only in wide outer margins.
 
+**Desks map (2026-10-05, PR #104, owner-approved):**
+`desks.html` is now a Natural Earth map of the Indo-Pacific (DECISION_LOG
+2026-10-05). Each declared desk is a `section.desk` plate hung from its seat
+by a fine leader; plates sit in open water from 1100px, in bands above and
+below the frame from 760px, and become a list under the map below that.
+Scope and status explanations moved to a "What each desk reads" register
+under the map; the comparison and status tables are unchanged. Placement is in
+`desks/geography.json`; geometry is rebuilt with
+`python scripts/desk_map.py <countries-50m.json>`. `desks.html` grows from
+about 13 KB to about 92 KB (69 KB of inline map geometry), inside the 120 KB
+page budget. The custom-property guard
+(`test_every_custom_property_used_is_declared`) now also allows the plates'
+inline placement properties (`--w*`, `--m*`) and the page-set `--on`.
+
 **Homepage atlas experiment (2026-10-01):**
 `styles.css` replaces the home page's margin grid with a compact pale blue-gray
 vector field: thirteen closely spaced abstract contours and two polygon fills.
@@ -564,6 +578,13 @@ at reduced opacity. Narrower screens keep plain paper. No content, layout,
 database or `output/` change. Direction approved 2026-10-01; source
 implementation complete. Production output has not been regenerated or
 deployed.
+
+**Homepage opening title (2026-10-05, draft PR, not merged):**
+`site/preview/intro.js` adds a ~2.4s once-per-tab title over a procedural
+WebGL ocean on the homepage only (V&M §1.1). Its exceptions to the motion
+doctrine and the 10 KB JS budget are owner-approved for this component
+only (DECISION_LOG 2026-10-05); it skips once the page has painted. No
+content, database or `output/` change.
 
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —

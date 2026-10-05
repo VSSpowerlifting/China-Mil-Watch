@@ -1084,10 +1084,6 @@ main.home-atlas .opening::before { display: none; }
 .coverage-foot { margin: .9rem 0 0; font-size: .875rem; font-weight: 600; }
 
 /* ═══ Desks ══════════════════════════════════════════════════════════════ */
-.cards--desks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin: 1.2rem 0 2rem; }
-.cards--desks .card--desk { background: var(--surface); border: 1px solid var(--rule); border-top: 3px solid var(--ink); padding: 1.1rem 1.2rem 1rem; display: flex; flex-direction: column; min-width: 0; }
-.cards--desks .card--desk.is-shadow { border-top-color: var(--rule-strong); background: var(--bg); }
-.cards--desks .card--desk.is-blocked { border-top-color: var(--warning); background: var(--bg); }
 .card--desk h2.plain { margin: .35rem 0 .45rem; font-size: 1.4rem; }
 .card--desk h2.plain a { color: var(--ink); text-decoration: none; }
 .card--desk h2.plain a:hover { text-decoration: underline; }
@@ -1103,6 +1099,117 @@ main.home-atlas .opening::before { display: none; }
 .card--desk .stat-rows { max-width: none; margin-bottom: 0; }
 .card--desk .stat-row { padding: .3rem 0; }
 .card--desk .stat-row dt { font-size: .84375rem; }
+
+/* ═══ Desks map ══════════════════════════════════════════════════════════
+   The Desks page is a map: Natural Earth land under a quiet graticule, each
+   desk's country lightly toned, and its plate hung from the seat of its
+   institutions by a fine leader. Collecting desks get a filled point and a
+   solid rule; the rest a hollow point and a dashed one, so the distinction
+   never rests on colour. `--on` (set per desk by the page's own rule) lights
+   a plate, its leader, point and country together on hover or focus.
+   Mobile first: below 760px the plates are a list under the map. */
+.deskmap { margin: .2rem 0 2.4rem; }
+.deskmap-stage { position: relative; display: grid; gap: .75rem; }
+.deskmap-svg { display: block; width: 100%; height: auto; overflow: visible; border: 1px solid var(--rule); }
+.dm-sea { fill: color-mix(in srgb, var(--accent-tint) 62%, var(--bg)); }
+.dm-graticule { fill: none; stroke: var(--accent); stroke-opacity: .16; stroke-width: .5px; vector-effect: non-scaling-stroke; }
+.dm-land { fill: var(--surface); stroke: var(--rule-strong); stroke-width: .6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dm-borders { fill: none; stroke: var(--rule); stroke-width: .5px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dm-scale { display: none; }
+.dm-scale text { font-family: var(--mono); font-size: 15px; letter-spacing: .04em; fill: var(--muted); }
+.dm-country use {
+  fill: color-mix(in srgb, color-mix(in srgb, var(--accent) 14%, var(--surface)) calc(var(--on, 0) * 100%), var(--surface-inset));
+  stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--muted));
+  stroke-width: .7px; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  transition: fill var(--dur-fast) var(--ease-out), stroke var(--dur-fast) var(--ease-out);
+}
+.dm-leader {
+  display: none; fill: none; pointer-events: none;
+  stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink-2));
+  stroke-width: calc(.75px + var(--on, 0) * .75px); stroke-linejoin: miter; vector-effect: non-scaling-stroke;
+}
+.dm-leader.is-quiet { stroke-dasharray: 4 3; }
+.dm-anchor { pointer-events: none; }
+.dm-dot {
+  transform: scale(calc(17 + var(--on, 0) * 5));
+  fill: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink));
+  stroke: var(--surface); stroke-width: 1.5px; vector-effect: non-scaling-stroke;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.dm-anchor.is-quiet .dm-dot { fill: var(--surface); stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink-2)); stroke-width: 1.25px; }
+.dm-label { font-family: var(--sans); font-size: 54px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 14px; stroke-linejoin: round; }
+.dm-label.is-west { text-anchor: end; }
+
+.deskmap-plate {
+  min-width: 0; background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--rule));
+  border-top: 2px solid color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink));
+  padding: .55rem .8rem .5rem;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.deskmap-plate.is-shadow { border-top-color: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--rule-strong)); }
+.deskmap-plate.is-blocked { border-top-color: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--warning)); }
+.deskmap-plate h2.plain { margin: .2rem 0 .05rem; font-size: 1.25rem; line-height: 1.2; }
+.deskmap-plate h2.plain a { color: var(--ink); text-decoration: none; }
+.deskmap-plate h2.plain a:hover { text-decoration: underline; }
+.deskmap-seat { margin: 0; font-size: .8125rem; color: var(--ink-2); }
+.deskmap-seat span { margin-left: .3rem; font-family: var(--mono); font-size: .75rem; color: var(--muted); white-space: nowrap; }
+.deskmap-stats { margin: .4rem 0 0; padding: 0; }
+.deskmap-stats div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 .75rem; padding: .22rem 0; border-top: 1px solid var(--rule-soft); }
+.deskmap-stats dt { margin: 0; font-size: .6875rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.deskmap-stats dd { font-size: .8125rem; font-weight: 600; margin-left: auto; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
+.deskmap-enter { margin: .4rem 0 0; font-size: .8125rem; font-weight: 600; }
+.deskmap-enter a { display: inline-flex; align-items: center; gap: .3rem; min-height: 24px; }
+.deskmap-enter span { transition: transform var(--dur-fast) var(--ease-out); }
+.deskmap-enter a:hover span, .deskmap-enter a:focus-visible span { transform: translateX(3px); }
+.deskmap-plate.is-unplaced { margin: 0 0 1rem; max-width: 22rem; }
+
+.deskmap-key { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1.4rem; margin-top: .7rem; font-size: .8125rem; color: var(--ink-2); }
+.deskmap-key-item { display: inline-flex; align-items: center; gap: .45rem; }
+.deskmap-key-item svg { width: 28px; height: 10px; flex: none; }
+.deskmap-key-item line { stroke: var(--ink-2); stroke-width: 1; }
+.deskmap-key-item circle { fill: var(--ink); stroke: var(--surface); stroke-width: 1.5; }
+.deskmap-key-item.is-quiet line { stroke-dasharray: 4 3; }
+.deskmap-key-item.is-quiet circle { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.25; }
+.deskmap-key-note { flex-basis: 100%; max-width: var(--measure); color: var(--muted); }
+
+@media (min-width: 520px) and (max-width: 759.98px) {
+  .deskmap-stage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .deskmap-svg { grid-column: 1 / -1; }
+}
+@media (min-width: 760px) {
+  .deskmap-stage { display: block; }
+  .deskmap-plate {
+    position: absolute; z-index: 1;
+  }
+  .dm-label { display: none; }
+  .dm-dot { transform: scale(calc(6 + var(--on, 0) * 2)); }
+}
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  /* Tablet: the plates leave the map for two bands, above and below the
+     frame, each on a vertical leader; the map itself stays clear. */
+  .deskmap-stage { margin: 15rem 0 16rem; }
+  .deskmap-plate { width: 14.25rem; left: var(--ml); top: var(--mt); transform: translate(var(--mtx), var(--mty)); }
+  .dm-leader--mid { display: inline; }
+}
+@media (min-width: 1100px) {
+  .deskmap-stage { margin-top: 9rem; }
+  .deskmap-plate { width: 15.25rem; left: var(--wl); top: var(--wt); transform: translate(var(--wtx), var(--wty)); }
+  .dm-leader--wide { display: inline; }
+  .dm-scale { display: inline; }
+  .dm-dot { transform: scale(calc(5 + var(--on, 0) * 1.75)); }
+}
+
+.scope-register { margin: .6rem 0 2rem; padding: 0; }
+.scope-entry { display: grid; grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr); gap: .3rem 2rem; padding: 1rem 0; border-top: 1px solid var(--rule); }
+.scope-entry dt { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; margin: 0; font-family: var(--serif); font-size: 1.125rem; font-weight: 600; }
+.scope-entry dd { margin: 0; }
+.scope-entry dd p { margin: 0 0 .5rem; }
+.scope-entry .blocking { font-size: .875rem; color: var(--ink-2); }
+.scope-entry .card-foot { padding-top: 0; }
+@media (max-width: 759.98px) {
+  .scope-entry { grid-template-columns: minmax(0, 1fr); }
+}
 
 .blockers dt { margin-top: .9rem; }
 .blockers dd { margin: .25rem 0 0; color: var(--ink-2); }
@@ -1411,7 +1518,7 @@ main.home-atlas .opening::before { display: none; }
 .fieldname { font-family: var(--mono); font-size: .8125rem; white-space: nowrap; }
 .changelog { list-style: none; padding: 0; margin: 0; }
 .changelog li { padding: .8rem 0; border-bottom: 1px solid var(--rule-soft); }
-.corpus-states td.c-count { text-align: right; white-space: nowrap; }
+.corpus-states td.c-count { margin-left: auto; text-align: right; white-space: nowrap; }
 /* A week range never breaks mid-date, at any width. */
 .c-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .c-note { font-size: .875rem; color: var(--ink-2); }

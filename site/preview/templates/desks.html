@@ -9,50 +9,107 @@ with its own sources, its own coverage record, and its own limits. A desk appear
 its scope is declared, and is labeled according to what it actually does.</p>
 <p class="meta">{{ desks.declared_count }} declared ·
 {{ desks.collecting_count }} collecting into the record ·
-{{ desks.not_collecting_count }} not collecting. Statuses and source counts come from the desk
-registry and the manifests it points at; record counts come from the corpus, and only a collecting
-desk has one.</p>
+{{ desks.not_collecting_count }} not collecting.</p>
 </header>
+{# The map is the directory. Each declared desk is a plate hung from the place
+   its publishing institutions sit, by a leader drawn from `desks/geography.json`
+   through the same projection that drew the coastline (scripts/desk_map.py).
+   Everything a plate says still comes from the registry and the corpus; the
+   geography file only says where. Below 760px the plates become a list under
+   the map, and the map keeps the anchors.
+
+   Each plate is still a `section.desk`: the no-fabricated-coverage guards
+   split this page on it to check each desk's block in isolation. A desk that
+   does not collect shows "None collected" — never a zero, which would read as
+   a measurement nothing made. #}
+{% set placed = desk_map.desks %}
+<figure class="deskmap" aria-labelledby="deskmap-key">
+  <div class="deskmap-stage">
+    <svg class="deskmap-svg" viewBox="0 0 {{ desk_map.width }} {{ desk_map.height }}"
+         role="img" aria-label="Map of the Indo-Pacific marking where each desk's publishing institutions are based:{% for d in desks if d.slug in placed %} {{ d.name }}, {{ placed[d.slug].seat }}{{ '.' if loop.last else ';' }}{% endfor %}"
+         preserveAspectRatio="xMidYMid meet" focusable="false">
+      <clipPath id="dm-frame"><rect width="{{ desk_map.width }}" height="{{ desk_map.height }}"/></clipPath>
+      <g clip-path="url(#dm-frame)">
+{% include "_desk_map_geo.svg" %}
+      {% for d in desks if d.slug in placed %}
+      <a class="dm-country" href="{{ d.route }}" tabindex="-1" data-desk="{{ d.slug }}"><use href="#dm-geo-{{ d.slug }}"/></a>
+      {% endfor %}
+      </g>
+      <g class="dm-leaders">
+      {% for d in desks if d.slug in placed %}
+        <polyline class="dm-leader dm-leader--wide{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" points="{{ placed[d.slug].wide.points }}"/>
+        <polyline class="dm-leader dm-leader--mid{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" points="{{ placed[d.slug].mid.points }}"/>
+      {% endfor %}
+      </g>
+      {% for d in desks if d.slug in placed %}
+      <g class="dm-anchor{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" transform="translate({{ placed[d.slug].x }} {{ placed[d.slug].y }})">
+        <circle class="dm-dot" r="1"/>
+        <text class="dm-label{{ ' is-west' if placed[d.slug].label_west }}" x="{{ -30 if placed[d.slug].label_west else 30 }}" y="18">{{ d.name|replace(' Desk', '')|replace(' Reference', '') }}</text>
+      </g>
+      {% endfor %}
+    </svg>
+    {% for d in desks if d.slug in placed %}{% set m = placed[d.slug] %}
+    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
+      style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
+      <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+      <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
+      <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
+      <dl class="deskmap-stats">
+        <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
+        <div><dt>Last collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+      </dl>
+      <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
+    </section>
+    {% endfor %}
+  </div>
+  <figcaption id="deskmap-key" class="deskmap-key">
+    <span class="deskmap-key-item"><svg viewBox="0 0 28 10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5"/><circle cx="23" cy="5" r="3.2"/></svg>Collecting into the record</span>
+    <span class="deskmap-key-item is-quiet"><svg viewBox="0 0 28 10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5"/><circle cx="23" cy="5" r="3.2"/></svg>Declared, not collecting</span>
+    <span class="deskmap-key-note">Each point marks where a desk's publishing institutions are based, not an area
+    of coverage. Statuses come from the desk registry; record counts come from the corpus, and only a
+    collecting desk has one. Boundaries are Natural Earth 1:50m (public domain), generalized, showing
+    de facto lines; no boundary claim is made. Miller projection.</span>
+  </figcaption>
+</figure>
+{# Hover or focus on a plate, its leader, or its country lights all three. One
+   rule per placed desk, so the pairing comes from the same data as the map. #}
+<style>{% for slug in placed %}
+.deskmap:has([data-desk="{{ slug }}"]:is(:hover, :focus-within)) [data-desk="{{ slug }}"] { --on: 1; }{% endfor %}
+</style>
+{% for d in desks if d.slug not in placed %}
+<section class="desk desk--{{ d.status }} deskmap-plate is-unplaced" data-desk="{{ d.slug }}">
+  <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+  <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
+  <dl class="deskmap-stats">
+    <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
+    <div><dt>Last collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+  </dl>
+  <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
+</section>
+{% endfor %}
+
 {{ spine(desks, snapshot, corpus_total) }}
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
-  <ul><li><a href="#desk-directory">Declared desks</a></li>
+  <ul><li><a href="#desk-scopes">What each desk reads</a></li>
       <li><a href="#desk-comparison">Compare desks</a></li>
       <li><a href="#desk-statuses">Status meanings</a></li></ul>
 </nav>
 
-{# Cards first for scanning, then the same four desks as a table for
-   comparing them column by column. Both are generated from one loop over the
-   same registry rows, so they cannot disagree.
-
-   A desk that does not collect shows "None collected" and its blocking
-   condition — never a zero. A zero in a records column would read as a
-   measurement, and nothing measured it. #}
-<div id="desk-directory" class="cards cards--desks">
+<h2 id="desk-scopes">What each desk reads</h2>
+<dl class="scope-register">
 {% for d in desks %}
-  {# Still a `section.desk` element: the no-fabricated-coverage guards split
-     this page on it to check each desk's block in isolation, and a card is a
-     presentation of the same block rather than a different thing. #}
-  <section class="desk desk--{{ d.status }} card card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}">
-    <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
-    <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
-    <p class="card-prose">{{ d.scope }}</p>
-    <p class="blocking">{{ d.status_explanation }}</p>
-    <dl class="stat-rows">
-      <div class="stat-row"><dt>Sources configured</dt><dd>{{ d.configured_source_count }}</dd></div>
-      <div class="stat-row"><dt>Sources enabled</dt><dd>{{ d.enabled_source_count }}</dd></div>
-      <div class="stat-row"><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
-      <div class="stat-row"><dt>Last successful collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
-    </dl>
-    <p class="card-foot"><a href="{{ d.route }}">{{ d.name }} in full</a>{% if d.record_count %} · <a href="archive.html?desk={{ d.slug }}">Browse its records</a>{% endif %}</p>
-  </section>
+  <div class="scope-entry">
+    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></dt>
+    <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
+  </div>
 {% endfor %}
-</div>
+</dl>
 
 <h2 id="desk-comparison">Every desk, side by side</h2>
 <div class="table-scroll">
 <table class="stacking desk-table">
-  <caption>The same {{ desks.declared_count }} desks as the cards above. Only a
+  <caption>The same {{ desks.declared_count }} desks as the map above. Only a
   collecting desk has a record count.</caption>
   <thead>
     <tr><th scope="col">Desk</th><th scope="col">Status</th>

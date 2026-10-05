@@ -1,0 +1,138 @@
+{
+ "_comment": [
+  "WHERE EACH DESK SITS ON THE DESKS-PAGE MAP — geography and placement only.",
+  "",
+  "Nothing editorial lives here. Name, route, status, counts and scope come",
+  "from desks/registry.json and the database, exactly as on every other",
+  "surface. A registry desk with no entry here is still rendered on the",
+  "Desks page, in the list, with no map anchor; an entry here for a slug the",
+  "registry does not declare is ignored.",
+  "",
+  "countries  Natural Earth ISO 3166-1 numeric ids emphasised for the desk.",
+  "seat       where the desk's publishing institutions are based; the anchor",
+  "           is that place, not an area of coverage.",
+  "anchor     [lon, lat] of the seat, east-positive (Hawaii is 360-157.9).",
+  "card       where the desk's plate hangs at each layout (`wide` from 1100px,",
+  "           `mid` from 760px; below that the plates are a list).",
+  "           hang left|right: `at` is the [lon, lat] of the plate's top",
+  "             corner and the plate extends that way from it; the leader",
+  "             runs in along the plate's top rule.",
+  "           hang up|down: the plate sits above|below the seat with its",
+  "             bottom|top edge at `at`'s latitude (beyond the frame's edge",
+  "             puts it outside the map); the leader is vertical and meets",
+  "             the edge `align` (0-1) of the way across the plate.",
+  "",
+  "Rebuild the base geometry with: python scripts/desk_map.py <countries-50m.json>"
+ ],
+ "desks": {
+  "china": {
+   "countries": [
+    "156"
+   ],
+   "seat": "Beijing",
+   "anchor": [
+    116.4,
+    39.9
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      116.4,
+      46.5
+     ],
+     "hang": "up",
+     "align": 0.9
+    },
+    "mid": {
+     "at": [
+      116.4,
+      56
+     ],
+     "hang": "up",
+     "align": 0.9
+    }
+   }
+  },
+  "japan": {
+   "countries": [
+    "392"
+   ],
+   "seat": "Tokyo",
+   "anchor": [
+    139.7,
+    35.7
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      156,
+      44
+     ],
+     "hang": "right"
+    },
+    "mid": {
+     "at": [
+      139.7,
+      56
+     ],
+     "hang": "up",
+     "align": 0.12
+    }
+   }
+  },
+  "singapore": {
+   "countries": [
+    "702"
+   ],
+   "seat": "Singapore",
+   "anchor": [
+    103.8,
+    1.3
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      100,
+      -12
+     ],
+     "hang": "left"
+    },
+    "mid": {
+     "at": [
+      103.8,
+      -49
+     ],
+     "hang": "down",
+     "align": 0.7
+    }
+   }
+  },
+  "us-indopacific": {
+   "countries": [
+    "840"
+   ],
+   "seat": "Hawaii",
+   "anchor": [
+    202.1,
+    21.4
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      198,
+      6
+     ],
+     "hang": "left"
+    },
+    "mid": {
+     "at": [
+      202.1,
+      -49
+     ],
+     "hang": "down",
+     "align": 0.85
+    }
+   }
+  }
+ }
+}
