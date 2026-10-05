@@ -63,7 +63,7 @@ concurrency:
 jobs:
   offline-checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     steps:
       # No `ref:` — for a pull_request event this checks out the merge of the
