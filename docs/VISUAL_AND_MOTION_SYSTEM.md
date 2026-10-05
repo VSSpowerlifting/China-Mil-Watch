@@ -43,6 +43,37 @@ new work must reuse it, not reinvent it.
 - Prefer CSS/SVG. JS only for IntersectionObserver gating and interactions
   that provide analytical value (e.g., node highlighting).
 
+### 1.1 Opening title (homepage) — approved 2026-10-05 (DECISION_LOG)
+A ~2.4s brand introduction: "INDO-PACIFIC RECORD" / "Defense records.
+Regional context." in live HTML over an overhead procedural ocean with one
+small ship and its wake, then a dissolve into the unchanged homepage.
+Source: `site/preview/intro.js`, requested by `home.html` alone; contract
+in `tests/test_homepage_intro.py`.
+
+- **Never a gate.** Loaded `async`, so a slow or failed request for
+  `intro.js` never holds the homepage. It plays only if it runs before
+  the first contentful paint, covering the page from the start; once
+  anything has painted (or 2s after navigation with nothing painted) it
+  stands aside, so an already-visible homepage is never covered. It waits for nothing but the DOM
+  (1.5s cap) and the title face (300ms cap); hard 5s cap. Skip intro is
+  reachable at once; Escape dismisses. Every exit runs one teardown that
+  removes the overlay, the scroll lock, `inert`, and the injected style.
+- **Plays only for an arrival.** Homepage, once per tab session
+  (`sessionStorage`); skipped for a query or hash, back/forward, a
+  same-site referrer, a hidden tab, `prefers-reduced-motion`, an
+  automated browser (`navigator.webdriver`, so the rest of the browser
+  suite sees the real homepage), no storage, or no hardware WebGL.
+- **Rendering.** One WebGL1 fragment shader: directional wave trains plus
+  warped noise, Fresnel sky, sparse glitter; the wake (foam, aged band,
+  faint Kelvin arms) and hull are drawn in the ship's frame. No asset,
+  download, or license. Buffer capped at ~1.6 MP and DPR 1.5.
+- **Scoped exceptions to §1 and DESIGN_SYSTEM §8**, approved for this
+  component only (no precedent for any other): an animated ground, a sequence longer than 1.2s, canvas/WebGL,
+  generated imagery that imitates photography (it depicts no real event,
+  place, or vessel), the page hidden behind it while it plays, and a
+  separate script cap — `intro.js` ≤ 12,000 bytes (≈5 KB gzip), homepage
+  only, cached after the first visit.
+
 ## 2. Image & asset policy
 
 | Class | Use | Rules |

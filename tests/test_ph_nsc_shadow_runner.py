@@ -220,6 +220,17 @@ class TestRunner(RunnerCase):
 
 
 class TestSchedule(RunnerCase):
+    def setUp(self):
+        super().setUp()
+        # main() defaults --run-id, --event-name and --run-attempt from the
+        # Actions environment; a CI rerun (attempt 2) must not change a date.
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("GITHUB_RUN_ID", "GITHUB_EVENT_NAME")}
+        env["GITHUB_RUN_ATTEMPT"] = "1"
+        patcher = mock.patch.dict(os.environ, env, clear=True)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def invoke(self, *extra):
         real_run = runner.run
         with mock.patch.object(runner, "run", side_effect=lambda *a, **kw:

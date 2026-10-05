@@ -516,7 +516,7 @@ class TestItIsInert(unittest.TestCase):
     def test_it_declares_a_timeout(self):
         job = load_workflow()["jobs"]["offline-checks"]
         self.assertIsInstance(job["timeout-minutes"], int)
-        self.assertLessEqual(job["timeout-minutes"], 30)
+        self.assertLessEqual(job["timeout-minutes"], 35)
 
     CONCURRENCY_GROUP = "pr-offline-checks-${{ github.event.pull_request.number }}"
 
@@ -683,11 +683,12 @@ class TestBrowserBackedTestsActuallyRun(unittest.TestCase):
         The browser classes add roughly three minutes on a hosted runner. The
         old 15-minute ceiling was set against a run that skipped them; keeping
         it would trade a silent skip for a timeout. Still bounded — a runaway
-        browser must not hold a runner indefinitely.
+        browser must not hold a runner indefinitely. Raised to 35 on
+        2026-10-05: the suite alone reached 24 minutes on a hosted runner.
         """
         timeout = self.doc["jobs"]["offline-checks"]["timeout-minutes"]
-        self.assertGreaterEqual(timeout, 20)
-        self.assertLessEqual(timeout, 30)
+        self.assertGreaterEqual(timeout, 30)
+        self.assertLessEqual(timeout, 35)
 
     # ── and none of it widens the job ─────────────────────────────────────
     def test_the_browser_steps_introduce_no_action_and_no_secret(self):
