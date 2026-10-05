@@ -268,8 +268,14 @@ class HomeCase(unittest.TestCase):
             raise unittest.SkipTest("production database not present")
         cls.tmp = Path(tempfile.mkdtemp(prefix="c1-home-"))
         cls.out = cls.tmp / "build"
+        # These historical-issue contracts deliberately exercise the state
+        # before a native Brief leads. Real publication must not change that
+        # fixture; native-first behavior is covered by the publication suite.
+        cls.briefs = cls.tmp / "briefs"
+        cls.briefs.mkdir()
         gp.build(cls.out, gp.PUBLIC_TITLE, TRACKED_DB,
-                 snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+                 snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+                 briefs_dir=cls.briefs)
         cls.home = (cls.out / "index.html").read_text(encoding="utf-8")
         cls.data = gp.load_corpus(TRACKED_DB)
         cls.view = PublicView(TRACKED_DB)
@@ -2756,12 +2762,15 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
         import tempfile as _tf
         tmp = Path(_tf.mkdtemp(prefix="c1-editions-"))
         self.addCleanup(shutil.rmtree, tmp, True)
+        briefs = tmp / "briefs"
+        briefs.mkdir()
         original = gp.load_editions
         gp.load_editions = lambda root: list(editions)
         try:
             out = tmp / "build"
             gp.build(out, gp.PUBLIC_TITLE, TRACKED_DB,
-                     snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+                     snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+                     briefs_dir=briefs)
         finally:
             gp.load_editions = original
         return (out / page).read_text(encoding="utf-8")
