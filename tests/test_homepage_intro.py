@@ -447,7 +447,9 @@ class TestTheCompositionFits(IntroCase):
         super().start(page, path)
         page.clock.run_for(300)                       # the copy's font wait
         page.wait_for_selector("div.ipr-intro.is-text", state="attached", timeout=3000)
-        page.evaluate("document.getAnimations().forEach(a => a.finish())")
+        # Finish only the overlay's entrances; ambient page terrain loops forever.
+        page.locator('div.ipr-intro').evaluate(
+            "el => el.getAnimations({subtree: true}).forEach(a => a.finish())")
 
     def assert_ends_cleanly(self, page):
         page.clock.run_for(2500)

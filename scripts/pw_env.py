@@ -19,6 +19,7 @@ from jinja2 import Environment, FileSystemLoader
 from markupsafe import Markup, escape
 
 from config import SITE_ORIGIN
+from core.topography import topography_style
 
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "site" / "templates"
 
@@ -427,4 +428,5 @@ def make_pw_env() -> Environment:
     # og:image and a feed link all have to name the same host, and six copies
     # of a literal is how they stop doing that.
     env.globals["site_origin"] = SITE_ORIGIN
+    env.globals["topography_style"] = topography_style
     return env

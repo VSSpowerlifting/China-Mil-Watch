@@ -40,6 +40,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ root_path }}icon-16.png">
   <link rel="apple-touch-icon" href="{{ root_path }}apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="{{ site_origin }}/the-pla-watch/feed.xml">
+  <link rel="stylesheet" href="{{ root_path }}topography.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -620,7 +621,7 @@
     {% block extra_styles %}{% endblock %}
   </style>
 </head>
-<body>
+<body class="night-topography"{% if topography_style is defined %} style="{{ topography_style(page_url | default(active_page | default('the-pla-watch'))) }}"{% endif %}>
 {# Parity with the record site, which has carried one since launch. Seven
    navigation links and a masthead rule sit between the top of an edition and
    its first paragraph. #}
@@ -657,6 +658,7 @@
 {% block hero %}{% endblock %}
 
 <main id="main">
+  <div class="topography" aria-hidden="true"></div>
   {% block content %}{% endblock %}
 </main>
 

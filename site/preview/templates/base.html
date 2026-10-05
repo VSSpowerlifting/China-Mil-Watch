@@ -39,6 +39,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
+<link rel="stylesheet" href="{{ '../' if nested else '' }}topography.css">
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
@@ -155,7 +156,15 @@
   </div>
 </aside>
 {% endif %}
-<main id="main"{% block main_class %}{% endblock %}>
+{# A decorative profile follows the actual address, including nested pages.
+   It never represents geography, collection volume or analytical meaning. #}
+{% if brief is defined %}{% set terrain_key = brief.route %}
+{% elif source is defined %}{% set terrain_key = source.route %}
+{% elif record is defined %}{% set terrain_key = 'record/' ~ record.id %}
+{% elif week is defined %}{% set terrain_key = week.path ~ '-' ~ (page_no | default(1)) %}
+{% else %}{% set terrain_key = page %}{% endif %}
+<main id="main"{% if topography_style is defined %} style="{{ topography_style(terrain_key) }}"{% endif %}{% block main_class %}{% endblock %}>
+  <div class="topography" aria-hidden="true"></div>
 {% if review_mode %}<p class="wrap review-banner" role="note">Private editorial preview · draft content is unapproved and unpublished.</p>{% endif %}
 {% block hero %}{% endblock %}
   <div class="wrap">
