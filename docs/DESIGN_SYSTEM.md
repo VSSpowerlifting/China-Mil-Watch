@@ -303,11 +303,13 @@ One canonical mark, several derivatives, documented in full in
 - **Simplified derivative:** `ipr-compass-mark-small.svg` covers favicon sizes
   (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
   never a replacement, and never presented as the mark at display size.
-- **The brand gradient appears in exactly one place** — inside the mark itself.
-  The accent budget still forbids gradients as decoration anywhere else, with
-  one owner-approved exception (DECISION_LOG 2026-10-01): the Signal Veil
+- **The brand gradient belongs inside the mark itself.** The accent budget
+  forbids decorative gradients outside the owner-approved exceptions: the
+  Signal Veil (DECISION_LOG 2026-10-01)
   behind the home Indo-Pacific Record Briefs band, pure CSS, token colours,
-  inert, never on another surface. It does not repeal this rule elsewhere.
+  inert, never on another surface; and the shared abstract blue topographic
+  ground (DECISION_LOG 2026-10-05), with attenuated reading surfaces and slow
+  decorative motion under the fallbacks in VISUAL_AND_MOTION_SYSTEM §1.
 - `logo-icon.png`, `logo-wordmark.png`, `og-image.png` and `favicon.svg` are
   **retired**: the predecessor's eagle, its wordmark, and a screenshot of its
   homepage. They remain in `output/` only because pages not yet re-rendered

@@ -68,8 +68,8 @@
  * The same three families as Night Desk (DECISION_LOG 2026-09-26).
  *   --zh / --zh-serif  system CJK; the serif stack only at display size.
  *
- * No box shadows. No gradients except inside the compass mark and the veil
- * mask. Radius 2px. Motion is transform/opacity only and says what changed.
+ * No box shadows. Gradients belong to the compass, veils and shared
+ * topographic ground. Radius 2px. Motion is transform/opacity only.
  */
 
 :root {
@@ -144,8 +144,6 @@
   --accent-rule:    #BFD2DB;
   --band-dek:       #D6D2C8;
 
-  /* Static abstract contours and polygon washes; homepage ground only. */
-  --home-atlas: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221440%22%20height%3D%221600%22%20viewBox%3D%220%200%201440%201600%22%3E%3Cg%20fill%3D%22%23cbdfe3%22%20fill-opacity%3D%22.22%22%3E%3Cpath%20d%3D%22M0%2040L270%200%20510%20175%20295%20440%200%20350Z%22%2F%3E%3Cpath%20d%3D%22M1440%20560L1105%20475%20955%20700%201150%20965%201440%20875Z%22%2F%3E%3Cpath%20d%3D%22M0%201135L325%201000%20670%201290%20425%201525%200%201440Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23668f9e%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%221%22%3E%3Cg%20transform%3D%22translate%28440%200%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%281000%20500%29%20scale%28-1%201%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28440%201010%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 
   /* ── Type ── */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -273,21 +271,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .wrap { max-width: var(--shell); margin: 0 auto; padding: 0 var(--gutter); }
 main { display: block; padding: 2rem 0 4rem; min-width: 0; }
 main.leads-with-hero { padding-top: 0; }
-
-/* Fine ledger ruling lives only in wide outer margins (PR #80, kept as
-   merged). Reading surfaces, evidence plates, and phone layouts stay on
-   uninterrupted paper. */
-@media (min-width: 1320px) {
-  main {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Cpath d='M87.5 0V88M0 87.5H88' fill='none' stroke='%23CFC9BC' stroke-opacity='.36' stroke-width='1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-position: top center;
-  }
-  main > .wrap {
-    background: var(--bg);
-    border-inline: 1px solid var(--rule-soft);
-  }
-}
 
 /* ═══ Type ═══════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 600; }
@@ -991,25 +974,11 @@ html.js .nojs-note { display: none; }
   }
 }
 
-/* Homepage ground: several abstract contour fields across the full paper
-   surface. A vertical repeat continues the field as the record grows; no
-   coordinates, geographic borders, raster request, gradient or motion.
-   Dark analysis and reading panels keep their own opaque surfaces. */
-main.home-atlas {
-  background-image: var(--home-atlas);
-  background-repeat: repeat-y;
-  background-position: center top;
-  background-size: max(100%, 1100px) auto;
-}
-main.home-atlas .opening { background-color: transparent; }
+/* The shared topographic ground owns the paper pattern. The protected
+   opening keeps its photographic veil and its existing geometry. */
 main.home-atlas .opening::before { display: none; }
-main.home-atlas > .wrap { background: transparent; }
 @media (min-width: 901px) {
   main.home-atlas .veil { opacity: .32; }
-}
-@media (max-width: 600px) {
-  /* A finer crop puts the quiet fields behind narrow reading columns. */
-  main.home-atlas { background-size: 760px auto; }
 }
 
 /* ═══ Home: the lead record and the register ═════════════════════════════
@@ -1827,9 +1796,4 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   thead { break-after: avoid; break-inside: avoid; }
   .table-scroll { overflow: visible; }
   h1, h2, h3 { break-after: avoid; }
-}
-
-@media print, (forced-colors: active) {
-  main.home-atlas { background-image: none; }
-  main.home-atlas .opening::before { display: none; }
 }

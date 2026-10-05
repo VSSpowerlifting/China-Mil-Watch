@@ -22,6 +22,21 @@ title ruling below.
 4. `intro.js` is unchanged and keeps its own styles; its computed type is
    verified identical before and after.
 
+## 2026-10-05 — Shared blue topographic backgrounds and gentle motion
+
+**Owner request (Benjamin Yang, Codex chat
+`01a10c6d-963d-7f61-8947-2dd75fe16ffe`).** Extend the homepage's blue
+geometric/topographic treatment across all subpages, replacing the margin
+grids; vary each page's profile subtly through scale, composition and
+gradients; animate the backgrounds slightly; add background detail to the
+large dark Analysis block. This authorizes the scoped gradient and ambient
+background-motion exception in `docs/VISUAL_AND_MOTION_SYSTEM.md`, retaining
+static no-JS, reduced-motion and `.no-anim` fallbacks and removing decoration
+in print and forced colors. Ben subsequently approved the private preview and
+explicitly authorized committing and pushing the source and docs in the same
+chat, then requested syncing the branch with main and opening a pull request.
+Production regeneration, merge into main and deployment remain unauthorized.
+
 ## 2026-10-05 — Homepage opening title approved; scoped exceptions granted
 
 **Owner ruling (Ben, 2026-10-05, PR #103 review).** The opening title's

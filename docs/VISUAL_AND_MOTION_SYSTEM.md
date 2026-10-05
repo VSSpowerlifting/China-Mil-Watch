@@ -18,8 +18,8 @@ new work must reuse it, not reinvent it.
 - **Ink node**: `.ink-node` scale 0→1, 0.5s, stagger `--ni`, capped delay.
 - **Rule wipe**: eyebrow/section-rule `::before` scaleX 0→1, 0.7s.
 - **Bar fill**: `.cat-bar-fill`/`.snap-bar-fill` scaleX, 0.8–0.9s.
-- **Ambient pulse**: `.pulse-dot` opacity 3.4s loop — the only infinite
-  animation; one instance per page maximum.
+- **Ambient pulse**: `.pulse-dot` opacity 3.4s loop; one instance per page
+  maximum. Abstract page terrain has the separate owner-authorized exception below.
 - **Progress rail** (PW posts): CSS `animation-timeline: scroll()`, no JS.
 
 ### Categories and budgets
@@ -38,10 +38,27 @@ new work must reuse it, not reinvent it.
 - Every page must satisfy three fallback paths: no-JS, `.no-anim`,
   `prefers-reduced-motion` (global kill-switch exists).
 - Prohibited: bouncing, floating cards, glow, cursor-following, radar
-  sweeps, animated backgrounds, entrance animations >1.2s, per-paragraph
+  sweeps, animated backgrounds outside the terrain exception below, entrance animations >1.2s, per-paragraph
   animation, autoplaying video, parallax.
 - Prefer CSS/SVG. JS only for IntersectionObserver gating and interactions
   that provide analytical value (e.g., node highlighting).
+
+### Abstract page terrain (owner request, 2026-10-05)
+
+Ben authorized blue geometric/topographic backgrounds across all subpages,
+subtle page-specific variation, gentle animation, and texture on the dark
+Analysis band. This supersedes the older blanket background-motion ban for
+this treatment only. `site/preview/topography.css` is shared by record pages,
+native Briefs and historical Night Desk pages; `core/topography.py` selects
+stable crops, scale, reflections, gradient positions and 38–56s periods from
+page addresses. These contours represent no geography or data.
+
+Only decorative layers drift (±8px horizontally, ±10px vertically) or vary
+opacity; reading paper attenuates the field, and content and photographs stay
+still. CSS gates motion on scripting enabled and reduced motion off, without
+adding scripts to week shards. No-JS, `.no-anim`, unsupported scripting media
+queries and reduced motion keep the finished artwork static. Print and forced
+colors remove it. Retain the existing source-photo and focus contracts.
 
 ### 1.1 Opening title (homepage) — approved 2026-10-05 (DECISION_LOG)
 A ~2.4s brand introduction: "INDO-PACIFIC RECORD" / "Defense records.

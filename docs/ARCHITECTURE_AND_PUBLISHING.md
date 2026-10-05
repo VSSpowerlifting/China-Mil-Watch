@@ -38,6 +38,12 @@ re-render. Sidecar JSON under `output/.../posts/*.json` is generated at
 publish but is the *canonical record* — edit only via deliberate,
 validated migration scripts, never casually.
 
+The shared decorative background source is `site/preview/topography.css`;
+the record renderer copies it to the site root. Both the record base and
+historical Night Desk base link that stylesheet. `core/topography.py` supplies
+deterministic address-specific profiles to both Jinja environments. Historical
+HTML still requires its normal sidecar re-render to pick up base-template edits.
+
 ## 3. Commands
 
 ```bash
