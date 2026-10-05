@@ -1777,20 +1777,25 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
                 }""")
                 with self.subTest(width=width):
                     self.assertEqual(state['display'], 'none')
-                    self.assertNotEqual(state['heroGround'], 'rgba(0, 0, 0, 0)')
+                    # The paper field now continues through the hero instead
+                    # of being covered by its old solid ground.
+                    self.assertEqual(state['heroGround'], 'rgba(0, 0, 0, 0)')
                     self.assertNotEqual(state['bannerGround'], 'rgba(0, 0, 0, 0)')
                     self.assertLessEqual(state['overflow'], 0)
                     self.assertEqual(state['image'], 'none')
-                    if width < 1200:
-                        self.assertEqual(state['atlas'], 'none')
-                    else:
-                        self.assertIn('data:image/svg+xml', state['atlas'])
-                    if width >= 1200:
-                        self.assertTrue(all(v.strip() == 'no-repeat'
-                                            for v in state['tiled'].split(',')))
+                    self.assertIn('data:image/svg+xml', state['atlas'])
+                    self.assertEqual(state['tiled'], 'repeat-y')
                 page.emulate_media(media='print')
                 self.assertEqual(page.evaluate("""() => getComputedStyle(
+                  document.querySelector('main')).backgroundImage"""), 'none')
+                self.assertEqual(page.evaluate("""() => getComputedStyle(
                   document.querySelector('.opening'), '::before').display"""), 'none')
+                page.emulate_media(media='screen', forced_colors='active')
+                self.assertEqual(page.evaluate("""() => getComputedStyle(
+                  document.querySelector('main')).backgroundImage"""), 'none')
+                page.emulate_media(forced_colors='none', reduced_motion='reduce')
+                self.assertIn('data:image/svg+xml', page.evaluate("""() => getComputedStyle(
+                  document.querySelector('main')).backgroundImage"""))
                 page.goto('http://127.0.0.1:%d/analysis.html' % self.port, wait_until='load')
                 self.assertEqual(page.locator('main.home-atlas').count(), 0)
                 self.assertNotIn('668f9e', page.evaluate("""() => getComputedStyle(
@@ -1838,7 +1843,8 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
         the ONLY raster allowed to paint behind text, and it is inert —
         `pointer-events: none`, `aria-hidden`, and behind every text layer, so
         it can never take a click or reach the accessibility tree. The new
-        vector ruling is allowed only on main, under opaque reading paper.
+        vector field is allowed only on main; reading panels and the dark
+        Briefs band keep their own grounds.
 
         The contrast property the ban existed to protect is measured directly,
         from the pixels each glyph actually covers, in
@@ -1864,7 +1870,7 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
             finally:
                 context.close()
 
-    def test_margin_ruling_stays_outside_reading_paper_and_phone(self):
+    def test_contour_field_continues_through_paper_without_extra_painters(self):
         for width in (1920, 375):
             context, page = self.page_at(width, 900)
             try:
@@ -1893,16 +1899,12 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
                 }""")
                 with self.subTest(width=width):
                     self.assertTrue(state["wraps"], "no reading paper")
-                    if width == 1920:
-                        self.assertIn("data:image/svg+xml", state["image"])
-                        self.assertEqual(state["gridPainters"], 1)
-                        self.assertTrue(all(w["opaque"] and w["inset"] and
-                                            w["image"] == "none"
-                                            for w in state["wraps"]),
-                                        "margin ruling reaches reading paper")
-                    else:
-                        self.assertEqual(state["image"], "none")
-                        self.assertEqual(state["gridPainters"], 0)
+                    self.assertIn("data:image/svg+xml", state["image"])
+                    self.assertEqual(state["gridPainters"], 1)
+                    self.assertTrue(all(not w["opaque"] and
+                                        w["image"] == "none"
+                                        for w in state["wraps"]),
+                                    "paper sections cover the shared field")
             finally:
                 context.close()
 
