@@ -125,7 +125,7 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **First native Brief: No. 15 approved; deployment pending verification.**
+* **First native Brief: No. 15 published and verified live on 2026-10-05.**
   `briefs/maritime-cooperation-2026.json` recovers the five-record host draft
   and finishes its prose, source comparison and native presentation. It
   covers 2026-09-03 → 09-19, selecting statements dated 09-05 → 09-14.
@@ -136,8 +136,12 @@ disclosed, and never backfilled.
   verification. The command assigned No. 15; public output now includes the
   article, homepage/Analysis lead, native feed and sitemap. This supersedes
   the missing-approval gate without claiming recovery of the older fourteen-source
-  cloud draft. Current remaining work: required checks, merge/deploy and actual
-  live verification. See the release review and DECISION_LOG for authorization.
+  cloud draft. PR #100 merged at `0e21083d6510c28e8f02daeca64e3a3d074ac8bd`;
+  output-only deployment 37273065804 passed. Article, homepage, Analysis,
+  feed, sitemap, both stylesheets and photograph returned HTTP 200 and matched
+  committed bytes (2026-10-05 07:11 UTC). Required CI passed 3,156 tests,
+  two skipped, and validation with ten historical warnings. Desktop/mobile
+  live review passed. See the release review and DECISION_LOG for authorization.
 * **Brief publication commands are complete.** `scripts/author_brief.py`
   distinguishes `check` (schema), `ready` (finished prose/citations and stored
   source parity), and `approve` (actual human authorization and whole-collection
@@ -148,7 +152,9 @@ disclosed, and never backfilled.
   Existing PR/deploy workflows apply, with no paid API call for publication.
   Native and predecessor catalog/feed ordering follows the coverage endpoint.
   `scripts/generate_pla_watch.py` still authors no new issue. The whole-background
-  topographic treatment is the next separate frontend task, outside this release.
+  topographic treatment is a separate, owner-authorized frontend release in
+  PR #101; its final `.12` opacity, measured review and release receipts are
+  documented in `docs/HOMEPAGE_TOPOGRAPHIC_REVIEW_2026-10-05.md` and PR #101.
 * **One analysis publication (source ruling 2026-09-30; render authorized
   with No. 14 corrections on 2026-10-03).**
   The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
@@ -157,8 +163,8 @@ disclosed, and never backfilled.
   compatibility, but the site does not present The PLA Watch as a separate
   archive product (DECISION_LOG 2026-09-30). Analysis opens on the Briefs
   masthead and the latest Brief, which is the newest item of the whole
-  collection by publication date (week ending), never by issue number: with
-  No. 15 now leads the local release output. The catalog, "All Briefs", lists every
+  collection by publication date (week ending), never by issue number.
+  No. 15 now leads the public site. The catalog, "All Briefs", lists every
   item newest first (number then slug only break ties), the earlier issues
   among them with "From the former series The PLA Watch · published under/by
   <masthead>" as a secondary line; there is no
