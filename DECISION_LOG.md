@@ -4,6 +4,32 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-05 — Desks page becomes a map (design change; owner-approved)
+
+**Owner-approved 2026-10-05 after screenshot review at 1440/1100/1024/768/375
+(PR #104).** The Desks page's card grid is replaced by a map of the
+Indo-Pacific with each declared desk's plate hung from where its publishing
+institutions sit. Constraints this sets for later work:
+
+1. **One map base, rights-cleared.** Natural Earth 1:50m country boundaries
+   (public domain; world-atlas 2.0.2 TopoJSON), clipped to 60°E–146°W,
+   54°N–47°S, generalized, Miller projection. `scripts/desk_map.py` writes
+   the committed `site/preview/templates/_desk_map_geo.svg`; the raw TopoJSON
+   is never committed and the site build never needs it. Boundaries are
+   Natural Earth's de facto lines and the page says no boundary claim is made.
+2. **Geography is not editorial.** `desks/geography.json` holds only the
+   Natural Earth country ids, the seat, its coordinates and plate placement.
+   Names, statuses, counts and scope stay in the registry and corpus.
+   `tests/test_desk_map.py` requires every public registry desk to be placed
+   and nothing else.
+3. **A point is a seat, not coverage.** Beijing, Tokyo, Singapore and Hawaii
+   (the US reference desk's command headquarters) mark where institutions are
+   based. Collecting desks get a filled point and solid leader; the others a
+   hollow point and dashed leader, so status never rests on colour.
+4. **No script.** Hover/focus pairing is CSS `:has()` from one generated rule
+   per desk; the map is `role="img"`, and its country links are mouse-only
+   duplicates of the plate links. The page reads fully without the map.
+
 ## 2026-10-05 — First native Brief approved; release and next frontend task authorized
 
 **Owner ruling (Benjamin Yang, 2026-10-05, America/New_York).** The exact

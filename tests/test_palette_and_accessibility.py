@@ -241,8 +241,12 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
         css = CSS.read_text(encoding="utf-8")
         used = set(re.findall(r"var\((--[a-z0-9-]+)", css))
         declared = set(self.t)
-        # Set inline per element by the templates, never on :root.
-        local = {"--ri", "--i", "--h"}
+        # Set inline per element by the templates, never on :root. The Desks
+        # map adds each plate's placement at the wide (--w*) and tablet (--m*)
+        # layouts, and the per-desk `--on` that the page's own rule sets.
+        local = {"--ri", "--i", "--h",
+                 "--wl", "--wt", "--wtx", "--wty",
+                 "--ml", "--mt", "--mtx", "--mty", "--on"}
         self.assertEqual(sorted(used - declared - local), [])
 
 
