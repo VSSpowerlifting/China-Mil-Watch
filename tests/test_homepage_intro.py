@@ -418,18 +418,19 @@ class TestTheIntroRequestNeverHoldsThePage(IntroCase):
                 self.assert_clean(page)
 
     def test_arriving_just_after_the_first_paint_it_fades_in_over_the_page(self):
-        # The arrival window is measured from the first contentful paint;
-        # the test moves that paint to the moment it releases the request,
-        # so the window does not depend on how fast this machine is.
+        # The arrival window is measured from the first contentful paint.
+        # Once released, the paint always reads as 100ms old, so the test
+        # does not depend on how fast this machine fetches and compiles.
+        # (The window's far edge is the stalled-request test's job.)
         page = self.page(extra="""const byName = performance.getEntriesByName.bind(performance);
             performance.getEntriesByName = (name, type) =>
-              name === 'first-contentful-paint' && window.__fcp != null
-                ? [{name, startTime: window.__fcp}] : byName(name, type);""")
+              name === 'first-contentful-paint' && window.__fcpAge != null
+                ? [{name, startTime: performance.now() - window.__fcpAge}] : byName(name, type);""")
         held = []
         page.route("**/intro.js", lambda route: held.append(route))
         page.goto(self.url(), wait_until="domcontentloaded")
         page.wait_for_function(PAINTED, timeout=3000)
-        page.evaluate("window.__fcp = performance.now()")
+        page.evaluate("window.__fcpAge = 100")
         held[0].continue_()
         page.wait_for_selector("div.ipr-intro", state="attached", timeout=3000)
         self.assertTrue(page.evaluate("!!window.__late"))
