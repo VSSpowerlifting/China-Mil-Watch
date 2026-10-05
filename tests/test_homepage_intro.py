@@ -47,10 +47,17 @@ HTMLCanvasElement.prototype.getContext = function (type, opts) {
   return gc.call(this, type, opts);
 };
 // Which exit ran: dismiss() fades the overlay (`is-out`) first, while the
-// cap, an error and context loss tear it down at once.
+// cap, an error and context loss tear it down at once. And how it entered:
+// covering the page before first paint (`ipr-intro-hide`) or fading in over
+// it (`is-late`).
 new MutationObserver(() => {
   const el = document.querySelector('div.ipr-intro');
-  if (el) { window.__seen = true; if (el.classList.contains('is-out')) window.__faded = true; }
+  if (document.documentElement.classList.contains('ipr-intro-hide')) window.__hid = true;
+  if (el) {
+    window.__seen = true;
+    if (el.classList.contains('is-out')) window.__faded = true;
+    if (el.classList.contains('is-late')) window.__late = true;
+  }
 }).observe(document, {subtree: true, childList: true, attributes: true, attributeFilter: ['class']});
 """
 
@@ -73,6 +80,20 @@ STATE = """() => {
 
 GONE = "() => !document.querySelector('.ipr-intro')"
 FADED = "!!window.__faded"
+PAINTED = "performance.getEntriesByName('first-contentful-paint').length > 0"
+
+#: The page is there to use: visible, not inert, not scroll-locked, and a
+#: point on its first link reaches that link.
+USABLE = """() => {
+  const a = document.querySelector('.claim-cta a'), r = a.getBoundingClientRect();
+  const hit = document.elementFromPoint(r.x + 4, r.y + 4);
+  return {
+    visible: getComputedStyle(document.body).visibility,
+    inert: document.querySelectorAll('[inert]').length,
+    overflow: getComputedStyle(document.documentElement).overflow,
+    link: !!hit && a.contains(hit),
+  };
+}"""
 
 
 class IntroCase(unittest.TestCase):
@@ -277,6 +298,8 @@ class TestADestinationIsNeverDelayed(IntroCase):
                        for p in self.out.rglob("*.html")
                        if "intro.js" in p.read_text(encoding="utf-8"))
         self.assertEqual(pages, ["index.html"])
+        self.assertIn('<script src="intro.js" async>',
+                      (self.out / "index.html").read_text(encoding="utf-8"))
         for path in ("archive.html", "analysis.html", "china.html",
                      "methodology.html"):
             with self.subTest(path=path):
@@ -322,7 +345,8 @@ class TestFailureNeverTraps(IntroCase):
               return raf.call(window, f); };""")
         self.start(page)
         page.evaluate("window.__boom = true")
-        page.wait_for_function(GONE, timeout=1500)
+        # Timer polling: Playwright's default polls with the rAF this breaks.
+        page.wait_for_function(GONE, timeout=1500, polling=50)
         self.assertFalse(page.evaluate(FADED), "ended by the timeline, not the error")
         self.assert_clean(page)
 
@@ -350,6 +374,68 @@ class TestFailureNeverTraps(IntroCase):
         page.route("**/reveal.js", lambda route: (time.sleep(2.2), route.continue_()))
         page.goto(self.url(), wait_until="load")
         self.assertFalse(page.evaluate("!!window.__seen"))
+        self.assert_clean(page)
+
+
+class TestTheIntroRequestNeverHoldsThePage(IntroCase):
+    """`intro.js` loads async: the homepage never waits on its request."""
+
+    def assert_usable(self, page):
+        self.assertEqual(page.evaluate(USABLE), {
+            "visible": "visible", "inert": 0, "overflow": "visible", "link": True})
+        page.keyboard.press("Tab")
+        self.assertEqual(page.evaluate("document.activeElement.className"), "skip")
+        self.assertGreater(page.evaluate("scrollBy(0, 300), scrollY"), 0)
+
+    def test_a_stalled_request_leaves_the_page_usable(self):
+        page = self.page()
+        held = []
+        page.route("**/intro.js", lambda route: held.append(route))
+        # Parsed, painted and usable while the request is still open.
+        page.goto(self.url(), wait_until="domcontentloaded")
+        page.wait_for_function(PAINTED, timeout=3000)
+        self.assertEqual(len(held), 1)
+        self.assert_usable(page)
+        # It arrives long after the page is in use, and stands aside.
+        page.wait_for_timeout(600)
+        held[0].continue_()
+        page.wait_for_load_state("load")
+        page.wait_for_timeout(150)
+        self.assertFalse(page.evaluate("!!window.__seen"))
+        self.assert_clean(page)
+
+    def test_a_failed_request_leaves_the_page_usable(self):
+        failures = {
+            "network error": lambda route: route.abort(),
+            "not found": lambda route: route.fulfill(status=404, body=""),
+        }
+        for name, handler in failures.items():
+            with self.subTest(failure=name):
+                page = self.page()
+                page.route("**/intro.js", handler)
+                page.goto(self.url(), wait_until="load")
+                self.assert_usable(page)
+                self.assert_clean(page)
+
+    def test_arriving_just_after_the_first_paint_it_fades_in_over_the_page(self):
+        # The arrival window is measured from the first contentful paint;
+        # the test moves that paint to the moment it releases the request,
+        # so the window does not depend on how fast this machine is.
+        page = self.page(extra="""const byName = performance.getEntriesByName.bind(performance);
+            performance.getEntriesByName = (name, type) =>
+              name === 'first-contentful-paint' && window.__fcp != null
+                ? [{name, startTime: window.__fcp}] : byName(name, type);""")
+        held = []
+        page.route("**/intro.js", lambda route: held.append(route))
+        page.goto(self.url(), wait_until="domcontentloaded")
+        page.wait_for_function(PAINTED, timeout=3000)
+        page.evaluate("window.__fcp = performance.now()")
+        held[0].continue_()
+        page.wait_for_selector("div.ipr-intro", state="attached", timeout=3000)
+        self.assertTrue(page.evaluate("!!window.__late"))
+        self.assertFalse(page.evaluate("!!window.__hid"), "the page was blanked after it painted")
+        page.wait_for_function(GONE, timeout=6000)
+        self.assertTrue(page.evaluate(FADED))
         self.assert_clean(page)
 
 

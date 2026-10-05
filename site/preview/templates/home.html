@@ -10,9 +10,9 @@
    asks for reduced motion.
 
    intro.js is the opening title (VISUAL_AND_MOTION_SYSTEM §1.1): this page
-   only, first in the head so its cover lands before first paint. It builds
+   only, and async, so the page never waits on its request. It builds
    everything it shows, so without JavaScript the page is simply the page. #}
-{% block head_scripts %}<script src="intro.js"></script><script src="reveal.js"></script>{% endblock %}
+{% block head_scripts %}<script src="intro.js" async></script><script src="reveal.js"></script>{% endblock %}
 {% block hero %}
 {# ── The opening (protected) ──────────────────────────────────────────────
    A display claim on the left, the dateline ledger on the right, and the

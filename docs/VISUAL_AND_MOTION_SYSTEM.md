@@ -50,10 +50,14 @@ small ship and its wake, then a dissolve into the unchanged homepage.
 Source: `site/preview/intro.js`, requested by `home.html` alone; contract
 in `tests/test_homepage_intro.py`.
 
-- **Never a gate.** Waits for nothing but the DOM (1.5s cap) and the title
-  face (300ms cap); hard 5s cap. Skip intro is reachable at once; Escape
-  dismisses. Every exit runs one teardown that removes the overlay, the
-  scroll lock, `inert`, and the injected style.
+- **Never a gate.** Loaded `async`, so a slow or failed request for
+  `intro.js` never holds the homepage. Arriving before the first
+  contentful paint it covers the page from the start; within 400ms after
+  it, it fades in over the page; later (or 2s after navigation with
+  nothing painted) it stands aside. It waits for nothing but the DOM
+  (1.5s cap) and the title face (300ms cap); hard 5s cap. Skip intro is
+  reachable at once; Escape dismisses. Every exit runs one teardown that
+  removes the overlay, the scroll lock, `inert`, and the injected style.
 - **Plays only for an arrival.** Homepage, once per tab session
   (`sessionStorage`); skipped for a query or hash, back/forward, a
   same-site referrer, a hidden tab, `prefers-reduced-motion`, an

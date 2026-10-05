@@ -1,20 +1,15 @@
 /*
- * The opening title: a ~2.4s brand introduction over a procedural ocean, on
- * the homepage only, once per tab session (docs/VISUAL_AND_MOTION_SYSTEM.md
- * §1.1). Not a loading screen: it waits for nothing but the DOM and the
- * title face, each with a cap.
- *
- * It never stands between a reader and a destination. It does not start for
- * a query or hash, a back/forward or same-site arrival, a hidden tab, reduced
- * motion, an automated browser, or without storage or hardware WebGL. Every
- * exit (the timeline, Skip, Escape, an error, the tab hiding or unloading,
- * the 5s cap) ends in finish(), which runs once and undoes everything this
- * file did. Without JavaScript none of it exists.
+ * The opening title (docs/VISUAL_AND_MOTION_SYSTEM.md §1.1): ~2.4s over a
+ * procedural ocean, homepage only, once per tab session. Loaded async, so
+ * nothing waits for it; it waits only for the DOM and the title face, each
+ * capped. Skipped for a query or hash, a back/forward or same-site arrival, a
+ * hidden tab, reduced motion, automation, or no storage or hardware WebGL.
+ * Every exit ends in finish(), which runs once and undoes all of it.
  */
 (function () {
   "use strict";
   var d = document, doc = d.documentElement, w = window, inerted = [],
-      gl, cv, el, st, U, raf, t0, out, done, cap, late, tm;
+      gl, cv, el, st, U, raf, t0, out, done, cap, late, tm, shown;
   var VS = "attribute vec2 P;void main(){gl_Position=vec4(P,0,1);}";
   // Units are ship lengths. Waves: nine directional trains plus warped
   // noise. Wake, in the ship's frame: foam aft, an aged turquoise band,
@@ -47,11 +42,12 @@
     "C=mix(C,vec3(.16,.18,.19),.7*clamp(l-B(q*1.12,D,a),0.,1.));" +
     "gl_FragColor=vec4(C*(1.-.3*dot(uv-.5,uv-.5)),1);}";
   var E = "cubic-bezier(.16,1,.3,1)", INK = "rgba(5,28,35,";
-  var CSS = "html.ipr-intro{overflow:hidden;background:#072a33}" +
-    "html.ipr-intro-hide body{visibility:hidden}" +
+  var CSS = "html.ipr-intro{overflow:hidden}" +
+    "html.ipr-intro-hide{background:#072a33}html.ipr-intro-hide body{visibility:hidden}" +
     ".ipr-intro{visibility:visible;position:fixed;inset:0;z-index:2147483000;overflow:hidden;color:#EDEAE2;" +
     "background:linear-gradient(160deg,#0d4049,#072a33);transition:opacity .65s cubic-bezier(.4,0,.2,1)}" +
     ".ipr-intro.is-out{opacity:0}" +
+    ".ipr-intro.is-late{animation:ipr-fade .3s ease-out backwards}@keyframes ipr-fade{from{opacity:0}}" +
     ".ipr-intro canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .3s}" +
     ".ipr-intro canvas.is-on{opacity:1}" +
     ".ipr-intro-scrim{position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 0 100%," + INK + ".72)," + INK + ".32) 55%," + INK + "0) 80%)}" +
@@ -125,11 +121,20 @@
     cv.className = "is-on";
     raf = requestAnimationFrame(guard(frame));
   }
+  // Once the page is on screen it may only fade in, within 400ms of the
+  // first contentful paint (2s of navigation if nothing has painted).
+  function fcp() { return performance.getEntriesByName("first-contentful-paint")[0]; }
+  function stale() {
+    var p = fcp(), now = performance.now();
+    return p ? now - p.startTime > 400 : now > 2000;
+  }
   function build() {
     clearTimeout(late);
     if (done) return;
+    if (stale()) return finish();
+    doc.classList.add("ipr-intro");
     el = d.createElement("div");
-    el.className = "ipr-intro";
+    el.className = shown ? "ipr-intro is-late" : "ipr-intro";
     el.innerHTML = '<div class="ipr-intro-scrim"></div><div class="ipr-intro-copy">' +
       '<p class="ipr-intro-title"><span>Indo-Pacific</span> Record</p>' +
       '<p class="ipr-intro-sub">Defense records. Regional context.</p></div>' +
@@ -156,7 +161,7 @@
         d.referrer.indexOf(location.origin + "/") === 0 ||
         w.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var nav = performance.getEntriesByType("navigation")[0];
-    if (nav && nav.type === "back_forward") return;
+    if (nav && nav.type === "back_forward" || stale()) return;
     if (sessionStorage.getItem("ipr-intro")) return;
     sessionStorage.setItem("ipr-intro", "1");
     cv = d.createElement("canvas");
@@ -179,7 +184,9 @@
 
   cap = setTimeout(finish, 5000);
   try {
-    doc.classList.add("ipr-intro", "ipr-intro-hide");
+    // Before the first paint it covers the page; after, it fades in over it.
+    shown = !!fcp();
+    if (!shown) doc.classList.add("ipr-intro", "ipr-intro-hide");
     st = d.createElement("style");
     st.textContent = CSS;
     d.head.appendChild(st);
