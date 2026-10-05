@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html as html_mod
+import json
 import re
 import shutil
 import sqlite3
@@ -673,16 +674,14 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
     def test_the_only_photograph_painted_behind_text_is_the_veil(self):
         """
         The veil's two encodings are the only photographic URLs. The inline
-        SVG ruling is a vector pattern in the wide margins, not a photograph
-        whose contrast needs measuring over text.
+        SVG terrain is shared decoration, not a photograph. Its stylesheet
+        must carry no additional raster, even when the vector is a variable.
         """
-        css = CSS.read_text(encoding="utf-8")
-        painted = [value for value in
-                   re.findall(r"background-image:\s*([^;}]+)", css)
-                   if "url(" in value]
-        urls = re.findall(r'url\("([^"]+)"\)', " ".join(painted))
+        css = (CSS.read_text(encoding="utf-8") + "\n" +
+               CSS.with_name("topography.css").read_text(encoding="utf-8"))
+        urls = re.findall(r'url\("([^"]+)"\)', css)
         ruling = [url for url in urls if url.startswith("data:image/svg+xml,")]
-        self.assertEqual(len(ruling), 1, "expected one inline vector ruling")
+        self.assertEqual(len(ruling), 1, "expected one shared contour vector")
         self.assertEqual(
             set(urls) - set(ruling),
             {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
@@ -1757,52 +1756,119 @@ class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
 
 class TestTheHomePageHoldsItsShape(BrowserCase):
 
-    def test_home_atlas_is_inert_responsive_and_scoped_to_home(self):
+    def test_topography_is_inert_responsive_and_shared_with_subpages(self):
         for width in (375, 390, 430, 900, 1280, 1440):
             context, page = self.page_at(width, 900)
             try:
-                state = page.evaluate("""() => {
-                  const opening = document.querySelector('.opening');
-                  const field = getComputedStyle(opening, '::before');
-                  return {
-                    image: field.backgroundImage,
-                    display: field.display,
-                    heroGround: getComputedStyle(opening).backgroundColor,
-                    atlas: getComputedStyle(document.querySelector('main')).backgroundImage,
-                    bannerGround: getComputedStyle(document.querySelector('.band')).backgroundColor,
-                    overflow: document.documentElement.scrollWidth -
-                      document.documentElement.clientWidth,
-                    tiled: getComputedStyle(document.querySelector('main')).backgroundRepeat
-                  };
-                }""")
-                with self.subTest(width=width):
-                    self.assertEqual(state['display'], 'none')
-                    # The paper field now continues through the hero instead
-                    # of being covered by its old solid ground.
-                    self.assertEqual(state['heroGround'], 'rgba(0, 0, 0, 0)')
-                    self.assertNotEqual(state['bannerGround'], 'rgba(0, 0, 0, 0)')
-                    self.assertLessEqual(state['overflow'], 0)
-                    self.assertEqual(state['image'], 'none')
-                    self.assertIn('data:image/svg+xml', state['atlas'])
-                    self.assertEqual(state['tiled'], 'repeat-y')
-                page.emulate_media(media='print')
-                self.assertEqual(page.evaluate("""() => getComputedStyle(
-                  document.querySelector('main')).backgroundImage"""), 'none')
-                self.assertEqual(page.evaluate("""() => getComputedStyle(
-                  document.querySelector('.opening'), '::before').display"""), 'none')
-                page.emulate_media(media='screen', forced_colors='active')
-                self.assertEqual(page.evaluate("""() => getComputedStyle(
-                  document.querySelector('main')).backgroundImage"""), 'none')
-                page.emulate_media(forced_colors='none', reduced_motion='reduce')
-                self.assertIn('data:image/svg+xml', page.evaluate("""() => getComputedStyle(
-                  document.querySelector('main')).backgroundImage"""))
-                page.goto('http://127.0.0.1:%d/analysis.html' % self.port, wait_until='load')
-                self.assertEqual(page.locator('main.home-atlas').count(), 0)
-                self.assertNotIn('668f9e', page.evaluate("""() => getComputedStyle(
-                  document.querySelector('main')).backgroundImage"""))
+                for route in ('index.html', 'analysis.html'):
+                    page.goto('http://127.0.0.1:%d/%s' % (self.port, route))
+                    state = page.evaluate("""() => {
+                      const field = document.querySelector('.topography');
+                      const paint = getComputedStyle(field, '::before');
+                      return {
+                        image: paint.backgroundImage, tiled: paint.backgroundRepeat,
+                        events: getComputedStyle(field).pointerEvents,
+                        hidden: field.getAttribute('aria-hidden'),
+                        overflow: document.documentElement.scrollWidth - innerWidth
+                      };
+                    }""")
+                    with self.subTest(width=width, route=route):
+                        self.assertIn('data:image/svg+xml', state['image'])
+                        self.assertEqual(state['tiled'], 'repeat-y')
+                        self.assertEqual(state['events'], 'none')
+                        self.assertEqual(state['hidden'], 'true')
+                        self.assertLessEqual(state['overflow'], 0)
+                    for media in ({'media': 'print'},
+                                  {'media': 'screen', 'forced_colors': 'active'}):
+                        page.emulate_media(**media)
+                        self.assertEqual(page.locator('.topography').evaluate(
+                            "e => getComputedStyle(e).display"), 'none')
+                    page.emulate_media(media='screen', forced_colors='none')
             finally:
                 context.close()
 
+    def test_page_profiles_vary_without_changing_when_revisited(self):
+        routes = ['index.html', 'archive.html', 'analysis.html', 'desks.html',
+                  'sources.html', 'coverage.html', 'methodology.html',
+                  'about.html', 'corpus.html', 'corpus-guide.html']
+        for folder in ('record', 'source', 'briefs'):
+            routes += [p.relative_to(self.out).as_posix()
+                       for p in sorted((self.out / folder).glob('*.html'))[:2]]
+        routes += [p.name for p in sorted(self.out.glob('desk-*.html'))]
+        routes += [p.name for p in sorted(self.out.glob('week-*.html'))[:2]]
+        context, page = self.page_at(1280, 900)
+        try:
+            profiles = []
+            for route in routes + ['index.html']:
+                page.goto('http://127.0.0.1:%d/%s' % (self.port, route))
+                profiles.append(page.locator('main').get_attribute('style'))
+            self.assertTrue(all(profiles))
+            self.assertEqual(profiles[0], profiles[-1])
+            self.assertEqual(len(profiles[:-1]), len(set(profiles[:-1])))
+        finally:
+            context.close()
+
+    def test_terrain_motion_is_decorative_and_has_static_fallbacks(self):
+        context, page = self.page_at(1280, 900, path='analysis.html')
+        motion = "e => getComputedStyle(e, '::before').animationName"
+        try:
+            self.assertEqual(page.locator('.topography').evaluate(motion),
+                             'terrain-drift')
+            self.assertEqual(page.locator('.briefs-head').evaluate(motion),
+                             'terrain-breath')
+            geometry = page.locator('#briefs-title').bounding_box()
+            transforms = page.locator('.topography').evaluate("""e => {
+              const a = e.getAnimations({subtree:true})[0];
+              a.pause(); a.currentTime = 0;
+              const first = getComputedStyle(e, '::before').transform;
+              a.currentTime = a.effect.getTiming().duration;
+              return [first, getComputedStyle(e, '::before').transform];
+            }""")
+            self.assertNotEqual(*transforms)
+            self.assertEqual(page.locator('#briefs-title').bounding_box(), geometry)
+            page.evaluate("document.documentElement.classList.add('no-anim')")
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            page.evaluate("document.documentElement.classList.remove('no-anim')")
+            page.emulate_media(reduced_motion='reduce')
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            self.assertEqual(page.locator('.briefs-head').evaluate(motion), 'none')
+        finally:
+            context.close()
+        context, page = self.page_at(1280, 900, path='analysis.html',
+                                     java_script_enabled=False)
+        try:
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            self.assertIn('data:image/svg+xml', page.locator('.topography').evaluate(
+                "e => getComputedStyle(e, '::before').backgroundImage"))
+            self.assertTrue(page.locator('#briefs-title').is_visible())
+        finally:
+            context.close()
+
+    def test_historical_small_type_keeps_contrast_over_terrain(self):
+        from scripts.pw_env import make_pw_env
+        from scripts.rerender_pla_watch import _build_post_context
+        from tests.test_homepage_veil_contract import (
+            TestTextOverTheVeilIsMeasuredAtItsGlyphs,
+        )
+        sidecar = json.loads((REPO_ROOT / 'output/the-pla-watch/posts/'
+                              '2026-08-15.json').read_text(encoding='utf-8'))
+        render_context = _build_post_context(sidecar)
+        render_context['root_path'] = ''
+        html = make_pw_env().get_template('pla-watch-post.html').render(
+            **render_context)
+        (self.out / 'historical-contrast.html').write_text(html, encoding='utf-8')
+        probe = TestTextOverTheVeilIsMeasuredAtItsGlyphs()
+        for width in (375, 1280):
+            context, page = self.page_at(width, path='historical-contrast.html',
+                                         reduced_motion='reduce')
+            try:
+                page.locator('.byline-title').scroll_into_view_if_needed()
+                measured = probe.glyph_contrast(page, '.byline-title')
+                with self.subTest(width=width):
+                    self.assertGreaterEqual(measured['pixels'], 200)
+                    self.assertGreaterEqual(measured['worst'], 4.5)
+            finally:
+                context.close()
 
     def test_no_horizontal_overflow_from_320_to_2560(self):
         for width in (320, 375, 768, 1280, 1920, 2560):
@@ -1843,8 +1909,8 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
         the ONLY raster allowed to paint behind text, and it is inert —
         `pointer-events: none`, `aria-hidden`, and behind every text layer, so
         it can never take a click or reach the accessibility tree. The new
-        vector field is allowed only on main; reading panels and the dark
-        Briefs band keep their own grounds.
+        shared vector field lives behind attenuated reading paper; dark bands
+        keep their own grounds and source photographs.
 
         The contrast property the ban existed to protect is measured directly,
         from the pixels each glyph actually covers, in
@@ -1870,41 +1936,25 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
             finally:
                 context.close()
 
-    def test_contour_field_continues_through_paper_without_extra_painters(self):
+    def test_contours_stay_behind_attenuating_reading_paper(self):
         for width in (1920, 375):
             context, page = self.page_at(width, 900)
             try:
                 state = page.evaluate("""() => {
                   const main = document.querySelector('main#main');
-                  const mainBox = main.getBoundingClientRect();
-                  const wraps = [...main.querySelectorAll(':scope > .wrap')];
                   return {
-                    image: getComputedStyle(main).backgroundImage,
-                    gridPainters: [...document.querySelectorAll('*')]
-                      .filter(el => getComputedStyle(el).backgroundImage
-                        .includes('data:image/svg+xml')).length,
-                    wraps: wraps.map(el => {
-                      const style = getComputedStyle(el);
-                      const box = el.getBoundingClientRect();
-                      const channels = style.backgroundColor.match(/[\\d.]+/g)
-                        .map(Number);
-                      return {
-                        image: style.backgroundImage,
-                        opaque: channels.length === 3 || channels[3] === 1,
-                        inset: box.left > mainBox.left &&
-                          box.right < mainBox.right
-                      };
-                    })
+                    wrap: getComputedStyle(main.querySelector(':scope > .wrap')).backgroundColor,
+                    image: getComputedStyle(main.querySelector('.topography'), '::before').backgroundImage,
+                    gridPainters: [...document.querySelectorAll('*')].filter(el =>
+                      getComputedStyle(el).backgroundImage.includes("width='88'")).length,
+                    overflow: document.documentElement.scrollWidth - innerWidth
                   };
                 }""")
                 with self.subTest(width=width):
-                    self.assertTrue(state["wraps"], "no reading paper")
-                    self.assertIn("data:image/svg+xml", state["image"])
-                    self.assertEqual(state["gridPainters"], 1)
-                    self.assertTrue(all(not w["opaque"] and
-                                        w["image"] == "none"
-                                        for w in state["wraps"]),
-                                    "paper sections cover the shared field")
+                    self.assertIn('data:image/svg+xml', state['image'])
+                    self.assertNotEqual(state['wrap'], 'rgba(0, 0, 0, 0)')
+                    self.assertEqual(state['gridPainters'], 0)
+                    self.assertLessEqual(state['overflow'], 0)
             finally:
                 context.close()
 

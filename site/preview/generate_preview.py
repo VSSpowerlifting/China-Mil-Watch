@@ -76,6 +76,7 @@ from config import SITE_ORIGIN                                    # noqa: E402
 
 from jinja2 import Environment, FileSystemLoader                    # noqa: E402
 from core.viewmodel import PublicView                               # noqa: E402
+from core.topography import topography_style                         # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
 
 TEMPLATES = Path(__file__).parent / "templates"
@@ -2368,6 +2369,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     assert_snapshot(data["corpus"], snapshot)
     env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
                       autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    env.globals["topography_style"] = topography_style
     env.filters["status_label"] = lambda s: STATUS_PROSE.get(s, (s, ""))[0]
     env.filters["status_prose"] = lambda s: STATUS_PROSE.get(s, ("", s))[1]
     env.filters["source_type_label"] = (
@@ -2783,6 +2785,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
+    (out_dir / "topography.css").write_text(
+        (Path(__file__).parent / "topography.css").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("topography.css")
 
     # ── Identity assets ──────────────────────────────────────────────────
     # All derived from one owner-supplied compass, and copied rather than
