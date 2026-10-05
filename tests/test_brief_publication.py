@@ -22,6 +22,9 @@ SOURCE = ROOT / 'briefs/maritime-cooperation-2026.json'
 class PublicationChecks(unittest.TestCase):
     def setUp(self):
         self.pending = json.loads(SOURCE.read_text())
+        self.pending['editorial_status'] = 'draft'
+        self.pending['issue_number'] = None
+        self.pending.pop('approval', None)
         self.pending['title'] = 'Approval command fixture; never published'
         self.pending['author_name'] = 'Owner (test fixture)'
         self.tmp = tempfile.TemporaryDirectory()
