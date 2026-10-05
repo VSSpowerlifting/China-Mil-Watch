@@ -3,6 +3,7 @@ import copy
 import contextlib
 import importlib.util
 import io
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -210,6 +211,36 @@ class PublicationChecks(unittest.TestCase):
             self.assertEqual((outputs[0] / route).read_bytes(),
                              (outputs[1] / route).read_bytes())
         self.assertEqual(self.path.read_bytes(), before)
+
+    def test_native_photo_gate_checks_approved_citation_and_pinned_bytes(self):
+        self.assertEqual(self.approve(), 0)
+        media = self.briefs / 'media'
+        media.mkdir()
+        source, derivative = b'fixture original', b'fixture duotone'
+        (media / 'fixture-source-image.jpg').write_bytes(source)
+        (media / 'fixture-veil.jpg').write_bytes(derivative)
+        meta = dict(article_url=self.pending['source_trail'][0]['url'],
+                    note='Fixture credit', alt='Fixture image',
+                    source_sha256=hashlib.sha256(source).hexdigest(),
+                    derivative={'sha256': hashlib.sha256(derivative).hexdigest()})
+        self.write(media / 'fixture-source-image.json', meta)
+        out = self.root / 'output'
+        (out / 'briefs/media').mkdir(parents=True)
+        published = out / 'briefs/media/fixture-veil.jpg'
+        published.write_bytes(derivative)
+        with mock.patch.object(validate_output, 'REPO_ROOT', self.root):
+            errors = []
+            self.assertIsNotNone(validate_output._brief_veil_entry('brief-fixture', out, errors, 'fixture.html'))
+            self.assertEqual(errors, [])
+            published.write_bytes(b'tampered')
+            self.assertIsNone(validate_output._brief_veil_entry('brief-fixture', out, errors, 'fixture.html'))
+            self.assertIn('digest mismatch', ' '.join(errors))
+            published.write_bytes(derivative)
+            meta['article_url'] = 'https://fixture.test/uncited'
+            self.write(media / 'fixture-source-image.json', meta)
+            errors = []
+            self.assertIsNone(validate_output._brief_veil_entry('brief-fixture', out, errors, 'fixture.html'))
+            self.assertIn('absent from the cited source trail', ' '.join(errors))
 
 
 if __name__ == '__main__':

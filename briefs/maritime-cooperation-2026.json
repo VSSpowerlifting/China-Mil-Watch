@@ -1,13 +1,13 @@
 {
   "publication": "Indo-Pacific Record",
   "publication_timing": "retrospective",
-  "author_name": "Draft prepared for Benjamin Yang",
-  "author_title": "AI-assisted editorial draft; awaiting editor review",
-  "author_bio": "Prepared for editorial review on 1 October 2026. This draft has not been approved, numbered or published.",
+  "author_name": "Benjamin Yang",
+  "author_title": "Editor",
+  "author_bio": "",
   "collection": "Indo-Pacific Record Briefs",
   "brief_schema": 1,
-  "editorial_status": "draft",
-  "issue_number": null,
+  "editorial_status": "approved",
+  "issue_number": 15,
   "desks": [
     "china",
     "singapore"
@@ -200,7 +200,7 @@
   "review": {
     "prepared_on": "2026-10-01",
     "prepared_by": "Codex",
-    "status": "awaiting_editor_review",
+    "status": "approved_by_editor",
     "evidence_window": {
       "start": "2026-09-05",
       "end": "2026-09-14"
@@ -213,6 +213,15 @@
     "reader_question": "How do Singapore and China place this naval exercise in their defense relationships, and what does the comparison establish?",
     "baseline": "MINDEF dates the series to 2015; both ministries identify its fifth iteration. No prior exercise program or performance measures are compared.",
     "revised_on": "2026-10-04",
-    "recovery_note": "Recovered the five-record host draft. The separately praised fourteen-record cloud draft could not be recovered; this candidate does not claim that approval."
+    "recovery_note": "Recovered the five-record host draft. The separately praised fourteen-record cloud draft could not be recovered; this candidate does not claim that approval.",
+    "approved_on": "2026-10-05",
+    "approved_by": "Benjamin Yang",
+    "approved_candidate_commit": "4bf960c4614b80289a1e3c1db2814f220d3201f1",
+    "approved_candidate_sha256": "5d5044314674861fd56c522ee572597d090062a9b0ef5cb879bb427fa692e096"
+  },
+  "approval": {
+    "approved_by": "Benjamin Yang",
+    "approved_on": "2026-10-05",
+    "reference": "Codex chat 01a10816-1238-7b03-89fb-9ef9cb3ccde6, owner message 2026-10-05 approving exact five-source candidate at 4bf960c4614b80289a1e3c1db2814f220d3201f1 with Benjamin Yang as editor and authorizing PR 100 merge/deploy/live verification"
   }
 }

@@ -375,6 +375,38 @@ def _source_veil_entry(eid: str, output_dir: Path, errors: list, rel):
     return {"id": eid, "source_page": article_url}
 
 
+def _brief_veil_entry(eid, output_dir, errors, rel):
+    """Native source photography is grounded in its approved Brief and hashes."""
+    import hashlib
+    from core.brief_collection import SLUG_RE
+    slug = eid[len("brief-"):]
+    try:
+        if not SLUG_RE.fullmatch(slug):
+            raise ValueError("invalid Brief slug")
+        sources = REPO_ROOT / "briefs"
+        sidecar = json.loads((sources / (slug + ".json")).read_text(encoding="utf-8"))
+        meta = json.loads((sources / "media" / (slug + "-source-image.json")).read_text(encoding="utf-8"))
+        if sidecar.get("editorial_status") != "approved":
+            raise ValueError("photo has no approved Brief source")
+        article_url = meta.get("article_url")
+        if not article_url or not any(e.get("url") == article_url
+                                     for e in sidecar.get("source_trail") or []):
+            raise ValueError("photo article_url is absent from the cited source trail")
+        if not meta.get("note") or not meta.get("alt"):
+            raise ValueError("photo lacks credit or alternative text")
+        derivative = meta.get("derivative") or {}
+        checks = ((sources / "media" / (slug + "-source-image.jpg"), meta.get("source_sha256")),
+                  (sources / "media" / (slug + "-veil.jpg"), derivative.get("sha256")),
+                  (output_dir / "briefs/media" / (slug + "-veil.jpg"), derivative.get("sha256")))
+        for path, expected in checks:
+            if not expected or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                raise ValueError("photo digest mismatch: %s" % path.name)
+        return {"id": eid, "source_page": article_url}
+    except (OSError, ValueError, TypeError, AttributeError) as exc:
+        errors.append("%s: Brief source veil %r: %s" % (rel, eid, exc))
+        return None
+
+
 def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -> None:
     site_editorial = Path(__file__).resolve().parent.parent / "site" / "assets" / "editorial"
     manifest_path = site_editorial / "manifest.json"
@@ -437,6 +469,8 @@ def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -
             eid = m.group(1)
             if eid.startswith("src-"):
                 entry = _source_veil_entry(eid, output_dir, errors, rel)
+            elif eid.startswith("brief-"):
+                entry = _brief_veil_entry(eid, output_dir, errors, rel)
             else:
                 entry = by_id.get(eid)
                 if entry is None:
