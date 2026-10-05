@@ -4,6 +4,24 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-05 — Site typography adopts the opening title's setting
+
+**Owner direction (Ben, 2026-10-05):** implement proposal A — the titling
+register — site-wide, preserving the opening title and existing source-title
+capitalisation. This is the "possible later change" named in the opening
+title ruling below.
+
+1. The title face was already the site's face (Source Serif 4); what changes
+   is its setting. Short fixed English names — wordmark, footer name, hub
+   page names (`h1.page-name`) — take serif 600 in letter-spaced capitals.
+2. Serif display unifies on weight 600 with near-neutral tracking, replacing
+   §4's 700 / −0.01 to −0.015em rule.
+3. Capitals and tracking never reach record, source or Brief titles, the
+   homepage claim, Chinese or Japanese text, or the PLA Watch predecessor
+   pages. Page names opt in by class; there is no blanket heading selector.
+4. `intro.js` is unchanged and keeps its own styles; its computed type is
+   verified identical before and after.
+
 ## 2026-10-05 — Homepage opening title approved; scoped exceptions granted
 
 **Owner ruling (Ben, 2026-10-05, PR #103 review).** The opening title's

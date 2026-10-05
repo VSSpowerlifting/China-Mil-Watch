@@ -573,6 +573,14 @@ by `deploy_output_only.yml` run 37383394581 (success). Verified live on
 desktop and mobile: plays once, Skip/Escape restore the page, no replay on
 reload or internal return.
 
+**Titling register (2026-10-05, draft PR, not merged):** the opening
+title's setting (Source Serif 4 600, letter-spaced capitals) becomes the
+identity register for the wordmark, footer name and hub page names
+(`h1.page-name`); serif display unifies on 600 (DESIGN_SYSTEM §4,
+DECISION_LOG 2026-10-05). Source only: `styles.css`, `briefs.css`, 11
+templates. `intro.js`, record/source/Brief titles and PLA Watch pages are
+unchanged. Production output has not been regenerated or deployed.
+
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —
 templates, `styles.css` (rewritten, 161 KB → 90 KB), `browse.js`,

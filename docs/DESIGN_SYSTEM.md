@@ -175,9 +175,30 @@ Reading rules:
 - Long-form measure ~700px (existing PW post body), line-height ~1.7–1.8.
 - Base 16px; body drops to 0.9375rem below 900px — keep.
 - Headline scale is responsive per template (hero ~3rem desktop → ~1.9rem
-  mobile); no fixed global scale, but keep serif display weight 700 with
-  tightened letter-spacing (−0.01 to −0.015em) and line-height ≤ 1.15.
+  mobile); no fixed global scale. Serif display is **weight 600** on Paper
+  Ledger and the Briefs surfaces (the homepage opening title's weight), in
+  sentence case with near-neutral tracking (about −0.008em; −0.004em at h2)
+  and line-height ≤ 1.15. (Revised 2026-10-05 from 700 / −0.01 to −0.015em;
+  DECISION_LOG.) Night Desk PLA Watch pages keep their own settings.
 - No more than ~4 type sizes per viewport region.
+
+**Titling register** (2026-10-05, DECISION_LOG). The opening title's setting
+(V&M §1.1): `--serif` at `--title-weight` (600), uppercase, letter-spaced
+`--title-tracking` (.07em; .06em on page names), line-height ~1.04–1.08.
+It is an identity register, used only for short, fixed English names:
+- the wordmark (`.brand-name`, `--step-wordmark` re-measured to
+  `clamp(1.2rem, 2.4vw, 1.55rem)` so it holds one line at 320px) and the
+  footer name (`.footer-name`);
+- hub page names, by opt-in class `h1.page-name` (About, Desks, Sources,
+  Coverage, Methodology, the record, Corpus Guide, corpus weeks, the
+  component gallery, each desk page, the Briefs masthead).
+
+Never in the titling register: a record, source or Brief headline, the
+homepage claim, anything carrying Chinese or Japanese (source pages are
+excluded because their names include 解放军报, 防衛省), any sentence-length
+heading, or the PLA Watch predecessor pages. Source titles keep the
+capitalisation they were preserved or translated with. `intro.js` styles
+itself and is never restyled from the site sheet; the site borrows from it.
 
 ## 5. Grid, spacing, structure
 
