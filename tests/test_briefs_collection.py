@@ -103,9 +103,12 @@ class TestLoading(_Tmp):
             self.assertIs(row["entry"], edition)
         self.assertIs(c.lead, self.editions[0])
 
-    def test_the_repository_has_no_real_brief_yet(self):
-        self.assertFalse(any(gp.BRIEFS_SOURCE.glob("*.json")),
-                         "a real brief sidecar exists; this PR adds none")
+    def test_repository_drafts_have_no_number_or_approval(self):
+        for path in gp.BRIEFS_SOURCE.glob("*.json"):
+            draft = json.loads(path.read_text())
+            if draft.get("editorial_status") == "draft":
+                self.assertIsNone(draft.get("issue_number"))
+                self.assertNotIn("approval", draft)
 
     def test_owner_approval_reconciles_no_14(self):
         self.assertEqual(UNRECONCILED_ISSUES, frozenset())
@@ -578,8 +581,8 @@ class TestSiteBuild(unittest.TestCase):
         self.assertNotIn('rel="canonical"', self.brief_html)
 
     def test_the_page_has_the_article_anatomy_in_order(self):
-        order = ["s-development", "s-coverage", "s-opening", "s-stood-out",
-                 "s-compare", "s-why", "s-routine", "s-term", "s-watching",
+        order = ["s-development", "s-opening", "s-stood-out",
+                 "s-why", "s-routine", "s-term", "s-watching", "s-compare", "s-coverage",
                  "s-sources", "s-cite"]
         positions = [self.brief_html.index('id="%s"' % a) for a in order]
         self.assertEqual(positions, sorted(positions))
@@ -713,7 +716,7 @@ class TestSiteBuild(unittest.TestCase):
         self.assertEqual(catalog.count("<ol "), 1)
         self.assertEqual(catalog.count('class="issue-ledger-row"'),
                          len(editions))
-        self.assertIn("%d published Briefs, newest first" % len(editions),
+        self.assertIn("Newest reporting window first.",
                       self.flat(catalog))
 
     def test_the_catalog_is_newest_first_and_carries_each_issues_provenance(self):

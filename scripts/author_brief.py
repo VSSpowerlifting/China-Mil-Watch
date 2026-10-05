@@ -1,41 +1,24 @@
-"""
-Scaffold an Indo-Pacific Record Brief draft, or check one against the contract.
+"""Author an Indo-Pacific Record Brief without API calls.
 
-    .venv/bin/python scripts/author_brief.py scaffold --desks china,singapore \\
-        --week-ending 2026-09-19 [--out PATH]
-    .venv/bin/python scripts/author_brief.py check PATH
+scaffold: source candidates and per-desk coverage from a read-only corpus copy.
+check: schema/collection validity; empty drafts may pass and remain withheld.
+ready: complete prose, citations, chronology and parity with preserved records.
+approve: record explicit human authorization and assign the next collection
+number, atomically under a local lock. Repeating the same approval is a no-op;
+a different approval, conflicting collection or existing scaffold is refused.
 
-`scaffold` selects candidate records by the brief's named desks and writes a
-draft: identity recorded explicitly, every candidate as a source-trail entry
-that keeps its own desk and language, per-desk coverage, empty analyst fields
-and no issue number. It is deterministic and read-only on disk: no model API,
-no network, and the database is read through a scratch copy
-(`scripts.reconcile_db.read_only`), so nothing is left beside the tracked file.
-Without `--out` the draft goes to stdout. It never writes inside `output/`,
-which is generated: a brief's sidecar is source, kept in `briefs/` at the
-repository root, where `core/brief_collection.py` reads it (drafts are withheld).
-
-The candidate trail is a starting list, not a citation list. The analyst keeps
-the entries the brief cites, removes the rest, writes the prose, and runs
-`check` until it passes.
-
-A single-desk brief is refused unless the exception is recorded with who
-approved it, when, and why. Issue numbers are not assigned here: a number is
-assigned at approval (`core.brief_contract.approve`), and none can be while
-an existing issue's publication status is unreconciled.
-
-`check` holds that line for a number written by hand. It reads the existing
-issues' sidecars under `output/the-pla-watch/posts/` (read only) and reports a
-brief that carries an issue number while an existing issue is unreconciled, or a number an
-existing issue already holds, as breaking the contract. An unnumbered draft is
-unaffected.
+Canonical source is briefs/<slug>.json. Nothing here writes generated output,
+merges, deploys, or establishes editorial approval on the owner's behalf.
 """
 
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
+import os
 import sys
+import tempfile
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -47,7 +30,8 @@ from config import DB_PATH                                     # noqa: E402
 from core.brief_contract import (                              # noqa: E402
     BRIEF_SCHEMA, MIN_DESKS, SCREENING_NOT_SELECTED, STATUS_DRAFT,
     coverage_by_desk, eligible_desks, screening_state, trail_entry,
-    validate_brief)
+    validate_brief, validate_readiness, approve, NumberingBlocked)
+from core.brief_collection import load_briefs, SLUG_RE, RESERVED_SLUGS
 from core.desk_registry import load_registry                   # noqa: E402
 from core.edition_identity import (                            # noqa: E402
     TIMING_REGULAR, TIMING_RETROSPECTIVE, brief_identity_fields)
@@ -56,12 +40,44 @@ from storage.db import get_articles_for_desks                  # noqa: E402
 
 OUTPUT_DIR = REPO_ROOT / "output"
 POSTS_DIR = OUTPUT_DIR / "the-pla-watch" / "posts"
+BRIEFS_DIR = REPO_ROOT / "briefs"
 
 
-def existing_issues() -> list:
-    """The existing issues' sidecars, read only, for `check`'s number rules."""
-    return [json.loads(p.read_text(encoding="utf-8"))
-            for p in sorted(POSTS_DIR.glob("*.json"))]
+def existing_issues(exclude=None) -> list:
+    """Validate/read the whole collection; exclude the file being checked."""
+    historical = [json.loads(p.read_text(encoding="utf-8"))
+                  for p in sorted(POSTS_DIR.glob("*.json"))]
+    published, _ = load_briefs(BRIEFS_DIR, load_registry(), historical_numbers=[
+        s["issue_number"] for s in historical])
+    return historical + [s for slug, s in published
+                         if exclude is None or (BRIEFS_DIR / (slug + ".json")).resolve() != exclude]
+
+
+def readiness_problems(sidecar, issues, db):
+    problems = validate_readiness(sidecar, load_registry(), collection=issues)
+    with read_only(Path(db)) as conn:
+        records = get_articles_for_desks(sidecar["week_start"], sidecar["week_ending"],
+                                         sidecar["desks"], conn=conn)
+    current = {r["id"]: trail_entry(r) for r in records}
+    for entry in sidecar.get("source_trail") or []:
+        rid = entry.get("record_id")
+        if rid not in current:
+            problems.append("record %s is absent from this corpus/window" % rid)
+        elif entry != current[rid]:
+            changed = sorted(k for k in current[rid] if entry.get(k) != current[rid][k])
+            problems.append("record %s conflicts with stored source state (%s); review a fresh scaffold" % (rid, ", ".join(changed)))
+    if sidecar.get("coverage_by_desk") != coverage_by_desk(records, sidecar["desks"]):
+        problems.append("coverage_by_desk conflicts with this corpus; review a fresh scaffold")
+    return problems
+
+
+def _report(path, problems):
+    if problems:
+        print("%s is not ready:" % path, file=sys.stderr)
+        for problem in problems:
+            print("  - " + problem, file=sys.stderr)
+        return 1
+    return 0
 
 
 def build_draft(records, *, desks, week_start: str, week_ending: str,
@@ -172,7 +188,8 @@ def cmd_scaffold(args) -> int:
     if out is None:
         sys.stdout.write(text)
     else:
-        out.write_text(text, encoding="utf-8")
+        with out.open("x", encoding="utf-8") as stream:
+            stream.write(text)
         print("Wrote %s" % out, file=sys.stderr)
     for desk, cov in draft["coverage_by_desk"].items():
         states = ", ".join("%s %d" % kv for kv in cov["by_screening"].items())
@@ -188,7 +205,7 @@ def cmd_scaffold(args) -> int:
 def cmd_check(args) -> int:
     path = Path(args.path)
     sidecar = json.loads(path.read_text(encoding="utf-8"))
-    issues = existing_issues()
+    issues = existing_issues(path.resolve())
     if sidecar.get("issue_number") is not None and not issues:
         # A number cannot be checked against issues that cannot be read; say so
         # rather than pass it. An unnumbered draft never needs them.
@@ -203,12 +220,61 @@ def cmd_check(args) -> int:
         return 1
     print("%s satisfies the brief contract (%s)."
           % (path, sidecar.get("editorial_status")))
+    print("Schema validity is not release readiness or editorial approval.")
+    return 0
+
+
+def cmd_ready(args):
+    path = Path(args.path).resolve()
+    sidecar = json.loads(path.read_text(encoding="utf-8"))
+    if _report(path, readiness_problems(sidecar, existing_issues(path), args.db)):
+        return 1
+    print("%s passes release readiness. Editorial approval and rendered review remain separate." % path)
+    return 0
+
+
+def cmd_approve(args):
+    path = Path(args.path).resolve()
+    if not args.approved_by.strip() or not args.approval_reference.strip():
+        return _refuse("name the approving human and the actual approval reference")
+    if path.parent != BRIEFS_DIR.resolve() or not SLUG_RE.fullmatch(path.stem) or path.stem in RESERVED_SLUGS:
+        return _refuse("approve a canonical briefs/<slug>.json source, never output/ or another directory")
+    # ponytail: one local publication lock; distributed publishers need a shared transaction.
+    with (BRIEFS_DIR / ".approval.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        sidecar = json.loads(path.read_text(encoding="utf-8"))
+        issues = existing_issues(path)
+        if sidecar.get("editorial_status") == "approved":
+            if sidecar.get("approval") != {"approved_by": args.approved_by, "approved_on": args.approved_on,
+                                          "reference": args.approval_reference}:
+                return _refuse("already approved; approval evidence and number cannot be overwritten")
+            print("Already approved as No. %s; unchanged." % sidecar["issue_number"])
+            return 0
+        if _report(path, readiness_problems(sidecar, issues, args.db)):
+            return 1
+        result = approve(sidecar, collection=issues, registry=load_registry(),
+                         approved_by=args.approved_by, approved_on=args.approved_on)
+        result["approval"]["reference"] = args.approval_reference
+        pending = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                             prefix=".approval-", delete=False) as stream:
+                pending = Path(stream.name)
+                json.dump(result, stream, ensure_ascii=False, indent=2)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(pending, path)
+        finally:
+            if pending and pending.exists():
+                pending.unlink()
+        print("Approved No. %s in %s. Render and validate before release." % (result["issue_number"], path))
     return 0
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="Scaffold or check an Indo-Pacific Record Brief.")
+        description="Scaffold, check, review readiness, or record authorized Brief approval.")
     sub = parser.add_subparsers(dest="command", required=True)
 
     scaffold = sub.add_parser(
@@ -237,10 +303,22 @@ def main(argv=None) -> int:
     check = sub.add_parser("check", help="validate a brief against the contract")
     check.add_argument("path")
 
+    ready = sub.add_parser("ready", help="check complete prose, citations and stored source state; no approval")
+    ready.add_argument("path")
+    ready.add_argument("--db", default=str(DB_PATH))
+    approval = sub.add_parser("approve", help="record explicit owner approval and assign the next collection number")
+    approval.add_argument("path")
+    approval.add_argument("--approved-by", required=True)
+    approval.add_argument("--approved-on", required=True, type=lambda v: _iso(v, "--approved-on").isoformat())
+    approval.add_argument("--approval-reference", required=True, help="location of the actual human approval")
+    approval.add_argument("--db", default=str(DB_PATH))
+
     args = parser.parse_args(argv)
-    if args.command == "scaffold":
-        return cmd_scaffold(args)
-    return cmd_check(args)
+    try:
+        return {"scaffold": cmd_scaffold, "check": cmd_check, "ready": cmd_ready,
+                "approve": cmd_approve}[args.command](args)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, NumberingBlocked) as exc:
+        return _refuse(str(exc))
 
 
 if __name__ == "__main__":

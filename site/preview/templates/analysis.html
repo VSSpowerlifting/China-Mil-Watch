@@ -28,18 +28,26 @@
     <div class="briefs-masthead">
       <p class="briefs-kicker">Analysis</p>
       <h1 id="briefs-title">{{ collection_name }}</h1>
-      <p class="briefs-lede">Human-authored analysis built from preserved records.
+      <p class="briefs-lede">Human-controlled analysis built from preserved records.
         Each Brief cites the records it rests on and names its editor.</p>
+      <p class="briefs-browse"><a href="#briefs-published">Browse all Briefs</a>{% if briefs_feed_route %} · <a href="{{ briefs_feed_route }}">Subscribe to the feed</a>{% endif %}</p>
     </div>
     {% if lead %}
     <article class="briefs-lead" aria-labelledby="briefs-lead-title">
-      <p class="briefs-label">Latest Brief{% if lead.issue is not none %} · No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
+      <p class="briefs-label">{% if lead.is_review %}Review candidate{% else %}Latest Brief{% endif %}{% if lead.issue is not none %} · No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
       <h2 id="briefs-lead-title"><a href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>{{ lead.title or lead.slug }}</a></h2>
       {% if lead.dek %}<p class="briefs-lead-dek">{{ lead.dek }}</p>{% endif %}
+      {% if lead.is_retrospective and lead_row.kind == 'brief' %}<p class="briefs-lead-note">{{ lead.retrospective_label }}</p>{% endif %}
       <p class="briefs-lead-byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.desks %} · {% for slug in lead.desks %}{% set d = desks.get(slug) %}{{ d.name if d else slug }}{% if not loop.last %}{{ ' and ' if loop.length == 2 else ', ' }}{% endif %}{% endfor %}{% endif %}</p>
       {% if lead_row.kind == 'issue' %}<p class="briefs-lead-note">{{ lead_row.provenance }}</p>{% endif %}
       {% if lead.synthetic %}<p class="briefs-lead-note">Synthetic test fixture. Not a published brief.</p>{% endif %}
       <p><a class="btn btn--primary" href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>Read this Brief</a></p>
+      {% if lead_row.kind == 'brief' and lead.cover %}
+      <figure class="briefs-lead-photo">
+        <a href="{{ lead.url }}"><img src="{{ lead.cover.route }}" width="1200" height="675" alt="{{ lead.cover.alt }}"></a>
+        <figcaption>{{ lead.cover.credit }}. <a href="{{ lead.cover.source_page }}">Source photograph</a> · visual context only.</figcaption>
+      </figure>
+      {% endif %}
       {#- The issue drawn from its own sidecar, where one exists: one mark per
           source-trail entry. It sits on paper inside the band, so its colors
           are the ones it was drawn with. -#}
@@ -68,11 +76,7 @@
 {% set n_rows = collection.rows|length %}
 <section class="briefs-index" aria-labelledby="briefs-published">
   <h2 id="briefs-published">All Briefs</h2>
-  <p class="section-note">{{ n_rows }} published {{ 'Brief' if n_rows == 1 else 'Briefs' }},
-    newest first.{% if editions %} The earlier Briefs were first published as
-    {{ predecessor_series }}; each keeps its issue number, title, date and original address,
-    and each title opens the Brief as it was published.{% endif %} Draft Briefs are withheld
-    from the public collection until approved: a draft has no public page or feed entry.</p>
+  <p class="section-note">Newest reporting window first.{% if review_mode %} This private preview includes an unapproved candidate.{% endif %}</p>
   <ol class="issue-ledger issue-ledger--briefs">
   {% for row in collection.rows %}
   {% set e = row.entry %}
@@ -82,10 +86,12 @@
           <span class="issue-no">{% if e.issue is not none %}No. {{ e.issue }}{% else %}Brief{% endif %}</span>
           <span class="visually-hidden">Week ending </span><time datetime="{{ e.date }}">{{ e.date|reader_date }}</time>
           {% if e.label %}<span class="issue-label">{{ e.label }}</span>{% endif %}
+          {% if e.is_review %}<span class="issue-label">Review candidate</span>{% elif e.is_retrospective %}<span class="issue-label">Retrospective</span>{% endif %}
         </div>
         <div class="issue-ledger-copy">
           <h3><a href="{{ e.url }}"{% if row.kind == 'issue' %} rel="noopener"{% endif %}>{{ e.title or e.slug }}</a></h3>
           {% if e.dek %}<p>{{ e.dek }}</p>{% endif %}
+          {% if e.desks %}<p class="meta">{% for slug in e.desks %}{{ desks.get(slug).name }}{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
           <p class="meta">{{ row.provenance }}{% if e.synthetic %} · Synthetic test fixture{% endif %}</p>
         </div>
       </article>
@@ -106,15 +112,18 @@
         original language, canonical link and retrieval time. Not analysis.</li>
     <li><span class="evidence evidence--claim">Official claim</span> an assertion by the publishing
         institution, never rendered as established fact.</li>
-    <li><span class="evidence evidence--model">Model-flagged</span> a machine classification or
-        summary, always marked as not reviewed by a human. It is not an editorial judgment and is
-        never described as one.</li>
+    <li><span class="evidence evidence--model">Machine output</span> translated titles,
+        translations and summaries produced by software. They can be wrong; the original text remains authoritative.</li>
+    <li><span class="evidence evidence--model">Model-flagged</span> a software triage cue,
+        separate from the editor's judgment. A flag does not establish the claim's importance or truth.</li>
     <li><span class="evidence evidence--analysis">Editorial judgment</span> the editor's own reading, attributed and signed. The
         edition label, Significant or Routine, is one of these, and is deliberately separate from
         the article-level machine flag beside it.</li>
   </ul>
   <p class="meta">The full labeling rules and their limits are on
   <a href="methodology.html">Methodology</a>.</p>
+  {% if editions %}<p class="meta">The earlier Briefs were first published as {{ predecessor_series }}. They retain their titles, attribution, numbers and addresses.</p>{% endif %}
+  <p class="meta">Draft Briefs are withheld from the public catalog and feed until approved.</p>
 </section>
 {% endblock %}
 

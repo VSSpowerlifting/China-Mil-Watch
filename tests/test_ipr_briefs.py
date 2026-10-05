@@ -777,6 +777,14 @@ class TestCheckCommandHoldsTheNumberingGate(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        # The simulated gate concerns predecessor numbers, including an empty
+        # predecessor directory. Isolate native issues rather than assuming
+        # the real collection will always leave No. 15 available.
+        briefs = self.tmp / "briefs"
+        briefs.mkdir()
+        patch = mock.patch.object(author_brief, "BRIEFS_DIR", briefs)
+        patch.start()
+        self.addCleanup(patch.stop)
 
     def check(self, sidecar):
         path = self.tmp / "brief.json"

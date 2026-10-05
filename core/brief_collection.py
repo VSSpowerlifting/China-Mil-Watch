@@ -66,6 +66,7 @@ from __future__ import annotations
 
 import json
 import re
+from html import escape
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -128,6 +129,16 @@ def paragraphs(text) -> list:
     """Blank-line separated paragraphs of plain prose. Nothing is markup."""
     return [p.strip() for p in re.split(r"\n\s*\n", str(text or ""))
             if p.strip()]
+
+
+def linked_prose(text) -> str:
+    """Escape all prose; only numeric record markers become source-trail links."""
+    def links(match):
+        ids = re.findall(r"\d+", match.group(1))
+        return '<span class="brief-prose-cites">[' + ', '.join(
+            '<a href="#r-%s" aria-label="Source record %s">%s</a>' % (rid, rid, rid)
+            for rid in ids) + ']</span>'
+    return re.sub(r"\[Records? (\d+(?:,\s*\d+)*)\]", links, escape(str(text)))
 
 
 def _iso(value):
@@ -220,7 +231,7 @@ def load_briefs(briefs_dir: Optional[Path], registry, *,
 
 # ── Rows ──────────────────────────────────────────────────────────────────────
 
-def brief_entry(slug: str, sidecar: Mapping) -> dict:
+def brief_entry(slug: str, sidecar: Mapping, media_dir=None) -> dict:
     """
     A brief as the same kind of dict `load_editions` yields for an issue, so
     the templates that list issues list briefs without a second code path.
@@ -230,6 +241,7 @@ def brief_entry(slug: str, sidecar: Mapping) -> dict:
     are screened, so a sum across them describes nothing.
     """
     identity = resolve_identity(sidecar)
+    veil = brief_veil(slug, sidecar, media_dir)
     return {
         "slug": slug,
         "date": sidecar["week_ending"],
@@ -241,10 +253,12 @@ def brief_entry(slug: str, sidecar: Mapping) -> dict:
         "label": (sidecar.get("edition_type") or "").strip(),
         "url": brief_route(slug),
         "rendered_locally": True,
-        "cover": None,
+        "cover": ({"route": "%s/%s" % (ROUTE_DIR, veil["route"]),
+                   "alt": veil["alt"], "credit": veil["credit"],
+                   "source_page": veil["source_page"]} if veil else None),
         "synthetic": bool(sidecar.get("synthetic")),
         "desks": list(sidecar["desks"]),
-        "approved_on": sidecar["approval"]["approved_on"],
+        "approved_on": (sidecar.get("approval") or {}).get("approved_on"),
         "author_name": identity["author_name"],
         "publication": identity["publication"],
         "publication_home_label": identity["publication_home_label"],
@@ -357,7 +371,8 @@ def load_collection(editions: list, registry, *,
                             if isinstance(e.get("issue"), int)],
         allow_synthetic=allow_synthetic, unreconciled=unreconciled)
     try:
-        briefs = [brief_entry(slug, sc) for slug, sc in published]
+        briefs = [brief_entry(slug, sc, Path(briefs_dir) / MEDIA_DIRNAME)
+                  for slug, sc in published]
     except IdentityError as exc:
         raise CollectionError([str(exc)])
     briefs.sort(key=_order_key)
@@ -431,7 +446,7 @@ def brief_veil(slug: str, sidecar: Mapping, media_dir: Optional[Path]):
         "id": "brief-%s" % slug,
         "file": derivative,
         "route": "%s/%s" % (MEDIA_DIRNAME, veil_name(slug)),
-        "alt": alt,
+        "alt": str(meta.get("alt") or "").strip() or alt,
         # Centre-weighted, as for the existing issues: the mask fades rather
         # than crops, and an off-centre focus on an uncurated news photograph
         # risks a misleading crop.
@@ -535,7 +550,8 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
         "publication": identity["publication"],
         "desks": [{"slug": d, "name": name(d)} for d in sidecar["desks"]],
         "single_desk_exception": sidecar.get("single_desk_exception"),
-        "approval": sidecar["approval"],
+        "approval": sidecar.get("approval") or {},
+        "is_review": sidecar.get("editorial_status") == STATUS_DRAFT,
         "development": {"paragraphs": paragraphs(development.get("summary")),
                         "citations": cite(development.get("citations"))},
         "claims": claims,
@@ -584,7 +600,7 @@ def brief_citation(view: Mapping, *, origin: str = "") -> str:
 
 def build_briefs_feed(briefs: Iterable[Mapping], *, origin: str) -> str:
     """
-    Atom feed of the briefs, newest number first. Deterministic: every
+    Atom feed in the collection's coverage-date order. Deterministic: every
     timestamp comes from a sidecar, never the clock.
 
     Briefs only. The existing issues are in `the-pla-watch/feed.xml` under the
@@ -592,7 +608,7 @@ def build_briefs_feed(briefs: Iterable[Mapping], *, origin: str) -> str:
     restated here: carrying them again would put each one in front of a reader
     subscribed to both feeds twice. A brief's ID is its own address.
     """
-    briefs = sorted(briefs, key=lambda b: -(b.get("issue") or 0))
+    briefs = sorted(briefs, key=_order_key)
     if not briefs:
         raise CollectionError(["a feed of briefs needs at least one brief"])
     stamps = ["%sT00:00:00Z" % b["approved_on"] for b in briefs]
