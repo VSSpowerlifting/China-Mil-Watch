@@ -1,5 +1,27 @@
 # China–Singapore Brief release candidate — 4 October 2026
 
+## Release authorization — 5 October 2026
+
+Benjamin Yang explicitly approved the exact five-source candidate at commit
+`4bf960c4614b80289a1e3c1db2814f220d3201f1`, with Benjamin Yang as editor,
+in Codex chat `01a10816-1238-7b03-89fb-9ef9cb3ccde6`. He authorized numbering,
+rendering, required checks, merge of PR #100, deployment and live verification
+of article/home/Analysis/feed/sitemap, followed by the separate whole-background
+topographic frontend task. `author_brief.py approve` assigned **No. 15** and
+recorded that actual approval on 2026-10-05. Approved prose and evidence are
+unchanged; only authorized editor attribution and approval/review metadata changed.
+The earlier candidate-status record below is historical. The current release
+state is in PROJECT_STATE.md and PR #100.
+
+The approved public render exposed a missing native-photo validator integration.
+Native `brief-<slug>` photo IDs now resolve against the approved Brief's cited
+source and canonical media metadata; original, source derivative and published
+derivative hashes must match. Tampered/uncited media regression checks pass.
+Approval-focused tests passed (95), the expanded publication suite passed (13),
+and the public deploy validator passes with the same ten historical warnings.
+Independent editorial rereview confirms all literary/evidence fields match the
+exact approved commit; only authorized identity/status/receipt fields differ.
+
 **Status: prepared and reviewed locally; unapproved, unnumbered, unpublished.**
 This record replaces the current-status claims in the recovered October 1
 review packet. It does not replace that packet's dated evidence or imply a

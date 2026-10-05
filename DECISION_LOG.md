@@ -4,6 +4,24 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-05 — First native Brief approved; release and next frontend task authorized
+
+**Owner ruling (Benjamin Yang, 2026-10-05, America/New_York).** The exact
+five-source candidate at `4bf960c4614b80289a1e3c1db2814f220d3201f1`,
+“Maritime Cooperation 2026: One Exercise, Two Official Accounts,” is approved
+with Benjamin Yang as editor. Source: owner message in Codex chat
+`01a10816-1238-7b03-89fb-9ef9cb3ccde6`.
+
+Assign the next available collection number (**15**, assigned by the approval
+command), retain the approved prose/evidence, render and validate, complete
+required checks, merge PR #100, deploy, and verify article/home/Analysis/native
+feed/sitemap live. This ruling approves this exact recovered version; it does
+not claim recovery of the earlier fourteen-source cloud artifact. Approval is
+dated now, not backdated to the September reporting window.
+
+After live verification, proceed to the whole-background topographic frontend
+treatment as a separate change. It is not bundled into the Brief release.
+
 ## 2026-10-03 — No. 14 approved; reviewed corrections authorized for publication
 
 **Owner ruling (Ben, 2026-10-03, America/Chicago).** “approve No. 14 and

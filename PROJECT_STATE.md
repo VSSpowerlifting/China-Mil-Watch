@@ -9,7 +9,7 @@ first-brief research packet are in
 Singapore recovery claim). The Singapore screening repair and re-screening
 plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md`.**
 
-Brief release preparation was checked 2026-10-04; its current candidate,
+Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
 `docs/BRIEF_RELEASE_REVIEW_2026-10-04.md`. The older desk measurements below
 have not been refreshed by that work.
@@ -125,18 +125,19 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **First native Brief: release candidate, unapproved and unpublished.**
+* **First native Brief: No. 15 approved; deployment pending verification.**
   `briefs/maritime-cooperation-2026.json` recovers the five-record host draft
   and finishes its prose, source comparison and native presentation. It
   covers 2026-09-03 → 09-19, selecting statements dated 09-05 → 09-14.
   Source parity, editorial integrity and rendered desktop/mobile review pass;
-  the candidate has no number or approval and ordinary rendering withholds it.
-  No. 14's 2026-10-03 correction ruling cleared the numbering gate; 15 remains
-  available and unassigned. Ben's later “fully see it through” instruction
-  referred to a distinct fourteen-source cloud draft whose bytes could not be
-  recovered. Its approval is not represented as approval of this version.
-  The exact remaining gate is approval of the recovered five-source candidate;
-  the evidence and proposed address are in the release review record.
+  Benjamin Yang approved this exact five-source version at commit
+  `4bf960c4614b80289a1e3c1db2814f220d3201f1` on 2026-10-05, with Benjamin Yang
+  as editor, and authorized numbering, PR #100 merge, deployment and live
+  verification. The command assigned No. 15; public output now includes the
+  article, homepage/Analysis lead, native feed and sitemap. This supersedes
+  the missing-approval gate without claiming recovery of the older fourteen-source
+  cloud draft. Current remaining work: required checks, merge/deploy and actual
+  live verification. See the release review and DECISION_LOG for authorization.
 * **Brief publication commands are complete.** `scripts/author_brief.py`
   distinguishes `check` (schema), `ready` (finished prose/citations and stored
   source parity), and `approve` (actual human authorization and whole-collection
@@ -157,7 +158,7 @@ disclosed, and never backfilled.
   archive product (DECISION_LOG 2026-09-30). Analysis opens on the Briefs
   masthead and the latest Brief, which is the newest item of the whole
   collection by publication date (week ending), never by issue number: with
-  no newer native Brief that is No. 14. The catalog, "All Briefs", lists every
+  No. 15 now leads the local release output. The catalog, "All Briefs", lists every
   item newest first (number then slug only break ties), the earlier issues
   among them with "From the former series The PLA Watch · published under/by
   <masthead>" as a secondary line; there is no
@@ -171,7 +172,7 @@ disclosed, and never backfilled.
   list). No page, navigation or footer links to it. The historical issue pages' shared
   footer (`site/templates/pla-watch-base.html`) now calls each an earlier
   Brief in Indo-Pacific Record Briefs; these source changes are included in the
-  authorized correction render. No. 14 leads with the owner approval recorded
+  authorized correction render. No. 14 retains the owner approval recorded
   on 2026-10-03. Briefs are marked turquoise on the band and compass blue on
   paper (DESIGN_SYSTEM §3).
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
