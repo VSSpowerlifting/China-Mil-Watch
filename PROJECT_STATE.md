@@ -538,7 +538,7 @@ Parsed for one labeled run and draws no bar for an unmeasured source; desk
 pages call the complement of analyzed records "Not analyzed" and say it is
 not a queue. Faint ledger ruling appears only in wide outer margins.
 
-**Desks map (2026-10-05, `feat/desks-map`, awaiting owner review):**
+**Desks map (2026-10-05, PR #104, owner-approved):**
 `desks.html` is now a Natural Earth map of the Indo-Pacific (DECISION_LOG
 2026-10-05). Each declared desk is a `section.desk` plate hung from its seat
 by a fine leader; plates sit in open water from 1100px, in bands above and
@@ -551,7 +551,6 @@ about 13 KB to about 92 KB (69 KB of inline map geometry), inside the 120 KB
 page budget. The custom-property guard
 (`test_every_custom_property_used_is_declared`) now also allows the plates'
 inline placement properties (`--w*`, `--m*`) and the page-set `--on`.
-Source only: `output/` has not been regenerated.
 
 **Homepage atlas experiment (2026-10-01):**
 `styles.css` replaces the home page's margin grid with a compact pale blue-gray

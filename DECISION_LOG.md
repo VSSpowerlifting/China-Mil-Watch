@@ -4,10 +4,10 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
-## 2026-10-05 — Desks page becomes a map (design change; awaiting owner review)
+## 2026-10-05 — Desks page becomes a map (design change; owner-approved)
 
-**Implemented on `feat/desks-map`; not yet owner-approved, merged or rendered
-into `output/`.** The Desks page's card grid is replaced by a map of the
+**Owner-approved 2026-10-05 after screenshot review at 1440/1100/1024/768/375
+(PR #104).** The Desks page's card grid is replaced by a map of the
 Indo-Pacific with each declared desk's plate hung from where its publishing
 institutions sit. Constraints this sets for later work:
 
