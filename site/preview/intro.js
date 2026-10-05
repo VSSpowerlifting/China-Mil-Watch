@@ -2,14 +2,15 @@
  * The opening title (docs/VISUAL_AND_MOTION_SYSTEM.md §1.1): ~2.4s over a
  * procedural ocean, homepage only, once per tab session. Loaded async, so
  * nothing waits for it; it waits only for the DOM and the title face, each
- * capped. Skipped for a query or hash, a back/forward or same-site arrival, a
- * hidden tab, reduced motion, automation, or no storage or hardware WebGL.
+ * capped. Skipped once the page has painted, and for a query or hash, a
+ * back/forward or same-site arrival, a hidden tab, reduced motion,
+ * automation, or no storage or hardware WebGL.
  * Every exit ends in finish(), which runs once and undoes all of it.
  */
 (function () {
   "use strict";
   var d = document, doc = d.documentElement, w = window, inerted = [],
-      gl, cv, el, st, U, raf, t0, out, done, cap, late, tm, shown;
+      gl, cv, el, st, U, raf, t0, out, done, cap, late, tm;
   var VS = "attribute vec2 P;void main(){gl_Position=vec4(P,0,1);}";
   // Units are ship lengths. Waves: nine directional trains plus warped
   // noise. Wake, in the ship's frame: foam aft, an aged turquoise band,
@@ -47,7 +48,6 @@
     ".ipr-intro{visibility:visible;position:fixed;inset:0;z-index:2147483000;overflow:hidden;color:#EDEAE2;" +
     "background:linear-gradient(160deg,#0d4049,#072a33);transition:opacity .65s cubic-bezier(.4,0,.2,1)}" +
     ".ipr-intro.is-out{opacity:0}" +
-    ".ipr-intro.is-late{animation:ipr-fade .3s ease-out backwards}@keyframes ipr-fade{from{opacity:0}}" +
     ".ipr-intro canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .3s}" +
     ".ipr-intro canvas.is-on{opacity:1}" +
     ".ipr-intro-scrim{position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 0 100%," + INK + ".72)," + INK + ".32) 55%," + INK + "0) 80%)}" +
@@ -121,12 +121,9 @@
     cv.className = "is-on";
     raf = requestAnimationFrame(guard(frame));
   }
-  // Once the page is on screen it may only fade in, within 400ms of the
-  // first contentful paint (2s of navigation if nothing has painted).
-  function fcp() { return performance.getEntriesByName("first-contentful-paint")[0]; }
+  // A page already on screen is never covered (nor after 2s with nothing painted).
   function stale() {
-    var p = fcp(), now = performance.now();
-    return p ? now - p.startTime > 400 : now > 2000;
+    return performance.getEntriesByName("first-contentful-paint").length > 0 || performance.now() > 2000;
   }
   function build() {
     clearTimeout(late);
@@ -134,7 +131,7 @@
     if (stale()) return finish();
     doc.classList.add("ipr-intro");
     el = d.createElement("div");
-    el.className = shown ? "ipr-intro is-late" : "ipr-intro";
+    el.className = "ipr-intro";
     el.innerHTML = '<div class="ipr-intro-scrim"></div><div class="ipr-intro-copy">' +
       '<p class="ipr-intro-title"><span>Indo-Pacific</span> Record</p>' +
       '<p class="ipr-intro-sub">Defense records. Regional context.</p></div>' +
@@ -184,9 +181,7 @@
 
   cap = setTimeout(finish, 5000);
   try {
-    // Before the first paint it covers the page; after, it fades in over it.
-    shown = !!fcp();
-    if (!shown) doc.classList.add("ipr-intro", "ipr-intro-hide");
+    doc.classList.add("ipr-intro", "ipr-intro-hide");
     st = d.createElement("style");
     st.textContent = CSS;
     d.head.appendChild(st);

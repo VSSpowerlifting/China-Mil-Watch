@@ -47,16 +47,14 @@ HTMLCanvasElement.prototype.getContext = function (type, opts) {
   return gc.call(this, type, opts);
 };
 // Which exit ran: dismiss() fades the overlay (`is-out`) first, while the
-// cap, an error and context loss tear it down at once. And how it entered:
-// covering the page before first paint (`ipr-intro-hide`) or fading in over
-// it (`is-late`).
+// cap, an error and context loss tear it down at once. And whether it ever
+// blanked the page (`ipr-intro-hide`).
 new MutationObserver(() => {
   const el = document.querySelector('div.ipr-intro');
   if (document.documentElement.classList.contains('ipr-intro-hide')) window.__hid = true;
   if (el) {
     window.__seen = true;
     if (el.classList.contains('is-out')) window.__faded = true;
-    if (el.classList.contains('is-late')) window.__late = true;
   }
 }).observe(document, {subtree: true, childList: true, attributes: true, attributeFilter: ['class']});
 """
@@ -417,26 +415,20 @@ class TestTheIntroRequestNeverHoldsThePage(IntroCase):
                 self.assert_usable(page)
                 self.assert_clean(page)
 
-    def test_arriving_just_after_the_first_paint_it_fades_in_over_the_page(self):
-        # The arrival window is measured from the first contentful paint.
-        # Once released, the paint always reads as 100ms old, so the test
-        # does not depend on how fast this machine fetches and compiles.
-        # (The window's far edge is the stalled-request test's job.)
-        page = self.page(extra="""const byName = performance.getEntriesByName.bind(performance);
-            performance.getEntriesByName = (name, type) =>
-              name === 'first-contentful-paint' && window.__fcpAge != null
-                ? [{name, startTime: performance.now() - window.__fcpAge}] : byName(name, type);""")
+    def test_arriving_just_after_the_first_paint_it_stands_aside(self):
+        # An already-visible homepage is never covered, however soon after
+        # its first paint the script arrives.
+        page = self.page()
         held = []
         page.route("**/intro.js", lambda route: held.append(route))
         page.goto(self.url(), wait_until="domcontentloaded")
         page.wait_for_function(PAINTED, timeout=3000)
-        page.evaluate("window.__fcpAge = 100")
         held[0].continue_()
-        page.wait_for_selector("div.ipr-intro", state="attached", timeout=3000)
-        self.assertTrue(page.evaluate("!!window.__late"))
+        page.wait_for_load_state("load")
+        page.wait_for_timeout(150)
+        self.assertFalse(page.evaluate("!!window.__seen"))
         self.assertFalse(page.evaluate("!!window.__hid"), "the page was blanked after it painted")
-        page.wait_for_function(GONE, timeout=6000)
-        self.assertTrue(page.evaluate(FADED))
+        self.assert_usable(page)
         self.assert_clean(page)
 
 

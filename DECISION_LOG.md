@@ -4,6 +4,23 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-05 — Homepage opening title approved; scoped exceptions granted
+
+**Owner ruling (Ben, 2026-10-05, PR #103 review).** The opening title's
+visual direction is approved as implemented: the teal procedural ocean, the
+ship and wake, and the title typography. The title face stays as built;
+adapting the broader site typography to it is a possible later change, not
+part of this one.
+
+The exceptions documented in V&M §1.1 are approved **for this component
+only**, and set no precedent elsewhere: WebGL, generated imagery imitating
+photography, the ~2.4s sequence, temporary page coverage while it plays,
+and a separate `intro.js` cap of 12,000 bytes on the homepage.
+
+Loading rule: the intro is skipped whenever first contentful paint has
+already occurred. An already-visible homepage is never covered; the earlier
+400ms fade-in-after-paint window is removed.
+
 ## 2026-10-05 — First native Brief approved; release and next frontend task authorized
 
 **Owner ruling (Benjamin Yang, 2026-10-05, America/New_York).** The exact

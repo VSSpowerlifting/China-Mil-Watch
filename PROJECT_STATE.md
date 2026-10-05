@@ -551,8 +551,9 @@ deployed.
 **Homepage opening title (2026-10-05, draft PR, not merged):**
 `site/preview/intro.js` adds a ~2.4s once-per-tab title over a procedural
 WebGL ocean on the homepage only (V&M §1.1). Its exceptions to the motion
-doctrine and the 10 KB JS budget are **pending owner sign-off**; no
-DECISION_LOG entry yet. No content, database or `output/` change.
+doctrine and the 10 KB JS budget are owner-approved for this component
+only (DECISION_LOG 2026-10-05); it skips once the page has painted. No
+content, database or `output/` change.
 
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —
