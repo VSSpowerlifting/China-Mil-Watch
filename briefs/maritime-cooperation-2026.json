@@ -1,0 +1,218 @@
+{
+  "publication": "Indo-Pacific Record",
+  "publication_timing": "retrospective",
+  "author_name": "Draft prepared for Benjamin Yang",
+  "author_title": "AI-assisted editorial draft; awaiting editor review",
+  "author_bio": "Prepared for editorial review on 1 October 2026. This draft has not been approved, numbered or published.",
+  "collection": "Indo-Pacific Record Briefs",
+  "brief_schema": 1,
+  "editorial_status": "draft",
+  "issue_number": null,
+  "desks": [
+    "china",
+    "singapore"
+  ],
+  "week_start": "2026-09-03",
+  "week_ending": "2026-09-19",
+  "development": {
+    "summary": "Singapore MINDEF reported that RSS Steadfast and PLANS Dali participated in Exercise Maritime Cooperation at Zhanjiang on 5–9 September 2026. China’s defense ministry described the same exercise on 14 September, giving a 3–9 September period. Both describe activities ashore and at sea.",
+    "citations": [
+      4466,
+      4472,
+      4164
+    ]
+  },
+  "title": "Maritime Cooperation 2026: One Exercise, Two Official Accounts",
+  "dek": "Singapore places the exercise within wider naval relationships. Its closing account and China’s ministry emphasize bilateral trust, while their starting dates remain unresolved.",
+  "signal": "Singapore places the exercise within wider naval relationships. Both ministries stress bilateral trust, while their different starting dates remain unresolved.",
+  "edition_type": "Routine",
+  "opening_note": "Singapore’s MINDEF places Maritime Cooperation 2026 at Zhanjiang on the final leg of RSS Steadfast’s three-month deployment with several naval partners. China’s defense ministry describes the exercise through bilateral cooperation. MINDEF’s closing release uses that frame too: the wider deployment context and the shared message about trust sit alongside each other. [Records 4466, 4472, 4164]",
+  "what_stood_out": "MINDEF gives 5–9 September, with shore activity on 5–7 September and a sea phase on 8–9 September. China’s ministry gives 3–9 September. PLA Daily reports a 5 September opening and preparatory meetings on 4 September; its later feature describes a five-day exercise ending on 9 September. Preparation and the formal exercise may have been counted differently, but no cited record explains the ministry’s 3 September starting point. [Records 4466, 4472, 4164, 3924, 4102]\n\nBoth ministries list communications, search and rescue, and casualty-related drills. MINDEF names gunnery firing; China’s ministry names live-fire shooting. The Chinese ministry also lists replenishment, which neither cited MINDEF release names. PLA Daily describes replenishment positioning and line handling; it does not establish that fuel or stores were transferred. [Records 4466, 4472, 4164, 4102]",
+  "why_it_matters": "For a policy reader, MINDEF’s opening release places cooperation with China among Steadfast’s engagements with several partners. Its closing release emphasizes the bilateral relationship, much as China’s ministry does. Reading the closing statements alone would miss the deployment context. Reading the opening statements as opposing political messages would overstate the contrast: a deployment-wide release and an answer about one exercise have different scopes. [Records 4466, 4472, 4164]\n\nMINDEF’s closing release cites improved operational competencies; China’s ministry claims an increased ability to maintain regional peace and stability. These are participant assessments. The five records provide no independent performance measures against which to test them. [Records 4472, 4164]",
+  "what_was_routine": "MINDEF dates the series to 2015, and both ministries call this its fifth iteration. That supports an assessment of continuity. Without a comparable earlier program or scale, this brief makes no finding about expansion or improved combat effectiveness. [Records 4466, 4472, 4164]",
+  "term_to_know_term": "sea riders",
+  "term_to_know_lang": "en",
+  "term_to_know_explanation": "MINDEF uses this term for personnel exchanged between the participating ships during the exercise. China’s ministry also reports that observers embarked on each other’s vessels. Both accounts describe a professional exchange. [Records 4466, 4472, 4164]",
+  "what_im_watching_next": "An official explanation of the 3 September starting date would clarify the exercise’s broader timeline. More specific replenishment reporting could establish whether the work went beyond positioning and line handling. [Records 4164, 3924, 4102]\n\nA changed program or scale would become more meaningful alongside a documented earlier iteration. Comparable performance measures would help test the benefits the ministries assert. [Records 4466, 4472, 4164]",
+  "cross_desk_claims": [
+    {
+      "claim": "MINDEF gives 5–9 September; China’s ministry gives 3–9 September. PLA Daily reports a 5 September opening, 4 September preparatory meetings and a five-day exercise ending on 9 September. The broader starting date remains unexplained.",
+      "desks": [
+        "china",
+        "singapore"
+      ],
+      "basis": "comparison",
+      "citations": [
+        4466,
+        4472,
+        4164,
+        3924,
+        4102
+      ]
+    },
+    {
+      "claim": "Both ministries list communications, search and rescue, and casualty-related drills. MINDEF names gunnery firing; China’s ministry names live-fire shooting. China’s ministry also names replenishment, which the two MINDEF releases do not name. This establishes a difference in their published lists.",
+      "desks": [
+        "china",
+        "singapore"
+      ],
+      "basis": "comparison",
+      "citations": [
+        4466,
+        4472,
+        4164
+      ]
+    },
+    {
+      "claim": "Both ministries call this the fifth iteration and associate it with cooperation and trust. This is an attributed assessment of an established exercise series; the records provide no comparative performance measures.",
+      "desks": [
+        "china",
+        "singapore"
+      ],
+      "basis": "comparison",
+      "citations": [
+        4466,
+        4472,
+        4164
+      ]
+    },
+    {
+      "claim": "MINDEF’s opening release places the exercise within Steadfast’s deployment involving several partners. Its closing release and China’s ministry answer both emphasize bilateral trust and cooperation. The wider deployment context and bilateral message coexist in the Singapore account.",
+      "desks": [
+        "china",
+        "singapore"
+      ],
+      "basis": "comparison",
+      "citations": [
+        4466,
+        4472,
+        4164
+      ]
+    }
+  ],
+  "coverage_by_desk": {
+    "china": {
+      "records": 526,
+      "by_screening": {
+        "analysis_incomplete": 3,
+        "analyzed": 257,
+        "awaiting_screening": 1,
+        "not_selected": 265
+      },
+      "model_flagged": 26,
+      "days_with_records": 17,
+      "sources": [
+        "China Military Online (EN)",
+        "Global Times — Defense",
+        "MOD China (国防部)",
+        "PLA Daily (解放军报)",
+        "Xinhua Military (新华军事)"
+      ],
+      "languages": [
+        "en",
+        "zh-Hans"
+      ]
+    },
+    "singapore": {
+      "records": 18,
+      "by_screening": {
+        "awaiting_screening": 11,
+        "not_selected": 7
+      },
+      "model_flagged": 0,
+      "days_with_records": 11,
+      "sources": [
+        "MINDEF Singapore — official releases"
+      ],
+      "languages": [
+        "en"
+      ]
+    }
+  },
+  "source_trail": [
+    {
+      "record_id": 4164,
+      "desk": "china",
+      "source_id": "mod_china",
+      "source": "MOD China (国防部)",
+      "lang": "zh-Hans",
+      "title_original": "中新“海上合作－2026”联演促进双方务实合作",
+      "title": "China-Singapore \"Maritime Cooperation-2026\" Joint Exercise Promotes Practical Cooperation Between the Two Sides",
+      "url": "http://www.mod.gov.cn/gfbw/xwfyr/yzxwfb/16486365.html",
+      "date": "2026-09-14",
+      "screening": "analyzed",
+      "is_significant": false
+    },
+    {
+      "record_id": 4102,
+      "desk": "china",
+      "source_id": "pla_daily",
+      "source": "PLA Daily (解放军报)",
+      "lang": "zh-Hans",
+      "title_original": "中新“海上合作-2026”联合演习回眸",
+      "title": "A Look Back at the China-Singapore \"Maritime Cooperation-2026\" Joint Exercise",
+      "url": "http://www.81.cn/yw_208727/16485244.html",
+      "date": "2026-09-12",
+      "screening": "analyzed",
+      "is_significant": false
+    },
+    {
+      "record_id": 3924,
+      "desk": "china",
+      "source_id": "pla_daily",
+      "source": "PLA Daily (解放军报)",
+      "lang": "zh-Hans",
+      "title_original": "中新“海上合作-2026”联合演习开幕",
+      "title": "China-Singapore \"Maritime Cooperation-2026\" Joint Exercise Opens",
+      "url": "http://www.81.cn/yw_208727/16483866.html",
+      "date": "2026-09-06",
+      "screening": "analyzed",
+      "is_significant": false
+    },
+    {
+      "record_id": 4472,
+      "desk": "singapore",
+      "source_id": "sg_mindef_releases",
+      "source": "MINDEF Singapore — official releases",
+      "lang": "en",
+      "title_original": "The Republic of Singapore Navy Successfully Concludes Exercise Maritime Cooperation with People’s Liberation Army (Navy)",
+      "title": "The Republic of Singapore Navy Successfully Concludes Exercise Maritime Cooperation with People’s Liberation Army (Navy)",
+      "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/9sep26-nr/",
+      "date": "2026-09-09",
+      "screening": "awaiting_screening",
+      "is_significant": null
+    },
+    {
+      "record_id": 4466,
+      "desk": "singapore",
+      "source_id": "sg_mindef_releases",
+      "source": "MINDEF Singapore — official releases",
+      "lang": "en",
+      "title_original": "The Republic of Singapore Navy and People’s Liberation Army (Navy) Commence Bilateral Maritime Exercise",
+      "title": "The Republic of Singapore Navy and People’s Liberation Army (Navy) Commence Bilateral Maritime Exercise",
+      "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/",
+      "date": "2026-09-05",
+      "screening": "awaiting_screening",
+      "is_significant": null
+    }
+  ],
+  "author_links": {},
+  "review": {
+    "prepared_on": "2026-10-01",
+    "prepared_by": "Codex",
+    "status": "awaiting_editor_review",
+    "evidence_window": {
+      "start": "2026-09-05",
+      "end": "2026-09-14"
+    },
+    "corpus_commit": "61b96cdce597236036988c4c60fe8f7b15f97f78",
+    "limitations": [
+      "Chinese ministry and PLA Daily source pages were not accessible through the web verification tool on 2026-10-01; the draft uses preserved corpus originals.",
+      "English-language Singapore releases were checked live on 2026-10-01; photo captions have changed since collection, while the factual paragraphs cited here remain supported."
+    ],
+    "reader_question": "How do Singapore and China place this naval exercise in their defense relationships, and what does the comparison establish?",
+    "baseline": "MINDEF dates the series to 2015; both ministries identify its fifth iteration. No prior exercise program or performance measures are compared.",
+    "revised_on": "2026-10-04",
+    "recovery_note": "Recovered the five-record host draft. The separately praised fourteen-record cloud draft could not be recovered; this candidate does not claim that approval."
+  }
+}

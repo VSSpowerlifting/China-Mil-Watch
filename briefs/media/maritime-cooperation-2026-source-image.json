@@ -1,0 +1,37 @@
+{
+  "article_url": "http://www.81.cn/yw_208727/16483866.html",
+  "image_url": "http://www.81.cn/yw_208727/_attachment/2026/09/06/16483866_86f0a3a38cee307a22f4e826e4c26ee1.jpg",
+  "original_width": 1200,
+  "original_height": 675,
+  "source_label": "article body photograph",
+  "provenance": "article-id-match",
+  "local_path": "briefs/media/maritime-cooperation-2026-source-image.jpg",
+  "downloaded_at": "2026-10-02T01:26:19+00:00",
+  "source_sha256": "657bd02c0b783dae00914a88a37481302ef99894cfebb6a2eda83d968b20e4d8",
+  "note": "Photo: 葛瀚强 / PLA Daily (via 81.cn)",
+  "alt": "Naval personnel with Chinese and Singaporean flags, standing at a pier beside a naval ship; rendered as a duotone source photograph.",
+  "caption_original": "9月5日，中国和新加坡两国海军参演官兵代表参加开幕式。葛瀚强摄",
+  "derivative": {
+    "local_path": "briefs/media/maritime-cooperation-2026-veil.jpg",
+    "sha256": "20363d5218d451f489c1c7ed7eec1ff4693f6056a66a22313b4859ddbf8a5cea",
+    "builder": "scripts.generate_editorial_derivatives._write_duotone",
+    "grayscale": "scripts.generate_editorial_derivatives._load_gray (autocontrast cutoff=1)",
+    "black": [
+      18,
+      34,
+      44
+    ],
+    "white": [
+      143,
+      201,
+      222
+    ],
+    "mid": [
+      37,
+      94,
+      122
+    ],
+    "crop": null,
+    "quality": 86
+  }
+}

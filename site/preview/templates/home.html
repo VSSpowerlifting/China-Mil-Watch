@@ -148,9 +148,10 @@
     <div class="feature feature--briefs" data-reveal>
       <div>
         {% if lead %}
-        <p class="briefs-label">{{ collection_name }}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
+        <p class="briefs-label">{{ collection_name }}{% if lead.is_review %} · Review candidate{% endif %}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
         <h3><a href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>{{ lead.title or lead.slug }}</a></h3>
         {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
+        {% if lead.is_retrospective and lead_row.kind == 'brief' %}<p class="legacy-note">{{ lead.retrospective_label }}</p>{% endif %}
         <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.desks %} · {% for slug in lead.desks %}{% set d = desks.get(slug) %}{{ d.name if d else slug }}{% if not loop.last %}{{ ' and ' if loop.length == 2 else ', ' }}{% endif %}{% endfor %}{% endif %}</p>
         {% if lead_row.kind == 'issue' %}
         <p class="legacy-note">{{ lead_row.provenance }}</p>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}{{ title }}{% endblock %}</title>
-<meta name="description" content="{{ tagline }}">
+<meta name="description" content="{% block description %}{{ tagline }}{% endblock %}">
 {# Build provenance. A candidate build and the published site are both static
    HTML in a directory; this is how a stray copy identifies itself. #}
 <meta name="generator" content="{{ title }} — {{ mode }} build">
@@ -24,12 +24,12 @@
    template does not have, so they are written in the post-processing pass
    that writes the canonical — one source of truth for a page's address. #}
 <meta property="og:site_name" content="{{ title }}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
 <meta property="og:title" content="{{ self.title() }}">
-<meta property="og:description" content="{{ tagline }}">
+<meta property="og:description" content="{{ self.description() }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ self.title() }}">
-<meta name="twitter:description" content="{{ tagline }}">
+<meta name="twitter:description" content="{{ self.description() }}">
 {# The publication's three families, weights capped, shared with Night Desk
    (DECISION_LOG 2026-09-26): Source Serif 4 (the voice), Inter (the
    interface) and IBM Plex Mono (metadata: the masthead kicker, hashes, ids).
@@ -156,6 +156,7 @@
 </aside>
 {% endif %}
 <main id="main"{% block main_class %}{% endblock %}>
+{% if review_mode %}<p class="wrap review-banner" role="note">Private editorial preview · draft content is unapproved and unpublished.</p>{% endif %}
 {% block hero %}{% endblock %}
   <div class="wrap">
 {% block content %}{% endblock %}

@@ -135,16 +135,20 @@
 }
 .brief-toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
 .brief-toc li { margin: 0; }
-.brief-toc a { display: block; padding: .3rem 0 .3rem .75rem; color: var(--ink-2); text-decoration: none; }
+.brief-toc a { display: block; padding: .3rem 0 .3rem .75rem; min-height: 40px; color: var(--ink-2); text-decoration: none; }
 .brief-toc a:hover { color: var(--accent-ink); text-decoration: underline; }
 @media (max-width: 1023px) {
   .brief-toc ol { display: flex; flex-wrap: wrap; gap: .25rem .9rem; border-left: 0; }
-  .brief-toc a { padding: .35rem 0; min-height: 24px; }
+  .brief-toc a { padding: .35rem 0; min-height: 40px; }
 }
 
 .brief-main > .brief-section:first-child h2,
 .brief-signal + .brief-section h2 { margin-top: 1.5rem; }
-.brief-section p { font-family: var(--serif); font-size: var(--step-body); line-height: 1.65; }
+.brief-section p { font-family: var(--serif); font-size: var(--step-body); line-height: 1.75; max-width: 68ch; }
+.brief-prose-cites { font-family: var(--sans); font-size: .75em; white-space: normal; }
+.brief-evidence { margin-top: 1.75rem; border-block: 1px solid var(--rule); padding-block: .7rem; }
+.brief-evidence > summary { font-family: var(--sans); font-weight: 600; cursor: pointer; padding-block: .4rem; }
+.brief-evidence .brief-section { margin-bottom: 1rem; }
 .brief-section .section-note { font-family: var(--sans); font-size: .875rem; line-height: 1.55; color: var(--ink-2); }
 .brief-section p.meta { font-family: var(--sans); font-size: var(--step-meta); line-height: 1.55; }
 /* A right-aligned count sits beside a left-aligned column; the site's table
@@ -174,6 +178,9 @@
 
 .brief-term { padding: 1rem 1.15rem; background: var(--band); color: var(--band-ink); border-radius: var(--radius); }
 .brief-term p { color: var(--band-ink); }
+.brief-term a, .brief-term a:visited { color: var(--focus-band); }
+.brief-term a:hover { color: var(--band-ink); }
+.brief-term a:focus-visible { outline-color: var(--focus-band); }
 .brief-section .brief-term-word { margin: 0 0 .5rem; font-size: 1.375rem; font-weight: 700; }
 
 .brief-count {
