@@ -4,6 +4,20 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-05 — Shared blue topographic backgrounds and gentle motion
+
+**Owner request (Benjamin Yang, Codex chat
+`01a10c6d-963d-7f61-8947-2dd75fe16ffe`).** Extend the homepage's blue
+geometric/topographic treatment across all subpages, replacing the margin
+grids; vary each page's profile subtly through scale, composition and
+gradients; animate the backgrounds slightly; add background detail to the
+large dark Analysis block. This authorizes the scoped gradient and ambient
+background-motion exception in `docs/VISUAL_AND_MOTION_SYSTEM.md`, retaining
+static no-JS, reduced-motion and `.no-anim` fallbacks and removing decoration
+in print and forced colors. Ben subsequently approved the private preview and
+explicitly authorized committing and pushing the source and docs in the same
+chat. Production regeneration, merge and deployment remain unauthorized.
+
 ## 2026-10-05 — First native Brief approved; release and next frontend task authorized
 
 **Owner ruling (Benjamin Yang, 2026-10-05, America/New_York).** The exact

@@ -155,6 +155,23 @@ disclosed, and never backfilled.
   topographic treatment is a separate, owner-authorized frontend release in
   PR #101; its final `.12` opacity, measured review and release receipts are
   documented in `docs/HOMEPAGE_TOPOGRAPHIC_REVIEW_2026-10-05.md` and PR #101.
+  A follow-up requested by Ben on 2026-10-05 is in source on
+  `codex/topographic-subpages-20261005`: shared blue contours replace page
+  grids, addresses select subtle profile variations, and decorative layers
+  move slowly, including on the dark Analysis band. The motion exception and
+  fallbacks are in `docs/VISUAL_AND_MOTION_SYSTEM.md`. Private preview only;
+  production output has not been regenerated, committed or deployed for this
+  follow-up. Final homepage suite: 107 checks, 106 passed and one skipped;
+  preview, veil and historical identity suites also ran. Private review:
+  63 page/width combinations, 18 glyph-contrast samples, no browser errors
+  or local asset failures; historical byline regression clears 5:1. The
+  complete private tree validates with the same 10 historical warnings.
+  Review at `http://127.0.0.1:8773/analysis.html`; evidence is in
+  `/private/tmp/ipr-topographic-subpages-review/report.json`. Ben approved
+  the private preview and authorized source/docs commit and push on 2026-10-05.
+  Review used base `03418aa08`; main subsequently gained the Desks map and
+  homepage opening, so integration review is required before merging this branch.
+  Production render, merge and release remain unauthorized.
 * **One analysis publication (source ruling 2026-09-30; render authorized
   with No. 14 corrections on 2026-10-03).**
   The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
