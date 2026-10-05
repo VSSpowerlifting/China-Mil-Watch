@@ -169,9 +169,15 @@ disclosed, and never backfilled.
   Review at `http://127.0.0.1:8773/analysis.html`; evidence is in
   `/private/tmp/ipr-topographic-subpages-review/report.json`. Ben approved
   the private preview and authorized source/docs commit and push on 2026-10-05.
-  Review used base `03418aa08`; main subsequently gained the Desks map and
-  homepage opening, so integration review is required before merging this branch.
-  Production render, merge and release remain unauthorized.
+  The branch is now synced with main at `efee36fe2`, preserving the Desks map
+  and homepage opening. Integration review passed: 193 tests with one skip,
+  plus 485 preview tests with one skip. The opening composition helper finishes
+  only overlay animations, leaving ambient background loops intact. The full
+  integration group passed on rerun after that fix. The refreshed private
+  preview passed 63 page/width checks and 18 glyph samples; unchanged production
+  output still validates with 10 historical warnings. Ben authorized the branch
+  sync and pull request in this chat. Production render, merge into main and
+  release remain unauthorized.
 * **One analysis publication (source ruling 2026-09-30; render authorized
   with No. 14 corrections on 2026-10-03).**
   The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
