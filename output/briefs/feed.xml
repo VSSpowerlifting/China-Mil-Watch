@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Indo-Pacific Record Briefs</title>
+  <link href="https://indopacificrecord.org/briefs/feed.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://indopacificrecord.org/analysis.html" rel="alternate" type="text/html"/>
+  <id>https://indopacificrecord.org/briefs/feed.xml</id>
+  <updated>2026-10-05T00:00:00Z</updated>
+  <entry>
+    <title>Maritime Cooperation 2026: One Exercise, Two Official Accounts</title>
+    <link href="https://indopacificrecord.org/briefs/maritime-cooperation-2026.html" rel="alternate" type="text/html"/>
+    <id>https://indopacificrecord.org/briefs/maritime-cooperation-2026.html</id>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <published>2026-10-05T00:00:00Z</published>
+    <author><name>Benjamin Yang</name></author>
+    <summary>Singapore places the exercise within wider naval relationships. Its closing account and China’s ministry emphasize bilateral trust, while their starting dates remain unresolved.</summary>
+  </entry>
+</feed>
