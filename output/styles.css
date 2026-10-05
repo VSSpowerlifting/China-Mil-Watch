@@ -1262,6 +1262,13 @@ main.home-atlas .opening::before { display: none; }
    Watch, are rows of the same catalog below it. Turquoise never appears on paper (1.71 on --surface); there the
    Briefs' structure is compass blue. */
 .briefs-head { border-top: 3px solid var(--focus-band); }
+.review-banner { padding-block: .7rem; font-size: .875rem; }
+.briefs-browse { margin-top: 1.4rem; font-size: .875rem; }
+.band .briefs-browse a { color: var(--focus-band); }
+.briefs-lead-photo { margin: 1.5rem 0 0; }
+.briefs-lead-photo img { display: block; width: 100%; height: auto; }
+.briefs-lead-photo figcaption { margin-top: .5rem; font-size: .75rem; line-height: 1.5; color: var(--band-dek); }
+.band .briefs-lead-photo figcaption a { color: inherit; }
 .briefs-head-inner { padding-block: 2.4rem 2.6rem; }
 .briefs-kicker {
   display: flex; align-items: center; gap: .6rem; margin: 0 0 .8rem;
