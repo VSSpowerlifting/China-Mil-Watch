@@ -298,6 +298,11 @@ class PreviewCase(unittest.TestCase):
             raise unittest.SkipTest("production database not present")
         cls.tmp = Path(tempfile.mkdtemp(prefix="preview-test-"))
         cls.out = cls.tmp / "build"
+        # This prototype snapshot exercises the predecessor issue collection.
+        # Native publication has separate fixtures; a real approved Brief must
+        # not silently change this snapshot's lead, routes or issue set.
+        cls.briefs = cls.tmp / "briefs"
+        cls.briefs.mkdir()
         cls.snapshot = snapshot_of(TRACKED_DB)
         cls.corpus_size = cls.snapshot["expected_records"]
         cls.corpus_edge = cls.snapshot["date"]
@@ -316,7 +321,7 @@ class PreviewCase(unittest.TestCase):
             1 for r in _data["corpus"] if r.get("analyzed_at"))
         cls.week_count = len(_data["weeks"])
         cls.result = gp.build(cls.out, "Test Title", TRACKED_DB,
-                              snapshot=cls.snapshot)
+                              snapshot=cls.snapshot, briefs_dir=cls.briefs)
         # Measured from the built tree, so necessarily after the build.
         cls.shard_count = len(list(cls.out.glob("week-*.html")))
         cls.source_count = len(list(cls.out.glob("source/*.html")))
@@ -6626,8 +6631,11 @@ class TestPreviewEditionIdentity(unittest.TestCase):
         ordered += [e for e in cls.editions if e.get("issue") != issue]
         gp.load_editions = lambda *a, **k: ordered
         try:
+            briefs = tmp / "briefs"
+            briefs.mkdir()
             gp.build(tmp / "out", "Test Title", TRACKED_DB,
-                     snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+                     snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+                     briefs_dir=briefs)
         finally:
             gp.load_editions = real
         pages = {name: (tmp / "out" / name).read_text(encoding="utf-8")
