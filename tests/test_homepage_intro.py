@@ -433,6 +433,27 @@ class TestTheIntroRequestNeverHoldsThePage(IntroCase):
 
 
 class TestTheCompositionFits(IntroCase):
+    """Layout only, on Playwright's clock, so the overlay holds still.
+
+    With software WebGL every frame ties up the page's main thread, and on a
+    slow runner the real 2.4s timeline can end before a measurement runs. Here
+    the timeline and frames advance only when the test says; real dismissal
+    timing and cleanup belong to the classes above.
+    """
+
+    def start(self, page, path="index.html"):
+        page.clock.install(time=0)
+        page.clock.pause_at(1000)                     # stopped until run_for
+        super().start(page, path)
+        page.clock.run_for(300)                       # the copy's font wait
+        page.wait_for_selector("div.ipr-intro.is-text", state="attached", timeout=3000)
+        page.evaluate("document.getAnimations().forEach(a => a.finish())")
+
+    def assert_ends_cleanly(self, page):
+        page.clock.run_for(2500)
+        page.wait_for_function(GONE, timeout=3000, polling=50)
+        self.assertTrue(page.evaluate(FADED))
+        self.assert_clean(page)
 
     def test_copy_and_skip_stay_inside_the_viewport(self):
         for width, height in ((320, 568), (375, 812), (812, 375), (1280, 800)):
@@ -455,6 +476,7 @@ class TestTheCompositionFits(IntroCase):
                 self.assertFalse(page.evaluate(
                     "document.documentElement.scrollWidth"
                     " > document.documentElement.clientWidth"))
+                self.assert_ends_cleanly(page)
 
 
     def test_it_recomposes_when_the_viewport_turns(self):
@@ -471,6 +493,7 @@ class TestTheCompositionFits(IntroCase):
         self.assertLessEqual(state["right"], 375 - 16)
         self.assertLess(state["skipBottom"], state["top"])
         self.assertEqual(state["canvas"], [375, 812])
+        self.assert_ends_cleanly(page)
 
 
 class TestBudget(unittest.TestCase):
