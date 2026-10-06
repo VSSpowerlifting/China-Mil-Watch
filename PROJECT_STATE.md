@@ -255,7 +255,12 @@ checkpoint reader are prepared. Fresh collections from immutable collector
 (`bbe2c8a2`). Clean remote clones and pinned integrity packets verified all state
 hashes with zero machine findings; rehearsal state was not transferred. Draft
 PR #110's source-commit CI passed 3,229 tests with two skipped and the ten-warning
-validator. The full local run hit 31 sandbox port-binding setup errors and is
+validator. Its receipt-update CI failed two existing phone-layout assertions
+against the newer main merge: a fully visible line measured 28.265625px against
+CSS line-height 28.272px. The test comparison now accounts for one Chromium
+layout unit (1/64px), with real-browser regressions for full visibility and
+viewport clipping; 18 adjacent browser checks pass. The PR's current full CI is
+the corrected-head gate. The full local run hit 31 sandbox port-binding setup errors and is
 not reported as green. Main merge, scheduling, Actions collection egress, human
 checkpoints and reuse-policy review remain open. Launch receipt:
 `docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`. Initial evidence and prompt:

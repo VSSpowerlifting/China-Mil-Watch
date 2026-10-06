@@ -1486,6 +1486,11 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
     #: the contract is actually about, so it is left where it was.
     FIRST_VIEWPORT = 900
 
+    # Chromium's LayoutUnit uses six fractional bits. Bounding rectangles
+    # round to that grid; computed CSS lineHeight can retain extra precision.
+    # https://chromium.googlesource.com/chromium/src/+/96b04b8744c3300c980cd87bc41cc3444d463fb0/third_party/blink/renderer/platform/geometry/layout_unit.h
+    LAYOUT_UNIT = 1 / 64
+
     @staticmethod
     def pin_reveal(page):
         """`.lead-record` carries `data-reveal`; measuring mid-reveal reads
@@ -1501,6 +1506,46 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             " return {top: r.top + window.scrollY, bottom: r.bottom +"
             " window.scrollY, height: r.height,"
             " lineHeight: parseFloat(getComputedStyle(h).lineHeight)}; }")
+
+    def assert_readable_phone_headline(self, box):
+        self.assertIsNotNone(box)
+        visible = min(box["bottom"], 900) - box["top"]
+        self.assertGreaterEqual(
+            visible + self.LAYOUT_UNIT, box["lineHeight"],
+            "only %.6fpx of the headline is inside 375x900 — less "
+            "than one rendered line of %.6fpx, so the record's "
+            "title begins below the fold"
+            % (visible, box["lineHeight"]))
+
+    def fractional_line_box(self, page, top):
+        # Synthetic layout probe, not a source title. Use the CI line height
+        # and the same selector/measurement as the actual phone contract.
+        page.set_content(
+            '<style>body{margin:0}.record-headline{position:absolute;'
+            'top:%spx;margin:0;font:20px/28.272px serif;white-space:nowrap}'
+            '</style><div class="lead-record"><h2 class="record-headline">'
+            'Layout probe</h2></div>' % top)
+        return self.lead_box(page)
+
+    def test_a_fully_visible_fractional_line_is_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 100)
+            self.assertLess(box["bottom"], 900)
+            self.assertLess(box["height"], box["lineHeight"])
+            self.assert_readable_phone_headline(box)
+        finally:
+            context.close()
+
+    def test_a_fractional_line_clipped_by_the_viewport_is_not_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 874)
+            self.assertGreater(box["bottom"], 900)
+            with self.assertRaises(AssertionError):
+                self.assert_readable_phone_headline(box)
+        finally:
+            context.close()
 
     def test_a_complete_record_title_is_visible_in_the_first_viewport(self):
         """Under the platform's own faces and under the forced wide stack."""
@@ -1582,14 +1627,7 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
                 page.wait_for_timeout(120)
                 box = self.lead_box(page)
                 with self.subTest(stack="wide" if wide else "native"):
-                    self.assertIsNotNone(box)
-                    visible = min(box["bottom"], 900) - box["top"]
-                    self.assertGreaterEqual(
-                        visible, box["lineHeight"],
-                        "only %.1fpx of the headline is inside 375x900 — less "
-                        "than one rendered line of %.1fpx, so the record's "
-                        "title begins below the fold"
-                        % (visible, box["lineHeight"]))
+                    self.assert_readable_phone_headline(box)
             finally:
                 context.close()
 

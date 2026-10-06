@@ -68,6 +68,35 @@ fresh state and clean remote-clone packets, source CI and full local suite logs,
 log, launch metadata and source snapshot. Its local storage is supplementary;
 the two published orphan commits are the durable collection evidence.
 
+## CI repair after the receipt update
+
+[Receipt-update CI](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37518846526)
+tested merge `071dd4faba1ef0ac777ffbaf16be498d4c591a1f` against newer main
+`ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c`: 3,245 tests, two failures,
+two skipped. Both failures were the existing phone headline assertion, on native
+and wide font stacks; the desk tests and production-preservation check passed.
+The validator step did not run after that failure.
+
+A minimal Chromium reproduction drove the exact assertion and failed identically
+with the whole headline visible at y=100 through y=128.265625: its measured line
+height was 28.265625px, while computed CSS returned 28.272px. Settling fonts and
+disabling motion did not change it; an integer line height passed. A title clipped
+by the viewport still failed. This isolates a measurement-precision mismatch,
+not a product layout change.
+
+`tests/test_home_paired_records.py` now allows one 1/64px layout unit in that
+comparison, consistent with [Chromium's six-bit layout representation](https://chromium.googlesource.com/chromium/src/+/96b04b8744c3300c980cd87bc41cc3444d463fb0/third_party/blink/renderer/platform/geometry/layout_unit.h).
+New real-browser cases prove that a fully visible fractional line passes and a
+clipped fractional line is rejected. The positive regression was observed red
+before the correction; the minimal repro and all 18 first-viewport, opening-space
+and page-shape browser checks pass after it. Production styling, the collectors,
+captured source bytes and both published state commits are unchanged.
+
+The current full check on [PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
+is the corrected-head verification gate; the older successful source run is not
+substituted for it. Repair evidence is in
+`/private/tmp/ipr-indonesia-korea-ci-repair-20261006.tar.gz`.
+
 ## Remaining action
 
 Owner review and an authorized merge of PR #110 are required before its prepared
