@@ -4,6 +4,22 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-06 — Indonesia and South Korea shadow state authorized
+
+**Owner direction (Ben, this Codex chat):** after reviewing the built candidates,
+"Next action: authorized commit/PR, followed by durable shadow collection."
+This authorizes committing/pushing the implementation, opening its PR and
+publishing fresh successful collection state to the public same-repository orphan
+branches `shadow/indonesia-kemhan` and `shadow/korea-policy-briefing`, using the
+full `IndoPacificRecord-ShadowCollector/0.1` identity documented in the execution
+receipt. Initial collection may run locally from the immutable collector commit;
+rehearsal state and clocks are not transferred. Existing ledgers and originals
+remain immutable. Indonesia's scope stays Kemhan Berita; South Korea's stays
+Policy Briefing's MND-labeled republications and linked HWPX documents. This
+direction does not authorize a main merge, schedule, deployment, public desk
+declaration or promotion. Source reuse terms and human checkpoints remain open;
+public Git state is evaluation evidence, not a claim of republication rights.
+
 ## 2026-10-06 — AFP manual shadow evaluation constraints
 
 **Owner direction (Ben, continuation brief, 2026-10-06):** approve public

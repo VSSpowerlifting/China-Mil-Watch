@@ -1514,6 +1514,36 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
                 lineHeight:parseFloat(getComputedStyle(h).lineHeight)};
         }""")
 
+    def fractional_line_box(self, page, top):
+        # Synthetic layout probe, not a source title. Use the CI line height
+        # and the same selector/measurement as the actual phone contract.
+        page.set_content(
+            '<style>body{margin:0}.record-headline{position:absolute;'
+            'top:%spx;margin:0;font:20px/28.272px serif;white-space:nowrap}'
+            '</style><div class="lead-record"><h2 class="record-headline">'
+            'Layout probe</h2></div>' % top)
+        return self.lead_box(page)
+
+    def test_a_fully_visible_fractional_line_is_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 100)
+            self.assertLess(box["bottom"], 900)
+            self.assertLess(box["height"], box["lineHeight"])
+            self.assert_complete_phone_line(box)
+        finally:
+            context.close()
+
+    def test_a_fractional_line_clipped_by_the_viewport_is_not_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 874)
+            self.assertGreater(box["bottom"], 900)
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(box)
+        finally:
+            context.close()
+
     def test_a_complete_record_title_is_visible_in_the_first_viewport(self):
         """Under the platform's own faces and under the forced wide stack."""
         for wide in (False, True):

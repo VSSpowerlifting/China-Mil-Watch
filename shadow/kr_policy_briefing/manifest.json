@@ -1,0 +1,42 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": "Candidate only. Outside production discovery. Separate government portal source, not an exception to the MND host's robots policy. No remote state or scheduled launch is established here.",
+  "desk": {
+    "desk_id": "korea",
+    "display_name": "South Korea Desk (shadow candidate)",
+    "jurisdiction_code": "KR",
+    "default_timezone": "Asia/Seoul",
+    "default_calendar": "gregorian",
+    "supported_language_tags": ["ko"],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [{
+    "institution_id": "kr_policy_briefing",
+    "display_name": "Korea Policy Briefing",
+    "name_original": "대한민국 정책브리핑",
+    "institution_type": "other"
+  }, {
+    "institution_id": "kr_mnd",
+    "display_name": "South Korea Ministry of National Defense",
+    "name_original": "국방부",
+    "institution_type": "defense_ministry"
+  }],
+  "sources": [{
+    "slug": "kr_policy_mnd_releases",
+    "institution_id": "kr_policy_briefing",
+    "display_name": "Policy Briefing — MND-labeled republished releases",
+    "base_url": "https://www.korea.kr",
+    "language_tag": "ko",
+    "access_method": "html",
+    "authority_tier": "B",
+    "source_type": "government_republished_release",
+    "originality": "syndicated",
+    "enabled": true,
+    "adapter": "scraper.sources.kr_policy_briefing:KoreaPolicyAdapter",
+    "listing_endpoints": ["https://www.korea.kr/briefing/pressReleaseList.do"],
+    "article_url_patterns": ["^https://www\\.korea\\.kr/briefing/pressReleaseView\\.do\\?newsId=[0-9]+$"],
+    "notes": "The portal's published POST search form filtered by its explicit A00005/국방부 control. Publisher is the government portal; issuer is the page's explicit MND label. Collect the linked HWPX document only; HWP, PDF, multi-attachment and HTML-only variants remain unsupported and are failures, not missing publications. The complete supported document's text, HTML and HWPX bytes are preserved separately. Portal posting date is preserved; any date inside the document stays original text and does not replace it. This is not direct MND-site retrieval, a complete MND wire, Joint Chiefs/service coverage, or independent corroboration. Tier B reflects republication. Cadence thresholds remain unset."
+  }]
+}
