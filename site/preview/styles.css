@@ -155,14 +155,22 @@
 
   /* The six-level type ladder (DESIGN_SYSTEM §4):
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta.
-     The wordmark's value is the masthead's measured one. */
-  --step-wordmark: clamp(1.5rem, 3.2vw, 2rem);
+     The wordmark's value is the masthead's measured one, re-measured for
+     the titling register's wider capitals. */
+  --step-wordmark: clamp(1.2rem, 2.4vw, 1.55rem);
   --step-display:  clamp(2.2rem, 1.45rem + 2.6vw, 3.1rem);
   --step-deck:     1.1875rem;
   --step-section:  1.5rem;
   --step-body:     1rem;
   --step-meta:     .875rem;
   --measure: 68ch;
+
+  /* The titling register (DESIGN_SYSTEM §4): the homepage opening title's
+     setting — serif 600 in letter-spaced capitals — for short, fixed English
+     names only: the wordmark, the footer name, hub page names. Never a
+     record, Brief or claim headline, never Chinese or Japanese. */
+  --title-weight: 600;
+  --title-tracking: .07em;
 
   /* ── Space and shape ── */
   --sp-1: .25rem; --sp-2: .5rem; --sp-3: .75rem; --sp-4: 1rem;
@@ -267,11 +275,11 @@ main.leads-with-hero { padding-top: 0; }
 /* ═══ Type ═══════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 600; }
 h1 {
-  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.018em;
+  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.008em;
   margin: 0 0 .55rem; text-wrap: balance; max-width: 24ch;
 }
 h2 {
-  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.01em;
+  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.004em;
   margin: 2.75rem 0 .8rem; padding-top: .8rem;
   border-top: 1px solid var(--rule);
 }
@@ -326,9 +334,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .brand-mark { display: block; width: 56px; height: 56px; border-radius: var(--radius); }
 .brand-text { display: block; }
 .brand-name {
-  margin: 0; font-family: var(--serif); font-weight: 700;
-  font-size: var(--step-wordmark); line-height: 1.1;
-  letter-spacing: -.022em; color: var(--ink); max-width: none;
+  margin: 0; font-family: var(--serif); font-weight: var(--title-weight);
+  font-size: var(--step-wordmark); line-height: 1.08; text-transform: uppercase;
+  letter-spacing: var(--title-tracking); color: var(--ink); max-width: none;
 }
 .brand-sub {
   margin: .26rem 0 0; font-family: var(--mono); font-size: .75rem;
@@ -422,6 +430,15 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .atlas-spine-count { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .page-head { margin-bottom: 1.6rem; }
+/* Hub page names (About, Desks, China Desk…) in the titling register.
+   Opt-in by class, only where the h1 is a fixed English name: never a
+   record, source or Brief title, never text with CJK in it (source pages
+   carry 解放军报, 防衛省 in their names, so they do not take it). */
+h1.page-name {
+  font-weight: var(--title-weight); text-transform: uppercase;
+  letter-spacing: .06em; line-height: 1.04;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.6rem);
+}
 .page-head .lede { margin-top: .5rem; }
 .page-head .meta { margin: 0; }
 
@@ -820,9 +837,9 @@ html.js .nojs-note { display: none; }
   gap: 2.4rem; align-items: start; padding-block: 2.1rem 1.9rem;
 }
 .claim {
-  margin: 0; font-family: var(--serif); font-weight: 700;
+  margin: 0; font-family: var(--serif); font-weight: 600;
   font-size: clamp(1.6rem, 3.1vw, 2.45rem); line-height: 1.1;
-  letter-spacing: -.02em; color: var(--ink); text-wrap: balance; max-width: 19ch;
+  letter-spacing: -.008em; color: var(--ink); text-wrap: balance; max-width: 19ch;
 }
 .claim em { font-style: italic; color: var(--accent); }
 .claim-sub {
@@ -1527,7 +1544,7 @@ main.home-atlas .opening::before { display: none; }
 .site { background: var(--surface); border-top: 2px solid var(--rule-hard); margin-top: 3rem; }
 .site .wrap { padding-block: 2.2rem 2rem; }
 .footer-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 1.6rem 2.4rem; }
-.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; letter-spacing: -.014em; color: var(--ink); }
+.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: var(--title-weight); font-size: 1.05rem; text-transform: uppercase; letter-spacing: var(--title-tracking); color: var(--ink); }
 .site p { margin: 0 0 .8rem; font-size: .875rem; line-height: 1.65; color: var(--ink-2); max-width: 46ch; }
 .footer-col h2 { margin: 0 0 .5rem; padding: 0; border: 0; font-family: var(--sans); font-size: .8125rem; font-weight: 600; color: var(--ink); }
 .footer-col ul { list-style: none; margin: 0; padding: 0; }
