@@ -1816,6 +1816,9 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
                              'terrain-drift')
             self.assertEqual(page.locator('.briefs-head').evaluate(motion),
                              'terrain-breath')
+            # Font swaps can move this title by 24px while decorative motion
+            # is being inspected. Measure only after the used faces settle.
+            page.wait_for_function("document.fonts.status === 'loaded'", timeout=30000)
             geometry = page.locator('#briefs-title').bounding_box()
             transforms = page.locator('.topography').evaluate("""e => {
               const a = e.getAnimations({subtree:true})[0];
