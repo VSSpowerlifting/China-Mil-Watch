@@ -1,0 +1,5 @@
+# robots.txt - Chan TAT CA bot crawl toan bo site
+# Dat tai: /var/www/vntr/public/robots.txt
+
+User-agent: *
+Disallow: /

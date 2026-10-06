@@ -88,13 +88,25 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
-import requests
 from bs4 import BeautifulSoup, NavigableString
 
 from core.collection import status as st
 from core.collection.contract import (
     CandidateReference, CaptureResult, CollectionWindow, DiscoveryResult,
-    ExtractedDocument, ExtractionResult, SourceAdapter, SourceHealthResult,
+    ExtractedDocument, ExtractionResult, SourceHealthResult,
+)
+# The identity, the transport limits, robots parsing and the request loop were
+# written here and moved to the module every Vietnam shadow adapter shares.
+# Two things changed in the move: a Crawl-delay that is not a finite,
+# non-negative number now reads as infinite (refused, never guessed low), and
+# a delay read from robots.txt reaches the shared host gate with that request.
+# REQUEST_HEADERS, REQUEST_TIMEOUT, USER_AGENT and robots_allows are not used
+# below; they are re-exported so nothing that reads them here changes.
+from scraper.sources.vn_shadow_http import (
+    CHALLENGE_RE as _CHALLENGE_RE, MAX_BODY_BYTES, MAX_CRAWL_DELAY, MAX_ROBOTS_BYTES,
+    REQUEST_HEADERS, REQUEST_INTERVAL, REQUEST_TIMEOUT, USER_AGENT, Refusal as _Refusal,
+    ShadowHttpAdapter, parse_robots, robots_allows, robots_crawl_delay,
+    robots_rules, squash,
 )
 
 HOSTNAME = "en.baochinhphu.vn"
@@ -105,22 +117,6 @@ LISTING = HOST + TAG_PATH
 #: The listing's own `#hdCatUrl` value: the page's statement of which tag it is.
 TAG_ZONE = "defense"
 IDENTITY_PREFIX = "vgp-en:"
-
-#: The repository's complete shadow-collector identity, unchanged, as every
-#: other shadow adapter sends it and as the 2026-10-06 UTC probe sent it.
-USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
-              "(+https://chinamilwatch.org; research archive; contact via site)")
-#: The only request headers this adapter sets. `Accept-Encoding: identity` asks
-#: for the bytes as stored; a compressed reply is refused rather than decoded,
-#: so a stored capture is always the bytes that crossed the wire.
-REQUEST_HEADERS = {"User-Agent": USER_AGENT, "Accept-Encoding": "identity"}
-ROBOTS_TOKENS = ("chinamilwatch-shadowcollector", "chinamilwatch")
-
-REQUEST_TIMEOUT = 30
-REQUEST_INTERVAL = 2.0          # seconds; a longer published Crawl-delay wins
-MAX_CRAWL_DELAY = 120.0         # a longer published delay is refused, not shortened
-MAX_BODY_BYTES = 2_000_000
-MAX_ROBOTS_BYTES = 512 * 1024
 
 #: Frame markers every Government News page carried in the 2026-10-06 UTC captures
 #: (listing, articles, the Politics page). An interstitial carries neither.
@@ -137,20 +133,12 @@ ARTICLE_PATH_RE = re.compile(r"^/(?:[a-z0-9]+-)+?(\d+)\.htm$")
 #: a re-served page with only its sidebars or modification time changed is not.
 CONTENT_HASH_RULE = "vgp-en-content-v1"
 
-_ASCII_WS = re.compile(r"[ \t\n\r\f]+")
 _MONTHS = ("january", "february", "march", "april", "may", "june", "july",
            "august", "september", "october", "november", "december")
 _VISIBLE_STAMP = re.compile(
     r"^([A-Za-z]+) (\d{1,2}), (\d{4}) (\d{1,2}):(\d{2}) (AM|PM) GMT([+-])(\d{1,2})(?::?(\d{2}))?$")
 _LIST_TEXT = re.compile(r"^(\d{2})/(\d{2})/(\d{4}) (\d{2}):(\d{2})$")
 _LIST_TITLE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$")
-
-_CHALLENGE_RE = re.compile(
-    r"<title>\s*(?:just a moment|attention required)|cf-browser-verification|"
-    r"_cf_chl_opt|id=[\"']challenge-form[\"']|"
-    r"enable javascript and cookies to continue|"
-    r"checking your browser before accessing|"
-    r"class=[\"'][^\"']*\b(?:g-recaptcha|h-captcha)\b", re.I)
 
 _BLOCK_TAGS = frozenset((
     "p", "div", "li", "ul", "ol", "h1", "h2", "h3", "h4", "h5", "h6",
@@ -174,26 +162,6 @@ _KNOWN_BLOCK_TYPES = frozenset(("Photo", "RelatedNewsBox"))
 
 class PageRejected(ValueError):
     """A page that is not what a Government News page must be."""
-
-
-class _Refusal(Exception):
-    """A collection stage that must stop, with the status that names why."""
-
-    def __init__(self, status: str, detail: str, endpoint: Optional[str] = None,
-                 http_status: Optional[int] = None):
-        super().__init__(detail)
-        self.status, self.detail, self.endpoint = status, detail, endpoint
-        self.http_status = http_status
-
-
-@dataclass(frozen=True)
-class _Raw:
-    url: str
-    status: int
-    headers: Dict[str, str]     # lower-cased names
-    body: bytes
-    oversized: bool
-    retrieved_at: str
 
 
 @dataclass(frozen=True)
@@ -241,15 +209,6 @@ class Article:
 
 
 # ── pure helpers, unit-testable without a network ────────────────────────────
-
-def squash(text: str) -> str:
-    """
-    Collapse runs of the ASCII whitespace HTML collapses (space, tab, CR, LF,
-    FF) and trim them at the ends. NBSP, soft hyphens and every other character
-    stay exactly as published; `str.split()` would turn NBSP into a space.
-    """
-    return _ASCII_WS.sub(" ", text or "").strip(" \t\n\r\f")
-
 
 def article_id(url: str) -> Optional[str]:
     """The id of an https article URL on this host, else None. Nothing is rewritten."""
@@ -333,65 +292,6 @@ def parse_visible_stamp(text: str) -> Optional[Tuple[str, int]]:
         return None
     offset = int(m.group(8)) * 60 + int(m.group(9) or 0)
     return dt.strftime("%Y-%m-%dT%H:%M"), offset if m.group(7) == "+" else -offset
-
-
-def parse_robots(text: str) -> List[dict]:
-    """
-    `[{"agents": [...], "rules": [(allow, pattern)], "crawl_delay": float|None}]`.
-    Consecutive `User-agent` lines share a group; one after a rule line starts
-    a new one. An empty `Allow:`/`Disallow:` value is no rule at all.
-    """
-    groups: List[dict] = []
-    current: Optional[dict] = None
-    in_rules = False
-    for line in (text or "").lstrip("﻿").splitlines():
-        name, sep, value = line.split("#", 1)[0].partition(":")
-        if not sep:
-            continue
-        name, value = name.strip().lower(), value.strip()
-        if name == "user-agent":
-            if current is None or in_rules:
-                current = {"agents": [], "rules": [], "crawl_delay": None}
-                groups.append(current)
-                in_rules = False
-            current["agents"].append(value.lower())
-        elif current is not None and name in ("allow", "disallow"):
-            in_rules = True
-            if value:
-                current["rules"].append((name == "allow", value))
-        elif current is not None and name == "crawl-delay":
-            in_rules = True
-            try:
-                current["crawl_delay"] = float(value)
-            except ValueError:
-                current["crawl_delay"] = float("inf")   # unreadable: refuse, never guess low
-    return groups
-
-
-def _governing(groups: List[dict]) -> List[dict]:
-    """Every group naming this collector, combined; only when none does, every `*` group."""
-    named = [g for g in groups if any(a in ROBOTS_TOKENS for a in g["agents"])]
-    return named or [g for g in groups if "*" in g["agents"]]
-
-
-def robots_rules(groups: List[dict]) -> List[Tuple[bool, str]]:
-    return [rule for g in _governing(groups) for rule in g["rules"]]
-
-
-def robots_crawl_delay(groups: List[dict]) -> Optional[float]:
-    delays = [g["crawl_delay"] for g in _governing(groups) if g["crawl_delay"] is not None]
-    return max(delays) if delays else None
-
-
-def robots_allows(rules, target: str) -> bool:
-    """RFC 9309: longest match wins, Allow wins a tie, `*` wildcard, `$` anchor."""
-    best = (-1, True)
-    for allow, pattern in rules:
-        anchored = pattern.endswith("$")
-        body = re.escape(pattern[:-1] if anchored else pattern).replace(r"\*", ".*")
-        if re.match(body + ("$" if anchored else ""), target):
-            best = max(best, (len(pattern), allow))
-    return best[1]
 
 
 def _framed(soup) -> bool:
@@ -701,188 +601,40 @@ def parse_article(text: str, url: str) -> Article:
         tags=tags, anomalies=anomalies)
 
 
-def _transport_status(exc: Exception, default: str) -> str:
-    return st.TIMEOUT if isinstance(exc, requests.exceptions.Timeout) else default
-
-
-def _now_utc() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
-
-
 # ── the adapter ──────────────────────────────────────────────────────────────
 
-class VNVgpAdapter(SourceAdapter):
+class VNVgpAdapter(ShadowHttpAdapter):
     """Discovery, retrieval and extraction. No storage, no analysis."""
 
     implemented = True
+    robots_url = ROBOTS
 
     def __init__(self, source, session=None, sleeper=time.sleep, clock=time.monotonic,
-                 max_requests: Optional[int] = None) -> None:
-        super().__init__(source)
-        self._session = session or requests.Session()
-        self._sleep = sleeper
-        self._clock = clock
-        self._last_request: Optional[float] = None
-        self._rules: Optional[List[Tuple[bool, str]]] = None
-        self._interval = REQUEST_INTERVAL
+                 max_requests: Optional[int] = None, gate=None, wall=time.time) -> None:
+        super().__init__(source, session=session, sleeper=sleeper, clock=clock,
+                         max_requests=max_requests, gate=gate, wall=wall)
         self._listing: Dict[str, ListingItem] = {}
-        #: Hard ceiling on requests this instance will make; the runner sets it.
-        self.max_requests = max_requests
-        #: Every request made, in order: url, status, bytes, redirect target.
-        self.request_log: List[dict] = []
-        #: Exact bytes of robots.txt and the listing, for the runner to store.
-        self.evidence: List[dict] = []
-        self.robots_status: Optional[str] = None
         self.listing_report: Dict[str, object] = {}
 
-    # -- transport ------------------------------------------------------------
-
-    def _get(self, url: str, limit: int, generic: str) -> _Raw:
-        """
-        One polite request: honest identity, no redirect followed, no cookie
-        returned, bounded read, spaced from the END of the previous attempt.
-        Never retried within a run.
-        """
-        if self.max_requests is not None and len(self.request_log) >= self.max_requests:
-            raise _Refusal(generic, "request cap of %d reached before %s"
-                           % (self.max_requests, url), url)
-        if self._last_request is not None:
-            wait = self._interval - (self._clock() - self._last_request)
-            if wait > 0:
-                self._sleep(wait)
-        log = {"url": url, "requested_at": _now_utc(), "status": None, "bytes": None}
-        self.request_log.append(log)
-        try:
-            resp = self._session.get(url, timeout=REQUEST_TIMEOUT, stream=True,
-                                     allow_redirects=False, headers=dict(REQUEST_HEADERS))
-        except Exception as exc:
-            self._last_request = self._clock()
-            log["error"] = type(exc).__name__
-            raise _Refusal(_transport_status(exc, generic),
-                           "%s unreachable: %s" % (url, type(exc).__name__), url)
-        try:
-            self._session.cookies.clear()
-            headers = {k.lower(): v for k, v in (resp.headers or {}).items()}
-            log["status"] = resp.status_code
-            if headers.get("location"):
-                log["location"] = headers["location"]
-            encoding = headers.get("content-encoding", "").strip().lower()
-            if encoding not in ("", "identity"):
-                raise _Refusal(st.UNEXPECTED_CONTENT_TYPE,
-                               "%s was sent with Content-Encoding %r despite "
-                               "Accept-Encoding: identity" % (url, encoding),
-                               url, resp.status_code)
-            declared = headers.get("content-length", "")
-            oversized = declared.isdigit() and int(declared) > limit
-            chunks, size = [], 0
-            if not oversized:
-                for chunk in resp.raw.stream(65536, decode_content=False):
-                    size += len(chunk)
-                    if size > limit:
-                        oversized = True
-                        break
-                    chunks.append(chunk)
-            body = b"" if oversized else b"".join(chunks)
-            log["bytes"] = len(body)
-            return _Raw(url, resp.status_code, headers, body, oversized, _now_utc())
-        except _Refusal:
-            raise
-        except Exception as exc:
-            log["error"] = type(exc).__name__
-            raise _Refusal(_transport_status(exc, generic),
-                           "%s: read failed (%s)" % (url, type(exc).__name__), url)
-        finally:
-            resp.close()
-            self._last_request = self._clock()
-
-    def _gate(self, raw: _Raw) -> None:
-        """Status-independent refusals: redirects, cookie gates, size, challenges."""
-        if 300 <= raw.status < 400:
-            target = urljoin(raw.url, raw.headers.get("location", ""))
-            if target == raw.url and "set-cookie" in raw.headers:
-                raise _Refusal(st.ACCESS_CHALLENGED,
-                               "cookie gate: HTTP %d back to the same URL while setting a "
-                               "cookie. Cookies are never returned, so this collector does not "
-                               "pass it" % raw.status, raw.url, raw.status)
-            raise _Refusal(st.DISALLOWED_REDIRECT, "HTTP %d redirect to %s was not followed"
-                           % (raw.status, raw.headers.get("location", "?")), raw.url, raw.status)
-        if raw.oversized:
-            raise _Refusal(st.OVERSIZED_RESPONSE, "response exceeds the byte limit",
-                           raw.url, raw.status)
-        if looks_challenged(raw.headers, raw.body.decode("utf-8", "replace")):
-            raise _Refusal(st.ACCESS_CHALLENGED,
-                           "an access challenge was served instead of the document",
-                           raw.url, raw.status)
-
-    def _screen(self, raw: _Raw, generic: str) -> str:
-        """A usable HTML body as text, or a refusal that names the reason."""
-        self._gate(raw)
-        if raw.status in (401, 403):
-            raise _Refusal(st.AUTH_FAILURE, "HTTP %d" % raw.status, raw.url, raw.status)
-        if raw.status != 200:
-            raise _Refusal(generic, "HTTP %d" % raw.status, raw.url, raw.status)
-        ctype = raw.headers.get("content-type", "")
-        charset = re.search(r"charset=([^;\s]+)", ctype, re.I)
-        if (not ctype.lower().startswith("text/html")
-                or (charset and charset.group(1).strip("\"'").lower() not in ("utf-8", "utf8"))):
-            raise _Refusal(st.UNEXPECTED_CONTENT_TYPE,
-                           "content-type %r, expected UTF-8 HTML" % ctype, raw.url, raw.status)
-        try:
-            return raw.body.decode("utf-8")
-        except UnicodeDecodeError:
-            raise _Refusal(st.UNEXPECTED_CONTENT_TYPE, "body is not valid UTF-8",
-                           raw.url, raw.status)
-
-    def _keep(self, role: str, raw: _Raw) -> None:
-        self.evidence.append({
-            "role": role, "url": raw.url, "http_status": raw.status,
-            "content_type": raw.headers.get("content-type"),
-            "payload_bytes": len(raw.body),
-            "payload_sha256": hashlib.sha256(raw.body).hexdigest(),
-            "retrieved_at": raw.retrieved_at, "payload": raw.body})
+    def _challenged(self, headers: Dict[str, str], text: str) -> bool:
+        return looks_challenged(headers, text)
 
     # -- policy ---------------------------------------------------------------
 
-    def _load_robots(self, generic: str) -> None:
+    def _robots_problem(self, raw) -> Optional[str]:
         """
-        Read robots.txt for this run, or refuse. 404/410 state no restriction;
-        401/403 is no permission basis; a redirect or a 200 that is not a
-        plain-text rules file (an HTML page, a challenge) is never read as
-        allow-all. A published Crawl-delay longer than 2 s is honoured.
+        This adapter's acceptance rule, unchanged since the pilot: a 200 that
+        is not a plain-text rules file (an HTML page, a challenge) is never
+        read as allow-all. The header decides here, as it always has.
         """
-        self._rules, self._interval = None, REQUEST_INTERVAL
-        raw = self._get(ROBOTS, MAX_ROBOTS_BYTES, generic)
-        self._gate(raw)
-        if raw.status in (404, 410):
-            self._rules, self.robots_status = [], "absent"
-            return
-        if raw.status in (401, 403):
-            raise _Refusal(st.AUTH_FAILURE, "robots.txt returned HTTP %d; no basis to "
-                           "conclude collection is permitted" % raw.status, ROBOTS, raw.status)
-        if raw.status != 200:
-            raise _Refusal(generic, "robots.txt returned HTTP %d" % raw.status, ROBOTS, raw.status)
         try:
             text = raw.body.decode("utf-8")
         except UnicodeDecodeError:
             text = "<"
         if (not raw.headers.get("content-type", "").lower().startswith("text/plain")
-                or text.lstrip("﻿").lstrip().startswith("<")):
-            raise _Refusal(st.UNEXPECTED_CONTENT_TYPE,
-                           "robots.txt is not a plain-text rules file", ROBOTS, raw.status)
-        groups = parse_robots(text)
-        delay = robots_crawl_delay(groups)
-        if delay is not None and delay > MAX_CRAWL_DELAY:
-            raise _Refusal(generic, "robots.txt publishes a Crawl-delay of %s s, longer than "
-                           "a bounded run honours (%s s); refusing rather than shortening it"
-                           % (delay, MAX_CRAWL_DELAY), ROBOTS, raw.status)
-        self._interval = max(REQUEST_INTERVAL, delay or 0.0)
-        self._rules, self.robots_status = robots_rules(groups), "read"
-        self._keep("robots", raw)
-
-    def _permits(self, url: str) -> bool:
-        parts = urlparse(url)
-        return robots_allows(self._rules or [],
-                             parts.path + ("?" + parts.query if parts.query else ""))
+                or text.lstrip("\ufeff").lstrip().startswith("<")):
+            return "robots.txt is not a plain-text rules file"
+        return None
 
     # -- discovery ------------------------------------------------------------
 
