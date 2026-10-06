@@ -237,38 +237,29 @@ disclosed, and never backfilled.
 
 ## 5. Desk evaluation and review status
 
-**Indonesia and South Korea initial durable shadow state published (2026-10-06).** Ben
-requested research and implementation, then authorized commit/PR and durable
-shadow collection. Implementation branch: `codex/indonesia-korea-shadow-20261006`.
-Manifests remain
-outside `desks/`; the public registry, production collection and output are
-unchanged. Indonesia's scope is Kemhan Berita institutional news. South Korea's
-scope is MND-labeled releases republished by the separately governed Policy
-Briefing portal, with their linked HWPX documents; MND's own publication paths
-are robots-disallowed and were not requested. Native temporary-state rehearsals
-for 2026-09-30 through 10-06 stored 14 Indonesia records and four Korean releases,
-with no fetch/extraction failures. These are bounded observations, not periodic
-reliability, qualification or promotion. A manual workflow and pinned-state
-checkpoint reader are prepared. Fresh collections from immutable collector
-`5ddca377e` published 14 Indonesia records and four Korean releases on
-`shadow/indonesia-kemhan` (`8e9ee2e8`) and `shadow/korea-policy-briefing`
-(`bbe2c8a2`). Clean remote clones and pinned integrity packets verified all state
-hashes with zero machine findings; rehearsal state was not transferred. Draft
-PR #110's source-commit CI passed 3,229 tests with two skipped and the ten-warning
-validator. Its receipt-update CI failed two existing phone-layout assertions
-against the newer main merge: a fully visible line measured 28.265625px against
-CSS line-height 28.272px. Correction `4868802fb` passed full CI: 3,247 tests,
-two skipped, ten governed validator warnings and DB/output preservation.
-After PR #109 merged, PR #110 incorporates main `cc8d36646`, preserves both
-desk authorization entries and adopts the upstream natural rendered-line
-measurement. Its fractional full-line/clipping regressions remain; the upstream
-viewport/element-clipping guard is retained. All 19 adjacent browser checks and
-40 desk tests pass; validation still has ten warnings. All 7,451 production
-files match that main commit. The current full PR check is the merge-resolution
-gate. The full local run hit 31 sandbox port-binding setup errors and is
-not reported as green. Main merge, scheduling, Actions collection egress, human
-checkpoints and reuse-policy review remain open. Launch receipt:
-`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`. Initial evidence and prompt:
+**Indonesia and South Korea — merged; bounded Actions collection verified
+(2026-10-06).** Ben authorized commit/PR and durable shadow collection, then
+reported the merge. PR #110 merged at `a8e6d5a26`; its exact-head full CI passed
+3,478 tests with two skipped, the ten-warning validator and DB/output preservation.
+Manifests remain outside `desks/`; neither desk enters production discovery or
+the public registry. Indonesia's scope is Kemhan Berita institutional news.
+South Korea's is the separately governed Policy Briefing portal's MND-labeled
+republications and linked HWPX; MND publication paths remain unrequested.
+One manual main-hosted run per desk traversed 2026-09-30 through 10-06, reread
+robots and retrieved/extracted all 14 Indonesia records and four Korean releases.
+All were duplicates: zero inserts, updates or fetch/extraction/access failures.
+Both runs published append-only state successfully. Current pinned heads:
+`shadow/indonesia-kemhan` (`9fe9f6fd`) and `shadow/korea-policy-briefing`
+(`a1088ea1`). Artifacts exactly match clean remote clones; all historical rows,
+captures, ledgers and first-success clocks remain unchanged. Machine packets have
+zero findings and supply no human sign-off. Each desk still has only one successful
+logical date, October 6: two same-day runs do not establish periodic reliability.
+The main tree remained unchanged by collection. Scheduling, human checkpoints,
+source reuse terms, completeness and cadence/silence review remain open. Nothing
+is promoted or qualified. Actions receipt:
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`. Initial native launch
+and CI/conflict history: `docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+Initial research and reusable prompt:
 `docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
 `docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
 

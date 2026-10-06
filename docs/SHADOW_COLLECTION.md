@@ -31,8 +31,12 @@ The state branches are `shadow/indonesia-kemhan` and `shadow/korea-policy-briefi
 both use `scripts/shadow_collect_desk.py` from its immutable implementation commit.
 Initial native collections from collector `5ddca377e` published fresh state and
 were verified from clean remote clones; no rehearsal state was transferred. The
-prepared `indonesia_korea_shadow.yml` is manual-only and main-only, pending an
-authorized merge. No schedule, public declaration or promotion is authorized.
+`indonesia_korea_shadow.yml` merged in PR #110 and remains manual-only and
+main-only. One bounded October 6 run per desk verified Actions egress and
+append-only publication on the existing state branches; all retrieved records
+were duplicates and the original clocks stayed unchanged. See
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
+No schedule, public declaration or promotion is authorized.
 Scope and limitations are in `shadow/id_kemhan/README.md` and
 `shadow/kr_policy_briefing/README.md`; DECISION_LOG records the authorization.
 Published commits and measured launch results are in

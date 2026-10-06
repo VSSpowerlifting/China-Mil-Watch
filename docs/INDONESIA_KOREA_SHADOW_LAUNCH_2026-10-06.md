@@ -2,9 +2,12 @@
 
 Ben authorized the implementation commit/PR followed by durable shadow collection
 in this Codex chat, then instructed continuation. The authorization is recorded
-in DECISION_LOG.md. [Draft PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
+in DECISION_LOG.md. [PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
 contains the collectors, fixtures, review tooling and prepared manual workflow.
-No main merge, schedule, deployment, public desk declaration or promotion occurred.
+The initial native launch performed no main merge, schedule, deployment, public
+desk declaration or promotion. PR #110 subsequently merged; its bounded
+post-merge Actions verification is recorded separately in
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
 
 ## Published initial state
 
@@ -113,17 +116,20 @@ are unchanged.
 All 19 adjacent browser checks and all 40 desk tests pass locally. Validation
 passes with ten governed warnings. All 7,451 production files are identical to
 that main commit's Git blobs; its daily snapshot is inherited without production
-regeneration. The current full check on [PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
-is the merge-resolution gate; neither earlier green run substitutes for it.
+regeneration. [Full CI on the conflict resolution](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37529546274)
+passed 3,478 tests with two skipped, ten governed validator warnings and
+DB/output preservation. GitHub confirmed the head mergeable before the owner
+merged PR #110 at `a8e6d5a266cf6dadc664e899905a4ad9dbf47732`.
 
 ## Remaining action
 
-Owner review and an authorized merge of PR #110 are required before its prepared
-main-only manual workflow can run on GitHub Actions. Scheduling remains off; no
-recurring run or automatic continuation has been configured. Any future schedule
-needs its own authorization and logical-date slot, followed by real Actions
-egress/persistence verification. This local native launch does not establish that
-egress. Durable state survives independently of that later integration.
+PR #110 merged on October 6; one manual main-hosted run per desk subsequently
+verified bounded egress and state persistence. Results and immutable state pins
+are in `docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
+Scheduling remains off; no recurring run or automatic continuation is configured.
+Any future schedule needs its own authorization, cadence and logical-date slot.
+The two same-day successes per desk establish one logical collecting date,
+not periodic reliability or a second collecting day.
 
 The bounded seed scopes, unsupported document formats, unresolved reuse terms,
 cadence thresholds, historical completeness and human source/document comparisons
