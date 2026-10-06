@@ -236,16 +236,22 @@ class TestRunnerReadiness(StateCase):
     def test_manual_cli_can_probe_disabled_source_but_does_not_enable_manifest(self):
         adapter = ph.PHAfpAdapter(S.FakeSource(), session=CapturedSession(),
                                   sleeper=lambda _: None)
-        with mock.patch.object(runner, "PHAfpAdapter", return_value=adapter) as factory:
+        disabled = runner.load_source()
+        disabled.enabled = False
+        with mock.patch.object(runner, "load_source", return_value=disabled), \
+                mock.patch.object(runner, "PHAfpAdapter", return_value=adapter) as factory:
             self.assertEqual(runner.main(["--state-dir", str(self.state), "--rehearsal",
                 "--event-name", "workflow_dispatch", "--target-date", "2026-10-06",
                 "--run-id", "sample"]), 0)
         self.assertTrue(factory.call_args.args[0].enabled)
-        self.assertFalse(runner.load_source().enabled)
+        self.assertTrue(runner.load_source().enabled)
         self.assertFalse((self.state / "clock.json").exists())
 
     def test_disabled_cli_makes_no_request_and_creates_no_state(self):
-        with mock.patch.object(runner, "PHAfpAdapter") as adapter:
+        disabled = runner.load_source()
+        disabled.enabled = False
+        with mock.patch.object(runner, "load_source", return_value=disabled), \
+                mock.patch.object(runner, "PHAfpAdapter") as adapter:
             self.assertEqual(runner.main(["--state-dir", str(self.state),
                                           "--target-date", "2026-10-06"]), 2)
         adapter.assert_not_called()
@@ -341,13 +347,13 @@ class TestStatePublisher(StateCase):
 
 
 class TestPreparedWorkflow(unittest.TestCase):
-    def test_workflow_is_manual_unscheduled_isolated_and_keeps_job_failed(self):
+    def test_workflow_is_scheduled_and_manual_isolated_and_keeps_job_failed(self):
         text = (S.REPO_ROOT / ".github/workflows/ph_afp_shadow.yml").read_text()
-        self.assertIn("    if: github.event_name == 'workflow_dispatch'", text)
+        self.assertIn("    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'", text)
         self.assertIn("--rehearsal --sample-limit 2", text)
-        self.assertIn("if: success() && inputs.publish_state", text)
+        self.assertIn("steps.collect.outcome == 'success' && (github.event_name == 'schedule' || inputs.publish_state)", text)
         self.assertIn("default: false", text)
-        self.assertNotRegex(text, r"(?m)^  schedule:|^\s+- cron:")
+        self.assertEqual(re.findall(r"(?m)^\s+- cron: (.+)$", text), ["'40 6 * * *'"])
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("continue-on-error: true", text)
         self.assertIn("scripts/check_ph_afp_state.py verify", text)

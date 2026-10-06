@@ -52,7 +52,7 @@
         "https://api.afp.mil.ph/articles/?page_size=100"
       ],
       "adapter": "scraper.sources.ph_afp:PHAfpAdapter",
-      "enabled": false,
+      "enabled": true,
       "language_tags": [
         "en"
       ],
@@ -76,7 +76,7 @@
         "Only categories news-blog and uncategorised are collected. Any other category is counted as rejected so that a new one is visible.",
         "Dates are publisher-stated, not independently verified originals. The prior pilot reported migration timestamps on historical items; that discarded scratch corpus remains unverified."
       ],
-      "notes": "Ongoing collection remains disabled. Owner approved direct first-party API use, IPR identity and public isolated shadow state for manual evaluation on 2026-10-06; no production admission or recurring schedule. See shadow/ph_afp/README.md.",
+      "notes": "Status: scheduled shadow reliability evaluation. Not production. Owner authorized daily 06:40 UTC AFP shadow collection and isolated durable state on 2026-10-06 after reviewing rehearsal 37527985057; scheduling PR requires a separate merge decision. No historical backfill or production admission. See shadow/ph_afp/README.md.",
       "access_policy": {
         "www": {
           "status": 200,

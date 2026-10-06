@@ -185,14 +185,14 @@ class TestIsolation(StateCase):
                 self.assertNotIn("shadow_collect_ph", text)
         for path in (REPO_ROOT / ".github" / "workflows").glob("*.yml"):
             if path.name == "ph_afp_shadow.yml":
-                continue  # separate manual-only, bounded shadow rehearsal
+                continue  # separate isolated scheduled/manual AFP workflow
             with self.subTest(file=path.name):
                 text = path.read_text(encoding="utf-8")
                 self.assertNotIn("scripts/shadow_collect_ph.py", text)
                 self.assertNotIn("ph_afp", text)
 
-    def test_the_source_is_disabled_in_the_manifest_and_in_the_loaded_source(self):
-        self.assertFalse(runner.load_source().enabled)
+    def test_the_source_is_enabled_only_in_the_shadow_manifest(self):
+        self.assertTrue(runner.load_source().enabled)
 
     def test_a_state_dir_inside_a_different_worktree_of_this_repo_is_refused(self):
         """The old guard checked only REPO_ROOT. A `--state-dir` inside a
