@@ -20,7 +20,9 @@
   "",
   "Statuses (core/domain.py DESK_STATUSES):",
   "  planned        declared scope, nothing researched or configured",
-  "  research       scope researched; no collector, no enabled source",
+  "  research       scope researched; no enabled source and nothing",
+  "                 collecting. A collector may be built and rehearsed,",
+  "                 but it has not been launched",
   "  shadow         collecting privately under evaluation; no public records",
   "  live           collecting into the production corpus",
   "  paused         configured and deliberately stopped",
@@ -99,6 +101,7 @@
       "note": "Declared so the English estate stays distinguishable. Nothing has been collected from it."
      }
     ],
+    "observed_volume_subject": "Joint Staff press releases",
     "observed_volume": [
      [
       "2026, to mid-August",
@@ -144,6 +147,90 @@
     "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
     "Both collected feeds are Japanese-language. The English estate and the Joint Staff are declared but not collected, and neither is reachable.",
     "Shadow testing began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
+   ]
+  },
+  {
+   "slug": "vietnam",
+   "name": "Vietnam Desk",
+   "route": "vietnam.html",
+   "scope": "One English-language publication family: the defense tag page of Viet Nam Government News, the Government's online newspaper at en.baochinhphu.vn, and the articles it lists. A tag that editors apply, not a complete defense category. Not the Ministry of National Defence, not the People's Army Newspaper, not the Vietnamese-language edition, and not formal government documents.",
+   "status": "research",
+   "status_explanation": "Researched, with a collector built but not launched. On 2026-10-06 UTC the Government News defense tag page and the articles it lists were retrieved under this project's full collector identity, and the site's robots.txt permits collection. A bounded rehearsal outside production then exercised the collector and its isolated storage; nothing it read reached the record or this site. Nothing is collected on a schedule, and the desk moves to shadow evaluation only once the collector is actually running.",
+   "public": true,
+   "manifest": null,
+   "has_production_records": false,
+   "research": {
+    "source_families": [
+     {
+      "name": "Viet Nam Government News — defense tag page (English)",
+      "format": "HTML tag page and HTML articles — 24 items listed on 2026-10-06 UTC",
+      "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The only family a collector has been built for."
+     },
+     {
+      "name": "Ministry of National Defence — English portal",
+      "format": "Not reached — robots.txt returned a script page, twice",
+      "note": "mod.gov.vn. Both requests for robots.txt on 2026-10-06 UTC, about six minutes apart, returned a page that sets a cookie by script and reloads, not a robots policy. With no readable policy, no ministry page was requested. Tier A if it is ever collected."
+     },
+     {
+      "name": "People's Army Newspaper — military news and international relations listings (English)",
+      "format": "Not reached — HTTP 302 back to the same address",
+      "note": "en.qdnd.vn. Its robots.txt was read and does not exclude these listings. On 2026-10-06 UTC the homepage and both listings each answered with a redirect to their own address while setting a cookie, and returned no listing. Measured once each. Official military media, Tier B, and a separate institution from the ministry."
+     },
+     {
+      "name": "Government portal",
+      "format": "HTML portal — homepage read, not collected",
+      "note": "chinhphu.vn. Read once, which confirmed that it links the Government News estate as “Báo điện tử chính phủ”. It also links the Government's document system, vanban.chinhphu.vn; formal documents would be a separate Tier A family and are not part of this desk."
+     }
+    ],
+    "observed_volume_subject": "Items the defense tag page listed",
+    "observed_volume": [
+     [
+      "2026, to 6 October",
+      "10"
+     ],
+     [
+      "2025",
+      "7"
+     ],
+     [
+      "2024",
+      "6"
+     ],
+     [
+      "2023, from 16 November",
+      "1"
+     ]
+    ],
+    "volume_caveat": "Counted from the tag page as it was read on 2026-10-06 UTC. These figures count what editors tagged, not the newsroom's defense output, and the page reaches back only 24 items, so 2023 is cut short. They are not a record count, and nothing has been collected into the public record. At the rate listed, most days will list nothing new, and a day with nothing new shows only that the listing was read, not that article text can be retrieved.",
+    "blockers": [
+     [
+      "The collector has not run where it is meant to run.",
+      "It has passed offline tests and one bounded rehearsal outside production. It has not run in the project's own automation, so access from there is unmeasured. Retrieval on one day is evidence of bounded access, not of sustained reliability."
+     ],
+     [
+      "A tag is not a category.",
+      "The tag lists what Government News editors chose to tag. When it was read, the national security strategy summary of 4 August 2026 carried no tag at all, and a Politics item of 23 September 2026 on a meeting with the acting U.S. Navy Secretary was not on the tag page. Items the tag does not list are not collected and nothing is claimed about them; no keyword or topic filter is used to fill the gap."
+     ],
+     [
+      "The tag page shows only its 24 most recent items.",
+      "Older items load by script from an address the page never publishes as a link, and that address is not requested. An item that appears on the page after its date's window was read is reported by the review rather than silently absorbed. No archive completeness is claimed."
+     ],
+     [
+      "The ministry and the army newspaper were not reachable.",
+      "The ministry's robots.txt returned a script page instead of a policy, and the newspaper's listings redirected to themselves. Both are recorded as measured and left alone: an institution must be able to recognise this collector and refuse it. Reading either would need an official route."
+     ],
+     [
+      "Collection-health thresholds remain unset.",
+      "Publication cadence and silence thresholds are calibrated only after shadow collection has run. On a tag this sparse a long quiet stretch is ordinary, so guessing now would create false alarms or hide real silence."
+     ]
+    ]
+   },
+   "limits": [
+    "No source is enabled in production, and no collector runs on a schedule. Nothing here reaches the production database, the public site, or any public count.",
+    "One tag page on one newsroom's English edition. Not comprehensive Vietnamese defense coverage, not the Ministry of National Defence, not the People's Army Newspaper, not the Vietnamese-language edition, and not formal government documents.",
+    "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
+    "English as published. An English article is the text the newsroom published in English, not a recovered Vietnamese original, and nothing is translated.",
+    "Shadow collection has not started. No qualification period has elapsed and no desk-readiness claim follows from this page."
    ]
   },
   {

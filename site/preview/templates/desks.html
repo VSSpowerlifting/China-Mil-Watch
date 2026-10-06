@@ -49,7 +49,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
       {% endfor %}
     </svg>
     {% for d in desks if d.slug in placed %}{% set m = placed[d.slug] %}
-    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
+    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}{{ ' is-mid-side' if m.mid.hang in ('left', 'right') }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
       <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
@@ -144,7 +144,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
     <tr><td data-label="Status"><span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></td>
         <td data-label="Meaning">Researched and reachable in principle, but the institution's discovery surface is not available to an honestly identified collector. Nothing has been collected.</td></tr>
     <tr><td data-label="Status"><span class="desk-state desk-state--research">Researched — not yet collecting</span></td>
-        <td data-label="Meaning">The source universe is documented; no collector has been built and no source is enabled.</td></tr>
+        <td data-label="Meaning">The source universe is documented and no source is enabled. Nothing is collected; where a collector has been built, it has not been launched.</td></tr>
     <tr><td data-label="Status"><span class="desk-state desk-state--planned">Planned — nothing collected</span></td>
         <td data-label="Meaning">Scope declared, nothing researched, configured, enabled or collected.</td></tr>
     <tr><td data-label="Status"><span class="desk-state desk-state--paused">Paused — collection stopped</span></td>

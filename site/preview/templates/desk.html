@@ -130,7 +130,7 @@ not coverage, and nothing below has produced a record.</p>
 <h3>Observed publication volume</h3>
 <dl class="stat-rows">
 {% for label, value in desk.research.observed_volume %}
-  <div class="stat-row"><dt>Joint Staff press releases — {{ label }}</dt><dd>{{ value }}</dd></div>
+  <div class="stat-row"><dt>{% if desk.research.observed_volume_subject %}{{ desk.research.observed_volume_subject }} — {% endif %}{{ label }}</dt><dd>{{ value }}</dd></div>
 {% endfor %}
 </dl>
 <p class="meta">{{ desk.research.volume_caveat }}</p>
