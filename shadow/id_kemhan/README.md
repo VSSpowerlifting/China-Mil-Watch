@@ -40,21 +40,25 @@ directories. A separate fresh authorized run from collector `5ddca377e` stored
 pinned integrity packet verified every state-file hash with zero machine findings.
 The launch receipt records the durable first-success clock and verification.
 
-The authorized initial collection runs locally from the immutable collector commit
-and publishes only fresh successful state to `shadow/indonesia-kemhan`. After a
-separately authorized merge, the prepared manual workflow uses that branch. It has
-no cron. The first successful durable run creates
-the durable clock; the rehearsal clock is not transferred. Failed batches write
+The initial durable collection ran locally from the immutable collector commit.
+PR #110 subsequently merged the manual workflow. Its bounded October 6 Actions
+run retrieved/extracted all 14 records as duplicates, with zero failures, and
+published state `9fe9f6fd`. Fresh remote-clone and artifact comparisons verified
+all original rows, captures, ledgers and the first-success clock unchanged.
+The workflow uses `shadow/indonesia-kemhan` and has no cron. Rehearsal clocks
+are not transferred. Failed batches write
 attempt evidence but no partial corpus and are not pushed. Stored original-text
 changes are refused pending human disposition. State never merges to main.
 
 Checkpoint packets are produced by `scripts/review_desk_shadow.py`. Days 7, 14
 and 30 still require actual human source comparisons and durable sign-off; the
-machine packet supplies none. Scheduled continuity, Actions egress, long-term
+machine packet supplies none. Scheduled continuity, long-term
 extraction reliability, reuse terms and cadence/silence thresholds remain
 unmeasured or unresolved. No promotion or qualification follows from this build.
 
 Full procedure and reusable prompt:
 `docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
 `docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`; durable state receipt:
-`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`. The bounded Actions egress
+and persistence check is in `docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`;
+it establishes one main-hosted run, not future access or periodic reliability.

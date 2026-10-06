@@ -49,17 +49,21 @@ listing, four pages, four documents). These are temporary-state measurements.
 A separate fresh authorized run from collector `5ddca377e` stored four releases
 on `shadow/korea-policy-briefing` at `bbe2c8a2`; a clean remote clone and pinned
 integrity packet verified every state-file hash with zero machine findings.
-No scheduled evaluation interval follows. Multi-day reliability, GitHub Actions egress,
+No scheduled evaluation interval follows. Multi-day reliability,
 visual/document extraction review, historical completeness, reuse terms and
 cadence thresholds remain open.
 
-The authorized initial collection runs locally from the immutable collector commit
-and publishes fresh successful state to `shadow/korea-policy-briefing`. The prepared
-manual workflow uses that branch only after a separately authorized merge. It
-enables no cron. Checkpoints use
+The initial durable collection ran locally from the immutable collector commit.
+After PR #110 merged, one bounded October 6 Actions run retrieved/extracted all
+four releases as duplicates, with zero failures, and published state `a1088ea1`.
+Fresh remote-clone and artifact comparisons verified all original rows, captures,
+ledgers and the first-success clock unchanged. The manual workflow uses
+`shadow/korea-policy-briefing` and enables no cron. Checkpoints use
 the new reviewer, require actual human comparisons/sign-off, and qualify nothing
 automatically. No rehearsal state or clock is transferred into durable state.
 
 Procedure and reusable prompt are in the two Indonesia/Korea execution documents.
 The durable first-success clock, published commit and verification are in
-`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`. The bounded Actions egress
+and persistence check is in `docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`;
+it establishes one main-hosted run, not future access or periodic reliability.
