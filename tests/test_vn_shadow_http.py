@@ -58,8 +58,39 @@ class FixtureProvenanceTests(unittest.TestCase):
         derived = {r["derived_fixture"]["file"] for r in MANIFEST["requests"]
                    if r.get("derived_fixture")}
         self.assertEqual({p.name for p in FIXTURES.glob("derived-*")}, derived)
-        self.assertEqual({p.name for p in FIXTURES.iterdir()},
-                         set(named) | derived | {"requests.json"})
+        self.assertEqual({p.name for p in FIXTURES.iterdir() if p.name != "__pycache__"},
+                         set(named) | derived | {"requests.json", "derive_moit_fixture.py"})
+
+    def test_moit_pages_are_committed_only_as_derived_fixtures(self):
+        # moit.gov.vn asks for written consent before reuse. Its robots.txt is
+        # a rules file, not a page, and is the only exact bytes kept from it.
+        for row in MANIFEST["requests"]:
+            if not row["url"].startswith("https://moit.gov.vn/"):
+                continue
+            if row["url"] == "https://moit.gov.vn/robots.txt":
+                continue
+            self.assertIsNone(row.get("fixture"), row["seq"])
+
+    def test_the_derivation_keeps_dates_and_equalities_and_drops_prose(self):
+        sys.path.insert(0, str(FIXTURES))
+        try:
+            import derive_moit_fixture as derive
+        finally:
+            sys.path.remove(str(FIXTURES))
+        page = ('<html><head><meta name="description" content="Bộ Công Thương họp">'
+                '<meta property="article:published_time" content="2026-09-30T21:26:36+0700">'
+                '</head><body><span class="post-date left">Thứ 4, 30/09/2026 | 21:22</span>'
+                '<a title="Tiêu đề" href="/tin-tuc/a.html">Tiêu đề</a><h1> Tiêu&nbsp;đề </h1>'
+                '<script>var c="eyJhIjoxfQ==";</script><p>30/09/2026</p></body></html>')
+        out = derive.derive(page)
+        self.assertNotIn("Bộ Công Thương họp", out)
+        self.assertNotIn(">Tiêu đề<", out)
+        for kept in ('content="2026-09-30T21:26:36+0700"', "Thứ 4, 30/09/2026 | 21:22",
+                     'href="/tin-tuc/a.html"', 'var c="eyJhIjoxfQ==";', "<p>30/09/2026</p>"):
+            self.assertIn(kept, out)
+        self.assertEqual(derive.placeholder("Tiêu đề").strip(),
+                         derive.placeholder(" Tiêu  đề ").strip())
+        self.assertNotEqual(derive.placeholder("Tiêu đề"), derive.placeholder("Tiêu đề khác"))
 
     def test_derived_fixtures_name_the_original_and_never_claim_exact_bytes(self):
         for row in MANIFEST["requests"]:
@@ -84,7 +115,12 @@ class FixtureProvenanceTests(unittest.TestCase):
                         self.assertEqual(cvalue, "<redacted>", (row["seq"], cname))
         for path in FIXTURES.iterdir():
             text = path.read_bytes().decode("utf-8", "replace")
+            # A JWT is three dot-joined base64url segments; moit.gov.vn's
+            # widget configs are single base64 JSON strings and are allowed.
             self.assertIsNone(re.search(r"eyJ[A-Za-z0-9_-]{10,}\.", text), path.name)
+            self.assertIsNone(re.search(r"(?:incap_ses|visid_incap)_[\d_]+=(?!<redacted>)", text),
+                              path.name)
+            self.assertIsNone(re.search(r"AUTH_BEARER\w*=(?!<redacted>)", text), path.name)
             for value in re.findall(r"document\.cookie\s*=\s*[\"'][\w.-]+=([^;\"'\s]*)", text):
                 self.assertEqual(value, "<redacted>", path.name)
 
