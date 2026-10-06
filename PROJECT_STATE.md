@@ -294,6 +294,18 @@ draft PR #79 (`b29e7edb0`) onto current main (`a259ee6d2`) on
 `codex/ph-afp-integration-20261006`. The sole Git overlap was the stale state
 paragraph; current-main NSC and Japan work is preserved. No production desk or
 source is added. AFP is the anchor candidate; NSC remains supplemental.
+**Current gate: PR #109 is ready but unmerged; fresh exact-head CI is required.**
+The documentation-only follow-up `0ab1eccf5` resolved the Japan merge conflict.
+Its Actions run `37518846754` failed a phone geometry check: computed CSS reports
+28.272px, but Chromium renders a complete natural line at 28.265625px. A scratch
+copy of current main reproduced this with the whole title above the fold and
+fonts already loaded. The test now measures a natural rendered line without a
+tolerance; regression checks still reject one-pixel viewport/element clipping.
+All 17 viewport/spacing/page-shape checks pass against the current-main scratch
+corpus. Product CSS, AFP collection code and tracked DB/output are unchanged.
+Ben authorized repair, fresh green CI, guarded merge and bounded artifact-only
+rehearsal in the continuation. No rehearsal has run; no state or clock started.
+Evidence and gates: `docs/AFP_ACTIONS_GATE_2026-10-06.md`.
 `shadow/ph_afp/manifest.json` remains disabled. The prepared
 `ph_afp_shadow.yml` is manual-only: complete listing, at most two recent body
 samples, no reliability-clock start, artifact-only by default and optional
