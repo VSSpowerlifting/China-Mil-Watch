@@ -7,6 +7,8 @@ push or durable launch had been authorized or done. Ben subsequently authorized
 "commit/PR, followed by durable shadow collection" in this chat; that continuation
 is recorded in DECISION_LOG.md. Main merge, scheduling, public declaration,
 promotion, production integration and deployment remain unauthorized.
+The [durable launch receipt](INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md) records
+the subsequent PR, fresh published state commits and source-commit CI results.
 The [reusable prompt](INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md) states the continuation
 contract; the candidate READMEs state each source's limits.
 
@@ -91,7 +93,7 @@ Local evidence:
 - `/private/tmp/ipr-indonesia-review-rehearsal-20261006/`
 - `/private/tmp/ipr-korea-review-rehearsal-20261006/`
 - `/private/tmp/ipr-indonesia-korea-evidence-20261006.tar.gz` — preserved evidence
-  bundle and final source snapshot; temporary storage, not a remote evaluation branch
+  bundle and initial build source snapshot; temporary storage, not a remote evaluation branch
 
 Both review rehearsals export the complete stored corpus, have zero machine
 integrity findings, identify themselves as rehearsals and leave human review

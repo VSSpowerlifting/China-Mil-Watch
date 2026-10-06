@@ -29,11 +29,14 @@ Ben authorized committing the Indonesia/South Korea candidates, opening their PR
 and establishing fresh durable shadow collection in this repository on 2026-10-06.
 The state branches are `shadow/indonesia-kemhan` and `shadow/korea-policy-briefing`;
 both use `scripts/shadow_collect_desk.py` from its immutable implementation commit.
-The initial collections may run locally; no rehearsal state is transferred. The
+Initial native collections from collector `5ddca377e` published fresh state and
+were verified from clean remote clones; no rehearsal state was transferred. The
 prepared `indonesia_korea_shadow.yml` is manual-only and main-only, pending an
 authorized merge. No schedule, public declaration or promotion is authorized.
 Scope and limitations are in `shadow/id_kemhan/README.md` and
 `shadow/kr_policy_briefing/README.md`; DECISION_LOG records the authorization.
+Published commits and measured launch results are in
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
 
 Each desk's manifest is authoritative for its sources; `desks/registry.json` is
 authoritative for its status and public presentation. Both are declared

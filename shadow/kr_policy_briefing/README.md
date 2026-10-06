@@ -45,8 +45,11 @@ stops the batch; a cap breach does not truncate it into a sample.
 
 Live rehearsals on 2026-10-06 passed for one current-date release, then all four
 selected releases for 2026-09-30 through 2026-10-06 (10 responses: robots, one
-listing, four pages, four documents). These are temporary-state measurements,
-not a scheduled evaluation interval. Multi-day reliability, GitHub Actions egress,
+listing, four pages, four documents). These are temporary-state measurements.
+A separate fresh authorized run from collector `5ddca377e` stored four releases
+on `shadow/korea-policy-briefing` at `bbe2c8a2`; a clean remote clone and pinned
+integrity packet verified every state-file hash with zero machine findings.
+No scheduled evaluation interval follows. Multi-day reliability, GitHub Actions egress,
 visual/document extraction review, historical completeness, reuse terms and
 cadence thresholds remain open.
 
@@ -58,3 +61,5 @@ the new reviewer, require actual human comparisons/sign-off, and qualify nothing
 automatically. No rehearsal state or clock is transferred into durable state.
 
 Procedure and reusable prompt are in the two Indonesia/Korea execution documents.
+The durable first-success clock, published commit and verification are in
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.

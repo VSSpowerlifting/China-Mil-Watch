@@ -237,7 +237,7 @@ disclosed, and never backfilled.
 
 ## 5. Desk evaluation and review status
 
-**Indonesia and South Korea durable shadow launch authorized (2026-10-06).** Ben
+**Indonesia and South Korea initial durable shadow state published (2026-10-06).** Ben
 requested research and implementation, then authorized commit/PR and durable
 shadow collection. Implementation branch: `codex/indonesia-korea-shadow-20261006`.
 Manifests remain
@@ -249,11 +249,16 @@ are robots-disallowed and were not requested. Native temporary-state rehearsals
 for 2026-09-30 through 10-06 stored 14 Indonesia records and four Korean releases,
 with no fetch/extraction failures. These are bounded observations, not periodic
 reliability, qualification or promotion. A manual workflow and pinned-state
-checkpoint reader are prepared. Fresh collection from the committed collector
-will establish separate clocks on `shadow/indonesia-kemhan` and
-`shadow/korea-policy-briefing`; rehearsal state is not transferred. Main merge,
-scheduling, Actions egress, human checkpoints and reuse-policy review remain
-open. Evidence and reusable prompt:
+checkpoint reader are prepared. Fresh collections from immutable collector
+`5ddca377e` published 14 Indonesia records and four Korean releases on
+`shadow/indonesia-kemhan` (`8e9ee2e8`) and `shadow/korea-policy-briefing`
+(`bbe2c8a2`). Clean remote clones and pinned integrity packets verified all state
+hashes with zero machine findings; rehearsal state was not transferred. Draft
+PR #110's source-commit CI passed 3,229 tests with two skipped and the ten-warning
+validator. The full local run hit 31 sandbox port-binding setup errors and is
+not reported as green. Main merge, scheduling, Actions collection egress, human
+checkpoints and reuse-policy review remain open. Launch receipt:
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`. Initial evidence and prompt:
 `docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
 `docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
 

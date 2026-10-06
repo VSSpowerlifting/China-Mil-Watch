@@ -34,8 +34,11 @@ are preserved separately from extracted text.
 
 Two live rehearsals on 2026-10-06 passed: one current-date record; then all 14
 selected records for 2026-09-30 through 2026-10-06 (17 responses: robots, two
-listings, fourteen articles). State lives in temporary directories, not a remote
-evaluation branch. The execution packet records the evidence and limits.
+listings, fourteen articles). Those rehearsal states remain in temporary
+directories. A separate fresh authorized run from collector `5ddca377e` stored
+14 records on `shadow/indonesia-kemhan` at `8e9ee2e8`; a clean remote clone and
+pinned integrity packet verified every state-file hash with zero machine findings.
+The launch receipt records the durable first-success clock and verification.
 
 The authorized initial collection runs locally from the immutable collector commit
 and publishes only fresh successful state to `shadow/indonesia-kemhan`. After a
@@ -53,4 +56,5 @@ unmeasured or unresolved. No promotion or qualification follows from this build.
 
 Full procedure and reusable prompt:
 `docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
-`docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
+`docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`; durable state receipt:
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
