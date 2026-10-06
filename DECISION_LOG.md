@@ -22,6 +22,11 @@ title ruling below.
 4. `intro.js` is unchanged and keeps its own styles; its computed type is
    verified identical before and after.
 
+**Release (owner approval, Ben, 2026-10-05):** release #106 completely. The
+production render from main also carried #105's topographic backgrounds,
+whose entry below left release unauthorized; asked in session, Ben chose to
+release both together. Output `d8289a143`; deploy run 37404728604.
+
 ## 2026-10-05 — Shared blue topographic backgrounds and gentle motion
 
 **Owner request (Benjamin Yang, Codex chat
