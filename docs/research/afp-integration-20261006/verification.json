@@ -1,0 +1,394 @@
+{
+  "base_commit": "a259ee6d2e42d90ade1cb0b51fab41a71ce3b430",
+  "branch": "codex/ph-afp-integration-20261006",
+  "capture_receipts": "../../../tests/fixtures/ph_afp/live_20261006/requests.json",
+  "historical_receipt_scope": "All 15 original HTTP responses from 2026-10-06T04:57Z rehearsal; no new live egress run.",
+  "initial_remote_check": {
+    "afp_state_branch_exists": false,
+    "japan_state": "e890112aacc7b9eaa85db4179fef4aedeba81b2b",
+    "main": "a259ee6d2e42d90ade1cb0b51fab41a71ce3b430",
+    "nsc_state": "05e7f9780ef330d0493f8b7ccf0de67306112b0e",
+    "pr79_head": "b29e7edb047c30c8b878bca0069ba183424e2478",
+    "pr79_state": "OPEN, draft, CONFLICTING / DIRTY",
+    "unchanged": true
+  },
+  "japan_checkpoint": "22bf87bd78dcc3f73e6a1e3767401a56b9c06ba0",
+  "japan_pr": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/108",
+  "live_requests_this_integration": 0,
+  "manual_rehearsal_approved": true,
+  "owner_decisions": {
+    "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org/about.html; research archive collector; contact via site)",
+    "contact_basis": [
+      "README.md canonical domain",
+      "site/preview/generate_preview.py MAINTAINER.email",
+      "site/preview/templates/about.html public mailto route"
+    ],
+    "direct_official_access_only": true,
+    "first_party_api_shadow_use": true,
+    "merge_approved": false,
+    "proxy_or_alternate_egress": false,
+    "public_isolated_state_allowed": true,
+    "recurring_schedule_approved": false
+  },
+  "ported_from_head": "b29e7edb047c30c8b878bca0069ba183424e2478",
+  "ported_from_pr": 79,
+  "production_activation_approved": false,
+  "source_sha256": {
+    ".github/workflows/ph_afp_shadow.yml": "af113396f18dd5eff1ec1d6a6caea4fa8bd730b0366c807916cabf96c4cbf05b",
+    "scraper/sources/ph_afp.py": "7cf8b063ff75cdee456ba73110ad609bea1b5047ebe94f471d0889380178e839",
+    "scripts/check_ph_afp_state.py": "0c7c3bf33295770c99d8e304f60ceec34a4814ff7efeab66added873a98d4a5a",
+    "scripts/shadow_collect_ph.py": "f31e45d9a53d1c33f71a4e5073939973982e29f24c65c90c82ea7751825f68af",
+    "shadow/ph_afp/manifest.json": "1dce2ebb57c06f4f092002b7131ec62abd862428eb5a1e4fec2e881215173fc9",
+    "tests/ph_afp_support.py": "7c27329dbffc98520e293543391a024864ca42022492d037387df65cab6ed853",
+    "tests/test_home_paired_records.py": "fb854b0674e909b7234ec7c9e8e04290bc90322f590f0af9c4dc9f071fd3a912",
+    "tests/test_ph_afp_adapter.py": "2290a314b892b26fa4b168c2c8fbc0811c50ffaad68f2a85973d899055b611b8",
+    "tests/test_ph_afp_readiness.py": "eb50e169af764e28932431f6b3a0560dfb89f7056ce22af4c877469e4c024d5c",
+    "tests/test_ph_shadow_runner.py": "abe902cd547a3182f15107c3b7b538402760448e9923706a18e0338a4a1671ab"
+  },
+  "transcript_sha256": {
+    "afp-full-suite-final.log": "d7f37025f19f54a5f606c7ca3cce5c6d816b328a3d48805d22e955359e077738",
+    "afp-manual-final-id-tests.log": "004a157ddcda76d9d921de99d9ed910598ed381096d1cecc4fcf0e80107850bd",
+    "afp-manual-final-tests.log": "69a917ed79c6c70b5707b78ea711988a14de506cbf45298b4c5370965185947f",
+    "afp-manual-full-suite-final.log": "da65114fe0249e8316f420df5a7cfedae39ceb0a4ef4ee7834425b499c4b1b16",
+    "afp-manual-full-suite.log": "fa559755ce12465884419ee3d27491b73fda0e48cca826d7796135899c379698",
+    "afp-manual-graphify-final.log": "6e826383b04c965fa38d11b880650d5f76e3717276744bc14559e8fd1bee8a2d",
+    "afp-manual-validator-final.log": "b8577b392a27ec68cec0cf091b61e07545019dc2786e9aa744f4d1938d0dc5d3",
+    "afp-manual-validator.log": "b8577b392a27ec68cec0cf091b61e07545019dc2786e9aa744f4d1938d0dc5d3",
+    "afp-readiness-final-tests.log": "1229dc711d7b0437942735b55af35aa98049b8610540931a87978dd2ac892ba9",
+    "afp-validator.log": "b8577b392a27ec68cec0cf091b61e07545019dc2786e9aa744f4d1938d0dc5d3",
+    "japan-pr108-ci-failure.log": "8febab49e40fc2780481ed2f6a4dbddbc44f6b7053f52c3d9a17b3fd041c1709",
+    "terrain-diagnostic.jsonl": "b1727cfbf53fe84a4e540591f013b695eec3b3ad42e8717f0b0d08d0b013fe5f",
+    "terrain-shape-tests.log": "33c0cecadee596b104ed3c7c29915dc074e0e3a344485cf8a001861d9459fc07"
+  },
+  "verification": {
+    "exact_changed_files": [
+      ".github/workflows/ph_afp_shadow.yml",
+      "DECISION_LOG.md",
+      "PROJECT_STATE.md",
+      "docs/AFP_SHADOW_INTEGRATION_2026-10-06.md",
+      "docs/research/afp-integration-20261006/verification.json",
+      "scraper/sources/ph_afp.py",
+      "scripts/check_ph_afp_state.py",
+      "scripts/shadow_collect_ph.py",
+      "shadow/ph_afp/README.md",
+      "shadow/ph_afp/manifest.json",
+      "tests/fixtures/ph_afp/detail_1211.json",
+      "tests/fixtures/ph_afp/detail_1312.json",
+      "tests/fixtures/ph_afp/detail_1330.json",
+      "tests/fixtures/ph_afp/detail_1331.json",
+      "tests/fixtures/ph_afp/detail_1365.json",
+      "tests/fixtures/ph_afp/detail_1378.json",
+      "tests/fixtures/ph_afp/detail_1384.json",
+      "tests/fixtures/ph_afp/detail_834.json",
+      "tests/fixtures/ph_afp/detail_949.json",
+      "tests/fixtures/ph_afp/list_page_default.json",
+      "tests/fixtures/ph_afp/list_page_invalid.json",
+      "tests/fixtures/ph_afp/list_page_last.json",
+      "tests/fixtures/ph_afp/live_20261006/.gitattributes",
+      "tests/fixtures/ph_afp/live_20261006/01.bin",
+      "tests/fixtures/ph_afp/live_20261006/02.bin",
+      "tests/fixtures/ph_afp/live_20261006/03.bin",
+      "tests/fixtures/ph_afp/live_20261006/04.bin",
+      "tests/fixtures/ph_afp/live_20261006/05.bin",
+      "tests/fixtures/ph_afp/live_20261006/06.bin",
+      "tests/fixtures/ph_afp/live_20261006/07.bin",
+      "tests/fixtures/ph_afp/live_20261006/08.bin",
+      "tests/fixtures/ph_afp/live_20261006/09.bin",
+      "tests/fixtures/ph_afp/live_20261006/10.bin",
+      "tests/fixtures/ph_afp/live_20261006/11.bin",
+      "tests/fixtures/ph_afp/live_20261006/12.bin",
+      "tests/fixtures/ph_afp/live_20261006/13.bin",
+      "tests/fixtures/ph_afp/live_20261006/14.bin",
+      "tests/fixtures/ph_afp/live_20261006/15.bin",
+      "tests/fixtures/ph_afp/live_20261006/requests.json",
+      "tests/fixtures/ph_afp/robots_api_404.html",
+      "tests/fixtures/ph_afp/robots_www.txt",
+      "tests/ph_afp_support.py",
+      "tests/test_home_paired_records.py",
+      "tests/test_ph_afp_adapter.py",
+      "tests/test_ph_afp_readiness.py",
+      "tests/test_ph_shadow_runner.py"
+    ],
+    "final_id_guard": "Reject non-decimal digit-like strings as explicit malformed listing metadata, rather than raising during integer conversion; source identity and runner regressions passed in the final focused group.",
+    "font_fixture_checkpoint": "0db5f03c80883ef4990eb4b5175a4448a8cc46f4",
+    "font_race_diagnostic": [
+      {
+        "attempt": 0,
+        "states": {
+          "after": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          },
+          "before": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 1,
+        "states": {
+          "after": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 2,
+        "states": {
+          "after": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 3,
+        "states": {
+          "after": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 4,
+        "states": {
+          "after": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 5,
+        "states": {
+          "after": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 6,
+        "states": {
+          "after": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      },
+      {
+        "attempt": 7,
+        "states": {
+          "after": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "before": {
+            "font_status": "loading",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 259.046875
+          },
+          "settled": {
+            "font_status": "loaded",
+            "masthead_height": 149.5,
+            "nav_height": 45,
+            "title_y": 283.03125
+          }
+        }
+      }
+    ],
+    "full_suite": {
+      "exit_code": 0,
+      "scope": "After fractional UTC and font-fixture corrections; before the final ASCII-decimal identity guard. The complete 538-test focused contract group passed after that guard.",
+      "seconds": 974.566,
+      "skipped": 2,
+      "tests": 3419
+    },
+    "full_suite_source_sha256": {
+      ".github/workflows/ph_afp_shadow.yml": "af113396f18dd5eff1ec1d6a6caea4fa8bd730b0366c807916cabf96c4cbf05b",
+      "scraper/sources/ph_afp.py": "b08054ac7498e878cf0fcdffad44b1b3283ceb9bdd3c799d93ce4ff5a2b1cce9",
+      "scripts/check_ph_afp_state.py": "0c7c3bf33295770c99d8e304f60ceec34a4814ff7efeab66added873a98d4a5a",
+      "scripts/shadow_collect_ph.py": "f31e45d9a53d1c33f71a4e5073939973982e29f24c65c90c82ea7751825f68af",
+      "shadow/ph_afp/manifest.json": "1dce2ebb57c06f4f092002b7131ec62abd862428eb5a1e4fec2e881215173fc9",
+      "tests/ph_afp_support.py": "7c27329dbffc98520e293543391a024864ca42022492d037387df65cab6ed853",
+      "tests/test_home_paired_records.py": "fb854b0674e909b7234ec7c9e8e04290bc90322f590f0af9c4dc9f071fd3a912",
+      "tests/test_ph_afp_adapter.py": "1bf8d84fbea8a050bb1452a844958114e831aecb2424ebae883c964f401772b1",
+      "tests/test_ph_afp_readiness.py": "052fecd740f6ecd4729bced0600f4a474bbbde47867a4994f5221cd064fe101f",
+      "tests/test_ph_shadow_runner.py": "abe902cd547a3182f15107c3b7b538402760448e9923706a18e0338a4a1671ab"
+    },
+    "graph_refresh": {
+      "command": "graphify update .",
+      "exit_code": 0,
+      "scope": "Code AST only; ignored graphify-out artifacts; no semantic document extraction or HTML visualization."
+    },
+    "html_field_type_checks": [
+      {
+        "derived_type": "list",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "intro_html",
+        "status": "extraction_failure"
+      },
+      {
+        "derived_type": "int",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "intro_html",
+        "status": "extraction_failure"
+      },
+      {
+        "derived_type": "bool",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "intro_html",
+        "status": "extraction_failure"
+      },
+      {
+        "derived_type": "list",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "body_html",
+        "status": "extraction_failure"
+      },
+      {
+        "derived_type": "int",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "body_html",
+        "status": "extraction_failure"
+      },
+      {
+        "derived_type": "bool",
+        "detail": "article HTML fields changed type: afp-advances-chr-leadership-with-first-civilian-director-i",
+        "field": "body_html",
+        "status": "extraction_failure"
+      }
+    ],
+    "initial_continuation_full_suite": {
+      "exit_code": 1,
+      "failure": "tests.test_home_paired_records.TestTheHomePageHoldsItsShape.test_terrain_motion_is_decorative_and_has_static_fallbacks: 23.984375px font-loading geometry race; reproduced independently of collectors",
+      "seconds": 998.531,
+      "skipped": 2,
+      "tests": 3418
+    },
+    "preceding_candidate_full_suite": {
+      "exit_code": 0,
+      "seconds": 1105.036,
+      "skipped": 2,
+      "tests": 3410
+    },
+    "preceding_candidate_targeted_tests": 529,
+    "production_preservation": {
+      "byte_identical": true,
+      "db_sha256": "4e130411e7b6e2aa97d0f7bbdacee00a4a81a3c5579e863106b2125c9307a96f",
+      "output_files": 7410,
+      "sqlite_sidecars": false
+    },
+    "publication_rehearsal": "actual prepared publication shell block; isolated local bare remote only; explicit state ref succeeded and divergent writer rejected",
+    "targeted_exit_code": 0,
+    "targeted_seconds": 19.611,
+    "targeted_tests": 538,
+    "terrain_shape_class": {
+      "exit_code": 0,
+      "seconds": 15.565,
+      "tests": 11
+    },
+    "validator_warnings": 10,
+    "workflow_yaml": "System Ruby YAML parsed: workflow_dispatch only; publish_state default false; sample limit two; no cron"
+  }
+}

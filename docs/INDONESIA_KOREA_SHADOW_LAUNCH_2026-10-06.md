@@ -84,7 +84,7 @@ disabling motion did not change it; an integer line height passed. A title clipp
 by the viewport still failed. This isolates a measurement-precision mismatch,
 not a product layout change.
 
-`tests/test_home_paired_records.py` now allows one 1/64px layout unit in that
+Correction `4868802fb` allowed one 1/64px layout unit in that
 comparison, consistent with [Chromium's six-bit layout representation](https://chromium.googlesource.com/chromium/src/+/96b04b8744c3300c980cd87bc41cc3444d463fb0/third_party/blink/renderer/platform/geometry/layout_unit.h).
 New real-browser cases prove that a fully visible fractional line passes and a
 clipped fractional line is rejected. The positive regression was observed red
@@ -92,10 +92,29 @@ before the correction; the minimal repro and all 18 first-viewport, opening-spac
 and page-shape browser checks pass after it. Production styling, the collectors,
 captured source bytes and both published state commits are unchanged.
 
-The current full check on [PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
-is the corrected-head verification gate; the older successful source run is not
-substituted for it. Repair evidence is in
+[Full CI on that correction](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37524633037)
+passed 3,247 tests with two skipped, launched Chromium, passed validation with
+ten governed warnings and proved DB/output preservation without sidecar residue.
+Repair evidence is in
 `/private/tmp/ipr-indonesia-korea-ci-repair-20261006.tar.gz`.
+
+## Reconciliation with the merged AFP integration
+
+Main advanced to `cc8d36646af1e2eb6026a17eaefd20378585faac` through PR #109.
+Both branches inserted separate authorization entries in `DECISION_LOG.md` and
+repaired the same phone assertion. The PR branch incorporates that main commit
+with a merge, preserving both authorizations. The browser test adopts the
+upstream natural rendered-line measurement and exact complete-line assertion;
+the numeric tolerance is removed. Both fractional-line regressions remain and
+call that shared assertion. Upstream tests still reject one-pixel viewport and
+constrained-element clipping. Collector code, captures, ledgers and state clocks
+are unchanged.
+
+All 19 adjacent browser checks and all 40 desk tests pass locally. Validation
+passes with ten governed warnings. All 7,451 production files are identical to
+that main commit's Git blobs; its daily snapshot is inherited without production
+regeneration. The current full check on [PR #110](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/110)
+is the merge-resolution gate; neither earlier green run substitutes for it.
 
 ## Remaining action
 

@@ -276,12 +276,13 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
     discovery = adapter.discover(window)
     bucket["listing_status"] = discovery.status
     bucket["failed_endpoints"] = discovery.failed_endpoints
+    bucket["discovery_error"] = discovery.error_detail
     # `discovered` is now everything the feed carried, not everything that
     # survived a filter. The difference between it and `selected` is the whole
     # point: a reader can see how much of the feed this run was responsible for.
     bucket["discovered"] = len(discovery.references)
     entry["discovered"] += len(discovery.references)
-    if discovery.status == st.LISTING_FAILURE:
+    if discovery.status not in (st.OK, st.OK_NO_PUBLICATIONS, st.OK_ALL_DUPLICATES):
         return
 
     (in_scope, pre_bootstrap, deferred, undated, known_challenged, carried,
@@ -407,7 +408,6 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         conn.execute("ALTER TABLE shadow_unretrieved ADD COLUMN source_slug TEXT")
 
     window = CollectionWindow(target_date=target, lookback_days=lookback)
-    entry["robots_status"] = "allowed"     # robots.txt permits every path used
 
     bootstrap = establish_cutoff(state_dir, datetime.now(timezone.utc), run_id)
     entry["bootstrap_cutoff_utc"] = bootstrap["cutoff_utc"]
@@ -423,7 +423,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         pairs = [(getattr(adapter, "slug", "jp_mod_news_ja"), adapter)]
     else:
         validators = load_validators(conn)
-        pairs = [(src.slug, JPModAdapter(src, cap=cap, validators=validators))
+        robots_cache = {}  # one current policy observation for this host/run
+        pairs = [(src.slug, JPModAdapter(src, cap=cap, validators=validators,
+                                        robots_cache=robots_cache))
                  for src in load_sources()]
 
     entry["sources"] = []
@@ -438,12 +440,27 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                   "kinds": {}}
         _collect_source(conn, source_adapter, window, run_id, entry, bucket,
                         bootstrap["cutoff_date"], cap)
+        bucket["robots_status"] = getattr(source_adapter, "robots_status", "not_checked")
+        bucket["robots_observation"] = getattr(source_adapter, "robots_observation", None)
+        refusal = getattr(source_adapter, "_policy_failure", None)
+        bucket["policy_failure"] = ({"status": refusal.status, "url": refusal.url,
+                                     "detail": str(refusal)} if refusal else None)
         entry["sources"].append(bucket)
         listing_statuses.append(bucket["listing_status"])
 
+    policy_failures = [bucket["policy_failure"] for bucket in entry["sources"]
+                       if bucket["policy_failure"]]
+    entry["policy_failures"] = policy_failures
+    robots_statuses = [bucket["robots_status"] for bucket in entry["sources"]]
+    entry["robots_status"] = (next((s for s in robots_statuses
+                                    if s not in ("allowed", "absent")),
+                                   "absent" if robots_statuses and all(
+                                       s == "absent" for s in robots_statuses) else "allowed")
+                              if robots_statuses else "not_checked")
+
     entry["listing_status"] = (
-        st.LISTING_FAILURE
-        if listing_statuses and all(x == st.LISTING_FAILURE for x in listing_statuses)
+        listing_statuses[0]
+        if listing_statuses and all(st.is_failure(x) for x in listing_statuses)
         else st.OK)
     entry["listing_failures"] = sum(
         bucket["listing_status"] == st.LISTING_FAILURE or bool(bucket["failed_endpoints"])
@@ -474,6 +491,10 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
     if not pairs:
         return _close_out(result=st.SKIPPED_DISABLED, health="skipped",
                           error_detail="no enabled collectible shadow sources")
+
+    if policy_failures:
+        return _close_out(result=policy_failures[0]["status"], health="fail",
+                          error_detail=policy_failures[0]["detail"])
 
     if entry["listing_status"] == st.LISTING_FAILURE:
         return _close_out(result=st.LISTING_FAILURE, health="fail",
@@ -644,7 +665,8 @@ def main(argv=None) -> int:
           % (entry["pre_bootstrap"], entry["deferred"], entry["undated"]))
     if entry.get("error_detail"):
         print("detail     : %s" % entry["error_detail"])
-    return 0 if entry["result"] in TERMINAL_OK + (st.SKIPPED_DISABLED, st.ACCESS_CHALLENGED) else 1
+    return 0 if entry["result"] in TERMINAL_OK + (st.SKIPPED_DISABLED,) or (
+        entry["result"] == st.ACCESS_CHALLENGED and entry["health"] != "fail") else 1
 
 
 if __name__ == "__main__":

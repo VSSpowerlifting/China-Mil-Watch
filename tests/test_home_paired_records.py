@@ -1486,11 +1486,6 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
     #: the contract is actually about, so it is left where it was.
     FIRST_VIEWPORT = 900
 
-    # Chromium's LayoutUnit uses six fractional bits. Bounding rectangles
-    # round to that grid; computed CSS lineHeight can retain extra precision.
-    # https://chromium.googlesource.com/chromium/src/+/96b04b8744c3300c980cd87bc41cc3444d463fb0/third_party/blink/renderer/platform/geometry/layout_unit.h
-    LAYOUT_UNIT = 1 / 64
-
     @staticmethod
     def pin_reveal(page):
         """`.lead-record` carries `data-reveal`; measuring mid-reveal reads
@@ -1499,23 +1494,25 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             "() => document.documentElement.classList.add('no-anim')")
 
     def lead_box(self, page):
-        return page.evaluate(
-            "() => { const h = document.querySelector("
-            "'.lead-record .record-headline'); if (!h) return null;"
-            " const r = h.getBoundingClientRect();"
-            " return {top: r.top + window.scrollY, bottom: r.bottom +"
-            " window.scrollY, height: r.height,"
-            " lineHeight: parseFloat(getComputedStyle(h).lineHeight)}; }")
-
-    def assert_readable_phone_headline(self, box):
-        self.assertIsNotNone(box)
-        visible = min(box["bottom"], 900) - box["top"]
-        self.assertGreaterEqual(
-            visible + self.LAYOUT_UNIT, box["lineHeight"],
-            "only %.6fpx of the headline is inside 375x900 — less "
-            "than one rendered line of %.6fpx, so the record's "
-            "title begins below the fold"
-            % (visible, box["lineHeight"]))
+        return page.evaluate("""() => {
+            const h = document.querySelector('.lead-record .record-headline');
+            if (!h) return null;
+            const r = h.getBoundingClientRect();
+            // Computed CSS line-height can exceed the actual layout line box
+            // (28.272px versus 28.265625px). Measure a natural single line in
+            // the same style context, without changing flow or adding slack.
+            const line = h.cloneNode(true);
+            Object.assign(line.style, {position:'absolute', top:'0', left:'0',
+                visibility:'hidden', whiteSpace:'nowrap', width:'max-content',
+                maxWidth:'none', height:'auto', minHeight:'0', maxHeight:'none',
+                transform:'none'});
+            h.parentElement.appendChild(line);
+            const renderedLineHeight = line.getBoundingClientRect().height;
+            line.remove();
+            return {top:r.top + window.scrollY, bottom:r.bottom + window.scrollY,
+                height:r.height, renderedLineHeight,
+                lineHeight:parseFloat(getComputedStyle(h).lineHeight)};
+        }""")
 
     def fractional_line_box(self, page, top):
         # Synthetic layout probe, not a source title. Use the CI line height
@@ -1533,7 +1530,7 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             box = self.fractional_line_box(page, 100)
             self.assertLess(box["bottom"], 900)
             self.assertLess(box["height"], box["lineHeight"])
-            self.assert_readable_phone_headline(box)
+            self.assert_complete_phone_line(box)
         finally:
             context.close()
 
@@ -1543,7 +1540,7 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             box = self.fractional_line_box(page, 874)
             self.assertGreater(box["bottom"], 900)
             with self.assertRaises(AssertionError):
-                self.assert_readable_phone_headline(box)
+                self.assert_complete_phone_line(box)
         finally:
             context.close()
 
@@ -1627,9 +1624,42 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
                 page.wait_for_timeout(120)
                 box = self.lead_box(page)
                 with self.subTest(stack="wide" if wide else "native"):
-                    self.assert_readable_phone_headline(box)
+                    self.assert_complete_phone_line(box)
             finally:
                 context.close()
+
+    def assert_complete_phone_line(self, box):
+        self.assertIsNotNone(box)
+        visible = min(box["bottom"], 900) - box["top"]
+        self.assertGreaterEqual(
+            visible, box["renderedLineHeight"],
+            "only %.6fpx of the headline is inside 375x900; a complete "
+            "rendered line requires %.6fpx" % (visible, box["renderedLineHeight"]))
+
+    def test_phone_line_guard_accepts_a_complete_line_and_rejects_clipping(self):
+        context, page = self.page_at(375, 900)
+        try:
+            self.pin_reveal(page)
+            page.wait_for_function("document.fonts.status === 'loaded'", timeout=30000)
+            headline = page.locator('.lead-record .record-headline')
+            # Use the preserved source title, laid out as one complete line.
+            headline.evaluate("h => Object.assign(h.style, {position:'fixed', "
+                              "top:'0', whiteSpace:'nowrap'})")
+            box = self.lead_box(page)
+            self.assert_complete_phone_line(box)
+            # Viewport clipping of even one CSS pixel must still fail.
+            headline.evaluate("(h, height) => h.style.top = (901-height)+'px'",
+                              box["height"])
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(self.lead_box(page))
+            # A constrained element must not redefine a complete natural line.
+            headline.evaluate("(h, height) => Object.assign(h.style, {top:'0', "
+                              "height:(height-1)+'px', overflow:'hidden'})",
+                              box["height"])
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(self.lead_box(page))
+        finally:
+            context.close()
 
 
 class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
@@ -1854,6 +1884,9 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
                              'terrain-drift')
             self.assertEqual(page.locator('.briefs-head').evaluate(motion),
                              'terrain-breath')
+            # Font swaps can move this title by 24px while decorative motion
+            # is being inspected. Measure only after the used faces settle.
+            page.wait_for_function("document.fonts.status === 'loaded'", timeout=30000)
             geometry = page.locator('#briefs-title').bounding_box()
             transforms = page.locator('.topography').evaluate("""e => {
               const a = e.getAnimations({subtree:true})[0];
