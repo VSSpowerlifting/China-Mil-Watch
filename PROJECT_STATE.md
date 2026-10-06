@@ -289,19 +289,6 @@ never observed, and no evidence reachable from inside the corpus could. Loss is
 unobserved, which is a narrower claim than ruled out, and the limitation is
 recorded rather than rounded off.
 
-**Attribution is fixed at the source, forward-only.** Singapore and Japan
-shadow runs derive their logical target date through `core/shadow_schedule.py`:
-a scheduled first attempt takes the schedule-slot convention — the most recent
-occurrence of the configured daily cron time at or before the run started,
-boundary inclusive — an explicit `--target-date` is authoritative wherever it
-is given, and a re-run without one is refused rather than re-dated. Each ledger
-records which rule applied in `target_date_source`. Historical ledgers and both
-published review findings are untouched: the fix changes no review evidence and
-does not retroactively alter a single stored date, so historical missing-day
-anomalies remain and still require disposition. Recovery from a failed
-scheduled run is a manual dispatch naming the intended logical date, not a UI
-re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
-
 **Philippines AFP — prepared shadow integration, 2026-10-06.** Ported from
 draft PR #79 (`b29e7edb0`) onto current main (`a259ee6d2`) on
 `codex/ph-afp-integration-20261006`. The sole Git overlap was the stale state
@@ -323,10 +310,24 @@ retained for an offline 1,088-row / 11-page replay and two-body extraction.
 No new AFP live requests or shadow-state branch were created. Integration
 verification and the remaining live-egress/schedule evidence gates:
 `docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`. Not scheduled or qualified.
-Japan's policy correctness checkpoint is separately committed on
-`codex/jp-ph-desk-assessment-20261006` as `22bf87bd78dcc3f73e6a1e3767401a56b9c06ba0`;
-it is pushed as PR #108, not merged into main or this AFP branch. Japan’s
-1.49% full-text coverage limitation remains unresolved.
+Japan's policy correctness repair merged in PR #108 at
+`ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c` after exact-head offline CI passed.
+Japan’s 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
+as superseded by #109. This current integration status supersedes the AFP PR
+status in the earlier Japan/Philippines completion assessment.
+
+**Attribution is fixed at the source, forward-only.** Singapore and Japan
+shadow runs derive their logical target date through `core/shadow_schedule.py`:
+a scheduled first attempt takes the schedule-slot convention — the most recent
+occurrence of the configured daily cron time at or before the run started,
+boundary inclusive — an explicit `--target-date` is authoritative wherever it
+is given, and a re-run without one is refused rather than re-dated. Each ledger
+records which rule applied in `target_date_source`. Historical ledgers and both
+published review findings are untouched: the fix changes no review evidence and
+does not retroactively alter a single stored date, so historical missing-day
+anomalies remain and still require disposition. Recovery from a failed
+scheduled run is a manual dispatch naming the intended logical date, not a UI
+re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
 **Japan MOD** — selection repair merged in PR #95; measured post-merge on
 2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
