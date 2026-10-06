@@ -324,44 +324,74 @@ never observed, and no evidence reachable from inside the corpus could. Loss is
 unobserved, which is a narrower claim than ruled out, and the limitation is
 recorded rather than rounded off.
 
-**Philippines AFP — prepared shadow integration, 2026-10-06.** Ported from
-draft PR #79 (`b29e7edb0`) onto current main (`a259ee6d2`) on
-`codex/ph-afp-integration-20261006`. The sole Git overlap was the stale state
-paragraph; current-main NSC and Japan work is preserved. No production desk or
-source is added. AFP is the anchor candidate; NSC remains supplemental.
-**Current gate: PR #109 is ready but unmerged; fresh exact-head CI is required.**
-The documentation-only follow-up `0ab1eccf5` resolved the Japan merge conflict.
-Its Actions run `37518846754` failed a phone geometry check: computed CSS reports
-28.272px, but Chromium renders a complete natural line at 28.265625px. A scratch
-copy of current main reproduced this with the whole title above the fold and
-fonts already loaded. The test now measures a natural rendered line without a
-tolerance; regression checks still reject one-pixel viewport/element clipping.
-All 17 viewport/spacing/page-shape checks pass against the current-main scratch
-corpus. Product CSS, AFP collection code and tracked DB/output are unchanged.
-Ben authorized repair, fresh green CI, guarded merge and bounded artifact-only
-rehearsal in the continuation. No rehearsal has run; no state or clock started.
-Evidence and gates: `docs/AFP_ACTIONS_GATE_2026-10-06.md`.
-`shadow/ph_afp/manifest.json` remains disabled. The prepared
-`ph_afp_shadow.yml` is manual-only: complete listing, at most two recent body
-samples, no reliability-clock start, artifact-only by default and optional
-verified public `shadow/ph-afp` state. It has no cron and awaits reviewed,
-explicitly authorized merge before dispatch. Direct first-party API evaluation,
-honest IPR About-contact identity and isolated public state are owner-approved
-(DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed. Fresh robots
-and API policy changes stop for review. Live Actions egress remains unverified.
-Current safeguards include complete count-reconciled pagination, visible cap
-overflow, current policy validation, immutable attempt evidence and a publisher
-gate that checks previous files/rows, capture hashes and the closed DB hash.
-All 15 original responses from the prior October 6 bounded rehearsal are now
-retained for an offline 1,088-row / 11-page replay and two-body extraction.
-No new AFP live requests or shadow-state branch were created. Integration
-verification and the remaining live-egress/schedule evidence gates:
-`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`. Not scheduled or qualified.
+**Philippines AFP — scheduled shadow reliability evaluation; activation PR pending,
+2026-10-06.** PR #109 merged with exact-head guard on
+`31719bed3d5b4c5de0b248a8d2b9b1be06e66e2c` as
+`cc8d36646af1e2eb6026a17eaefd20378585faac`. Fresh Actions CI `37524618783`
+passed 3,436 tests (two skips), output validation with ten governed warnings,
+and tracked DB/output immutability. The earlier `0ab1eccf5` failure compared
+nominal CSS line-height 28.272px against Chromium's actual 28.265625px line.
+The test-only repair measures a natural rendered line without tolerance; its
+regression still rejects one-pixel viewport/element clipping. Product CSS and
+all nine AFP-specific source hashes were unchanged at that merge.
+
+**One live GitHub-hosted rehearsal completed successfully:** Actions
+`37527985057`, attempt 1, collector commit `cc8d36646`, dispatched manually with
+`publish_state=false` and no target-date override. Retained evidence reconciles
+1,090 unique rows across 11 pages ending in `next:null`; 13 recent eligible
+items, two body requests/retrievals (`afp:1398`, `afp:1397`), 11 explicitly
+unselected samples. All 15 requests stayed on direct official AFP hosts.
+Fresh www robots returned 200/Allow; API robots returned the reviewed 404 with
+`X-Robots-Tag: noindex, nofollow`; both payload hashes matched policy. No access,
+fetch, extraction or identity failure was recorded. IDs/slugs, listing/detail
+publication timestamps and original capture hashes were independently checked.
+The two additional rows explain growth from the historical 1,088-row replay;
+no prior identity/date metadata changed. Nine same-title/date groups remain
+visible and are not merged. Artifact `ph-afp-shadow-37527985057-1`
+(ID `11442459154`, 90-day retention) contains the ledger, request receipts,
+robots/listing originals, closed shadow DB with original detail captures, and log.
+
+**Scheduled shadow collection owner-authorized; no live AFP cron until separate
+PR merge.** Scheduling branch `codex/ph-afp-scheduled-shadow-20261006` starts
+from current main `a8e6d5a26`, including #108, #109 and subsequent #110. It proposes
+one daily cron at 06:40 UTC, normal 14-day/cap-100 collection with cron-aware
+logical dates and automatic successful isolated state publication. The manual
+path remains a two-body rehearsal, artifact-only by default, optional explicit
+publication and no clock start. Failed/partial attempts retain artifacts and do
+not publish state; non-force append-only publication rejects divergent writers.
+The AFP shadow manifest is enabled outside production discovery with desk
+`active: false`; AFP remains an anchor candidate and NSC supplemental. The current
+default-branch workflow remains manual-only until merge; the proposed event
+distinction is documented above. During the rehearsal, state publication was
+skipped; no `shadow/ph-afp`
+branch or reliability clock was created. Main, gh-pages and every shadow ref
+were unchanged across the rehearsal. Actual merge DB/output/desks object IDs
+match pre-merge main. No production DB/output generation or deployment occurred.
+Direct first-party API evaluation and honest IPR About-contact identity remain
+owner-approved (DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed.
+Policy changes stop for review. This single bounded success does not establish
+ongoing reliability, full-window body coverage or qualification. Ben reviewed the
+live evidence and authorized recurring AFP shadow collection
+and isolated durable state. The scheduling PR still requires clean exact-head
+CI, final review and separate merge authorization. After activation, require
+seven consecutive terminal-successful scheduled days plus durable human review
+of every new record when five or fewer are inserted, otherwise at least five
+representative new records. Then assess reliability, review results, NSC
+supplementation, source breadth and historical backfill; never graduate
+automatically. Standing qualification gates remain. Focused AFP validation: 238
+tests pass; local validator passes with ten governed warnings and tracked
+DB/output/desks unchanged. Full offline suite and validator remain the PR gate.
+Full evidence and remaining gates:
+`docs/AFP_ACTIONS_GATE_2026-10-06.md`; historical preparation receipt:
+`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`.
+
 Japan's policy correctness repair merged in PR #108 at
 `ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c` after exact-head offline CI passed.
-Japan’s 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
+Japan's 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
 as superseded by #109. This current integration status supersedes the AFP PR
-status in the earlier Japan/Philippines completion assessment.
+status in the earlier Japan/Philippines completion assessment. The accurate post-run
+checkpoint is carried into the scheduling branch for commit, preserving later
+current-main work. No production or broader Philippine source is authorized.
 
 **Attribution is fixed at the source, forward-only.** Singapore and Japan
 shadow runs derive their logical target date through `core/shadow_schedule.py`:

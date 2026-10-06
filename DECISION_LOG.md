@@ -4,6 +4,36 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-06 — AFP scheduled shadow reliability evaluation authorized
+
+**Owner direction (Ben, scheduling continuation brief):** after reviewing live
+Actions rehearsal `37527985057` (1,090 reconciled rows, eleven pages, two successful
+body captures, reviewed robots/access state), authorize daily AFP shadow collection
+at **06:40 UTC**, isolated durable public state on `shadow/ph-afp`, direct official
+AFP infrastructure, evidence preservation and reliability evaluation. No proxy or
+access-control workaround. This supersedes the earlier manual-only scheduling
+restriction, not the access rules. The scheduling branch/PR may be committed and
+pushed; its exact final head needs clean CI and separate merge authorization.
+No cron is live until that PR is merged. No Philippines production desk, production
+DB integration, rendered publication, deployment, broader sources or historical
+body backfill is authorized. Manual rehearsals stay bounded and artifact-only by
+default; explicit `publish_state=true` may publish verified rehearsal state without
+starting the clock. Scheduled successful normal runs publish verified isolated
+state automatically. Partial/failed runs publish no durable state and retain
+artifacts; they cannot start or advance successful collection evidence.
+
+Require **seven consecutive terminal-successful scheduled collection days** before
+another readiness decision, with reconciled discovery, no unresolved access,
+identity/date or truncation failures, append-only state and accessible evidence.
+During that window, human review examines every newly inserted record when there
+are five or fewer, otherwise at least five representative new records; record
+fidelity/date/extraction/URL/identity/capture checks durably. Quiet publication days
+may succeed when discovery proves the window. The seven-day decision is an
+assessment, not qualification or automatic graduation; the existing qualification
+and owner sign-off gates remain. Assess AFP reliability, human reviews, NSC's
+supplemental role, source breadth, another first-party source and historical backfill
+before any later Philippines production decision. Japan remains outside this task.
+
 ## 2026-10-06 — Indonesia and South Korea shadow state authorized
 
 **Owner direction (Ben, this Codex chat):** after reviewing the built candidates,
