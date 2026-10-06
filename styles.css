@@ -68,8 +68,8 @@
  * The same three families as Night Desk (DECISION_LOG 2026-09-26).
  *   --zh / --zh-serif  system CJK; the serif stack only at display size.
  *
- * No box shadows. No gradients except inside the compass mark and the veil
- * mask. Radius 2px. Motion is transform/opacity only and says what changed.
+ * No box shadows. Gradients belong to the compass, veils and shared
+ * topographic ground. Radius 2px. Motion is transform/opacity only.
  */
 
 :root {
@@ -144,8 +144,6 @@
   --accent-rule:    #BFD2DB;
   --band-dek:       #D6D2C8;
 
-  /* Static abstract contours and polygon washes; homepage ground only. */
-  --home-atlas: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221440%22%20height%3D%221600%22%20viewBox%3D%220%200%201440%201600%22%3E%3Cg%20fill%3D%22%23cbdfe3%22%20fill-opacity%3D%22.22%22%3E%3Cpath%20d%3D%22M0%2040L270%200%20510%20175%20295%20440%200%20350Z%22%2F%3E%3Cpath%20d%3D%22M1440%20560L1105%20475%20955%20700%201150%20965%201440%20875Z%22%2F%3E%3Cpath%20d%3D%22M0%201135L325%201000%20670%201290%20425%201525%200%201440Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23668f9e%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%221%22%3E%3Cg%20transform%3D%22translate%28440%200%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%281000%20500%29%20scale%28-1%201%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28440%201010%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 
   /* ── Type ── */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -157,14 +155,22 @@
 
   /* The six-level type ladder (DESIGN_SYSTEM §4):
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta.
-     The wordmark's value is the masthead's measured one. */
-  --step-wordmark: clamp(1.5rem, 3.2vw, 2rem);
+     The wordmark's value is the masthead's measured one, re-measured for
+     the titling register's wider capitals. */
+  --step-wordmark: clamp(1.2rem, 2.4vw, 1.55rem);
   --step-display:  clamp(2.2rem, 1.45rem + 2.6vw, 3.1rem);
   --step-deck:     1.1875rem;
   --step-section:  1.5rem;
   --step-body:     1rem;
   --step-meta:     .875rem;
   --measure: 68ch;
+
+  /* The titling register (DESIGN_SYSTEM §4): the homepage opening title's
+     setting — serif 600 in letter-spaced capitals — for short, fixed English
+     names only: the wordmark, the footer name, hub page names. Never a
+     record, Brief or claim headline, never Chinese or Japanese. */
+  --title-weight: 600;
+  --title-tracking: .07em;
 
   /* ── Space and shape ── */
   --sp-1: .25rem; --sp-2: .5rem; --sp-3: .75rem; --sp-4: 1rem;
@@ -266,29 +272,14 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 main { display: block; padding: 2rem 0 4rem; min-width: 0; }
 main.leads-with-hero { padding-top: 0; }
 
-/* Fine ledger ruling lives only in wide outer margins (PR #80, kept as
-   merged). Reading surfaces, evidence plates, and phone layouts stay on
-   uninterrupted paper. */
-@media (min-width: 1320px) {
-  main {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Cpath d='M87.5 0V88M0 87.5H88' fill='none' stroke='%23CFC9BC' stroke-opacity='.36' stroke-width='1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-position: top center;
-  }
-  main > .wrap {
-    background: var(--bg);
-    border-inline: 1px solid var(--rule-soft);
-  }
-}
-
 /* ═══ Type ═══════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 600; }
 h1 {
-  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.018em;
+  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.008em;
   margin: 0 0 .55rem; text-wrap: balance; max-width: 24ch;
 }
 h2 {
-  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.01em;
+  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.004em;
   margin: 2.75rem 0 .8rem; padding-top: .8rem;
   border-top: 1px solid var(--rule);
 }
@@ -343,9 +334,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .brand-mark { display: block; width: 56px; height: 56px; border-radius: var(--radius); }
 .brand-text { display: block; }
 .brand-name {
-  margin: 0; font-family: var(--serif); font-weight: 700;
-  font-size: var(--step-wordmark); line-height: 1.1;
-  letter-spacing: -.022em; color: var(--ink); max-width: none;
+  margin: 0; font-family: var(--serif); font-weight: var(--title-weight);
+  font-size: var(--step-wordmark); line-height: 1.08; text-transform: uppercase;
+  letter-spacing: var(--title-tracking); color: var(--ink); max-width: none;
 }
 .brand-sub {
   margin: .26rem 0 0; font-family: var(--mono); font-size: .75rem;
@@ -439,6 +430,15 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .atlas-spine-count { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .page-head { margin-bottom: 1.6rem; }
+/* Hub page names (About, Desks, China Desk…) in the titling register.
+   Opt-in by class, only where the h1 is a fixed English name: never a
+   record, source or Brief title, never text with CJK in it (source pages
+   carry 解放军报, 防衛省 in their names, so they do not take it). */
+h1.page-name {
+  font-weight: var(--title-weight); text-transform: uppercase;
+  letter-spacing: .06em; line-height: 1.04;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.6rem);
+}
 .page-head .lede { margin-top: .5rem; }
 .page-head .meta { margin: 0; }
 
@@ -837,9 +837,9 @@ html.js .nojs-note { display: none; }
   gap: 2.4rem; align-items: start; padding-block: 2.1rem 1.9rem;
 }
 .claim {
-  margin: 0; font-family: var(--serif); font-weight: 700;
+  margin: 0; font-family: var(--serif); font-weight: 600;
   font-size: clamp(1.6rem, 3.1vw, 2.45rem); line-height: 1.1;
-  letter-spacing: -.02em; color: var(--ink); text-wrap: balance; max-width: 19ch;
+  letter-spacing: -.008em; color: var(--ink); text-wrap: balance; max-width: 19ch;
 }
 .claim em { font-style: italic; color: var(--accent); }
 .claim-sub {
@@ -974,25 +974,11 @@ html.js .nojs-note { display: none; }
   }
 }
 
-/* Homepage ground: several abstract contour fields across the full paper
-   surface. A vertical repeat continues the field as the record grows; no
-   coordinates, geographic borders, raster request, gradient or motion.
-   Dark analysis and reading panels keep their own opaque surfaces. */
-main.home-atlas {
-  background-image: var(--home-atlas);
-  background-repeat: repeat-y;
-  background-position: center top;
-  background-size: max(100%, 1100px) auto;
-}
-main.home-atlas .opening { background-color: transparent; }
+/* The shared topographic ground owns the paper pattern. The protected
+   opening keeps its photographic veil and its existing geometry. */
 main.home-atlas .opening::before { display: none; }
-main.home-atlas > .wrap { background: transparent; }
 @media (min-width: 901px) {
   main.home-atlas .veil { opacity: .32; }
-}
-@media (max-width: 600px) {
-  /* A finer crop puts the quiet fields behind narrow reading columns. */
-  main.home-atlas { background-size: 760px auto; }
 }
 
 /* ═══ Home: the lead record and the register ═════════════════════════════
@@ -1558,7 +1544,7 @@ main.home-atlas > .wrap { background: transparent; }
 .site { background: var(--surface); border-top: 2px solid var(--rule-hard); margin-top: 3rem; }
 .site .wrap { padding-block: 2.2rem 2rem; }
 .footer-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 1.6rem 2.4rem; }
-.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; letter-spacing: -.014em; color: var(--ink); }
+.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: var(--title-weight); font-size: 1.05rem; text-transform: uppercase; letter-spacing: var(--title-tracking); color: var(--ink); }
 .site p { margin: 0 0 .8rem; font-size: .875rem; line-height: 1.65; color: var(--ink-2); max-width: 46ch; }
 .footer-col h2 { margin: 0 0 .5rem; padding: 0; border: 0; font-family: var(--sans); font-size: .8125rem; font-weight: 600; color: var(--ink); }
 .footer-col ul { list-style: none; margin: 0; padding: 0; }
@@ -1810,9 +1796,4 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   thead { break-after: avoid; break-inside: avoid; }
   .table-scroll { overflow: visible; }
   h1, h2, h3 { break-after: avoid; }
-}
-
-@media print, (forced-colors: active) {
-  main.home-atlas { background-image: none; }
-  main.home-atlas .opening::before { display: none; }
 }
