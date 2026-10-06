@@ -1,0 +1,6 @@
+User-agent: Googlebot
+Disallow: /dapa/search.do
+Disaloow: /dapa/doc/ 
+
+User-agent: *
+Allow: /

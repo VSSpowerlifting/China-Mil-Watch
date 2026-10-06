@@ -1,0 +1,255 @@
+[
+  {
+    "name": "kemhan",
+    "url": "https://www.kemhan.go.id/robots.txt",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:25:54.143376+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Length": "67",
+      "Content-Type": "text/plain; charset=utf-8"
+    },
+    "sha256": "9311bab30d8b5d05f5fa5563a251b8c96b8470873bb77c62d3d17c146d7acab7",
+    "bytes": 67,
+    "capture": "kemhan-robots.bin"
+  },
+  {
+    "name": "tni",
+    "url": "https://tni.mil.id/robots.txt",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:25:57.829362+00:00",
+    "error": "HTTPSConnectionPool(host='tni.mil.id', port=443): Max retries exceeded with url: /robots.txt (Caused by ConnectTimeoutError(<HTTPSConnection(host='tni.mil.id', port=443) at 0x105e2c6d0>, 'Connection to tni.mil.id timed out. (connect timeout=20)'))"
+  },
+  {
+    "name": "mnd",
+    "url": "https://www.mnd.go.kr/robots.txt",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:26:19.859705+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain; charset=UTF-8",
+      "Content-Length": "55"
+    },
+    "sha256": "c9023d51bd15d0ebcbac271556712d4f1497034da7b87e17ee0e30d48c38da59",
+    "bytes": 55,
+    "capture": "mnd-robots.bin"
+  },
+  {
+    "name": "korea-policy",
+    "url": "https://www.korea.kr/robots.txt",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:26:56.301775+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Length": "262",
+      "Content-Type": "text/plain; charset=UTF-8"
+    },
+    "sha256": "98d411637ae27a333b95d03c7b691eae06992f5d0d061ff6e3a77ffaace7ebf8",
+    "bytes": 262,
+    "capture": "korea-policy.bin"
+  },
+  {
+    "name": "dapa",
+    "url": "https://www.dapa.go.kr/robots.txt",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:26:59.179236+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/plain;charset=utf-8",
+      "Content-Length": "98"
+    },
+    "sha256": "a5d338113711f154b784195da75e2d44521d3a1bf6a9619ad3c0f039f9f61f01",
+    "bytes": 98,
+    "capture": "dapa.bin"
+  },
+  {
+    "name": "korea-listing",
+    "url": "https://www.korea.kr/briefing/pressReleaseList.do",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:27:33.635314+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "sha256": "99e1f117c245af6fb8ae54cd8430818d24f4a2b944530399285274451d92cca2",
+    "bytes": 203791,
+    "capture": "korea-listing.bin"
+  },
+  {
+    "name": "kemhan-news",
+    "url": "https://www.kemhan.go.id/category/berita",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:27:40.288531+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "sha256": "c994d568e4dbcf915298041e0208e50de390d23bacd6c71b277d9c94b889f8a2",
+    "bytes": 128897,
+    "capture": "kemhan-news.bin"
+  },
+  {
+    "name": "kemhan-article",
+    "url": "https://www.kemhan.go.id/2026/10/06/menhan-sjafrie-terima-courtesy-call-athan-singapura-apresiasi-dedikasi-selama-bertugas.html",
+    "method": "GET",
+    "form": null,
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:28:39.134192+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "sha256": "0e5bb20f5659bdec47ed502003b5772c9fdd3ea63b6dbcb603afe741bc15e234",
+    "bytes": 112188,
+    "capture": "kemhan-article.bin"
+  },
+  {
+    "name": "korea-filtered",
+    "url": "https://www.korea.kr/briefing/pressReleaseList.do",
+    "method": "POST",
+    "form": {
+      "repCode": "A00005",
+      "pageIndex": "1",
+      "startDate": "2026-09-01",
+      "endDate": "2026-10-06"
+    },
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:28:43.238764+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "sha256": "5d9a47cd2afd775e6109901033c836545bec490a09156ff4e6a91f2ac074ea7d",
+    "bytes": 159737,
+    "capture": "korea-filtered.bin"
+  },
+  {
+    "name": "korea-article-1",
+    "url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297&pageIndex=1&repCodeType=&repCode=A00005&startDate=2026-09-01&endDate=2026-10-06&srchWord=&period=",
+    "method": "GET",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:29:37.323906+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "sha256": "1ff0c785c59eabdd39a185eee3c2fae17d83da350520962bf59ae6667231b395",
+    "bytes": 149597,
+    "capture": "korea-article-1.bin"
+  },
+  {
+    "name": "korea-article-2",
+    "url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784196&pageIndex=1&repCodeType=&repCode=A00005&startDate=2026-09-01&endDate=2026-10-06&srchWord=&period=",
+    "method": "GET",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:29:42.695464+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "sha256": "e4e222326bf93f4171da48eb0cb44f783e1efacfa0a4584c24288109f58dd790",
+    "bytes": 149958,
+    "capture": "korea-article-2.bin"
+  },
+  {
+    "name": "kemhan-article-2",
+    "url": "https://www.kemhan.go.id/2026/10/01/menhan-sjafrie-hadiri-pelantikan-pejabat-kabinet-merah-putih-dan-penganugerahan-tanda-kehormatan.html",
+    "method": "GET",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:29:48.174249+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "sha256": "1d9d081918e15fbea14d6c8ab3810f44723b28dfa164d74cd37cb80a97a9a6bd",
+    "bytes": 113328,
+    "capture": "kemhan-article-2.bin"
+  },
+  {
+    "name": "kemhan-page-2",
+    "url": "https://www.kemhan.go.id/category/berita/page/2",
+    "method": "GET",
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:29:52.312072+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "sha256": "42d925da47c9f80ab28c51247bfb763de880e31bab8150416f2a38edcbc43fdf",
+    "bytes": 129579,
+    "capture": "kemhan-page-2.bin"
+  },
+  {
+    "name": "korea-document-1",
+    "url": "https://www.korea.kr/common/download.do?fileId=198565537&tblKey=GMN",
+    "method": "GET",
+    "form": null,
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:32:34.525891+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Length": "228813",
+      "Content-Type": "application/x-download"
+    },
+    "sha256": "d1b8c4d21f97c9a33da1602ec9433487c591e49e442f3b4a5960410bda145be4",
+    "bytes": 228813,
+    "capture": "korea-document-1.bin"
+  },
+  {
+    "name": "korea-document-2",
+    "url": "https://www.korea.kr/common/download.do?fileId=198564889&tblKey=GMN",
+    "method": "GET",
+    "form": null,
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:32:40.555433+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Length": "245549",
+      "Content-Type": "application/x-download"
+    },
+    "sha256": "808e26d5eddc604d3d09c5bf3655ad928cd32ba0529eb8f5fd93066e36b61f91",
+    "bytes": 245549,
+    "capture": "korea-document-2.bin"
+  },
+  {
+    "name": "korea-empty",
+    "url": "https://www.korea.kr/briefing/pressReleaseList.do",
+    "method": "POST",
+    "form": {
+      "repCode": "A00005",
+      "pageIndex": "1",
+      "startDate": "2026-10-05",
+      "endDate": "2026-10-05"
+    },
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:32:46.856872+00:00",
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "sha256": "1b138ad75ba0960f10e8a191c0cdc29d328d5afa005de80a542cb96769d099be",
+    "bytes": 139293,
+    "capture": "korea-empty.bin"
+  },
+  {
+    "name": "korea-current",
+    "url": "https://www.korea.kr/briefing/pressReleaseList.do",
+    "method": "POST",
+    "form": {
+      "repCode": "A00005",
+      "pageIndex": "1",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-06"
+    },
+    "user_agent": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+    "retrieved_at": "2026-10-06T15:42:51.691433+00:00",
+    "status": 200,
+    "headers": {
+      "content-type": "text/html;charset=UTF-8"
+    },
+    "sha256": "70d377a6552faf6ef1362c061563d37267a6c0a2de9f55dca8452a24181e08e4",
+    "bytes": 140508,
+    "capture": "korea-current.bin",
+    "note": "Exact native-collector rehearsal bytes. Content type passed the collector HTML gate; header spelling here is normalized."
+  }
+]

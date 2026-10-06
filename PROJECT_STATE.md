@@ -237,6 +237,26 @@ disclosed, and never backfilled.
 
 ## 5. Desk evaluation and review status
 
+**Indonesia and South Korea durable shadow launch authorized (2026-10-06).** Ben
+requested research and implementation, then authorized commit/PR and durable
+shadow collection. Implementation branch: `codex/indonesia-korea-shadow-20261006`.
+Manifests remain
+outside `desks/`; the public registry, production collection and output are
+unchanged. Indonesia's scope is Kemhan Berita institutional news. South Korea's
+scope is MND-labeled releases republished by the separately governed Policy
+Briefing portal, with their linked HWPX documents; MND's own publication paths
+are robots-disallowed and were not requested. Native temporary-state rehearsals
+for 2026-09-30 through 10-06 stored 14 Indonesia records and four Korean releases,
+with no fetch/extraction failures. These are bounded observations, not periodic
+reliability, qualification or promotion. A manual workflow and pinned-state
+checkpoint reader are prepared. Fresh collection from the committed collector
+will establish separate clocks on `shadow/indonesia-kemhan` and
+`shadow/korea-policy-briefing`; rehearsal state is not transferred. Main merge,
+scheduling, Actions egress, human checkpoints and reuse-policy review remain
+open. Evidence and reusable prompt:
+`docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
+`docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
+
 **Singapore was promoted to `live` on 2026-09-21 by owner sign-off**
 (`DECISION_LOG.md`). The Singapore observations below describe its earlier
 shadow period, not its current desk status. Japan remains in shadow evaluation.

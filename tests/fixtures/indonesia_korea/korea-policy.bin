@@ -1,0 +1,8 @@
+User-agent : Googlebot 
+Disallow: https://www.korea.kr/totalSearch.do 
+
+User-Agent: *
+Allow: /
+Disallow: 
+Sitemap: https://www.korea.kr/sitemapindex.xml
+#DaumWebMasterTool:d56c572702760576c3c34a5a006d97ed33a07d76ac0c8bb7d42817432f15a0f9:1LHq5uE7RQNm3p2lob5V0w==

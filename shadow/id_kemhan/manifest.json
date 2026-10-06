@@ -1,0 +1,37 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": "Candidate only. Outside production manifest discovery; source enablement applies only to the isolated runner. No state branch, scheduled launch or public declaration is established by this file.",
+  "desk": {
+    "desk_id": "indonesia",
+    "display_name": "Indonesia Desk (shadow candidate)",
+    "jurisdiction_code": "ID",
+    "default_timezone": "Asia/Jakarta",
+    "default_calendar": "gregorian",
+    "supported_language_tags": ["id"],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [{
+    "institution_id": "id_kemhan",
+    "display_name": "Indonesia Ministry of Defense",
+    "name_original": "Kementerian Pertahanan Republik Indonesia",
+    "institution_type": "defense_ministry"
+  }],
+  "sources": [{
+    "slug": "id_kemhan_news",
+    "institution_id": "id_kemhan",
+    "display_name": "Kemhan — Berita institutional news",
+    "base_url": "https://www.kemhan.go.id",
+    "language_tag": "id",
+    "access_method": "html",
+    "authority_tier": "A",
+    "source_type": "official_institutional_news",
+    "originality": "original",
+    "enabled": true,
+    "adapter": "scraper.sources.id_kemhan:KemhanAdapter",
+    "listing_endpoints": ["https://www.kemhan.go.id/category/berita"],
+    "article_url_patterns": ["^https://www\\.kemhan\\.go\\.id/[0-9]{4}/[0-9]{2}/[0-9]{2}/[a-z0-9-]+\\.html$"],
+    "notes": "Only the ministry's Berita category and its linked HTML articles. Institutional messaging, not comprehensive Indonesian defense coverage or a TNI command-release stream. The separate Siaran Pers category, service websites, procurement notices, social media and attachments are excluded. Publication dates are day-precision source dates; no timestamp is inferred. Tier A describes first-party hosting, not independent verification of claims. Cadence thresholds remain unset. See README.md and the 2026-10-06 execution packet."
+  }]
+}
