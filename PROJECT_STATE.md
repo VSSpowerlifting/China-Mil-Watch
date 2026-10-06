@@ -289,6 +289,45 @@ never observed, and no evidence reachable from inside the corpus could. Loss is
 unobserved, which is a narrower claim than ruled out, and the limitation is
 recorded rather than rounded off.
 
+**Philippines AFP — prepared shadow integration, 2026-10-06.** Ported from
+draft PR #79 (`b29e7edb0`) onto current main (`a259ee6d2`) on
+`codex/ph-afp-integration-20261006`. The sole Git overlap was the stale state
+paragraph; current-main NSC and Japan work is preserved. No production desk or
+source is added. AFP is the anchor candidate; NSC remains supplemental.
+**Current gate: PR #109 is ready but unmerged; fresh exact-head CI is required.**
+The documentation-only follow-up `0ab1eccf5` resolved the Japan merge conflict.
+Its Actions run `37518846754` failed a phone geometry check: computed CSS reports
+28.272px, but Chromium renders a complete natural line at 28.265625px. A scratch
+copy of current main reproduced this with the whole title above the fold and
+fonts already loaded. The test now measures a natural rendered line without a
+tolerance; regression checks still reject one-pixel viewport/element clipping.
+All 17 viewport/spacing/page-shape checks pass against the current-main scratch
+corpus. Product CSS, AFP collection code and tracked DB/output are unchanged.
+Ben authorized repair, fresh green CI, guarded merge and bounded artifact-only
+rehearsal in the continuation. No rehearsal has run; no state or clock started.
+Evidence and gates: `docs/AFP_ACTIONS_GATE_2026-10-06.md`.
+`shadow/ph_afp/manifest.json` remains disabled. The prepared
+`ph_afp_shadow.yml` is manual-only: complete listing, at most two recent body
+samples, no reliability-clock start, artifact-only by default and optional
+verified public `shadow/ph-afp` state. It has no cron and awaits reviewed,
+explicitly authorized merge before dispatch. Direct first-party API evaluation,
+honest IPR About-contact identity and isolated public state are owner-approved
+(DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed. Fresh robots
+and API policy changes stop for review. Live Actions egress remains unverified.
+Current safeguards include complete count-reconciled pagination, visible cap
+overflow, current policy validation, immutable attempt evidence and a publisher
+gate that checks previous files/rows, capture hashes and the closed DB hash.
+All 15 original responses from the prior October 6 bounded rehearsal are now
+retained for an offline 1,088-row / 11-page replay and two-body extraction.
+No new AFP live requests or shadow-state branch were created. Integration
+verification and the remaining live-egress/schedule evidence gates:
+`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`. Not scheduled or qualified.
+Japan's policy correctness repair merged in PR #108 at
+`ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c` after exact-head offline CI passed.
+Japan’s 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
+as superseded by #109. This current integration status supersedes the AFP PR
+status in the earlier Japan/Philippines completion assessment.
+
 **Attribution is fixed at the source, forward-only.** Singapore and Japan
 shadow runs derive their logical target date through `core/shadow_schedule.py`:
 a scheduled first attempt takes the schedule-slot convention — the most recent
