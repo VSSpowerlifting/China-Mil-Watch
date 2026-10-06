@@ -16,9 +16,11 @@
     "never enters the site.",
     "",
     "desks/registry.json declares the Vietnam desk as status 'research' with",
-    "manifest null: the collector exists but has not run. Pointing the registry",
-    "at this file and moving the desk to 'shadow' happens only after the first",
-    "successful post-merge dispatch (shadow/vietnam/README.md, Activation)."
+    "manifest null: the collector is built and had a bounded live rehearsal",
+    "that pushed state only to a local bare remote. It has not been launched",
+    "and has never run in the project's automation. Pointing the registry at",
+    "this file and moving the desk to 'shadow' happens only once collection",
+    "is actually running (shadow/vietnam/README.md, Activation)."
   ],
   "desk": {
     "desk_id": "vietnam",

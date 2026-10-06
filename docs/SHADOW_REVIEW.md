@@ -20,6 +20,12 @@ its own, and no review outcome promotes a desk: promotion is an owner decision
 recorded in `DECISION_LOG.md` after 30 consecutive collecting days and the
 reviews are complete.
 
+The **Vietnam** pilot, built but not launched, has its own packet tool,
+`scripts/review_vietnam_shadow_state.py`. It reads only Vietnam state, refuses
+anything else, and has no publisher and no review branch; the Singapore
+procedure below and `scripts/publish_shadow_review.py` do not apply to it. Its
+use is in `shadow/vietnam/README.md`.
+
 `scripts/review_shadow_state.py` produces the evidence package. It validates
 what a machine can validate and then stops. **The checkpoint is a person
 reading stored records against the ministry's own pages.** Nothing in the tool
