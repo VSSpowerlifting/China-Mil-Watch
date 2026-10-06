@@ -176,8 +176,10 @@ disclosed, and never backfilled.
   integration group passed on rerun after that fix. The refreshed private
   preview passed 63 page/width checks and 18 glyph samples; unchanged production
   output still validates with 10 historical warnings. Ben authorized the branch
-  sync and pull request in this chat. Production render, merge into main and
-  release remain unauthorized.
+  sync and pull request in this chat. PR #105 merged as `a0dd1aa95`. Ben
+  authorized its release with #106 on 2026-10-05 (DECISION_LOG): output
+  `d8289a143`, deploy run 37404728604; live on every page, including the 17
+  PLA Watch pages, with no overflow or console errors at 1280/375.
 * **One analysis publication (source ruling 2026-09-30; render authorized
   with No. 14 corrections on 2026-10-03).**
   The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
@@ -596,13 +598,21 @@ by `deploy_output_only.yml` run 37383394581 (success). Verified live on
 desktop and mobile: plays once, Skip/Escape restore the page, no replay on
 reload or internal return.
 
-**Titling register (2026-10-05, draft PR, not merged):** the opening
-title's setting (Source Serif 4 600, letter-spaced capitals) becomes the
-identity register for the wordmark, footer name and hub page names
-(`h1.page-name`); serif display unifies on 600 (DESIGN_SYSTEM §4,
-DECISION_LOG 2026-10-05). Source only: `styles.css`, `briefs.css`, 11
-templates. `intro.js`, record/source/Brief titles and PLA Watch pages are
-unchanged. Production output has not been regenerated or deployed.
+**Titling register (2026-10-05, merged and live):** the opening title's
+setting (Source Serif 4 600, letter-spaced capitals) is the identity register
+for the wordmark, footer name and hub page names (`h1.page-name`); serif
+display unifies on 600 (DESIGN_SYSTEM §4, DECISION_LOG 2026-10-05).
+`intro.js`, record/source/Brief titles and PLA Watch type are unchanged.
+PR #106 merged as `9bf842f2d` at head `c7b6d9bbb` (offline-checks passed on
+that head). Output regenerated in `d8289a143` together with #105's
+backgrounds (below): `site/render.py` + `rerender_pla_watch.py --no-covers`,
+design-only diff, sidecars untouched, validator 10 governed warnings.
+Deployed by `deploy_output_only.yml` run 37404728604 (success; live
+2026-10-06 02:35 UTC). Verified live in Chromium and WebKit at 1280 and
+375: computed wordmark/page-name/footer settings as built, record h1 in
+source case, no CJK tracking, no overflow or console errors; live `intro.js`
+hash equals source, and the intro plays once (~2.4s), then does not replay
+on reload, at 1280 and 390.
 
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —
