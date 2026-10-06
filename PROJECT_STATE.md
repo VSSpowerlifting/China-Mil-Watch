@@ -302,6 +302,32 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
+**Philippines AFP — prepared shadow integration, 2026-10-06.** Ported from
+draft PR #79 (`b29e7edb0`) onto current main (`a259ee6d2`) on
+`codex/ph-afp-integration-20261006`. The sole Git overlap was the stale state
+paragraph; current-main NSC and Japan work is preserved. No production desk or
+source is added. AFP is the anchor candidate; NSC remains supplemental.
+`shadow/ph_afp/manifest.json` remains disabled. The prepared
+`ph_afp_shadow.yml` is manual-only: complete listing, at most two recent body
+samples, no reliability-clock start, artifact-only by default and optional
+verified public `shadow/ph-afp` state. It has no cron and awaits reviewed,
+explicitly authorized merge before dispatch. Direct first-party API evaluation,
+honest IPR About-contact identity and isolated public state are owner-approved
+(DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed. Fresh robots
+and API policy changes stop for review. Live Actions egress remains unverified.
+Current safeguards include complete count-reconciled pagination, visible cap
+overflow, current policy validation, immutable attempt evidence and a publisher
+gate that checks previous files/rows, capture hashes and the closed DB hash.
+All 15 original responses from the prior October 6 bounded rehearsal are now
+retained for an offline 1,088-row / 11-page replay and two-body extraction.
+No new AFP live requests or shadow-state branch were created. Integration
+verification and the remaining live-egress/schedule evidence gates:
+`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`. Not scheduled or qualified.
+Japan's policy correctness checkpoint is separately committed on
+`codex/jp-ph-desk-assessment-20261006` as `22bf87bd78dcc3f73e6a1e3767401a56b9c06ba0`;
+it is pushed as PR #108, not merged into main or this AFP branch. Japan’s
+1.49% full-text coverage limitation remains unresolved.
+
 **Japan MOD** — selection repair merged in PR #95; measured post-merge on
 2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
 collector `30b7169c892a48049efe538f02f8fcc2aff6d481`. State branch `shadow/jp-mod`:

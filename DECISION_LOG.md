@@ -4,6 +4,31 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-06 — AFP manual shadow evaluation constraints
+
+**Owner direction (Ben, continuation brief, 2026-10-06):** approve public
+first-party `api.afp.mil.ph` use for AFP shadow evaluation, direct official
+infrastructure only. No proxy, alternate egress, challenge solving, WAF bypass
+or access-control workaround. Fresh robots are read every run; relevant API
+policy headers and exact requested/final URLs and hashes are preserved. A
+material policy change or refusal stops collection for review.
+
+Use an honest Indo-Pacific Record research/archive identity with an existing
+project-controlled public contact route. Repository inspection confirms the
+canonical `indopacificrecord.org` domain and About page with the editor's
+public email. This authorizes the AFP identity change; other collectors are
+outside this task. Public same-repository `shadow/ph-afp` state is acceptable
+for official public content and collector metadata only, isolated from
+production with append-only, non-force history and honest failure evidence.
+Never merge that state branch into main.
+
+Prepare manual GitHub-hosted rehearsal plumbing with complete listing
+traversal and a very small recent article sample. No recurring cron, production
+desk/source activation, production DB/output changes, deployment or merge is
+authorized. Review the replacement draft PR, explicitly authorize its merge,
+then manually rehearse and inspect evidence before separately considering a
+schedule. Sample rehearsal does not establish a reliability day zero.
+
 ## 2026-10-05 — Site typography adopts the opening title's setting
 
 **Owner direction (Ben, 2026-10-05):** implement proposal A — the titling
