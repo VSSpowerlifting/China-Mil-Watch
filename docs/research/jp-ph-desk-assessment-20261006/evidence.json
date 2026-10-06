@@ -1,0 +1,871 @@
+{
+  "afp_pr": {
+    "draft": true,
+    "head": "b29e7edb047c30c8b878bca0069ba183424e2478",
+    "mergeable": "CONFLICTING",
+    "number": 79
+  },
+  "afp_rehearsal": {
+    "at": "2026-10-06T04:57:33.501319+00:00",
+    "bodies": [
+      {
+        "capture_status": "ok",
+        "documents": [
+          {
+            "capture_sha256": "18279c3a4bc0b8892b2da982e77fcb8e06a85af716a01f0394223f315773aa77",
+            "chars": 1481,
+            "content_sha256": "197500c043dab7e88e673243dc4050a4f62f0f8a22abf6212a03032a5d7e20c0",
+            "date": "2026-10-06",
+            "identity": "afp:1396"
+          }
+        ],
+        "error_detail": null,
+        "extract_status": "ok",
+        "url": "https://www.afp.mil.ph/news/afp-chief-calls-for-one-visayas-command-under-new-commander"
+      },
+      {
+        "capture_status": "ok",
+        "documents": [
+          {
+            "capture_sha256": "48b059e761ab2dafab8957654d5cdfee9b6cb10f0a7f33d65a26e0727dd659cc",
+            "chars": 1291,
+            "content_sha256": "e6c9986e9f5aca93774687a49bf0d9cfe98bc397b7ff334dd6656c199b63da47",
+            "date": "2026-10-05",
+            "identity": "afp:1395"
+          }
+        ],
+        "error_detail": null,
+        "extract_status": "ok",
+        "url": "https://www.afp.mil.ph/news/afp-marks-36-years-of-code-of-conduct-honors-excellence-in-service"
+      }
+    ],
+    "count": 11,
+    "error_detail": null,
+    "observed": {
+      "api_reported_count": 1088,
+      "api_robots_status": 404,
+      "api_x_robots_tag": "noindex, nofollow",
+      "count_mismatch": false,
+      "list_pages": 11,
+      "listed_date_max": "2026-10-06",
+      "listed_date_min": "2021-01-21",
+      "listed_items": 1088,
+      "listing_end": "next_null",
+      "listing_http_status": 200,
+      "listing_payload_sha256": "cb0d30aabf5ea8496a404a9d06c904dce8da5f735567e51936eebf9ca96ccf23",
+      "listing_url": "https://api.afp.mil.ph/articles/?page=11&page_size=100",
+      "same_title_same_date_groups": 9,
+      "www_robots_status": 200
+    },
+    "rejections": {
+      "beyond_cap": 0,
+      "duplicate_in_list": 0,
+      "identity_mismatch": 0,
+      "invalid_slug": 0,
+      "missing_id": 0,
+      "missing_pubdate": 0,
+      "missing_title": 0,
+      "non_press_category": 2,
+      "not_published": 0,
+      "outside_window": 1075,
+      "unparseable_pubdate": 0
+    },
+    "requests": 15,
+    "status": "ok"
+  },
+  "afp_request_ledger": [
+    {
+      "at": "2026-10-06T04:57:00.077255+00:00",
+      "bytes": 45,
+      "cf_mitigated": null,
+      "content_type": "text/plain",
+      "sha256": "befa30284d46cf89ba3ab58ba65af7e987be472e9efcdd368c98cea0530e378b",
+      "status": 200,
+      "url": "https://www.afp.mil.ph/robots.txt",
+      "x_robots_tag": null
+    },
+    {
+      "at": "2026-10-06T04:57:03.220709+00:00",
+      "bytes": 179,
+      "cf_mitigated": null,
+      "content_type": "text/html; charset=utf-8",
+      "sha256": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d",
+      "status": 404,
+      "url": "https://api.afp.mil.ph/robots.txt",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:06.302617+00:00",
+      "bytes": 104343,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "b1fb01357430d22689f250426b4ec36663ace428250f3fd448b8384dc0675a52",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page_size=100&page=1",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:08.947307+00:00",
+      "bytes": 109573,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "1595e2040d0449ca1eb657674fef4d326f2ad41ec5563ccb919c4c1cb07691f8",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=2&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:11.517911+00:00",
+      "bytes": 121715,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "2dbbc25f285f6aec42d971d41d1bc36a2aee5fb952064864fd935dddd3e0e0fb",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=3&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:14.213982+00:00",
+      "bytes": 125555,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "86976ebd37b326ed5e13a75f9083885fee541170699e34433ed09f8beb2cab16",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=4&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:16.875603+00:00",
+      "bytes": 146276,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "c4e6d5dfc63d69b2e204ef91d764d9dd773a86e75c4e0dfaeb43e87911f2777c",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=5&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:19.492356+00:00",
+      "bytes": 150913,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "fe5747bd565eeb9814c557c82ed1ee21e411443fcf5119ecf210ede3ea735991",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=6&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:22.322326+00:00",
+      "bytes": 139359,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "02e76b15486ea5dc65c72fbbf28544542895fbde7228ac8eff6e898359d86785",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=7&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:24.924948+00:00",
+      "bytes": 111221,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "4890f5eb8a689d04ee48906923ef585dfd08c2bd4e089490f86b7bb3bb624de1",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=8&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:27.628787+00:00",
+      "bytes": 124776,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "89ee5578113e3088dd06e4a8511a404d950373215e116b903fde6316378aeae5",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=9&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:30.260425+00:00",
+      "bytes": 124480,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "4c69add45608e90a2ff55615cb6430d0872cc96e38df4b935b1aa30c7a221567",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=10&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:32.854055+00:00",
+      "bytes": 112355,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "cb0d30aabf5ea8496a404a9d06c904dce8da5f735567e51936eebf9ca96ccf23",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/?page=11&page_size=100",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:35.469155+00:00",
+      "bytes": 2866,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "18279c3a4bc0b8892b2da982e77fcb8e06a85af716a01f0394223f315773aa77",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/afp-chief-calls-for-one-visayas-command-under-new-commander/",
+      "x_robots_tag": "noindex, nofollow"
+    },
+    {
+      "at": "2026-10-06T04:57:37.759084+00:00",
+      "bytes": 2789,
+      "cf_mitigated": null,
+      "content_type": "application/json",
+      "sha256": "48b059e761ab2dafab8957654d5cdfee9b6cb10f0a7f33d65a26e0727dd659cc",
+      "status": 200,
+      "url": "https://api.afp.mil.ph/articles/afp-marks-36-years-of-code-of-conduct-honors-excellence-in-service/",
+      "x_robots_tag": "noindex, nofollow"
+    }
+  ],
+  "base_commit": "a259ee6d2e42d90ade1cb0b51fab41a71ce3b430",
+  "date_conflict_diagnostic": {
+    "examples": [
+      {
+        "feed_date": "2026-10-05",
+        "url": "https://www.mod.go.jp/j/press/news/2026/10/03d.html",
+        "url_date_hint": "2026-10-03"
+      },
+      {
+        "feed_date": "2026-10-05",
+        "url": "https://www.mod.go.jp/j/press/news/2026/10/03c.html",
+        "url_date_hint": "2026-10-03"
+      },
+      {
+        "feed_date": "2026-10-05",
+        "url": "https://www.mod.go.jp/j/press/news/2026/10/03b.html",
+        "url_date_hint": "2026-10-03"
+      }
+    ],
+    "url_date_comparable": 160,
+    "url_date_disagreements": 57
+  },
+  "historical_japan_policy_limit": "robots_status was hard-coded allowed at the inspected base; historical scheduled policy compliance is unproven",
+  "identified_request_ledger": [
+    {
+      "at": "2026-10-06T04:50:56.676313+00:00",
+      "bytes": 48,
+      "cf_mitigated": null,
+      "content_type": "text/plain",
+      "location": null,
+      "sha256": "80ab46c5995b2e460fc237555b122d3b886159b0e5e094f48e39fed9e9dd48aa",
+      "status": 200,
+      "url": "https://www.mod.go.jp/robots.txt"
+    },
+    {
+      "at": "2026-10-06T04:50:58.765724+00:00",
+      "bytes": 59638,
+      "cf_mitigated": null,
+      "content_type": "application/xml",
+      "location": null,
+      "sha256": "ebccdd66fd763034bde3d598ba5027d71b3844bf0a1df88c689623cd29271227",
+      "status": 200,
+      "url": "https://www.mod.go.jp/j/rss/news.xml"
+    },
+    {
+      "at": "2026-10-06T04:51:00.792205+00:00",
+      "bytes": 99849,
+      "cf_mitigated": null,
+      "content_type": "application/xml",
+      "location": null,
+      "sha256": "c79a8c36ab16381cc88f408515adcbd9efdcd9fadf27e4a05e1892b68c1782f9",
+      "status": 200,
+      "url": "https://www.mod.go.jp/j/rss/update.xml"
+    },
+    {
+      "at": "2026-10-06T04:51:02.818890+00:00",
+      "bytes": 5695,
+      "cf_mitigated": "challenge",
+      "content_type": "text/html; charset=UTF-8",
+      "location": null,
+      "sha256": "c609d97cb5867c05ddb0f3d2eeff970d578f84cca42ac8b47acfe02006f775a5",
+      "status": 403,
+      "url": "https://www.mod.go.jp/js/press/index.html"
+    },
+    {
+      "at": "2026-10-06T04:51:04.841279+00:00",
+      "bytes": 5689,
+      "cf_mitigated": "challenge",
+      "content_type": "text/html; charset=UTF-8",
+      "location": null,
+      "sha256": "8a4141465675222c3e177aa1b09ab7045d4c1e3357ed867280b9d5275259ebcd",
+      "status": 403,
+      "url": "https://www.mod.go.jp/en/press-release/"
+    },
+    {
+      "at": "2026-10-06T04:51:06.897131+00:00",
+      "error": "SSLError",
+      "url": "https://dnd.gov.ph/robots.txt"
+    },
+    {
+      "at": "2026-10-06T04:51:08.958051+00:00",
+      "bytes": 5698,
+      "cf_mitigated": "challenge",
+      "content_type": "text/html; charset=UTF-8",
+      "location": null,
+      "sha256": "5a68d7ea4bc46d48fa5d729c90d31ef85d50520798de91e598a72ffdecf53add",
+      "status": 403,
+      "url": "https://coastguard.gov.ph/robots.txt"
+    }
+  ],
+  "inventories": {
+    "news": {
+      "date_basis": "RSS hint date; not verified publication date",
+      "feed_dated_window": {
+        "by_kind": {
+          "defense exchange or policy item": {
+            "references": 2,
+            "stored_bodies": 0
+          },
+          "press release": {
+            "references": 32,
+            "stored_bodies": 1
+          }
+        },
+        "non_pdf": 31,
+        "outcomes": {
+          "access_challenged": 31,
+          "oversized_response": 1,
+          "pdf: no_text_layer": 1,
+          "stored_body": 1
+        },
+        "pdf": 3,
+        "references": 34,
+        "stored_bodies": 1
+      },
+      "undated": 0,
+      "whole_feed": {
+        "by_kind": {
+          "budget document": {
+            "references": 1,
+            "stored_bodies": 0
+          },
+          "defense exchange or policy item": {
+            "references": 34,
+            "stored_bodies": 0
+          },
+          "press release": {
+            "references": 129,
+            "stored_bodies": 5
+          }
+        },
+        "non_pdf": 152,
+        "outcomes": {
+          "access_challenged": 70,
+          "oversized_response": 1,
+          "pdf: no_text_layer": 2,
+          "pre_bootstrap": 86,
+          "stored_body": 5
+        },
+        "pdf": 12,
+        "references": 164,
+        "stored_bodies": 5
+      },
+      "window_end": "2026-10-05",
+      "window_start": "2026-09-22"
+    },
+    "update": {
+      "date_basis": "RSS hint date; not verified publication date",
+      "feed_dated_window": {
+        "by_kind": {
+          "budget document": {
+            "references": 7,
+            "stored_bodies": 0
+          },
+          "defense exchange or policy item": {
+            "references": 7,
+            "stored_bodies": 0
+          },
+          "ministry profile page": {
+            "references": 6,
+            "stored_bodies": 0
+          },
+          "policy document": {
+            "references": 1,
+            "stored_bodies": 0
+          },
+          "presiding-office page": {
+            "references": 1,
+            "stored_bodies": 0
+          },
+          "press material": {
+            "references": 11,
+            "stored_bodies": 0
+          }
+        },
+        "non_pdf": 33,
+        "outcomes": {
+          "access_challenged": 33
+        },
+        "pdf": 0,
+        "references": 33,
+        "stored_bodies": 0
+      },
+      "undated": 0,
+      "whole_feed": {
+        "by_kind": {
+          "budget document": {
+            "references": 18,
+            "stored_bodies": 0
+          },
+          "defense exchange or policy item": {
+            "references": 18,
+            "stored_bodies": 0
+          },
+          "ministry profile page": {
+            "references": 16,
+            "stored_bodies": 0
+          },
+          "policy document": {
+            "references": 11,
+            "stored_bodies": 0
+          },
+          "presiding-office page": {
+            "references": 1,
+            "stored_bodies": 0
+          },
+          "press material": {
+            "references": 41,
+            "stored_bodies": 0
+          },
+          "public education page": {
+            "references": 1,
+            "stored_bodies": 0
+          }
+        },
+        "non_pdf": 106,
+        "outcomes": {
+          "access_challenged": 76,
+          "pre_bootstrap": 30
+        },
+        "pdf": 0,
+        "references": 106,
+        "stored_bodies": 0
+      },
+      "window_end": "2026-10-05",
+      "window_start": "2026-09-22"
+    }
+  },
+  "japan_latest_ledger": {
+    "bootstrap_cutoff_date": "2026-08-27",
+    "bootstrap_cutoff_utc": "2026-08-27T02:14:34+00:00",
+    "bootstrap_established_run": "33032633240",
+    "cap": 40,
+    "carried_pending": 0,
+    "challenged": 9,
+    "challenged_urls": [
+      "https://www.mod.go.jp/j/press/news/2026/08/26d.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/27a.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/28c.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/28d.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/28e.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/28h.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260831_bel-j.html",
+      "https://www.mod.go.jp/j/budget/yosan_gaiyo/index.html",
+      "https://www.mod.go.jp/j/press/news/2026/08/30a.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260826_grc-j.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260827_ltu_est-j.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260901_bra-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/01a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/01b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/02a.html",
+      "https://www.mod.go.jp/j/approach/chouwa/hojokin/index.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/04a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/04b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/04c.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/07a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/07b.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260908_kor-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/09a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/10a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/10b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/11a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/11b.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260910_fin-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/14a.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260828_egy-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/15a.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260915_kor-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/16a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/16b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/16c.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/16d.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/16e.html",
+      "https://www.mod.go.jp/j/approach/defense/sedori/index.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/18b.html",
+      "https://www.mod.go.jp/j/approach/anpo/2026/0918a_usa-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/18a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20c.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20d.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20e.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20f.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20g.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20h.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/20i.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/21a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/23a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/24a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/25a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/27a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/28a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/28b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/29a.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/29b.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/29c.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/29e.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260930_mng-j.html",
+      "https://www.mod.go.jp/j/press/news/2026/09/30a.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/02a.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/02c.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/03a.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/03b.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/03c.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/03d.html",
+      "https://www.mod.go.jp/j/press/news/2026/10/05a.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/support-for-retired/index.html",
+      "https://www.mod.go.jp/j/budget/yosan_gaiyo/index.html",
+      "https://www.mod.go.jp/j/policy/agenda/nazeima/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0828a.html",
+      "https://www.mod.go.jp/j/budget/gaisan/index.html",
+      "https://www.mod.go.jp/j/budget/release/pfi/cargo_ship/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0828b_r.html",
+      "https://www.mod.go.jp/j/profile/minister/koizumi/2026_08.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/boshu/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0901a.html",
+      "https://www.mod.go.jp/j/profile/houjin/lmo/index.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260903_tha-j_a.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260903_tha-j_b.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/pacific/australia.html",
+      "https://www.mod.go.jp/j/approach/zaibeigun/stuff/index.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/henkaku/20260831.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0904a.html",
+      "https://www.mod.go.jp/j/profile/minister/vice-minister/yoshida.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0904b.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0908a.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0908b.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/space_domain/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0907a_r.html",
+      "https://www.mod.go.jp/j/budget/release/pfi/shukusha_seibi/05/index.html",
+      "https://www.mod.go.jp/j/budget/saigai/index.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/jinji/giji_shoguu.html",
+      "https://www.mod.go.jp/j/profile/minister/vice-minister/wakabayashi.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0911a.html",
+      "https://www.mod.go.jp/j/approach/anpo/2026/0903a_usa_aus_ind-j.html",
+      "https://www.mod.go.jp/j/approach/defense/saigai/index.html",
+      "https://www.mod.go.jp/j/approach/exchange/cap_build/index.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/rinri/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0915a.html",
+      "https://www.mod.go.jp/j/profile/memorial_zone/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0915b.html",
+      "https://www.mod.go.jp/j/press/wp/index.html",
+      "https://www.mod.go.jp/j/profile/minister/vice-minister/miyazaki.html",
+      "https://www.mod.go.jp/j/profile/mod_sdf/sosikizu/inner/kanbumeibo.html",
+      "https://www.mod.go.jp/j/approach/exchange/area/2026/20260914_alb_ita-j.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/consul/gyomu.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/iten/index.html",
+      "https://www.mod.go.jp/j/press/other/seminar/index.html",
+      "https://www.mod.go.jp/j/profile/worklife/index.html",
+      "https://www.mod.go.jp/j/approach/defense/cyber/c_contest/index.html",
+      "https://www.mod.go.jp/j/approach/exchange/dialogue/iiss/iiss_pds_3rd.html",
+      "https://www.mod.go.jp/j/budget/release/pfi/shukusha_seibi/04/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0918a.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0920a_r.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0920b_r.html",
+      "https://www.mod.go.jp/j/profile/minister/koizumi/2026_09.html",
+      "https://www.mod.go.jp/j/approach/defense/cyber/c_contest/previous_exam.html",
+      "https://www.mod.go.jp/j/approach/exchange/cap_build/2026/20260831_slb.html",
+      "https://www.mod.go.jp/j/approach/exchange/dialogue/fukakusan/abandon_cw.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0925a.html",
+      "https://www.mod.go.jp/j/budget/release/pfi/shukusha_seibi/06/20260702a.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/nyuusatu/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/0929a.html",
+      "https://www.mod.go.jp/j/policy/agenda/meeting/cho-shin/index.html",
+      "https://www.mod.go.jp/j/profile/mentalhealth/index.html",
+      "https://www.mod.go.jp/j/profile/syogu/engo/index.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/index.html",
+      "https://www.mod.go.jp/j/presiding/kokuji/index.html",
+      "https://www.mod.go.jp/j/press/movie/index.html",
+      "https://www.mod.go.jp/j/profile/houjin/index.html",
+      "https://www.mod.go.jp/j/approach/exchange/cap_build/2026/20260915_mng.html",
+      "https://www.mod.go.jp/j/budget/shikaku/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/1002a.html",
+      "https://www.mod.go.jp/j/profile/chouwa/heliport/index.html",
+      "https://www.mod.go.jp/j/approach/chouwa/firing/index.html",
+      "https://www.mod.go.jp/j/budget/chotatsu/naikyoku/consul/kekka_gyomu.html",
+      "https://www.mod.go.jp/j/press/events/index.html",
+      "https://www.mod.go.jp/j/press/jinji/index.html",
+      "https://www.mod.go.jp/j/budget/yosanhyoka/index.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/1004a_r.html",
+      "https://www.mod.go.jp/j/press/kisha/2026/1004b_r.html",
+      "https://www.mod.go.jp/j/profile/minister/vice-minister/odawara.html"
+    ],
+    "collector_commit": "9bf842f2d313c7b10c817fc5ec8e2ade32f47811",
+    "content_hashes": [
+      "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8"
+    ],
+    "corpus_range": [
+      "2026-08-27",
+      "2026-10-05"
+    ],
+    "day_zero_utc": "2026-08-27T02:14:38+00:00",
+    "deferred": 0,
+    "deferred_urls": [],
+    "discovered": 270,
+    "duplicates": 4,
+    "error_detail": "149 outstanding gap(s), 146 challenged, 1 unassigned; 0 listing, 1 fetch and 2 extraction failure(s) this run",
+    "extraction_failures": 2,
+    "fetch_failures": 1,
+    "finished_utc": "2026-10-06T02:29:33+00:00",
+    "health": "partial",
+    "inserted": 1,
+    "is_bootstrap_run": false,
+    "known_challenged": 137,
+    "listing_failures": 0,
+    "listing_status": "ok",
+    "lookback_days": 14,
+    "outstanding_challenged": 146,
+    "pre_bootstrap": 116,
+    "pre_bootstrap_total": 288,
+    "result": "ok",
+    "retrieved": 3,
+    "revalidation_deferred": 0,
+    "robots_status": "allowed",
+    "run_id": "37404326269-1",
+    "selected": 17,
+    "shadow_day": 40,
+    "sources": [
+      {
+        "carried_pending": 0,
+        "challenged": 5,
+        "deferred": 0,
+        "deferred_urls": [],
+        "discovered": 164,
+        "duplicates": 4,
+        "extraction_failures": 2,
+        "failed_endpoints": [],
+        "fetch_failures": 1,
+        "inserted": 1,
+        "kinds": {
+          "press release": 13
+        },
+        "known_challenged": 65,
+        "listing_status": "ok",
+        "pre_bootstrap": 86,
+        "retrieved": 3,
+        "revalidation_deferred": 0,
+        "selected": 13,
+        "source_slug": "jp_mod_news_ja",
+        "undated": 0
+      },
+      {
+        "carried_pending": 0,
+        "challenged": 4,
+        "deferred": 0,
+        "deferred_urls": [],
+        "discovered": 106,
+        "duplicates": 0,
+        "extraction_failures": 0,
+        "failed_endpoints": [],
+        "fetch_failures": 0,
+        "inserted": 0,
+        "kinds": {
+          "budget document": 1,
+          "ministry profile page": 1,
+          "press material": 2
+        },
+        "known_challenged": 72,
+        "listing_status": "ok",
+        "pre_bootstrap": 30,
+        "retrieved": 0,
+        "revalidation_deferred": 0,
+        "selected": 4,
+        "source_slug": "jp_mod_siteupdate_ja",
+        "undated": 0
+      }
+    ],
+    "started_utc": "2026-10-06T02:29:21+00:00",
+    "state_sha256_after": "aee277d2d5010d51671046deffee339d2d47b0b084217c578384f354391f0505",
+    "state_sha256_before": "e70570368e37346e59a6fe2cf619c339f3be03c433d0422d4327a0b8a8c4d2b7",
+    "stored_total": 5,
+    "target_date": "2026-10-05",
+    "target_date_source": "schedule-slot",
+    "unassigned_gap_urls": [
+      "https://www.mod.go.jp/j/approach/exchange/cap_build/mongolia.html"
+    ],
+    "undated": 0,
+    "unretrieved_total": 149
+  },
+  "japan_repaired_policy_rehearsal": {
+    "body_lengths": [
+      580
+    ],
+    "discovery_status": "ok",
+    "extraction_status": "ok",
+    "fetch_status": "ok",
+    "references": 165,
+    "requested_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "requests": [
+      {
+        "at": "2026-10-06T13:42:58.731250+00:00",
+        "bytes": 48,
+        "sha256": "80ab46c5995b2e460fc237555b122d3b886159b0e5e094f48e39fed9e9dd48aa",
+        "status": 200,
+        "url": "https://www.mod.go.jp/robots.txt"
+      },
+      {
+        "at": "2026-10-06T13:43:00.751307+00:00",
+        "bytes": 60056,
+        "sha256": "d14024dde026e3c938d00aade1572548a6e0077a2827eaf9c19852ec31c2bfd6",
+        "status": 200,
+        "url": "https://www.mod.go.jp/j/rss/news.xml"
+      },
+      {
+        "at": "2026-10-06T13:43:04.816057+00:00",
+        "bytes": 95660,
+        "sha256": "4788557ba554cd8af8211906174f44fc60eecaa53f46e2c1818b418c2d0d57bf",
+        "status": 200,
+        "url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf"
+      }
+    ],
+    "robots_observation": {
+      "http_status": 200,
+      "payload_sha256": "80ab46c5995b2e460fc237555b122d3b886159b0e5e094f48e39fed9e9dd48aa",
+      "retrieved_at": "2026-10-06T13:42:58+00:00",
+      "text": "User-agent: *\r\nDisallow: /a/\r\nDisallow: /sp/j/\r\n",
+      "url": "https://www.mod.go.jp/robots.txt"
+    },
+    "robots_status": "allowed"
+  },
+  "local_verification": {
+    "branch": "codex/jp-ph-desk-assessment-20261006",
+    "checkpoint_authorized": true,
+    "checkpoint_review": {
+      "exit_code": 0,
+      "full_suite_scope": "Prior full suite passed before the final UTF-8 decoding review correction; 496 focused checks passed on final checkpoint source.",
+      "new_policy_tests": 16,
+      "targeted_tests": 496
+    },
+    "full_suite": {
+      "exit_code": 0,
+      "seconds": 1228.122,
+      "skipped": 2,
+      "tests": 3204
+    },
+    "initial_delivery_committed": false,
+    "japan_tests": 164,
+    "new_policy_tests": 15,
+    "targeted_tests": 495,
+    "transcript_sha256": {
+      "checkpoint-tests.log": "f72a7ea7755e2f2223ee9b1ebbfc56fdb402fc3af95f7cb955e211e7e4506f80",
+      "full-suite-final.log": "c631ac268a57dc16601ee657bb3c827a88959dc19b396cd13a2669272d9b826f",
+      "japan-policy-tests.log": "04aec6af12b4422ea2cf39c81846b1c7bf22db747053e65c0edebf9c39aefe18",
+      "targeted-tests.log": "0f1dba76c9bbb8af79081fe7016b4db474782fa360689bbb218c58cfa63bbc93",
+      "validator-final.log": "b8577b392a27ec68cec0cf091b61e07545019dc2786e9aa744f4d1938d0dc5d3"
+    },
+    "validator_warnings": 10
+  },
+  "measured_utc": "2026-10-06T04:50:56Z/2026-10-06T04:57:38Z",
+  "nsc_latest_ledger": {
+    "access_failures": 0,
+    "cap": 40,
+    "captures": [],
+    "challenged": 0,
+    "collector_commit": "4b285cd64984aafd8b10579b6a1b2f82482d0d96",
+    "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+    "content_hashes": [],
+    "corpus_range": [
+      null,
+      null
+    ],
+    "day_zero_utc": "2026-10-02T22:22:47+00:00",
+    "discovered": 0,
+    "duplicates": 0,
+    "error_detail": null,
+    "extraction_failures": 0,
+    "failures": [],
+    "fetch_failures": 0,
+    "finished_utc": "2026-10-05T19:17:14+00:00",
+    "health": "ok",
+    "inserted": 0,
+    "listing_report": {
+      "items_listed": 6,
+      "newest": "2026-07-08",
+      "oldest": "2026-06-03",
+      "pages_walked": 1,
+      "pagination_markup_seen": false,
+      "unsupported_pagination": [],
+      "window_start": "2026-09-29"
+    },
+    "listing_status": "ok_no_publications",
+    "lookback_days": 6,
+    "result": "ok_no_publications",
+    "retrieved": 0,
+    "robots_status": "read",
+    "run_id": "37362237368-1",
+    "selected": 0,
+    "shadow_day": 2,
+    "started_utc": "2026-10-05T19:17:09+00:00",
+    "state_sha256_after": "6a56f49d76638c94a370605cec9a73944bdd3b970c5ab4537c172e86db15f88c",
+    "state_sha256_before": "6a56f49d76638c94a370605cec9a73944bdd3b970c5ab4537c172e86db15f88c",
+    "stored_total": 0,
+    "target_date": "2026-10-05",
+    "target_date_source": "schedule-slot",
+    "window_start": "2026-09-29"
+  },
+  "retained_capture_hashes": {
+    "../../../tests/fixtures/jp_mod/robots.txt": "80ab46c5995b2e460fc237555b122d3b886159b0e5e094f48e39fed9e9dd48aa",
+    "afp-1395.json": "48b059e761ab2dafab8957654d5cdfee9b6cb10f0a7f33d65a26e0727dd659cc",
+    "afp-1396.json": "18279c3a4bc0b8892b2da982e77fcb8e06a85af716a01f0394223f315773aa77",
+    "afp-api-robots-404.html": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d",
+    "afp-www-robots.txt": "befa30284d46cf89ba3ab58ba65af7e987be472e9efcdd368c98cea0530e378b",
+    "news.xml": "ebccdd66fd763034bde3d598ba5027d71b3844bf0a1df88c689623cd29271227",
+    "update.xml": "c79a8c36ab16381cc88f408515adcbd9efdcd9fadf27e4a05e1892b68c1782f9"
+  },
+  "selected_fix": "Japan live robots enforcement and truthful failure evidence; no persistent discovery inventory change",
+  "state_chain_audit": {
+    "japan_state": {
+      "chain_breaks": [],
+      "duplicate_dates": {
+        "2026-08-27": 2,
+        "2026-09-03": 2,
+        "2026-10-02": 2
+      },
+      "health_counts": {
+        "ok": 2,
+        "partial": 41
+      },
+      "ledgers": 43,
+      "missing_logical_dates": [],
+      "result_counts": {
+        "ok": 3,
+        "ok_all_duplicates": 38,
+        "ok_no_publications": 2
+      }
+    },
+    "nsc_state": {
+      "chain_breaks": [],
+      "duplicate_dates": {},
+      "health_counts": {
+        "ok": 4
+      },
+      "ledgers": 4,
+      "missing_logical_dates": [],
+      "result_counts": {
+        "ok_no_publications": 4
+      }
+    }
+  },
+  "state_commits": {
+    "japan": "e890112aacc7b9eaa85db4179fef4aedeba81b2b",
+    "nsc": "05e7f9780ef330d0493f8b7ccf0de67306112b0e"
+  }
+}
