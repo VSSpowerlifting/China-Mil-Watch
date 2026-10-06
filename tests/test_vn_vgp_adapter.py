@@ -53,6 +53,10 @@ ROBOTS_BIN = fixture("robots.bin")
 LISTING_BIN = fixture("listing.bin")
 LISTING_TEXT = LISTING_BIN.decode("utf-8")
 MOD_CHALLENGE = fixture("mod-gov-vn-robots-challenge.bin")
+#: From the live rehearsal, not the probe: the tag page with a cache stamp after </html>.
+REHEARSAL = json.loads((FIX / "rehearsal.json").read_text(encoding="utf-8"))["captures"]
+STAMPED_BIN = fixture("listing-cache-stamp.bin")
+STAMP = "<!--u: 10/6/2026 9:59:55 AM-->"
 #: item id -> (url, exact bytes) for every article page the probe kept.
 PAGES = {name.rsplit("-", 1)[1][:-4]: (ROWS[name]["url"], fixture(name))
          for name in ROWS if name.startswith(("article-", "untagged-"))}
@@ -252,6 +256,13 @@ class TestFixtureIntegrity(unittest.TestCase):
         # CRLF is part of the published bytes and must survive storage untouched.
         self.assertIn(b"\r\n", BIN[MAY[0]])
 
+    def test_the_rehearsal_capture_is_the_listing_plus_a_cache_stamp(self):
+        (row,) = REHEARSAL
+        self.assertEqual((hashlib.sha256(STAMPED_BIN).hexdigest(), len(STAMPED_BIN)),
+                         (row["sha256"], row["bytes"]))
+        self.assertEqual((row["url"], row["status"], row["trailer"]), (vgp.LISTING, 200, STAMP))
+        self.assertEqual(STAMPED_BIN, LISTING_BIN + STAMP.encode("utf-8"))
+
     def test_probe_stayed_inside_its_written_cap_and_spacing(self):
         rows = PROBE["requests"]
         self.assertEqual([r["seq"] for r in rows], list(range(1, len(rows) + 1)))
@@ -388,6 +399,17 @@ class TestListing(unittest.TestCase):
         widths = {len(i.item_id) for i in items}
         self.assertEqual(widths, {17, 18})
 
+    def test_the_rehearsal_page_with_its_cache_stamp_lists_the_same_items(self):
+        self.assertEqual(vgp.parse_listing_page(STAMPED_BIN.decode("utf-8")),
+                         vgp.parse_listing_page(LISTING_TEXT))
+        plain = Rig().discover(date(2026, 8, 5), 0)
+        rig = Rig(routes({vgp.LISTING: FakeResponse(STAMPED_BIN)}))
+        cached = rig.discover(date(2026, 8, 5), 0)
+        self.assertEqual((cached.status, [r.url for r in cached.references]),
+                         (st.OK, [r.url for r in plain.references]))
+        self.assertEqual(len(cached.references), 2)
+        self.assertEqual(rig.adapter.listing_report["coverage"], "proven")
+
     def test_sidebar_widgets_never_become_references(self):
         from bs4 import BeautifulSoup
         from urllib.parse import urljoin
@@ -485,6 +507,9 @@ class TestListing(unittest.TestCase):
             (edited(LISTING_TEXT, ('id="hdCatUrl" value="defense"', 'id="hdCatUrl" value="navy"')),
              "declares tag"),
             (LISTING_TEXT[:LISTING_TEXT.rindex("</html>")], "truncation"),
+            (LISTING_TEXT + STAMP[:14], "truncation"),
+            (LISTING_TEXT + STAMP + "x", "truncation"),
+            (LISTING_TEXT + "<!--u--> -->", "truncation"),
             (edited(LISTING_TEXT, ('content="&#xA9; Viet Nam Government Portal"',
                                    'content="Viet Nam Government Portal"')), "frame"),
             (LISTING_TEXT[:a0] + '<div class="promo"><a href="/x-111260909103625767.htm">x</a></div>'
@@ -879,6 +904,17 @@ class TestExtraction(unittest.TestCase):
                          "Viet Nam, Russia hold second consultation session on maritime issues")
         self.assertEqual(doc.extra["listing_title"], "Viet Nam, Russia hold maritime consultation")
         self.assertIn("listing_title_differs", " ".join(doc.extra["anomalies"]))
+
+    def test_a_cache_stamp_after_the_document_changes_nothing(self):
+        stamped = BIN[MAY[0]].decode("utf-8") + STAMP + "\r\n"
+        plain, cached = extract(BIN[MAY[0]]), extract(stamped)
+        self.assertEqual((plain.status, cached.status), (st.OK, st.OK))
+        self.assertEqual(cached.documents[0].extra["content_sha256"],
+                         plain.documents[0].extra["content_sha256"])
+        self.assertEqual(cached.documents[0].text_original, plain.documents[0].text_original)
+        cut = extract(BIN[MAY[0]].decode("utf-8") + STAMP[:9])
+        self.assertEqual(cut.status, st.EXTRACTION_FAILURE)
+        self.assertIn("truncation", cut.error_detail)
 
     def test_template_challenge_and_truncation_refusals(self):
         cases = [

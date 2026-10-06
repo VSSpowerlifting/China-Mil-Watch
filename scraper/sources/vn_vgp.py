@@ -433,8 +433,17 @@ def _at_most_one(nodes, what: str):
     return nodes[0] if nodes else None
 
 
+#: The site's cache can append its own stamp after the document. Measured in
+#: the 2026-10-06 rehearsal: the tag page came back as the earlier bytes plus
+#: `<!--u: 10/6/2026 9:59:55 AM-->`. Whitespace and complete comments after
+#: </html> are tolerated; anything else, a comment cut short included, is
+#: still a possible truncation.
+_DOCUMENT_END_RE = re.compile(r"</html>(?:[ \t\n\r\f]|<!--(?:(?!-->).)*-->)*\Z",
+                              re.IGNORECASE | re.DOTALL)
+
+
 def _frame(soup, text: str) -> None:
-    if text.rstrip(" \t\n\r\f")[-7:].lower() != "</html>":
+    if not _DOCUMENT_END_RE.search(text):
         raise PageRejected("document does not end with </html>: possible truncation")
     if not _framed(soup):
         raise PageRejected("page lacks the Government News frame (copyright and site name)")
