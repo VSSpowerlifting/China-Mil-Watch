@@ -141,6 +141,9 @@ class TestRunner(RunnerCase):
         on_disk = json.loads(self.ledgers()[0].read_text(encoding="utf-8"))
         self.assertEqual(on_disk["run_id"], "r1")
         self.assertFalse([c for c in on_disk["captures"] if "payload" in c])
+        # Every listed item and its listed time, for late-listing review.
+        self.assertEqual(len(on_disk["listing_report"]["listed"]), 24)
+        self.assertIn([MAY[1], "2026-05-21T16:40"], on_disk["listing_report"]["listed"])
 
     def test_a_current_quiet_window_is_an_honest_empty_success(self):
         entry = self.go(target=date(2026, 10, 5), lookback=6)
@@ -149,6 +152,18 @@ class TestRunner(RunnerCase):
         self.assertEqual(self.rig.urls, [vgp.ROBOTS, vgp.LISTING])
         clock = json.loads((self.state / "clock.json").read_text())
         self.assertEqual((clock["day_zero_run_id"], entry["shadow_day"]), ("r1", 0))
+
+    def test_a_quiet_run_leaves_an_existing_database_byte_identical(self):
+        first = self.go(target=date(2026, 10, 5), lookback=6)
+        self.assertIsNone(first["state_sha256_before"])
+        self.assertEqual(self.query("SELECT COUNT(*) FROM shadow_records"), [(0,)])
+        stored = self.go(run_id="r2")
+        db = (self.state / "shadow.db").read_bytes()
+        quiet = self.go(target=date(2026, 10, 6), lookback=6, run_id="r3")
+        self.assertEqual(quiet["result"], st.OK_NO_PUBLICATIONS)
+        self.assertEqual(quiet["state_sha256_before"], stored["state_sha256_after"])
+        self.assertEqual(quiet["state_sha256_after"], quiet["state_sha256_before"])
+        self.assertEqual((self.state / "shadow.db").read_bytes(), db)
 
     def test_unprovable_history_fails_before_fetching_and_does_not_start_clock(self):
         entry = self.go(target=date(2023, 11, 22), lookback=6)

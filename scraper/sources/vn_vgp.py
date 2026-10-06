@@ -912,6 +912,9 @@ class VNVgpAdapter(SourceAdapter):
                 "window_start": start.isoformat(), "window_end": end.isoformat(),
                 "pagination": "script-built only (/timelinetags/); never requested",
                 "coverage": "proven" if oldest < start else "unprovable",
+                # Every item the page listed, so a later review can see an
+                # item that appears in a window after that window was read.
+                "listed": [[i.item_id, i.listed_local] for i in items],
             }
             if not oldest < start:
                 raise _Refusal(st.LISTING_FAILURE,

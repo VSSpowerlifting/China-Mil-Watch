@@ -417,6 +417,9 @@ class TestListing(unittest.TestCase):
         self.assertEqual((report["coverage"], report["items_listed"], report["selected"],
                           report["listed_after_window"], report["pages_read"]),
                          ("proven", 24, 2, 8, 1))
+        self.assertEqual(len(report["listed"]), 24)
+        self.assertEqual(report["listed"][0], ["111260909103625767", "2026-09-09T09:33"])
+        self.assertEqual(report["listed"][-1][0], "111231116101259413")
         self.assertEqual(rig.adapter.robots_status, "read")
         self.assertEqual([e["role"] for e in rig.adapter.evidence], ["robots", "listing"])
         self.assertEqual(rig.adapter.evidence[1]["payload"], LISTING_BIN)
