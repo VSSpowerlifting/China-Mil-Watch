@@ -47,6 +47,7 @@ from __future__ import annotations
 import hashlib
 import re
 import time
+import urllib.robotparser
 
 import requests
 import xml.etree.ElementTree as ET
@@ -80,10 +81,6 @@ REQUEST_INTERVAL = 2.0          # seconds between requests; one worker only
 MAX_RETRIES = 1                 # one retry, transport errors only — never a 403
 MAX_BODY_BYTES = pdf_text.MAX_BYTES
 
-#: Paths robots.txt disallows for `User-agent: *` as measured 2026-08-26. Kept
-#: as a fallback only; `assert_robots_allows` parses the live file when given it.
-KNOWN_DISALLOW = ("/a/", "/sp/j/")
-
 #: URL family -> what that family actually is, measured across both feeds on
 #: 2026-08-26. These are **labels, not filters**. Nothing is dropped for failing
 #: to match: an unrecognised family is stored as "ministry page (unclassified)"
@@ -109,7 +106,12 @@ _PRESS_KIND = (
 
 
 class RobotsDisallowed(RuntimeError):
-    """The live robots.txt forbids a path this adapter was about to request."""
+    """No current policy basis for this request; never fall back to old rules."""
+
+    def __init__(self, detail, status=st.AUTH_FAILURE, url=ROBOTS):
+        super().__init__(detail)
+        self.status = status
+        self.url = url
 
 
 def canonical_url(url: str) -> Optional[str]:
@@ -287,7 +289,7 @@ class JPModAdapter(SourceAdapter):
     """
 
     def __init__(self, source, session=None, cap: int = 40,
-                 validators=None, sleep=time.sleep):
+                 validators=None, sleep=time.sleep, robots_cache=None):
         self.source = source
         self.slug = getattr(source, "slug", "jp_mod_news_ja")
         #: Each declared feed is its own source, because the two are objectively
@@ -306,7 +308,13 @@ class JPModAdapter(SourceAdapter):
         #: document already stored is revalidated rather than re-downloaded.
         self._validators = validators or {}
         self._sleep = sleep
-        self._robots_disallow: Optional[List[str]] = None
+        self._robots_checked = False
+        self._robots_text = None
+        self._policy_failure = None
+        self.robots_status = "not_checked"
+        self.robots_observation = None
+        self._request_interval = REQUEST_INTERVAL
+        self._robots_cache = robots_cache if robots_cache is not None else {}
         #: {canonical url: title as the feed published it}. Titles live here
         #: rather than on CandidateReference because the contract has no title
         #: field, and inventing one for a shadow source would change a shared
@@ -318,12 +326,91 @@ class JPModAdapter(SourceAdapter):
     # ---------------------------------------------------------------- robots
 
     def assert_robots_allows(self, robots_text: str, url: str) -> None:
-        rules = parse_robots(robots_text) if robots_text else list(KNOWN_DISALLOW)
-        path = urlsplit(url).path or "/"
-        for rule in rules:
-            if path.startswith(rule):
-                raise RobotsDisallowed(
-                    "robots.txt disallows %s (rule %r)" % (path, rule))
+        if robots_text is None:  # an observed 404/410, not an unread policy
+            return
+        for line in robots_text.splitlines():
+            directive, _, value = line.partition("#")[0].partition(":")
+            if directive.strip().lower() == "crawl-delay" and not value.strip().isdigit():
+                raise RobotsDisallowed("unsupported robots crawl-delay; stopped", url=url)
+            if directive.strip().lower() in ("allow", "disallow") and any(
+                    char in value for char in ("*", "$")):
+                raise RobotsDisallowed("unsupported robots path pattern; stopped", url=url)
+        parser = urllib.robotparser.RobotFileParser()
+        parser._add_entry = parser.entries.append  # preserve repeated wildcard groups
+        parser.parse(robots_text.lstrip("\ufeff").splitlines())
+        token = USER_AGENT.split("/")[0].lower()
+        matches = [(len(agent), entry) for entry in parser.entries
+                   for agent in entry.useragents if agent != "*" and agent.lower() in token]
+        specificity = max((length for length, _ in matches), default=0)
+        groups = ([entry for length, entry in matches if length == specificity]
+                  if matches else [entry for entry in parser.entries if "*" in entry.useragents])
+        merged = urllib.robotparser.Entry()
+        merged.rulelines = sorted([rule for entry in groups for rule in entry.rulelines],
+                                  key=lambda rule: (len(rule.path), rule.allowance), reverse=True)
+        parser.entries = []
+        parser.default_entry = merged
+        self._request_interval = max([REQUEST_INTERVAL] +
+                                     [entry.delay for entry in groups if entry.delay is not None])
+        if not parser.can_fetch(USER_AGENT, url):
+            raise RobotsDisallowed("robots.txt disallows %s" % url, url=url)
+
+    def _ensure_robots(self):
+        if self._robots_cache:
+            self._robots_checked = True
+            self._robots_text = self._robots_cache["text"]
+            self.robots_status = self._robots_cache["status"]
+            self.robots_observation = self._robots_cache["observation"]
+            self._policy_failure = self._robots_cache["failure"]
+        if self._policy_failure is not None:
+            raise self._policy_failure
+        if self._robots_checked:
+            return
+        self._robots_checked = True
+        try:
+            response = self._session.get(
+                ROBOTS, headers={"User-Agent": USER_AGENT, "Accept": "text/plain"},
+                timeout=REQUEST_TIMEOUT, allow_redirects=False)
+            code = response.status_code
+            text = response.text or ""
+            payload = response.content or text.encode("utf-8")
+            self.robots_observation = {
+                "url": ROBOTS, "http_status": code,
+                "retrieved_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "payload_sha256": hashlib.sha256(payload).hexdigest()}
+            if _is_challenge(response):
+                raise RobotsDisallowed("robots.txt access challenge; stopped",
+                                       status=st.ACCESS_CHALLENGED)
+            if code in (404, 410):
+                self.robots_status = "absent"
+                return
+            if code != 200:
+                raise RobotsDisallowed("robots.txt unreadable: HTTP %s" % code)
+            if "text/plain" not in response.headers.get("Content-Type", "").lower() \
+                    or len(payload) > 64_000:
+                raise RobotsDisallowed("robots.txt is not a bounded plain-text policy")
+            try:
+                text = payload.decode("utf-8-sig")
+            except UnicodeDecodeError:
+                raise RobotsDisallowed("robots.txt is not valid UTF-8; stopped")
+            meaningful = [line.partition("#")[0].strip()
+                          for line in text.lstrip("\ufeff").splitlines()]
+            if any(meaningful) and not any(
+                    line.partition(":")[0].strip().lower() == "user-agent"
+                    and line.partition(":")[2].strip() for line in meaningful):
+                raise RobotsDisallowed("robots.txt has no recognizable user-agent group")
+            self._robots_text = text
+            self.robots_observation["text"] = text
+            self.robots_status = "allowed"
+        except Exception as exc:
+            refusal = exc if isinstance(exc, RobotsDisallowed) else RobotsDisallowed(
+                "robots.txt unreadable: %s" % type(exc).__name__)
+            self.robots_status = refusal.status
+            self._policy_failure = refusal
+            raise refusal
+        finally:
+            self._robots_cache.update(text=self._robots_text, status=self.robots_status,
+                                      observation=self.robots_observation,
+                                      failure=self._policy_failure)
 
     # ----------------------------------------------------------------- fetch
 
@@ -334,6 +421,15 @@ class JPModAdapter(SourceAdapter):
         A 403 is never retried. It is the host's answer, and asking again is
         both rude and useless.
         """
+        self._ensure_robots()
+        try:
+            self.assert_robots_allows(self._robots_text, url)
+        except RobotsDisallowed as exc:
+            self.robots_status = exc.status
+            self._policy_failure = exc
+            self._robots_cache.update(status=exc.status, failure=exc)
+            raise
+        self._sleep(self._request_interval)
         headers = {"User-Agent": USER_AGENT, "Accept": "*/*",
                    "Accept-Language": "en,ja"}
         if conditional:
@@ -346,7 +442,7 @@ class JPModAdapter(SourceAdapter):
         attempt = 0
         while True:
             response = self._session.get(
-                url, headers=headers, timeout=REQUEST_TIMEOUT)
+                url, headers=headers, timeout=REQUEST_TIMEOUT, allow_redirects=False)
             code = getattr(response, "status_code", None)
             if code == 403 or _is_challenge(response):
                 return response                     # never retried
@@ -355,7 +451,7 @@ class JPModAdapter(SourceAdapter):
             attempt += 1
             if attempt > MAX_RETRIES:
                 return response
-            self._sleep(REQUEST_INTERVAL)
+            self._sleep(self._request_interval)
 
     # ------------------------------------------------------------- discovery
 
@@ -375,6 +471,9 @@ class JPModAdapter(SourceAdapter):
                     if ref.url not in seen:
                         seen.add(ref.url)
                         refs.append(ref)
+            except RobotsDisallowed as exc:
+                return DiscoveryResult(self.slug, exc.status, failed_endpoints=[exc.url],
+                                       error_detail=str(exc))
             except ET.ParseError as exc:
                 failed.append("%s (malformed feed: %s)" % (feed, exc))
             except Exception as exc:                # transport
@@ -410,6 +509,9 @@ class JPModAdapter(SourceAdapter):
 
         try:
             response = self._get(reference.url)
+        except RobotsDisallowed as exc:
+            return CaptureResult(reference, exc.status, reference.url, retrieved_at=now,
+                                 error_detail=str(exc))
         except Exception as exc:
             self.failed_fetches.append(reference.url)
             return CaptureResult(
@@ -524,6 +626,8 @@ class JPModAdapter(SourceAdapter):
     def healthcheck(self) -> SourceHealthResult:
         try:
             response = self._get(self.feeds[0], conditional=False)
+        except RobotsDisallowed as exc:
+            return SourceHealthResult(self.slug, exc.status, detail=str(exc))
         except Exception as exc:
             return SourceHealthResult(
                 source_slug=self.slug, status=st.LISTING_FAILURE,

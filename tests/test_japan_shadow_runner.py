@@ -245,6 +245,64 @@ class TestHonestCounters(RunnerCase):
 
 # ---------------------------------------------------------------------- state
 
+class TestPolicyLedger(RunnerCase):
+
+    def test_policy_refusal_is_failed_evidence_not_an_empty_or_partial_success(self):
+        for response, status in [(challenge(), st.ACCESS_CHALLENGED),
+                                 (Response(403), st.AUTH_FAILURE),
+                                 (Response(200, text="User-agent: *\nDisallow: /j/\n",
+                                           headers={"Content-Type": "text/plain"}), st.AUTH_FAILURE)]:
+            with self.subTest(status=status, body=response.text):
+                a = make_adapter({jp_mod.ROBOTS: response})
+                entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                                   "policy-" + status, "deadbeef", adapter=a)
+                self.assertEqual((entry["result"], entry["health"]), (status, "fail"))
+                self.assertEqual(entry["robots_status"], status)
+                self.assertEqual(entry["listing_status"], status)
+                self.assertEqual(entry["stored_total"], 0)
+                self.assertIsNone(entry["shadow_day"])
+                self.assertFalse((self.state / "clock.json").exists())
+                self.assertTrue(entry["policy_failures"])
+                self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+                with mock.patch.object(runner, "run", return_value=entry):
+                    self.assertEqual(runner.main(["--state-dir", str(self.state),
+                                                  "--target-date", "2026-08-26"]), 1)
+
+    def test_policy_failure_preserves_prior_corpus_clock_bootstrap_and_ledgers(self):
+        self.go()
+        prior = {p: p.read_bytes() for p in self.state.rglob("*") if p.is_file()}
+        entry = runner.run(self.state, date(2026, 8, 26), 30, 40, "policy-failure",
+                           "deadbeef", adapter=make_adapter({jp_mod.ROBOTS: challenge()}))
+        for p, data in prior.items():
+            self.assertEqual(p.read_bytes(), data, str(p))
+        self.assertEqual(entry["state_sha256_before"], entry["state_sha256_after"])
+        self.assertEqual(entry["stored_total"], 1)
+        self.assertIsNone(entry["shadow_day"])
+
+    def test_two_feeds_share_one_policy_refusal_and_no_listing_request(self):
+        session = Session({jp_mod.ROBOTS: challenge()})
+        real_adapter = jp_mod.JPModAdapter
+        with mock.patch.object(runner, "JPModAdapter", side_effect=lambda src, **kw:
+                               real_adapter(src, session=session, sleep=lambda _: None, **kw)):
+            entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                               "both-feeds-refused", "deadbeef")
+        self.assertEqual([u for u, _ in session.calls], [jp_mod.ROBOTS])
+        self.assertEqual(len(entry["policy_failures"]), 2)
+        self.assertEqual(entry["health"], "fail")
+
+    def test_allowed_is_observed_and_an_absent_file_is_recorded_separately(self):
+        entry = self.go()
+        bucket = entry["sources"][0]
+        self.assertEqual(entry["robots_status"], "allowed")
+        self.assertEqual(bucket["robots_observation"]["http_status"], 200)
+        self.assertIn("payload_sha256", bucket["robots_observation"])
+        routes = routes_with_pdf()
+        routes[jp_mod.ROBOTS] = Response(404)
+        entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                           "absent-policy", "deadbeef", adapter=make_adapter(routes))
+        self.assertEqual(entry["robots_status"], "absent")
+        self.assertEqual(entry["sources"][0]["robots_observation"]["http_status"], 404)
+
 class TestStateAndLedger(RunnerCase):
 
     def test_the_state_database_holds_the_stored_record(self):

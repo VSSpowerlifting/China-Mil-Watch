@@ -302,6 +302,24 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
+**Japan/Philippines completion assessment — 2026-10-06.** Neither desk may
+graduate. Evidence, the per-gate checklist and immutable state/PR locators:
+`docs/JAPAN_PHILIPPINES_DESK_COMPLETION_2026-10-06.md`. Latest Japan state
+`e890112` has 5 usable PDF bodies and 149 outstanding gaps (146 challenges,
+one size refusal, two PDFs without a text layer). The September 22–October 5
+RSS-date window has one stored body among 67 distinct URLs (1.49%); this is
+not all-MOD publication coverage. Dates and Joint Staff discovery remain blocked.
+**Policy defect repaired locally:** the old runner hard-coded `allowed` without
+reading robots. Source now enforces current policy before requests and records
+typed failed evidence on refusal; historical compliance remains unproven.
+Correctness checkpoint in source; not run in Actions, activated or published.
+AFP PR #79 remains draft at `b29e7edb0`, conflicting with current main.
+Its existing adapter passed a bounded Mac rehearsal: 11 listing pages / 1,088
+rows and two usable recent bodies; no state or production writes. AFP+NSC is
+the proposed portfolio, not an approved desk. NSC has four healthy quiet runs
+and no stored bodies; Coast Guard policy is challenged, DND policy unreadable
+in the current probe. Existing AFP work was inspected, not replaced or modified.
+
 **Japan MOD** — selection repair merged in PR #95; measured post-merge on
 2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
 collector `30b7169c892a48049efe538f02f8fcc2aff6d481`. State branch `shadow/jp-mod`:
