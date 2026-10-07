@@ -1,0 +1,174 @@
+name: Japan Official Route Probe
+
+# One-shot research probe. This workflow exists only to test whether the official
+# Joint Staff/JMSDF/JASDF indexes that are publicly visible today are also
+# reachable from the GitHub Actions environment used by Indo-Pacific Record.
+# It writes no repository state, follows no redirects, fetches no linked
+# documents, and makes at most five GET requests total.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/japan_route_probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.head_ref == 'research/japan-official-route-probe-20261007'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact probe head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install requests only
+        run: python -m pip install 'requests>=2.31,<3'
+
+      - name: Probe five bounded official routes
+        env:
+          OUT: ${{ runner.temp }}/japan-route-probe.json
+        run: |
+          python - <<'PY'
+          import ast
+          import hashlib
+          import json
+          import os
+          import re
+          from pathlib import Path
+          from urllib import robotparser
+
+          import requests
+
+          BASE = "https://www.mod.go.jp"
+          ROBOTS = BASE + "/robots.txt"
+          TARGETS = [
+              ("joint_staff_ja", BASE + "/js/press/"),
+              ("joint_staff_en", BASE + "/js/press/index-en.html"),
+              ("jmsdf_en", BASE + "/msdf/en/news/2026.html"),
+              ("jasdf_en", BASE + "/asdf/en/news/"),
+          ]
+          MAX_SAMPLE = 256 * 1024
+          TIMEOUT = 20
+
+          # Read the exact project user-agent constant without importing scraper
+          # dependencies or copying the identity into this temporary workflow.
+          tree = ast.parse(Path("scraper/base.py").read_text(encoding="utf-8"))
+          user_agent = None
+          for node in tree.body:
+              if isinstance(node, ast.Assign) and any(
+                  getattr(t, "id", None) == "_USER_AGENT" for t in node.targets
+              ):
+                  user_agent = ast.literal_eval(node.value)
+                  break
+          if not user_agent:
+              raise SystemExit("could not read _USER_AGENT")
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": user_agent,
+              "Accept": "text/plain,text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+          })
+
+          def fetch(url):
+              try:
+                  resp = session.get(
+                      url,
+                      timeout=TIMEOUT,
+                      allow_redirects=False,
+                      stream=True,
+                  )
+                  chunks = []
+                  total = 0
+                  for chunk in resp.iter_content(16384):
+                      if not chunk:
+                          continue
+                      remaining = MAX_SAMPLE - total
+                      if remaining <= 0:
+                          break
+                      chunk = chunk[:remaining]
+                      chunks.append(chunk)
+                      total += len(chunk)
+                      if total >= MAX_SAMPLE:
+                          break
+                  body = b"".join(chunks)
+                  text = body.decode(resp.encoding or "utf-8", errors="replace")
+                  return {
+                      "url": url,
+                      "status": resp.status_code,
+                      "content_type": resp.headers.get("Content-Type"),
+                      "location": resp.headers.get("Location"),
+                      "cf_mitigated": resp.headers.get("Cf-Mitigated"),
+                      "server": resp.headers.get("Server"),
+                      "sample_bytes": len(body),
+                      "sample_sha256": hashlib.sha256(body).hexdigest(),
+                      "challenge_marker": bool(
+                          resp.headers.get("Cf-Mitigated")
+                          or re.search(r"cf-chl|challenge-platform|just a moment", text, re.I)
+                      ),
+                  }, text
+              except requests.RequestException as exc:
+                  return {
+                      "url": url,
+                      "transport_error": "%s: %s" % (type(exc).__name__, exc),
+                  }, ""
+
+          report = {
+              "collector_user_agent": user_agent,
+              "request_budget": 5,
+              "redirects_followed": False,
+              "linked_documents_fetched": False,
+              "robots": None,
+              "targets": [],
+          }
+
+          robots_meta, robots_text = fetch(ROBOTS)
+          report["robots"] = robots_meta
+
+          policy_readable = robots_meta.get("status") == 200 and bool(robots_text.strip())
+          rp = robotparser.RobotFileParser()
+          if policy_readable:
+              rp.set_url(ROBOTS)
+              rp.parse(robots_text.splitlines())
+
+          for name, url in TARGETS:
+              allowed = bool(policy_readable and rp.can_fetch(user_agent, url))
+              if not allowed:
+                  report["targets"].append({
+                      "name": name,
+                      "url": url,
+                      "robots_allowed": False,
+                      "request_made": False,
+                  })
+                  continue
+              meta, _ = fetch(url)
+              meta.update({
+                  "name": name,
+                  "robots_allowed": True,
+                  "request_made": True,
+              })
+              report["targets"].append(meta)
+
+          Path(os.environ["OUT"]).write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(report, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload immutable probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-official-route-probe-${{ github.run_id }}
+          path: ${{ runner.temp }}/japan-route-probe.json
+          if-no-files-found: error
+          retention-days: 90
