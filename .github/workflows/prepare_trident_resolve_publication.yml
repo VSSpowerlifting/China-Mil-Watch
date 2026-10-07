@@ -96,8 +96,8 @@ jobs:
           test -f "$PAGE"
           grep -Fq "Trident Resolve: What the Exercise Looked Like From Singapore and China" "$PAGE"
           grep -Fq "No. 17" "$PAGE"
-          grep -Fq "Record 4392" "$PAGE"
-          grep -Fq "Record 4935" "$PAGE"
+          grep -Fq 'href="#r-4392"' "$PAGE"
+          grep -Fq 'href="#r-4935"' "$PAGE"
           grep -Fq "Trident Resolve: What the Exercise Looked Like From Singapore and China" output/analysis.html
           grep -Fq "Trident Resolve: What the Exercise Looked Like From Singapore and China" output/briefs/feed.xml
           grep -Fq "trident-resolve-regional-scale-specific-chinese-tasks" output/sitemap.xml
