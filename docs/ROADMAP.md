@@ -138,13 +138,19 @@ retriable, 0 terminal.
 - Health and liveness reports read stored records, so they cannot see a day
   that never reached collection.
 - Singapore's single-day production window was fixed on 2026-09-28. The
-  three releases it lost (`22sep26-nr`, `22sep26-speech`, `23sep26-mq`) were
-  not recovered.
+  three releases it lost were not recovered by the authorized 09-28 run.
+  The 2026-10-06 refresh confirms `23sep26-mq` is now stored (id 4759).
   - The authorized 09-28 run was withheld whole by `22sep26-infographic`,
-    whose 178 characters of text are under the adapter's minimum.
-  - `23sep26-mq` should return with the 09-29 schedule.
-  - The two `22sep26` releases need an owner ruling on image-only releases.
-    The options are in the consolidation packet §7.
+    an image-only page whose 178 characters of text are page furniture.
+  - PR #85 is refreshed against current main, pending an owner merge decision:
+    an image-only release is stored as a text-unavailable record and no longer
+    blocks the batch
+    (`docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`). After review and
+    merge and separate recovery authorization, one Singapore-only, no-analysis
+    recovery for 09-22 → 09-28 proposes exactly three inserts (`22sep26-nr`,
+    `22sep26-speech`, the infographic) and eight duplicates. These are the only
+    eligible September releases missing in the fresh sitemap/database comparison;
+    `16sep26-speech` remains a governed hold.
 - To decide:
   - disclose or recover 09-15;
   - whether collection should depend on the test gate.
