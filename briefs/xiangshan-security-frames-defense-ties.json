@@ -6,8 +6,8 @@
   "author_bio": "Benjamin Yang is the creator and editor of Indo-Pacific Record. He studies International Affairs at George Washington University’s Elliott School, with interests in U.S.–China relations, public diplomacy, and security affairs. He writes Indo-Pacific Record Briefs and maintains the project’s collection pipeline.",
   "collection": "Indo-Pacific Record Briefs",
   "brief_schema": 1,
-  "editorial_status": "draft",
-  "issue_number": null,
+  "editorial_status": "approved",
+  "issue_number": 16,
   "desks": [
     "china",
     "singapore"
@@ -165,5 +165,10 @@
       "Record 4207 is treated as PLA Daily's publication of a Xinhua report of Dong Jun's opening remarks, not as an independently issued Ministry of National Defense policy document.",
       "The three records establish a September 16 comparison, not a durable longitudinal pattern."
     ]
+  },
+  "approval": {
+    "approved_by": "Benjamin Yang",
+    "approved_on": "2026-10-07",
+    "reference": "ChatGPT authorization on 2026-10-07 for PR #118 at exact candidate head 0218c506e28813c79d80a5f38cc5cae70b999d95"
   }
 }
