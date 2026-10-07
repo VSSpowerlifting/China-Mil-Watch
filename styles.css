@@ -1204,9 +1204,14 @@ main.home-atlas .opening::before { display: none; }
 }
 @media (min-width: 760px) and (max-width: 1099.98px) {
   /* Tablet: the plates leave the map for two bands, above and below the
-     frame, each on a vertical leader; the map itself stays clear. */
+     frame, each on a vertical leader; the map itself stays clear. One
+     exception: a seat that sits within a plate's width of two other desks'
+     meridians (Hanoi, beside Singapore's and Beijing's) cannot reach either
+     band without its leader running past another desk, so its plate hangs
+     sideways over open map, narrowed to fit west of the seat. */
   .deskmap-stage { margin: 15rem 0 16rem; }
   .deskmap-plate { width: 14.25rem; left: var(--ml); top: var(--mt); transform: translate(var(--mtx), var(--mty)); }
+  .deskmap-plate.is-mid-side { width: min(14.25rem, 25%); }
   .dm-leader--mid { display: inline; }
 }
 @media (min-width: 1100px) {
@@ -1742,6 +1747,8 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .ledger-label { padding-bottom: .35rem; }
   /* The run link keeps its 44px; the space comes out of the panel around it. */
   .ledger-foot { margin-top: 0; }
+  /* Keep a complete headline line visible when collection leads analysis. */
+  .ledger-note { margin-top: .25rem; }
   .lead-record { padding-block: .7rem 1.05rem; }
   .lead-meta { margin-bottom: .45rem; }
   .week-bars { gap: 2px; height: 64px; }
