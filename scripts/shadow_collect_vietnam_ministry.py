@@ -16,6 +16,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from core.collection.vietnam_sources import SOURCES
+from core.shadow_schedule import SOURCE_EXPLICIT
 from scraper.sources.vn_ministries import VNMinistryAdapter
 from scripts.shadow_collect_vietnam import assert_isolated, assert_source_state, host_gate, run
 
@@ -33,7 +34,7 @@ def load_source(slug):
 
 
 def collect(state_dir, slug, target, lookback=6, cap=40, run_id="local", commit="unknown",
-            adapter=None, gate_dir=None):
+            adapter=None, gate_dir=None, target_source=SOURCE_EXPLICIT):
     state_dir = Path(state_dir)
     assert_isolated(state_dir)
     source = load_source(slug)
@@ -44,7 +45,8 @@ def collect(state_dir, slug, target, lookback=6, cap=40, run_id="local", commit=
     if adapter is not None and adapter.slug != slug:
         raise ValueError("adapter belongs to another source")
     return run(state_dir, target, lookback, cap, run_id, commit, adapter=adapter,
-               source=source, content_hash_rule=SOURCES[slug].hash_rule)
+               source=source, content_hash_rule=SOURCES[slug].hash_rule,
+               target_source=target_source)
 
 
 def main(argv=None):
