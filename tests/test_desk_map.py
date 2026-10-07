@@ -91,7 +91,9 @@ class DeskMapTest(unittest.TestCase):
         inside the country's bounding box and outside the country."""
         for slug, place, lonlat in (("china", "Ulaanbaatar", (106.9, 47.9)),
                                     ("china", "Yellow Sea", (123, 35)),
-                                    ("japan", "Sea of Japan", (135, 40))):
+                                    ("japan", "Sea of Japan", (135, 40)),
+                                    ("vietnam", "Gulf of Tonkin", (107.5, 20.0)),
+                                    ("vietnam", "Vientiane", (102.6, 17.97))):
             rings = self._rings(slug)
             x, y = desk_map.project(*lonlat)
             xs = [p[0] for r in rings for p in r]

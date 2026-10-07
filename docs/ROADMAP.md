@@ -244,6 +244,12 @@ collecting days, its human checkpoint reviews, and an owner sign-off recorded in
 `DECISION_LOG.md`. The US Indo-Pacific desk stays `access_blocked` while
 `robots.txt` returns 403; a desk that cannot establish permission is not built.
 
+**One owner-authorized exception: the Vietnam Desk** (`DECISION_LOG.md`
+2026-10-05). It is declared at `research` with a built, locally rehearsed
+shadow collector that has not been launched. It shows no records, is not
+coverage and is not promoted. It moves to `shadow` only once collection
+actually runs; the deferral otherwise stands.
+
 **The record archive is not on this list, and the old "archive weight" ticket
 is retired.** It was written against an 804 KB flat all-records page that no
 longer exists. Measured 2026-09-02 on the tracked tree: `output/archive.html`

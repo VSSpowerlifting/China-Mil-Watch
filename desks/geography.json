@@ -21,6 +21,12 @@
   "             bottom|top edge at `at`'s latitude (beyond the frame's edge",
   "             puts it outside the map); the leader is vertical and meets",
   "             the edge `align` (0-1) of the way across the plate.",
+  "           At `mid` a plate normally hangs up or down, into the bands",
+  "             above and below the frame. A left|right hang there is the",
+  "             exception for a seat too close to two other desks' seats",
+  "             to reach either band (Hanoi, between Beijing and",
+  "             Singapore); the stylesheet narrows such a plate",
+  "             (`is-mid-side`) so it fits on the map beside the seat.",
   "",
   "Rebuild the base geometry with: python scripts/desk_map.py <countries-50m.json>"
  ],
@@ -104,6 +110,32 @@
      ],
      "hang": "down",
      "align": 0.7
+    }
+   }
+  },
+  "vietnam": {
+   "countries": [
+    "704"
+   ],
+   "seat": "Hanoi",
+   "anchor": [
+    105.8,
+    21.0
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      100,
+      21.0
+     ],
+     "hang": "left"
+    },
+    "mid": {
+     "at": [
+      100,
+      21.0
+     ],
+     "hang": "left"
     }
    }
   },

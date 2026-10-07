@@ -1,0 +1,27 @@
+{
+ "_comment": [
+  "A capture kept from the 2026-10-06 UTC live rehearsal, not from the probe.",
+  "Rehearsal run 880002-1 (the second of two identical dispatches for 2026-08-05)",
+  "received the tag page as the first run's exact bytes followed by a 30-byte",
+  "cache stamp after </html>. The adapter then refused it as possible truncation;",
+  "the run failed closed, stored nothing and pushed nothing. The guard was",
+  "corrected to tolerate complete comments after </html>. Byte-exact, as stored",
+  "by scripts/shadow_collect_vietnam.py under its SHA-256."
+ ],
+ "captures": [
+  {
+   "fixture": "listing-cache-stamp.bin",
+   "run_id": "880002-1",
+   "url": "https://en.baochinhphu.vn/defense.html",
+   "requested_at_utc": "2026-10-06T03:00:09+00:00",
+   "retrieved_at_utc": "2026-10-06T03:00:10+00:00",
+   "status": 200,
+   "content_type": "text/html; charset=utf-8",
+   "bytes": 100100,
+   "sha256": "3017fb98934b3b6d9e1ae34df1d349856cd267889832d663494303a77633804e",
+   "exact_wire_bytes": true,
+   "trailer": "<!--u: 10/6/2026 9:59:55 AM-->",
+   "equals_listing_bin_plus_trailer": true
+  }
+ ]
+}

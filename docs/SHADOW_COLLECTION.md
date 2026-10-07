@@ -91,14 +91,17 @@ carries the same four, with `shadow/jp_mod/`, `scripts/shadow_collect_japan.py`
 and the `shadow/jp-mod` branch in the corresponding places. The US desk carries
 the same four in code -- `shadow/us_indopacom/`,
 `scripts/shadow_collect_us.py` -- but **has not been launched**: it has no state
-branch, no workflow and no day zero. See "Built but not launched" below.
+branch, no workflow and no day zero. See "Built but not launched" below. The
+Vietnam desk carries them too -- `shadow/vietnam/`,
+`scripts/shadow_collect_vietnam.py` -- and has not been launched: its
+workflow is dispatch-only and its state branch does not exist yet.
 
 1. **The manifest is not under `desks/`.** `core.manifests.load_all_desks()`
    globs `desks/*/manifest.json`. A shadow manifest placed there would be
    written into the tracked database by `sync_desk_config()` on the next
    migration run, putting a non-collecting desk into public counts. It lives
-   under `shadow/` instead; tests assert Japan and Philippines are absent
-   from production discovery.
+   under `shadow/` instead; tests assert Japan, Philippines and Vietnam are
+   absent from production discovery.
 2. **Shadow enablement is separate from production admission.** Enabling a
    source in a manifest outside `desks/` cannot admit it to production. Each
    runner's source-participation rules are in its own scope document. The
@@ -194,6 +197,43 @@ read: the DVIDS window is a fixed item count, not a date range. A collection gap
 is **permanent** -- those documents cannot be recovered from this route -- so
 `scripts/review_us_shadow_state.py` reports a gap as a failure rather than as
 lateness, and has its own reviewer rather than borrowing Singapore's.
+
+## Built but not launched: the Vietnam desk
+
+The Vietnam collector reads one English publication family, the defense tag
+page of Viet Nam Government News (`vn_vgp_defense_en`), and **collects nothing
+yet**. `vietnam_shadow.yml` is `workflow_dispatch` only. There is no
+`shadow/vietnam` branch on origin, no `clock.json` and no day zero, and the
+registry declares the desk `research` rather than `shadow` until collection
+actually runs. A local bare-remote rehearsal tested persistence, not Actions
+egress or reliability.
+
+Three things hold wherever the source is described:
+
+* it is **Tier B newsroom reporting**, not a statement of the Ministry of
+  National Defence or the People's Army Newspaper, which are separate
+  institutions and are not collected;
+* a **tag is an editor's label, not a complete defense category**: items the
+  tag does not list are neither collected nor accounted for, and no keyword
+  or model filter widens or narrows it;
+* the English text is **what the newsroom published**, not a Vietnamese
+  original, and nothing is translated.
+
+Launching needs the owner decisions left open in `DECISION_LOG.md`
+(2026-10-05): where the state lives and whether it may be public, the
+collector identity for periodic use on this host, and approval to dispatch and
+then to schedule. Scope, activation and recovery are in
+`shadow/vietnam/README.md`; the measured evidence in
+`docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`. Checkpoint packets come from
+`scripts/review_vietnam_shadow_state.py`, never from Singapore's tooling.
+
+The October 7 ministry expansion adds local-only Vietnamese foreign-affairs
+RSS collection for Public Security and separate energy/foundational-industry
+first-page collection for Industry and Trade. Its manifest remains outside
+`desks/`, in `shadow/vietnam_ministries/`; no workflow invokes it. Each source
+has separate state and clock; both MOIT categories share the cross-process
+host gate. Defence and Finance remain unreached. See
+`docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md` for bounded evidence and limits.
 
 ## The ledger and the clock
 

@@ -1,0 +1,1676 @@
+{
+  "budget": "BUDGET_2026-10-07.md",
+  "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+  "kind": "bounded local live rehearsal; not reliability or a completed checkpoint",
+  "minimum_same_host_end_to_start_seconds": 2.000824,
+  "request_headers": "ChinaMilWatch-ShadowCollector/0.1 full identity; Accept-Encoding: identity",
+  "reviews": {
+    "vn_moit_energy_vi": {
+      "input_hashes": {
+        "captures/06b012105821611c7dcfb365a4760d4e28555d9acd1fff88323a3a0e84b345fb.bin": "06b012105821611c7dcfb365a4760d4e28555d9acd1fff88323a3a0e84b345fb",
+        "captures/3449f68dd4cfe7c36864e51adbd6a592d4b17151878964da217ce38872ef4878.bin": "3449f68dd4cfe7c36864e51adbd6a592d4b17151878964da217ce38872ef4878",
+        "captures/52a30522736e1281305c59b707c0dec033e9e311fd0f7cb48fdbfda2a8a7efec.bin": "52a30522736e1281305c59b707c0dec033e9e311fd0f7cb48fdbfda2a8a7efec",
+        "captures/5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a.bin": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+        "captures/5a1eaaae354321c9c2b1e6490080865a537fa13f13dde830512d8c34f2e5396c.bin": "5a1eaaae354321c9c2b1e6490080865a537fa13f13dde830512d8c34f2e5396c",
+        "captures/803fea3aec4d8161583100d093f9ca79a7493d3cba612239cec263556a593ffd.bin": "803fea3aec4d8161583100d093f9ca79a7493d3cba612239cec263556a593ffd",
+        "captures/9f2f74418b25d8102409c26fa7b2c9a0b166316cdc27f41123eaa0585da57a24.bin": "9f2f74418b25d8102409c26fa7b2c9a0b166316cdc27f41123eaa0585da57a24",
+        "captures/d137c5e91f07e5be63e1f22948c54deebd3055112fe326e92bc03a8e9ba13cc9.bin": "d137c5e91f07e5be63e1f22948c54deebd3055112fe326e92bc03a8e9ba13cc9",
+        "clock.json": "bea99c2b9b87777fa84851adf4cd349de6b1050e0a0e7d0660b785990a5d3b3d",
+        "ledger/20261007T005902+0000-body.json": "19045343d4a18c63290ea8648ae0123d2d8edbd18cf43811b94f1aeb09df3574",
+        "ledger/20261007T005919+0000-repeat.json": "cc7b17b64cea022bc4adeb28ffbedc8f2c6131819e1accab8f7eca9752a655ce",
+        "ledger/20261007T005932+0000-quiet.json": "28338d1377f97da8420d6761ca9df176ddcdeca3780c944a091e894208c3c9b1",
+        "shadow.db": "7dc3a5c3cf395d588c4b2486ac01eedfc55a3522e9992fab7878936faf4290be"
+      },
+      "observations": 4,
+      "owner_signoff": null,
+      "record_count": 2,
+      "rehearsal_only": true,
+      "review_sha256": "cb13a7f4fca324aedc8f28c9e29d7c68817029121cf4ee56f82ccae70d942ad1",
+      "state_commit": null,
+      "version_count": 2
+    },
+    "vn_moit_foundational_industry_vi": {
+      "input_hashes": {
+        "captures/2225cfab056f0fc3a3dfc9de047547315cf513d4e7ce8f2332e42fc090dbef9d.bin": "2225cfab056f0fc3a3dfc9de047547315cf513d4e7ce8f2332e42fc090dbef9d",
+        "captures/5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a.bin": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+        "captures/555cb217c64ffd74fd6cf2d612cf2157e659dd50c87e98a7bc370d424c74b226.bin": "555cb217c64ffd74fd6cf2d612cf2157e659dd50c87e98a7bc370d424c74b226",
+        "captures/7325a93550b35150f73bf3b0a97fec60a1452bf2b0e46b102692435240c3582a.bin": "7325a93550b35150f73bf3b0a97fec60a1452bf2b0e46b102692435240c3582a",
+        "captures/9d235d5daa6ce8062ffcf06d003a740a91cea6e42ef2171383f43fe5f008a736.bin": "9d235d5daa6ce8062ffcf06d003a740a91cea6e42ef2171383f43fe5f008a736",
+        "captures/ddd9415d45357c6a570f8db0708d9f758dec5c8606672b7d8828aa752d2740c4.bin": "ddd9415d45357c6a570f8db0708d9f758dec5c8606672b7d8828aa752d2740c4",
+        "clock.json": "27bda113d06ec39ba9bb5f175b4ebdaa0c7e4fc6413e5cf667a7861c5e32b643",
+        "ledger/20261007T005947+0000-body.json": "aa15086d209e89f66857a9be6c865fe08354107e2b578b0cc3fa1d6a6e8ff91b",
+        "ledger/20261007T010003+0000-repeat.json": "c144bd6710e31bc93a7dd9735941c49fd393b4cf2710d238bee8abb83405e0ca",
+        "ledger/20261007T010017+0000-quiet.json": "7b10d2bca163592db3378dbd0837d66368ac4d6db9b7c1560bbb4244127d07fe",
+        "shadow.db": "1fa54f9f6d9798338d20b92f1689624243d53d968ce9353aeb752492fff55c5c"
+      },
+      "observations": 2,
+      "owner_signoff": null,
+      "record_count": 1,
+      "rehearsal_only": true,
+      "review_sha256": "cd811416d968669e3c983429688a69f4924cd29d1118db07d61d580169539b65",
+      "state_commit": null,
+      "version_count": 1
+    },
+    "vn_mps_foreign_affairs_vi": {
+      "input_hashes": {
+        "captures/1d7598aa6bd1c45a8991d00c79b43108f77ed8a573ebdb50feef9a8c7d855f87.bin": "1d7598aa6bd1c45a8991d00c79b43108f77ed8a573ebdb50feef9a8c7d855f87",
+        "captures/6ba3457d334af67fec7208564ebe1c8683b8b9e2277e1a0229b93d57c9f2ef5e.bin": "6ba3457d334af67fec7208564ebe1c8683b8b9e2277e1a0229b93d57c9f2ef5e",
+        "captures/7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f.bin": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+        "captures/c311dd5b588e1901cd84ff7170c6953da862eb9cc578286b6d92b019f52c2eb8.bin": "c311dd5b588e1901cd84ff7170c6953da862eb9cc578286b6d92b019f52c2eb8",
+        "captures/d3d541f425de924da0bb740eb370e0ab9bc2af4a5d3af4ba7ccb4b9bfb4412aa.bin": "d3d541f425de924da0bb740eb370e0ab9bc2af4a5d3af4ba7ccb4b9bfb4412aa",
+        "captures/f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b.bin": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+        "clock.json": "0ae4f2703321c6f54ff8ac33e97f061938595e31a08a4f2b146dbdd3147b60a7",
+        "ledger/20261007T005824+0000-body.json": "e5a9b0aa64ca8e0bbef451a976621d640c1e862f705fb79409c5dd51cd267e32",
+        "ledger/20261007T005841+0000-repeat.json": "cdbd6366a13a02a8d4f56c657aadad9afae5579533785d29146c0b3749d96964",
+        "ledger/20261007T005850+0000-quiet.json": "2ceb94a28634d951f2a72ec5be8e171b6466d21c1cb8dbf13d46d4d6dd072ff1",
+        "shadow.db": "b858ac8d4f0a36563337d21effddb9186a2f2c4eed50fa2303c54516c47f88af"
+      },
+      "observations": 4,
+      "owner_signoff": null,
+      "record_count": 2,
+      "rehearsal_only": true,
+      "review_sha256": "80ae9c3bf407eecc407d86e00f8368b5a67d390e7369cc35d97b59d5da3344db",
+      "state_commit": null,
+      "version_count": 2
+    }
+  },
+  "runs": [
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/plain; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 68,
+          "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+          "retrieved_at": "2026-10-07T00:58:07+00:00",
+          "role": "robots",
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "application/xml; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 13397,
+          "payload_sha256": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+          "retrieved_at": "2026-10-07T00:58:10+00:00",
+          "role": "listing",
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        },
+        {
+          "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+          "content_type": "text/html;charset=utf-8",
+          "final_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+          "http_status": 200,
+          "outcome": "new",
+          "payload_bytes": 419974,
+          "payload_sha256": "c311dd5b588e1901cd84ff7170c6953da862eb9cc578286b6d92b019f52c2eb8",
+          "retrieved_at": "2026-10-07T00:58:21+00:00",
+          "role": "article",
+          "source_identity": "mps-vi:1791199677",
+          "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+        },
+        {
+          "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+          "content_type": "text/html;charset=utf-8",
+          "final_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+          "http_status": 200,
+          "outcome": "new",
+          "payload_bytes": 426276,
+          "payload_sha256": "d3d541f425de924da0bb740eb370e0ab9bc2af4a5d3af4ba7ccb4b9bfb4412aa",
+          "retrieved_at": "2026-10-07T00:58:24+00:00",
+          "role": "article",
+          "source_identity": "mps-vi:1791199100",
+          "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "mps-vi-content-v1",
+      "corpus_range": [
+        "2026-10-05",
+        "2026-10-05"
+      ],
+      "day_zero_utc": "2026-10-07T00:58:24+00:00",
+      "desk_id": "vietnam",
+      "discovered": 2,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:58:24+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 10,
+        "listed": [
+          [
+            "1791199677",
+            "2026-10-05"
+          ],
+          [
+            "1791199100",
+            "2026-10-05"
+          ],
+          [
+            "1790933646",
+            "2026-10-02"
+          ],
+          [
+            "1790758318",
+            "2026-09-30"
+          ],
+          [
+            "1790748442",
+            "2026-09-30"
+          ],
+          [
+            "1790579880",
+            "2026-09-28"
+          ],
+          [
+            "1790397583",
+            "2026-09-26"
+          ],
+          [
+            "1790323608",
+            "2026-09-24"
+          ],
+          [
+            "1790323191",
+            "2026-09-24"
+          ],
+          [
+            "1790132836",
+            "2026-09-23"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+        "newest_listed": "2026-10-05",
+        "oldest_listed": "2026-09-23",
+        "pages_read": 1,
+        "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+        "selected": 2,
+        "window_end": "2026-10-05",
+        "window_start": "2026-10-05"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 2,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 68,
+          "ended_utc": "2026-10-07T00:58:07.604374+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:00+00:00",
+          "started_utc": "2026-10-07T00:58:00.997570+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 13397,
+          "ended_utc": "2026-10-07T00:58:10.075086+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:09+00:00",
+          "started_utc": "2026-10-07T00:58:09.606346+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        },
+        {
+          "bytes": 419974,
+          "ended_utc": "2026-10-07T00:58:21.224715+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:12+00:00",
+          "started_utc": "2026-10-07T00:58:12.076411+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+        },
+        {
+          "bytes": 426276,
+          "ended_utc": "2026-10-07T00:58:24.080693+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:23+00:00",
+          "started_utc": "2026-10-07T00:58:23.225623+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+        }
+      ],
+      "result": "ok",
+      "retrieved": 2,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "body",
+      "selected": 2,
+      "shadow_day": 0,
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "started_utc": "2026-10-07T00:58:00+00:00",
+      "state_sha256_after": "e0c274d3817cfeb5aec29cf45fa4b0e7e7aeee682967dabfae02a8d1743a3c06",
+      "state_sha256_before": null,
+      "stored_total": 2,
+      "target_date": "2026-10-05",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 2,
+      "window_start": "2026-10-05"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/plain; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 68,
+          "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+          "retrieved_at": "2026-10-07T00:58:31+00:00",
+          "role": "robots",
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "application/xml; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 13397,
+          "payload_sha256": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+          "retrieved_at": "2026-10-07T00:58:34+00:00",
+          "role": "listing",
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        },
+        {
+          "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+          "content_type": "text/html;charset=utf-8",
+          "final_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+          "http_status": 200,
+          "outcome": "unchanged",
+          "payload_bytes": 420069,
+          "payload_sha256": "6ba3457d334af67fec7208564ebe1c8683b8b9e2277e1a0229b93d57c9f2ef5e",
+          "retrieved_at": "2026-10-07T00:58:38+00:00",
+          "role": "article",
+          "source_identity": "mps-vi:1791199677",
+          "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+        },
+        {
+          "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+          "content_type": "text/html;charset=utf-8",
+          "final_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+          "http_status": 200,
+          "outcome": "unchanged",
+          "payload_bytes": 426180,
+          "payload_sha256": "1d7598aa6bd1c45a8991d00c79b43108f77ed8a573ebdb50feef9a8c7d855f87",
+          "retrieved_at": "2026-10-07T00:58:41+00:00",
+          "role": "article",
+          "source_identity": "mps-vi:1791199100",
+          "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "mps-vi-content-v1",
+      "corpus_range": [
+        "2026-10-05",
+        "2026-10-05"
+      ],
+      "day_zero_utc": "2026-10-07T00:58:24+00:00",
+      "desk_id": "vietnam",
+      "discovered": 2,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:58:41+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 10,
+        "listed": [
+          [
+            "1791199677",
+            "2026-10-05"
+          ],
+          [
+            "1791199100",
+            "2026-10-05"
+          ],
+          [
+            "1790933646",
+            "2026-10-02"
+          ],
+          [
+            "1790758318",
+            "2026-09-30"
+          ],
+          [
+            "1790748442",
+            "2026-09-30"
+          ],
+          [
+            "1790579880",
+            "2026-09-28"
+          ],
+          [
+            "1790397583",
+            "2026-09-26"
+          ],
+          [
+            "1790323608",
+            "2026-09-24"
+          ],
+          [
+            "1790323191",
+            "2026-09-24"
+          ],
+          [
+            "1790132836",
+            "2026-09-23"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+        "newest_listed": "2026-10-05",
+        "oldest_listed": "2026-09-23",
+        "pages_read": 1,
+        "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+        "selected": 2,
+        "window_end": "2026-10-05",
+        "window_start": "2026-10-05"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 68,
+          "ended_utc": "2026-10-07T00:58:31.704339+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.918,
+          "requested_at": "2026-10-07T00:58:26+00:00",
+          "started_utc": "2026-10-07T00:58:26.086274+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 13397,
+          "ended_utc": "2026-10-07T00:58:34.166376+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:33+00:00",
+          "started_utc": "2026-10-07T00:58:33.705244+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        },
+        {
+          "bytes": 420069,
+          "ended_utc": "2026-10-07T00:58:38.236604+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:36+00:00",
+          "started_utc": "2026-10-07T00:58:36.167270+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+        },
+        {
+          "bytes": 426180,
+          "ended_utc": "2026-10-07T00:58:41.084285+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:40+00:00",
+          "started_utc": "2026-10-07T00:58:40.237920+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+        }
+      ],
+      "result": "ok_all_duplicates",
+      "retrieved": 2,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "repeat",
+      "selected": 2,
+      "shadow_day": 0,
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "started_utc": "2026-10-07T00:58:24+00:00",
+      "state_sha256_after": "b858ac8d4f0a36563337d21effddb9186a2f2c4eed50fa2303c54516c47f88af",
+      "state_sha256_before": "e0c274d3817cfeb5aec29cf45fa4b0e7e7aeee682967dabfae02a8d1743a3c06",
+      "stored_total": 2,
+      "target_date": "2026-10-05",
+      "target_date_source": "explicit",
+      "unchanged": 2,
+      "versions_total": 2,
+      "window_start": "2026-10-05"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/plain; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 68,
+          "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+          "retrieved_at": "2026-10-07T00:58:47+00:00",
+          "role": "robots",
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "application/xml; charset=utf-8",
+          "http_status": 200,
+          "payload_bytes": 13397,
+          "payload_sha256": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+          "retrieved_at": "2026-10-07T00:58:50+00:00",
+          "role": "listing",
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "mps-vi-content-v1",
+      "corpus_range": [
+        "2026-10-05",
+        "2026-10-05"
+      ],
+      "day_zero_utc": "2026-10-07T00:58:24+00:00",
+      "desk_id": "vietnam",
+      "discovered": 0,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:58:50+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 10,
+        "listed": [
+          [
+            "1791199677",
+            "2026-10-05"
+          ],
+          [
+            "1791199100",
+            "2026-10-05"
+          ],
+          [
+            "1790933646",
+            "2026-10-02"
+          ],
+          [
+            "1790758318",
+            "2026-09-30"
+          ],
+          [
+            "1790748442",
+            "2026-09-30"
+          ],
+          [
+            "1790579880",
+            "2026-09-28"
+          ],
+          [
+            "1790397583",
+            "2026-09-26"
+          ],
+          [
+            "1790323608",
+            "2026-09-24"
+          ],
+          [
+            "1790323191",
+            "2026-09-24"
+          ],
+          [
+            "1790132836",
+            "2026-09-23"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+        "newest_listed": "2026-10-05",
+        "oldest_listed": "2026-09-23",
+        "pages_read": 1,
+        "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+        "selected": 0,
+        "window_end": "2026-10-06",
+        "window_start": "2026-10-06"
+      },
+      "listing_status": "ok_no_publications",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 68,
+          "ended_utc": "2026-10-07T00:58:47.796454+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.899,
+          "requested_at": "2026-10-07T00:58:43+00:00",
+          "started_utc": "2026-10-07T00:58:43.090103+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 13397,
+          "ended_utc": "2026-10-07T00:58:50.227457+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:49+00:00",
+          "started_utc": "2026-10-07T00:58:49.797370+00:00",
+          "status": 200,
+          "url": "https://bocongan.gov.vn/api/rss/34.xml"
+        }
+      ],
+      "result": "ok_no_publications",
+      "retrieved": 0,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "quiet",
+      "selected": 0,
+      "shadow_day": 0,
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "started_utc": "2026-10-07T00:58:41+00:00",
+      "state_sha256_after": "b858ac8d4f0a36563337d21effddb9186a2f2c4eed50fa2303c54516c47f88af",
+      "state_sha256_before": "b858ac8d4f0a36563337d21effddb9186a2f2c4eed50fa2303c54516c47f88af",
+      "stored_total": 2,
+      "target_date": "2026-10-06",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 2,
+      "window_start": "2026-10-06"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T00:58:54+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 114002,
+          "payload_sha256": "9f2f74418b25d8102409c26fa7b2c9a0b166316cdc27f41123eaa0585da57a24",
+          "retrieved_at": "2026-10-07T00:58:56+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        },
+        {
+          "content_sha256": "7d5bf295eb708dcf1c591ebb66a5f0d1e322d6c4bcd7b92123066c446dfe9858",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+          "http_status": 200,
+          "outcome": "new",
+          "payload_bytes": 106356,
+          "payload_sha256": "d137c5e91f07e5be63e1f22948c54deebd3055112fe326e92bc03a8e9ba13cc9",
+          "retrieved_at": "2026-10-07T00:58:59+00:00",
+          "role": "article",
+          "source_identity": "moit-energy-vi:/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+          "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+        },
+        {
+          "content_sha256": "7e377a0d9070060674a4cf9208e16a955fd41a0044b44fd4923340d267004d50",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+          "http_status": 200,
+          "outcome": "new",
+          "payload_bytes": 114021,
+          "payload_sha256": "3449f68dd4cfe7c36864e51adbd6a592d4b17151878964da217ce38872ef4878",
+          "retrieved_at": "2026-10-07T00:59:02+00:00",
+          "role": "article",
+          "source_identity": "moit-energy-vi:/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+          "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:02+00:00",
+      "desk_id": "vietnam",
+      "discovered": 2,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:59:02+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-dieu-chinh-quy-hoach-dien-viii-tinh-dien-bien.html",
+            "2026-09-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-don-doc-dia-phuong-phat-trien-dien-mat-troi-mai-nha.html",
+            "2026-09-18"
+          ],
+          [
+            "/tin-tuc/viet-nam-de-xuat-ket-noi-cong-nghe-dau-tu-va-nang-luc-trong-hop-tac-nang-luong.html",
+            "2026-09-11"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/phat-trien-trung-tam-nang-luong-tai-tao-nhin-tu-thuc-tien-quoc-te.html",
+            "2026-09-10"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-de-nghi-gian-doan-nguon-cung-xang-dau-dip-quoc-khanh-2-9.html",
+            "2026-08-28"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bao-dam-cung-ung-dien-cho-giai-doan-but-pha-2026-2030.html",
+            "2026-08-27"
+          ],
+          [
+            "/tin-tuc/nsmo-thong-bao-phuong-an-dam-bao-cung-cap-dien-cho-ky-le-quoc-khanh-2-9.html",
+            "2026-08-25"
+          ],
+          [
+            "/tin-tuc/mot-so-thong-tin-ve-viec-dieu-hanh-gia-xang-dau-ngay-13-8-2026.html",
+            "2026-08-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-nhiet-dien-khi-nam-2026.html",
+            "2026-07-27"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-to-chuc-lay-y-kien-cho-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-07-27"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2026-07-27",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 761
+        },
+        "selected": 2,
+        "window_end": "2026-09-30",
+        "window_start": "2026-09-30"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 2,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T00:58:54.100386+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:50+00:00",
+          "started_utc": "2026-10-07T00:58:50.246390+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 114002,
+          "ended_utc": "2026-10-07T00:58:56.888836+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:56+00:00",
+          "started_utc": "2026-10-07T00:58:56.103137+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        },
+        {
+          "bytes": 106356,
+          "ended_utc": "2026-10-07T00:58:59.844587+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:58:58+00:00",
+          "started_utc": "2026-10-07T00:58:58.889660+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+        },
+        {
+          "bytes": 114021,
+          "ended_utc": "2026-10-07T00:59:02.798187+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:01+00:00",
+          "started_utc": "2026-10-07T00:59:01.845702+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+        }
+      ],
+      "result": "ok",
+      "retrieved": 2,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "body",
+      "selected": 2,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_energy_vi",
+      "started_utc": "2026-10-07T00:58:50+00:00",
+      "state_sha256_after": "525eafc9767ac498d3833a044fecc3efd16a4d91752e7ddbd3a75ff60c18c54d",
+      "state_sha256_before": null,
+      "stored_total": 2,
+      "target_date": "2026-09-30",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 2,
+      "window_start": "2026-09-30"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T00:59:10+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 114002,
+          "payload_sha256": "52a30522736e1281305c59b707c0dec033e9e311fd0f7cb48fdbfda2a8a7efec",
+          "retrieved_at": "2026-10-07T00:59:13+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        },
+        {
+          "content_sha256": "7d5bf295eb708dcf1c591ebb66a5f0d1e322d6c4bcd7b92123066c446dfe9858",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+          "http_status": 200,
+          "outcome": "unchanged",
+          "payload_bytes": 106639,
+          "payload_sha256": "06b012105821611c7dcfb365a4760d4e28555d9acd1fff88323a3a0e84b345fb",
+          "retrieved_at": "2026-10-07T00:59:16+00:00",
+          "role": "article",
+          "source_identity": "moit-energy-vi:/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+          "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+        },
+        {
+          "content_sha256": "7e377a0d9070060674a4cf9208e16a955fd41a0044b44fd4923340d267004d50",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+          "http_status": 200,
+          "outcome": "unchanged",
+          "payload_bytes": 113972,
+          "payload_sha256": "803fea3aec4d8161583100d093f9ca79a7493d3cba612239cec263556a593ffd",
+          "retrieved_at": "2026-10-07T00:59:19+00:00",
+          "role": "article",
+          "source_identity": "moit-energy-vi:/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+          "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:02+00:00",
+      "desk_id": "vietnam",
+      "discovered": 2,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:59:19+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-dieu-chinh-quy-hoach-dien-viii-tinh-dien-bien.html",
+            "2026-09-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-don-doc-dia-phuong-phat-trien-dien-mat-troi-mai-nha.html",
+            "2026-09-18"
+          ],
+          [
+            "/tin-tuc/viet-nam-de-xuat-ket-noi-cong-nghe-dau-tu-va-nang-luc-trong-hop-tac-nang-luong.html",
+            "2026-09-11"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/phat-trien-trung-tam-nang-luong-tai-tao-nhin-tu-thuc-tien-quoc-te.html",
+            "2026-09-10"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-de-nghi-gian-doan-nguon-cung-xang-dau-dip-quoc-khanh-2-9.html",
+            "2026-08-28"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bao-dam-cung-ung-dien-cho-giai-doan-but-pha-2026-2030.html",
+            "2026-08-27"
+          ],
+          [
+            "/tin-tuc/nsmo-thong-bao-phuong-an-dam-bao-cung-cap-dien-cho-ky-le-quoc-khanh-2-9.html",
+            "2026-08-25"
+          ],
+          [
+            "/tin-tuc/mot-so-thong-tin-ve-viec-dieu-hanh-gia-xang-dau-ngay-13-8-2026.html",
+            "2026-08-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-nhiet-dien-khi-nam-2026.html",
+            "2026-07-27"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-to-chuc-lay-y-kien-cho-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-07-27"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2026-07-27",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 761
+        },
+        "selected": 2,
+        "window_end": "2026-09-30",
+        "window_start": "2026-09-30"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T00:59:10.560244+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.961,
+          "requested_at": "2026-10-07T00:59:04+00:00",
+          "started_utc": "2026-10-07T00:59:04.804906+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 114002,
+          "ended_utc": "2026-10-07T00:59:13.384608+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:12+00:00",
+          "started_utc": "2026-10-07T00:59:12.561718+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        },
+        {
+          "bytes": 106639,
+          "ended_utc": "2026-10-07T00:59:16.331959+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:15+00:00",
+          "started_utc": "2026-10-07T00:59:15.385503+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+        },
+        {
+          "bytes": 113972,
+          "ended_utc": "2026-10-07T00:59:19.155037+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:18+00:00",
+          "started_utc": "2026-10-07T00:59:18.332922+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+        }
+      ],
+      "result": "ok_all_duplicates",
+      "retrieved": 2,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "repeat",
+      "selected": 2,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_energy_vi",
+      "started_utc": "2026-10-07T00:59:02+00:00",
+      "state_sha256_after": "7dc3a5c3cf395d588c4b2486ac01eedfc55a3522e9992fab7878936faf4290be",
+      "state_sha256_before": "525eafc9767ac498d3833a044fecc3efd16a4d91752e7ddbd3a75ff60c18c54d",
+      "stored_total": 2,
+      "target_date": "2026-09-30",
+      "target_date_source": "explicit",
+      "unchanged": 2,
+      "versions_total": 2,
+      "window_start": "2026-09-30"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 2,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T00:59:29+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 113719,
+          "payload_sha256": "5a1eaaae354321c9c2b1e6490080865a537fa13f13dde830512d8c34f2e5396c",
+          "retrieved_at": "2026-10-07T00:59:32+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:02+00:00",
+      "desk_id": "vietnam",
+      "discovered": 0,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:59:32+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-dieu-chinh-quy-hoach-dien-viii-tinh-dien-bien.html",
+            "2026-09-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-don-doc-dia-phuong-phat-trien-dien-mat-troi-mai-nha.html",
+            "2026-09-18"
+          ],
+          [
+            "/tin-tuc/viet-nam-de-xuat-ket-noi-cong-nghe-dau-tu-va-nang-luc-trong-hop-tac-nang-luong.html",
+            "2026-09-11"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/phat-trien-trung-tam-nang-luong-tai-tao-nhin-tu-thuc-tien-quoc-te.html",
+            "2026-09-10"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-de-nghi-gian-doan-nguon-cung-xang-dau-dip-quoc-khanh-2-9.html",
+            "2026-08-28"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bao-dam-cung-ung-dien-cho-giai-doan-but-pha-2026-2030.html",
+            "2026-08-27"
+          ],
+          [
+            "/tin-tuc/nsmo-thong-bao-phuong-an-dam-bao-cung-cap-dien-cho-ky-le-quoc-khanh-2-9.html",
+            "2026-08-25"
+          ],
+          [
+            "/tin-tuc/mot-so-thong-tin-ve-viec-dieu-hanh-gia-xang-dau-ngay-13-8-2026.html",
+            "2026-08-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-nhiet-dien-khi-nam-2026.html",
+            "2026-07-27"
+          ],
+          [
+            "/tin-tuc/bo-cong-thuong-to-chuc-lay-y-kien-cho-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+            "2026-07-27"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2026-07-27",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 761
+        },
+        "selected": 0,
+        "window_end": "2026-10-06",
+        "window_start": "2026-10-06"
+      },
+      "listing_status": "ok_no_publications",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 4,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T00:59:29.736959+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.958,
+          "requested_at": "2026-10-07T00:59:21+00:00",
+          "started_utc": "2026-10-07T00:59:21.160594+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 113719,
+          "ended_utc": "2026-10-07T00:59:32.798288+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:31+00:00",
+          "started_utc": "2026-10-07T00:59:31.738753+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+        }
+      ],
+      "result": "ok_no_publications",
+      "retrieved": 0,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "quiet",
+      "selected": 0,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_energy_vi",
+      "started_utc": "2026-10-07T00:59:19+00:00",
+      "state_sha256_after": "7dc3a5c3cf395d588c4b2486ac01eedfc55a3522e9992fab7878936faf4290be",
+      "state_sha256_before": "7dc3a5c3cf395d588c4b2486ac01eedfc55a3522e9992fab7878936faf4290be",
+      "stored_total": 2,
+      "target_date": "2026-10-06",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 2,
+      "window_start": "2026-10-06"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 1,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T00:59:41+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 114538,
+          "payload_sha256": "7325a93550b35150f73bf3b0a97fec60a1452bf2b0e46b102692435240c3582a",
+          "retrieved_at": "2026-10-07T00:59:44+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        },
+        {
+          "content_sha256": "ce2343fa9efeb3e19799b488e2a4377ebd1fe8ddac000e5d1247f73a4be461df",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+          "http_status": 200,
+          "outcome": "new",
+          "payload_bytes": 117706,
+          "payload_sha256": "9d235d5daa6ce8062ffcf06d003a740a91cea6e42ef2171383f43fe5f008a736",
+          "retrieved_at": "2026-10-07T00:59:47+00:00",
+          "role": "article",
+          "source_identity": "moit-industry-vi:/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+          "url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:47+00:00",
+      "desk_id": "vietnam",
+      "discovered": 1,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T00:59:47+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/bo-cong-thuong-ban-hanh-quyet-dinh-thanh-lap-to-soan-thao-va-to-bien-tap-xay-dung-luat-cong-nghiep-trong-diem.html",
+            "2026-05-08"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/ket-noi-doanh-nghiep-cong-nghiep-ho-tro-viet-nam-nhat-ban.html",
+            "2022-07-05"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-day-cong-nghiep-ho-tro-nganh-co-khi-phat-trien.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/quang-nam-tap-trung-nhieu-giai-phap-phat-trien-cong-nghiep-ho-tro-quy-mo-lon.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/hoat-dong/nganh-cong-nghiep-ho-tro-nhin-tu-cac-cuoc-cach-mang-cong-nghiep.html",
+            "2022-01-12"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/trung-uong-dia-phuong-va-doanh-nghiep-chung-tay-phat-trien-nganh-cong-nghiep-che-bien-che-tao-va-cong-nghiep-ho-tro.html",
+            "2021-11-25"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang/dieu-gi-se-xay-ra-neu-san-giao-dich-kim-loai-chu-luc-cua-the-gioi-khong-co-du-hang-de-giao-.html",
+            "2021-10-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/viet-nam-day-manh-dau-tu-vao-tri-tue-nhan-tao.html",
+            "2021-10-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/lam-gi-de-vuc-day-nganh-dong-tau-viet-nam-.html",
+            "2021-09-29"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-trang-phat-trien-cua-cnht-nganh-o-to-viet-nam.html",
+            "2021-09-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/vai-tro-quan-trong-cua-cnht-trong-su-phat-trien-nganh-o-to-ky-2-.html",
+            "2021-09-06"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2021-09-06",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 26
+        },
+        "selected": 1,
+        "window_end": "2026-09-30",
+        "window_start": "2026-09-30"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 1,
+      "request_ceiling": 3,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T00:59:41.676582+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.953,
+          "requested_at": "2026-10-07T00:59:34+00:00",
+          "started_utc": "2026-10-07T00:59:34.806046+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 114538,
+          "ended_utc": "2026-10-07T00:59:44.505707+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:43+00:00",
+          "started_utc": "2026-10-07T00:59:43.677978+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        },
+        {
+          "bytes": 117706,
+          "ended_utc": "2026-10-07T00:59:47.468009+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:46+00:00",
+          "started_utc": "2026-10-07T00:59:46.506876+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html"
+        }
+      ],
+      "result": "ok",
+      "retrieved": 1,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "body",
+      "selected": 1,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_foundational_industry_vi",
+      "started_utc": "2026-10-07T00:59:32+00:00",
+      "state_sha256_after": "9daec7b4a36474de94bd8de6d9ca3b50bdafe80ce1cf208972a52250844f40dd",
+      "state_sha256_before": null,
+      "stored_total": 1,
+      "target_date": "2026-09-30",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 1,
+      "window_start": "2026-09-30"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 1,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T00:59:57+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 114538,
+          "payload_sha256": "555cb217c64ffd74fd6cf2d612cf2157e659dd50c87e98a7bc370d424c74b226",
+          "retrieved_at": "2026-10-07T01:00:00+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        },
+        {
+          "content_sha256": "ce2343fa9efeb3e19799b488e2a4377ebd1fe8ddac000e5d1247f73a4be461df",
+          "content_type": "text/html; charset=UTF-8",
+          "final_url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+          "http_status": 200,
+          "outcome": "unchanged",
+          "payload_bytes": 117764,
+          "payload_sha256": "ddd9415d45357c6a570f8db0708d9f758dec5c8606672b7d8828aa752d2740c4",
+          "retrieved_at": "2026-10-07T01:00:03+00:00",
+          "role": "article",
+          "source_identity": "moit-industry-vi:/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+          "url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:47+00:00",
+      "desk_id": "vietnam",
+      "discovered": 1,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T01:00:03+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/bo-cong-thuong-ban-hanh-quyet-dinh-thanh-lap-to-soan-thao-va-to-bien-tap-xay-dung-luat-cong-nghiep-trong-diem.html",
+            "2026-05-08"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/ket-noi-doanh-nghiep-cong-nghiep-ho-tro-viet-nam-nhat-ban.html",
+            "2022-07-05"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-day-cong-nghiep-ho-tro-nganh-co-khi-phat-trien.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/quang-nam-tap-trung-nhieu-giai-phap-phat-trien-cong-nghiep-ho-tro-quy-mo-lon.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/hoat-dong/nganh-cong-nghiep-ho-tro-nhin-tu-cac-cuoc-cach-mang-cong-nghiep.html",
+            "2022-01-12"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/trung-uong-dia-phuong-va-doanh-nghiep-chung-tay-phat-trien-nganh-cong-nghiep-che-bien-che-tao-va-cong-nghiep-ho-tro.html",
+            "2021-11-25"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang/dieu-gi-se-xay-ra-neu-san-giao-dich-kim-loai-chu-luc-cua-the-gioi-khong-co-du-hang-de-giao-.html",
+            "2021-10-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/viet-nam-day-manh-dau-tu-vao-tri-tue-nhan-tao.html",
+            "2021-10-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/lam-gi-de-vuc-day-nganh-dong-tau-viet-nam-.html",
+            "2021-09-29"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-trang-phat-trien-cua-cnht-nganh-o-to-viet-nam.html",
+            "2021-09-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/vai-tro-quan-trong-cua-cnht-trong-su-phat-trien-nganh-o-to-ky-2-.html",
+            "2021-09-06"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2021-09-06",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 26
+        },
+        "selected": 1,
+        "window_end": "2026-09-30",
+        "window_start": "2026-09-30"
+      },
+      "listing_status": "ok",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 3,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T00:59:57.584552+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.961,
+          "requested_at": "2026-10-07T00:59:49+00:00",
+          "started_utc": "2026-10-07T00:59:49.474047+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 114538,
+          "ended_utc": "2026-10-07T01:00:00.389017+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T00:59:59+00:00",
+          "started_utc": "2026-10-07T00:59:59.587092+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        },
+        {
+          "bytes": 117764,
+          "ended_utc": "2026-10-07T01:00:03.386029+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T01:00:02+00:00",
+          "started_utc": "2026-10-07T01:00:02.390473+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html"
+        }
+      ],
+      "result": "ok_all_duplicates",
+      "retrieved": 1,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "repeat",
+      "selected": 1,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_foundational_industry_vi",
+      "started_utc": "2026-10-07T00:59:47+00:00",
+      "state_sha256_after": "1fa54f9f6d9798338d20b92f1689624243d53d968ce9353aeb752492fff55c5c",
+      "state_sha256_before": "9daec7b4a36474de94bd8de6d9ca3b50bdafe80ce1cf208972a52250844f40dd",
+      "stored_total": 1,
+      "target_date": "2026-09-30",
+      "target_date_source": "explicit",
+      "unchanged": 1,
+      "versions_total": 1,
+      "window_start": "2026-09-30"
+    },
+    {
+      "access_failures": 0,
+      "anomalies": [],
+      "cap": 1,
+      "captures": [
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 166,
+          "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+          "retrieved_at": "2026-10-07T01:00:13+00:00",
+          "role": "robots",
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "content_type": "text/html; charset=UTF-8",
+          "http_status": 200,
+          "payload_bytes": 114821,
+          "payload_sha256": "2225cfab056f0fc3a3dfc9de047547315cf513d4e7ce8f2332e42fc090dbef9d",
+          "retrieved_at": "2026-10-07T01:00:17+00:00",
+          "role": "listing",
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        }
+      ],
+      "challenged": 0,
+      "changed": 0,
+      "collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+      "collector_identity": "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)",
+      "content_hash_rule": "moit-vi-content-v1",
+      "corpus_range": [
+        "2026-09-30",
+        "2026-09-30"
+      ],
+      "day_zero_utc": "2026-10-07T00:59:47+00:00",
+      "desk_id": "vietnam",
+      "discovered": 0,
+      "error_detail": null,
+      "extraction_failures": 0,
+      "failures": [],
+      "fetch_failures": 0,
+      "finished_utc": "2026-10-07T01:00:17+00:00",
+      "health": "ok",
+      "listing_report": {
+        "coverage": "proven",
+        "items_listed": 12,
+        "listed": [
+          [
+            "/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+            "2026-09-30"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/bo-cong-thuong-ban-hanh-quyet-dinh-thanh-lap-to-soan-thao-va-to-bien-tap-xay-dung-luat-cong-nghiep-trong-diem.html",
+            "2026-05-08"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/ket-noi-doanh-nghiep-cong-nghiep-ho-tro-viet-nam-nhat-ban.html",
+            "2022-07-05"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-day-cong-nghiep-ho-tro-nganh-co-khi-phat-trien.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/quang-nam-tap-trung-nhieu-giai-phap-phat-trien-cong-nghiep-ho-tro-quy-mo-lon.html",
+            "2022-06-15"
+          ],
+          [
+            "/tin-tuc/hoat-dong/nganh-cong-nghiep-ho-tro-nhin-tu-cac-cuoc-cach-mang-cong-nghiep.html",
+            "2022-01-12"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/trung-uong-dia-phuong-va-doanh-nghiep-chung-tay-phat-trien-nganh-cong-nghiep-che-bien-che-tao-va-cong-nghiep-ho-tro.html",
+            "2021-11-25"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang/dieu-gi-se-xay-ra-neu-san-giao-dich-kim-loai-chu-luc-cua-the-gioi-khong-co-du-hang-de-giao-.html",
+            "2021-10-22"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/viet-nam-day-manh-dau-tu-vao-tri-tue-nhan-tao.html",
+            "2021-10-13"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/lam-gi-de-vuc-day-nganh-dong-tau-viet-nam-.html",
+            "2021-09-29"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/thuc-trang-phat-trien-cua-cnht-nganh-o-to-viet-nam.html",
+            "2021-09-15"
+          ],
+          [
+            "/tin-tuc/phat-trien-cong-nghiep/vai-tro-quan-trong-cua-cnht-trong-su-phat-trien-nganh-o-to-ky-2-.html",
+            "2021-09-06"
+          ]
+        ],
+        "listed_after_window": 0,
+        "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang",
+        "newest_listed": "2026-09-30",
+        "oldest_listed": "2021-09-06",
+        "pages_read": 1,
+        "pagination": {
+          "older_pages": "script-only; not requested",
+          "page": 1,
+          "page_size": 12,
+          "total_items": 26
+        },
+        "selected": 0,
+        "window_end": "2026-10-06",
+        "window_start": "2026-10-06"
+      },
+      "listing_status": "ok_no_publications",
+      "lookback_days": 0,
+      "new_records": 0,
+      "request_ceiling": 3,
+      "requests": [
+        {
+          "bytes": 166,
+          "ended_utc": "2026-10-07T01:00:13.368845+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 1.957,
+          "requested_at": "2026-10-07T01:00:05+00:00",
+          "started_utc": "2026-10-07T01:00:05.391625+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/robots.txt"
+        },
+        {
+          "bytes": 114821,
+          "ended_utc": "2026-10-07T01:00:17.253573+00:00",
+          "gate_interval_s": 2.0,
+          "gate_wait_s": 0.0,
+          "requested_at": "2026-10-07T01:00:15+00:00",
+          "started_utc": "2026-10-07T01:00:15.369998+00:00",
+          "status": 200,
+          "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+        }
+      ],
+      "result": "ok_no_publications",
+      "retrieved": 0,
+      "reverted": 0,
+      "robots_status": "read",
+      "run_id": "quiet",
+      "selected": 0,
+      "shadow_day": 0,
+      "source_anomalies": [
+        "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+      ],
+      "source_slug": "vn_moit_foundational_industry_vi",
+      "started_utc": "2026-10-07T01:00:03+00:00",
+      "state_sha256_after": "1fa54f9f6d9798338d20b92f1689624243d53d968ce9353aeb752492fff55c5c",
+      "state_sha256_before": "1fa54f9f6d9798338d20b92f1689624243d53d968ce9353aeb752492fff55c5c",
+      "stored_total": 1,
+      "target_date": "2026-10-06",
+      "target_date_source": "explicit",
+      "unchanged": 0,
+      "versions_total": 1,
+      "window_start": "2026-10-06"
+    }
+  ],
+  "source_bytes_published": false,
+  "total_requests": 28
+}

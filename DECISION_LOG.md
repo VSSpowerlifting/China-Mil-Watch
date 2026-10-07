@@ -4,6 +4,22 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Vietnam ministry engineering continuation; activation unchanged
+
+**Owner direction (Ben, this continuation):** continue the Vietnam Desk work
+after the earlier agent's weekly usage limit, retaining the requested Government
+portal, National Defence, Public Security, Industry and Trade and Finance sites.
+Within the existing engineering/PR authority, the local ministry adapters and
+bounded nonproduction rehearsals are completed on draft PR #107. The original
+Government News pilot remains. Three Vietnamese families passed local rehearsal;
+Defence and Finance remain unreached. Evidence:
+`docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
+
+This records continuation authority, not new rights, periodic identity, state
+visibility, dispatch, scheduling, main merge or deployment approval. No ministry
+remote state is published; no local rehearsal clock is adopted as reliability
+day zero. The open Vietnam activation decisions below still apply.
+
 ## 2026-10-06 — Indonesia and South Korea daily shadow cadence authorized
 
 **Owner direction (Ben, this Codex chat):** "Authorize daily shadow collection
@@ -94,6 +110,59 @@ desk/source activation, production DB/output changes, deployment or merge is
 authorized. Review the replacement draft PR, explicitly authorize its merge,
 then manually rehearse and inspect evidence before separately considering a
 schedule. Sample rehearsal does not establish a reliability day zero.
+
+## 2026-10-05 — Vietnam Desk: bounded shadow pilot authorized; built, not launched
+
+**Owner authorization (Ben, 2026-10-05; the Vietnam Desk engineering
+brief).** Engineer a Vietnam Desk, starting with a source-tested,
+isolated shadow pilot and an honest desk page and map entry, delivered as a
+draft PR. The brief authorizes source research, implementation, bounded
+nonproduction rehearsals, committing source, docs and tests, pushing the
+feature branch and opening the draft PR, and does so expressly despite the
+geographic deferral in `docs/ROADMAP.md`. It does not authorize merging,
+production collection, production output regeneration, deployment or launching
+a scheduled remote collector. The ordinary promotion requirements are
+unchanged.
+
+Set by the brief, and binding on later Vietnam work:
+
+1. **Institutions and tiers.** The Ministry of National Defence is Tier A. The
+   People's Army Newspaper is Tier B and distinct from a ministry statement.
+   Ordinary Government News reporting is Tier B, an institutional
+   public-affairs channel. The three are separate publishing institutions.
+   Formal government documents would be a separate source family. The Coast
+   Guard, the Navy, the foreign ministry and the state news agency are
+   deferred.
+2. **Public status.** The desk is declared in `desks/registry.json` with route
+   `vietnam.html`, `public: true` and `has_production_records: false`, and shows
+   no record count. It is `research` while unlaunched, `access_blocked` only
+   after a measured refusal, and `shadow` only once the pilot is actually
+   collecting. Hanoi marks the publishing institutions' seat, not coverage.
+   The shadow manifest stays outside `desks/`.
+3. **Isolation.** State on the orphan branch `shadow/vietnam`, outside every
+   checkout. The workflow is dispatch-only; scheduling is a later, separate
+   step.
+
+**Selected within that authority, for owner review in the PR.** The brief
+asked for one passing publisher/language surface. The pilot uses the English
+defense tag of Viet Nam Government News (`vn_vgp_defense_en`, Tier B). The
+ministry's English site and the People's Army Newspaper were not reached on
+2026-10-06 UTC: one served a script page in place of `robots.txt`, the other a
+redirect to the same address. Neither is recorded as a refusal. Evidence:
+`docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`.
+
+**Not decided; needed before the collector is dispatched:**
+- where the state lives and whether it may be public, given the publisher's
+  "All rights reserved" notice (the 2026-10-02 ruling covers `shadow/ph-nsc`
+  only);
+- the collector identity for periodic collection from this host (the
+  2026-10-02 approval covers NSC only);
+- approval to dispatch, and later to schedule.
+
+No promotion, coverage claim or qualification decision is made. Thirty
+consecutive collecting days, the Day 7, 14 and 30 human reviews, the
+applicable desk-strength criteria and a recorded owner sign-off remain
+required.
 
 ## 2026-10-05 — Site typography adopts the opening title's setting
 

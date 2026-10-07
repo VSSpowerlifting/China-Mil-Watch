@@ -1,0 +1,88 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST — deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a Vietnam",
+    "desk and source into the tracked production database on the next",
+    "migration run, which would put a non-collecting desk into public counts.",
+    "It lives here so production discovery cannot see it, and tests assert",
+    "that desks/ contains only china and singapore.",
+    "",
+    "Nothing in this file is read by pipeline.py. Only the isolated Vietnam",
+    "shadow runner, its review kit and offline tests read it. Shadow state",
+    "lives on the orphan branch shadow/vietnam, outside every checkout, and",
+    "never enters the site.",
+    "",
+    "desks/registry.json declares the Vietnam desk as status 'research' with",
+    "manifest null: the collector is built and had a bounded live rehearsal",
+    "that pushed state only to a local bare remote. It has not been launched",
+    "and has never run in the project's automation. Pointing the registry at",
+    "this file and moving the desk to 'shadow' happens only once collection",
+    "is actually running (shadow/vietnam/README.md, Activation)."
+  ],
+  "desk": {
+    "desk_id": "vietnam",
+    "display_name": "Vietnam Desk (shadow pilot)",
+    "jurisdiction_code": "VN",
+    "default_timezone": "Asia/Ho_Chi_Minh",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "research",
+    "active": false,
+    "_timezone_note": [
+      "Asia/Ho_Chi_Minh is UTC+07:00 with no daylight saving. It is NOT used to",
+      "date records: each article's publication date is read from the offset its",
+      "own article:published_time declares, with the UTC instant stored beside",
+      "it. Every stamp in the 2026-10-06 UTC captures carried +07:00. A stamp",
+      "with no offset keeps its written date and gets no UTC instant; no offset",
+      "is assumed. Collection windows are calendar dates in this time zone."
+    ]
+  },
+  "institutions": [
+    {
+      "institution_id": "vn_vgp_news",
+      "display_name": "Viet Nam Government News",
+      "name_original": "Báo điện tử chính phủ",
+      "institution_type": "government_newsroom",
+      "notes": "The online newspaper of the Government, published by the Department of Government Information and Communications. 'Báo điện tử chính phủ' is the label of the link from the Government portal chinhphu.vn to https://baochinhphu.vn, captured 2026-10-06 UTC. The English edition en.baochinhphu.vn names itself in its footer 'ONLINE NEWSPAPER OF THE GOVERNMENT OF THE SOCIALIST REPUBLIC OF VIET NAM' and '© Copyright Viet Nam Government News - Department of Government Information and Communications. All rights reserved.' It is a newsroom: its reports are not statements of the Ministry of National Defence, the People's Army Newspaper or any office they describe. A report that names a resolution or quotes a minister remains a newsroom report about it."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "vn_vgp_defense_en",
+      "display_name": "Government News (English) — defense tag",
+      "institution_id": "vn_vgp_news",
+      "base_url": "https://en.baochinhphu.vn",
+      "discovery_endpoints": [
+        "https://en.baochinhphu.vn/defense.html"
+      ],
+      "adapter": "scraper.sources.vn_vgp:VNVgpAdapter",
+      "enabled": true,
+      "language_tags": [
+        "en"
+      ],
+      "authority_tier": "B",
+      "article_url_patterns": [
+        "^https://en\\.baochinhphu\\.vn/(?:[a-z0-9]+-)+?\\d+\\.htm$"
+      ],
+      "declared_scope": [
+        "The page https://en.baochinhphu.vn/defense.html, which labels itself 'Tags: defense', and the English article pages it lists. Nothing else on the site is requested: not the Politics or Policies sections, not other tags, not the Vietnamese edition, not the Government portal.",
+        "A tag, not a category. An article carries it when an editor applies it. On 2026-10-06 UTC the 2026-08-04 national security strategy summary (Policies section) carried no tags at all, and a 2026-09-23 Navy-related Politics item did not carry this tag. Items the tag does not list are not collected and nothing is claimed about them. No keyword, topic or model filter widens or narrows the scope.",
+        "Tier B: institutional public-affairs reporting by the Government's newsroom. Not Tier A because it is government-hosted, and not Tier C because it is a newspaper. The Ministry of National Defence (Tier A) and the People's Army Newspaper (Tier B) are separate publishing institutions and are not collected here.",
+        "English as published. An English article is the English text the newsroom published, not a recovered Vietnamese original, and nothing is translated.",
+        "Attribution: the publisher is this newsroom; the page byline is stored as the byline and is not called an author, writer or translator; no issuing office is derived from a title or a body. Photo credits stay inside captions as published.",
+        "Identity: the trailing digit run of the article path, 'vgp-en:<id>', cross-checked between the listing item's data-id, the URL it links and the article's canonical link. Never the title, never a date read from the id.",
+        "Dates: the article's article:published_time in the offset it declares, with the UTC instant beside it; modification time stored separately. JSON-LD and the visible header are cross-checks recorded as anomalies. The listing's own local time (shown day-first and month-first, which must agree) selects the window and is never stored as the publication time.",
+        "Body: the single div.detail-content block — paragraphs, headings, list items, quotations, table rows and figure captions in page order, each labelled with its element; the lead is the first line. The related-stories box, CMS comments, scripts, images and tag list are excluded. Accepted on structure, never on length.",
+        "Listing: only the one published tag page is read. Its 24 items reached back to 2023-11-16 on 2026-10-06 UTC; older items load by script from a URL the page never publishes as a link, which is never requested. A window is collected only when the oldest listed item is older than the window start; otherwise the run fails with no references.",
+        "Preserved original: the exact response bytes of robots.txt, the listing and every article fetched, with requested URL, final URL, HTTP status, content type, retrieval time and SHA-256.",
+        "Bounded accessibility only: 18 capped requests to this host on 2026-10-06 UTC under the full collector identity returned HTTP 200 throughout, including robots.txt ('User-agent: *' / 'Allow: /'). That is not reliable periodic access, GitHub Actions egress, permission to reuse text, or archive completeness."
+      ],
+      "notes": "Enabled is true for the isolated shadow runner only, so the first post-merge manual dispatch can establish day zero. This manifest stays outside desks/ and has never been part of a production run. Scope, measured evidence, limits, the activation procedure and the review path are in shadow/vietnam/README.md and docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md."
+    }
+  ]
+}

@@ -451,7 +451,7 @@ class TestNoFabricatedCoverage(PreviewCase):
         """
         html = self.page("index.html")
         self.assertIn("2</b> collecting desk", html)
-        self.assertIn("of <b>4</b> declared", html)
+        self.assertIn("of <b>5</b> declared", html)
 
         from core.viewmodel import PublicView
         desks = PublicView(TRACKED_DB).desk_directory()
@@ -1270,7 +1270,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_a_desk_states_its_limits_without_a_callout(self):
         """The limits are still on the page — only their rendering changed."""
         for route in ("china.html", "singapore.html", "japan.html",
-                      "us-indopacific.html"):
+                      "vietnam.html", "us-indopacific.html"):
             with self.subTest(page=route):
                 html = self.page(route)
                 self.assertIn("Limits of this desk, stated plainly", html)
