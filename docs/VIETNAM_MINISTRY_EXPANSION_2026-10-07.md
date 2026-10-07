@@ -118,15 +118,27 @@ No production database or output file is edited by the ministry implementation.
 Main subsequently advanced to `d0c6dbb` for Indonesia/Korea cadence. That update
 is also integrated, retaining its decisions and leaving Vietnam's scope and
 source code unchanged. Its affected integration/telemetry modules pass 106 tests.
-Vietnam, gate, map, registry and site-mode checks pass 289 tests on the updated
-source. The broader local run exposed an unavailable Chromium and a missing
-`httpx` dependency; `httpx` was installed and its telemetry module then passed.
-The browser gate remains separately reported rather than claimed as successful.
+Vietnam, gate, map, registry and site-mode checks pass 289 tests; the final
+ministry suite passes 17 tests after adding a Python 3.9 offset regression.
+All six Vietnam transport, gate, adapter, runner and review suites pass **208
+tests on native Python 3.9**. Replaying the original live captures on that
+interpreter reproduces all five stored reports' dates, hashes and text exactly.
+MOIT's declared offset is normalised only for datetime cross-checking; its raw
+metadata remains unchanged.
 
-Chromium's Playwright download returned invalid/truncated ZIP data in this
-environment. Browser-backed checks cannot be claimed as locally executed here;
-PR CI installs and smoke-launches Chromium. Output validation retains the
-governed **10 warnings**. Final test counts and CI results are recorded on PR #107.
+After repairing missing local dependencies, Playwright 1.55.0's Chromium 140
+launched successfully. The broader suite ran **3,712 tests** with 18 failures,
+one error and two skips. All 13 failed methods were then rerun after correcting
+the official ministry name and supplying Google Fonts resources to Chromium
+through verified HTTPS downloads. Twelve methods pass; the remaining failure
+is the existing Analysis page's responsive topography check at 375 px (9 px
+horizontal overflow). No unrelated renderer or test tolerance was changed.
+The broader browser gate is therefore **not green**, and latest-head GitHub CI
+has not reported a result. This PR stays draft and unmerged.
+
+Output validation passes with the governed **10 warnings**. Final preservation
+checks confirm all **7,451** inherited DB/output files remain byte-identical,
+with no database sidecar residue.
 
 Remaining work is a separate activation phase: owner decisions on state
 visibility/reuse, periodic collector identity, bounded remote dispatch and later

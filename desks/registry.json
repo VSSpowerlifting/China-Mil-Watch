@@ -155,7 +155,7 @@
    "route": "vietnam.html",
    "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
    "status": "research",
-   "status_explanation": "Researched, with collectors built but not launched. Bounded local rehearsals read Government News, Public Security foreign affairs, and Industry and Trade energy and foundational industry under the full collector identity. Each ministry family has separate external state; nothing reaches the public record. National Defence and Finance have recorded access blockers. Nothing runs on a schedule, and the desk moves to shadow evaluation only once ongoing collection actually runs.",
+   "status_explanation": "Researched, with collectors built but not launched. Bounded local rehearsals read Government News, Public Security foreign affairs, and Industry and Trade energy and foundational industry under the full collector identity. Each ministry family has separate external state; nothing reaches the public record. The Ministry of National Defence and Ministry of Finance have recorded access blockers. Nothing runs on a schedule, and the desk moves to shadow evaluation only once ongoing collection actually runs.",
    "public": true,
    "manifest": null,
    "has_production_records": false,

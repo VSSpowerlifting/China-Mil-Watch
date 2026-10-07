@@ -1,11 +1,12 @@
 """Measured ministry structures only; sockets are forbidden in this suite."""
 import hashlib
 import json
+import re
 import socket
 import sqlite3
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -134,6 +135,21 @@ class MinistryCase(unittest.TestCase):
         self.assertEqual(doc.published_date, "2022-01-12")
         self.assertTrue(doc.extra["source_metadata"]["article_published_time"].startswith("2022-08-25"))
         self.assertTrue(any(s.startswith("metadata_date_differs") for s in doc.extra["anomalies"]))
+
+    def test_moit_compact_declared_offset_works_with_the_python39_iso_parser(self):
+        def restricted_parser(text):
+            if re.search(r"[+-]\d{4}$", text):
+                raise ValueError("compact offsets are not supported by Python 3.9")
+            return datetime.fromisoformat(text)
+        with patch("scraper.sources.vn_ministries.datetime") as parser:
+            parser.fromisoformat.side_effect = restricted_parser
+            result = adapter(INDUSTRY).extract(capture(
+                INDUSTRY, "derived-moit-article-date-discrepancy.html"))
+        self.assertEqual(result.status, st.OK, result.error_detail)
+        doc = result.documents[0]
+        self.assertEqual(doc.published_date, "2022-01-12")
+        self.assertEqual(doc.extra["source_metadata"]["article_published_time"],
+                         "2022-08-25T08:47:29+0700")
 
     def test_nonarticle_and_foreign_identity_are_refused_before_transport(self):
         a = adapter(MPS)
