@@ -22,8 +22,8 @@ jobs:
       - name: Guard exact reviewed base and one-shot scope
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "46e152493356336655308cec82f3f3b850f81637"
-          test "$(git diff --name-only "46e152493356336655308cec82f3f3b850f81637"...HEAD)" = ".github/workflows/prepare_trident_resolve_brief.yml"
+          test "$(git merge-base HEAD 46e152493356336655308cec82f3f3b850f81637)" = "46e152493356336655308cec82f3f3b850f81637"
+          test "$(git diff --name-only 46e152493356336655308cec82f3f3b850f81637...HEAD)" = ".github/workflows/prepare_trident_resolve_brief.yml"
           test "$(git rev-parse origin/main)" = "46e152493356336655308cec82f3f3b850f81637" || {
             echo "::error::main moved after candidate preparation began"
             exit 1
@@ -46,30 +46,25 @@ jobs:
 
       - name: Scaffold exact corpus metadata
         run: |
-          python scripts/author_brief.py scaffold \
-            --desks china,singapore \
-            --week-start 2026-09-20 \
-            --week-ending 2026-09-26 \
-            --retrospective \
-            --out /tmp/trident-scaffold.json
+          python scripts/author_brief.py scaffold             --desks china,singapore             --week-start 2026-09-20             --week-ending 2026-09-26             --retrospective             --out /tmp/trident-scaffold.json
 
       - name: Build approved editorial candidate
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-
+          
           base_commit = "46e152493356336655308cec82f3f3b850f81637"
           src = Path("/tmp/trident-scaffold.json")
           out = Path("briefs/trident-resolve-regional-scale-specific-chinese-tasks.json")
           draft = json.loads(src.read_text(encoding="utf-8"))
-
+          
           keep = {4935, 4392}
           trail = [e for e in draft["source_trail"] if e["record_id"] in keep]
           if {e["record_id"] for e in trail} != keep:
               raise SystemExit("REFUSED: scaffold does not contain both Records 4935 and 4392")
           draft["source_trail"] = trail
-
+          
           draft.update({
               "development": {
                   "summary": "Exercise Trident Resolve brought military and civilian participants from all 19 ADMM-Plus countries to Indonesia in September 2026. Singapore MINDEF described the exercise-wide scale and structure, while PLA Daily described the narrower disaster-response tasks and participation window of the Chinese contingent.",
@@ -80,44 +75,44 @@ jobs:
               "signal": "The two official accounts describe the same exercise from different vantage points: Singapore maps the wider ADMM-Plus structure, while China concentrates on its own disaster-response role.",
               "edition_type": "Routine",
               "opening_note": """Exercise Trident Resolve brought military and civilian participants from all 19 ASEAN Defence Ministers’ Meeting-Plus countries to Banten, Indonesia, in September. Singapore’s Ministry of Defence said roughly 2,200 personnel took part between 20 and 26 September, making it the largest ADMM-Plus exercise in a decade by personnel participation. [Record 4935]
-
-That scale was only part of what made the exercise notable. MINDEF described an event spread across seven sites and at sea, bringing together three ADMM-Plus Experts’ Working Groups: Cyber Security, Humanitarian Assistance and Disaster Relief, and Military Medicine. The scenario included search and rescue, medical evacuation and treatment, chemical, biological and radiological response, infrastructure repair, and cybersecurity work supporting a multinational disaster response. [Record 4935]
-
-China’s account, published a day earlier, looked at the same exercise from a much narrower angle. PLA Daily reported that the Chinese military would send a contingent to Indonesia from 22 to 25 September to take part in tabletop and field training involving rubble search and rescue, multinational field medical treatment, epidemic prevention and disinfection, and emergency communications. [Record 4392]
-
-Read together, the two records fit rather than conflict. Singapore was describing the exercise as a whole, while the Chinese announcement was describing the period and activities assigned to its own contingent. That also explains the difference in dates: MINDEF gives the full 20–26 September exercise window, while the Chinese account gives China’s 22–25 September participation period.""",
+          
+          That scale was only part of what made the exercise notable. MINDEF described an event spread across seven sites and at sea, bringing together three ADMM-Plus Experts’ Working Groups: Cyber Security, Humanitarian Assistance and Disaster Relief, and Military Medicine. The scenario included search and rescue, medical evacuation and treatment, chemical, biological and radiological response, infrastructure repair, and cybersecurity work supporting a multinational disaster response. [Record 4935]
+          
+          China’s account, published a day earlier, looked at the same exercise from a much narrower angle. PLA Daily reported that the Chinese military would send a contingent to Indonesia from 22 to 25 September to take part in tabletop and field training involving rubble search and rescue, multinational field medical treatment, epidemic prevention and disinfection, and emergency communications. [Record 4392]
+          
+          Read together, the two records fit rather than conflict. Singapore was describing the exercise as a whole, while the Chinese announcement was describing the period and activities assigned to its own contingent. That also explains the difference in dates: MINDEF gives the full 20–26 September exercise window, while the Chinese account gives China’s 22–25 September participation period.""",
               "what_stood_out": """The Singapore record gives a sense of how broad Trident Resolve had become. This was not simply a disaster-relief drill built around one function. MINDEF described the first ADMM-Plus field training exercise to combine the Cyber Security, HADR, and Military Medicine expert groups, with military and civilian organizations working through different pieces of the same disaster scenario. Singapore’s RSS Endeavour and Indonesia’s hospital ship KRI dr. Soeharso formed part of the maritime medical element, extending the exercise beyond shore-based activities. [Record 4935]
-
-The Chinese announcement is more modest in scope, but that makes it useful in a different way. Rather than describing the entire exercise architecture, it identifies the practical tasks the Chinese contingent was expected to perform: search and rescue in collapsed structures, multinational medical treatment, epidemic-control work, and emergency communications. It does not name the Chinese unit involved, say how many personnel were sent, or spell out whether they participated in every part of the wider exercise. [Record 4392]
-
-That gap between the two accounts is analytically useful. Singapore shows what the ADMM-Plus exercise was designed to encompass. China shows a more specific slice of what its own military said it would do inside that framework.
-
-There is clear overlap in the way both sides describe the purpose of the event. The Singapore account emphasizes coordination among militaries and civilian agencies across several disaster-response functions. The Chinese announcement says the exercise was intended to strengthen multinational humanitarian-assistance coordination and improve regional disaster-response mechanisms. [Records 4935, 4392]
-
-But the overlap should not be stretched too far. The Chinese record does not say that its contingent took part in the cyber component, the maritime medical element, or every one of the three expert groups described by MINDEF. At the same time, its silence on those areas does not show that China stayed out of them. The two records simply do not answer that question.""",
+          
+          The Chinese announcement is more modest in scope, but that makes it useful in a different way. Rather than describing the entire exercise architecture, it identifies the practical tasks the Chinese contingent was expected to perform: search and rescue in collapsed structures, multinational medical treatment, epidemic-control work, and emergency communications. It does not name the Chinese unit involved, say how many personnel were sent, or spell out whether they participated in every part of the wider exercise. [Record 4392]
+          
+          That gap between the two accounts is analytically useful. Singapore shows what the ADMM-Plus exercise was designed to encompass. China shows a more specific slice of what its own military said it would do inside that framework.
+          
+          There is clear overlap in the way both sides describe the purpose of the event. The Singapore account emphasizes coordination among militaries and civilian agencies across several disaster-response functions. The Chinese announcement says the exercise was intended to strengthen multinational humanitarian-assistance coordination and improve regional disaster-response mechanisms. [Records 4935, 4392]
+          
+          But the overlap should not be stretched too far. The Chinese record does not say that its contingent took part in the cyber component, the maritime medical element, or every one of the three expert groups described by MINDEF. At the same time, its silence on those areas does not show that China stayed out of them. The two records simply do not answer that question.""",
               "why_it_matters": """Trident Resolve is useful because it gives a more concrete picture of regional defense cooperation than the usual language about dialogue, trust, or partnership.
-
-The official accounts describe militaries and civilian agencies working through search and rescue, field medicine, emergency communications, maritime medical support, cybersecurity, and other disaster-response functions inside a single ADMM-Plus exercise. Singapore’s account places those activities within a 19-country framework, while China’s narrows the picture to the tasks its own contingent was preparing to perform. [Records 4935, 4392]
-
-That makes the exercise a useful baseline for watching how ASEAN-led defense cooperation works in practice. The significance is not that all 19 participants suddenly shared a common strategic outlook. Nothing in these records points to agreement over regional threats, political disputes, or the broader security order.
-
-The same caution applies to military capability. Taking part in a field exercise is not the same thing as demonstrating improved combat interoperability or operational effectiveness. Neither record provides the kind of evidence needed to make those claims.
-
-What Trident Resolve does show is more grounded. China participated in a large ASEAN-led multilateral exercise that brought several strands of disaster-response cooperation together in one event, and its own announcement identified a specific set of tasks within that wider structure. That gives future exercises something concrete to compare against.""",
+          
+          The official accounts describe militaries and civilian agencies working through search and rescue, field medicine, emergency communications, maritime medical support, cybersecurity, and other disaster-response functions inside a single ADMM-Plus exercise. Singapore’s account places those activities within a 19-country framework, while China’s narrows the picture to the tasks its own contingent was preparing to perform. [Records 4935, 4392]
+          
+          That makes the exercise a useful baseline for watching how ASEAN-led defense cooperation works in practice. The significance is not that all 19 participants suddenly shared a common strategic outlook. Nothing in these records points to agreement over regional threats, political disputes, or the broader security order.
+          
+          The same caution applies to military capability. Taking part in a field exercise is not the same thing as demonstrating improved combat interoperability or operational effectiveness. Neither record provides the kind of evidence needed to make those claims.
+          
+          What Trident Resolve does show is more grounded. China participated in a large ASEAN-led multilateral exercise that brought several strands of disaster-response cooperation together in one event, and its own announcement identified a specific set of tasks within that wider structure. That gives future exercises something concrete to compare against.""",
               "what_was_routine": """Chinese participation itself should not be treated as a strategic breakthrough. The Chinese announcement presents the deployment as part of an established multilateral mechanism and focuses on humanitarian assistance and disaster response, not on a new combat mission or a change in force posture. [Record 4392]
-
-Singapore’s account makes the same institutional setting clear from the other direction. MINDEF describes Trident Resolve as an ADMM-Plus exercise and notes that the framework has existed since 2010 as a platform for practical defense cooperation. [Record 4935]
-
-What was less routine was the way this particular exercise was organized. MINDEF called it the largest ADMM-Plus exercise in a decade by personnel participation and the first field training exercise to combine the Cyber Security, HADR, and Military Medicine expert groups. Those are meaningful descriptions of Trident Resolve itself, but they do not justify a broader claim that ADMM-Plus cooperation has entered a fundamentally new phase. [Record 4935]
-
-The Chinese account is similarly limited. It tells us what China planned to do during this exercise, but not whether Beijing had expanded its role compared with earlier ADMM-Plus exercises. Without a personnel figure, unit identity, or direct comparison with past participation, the record does not support that larger conclusion.""",
+          
+          Singapore’s account makes the same institutional setting clear from the other direction. MINDEF describes Trident Resolve as an ADMM-Plus exercise and notes that the framework has existed since 2010 as a platform for practical defense cooperation. [Record 4935]
+          
+          What was less routine was the way this particular exercise was organized. MINDEF called it the largest ADMM-Plus exercise in a decade by personnel participation and the first field training exercise to combine the Cyber Security, HADR, and Military Medicine expert groups. Those are meaningful descriptions of Trident Resolve itself, but they do not justify a broader claim that ADMM-Plus cooperation has entered a fundamentally new phase. [Record 4935]
+          
+          The Chinese account is similarly limited. It tells us what China planned to do during this exercise, but not whether Beijing had expanded its role compared with earlier ADMM-Plus exercises. Without a personnel figure, unit identity, or direct comparison with past participation, the record does not support that larger conclusion.""",
               "what_im_watching_next": """The most useful follow-up would be an official Chinese account published after the exercise. That could show which units or services actually participated, how many personnel were involved, what activities they completed, and whether the Chinese contingent took part in parts of Trident Resolve that were absent from the pre-exercise announcement. [Record 4392]
-
-An exercise-conclusion account from Singapore or another organizer would answer a different set of questions. It could show how closely the actual exercise matched the planned activities and whether officials offered any assessment of the combined Cyber Security, HADR, and Military Medicine format. [Record 4935]
-
-The longer-term question is whether this structure repeats. If future ADMM-Plus exercises continue combining several expert groups and military-civilian functions in the same field exercise, Trident Resolve may look less like a one-off format and more like part of a broader institutional pattern.
-
-For now, the narrower finding is enough. Singapore’s account shows the regional scale and structure of Trident Resolve, while China’s shows what its own military publicly said it would contribute. Together, they offer a useful picture of how one large ASEAN-led exercise looked from the perspective of the organizer and one of its major participants.""",
+          
+          An exercise-conclusion account from Singapore or another organizer would answer a different set of questions. It could show how closely the actual exercise matched the planned activities and whether officials offered any assessment of the combined Cyber Security, HADR, and Military Medicine format. [Record 4935]
+          
+          The longer-term question is whether this structure repeats. If future ADMM-Plus exercises continue combining several expert groups and military-civilian functions in the same field exercise, Trident Resolve may look less like a one-off format and more like part of a broader institutional pattern.
+          
+          For now, the narrower finding is enough. Singapore’s account shows the regional scale and structure of Trident Resolve, while China’s shows what its own military publicly said it would contribute. Together, they offer a useful picture of how one large ASEAN-led exercise looked from the perspective of the organizer and one of its major participants.""",
               "cross_desk_claims": [
                   {
                       "claim": "Singapore MINDEF and PLA Daily describe the same ADMM-Plus exercise at different levels: MINDEF gives the exercise-wide scale and structure, while PLA Daily gives the Chinese contingent’s narrower participation window and disaster-response tasks.",
@@ -154,7 +149,7 @@ For now, the narrower finding is enough. Singapore’s account shows the regiona
                   ],
               },
           })
-
+          
           out.write_text(json.dumps(draft, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
 
@@ -167,10 +162,7 @@ For now, the narrower finding is enough. Singapore’s account shows the regiona
 
       - name: Run focused Brief regression tests
         run: |
-          python -m unittest \
-            tests.test_brief_publication \
-            tests.test_briefs_collection \
-            tests.test_ipr_briefs -v
+          python -m unittest             tests.test_brief_publication             tests.test_briefs_collection             tests.test_ipr_briefs -v
 
       - name: Assert production corpus and rendered output unchanged
         run: |
