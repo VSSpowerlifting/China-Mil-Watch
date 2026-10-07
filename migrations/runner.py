@@ -268,10 +268,7 @@ def verify(conn: sqlite3.Connection) -> Dict[str, object]:
         "max_run_id": scalar("SELECT IFNULL(MAX(id), 0) FROM scrape_runs"),
     }
 
-    for extra in (
-        "desks", "institutions", "source_run_results", "record_topics",
-        "schema_migrations",
-    ):
+    for extra in ("desks", "institutions", "source_run_results", "schema_migrations"):
         out["counts"][extra] = (
             scalar("SELECT COUNT(*) FROM %s" % extra) if table_exists(extra) else None
         )
