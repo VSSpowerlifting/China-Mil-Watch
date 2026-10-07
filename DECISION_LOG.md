@@ -329,6 +329,27 @@ dated now, not backdated to the September reporting window.
 After live verification, proceed to the whole-background topographic frontend
 treatment as a separate change. It is not bundled into the Brief release.
 
+## 2026-10-05 — One-time wording-level Humanizer pass authorized for Nos. 1–14
+
+**Owner ruling (Ben, 2026-10-05).** One wording-level Humanizer (v2.8.2) pass
+over the authored prose of the 14 existing weekly issues (Nos. 1–14,
+2026-05-09 through 2026-08-15) is explicitly authorized. For this pass only,
+it supersedes the "punctuation and sentence boundaries only" limit in
+condition 3 of the 2026-08-11 ruling. Everything else in that ruling stands:
+explicit instruction, authored prose fields only, mechanical verification,
+re-render and re-gate, and no change to any claim, number, name, date, unit
+or quoted language. Source: owner message to Claude Code, 2026-10-05.
+
+Held fixed: titles, `source_trail`, media, author and publication fields,
+and every date, issue number and count. No. 14's 3 October 2026 correction
+paragraph stays byte-identical. Attributions, qualifiers and evidentiary
+limits ("does not establish", "cannot assess") keep their meaning. The
+LinkedIn companion files are outside this pass.
+
+This is not a standing rule and does not make the Humanizer a publishing
+gate. Whether it becomes a required step for future issues is a separate
+decision.
+
 ## 2026-10-03 — No. 14 approved; reviewed corrections authorized for publication
 
 **Owner ruling (Ben, 2026-10-03, America/Chicago).** “approve No. 14 and
