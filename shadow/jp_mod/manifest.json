@@ -106,9 +106,8 @@
         "en"
       ],
       "declared_scope": [
-        "Declared so the Joint Staff stays distinguishable from the ministry's own",
-        "Japanese estate. NOT collected and NOT reachable: the index is served behind",
-        "an interactive challenge (403), and no RSS route for it is known.",
+        "Declared so the Joint Staff stays distinguishable from the ministry's own Japanese estate.",
+        "NOT collected. GitHub Actions re-probe 2026-10-07: robots permits /js/, but the English index returned HTTP 403 with Cf-Mitigated: challenge.",
         "No item from this source has ever been collected."
       ]
     },
@@ -128,20 +127,20 @@
       ],
       "declared_scope": [
         "Declared so the English estate stays distinguishable from the Japanese one.",
-        "NOT collected and NOT reachable: served behind an interactive challenge (403).",
+        "NOT collected. The MOD HTML estate remains challenge-gated for the GitHub-hosted collector; no bypass is authorized.",
         "No item from this source has ever been collected."
       ]
     }
   ],
   "access_notes": [
-    "Access qualified 2026-08-26, one honest request per endpoint.",
-    "robots.txt: 200, disallows only /a/ and /sp/j/ — every path used here is permitted.",
+    "Access initially qualified 2026-08-26 and re-probed from GitHub Actions on 2026-10-07.",
+    "robots.txt: 200, disallows only /a/ and /sp/j/ — every tested Japan route is permitted.",
     "RSS feeds: 200, application/xml, 304 on If-None-Match.",
     "PDF documents: 200, application/pdf.",
-    "HTML documents: 403 with Cf-Mitigated: challenge, on /j/, /en/ and /js/ alike.",
-    "Consequence, measured across news.xml: 8 of 142 items (6%) are PDF and carry",
-    "full text; 134 of 142 (94%) are HTML and are recorded as titled, dated",
-    "discovery records with no body. This is partial retrieval, not coverage.",
+    "HTML documents: challenge-gated for the declared GitHub-hosted collector.",
+    "2026-10-07 bounded Actions probe: /js/press/, /js/press/index-en.html, /msdf/en/news/2026.html and /asdf/en/news/ each returned 403 with Cf-Mitigated: challenge after a readable 200 robots.txt.",
+    "Probe run 37678838045; artifact 11508166487; no redirects followed and no linked documents fetched.",
+    "Consequence, measured across news.xml: 8 of 142 items (6%) are PDF and carry full text; 134 of 142 (94%) are HTML and are recorded as titled, dated discovery records with no body. This is partial retrieval, not coverage.",
     "The challenge is not solved, worked around, or retried."
   ]
 }
