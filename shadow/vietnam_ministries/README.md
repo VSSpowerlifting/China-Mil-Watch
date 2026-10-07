@@ -1,9 +1,12 @@
 # Vietnam ministry shadow research
 
-This manifest is outside `desks/` and is read only by the local ministry runner.
-Vietnam remains `research`; the original Government News English pilot is
-retained in `shadow/vietnam/`. No ministry workflow, production registration or
-remote state branch is created here.
+This manifest stays outside `desks/`. Vietnam remains `research`; the original
+Government News English pilot is retained in `shadow/vietnam/`. The prepared
+`vietnam_ministry_shadow.yml` is dispatch-only and main-only, using one serial
+batch and separate source branches. It has not been activated; no ministry
+remote state branch or production registration is created by this readiness work.
+The exact first-run proposal and owner decisions are in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
 
 | Institution | Bounded surface | Engineering result |
 |---|---|---|
@@ -39,13 +42,20 @@ Example (only after recording an appropriate request budget):
   --out-dir /tmp/vn-mps-review
 ```
 
-The review is deterministic, read-only and bound to one source. It verifies
+The `--state-dir` review is deterministic, read-only and bound to one source. It verifies
 input/capture hashes, database integrity, versions, original-text assembly,
 observations, source metadata and clock ownership. It explicitly labels itself
 **local rehearsal only**: it verifies no remote commit or checkpoint and gives
 no signoff or qualification. The Government News formal review path is unchanged.
-Ministry remote activation and a formal commit-bound review path are a later
-phase, after owner decisions on visibility, rights and periodic identity.
+Formal mode uses `--state-repo`, `--state-commit`, `--checkpoint` and `--as-of`
+instead of `--state-dir`. It exports only the named commit's objects, verifies
+reachability from the selected source's fixed branch, and emits deterministic
+Day 7/14/30 complete-corpus packets with a blank structured signoff. Early packets
+cannot complete a checkpoint. `--check-signoff` validates a human's answers;
+it publishes nothing and qualifies nothing. See the activation proposal for
+commands, budgets, state/artifact visibility and publication failure behavior.
+Remote activation still requires owner decisions on visibility, rights, identity
+and dispatch; local rehearsal clocks are never transferred.
 
 Only the published first page/feed is requested. The oldest item must precede
 the window start, otherwise discovery fails without fetching. Quiet means an

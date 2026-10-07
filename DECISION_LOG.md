@@ -4,6 +4,20 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Vietnam remote readiness and ministry formal-review preparation
+
+Ben authorizes scoped code/tests/docs commits, push and a tested draft PR from
+current main after #107's merge. This phase prepares commit-bound ministry
+checkpoint packets and a bounded, dispatch-only, isolated remote state path.
+The exact proposed first operation and owner choices are in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
+
+No main merge, remote dispatch, schedule, production admission, DB/output change,
+regeneration or deployment is authorized. Public state-byte retention and
+collector identity remain undecided for these hosts. Local rehearsal clocks
+remain local evidence, never remote reliability day zero or completed human
+review. Defence and Finance are not probed again and scope is not expanded.
+
 ## 2026-10-07 — Vietnam ministry engineering continuation; activation unchanged
 
 **Owner direction (Ben, this continuation):** continue the Vietnam Desk work
