@@ -1,0 +1,210 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 40,
+ "captures": [
+  {
+   "content_type": "text/plain; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 68,
+   "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+   "retrieved_at": "2026-10-07T23:05:55+00:00",
+   "role": "robots",
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "application/xml; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 13397,
+   "payload_sha256": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+   "retrieved_at": "2026-10-07T23:05:57+00:00",
+   "role": "listing",
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 421555,
+   "payload_sha256": "1460a1efb82e09ec28363158679c7dc97c7107f313054f61cfe3188c8c171d85",
+   "retrieved_at": "2026-10-07T23:06:00+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199677",
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 428051,
+   "payload_sha256": "07751ddee5728fd09e3b13a25bcd6f918da9f0f62678e317d0b73585a9f5868f",
+   "retrieved_at": "2026-10-07T23:06:03+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199100",
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  },
+  {
+   "content_sha256": "3ba9014700628d467872322bb7182d182f1bee17caea66ecb5e8f9e9ad177726",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 433938,
+   "payload_sha256": "072cd0783197b6bf6f29678f2a997380977dd085b8ead5647a78d5cc58d89a08",
+   "retrieved_at": "2026-10-07T23:06:06+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1790933646",
+   "url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "e9db628650b281786458d16d79db74fe0f664fe7",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "mps-vi-content-v1",
+ "corpus_range": [
+  "2026-10-02",
+  "2026-10-05"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:33+00:00",
+ "desk_id": "vietnam",
+ "discovered": 3,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-07T23:06:07+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 10,
+  "listed": [
+   [
+    "1791199677",
+    "2026-10-05"
+   ],
+   [
+    "1791199100",
+    "2026-10-05"
+   ],
+   [
+    "1790933646",
+    "2026-10-02"
+   ],
+   [
+    "1790758318",
+    "2026-09-30"
+   ],
+   [
+    "1790748442",
+    "2026-09-30"
+   ],
+   [
+    "1790579880",
+    "2026-09-28"
+   ],
+   [
+    "1790397583",
+    "2026-09-26"
+   ],
+   [
+    "1790323608",
+    "2026-09-24"
+   ],
+   [
+    "1790323191",
+    "2026-09-24"
+   ],
+   [
+    "1790132836",
+    "2026-09-23"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+  "newest_listed": "2026-10-05",
+  "oldest_listed": "2026-09-23",
+  "pages_read": 1,
+  "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+  "selected": 3,
+  "window_end": "2026-10-07",
+  "window_start": "2026-10-01"
+ },
+ "listing_status": "ok",
+ "lookback_days": 6,
+ "new_records": 1,
+ "request_ceiling": 42,
+ "requests": [
+  {
+   "bytes": 68,
+   "ended_utc": "2026-10-07T23:05:55.078653+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T23:05:53+00:00",
+   "started_utc": "2026-10-07T23:05:53.631884+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 13397,
+   "ended_utc": "2026-10-07T23:05:57.414824+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T23:05:57+00:00",
+   "started_utc": "2026-10-07T23:05:57.081609+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "bytes": 421555,
+   "ended_utc": "2026-10-07T23:06:00.698655+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T23:05:59+00:00",
+   "started_utc": "2026-10-07T23:05:59.417789+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "bytes": 428051,
+   "ended_utc": "2026-10-07T23:06:03.571307+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T23:06:02+00:00",
+   "started_utc": "2026-10-07T23:06:02.702352+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  },
+  {
+   "bytes": 433938,
+   "ended_utc": "2026-10-07T23:06:06.892255+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T23:06:05+00:00",
+   "started_utc": "2026-10-07T23:06:05.669359+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646"
+  }
+ ],
+ "result": "ok",
+ "retrieved": 3,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "37700200951-1",
+ "selected": 3,
+ "shadow_day": 0,
+ "source_slug": "vn_mps_foreign_affairs_vi",
+ "started_utc": "2026-10-07T23:05:53+00:00",
+ "state_sha256_after": "036a6db16884dce0c75fe60dbefddf8ad6ba195c87745182cc579332a1845e1d",
+ "state_sha256_before": "f487ab206de2c9a60bc4559ac0c8bc0cad78b4695dad23a871afbf3e2c56ecb4",
+ "stored_total": 3,
+ "target_date": "2026-10-07",
+ "target_date_source": "schedule-slot",
+ "unchanged": 2,
+ "versions_total": 3,
+ "window_start": "2026-10-01"
+}
