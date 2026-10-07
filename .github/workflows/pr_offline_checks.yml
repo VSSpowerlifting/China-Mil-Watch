@@ -62,6 +62,10 @@ concurrency:
 
 jobs:
   offline-checks:
+    # Draft iterations allocate no runner. ready_for_review runs this same full
+    # gate even without a new commit; every later synchronize runs it again.
+    # A skipped draft check is never full-suite evidence for an exact-head merge.
+    if: ${{ github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
 
