@@ -356,7 +356,8 @@ def _ranges(days):
     return [[a.isoformat(), b.isoformat()] for a, b in out]
 
 
-def validate_runs(state_dir: Path, ledgers: list, db_sha: str) -> tuple:
+def validate_runs(state_dir: Path, ledgers: list, db_sha: str,
+                  content_hash_rule: str = CONTENT_HASH_RULE) -> tuple:
     """Clock, ledger identity, results, chain, continuity and window coverage."""
     a, facts = [], {}
     try:
@@ -400,9 +401,9 @@ def validate_runs(state_dir: Path, ledgers: list, db_sha: str) -> tuple:
         if e["collector_identity"] != USER_AGENT:
             a.append("%s: collector identity %r is not the declared one"
                      % (name, e["collector_identity"]))
-        if e["content_hash_rule"] != CONTENT_HASH_RULE:
+        if e["content_hash_rule"] != content_hash_rule:
             a.append("%s: content hash rule %r is not %s" % (name, e["content_hash_rule"],
-                                                             CONTENT_HASH_RULE))
+                                                             content_hash_rule))
         if e["request_ceiling"] != e["cap"] + 2 or len(e["requests"]) > e["request_ceiling"]:
             a.append("%s: %d request(s) against a ceiling of %r for cap %r"
                      % (name, len(e["requests"]), e["request_ceiling"], e["cap"]))
