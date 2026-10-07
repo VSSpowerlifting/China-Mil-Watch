@@ -11,7 +11,7 @@ Isolation is the point. This script:
   * writes only inside `--state-dir`, which must be OUTSIDE the repository
     working tree: a state file committed to `main` is exactly the leak the
     isolation exists to prevent
-  * is not called by `pipeline.py` and is not scheduled by any workflow
+  * is not called by `pipeline.py`; only the isolated AFP shadow workflow schedules it
 
 What it preserves, per article:
 

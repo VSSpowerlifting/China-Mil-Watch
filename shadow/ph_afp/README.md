@@ -1,25 +1,35 @@
 # Philippines — AFP shadow collector
 
-**Prepared for review, disabled and unscheduled.** No production desk, public
-coverage or graduation is implied. `shadow/ph_afp/manifest.json` is outside
-`desks/`, with source `enabled: false` and desk `active: false`. The normal CLI
-refuses that disabled source before requests or state creation. Offline tests
-inject an adapter; they do not activate the manifest.
+**Status: scheduled shadow reliability evaluation. Not production.**
+Owner authorization is recorded in `DECISION_LOG.md` (2026-10-06). **Activation
+is pending the scheduling PR's separate reviewed merge; no AFP cron is live yet.**
+The manifest is outside `desks/`, with source `enabled: true` for shadow collection
+and desk `active: false`. Production discovery, DB, rendered site and deployment
+are untouched; no public Philippines coverage or qualification is implied.
 
-The manual `.github/workflows/ph_afp_shadow.yml` runs only on
-`workflow_dispatch`, on GitHub-hosted Ubuntu. It has **no cron** and has not
-run in Actions. Normal collection remains manifest-disabled; an explicit
-manual `--rehearsal` permits at most two samples from a window of at most
-14 days. Discovery still walks the entire listing and reconciles its terminal
-count. The ledger distinguishes discovered, selected and sample-unselected
-items. This sample cannot start or advance the reliability clock and makes
-no complete-window retrieval claim. An empty recent window fails because
-article egress remains unverified.
+The proposed `.github/workflows/ph_afp_shadow.yml` accepts exactly two events:
 
-`publish_state` defaults to **false**: evidence stays in external temporary
-state and a 90-day Actions artifact. Selecting true permits verified public
-state publication only to `shadow/ph-afp`, with append-only, non-force history.
-No AFP state branch or day zero has been established by this integration.
+| Event | Collection | State publication | Clock |
+|---|---|---|---|
+| `schedule`, daily `40 6 * * *` (06:40 UTC) | Normal eligible 14-day window, cap 100, existing 14-day revision watch | Automatic after collection success and completed-attempt verification | Only complete normal success is eligible |
+| `workflow_dispatch` | Rehearsal, at most two recent bodies, same complete listing | Artifact-only by default; explicit `publish_state=true` opts in after success/verification | Never starts or advances collecting days |
+
+The scheduled invocation passes `--event-name schedule --cron-utc "06:40"`
+through the existing shared logical-date resolver; YAML duplicates no date logic.
+Manual target-date input remains optional. An undated rerun is refused, rather
+than assigned a new logical date. A manual dispatch remains a rehearsal even
+with explicit state publication; it is not a normal recovery/backfill mode.
+The first scheduled run may initialize the orphan `shadow/ph-afp` branch.
+No 1,090-record historical body backfill is part of activation.
+
+Both modes inspect fresh policy and reconcile the full terminal listing. Successful
+scheduled collection retrieves the entire eligible window subject to the visible
+cap; manual sampling records `sample_unselected`. Every attempt preserves evidence
+in a 90-day artifact. Failed/partial collection or failed verification prevents
+state publication; existing durable state stays unchanged and failure artifacts
+remain inspectable. Publication is explicit, non-force and confined to `state/`
+on `shadow/ph-afp`; a divergent writer fails. No branch or clock is initialized
+merely by merging source. No AFP durable branch existed at the reviewed rehearsal.
 
 ## Source and scope
 
@@ -66,9 +76,9 @@ The owner-approved collector identity is:
 `IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org/about.html; research archive collector; contact via site)`.
 The canonical domain is in `README.md`/`PROJECT_STATE.md`; the existing About
 page exposes the maintainer email from `site/preview/generate_preview.py`.
-No contact route is invented. This new identity has been tested offline;
-its live Actions acceptance remains unverified. The October 6 original
-captures used the previous China Mil Watch shadow identity.
+No contact route is invented. Actions rehearsal `37527985057` accepted this
+identity on October 6. The earlier retained offline replay captures used the
+previous China Mil Watch shadow identity; they are separate measurements.
 
 Direct official infrastructure only: the HTTP session disables environment
 proxy inheritance and clears session proxies. No proxy, alternate egress,
@@ -135,8 +145,8 @@ failure stops. Before collection it hashes historical files and database rows.
 correct collector/attempt identity, old-file and old-row preservation, capture
 payload hashes, original request payloads, the closed DB hash, valid clock
 behavior and no sidecars/unexpected files. A crash or failed verification cannot
-be pushed. Completed partial/failure evidence can be preserved while the job
-still reports failure. Publication uses a non-force explicit state ref; a
+be pushed. Completed partial/failure evidence remains in artifacts while the job reports
+failure; it is not published into durable state. Publication uses a non-force explicit state ref; a
 competing writer is rejected. Artifacts retain the failed attempt too.
 
 ## Verification and remaining gates
@@ -154,31 +164,56 @@ are from the September 26 pilot. Its discarded scratch-corpus counts remain
 producer-reported/unverified in
 [PR #79's historical receipt](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/b29e7edb047c30c8b878bca0069ba183424e2478/docs/AFP_PR79_OFFLINE_REPAIR_2026-10-01.md).
 
-Ben's October 6 decisions authorize direct API shadow evaluation, the honest
-IPR contact identity and public isolated state. Recurring collection and
-production remain unapproved. The required sequence is:
+## Live rehearsal and activation gate
 
-`review draft PR → explicitly authorize and merge shadow-only plumbing → manually dispatch rehearsal → inspect evidence → separately decide whether to enable recurring schedule`
+[Actions run 37527985057](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37527985057)
+on merged collector `cc8d36646af1e2eb6026a17eaefd20378585faac` succeeded:
+1,090 unique listing rows over eleven pages with terminal reconciliation,
+two bodies requested/retrieved (`afp:1398`, `afp:1397`), no challenge, access,
+extraction or identity/date mismatch. Fresh www robots returned HTTP 200/Allow;
+API robots matched the reviewed 404 and `noindex, nofollow` indexing header.
+Exact captures and the completed ledger are in
+[artifact 11442459154](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37527985057/artifacts/11442459154).
+State publication was disabled and `shadow_day` was null. The detailed reviewed
+checkpoint is [AFP Actions gate](../../docs/AFP_ACTIONS_GATE_2026-10-06.md).
+These measurements make no full-window body or historical completeness claim.
 
-[GitHub requires the dispatch workflow on the default branch](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
-Do not attempt to dispatch this unmerged branch or merge merely to force a run.
-After the reviewed merge is explicitly authorized and completed, run:
+The owner has reviewed that live evidence and authorized recurring shadow
+collection, isolated state and the scheduling PR. After clean exact-head CI,
+report for a separate merge authorization. Do not merge or dispatch another live
+run during this implementation step. Until the scheduling PR merges, default
+main still exposes only the prior manual rehearsal workflow.
 
-```bash
-gh workflow run ph_afp_shadow.yml --ref main -f publish_state=false
-```
+## Scheduling verification
 
-An older logical slot requires `-f target_date=YYYY-MM-DD`; an undated UI rerun
-is refused. The workflow fixes two samples and a 14-day lookback; it cannot
-request full historical article retrieval. Inspect both robots originals and
-API headers, complete listing/count reconciliation, sample identities/dates,
-exact payload hashes and captures, the finished ledger and immutable-history
-verification. Failed/incomplete attempts remain failures, including when their
-evidence is preserved. Artifacts must contain no credentials. No outreach is
-authorized or sent by this work.
+The focused AFP suite passes 238 tests, including execution of the actual YAML
+collection/bootstrap/publication shell blocks against original-payload fixtures
+and a local bare remote. It checks cron-aware date resolution, normal-window
+selection, failed/partial nonpublication and clock preservation, safe manual
+modes, exact cron, isolated refs and divergent writers. Local validation passes
+with the ten governed warnings; tracked DB/output/desks and DB sidecars are
+unchanged. The PR must also pass the full offline suite and validator on its
+exact final head before a separate merge authorization.
 
-Graduation additionally needs a sustained reliability interval, substantive
-AFP body sampling, publication-date/migration assessment, checkpoint review
-tooling for the Philippines, completed human checkpoints and an owner ruling
-in `DECISION_LOG.md`. NSC supplementation does not fill missing AFP bodies.
-DND/Coast Guard scope expansion is deferred until AFP has reliability evidence.
+## Seven-day reliability and human review
+
+After activation, require seven consecutive terminal-successful **scheduled**
+logical collection days, inspected through event provenance and ledgers rather
+than elapsed clock age. Listing reconciliation, access policy, truncation,
+identity/date failures and state history must have no unresolved failures.
+Artifacts and ledgers must be available; only verified complete successful runs
+may advance the state branch. A proven quiet window is not a failed day.
+
+During those days, manually inspect every newly inserted record if five or fewer
+are inserted, otherwise at least five representative new records. Keep durable
+review evidence tied to run, collector commit, source IDs and capture hashes,
+covering title fidelity, publisher date, body extraction, canonical/requested URL,
+identity, provenance, and absence of site furniture or invented text. Scheduling
+a collection does not perform or substitute for this human review.
+
+After seven days, produce a new readiness assessment covering reliability,
+human reviews, NSC supplementation, whether AFP + NSC provides sufficient breadth,
+another first-party Philippine source, and whether historical backfill should
+precede production activation. No automatic graduation: standing qualification
+and owner sign-off gates remain. NSC does not fill missing AFP bodies. Japan
+source coverage is a separate task.

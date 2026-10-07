@@ -1300,11 +1300,11 @@ class TestContractCollect(unittest.TestCase):
         self.assertEqual(result.status, st.LISTING_FAILURE)
         self.assertEqual(docs, [])
 
-    def test_the_manifest_declares_a_shadow_source_that_is_not_enabled(self):
+    def test_the_manifest_enables_only_the_isolated_shadow_source(self):
         m = json.loads((REPO_ROOT / "shadow" / "ph_afp" / "manifest.json"
                         ).read_text(encoding="utf-8"))
         src = m["sources"][0]
-        self.assertFalse(src["enabled"])
+        self.assertTrue(src["enabled"])
         self.assertEqual(src["adapter"], "scraper.sources.ph_afp:PHAfpAdapter")
         self.assertEqual(m["desk"]["public_status"], "shadow")
         self.assertFalse(m["desk"]["active"])

@@ -1,6 +1,12 @@
 # AFP shadow integration — 2026-10-06
 
-**AFP shadow evaluation only; manual rehearsal plumbing is owner-approved.**
+**Historical integration receipt.** The manual plumbing described here merged
+in #109; live Actions rehearsal `37527985057` succeeded. Recurring shadow
+collection was subsequently owner-authorized; its implementation and separate
+merge gate are documented in `shadow/ph_afp/README.md` and `DECISION_LOG.md`.
+The source hashes below describe the integration head, before scheduling changes.
+
+**Original integration scope: AFP shadow evaluation only; manual rehearsal plumbing is owner-approved.**
 No Philippine production desk, new institution adapter, production collection,
 deployment or scheduled run is created. NSC remains supplemental. Japan source
 research is outside this integration.
