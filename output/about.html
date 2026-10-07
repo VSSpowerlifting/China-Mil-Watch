@@ -30,6 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="topography.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,12 +54,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html" aria-current="page">About</a></li>
     </ul>
     </nav>
@@ -67,12 +68,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html" aria-current="page">About</a></li>
     </ul>
         </nav>
@@ -80,27 +81,30 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,715</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,995</dd></div>    </dl>
+        <dd>4,927</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,229</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      152 in full &rarr;</a></p>
+      161 in full</a></p>
   </div>
-</div>
-<main id="main">
+</aside>
+<main id="main" style="--topo-size: 1482px; --topo-offset: -378px; --topo-x: 62%; --topo-flip: -1; --topo-wash-x: 35%; --topo-wash-y: 50%; --topo-duration: 38s">
+  <div class="topography" aria-hidden="true"></div>
   <div class="wrap">
-<h1>About</h1>
+<header class="page-head">
+<h1 class="page-name">About</h1>
 <p class="lede">Official defense and security texts, preserved as published and analyzed in context.</p>
-
+</header>
+<div class="prose">
 <h2 class="plain">What this project does</h2>
 <p>Indo-Pacific Record preserves official defense and security texts, with translations where available, and
 records what collection found, missed, or could not retrieve. Collection gaps are published because
@@ -134,20 +138,52 @@ occurred. Coverage is selective.</p>
 patched on the rendered page.</p>
 
 <h2>Citing this archive</h2>
-<p class="cite-line">Snapshot — 2026-09-28. Cite as: Indo-Pacific Record. Research Atlas corpus. Snapshot — 2026-09-28. 4,715 records. Benjamin Yang, Creator and Editor.</p>
+<p class="cite-line">Snapshot — 2026-10-06. Cite as: Indo-Pacific Record. Research Atlas corpus. Snapshot — 2026-10-06. 4,927 records. Benjamin Yang, Creator and Editor.</p>
 <p class="meta">Use the snapshot date rather than a version number; no versioning rule has been
 established.</p>
 <p>Record-level and edition citation formats, the meaning of every stored field, and the corpus
 changelog are in the <a href="corpus-guide.html">Corpus Guide</a>.</p>
+</div>
   </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

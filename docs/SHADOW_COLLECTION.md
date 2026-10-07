@@ -13,6 +13,41 @@ public promotion, and neither may be described as coverage.
 | **Singapore MINDEF** | `shadow/singapore-mindef` | `scripts/shadow_collect.py` | `singapore_shadow.yml` | `shadow/singapore_mindef/README.md` |
 | **Japan MOD** | `shadow/jp-mod` | `scripts/shadow_collect_japan.py` | `japan_shadow.yml` | `shadow/jp_mod/README.md` |
 
+Ben approved public Philippines NSC shadow state in this repository on
+2026-10-02, using `shadow/ph-nsc`, `scripts/shadow_collect_ph_nsc.py` and
+`ph_nsc_shadow.yml`, with the existing full collector identity unchanged. The
+activation merged in PR #96; scheduled/manual collection is enabled. The first
+[post-merge run](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
+verified robots/listing egress and initial state persistence with zero article
+requests in a quiet window. “Private” was planning shorthand for nonproduction,
+not a confidentiality requirement: Git state and Actions artifacts are public,
+and no shadow record enters the published site or production collection. No
+private remote or new credentials are needed. The bounded post-merge verification
+procedure and remaining evidence gates are in `shadow/ph_nsc/README.md`.
+
+Ben authorized committing the Indonesia/South Korea candidates, opening their PR
+and establishing fresh durable shadow collection in this repository on 2026-10-06.
+The state branches are `shadow/indonesia-kemhan` and `shadow/korea-policy-briefing`;
+both use `scripts/shadow_collect_desk.py` from its immutable implementation commit.
+Initial native collections from collector `5ddca377e` published fresh state and
+were verified from clean remote clones; no rehearsal state was transferred. The
+`indonesia_korea_shadow.yml` merged in PR #110 and remains manual-only and
+main-only. One bounded October 6 run per desk verified Actions egress and
+append-only publication on the existing state branches; all retrieved records
+were duplicates and the original clocks stayed unchanged. See
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
+Ben subsequently authorized daily shadow cadence at 17:17 UTC for Indonesia
+and 17:47 UTC for South Korea, retaining six lookback days and a forty-record cap.
+The dedicated cadence PR is pending; separate owner merge is the activation
+boundary. Scheduled runs refuse absent durable branches, databases or clocks,
+retain cron-aware dates and publish only successful append-only state. No manual
+dispatch, public declaration or promotion is authorized in this cadence phase.
+See `docs/INDONESIA_KOREA_CADENCE_PROPOSAL_2026-10-06.md`.
+Scope and limitations are in `shadow/id_kemhan/README.md` and
+`shadow/kr_policy_briefing/README.md`; DECISION_LOG records the authorization.
+Published commits and measured launch results are in
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+
 Each desk's manifest is authoritative for its sources; `desks/registry.json` is
 authoritative for its status and public presentation. Both are declared
 `shadow` there. Elapsed shadow days live in each desk's ledger and are
@@ -25,6 +60,10 @@ full, but HTML documents on the same host are returned behind an interactive
 challenge. Those items are stored as titled, dated discovery records with no
 body and nothing inferred. Partial retrieval is not coverage, and the challenge
 is never to be defeated — see §Access below.
+
+Japan enables only `jp_mod_news_ja` and `jp_mod_siteupdate_ja` in its shadow
+manifest. Its runner excludes disabled sources and `_not_collected` entries.
+The English MOD and Joint Staff sources remain disabled and not collected.
 
 ---
 
@@ -58,9 +97,12 @@ branch, no workflow and no day zero. See "Built but not launched" below.
    globs `desks/*/manifest.json`. A shadow manifest placed there would be
    written into the tracked database by `sync_desk_config()` on the next
    migration run, putting a non-collecting desk into public counts. It lives
-   under `shadow/` instead, and a test asserts `desks/` contains only `china`.
-2. **The source is `enabled: false`** in its own manifest, and its
-   `healthcheck()` reports `skipped_disabled`.
+   under `shadow/` instead; tests assert Japan and Philippines are absent
+   from production discovery.
+2. **Shadow enablement is separate from production admission.** Enabling a
+   source in a manifest outside `desks/` cannot admit it to production. Each
+   runner's source-participation rules are in its own scope document. The
+   structural production barrier is the manifest path, not an enabled flag.
 3. **The runner refuses to write inside the repository.**
    `scripts/shadow_collect.py` raises if `--state-dir` resolves under the repo
    root, so a state file cannot be committed to `main` by accident.

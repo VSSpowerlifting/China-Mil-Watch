@@ -1,31 +1,34 @@
 ---
-description: Indo-Pacific Record Brief workflow — scaffold, contract check, editorial QA; stops before approval. Briefs have no renderer or route yet.
+description: Indo-Pacific Record Brief workflow — readiness, editorial review, private preview, authorized approval, render and release verification.
 ---
 
-Run the Indo-Pacific Record Brief workflow. Follow
-docs/ARCHITECTURE_AND_PUBLISHING.md §7 and docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md
-§5b exactly. No new issue is authored or published as The PLA Watch
-(DECISION_LOG 2026-09-23); `scripts/generate_pla_watch.py` refuses.
+Use `docs/ARCHITECTURE_AND_PUBLISHING.md` §7 and the full
+`EDITORIAL_QA_CHECKLIST.md`. Existing issues retain their historical sources,
+addresses and attribution; no new issue is authored as The PLA Watch.
 
-1. Confirm preconditions: the concrete development the brief begins with, its
-   week, and the live desks it draws on — two or more, or one desk with an
-   owner-approved exception (who, when, why). State them and stop for
-   confirmation if the analyst has not specified them.
-2. Scaffold: `.venv/bin/python scripts/author_brief.py scaffold --desks …
-   --week-ending YYYY-MM-DD --out <path outside output/>`.
-3. The analyst writes the brief: keeps the trail entries it cites, records
-   `development` and each cross-desk claim with its citations, and writes the
-   prose. Never compose prose, titles or translations on the analyst's behalf.
-4. `.venv/bin/python scripts/author_brief.py check <path>` — must pass.
-5. Run EDITORIAL_QA_CHECKLIST.md top to bottom. Delegate the source-to-claim
-   and original-language checks to the `editorial-integrity-reviewer` agent
-   and include its verdict.
-6. **Stop.** Present the check and QA results. Do not assign an issue number,
-   commit, push, or deploy — the analyst decides. Numbering is blocked while
-   No. 14's publication status is unreconciled, and briefs have no renderer or
-   route yet; rendering is the next phase.
-
-Existing issues are re-rendered, never re-authored:
-`.venv/bin/python scripts/rerender_pla_watch.py --no-covers`, then
-`.venv/bin/python scripts/validate_output.py` (governed baseline in
-PROJECT_STATE.md).
+1. Recover existing work and recorded human instructions first. Scaffold only
+   if needed with `scripts/author_brief.py scaffold`, choosing the development,
+   reporting window ending Saturday, and contributing live desks from the brief.
+2. Finish the prose and source trail. `check` validates schema; `ready` also
+   requires finished prose, resolvable citations and exact stored source state.
+   Neither is editorial approval.
+3. Delegate source-to-claim and original-language review to the read-only
+   `editorial-integrity-reviewer`. Apply the full checklist and inspect the
+   actual article and Analysis pages at 1280 and 375 pixels.
+4. Render an unapproved candidate with `site/render.py --review-brief
+   briefs/<slug>.json --out <private scratch directory>`. This uses production
+   templates with a visible review notice, no number/approval, `noindex`, and
+   no native feed or sitemap. Ordinary rendering continues to withhold drafts.
+5. Follow authorization already given by the human. If approval is genuinely
+   missing, finish the exact review candidate before asking once. Never infer
+   approval of one artifact from approval of a different draft or fabricate it.
+6. With explicit approval, run `author_brief.py approve` with approving human,
+   actual date and approval reference. It assigns the next number from the
+   whole collection; repeat execution with identical evidence is unchanged.
+7. Run the production renderer and deploy validator. Separate source/docs/output
+   commits, prepare the PR and follow recorded merge/deploy authorization.
+   Existing deploy workflows publish committed output from main; no new
+   collection, API call or scheduled authoring flow is required.
+8. After deployment, fetch the actual article, Analysis, home, native feed and
+   sitemap. Check title, number, citations and version; only then report it as
+   published. Update `PROJECT_STATE.md` with actual status and remaining work.

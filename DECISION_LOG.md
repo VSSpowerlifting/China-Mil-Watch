@@ -4,6 +4,375 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-06 — Indonesia and South Korea daily shadow cadence authorized
+
+**Owner direction (Ben, this Codex chat):** "Authorize daily shadow collection
+at 17:17 UTC for Indonesia and 17:47 UTC for South Korea, retaining the six-day
+lookback and 40-record cap." This authorizes seven-day recurring shadow evaluation
+and the dedicated cadence commit, push and draft PR after syncing with main
+`ba5885c30e90ff05644a67b86eac01818de4be7d` (PR #112). Merge is the activation
+boundary and requires separate owner authorization. Stop this phase at a clean,
+mergeable, CI-verified draft PR; no merge or manual workflow dispatch is authorized.
+
+Keep the existing identifiable robots-gated native scopes, twenty-minute timeout,
+ninety-day artifacts, isolated public branches `shadow/indonesia-kemhan` and
+`shadow/korea-policy-briefing`, immutable originals/ledgers/first-success clocks,
+success-only atomic collection and explicit non-force state publication. Scheduled
+runs refuse missing branches, databases or clocks; they must not restart day zero.
+Cron-aware logical dates and explicit-date recovery preserve honest attempt times.
+This supersedes only the earlier scheduling exclusion. No production collection,
+DB/output change, deployment, desk promotion or additional desk/task is authorized.
+Human checkpoints, reuse review and qualification gates remain open.
+
+## 2026-10-06 — AFP scheduled shadow reliability evaluation authorized
+
+**Owner direction (Ben, scheduling continuation brief):** after reviewing live
+Actions rehearsal `37527985057` (1,090 reconciled rows, eleven pages, two successful
+body captures, reviewed robots/access state), authorize daily AFP shadow collection
+at **06:40 UTC**, isolated durable public state on `shadow/ph-afp`, direct official
+AFP infrastructure, evidence preservation and reliability evaluation. No proxy or
+access-control workaround. This supersedes the earlier manual-only scheduling
+restriction, not the access rules. The scheduling branch/PR may be committed and
+pushed; its exact final head needs clean CI and separate merge authorization.
+No cron is live until that PR is merged. No Philippines production desk, production
+DB integration, rendered publication, deployment, broader sources or historical
+body backfill is authorized. Manual rehearsals stay bounded and artifact-only by
+default; explicit `publish_state=true` may publish verified rehearsal state without
+starting the clock. Scheduled successful normal runs publish verified isolated
+state automatically. Partial/failed runs publish no durable state and retain
+artifacts; they cannot start or advance successful collection evidence.
+
+Require **seven consecutive terminal-successful scheduled collection days** before
+another readiness decision, with reconciled discovery, no unresolved access,
+identity/date or truncation failures, append-only state and accessible evidence.
+During that window, human review examines every newly inserted record when there
+are five or fewer, otherwise at least five representative new records; record
+fidelity/date/extraction/URL/identity/capture checks durably. Quiet publication days
+may succeed when discovery proves the window. The seven-day decision is an
+assessment, not qualification or automatic graduation; the existing qualification
+and owner sign-off gates remain. Assess AFP reliability, human reviews, NSC's
+supplemental role, source breadth, another first-party source and historical backfill
+before any later Philippines production decision. Japan remains outside this task.
+
+## 2026-10-06 — Indonesia and South Korea shadow state authorized
+
+**Owner direction (Ben, this Codex chat):** after reviewing the built candidates,
+"Next action: authorized commit/PR, followed by durable shadow collection."
+This authorizes committing/pushing the implementation, opening its PR and
+publishing fresh successful collection state to the public same-repository orphan
+branches `shadow/indonesia-kemhan` and `shadow/korea-policy-briefing`, using the
+full `IndoPacificRecord-ShadowCollector/0.1` identity documented in the execution
+receipt. Initial collection may run locally from the immutable collector commit;
+rehearsal state and clocks are not transferred. Existing ledgers and originals
+remain immutable. Indonesia's scope stays Kemhan Berita; South Korea's stays
+Policy Briefing's MND-labeled republications and linked HWPX documents. This
+direction does not authorize a main merge, schedule, deployment, public desk
+declaration or promotion. Source reuse terms and human checkpoints remain open;
+public Git state is evaluation evidence, not a claim of republication rights.
+
+## 2026-10-06 — AFP manual shadow evaluation constraints
+
+**Owner direction (Ben, continuation brief, 2026-10-06):** approve public
+first-party `api.afp.mil.ph` use for AFP shadow evaluation, direct official
+infrastructure only. No proxy, alternate egress, challenge solving, WAF bypass
+or access-control workaround. Fresh robots are read every run; relevant API
+policy headers and exact requested/final URLs and hashes are preserved. A
+material policy change or refusal stops collection for review.
+
+Use an honest Indo-Pacific Record research/archive identity with an existing
+project-controlled public contact route. Repository inspection confirms the
+canonical `indopacificrecord.org` domain and About page with the editor's
+public email. This authorizes the AFP identity change; other collectors are
+outside this task. Public same-repository `shadow/ph-afp` state is acceptable
+for official public content and collector metadata only, isolated from
+production with append-only, non-force history and honest failure evidence.
+Never merge that state branch into main.
+
+Prepare manual GitHub-hosted rehearsal plumbing with complete listing
+traversal and a very small recent article sample. No recurring cron, production
+desk/source activation, production DB/output changes, deployment or merge is
+authorized. Review the replacement draft PR, explicitly authorize its merge,
+then manually rehearse and inspect evidence before separately considering a
+schedule. Sample rehearsal does not establish a reliability day zero.
+
+## 2026-10-05 — Site typography adopts the opening title's setting
+
+**Owner direction (Ben, 2026-10-05):** implement proposal A — the titling
+register — site-wide, preserving the opening title and existing source-title
+capitalisation. This is the "possible later change" named in the opening
+title ruling below.
+
+1. The title face was already the site's face (Source Serif 4); what changes
+   is its setting. Short fixed English names — wordmark, footer name, hub
+   page names (`h1.page-name`) — take serif 600 in letter-spaced capitals.
+2. Serif display unifies on weight 600 with near-neutral tracking, replacing
+   §4's 700 / −0.01 to −0.015em rule.
+3. Capitals and tracking never reach record, source or Brief titles, the
+   homepage claim, Chinese or Japanese text, or the PLA Watch predecessor
+   pages. Page names opt in by class; there is no blanket heading selector.
+4. `intro.js` is unchanged and keeps its own styles; its computed type is
+   verified identical before and after.
+
+**Release (owner approval, Ben, 2026-10-05):** release #106 completely. The
+production render from main also carried #105's topographic backgrounds,
+whose entry below left release unauthorized; asked in session, Ben chose to
+release both together. Output `d8289a143`; deploy run 37404728604.
+
+## 2026-10-05 — Shared blue topographic backgrounds and gentle motion
+
+**Owner request (Benjamin Yang, Codex chat
+`01a10c6d-963d-7f61-8947-2dd75fe16ffe`).** Extend the homepage's blue
+geometric/topographic treatment across all subpages, replacing the margin
+grids; vary each page's profile subtly through scale, composition and
+gradients; animate the backgrounds slightly; add background detail to the
+large dark Analysis block. This authorizes the scoped gradient and ambient
+background-motion exception in `docs/VISUAL_AND_MOTION_SYSTEM.md`, retaining
+static no-JS, reduced-motion and `.no-anim` fallbacks and removing decoration
+in print and forced colors. Ben subsequently approved the private preview and
+explicitly authorized committing and pushing the source and docs in the same
+chat, then requested syncing the branch with main and opening a pull request.
+Production regeneration, merge into main and deployment remain unauthorized.
+
+## 2026-10-05 — Homepage opening title approved; scoped exceptions granted
+
+**Owner ruling (Ben, 2026-10-05, PR #103 review).** The opening title's
+visual direction is approved as implemented: the teal procedural ocean, the
+ship and wake, and the title typography. The title face stays as built;
+adapting the broader site typography to it is a possible later change, not
+part of this one.
+
+The exceptions documented in V&M §1.1 are approved **for this component
+only**, and set no precedent elsewhere: WebGL, generated imagery imitating
+photography, the ~2.4s sequence, temporary page coverage while it plays,
+and a separate `intro.js` cap of 12,000 bytes on the homepage.
+
+Loading rule: the intro is skipped whenever first contentful paint has
+already occurred. An already-visible homepage is never covered; the earlier
+400ms fade-in-after-paint window is removed.
+
+## 2026-10-05 — Desks page becomes a map (design change; owner-approved)
+
+**Owner-approved 2026-10-05 after screenshot review at 1440/1100/1024/768/375
+(PR #104).** The Desks page's card grid is replaced by a map of the
+Indo-Pacific with each declared desk's plate hung from where its publishing
+institutions sit. Constraints this sets for later work:
+
+1. **One map base, rights-cleared.** Natural Earth 1:50m country boundaries
+   (public domain; world-atlas 2.0.2 TopoJSON), clipped to 60°E–146°W,
+   54°N–47°S, generalized, Miller projection. `scripts/desk_map.py` writes
+   the committed `site/preview/templates/_desk_map_geo.svg`; the raw TopoJSON
+   is never committed and the site build never needs it. Boundaries are
+   Natural Earth's de facto lines and the page says no boundary claim is made.
+2. **Geography is not editorial.** `desks/geography.json` holds only the
+   Natural Earth country ids, the seat, its coordinates and plate placement.
+   Names, statuses, counts and scope stay in the registry and corpus.
+   `tests/test_desk_map.py` requires every public registry desk to be placed
+   and nothing else.
+3. **A point is a seat, not coverage.** Beijing, Tokyo, Singapore and Hawaii
+   (the US reference desk's command headquarters) mark where institutions are
+   based. Collecting desks get a filled point and solid leader; the others a
+   hollow point and dashed leader, so status never rests on colour.
+4. **No script.** Hover/focus pairing is CSS `:has()` from one generated rule
+   per desk; the map is `role="img"`, and its country links are mouse-only
+   duplicates of the plate links. The page reads fully without the map.
+
+## 2026-10-05 — First native Brief approved; release and next frontend task authorized
+
+**Owner ruling (Benjamin Yang, 2026-10-05, America/New_York).** The exact
+five-source candidate at `4bf960c4614b80289a1e3c1db2814f220d3201f1`,
+“Maritime Cooperation 2026: One Exercise, Two Official Accounts,” is approved
+with Benjamin Yang as editor. Source: owner message in Codex chat
+`01a10816-1238-7b03-89fb-9ef9cb3ccde6`.
+
+Assign the next available collection number (**15**, assigned by the approval
+command), retain the approved prose/evidence, render and validate, complete
+required checks, merge PR #100, deploy, and verify article/home/Analysis/native
+feed/sitemap live. This ruling approves this exact recovered version; it does
+not claim recovery of the earlier fourteen-source cloud artifact. Approval is
+dated now, not backdated to the September reporting window.
+
+After live verification, proceed to the whole-background topographic frontend
+treatment as a separate change. It is not bundled into the Brief release.
+
+## 2026-10-03 — No. 14 approved; reviewed corrections authorized for publication
+
+**Owner ruling (Ben, 2026-10-03, America/Chicago).** “approve No. 14 and
+publish the corrections.” Approval was received at 20:25:46 CDT
+(2026-10-04 01:25:46 UTC), after the completed review and corrected draft.
+
+Retain No. 14, its title, week ending 2026-08-15, retrospective designation,
+masthead attribution and existing URL. Publish the bounded migration in
+`scripts/correct_no14.py` and the matching companion text, with a visible
+correction note dated 3 October 2026. The preparation and source checks are
+recorded in `docs/NO14_CORRECTION_PREPARATION_2026-10-03.md`.
+
+The approved corrections remove unsupported vessel classification, exercise
+baseline/definition and footage attribution claims; distinguish preserved
+titles from defective Global Times bodies; attribute ministry-stated aims;
+state China Desk corpus scope; and show all four sources. Historical source
+bodies, Chinese titles, URLs and publication dates remain evidence as captured.
+
+This ruling reconciles the mismatch between the earlier draft-only record
+and the page served since 2026-09-05. Approval is recorded now, not backdated.
+Clear No. 14 from `UNRECONCILED_ISSUES`; 15 becomes the next available number,
+assigned only on a subsequent Brief's approval. No new Brief is approved here.
+The separate week-ending 2026-08-22 decision remains open.
+
+## 2026-10-02 — NSC public shadow settings; activation requires a separate PR
+
+**Owner ruling (Ben, 2026-10-02).** “Private” was earlier planning wording,
+not a confidentiality requirement. Use public `shadow/ph-nsc` state in the
+existing `VSSpowerlifting/China-Mil-Watch` repository, excluded from the
+published site, production collection and public corpus counts. Do not create
+a private remote or new credentials.
+
+Retain the existing full identity unchanged:
+`ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`.
+This approves that rehearsed header for periodic NSC shadow collection; it
+does not invent contact details or change the wider identity convention.
+
+Prepare, test and publish a separate activation PR removing the literal-false
+guard, with the bounded verification procedure in `shadow/ph_nsc/README.md`.
+Do not merge that PR or dispatch NSC during preparation. No run or day zero is
+claimed. Reliability, Actions egress, reuse/republishing review, historical
+completeness before 2026-06-03 and the earlier unresolved anomaly remain open.
+There is no promotion, public desk admission or qualification decision.
+
+## 2026-10-01 — Run-level LLM usage telemetry: accounting only, no behavior change
+
+Owner direction after the 2026-10-01 cost audit, which found that token usage
+existed only in a DEBUG log line and so production kept nothing: the audit had
+to reconstruct volumes from stored text lengths.
+
+1. **What it is.** `Analyzer` counts calls, failures and the four token
+   fields the API reports (input, output, cache creation, cache read) per
+   `(task, model)`, with explicit task labels `relevance`, `translation`,
+   `summary`, `categorization`. After the analysis stage `pipeline.py` logs one
+   INFO summary and writes one JSON record for the run to a runtime file
+   (`analysis/usage.py`; see 4). No article text, title, URL, prompt or key is
+   recorded; there is no per-article breakdown.
+2. **It changes nothing the pipeline does.** No model, prompt, threshold,
+   routing, queue, cap, retry or schema change, and nothing in `output/`.
+   Exception behavior of `_call` and `_call_tool` is preserved, including
+   `FatalAPIError`. The summary-versus-categorization merge and Haiku
+   categorization are **not** decided here; this exists so that decision can
+   rest on measurements.
+3. **Estimates, not invoices.** Cost comes from the table in
+   `analysis/pricing.py` (Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5 per MTok; 5-minute
+   cache write 1.25x and cache read 0.10x of input; verified 2026-10-01 against
+   the provider's pricing page). `scripts/spend_guard.py` now imports that table
+   instead of keeping its own. Nothing is fetched at run time, so a provider
+   price change is invisible until the table is edited. A model with no price
+   is listed in `unpriced_models` and the total is then an under-count.
+4. **Persistence: runtime file first, tracked file only in its own step.**
+   The pipeline never writes the tracked history. If `LLM_USAGE_RECORD_PATH`
+   names a file it writes the run's one record there, and the workflow points
+   it under `$RUNNER_TEMP`, outside the repository; if it is unset, which is
+   every local run, the summary is logged and nothing is written. So a local
+   run cannot dirty production state, and no tracked file is dirty while the
+   workflow's `git pull --rebase --autostash` steps run. A dedicated step
+   ("Commit LLM usage telemetry") runs after deploy and after the success
+   marker: it rebases, verifies the database without repairing it, appends the
+   validated runtime record as one line to `.github/state/llm_usage.jsonl`
+   (`scripts/append_llm_usage.py`), stages only that file and fails if anything
+   else is staged. The file is under `.github/state/`, not `output/`, so it is
+   never published. The step is `continue-on-error`: a telemetry commit that
+   cannot be pushed is a visible warning, never a red run, a rewritten marker
+   or a skipped Health gate. It runs on a failed pipeline too, because a run
+   that hit the spend limit is the run whose usage is worth keeping.
+5. **Failure semantics.** Ledger methods and `record_run_usage()` swallow their
+   own errors and log one warning; they never raise into analysis. The cost of
+   that choice is that a telemetry bug is a log warning, not a red run, so an
+   absent record in `llm_usage.jsonl` is the signal to look. A run that made no
+   model call writes no record, and a run that dies on an unhandled exception
+   before the analysis stage closes writes none either. Retries inside the
+   Anthropic SDK are not visible to the ledger.
+6. **Growth.** About 1.5 KB per run (about 0.5 MB a year at one record a day).
+
+## 2026-10-01 — Briefs-band Signal Veil: one decorative gradient exception on the home analysis band
+
+**Approved owner ruling (Ben, 2026-10-01).** The treatment and the exception
+below are accepted; the current visual treatment is the approved review
+baseline and is not to be strengthened or redesigned without a new direction.
+Owner direction: the dark "Latest analysis" band on the home page leaves its
+right side empty; give it a restrained, Indo-Pacific-Record atmosphere without
+changing layout, content or hierarchy.
+
+1. **What it is.** Two pseudo-elements on `.band[aria-labelledby="analysis"]`
+   in `site/preview/styles.css`: layered translucent swells with thin edge
+   lines, a dotted mesh and faint contours, painted from the band's own tokens
+   (`--accent`, `--focus-band`) with `color-mix`. No image, no `url()`, no
+   `<svg>`, no template change, no new token, no crimson, no motion.
+2. **Narrow exception to a standing rule.** `docs/DESIGN_SYSTEM.md` §6 says
+   the accent budget forbids gradients as decoration anywhere but the mark. This
+   veil is a gradient used as decoration, and the owner has approved it as an
+   exception scoped **only to the homepage Indo-Pacific Record Briefs band**
+   (`.band[aria-labelledby="analysis"]`). It does not repeal the general rule:
+   gradients remain forbidden as decoration on every other surface, including
+   other bands, the Analysis page and the Briefs pages, and any further use
+   needs its own ruling. The Ocean Signal Veil's masked photograph is a
+   different, already-sanctioned mechanism.
+3. **Constraints it keeps.** Inert (`pointer-events: none`, `z-index: -1` in
+   the band's own stacking context), inside the band's box (cannot overflow),
+   dropped in print and forced-colours. The full veil runs from 720px, in the
+   space the lead's column leaves free; below 720px that space is under 150px,
+   so only a quiet corner of fills remains (no lines, no mesh). No geographic
+   or radar imagery: every arc is centred off the box, and a coastline or map
+   is not attempted in CSS.
+4. **Measured, not judged.** Every text run in the band clears AA at the pixels
+   its glyphs cover at 375, 390, 430, 719, 720, 768, 900, 1024, 1280 and 1440,
+   and a long desk list in the byline and label (they have no measure of their
+   own) still clears it at 720, 768, 1024 and 1280. From 720px up the body runs
+   measure the same as the unveiled band (6.54:1 for the muted tone; the long
+   byline stress 6.04:1 at worst) and "All analysis" 8.67:1 against 8.97:1. The
+   weakest figure is the quiet corner on phones: the legacy note at 375 measures
+   5.52:1 against 6.54:1 unveiled. `tests/test_home_briefs_band_veil.py` holds
+   this, reusing the Ocean Signal Veil's glyph-pixel method.
+5. **Reversal.** Withdrawing the exception means deleting the "BRIEFS-BAND SIGNAL
+   VEIL" block in `styles.css`, `tests/test_home_briefs_band_veil.py`, and the
+   matching lines in `docs/DESIGN_SYSTEM.md` §6 and `PROJECT_STATE.md` §6a;
+   nothing else depends on them.
+
+## 2026-09-30 — The PLA Watch is absorbed into Indo-Pacific Record Briefs: one publication, no visible second archive
+
+**Owner direction (Ben, 2026-09-30).** Indo-Pacific Record Briefs is the single
+analysis publication. The PLA Watch is not a visibly separate archive or
+product: its existing issues are the earlier part of the same catalog, and
+their historical identity is provenance metadata, not a second hierarchy.
+This implements point 1 of the 2026-09-23 ruling ("a unified collection may
+display that provenance and never rewrites it") and reverses the presentation
+PR #86 gave it, which set the issues apart in a legacy-archive section and
+refused to let one lead.
+
+1. **One list.** The Analysis page and the home band use `collection.rows`:
+   native Briefs and earlier issues together, newest first by number, then week,
+   then address, each item once (a duplicate number, address or slug fails the
+   build). There is no "Historical PLA Watch Archive", "Legacy archive" or other
+   separated collection on either surface.
+2. **The newest item leads, by publication date.** `collection.lead` is the
+   item with the latest week ending, whichever series it began in and whether or
+   not it is numbered; issue number then slug only break ties. Today that is
+   No. 14. "Briefs in development" appears
+   only when the collection holds no item at all, never because there is no
+   native Brief. PR #86's rule that a PLA Watch issue may not lead is revoked.
+3. **Provenance is secondary metadata.** An earlier issue carries
+   "From the former series The PLA Watch · published under China Mil Watch" (or
+   "published by Indo-Pacific Record" for No. 14, from its stored publication
+   field, with its retrospective label). Stored
+   sidecars, titles, issue numbers, bylines, dates, source trails, citation
+   targets and URLs are unchanged; nothing is renumbered or rewritten.
+4. **Routes.** `/pla-watch.html` still resolves, because it is an established
+   address and alone carries each issue's citation. It is a compatibility bridge ("The PLA Watch is now part of Indo-Pacific
+   Record Briefs"): it points to Analysis, keeps the preservation notice and a
+   collapsed block of citation text under the anchors it always had, and lists
+   no issues of its own. No page, navigation or footer links to it. The feeds are unchanged: `briefs/feed.xml` carries native Briefs,
+   `the-pla-watch/feed.xml` keeps the earlier issues.
+5. **What this does not change.** No. 14's publication status is still
+   unreconciled (2026-09-23 point 9), and it now leads the page without a
+   recorded approval, which is an editorial exposure the owner should rule on.
+   `UNRECONCILED_ISSUES` and every Brief approval gate are untouched. The
+   historical pages' rendered output is not regenerated here.
+
 ## 2026-09-27 — Three public copy corrections, owner-approved
 
 **Owner ruling (Ben, 2026-09-27):** approve the corrections an independent

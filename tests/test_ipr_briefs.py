@@ -5,7 +5,7 @@ Five things are pinned here: the existing issues keep every mark of what they
 were published as; records are selected by the brief's named desks; each
 source-trail entry keeps its own desk and language; cross-desk claims cite each
 desk they compare and never infer coordination; and issue numbers are assigned
-at approval, never reassigned, and not assigned at all while No. 14's
+at approval, never reassigned, and not assigned at all while an existing issue's
 publication status is unreconciled.
 
 Fixtures are built, never borrowed: a scratch database made by the real
@@ -128,7 +128,7 @@ def complete(**changes):
 
 
 def approve(sidecar, collection, on="2026-09-27"):
-    """Approval as if No. 14 were already reconciled — simulated, not ruled."""
+    """Synthetic approval for contract tests; no production Brief is approved."""
     return bc.approve(sidecar, collection=collection, registry=LIVE,
                       approved_by="Owner (fixture)", approved_on=on,
                       unreconciled=frozenset())
@@ -705,12 +705,17 @@ class TestStableNumbering(unittest.TestCase):
         self.existing = list(existing_sidecars().values())
 
     def test_no_number_is_assigned_while_no_14_is_unreconciled(self):
-        self.assertIn(14, bc.UNRECONCILED_ISSUES)
         with self.assertRaises(bc.NumberingBlocked):
-            bc.next_issue_number(self.existing)
+            bc.next_issue_number(self.existing, unreconciled=frozenset({14}))
         with self.assertRaises(bc.NumberingBlocked):
             bc.approve(complete(), collection=self.existing, registry=LIVE,
-                       approved_by="Owner", approved_on="2026-09-27")
+                       approved_by="Owner", approved_on="2026-09-27",
+                       unreconciled=frozenset({14}))
+
+    def test_owner_ruling_makes_15_available_without_assigning_it(self):
+        self.assertEqual(bc.UNRECONCILED_ISSUES, frozenset())
+        self.assertEqual(bc.next_issue_number(self.existing), 15)
+        self.assertEqual(max(sc["issue_number"] for sc in self.existing), 14)
 
     def test_a_draft_carries_no_number(self):
         self.assertIn("a draft carries no issue number; numbers are assigned "
@@ -766,12 +771,20 @@ class TestCheckCommandHoldsTheNumberingGate(unittest.TestCase):
     briefs numbered by hand: it must never report one as valid while No. 14 is
     unreconciled, or with a number an existing issue holds. Nothing here
     assigns or approves a number; the fixtures are what the command must not
-    certify, and a simulated ruling stands in for one that has not been made.
+    certify, and unresolved-state simulations keep the gate covered.
     """
 
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        # The simulated gate concerns predecessor numbers, including an empty
+        # predecessor directory. Isolate native issues rather than assuming
+        # the real collection will always leave No. 15 available.
+        briefs = self.tmp / "briefs"
+        briefs.mkdir()
+        patch = mock.patch.object(author_brief, "BRIEFS_DIR", briefs)
+        patch.start()
+        self.addCleanup(patch.stop)
 
     def check(self, sidecar):
         path = self.tmp / "brief.json"
@@ -789,8 +802,8 @@ class TestCheckCommandHoldsTheNumberingGate(unittest.TestCase):
                       "approved_on": "2026-09-27"})
 
     def test_a_hand_numbered_brief_is_refused_while_no_14_is_unreconciled(self):
-        self.assertIn(14, bc.UNRECONCILED_ISSUES)
-        code, text = self.check(self.numbered(LAST_PREDECESSOR_ISSUE + 1))
+        with mock.patch.object(bc, "UNRECONCILED_ISSUES", frozenset({14})):
+            code, text = self.check(self.numbered(LAST_PREDECESSOR_ISSUE + 1))
         self.assertEqual(code, 1, text)
         self.assertIn("No. 14 has an unreconciled publication status", text)
         self.assertNotIn("satisfies the brief contract", text)
@@ -805,7 +818,7 @@ class TestCheckCommandHoldsTheNumberingGate(unittest.TestCase):
         existing = sorted(sc["issue_number"]
                           for sc in existing_sidecars().values())
         self.assertEqual(existing, list(range(1, LAST_PREDECESSOR_ISSUE + 1)))
-        for gate in (bc.UNRECONCILED_ISSUES, frozenset()):
+        for gate in (frozenset({14}), frozenset()):
             for number in existing:
                 with self.subTest(number=number, gate_in_force=bool(gate)):
                     with mock.patch.object(bc, "UNRECONCILED_ISSUES", gate):

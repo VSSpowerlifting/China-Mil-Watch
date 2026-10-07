@@ -23,7 +23,7 @@ Everything happens inside `~/pla-watch`. Never touch sibling repositories
 | Record site (production) | `pla_watch.db` | `site/preview/generate_preview.py`, driven by `render_site()` | `output/index.html`, `record/*.html`, `archive.html`, `coverage.html`, `methodology.html`, desk pages, `article/*.html` compatibility stubs, `data/`, sitemap |
 | Legacy site (rollback only) | `pla_watch.db` | `site/generator.py` + `site/templates/{base,index,archive,article,signals,methodology}.html` | the predecessor's tree; **not** the production build |
 | Weekly edition (predecessor series) | — | `scripts/generate_pla_watch.py` — **closed to new issues since 2026-09-23**: refuses before any DB read or API call | nothing |
-| Brief (draft + contract check) | `pla_watch.db`, read through a scratch copy (`scripts.reconcile_db.read_only`) | `scripts/author_brief.py` + `core/brief_contract.py`; selection by desk via `storage.db.get_articles_for_desks` | a draft sidecar on stdout or `--out` (never under `output/`); no route or renderer yet |
+| Brief (human-controlled publication) | `pla_watch.db`, read through a scratch copy (`scripts.reconcile_db.read_only`) | `scripts/author_brief.py` + `core/brief_contract.py`; selection by desk via `storage.db.get_articles_for_desks` | canonical source in `briefs/<slug>.json`; draft/check/readiness/authorized approval; native article, Analysis, homepage, Atom feed and sitemap through the production renderer |
 | Weekly re-render (no API) | **sidecar JSON** (canonical edition record: metadata + trail + full body) | `scripts/rerender_pla_watch.py` + `site/templates/pla-watch-*.html` | posts/index/archive/terms HTML + feed.xml |
 | Shared weekly env | `scripts/pw_env.py` — one Jinja environment (autoescape ON), `format_date`, `inline_markup` (whitelists bare `<strong>/<em>` only), `first_cjk`, `build_atom_feed` | both weekly renderers | — |
 | Deploy gate | `scripts/validate_output.py` (stdlib-only) | CI + local | non-zero exit blocks deploy |
@@ -38,6 +38,12 @@ re-render. Sidecar JSON under `output/.../posts/*.json` is generated at
 publish but is the *canonical record* — edit only via deliberate,
 validated migration scripts, never casually.
 
+The shared decorative background source is `site/preview/topography.css`;
+the record renderer copies it to the site root. Both the record base and
+historical Night Desk base link that stylesheet. `core/topography.py` supplies
+deterministic address-specific profiles to both Jinja environments. Historical
+HTML still requires its normal sidecar re-render to pick up base-template edits.
+
 ## 3. Commands
 
 ```bash
@@ -45,7 +51,9 @@ validated migration scripts, never casually.
 .venv/bin/python site/render.py                          # PRODUCTION renderer: daily site from DB
 .venv/bin/python scripts/rerender_pla_watch.py --no-covers  # weekly pages from sidecars (refuses empty-body sidecars)
 .venv/bin/python scripts/author_brief.py scaffold --desks china,singapore --week-ending YYYY-MM-DD --out PATH  # draft a brief (no API; read-only on disk)
-.venv/bin/python scripts/author_brief.py check PATH      # the brief contract (DECISION_LOG 2026-09-23)
+.venv/bin/python scripts/author_brief.py check PATH      # schema/numbering contract; a draft may still have empty prose
+.venv/bin/python scripts/author_brief.py ready PATH      # complete prose/citations and exact parity with preserved records
+.venv/bin/python site/render.py --review-brief briefs/<slug>.json --out /tmp/<private-review>  # private candidate, no approval or number
 # scripts/generate_pla_watch.py authors nothing new: no issue is published as The PLA Watch after No. 14
 ```
 
@@ -156,16 +164,59 @@ PROJECT_STATE.md, and none is ever cleared by invention.
 2. The analyst keeps the trail entries the brief cites, records the
    `development` and each cross-desk claim with its citations, and writes the
    prose in the existing anatomy.
-3. `scripts/author_brief.py check` until it passes, then
-   EDITORIAL_QA_CHECKLIST.md in full, then owner approval. `check` also refuses
-   a brief that carries an issue number while No. 14's publication status is
-   unreconciled, and any number an existing issue already holds; an unnumbered
-   draft is unaffected.
-4. Approval assigns the issue number (`core.brief_contract.approve`). It is
-   blocked while No. 14's publication status is unreconciled, and is not wired
-   to a command until briefs have a route.
-5. Rendering, route, feed, sitemap and deploy for briefs are not built yet —
-   the next phase.
+3. `scripts/author_brief.py check PATH` validates schema and whole-collection
+   numbering; empty drafts may pass. `ready PATH` requires finished standing
+   sections, development and comparison citations, a Saturday reporting endpoint,
+   a signal of at most 28 words, source metadata, and exact source-trail and
+   per-desk coverage parity with the preserved corpus. Source state conflicts
+   are refused with the changed fields; review a fresh scaffold rather than
+   silently replacing evidence. A schema check or readiness pass is never an
+   editorial sign-off.
+4. Complete `EDITORIAL_QA_CHECKLIST.md`, including source-to-claim and original
+   language review. Preview the exact candidate with the production renderer:
+
+   ```sh
+   .venv/bin/python site/render.py --review-brief briefs/<slug>.json --out /tmp/<private-review>
+   ```
+
+   Review mode renders the article, Analysis lead/catalog and homepage in a
+   private tree with visible notices, no issue number or invented approval,
+   `noindex`, no native feed and no sitemap. It refuses `output/` and legacy
+   mode. Ordinary rendering withholds every draft. Inspect actual 1280px and
+   375px screenshots, source links, keyboard focus and reduced motion.
+5. Once the human has approved this exact editorial version, record that actual
+   authorization; do not ask again when the session already supplies it:
+
+   ```sh
+   .venv/bin/python scripts/author_brief.py approve briefs/<slug>.json \
+     --approved-by 'Benjamin Yang' --approved-on YYYY-MM-DD \
+     --approval-reference '<location of actual human approval>'
+   ```
+
+   Approval assigns one more than the collection's highest number, including
+   native and predecessor issues. A local publication lock serializes assignment,
+   and the canonical source is replaced atomically. An identical repeated
+   approval is a no-op; changed evidence or a second number is refused. Scaffold
+   refuses an existing destination. The command records authorization supplied
+   by its caller; it cannot independently establish that a human gave it.
+   Approval freezes the reviewed evidence snapshot. Later pipeline screening
+   does not rewrite an approved Brief or block its ordinary re-render.
+6. Render with `.venv/bin/python site/render.py`; validate with
+   `.venv/bin/python scripts/validate_output.py`. The native article is
+   `briefs/<slug>.html`; Analysis and the homepage use the same unified catalog.
+   Both the catalog and native feed sort newest coverage endpoint first,
+   breaking ties by number and slug. Numbers remain approval order; Atom dates
+   remain actual approval dates. Predecessor feed entries are untouched.
+   The validator refuses draft/stale native routes, missing approved pages,
+   mismatched title/number, missing canonical, catalog/feed/sitemap entries,
+   and a native feed without approved sources. Its historical baseline remains
+   10 governed warnings.
+7. Prepare source/docs/generated-output commits separately (§5), then use the
+   existing PR checks and deployment path (§4) within recorded authorization.
+   A PR or successful workflow is not evidence of publication. Fetch the actual
+   public article, Analysis, home, native feed and sitemap after deployment and
+   verify the correct title, number, source links and editorial version. A
+   subsequent ordinary render must preserve it without any paid API call.
 
 **The existing issues** (published as *The PLA Watch*) re-render from their
 sidecars with `scripts/rerender_pla_watch.py`. `scripts/generate_pla_watch.py`

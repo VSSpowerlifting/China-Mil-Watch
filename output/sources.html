@@ -30,6 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="topography.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,12 +54,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html" aria-current="page">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html" aria-current="page">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -67,12 +68,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html" aria-current="page">Sources</a></li>
+      <li><a href="archive.html">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html" aria-current="page">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -80,52 +81,34 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,715</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,995</dd></div>    </dl>
+        <dd>4,927</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,229</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      152 in full &rarr;</a></p>
+      161 in full</a></p>
   </div>
-</div>
-<main id="main">
-  <div class="wrap">
-<nav class="atlas-breadcrumb" aria-label="Breadcrumb">
-  <ol>
-    <li><a href="archive.html">Atlas</a></li>
-    <li><span aria-current="page">Sources</span></li>
-  </ol>
-</nav>
-<h1>Source universe</h1>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-28">2026-09-28</time>
-    · 4,715 records held ·
-    <a href="coverage.html">collection evidence</a></p>
-  <ul aria-label="Desk collection states">
-    <li><a href="china.html">China Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">4,651 records</span></li>
-    <li><a href="singapore.html">Singapore Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">64 records</span></li>
-    <li><a href="japan.html">Japan Desk</a>
-      <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></li>
-    <li><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a>
-      <span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></li>
-  </ul>
 </aside>
+<main id="main" style="--topo-size: 1271px; --topo-offset: -416px; --topo-x: 79%; --topo-flip: 1; --topo-wash-x: 76%; --topo-wash-y: 31%; --topo-duration: 45s">
+  <div class="topography" aria-hidden="true"></div>
+  <div class="wrap">
+<header class="page-head">
+<h1 class="page-name">Sources</h1>
 <p class="lede">Which institutions are collected, how they are positioned, and what authority their
 publications carry. Each source is declared in advance with an institution, source type, language
 and collection purpose, and belongs to exactly one desk.</p>
 <p class="meta">10 sources declared across
 4 desks. A source with no record count has never been part of a
 production run — which is different from a source that ran and stored nothing.</p>
+</header>
 <nav class="reader-contents" aria-label="On this page">
   <span>On this page</span>
   <ul><li><a href="#contributions-title">Stored record chart</a></li>      <li><a href="#source-directory">Source directory</a></li>
@@ -134,47 +117,47 @@ production run — which is different from a source that ran and stored nothing.
 <figure class="source-contributions" aria-labelledby="contributions-title">
   <figcaption>
     <h2 id="contributions-title">Sources in the stored record</h2>
-    <p>Snapshot — 2026-09-28 · 4,715 stored, deduplicated records.
+    <p>Snapshot — 2026-10-06 · 4,927 stored, deduplicated records.
     Each bar counts records assigned to that source in the stored corpus.
     It does not measure an institution's output,
     the share of its publications, or completeness of coverage.</p>
   </figcaption>
   <ol class="contribution-list">
     <li>
-      <span class="contribution-index" aria-hidden="true">01</span>
-      <a href="source/pla_daily.html">PLA Daily (解放军报)</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 81.548%"></span></span>
-      <span class="contribution-value">3,845 <small>(81.5%)</small></span>
+      <span class="bar-label"><a href="source/pla_daily.html">PLA Daily (解放军报)</a>
+        <span class="contribution-value">3,981 <small>(80.8%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 80.8%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=pla_daily">Browse these records</a>
     </li>
     <li>
-      <span class="contribution-index" aria-hidden="true">02</span>
-      <a href="source/china_mil_online.html">China Military Online (EN)</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 10.562%"></span></span>
-      <span class="contribution-value">498 <small>(10.6%)</small></span>
+      <span class="bar-label"><a href="source/china_mil_online.html">China Military Online (EN)</a>
+        <span class="contribution-value">517 <small>(10.5%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 10.493%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=china_mil_online">Browse these records</a>
     </li>
     <li>
-      <span class="contribution-index" aria-hidden="true">03</span>
-      <a href="source/global_times_mil.html">Global Times — Defense</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 2.969%"></span></span>
-      <span class="contribution-value">140 <small>(3.0%)</small></span>
+      <span class="bar-label"><a href="source/global_times_mil.html">Global Times — Defense</a>
+        <span class="contribution-value">148 <small>(3.0%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 3.004%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=global_times_mil">Browse these records</a>
     </li>
     <li>
-      <span class="contribution-index" aria-hidden="true">04</span>
-      <a href="source/mod_china.html">MOD China (国防部)</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 2.227%"></span></span>
-      <span class="contribution-value">105 <small>(2.2%)</small></span>
+      <span class="bar-label"><a href="source/mod_china.html">MOD China (国防部)</a>
+        <span class="contribution-value">116 <small>(2.4%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 2.354%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=mod_china">Browse these records</a>
     </li>
     <li>
-      <span class="contribution-index" aria-hidden="true">05</span>
-      <a href="source/sg_mindef_releases.html">MINDEF Singapore — official releases</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 1.357%"></span></span>
-      <span class="contribution-value">64 <small>(1.4%)</small></span>
+      <span class="bar-label"><a href="source/xinhua_mil.html">Xinhua Military (新华军事)</a>
+        <span class="contribution-value">89 <small>(1.8%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 1.806%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=xinhua_mil">Browse these records</a>
     </li>
     <li>
-      <span class="contribution-index" aria-hidden="true">06</span>
-      <a href="source/xinhua_mil.html">Xinhua Military (新华军事)</a>
-      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 1.336%"></span></span>
-      <span class="contribution-value">63 <small>(1.3%)</small></span>
+      <span class="bar-label"><a href="source/sg_mindef_releases.html">MINDEF Singapore — official releases</a>
+        <span class="contribution-value">76 <small>(1.5%)</small></span></span>
+      <span class="contribution-track" aria-hidden="true"><span class="contribution-fill" style="width: 1.543%"></span></span>
+      <a class="contribution-browse" href="archive.html?source=sg_mindef_releases">Browse these records</a>
     </li>
   </ol>
   <p class="meta">The source directory below includes declared sources with no
@@ -189,56 +172,56 @@ production run — which is different from a source that ran and stored nothing.
     <tr>
       <td data-label="Source"><a href="source/pla_daily.html">PLA Daily (解放军报)</a><br><span class="meta token">pla_daily</span></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
-      <td data-label="Institution">CMC Political Work Department<br><span class="meta" lang="zh">中央军事委员会政治工作部</span></td>
+      <td data-label="Institution">CMC Political Work Department<br><span class="meta" lang="zh-Hans">中央军事委员会政治工作部</span></td>
       <td data-label="Type">Armed forces newspaper</td>
       <td data-label="Authority">B</td>
       <td data-label="Language">zh-Hans</td>
-      <td data-label="Records" class="num">3,845</td>
+      <td data-label="Records" class="num">3,981</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/mod_china.html">MOD China (国防部)</a><br><span class="meta token">mod_china</span></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
-      <td data-label="Institution">Ministry of National Defense<br><span class="meta" lang="zh">中华人民共和国国防部</span></td>
+      <td data-label="Institution">Ministry of National Defense<br><span class="meta" lang="zh-Hans">中华人民共和国国防部</span></td>
       <td data-label="Type">Ministry website</td>
       <td data-label="Authority">A</td>
       <td data-label="Language">zh-Hans</td>
-      <td data-label="Records" class="num">105</td>
+      <td data-label="Records" class="num">116</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/xinhua_mil.html">Xinhua Military (新华军事)</a><br><span class="meta token">xinhua_mil</span></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
-      <td data-label="Institution">Xinhua News Agency<br><span class="meta" lang="zh">新华通讯社</span></td>
+      <td data-label="Institution">Xinhua News Agency<br><span class="meta" lang="zh-Hans">新华通讯社</span></td>
       <td data-label="Type">State news agency</td>
       <td data-label="Authority">C</td>
       <td data-label="Language">zh-Hans</td>
-      <td data-label="Records" class="num">63</td>
+      <td data-label="Records" class="num">89</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/global_times_mil.html">Global Times — Defense</a><br><span class="meta token">global_times_mil</span></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
-      <td data-label="Institution">People&#39;s Daily Group<br><span class="meta" lang="zh">人民日报社</span></td>
+      <td data-label="Institution">People&#39;s Daily Group<br><span class="meta" lang="zh-Hans">人民日报社</span></td>
       <td data-label="Type">State-linked newspaper</td>
       <td data-label="Authority">D</td>
       <td data-label="Language">en</td>
-      <td data-label="Records" class="num">140</td>
+      <td data-label="Records" class="num">148</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/china_mil_online.html">China Military Online (EN)</a><br><span class="meta token">china_mil_online</span></td>
       <td data-label="Desk"><a href="china.html">China Desk</a></td>
-      <td data-label="Institution">CMC Political Work Department<br><span class="meta" lang="zh">中央军事委员会政治工作部</span></td>
+      <td data-label="Institution">CMC Political Work Department<br><span class="meta" lang="zh-Hans">中央军事委员会政治工作部</span></td>
       <td data-label="Type">Armed forces English-language portal</td>
       <td data-label="Authority">B</td>
       <td data-label="Language">en</td>
-      <td data-label="Records" class="num">498</td>
+      <td data-label="Records" class="num">517</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/sg_mindef_releases.html">MINDEF Singapore — official releases</a><br><span class="meta token">sg_mindef_releases</span></td>
       <td data-label="Desk"><a href="singapore.html">Singapore Desk</a></td>
-      <td data-label="Institution">Ministry of Defence<br><span class="meta" lang="zh">Ministry of Defence, Singapore</span></td>
+      <td data-label="Institution">Ministry of Defence<br><span class="meta">Ministry of Defence, Singapore</span></td>
       <td data-label="Type">Ministry website</td>
       <td data-label="Authority">A</td>
       <td data-label="Language">en</td>
-      <td data-label="Records" class="num">64</td>
+      <td data-label="Records" class="num">76</td>
     </tr>
     <tr>
       <td data-label="Source"><a href="source/jp_mod_news_ja.html">防衛省・自衛隊 — news feed (Japanese)</a><br><span class="meta token">jp_mod_news_ja</span></td>
@@ -292,11 +275,42 @@ empty count or a quiet day.</p>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

@@ -1,36 +1,38 @@
 The PLA Watch No. 14: One Exercise, Five Reports East of Taiwan
 
-Retrospective edition. This covers the week of 9 to 15 August 2026 and was prepared afterwards, in September, as part of restoring the weekly cadence. It is a record of what Chinese official and state-linked military media published that week, not a dispatch written as the week unfolded.
+Retrospective edition. Covers 9–15 August 2026; originally prepared in September.
 
-This week's signal: one exercise, five reports across three outlets on three publication dates. The activities described were limited; the location framing was not.
+Correction — 3 October 2026: This edition now identifies Honghe without an unsupported vessel classification, removes untraced exercise definitions and footage-release attribution, and limits the headline comparison to what the preserved records support. Three Global Times body captures contain unrelated snippets; their titles are retained for transparent metadata comparison. The coverage snapshot identifies four sources, and the counts are explicitly scoped to the China Desk. The original captured source records, issue number, URL and coverage dates are preserved. The English trail title for the 12 August completion report retains the source's Chinese vessel designation without assigning it an English proper name.
+
+This week's signal: One exercise, five reports across three outlets on three publication dates. Each headline names waters east of Taiwan; repetition does not prove coordination.
 
 ## What stood out
 
-On 11 August, PLA Daily announced that the Chinese Navy replenishment ship Honghe and the Indonesian Navy frigate 莱 (Lái) would conduct a passage exercise in waters east of Taiwan Island. China Military Online and Global Times carried the announcement in English the same day. On 12 August PLA Daily reported the drill complete, listing formation manoeuvring, underway replenishment and signal communications. PLA Daily returned to it on 14 August.
+On 11 August, PLA Daily announced that the Chinese Navy ship Honghe and an Indonesian Navy frigate, identified in the Chinese report as “莱”号护卫舰, would conduct a passage exercise in waters east of Taiwan Island in mid-August. China Military Online carried an English announcement attributed to Xinhua and China's Ministry of National Defense. The captured Global Times headline names the same exercise and location, but its stored body contains unrelated snippets.
 
-That is one exercise: five reports across three outlets on three publication dates. Five of the week's twelve flagged records describe it, and it should be counted once rather than read as five corroborating events.
+On 12 August, PLA Daily reported completion of the encounter. Its accounts describe communications, formation manoeuvring, replenishment drills and a separation ceremony. PLA Daily returned to the same encounter on 14 August; that later publication is not a second exercise.
 
-The activities described are limited and routine. Formation manoeuvring, replenishment and signal drills are the ordinary content of a passage exercise, and the reports describe a short encounter rather than a combined operation.
+That is one exercise represented by five selected headlines across three outlets on three publication dates. Five of the week's twelve model-flagged records refer to it. The completion accounts document reported activities; they do not independently establish operational performance, actual fuel or cargo transfer, or a wider naval arrangement.
 
-What does not vary across the five reports is the location framing. Every one of the five headlines names the operating area east of Taiwan Island rather than leaving it to the body text. That is a property of how the reports were written and titled, and it is observable directly in the stored titles.
+Every one of the five captured headlines names the operating area east of Taiwan Island. That is an observation about preserved publication metadata. It remains traceable even where the body capture is incomplete.
 
 ## Why it matters
 
-The repeated framing supports a claim about publication emphasis, and only that. Across three outlets and three days, the same short drill was presented with its operating area in the headline each time. Where a headline places a fact is an editorial decision by the publisher, and here the same decision recurs five times.
+The repeated framing supports a claim about publication emphasis. Across three outlets and three publication dates, the operating area appears in each selected headline. This comparison concerns the captured titles, not five independently verified accounts of the exercise.
 
-It does not establish Beijing's operational intent, how Jakarta understood its own participation, or that any of this was coordinated as a signalling plan. None of the five records speaks to any of those questions. Official media shows what an institution published; it does not show why.
+The announcement carried by China Military Online attributes to China's defence ministry the aims of enhancing joint operational capabilities, deepening practical cooperation and maintaining regional peace and stability. Those are the ministry's stated aims. The repeated headlines do not independently establish either government's operational intent, Indonesia's interpretation of its participation, or a coordinated media plan. The preserved Global Times body is incomplete, so this edition cannot assess that article's full explanation of the exercise.
 
-Nor does the repetition strengthen the underlying facts. Five reports across three outlets still describe one event, not five independent confirmations.
+Nor does repetition strengthen the underlying facts. The China Military Online announcement is explicitly Xinhua copy reporting the ministry's announcement. The five reports are not five independent confirmations.
 
 ## Recorded separately
 
-On 12 August, China Military Online reported that China's Ambassador for Disarmament Affairs, Li Chijiang, rejected a joint statement led by the United States at the Conference on Disarmament in Geneva concerning a 6 July submarine-launched ballistic missile test. This appears in the window through that single China Military Online report. It establishes that China publicly disputed the American account; it does not establish the facts of the test itself.
+On 12 August, China Military Online published China's Ambassador for Disarmament Affairs Li Chijiang's rebuttal to a US-led statement at the Conference on Disarmament concerning a 6 July submarine-launched ballistic missile test and advance notification. The publication date is not the meeting date. The report establishes that China publicly disputed the American account; it does not independently establish the circumstances of the test.
 
-Two separate aviation accounts appeared. On 14 August, PLA Daily and MOD China carried the same release describing the Navy's female carrier-based helicopter pilot trainees completing daytime solo carrier-landing assessments. On 13 August, PLA Daily published a named profile of a J-16 pilot, Tian Jing, which the stored record describes as a PLAAF profile. Different services, different stories, and not evidence for one another.
+Two separate aviation accounts appeared. On 14 August, PLA Daily and MOD China carried the same PLA Daily report describing the Navy's female carrier-based helicopter pilot trainees completing daytime solo carrier-landing assessments in Bohai Bay. On 13 August, PLA Daily published a profile of J-16 pilot Tian Jing. These are different stories, and the two outlets carrying the helicopter account do not provide independent corroboration.
 
 ## The corpus behind this edition
 
-229 records for the week, 137 relevant and all 137 analysed, nothing left unscreened, seven of seven days observed. Four sources contributed, with PLA Daily supplying 111 of the 137 relevant records. That concentration is normal for this corpus and is described in the methodology. Global Times is state-linked rather than official.
+The China Desk holds 229 records for the week: 137 passed relevance screening and all 137 were analyzed; none of those China Desk records awaits screening. Seven publication dates are represented. Four sources contributed to the analyzed set; PLA Daily supplied 111 of 137 records. Three cited Global Times bodies contain unrelated snippets, so the headline comparison uses captured titles with that limitation disclosed. Global Times is state-linked rather than official.
 
 Full edition: https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html
 

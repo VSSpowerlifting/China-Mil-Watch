@@ -1,89 +1,55 @@
 {% extends "base.html" %}
-{% from "_atlas.html" import breadcrumb, spine %}
-{% block title %}{{ lead_edition.series_name if lead_edition else predecessor_series }} — {{ title }}{% endblock %}
+{% from "_atlas.html" import breadcrumb %}
+{% block title %}{{ predecessor_series }} is now part of {{ collection_name }} — {{ title }}{% endblock %}
 {% block content %}
-{# Era comes from `load_editions()`, which resolves each sidecar through
-   core.edition_identity. The page states which publication published which
-   issues, so it must not restate a name or infer a boundary of its own. #}
+{# A compatibility page, and only that. The PLA Watch's issues are earlier
+   Briefs in the one catalog on Analysis (DECISION_LOG 2026-09-30), which is
+   where they are browsed. This address stays because inbound links to it are
+   established, and because it still carries each issue's citation text under
+   the anchors it has always had. It is linked from no navigation, footer or
+   page body, and it lists no issue titles of its own. #}
 {% set historical_editions = editions | selectattr('era', 'equalto', 'historical') | list %}
 {% set current_editions = editions | selectattr('era', 'equalto', 'current') | list %}
-{{ breadcrumb([('Analysis', 'analysis.html'), (predecessor_series, none)]) }}
+{{ breadcrumb([(collection_name, 'analysis.html'), (predecessor_series, none)]) }}
 <header class="page-head">
-<p class="eyebrow"><span class="evidence evidence--analysis">Analysis archive</span></p>
-<h1>{{ lead_edition.series_name if lead_edition else predecessor_series }}</h1>
-<p class="lede">The China Desk's weekly analytical series, which spanned the project's
-publication rename:
-{% if historical_editions %}{{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, and {{ current_editions | length }} later {{ 'edition was' if current_editions | length == 1 else 'editions were' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions were published by {{ title }}{% endif %}.
-This page is an archive of those issues. For current analysis, see
-<a href="analysis.html">Analysis</a>.</p>
+<p class="eyebrow">{{ predecessor_series }}</p>
+<h1>{{ predecessor_series }} is now part of {{ collection_name }}</h1>
+<p class="lede">The China Desk's weekly series {{ predecessor_series }} spanned the project's
+publication rename{% if historical_editions %}: {{ historical_editions | length }} earlier editions were published under {{ predecessor_name }}{% endif %}{% if historical_editions and current_editions %}, and {{ current_editions | length }} later {{ 'edition was' if current_editions | length == 1 else 'editions were' }} published by {{ title }}{% endif %}{% if current_editions and not historical_editions %}{{ current_editions | length }} editions were published by {{ title }}{% endif %}.
+Its issues are now earlier Briefs in {{ collection_name }}, listed with every other Brief in one place.</p>
+<p><a class="btn btn--primary" href="analysis.html">Read the Briefs</a></p>
 </header>
-{{ spine(desks, snapshot, corpus_total, false, desks.get('china')) }}
 
 <div class="notice">
   <h2 class="plain">These issues are preserved as published</h2>
   <p>Every issue keeps the issue number, title, dek, byline, date and publication identity it
   carried when it was published, and keeps the path it was published at:
-  <a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">the full archive</a>.
+  <a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">the series archive</a>.
   {% if historical_editions %}{{ predecessor_name }}'s own domain redirects to the
   {{ historical_editions | length }} editions published under that masthead rather than dropping
   them.{% endif %} No issue is rewritten to look as though it appeared under a masthead
-  it did not carry, in either direction. This page keeps them available as published, and none of
-  them is renamed, renumbered or moved.</p>
+  it did not carry, in either direction.</p>
 </div>
 
-<h2>Editions</h2>
-<p>{{ editions|length }} editions were published in this series. Each edition carries
-a source trail for readers to inspect alongside its analysis; machine-generated classifications are labeled
-<span class="evidence evidence--model">Model-flagged</span> and are never presented as editorial
-judgment.</p>
-
-{% if editions %}
-{# Below 640px this table re-flows into editorial rows: one metadata line, the
-   full-width headline, then one counts line. The label is emitted twice —
-   exactly one is display:none at any width, so the accessibility tree still
-   carries it once. #}
-<div class="table-scroll">
-<table class="editions">
-  <caption>{{ editions|length }} editions, newest first. Counts are the edition's own record.</caption>
-  <thead>
-    <tr><th scope="col">No.</th><th scope="col">Week ending</th><th scope="col">Edition</th><th scope="col" class="num">Articles</th><th scope="col" class="num">Model-flagged</th></tr>
-  </thead>
-  <tbody>
+{% if edition_citations %}
+<h2>Citing an earlier Brief</h2>
+<p>Each earlier Brief's citation text, kept at the address it has always had.</p>
+{# Closed by default so this page stays a bridge. A native <details> opens on
+   a fragment link in current browsers and needs no script; only the copy
+   buttons inside are enhancement, and they ship hidden. #}
+<details class="ed-cite cite-all">
+  <summary>Citation text for the {{ edition_citations | length }} earlier Briefs</summary>
+  <ol class="cite-list">
   {% for item in edition_citations %}
-  {% set e = item.edition %}
-    <tr>
-      <td class="num ed-no">{{ e.issue if e.issue is not none else '—' }}</td>
-      <td class="ed-date">{{ e.date }}{% if e.label %}<span class="ed-label-inline">{{ e.label }}</span>{% endif %}</td>
-      <td class="ed-title">
-        <a href="{{ e.url }}" rel="noopener">{{ e.title or e.slug }}</a>
-        {% if e.label %}<br><span class="meta ed-label-wide">{{ e.label }}</span>{% endif %}
-        {% if e.is_retrospective %}<br><span class="meta ed-timing">{{ e.retrospective_label }}</span>{% endif %}
-        {# The citation belongs to the edition it cites, not to a second list
-           of the same titles. A native <details> opens, closes and takes
-           keyboard focus with no script at all; only the copy button inside is
-           enhancement, and it ships hidden. #}
-        <details class="ed-cite">
-          <summary>Cite this issue</summary>
-          <p class="cite-text" id="{{ item.anchor }}">{{ item.citation }}</p>
-          <button type="button" class="cite-copy" data-copy="{{ item.anchor }}"
-                  aria-label="Copy citation for The PLA Watch number {{ e.issue }}" hidden>Copy</button>
-          <p class="cite-status" role="status" aria-live="polite"></p>
-        </details>
-      </td>
-      <td class="num ed-articles">{{ e.articles if e.articles is not none else '—' }}</td>
-      <td class="num ed-flagged">{{ e.flagged if e.flagged is not none else '—' }}</td>
-    </tr>
+    <li>
+      <p class="cite-text" id="{{ item.anchor }}">{{ item.citation }}</p>
+      <button type="button" class="cite-copy" data-copy="{{ item.anchor }}"
+              aria-label="Copy citation for The PLA Watch number {{ item.edition.issue }}" hidden>Copy</button>
+      <p class="cite-status" role="status" aria-live="polite"></p>
+    </li>
   {% endfor %}
-  </tbody>
-</table>
-</div>
-<p class="meta">The edition label is the editor's own classification of the week, not a machine
-output. The model-flagged column beside it is the pipeline's count, and the two are deliberately
-kept apart.</p>
-<p><a href="{{ live_base }}/the-pla-watch/archive.html" rel="noopener">The series archive, as published</a></p>
-{% else %}
-<p class="no-results">No edition records were found in <code>output/the-pla-watch/posts/</code>.
-Nothing is invented to fill the gap.</p>
+  </ol>
+</details>
 {% endif %}
 
 <h2>A gap in the series, recorded rather than hidden</h2>

@@ -18,8 +18,8 @@ new work must reuse it, not reinvent it.
 - **Ink node**: `.ink-node` scale 0→1, 0.5s, stagger `--ni`, capped delay.
 - **Rule wipe**: eyebrow/section-rule `::before` scaleX 0→1, 0.7s.
 - **Bar fill**: `.cat-bar-fill`/`.snap-bar-fill` scaleX, 0.8–0.9s.
-- **Ambient pulse**: `.pulse-dot` opacity 3.4s loop — the only infinite
-  animation; one instance per page maximum.
+- **Ambient pulse**: `.pulse-dot` opacity 3.4s loop; one instance per page
+  maximum. Abstract page terrain has the separate owner-authorized exception below.
 - **Progress rail** (PW posts): CSS `animation-timeline: scroll()`, no JS.
 
 ### Categories and budgets
@@ -38,10 +38,58 @@ new work must reuse it, not reinvent it.
 - Every page must satisfy three fallback paths: no-JS, `.no-anim`,
   `prefers-reduced-motion` (global kill-switch exists).
 - Prohibited: bouncing, floating cards, glow, cursor-following, radar
-  sweeps, animated backgrounds, entrance animations >1.2s, per-paragraph
+  sweeps, animated backgrounds outside the terrain exception below, entrance animations >1.2s, per-paragraph
   animation, autoplaying video, parallax.
 - Prefer CSS/SVG. JS only for IntersectionObserver gating and interactions
   that provide analytical value (e.g., node highlighting).
+
+### Abstract page terrain (owner request, 2026-10-05)
+
+Ben authorized blue geometric/topographic backgrounds across all subpages,
+subtle page-specific variation, gentle animation, and texture on the dark
+Analysis band. This supersedes the older blanket background-motion ban for
+this treatment only. `site/preview/topography.css` is shared by record pages,
+native Briefs and historical Night Desk pages; `core/topography.py` selects
+stable crops, scale, reflections, gradient positions and 38–56s periods from
+page addresses. These contours represent no geography or data.
+
+Only decorative layers drift (±8px horizontally, ±10px vertically) or vary
+opacity; reading paper attenuates the field, and content and photographs stay
+still. CSS gates motion on scripting enabled and reduced motion off, without
+adding scripts to week shards. No-JS, `.no-anim`, unsupported scripting media
+queries and reduced motion keep the finished artwork static. Print and forced
+colors remove it. Retain the existing source-photo and focus contracts.
+
+### 1.1 Opening title (homepage) — approved 2026-10-05 (DECISION_LOG)
+A ~2.4s brand introduction: "INDO-PACIFIC RECORD" / "Defense records.
+Regional context." in live HTML over an overhead procedural ocean with one
+small ship and its wake, then a dissolve into the unchanged homepage.
+Source: `site/preview/intro.js`, requested by `home.html` alone; contract
+in `tests/test_homepage_intro.py`.
+
+- **Never a gate.** Loaded `async`, so a slow or failed request for
+  `intro.js` never holds the homepage. It plays only if it runs before
+  the first contentful paint, covering the page from the start; once
+  anything has painted (or 2s after navigation with nothing painted) it
+  stands aside, so an already-visible homepage is never covered. It waits for nothing but the DOM
+  (1.5s cap) and the title face (300ms cap); hard 5s cap. Skip intro is
+  reachable at once; Escape dismisses. Every exit runs one teardown that
+  removes the overlay, the scroll lock, `inert`, and the injected style.
+- **Plays only for an arrival.** Homepage, once per tab session
+  (`sessionStorage`); skipped for a query or hash, back/forward, a
+  same-site referrer, a hidden tab, `prefers-reduced-motion`, an
+  automated browser (`navigator.webdriver`, so the rest of the browser
+  suite sees the real homepage), no storage, or no hardware WebGL.
+- **Rendering.** One WebGL1 fragment shader: directional wave trains plus
+  warped noise, Fresnel sky, sparse glitter; the wake (foam, aged band,
+  faint Kelvin arms) and hull are drawn in the ship's frame. No asset,
+  download, or license. Buffer capped at ~1.6 MP and DPR 1.5.
+- **Scoped exceptions to §1 and DESIGN_SYSTEM §8**, approved for this
+  component only (no precedent for any other): an animated ground, a sequence longer than 1.2s, canvas/WebGL,
+  generated imagery that imitates photography (it depicts no real event,
+  place, or vessel), the page hidden behind it while it plays, and a
+  separate script cap — `intro.js` ≤ 12,000 bytes (≈5 KB gzip), homepage
+  only, cached after the first visit.
 
 ## 2. Image & asset policy
 
@@ -50,7 +98,7 @@ new work must reuse it, not reinvent it.
 | Original editorial graphics (SVG plates) | flagship visuals, edition plates | abstract, generated from real repo data; must read as editorial, not evidentiary |
 | Data-derived visualizations | Signals dashboard, snapshot bars | only fields the pipeline reliably produces; label gaps honestly |
 | Source photographs | inside editions as context | verbatim from the cited article; credit + "visual context only; not evidence" note (mandatory, existing norm); no misleading crops |
-| Maps | none currently | only with rights-cleared bases + honest generalization; no fake operational maps |
+| Maps | Desks page only (`desks.html`) | only with rights-cleared bases + honest generalization; no fake operational maps. The Desks map: Natural Earth 1:50m (public domain), de facto lines, Miller projection, generated by `scripts/desk_map.py`; a point marks where a desk's publishing institutions sit, never an area of coverage |
 | Generated abstract imagery | backgrounds of plates | never depicting real events as documentary; no imitation photography |
 | Stock imagery | — | banned |
 
@@ -147,8 +195,11 @@ archive page weight drops (SVG replaces PNG thumbs).
 themes/glyphs; per-edition hand-tuning.
 
 **Built on the record site, 2026-09-27** (`site/preview/templates/_plate.html`,
-data from `generate_preview.edition_plate`): the home page's dark band and the
-head of Analysis draw the lead issue as its plate instead of its cover — 16:9,
+data from `generate_preview.edition_plate`): when the newest item of the one Briefs
+collection is an earlier issue, the Analysis page's latest-Brief lead draws it
+as its plate, on a paper panel inside the Night Desk band, instead of its
+cover (the home band drew it too until 2026-09-30 and now draws none;
+DESIGN_SYSTEM §3; there is no separate legacy archive to head) — 16:9,
 series name, week ending, "No." and the numeral, and the tick row. One
 deliberate departure from the spec above, recorded in DECISION_LOG: a
 model-flagged tick is drawn in the machine layer's rust (#D4845F) and at full

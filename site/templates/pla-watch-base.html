@@ -40,6 +40,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ root_path }}icon-16.png">
   <link rel="apple-touch-icon" href="{{ root_path }}apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="{{ site_origin }}/the-pla-watch/feed.xml">
+  <link rel="stylesheet" href="{{ root_path }}topography.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -620,7 +621,7 @@
     {% block extra_styles %}{% endblock %}
   </style>
 </head>
-<body>
+<body class="night-topography"{% if topography_style is defined %} style="{{ topography_style(page_url | default(active_page | default('the-pla-watch'))) }}"{% endif %}>
 {# Parity with the record site, which has carried one since launch. Seven
    navigation links and a masthead rule sit between the top of an edition and
    its first paragraph. #}
@@ -657,6 +658,7 @@
 {% block hero %}{% endblock %}
 
 <main id="main">
+  <div class="topography" aria-hidden="true"></div>
   {% block content %}{% endblock %}
 </main>
 
@@ -664,7 +666,7 @@
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The PLA Watch is the preserved China Desk series. Existing issues keep their original titles, issue numbers, and publishing attribution. Continuing analysis appears in <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a>.</div>
+      <div class="footer-desc">This issue is an earlier Brief in <a href="{{ root_path }}analysis.html">Indo-Pacific Record Briefs</a>, originally published as The PLA Watch. Existing issues keep their original titles, issue numbers, and publishing attribution.</div>
       <div class="footer-transparency">
         Each edition's source trail identifies selected records used in its analysis; it is not a complete account of institutional output or monitored coverage. Original sources remain authoritative. <a href="{{ root_path }}methodology.html">Methodology</a>
       </div>

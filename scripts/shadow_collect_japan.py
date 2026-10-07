@@ -55,7 +55,8 @@ if str(REPO_ROOT) not in sys.path:
 from core.collection import status as st                      # noqa: E402
 from core.shadow_schedule import (                            # noqa: E402
     SOURCE_EXPLICIT, ScheduleError, resolve_target_date)
-from core.collection.contract import CollectionWindow          # noqa: E402
+from core.collection.contract import (                          # noqa: E402
+    CandidateReference, CollectionWindow)
 from scraper.sources.jp_mod import (                            # noqa: E402
     JPModAdapter, partition_refs, publication_kind)
 
@@ -150,11 +151,12 @@ def load_sources():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     out = []
     for spec in manifest["sources"]:
-        if spec.get("_not_collected"):
+        if spec.get("_not_collected") or spec.get("enabled") is not True:
             continue
 
         class Source:
             slug = spec["slug"]
+            enabled = spec["enabled"]
             display_name = spec["display_name"]
             base_url = spec["base_url"]
             discovery_endpoints = tuple(spec["discovery_endpoints"])
@@ -214,9 +216,47 @@ def load_validators(conn) -> dict:
     return {
         row[0]: {"etag": row[1], "last_modified": row[2]}
         for row in conn.execute(
-            "SELECT url, etag, last_modified FROM shadow_validators")
+            "SELECT url, etag, last_modified FROM shadow_validators"
+            " WHERE url IN (SELECT url FROM shadow_records)")
     }
 
+
+
+def _select_refs(conn, refs, adapter, slug, run_id, cutoff_date, cap):
+    """Unprocessed items first; persist overflow before the feed can evict it."""
+    feed_urls = {ref.url for ref in refs}
+    carried = 0
+    for url, title, published in conn.execute(
+            "SELECT url, title_original, published_date FROM shadow_unretrieved"
+            " WHERE source_slug = ? AND reason != 'access_challenged'"
+            " AND url NOT IN (SELECT url FROM shadow_records)", (slug,)):
+        if url not in feed_urls:
+            refs.append(CandidateReference(url, slug, hint_published_date=published))
+            adapter._titles[url] = title
+            carried += 1
+    eligible, pre, _, undated = partition_refs(refs, cutoff_date, None)
+    stored = {row[0] for row in conn.execute("SELECT url FROM shadow_records")}
+    gaps = dict(conn.execute("SELECT url, reason FROM shadow_unretrieved"))
+    new, retry, revalidate, challenged = [], [], [], []
+    for ref in eligible:
+        if ref.url in stored:
+            revalidate.append(ref)
+        elif gaps.get(ref.url) == st.ACCESS_CHALLENGED:
+            challenged.append(ref)
+            _record_unretrieved(conn, ref, adapter, st.ACCESS_CHALLENGED, run_id)
+        elif gaps.get(ref.url) in (None, "deferred_cap"):
+            new.append(ref)
+        else:
+            retry.append(ref)
+    ordered = new + retry + revalidate
+    selected = ordered[:cap]
+    selected_urls = {ref.url for ref in selected}
+    deferred = [ref for ref in new + retry if ref.url not in selected_urls]
+    for ref in deferred:
+        _record_unretrieved(conn, ref, adapter,
+                            gaps.get(ref.url, "deferred_cap"), run_id)
+    return (selected, pre, deferred, undated, challenged, carried,
+            sum(ref.url not in selected_urls for ref in revalidate))
 
 
 def _collect_source(conn, adapter, window, run_id, entry, bucket,
@@ -235,22 +275,32 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
 
     discovery = adapter.discover(window)
     bucket["listing_status"] = discovery.status
+    bucket["failed_endpoints"] = discovery.failed_endpoints
+    bucket["discovery_error"] = discovery.error_detail
     # `discovered` is now everything the feed carried, not everything that
     # survived a filter. The difference between it and `selected` is the whole
     # point: a reader can see how much of the feed this run was responsible for.
     bucket["discovered"] = len(discovery.references)
     entry["discovered"] += len(discovery.references)
-    if discovery.status == st.LISTING_FAILURE:
+    if discovery.status not in (st.OK, st.OK_NO_PUBLICATIONS, st.OK_ALL_DUPLICATES):
         return
 
-    in_scope, pre_bootstrap, deferred, undated = partition_refs(
-        discovery.references, cutoff_date, cap)
+    (in_scope, pre_bootstrap, deferred, undated, known_challenged, carried,
+     revalidation_deferred) = _select_refs(
+        conn, list(discovery.references), adapter, bucket["source_slug"],
+        run_id, cutoff_date, cap)
+    bucket["deferred_urls"] = [ref.url for ref in deferred]
+    entry["deferred_urls"].extend(bucket["deferred_urls"])
+    entry["challenged_urls"].extend(ref.url for ref in known_challenged)
     record_pre_bootstrap(conn, pre_bootstrap, adapter, bucket["source_slug"],
                          run_id)
     for name, n in (("pre_bootstrap", len(pre_bootstrap)),
                     ("deferred", len(deferred)),
                     ("undated", len(undated)),
-                    ("selected", len(in_scope))):
+                    ("selected", len(in_scope)),
+                    ("known_challenged", len(known_challenged)),
+                    ("carried_pending", carried),
+                    ("revalidation_deferred", revalidation_deferred)):
         bucket[name] = n
         entry[name] += n
 
@@ -270,6 +320,10 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
             _record_unretrieved(conn, ref, adapter, "access_challenged", run_id)
             continue
         if capture.status == st.OK_ALL_DUPLICATES:
+            if not conn.execute("SELECT 1 FROM shadow_records WHERE url = ?", (ref.url,)).fetchone():
+                count("fetch_failures")
+                _record_unretrieved(conn, ref, adapter, st.FETCH_FAILURE, run_id)
+                continue
             count("duplicates")          # 304: unchanged since the stored validator
             continue
         if capture.status != st.OK:
@@ -309,6 +363,8 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         run_id: str, commit: str, adapter=None,
         target_source: str = SOURCE_EXPLICIT) -> dict:
     assert_isolated(state_dir)
+    if cap < 1 or lookback < 0:
+        raise ValueError("cap must be positive and lookback non-negative")
     state_dir.mkdir(parents=True, exist_ok=True)
     (state_dir / "ledger").mkdir(exist_ok=True)
     db_path = state_dir / "shadow.db"
@@ -332,7 +388,8 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         # Japan-specific and deliberately its own number: an item the edge
         # refused to serve is not an item that failed to parse, and neither is
         # an outage. Reported separately so coverage can say so out loud.
-        "challenged": 0,
+        "challenged": 0, "known_challenged": 0,
+        "carried_pending": 0, "revalidation_deferred": 0, "deferred_urls": [],
         "pre_bootstrap": 0, "deferred": 0, "undated": 0,
         "challenged_urls": [],
         "content_hashes": [],
@@ -345,9 +402,12 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
 
     conn = sqlite3.connect(str(db_path))
     conn.executescript(SCHEMA)
+    # Forward-only schema extension; historical rows and ledgers stay intact.
+    if "source_slug" not in {row[1] for row in
+                              conn.execute("PRAGMA table_info(shadow_unretrieved)")}:
+        conn.execute("ALTER TABLE shadow_unretrieved ADD COLUMN source_slug TEXT")
 
     window = CollectionWindow(target_date=target, lookback_days=lookback)
-    entry["robots_status"] = "allowed"     # robots.txt permits every path used
 
     bootstrap = establish_cutoff(state_dir, datetime.now(timezone.utc), run_id)
     entry["bootstrap_cutoff_utc"] = bootstrap["cutoff_utc"]
@@ -363,7 +423,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         pairs = [(getattr(adapter, "slug", "jp_mod_news_ja"), adapter)]
     else:
         validators = load_validators(conn)
-        pairs = [(src.slug, JPModAdapter(src, cap=cap, validators=validators))
+        robots_cache = {}  # one current policy observation for this host/run
+        pairs = [(src.slug, JPModAdapter(src, cap=cap, validators=validators,
+                                        robots_cache=robots_cache))
                  for src in load_sources()]
 
     entry["sources"] = []
@@ -371,19 +433,48 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
     for slug, source_adapter in pairs:
         bucket = {"source_slug": slug, "discovered": 0, "selected": 0,
                   "retrieved": 0, "inserted": 0, "duplicates": 0,
-                  "challenged": 0, "fetch_failures": 0,
+                  "challenged": 0, "known_challenged": 0, "carried_pending": 0,
+                  "revalidation_deferred": 0, "fetch_failures": 0,
                   "extraction_failures": 0, "pre_bootstrap": 0,
                   "deferred": 0, "undated": 0, "listing_status": None,
                   "kinds": {}}
         _collect_source(conn, source_adapter, window, run_id, entry, bucket,
                         bootstrap["cutoff_date"], cap)
+        bucket["robots_status"] = getattr(source_adapter, "robots_status", "not_checked")
+        bucket["robots_observation"] = getattr(source_adapter, "robots_observation", None)
+        refusal = getattr(source_adapter, "_policy_failure", None)
+        bucket["policy_failure"] = ({"status": refusal.status, "url": refusal.url,
+                                     "detail": str(refusal)} if refusal else None)
         entry["sources"].append(bucket)
         listing_statuses.append(bucket["listing_status"])
 
+    policy_failures = [bucket["policy_failure"] for bucket in entry["sources"]
+                       if bucket["policy_failure"]]
+    entry["policy_failures"] = policy_failures
+    robots_statuses = [bucket["robots_status"] for bucket in entry["sources"]]
+    entry["robots_status"] = (next((s for s in robots_statuses
+                                    if s not in ("allowed", "absent")),
+                                   "absent" if robots_statuses and all(
+                                       s == "absent" for s in robots_statuses) else "allowed")
+                              if robots_statuses else "not_checked")
+
     entry["listing_status"] = (
-        st.LISTING_FAILURE
-        if listing_statuses and all(x == st.LISTING_FAILURE for x in listing_statuses)
+        listing_statuses[0]
+        if listing_statuses and all(st.is_failure(x) for x in listing_statuses)
         else st.OK)
+    entry["listing_failures"] = sum(
+        bucket["listing_status"] == st.LISTING_FAILURE or bool(bucket["failed_endpoints"])
+        for bucket in entry["sources"])
+    entry["stored_total"] = conn.execute("SELECT COUNT(*) FROM shadow_records").fetchone()[0]
+    outstanding = conn.execute(
+        "SELECT url, reason, source_slug FROM shadow_unretrieved WHERE url NOT IN"
+        " (SELECT url FROM shadow_records)").fetchall()
+    entry["unretrieved_total"] = len(outstanding)
+    entry["outstanding_challenged"] = sum(row[1] == st.ACCESS_CHALLENGED for row in outstanding)
+    # Old rows cannot be assigned to either feed from a shared-host URL alone.
+    entry["unassigned_gap_urls"] = sorted(row[0] for row in outstanding if row[2] is None)
+    rng = conn.execute("SELECT MIN(published_date), MAX(published_date) FROM shadow_records").fetchone()
+    entry["corpus_range"] = list(rng)
 
     # Commit before any early return. Pre-bootstrap history is written during
     # collection, and a run that discovers nothing new still has that history
@@ -397,67 +488,67 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         entry.update(**update)
         return _finish(entry, state_dir, db_path)
 
+    if not pairs:
+        return _close_out(result=st.SKIPPED_DISABLED, health="skipped",
+                          error_detail="no enabled collectible shadow sources")
+
+    if policy_failures:
+        return _close_out(result=policy_failures[0]["status"], health="fail",
+                          error_detail=policy_failures[0]["detail"])
+
     if entry["listing_status"] == st.LISTING_FAILURE:
         return _close_out(result=st.LISTING_FAILURE, health="fail",
                           error_detail="no declared feed returned a usable "
                                        "listing")
 
-    if entry["selected"] == 0:
-        # Not "nothing published": the feeds carried plenty. Nothing was in
-        # scope, which on the bootstrap run is the expected state and on any
-        # later run means the ministry has published nothing since.
-        return _close_out(
-            result=st.OK_NO_PUBLICATIONS,
-            health="ok",
-            error_detail=("%d feed entries were discovered and all predate the "
-                          "collection cutoff of %s; recorded as history, none "
-                          "fetched" % (entry["pre_bootstrap"],
-                                       entry["bootstrap_cutoff_date"]))
-            if entry["pre_bootstrap"] else None)
     conn.commit()
-    entry["stored_total"] = conn.execute(
-        "SELECT COUNT(*) FROM shadow_records").fetchone()[0]
-    entry["unretrieved_total"] = conn.execute(
-        "SELECT COUNT(*) FROM shadow_unretrieved").fetchone()[0]
     entry["pre_bootstrap_total"] = conn.execute(
         "SELECT COUNT(*) FROM shadow_pre_bootstrap").fetchone()[0]
-    rng = conn.execute("SELECT MIN(published_date), MAX(published_date) "
-                       "FROM shadow_records").fetchone()
-    entry["corpus_range"] = list(rng) if rng else [None, None]
     conn.close()
+
+    challenge_count = entry["outstanding_challenged"]
+    incomplete = (entry["unretrieved_total"] or entry["listing_failures"]
+                  or entry["fetch_failures"] or entry["extraction_failures"])
 
     # Result taxonomy. A challenged item is a disclosed gap, not a failed run —
     # see the module docstring. What fails a run is the open routes closing.
     if entry["fetch_failures"] and not entry["inserted"] \
-            and not entry["duplicates"] and not entry["challenged"]:
+            and not entry["duplicates"]:
         entry.update(result=st.FETCH_FAILURE, health="fail",
                      error_detail="%d selected item(s) could not be retrieved"
                                   % entry["fetch_failures"])
-    elif entry["challenged"] and not entry["retrieved"] \
+    elif challenge_count and not entry["retrieved"] \
             and not entry["duplicates"]:
-        # Everything the feed offered was refused. The feed still worked, so
-        # this is not a listing failure, but it is not a healthy day either.
+        # Feed eviction does not erase an outstanding access refusal. Working
+        # feeds without a served body still do not establish healthy coverage.
         entry.update(result=st.ACCESS_CHALLENGED, health="degraded",
-                     error_detail="every selected item was challenged at the "
-                                  "edge; no document was served")
+                     error_detail="%d access-challenged gap(s) remain in state; "
+                                  "no document was served" % challenge_count)
     elif entry["extraction_failures"] and not entry["inserted"] \
             and not entry["duplicates"]:
         entry.update(result=st.EXTRACTION_FAILURE, health="fail",
                      error_detail="every retrieved item failed extraction")
     elif entry["inserted"]:
         entry.update(result=st.OK,
-                     health="ok" if not entry["challenged"] else "partial")
+                     health="partial" if incomplete else "ok")
     elif entry["duplicates"]:
         entry.update(result=st.OK_ALL_DUPLICATES,
-                     health="ok" if not entry["challenged"] else "partial")
+                     health="partial" if incomplete else "ok")
     else:
-        entry.update(result=st.OK_NO_PUBLICATIONS, health="ok")
+        entry.update(result=st.OK_NO_PUBLICATIONS, health="partial" if incomplete else "ok")
+        if entry["pre_bootstrap"] and not entry["selected"] and not incomplete:
+            entry["error_detail"] = (
+                "%d feed entries were discovered and all predate the collection cutoff "
+                "of %s; recorded as history, none fetched"
+                % (entry["pre_bootstrap"], entry["bootstrap_cutoff_date"]))
 
-    if entry["challenged"] and entry.get("error_detail") is None:
+    if incomplete and entry.get("error_detail") is None:
         entry["error_detail"] = (
-            "%d of %d selected item(s) are HTML and are served behind an edge "
-            "challenge; recorded, not fetched"
-            % (entry["challenged"], entry["selected"]))
+            "%d outstanding gap(s), %d challenged, %d unassigned; "
+            "%d listing, %d fetch and %d extraction failure(s) this run"
+            % (entry["unretrieved_total"], challenge_count, len(entry["unassigned_gap_urls"]),
+               entry["listing_failures"], entry["fetch_failures"], entry["extraction_failures"]))
+
     return _finish(entry, state_dir, db_path)
 
 
@@ -468,14 +559,15 @@ def _record_unretrieved(conn, ref, adapter, reason, run_id) -> None:
     if row:
         conn.execute(
             "UPDATE shadow_unretrieved SET last_seen_run = ?, reason = ?,"
+            " source_slug = COALESCE(source_slug, ?),"
             " seen_count = seen_count + 1 WHERE url = ?",
-            (run_id, reason, ref.url))
+            (run_id, reason, ref.source_slug, ref.url))
     else:
         conn.execute(
-            "INSERT INTO shadow_unretrieved (url, title_original,"
+            "INSERT INTO shadow_unretrieved (url, source_slug, title_original,"
             " published_date, reason, first_seen_run, last_seen_run, seen_count)"
-            " VALUES (?,?,?,?,?,?,1)",
-            (ref.url, title, ref.hint_published_date, reason, run_id, run_id))
+            " VALUES (?,?,?,?,?,?,?,1)",
+            (ref.url, ref.source_slug, title, ref.hint_published_date, reason, run_id, run_id))
 
 
 def _store_validator(conn, doc, run_id) -> None:
@@ -573,7 +665,8 @@ def main(argv=None) -> int:
           % (entry["pre_bootstrap"], entry["deferred"], entry["undated"]))
     if entry.get("error_detail"):
         print("detail     : %s" % entry["error_detail"])
-    return 0 if entry["result"] in TERMINAL_OK or entry["challenged"] else 1
+    return 0 if entry["result"] in TERMINAL_OK + (st.SKIPPED_DISABLED,) or (
+        entry["result"] == st.ACCESS_CHALLENGED and entry["health"] != "fail") else 1
 
 
 if __name__ == "__main__":

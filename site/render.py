@@ -181,7 +181,7 @@ class MissingSiteOrigin(RuntimeError):
 
 def render_site(mode: str = None, output_dir=None, db_path=None,
                 environ=None, snapshot=None, site_origin=None,
-                allow_test_origin=False, daily_run_date=None) -> dict:
+                allow_test_origin=False, daily_run_date=None, review_brief=None) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
@@ -196,6 +196,8 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     unusable value stops the build instead of falling back.
     """
     resolved = resolve_site_mode(mode, environ)
+    if review_brief and resolved == LEGACY:
+        raise ValueError("draft review requires the production Indo-Pacific Record renderer")
 
     if resolved == LEGACY:
         target = Path(output_dir) if output_dir else OUTPUT_DIR
@@ -217,6 +219,8 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     # `generate_preview.build()`: that guard still stands, and the publish
     # below satisfies it by building into a scratch tree and exchanging it in.
     target = Path(output_dir).resolve() if output_dir else OUTPUT_DIR.resolve()
+    if review_brief and (target == OUTPUT_DIR.resolve() or OUTPUT_DIR.resolve() in target.parents):
+        raise ValueError("a draft review needs --out outside output/; it cannot be published")
 
     import importlib.util
     spec = importlib.util.spec_from_file_location(
@@ -290,13 +294,14 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
         snapshot_source = "derived"
 
     def _render(destination):
+        review_options = {"review_brief": Path(review_brief)} if review_brief else {}
         return gp.build(destination, INDO_PACIFIC_RECORD_TITLE,
                         selected_db,
                         snapshot=effective_snapshot,
                         legacy_routes=True,
-                        site_origin=origin,
+                        site_origin=None if review_brief else origin,
                         allow_test_origin=allow_test_origin,
-                        daily_run_date=run_date)
+                        daily_run_date=run_date, **review_options)
 
     if target == OUTPUT_DIR.resolve():
         with tempfile.TemporaryDirectory(prefix="ipr-publish-") as scratch:
@@ -310,6 +315,10 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
                   "carried_pages_listed_in_sitemap": listed}
     else:
         result = _render(target)
+        if review_brief:
+            # A successfully built review tree must not retain public artifacts.
+            for route in ("sitemap.xml", "briefs/feed.xml"):
+                (target / route).unlink(missing_ok=True)
         report = {"mode": INDO_PACIFIC_RECORD, "output_dir": str(target),
                   "snapshot_source": snapshot_source,
                   "daily_run_date": run_date}
@@ -427,6 +436,7 @@ def main(argv=None) -> int:
                    help="destination directory; required for %s"
                         % INDO_PACIFIC_RECORD)
     p.add_argument("--db", default=None, help="database to read (read-only)")
+    p.add_argument("--review-brief", help="private unnumbered draft review; requires --out outside output/")
     p.add_argument("--site-origin", default=None,
                    help="absolute origin the site will be published under. "
                         "Required for %s; may also come from %s."
@@ -438,8 +448,9 @@ def main(argv=None) -> int:
     try:
         report = render_site(args.mode, args.out, args.db,
                              site_origin=args.site_origin,
-                             allow_test_origin=args.allow_test_origin)
-    except (UnsupportedSiteMode, MissingSiteOrigin, InvalidDailyRunDate) as exc:
+                             allow_test_origin=args.allow_test_origin,
+                             review_brief=args.review_brief)
+    except (UnsupportedSiteMode, MissingSiteOrigin, InvalidDailyRunDate, ValueError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2
     print("mode   : %s" % report["mode"])

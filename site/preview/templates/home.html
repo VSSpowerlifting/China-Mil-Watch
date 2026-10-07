@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% from "_records.html" import lead_record, record_register, records_aside %}
 {% from "_weeks.html" import week_strip %}
-{% from "_plate.html" import edition_plate %}
 {# The opening paints its own ground, so the page opts out of the reading
    column's top padding. #}
-{% block main_class %} class="leads-with-hero"{% endblock %}
+{% block main_class %} class="leads-with-hero home-atlas"{% endblock %}
 {# The page's scripted motion: the home sections arriving, once. Synchronous
    in the head so the start-state class lands before first paint; it bails,
    leaving the finished page, without IntersectionObserver or when the reader
-   asks for reduced motion. #}
-{% block head_scripts %}<script src="reveal.js"></script>{% endblock %}
+   asks for reduced motion.
+
+   intro.js is the opening title (VISUAL_AND_MOTION_SYSTEM §1.1): this page
+   only, and async, so the page never waits on its request. It builds
+   everything it shows, so without JavaScript the page is simply the page. #}
+{% block head_scripts %}<script src="intro.js" async></script><script src="reveal.js"></script>{% endblock %}
 {% block hero %}
 {# ── The opening (protected) ──────────────────────────────────────────────
    A display claim on the left, the dateline ledger on the right, and the
@@ -130,10 +133,15 @@
 </section>
 {% endblock %}
 {% block after_content %}
-{# The newest issue in the collection, brief or not; with no brief it is the
-   newest issue published as The PLA Watch. #}
-{% set lead = latest_analysis %}
-{% if lead %}
+{#- The analysis band states the same model as Analysis: one publication,
+    Indo-Pacific Record Briefs, led by the newest published item of the whole
+    collection (`collection.lead`). The issues first published as The PLA Watch
+    are earlier Briefs in that collection, so when the newest one is the lead it
+    leads, with where it was first published as a secondary line. The
+    in-development state appears only when the collection holds no item at all.
+    No plate is drawn here; the band links into Analysis for the catalog. -#}
+{% set lead = collection.lead if collection else none %}
+{% set lead_row = collection.lead_row if collection else none %}
 <section class="band" aria-labelledby="analysis">
   <div class="wrap section">
     <div class="section-head">
@@ -141,38 +149,32 @@
       <p class="section-more"><a href="analysis.html">All analysis</a></p>
       <p class="section-kicker">Human-controlled, citing the records it rests on. Labeled as interpretation.</p>
     </div>
-    <div class="feature" data-reveal>
+    <div class="feature feature--briefs" data-reveal>
       <div>
-        <p class="feature-eyebrow">{{ lead.series_name or predecessor_series }}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
-        <h3><a href="{{ lead.url }}" rel="noopener">{{ lead.title or lead.slug }}</a></h3>
+        {% if lead %}
+        <p class="briefs-label">{{ collection_name }}{% if lead.is_review %} · Review candidate{% endif %}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
+        <h3><a href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>{{ lead.title or lead.slug }}</a></h3>
         {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
-        {# `articles` is the sidecar's n_articles: the week's relevance-passing
-           collected articles. It is NOT the count of items the edition cites —
-           that is the source trail, which the plate draws. #}
-        <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.articles is not none %} &middot; {{ lead.articles|count }} articles{% endif %}{% if lead.flagged is not none %} &middot; {{ lead.flagged|count }} model-flagged{% endif %}</p>
+        {% if lead.is_retrospective and lead_row.kind == 'brief' %}<p class="legacy-note">{{ lead.retrospective_label }}</p>{% endif %}
+        <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.desks %} · {% for slug in lead.desks %}{% set d = desks.get(slug) %}{{ d.name if d else slug }}{% if not loop.last %}{{ ' and ' if loop.length == 2 else ', ' }}{% endif %}{% endfor %}{% endif %}</p>
+        {% if lead_row.kind == 'issue' %}
+        <p class="legacy-note">{{ lead_row.provenance }}</p>
+        {% endif %}
         {% if lead.synthetic %}
         <p class="legacy-note">Synthetic test fixture. Not a published brief.</p>
-        {% elif lead.era == 'historical' %}
-        <p class="legacy-note">A legacy China Desk series, published under the
-          predecessor masthead {{ predecessor_name }} and preserved with its
-          original issue numbers, titles and URLs.</p>
-        {% elif lead.is_retrospective %}
-        <p class="legacy-note">{{ lead.retrospective_label }}: prepared
-          after the week it covers, and published under the current masthead.</p>
         {% endif %}
-        <p><a class="btn btn--primary" href="{{ lead.url }}" rel="noopener">Read this {{ 'brief' if lead.series_name == collection_name else 'edition' }}</a></p>
+        <p><a class="btn btn--primary" href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>Read this Brief</a></p>
+        {% else %}
+        <p class="briefs-label">{{ collection_name }}</p>
+        <h3 id="briefs-development">Briefs in development</h3>
+        <p class="dek">{{ collection_name }} is in development, and no Brief has been
+          published yet. Draft Briefs are withheld from the public collection until
+          approved.</p>
+        {% endif %}
       </div>
-      {% set plate = edition_plates.get(lead.slug) if edition_plates else none %}
-      {% if plate %}
-      <figure class="plate">
-        {{ edition_plate(plate, 'plate-lead', lead.series_name or predecessor_series) }}
-        <figcaption>One mark per record in this issue's source trail. The tall rust marks are model-flagged: a software triage flag, not the editor's judgment.</figcaption>
-      </figure>
-      {% endif %}
     </div>
   </div>
 </section>
-{% endif %}
 
 <div class="wrap">
 <section class="section" aria-labelledby="record-and-analysis">

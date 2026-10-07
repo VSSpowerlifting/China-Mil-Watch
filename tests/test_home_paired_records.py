@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html as html_mod
+import json
 import re
 import shutil
 import sqlite3
@@ -268,8 +269,14 @@ class HomeCase(unittest.TestCase):
             raise unittest.SkipTest("production database not present")
         cls.tmp = Path(tempfile.mkdtemp(prefix="c1-home-"))
         cls.out = cls.tmp / "build"
+        # These historical-issue contracts deliberately exercise the state
+        # before a native Brief leads. Real publication must not change that
+        # fixture; native-first behavior is covered by the publication suite.
+        cls.briefs = cls.tmp / "briefs"
+        cls.briefs.mkdir()
         gp.build(cls.out, gp.PUBLIC_TITLE, TRACKED_DB,
-                 snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+                 snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+                 briefs_dir=cls.briefs)
         cls.home = (cls.out / "index.html").read_text(encoding="utf-8")
         cls.data = gp.load_corpus(TRACKED_DB)
         cls.view = PublicView(TRACKED_DB)
@@ -542,11 +549,19 @@ class TestTheDatelineCarriesEveryGovernedFigure(HomeCase):
         # `records_last_collected` is MAX(scraped_at) and
         # `analysis_last_produced` is MAX(analyzed_at). Collecting one record
         # after the last analysis ran is exactly the state the caveat exists
-        # for, and it is the smallest change that produces it.
+        # for, and it is the smallest change that produces it. Freshness is
+        # compared by calendar day (the first ten characters), so the
+        # collection time is derived from the copied corpus as one day after
+        # its newest analysis, never a fixed date, and stays "after" as the
+        # tracked corpus advances.
         con = sqlite3.connect(str(db))
         newest = _newest_analyzed_ids(db, 1)[0]
-        con.execute("UPDATE articles SET scraped_at = '2026-09-30 06:00:00' "
-                    " WHERE id = ?", (newest,))
+        collected_after = con.execute(
+            "SELECT datetime(MAX(analyzed_at), '+1 day') FROM articles "
+            " WHERE analyzed_at IS NOT NULL").fetchone()[0]
+        self.assertIsNotNone(collected_after, "the corpus has no analysis")
+        con.execute("UPDATE articles SET scraped_at = ? WHERE id = ?",
+                    (collected_after, newest))
         con.commit()
         con.close()
         out = tmp / "behind-build"
@@ -659,16 +674,14 @@ class TestTheAircraftIsGoneAndTheVeilIsMeasured(HomeCase):
     def test_the_only_photograph_painted_behind_text_is_the_veil(self):
         """
         The veil's two encodings are the only photographic URLs. The inline
-        SVG ruling is a vector pattern in the wide margins, not a photograph
-        whose contrast needs measuring over text.
+        SVG terrain is shared decoration, not a photograph. Its stylesheet
+        must carry no additional raster, even when the vector is a variable.
         """
-        css = CSS.read_text(encoding="utf-8")
-        painted = [value for value in
-                   re.findall(r"background-image:\s*([^;}]+)", css)
-                   if "url(" in value]
-        urls = re.findall(r'url\("([^"]+)"\)', " ".join(painted))
+        css = (CSS.read_text(encoding="utf-8") + "\n" +
+               CSS.with_name("topography.css").read_text(encoding="utf-8"))
+        urls = re.findall(r'url\("([^"]+)"\)', css)
         ruling = [url for url in urls if url.startswith("data:image/svg+xml,")]
-        self.assertEqual(len(ruling), 1, "expected one inline vector ruling")
+        self.assertEqual(len(ruling), 1, "expected one shared contour vector")
         self.assertEqual(
             set(urls) - set(ruling),
             {"atmosphere/veil-ocean.webp", "atmosphere/veil-ocean.jpg"},
@@ -742,16 +755,28 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         lead = lead.split("</section>", 1)[0]
         self.assertIn('class="evidence evidence--record">Source record', lead)
 
-    def test_the_latest_analysis_renders_the_actual_edition(self):
+    def test_the_latest_analysis_band_leads_with_the_newest_unified_brief(self):
+        """
+        Changed 2026-09-30 (DECISION_LOG): the earlier issues are Briefs in the
+        one collection, so the band leads with the newest item of it, which
+        with no native Brief is the newest earlier issue. It says where that
+        issue was first published as a secondary line, draws no plate, and
+        stands alone: no archive aside, no "in development" state.
+        """
         editions = gp.load_editions(REPO_ROOT)
         if not editions:
             self.skipTest("no published edition to lead with")
         lead = editions[0]
-        section = self.home.split("Latest analysis", 1)[1]
-        section = section.split('class="section-head', 1)[0]
-        self.assertIn(lead["title"] or lead["slug"], section)
+        section = self.home.split(">Latest analysis</h2>", 1)[1]
+        section = section.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertNotIn("Briefs in development", section)
         self.assertIn(lead["url"], section)
+        self.assertIn(lead["title"] or lead["slug"], section)
         self.assertIn("No. %s" % lead["issue"], section)
+        self.assertIn("From the former series The PLA Watch", section)
+        self.assertIn("Read this Brief", section)
+        self.assertNotIn("band-archive", section)
+        self.assertNotIn('href="pla-watch.html"', section)
 
     def test_the_lead_edition_is_drawn_as_its_plate_not_its_cover(self):
         """
@@ -767,8 +792,14 @@ class TestRecordAndAnalysisStayDistinguished(HomeCase):
         if not editions:
             self.skipTest("no published edition to lead with")
         lead = editions[0]
-        section = self.home.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('aria-labelledby="record-and-analysis"', 1)[0]
+        # Since 2026-09-30 the plate stands in the latest-Brief lead on the
+        # Analysis page; the home band draws no plate at all.
+        band = self.home.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertNotIn("<svg", band)
+        analysis = (self.out / "analysis.html").read_text(encoding="utf-8")
+        section = analysis.split('class="band briefs-head"', 1)[1]
+        section = section.split('id="briefs-published"', 1)[0]
         self.assertEqual(section.count("<svg"), 1)
         self.assertIn('role="img"', section)
         self.assertIn("No. %s" % lead["issue"], section)
@@ -1295,16 +1326,20 @@ class TestTheRegisterDegradesWithTheCorpus(PairedRecordCase):
 
     def test_no_current_edition_leaves_the_page_coherent(self):
         """
-        The band's lead is `latest_analysis`, the collection's newest issue:
-        `None` when no sidecar and no brief exists. The analysis section is then
-        absent rather than an empty frame, and nothing above or below it claims
-        an edition. (Until 2026-09-23 the guard read `lead_edition`, the newest
-        PLA Watch issue; the band now leads with the collection.)
+        The band's lead is `collection.lead`: the newest published item of the
+        one collection, an earlier issue included. The in-development state
+        stays in the template for the case where the collection is empty.
+        (Until 2026-09-30 the lead was the newest native brief only, and before
+        that `latest_analysis` or `lead_edition`.)
         """
         source = (TEMPLATES / "home.html").read_text(encoding="utf-8")
-        self.assertIn("{% set lead = latest_analysis %}\n{% if lead %}", source)
-        analysis = source.split("{% if lead %}", 1)[1]
-        self.assertIn("Latest analysis", analysis.split("{% endif %}")[0])
+        self.assertIn("{% set lead = collection.lead if collection else none %}",
+                      source)
+        self.assertNotIn("collection.briefs[0]", source)
+        self.assertNotIn("{% set lead = latest_analysis %}", source)
+        band = source.split('<section class="band" aria-labelledby="analysis">', 1)[1]
+        self.assertLess(band.index("Latest analysis"), band.index("{% if lead %}"))
+        self.assertIn("Briefs in development", band.split("</section>", 1)[0])
 
 
 if __name__ == "__main__":                                  # pragma: no cover
@@ -1459,13 +1494,55 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
             "() => document.documentElement.classList.add('no-anim')")
 
     def lead_box(self, page):
-        return page.evaluate(
-            "() => { const h = document.querySelector("
-            "'.lead-record .record-headline'); if (!h) return null;"
-            " const r = h.getBoundingClientRect();"
-            " return {top: r.top + window.scrollY, bottom: r.bottom +"
-            " window.scrollY, height: r.height,"
-            " lineHeight: parseFloat(getComputedStyle(h).lineHeight)}; }")
+        return page.evaluate("""() => {
+            const h = document.querySelector('.lead-record .record-headline');
+            if (!h) return null;
+            const r = h.getBoundingClientRect();
+            // Computed CSS line-height can exceed the actual layout line box
+            // (28.272px versus 28.265625px). Measure a natural single line in
+            // the same style context, without changing flow or adding slack.
+            const line = h.cloneNode(true);
+            Object.assign(line.style, {position:'absolute', top:'0', left:'0',
+                visibility:'hidden', whiteSpace:'nowrap', width:'max-content',
+                maxWidth:'none', height:'auto', minHeight:'0', maxHeight:'none',
+                transform:'none'});
+            h.parentElement.appendChild(line);
+            const renderedLineHeight = line.getBoundingClientRect().height;
+            line.remove();
+            return {top:r.top + window.scrollY, bottom:r.bottom + window.scrollY,
+                height:r.height, renderedLineHeight,
+                lineHeight:parseFloat(getComputedStyle(h).lineHeight)};
+        }""")
+
+    def fractional_line_box(self, page, top):
+        # Synthetic layout probe, not a source title. Use the CI line height
+        # and the same selector/measurement as the actual phone contract.
+        page.set_content(
+            '<style>body{margin:0}.record-headline{position:absolute;'
+            'top:%spx;margin:0;font:20px/28.272px serif;white-space:nowrap}'
+            '</style><div class="lead-record"><h2 class="record-headline">'
+            'Layout probe</h2></div>' % top)
+        return self.lead_box(page)
+
+    def test_a_fully_visible_fractional_line_is_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 100)
+            self.assertLess(box["bottom"], 900)
+            self.assertLess(box["height"], box["lineHeight"])
+            self.assert_complete_phone_line(box)
+        finally:
+            context.close()
+
+    def test_a_fractional_line_clipped_by_the_viewport_is_not_readable(self):
+        context, page = self.page_at(375, 900)
+        try:
+            box = self.fractional_line_box(page, 874)
+            self.assertGreater(box["bottom"], 900)
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(box)
+        finally:
+            context.close()
 
     def test_a_complete_record_title_is_visible_in_the_first_viewport(self):
         """Under the platform's own faces and under the forced wide stack."""
@@ -1547,16 +1624,42 @@ class TestTheRecordReachesTheFirstViewport(BrowserCase):
                 page.wait_for_timeout(120)
                 box = self.lead_box(page)
                 with self.subTest(stack="wide" if wide else "native"):
-                    self.assertIsNotNone(box)
-                    visible = min(box["bottom"], 900) - box["top"]
-                    self.assertGreaterEqual(
-                        visible, box["lineHeight"],
-                        "only %.1fpx of the headline is inside 375x900 — less "
-                        "than one rendered line of %.1fpx, so the record's "
-                        "title begins below the fold"
-                        % (visible, box["lineHeight"]))
+                    self.assert_complete_phone_line(box)
             finally:
                 context.close()
+
+    def assert_complete_phone_line(self, box):
+        self.assertIsNotNone(box)
+        visible = min(box["bottom"], 900) - box["top"]
+        self.assertGreaterEqual(
+            visible, box["renderedLineHeight"],
+            "only %.6fpx of the headline is inside 375x900; a complete "
+            "rendered line requires %.6fpx" % (visible, box["renderedLineHeight"]))
+
+    def test_phone_line_guard_accepts_a_complete_line_and_rejects_clipping(self):
+        context, page = self.page_at(375, 900)
+        try:
+            self.pin_reveal(page)
+            page.wait_for_function("document.fonts.status === 'loaded'", timeout=30000)
+            headline = page.locator('.lead-record .record-headline')
+            # Use the preserved source title, laid out as one complete line.
+            headline.evaluate("h => Object.assign(h.style, {position:'fixed', "
+                              "top:'0', whiteSpace:'nowrap'})")
+            box = self.lead_box(page)
+            self.assert_complete_phone_line(box)
+            # Viewport clipping of even one CSS pixel must still fail.
+            headline.evaluate("(h, height) => h.style.top = (901-height)+'px'",
+                              box["height"])
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(self.lead_box(page))
+            # A constrained element must not redefine a complete natural line.
+            headline.evaluate("(h, height) => Object.assign(h.style, {top:'0', "
+                              "height:(height-1)+'px', overflow:'hidden'})",
+                              box["height"])
+            with self.assertRaises(AssertionError):
+                self.assert_complete_phone_line(self.lead_box(page))
+        finally:
+            context.close()
 
 
 class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
@@ -1721,6 +1824,123 @@ class TestTheOpeningHasNoUnexplainedSpace(BrowserCase):
 
 class TestTheHomePageHoldsItsShape(BrowserCase):
 
+    def test_topography_is_inert_responsive_and_shared_with_subpages(self):
+        for width in (375, 390, 430, 900, 1280, 1440):
+            context, page = self.page_at(width, 900)
+            try:
+                for route in ('index.html', 'analysis.html'):
+                    page.goto('http://127.0.0.1:%d/%s' % (self.port, route))
+                    state = page.evaluate("""() => {
+                      const field = document.querySelector('.topography');
+                      const paint = getComputedStyle(field, '::before');
+                      return {
+                        image: paint.backgroundImage, tiled: paint.backgroundRepeat,
+                        events: getComputedStyle(field).pointerEvents,
+                        hidden: field.getAttribute('aria-hidden'),
+                        overflow: document.documentElement.scrollWidth - innerWidth
+                      };
+                    }""")
+                    with self.subTest(width=width, route=route):
+                        self.assertIn('data:image/svg+xml', state['image'])
+                        self.assertEqual(state['tiled'], 'repeat-y')
+                        self.assertEqual(state['events'], 'none')
+                        self.assertEqual(state['hidden'], 'true')
+                        self.assertLessEqual(state['overflow'], 0)
+                    for media in ({'media': 'print'},
+                                  {'media': 'screen', 'forced_colors': 'active'}):
+                        page.emulate_media(**media)
+                        self.assertEqual(page.locator('.topography').evaluate(
+                            "e => getComputedStyle(e).display"), 'none')
+                    page.emulate_media(media='screen', forced_colors='none')
+            finally:
+                context.close()
+
+    def test_page_profiles_vary_without_changing_when_revisited(self):
+        routes = ['index.html', 'archive.html', 'analysis.html', 'desks.html',
+                  'sources.html', 'coverage.html', 'methodology.html',
+                  'about.html', 'corpus.html', 'corpus-guide.html']
+        for folder in ('record', 'source', 'briefs'):
+            routes += [p.relative_to(self.out).as_posix()
+                       for p in sorted((self.out / folder).glob('*.html'))[:2]]
+        routes += [p.name for p in sorted(self.out.glob('desk-*.html'))]
+        routes += [p.name for p in sorted(self.out.glob('week-*.html'))[:2]]
+        context, page = self.page_at(1280, 900)
+        try:
+            profiles = []
+            for route in routes + ['index.html']:
+                page.goto('http://127.0.0.1:%d/%s' % (self.port, route))
+                profiles.append(page.locator('main').get_attribute('style'))
+            self.assertTrue(all(profiles))
+            self.assertEqual(profiles[0], profiles[-1])
+            self.assertEqual(len(profiles[:-1]), len(set(profiles[:-1])))
+        finally:
+            context.close()
+
+    def test_terrain_motion_is_decorative_and_has_static_fallbacks(self):
+        context, page = self.page_at(1280, 900, path='analysis.html')
+        motion = "e => getComputedStyle(e, '::before').animationName"
+        try:
+            self.assertEqual(page.locator('.topography').evaluate(motion),
+                             'terrain-drift')
+            self.assertEqual(page.locator('.briefs-head').evaluate(motion),
+                             'terrain-breath')
+            # Font swaps can move this title by 24px while decorative motion
+            # is being inspected. Measure only after the used faces settle.
+            page.wait_for_function("document.fonts.status === 'loaded'", timeout=30000)
+            geometry = page.locator('#briefs-title').bounding_box()
+            transforms = page.locator('.topography').evaluate("""e => {
+              const a = e.getAnimations({subtree:true})[0];
+              a.pause(); a.currentTime = 0;
+              const first = getComputedStyle(e, '::before').transform;
+              a.currentTime = a.effect.getTiming().duration;
+              return [first, getComputedStyle(e, '::before').transform];
+            }""")
+            self.assertNotEqual(*transforms)
+            self.assertEqual(page.locator('#briefs-title').bounding_box(), geometry)
+            page.evaluate("document.documentElement.classList.add('no-anim')")
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            page.evaluate("document.documentElement.classList.remove('no-anim')")
+            page.emulate_media(reduced_motion='reduce')
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            self.assertEqual(page.locator('.briefs-head').evaluate(motion), 'none')
+        finally:
+            context.close()
+        context, page = self.page_at(1280, 900, path='analysis.html',
+                                     java_script_enabled=False)
+        try:
+            self.assertEqual(page.locator('.topography').evaluate(motion), 'none')
+            self.assertIn('data:image/svg+xml', page.locator('.topography').evaluate(
+                "e => getComputedStyle(e, '::before').backgroundImage"))
+            self.assertTrue(page.locator('#briefs-title').is_visible())
+        finally:
+            context.close()
+
+    def test_historical_small_type_keeps_contrast_over_terrain(self):
+        from scripts.pw_env import make_pw_env
+        from scripts.rerender_pla_watch import _build_post_context
+        from tests.test_homepage_veil_contract import (
+            TestTextOverTheVeilIsMeasuredAtItsGlyphs,
+        )
+        sidecar = json.loads((REPO_ROOT / 'output/the-pla-watch/posts/'
+                              '2026-08-15.json').read_text(encoding='utf-8'))
+        render_context = _build_post_context(sidecar)
+        render_context['root_path'] = ''
+        html = make_pw_env().get_template('pla-watch-post.html').render(
+            **render_context)
+        (self.out / 'historical-contrast.html').write_text(html, encoding='utf-8')
+        probe = TestTextOverTheVeilIsMeasuredAtItsGlyphs()
+        for width in (375, 1280):
+            context, page = self.page_at(width, path='historical-contrast.html',
+                                         reduced_motion='reduce')
+            try:
+                page.locator('.byline-title').scroll_into_view_if_needed()
+                measured = probe.glyph_contrast(page, '.byline-title')
+                with self.subTest(width=width):
+                    self.assertGreaterEqual(measured['pixels'], 200)
+                    self.assertGreaterEqual(measured['worst'], 4.5)
+            finally:
+                context.close()
+
     def test_no_horizontal_overflow_from_320_to_2560(self):
         for width in (320, 375, 768, 1280, 1920, 2560):
             context, page = self.page_at(width, 900)
@@ -1760,7 +1980,8 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
         the ONLY raster allowed to paint behind text, and it is inert —
         `pointer-events: none`, `aria-hidden`, and behind every text layer, so
         it can never take a click or reach the accessibility tree. The new
-        vector ruling is allowed only on main, under opaque reading paper.
+        shared vector field lives behind attenuated reading paper; dark bands
+        keep their own grounds and source photographs.
 
         The contrast property the ban existed to protect is measured directly,
         from the pixels each glyph actually covers, in
@@ -1786,45 +2007,25 @@ class TestTheHomePageHoldsItsShape(BrowserCase):
             finally:
                 context.close()
 
-    def test_margin_ruling_stays_outside_reading_paper_and_phone(self):
+    def test_contours_stay_behind_attenuating_reading_paper(self):
         for width in (1920, 375):
             context, page = self.page_at(width, 900)
             try:
                 state = page.evaluate("""() => {
                   const main = document.querySelector('main#main');
-                  const mainBox = main.getBoundingClientRect();
-                  const wraps = [...main.querySelectorAll(':scope > .wrap')];
                   return {
-                    image: getComputedStyle(main).backgroundImage,
-                    gridPainters: [...document.querySelectorAll('*')]
-                      .filter(el => getComputedStyle(el).backgroundImage
-                        .includes('data:image/svg+xml')).length,
-                    wraps: wraps.map(el => {
-                      const style = getComputedStyle(el);
-                      const box = el.getBoundingClientRect();
-                      const channels = style.backgroundColor.match(/[\\d.]+/g)
-                        .map(Number);
-                      return {
-                        image: style.backgroundImage,
-                        opaque: channels.length === 3 || channels[3] === 1,
-                        inset: box.left > mainBox.left &&
-                          box.right < mainBox.right
-                      };
-                    })
+                    wrap: getComputedStyle(main.querySelector(':scope > .wrap')).backgroundColor,
+                    image: getComputedStyle(main.querySelector('.topography'), '::before').backgroundImage,
+                    gridPainters: [...document.querySelectorAll('*')].filter(el =>
+                      getComputedStyle(el).backgroundImage.includes("width='88'")).length,
+                    overflow: document.documentElement.scrollWidth - innerWidth
                   };
                 }""")
                 with self.subTest(width=width):
-                    self.assertTrue(state["wraps"], "no reading paper")
-                    if width == 1920:
-                        self.assertIn("data:image/svg+xml", state["image"])
-                        self.assertEqual(state["gridPainters"], 1)
-                        self.assertTrue(all(w["opaque"] and w["inset"] and
-                                            w["image"] == "none"
-                                            for w in state["wraps"]),
-                                        "margin ruling reaches reading paper")
-                    else:
-                        self.assertEqual(state["image"], "none")
-                        self.assertEqual(state["gridPainters"], 0)
+                    self.assertIn('data:image/svg+xml', state['image'])
+                    self.assertNotEqual(state['wrap'], 'rgba(0, 0, 0, 0)')
+                    self.assertEqual(state['gridPainters'], 0)
+                    self.assertLessEqual(state['overflow'], 0)
             finally:
                 context.close()
 
@@ -2631,9 +2832,10 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
     which is protected — so they are exercised where the decision is made:
     `edition_cover()` and the template's own guards.
 
-    Since 2026-09-27 the home page draws the lead issue as its edition plate
-    rather than its cover (DECISION_LOG), so the cover's absence changes
-    nothing there, and the plate is held to the issue's own sidecar.
+    Since 2026-09-27 the lead issue is drawn as its edition plate rather than
+    its cover (DECISION_LOG), so the cover's absence changes nothing, and the
+    plate is held to the issue's own sidecar. Since 2026-09-30 that plate
+    is drawn in the Analysis lead when an issue leads, not on the home band.
     """
 
     def test_a_missing_cover_file_yields_no_cover_rather_than_a_gap(self):
@@ -2662,7 +2864,14 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
                 with self.subTest(key=key):
                     self.assertTrue(real[key])
 
-    def build_with_editions(self, editions):
+    @staticmethod
+    def archive_lead(analysis):
+        """The Analysis page's latest-Brief lead, up to the catalog: where
+        the newest item, when it is an earlier issue, is drawn as its plate."""
+        section = analysis.split('class="band briefs-head"', 1)[1]
+        return section.split('id="briefs-published"', 1)[0]
+
+    def build_with_editions(self, editions, page="index.html"):
         """
         A real build whose edition list is exactly `editions`.
 
@@ -2674,15 +2883,18 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
         import tempfile as _tf
         tmp = Path(_tf.mkdtemp(prefix="c1-editions-"))
         self.addCleanup(shutil.rmtree, tmp, True)
+        briefs = tmp / "briefs"
+        briefs.mkdir()
         original = gp.load_editions
         gp.load_editions = lambda root: list(editions)
         try:
             out = tmp / "build"
             gp.build(out, gp.PUBLIC_TITLE, TRACKED_DB,
-                     snapshot=gp.snapshot_from_corpus(TRACKED_DB))
+                     snapshot=gp.snapshot_from_corpus(TRACKED_DB),
+                     briefs_dir=briefs)
         finally:
             gp.load_editions = original
-        return (out / "index.html").read_text(encoding="utf-8")
+        return (out / page).read_text(encoding="utf-8")
 
     def real_edition(self):
         """
@@ -2695,17 +2907,16 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
             self.skipTest("no published edition to lead with")
         return dict(editions[0])
 
-    def test_a_missing_cover_changes_nothing_on_the_home_page(self):
+    def test_a_missing_cover_changes_nothing_where_the_issue_is_drawn(self):
         edition = self.real_edition()
         self.assertIsNotNone(edition.get("cover"),
                              "the fixture needs an edition that HAS a cover")
         edition["cover"] = None
-        html = self.build_with_editions([edition])
-        section = html.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('class="section-head', 1)[0]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
         self.assertIn(edition["title"], section)
-        self.assertIn("Read this edition", section)
-        self.assertIn('class="plate"', section)
+        self.assertIn("Read this Brief", section)
+        self.assertIn('class="plate', section)
         self.assertNotIn("<img", section)
         self.assertNotIn("figure-credit", section)
 
@@ -2725,9 +2936,8 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
              / ("%s.json" % edition["slug"])).read_text(encoding="utf-8"))
         trail = sidecar.get("source_trail") or []
         flagged = [bool(e.get("is_significant")) for e in trail]
-        html = self.build_with_editions([edition])
-        section = html.split(">Latest analysis</h2>", 1)[1]
-        section = section.split('class="section-head', 1)[0]
+        html = self.build_with_editions([edition], "analysis.html")
+        section = self.archive_lead(html)
         svg = section.split("<svg", 1)[1].split("</svg>", 1)[0]
         ticks = re.findall(r'<rect [^>]*class="(tick[^"]*)"', svg)
         self.assertEqual(len(ticks), len(trail))
@@ -2744,10 +2954,15 @@ class TestTheAnalysisSectionDegrades(unittest.TestCase):
 
     def test_no_current_edition_removes_the_section_without_a_claim(self):
         html = self.build_with_editions([])
-        # `>…</h2>`: the heading carries an id, and a bare `<h2>` match
-        # would pass however the section rendered. The plate stands where
-        # `<figure` stood: the week strip on the same page is a figure too.
-        self.assertNotIn(">Latest analysis</h2>", html)
+        # Since 2026-09-30 the band states the current collection whether or
+        # not an issue exists, so it stays; with no issue it has no archive
+        # to point to, and it claims no edition. `>…</h2>`: the heading
+        # carries an id, and a bare `<h2>` match would pass however the
+        # section rendered.
+        band = html.split(">Latest analysis</h2>", 1)[1]
+        band = band.split('aria-labelledby="record-and-analysis"', 1)[0]
+        self.assertIn("Briefs in development", band)
+        self.assertNotIn('class="band-archive"', band)
         for phrase in ("Read this edition", "figure-credit",
                        'class="plate', 'viewBox="0 0 560 315"', "legacy-note",
                        "Retrospective edition"):

@@ -21,7 +21,11 @@ import re
 import sqlite3
 import sys
 import tempfile
+import os
+import subprocess
+import textwrap
 import unittest
+from unittest import mock
 from datetime import date
 from pathlib import Path
 
@@ -30,6 +34,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from core.collection import status as st                     # noqa: E402
+from core.collection.contract import (CandidateReference, CaptureResult,
+                                      DiscoveryResult, ExtractionResult, ExtractedDocument)
 from scraper.sources import jp_mod                           # noqa: E402
 from tests.test_jp_mod_adapter import (                      # noqa: E402
     FEED, PDF_URL, Response, Session, challenge, feed_ok, pdf_ok)
@@ -174,12 +180,18 @@ class TestIsolation(RunnerCase):
         self.assertFalse((ROOT / "desks" / "japan").exists())
         self.assertTrue((ROOT / "shadow" / "jp_mod" / "manifest.json").exists())
 
-    def test_the_japan_source_is_not_enabled(self):
+    def test_the_japan_source_is_enabled_only_in_shadow(self):
         m = json.loads((ROOT / "shadow" / "jp_mod" / "manifest.json")
                        .read_text("utf-8"))
-        self.assertFalse(m["sources"][0]["enabled"])
+        self.assertTrue(m["sources"][0]["enabled"])
         self.assertFalse(m["desk"]["active"])
         self.assertEqual(m["desk"]["public_status"], "shadow")
+        registry = json.loads((ROOT / "desks/registry.json").read_text())
+        japan = next(d for d in registry["desks"] if d["slug"] == "japan")
+        self.assertEqual(japan["status"], "shadow")
+        self.assertTrue(japan["public"])
+        self.assertFalse(japan["has_production_records"])
+        self.assertEqual(japan["manifest"], "shadow/jp_mod/manifest.json")
 
 
 # ------------------------------------------------------------------- counters
@@ -232,6 +244,64 @@ class TestHonestCounters(RunnerCase):
 
 
 # ---------------------------------------------------------------------- state
+
+class TestPolicyLedger(RunnerCase):
+
+    def test_policy_refusal_is_failed_evidence_not_an_empty_or_partial_success(self):
+        for response, status in [(challenge(), st.ACCESS_CHALLENGED),
+                                 (Response(403), st.AUTH_FAILURE),
+                                 (Response(200, text="User-agent: *\nDisallow: /j/\n",
+                                           headers={"Content-Type": "text/plain"}), st.AUTH_FAILURE)]:
+            with self.subTest(status=status, body=response.text):
+                a = make_adapter({jp_mod.ROBOTS: response})
+                entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                                   "policy-" + status, "deadbeef", adapter=a)
+                self.assertEqual((entry["result"], entry["health"]), (status, "fail"))
+                self.assertEqual(entry["robots_status"], status)
+                self.assertEqual(entry["listing_status"], status)
+                self.assertEqual(entry["stored_total"], 0)
+                self.assertIsNone(entry["shadow_day"])
+                self.assertFalse((self.state / "clock.json").exists())
+                self.assertTrue(entry["policy_failures"])
+                self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+                with mock.patch.object(runner, "run", return_value=entry):
+                    self.assertEqual(runner.main(["--state-dir", str(self.state),
+                                                  "--target-date", "2026-08-26"]), 1)
+
+    def test_policy_failure_preserves_prior_corpus_clock_bootstrap_and_ledgers(self):
+        self.go()
+        prior = {p: p.read_bytes() for p in self.state.rglob("*") if p.is_file()}
+        entry = runner.run(self.state, date(2026, 8, 26), 30, 40, "policy-failure",
+                           "deadbeef", adapter=make_adapter({jp_mod.ROBOTS: challenge()}))
+        for p, data in prior.items():
+            self.assertEqual(p.read_bytes(), data, str(p))
+        self.assertEqual(entry["state_sha256_before"], entry["state_sha256_after"])
+        self.assertEqual(entry["stored_total"], 1)
+        self.assertIsNone(entry["shadow_day"])
+
+    def test_two_feeds_share_one_policy_refusal_and_no_listing_request(self):
+        session = Session({jp_mod.ROBOTS: challenge()})
+        real_adapter = jp_mod.JPModAdapter
+        with mock.patch.object(runner, "JPModAdapter", side_effect=lambda src, **kw:
+                               real_adapter(src, session=session, sleep=lambda _: None, **kw)):
+            entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                               "both-feeds-refused", "deadbeef")
+        self.assertEqual([u for u, _ in session.calls], [jp_mod.ROBOTS])
+        self.assertEqual(len(entry["policy_failures"]), 2)
+        self.assertEqual(entry["health"], "fail")
+
+    def test_allowed_is_observed_and_an_absent_file_is_recorded_separately(self):
+        entry = self.go()
+        bucket = entry["sources"][0]
+        self.assertEqual(entry["robots_status"], "allowed")
+        self.assertEqual(bucket["robots_observation"]["http_status"], 200)
+        self.assertIn("payload_sha256", bucket["robots_observation"])
+        routes = routes_with_pdf()
+        routes[jp_mod.ROBOTS] = Response(404)
+        entry = runner.run(self.state, date(2026, 8, 26), 30, 40,
+                           "absent-policy", "deadbeef", adapter=make_adapter(routes))
+        self.assertEqual(entry["robots_status"], "absent")
+        self.assertEqual(entry["sources"][0]["robots_observation"]["http_status"], 404)
 
 class TestStateAndLedger(RunnerCase):
 
@@ -319,6 +389,254 @@ class TestStateAndLedger(RunnerCase):
         for suffix in ("-wal", "-shm"):
             with self.subTest(suffix=suffix):
                 self.assertFalse((self.state / ("shadow.db" + suffix)).exists())
+
+
+class TestSourceEnablement(unittest.TestCase):
+    def configured(self, change):
+        manifest = json.loads(runner.MANIFEST.read_text())
+        change(manifest)
+        with mock.patch.object(Path, "read_text", return_value=json.dumps(manifest)):
+            return runner.load_sources()
+
+    def test_disabled_and_missing_enabled_sources_are_excluded(self):
+        def change(manifest):
+            manifest["sources"][0]["enabled"] = False
+            manifest["sources"][1].pop("enabled")
+        self.assertEqual(self.configured(change), [])
+
+    def test_not_collected_excludes_even_an_enabled_source(self):
+        def change(manifest):
+            for source in manifest["sources"]:
+                source["enabled"] = True
+        self.assertEqual([src.slug for src in self.configured(change)],
+                         ["jp_mod_news_ja", "jp_mod_siteupdate_ja"])
+
+
+class QueueAdapter:
+    """Clearly derived URLs/bodies, exercising the runner without transport."""
+    slug = "jp_mod_news_ja"
+
+    def __init__(self, refs, statuses=None):
+        self.refs = refs
+        self.statuses = statuses or {}
+        self._titles = {r.url: "derived fixture" for r in refs}
+        self.fetched = []
+
+    def discover(self, window):
+        return DiscoveryResult(self.slug, st.OK, list(self.refs))
+
+    def fetch(self, ref):
+        self.fetched.append(ref.url)
+        return CaptureResult(ref, self.statuses.get(ref.url, st.OK), ref.url)
+
+    def extract(self, capture):
+        return ExtractionResult(self.slug, st.OK, [ExtractedDocument(
+            capture.requested_url, self.slug, self._titles[capture.requested_url],
+            "derived body", capture.reference.hint_published_date, language_tag="ja",
+            extra={"publication_kind": "press release", "content_sha256": "derived-hash"})])
+
+
+def queued_ref(n, day="2026-08-20"):
+    return CandidateReference("https://www.mod.go.jp/j/press/derived-%d.pdf" % n,
+                              QueueAdapter.slug, hint_published_date=day)
+
+
+class TestSelectionDoesNotStarve(RunnerCase):
+    def test_repeated_failures_do_not_starve_evicted_never_attempted_urls(self):
+        refs = [queued_ref(n) for n in range(3)]
+        failures = {ref.url: st.FETCH_FAILURE for ref in refs}
+        for n in range(3):
+            adapter = QueueAdapter(refs if n == 0 else [], failures)
+            entry = self.collect(adapter, run_id="fail-%d" % n)
+            self.assertEqual(adapter.fetched, [refs[n].url])
+            self.assertEqual((entry["unretrieved_total"], entry["health"]), (3, "fail"))
+            self.assertEqual(entry["deferred"], 2)
+
+    def test_off_feed_challenges_still_disclose_an_outstanding_gap(self):
+        ref = queued_ref(1)
+        self.collect(QueueAdapter([ref], {ref.url: st.ACCESS_CHALLENGED}))
+        adapter = QueueAdapter([])
+        entry = self.collect(adapter, run_id="r2")
+        self.assertEqual(adapter.fetched, [])
+        self.assertEqual(entry["unretrieved_total"], 1)
+        self.assertEqual(entry["outstanding_challenged"], 1)
+        self.assertEqual((entry["result"], entry["health"]), (st.ACCESS_CHALLENGED, "degraded"))
+
+    def test_a_stored_pdf_does_not_hide_fetch_or_extraction_failures(self):
+        refs = [queued_ref(1), queued_ref(2)]
+        for extraction in (False, True):
+            with self.subTest(extraction=extraction):
+                adapter = QueueAdapter(refs, {} if extraction else {refs[1].url: st.FETCH_FAILURE})
+                original = adapter.extract
+                if extraction:
+                    adapter.extract = lambda capture: (
+                        ExtractionResult(adapter.slug, st.EXTRACTION_FAILURE, error_detail="derived failure")
+                        if capture.requested_url == refs[1].url else original(capture))
+                entry = self.collect(adapter, cap=2, run_id="partial-%s" % extraction)
+                self.assertEqual(entry["health"], "partial")
+                self.assertEqual(entry["unretrieved_total"], 1)
+
+    def test_a_new_challenge_does_not_mask_an_open_pdf_route_failure(self):
+        refs = [queued_ref(1), queued_ref(2)]
+        entry = self.collect(QueueAdapter(refs, {refs[0].url: st.ACCESS_CHALLENGED,
+                                                 refs[1].url: st.FETCH_FAILURE}), cap=2)
+        self.assertEqual((entry["result"], entry["health"]), (st.FETCH_FAILURE, "fail"))
+
+    def test_a_failed_feed_is_disclosed_alongside_a_successful_feed(self):
+        good, bad = QueueAdapter([queued_ref(1)]), QueueAdapter([])
+        bad.discover = lambda window: DiscoveryResult(bad.slug, st.LISTING_FAILURE,
+                                                       failed_endpoints=["derived endpoint"])
+        with mock.patch.object(runner, "load_sources", return_value=[good, bad]), \
+                mock.patch.object(runner, "JPModAdapter", side_effect=[good, bad]):
+            entry = runner.run(self.state, date(2026, 8, 26), 14, 40, "r1", "c")
+        self.assertEqual((entry["inserted"], entry["listing_failures"], entry["health"]),
+                         (1, 1, "partial"))
+        self.assertEqual(entry["sources"][1]["failed_endpoints"], ["derived endpoint"])
+
+    def test_legacy_off_feed_gap_is_unassigned_and_not_silently_healthy(self):
+        ref = queued_ref(1)
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            db.executescript(runner.SCHEMA)
+            db.execute("INSERT INTO shadow_unretrieved VALUES (?,?,?,?,?,?,?)",
+                       (ref.url, "historical title", "2026-08-20", st.FETCH_FAILURE,
+                        "original", "original", 1))
+        adapter = QueueAdapter([])
+        entry = self.collect(adapter)
+        self.assertEqual(adapter.fetched, [])
+        self.assertEqual((entry["unretrieved_total"], entry["health"]), (1, "partial"))
+        self.assertEqual(entry["unassigned_gap_urls"], [ref.url])
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            self.assertEqual(db.execute("SELECT title_original, first_seen_run, last_seen_run,"
+                                        " source_slug FROM shadow_unretrieved").fetchone(),
+                             ("historical title", "original", "original", None))
+
+    def test_an_orphan_validator_or_304_does_not_claim_a_stored_body(self):
+        ref = queued_ref(1)
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            db.executescript(runner.SCHEMA)
+            db.execute("INSERT INTO shadow_validators VALUES (?,?,?,?)", (ref.url, "old", None, "old"))
+            self.assertEqual(runner.load_validators(db), {})
+        entry = self.collect(QueueAdapter([ref], {ref.url: st.OK_ALL_DUPLICATES}))
+        self.assertEqual((entry["duplicates"], entry["fetch_failures"], entry["unretrieved_total"]),
+                         (0, 1, 1))
+
+    def collect(self, adapter, cap=1, run_id="r1"):
+        return runner.run(self.state, date(2026, 8, 26), 14, cap, run_id, "c", adapter=adapter)
+
+    def test_old_challenges_and_stored_urls_do_not_consume_the_next_cap(self):
+        old = [queued_ref(n) for n in range(40)]
+        statuses = {ref.url: st.ACCESS_CHALLENGED for ref in old[:-1]}
+        first = self.collect(QueueAdapter(old, statuses), cap=40)
+        ledger = next((self.state / "ledger").glob("*.json"))
+        old_bytes = ledger.read_bytes()
+        newer = [queued_ref(40, "2026-08-25"), queued_ref(41, "2026-08-26")]
+        second_adapter = QueueAdapter(old + newer, statuses)
+        second = self.collect(second_adapter, cap=2, run_id="r2")
+        self.assertEqual(second_adapter.fetched, [ref.url for ref in newer])
+        self.assertEqual((second["inserted"], second["known_challenged"], second["deferred"]),
+                         (2, 39, 0))
+        self.assertEqual(second["revalidation_deferred"], 1)
+        self.assertEqual(second["result"], st.OK)
+        self.assertEqual(second["health"], "partial")
+        self.assertEqual(second["state_sha256_before"], first["state_sha256_after"])
+        self.assertEqual(ledger.read_bytes(), old_bytes)
+
+    def test_overflow_survives_feed_turnover_and_drains_under_the_same_cap(self):
+        refs = [queued_ref(n) for n in range(3)]
+        first = self.collect(QueueAdapter(refs))
+        self.assertEqual(first["deferred_urls"], [ref.url for ref in refs[1:]])
+        second_adapter = QueueAdapter([])
+        second = self.collect(second_adapter, run_id="r2")
+        self.assertEqual(second["discovered"], 0)
+        self.assertEqual(second["carried_pending"], 2)
+        self.assertEqual(second_adapter.fetched, [refs[1].url])
+        third = self.collect(QueueAdapter([]), run_id="r3")
+        self.assertEqual(third["inserted"], 1)
+        self.assertEqual(third["deferred"], 0)
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM shadow_records").fetchone()[0], 3)
+            # The gap rows remain as provenance even after later retrieval.
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM shadow_unretrieved").fetchone()[0], 2)
+
+    def test_transient_failures_wait_behind_never_seen_items(self):
+        old, newer = queued_ref(1), queued_ref(2, "2026-08-26")
+        self.collect(QueueAdapter([old], {old.url: st.FETCH_FAILURE}))
+        adapter = QueueAdapter([old, newer], {old.url: st.FETCH_FAILURE})
+        entry = self.collect(adapter, run_id="r2")
+        self.assertEqual(adapter.fetched, [newer.url])
+        self.assertEqual(entry["inserted"], 1)
+        self.assertEqual(entry["deferred_urls"], [old.url])
+
+    def test_pdf_validators_still_revalidate_when_capacity_remains(self):
+        first = self.go()
+        routes = dict(ALL_FEEDS)
+        routes[PDF_URL] = Response(304)
+        second = runner.run(self.state, date(2026, 8, 26), 14, 40, "r2", "c",
+                            adapter=make_adapter(routes, {PDF_URL: {"etag": '"pdf-1"'}}))
+        self.assertEqual((second["duplicates"], second["known_challenged"], second["challenged"]),
+                         (1, 5, 0))
+        self.assertEqual(second["result"], st.OK_ALL_DUPLICATES)
+        self.assertEqual(second["health"], "partial")
+
+    def test_existing_state_gets_only_a_forward_schema_extension(self):
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            db.executescript(runner.SCHEMA)
+            db.execute("INSERT INTO shadow_unretrieved VALUES (?,?,?,?,?,?,?)",
+                       (queued_ref(1).url, "historical title", "2026-08-20",
+                        st.ACCESS_CHALLENGED, "original", "original", 1))
+        adapter = QueueAdapter([queued_ref(1), queued_ref(2)])
+        entry = self.collect(adapter)
+        self.assertEqual(adapter.fetched, [queued_ref(2).url])
+        with sqlite3.connect(str(self.state / "shadow.db")) as db:
+            row = db.execute("SELECT first_seen_run, title_original, reason FROM shadow_unretrieved"
+                             " WHERE url = ?", (queued_ref(1).url,)).fetchone()
+        self.assertEqual(row, ("original", "historical title", st.ACCESS_CHALLENGED))
+
+    def test_all_disabled_sources_do_not_collect_or_start_clock(self):
+        with mock.patch.object(runner, "load_sources", return_value=[]), \
+                mock.patch.object(runner, "JPModAdapter") as adapter:
+            entry = runner.run(self.state, date(2026, 8, 26), 14, 40, "r", "c")
+        adapter.assert_not_called()
+        self.assertEqual(entry["result"], st.SKIPPED_DISABLED)
+        self.assertFalse((self.state / "clock.json").exists())
+
+    def test_completed_failure_is_publishable_but_a_crash_or_changed_hash_is_not(self):
+        raw = (ROOT / ".github/workflows/japan_shadow.yml").read_text()
+        body = raw.split("      - name: Verify the completed attempt and immutable history\n", 1)[1]
+        body = textwrap.dedent(body.split("run: |\n", 1)[1]
+                               .split("      - name:", 1)[0].split("\n      #", 1)[0])
+        self.assertIn("continue-on-error: true", raw)
+        self.assertIn("if: steps.collect.outcome == 'failure'", raw)
+        self.assertLess(raw.index("- name: Publish shadow state"),
+                        raw.index("- name: Report collection failure"))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # The executable verification block expects the same layout as Actions.
+            subprocess.run(["git", "init", str(root / "shadow-state")], check=True, capture_output=True)
+            (root / "workspace").mkdir()
+            (root / "workspace/repo").symlink_to(ROOT, target_is_directory=True)
+            state = root / "shadow-state/state"
+            state.mkdir()
+            (state / "bootstrap.json").write_text((self.state / "bootstrap.json").read_text())
+            commit = subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()
+            failed = runner.run(state, date(2026, 8, 26), 14, 1, "test-1", commit,
+                                adapter=QueueAdapter([queued_ref(1), queued_ref(2)],
+                                                     {queued_ref(1).url: st.FETCH_FAILURE}))
+            self.assertEqual(failed["result"], st.FETCH_FAILURE)
+            env = dict(os.environ, RUNNER_TEMP=str(root), GITHUB_WORKSPACE=str(root / "workspace"),
+                       GITHUB_RUN_ID="test", GITHUB_RUN_ATTEMPT="1",
+                       PATH=str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"])
+            def verify():
+                return subprocess.run(["bash", "-c", body], env=env, capture_output=True)
+            checked = verify()
+            self.assertEqual(checked.returncode, 0, checked.stderr.decode())
+            # Failed gap rows are now durable input: the next cap admits the newer URL.
+            next_adapter = QueueAdapter([queued_ref(1), queued_ref(2)])
+            runner.run(state, date(2026, 8, 26), 14, 1, "next-1", commit, adapter=next_adapter)
+            self.assertEqual(next_adapter.fetched, [queued_ref(2).url])
+            self.assertNotEqual(verify().returncode, 0)  # old completed hash no longer matches
+            env["GITHUB_RUN_ATTEMPT"] = "2"          # crash: no ledger for this attempt
+            self.assertNotEqual(verify().returncode, 0)
 
 
 if __name__ == "__main__":

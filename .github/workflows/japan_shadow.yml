@@ -96,6 +96,9 @@ jobs:
 
       - name: Run shadow collection
         id: collect
+        # Completed failure ledgers must reach state so failures do not occupy
+        # the first cap forever. Verification below refuses crashes/partial DBs.
+        continue-on-error: true
         working-directory: repo
         env:
           # Through the environment, never interpolated into the script body.
@@ -119,8 +122,8 @@ jobs:
             --state-dir "${RUNNER_TEMP}/shadow-state/state" \
             --lookback-days 14 \
             --cap 40 \
-            --run-id "${GITHUB_RUN_ID}" \
-            --commit "${GITHUB_SHA}" \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
             --event-name "${GITHUB_EVENT_NAME}" \
             --run-attempt "${GITHUB_RUN_ATTEMPT}" \
             --cron-utc "22:40" \
@@ -137,8 +140,35 @@ jobs:
           fi
           echo "Collector checkout is clean."
 
-      # Only reached when collection succeeded: a failing run must not persist a
-      # half-written state, and `set -e` above already stopped the job.
+      - name: Verify the completed attempt and immutable history
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            changed=$(git diff --name-status -- state/ledger state/clock.json state/bootstrap.json | grep -E '^(M|D|R)' || true)
+            if [ -n "$changed" ]; then
+              echo "::error::historical ledger, clock or bootstrap changed"
+              exit 1
+            fi
+          fi
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          run_id = os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']
+          entries = [json.loads(p.read_text()) for p in Path('state/ledger').glob('*.json')]
+          matches = [entry for entry in entries if entry['run_id'] == run_id]
+          assert len(matches) == 1, 'no unique completed ledger for this attempt'
+          entry = matches[0]
+          collector = str(Path(os.environ['GITHUB_WORKSPACE']) / 'repo')
+          commit = subprocess.check_output(['git', '-C', collector, 'rev-parse', 'HEAD'], text=True).strip()
+          assert entry['collector_commit'] == commit, 'wrong collector provenance'
+          assert entry['finished_utc'] and entry['result'] and entry['health']
+          digest = hashlib.sha256(Path('state/shadow.db').read_bytes()).hexdigest()
+          assert entry['state_sha256_after'] == digest, 'incomplete or changed state'
+          PY
+
+      # Completed failures retain known gaps/backlog. A crash, invalid schedule,
+      # modified history or mismatched state hash never reaches this step.
       - name: Publish shadow state
         if: success()
         run: |
@@ -156,10 +186,16 @@ jobs:
             exit 0
           fi
           git commit \
-            -m "shadow(japan): run ${GITHUB_RUN_ID}" \
-            -m "Recorded by ${GITHUB_WORKFLOW} at ${GITHUB_SHA}." \
+            -m "shadow(japan): run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Recorded by ${GITHUB_WORKFLOW}; collector provenance in the ledger." \
             -m "State only. Never merged to main."
           git push origin shadow/jp-mod
+
+      - name: Report collection failure after preserving evidence
+        if: steps.collect.outcome == 'failure'
+        run: |
+          echo "::error::collection failed; completed gap evidence was preserved"
+          exit 1
 
       - name: Upload the run ledger
         if: always()

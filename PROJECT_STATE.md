@@ -11,6 +11,11 @@ plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` (merged, PR #84).
 The image-only-release repair is in
 `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`.**
 
+Brief release approval was received 2026-10-05; its candidate,
+authorization recovery and QA evidence are in
+`docs/BRIEF_RELEASE_REVIEW_2026-10-04.md`. The older desk measurements below
+have not been refreshed by that work.
+
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
@@ -129,25 +134,89 @@ disclosed, and never backfilled.
 
 ## 4. Analytical publication status
 
-* **Indo-Pacific Record Briefs: source foundation, no published brief.** A
-  brief can be scaffolded and checked (`scripts/author_brief.py`,
-  `core/brief_contract.py`); the collection and renderer use
-  `core/brief_collection.py` and `site/preview/templates/brief.html`. Routes
-  are `briefs/<slug>.html`, Analysis is the landing page, and
-  `briefs/feed.xml` carries briefs only (DECISION_LOG 2026-09-23). The only
-  brief data is a synthetic test fixture. No. 14 remains unreconciled, and
-  `check` refuses a hand-numbered brief or an existing issue number. The
-  predecessor pages' source chrome now identifies the series as historical
-  and points to continuing Briefs; public `output/` still requires a separate
-  authorized render and deploy. `scripts/generate_pla_watch.py` authors no
-  new issue. The owner must decide how to handle the w/e 2026-08-22 gap.
-  First-brief candidate questions, record-level evidence and the remaining
-  human gates are in `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`
-  §4–5. The recommended candidate is Exercise Maritime Cooperation 2026 (China
-  + Singapore, 2026-09-03 → 09-14). Nothing there is a draft, thesis or
-  approval.
+* **First native Brief: No. 15 published and verified live on 2026-10-05.**
+  `briefs/maritime-cooperation-2026.json` recovers the five-record host draft
+  and finishes its prose, source comparison and native presentation. It
+  covers 2026-09-03 → 09-19, selecting statements dated 09-05 → 09-14.
+  Source parity, editorial integrity and rendered desktop/mobile review pass;
+  Benjamin Yang approved this exact five-source version at commit
+  `4bf960c4614b80289a1e3c1db2814f220d3201f1` on 2026-10-05, with Benjamin Yang
+  as editor, and authorized numbering, PR #100 merge, deployment and live
+  verification. The command assigned No. 15; public output now includes the
+  article, homepage/Analysis lead, native feed and sitemap. This supersedes
+  the missing-approval gate without claiming recovery of the older fourteen-source
+  cloud draft. PR #100 merged at `0e21083d6510c28e8f02daeca64e3a3d074ac8bd`;
+  output-only deployment 37273065804 passed. Article, homepage, Analysis,
+  feed, sitemap, both stylesheets and photograph returned HTTP 200 and matched
+  committed bytes (2026-10-05 07:11 UTC). Required CI passed 3,156 tests,
+  two skipped, and validation with ten historical warnings. Desktop/mobile
+  live review passed. See the release review and DECISION_LOG for authorization.
+* **Brief publication commands are complete.** `scripts/author_brief.py`
+  distinguishes `check` (schema), `ready` (finished prose/citations and stored
+  source parity), and `approve` (actual human authorization and whole-collection
+  numbering). Identical repeated approval is unchanged. The production renderer
+  supports private unnumbered review outside `output/`, then approved article,
+  Analysis, home, native Atom feed and sitemap integration. The deploy validator
+  checks those surfaces; the governed historical baseline remains 10 warnings.
+  Existing PR/deploy workflows apply, with no paid API call for publication.
+  Native and predecessor catalog/feed ordering follows the coverage endpoint.
+  `scripts/generate_pla_watch.py` still authors no new issue. The whole-background
+  topographic treatment is a separate, owner-authorized frontend release in
+  PR #101; its final `.12` opacity, measured review and release receipts are
+  documented in `docs/HOMEPAGE_TOPOGRAPHIC_REVIEW_2026-10-05.md` and PR #101.
+  A follow-up requested by Ben on 2026-10-05 is in source on
+  `codex/topographic-subpages-20261005`: shared blue contours replace page
+  grids, addresses select subtle profile variations, and decorative layers
+  move slowly, including on the dark Analysis band. The motion exception and
+  fallbacks are in `docs/VISUAL_AND_MOTION_SYSTEM.md`. Private preview only;
+  production output has not been regenerated, committed or deployed for this
+  follow-up. Final homepage suite: 107 checks, 106 passed and one skipped;
+  preview, veil and historical identity suites also ran. Private review:
+  63 page/width combinations, 18 glyph-contrast samples, no browser errors
+  or local asset failures; historical byline regression clears 5:1. The
+  complete private tree validates with the same 10 historical warnings.
+  Review at `http://127.0.0.1:8773/analysis.html`; evidence is in
+  `/private/tmp/ipr-topographic-subpages-review/report.json`. Ben approved
+  the private preview and authorized source/docs commit and push on 2026-10-05.
+  The branch is now synced with main at `efee36fe2`, preserving the Desks map
+  and homepage opening. Integration review passed: 193 tests with one skip,
+  plus 485 preview tests with one skip. The opening composition helper finishes
+  only overlay animations, leaving ambient background loops intact. The full
+  integration group passed on rerun after that fix. The refreshed private
+  preview passed 63 page/width checks and 18 glyph samples; unchanged production
+  output still validates with 10 historical warnings. Ben authorized the branch
+  sync and pull request in this chat. PR #105 merged as `a0dd1aa95`. Ben
+  authorized its release with #106 on 2026-10-05 (DECISION_LOG): output
+  `d8289a143`, deploy run 37404728604; live on every page, including the 17
+  PLA Watch pages, with no overflow or console errors at 1280/375.
+* **One analysis publication (source ruling 2026-09-30; render authorized
+  with No. 14 corrections on 2026-10-03).**
+  The PLA Watch has been absorbed into Indo-Pacific Record Briefs as the
+  historical portion of one unified analysis publication. Historical
+  publication metadata and URLs are preserved for provenance and
+  compatibility, but the site does not present The PLA Watch as a separate
+  archive product (DECISION_LOG 2026-09-30). Analysis opens on the Briefs
+  masthead and the latest Brief, which is the newest item of the whole
+  collection by publication date (week ending), never by issue number.
+  No. 15 now leads the public site. The catalog, "All Briefs", lists every
+  item newest first (number then slug only break ties), the earlier issues
+  among them with "From the former series The PLA Watch · published under/by
+  <masthead>" as a secondary line; there is no
+  legacy-archive section. The labeling key follows, then the Collections and
+  Series tables as closing reference (every desk row kept). The home band
+  leads with the same item and links into Analysis. "Briefs in development"
+  appears only when the collection holds no item at all. `/pla-watch.html`
+  still resolves as a compatibility bridge ("The PLA Watch is now part of
+  Indo-Pacific Record Briefs": a pointer to Analysis, the preservation notice
+  and a collapsed block of citation text under the original anchors, no issue
+  list). No page, navigation or footer links to it. The historical issue pages' shared
+  footer (`site/templates/pla-watch-base.html`) now calls each an earlier
+  Brief in Indo-Pacific Record Briefs; these source changes are included in the
+  authorized correction render. No. 14 retains the owner approval recorded
+  on 2026-10-03. Briefs are marked turquoise on the band and compass blue on
+  paper (DESIGN_SYSTEM §3).
 * **No. 1 (2026-05-09 pilot) through No. 13 (week ending 2026-08-08) are
-  published.** No. 14 is publicly served, with its status unreconciled (below).
+  published.** No. 14 is approved with corrections (below).
 * **The cadence lapsed after No. 13, and its recovery is ruled.** No edition
   exists for the weeks ending 2026-08-22 or 08-29; w/e 2026-08-15 is No. 14
   (below). The owner ruling of 2026-09-03 (`DECISION_LOG.md`) prepares
@@ -155,19 +224,16 @@ disclosed, and never backfilled.
   editions**, rules **08-29 a disclosed gap** (36% of that window was never
   relevance-screened), and **resumes normal cadence at 09-05**. Restoring
   cadence remains the first priority in `docs/ROADMAP.md`.
-* **No. 14's publication status is unreconciled** (verified 2026-09-23;
-  DECISION_LOG 2026-09-23 point 9). Prepared as a draft for review (w/e
-  2026-08-15), it merged with PR #43 and has been publicly served since an
-  output-only deploy on 2026-09-05, linked from the series index, archive,
-  sitemap and feed. No approval and no completed `EDITORIAL_QA_CHECKLIST.md`
-  record exist. The 2026-09-04 ruling ("not published") is stale on
-  publication. Its status and number are unchanged until the owner rules.
-  Recommended path: an `EDITORIAL_QA_CHECKLIST.md` review of the page as
-  served, then a DECISION_LOG entry recording what the review found and the
-  owner's ruling. Approval is not recorded retroactively without that review,
-  and withdrawal is one option open to the owner, not a requirement.
-* **14 editions now exist in the tree, all publicly served** (No. 14 without
-  recorded approval, above). No. 14 is the first
+* **No. 14 approved with corrections (owner ruling 2026-10-03).** The
+  reviewed draft and correction packet are approved for publication with the
+  visible correction date 3 October 2026; see DECISION_LOG and
+  `docs/NO14_CORRECTION_PREPARATION_2026-10-03.md`. It retains number 14,
+  existing URL, week ending 2026-08-15 and retrospective identity. Its earlier
+  unapproved service since 2026-09-05 remains historical provenance; approval
+  is not backdated. The numbering gate is cleared; 15 is available but has
+  not been assigned. Publication verification belongs in the release record.
+* **14 editions now exist in the tree, all publicly served** (No. 14 now
+  approved with corrections, above). No. 14 is the first
   edition under the Indo-Pacific Record masthead and the first marked
   `publication_timing: retrospective`. Editions 1–13 keep the China Mil Watch
   identity on their own pages; site chrome is current throughout.
@@ -179,6 +245,39 @@ disclosed, and never backfilled.
   direction. That gap is recorded, not implied.
 
 ## 5. Desk evaluation and review status
+
+**Indonesia and South Korea — merged; bounded Actions collection verified
+(2026-10-06).** Ben authorized commit/PR and durable shadow collection, then
+reported the merge. PR #110 merged at `a8e6d5a26`; its exact-head full CI passed
+3,478 tests with two skipped, the ten-warning validator and DB/output preservation.
+Manifests remain outside `desks/`; neither desk enters production discovery or
+the public registry. Indonesia's scope is Kemhan Berita institutional news.
+South Korea's is the separately governed Policy Briefing portal's MND-labeled
+republications and linked HWPX; MND publication paths remain unrequested.
+One manual main-hosted run per desk traversed 2026-09-30 through 10-06, reread
+robots and retrieved/extracted all 14 Indonesia records and four Korean releases.
+All were duplicates: zero inserts, updates or fetch/extraction/access failures.
+Both runs published append-only state successfully. Current pinned heads:
+`shadow/indonesia-kemhan` (`9fe9f6fd`) and `shadow/korea-policy-briefing`
+(`a1088ea1`). Artifacts exactly match clean remote clones; all historical rows,
+captures, ledgers and first-success clocks remain unchanged. Machine packets have
+zero findings and supply no human sign-off. Each desk still has only one successful
+logical date, October 6: two same-day runs do not establish periodic reliability.
+The main tree remained unchanged by collection. Human checkpoints, source reuse
+terms, completeness and cadence/silence review remain open. Nothing is promoted
+or qualified. Ben authorized daily shadow collection at 17:17 UTC for Indonesia
+and 17:47 UTC for South Korea, with the existing six-day lookback and 40-record cap.
+The cadence branch is synced to main `ba5885c30` (PR #112), without workflow or
+schedule conflicts. Main remains manual-only for these candidates until separate
+owner authorization and merge of the cadence PR. This phase stops at a clean,
+mergeable, CI-verified draft PR; no dispatch or activation is authorized.
+Reviewable scope and activation sequence:
+`docs/INDONESIA_KOREA_CADENCE_PROPOSAL_2026-10-06.md`. Actions receipt:
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`. Initial native launch
+and CI/conflict history: `docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+Initial research and reusable prompt:
+`docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
+`docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
 
 **Singapore was promoted to `live` on 2026-09-21 by owner sign-off**
 (`DECISION_LOG.md`). The Singapore observations below describe its earlier
@@ -232,6 +331,75 @@ never observed, and no evidence reachable from inside the corpus could. Loss is
 unobserved, which is a narrower claim than ruled out, and the limitation is
 recorded rather than rounded off.
 
+**Philippines AFP — scheduled shadow reliability evaluation; activation PR pending,
+2026-10-06.** PR #109 merged with exact-head guard on
+`31719bed3d5b4c5de0b248a8d2b9b1be06e66e2c` as
+`cc8d36646af1e2eb6026a17eaefd20378585faac`. Fresh Actions CI `37524618783`
+passed 3,436 tests (two skips), output validation with ten governed warnings,
+and tracked DB/output immutability. The earlier `0ab1eccf5` failure compared
+nominal CSS line-height 28.272px against Chromium's actual 28.265625px line.
+The test-only repair measures a natural rendered line without tolerance; its
+regression still rejects one-pixel viewport/element clipping. Product CSS and
+all nine AFP-specific source hashes were unchanged at that merge.
+
+**One live GitHub-hosted rehearsal completed successfully:** Actions
+`37527985057`, attempt 1, collector commit `cc8d36646`, dispatched manually with
+`publish_state=false` and no target-date override. Retained evidence reconciles
+1,090 unique rows across 11 pages ending in `next:null`; 13 recent eligible
+items, two body requests/retrievals (`afp:1398`, `afp:1397`), 11 explicitly
+unselected samples. All 15 requests stayed on direct official AFP hosts.
+Fresh www robots returned 200/Allow; API robots returned the reviewed 404 with
+`X-Robots-Tag: noindex, nofollow`; both payload hashes matched policy. No access,
+fetch, extraction or identity failure was recorded. IDs/slugs, listing/detail
+publication timestamps and original capture hashes were independently checked.
+The two additional rows explain growth from the historical 1,088-row replay;
+no prior identity/date metadata changed. Nine same-title/date groups remain
+visible and are not merged. Artifact `ph-afp-shadow-37527985057-1`
+(ID `11442459154`, 90-day retention) contains the ledger, request receipts,
+robots/listing originals, closed shadow DB with original detail captures, and log.
+
+**Scheduled shadow collection owner-authorized; no live AFP cron until separate
+PR merge.** Scheduling branch `codex/ph-afp-scheduled-shadow-20261006` starts
+from current main `a8e6d5a26`, including #108, #109 and subsequent #110. It proposes
+one daily cron at 06:40 UTC, normal 14-day/cap-100 collection with cron-aware
+logical dates and automatic successful isolated state publication. The manual
+path remains a two-body rehearsal, artifact-only by default, optional explicit
+publication and no clock start. Failed/partial attempts retain artifacts and do
+not publish state; non-force append-only publication rejects divergent writers.
+The AFP shadow manifest is enabled outside production discovery with desk
+`active: false`; AFP remains an anchor candidate and NSC supplemental. The current
+default-branch workflow remains manual-only until merge; the proposed event
+distinction is documented above. During the rehearsal, state publication was
+skipped; no `shadow/ph-afp`
+branch or reliability clock was created. Main, gh-pages and every shadow ref
+were unchanged across the rehearsal. Actual merge DB/output/desks object IDs
+match pre-merge main. No production DB/output generation or deployment occurred.
+Direct first-party API evaluation and honest IPR About-contact identity remain
+owner-approved (DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed.
+Policy changes stop for review. This single bounded success does not establish
+ongoing reliability, full-window body coverage or qualification. Ben reviewed the
+live evidence and authorized recurring AFP shadow collection
+and isolated durable state. The scheduling PR still requires clean exact-head
+CI, final review and separate merge authorization. After activation, require
+seven consecutive terminal-successful scheduled days plus durable human review
+of every new record when five or fewer are inserted, otherwise at least five
+representative new records. Then assess reliability, review results, NSC
+supplementation, source breadth and historical backfill; never graduate
+automatically. Standing qualification gates remain. Focused AFP validation: 238
+tests pass; local validator passes with ten governed warnings and tracked
+DB/output/desks unchanged. Full offline suite and validator remain the PR gate.
+Full evidence and remaining gates:
+`docs/AFP_ACTIONS_GATE_2026-10-06.md`; historical preparation receipt:
+`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`.
+
+Japan's policy correctness repair merged in PR #108 at
+`ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c` after exact-head offline CI passed.
+Japan's 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
+as superseded by #109. This current integration status supersedes the AFP PR
+status in the earlier Japan/Philippines completion assessment. The accurate post-run
+checkpoint is carried into the scheduling branch for commit, preserving later
+current-main work. No production or broader Philippine source is authorized.
+
 **Attribution is fixed at the source, forward-only.** Singapore and Japan
 shadow runs derive their logical target date through `core/shadow_schedule.py`:
 a scheduled first attempt takes the schedule-slot convention — the most recent
@@ -245,26 +413,55 @@ anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
 
-**Japan MOD** — state branch `shadow/jp-mod` (`84edebfa6`, measured
-2026-09-28). Day zero 2026-08-27T02:14:38Z.
-- 34 ledgers. Every recent run is `ok_all_duplicates`, health **`partial`**.
-- **Access-constrained, and discovery-only in practice.** Only 4 bodies have
-  ever been stored, all PDFs dated 08-27/08-28. 84 discovery records dated
-  08-27 → 09-17 have no body. HTML documents on the same host are returned
-  behind an interactive challenge.
-- Challenged items are stored as titled, dated discovery records, with no body
-  and nothing inferred. The challenge is **never** to be bypassed; resolving
-  this means requesting an official route.
-- **A selection defect hides new items.** Selection is capped at 40 per source,
-  oldest first, so the same challenged items and PDFs are re-selected every
-  run. Newer items are deferred and never recorded: 42 were deferred on 09-27,
-  and nothing published since about 09-18 has been captured.
-  `ok_all_duplicates` does not show this.
-- No checkpoint review is on record.
+**Japan/Philippines completion assessment — 2026-10-06.** Neither desk may
+graduate. Evidence, the per-gate checklist and immutable state/PR locators:
+`docs/JAPAN_PHILIPPINES_DESK_COMPLETION_2026-10-06.md`. Latest Japan state
+`e890112` has 5 usable PDF bodies and 149 outstanding gaps (146 challenges,
+one size refusal, two PDFs without a text layer). The September 22–October 5
+RSS-date window has one stored body among 67 distinct URLs (1.49%); this is
+not all-MOD publication coverage. Dates and Joint Staff discovery remain blocked.
+**Policy defect repaired locally:** the old runner hard-coded `allowed` without
+reading robots. Source now enforces current policy before requests and records
+typed failed evidence on refusal; historical compliance remains unproven.
+Correctness checkpoint in source; not run in Actions, activated or published.
+AFP PR #79 remains draft at `b29e7edb0`, conflicting with current main.
+Its existing adapter passed a bounded Mac rehearsal: 11 listing pages / 1,088
+rows and two usable recent bodies; no state or production writes. AFP+NSC is
+the proposed portfolio, not an approved desk. NSC has four healthy quiet runs
+and no stored bodies; Coast Guard policy is challenged, DND policy unreadable
+in the current probe. Existing AFP work was inspected, not replaced or modified.
 
-**Every Japan ledger written so far carries an execution date, not a slot
-date.** Japan's cron sits at 22:40 UTC and Actions has started every scheduled
-Japan run late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
+**Japan MOD** — selection repair merged in PR #95; measured post-merge on
+2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),
+collector `30b7169c892a48049efe538f02f8fcc2aff6d481`. State branch `shadow/jp-mod`:
+[commit 138c4e20b7b06ba766bab063cc544c2d132e7791](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/138c4e20b7b06ba766bab063cc544c2d132e7791).
+Day zero remains 2026-08-27T02:14:38Z.
+- **Selection recovery observed; document coverage remains partial.** 54
+  previously unrecorded URLs received cap space (31 news, 23 site updates),
+  including September 29–October 2 items. Zero new usable bodies were inserted;
+  the four previously stored PDFs remain unchanged. Result `ok_all_duplicates`
+  accompanies health **`partial`**, not a full-coverage success.
+- 140 outstanding gaps: 68 news, 71 site updates and one historical
+  source-unassigned challenge. These comprise 137 challenges, one oversized
+  response and two PDFs without a text layer. All 86 prior gap rows and their
+  original title/date/reason/first-seen provenance remain preserved.
+- The two reachable Japanese RSS sources are explicitly enabled for shadow;
+  disabled and `_not_collected` entries are excluded. Known challenges consume
+  no fetch slot; new/deferred URLs precede retries and PDF revalidation under
+  the unchanged 40-item per-source ceiling. Challenges are never bypassed.
+- This run had zero deferred or carried-pending URLs. Persistence across feed
+  eviction and priority over retries/revalidation are **regression-test
+  guarantees, not live observations from this run**. Sustained arrivals above
+  the ceiling would grow a visible backlog. Historical evidence remains:
+  42 items were deferred on 09-27 and nothing since about 09-18 had been captured;
+  old counts cannot reconstruct the missing deferred URLs. No historical loss
+  recovery is claimed. Old ledgers, cutoff and date-misattribution evidence
+  are untouched; legacy gaps remain unassigned unless observed in a feed.
+- No checkpoint review is on record; Japan remains shadow and unqualified.
+
+**All nine Japan ledgers inspected on 2026-09-03 carried an execution
+date, not a slot date.** Japan's cron sits at 22:40 UTC; the inspected
+scheduled runs started late enough to cross UTC midnight — observed lateness 1h50m to 7h38m.
 Verified 2026-09-03 against `shadow/jp-mod`: all 9 ledgers are stamped one day
 after the slot they belong to, most recently run `33700195896` (started
 2026-09-03T00:36:36Z, stamped 2026-09-03, nominal 2026-09-02). Japan's
@@ -290,10 +487,73 @@ from the `access_blocked` command website and is not public coverage.
   permission was undetermined. The cause is not established and was not
   probed.
 
-**Failed shadow runs leave no ledger on the state branch.** The collectors exit
-non-zero when health is not `ok`, and every shadow workflow persists state
-only on success, so a failed run's ledger survives only as a 90-day Actions
-artifact. This applies to all three shadow desks.
+**Failure evidence is not a healthy-body claim.** Singapore and US
+workflows push state only after successful collection; failed attempts
+survive in 90-day Actions artifacts. Japan's workflow repair also persists
+completed failure ledgers/gap rows after validating the collector commit,
+closed-state hash and immutable history, then marks the job failed. Crashes
+and incomplete attempts cannot push. This prevents an all-fetch-failure batch
+from consuming the same first cap on every run. These changes merged in PR #95;
+the successful post-merge run above did not exercise the failed-attempt path.
+
+**Philippines NSC official statements: adapter merged in PR #93; isolated
+runner/workflow merged in PR #94; activation merged in PR #96 (2026-10-02).**
+`scripts/shadow_collect_ph_nsc.py`, `ph_nsc_shadow.yml`, prospective seven-date
+windows, owner-approved public state branch `shadow/ph-nsc`, daily 10:10 UTC
+plus explicit manual `target_date` recovery via `core/shadow_schedule.py`. The manifest is
+now enabled only under `shadow/ph_nsc/`; no Philippines production manifest
+or registry entry exists. State remains outside the checkout, captures retain
+exact bytes and hashes, ledgers preserve adapter window/policy evidence and
+post-ID provenance, and failed attempts push nothing. The dedicated adapter
+suite remains 101 tests; additional runner/workflow tests exercise fixtures
+and a local bare remote. Neither output nor the production database is changed.
+[Run 37072106688](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
+used collector `302a74555a3503ea344351b1c99c64c128911104`, explicit target
+2026-10-02 and the September 26–October 2 window. Result `ok_no_publications`,
+health `ok`: robots/listing egress and initial public state persistence were
+verified, with zero article requests and zero discovered/selected/retrieved/
+inserted records. State branch `shadow/ph-nsc` was initialized at
+[commit 2dd38f1bcfc598f1eca66082b626146023edf7e7](https://github.com/VSSpowerlifting/China-Mil-Watch/commit/2dd38f1bcfc598f1eca66082b626146023edf7e7).
+The artifact matched state hashes; the collector checkout stayed clean and
+no SQLite sidecars remained. A quiet window establishes no article-body egress.
+
+**Owner settings approved 2026-10-02:** public shadow state in the existing
+repository, excluded from the published site and production collection, with
+the unchanged full header `ChinaMilWatch-ShadowCollector/0.1
+(+https://chinamilwatch.org; research archive; contact via site)`. “Private” was
+planning wording, not a confidentiality requirement. No private remote, new
+credentials or contact details are introduced. Ordinary 10:10 UTC scheduling
+remains in place; one manual run establishes no multi-day reliability. The exact
+bounded post-merge verification procedure is in `shadow/ph_nsc/README.md`.
+
+An authorized 2026-10-02 rehearsal used the adapter's own `requests` transport:
+robots.txt and the category returned HTTP 200; discovery for 2026-06-16 through
+2026-07-08 returned exactly two expected references; both statement fetches and
+extractions succeeded (`nsc:3108`, `nsc:2269`) with no database, output or
+production writes. The live category exposes six statements from 2026-06-03
+through 2026-07-08 and no pagination. The sitemap contains only the homepage;
+the two-page author archive exposes those same six Official Statements and
+page 3 is 404. **Still open:** multi-day access reliability, reuse permission,
+pre-2026-06-03 historical completeness, the unresolved-but-not-reproduced
+gambling-content anomaly, article-body egress/extraction/capture persistence in
+Actions and human checkpoint review. Scheduled collector identity
+and public state visibility are owner-approved; reuse/republishing remains open.
+Two robots matchers will exist once draft PR #79 (AFP, untouched) lands; unify
+them then. Gate wording and evidence:
+`shadow/ph_nsc/README.md` and
+`docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
+
+**Production preservation uses separate baselines.** The earlier reviewed
+branches/Japan verification used a 7,209-file production DB/output snapshot;
+the later NSC run used its own 7,254-file before/after Git blob and file-list
+snapshot. Each remained unchanged against its own baseline. These counts are
+not a shared snapshot or a change caused by shadow collection.
+
+**Next evidence review: around 2026-10-09**, after ordinary scheduled runs.
+Review NSC logical-date continuity, robots/listing/refusal health and body
+retrieval/capture evidence only if publications appear; review Japan admission,
+backlog/gap persistence and usable-body yield separately. This is a human
+review date, not a qualification threshold. Neither desk is promoted.
 
 ## 6. Known technical debt
 
@@ -303,6 +563,14 @@ artifact. This applies to all three shadow desks.
   warning, three missing LinkedIn files (eds. 1–3), and one cadence gap
   (2026-07-18 → 2026-08-01). Any **new** warning must be explained here before
   it is accepted; none is ever fixed by invention.
+* **LLM usage is now recorded per run (2026-10-01), but no record exists
+  yet.** `.github/state/llm_usage.jsonl` is appended by the workflow's own
+  telemetry step on the first CI run after the telemetry lands (the pipeline
+  writes only a runtime file, so local runs never touch it). It is operational
+  accounting with estimated cost from a pinned price table
+  (`analysis/pricing.py`), not an invoice. Two decisions wait on it: whether to
+  merge summary and categorization into one call, and whether categorization
+  can move to the relevance model. Neither is decided (DECISION_LOG 2026-10-01).
 * **Processing states exist; paused records are not shown separately in
   public.**
   - The retry budget (5) and the `retriable`/`paused`/`terminal` states are
@@ -412,7 +680,10 @@ artifact. This applies to all three shadow desks.
 The reader interface uses Paper Ledger for the record and Night Desk for the
 historical *The PLA Watch* issues. The Ocean Signal Veil remains a
 desktop-only, credited public-domain image in the home page's two-column
-opening; The PLA Watch keeps its own veil. Briefs remain unpublished until
+opening; The PLA Watch keeps its own veil. The home "Latest analysis" band
+carries a CSS-only Signal Veil in its empty right side (owner-approved
+2026-10-01 as a narrow exception to the gradient rule; DECISION_LOG). Briefs
+remain unpublished until
 editorial approval; historical issues keep their original attribution.
 Standing chart rules on the live pages: the Sources chart counts stored,
 deduplicated records per source at the labeled snapshot and disclaims
@@ -420,6 +691,57 @@ institutional output and coverage; Coverage's per-source chart is Text read /
 Parsed for one labeled run and draws no bar for an unmeasured source; desk
 pages call the complement of analyzed records "Not analyzed" and say it is
 not a queue. Faint ledger ruling appears only in wide outer margins.
+
+**Desks map (2026-10-05, PR #104, owner-approved):**
+`desks.html` is now a Natural Earth map of the Indo-Pacific (DECISION_LOG
+2026-10-05). Each declared desk is a `section.desk` plate hung from its seat
+by a fine leader; plates sit in open water from 1100px, in bands above and
+below the frame from 760px, and become a list under the map below that.
+Scope and status explanations moved to a "What each desk reads" register
+under the map; the comparison and status tables are unchanged. Placement is in
+`desks/geography.json`; geometry is rebuilt with
+`python scripts/desk_map.py <countries-50m.json>`. `desks.html` grows from
+about 13 KB to about 92 KB (69 KB of inline map geometry), inside the 120 KB
+page budget. The custom-property guard
+(`test_every_custom_property_used_is_declared`) now also allows the plates'
+inline placement properties (`--w*`, `--m*`) and the page-set `--on`.
+
+**Homepage atlas experiment (2026-10-01):**
+`styles.css` replaces the home page's margin grid with a compact pale blue-gray
+vector field: thirteen closely spaced abstract contours and two polygon fills.
+The field is confined to paper margins at >=1200px; opaque hero and Briefs
+backgrounds separate it from both Signal Veils. The Ocean Veil keeps its crop
+at reduced opacity. Narrower screens keep plain paper. No content, layout,
+database or `output/` change. Direction approved 2026-10-01; source
+implementation complete. Production output has not been regenerated or
+deployed.
+
+**Homepage opening title (2026-10-05, merged and live):**
+`site/preview/intro.js` adds a ~2.4s once-per-tab title over a procedural
+WebGL ocean on the homepage only (V&M §1.1). Its exceptions to the motion
+doctrine and the 10 KB JS budget are owner-approved for this component
+only (DECISION_LOG 2026-10-05); it skips once the page has painted.
+PR #103 merged as `a957aff`; output regenerated in `efee36fe2`
+(`index.html` script tag + `intro.js` only; database untouched); deployed
+by `deploy_output_only.yml` run 37383394581 (success). Verified live on
+desktop and mobile: plays once, Skip/Escape restore the page, no replay on
+reload or internal return.
+
+**Titling register (2026-10-05, merged and live):** the opening title's
+setting (Source Serif 4 600, letter-spaced capitals) is the identity register
+for the wordmark, footer name and hub page names (`h1.page-name`); serif
+display unifies on 600 (DESIGN_SYSTEM §4, DECISION_LOG 2026-10-05).
+`intro.js`, record/source/Brief titles and PLA Watch type are unchanged.
+PR #106 merged as `9bf842f2d` at head `c7b6d9bbb` (offline-checks passed on
+that head). Output regenerated in `d8289a143` together with #105's
+backgrounds (below): `site/render.py` + `rerender_pla_watch.py --no-covers`,
+design-only diff, sidecars untouched, validator 10 governed warnings.
+Deployed by `deploy_output_only.yml` run 37404728604 (success; live
+2026-10-06 02:35 UTC). Verified live in Chromium and WebKit at 1280 and
+375: computed wordmark/page-name/footer settings as built, record h1 in
+source case, no CJK tracking, no overflow or console errors; live `intro.js`
+hash equals source, and the intro plays once (~2.4s), then does not replay
+on reload, at 1280 and 390.
 
 **Record-surface overhaul (2026-09-27): "Almanac, with custody layers"**
 (DECISION_LOG 2026-09-27). This change set covers source only —
@@ -471,7 +793,8 @@ deploy gate's governed baseline is 10 warnings.
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
 1. Restore the human analytical publication cadence. The first brief is
-   gated on the No. 14 ruling for its number and approval. Candidate
+   ready for drafting after the No. 14 approval; it still needs its own
+   editorial review and approval before number 15 is assigned. Candidate
    questions are prepared (`docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md`).
 2. Close Singapore's unrecorded Day 30 human-review evidence gap. The packet
    is verified; the human review is not done.

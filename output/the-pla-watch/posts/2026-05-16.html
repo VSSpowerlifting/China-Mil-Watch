@@ -31,6 +31,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="../../icon-16.png">
   <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
   <link rel="alternate" type="application/atom+xml" title="The PLA Watch" href="https://indopacificrecord.org/the-pla-watch/feed.xml">
+  <link rel="stylesheet" href="../../topography.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,6 +210,7 @@
       color: var(--color-text-primary);
       line-height: 1.1;
       padding-bottom: 0.05em;
+      white-space: nowrap;
     }
     .pw-nameplate .pw-mark .the {
       font-style: italic;
@@ -232,7 +234,7 @@
       align-self: center;
     }
 
-    .pw-nav { display: flex; gap: 1.25rem; align-items: center; }
+    .pw-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; align-items: center; }
     .pw-nav a {
       color: var(--color-text-secondary);
       font-family: var(--sans);
@@ -268,7 +270,6 @@
     .pw-nav a:hover::after { transform: scaleX(1); }
     .pw-nav a.active { color: var(--color-text-primary); }
     .pw-nav a.active::after { transform: scaleX(1); }
-    .pw-nav .nav-sep { color: var(--color-border); font-weight: 400; letter-spacing: 0; }
     .pw-skip {
       position: absolute; left: -9999px; top: 0; z-index: 100;
       background: var(--color-bg-card); color: var(--color-text-primary);
@@ -334,6 +335,13 @@
       color: var(--color-text-secondary);
       line-height: 1.65;
       max-width: 520px;
+    }
+    .footer-desc a,
+    .footer-transparency a {
+      color: var(--color-text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--signal-bright);
+      text-underline-offset: 3px;
     }
     .footer-transparency {
       font-size: 0.78rem;
@@ -483,13 +491,17 @@
     }
     @media (max-width: 600px) {
       .pw-nameplate .pw-mark { font-size: 1.55rem; }
-      .pw-nav { gap: 0.85rem; }
-      .pw-nav a { font-size: 0.6rem; }
-      .pw-nav .nav-sep { display: none; }
-    }
-    @media (max-width: 460px) {
-      .pw-nav a[href$="archive.html"]:not(.active),
-      .pw-nav a[href$="terms.html"]:not(.active) { display: none; }
+      .pw-nav { gap: 0.1rem 0.3rem; width: 100%; }
+      .pw-nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: var(--target-min);
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        padding: 0.55rem 0.35rem;
+        margin: 0;
+      }
+      .pw-nav a::after { bottom: 0.25rem; }
     }
 
     /* ── Reduced motion ─────────────────────────────────────────────────── */
@@ -552,7 +564,7 @@
       }
     }
     @media (prefers-reduced-motion: no-preference) {
-      .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
+      .js:not(.no-anim) .nd-veil { animation: nd-veil-in 1.1s var(--ease) both; }
       @keyframes nd-veil-in { from { opacity: .35; transform: scale(1.012); } }
     }
     /* night bracket — Concept C analyst mark, desktop only (mobile: inline) */
@@ -607,6 +619,42 @@
 .post-main { min-width: 0; }
 @media (max-width: 900px) {
   .post-wrap { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+}
+
+/* The desktop contents rail moves below the article on phones. A short,
+   static set of native anchors keeps the long issue navigable there. */
+.post-jump { display: none; }
+@media (max-width: 900px) {
+  .post-jump {
+    display: block;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.65rem 0;
+    margin: 0 0 1.6rem;
+  }
+  .post-jump-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+  }
+  .post-jump-links { display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; }
+  .post-jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: var(--color-text-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border);
+    text-underline-offset: 3px;
+  }
+  .post-jump a:hover { text-decoration-color: var(--signal-bright); }
 }
 
 /* ── Edition header — briefing head, structured not decorated ───────── */
@@ -1012,7 +1060,7 @@
 }
 .snapshot-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1.25rem;
 }
 .snap-stat .num {
@@ -1210,12 +1258,13 @@
   line-height: 1.35;
   color: var(--color-text-primary);
 }
-.source-card-zh {
-  font-family: var(--zh);
+.source-card-original {
+  font-family: var(--sans);
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   line-height: 1.55;
 }
+.source-card-original.is-zh { font-family: var(--zh); }
 .source-card-meta {
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -1430,6 +1479,7 @@
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  min-height: var(--target-min);
   padding: 0.35rem 0.8rem;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
@@ -1492,6 +1542,11 @@
   margin: -0.7rem 0;
 }
 .post-nav a:hover { color: var(--color-brand-light); text-decoration: none; }
+@media (max-width: 600px) {
+  .edition-nav { flex-direction: column; align-items: stretch; }
+  .edition-nav .next { text-align: left; margin-left: 0; }
+  .post-nav { flex-wrap: wrap; gap: 0.9rem 1.3rem; }
+}
 
 /* ── Print — single column brief ────────────────────────────────────── */
 @media print {
@@ -1524,7 +1579,7 @@
 }
   </style>
 </head>
-<body>
+<body class="night-topography" style="--topo-size: 1666px; --topo-offset: -136px; --topo-x: 23%; --topo-flip: 1; --topo-wash-x: 52%; --topo-wash-y: 33%; --topo-duration: 39s">
 <a class="pw-skip" href="#main">Skip to content</a>
 
 <div class="progress-rail" aria-hidden="true"><b></b></div>
@@ -1532,16 +1587,16 @@
 <header class="pw-masthead">
   <div class="pw-masthead-inner">
     <div class="pw-masthead-top">
-      <a href="../index.html" class="pw-nameplate" aria-label="The PLA Watch home">
+      <a href="../index.html" class="pw-nameplate" aria-label="The PLA Watch series home">
         <span class="pw-mark"><span class="the">The</span>PLA Watch</span>
         <span class="pw-mark-rule" aria-hidden="true"></span>
         <span class="pw-tag">A weekly publication of China Mil Watch</span>
       </a>
       <nav class="pw-nav" aria-label="Publication">
-        <a href="../index.html" >Latest Edition</a>
-        <a href="../archive.html" >Archive</a>
+        <a href="../index.html" >Series</a>
+        <a href="../archive.html" >Issues</a>
         <a href="../terms.html" >Terms</a>
-        <span class="nav-sep" aria-hidden="true">|</span>
+        <a href="../../analysis.html">Analysis</a>
         <a href="../../index.html" class="pw-nav-back">Indo-Pacific Record &rarr;</a>
       </nav>
     </div>
@@ -1576,7 +1631,7 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
   <span class="meta-item">Covers <span class="num">10 May 2026</span> → <span class="num">16 May 2026</span></span>
 <span class="meta-item"><span class="num">7</span> days observed</span>  <span class="meta-item"><span class="num">85</span> articles analyzed</span>
   <span class="meta-item"><span class="num">3</span> model-flagged</span>
-    <span class="meta-item" title="PLA Daily (81.cn), China Military Online, Global Times: Defense"><span class="num">3</span> sources</span>
+    <span class="meta-item" title="PLA Daily (81.cn), China Military Online, Global Times: Defense"><span class="num">3</span> sources in the trail</span>
 </div>
 <div class="nd-tickrow" aria-hidden="true">
 <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -1586,10 +1641,20 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
 </section>
 
 <main id="main">
+  <div class="topography" aria-hidden="true"></div>
 <div class="post-wrap">
 
   <article class="post-main">
 
+
+    <nav class="post-jump" aria-label="Jump within this issue">
+      <span class="post-jump-label">In this issue</span>
+      <div class="post-jump-links">
+        <a href="#s-snapshot">Snapshot</a>
+<a href="#s-opening">Analysis</a>        <a href="#s-sources">Source trail</a>
+        <a href="#pw-cite">Citation</a>
+      </div>
+    </nav>
 
     <div class="cover-credit-note">
       <span class="label">Edition cover (link-preview image):</span>
@@ -1614,7 +1679,7 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
         <div class="snap-stat">
           <div class="num">3</div>
           <div class="label">Sources</div>
-          <div class="sub">PLA Daily (81.cn), China Military Online, Global Times: Defense</div>
+          <div class="sub">PLA Daily (81.cn), China Military Online, Global Times: Defense in the trail</div>
         </div>
         <div class="snap-stat">
           <div class="num">7</div>
@@ -1623,17 +1688,17 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
         </div>
       </div>
       <div class="snap-bar">
-        <div class="snap-bar-label">Model-flagged vs. routine coverage</div>
+        <div class="snap-bar-label">Model flagging within articles analyzed for this issue</div>
         <div class="snap-bar-track">
           <div class="snap-bar-fill" style="width: 3.5%;"></div>
           <div class="snap-bar-rest"></div>
         </div>
         <div class="snap-bar-legend">
           <span><span class="swatch swatch-sig"></span>Model-flagged (3)</span>
-          <span><span class="swatch swatch-rest"></span>Routine (82)</span>
+          <span><span class="swatch swatch-rest"></span>Not model-flagged (82)</span>
         </div>
       </div>
-      <p class="snap-note">“Model-flagged” means the analysis model marked an item for closer attention during daily processing — an automated triage cue, not an editorial judgment. The analysis in this brief is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
+      <p class="snap-note">These figures describe the articles analyzed for this issue, not institutional output or complete collection. “Model-flagged” is an automated triage cue, not an editorial judgment. The analysis in this issue is the analyst's. <a href="../../methodology.html#model-flagged">How flagging works</a></p>
     </div>
 
     <div class="post-body">
@@ -1682,77 +1747,88 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
         <div class="source-cards">
           <a class="source-card" href="http://www.81.cn/hj_208557/16459619.html" target="_blank" rel="noopener" style="--ni: 0;">
             <div class="source-card-title">Fujian air wing / KJ-600 carrier qualifications</div>
-<div class="source-card-zh" lang="zh-Hans">海军舰载航空兵部队，13岁生日快乐！</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">海军舰载航空兵部队，13岁生日快乐！</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16459619.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460297.html" target="_blank" rel="noopener" style="--ni: 1;">
             <div class="source-card-title">Rocket Force “Four Randoms” training model</div>
-<div class="source-card-zh" lang="zh-Hans">“四个随机”训练模式推行后，备份号手补位打出“满堂彩”</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">“四个随机”训练模式推行后，备份号手补位打出“满堂彩”</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460297.html ↗</div>
           </a>
           <a class="source-card" href="https://www.globaltimes.cn/page/202605/1360888.shtml" target="_blank" rel="noopener" style="--ni: 2;">
             <div class="source-card-title">PLA Navy terminal defense system (Global Times)</div>
-<div class="source-card-zh" lang="zh-Hans">PLA Navy’s new terminal defense system completes type certification trials; expert cites world-class ultra-low-altitude interception capability</div>            <div class="source-card-meta">
+              <div class="source-card-original">PLA Navy’s new terminal defense system completes type certification trials; expert cites world-class ultra-low-altitude interception capability</div>
+            <div class="source-card-meta">
               <span>Global Times: Defense</span>
             </div>
             <div class="source-card-domain">www.globaltimes.cn/page/202605/1360888.shtml ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461159.html" target="_blank" rel="noopener" style="--ni: 3;">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15</div>
-<div class="source-card-zh" lang="zh-Hans">海军航空兵某部跨昼夜协同训练见闻</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">海军航空兵某部跨昼夜协同训练见闻</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461159.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/hj_208557/16461187.html" target="_blank" rel="noopener" style="--ni: 4;">
             <div class="source-card-title">Naval Aviation AEW-fighter coordinated training, May 15 (alternate)</div>
-<div class="source-card-zh" lang="zh-Hans">云端淬剑！海军航空兵某部开展跨昼夜协同训练</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">云端淬剑！海军航空兵某部开展跨昼夜协同训练</div>
+            <div class="source-card-meta">
               <span>China Military Online</span>
             </div>
             <div class="source-card-domain">www.81.cn/hj_208557/16461187.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16461388.html" target="_blank" rel="noopener" style="--ni: 5;">
             <div class="source-card-title">Submarine “Four Randoms”-adjacent systems thinking exercise</div>
-<div class="source-card-zh" lang="zh-Hans">海军某潜艇支队强化体系思维打赢“翻身仗”</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">海军某潜艇支队强化体系思维打赢“翻身仗”</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16461388.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460482.html" target="_blank" rel="noopener" style="--ni: 6;">
             <div class="source-card-title">CMC Logistic Support Department logistics governance reforms</div>
-<div class="source-card-zh" lang="zh-Hans">我军后勤军事治理的探索实践</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">我军后勤军事治理的探索实践</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460482.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460490.html" target="_blank" rel="noopener" style="--ni: 7;">
             <div class="source-card-title">PLA cyber doctrine article, Kong Rui / Jiao Dawei</div>
-<div class="source-card-zh" lang="zh-Hans">研究军事、研究战争、研究打仗丨把握网络空间作战新变化</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">研究军事、研究战争、研究打仗丨把握网络空间作战新变化</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460490.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460298.html" target="_blank" rel="noopener" style="--ni: 8;">
             <div class="source-card-title">New-domain new-quality combat forces doctrine, AMS War Studies</div>
-<div class="source-card-zh" lang="zh-Hans">推进新域新质作战力量规模化实战化体系化发展</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">推进新域新质作战力量规模化实战化体系化发展</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460298.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460401.html" target="_blank" rel="noopener" style="--ni: 9;">
             <div class="source-card-title">Eastern Theater Command civilian personnel recruitment</div>
-<div class="source-card-zh" lang="zh-Hans">东部战区2026年面向社会公开招考专业技能类文职人员公告</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">东部战区2026年面向社会公开招考专业技能类文职人员公告</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460401.html ↗</div>
           </a>
           <a class="source-card" href="http://www.81.cn/yw_208727/16460498.html" target="_blank" rel="noopener" style="--ni: 10;">
             <div class="source-card-title">China-Japan-Philippines Balikatan framing</div>
-<div class="source-card-zh" lang="zh-Hans">国际瞭望丨日菲军事捆绑加剧地区安全风险</div>            <div class="source-card-meta">
+              <div class="source-card-original is-zh" lang="zh-Hans">国际瞭望丨日菲军事捆绑加剧地区安全风险</div>
+            <div class="source-card-meta">
               <span>PLA Daily (81.cn)</span>
             </div>
             <div class="source-card-domain">www.81.cn/yw_208727/16460498.html ↗</div>
@@ -1785,6 +1861,7 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
     </div>
     <div class="post-nav post-nav--tight">
       <a href="../archive.html">&larr; Back to Archive</a>
+      <a href="../../analysis.html">Analysis &amp; Briefs &rarr;</a>
       <a href="../../index.html">Visit China Mil Watch &rarr;</a>
     </div>
   </article>
@@ -1815,7 +1892,7 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
     <div class="sb-card">
       <div class="sb-eyebrow">About this edition</div>
       <div class="sb-text">
-        Source-grounded weekly synthesis built from China Mil Watch's daily Mandarin-language monitoring. The source trail below the brief links cited items to the original Chinese-language records — the original is always the authoritative text. <a href="../../methodology.html">Methodology</a>
+        This issue draws on daily monitoring. Its source trail lists selected linked records; it is not a complete account of the official record or a substitute for checking the original text. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
   </aside>
@@ -1826,16 +1903,17 @@ Fujian air wing / KJ-600 carrier qualifications<br>      CONTEXT, NOT EVIDENCE
   <div class="footer-inner">
     <div>
       <div class="footer-name">The PLA Watch</div>
-      <div class="footer-desc">The reader-facing weekly publication from Indo-Pacific Record — a synthesis layer for the daily Chinese-language monitoring archive, written for policy readers, analysts, and journalists.</div>
+      <div class="footer-desc">This issue is an earlier Brief in <a href="../../analysis.html">Indo-Pacific Record Briefs</a>, originally published as The PLA Watch. Existing issues keep their original titles, issue numbers, and publishing attribution.</div>
       <div class="footer-transparency">
-        Source-grounded weekly synthesis. Every edition links to original Chinese-language sources. Not a substitute for expert judgment or original source review. <a href="../../methodology.html">Methodology</a>
+        Each edition's source trail identifies selected records used in its analysis; it is not a complete account of institutional output or monitored coverage. Original sources remain authoritative. <a href="../../methodology.html">Methodology</a>
       </div>
     </div>
     <div class="footer-meta">
       <span class="footer-meta-label">Read alongside</span>
-      <a href="../../index.html">Indo-Pacific Record — Daily Brief</a><br>
-      <a href="../../archive.html">Indo-Pacific Record — Archive</a><br>
-      <a href="../../signals.html">Signals &amp; Methodology</a><br>
+      <a href="../../analysis.html">Analysis &amp; Briefs</a><br>
+      <a href="../../index.html">Indo-Pacific Record — Home</a><br>
+      <a href="../../archive.html">Indo-Pacific Record — Records</a><br>
+      <a href="../../methodology.html">Methodology</a><br>
       <a href="../../the-pla-watch/terms.html">Terms to Know</a><br>
       <a href="../../the-pla-watch/feed.xml">Atom feed</a>
     </div>

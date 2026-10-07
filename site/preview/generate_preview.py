@@ -76,7 +76,9 @@ from config import SITE_ORIGIN                                    # noqa: E402
 
 from jinja2 import Environment, FileSystemLoader                    # noqa: E402
 from core.viewmodel import PublicView                               # noqa: E402
+from core.topography import topography_style                         # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
+from scripts.desk_map import layout as desk_map_layout              # noqa: E402
 
 TEMPLATES = Path(__file__).parent / "templates"
 DEFAULT_OUT = REPO_ROOT / "preview"
@@ -115,7 +117,8 @@ from core.edition_identity import (                                  # noqa: E40
 from core.brief_collection import (                                  # noqa: E402
     FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
-    build_briefs_feed, load_collection)
+    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
+from core.brief_contract import validate_readiness
 from core.desk_registry import load_registry                         # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
@@ -2320,7 +2323,8 @@ def build(out_dir: Path, title: str, db_path: Path,
           legacy_routes: bool = False, mode: str = BUILD_MODE,
           site_origin: str = None, allow_test_origin: bool = False,
           daily_run_date: str = None, briefs_dir: Path = None,
-          allow_synthetic_briefs: bool = False, gallery: bool = False) -> dict:
+          allow_synthetic_briefs: bool = False, gallery: bool = False,
+          review_brief: Path = None) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2343,6 +2347,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     turns the workflow's environment into this argument.
     """
     out_dir = Path(out_dir).resolve()
+    if review_brief and site_origin:
+        raise ValueError("a draft review is private: no site origin, feed or sitemap")
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
             "refusing to write inside production output/: %s\n"
@@ -2364,6 +2370,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     assert_snapshot(data["corpus"], snapshot)
     env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
                       autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    env.globals["topography_style"] = topography_style
     env.filters["status_label"] = lambda s: STATUS_PROSE.get(s, (s, ""))[0]
     env.filters["status_prose"] = lambda s: STATUS_PROSE.get(s, ("", s))[1]
     env.filters["source_type_label"] = (
@@ -2376,6 +2383,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     env.filters["language_label"] = language_label
     env.filters["script_lang"] = script_lang
     env.filters["weekday"] = weekday
+    from markupsafe import Markup
+    env.filters["brief_prose"] = lambda text: Markup(linked_prose(text))
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
@@ -2419,6 +2428,23 @@ def build(out_dir: Path, title: str, db_path: Path,
     collection = load_collection(editions, load_registry(),
                                  briefs_dir=briefs_dir,
                                  allow_synthetic=allow_synthetic_briefs)
+    if review_brief:
+        path = Path(review_brief).resolve()
+        if path.parent != briefs_dir.resolve():
+            raise ValueError("review the canonical source in briefs/<slug>.json")
+        draft = json.loads(path.read_text(encoding="utf-8"))
+        if draft.get("editorial_status") != "draft":
+            raise ValueError("--review-brief is for an unapproved draft only")
+        problems = validate_readiness(draft, load_registry())
+        if problems:
+            raise ValueError("draft review: " + "; ".join(problems))
+        entry = brief_entry(path.stem, draft, briefs_dir / BRIEFS_MEDIA)
+        entry["is_review"] = True
+        rows = order_rows(list(collection.rows) + [{"entry": entry, "kind": "brief",
+                                                    "provenance": "Unapproved review candidate"}])
+        collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
+                                withheld=collection.withheld,
+                                sidecars=dict(collection.sidecars, **{path.stem: draft}))
     briefs_feed = bool(collection.briefs) and bool((site_origin or "").strip())
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
@@ -2443,6 +2469,7 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     ctx = {
         "title": title,
+        "review_mode": bool(review_brief),
         "tagline": TAGLINE,
         "corpus_eyebrow": CORPUS_EYEBROW,
         "identity": identity,
@@ -2466,6 +2493,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
+        # Where each desk's plate hangs on the Desks-page map; geography only.
+        "desk_map": desk_map_layout(desks),
         "live_desk_count": desks.collecting_count,
         "developing_desk_count": desks.not_collecting_count,
         "metrics": metrics,
@@ -2645,7 +2674,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             # A fixture is cited by its relative route: it has no address on
             # the live site and must not print one.
             brief["citation"] = brief_citation(
-                brief, origin="" if brief["synthetic"] else LIVE_BASE)
+                brief, origin="" if brief["synthetic"] or brief["is_review"] else LIVE_BASE)
             (out_dir / brief["route"]).write_text(
                 brief_tmpl.render(page="analysis.html", nested=True,
                                   brief=brief, **ctx),
@@ -2750,6 +2779,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         encoding="utf-8")
     written.append("reveal.js")
 
+    # The homepage's opening title. Requested by home.html alone; no other
+    # page carries it.
+    (out_dir / "intro.js").write_text(
+        (Path(__file__).parent / "intro.js").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("intro.js")
+
     (out_dir / "corpus.html").write_text(
         env.get_template("corpus_weeks.html").render(page="corpus.html", **ctx),
         encoding="utf-8")
@@ -2759,6 +2795,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
+    (out_dir / "topography.css").write_text(
+        (Path(__file__).parent / "topography.css").read_text(encoding="utf-8"),
+        encoding="utf-8")
+    written.append("topography.css")
 
     # ── Identity assets ──────────────────────────────────────────────────
     # All derived from one owner-supplied compass, and copied rather than

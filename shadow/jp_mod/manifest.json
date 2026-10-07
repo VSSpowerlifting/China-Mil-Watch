@@ -55,7 +55,7 @@
         "https://www.mod.go.jp/j/rss/news.xml"
       ],
       "adapter": "scraper.sources.jp_mod:JPModAdapter",
-      "enabled": false,
+      "enabled": true,
       "language_tags": [
         "ja"
       ],
@@ -75,7 +75,7 @@
         "https://www.mod.go.jp/j/rss/update.xml"
       ],
       "adapter": "scraper.sources.jp_mod:JPModAdapter",
-      "enabled": false,
+      "enabled": true,
       "language_tags": [
         "ja"
       ],

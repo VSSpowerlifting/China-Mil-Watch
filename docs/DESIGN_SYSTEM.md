@@ -93,6 +93,8 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 | `--rule` | #CFC9BC | hairline structure |
 | `--accent` | #255E7A | compass-blue links, chart marks, focus |
 | `--band` | #12222C | dark analysis band |
+| `--focus-band` | #8FC9DE | turquoise, on the band only (8.97 on `--band`, 1.71 on paper): focus there, and the Briefs mark |
+| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks (the Analysis page's former legacy-archive ground was retired 2026-09-30) |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
 | `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
@@ -114,6 +116,29 @@ aliases onto these tokens — one place a colour is decided, two names for it.
   The Ledger uses compass blue for structure and rust for model output.
   Neither surface uses crimson as a decorative paper accent, a data-chart
   fill, or for a machine flag: a model-flagged mark is rust.
+- **Briefs identity (2026-09-30).** The current collection, Indo-Pacific
+  Record Briefs, is identified by turquoise (`--focus-band`) on the band and
+  compass blue (`--accent`) on paper: the Analysis page head, the home
+  page's analysis lead, a Brief's hero and its Signal rule. This is an
+  identity colour, not a replacement for the meaning rules above: crimson
+  still marks the human-analysis layer wherever that layer is labeled
+  (including on Briefs and their pages), rust still marks machine output,
+  and ink still marks the source record. What changes is only which colour
+  names the publication.
+- **One analysis publication (2026-09-30).** The PLA Watch has been absorbed
+  into Indo-Pacific Record Briefs as the historical portion of one unified
+  analysis publication. Historical publication metadata and URLs are
+  preserved for provenance and compatibility, but the site does not present
+  The PLA Watch as a separate archive product. On the Analysis page and the
+  home band the earlier issues are rows of the same catalog; the newest item
+  of the whole collection leads, whichever series it began in; and where an
+  issue was first published is a secondary line of restrained metadata
+  ("From the former series The PLA Watch · published under …"), never a section, a
+  boundary, a second masthead or a second colour identity. There is no
+  legacy-archive band, no recessed "archive" ground and no large crimson
+  section on either surface. The issues' own pages keep the crimson they
+  were published with, and the lead's edition plate keeps its governed
+  marks (one crimson rule, rust ticks).
 - **Three layers, marked the same way everywhere** on the record surfaces:
   source record (ink), machine output (rust), analysis (crimson). A reader
   can tell which layer a line belongs to without reading its label, and the
@@ -150,9 +175,30 @@ Reading rules:
 - Long-form measure ~700px (existing PW post body), line-height ~1.7–1.8.
 - Base 16px; body drops to 0.9375rem below 900px — keep.
 - Headline scale is responsive per template (hero ~3rem desktop → ~1.9rem
-  mobile); no fixed global scale, but keep serif display weight 700 with
-  tightened letter-spacing (−0.01 to −0.015em) and line-height ≤ 1.15.
+  mobile); no fixed global scale. Serif display is **weight 600** on Paper
+  Ledger and the Briefs surfaces (the homepage opening title's weight), in
+  sentence case with near-neutral tracking (about −0.008em; −0.004em at h2)
+  and line-height ≤ 1.15. (Revised 2026-10-05 from 700 / −0.01 to −0.015em;
+  DECISION_LOG.) Night Desk PLA Watch pages keep their own settings.
 - No more than ~4 type sizes per viewport region.
+
+**Titling register** (2026-10-05, DECISION_LOG). The opening title's setting
+(V&M §1.1): `--serif` at `--title-weight` (600), uppercase, letter-spaced
+`--title-tracking` (.07em; .06em on page names), line-height ~1.04–1.08.
+It is an identity register, used only for short, fixed English names:
+- the wordmark (`.brand-name`, `--step-wordmark` re-measured to
+  `clamp(1.2rem, 2.4vw, 1.55rem)` so it holds one line at 320px) and the
+  footer name (`.footer-name`);
+- hub page names, by opt-in class `h1.page-name` (About, Desks, Sources,
+  Coverage, Methodology, the record, Corpus Guide, corpus weeks, the
+  component gallery, each desk page, the Briefs masthead).
+
+Never in the titling register: a record, source or Brief headline, the
+homepage claim, anything carrying Chinese or Japanese (source pages are
+excluded because their names include 解放军报, 防衛省), any sentence-length
+heading, or the PLA Watch predecessor pages. Source titles keep the
+capitalisation they were preserved or translated with. `intro.js` styles
+itself and is never restyled from the site sheet; the site borrows from it.
 
 ## 5. Grid, spacing, structure
 
@@ -230,7 +276,9 @@ once the database has outgrown the declared snapshot. Never published.
   now be disabled. The address names the page actually shown, and a value no
   option carries shows that control's default.
 - **Edition plate** (`_plate.html`) — an issue drawn from its sidecar
-  (VISUAL_AND_MOTION §3.2), on the home band and at the head of Analysis.
+  (VISUAL_AND_MOTION §3.2), at the head of the Analysis page's legacy
+  archive. The home band no longer draws it (2026-09-30): the band leads
+  with the current collection, and a plate there read as the current lead.
 - **Citations** — plain selectable text, never boxed; a copy control and a
   visible status line that says what happened, including failure.
 
@@ -255,8 +303,13 @@ One canonical mark, several derivatives, documented in full in
 - **Simplified derivative:** `ipr-compass-mark-small.svg` covers favicon sizes
   (16/24/32 px) with one ring, filled points, no ticks. It is a derivative,
   never a replacement, and never presented as the mark at display size.
-- **The brand gradient appears in exactly one place** — inside the mark itself.
-  The accent budget still forbids gradients as decoration anywhere else.
+- **The brand gradient belongs inside the mark itself.** The accent budget
+  forbids decorative gradients outside the owner-approved exceptions: the
+  Signal Veil (DECISION_LOG 2026-10-01)
+  behind the home Indo-Pacific Record Briefs band, pure CSS, token colours,
+  inert, never on another surface; and the shared abstract blue topographic
+  ground (DECISION_LOG 2026-10-05), with attenuated reading surfaces and slow
+  decorative motion under the fallbacks in VISUAL_AND_MOTION_SYSTEM §1.
 - `logo-icon.png`, `logo-wordmark.png`, `og-image.png` and `favicon.svg` are
   **retired**: the predecessor's eagle, its wordmark, and a screenshot of its
   homepage. They remain in `output/` only because pages not yet re-rendered

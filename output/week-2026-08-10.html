@@ -30,6 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="topography.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,12 +54,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="archive.html" aria-current="page">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html" aria-current="page">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     </nav>
@@ -67,12 +68,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="archive.html" aria-current="page">Atlas</a></li>
-      <li><a href="desks.html">Desks</a></li>
-      <li><a href="sources.html">Sources</a></li>
+      <li><a href="archive.html" aria-current="page">Records</a></li>
       <li><a href="analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="desks.html">Desks</a></li>
+      <li><a href="sources.html">Sources</a></li>
       <li><a href="coverage.html">Coverage</a></li>
-      <li><a href="methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="methodology.html">Methodology</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
         </nav>
@@ -80,51 +81,38 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,715</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,995</dd></div>    </dl>
+        <dd>4,927</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,229</dd></div>    </dl>
     <p class="detail"><a href="coverage.html">Run
-      152 in full &rarr;</a></p>
+      161 in full</a></p>
   </div>
-</div>
-<main id="main">
+</aside>
+<main id="main" style="--topo-size: 1664px; --topo-offset: -28px; --topo-x: 80%; --topo-flip: -1; --topo-wash-x: 30%; --topo-wash-y: 75%; --topo-duration: 55s">
+  <div class="topography" aria-hidden="true"></div>
   <div class="wrap">
 <nav class="atlas-breadcrumb" aria-label="Breadcrumb">
   <ol>
-    <li><a href="archive.html">Atlas</a></li>
+    <li><a href="archive.html">Records</a></li>
     <li><a href="corpus.html">Records by week</a></li>
     <li><span aria-current="page">Publication week 2026-08-10</span></li>
   </ol>
 </nav>
-
-<h1>Publication week 2026-08-10 to 2026-08-16</h1>
-<p class="lede">50 records on this page,
-of 237 in the week, by the publication date each
-source stated.</p>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-28">2026-09-28</time>
-    · 4,715 records held ·
-    <a href="coverage.html">collection evidence</a></p>
-  <ul aria-label="Desk collection states">
-    <li><a href="china.html">China Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">4,651 records</span></li>
-    <li><a href="singapore.html">Singapore Desk</a>
-      <span class="desk-state desk-state--live">Live — collecting</span>      <span class="atlas-spine-count">64 records</span></li>
-    <li><a href="japan.html">Japan Desk</a>
-      <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></li>
-    <li><a href="us-indopacific.html">US Indo-Pacific Reference Desk</a>
-      <span class="desk-state desk-state--access_blocked">Access blocked — not collecting</span></li>
-  </ul>
-</aside>
+<header class="page-head">
+  <h1>Publication week <span class="nowrap">2026-08-10</span> to <span class="nowrap">2026-08-16</span></h1>
+  <p class="lede">50 records on this page,
+  of 237 in the week, by the publication date each
+  source stated.</p>
+</header>
 
 
 <p class="meta">7 recorded run dates (UTC)
@@ -138,445 +126,620 @@ so this is operational context, not a measure of coverage.</p>
 
 <h2>Records</h2>
 <div id="records">
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">Ministry of National Defense · 2026-08-16</span>
+<div class="records-days">
+  <section class="records-day">
+    <p class="day-date"><time datetime="2026-08-16"><span class="day-num">16</span>
+      <span class="day-month">August 2026</span>      <span class="day-week">Sunday</span></time></p>
+    <ul class="record-list">
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3353.html">Deeply Advancing Combat-Realistic Military Training | Sea and Sky Temper the Blade, Spanning Day and Night</a></h3>    <p class="original" lang="zh-Hans">深入推进实战化军事训练丨海空淬利剑，横跨昼与夜</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3353.html">Deeply Advancing Combat-Realistic Military Training | Sea and Sky Temper the Blade, Spanning Day and Night</a></h3>
-  <p class="original" lang="zh-Hans">深入推进实战化军事训练丨海空淬利剑，横跨昼与夜</p>
-  <p class="meta">MOD China (国防部) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">Ministry of National Defense · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">Ministry of National Defense</span>
+    <span class="row-via">MOD China (国防部) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3352.html">The Garrison Soldiers at the Outpost Along This &#34;Silk Ribbon&#34; Guard the Peace of the Nation&#39;s Frontier with Loyalty</a></h3>    <p class="original" lang="zh-Hans">这条“绸带”旁的哨所官兵，用忠诚守护着祖国边陲安宁</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3352.html">The Garrison Soldiers at the Outpost Along This &#34;Silk Ribbon&#34; Guard the Peace of the Nation&#39;s Frontier with Loyalty</a></h3>
-  <p class="original" lang="zh-Hans">这条“绸带”旁的哨所官兵，用忠诚守护着祖国边陲安宁</p>
-  <p class="meta">MOD China (国防部) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">Ministry of National Defense</span>
+    <span class="row-via">MOD China (国防部) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3313.html">悟事明理丨“一堂好课”是怎样炼成的</a></h3>
   </div>
-  <h3><a href="record/3313.html">悟事明理丨“一堂好课”是怎样炼成的</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3312.html">学习卡·长征百问（35）丨彝海结盟是红军通过哪个少数民族聚居区发生的事？</a></h3>
   </div>
-  <h3><a href="record/3312.html">学习卡·长征百问（35）丨彝海结盟是红军通过哪个少数民族聚居区发生的事？</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3311.html">厄瓜多尔总统诺沃亚抵达北京开始访华</a></h3>
   </div>
-  <h3><a href="record/3311.html">厄瓜多尔总统诺沃亚抵达北京开始访华</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3310.html">Military-Wide Medical and Health System Takes Multiple Measures to Deepen Industry-Wide Clean Governance (廉政建设)</a></h3>    <p class="original" lang="zh-Hans">全军医疗卫生系统多措并举深化行业廉政建设</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3310.html">Military-Wide Medical and Health System Takes Multiple Measures to Deepen Industry-Wide Clean Governance (廉政建设)</a></h3>
-  <p class="original" lang="zh-Hans">全军医疗卫生系统多措并举深化行业廉政建设</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3309.html">一张灌溉管网，滋润百亩杏林，更滋润着连队职工群众的心田</a></h3>
   </div>
-  <h3><a href="record/3309.html">一张灌溉管网，滋润百亩杏林，更滋润着连队职工群众的心田</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3308.html">从“指尖手艺”到“指尖经济”，四川省军区帮扶深山彝寨蝶变为大美彝乡</a></h3>
   </div>
-  <h3><a href="record/3308.html">从“指尖手艺”到“指尖经济”，四川省军区帮扶深山彝寨蝶变为大美彝乡</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3307.html">警惕日本“新型军国主义”的现实威胁丨播种错误认知为扩军备战铺路</a></h3>
   </div>
-  <h3><a href="record/3307.html">警惕日本“新型军国主义”的现实威胁丨播种错误认知为扩军备战铺路</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3306.html">强军论坛丨烧旺党内政治生活炉火</a></h3>
   </div>
-  <h3><a href="record/3306.html">强军论坛丨烧旺党内政治生活炉火</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3305.html">Profiles in &#34;Two Excellences, One Vanguard&#34; | Striving to Be the New-Era &#34;Sea Tigers&#34;</a></h3>    <p class="original" lang="zh-Hans">“两优一先”风采录丨争当新时代“海上猛虎”</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3305.html">Profiles in &#34;Two Excellences, One Vanguard&#34; | Striving to Be the New-Era &#34;Sea Tigers&#34;</a></h3>
-  <p class="original" lang="zh-Hans">“两优一先”风采录丨争当新时代“海上猛虎”</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3304.html">The Garrison Soldiers Beside This &#34;Silk Ribbon&#34; Guard the Peace of the Nation&#39;s Frontier with Loyalty</a></h3>    <p class="original" lang="zh-Hans">这条“绸带”旁的哨所官兵，用忠诚守护着祖国边陲安宁</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3304.html">The Garrison Soldiers Beside This &#34;Silk Ribbon&#34; Guard the Peace of the Nation&#39;s Frontier with Loyalty</a></h3>
-  <p class="original" lang="zh-Hans">这条“绸带”旁的哨所官兵，用忠诚守护着祖国边陲安宁</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3303.html">“崇军集市”开进营区</a></h3>
   </div>
-  <h3><a href="record/3303.html">“崇军集市”开进营区</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3302.html">江苏省宜兴市高校着力推进教育拥军</a></h3>
   </div>
-  <h3><a href="record/3302.html">江苏省宜兴市高校着力推进教育拥军</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3301.html">For More Than 80 Years, the Same Name Has Bound a Hero Company to the Hero&#39;s Hometown</a></h3>    <p class="original" lang="zh-Hans">从80多年前起，同一个名字就将英雄连队与英雄故里紧紧相连</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3301.html">For More Than 80 Years, the Same Name Has Bound a Hero Company to the Hero&#39;s Hometown</a></h3>
-  <p class="original" lang="zh-Hans">从80多年前起，同一个名字就将英雄连队与英雄故里紧紧相连</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3300.html">我国成功发射卫星互联网低轨24组卫星</a></h3>
   </div>
-  <h3><a href="record/3300.html">我国成功发射卫星互联网低轨24组卫星</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3299.html">王戟先进事迹启示录丨一心往前看，一起往前走</a></h3>
   </div>
-  <h3><a href="record/3299.html">王戟先进事迹启示录丨一心往前看，一起往前走</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3298.html">“推动企业发展更上一层楼，为国家作出更大贡献”——习近平总书记指引企业坚定不移走高质量发展之路</a></h3>
   </div>
-  <h3><a href="record/3298.html">“推动企业发展更上一层楼，为国家作出更大贡献”——习近平总书记指引企业坚定不移走高质量发展之路</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3297.html">Commemorating the 90th Anniversary of the Victory of the Workers&#39; and Peasants&#39; Red Army&#39;s Long March | The Wisdom of Victory in Adversity</a></h3>    <p class="original" lang="zh-Hans">纪念工农红军长征胜利90周年 | 逆境突围的制胜智慧</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3297.html">Commemorating the 90th Anniversary of the Victory of the Workers&#39; and Peasants&#39; Red Army&#39;s Long March | The Wisdom of Victory in Adversity</a></h3>
-  <p class="original" lang="zh-Hans">纪念工农红军长征胜利90周年 | 逆境突围的制胜智慧</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3296.html">朱镕基同志遗体18日火化 天安门等地将下半旗志哀</a></h3>
   </div>
-  <h3><a href="record/3296.html">朱镕基同志遗体18日火化 天安门等地将下半旗志哀</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3295.html">An Air Force Base Opens &#34;One-Number, All-Handled&#34; Hotline to Serve Officers and Soldiers on Temporary Training Deployment</a></h3>    <p class="original" lang="zh-Hans">空军某场站开通“一号通办”热线服务驻训官兵</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3295.html">An Air Force Base Opens &#34;One-Number, All-Handled&#34; Hotline to Serve Officers and Soldiers on Temporary Training Deployment</a></h3>
-  <p class="original" lang="zh-Hans">空军某场站开通“一号通办”热线服务驻训官兵</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3294.html">Deeply Advancing Combat-Realistic Military Training | Sea and Air Forge a Sharp Sword, Spanning Day and Night</a></h3>    <p class="original" lang="zh-Hans">深入推进实战化军事训练丨海空淬利剑，横跨昼与夜</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3294.html">Deeply Advancing Combat-Realistic Military Training | Sea and Air Forge a Sharp Sword, Spanning Day and Night</a></h3>
-  <p class="original" lang="zh-Hans">深入推进实战化军事训练丨海空淬利剑，横跨昼与夜</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3293.html">闻“汛”而动 全力以赴——各地多措并举筑牢防汛安全屏障</a></h3>
   </div>
-  <h3><a href="record/3293.html">闻“汛”而动 全力以赴——各地多措并举筑牢防汛安全屏障</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3292.html">Knowledge and Action Forum | Let Youth Shine Through Striving and Hard Work</a></h3>    <p class="original" lang="zh-Hans">知行论坛丨让青春在拼搏奋斗中闪光</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3292.html">Knowledge and Action Forum | Let Youth Shine Through Striving and Hard Work</a></h3>
-  <p class="original" lang="zh-Hans">知行论坛丨让青春在拼搏奋斗中闪光</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3291.html">解放军新闻传播中心全媒体投稿系统正式开通运行</a></h3>
   </div>
-  <h3><a href="record/3291.html">解放军新闻传播中心全媒体投稿系统正式开通运行</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3290.html">31 Officers and Soldiers of China&#39;s Peacekeeping Infantry Battalion in South Sudan (Juba) Awarded Force Commander Commendations</a></h3>    <p class="original" lang="zh-Hans">我赴南苏丹（朱巴）维和步兵营31名官兵荣获部队司令嘉奖</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3290.html">31 Officers and Soldiers of China&#39;s Peacekeeping Infantry Battalion in South Sudan (Juba) Awarded Force Commander Commendations</a></h3>
-  <p class="original" lang="zh-Hans">我赴南苏丹（朱巴）维和步兵营31名官兵荣获部队司令嘉奖</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3289.html">谈心录丨多一些较真精神</a></h3>
   </div>
-  <h3><a href="record/3289.html">谈心录丨多一些较真精神</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3288.html">写给“白衣战士”的健康备忘录</a></h3>
   </div>
-  <h3><a href="record/3288.html">写给“白衣战士”的健康备忘录</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3287.html">忆长征·话传承丨矢志不渝“跟着走”</a></h3>
   </div>
-  <h3><a href="record/3287.html">忆长征·话传承丨矢志不渝“跟着走”</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3286.html">Turning Headaches into Heartwarming Outcomes, Giving Officers and Soldiers More Time and Energy to Devote to Training and War Preparations</a></h3>    <p class="original" lang="zh-Hans">把挠头事办成暖心事,让官兵有更多的时间和精力投入练兵备战</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3286.html">Turning Headaches into Heartwarming Outcomes, Giving Officers and Soldiers More Time and Energy to Devote to Training and War Preparations</a></h3>
-  <p class="original" lang="zh-Hans">把挠头事办成暖心事,让官兵有更多的时间和精力投入练兵备战</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">People&#39;s Daily Group · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3285.html">PLA Navy&#39;s first-batch female shipborne pilot trainees pass daytime landing qualification tests, signaling mature pilot training system: expert</a></h3>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3285.html">PLA Navy&#39;s first-batch female shipborne pilot trainees pass daytime landing qualification tests, signaling mature pilot training system: expert</a></h3>
-  <p class="original" lang="en">PLA Navy&#39;s first-batch female shipborne pilot trainees pass daytime landing qualification tests, signaling mature pilot training system: expert</p>
-  <p class="meta">Global Times — Defense · en · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-16</span>
+  <p class="row-side"><span class="row-who">People&#39;s Daily Group</span>
+    <span class="row-via">Global Times — Defense · English</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3284.html">Armored Assault Vehicles in Live-fire Assessment</a></h3>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3284.html">Armored Assault Vehicles in Live-fire Assessment</a></h3>
-  <p class="original" lang="en">Armored Assault Vehicles in Live-fire Assessment</p>
-  <p class="meta">China Military Online (EN) · en · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">China Military Online (EN) · English</span>
+<a href="china.html">China Desk</a></p>
+</li>
+    </ul>
+  </section>
+  <section class="records-day">
+    <p class="day-date"><time datetime="2026-08-15"><span class="day-num">15</span>
+      <span class="day-month">August 2026</span>      <span class="day-week">Saturday</span></time></p>
+    <ul class="record-list">
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3283.html">王戟先进事迹启示录丨知所从来，方明所往</a></h3>
   </div>
-  <h3><a href="record/3283.html">王戟先进事迹启示录丨知所从来，方明所往</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3282.html">外交部就日本政要参拜供奉甲级战犯的靖国神社答问</a></h3>
   </div>
-  <h3><a href="record/3282.html">外交部就日本政要参拜供奉甲级战犯的靖国神社答问</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3281.html">强军论坛丨牢记第一身份是共产党员</a></h3>
   </div>
-  <h3><a href="record/3281.html">强军论坛丨牢记第一身份是共产党员</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3280.html">八一锐评丨铭记抗战历史 奋进强军征程</a></h3>
   </div>
-  <h3><a href="record/3280.html">八一锐评丨铭记抗战历史 奋进强军征程</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3279.html">住宅建设用地使用权 届满后可以续期吗</a></h3>
   </div>
-  <h3><a href="record/3279.html">住宅建设用地使用权 届满后可以续期吗</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="en"><a href="record/3278.html">China lodges protests against Japan&#39;s negative moves related to Yasukuni Shrine</a></h3>
   </div>
-  <h3><a href="record/3278.html">China lodges protests against Japan&#39;s negative moves related to Yasukuni Shrine</a></h3>
-  <p class="meta">China Military Online (EN) · en · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">China Military Online (EN) · English</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3277.html">课堂“零距离”，让家国情怀走进日常</a></h3>
   </div>
-  <h3><a href="record/3277.html">课堂“零距离”，让家国情怀走进日常</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3276.html">Welcoming the Gift from the Sea — A Look at Military Physical Training Conducted by Southern Theater Command Navy Personnel Aboard Ships Underway</a></h3>    <p class="original" lang="zh-Hans">迎接来自大海的馈赠——南部战区海军官兵在舰艇航行中开展军体训练见闻</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3276.html">Welcoming the Gift from the Sea — A Look at Military Physical Training Conducted by Southern Theater Command Navy Personnel Aboard Ships Underway</a></h3>
-  <p class="original" lang="zh-Hans">迎接来自大海的馈赠——南部战区海军官兵在舰艇航行中开展军体训练见闻</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3275.html">Symposium on Jiang Zemin&#39;s Thought on National Defense and Army Building Held in Beijing</a></h3>    <p class="original" lang="zh-Hans">江泽民国防和军队建设思想研讨会在京召开</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3275.html">Symposium on Jiang Zemin&#39;s Thought on National Defense and Army Building Held in Beijing</a></h3>
-  <p class="original" lang="zh-Hans">江泽民国防和军队建设思想研讨会在京召开</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3274.html">Love Flows Through the &#34;Galaxy&#34; — Wang Ji Is One of Its Stars</a></h3>    <p class="original" lang="zh-Hans">爱在“银河”流淌，王戟是其中一颗星</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3274.html">Love Flows Through the &#34;Galaxy&#34; — Wang Ji Is One of Its Stars</a></h3>
-  <p class="original" lang="zh-Hans">爱在“银河”流淌，王戟是其中一颗星</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3273.html">Sharp Words | Denying Historical Guilt Will Bring Complete Reckoning</a></h3>    <p class="original" lang="zh-Hans">锐言丨否认历史罪责 必遭彻底清算</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3273.html">Sharp Words | Denying Historical Guilt Will Bring Complete Reckoning</a></h3>
-  <p class="original" lang="zh-Hans">锐言丨否认历史罪责 必遭彻底清算</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3272.html">A Party Committee Secretary&#39;s Reflections: Don&#39;t Shirk What You Should Do, Don&#39;t Overstep What You Shouldn&#39;t</a></h3>    <p class="original" lang="zh-Hans">党委书记的心得感悟：该干的不推诿，不该干的别越位</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3272.html">A Party Committee Secretary&#39;s Reflections: Don&#39;t Shirk What You Should Do, Don&#39;t Overstep What You Shouldn&#39;t</a></h3>
-  <p class="original" lang="zh-Hans">党委书记的心得感悟：该干的不推诿，不该干的别越位</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3271.html">Fear No Wind or Waves! Warriors Struggle Valiantly Against Wind, Waves, and Peril</a></h3>    <p class="original" lang="zh-Hans">不惧风浪！勇士们与风浪、险阻进行奋勇抗争</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3271.html">Fear No Wind or Waves! Warriors Struggle Valiantly Against Wind, Waves, and Peril</a></h3>
-  <p class="original" lang="zh-Hans">不惧风浪！勇士们与风浪、险阻进行奋勇抗争</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3270.html">A Package of Local Specialties Sent Back Home — An Account of the Dazhou Detachment of the Sichuan General Corps of the People&#39;s Armed Police Force Rectifying Grassroots Conduct</a></h3>    <p class="original" lang="zh-Hans">一份被寄回的土特产——武警四川总队达州支队纠治基层风气的一段经历</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3270.html">A Package of Local Specialties Sent Back Home — An Account of the Dazhou Detachment of the Sichuan General Corps of the People&#39;s Armed Police Force Rectifying Grassroots Conduct</a></h3>
-  <p class="original" lang="zh-Hans">一份被寄回的土特产——武警四川总队达州支队纠治基层风气的一段经历</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3269.html">国防部新闻发言人蒋斌就日本政要参拜靖国神社答记者问</a></h3>
   </div>
-  <h3><a href="record/3269.html">国防部新闻发言人蒋斌就日本政要参拜靖国神社答记者问</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3268.html">军人家庭丨边关恋歌</a></h3>
   </div>
-  <h3><a href="record/3268.html">军人家庭丨边关恋歌</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3><a href="record/3267.html">A Series of Observations on Units Using High-Temperature Weather to Enhance Combat Effectiveness</a></h3>    <p class="original" lang="zh-Hans">各部队利用高温天气提升战斗力的一组见闻</p>
+    <p class="row-tags"><span class="state state--analyzed">Analyzed</span></p>
   </div>
-  <h3><a href="record/3267.html">A Series of Observations on Units Using High-Temperature Weather to Enhance Combat Effectiveness</a></h3>
-  <p class="original" lang="zh-Hans">各部队利用高温天气提升战斗力的一组见闻</p>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Analyzed</p>
-</article>
-<article class="record">
-  <div class="record-head">
-    <span class="evidence evidence--record">Source record</span>
-<span class="meta"><a href="china.html">China Desk</a></span>    <span class="meta">CMC Political Work Department · 2026-08-15</span>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a></p>
+</li>
+      <li class="record-row">
+  <div>
+    <h3 lang="zh-Hans"><a href="record/3266.html">《求是》杂志发表习近平总书记重要文章《提高防灾减灾救灾能力》</a></h3>
   </div>
-  <h3><a href="record/3266.html">《求是》杂志发表习近平总书记重要文章《提高防灾减灾救灾能力》</a></h3>
-  <p class="meta">PLA Daily (解放军报) · zh-Hans · Not selected for analysis</p>
-</article>
+  <p class="row-side"><span class="row-who">CMC Political Work Department</span>
+    <span class="row-via">PLA Daily (解放军报) · Simplified Chinese</span>
+<a href="china.html">China Desk</a><span class="state state--not_selected">Not selected for analysis</span></p>
+</li>
+    </ul>
+  </section>
+</div>
 </div>
 
-<nav class="pager" aria-label="Pages within this week">
+<div class="pager" role="group" aria-label="Pages within this week">
   <p>Page 1 of 5 ·
   <a href="week-2026-08-10-2.html">Next page</a></p>
-</nav>
+</div>
 
-<p class="meta"><a href="corpus.html">← All publication weeks</a></p>
+<figure class="week-strip" aria-labelledby="week-strip-title-h2">
+  <figcaption class="week-strip-head">
+    <h2 id="week-strip-title-h2">All publication weeks</h2>
+    <p>Stored records per publication week; this week is drawn in ink. Hatched and faint weeks are explained on Corpus by week.</p>
+  </figcaption>
+  <div class="week-scroll">
+  <div class="week-plot">
+  <ol class="week-bars">
+    <li class="is-edge">
+      <a href="week-2026-10-05.html" style="--h: 15.7%; --i: 22"
+         aria-label="Week of 2026-10-05: 42 records (snapshot boundary)"
+         title="2026-10-05 to 2026-10-11 · 42 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-28.html" style="--h: 78.7%; --i: 21"
+         aria-label="Week of 2026-09-28: 210 records"
+         title="2026-09-28 to 2026-10-04 · 210 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-21.html" style="--h: 95.5%; --i: 20"
+         aria-label="Week of 2026-09-21: 255 records"
+         title="2026-09-21 to 2026-09-27 · 255 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-14.html" style="--h: 82.8%; --i: 19"
+         aria-label="Week of 2026-09-14: 221 records"
+         title="2026-09-14 to 2026-09-20 · 221 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-09-07.html" style="--h: 82.4%; --i: 18"
+         aria-label="Week of 2026-09-07: 220 records"
+         title="2026-09-07 to 2026-09-13 · 220 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-31.html" style="--h: 100.0%; --i: 17"
+         aria-label="Week of 2026-08-31: 267 records"
+         title="2026-08-31 to 2026-09-06 · 267 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-24.html" style="--h: 82.8%; --i: 16"
+         aria-label="Week of 2026-08-24: 221 records"
+         title="2026-08-24 to 2026-08-30 · 221 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-17.html" style="--h: 56.6%; --i: 15"
+         aria-label="Week of 2026-08-17: 151 records"
+         title="2026-08-17 to 2026-08-23 · 151 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-10.html" style="--h: 88.8%; --i: 14"
+         aria-label="Week of 2026-08-10: 237 records"
+         title="2026-08-10 to 2026-08-16 · 237 records" aria-current="page"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-08-03.html" style="--h: 89.1%; --i: 13"
+         aria-label="Week of 2026-08-03: 238 records"
+         title="2026-08-03 to 2026-08-09 · 238 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-07-27.html" style="--h: 93.3%; --i: 12"
+         aria-label="Week of 2026-07-27: 249 records"
+         title="2026-07-27 to 2026-08-02 · 249 records"></a>
+    </li>
+    <li class="is-outage">
+      <a href="week-2026-07-20.html" style="--h: 26.6%; --i: 11"
+         aria-label="Week of 2026-07-20: 71 records (known collection interruption)"
+         title="2026-07-20 to 2026-07-26 · 71 records"></a>
+    </li>
+    <li class="is-outage">
+      <a href="week-2026-07-13.html" style="--h: 55.1%; --i: 10"
+         aria-label="Week of 2026-07-13: 147 records (known collection interruption)"
+         title="2026-07-13 to 2026-07-19 · 147 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-07-06.html" style="--h: 98.1%; --i: 9"
+         aria-label="Week of 2026-07-06: 262 records"
+         title="2026-07-06 to 2026-07-12 · 262 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-29.html" style="--h: 95.1%; --i: 8"
+         aria-label="Week of 2026-06-29: 254 records"
+         title="2026-06-29 to 2026-07-05 · 254 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-22.html" style="--h: 95.9%; --i: 7"
+         aria-label="Week of 2026-06-22: 256 records"
+         title="2026-06-22 to 2026-06-28 · 256 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-15.html" style="--h: 77.5%; --i: 6"
+         aria-label="Week of 2026-06-15: 207 records"
+         title="2026-06-15 to 2026-06-21 · 207 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-08.html" style="--h: 99.6%; --i: 5"
+         aria-label="Week of 2026-06-08: 266 records"
+         title="2026-06-08 to 2026-06-14 · 266 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-06-01.html" style="--h: 95.1%; --i: 4"
+         aria-label="Week of 2026-06-01: 254 records"
+         title="2026-06-01 to 2026-06-07 · 254 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-25.html" style="--h: 99.3%; --i: 3"
+         aria-label="Week of 2026-05-25: 265 records"
+         title="2026-05-25 to 2026-05-31 · 265 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-18.html" style="--h: 97.4%; --i: 2"
+         aria-label="Week of 2026-05-18: 260 records"
+         title="2026-05-18 to 2026-05-24 · 260 records"></a>
+    </li>
+    <li class="">
+      <a href="week-2026-05-11.html" style="--h: 93.3%; --i: 1"
+         aria-label="Week of 2026-05-11: 249 records"
+         title="2026-05-11 to 2026-05-17 · 249 records"></a>
+    </li>
+    <li class="is-edge">
+      <a href="week-2026-05-04.html" style="--h: 46.8%; --i: 0"
+         aria-label="Week of 2026-05-04: 125 records (snapshot boundary)"
+         title="2026-05-04 to 2026-05-10 · 125 records"></a>
+    </li>
+  </ol>
+  <p class="week-axis" aria-hidden="true"><span>4 May 2026</span><span>5 October 2026</span></p>
+  </div>
+  </div>
+</figure>
+
+<p class="records-foot"><a href="corpus.html">All publication weeks, in figures</a>
+  <a href="archive.html">Search the records</a></p>
   </div>
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="archive.html">Records</a></li>
+          <li><a href="corpus.html">Records by week</a></li>
+          <li><a href="corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="desks.html">Desks</a></li>
+          <li><a href="sources.html">Sources</a></li>
+          <li><a href="coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="methodology.html">Methodology</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

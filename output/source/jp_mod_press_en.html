@@ -30,6 +30,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../topography.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,12 +54,12 @@
   <div class="nav-rail">
     <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
       <ul>
-      <li><a href="../archive.html">Atlas</a></li>
-      <li><a href="../desks.html">Desks</a></li>
-      <li><a href="../sources.html" aria-current="page">Sources</a></li>
+      <li><a href="../archive.html">Records</a></li>
       <li><a href="../analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="../desks.html">Desks</a></li>
+      <li><a href="../sources.html" aria-current="page">Sources</a></li>
       <li><a href="../coverage.html">Coverage</a></li>
-      <li><a href="../methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="../methodology.html">Methodology</a></li>
       <li><a href="../about.html">About</a></li>
     </ul>
     </nav>
@@ -67,12 +68,12 @@
         <summary>Sections</summary>
         <nav aria-label="Primary">
           <ul>
-      <li><a href="../archive.html">Atlas</a></li>
-      <li><a href="../desks.html">Desks</a></li>
-      <li><a href="../sources.html" aria-current="page">Sources</a></li>
+      <li><a href="../archive.html">Records</a></li>
       <li><a href="../analysis.html">Analysis</a></li>
+      <li class="nav-group-start"><a href="../desks.html">Desks</a></li>
+      <li><a href="../sources.html" aria-current="page">Sources</a></li>
       <li><a href="../coverage.html">Coverage</a></li>
-      <li><a href="../methodology.html">Methodology</a></li>
+      <li class="nav-group-start"><a href="../methodology.html">Methodology</a></li>
       <li><a href="../about.html">About</a></li>
     </ul>
         </nav>
@@ -80,43 +81,45 @@
     </div>
   </div>
 </header>
-<div class="freshness-bar">
+<aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     <dl>
       <div><dt>Records last collected</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Analysis last produced</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
       <div><dt>Last full update</dt>
-        <dd>2026-09-28</dd></div>
+        <dd>2026-10-06</dd></div>
 <div><dt>Records held</dt>
-        <dd>4,715</dd></div><div><dt>Of those, analyzed</dt>
-        <dd>1,995</dd></div>    </dl>
+        <dd>4,927</dd></div><div><dt>Of those, analyzed</dt>
+        <dd>2,229</dd></div>    </dl>
     <p class="detail"><a href="../coverage.html">Run
-      152 in full &rarr;</a></p>
+      161 in full</a></p>
   </div>
-</div>
-<main id="main">
+</aside>
+<main id="main" style="--topo-size: 1406px; --topo-offset: -390px; --topo-x: 25%; --topo-flip: -1; --topo-wash-x: 32%; --topo-wash-y: 45%; --topo-duration: 47s">
+  <div class="topography" aria-hidden="true"></div>
   <div class="wrap">
 <nav class="atlas-breadcrumb" aria-label="Breadcrumb">
   <ol>
-    <li><a href="../archive.html">Atlas</a></li>
+    <li><a href="../sources.html">Sources</a></li>
     <li><a href="../japan.html">Japan Desk</a></li>
     <li><span aria-current="page">Ministry of Defense — press releases (English)</span></li>
   </ol>
 </nav>
-<p class="meta"><a href="../sources.html">All sources</a></p>
+<header class="page-head">
+<p class="eyebrow"><span class="desk-state desk-state--shadow">Japan Desk · Shadow evaluation — not public</span></p>
 <h1>Ministry of Defense — press releases (English)</h1>
-<aside class="atlas-spine" aria-label="Atlas status and provenance">
-  <p><strong>Research Atlas</strong> · Snapshot <time datetime="2026-09-28">2026-09-28</time>
-    · no production record count for this desk ·
-    <a href="../coverage.html">collection evidence</a></p>
+<p class="lede">Part of the <a href="../japan.html">Japan Desk</a>, currently shadow evaluation — not public.</p>
+</header>
+<aside class="atlas-spine" aria-label="Desk collection status">
+  <p><strong>Snapshot <time datetime="2026-10-06">2026-10-06</time></strong>
+    · no production record count for this desk    · <a href="../coverage.html">collection evidence</a></p>
   <ul aria-label="Desk collection states">
     <li><a href="../japan.html">Japan Desk</a>
       <span class="desk-state desk-state--shadow">Shadow evaluation — not public</span></li>
   </ul>
 </aside>
-<p class="lede">Part of the <a href="../japan.html">Japan Desk</a>, currently shadow evaluation — not public.</p>
 
 <div class="table-scroll">
 <table class="provenance">
@@ -129,7 +132,7 @@
     <tr><th scope="row">Authority tier</th><td class="prov-value">—</td></tr>
     <tr><th scope="row">Original language</th><td class="prov-value">—</td></tr>
     <tr><th scope="row">Official base URL</th><td class="prov-value"><a href="https://www.mod.go.jp" rel="noopener nofollow">https://www.mod.go.jp</a></td></tr>
-    <tr><th scope="row">Enabled for collection</th><td class="prov-value">No</td></tr>
+    <tr><th scope="row">Enabled for shadow collection</th><td class="prov-value">No</td></tr>
     <tr><th scope="row">Records held</th><td class="prov-value">None — this source has never been part of a production run</td></tr>
     <tr><th scope="row">Most recent run outcome</th><td class="prov-value">Not part of the most recent run</td></tr>
   </tbody>
@@ -138,7 +141,8 @@
 
 <h2>Declared outside production configuration</h2>
 <p>This source is declared in a shadow manifest, which is deliberately not discoverable by the
-production configuration loader. It is not part of the collection contract, it is not enabled, and
+production configuration loader. It is not part of the production collection contract.
+Shadow enablement does not admit it to production, and
 nothing it reaches enters the record. Fields the shadow manifest does not declare are shown as
 undeclared rather than filled in.</p>
 
@@ -158,11 +162,42 @@ capability exists, and not that coverage of this source is complete — see
 </main>
 <footer class="site">
   <div class="wrap">
-    <div class="footer-name">Indo-Pacific Record</div>
-    <p>Indo-Pacific Record is an independent research project created and edited by
-    Benjamin Yang ·
-    <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
-    <p>Coverage is selective. Publication records what an institution said, not whether its
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name">Indo-Pacific Record</div>
+        <p>Indo-Pacific Record is an independent research project created and edited by
+        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Corrections and questions about any record are welcome at the same
+        address.</p>
+      </div>
+      <nav class="footer-col" aria-label="The record">
+        <h2>The record</h2>
+        <ul>
+          <li><a href="../archive.html">Records</a></li>
+          <li><a href="../corpus.html">Records by week</a></li>
+          <li><a href="../corpus-guide.html">Corpus Guide</a></li>
+          <li><a href="../desks.html">Desks</a></li>
+          <li><a href="../sources.html">Sources</a></li>
+          <li><a href="../coverage.html">Coverage</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="Analysis">
+        <h2>Analysis</h2>
+        <ul>
+          <li><a href="../analysis.html">Indo-Pacific Record Briefs</a></li>
+          <li><a href="https://indopacificrecord.org/the-pla-watch/terms.html">Terms to Know</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-label="About this publication">
+        <h2>About</h2>
+        <ul>
+          <li><a href="../methodology.html">Methodology</a></li>
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../corpus-guide.html#citation">Citing a record</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-standing">Coverage is selective. Publication records what an institution said, not whether its
     claims are true or its capabilities exist.</p>
   </div>
 </footer>

@@ -162,7 +162,70 @@ def validate(output_dir: Path) -> tuple[list[str], list[str]]:
 
     _validate_db_coverage(output_dir, errors, warnings)
 
+    _validate_briefs(output_dir, errors)
+
     return (errors, warnings)
+
+
+def _validate_briefs(output_dir, errors):
+    """Native publication must agree with its canonical approved sources."""
+    from core.brief_collection import (load_briefs, brief_route, brief_entry,
+                                       order_rows, CollectionError)
+    from core.desk_registry import load_registry
+    import xml.etree.ElementTree as ET
+
+    try:
+        historical = [json.loads(p.read_text(encoding="utf-8"))["issue_number"]
+                      for p in (output_dir / "the-pla-watch/posts").glob("*.json")]
+        published, _ = load_briefs(REPO_ROOT / "briefs", load_registry(),
+                                  historical_numbers=historical)
+    except (CollectionError, OSError, ValueError, KeyError) as exc:
+        errors.append("Brief sources: %s" % exc)
+        return
+    expected = {slug for slug, _ in published}
+    for page in (output_dir / "briefs").glob("*.html"):
+        if page.stem not in expected:
+            errors.append("briefs/%s: no approved source; drafts/stale pages cannot be deployed" % page.name)
+    if not published:
+        if (output_dir / "briefs/feed.xml").exists():
+            errors.append("briefs/feed.xml exists without approved Briefs")
+        return
+    texts = {}
+    for route in ("index.html", "analysis.html", "sitemap.xml"):
+        path = output_dir / route
+        texts[route] = path.read_text(encoding="utf-8") if path.is_file() else ""
+    atom = "{http://www.w3.org/2005/Atom}"
+    try:
+        feed = ET.parse(output_dir / "briefs/feed.xml").getroot()
+        ids = [entry.findtext(atom + "id") or "" for entry in feed.findall(atom + "entry")]
+    except (OSError, ET.ParseError) as exc:
+        errors.append("briefs/feed.xml: %s" % exc)
+        ids = []
+    if len(ids) != len(published) or len(set(ids)) != len(ids):
+        errors.append("briefs/feed.xml must contain each approved Brief once")
+    ordered = order_rows([{"entry": brief_entry(slug, sc)} for slug, sc in published])
+    if [value.rsplit("/", 1)[-1] for value in ids] != [row["entry"]["slug"] + ".html" for row in ordered]:
+        errors.append("briefs/feed.xml must use the catalog's coverage-date order")
+    newest = ordered[0]["entry"]
+    older_dates = [p.stem for p in (output_dir / "the-pla-watch/posts").glob("*.json")]
+    if newest["date"] >= max(older_dates, default="") and ('href="%s"' % newest["url"]) not in texts["index.html"]:
+        errors.append("homepage is missing the newest approved Brief")
+    for slug, sidecar in published:
+        route = brief_route(slug)
+        page = output_dir / route
+        if not page.is_file():
+            errors.append("%s is missing for approved No. %s" % (route, sidecar["issue_number"]))
+            continue
+        text = page.read_text(encoding="utf-8")
+        from html import escape
+        if escape(sidecar["title"]) not in text or "No. %s" % sidecar["issue_number"] not in text:
+            errors.append("%s title/number disagrees with its approved source" % route)
+        if 'content="noindex' in text or 'rel="canonical"' not in text:
+            errors.append("%s needs a public canonical and indexable metadata" % route)
+        if ('href="%s"' % route) not in texts["analysis.html"] or ("/%s</loc>" % route) not in texts["sitemap.xml"]:
+            errors.append("%s is missing from Analysis or sitemap" % route)
+        if not any(value.endswith("/" + route) for value in ids):
+            errors.append("%s is missing from the native feed" % route)
 
 
 # ── DB ↔ output coverage ────────────────────────────────────────────────────
@@ -312,6 +375,38 @@ def _source_veil_entry(eid: str, output_dir: Path, errors: list, rel):
     return {"id": eid, "source_page": article_url}
 
 
+def _brief_veil_entry(eid, output_dir, errors, rel):
+    """Native source photography is grounded in its approved Brief and hashes."""
+    import hashlib
+    from core.brief_collection import SLUG_RE
+    slug = eid[len("brief-"):]
+    try:
+        if not SLUG_RE.fullmatch(slug):
+            raise ValueError("invalid Brief slug")
+        sources = REPO_ROOT / "briefs"
+        sidecar = json.loads((sources / (slug + ".json")).read_text(encoding="utf-8"))
+        meta = json.loads((sources / "media" / (slug + "-source-image.json")).read_text(encoding="utf-8"))
+        if sidecar.get("editorial_status") != "approved":
+            raise ValueError("photo has no approved Brief source")
+        article_url = meta.get("article_url")
+        if not article_url or not any(e.get("url") == article_url
+                                     for e in sidecar.get("source_trail") or []):
+            raise ValueError("photo article_url is absent from the cited source trail")
+        if not meta.get("note") or not meta.get("alt"):
+            raise ValueError("photo lacks credit or alternative text")
+        derivative = meta.get("derivative") or {}
+        checks = ((sources / "media" / (slug + "-source-image.jpg"), meta.get("source_sha256")),
+                  (sources / "media" / (slug + "-veil.jpg"), derivative.get("sha256")),
+                  (output_dir / "briefs/media" / (slug + "-veil.jpg"), derivative.get("sha256")))
+        for path, expected in checks:
+            if not expected or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                raise ValueError("photo digest mismatch: %s" % path.name)
+        return {"id": eid, "source_page": article_url}
+    except (OSError, ValueError, TypeError, AttributeError) as exc:
+        errors.append("%s: Brief source veil %r: %s" % (rel, eid, exc))
+        return None
+
+
 def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -> None:
     site_editorial = Path(__file__).resolve().parent.parent / "site" / "assets" / "editorial"
     manifest_path = site_editorial / "manifest.json"
@@ -374,6 +469,8 @@ def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -
             eid = m.group(1)
             if eid.startswith("src-"):
                 entry = _source_veil_entry(eid, output_dir, errors, rel)
+            elif eid.startswith("brief-"):
+                entry = _brief_veil_entry(eid, output_dir, errors, rel)
             else:
                 entry = by_id.get(eid)
                 if entry is None:

@@ -22,6 +22,8 @@ Nothing here builds production or touches the tracked database.
 from __future__ import annotations
 
 import importlib.util
+import html as html_mod
+import json
 import re
 import shutil
 import sys
@@ -120,11 +122,17 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
             with self.subTest(page=name):
                 self.assertEqual(len(re.findall(r"<h1[ >]", html)), 1)
 
-    def test_the_description_metadata_is_the_tagline(self):
+    def test_description_metadata_follows_the_page_purpose(self):
         for name, html in self.pages().items():
+            description = TAGLINE
+            if name.startswith("briefs/"):
+                # A native article shares the masthead but its search/share
+                # description is the editor's dek, not the site tagline.
+                source = REPO_ROOT / "briefs" / (Path(name).stem + ".json")
+                description = json.loads(source.read_text(encoding="utf-8"))["dek"]
             with self.subTest(page=name):
                 self.assertIn('<meta name="description" content="%s">'
-                              % TAGLINE, html)
+                              % html_mod.escape(description, quote=True), html)
 
     def test_the_build_mode_is_recorded_in_metadata(self):
         for name, html in self.pages().items():
@@ -238,7 +246,9 @@ class TestRetiredNamesStayRetired(IdentityCase):
         html = re.sub(r"\s+", " ", self.page("pla-watch.html"))
         self.assertNotIn("not a discontinued one", html)
         self.assertNotIn("The series continues", html)
-        self.assertIn("This page is an archive of those issues", html)
+        # 2026-09-30: no longer a second archive; the issues are earlier Briefs.
+        self.assertNotIn("This page is an archive of those issues", html)
+        self.assertIn("is now part of Indo-Pacific Record Briefs", html)
         self.assertIn("preserved as published", html)
 
 

@@ -68,8 +68,8 @@
  * The same three families as Night Desk (DECISION_LOG 2026-09-26).
  *   --zh / --zh-serif  system CJK; the serif stack only at display size.
  *
- * No box shadows. No gradients except inside the compass mark and the veil
- * mask. Radius 2px. Motion is transform/opacity only and says what changed.
+ * No box shadows. Gradients belong to the compass, veils and shared
+ * topographic ground. Radius 2px. Motion is transform/opacity only.
  */
 
 :root {
@@ -144,6 +144,7 @@
   --accent-rule:    #BFD2DB;
   --band-dek:       #D6D2C8;
 
+
   /* ── Type ── */
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -154,14 +155,22 @@
 
   /* The six-level type ladder (DESIGN_SYSTEM §4):
      1 wordmark · 2 display · 3 deck · 4 section · 5 body · 6 meta.
-     The wordmark's value is the masthead's measured one. */
-  --step-wordmark: clamp(1.5rem, 3.2vw, 2rem);
+     The wordmark's value is the masthead's measured one, re-measured for
+     the titling register's wider capitals. */
+  --step-wordmark: clamp(1.2rem, 2.4vw, 1.55rem);
   --step-display:  clamp(2.2rem, 1.45rem + 2.6vw, 3.1rem);
   --step-deck:     1.1875rem;
   --step-section:  1.5rem;
   --step-body:     1rem;
   --step-meta:     .875rem;
   --measure: 68ch;
+
+  /* The titling register (DESIGN_SYSTEM §4): the homepage opening title's
+     setting — serif 600 in letter-spaced capitals — for short, fixed English
+     names only: the wordmark, the footer name, hub page names. Never a
+     record, Brief or claim headline, never Chinese or Japanese. */
+  --title-weight: 600;
+  --title-tracking: .07em;
 
   /* ── Space and shape ── */
   --sp-1: .25rem; --sp-2: .5rem; --sp-3: .75rem; --sp-4: 1rem;
@@ -263,29 +272,14 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 main { display: block; padding: 2rem 0 4rem; min-width: 0; }
 main.leads-with-hero { padding-top: 0; }
 
-/* Fine ledger ruling lives only in wide outer margins (PR #80, kept as
-   merged). Reading surfaces, evidence plates, and phone layouts stay on
-   uninterrupted paper. */
-@media (min-width: 1320px) {
-  main {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Cpath d='M87.5 0V88M0 87.5H88' fill='none' stroke='%23CFC9BC' stroke-opacity='.36' stroke-width='1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-position: top center;
-  }
-  main > .wrap {
-    background: var(--bg);
-    border-inline: 1px solid var(--rule-soft);
-  }
-}
-
 /* ═══ Type ═══════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4 { font-family: var(--serif); color: var(--ink); font-weight: 600; }
 h1 {
-  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.018em;
+  font-size: var(--step-display); line-height: 1.06; letter-spacing: -.008em;
   margin: 0 0 .55rem; text-wrap: balance; max-width: 24ch;
 }
 h2 {
-  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.01em;
+  font-size: var(--step-section); line-height: 1.2; letter-spacing: -.004em;
   margin: 2.75rem 0 .8rem; padding-top: .8rem;
   border-top: 1px solid var(--rule);
 }
@@ -340,9 +334,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .brand-mark { display: block; width: 56px; height: 56px; border-radius: var(--radius); }
 .brand-text { display: block; }
 .brand-name {
-  margin: 0; font-family: var(--serif); font-weight: 700;
-  font-size: var(--step-wordmark); line-height: 1.1;
-  letter-spacing: -.022em; color: var(--ink); max-width: none;
+  margin: 0; font-family: var(--serif); font-weight: var(--title-weight);
+  font-size: var(--step-wordmark); line-height: 1.08; text-transform: uppercase;
+  letter-spacing: var(--title-tracking); color: var(--ink); max-width: none;
 }
 .brand-sub {
   margin: .26rem 0 0; font-family: var(--mono); font-size: .75rem;
@@ -436,6 +430,15 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2.4rem 0; }
 .atlas-spine-count { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .page-head { margin-bottom: 1.6rem; }
+/* Hub page names (About, Desks, China Desk…) in the titling register.
+   Opt-in by class, only where the h1 is a fixed English name: never a
+   record, source or Brief title, never text with CJK in it (source pages
+   carry 解放军报, 防衛省 in their names, so they do not take it). */
+h1.page-name {
+  font-weight: var(--title-weight); text-transform: uppercase;
+  letter-spacing: .06em; line-height: 1.04;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.6rem);
+}
 .page-head .lede { margin-top: .5rem; }
 .page-head .meta { margin: 0; }
 
@@ -834,9 +837,9 @@ html.js .nojs-note { display: none; }
   gap: 2.4rem; align-items: start; padding-block: 2.1rem 1.9rem;
 }
 .claim {
-  margin: 0; font-family: var(--serif); font-weight: 700;
+  margin: 0; font-family: var(--serif); font-weight: 600;
   font-size: clamp(1.6rem, 3.1vw, 2.45rem); line-height: 1.1;
-  letter-spacing: -.02em; color: var(--ink); text-wrap: balance; max-width: 19ch;
+  letter-spacing: -.008em; color: var(--ink); text-wrap: balance; max-width: 19ch;
 }
 .claim em { font-style: italic; color: var(--accent); }
 .claim-sub {
@@ -971,6 +974,13 @@ html.js .nojs-note { display: none; }
   }
 }
 
+/* The shared topographic ground owns the paper pattern. The protected
+   opening keeps its photographic veil and its existing geometry. */
+main.home-atlas .opening::before { display: none; }
+@media (min-width: 901px) {
+  main.home-atlas .veil { opacity: .32; }
+}
+
 /* ═══ Home: the lead record and the register ═════════════════════════════
    The almanac on the front page: the newest analyzed record under a large
    date block, directly below the opening, then the rest as a register with
@@ -1062,6 +1072,8 @@ html.js .nojs-note { display: none; }
 .ed-cite { margin: .45rem 0 0; font-size: .875rem; }
 .ed-cite > summary { cursor: pointer; color: var(--link); font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; }
 .ed-cite .cite-text { margin: .5rem 0; font-size: .875rem; }
+.cite-list { list-style: none; margin: .5rem 0 0; padding: 0; }
+.cite-list li { padding: .5rem 0; border-top: 1px solid var(--rule); }
 .ed-label-inline { display: none; }
 .ed-timing { color: var(--ink-2); }
 .band .btn--primary { background: var(--band-ink); color: var(--band); border-color: var(--band-ink); margin-top: 1.2rem; }
@@ -1089,10 +1101,6 @@ html.js .nojs-note { display: none; }
 .coverage-foot { margin: .9rem 0 0; font-size: .875rem; font-weight: 600; }
 
 /* ═══ Desks ══════════════════════════════════════════════════════════════ */
-.cards--desks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin: 1.2rem 0 2rem; }
-.cards--desks .card--desk { background: var(--surface); border: 1px solid var(--rule); border-top: 3px solid var(--ink); padding: 1.1rem 1.2rem 1rem; display: flex; flex-direction: column; min-width: 0; }
-.cards--desks .card--desk.is-shadow { border-top-color: var(--rule-strong); background: var(--bg); }
-.cards--desks .card--desk.is-blocked { border-top-color: var(--warning); background: var(--bg); }
 .card--desk h2.plain { margin: .35rem 0 .45rem; font-size: 1.4rem; }
 .card--desk h2.plain a { color: var(--ink); text-decoration: none; }
 .card--desk h2.plain a:hover { text-decoration: underline; }
@@ -1108,6 +1116,117 @@ html.js .nojs-note { display: none; }
 .card--desk .stat-rows { max-width: none; margin-bottom: 0; }
 .card--desk .stat-row { padding: .3rem 0; }
 .card--desk .stat-row dt { font-size: .84375rem; }
+
+/* ═══ Desks map ══════════════════════════════════════════════════════════
+   The Desks page is a map: Natural Earth land under a quiet graticule, each
+   desk's country lightly toned, and its plate hung from the seat of its
+   institutions by a fine leader. Collecting desks get a filled point and a
+   solid rule; the rest a hollow point and a dashed one, so the distinction
+   never rests on colour. `--on` (set per desk by the page's own rule) lights
+   a plate, its leader, point and country together on hover or focus.
+   Mobile first: below 760px the plates are a list under the map. */
+.deskmap { margin: .2rem 0 2.4rem; }
+.deskmap-stage { position: relative; display: grid; gap: .75rem; }
+.deskmap-svg { display: block; width: 100%; height: auto; overflow: visible; border: 1px solid var(--rule); }
+.dm-sea { fill: color-mix(in srgb, var(--accent-tint) 62%, var(--bg)); }
+.dm-graticule { fill: none; stroke: var(--accent); stroke-opacity: .16; stroke-width: .5px; vector-effect: non-scaling-stroke; }
+.dm-land { fill: var(--surface); stroke: var(--rule-strong); stroke-width: .6px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dm-borders { fill: none; stroke: var(--rule); stroke-width: .5px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dm-scale { display: none; }
+.dm-scale text { font-family: var(--mono); font-size: 15px; letter-spacing: .04em; fill: var(--muted); }
+.dm-country use {
+  fill: color-mix(in srgb, color-mix(in srgb, var(--accent) 14%, var(--surface)) calc(var(--on, 0) * 100%), var(--surface-inset));
+  stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--muted));
+  stroke-width: .7px; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  transition: fill var(--dur-fast) var(--ease-out), stroke var(--dur-fast) var(--ease-out);
+}
+.dm-leader {
+  display: none; fill: none; pointer-events: none;
+  stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink-2));
+  stroke-width: calc(.75px + var(--on, 0) * .75px); stroke-linejoin: miter; vector-effect: non-scaling-stroke;
+}
+.dm-leader.is-quiet { stroke-dasharray: 4 3; }
+.dm-anchor { pointer-events: none; }
+.dm-dot {
+  transform: scale(calc(17 + var(--on, 0) * 5));
+  fill: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink));
+  stroke: var(--surface); stroke-width: 1.5px; vector-effect: non-scaling-stroke;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.dm-anchor.is-quiet .dm-dot { fill: var(--surface); stroke: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink-2)); stroke-width: 1.25px; }
+.dm-label { font-family: var(--sans); font-size: 54px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 14px; stroke-linejoin: round; }
+.dm-label.is-west { text-anchor: end; }
+
+.deskmap-plate {
+  min-width: 0; background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--rule));
+  border-top: 2px solid color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--ink));
+  padding: .55rem .8rem .5rem;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.deskmap-plate.is-shadow { border-top-color: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--rule-strong)); }
+.deskmap-plate.is-blocked { border-top-color: color-mix(in srgb, var(--accent) calc(var(--on, 0) * 100%), var(--warning)); }
+.deskmap-plate h2.plain { margin: .2rem 0 .05rem; font-size: 1.25rem; line-height: 1.2; }
+.deskmap-plate h2.plain a { color: var(--ink); text-decoration: none; }
+.deskmap-plate h2.plain a:hover { text-decoration: underline; }
+.deskmap-seat { margin: 0; font-size: .8125rem; color: var(--ink-2); }
+.deskmap-seat span { margin-left: .3rem; font-family: var(--mono); font-size: .75rem; color: var(--muted); white-space: nowrap; }
+.deskmap-stats { margin: .4rem 0 0; padding: 0; }
+.deskmap-stats div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 .75rem; padding: .22rem 0; border-top: 1px solid var(--rule-soft); }
+.deskmap-stats dt { margin: 0; font-size: .6875rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.deskmap-stats dd { font-size: .8125rem; font-weight: 600; margin-left: auto; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
+.deskmap-enter { margin: .4rem 0 0; font-size: .8125rem; font-weight: 600; }
+.deskmap-enter a { display: inline-flex; align-items: center; gap: .3rem; min-height: 24px; }
+.deskmap-enter span { transition: transform var(--dur-fast) var(--ease-out); }
+.deskmap-enter a:hover span, .deskmap-enter a:focus-visible span { transform: translateX(3px); }
+.deskmap-plate.is-unplaced { margin: 0 0 1rem; max-width: 22rem; }
+
+.deskmap-key { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1.4rem; margin-top: .7rem; font-size: .8125rem; color: var(--ink-2); }
+.deskmap-key-item { display: inline-flex; align-items: center; gap: .45rem; }
+.deskmap-key-item svg { width: 28px; height: 10px; flex: none; }
+.deskmap-key-item line { stroke: var(--ink-2); stroke-width: 1; }
+.deskmap-key-item circle { fill: var(--ink); stroke: var(--surface); stroke-width: 1.5; }
+.deskmap-key-item.is-quiet line { stroke-dasharray: 4 3; }
+.deskmap-key-item.is-quiet circle { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.25; }
+.deskmap-key-note { flex-basis: 100%; max-width: var(--measure); color: var(--muted); }
+
+@media (min-width: 520px) and (max-width: 759.98px) {
+  .deskmap-stage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .deskmap-svg { grid-column: 1 / -1; }
+}
+@media (min-width: 760px) {
+  .deskmap-stage { display: block; }
+  .deskmap-plate {
+    position: absolute; z-index: 1;
+  }
+  .dm-label { display: none; }
+  .dm-dot { transform: scale(calc(6 + var(--on, 0) * 2)); }
+}
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  /* Tablet: the plates leave the map for two bands, above and below the
+     frame, each on a vertical leader; the map itself stays clear. */
+  .deskmap-stage { margin: 15rem 0 16rem; }
+  .deskmap-plate { width: 14.25rem; left: var(--ml); top: var(--mt); transform: translate(var(--mtx), var(--mty)); }
+  .dm-leader--mid { display: inline; }
+}
+@media (min-width: 1100px) {
+  .deskmap-stage { margin-top: 9rem; }
+  .deskmap-plate { width: 15.25rem; left: var(--wl); top: var(--wt); transform: translate(var(--wtx), var(--wty)); }
+  .dm-leader--wide { display: inline; }
+  .dm-scale { display: inline; }
+  .dm-dot { transform: scale(calc(5 + var(--on, 0) * 1.75)); }
+}
+
+.scope-register { margin: .6rem 0 2rem; padding: 0; }
+.scope-entry { display: grid; grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr); gap: .3rem 2rem; padding: 1rem 0; border-top: 1px solid var(--rule); }
+.scope-entry dt { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; margin: 0; font-family: var(--serif); font-size: 1.125rem; font-weight: 600; }
+.scope-entry dd { margin: 0; }
+.scope-entry dd p { margin: 0 0 .5rem; }
+.scope-entry .blocking { font-size: .875rem; color: var(--ink-2); }
+.scope-entry .card-foot { padding-top: 0; }
+@media (max-width: 759.98px) {
+  .scope-entry { grid-template-columns: minmax(0, 1fr); }
+}
 
 .blockers dt { margin-top: .9rem; }
 .blockers dd { margin: .25rem 0 0; color: var(--ink-2); }
@@ -1231,8 +1350,162 @@ html.js .nojs-note { display: none; }
   .provenance th[scope="row"] { width: auto; font-size: .8125rem; color: var(--text-muted); border: 0; padding: 0; }
   .provenance td { border: 0; padding: .15rem 0 0; }
 }
-.analysis-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; list-style: none; margin: 1rem 0 2rem; padding: 0; }
-.analysis-paths > li { border-top: 3px solid var(--ink); padding-top: .8rem; max-width: none; }
+/* ═══ Analysis: the Briefs landing ═══════════════════════════════════════
+   Two zones in reading priority (DESIGN_SYSTEM §3, meaning rules). The
+   current collection opens on the Night Desk band, marked by a turquoise
+   rule (--focus-band, 8.97 on the band): the Briefs' own mark, the same one
+   a brief's hero carries. The earlier issues, first published as The PLA
+   Watch, are rows of the same catalog below it. Turquoise never appears on paper (1.71 on --surface); there the
+   Briefs' structure is compass blue. */
+.briefs-head { border-top: 3px solid var(--focus-band); }
+.review-banner { padding-block: .7rem; font-size: .875rem; }
+.briefs-browse { margin-top: 1.4rem; font-size: .875rem; }
+.band .briefs-browse a { color: var(--focus-band); }
+.briefs-lead-photo { margin: 1.5rem 0 0; }
+.briefs-lead-photo img { display: block; width: 100%; height: auto; }
+.briefs-lead-photo figcaption { margin-top: .5rem; font-size: .75rem; line-height: 1.5; color: var(--band-dek); }
+.band .briefs-lead-photo figcaption a { color: inherit; }
+.briefs-head-inner { padding-block: 2.4rem 2.6rem; }
+.briefs-kicker {
+  display: flex; align-items: center; gap: .6rem; margin: 0 0 .8rem;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--band-muted);
+}
+.briefs-kicker::before { content: ""; width: 1.125rem; height: 2px; background: var(--focus-band); flex: none; }
+.briefs-head h1 { margin: 0; color: var(--band-ink); }
+.briefs-lede {
+  margin: .8rem 0 0; max-width: 44ch; font-family: var(--serif);
+  font-size: clamp(1.125rem, 1rem + .5vw, 1.3rem); line-height: 1.55; color: var(--band-dek);
+}
+.briefs-lead, .briefs-empty { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--band-rule); max-width: 46rem; }
+.briefs-label { margin: 0 0 .6rem; font-size: .875rem; font-weight: 600; color: var(--focus-band); }
+.briefs-lead h2 {
+  margin: 0; padding: 0; border: 0; max-width: 26ch; text-wrap: balance;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); line-height: 1.15; letter-spacing: -.015em;
+}
+.band .briefs-lead h2 a {
+  color: var(--band-ink); text-decoration-thickness: 1px; text-underline-offset: .18em;
+  text-decoration-color: var(--band-muted);
+}
+.band .briefs-lead h2 a:hover { text-decoration-color: var(--focus-band); }
+.briefs-lead-dek { margin: .85rem 0 0; max-width: 58ch; font-family: var(--serif); font-size: 1.125rem; line-height: 1.55; color: var(--band-dek); }
+.briefs-lead-byline, .briefs-lead-note { margin: .85rem 0 0; font-size: .875rem; color: var(--band-muted); }
+.briefs-lead-note { margin-top: .35rem; font-size: .8125rem; }
+/* An earlier Brief that leads is drawn from its own sidecar. The plate was
+   drawn for paper, so it stands on a paper panel inside the band. */
+.briefs-lead-plate { margin: 1.6rem 0 0; padding: 1rem 1.1rem .9rem; background: var(--surface); max-width: 34rem; }
+.briefs-lead-plate figcaption { margin-top: .6rem; }
+.briefs-empty h2 { margin: 0; padding: 0; border: 0; font-size: 1.25rem; color: var(--band-ink); }
+.briefs-empty p { margin: .55rem 0 0; max-width: 62ch; color: var(--band-dek); }
+.band .briefs-empty a { color: var(--focus-band); }
+
+/* Wide screens: the masthead and the lead share the band as two columns,
+   title block beside the thing it introduces, instead of one narrow stack
+   with the band's right half empty. Both columns open on the same line. */
+@media (min-width: 960px) {
+  .briefs-head-inner {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 0 clamp(2.5rem, 5vw, 4.5rem); align-items: start;
+  }
+  .briefs-lead, .briefs-empty { margin-top: .2rem; }
+}
+/* Phones: a little less air above and between, so the lead's title and dek
+   sit higher; the type sizes are the lede and dek steps, not the title. */
+@media (max-width: 600px) {
+  .briefs-head-inner { padding-block: 1.8rem 2.1rem; }
+  .briefs-lede, .briefs-lead-dek { font-size: 1.0625rem; line-height: 1.5; }
+  .briefs-lead, .briefs-empty { margin-top: 1.4rem; padding-top: 1.2rem; }
+  .briefs-lead-dek { margin-top: .7rem; }
+  .briefs-lead-byline { margin-top: .7rem; }
+  .briefs-lead > p:last-child { margin: 1.1rem 0 0; }
+  .band .briefs-lead .btn--primary { margin-top: 0; }
+}
+
+/* Home: the analysis band keeps its section head and states the same model
+   as Analysis: one publication, led by the newest item of the collection. A
+   single column, because nothing stands beside the lead. */
+.feature--briefs { grid-template-columns: minmax(0, 46rem); }
+.feature--briefs h3 { margin: 0; }
+
+/* ═══ BRIEFS-BAND SIGNAL VEIL — the home analysis band's empty right ═══════
+   The lead's column is 46rem, so on a wide band the right side is bare Night
+   Desk ground. This fills it with atmosphere, not content: layered translucent
+   swells with fine edge lines, a dotted mesh and faint contours, every centre
+   OFF the box so no arc reads as a radar sweep. Pure gradients painted from
+   the band's own tokens: no image, no `url()`, nothing to fetch.
+
+   Selected by the section's `aria-labelledby` because the template string
+   `<section class="band" aria-labelledby="analysis">` is pinned by a test;
+   Analysis and every other band are untouched. Both layers are pseudo-elements
+   inside the band's own box, `z-index: -1` in the band's own stacking context,
+   `pointer-events: none`: nothing overflows, no focus ring is clipped, no link
+   is covered, the type is never repositioned.
+
+   From 720px the box starts 34rem in from the lead's left edge, just past the
+   widest line of type (the dek's 58ch measure; the column itself is 46rem,
+   kept in step with `.feature--briefs` above) and runs to the band's edge; the
+   mask fades its left side to nothing, so no box edge shows. The strong part
+   sits low and right, clear of the section head ("All analysis" is
+   `--focus-band`, the veil's own hue). Below 720 that leaves under 150px, so
+   the veil becomes a quieter corner of fills only: no lines, no mesh.
+   Static: no motion to gate. Measured at the glyphs in
+   tests/test_home_briefs_band_veil.py. */
+.band[aria-labelledby="analysis"] { position: relative; isolation: isolate; }
+.band[aria-labelledby="analysis"]::before,
+.band[aria-labelledby="analysis"]::after {
+  content: ""; position: absolute; inset: 0 0 0 auto; z-index: -1; pointer-events: none;
+  width: calc(100% - max(var(--gutter), (100% - var(--shell)) / 2 + var(--gutter)) - 34rem);
+}
+.band[aria-labelledby="analysis"]::before {
+  background:
+    radial-gradient(ellipse 130% 112% at 112% 128%,
+      color-mix(in srgb, var(--accent) 10%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 18%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 100% 74% at 96% 142%,
+      color-mix(in srgb, var(--accent) 24%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 34%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 120% 90% at 82% 136%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 24%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 110% 66% at 58% 152%,
+      color-mix(in srgb, var(--accent) 22%, transparent) 0 98.4%, color-mix(in srgb, var(--focus-band) 28%, transparent) 99% 99.5%, transparent 100%),
+    radial-gradient(ellipse 80% 90% at 90% 66%,
+      color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 82% 64% at 84% 68%, #000 26%, rgba(0,0,0,.55) 56%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 82% 64% at 84% 68%, #000 26%, rgba(0,0,0,.55) 56%, transparent 100%);
+}
+.band[aria-labelledby="analysis"]::after {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--focus-band) 42%, transparent) 0 1px, transparent 1.5px) 0 0 / 18px 18px,
+    repeating-radial-gradient(ellipse 150% 100% at 100% 150%,
+      transparent 0 21px, color-mix(in srgb, var(--focus-band) 15%, transparent) 21px 22px);
+  -webkit-mask-image:
+    radial-gradient(ellipse 66% 62% at 88% 74%, #000 12%, transparent 100%);
+  mask-image:
+    radial-gradient(ellipse 66% 62% at 88% 74%, #000 12%, transparent 100%);
+}
+@media (max-width: 719px) {
+  .band[aria-labelledby="analysis"]::before { width: 100%; background:
+    radial-gradient(ellipse 80% 62% at 104% 118%, color-mix(in srgb, var(--accent) 12%, transparent) 0 98.4%, transparent 100%),
+    radial-gradient(ellipse 100% 78% at 96% 128%, color-mix(in srgb, var(--accent) 9%, transparent) 0 98.4%, transparent 100%),
+    radial-gradient(ellipse 56% 42% at 102% 104%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 72%);
+    -webkit-mask-image: none; mask-image: none; }
+  .band[aria-labelledby="analysis"]::after { display: none; }
+}
+@media print, (forced-colors: active) {
+  .band[aria-labelledby="analysis"]::before,
+  .band[aria-labelledby="analysis"]::after { display: none; }
+}
+
+.issue-ledger--briefs { border-top-color: var(--accent); }
+.issue-ledger--briefs .issue-no { color: var(--accent-ink); }
+.layer-key { list-style: none; margin: 1.1rem 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 2.4rem; max-width: 60rem; }
+.layer-key > li { margin: 0; max-width: none; color: var(--ink-2); }
+.layer-key .evidence { display: flex; margin-bottom: .3rem; }
+
+.briefs-reference { padding-top: .5rem; }
+.briefs-reference h2 { font-size: 1.25rem; }
+.briefs-reference h3 { margin: 1.6rem 0 .2rem; font-family: var(--sans); font-size: .9375rem; font-weight: 600; }
+.briefs-reference table { font-size: .875rem; }
 
 /* ═══ Methodology, Corpus Guide ══════════════════════════════════════════ */
 .evidence-specimens { list-style: none; padding: 0; display: grid; gap: 0; margin: 1rem 0 1.6rem; border-top: 2px solid var(--rule-hard); max-width: 52rem; }
@@ -1262,7 +1535,7 @@ html.js .nojs-note { display: none; }
 .fieldname { font-family: var(--mono); font-size: .8125rem; white-space: nowrap; }
 .changelog { list-style: none; padding: 0; margin: 0; }
 .changelog li { padding: .8rem 0; border-bottom: 1px solid var(--rule-soft); }
-.corpus-states td.c-count { text-align: right; white-space: nowrap; }
+.corpus-states td.c-count { margin-left: auto; text-align: right; white-space: nowrap; }
 /* A week range never breaks mid-date, at any width. */
 .c-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .c-note { font-size: .875rem; color: var(--ink-2); }
@@ -1271,7 +1544,7 @@ html.js .nojs-note { display: none; }
 .site { background: var(--surface); border-top: 2px solid var(--rule-hard); margin-top: 3rem; }
 .site .wrap { padding-block: 2.2rem 2rem; }
 .footer-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 1.6rem 2.4rem; }
-.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; letter-spacing: -.014em; color: var(--ink); }
+.footer-name { margin: 0 0 .6rem; font-family: var(--serif); font-weight: var(--title-weight); font-size: 1.05rem; text-transform: uppercase; letter-spacing: var(--title-tracking); color: var(--ink); }
 .site p { margin: 0 0 .8rem; font-size: .875rem; line-height: 1.65; color: var(--ink-2); max-width: 46ch; }
 .footer-col h2 { margin: 0 0 .5rem; padding: 0; border: 0; font-family: var(--sans); font-size: .8125rem; font-weight: 600; color: var(--ink); }
 .footer-col ul { list-style: none; margin: 0; padding: 0; }
@@ -1395,7 +1668,7 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-grid > :first-child { grid-column: 1 / -1; }
   .finder { position: static; }
-  .analysis-paths { grid-template-columns: minmax(0, 1fr); }
+  .layer-key { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 760px) {
   :root { --gutter-date: 100%; }
@@ -1507,6 +1780,7 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .band { background: #fff; color: #000; }
   .band .section-head h2, .band .feature h3 a, .band .feature .dek, .band a { color: #000; }
   .band .byline, .band .legacy-note, .band .plate figcaption { color: #333; }
+  .briefs-head, .briefs-head * { color: #000 !important; border-color: #999 !important; }
   /* A button prints as a link: dark fills and the printed address below would not mix. */
   .btn { background: none !important; color: #000 !important; border: 0; padding: 0; min-height: 0; transition: none; }
   .record-page { grid-template-columns: minmax(0, 1fr); }

@@ -97,14 +97,20 @@ class ResearchAtlasHierarchy(unittest.TestCase):
         self.assertTrue(any('href="china.html"' in p.read_text(encoding="utf-8")
                             for p in self.out.glob("week-*.html")))
 
-    def test_analysis_separates_draft_published_and_historical(self):
+    def test_analysis_is_one_briefs_publication_with_drafts_withheld(self):
+        # One publication (DECISION_LOG 2026-09-30): the masthead and the
+        # latest Brief, the one catalog that also holds the earlier issues,
+        # the labeling key, and the collection tables as closing reference.
+        # There is no separate archive section.
         page = self.html("analysis.html")
         headings = [page.index(label) for label in
-                    ("Briefs in development", "Published Briefs",
-                     "Historical The PLA Watch archive")]
+                    ('id="briefs-title"', 'id="briefs-lead-title"',
+                     'id="briefs-published"', 'id="briefs-method"',
+                     'id="collections-and-desks"')]
         self.assertEqual(headings, sorted(headings))
         self.assertIn("Draft Briefs are withheld", page)
-        self.assertIn('href="pla-watch.html"', page)
+        self.assertNotIn('id="legacy-archive"', page)
+        self.assertNotIn('id="every-issue"', page)
 
     def test_public_citations_name_the_multi_desk_corpus(self):
         guide = self.html("corpus-guide.html")

@@ -1,0 +1,110 @@
+/* Indo-Pacific Record — abstract blue terrain shared by every page.
+ * Page addresses select stable crops; no geography or data is represented.
+ * Decorative layers alone move. Reading paper, source photographs and all
+ * content stay still. No-JS, reduced motion and .no-anim keep the artwork
+ * static; print and forced colors remove it. */
+:root {
+  --topo-contours: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221440%22%20height%3D%221600%22%20viewBox%3D%220%200%201440%201600%22%3E%3Cg%20fill%3D%22%23cbdfe3%22%20fill-opacity%3D%22.30%22%3E%3Cpath%20d%3D%22M0%2040L270%200%20510%20175%20295%20440%200%20350Z%22%2F%3E%3Cpath%20d%3D%22M1440%20560L1105%20475%20955%20700%201150%20965%201440%20875Z%22%2F%3E%3Cpath%20d%3D%22M0%201135L325%201000%20670%201290%20425%201525%200%201440Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23668f9e%22%20stroke-opacity%3D%22.22%22%20stroke-width%3D%221%22%3E%3Cg%20transform%3D%22translate%28440%200%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%281000%20500%29%20scale%28-1%201%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28440%201010%29%22%3E%3Cpath%20d%3D%22M1000%2045C850%208%20670%2045%20622%20154S655%20332%20553%20413%20453%20548%20525%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2067C860%2028%20691%2061%20645%20168S680%20343%20575%20426%20478%20555%20548%20640%22%2F%3E%3Cpath%20d%3D%22M1000%2089C870%2048%20712%2077%20668%20182S705%20354%20597%20439%20503%20562%20571%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20111C880%2068%20733%2093%20691%20196S730%20365%20619%20452%20528%20569%20594%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20133C890%2088%20754%20109%20714%20210S755%20376%20641%20465%20553%20576%20617%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20155C900%20108%20775%20125%20737%20224S780%20387%20663%20478%20578%20583%20640%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20177C910%20128%20796%20141%20760%20238S805%20398%20685%20491%20603%20590%20663%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20199C920%20148%20817%20157%20783%20252S830%20409%20707%20504%20628%20597%20686%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20221C930%20168%20838%20173%20806%20266S855%20420%20729%20517%20653%20604%20709%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20243C940%20188%20859%20189%20829%20280S880%20431%20751%20530%20678%20611%20732%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20265C950%20208%20880%20205%20852%20294S905%20442%20773%20543%20703%20618%20755%20640%22%2F%3E%3Cpath%20d%3D%22M1000%20287C960%20228%20901%20221%20875%20308S930%20453%20795%20556%20728%20625%20778%20640%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+main#main { position: relative; isolation: isolate; }
+.topography {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden;
+  pointer-events: none;
+}
+.topography::before, .topography::after {
+  content: ""; position: absolute; inset: -28px;
+  pointer-events: none;
+}
+.topography::before {
+  background-image: var(--topo-contours);
+  background-size: max(100%, var(--topo-size, 1440px)) auto;
+  background-position: var(--topo-x, 50%) var(--topo-offset, -120px);
+  background-repeat: repeat-y;
+  transform: scaleX(var(--topo-flip, 1));
+}
+.topography::after {
+  background:
+    radial-gradient(ellipse 70% 48% at var(--topo-wash-x, 80%) var(--topo-wash-y, 35%), rgba(37, 94, 122, .055), transparent 78%),
+    radial-gradient(ellipse 52% 62% at 12% 78%, rgba(102, 143, 158, .04), transparent 75%);
+}
+/* Reading columns attenuate the field without turning it into a panel.
+   The homepage opening has a stronger scrim for its governed photo contrast. */
+main#main > .wrap {
+  background: var(--bg, #F3F1EA);
+  background: color-mix(in srgb, var(--bg, #F3F1EA) 88%, transparent);
+}
+main.home-atlas .opening { background-color: color-mix(in srgb, var(--bg) 96%, transparent); }
+@media (min-width: 1320px) {
+  main#main > .wrap { border-inline: 1px solid var(--rule-soft); }
+}
+/* The Analysis landing and native Brief hero carry a faint terrain field
+   on their own dark ground. It sits behind their content and photographs. */
+.briefs-head, .brief-hero { position: relative; isolation: isolate; }
+.briefs-head::before, .brief-hero::before, .nd-veil-band::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  pointer-events: none;
+  background-image: var(--topo-contours);
+  background-size: max(100%, var(--topo-size, 1440px)) auto;
+  background-position: var(--topo-x, 50%) var(--topo-offset, -120px);
+  opacity: .30;
+  transform: scaleX(var(--topo-flip, 1));
+}
+.briefs-head::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 85% 90% at var(--topo-wash-x, 80%) 100%, rgba(37, 94, 122, .18), transparent 80%);
+}
+/* Historical Night Desk pages use the same abstract family on navy.
+   Their masthead, article panels and source metadata retain their grounds. */
+.night-topography .topography { opacity: .32; }
+.night-topography .post-wrap, .night-topography .cover-wrap,
+.night-topography .archive-wrap, .night-topography .terms-head,
+.night-topography .terms-list {
+  background-color: var(--color-bg);
+  background-color: color-mix(in srgb, var(--color-bg) 88%, transparent);
+}
+.night-topography .nd-veil-band { isolation: isolate; }
+@media (max-width: 600px) {
+  .topography::before { background-size: calc(var(--topo-size, 1440px) * .62) auto; }
+  .briefs-head::before, .brief-hero::before { background-size: 980px auto; opacity: .20; }
+}
+/* Scripting is a CSS capability gate: script-free week pages keep their
+   contract, and a browser with JavaScript disabled gets static artwork.
+   Unsupported media features also fall back to static artwork. */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html:not(.no-anim) .topography::before {
+    animation: terrain-drift var(--topo-duration, 46s) ease-in-out infinite alternate;
+  }
+  html:not(.no-anim) .topography::after {
+    animation: terrain-wash calc(var(--topo-duration, 46s) + 12s) ease-in-out infinite alternate;
+  }
+  html:not(.no-anim) .briefs-head::before,
+  html:not(.no-anim) .brief-hero::before,
+  html:not(.no-anim) .nd-veil-band::before {
+    animation: terrain-breath var(--topo-duration, 46s) ease-in-out infinite alternate;
+  }
+  /* The existing homepage band veil stays in its reviewed text-free area. */
+  html:not(.no-anim) .band[aria-labelledby="analysis"]::before,
+  html:not(.no-anim) .band[aria-labelledby="analysis"]::after {
+    animation: veil-breath var(--topo-duration, 46s) ease-in-out infinite alternate;
+  }
+}
+@keyframes terrain-drift {
+  from { transform: translate3d(-8px, -10px, 0) scaleX(var(--topo-flip, 1)); }
+  to { transform: translate3d(8px, 10px, 0) scaleX(var(--topo-flip, 1)); }
+}
+@keyframes terrain-wash {
+  from { opacity: .65; transform: translate3d(0, -6px, 0); }
+  to { opacity: 1; transform: translate3d(0, 6px, 0); }
+}
+/* Dark band geometry stays inside its box: opacity gives the quiet movement
+   without clipping a content focus ring or extending the page horizontally. */
+@keyframes terrain-breath { from { opacity: .16; } to { opacity: .30; } }
+@keyframes veil-breath { from { opacity: .82; } to { opacity: 1; } }
+@media print, (forced-colors: active) {
+  .topography, .briefs-head::before, .briefs-head::after,
+  .brief-hero::before, .nd-veil-band::before { display: none !important; }
+  main#main > .wrap, main.home-atlas .opening { background: none; }
+  .night-topography .post-wrap, .night-topography .cover-wrap,
+  .night-topography .archive-wrap, .night-topography .terms-head,
+  .night-topography .terms-list { background: none !important; }
+}

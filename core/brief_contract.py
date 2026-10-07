@@ -57,6 +57,7 @@ from __future__ import annotations
 import re
 from datetime import date
 from typing import Iterable, Mapping
+from urllib.parse import urlsplit
 
 from core.edition_identity import (
     COLLECTION_NAME, SERIES_NAME, IdentityError, is_brief,
@@ -91,15 +92,13 @@ REQUIRED_SECTIONS = ("title", "dek", "opening_note", "what_stood_out",
                      "why_it_matters", "what_was_routine",
                      "what_im_watching_next")
 
-#: Existing issues whose publication status the editorial record and the
-#: deployed site disagree on. No. 14: DECISION_LOG 2026-09-04 and PROJECT_STATE
-#: §4 record it as drafted and not published; the deployed site has served it
-#: since 2026-09-05 (gh-pages 57ca945f5), linked from the series index, archive,
-#: sitemap and feed, and no approval is on record. While any issue is listed
-#: here the next number is not known, so none is assigned. Clearing it is the
-#: owner's ruling, recorded in DECISION_LOG — never an edit made to unblock a
-#: build.
-UNRECONCILED_ISSUES = frozenset({14})
+#: Existing issues whose editorial record and deployed status disagree.
+#: No. 14 was served from 2026-09-05 without recorded approval. The owner
+#: approved its reviewed corrections on 2026-10-03 (DECISION_LOG), retaining
+#: its number and historical publication metadata. That ruling reconciles
+#: No. 14; it does not backdate approval. Any future unresolved issue listed
+#: here still blocks numbering until an owner ruling is recorded.
+UNRECONCILED_ISSUES = frozenset()
 
 
 def _unreconciled(value) -> frozenset:
@@ -440,6 +439,57 @@ def validate_brief(sidecar: Mapping, registry, *,
             problems.append("an approved brief records approval.approved_by "
                             "and approval.approved_on")
     return problems
+
+
+def validate_readiness(sidecar, registry, *, collection=()) -> list:
+    """Release content checks, without assigning a number or asserting approval."""
+    problems = validate_brief(sidecar, registry, collection=collection)
+    for field in REQUIRED_SECTIONS:
+        if not isinstance(sidecar.get(field), str) or not sidecar[field].strip():
+            problems.append("release readiness: %s is empty; finish the prose" % field)
+    development = sidecar.get("development") or {}
+    if not _text(development.get("summary")) or not development.get("citations"):
+        problems.append("release readiness: document the development and its citations")
+    if len(sidecar.get("desks") or []) >= MIN_DESKS and not sidecar.get("cross_desk_claims"):
+        problems.append("release readiness: add the cross-desk comparison and citations")
+    start, end = (_iso_date(sidecar.get(k)) for k in ("week_start", "week_ending"))
+    if not start or not end or start > end or end.weekday() != 5:
+        problems.append("release readiness: use an ordered ISO reporting window ending Saturday")
+    if _text(sidecar.get("edition_type")).lower() not in ("routine", "significant"):
+        problems.append("release readiness: edition_type must be Routine or Significant")
+    if len(_text(sidecar.get("signal")).split()) > 28:
+        problems.append("release readiness: signal exceeds 28 words")
+    if sidecar.get("term_to_know_term") and not _text(sidecar.get("term_to_know_explanation")):
+        problems.append("release readiness: explain the term or omit it")
+    if not _text(sidecar.get("author_name")):
+        problems.append("release readiness: name the author")
+    trail = sidecar.get("source_trail") or []
+    ids = {e.get("record_id") for e in trail if isinstance(e, dict)}
+    for e in trail:
+        if not isinstance(e, dict):
+            continue
+        at = "record %s" % e.get("record_id")
+        for field in ("title_original", "source", "source_id", "date", "screening"):
+            if not _text(e.get(field)):
+                problems.append("release readiness: %s lacks %s" % (at, field))
+        url = urlsplit(_text(e.get("url")))
+        if url.scheme not in ("http", "https") or not url.netloc:
+            problems.append("release readiness: %s needs an HTTP(S) source URL" % at)
+        day = _iso_date(e.get("date"))
+        if not day or (start and end and not start <= day <= end):
+            problems.append("release readiness: %s date is outside the reporting window" % at)
+    prose = [(field, sidecar.get(field)) for field in REQUIRED_SECTIONS +
+             ("term_to_know_explanation", "signal")]
+    prose.append(("development.summary", development.get("summary")))
+    prose.extend(("cross_desk_claims[%d]" % i, claim.get("claim"))
+                 for i, claim in enumerate(sidecar.get("cross_desk_claims") or [])
+                 if isinstance(claim, Mapping))
+    for field, text in prose:
+        for marker in re.findall(r"\[Records? ([^\]]+)\]", _text(text)):
+            refs = [r.strip() for r in marker.split(",")]
+            if any(not r.isdigit() or int(r) not in ids for r in refs):
+                problems.append("release readiness: %s cites a record absent from the trail: %s" % (field, marker))
+    return list(dict.fromkeys(problems))
 
 
 # ── Numbering ─────────────────────────────────────────────────────────────────

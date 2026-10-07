@@ -25,15 +25,12 @@ reorders around a frontend idea.
 
 ### 1. Restore the human analytical publication cadence
 
-The last edition with a settled record is No. 13, week ending 2026-08-08.
-No. 14 (week ending 2026-08-15) has been publicly served since 2026-09-05, but
-no approval or completed `EDITORIAL_QA_CHECKLIST.md` record exists for it, so
-its status is unreconciled (DECISION_LOG 2026-09-23 point 9). Serving it is not
-approval, and approval is not recorded retroactively: its checklist review and
-an owner ruling come first, and they also gate the number of the next brief.
-The weeks ending 2026-08-22 and 08-29 have no edition. This is the highest
-priority: the analytical series is the layer that distinguishes this
-publication from a scraper, and a lapsed cadence is visible to every reader.
+The latest approved edition is No. 14, week ending 2026-08-15.
+No. 14 (week ending 2026-08-15) was served from 2026-09-05 without recorded
+approval. The owner approved the reviewed corrections on 2026-10-03, retaining
+No. 14 and its URL with a dated correction note (DECISION_LOG). Its status is
+reconciled; the next number is 15, assigned only at a subsequent Brief's own
+approval. The separate week-ending 2026-08-22 disposition remains open.
 
 Restoration means editions published through the full `EDITORIAL_QA_CHECKLIST.md`
 gate — source-to-claim tracing and a rendered-page review — not a catch-up
@@ -259,9 +256,10 @@ needed; the largest of them is under 30 KB against the DS §8 budget of 300 KB.
 There is no present defect to fix. Re-open the question only on a measured
 budget crossing — an archive index over 300 KB, a single generated week page
 over 300 KB, or a week index that no longer fits one screen of scanning — and
-re-measure before asserting one. The **PLA Watch edition archive** is a
-separate surface with its own shape, and month grouping there at ~20+ editions
-remains a legitimate later consideration.
+re-measure before asserting one. The earlier PLA Watch issues are rows of the one Briefs catalog on Analysis
+(DECISION_LOG 2026-09-30), and month grouping there at ~20+ items remains a
+legitimate later consideration. Brief feed ordering (`build_briefs_feed` sorts
+by issue number, which is unsafe for unnumbered Briefs) is future work.
 
 Also deferred, carried forward from the superseded plan and still valid when
 the gates above are healthy:

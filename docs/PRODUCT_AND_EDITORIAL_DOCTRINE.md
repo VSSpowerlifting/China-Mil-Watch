@@ -175,10 +175,14 @@ only from real sidecar data.
   per-week surfaces, paginated where a week is large. It is not a flat
   all-records page and carries no known weight or grouping defect; the
   measurement and the threshold for revisiting it are in docs/ROADMAP.md.
-- PLA Watch archive: a **separate surface** — the issue-anchored edition list,
-  with distinct-source counts and an honest limitations footnote. At ~20+
-  editions, month grouping is worth reconsidering. Do not conflate this with
-  the record archive above; they have different shapes and different budgets.
+- PLA Watch archive (superseded 2026-09-30, DECISION_LOG): The PLA Watch is
+  the former series whose issues now form the earlier portion of one
+  Indo-Pacific Record Briefs publication, browsed in the single catalog on
+  `analysis.html`. It is not presented as a separate browsable product. Its
+  issues keep their numbers, URLs, publication identity and provenance, and
+  `/the-pla-watch/archive.html` and `/pla-watch.html` keep resolving as
+  preserved and compatibility addresses. Do not conflate the record archive
+  above with that catalog; they have different shapes and different budgets.
 
 ### Methodology
 The credibility centerpiece: pipeline description, five-layer ladder,
@@ -253,8 +257,9 @@ The collection and its renderer are `core/brief_collection.py` and
 `briefs/<slug>.html` from a source sidecar in `briefs/<slug>.json`; the Analysis
 page is the collection's landing page (no separate `briefs/index.html`); and
 `briefs/feed.xml` carries briefs only, while the existing issues keep
-`the-pla-watch/feed.xml` and its entry IDs. No real brief exists yet, and none is
-published while No. 14 is unreconciled.
+`the-pla-watch/feed.xml` and its entry IDs. Drafts remain outside published coverage until their own approval. No. 14
+was reconciled by the owner ruling of 2026-10-03; no new Brief was approved
+by that ruling. Current publication state lives in PROJECT_STATE.md.
 
 **One collection, provenance intact.** *Indo-Pacific Record Briefs* includes the
 existing issues and every future issue. Each existing issue keeps its sidecar,
@@ -295,8 +300,10 @@ and in how far their records have been screened.
 **Numbers.** Assigned at approval — one more than the highest number already
 assigned in the collection — and never reassigned. Not a rank by the week an
 issue covers: a retrospective brief approved later takes a later number and
-states its week. **No number is assigned while No. 14's publication status is
-unreconciled**, because the next number depends on that ruling.
+states its week. **No number is assigned while any existing issue has unreconciled publication
+status.** No. 14 was reconciled by the 2026-10-03 ruling; the next Brief still
+requires its own approval. Numbers are approval order; catalog and feed are
+ordered by the coverage endpoint, with number and slug breaking ties.
 
 **Titles.** A brief's title does not begin with *The PLA Watch*. The title
 format for briefs is decided with their renderer.
