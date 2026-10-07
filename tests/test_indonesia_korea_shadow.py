@@ -436,10 +436,10 @@ class Runner(Case):
         with self.assertRaisesRegex(ValueError, "outside state"):
             reviewer.export_commit(repo, bad_commit, "indonesia", Path(self.tmp.name) / "contaminated")
 
-    def test_workflow_has_only_manual_launch_and_explicit_success_only_state_destination(self):
+    def test_workflow_preserves_manual_launch_and_explicit_success_only_state_destination(self):
         raw = (ROOT / ".github/workflows/indonesia_korea_shadow.yml").read_text()
         self.assertIn("workflow_dispatch:", raw)
-        self.assertNotIn("  schedule:", raw)
+        self.assertIn("  schedule:", raw)
         self.assertIn('git push origin "HEAD:refs/heads/$STATE_BRANCH"', raw)
         self.assertIn("if: success()", raw)
         self.assertNotIn("--force", raw)
@@ -475,6 +475,177 @@ class Runner(Case):
         tree = ast.parse(source)
         strings = [n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)]
         self.assertFalse(any("pla_watch.db" in s or "output/" in s for s in strings))
+
+
+class WorkflowCadence(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.raw = (ROOT / ".github/workflows/indonesia_korea_shadow.yml").read_text()
+
+    def block(self, name):
+        import textwrap
+        step = self.raw.split("      - name: " + name + "\n", 1)[1].split("      - name:", 1)[0]
+        return textwrap.dedent(step.split("        run: |\n", 1)[1])
+
+    def shell(self, name, values):
+        import os
+        import subprocess
+        return subprocess.run(["bash", "-c", self.block(name)], cwd=self.root,
+                              env={**os.environ, **values}, text=True, capture_output=True)
+
+    def selection(self, event, schedule="", desk=""):
+        env_file = self.root / "selected-env"
+        env_file.write_text("")
+        result = self.shell("Select the fixed desk branch", {
+            "EVENT_NAME": event, "SCHEDULE_INPUT": schedule, "DESK_INPUT": desk,
+            "GITHUB_ENV": str(env_file),
+        })
+        values = dict(line.split("=", 1) for line in env_file.read_text().splitlines())
+        return result, values
+
+    def probes(self):
+        import os
+        import sys
+        directory = self.root / "bin"
+        directory.mkdir(exist_ok=True)
+        bodies = {
+            "git": "import sys\nassert sys.argv[1:] == ['rev-parse', 'HEAD']\nprint('fixture-collector')\n",
+            "python": "import json, os, sys\nfrom pathlib import Path\nPath(os.environ['PROBE_ARGS']).write_text(json.dumps(sys.argv[1:]))\n",
+        }
+        for name, body in bodies.items():
+            path = directory / name
+            path.write_text("#!" + sys.executable + "\n" + body)
+            path.chmod(0o755)
+        return str(directory) + os.pathsep + os.environ["PATH"]
+
+    def collection_args(self, values, event, target="", attempt="1"):
+        path = self.root / "args.json"
+        result = self.shell("Collect the declared window", {
+            **values, "PATH": self.probes(), "PROBE_ARGS": str(path),
+            "RUNNER_TEMP": str(self.root), "GITHUB_EVENT_NAME": event,
+            "GITHUB_RUN_ID": "fixture", "GITHUB_RUN_ATTEMPT": attempt,
+            "TARGET_DATE_INPUT": target,
+        })
+        self.assertEqual(result.returncode, 0, result.stderr)
+        args = json.loads(path.read_text())
+        self.assertEqual(args[0], "scripts/shadow_collect_desk.py")
+        return args[1:]
+
+    def test_each_schedule_selects_its_desk_even_with_conflicting_dispatch_input(self):
+        for cron, desk, branch, time in (
+            ("17 17 * * *", "indonesia", "shadow/indonesia-kemhan", "17:17"),
+            ("47 17 * * *", "korea", "shadow/korea-policy-briefing", "17:47"),
+        ):
+            with self.subTest(desk=desk):
+                result, values = self.selection("schedule", cron, "korea" if desk == "indonesia" else "indonesia")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(values, {"SHADOW_DESK": desk, "STATE_BRANCH": branch, "SHADOW_CRON_UTC": time})
+
+    def test_manual_dispatch_keeps_its_selected_desk(self):
+        for desk, time in (("indonesia", "17:17"), ("korea", "17:47")):
+            result, values = self.selection("workflow_dispatch", "", desk)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(values["SHADOW_DESK"], desk)
+            self.assertEqual(values["SHADOW_CRON_UTC"], time)
+
+    def test_unknown_events_schedules_and_desks_fail_before_state_selection(self):
+        for event, schedule, desk in (
+            ("schedule", "", "indonesia"), ("schedule", "0 * * * *", "korea"),
+            ("push", "", "indonesia"), ("workflow_dispatch", "", "../foreign"),
+        ):
+            with self.subTest(event=event, schedule=schedule, desk=desk):
+                result, values = self.selection(event, schedule, desk)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(values, {})
+
+    def test_actual_workflow_arguments_preserve_scheduled_dates_across_midnight(self):
+        from contextlib import redirect_stdout
+        from datetime import datetime, timezone
+        for cron in ("17 17 * * *", "47 17 * * *"):
+            _, values = self.selection("schedule", cron)
+            args = self.collection_args(values, "schedule")
+            with mock.patch.object(runner, "datetime") as clock, mock.patch.object(runner, "run", return_value={"health": "ok"}) as collect:
+                clock.now.return_value = datetime(2026, 10, 7, 0, 15, tzinfo=timezone.utc)
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(runner.main(args), 0)
+                self.assertEqual(collect.call_args.args[2], date(2026, 10, 6))
+                self.assertEqual(collect.call_args.kwargs["target_source"], "schedule-slot")
+
+    def test_actual_manual_arguments_keep_utc_today_or_explicit_recovery_date(self):
+        from contextlib import redirect_stdout
+        from datetime import datetime, timezone
+        _, values = self.selection("workflow_dispatch", "", "korea")
+        for target, expected, provenance in (("", date(2026, 10, 7), "manual-utc-date"),
+                                              ("2026-10-03", date(2026, 10, 3), "explicit")):
+            args = self.collection_args(values, "workflow_dispatch", target)
+            with mock.patch.object(runner, "datetime") as clock, mock.patch.object(runner, "run", return_value={"health": "ok"}) as collect:
+                clock.now.return_value = datetime(2026, 10, 7, 0, 15, tzinfo=timezone.utc)
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(runner.main(args), 0)
+                self.assertEqual(collect.call_args.args[2], expected)
+                self.assertEqual(collect.call_args.kwargs["target_source"], provenance)
+
+    def test_scheduled_ui_rerun_still_refuses_an_ambiguous_date(self):
+        from contextlib import redirect_stderr
+        _, values = self.selection("schedule", "17 17 * * *")
+        args = self.collection_args(values, "schedule", attempt="2")
+        with mock.patch.object(runner, "run") as collect, redirect_stderr(io.StringIO()):
+            self.assertEqual(runner.main(args), 2)
+        collect.assert_not_called()
+        self.assertFalse((self.root / "candidate-state").exists())
+
+    def test_missing_scheduled_state_refuses_to_bootstrap_a_new_clock(self):
+        import sys
+        path = self.probes()
+        (self.root / "bin/git").write_text("#!" + sys.executable + "\nimport sys\nsys.exit(2 if sys.argv[1] == 'ls-remote' else 98)\n")
+        result = self.shell("Check out isolated state", {
+            "PATH": path, "RUNNER_TEMP": str(self.root), "GITHUB_EVENT_NAME": "schedule",
+            "STATE_BRANCH": "shadow/indonesia-kemhan", "STATE_REMOTE": "https://example.invalid/fixture",
+        })
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("refusing to restart its clock", result.stdout)
+        self.assertFalse((self.root / "candidate-state").exists())
+
+    def test_schedule_contract_keeps_daily_slots_main_guard_and_desk_serialization(self):
+        import re
+        self.assertEqual(re.findall(r"- cron: '([^']+)'", self.raw), ["17 17 * * *", "47 17 * * *"])
+        self.assertIn("if: github.ref == 'refs/heads/main'", self.raw)
+        group = next(line for line in self.raw.splitlines() if line.startswith("  group:"))
+        self.assertIn("inputs.desk ||", group)
+        self.assertIn("github.event.schedule == '17 17 * * *' && 'indonesia'", group)
+        self.assertIn("github.event.schedule == '47 17 * * *' && 'korea'", group)
+        self.assertIn("cancel-in-progress: false", self.raw)
+        self.assertIn('--lookback-days 6 --cap 40', self.raw)
+
+    def test_scheduled_state_requires_both_existing_database_and_clock(self):
+        import sys
+        path = self.probes()
+        (self.root / "bin/git").write_text("#!" + sys.executable + "\n" +
+            "import os, sys\nfrom pathlib import Path\n" +
+            "cmd = sys.argv[1]\n" +
+            "if cmd == 'ls-remote':\n    sys.exit(0)\n" +
+            "elif cmd == 'clone':\n" +
+            "    state = Path(sys.argv[-1]) / 'state'\n    state.mkdir(parents=True)\n" +
+            "    if os.environ['HAS_DB'] == '1': (state / 'shadow.db').write_bytes(b'fixture')\n" +
+            "    if os.environ['HAS_CLOCK'] == '1': (state / 'clock.json').write_text('{}')\n" +
+            "elif cmd == 'branch':\n    print(os.environ['STATE_BRANCH'])\n" +
+            "elif cmd == 'rev-parse':\n    print('fixture-collector')\n" +
+            "elif cmd == 'ls-tree':\n    print('state')\n" +
+            "else:\n    sys.exit(98)\n")
+        for has_db, has_clock, expected in (("1", "0", 1), ("0", "1", 1), ("1", "1", 0)):
+            with self.subTest(database=has_db, clock=has_clock):
+                run_temp = self.root / (has_db + has_clock)
+                run_temp.mkdir()
+                result = self.shell("Check out isolated state", {
+                    "PATH": path, "RUNNER_TEMP": str(run_temp), "GITHUB_EVENT_NAME": "schedule",
+                    "STATE_BRANCH": "shadow/korea-policy-briefing", "STATE_REMOTE": "https://example.invalid/fixture",
+                    "HAS_DB": has_db, "HAS_CLOCK": has_clock,
+                })
+                self.assertEqual(result.returncode, expected, result.stderr)
+                if expected:
+                    self.assertIn("refusing to restart its clock", result.stdout)
 
 
 if __name__ == "__main__":

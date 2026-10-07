@@ -4,6 +4,26 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-06 — Indonesia and South Korea daily shadow cadence authorized
+
+**Owner direction (Ben, this Codex chat):** "Authorize daily shadow collection
+at 17:17 UTC for Indonesia and 17:47 UTC for South Korea, retaining the six-day
+lookback and 40-record cap." This authorizes seven-day recurring shadow evaluation
+and the dedicated cadence commit, push and draft PR after syncing with main
+`ba5885c30e90ff05644a67b86eac01818de4be7d` (PR #112). Merge is the activation
+boundary and requires separate owner authorization. Stop this phase at a clean,
+mergeable, CI-verified draft PR; no merge or manual workflow dispatch is authorized.
+
+Keep the existing identifiable robots-gated native scopes, twenty-minute timeout,
+ninety-day artifacts, isolated public branches `shadow/indonesia-kemhan` and
+`shadow/korea-policy-briefing`, immutable originals/ledgers/first-success clocks,
+success-only atomic collection and explicit non-force state publication. Scheduled
+runs refuse missing branches, databases or clocks; they must not restart day zero.
+Cron-aware logical dates and explicit-date recovery preserve honest attempt times.
+This supersedes only the earlier scheduling exclusion. No production collection,
+DB/output change, deployment, desk promotion or additional desk/task is authorized.
+Human checkpoints, reuse review and qualification gates remain open.
+
 ## 2026-10-06 — AFP scheduled shadow reliability evaluation authorized
 
 **Owner direction (Ben, scheduling continuation brief):** after reviewing live
