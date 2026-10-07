@@ -4,6 +4,33 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Japan official HTML routes remain challenge-gated from Actions
+
+A read-only bounded GitHub Actions re-probe tested the official Joint Staff and
+service indexes before any adapter change. Temporary draft PR #120 at
+`0a697024bbed270246acb2a206891796a39827ea` ran once and was closed
+unmerged. Actions run `37678838045` used the repository's exact declared
+collector identity, followed no redirects, fetched no linked documents and made
+five GET requests maximum.
+
+`https://www.mod.go.jp/robots.txt` returned HTTP 200 and permitted all four
+tested index paths. Joint Staff Japanese (`/js/press/`), Joint Staff English
+(`/js/press/index-en.html`), JMSDF English
+(`/msdf/en/news/2026.html`) and JASDF English (`/asdf/en/news/`) each then
+returned HTTP 403 with `Cf-Mitigated: challenge` from the GitHub-hosted
+collector. Artifact `japan-official-route-probe-37678838045`, ID
+`11508166487`, digest
+`sha256:85404a821576205e9103919b2a6ee15167de7aca67f533608542bd638246ad52`
+preserves the result for 90 days.
+
+Decision: do not add Joint Staff/JMSDF/JASDF HTML adapters from these indexes,
+and do not use a browser identity, challenge solver, cookies, proxy, alternate
+host or retry loop to bypass the edge policy. Japan's current two-RSS/PDF
+shadow scope and schedule remain unchanged. A future route requires an official
+machine-readable or directly reachable first-party path, or a later bounded
+re-probe showing direct reachability. See
+`docs/JAPAN_OFFICIAL_ROUTE_REPROBE_2026-10-07.md`.
+
 ## 2026-10-07 — Pause US DVIDS scheduled shadow collection
 
 Ben authorizes disposition of the US DVIDS incident after direct review of the
