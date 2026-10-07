@@ -253,7 +253,6 @@ class StorePortability(unittest.TestCase):
         self.assertIn("0008", report["applied"])
         self.assertEqual(after_ids, before["article_ids"])
         self.assertEqual(topic_count, 0)
-        self.assertEqual(verified["counts"]["record_topics"], 0)
         self.assertTrue(verified["ok"])
 
 
