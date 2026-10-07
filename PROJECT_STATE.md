@@ -118,15 +118,21 @@ committed by `d17646aef` (sha256 `42f4e5a9…b501c`):
   whose article is one image; its 178 characters of "text" are page furniture,
   under `MIN_BODY_CHARS`, so the all-or-nothing batch was withheld. The local
   run was not landed. `22sep26-nr` and `22sep26-speech` stay unrecovered;
-  `23sep26-mq` should return with the 09-29 scheduled run.
-* **Image-only releases: repair in draft (2026-09-29, not yet merged).** On the
+  the 2026-10-06 refresh confirms `23sep26-mq` is stored as id 4759.
+* **Image-only releases: PR #85 refreshed 2026-10-06, not yet merged.** On the
   scheduled path only, a short body whose article container holds an image and
   no prose is stored as a text-unavailable record (official title, URL, date;
   empty body), and no longer withholds the batch. Short prose is kept as text;
   an unreadable layout still fails the whole batch; the two held records are
   still excluded; the shadow collector is unchanged. The recovery for 09-22 is
-  **not** run: it waits for review and merge. Residual risks and owner
-  decisions are in `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` §7.
+  **not** run: it waits for an owner merge decision and separate recovery scope.
+  Against main `d0c6dbb27`, a fresh September sitemap/database comparison finds
+  only `22sep26-infographic`, `22sep26-nr` and `22sep26-speech` missing among
+  32 eligible references (29 stored); `16sep26-speech` remains held. The
+  proposed 09-22 → 09-28 window is three inserts and eight duplicates.
+  Current main still reproduces the fixture blocker. Focused checks pass;
+  production DB/output are unchanged. Evidence and remaining tradeoffs are in
+  `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` §§7–9.
 
 Coverage is heavily concentrated in one source and every public surface must
 show that honestly. The 2026-07-17 → 07-24 collection outage is permanent,

@@ -81,15 +81,15 @@ tests pin this for `22sep26-nr` and `22sep26-speech`.
 
 1. **An image-only release is now stored**, with an empty body.
 2. **A genuinely short prose release is now stored on the scheduled path**,
-   where before a sub-200-character body was refused. No real Singapore prose
-   release is that short: the shortest stored is 4429 at 258 characters, and the
+   where before a sub-200-character body was refused. In the 2026-09-29
+   database snapshot, no stored Singapore prose release was that short: the shortest stored is 4429 at 258 characters, and the
    real `23sep26-mq` is 391. The case is tested with a synthetic page.
 
 ## 6. How "body unavailable" is recorded
 
 - **Per record:** an empty `articles.text_original`, the same representation the
-  58 China records with no captured text already use in the tracked database
-  (Singapore has none). Nothing else per record is
+  58 China records with no captured text used in the 2026-09-29 database
+  snapshot (Singapore had none). Nothing else per record is
   stored; `content_verdict` is not a column.
 - **Per run:** `source_run_results.text_unavailable` counts it, the status stays
   `ok`, and `error_detail` says "1 of 11 parsed page(s) carried no usable text;
@@ -119,23 +119,96 @@ tests pin this for `22sep26-nr` and `22sep26-speech`.
   template changes, the container is not found and pages fall back to today's
   behaviour: a short body fails the batch, visibly.
 
-## 8. Recovery (not run)
+## 8. Proposed recovery scope — refreshed 2026-10-06 (not run)
 
-The recovery follows review and merge. The command is the one already
-documented:
+PR #85 still needs an owner merge decision. Current main
+`d0c6dbb273501906f10f039467388b0bfd834d37` has not superseded the repair:
+its adapter still withholds the eleven-reference fixture batch on the
+infographic, returning zero documents. Dependencies #69, #82 and #84 are
+merged. Current main was merged into the refresh branch without rebasing or
+rewriting the original PR head `04feaa0691255d97ec5380b4c40f961255846142`.
+No source correction was required during this review.
+
+The tracked main database SHA-256 is
+`b10890ddac59538b66041b10d13d08199f20be2279efa9bcb03a2d991d17decc`.
+Read through `scripts.reconcile_db.read_only`, it holds 76 Singapore records,
+29 dated in September. `23sep26-mq` is already stored as id 4759 with its
+391-character body; it is no longer a proposed insert.
+
+At 2026-10-06 22:19 EDT (2026-10-07 02:19 UTC), the adapter's existing
+identifiable transport reread robots.txt and the MINDEF sitemap, both HTTP
+200, with normal 1.5-second spacing. Only those two requests were made;
+no release body or image was fetched. Robots allowed discovery. The sitemap
+was 818,394 bytes, SHA-256
+`82644c9fbff3f094360029a74ca95ef387e9c0a2184363bbe22227a8a8cb1712`.
+A September-wide discovery with cap 1000 (above the 32 eligible references)
+was compared by canonical URL against the scratch-read database:
+
+| September disposition | Count | Releases |
+|---|---:|---|
+| Eligible and already stored | 29 | Every eligible September reference except the three below |
+| Eligible and missing | 3 | `22sep26-infographic`, `22sep26-nr`, `22sep26-speech` |
+| Governed hold, excluded before selection | 1 | `16sep26-speech` |
+
+No stored September release was absent from this listing. This is a comparison
+with the current official sitemap, not proof of releases the sitemap never
+listed. The August hold `15aug26-speech` also remains excluded.
+
+**Proposed owner-authorized recovery, only after merge:**
 
     .venv/bin/python pipeline.py --date 2026-09-28 --source sg_mindef_releases --no-analysis
 
-Against the tracked database, seven of the window's eleven releases are already
-stored (`23sep26-nr`, `24sep26-nr`, `25sep26-speech`, `27sep26-nr`,
-`27sep26-nr2`, `28sep26-mq`, `28sep26-speech`; ids 4561-4721). Expected:
+That selects slug dates 2026-09-22 through 2026-09-28, Singapore only. Recheck
+main, the database and listing immediately before execution. Against this
+review's snapshot, acceptance is:
 
-- **New:** `22sep26-infographic` (empty body), `22sep26-nr` and
-  `22sep26-speech`, plus `23sep26-mq` unless the 2026-09-29 scheduled run has
-  already stored it (its window, 09-23 → 09-29, includes it).
-- **Duplicates:** the other seven or eight.
-- **Run row:** discovered 11, fetched 11, extracted 11, `text_unavailable` 1,
-  status `ok`. Both held records absent.
+- **Three new URLs:** `22sep26-infographic` with empty original text,
+  `22sep26-nr` and `22sep26-speech` with extracted prose.
+- **Eight duplicates:** `23sep26-mq`, `23sep26-nr`, `24sep26-nr`,
+  `25sep26-speech`, `27sep26-nr`, `27sep26-nr2`, `28sep26-mq`,
+  `28sep26-speech`. Existing rows and verdicts must remain unchanged.
+- **Source run:** discovered 11, fetched 11, extracted 11, new 3, duplicates 8,
+  usable text 10, text unavailable 1, status `ok`. Both held releases absent.
+- **Repeat:** zero new URLs and eleven duplicates; no stored row changes.
+- **Boundaries:** no screening/model calls, no rendering/deployment, no other
+  source collection, no shadow state writes. The command records a production
+  scrape run and inserts records; it is proposed here, not authorized or run.
 
-The offline run over the fixtures and an empty database gives 11 new; the live
-counts differ only because those releases are already stored.
+Any unresolved fetch/extraction defect still withholds the whole batch. A changed
+listing or body must be inspected rather than forced to fit these counts.
+Recovery landing/reconciliation and any later render/deploy require separate
+owner scope; merging this code PR alone does not recover the records.
+
+## 9. Refresh verification and remaining decisions
+
+The 146 focused offline tests passed on Python 3.9.6, including all 30 PR tests,
+scheduled production, production windows, shadow, desk-scoped screening and
+cross-source duplicate authority. They cover structural image-only detection,
+caption/lede/mixed-link prose, genuine short prose, missing title/date/layout,
+fetch/extraction failures, held discovery and leaked holds, empty-text storage,
+duplicates and idempotence. Existing prose fixture hashes remain unchanged.
+
+A separate fixture-only temporary-database rehearsal seeded the eight current
+window duplicates, ran the real pipeline, and verified exactly three inserts,
+eight duplicates and one unavailable text record. All eight seeded rows remained
+identical. Repeating the run produced zero inserts and eleven duplicates with
+all eleven rows identical. The seven filler bodies are explicitly synthetic;
+this rehearsal makes no new claim about their live prose.
+
+Production uses `collect()` with structural classification; shadow still calls
+`extract()` and refuses the infographic and synthetic sub-200 prose. No shadow
+collector, workflow, manifest, ledger or record changes are in this PR. Longer
+image-only pages remain outside the structural branch. Link-only paragraphs
+are treated as resources under the existing rule, so an atypical release made
+entirely of linked text could be misclassified; classification is tied to the
+known container layout. Empty text is stored without a durable per-record
+`media_only` field, and later text at an existing URL is not automatically
+refreshed. These are owner tradeoffs, not evidence that image contents were read.
+
+Full-suite, validator and final preservation results are recorded in the PR's
+current review evidence. The baseline for preservation is current main, not the
+September 29 branch database: main's intervening daily DB/output commits were
+inherited by the merge, and are not recovery or generated-output changes made
+by this PR. All 7,451 DB/output files are hashed before and after verification;
+there are no DB/output differences against the pinned main tree and no SQLite
+sidecars. No recovery, workflow dispatch, production render or deploy was run.
