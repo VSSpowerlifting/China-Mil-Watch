@@ -4,8 +4,9 @@ name: Vietnam Shadow Collection
 # collector checkout. No production collection, analysis or deployment.
 # This repository is public: its state branch is not confidential storage.
 # Source: the English `defense` tag page of Viet Nam Government News
-# (en.baochinhphu.vn), under the adapter's unchanged full
-# ChinaMilWatch-ShadowCollector/0.1 identity. Scope and limits:
+# (en.baochinhphu.vn). Remote dispatch and public capture retention are NOT
+# approved. The shared transport identity is IndoPacificRecord-ShadowCollector/0.1;
+# this change has been verified offline only. Scope and limits:
 # shadow/vietnam/README.md.
 #
 # Manual dispatch only. No schedule is declared, so nothing runs unattended

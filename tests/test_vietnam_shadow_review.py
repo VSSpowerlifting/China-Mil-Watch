@@ -645,7 +645,7 @@ class TestEquivalence(KitCase):
         self.assertEqual(imported - {"__future__", "argparse", "hashlib", "json", "re", "shutil",
                                      "sqlite3", "sys", "tempfile", "collections", "datetime",
                                      "pathlib", "urllib.parse"},
-                         {"core.collection", "scripts.review_shadow_state"})
+                         {"core.collection", "core.collection.vietnam_identity", "scripts.review_shadow_state"})
 
     def test_singapores_reviewer_and_publisher_are_not_redirected(self):
         from scripts import publish_shadow_review, review_shadow_state

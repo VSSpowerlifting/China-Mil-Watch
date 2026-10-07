@@ -26,11 +26,15 @@ anything else, and has no publisher and no review branch; the Singapore
 procedure below and `scripts/publish_shadow_review.py` do not apply to it. Its
 use is in `shadow/vietnam/README.md`.
 
-Vietnam's ministry families have a separate **local rehearsal** checker,
-`scripts/review_vietnam_ministry_state.py`, bound to exactly one source. It
-does not verify a remote commit, produce a formal checkpoint, collect signoff
-or qualify a desk. It cannot inherit Government News's clock. Ministry remote
-activation and formal review remain a later phase; scope and commands are in
+Vietnam's ministry families use `scripts/review_vietnam_ministry_state.py`,
+bound to exactly one source. `--state-dir` remains **local rehearsal only**.
+Formal mode exports the named commit's bytes after verifying reachability from
+that source's fixed branch and produces deterministic Day 7/14/30 packets with
+blank structured signoff. An early packet cannot complete a checkpoint, and
+validation of a completed signoff does not publish or qualify anything. No
+ministry publisher is implemented. A source cannot inherit Government News's
+clock or a local rehearsal clock. Commands, exact activation budgets and owner
+decisions are in `docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md` and
 `shadow/vietnam_ministries/README.md`.
 
 `scripts/review_shadow_state.py` produces the evidence package. It validates

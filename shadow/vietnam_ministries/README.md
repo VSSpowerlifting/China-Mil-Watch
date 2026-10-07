@@ -1,9 +1,12 @@
 # Vietnam ministry shadow research
 
-This manifest is outside `desks/` and is read only by the local ministry runner.
-Vietnam remains `research`; the original Government News English pilot is
-retained in `shadow/vietnam/`. No ministry workflow, production registration or
-remote state branch is created here.
+This manifest stays outside `desks/`. Vietnam remains `research`; the original
+Government News English pilot is retained in `shadow/vietnam/`. The prepared
+`vietnam_ministry_shadow.yml` is dispatch-only and main-only, using one serial
+batch and separate source branches. It has not been activated; no ministry
+remote state branch or production registration is created by this readiness work.
+The exact first-run proposal and owner decisions are in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
 
 | Institution | Bounded surface | Engineering result |
 |---|---|---|
@@ -19,8 +22,9 @@ The exact October 6 request inventory is
 portal's attribution. MOIT fixtures replace prose and preserve measured DOM,
 identifiers and dates, with original and derived hashes recorded separately.
 They test structure and date handling, not MOIT source-text fidelity. Original
-live bytes may be retained in external rehearsal state under the existing
-unresolved state-visibility/reuse decisions; they are not published by this tool.
+rehearsal bytes stay external and are not transferred to remote state. The owner
+approves successful ministry remote state and original bytes on the public orphan
+branches and Actions evidence only for the shadow reliability period.
 
 Each source requires a different external state directory and has its own clock.
 The default external host gate directory is shared across local processes;
@@ -39,13 +43,25 @@ Example (only after recording an appropriate request budget):
   --out-dir /tmp/vn-mps-review
 ```
 
-The review is deterministic, read-only and bound to one source. It verifies
+The `--state-dir` review is deterministic, read-only and bound to one source. It verifies
 input/capture hashes, database integrity, versions, original-text assembly,
 observations, source metadata and clock ownership. It explicitly labels itself
 **local rehearsal only**: it verifies no remote commit or checkpoint and gives
 no signoff or qualification. The Government News formal review path is unchanged.
-Ministry remote activation and a formal commit-bound review path are a later
-phase, after owner decisions on visibility, rights and periodic identity.
+Formal mode uses `--state-repo`, `--state-commit`, `--checkpoint` and `--as-of`
+instead of `--state-dir`. It exports only the named commit's objects, verifies
+reachability from the selected source's fixed branch, and emits deterministic
+Day 7/14/30 complete-corpus packets with a blank structured signoff. Early packets
+cannot complete a checkpoint. `--check-signoff` validates a human's answers;
+it publishes nothing and qualifies nothing. See the activation proposal for
+commands, budgets, state/artifact visibility and publication failure behavior.
+The owner approves narrow public MPS/MOIT shadow-state/original-byte retention
+for the reliability period and exactly one 12-request ministry batch after
+separate owner merge. The current identity is
+`IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`.
+This session performs no dispatch. Government News retention/dispatch remain
+unapproved. No retry, second dispatch or schedule is approved; local rehearsal
+clocks are never transferred.
 
 Only the published first page/feed is requested. The oldest item must precede
 the window start, otherwise discovery fails without fetching. Quiet means an

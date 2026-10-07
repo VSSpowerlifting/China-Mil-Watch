@@ -40,15 +40,12 @@ from core.collection import status as st
 from core.collection.contract import SourceAdapter
 from core.collection.host_gate import MAX_INTERVAL, GateError
 
-#: The repository's complete shadow-collector identity, unchanged, as every
-#: other shadow adapter sends it and as the 2026-10-06 UTC probes sent it.
-USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
-              "(+https://chinamilwatch.org; research archive; contact via site)")
+from core.collection.vietnam_identity import USER_AGENT, ROBOTS_TOKENS
+
 #: The only request headers these adapters set. `Accept-Encoding: identity` asks
 #: for the bytes as stored; a compressed reply is refused rather than decoded,
 #: so a stored capture is always the bytes that crossed the wire.
 REQUEST_HEADERS = {"User-Agent": USER_AGENT, "Accept-Encoding": "identity"}
-ROBOTS_TOKENS = ("chinamilwatch-shadowcollector", "chinamilwatch")
 
 REQUEST_TIMEOUT = 30
 REQUEST_INTERVAL = 2.0          # seconds; a longer published Crawl-delay wins

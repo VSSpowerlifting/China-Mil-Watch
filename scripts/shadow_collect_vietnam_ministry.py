@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Collect one bounded ministry family into its own external shadow state.
 
-Local research/rehearsal entry point only; no workflow invokes it, no remote is
-written, and no source inherits the Government News clock.
+The dispatch-only ministry workflow may invoke this after owner activation.
+This runner writes no remote; no source inherits another source's clock.
 """
 import argparse
 import json

@@ -6,6 +6,13 @@
 The desk is public at `research` status with no manifest and no record count.
 Nothing here is coverage, and nothing here qualifies the desk.
 
+The October 7 finalization decisions supersede prospective activation choices
+in this historical feasibility report: Government News remote dispatch and
+public capture retention remain unapproved. Its rights-notice question remains
+separate. The shared transport now uses the owner-selected Indo-Pacific Record
+identity, verified offline only. See `VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`;
+the recorded October 6 probe identity/bytes are historical evidence and unchanged.
+
 ## 1. Outcome
 
 - **Chosen surface: the English `defense` tag page of Viet Nam Government News**
@@ -286,7 +293,8 @@ derived variants are never written back as fixtures.
 
 The adapter is the contract implementation: `desk_id=vietnam`,
 `jurisdiction_code=VN`, `default_timezone=Asia/Ho_Chi_Minh`, language `en`,
-Tier B. It sends the identity above with two-second spacing measured from the
+Tier B. The original probes sent the historical identity above; future requests
+use the shared owner-selected Vietnam identity. Spacing is two seconds from the
 end of the previous request. A longer published `Crawl-delay` wins, and one over
 120 seconds stops collection rather than being shortened. It uses 30-second timeouts and a 2 MB body ceiling, follows no
 redirects, makes no retries, clears cookies and refuses compressed replies, so
@@ -453,20 +461,17 @@ Offline tests (real sockets refused):
 .venv/bin/python -m unittest tests.test_vn_vgp_adapter tests.test_vietnam_shadow_runner tests.test_vietnam_shadow_review tests.test_desk_map tests.test_desk_rollout_contract -v
 ```
 
-The local rehearsal, persistence check, post-merge dispatch, activation and
-review commands are in `shadow/vietnam/README.md`. In short:
+Historical local rehearsal and review commands are in `shadow/vietnam/README.md`.
 
-```bash
-gh workflow run vietnam_shadow.yml --repo VSSpowerlifting/China-Mil-Watch --ref main -f target_date=YYYY-MM-DD
-```
+Government News remote dispatch remains unapproved; do not dispatch
+`vietnam_shadow.yml` or create `shadow/vietnam`.
 
 ```bash
 .venv/bin/python scripts/review_vietnam_shadow_state.py --state-repo <clone> --state-commit <40-hex> --checkpoint day-07 --as-of YYYY-MM-DD --out <directory outside the repository>
 ```
 
-Activation needs owner approval first (§6). Then it takes a PR that adds the
-commented schedule, and the registry moves to `shadow` only once collection is
-actually running.
+Government News retention remains a separate owner decision (§6). No schedule
+or registry activation is approved.
 
 ## 14. Remaining limits and next actions
 

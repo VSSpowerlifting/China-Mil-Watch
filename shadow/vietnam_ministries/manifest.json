@@ -49,7 +49,7 @@
         "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
         "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
         "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
-        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+        "Isolated shadow only; remote dispatch requires owner approval. No production admission, schedule or inherited rehearsal clock."
       ]
     },
     {
@@ -73,7 +73,7 @@
         "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
         "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
         "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
-        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+        "Isolated shadow only; remote dispatch requires owner approval. No production admission, schedule or inherited rehearsal clock."
       ]
     },
     {
@@ -97,7 +97,7 @@
         "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
         "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
         "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
-        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+        "Isolated shadow only; remote dispatch requires owner approval. No production admission, schedule or inherited rehearsal clock."
       ]
     }
   ],

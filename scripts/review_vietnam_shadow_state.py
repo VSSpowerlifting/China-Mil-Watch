@@ -59,6 +59,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from core.collection import status as st                       # noqa: E402
+from core.collection.vietnam_identity import USER_AGENT        # noqa: E402
 # Desk-agnostic Git provenance, shared rather than copied.
 from scripts.review_shadow_state import (                      # noqa: E402
     ReviewError, _git_bytes, resolve_state_repo, verify_state_commit)
@@ -142,8 +143,6 @@ LISTING = "https://en.baochinhphu.vn/defense.html"
 IDENTITY_PREFIX = "vgp-en:"
 ARTICLE_PATH_RE = re.compile(r"^/(?:[a-z0-9]+-)+?(\d+)\.htm$")
 CONTENT_HASH_RULE = "vgp-en-content-v1"
-USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
-              "(+https://chinamilwatch.org; research archive; contact via site)")
 PUBLICATION_KIND = "newsroom report"
 BODY_STATUSES = ("text", "media_only")
 #: The tag page's wall clock: Ha Noi, UTC+07:00, the manifest's time zone.
@@ -356,7 +355,8 @@ def _ranges(days):
     return [[a.isoformat(), b.isoformat()] for a, b in out]
 
 
-def validate_runs(state_dir: Path, ledgers: list, db_sha: str) -> tuple:
+def validate_runs(state_dir: Path, ledgers: list, db_sha: str,
+                  content_hash_rule: str = CONTENT_HASH_RULE) -> tuple:
     """Clock, ledger identity, results, chain, continuity and window coverage."""
     a, facts = [], {}
     try:
@@ -400,9 +400,9 @@ def validate_runs(state_dir: Path, ledgers: list, db_sha: str) -> tuple:
         if e["collector_identity"] != USER_AGENT:
             a.append("%s: collector identity %r is not the declared one"
                      % (name, e["collector_identity"]))
-        if e["content_hash_rule"] != CONTENT_HASH_RULE:
+        if e["content_hash_rule"] != content_hash_rule:
             a.append("%s: content hash rule %r is not %s" % (name, e["content_hash_rule"],
-                                                             CONTENT_HASH_RULE))
+                                                             content_hash_rule))
         if e["request_ceiling"] != e["cap"] + 2 or len(e["requests"]) > e["request_ceiling"]:
             a.append("%s: %d request(s) against a ceiling of %r for cap %r"
                      % (name, len(e["requests"]), e["request_ceiling"], e["cap"]))

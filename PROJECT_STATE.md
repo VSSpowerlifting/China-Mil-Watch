@@ -16,9 +16,13 @@ authorization recovery and QA evidence are in
 `docs/BRIEF_RELEASE_REVIEW_2026-10-04.md`. The older desk measurements below
 have not been refreshed by that work.
 
-A Vietnam Desk is declared at `research` on `feat/vietnam-shadow-pilot` (draft
-PR, 2026-10-06): its collector is built and rehearsed locally, not launched
-(§5). Merging publishes the desk page and map entry; it starts no collection.
+Vietnam is declared at `research`; PR #107 merged on 2026-10-07 as
+`5ccc20ff9`. Its collectors remain unlaunched (§5). Remote activation readiness
+and commit-bound ministry review are prepared in draft PR #114. The owner
+approves narrow public MPS/MOIT shadow retention and exactly one 12-request
+ministry batch after separate owner merge, under the new Indo-Pacific Record
+collector identity. Government News remains unapproved for remote dispatch or
+public capture retention; no remote collection or schedule has started.
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
@@ -554,8 +558,8 @@ them then. Gate wording and evidence:
 `shadow/ph_nsc/README.md` and
 `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
 
-**Vietnam Desk: built and rehearsed, not launched (2026-10-06, draft PR from
-`feat/vietnam-shadow-pilot`).** An owner-authorized exception to the
+**Vietnam Desk: built and rehearsed, not launched (PR #107 merged 2026-10-07).**
+An owner-authorized exception to the
 geographic deferral (DECISION_LOG 2026-10-05). The registry declares
 `vietnam` at `research`, manifest null, `has_production_records: false`; no
 count is shown. Pilot source: the English defense tag of Viet Nam Government
@@ -566,7 +570,7 @@ dispatch-only `vietnam_shadow.yml`; review kit
 `shadow/vietnam/`. The orphan state branch `shadow/vietnam` does not exist on
 origin.
 
-**Ministry continuation (2026-10-07, same draft PR #107):** local-only adapters
+**Ministry continuation (2026-10-07, merged PR #107):** isolated adapters
 now read Public Security's Vietnamese foreign-affairs RSS and Industry and
 Trade's Vietnamese energy/foundational-industry first pages. All three passed
 body, duplicate and quiet live rehearsals (28 capped requests, five reports),
@@ -574,8 +578,12 @@ with separate source state/clocks and deterministic local reviews. Both runners
 pass the shared cross-process host gate. Defence (`bqp.vn`/`mod.gov.vn`) remains
 at a robots script challenge; Finance (`www.mof.gov.vn`) at a robots app shell.
 No ministry workflow or remote state was published. Registry remains research;
-no activation, qualification, merge or deployment. Evidence and remaining formal
-review/activation work: `docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
+no activation or qualification. The continuation evidence is in
+`docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`. The separate readiness draft
+adds a main-only dispatch workflow for a serial ministry batch and source-bound
+Day 7/14/30 packets. No rehearsal clock is transferred. Exact budgets, public
+approved ministry retention/identity, publication failure boundaries and exact first
+action: `docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
 
 - **Measured 2026-10-06 UTC**, 26 requests under the full identity: the tag
   page lists 24 items, 2023-11-16 to 2026-09-09, with no published
@@ -590,8 +598,9 @@ review/activation work: `docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
   checkpoint). This is persistence evidence, not Actions egress or
   reliability.
 - **Open before the first dispatch (owner):** state location and visibility
-  given the publisher's "All rights reserved" notice; collector identity for
-  periodic use on this host; approval to dispatch, then to schedule. Promotion
+  given the publisher's "All rights reserved" notice; remote Government News
+  dispatch and scheduling remain unapproved. The shared transport now uses the
+  owner-selected Indo-Pacific Record identity, verified offline only. Promotion
   would still need 30 collecting days and the Day 7/14/30 reviews.
 - Evidence and criteria: `docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`;
   procedure: `shadow/vietnam/README.md`.
@@ -871,8 +880,9 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    around them.
 
 Further geographic promotion remains gated by research and review. The
-Vietnam pilot needs the owner decisions in DECISION_LOG 2026-10-05 before its
-first dispatch. Frontend
+Vietnam ministries have approval for narrow public retention and one exact
+12-request batch after separate owner merge (DECISION_LOG 2026-10-07). Government
+News remote dispatch and retention remain unapproved. Frontend
 work may proceed when explicitly authorized without changing desk status or
 editorial records.
 

@@ -124,8 +124,9 @@ class FixtureProvenanceTests(unittest.TestCase):
             for value in re.findall(r"document\.cookie\s*=\s*[\"'][\w.-]+=([^;\"'\s]*)", text):
                 self.assertEqual(value, "<redacted>", path.name)
 
-    def test_identity_is_the_collector_identity(self):
-        self.assertEqual(MANIFEST["user_agent"], http.USER_AGENT)
+    def test_historical_probe_identity_is_preserved(self):
+        self.assertEqual(MANIFEST["user_agent"], "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)")
+        self.assertNotEqual(MANIFEST["user_agent"], http.USER_AGENT)
         self.assertLessEqual(MANIFEST["used"]["total"], MANIFEST["written_cap"]["aggregate"])
         for group, used in MANIFEST["used"]["per_group"].items():
             self.assertLessEqual(used, MANIFEST["written_cap"]["groups"][group], group)
@@ -371,7 +372,26 @@ class GatedTransportTests(unittest.TestCase):
         adapter._get("https://moit.gov.vn/a", 1000, st.FETCH_FAILURE)
         _, kwargs = adapter._session.calls[0]
         self.assertEqual(kwargs["headers"], http.REQUEST_HEADERS)
+        self.assertEqual(kwargs["headers"]["User-Agent"],
+                         "IndoPacificRecord-ShadowCollector/0.1 "
+                         "(+https://indopacificrecord.org; research archive; contact via site)")
         self.assertFalse(kwargs["allow_redirects"])
+
+
+class VietnamIdentityTests(unittest.TestCase):
+    def test_new_and_legacy_named_rules_remain_binding(self):
+        for token in ("IndoPacificRecord", "IndoPacificRecord-ShadowCollector",
+                      "ChinaMilWatch", "ChinaMilWatch-ShadowCollector"):
+            groups = parse_robots("User-agent: *\nAllow: /\n\nUser-agent: %s\nDisallow: /\nCrawl-delay: 7\n" % token)
+            self.assertFalse(http.robots_allows(http.robots_rules(groups), "/article"))
+            self.assertEqual(robots_crawl_delay(groups), 7)
+
+    def test_adapter_runner_and_review_share_one_current_identity(self):
+        from core.collection.vietnam_identity import USER_AGENT
+        from scraper.sources import vn_vgp
+        from scripts import shadow_collect_vietnam, review_vietnam_shadow_state
+        for module in (http, vn_vgp, shadow_collect_vietnam, review_vietnam_shadow_state):
+            self.assertEqual(module.USER_AGENT, USER_AGENT)
 
 
 class IsolationTests(unittest.TestCase):
@@ -384,7 +404,7 @@ class IsolationTests(unittest.TestCase):
             elif isinstance(node, ast.ImportFrom):
                 names.add(node.module or "")
         allowed = {"core.collection.contract", "core.collection.host_gate",
-                   "core.collection.status", "core.collection"}
+                   "core.collection.status", "core.collection", "core.collection.vietnam_identity"}
         for name in names:
             if name.startswith(("core", "scraper", "site", "scripts", "shadow")):
                 self.assertIn(name, allowed, name)

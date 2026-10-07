@@ -4,6 +4,46 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Vietnam ministry first-batch decisions; finalization only
+
+Ben authorizes integrating current main into draft PR #114, incorporating these
+owner decisions, testing and pushing only that PR branch for final merge review.
+Successful shadow state and original response bytes may be retained on the
+existing public repository ministry orphan branches and associated Actions
+evidence for the shadow reliability period, narrowly for MPS foreign affairs,
+MOIT energy and MOIT foundational industry. This grants no blanket Vietnam or
+production retention policy.
+
+Future Vietnam requests must use exactly
+`IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`.
+The shared transport identity changes offline; historical probe/ledger identities
+are preserved. Government News remains unapproved for remote dispatch and public
+capture retention: do not dispatch `vietnam_shadow.yml` or create `shadow/vietnam`.
+Its rights-notice retention question remains a separate owner decision.
+
+Exactly one first ministry batch is approved **after a separate owner merge**:
+`mps_target=2026-10-05`, `moit_target=2026-09-30`, `lookback=0`, `cap=2`, at most
+12 aggregate requests. The exact command is in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`. It is documentation only
+in this finalization session. No merge, dispatch, remote state creation, retry,
+second dispatch, schedule, production admission/write, regeneration, deployment,
+new source probe or scope expansion is authorized here. No local rehearsal
+clock becomes remote day zero or completed human review.
+
+## 2026-10-07 — Vietnam remote readiness and ministry formal-review preparation
+
+Ben authorizes scoped code/tests/docs commits, push and a tested draft PR from
+current main after #107's merge. This phase prepares commit-bound ministry
+checkpoint packets and a bounded, dispatch-only, isolated remote state path.
+The exact proposed first operation and owner choices are in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
+
+No main merge, remote dispatch, schedule, production admission, DB/output change,
+regeneration or deployment is authorized. Public state-byte retention and
+collector identity remain undecided for these hosts. Local rehearsal clocks
+remain local evidence, never remote reliability day zero or completed human
+review. Defence and Finance are not probed again and scope is not expanded.
+
 ## 2026-10-07 — Vietnam ministry engineering continuation; activation unchanged
 
 **Owner direction (Ben, this continuation):** continue the Vietnam Desk work
