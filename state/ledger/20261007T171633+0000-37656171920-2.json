@@ -1,0 +1,187 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 2,
+ "captures": [
+  {
+   "content_type": "text/plain; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 68,
+   "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+   "retrieved_at": "2026-10-07T17:16:24+00:00",
+   "role": "robots",
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "application/xml; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 13397,
+   "payload_sha256": "7026ed22af24df32e664e15b20fa253dc67854be3b4f3eccaa01d8dfbbb2046f",
+   "retrieved_at": "2026-10-07T17:16:27+00:00",
+   "role": "listing",
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 422681,
+   "payload_sha256": "54327544e9e3c01380bf3c3fe56654075294f3f65ea9d613c0ffe299a09a1c12",
+   "retrieved_at": "2026-10-07T17:16:30+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199677",
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 429050,
+   "payload_sha256": "3c2655abac2130a196dee00c9375a9434d8b347eaf526b7a9ef1c632414f9837",
+   "retrieved_at": "2026-10-07T17:16:33+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199100",
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "2c21b0d091ffc288b1a106d5459d758aaaac6ff5",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "mps-vi-content-v1",
+ "corpus_range": [
+  "2026-10-05",
+  "2026-10-05"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:33+00:00",
+ "desk_id": "vietnam",
+ "discovered": 2,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-07T17:16:33+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 10,
+  "listed": [
+   [
+    "1791199677",
+    "2026-10-05"
+   ],
+   [
+    "1791199100",
+    "2026-10-05"
+   ],
+   [
+    "1790933646",
+    "2026-10-02"
+   ],
+   [
+    "1790758318",
+    "2026-09-30"
+   ],
+   [
+    "1790748442",
+    "2026-09-30"
+   ],
+   [
+    "1790579880",
+    "2026-09-28"
+   ],
+   [
+    "1790397583",
+    "2026-09-26"
+   ],
+   [
+    "1790323608",
+    "2026-09-24"
+   ],
+   [
+    "1790323191",
+    "2026-09-24"
+   ],
+   [
+    "1790132836",
+    "2026-09-23"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+  "newest_listed": "2026-10-05",
+  "oldest_listed": "2026-09-23",
+  "pages_read": 1,
+  "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+  "selected": 2,
+  "window_end": "2026-10-05",
+  "window_start": "2026-10-05"
+ },
+ "listing_status": "ok",
+ "lookback_days": 0,
+ "new_records": 2,
+ "request_ceiling": 4,
+ "requests": [
+  {
+   "bytes": 68,
+   "ended_utc": "2026-10-07T17:16:24.680395+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:23+00:00",
+   "started_utc": "2026-10-07T17:16:23.465232+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 13397,
+   "ended_utc": "2026-10-07T17:16:27.106871+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:26+00:00",
+   "started_utc": "2026-10-07T17:16:26.683247+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "bytes": 422681,
+   "ended_utc": "2026-10-07T17:16:30.607931+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:29+00:00",
+   "started_utc": "2026-10-07T17:16:29.109678+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "bytes": 429050,
+   "ended_utc": "2026-10-07T17:16:33.830298+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:32+00:00",
+   "started_utc": "2026-10-07T17:16:32.610542+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  }
+ ],
+ "result": "ok",
+ "retrieved": 2,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "37656171920-2",
+ "selected": 2,
+ "shadow_day": 0,
+ "source_slug": "vn_mps_foreign_affairs_vi",
+ "started_utc": "2026-10-07T17:16:23+00:00",
+ "state_sha256_after": "f487ab206de2c9a60bc4559ac0c8bc0cad78b4695dad23a871afbf3e2c56ecb4",
+ "state_sha256_before": null,
+ "stored_total": 2,
+ "target_date": "2026-10-05",
+ "target_date_source": "explicit",
+ "unchanged": 0,
+ "versions_total": 2,
+ "window_start": "2026-10-05"
+}
