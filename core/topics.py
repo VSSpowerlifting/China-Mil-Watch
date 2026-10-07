@@ -257,6 +257,13 @@ ON record_topics (taxonomy_version, topic_slug, desk_id)
 """
 
 
+def topic_store_exists(conn: sqlite3.Connection) -> bool:
+    """Whether this database has opted into regional topic assignments."""
+    return conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='record_topics'"
+    ).fetchone() is not None
+
+
 def ensure_topic_store(conn: sqlite3.Connection) -> None:
     """Install the assignment table in any IPR SQLite state store."""
     conn.execute(RECORD_TOPICS_DDL)
@@ -326,9 +333,15 @@ def topics_for_record(
     record: RecordRef,
     taxonomy_version: int = TAXONOMY_VERSION,
 ) -> List[TopicAssignment]:
-    """Return deterministic assignments for one record."""
+    """Return deterministic assignments for one record without mutating schema."""
     record.validate()
-    ensure_topic_store(conn)
+    if not topic_store_exists(conn):
+        return []
+    taxonomy = load_taxonomy()
+    if taxonomy_version != taxonomy.taxonomy_version:
+        raise TopicTaxonomyError(
+            "unsupported taxonomy_version %r" % taxonomy_version
+        )
     rows = conn.execute(
         """
         SELECT topic_slug, assignment_method, assigned_by, assigned_at,
@@ -341,7 +354,7 @@ def topics_for_record(
         (record.desk_id, record.source_slug, record.canonical_url,
          taxonomy_version),
     ).fetchall()
-    return [
+    assignments = [
         TopicAssignment(
             record=record,
             topic_slug=row[0],
@@ -354,6 +367,9 @@ def topics_for_record(
         )
         for row in rows
     ]
+    for assignment in assignments:
+        assignment.validate(taxonomy)
+    return assignments
 
 
 def _parse_utc(value: str) -> datetime:
