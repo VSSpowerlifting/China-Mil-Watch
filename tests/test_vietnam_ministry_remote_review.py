@@ -8,6 +8,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
+from core.shadow_schedule import SOURCE_EXPLICIT, SOURCE_SCHEDULE
 from scripts import review_vietnam_ministry_state as review
 from scripts import vietnam_ministry_remote as remote
 from scripts.shadow_collect_vietnam_ministry import collect, load_source
@@ -157,6 +158,30 @@ class RemoteReview(unittest.TestCase):
                                  0, cap, "test", commit)
         self.assertFalse((self.repos / MPS / "state").exists())
 
+    def test_scheduled_target_resolution_and_rerun_guard(self):
+        started = datetime(2026, 10, 8, 0, 45, tzinfo=timezone.utc)
+        mps, moit, source = remote.resolve_targets(
+            "schedule", "1", "18:17", started=started)
+        self.assertEqual((mps, moit, source),
+                         (date(2026, 10, 7), date(2026, 10, 7), SOURCE_SCHEDULE))
+        with self.assertRaisesRegex(ValueError, "attempt 2"):
+            remote.resolve_targets("schedule", "2", "18:17", started=started)
+        with self.assertRaisesRegex(ValueError, "manual dispatch requires"):
+            remote.resolve_targets("workflow_dispatch", "1", "18:17", started=started)
+        mps, moit, source = remote.resolve_targets(
+            "workflow_dispatch", "2", "18:17",
+            date(2026, 10, 7), date(2026, 10, 7), started=started)
+        self.assertEqual((mps, moit, source),
+                         (date(2026, 10, 7), date(2026, 10, 7), SOURCE_EXPLICIT))
+
+    def test_ministry_collect_preserves_schedule_target_source(self):
+        state = self.repos / MPS / "state"
+        entry = collect(
+            state, MPS, date(2026, 10, 7), 0, 2, "scheduled-slot", COMMIT,
+            adapter=adapter(MPS, [response(n) for n in BODIES[MPS]]),
+            target_source=SOURCE_SCHEDULE)
+        self.assertEqual(entry["target_date_source"], SOURCE_SCHEDULE)
+
     def test_historical_evidence_mutation_refused(self):
         self.batch()
         for slug in remote.SOURCES:
@@ -232,13 +257,21 @@ class RemoteReview(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "artifact changed"):
             review.check_signoff(out, out / "signoff_template.json")
 
-    def test_workflow_is_serial_main_only_dispatch_and_success_only_publication(self):
+    def test_workflow_is_daily_main_only_and_success_only_publication(self):
         text = (Path(remote.REPO) / ".github/workflows/vietnam_ministry_shadow.yml").read_text()
         self.assertIn("workflow_dispatch:", text)
-        self.assertNotIn("  schedule:", text)
+        self.assertIn("schedule:", text)
+        self.assertIn("cron: '17 18 * * *'", text)
+        self.assertIn("target_date:", text)
         self.assertIn("github.ref == 'refs/heads/main'", text)
         self.assertIn("cancel-in-progress: false", text)
         self.assertIn("--gate-dir", text)
+        self.assertIn("--lookback 6 --cap 40", text)
+        self.assertIn("--event-name", text)
+        self.assertIn("--run-attempt", text)
+        self.assertIn('--cron-utc "18:17"', text)
+        self.assertIn("scheduled reliability state branch missing", text)
+        self.assertIn('test -f "$dest/state/clock.json"', text)
         self.assertIn("ref: ${{ github.sha }}", text)
         self.assertIn("if: success()", text)
         self.assertIn("if: always()", text)

@@ -1,53 +1,56 @@
 name: Vietnam Ministry Shadow Collection
 
-# Owner-approved public MPS/MOIT shadow retention and new Vietnam identity.
-# Exactly one 12-request first batch is approved AFTER separate owner merge;
-# no dispatch, retry, schedule or Government News collection in this session.
-# No schedule; main-only; one serial batch, common cross-process host gate.
+# Owner-approved reliability cadence for MPS/MOIT only.
+# Daily schedule begins only after this PR is separately merged. Government News
+# remains unapproved. State stays on three isolated orphan branches; never main.
 on:
+  schedule:
+    # 18:17 UTC = 01:17 in Hanoi the following day. The schedule-slot UTC date
+    # is therefore the Hanoi publication date being closed out.
+    - cron: '17 18 * * *'
   workflow_dispatch:
     inputs:
-      mps_target:
-        description: Explicit Hanoi calendar endpoint for MPS (YYYY-MM-DD)
+      target_date:
+        description: >-
+          Explicit logical date YYYY-MM-DD for recovery. Do not use the Actions
+          re-run button for a failed scheduled slot.
         required: true
-      moit_target:
-        description: Explicit Hanoi calendar endpoint for both MOIT families (YYYY-MM-DD)
-        required: true
-      lookback:
-        description: Prior calendar dates included (0 means endpoint only)
-        type: choice
-        options: ['0', '6']
-        default: '0'
-      cap:
-        description: Article cap per source; overflow refuses the window without sampling
-        type: choice
-        options: ['2', '40']
-        default: '2'
 
 concurrency:
   group: vietnam-ministry-shadow
   cancel-in-progress: false
+
 permissions:
   contents: read
+
 jobs:
   shadow:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out exact collector
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           path: repo
           persist-credentials: false
-      - uses: actions/setup-python@v5
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+
       - name: Install dependencies
         run: pip install -r repo/requirements.txt
-      - name: Prepare isolated state checkouts
+
+      - name: Run Vietnam ministry offline contracts
+        working-directory: repo
+        run: python -m unittest tests.test_vietnam_ministry_remote_review -q
+
+      - name: Prepare isolated initialized state checkouts
         env:
           STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
         run: |
@@ -65,35 +68,51 @@ jobs:
             if [ "$status" -eq 0 ]; then
               git clone --branch "$branch" --single-branch "$STATE_REMOTE" "$dest"
             elif [ "$status" -eq 2 ]; then
-              git init "$dest"
-              git -C "$dest" checkout --orphan "$branch"
-              git -C "$dest" remote add origin "$STATE_REMOTE"
+              echo "::error::scheduled reliability state branch missing: $branch; refusing to restart Day 0"
+              exit 1
             else
               exit "$status"
             fi
+            test "$(git -C "$dest" branch --show-current)" = "$branch"
+            test "$(git -C "$dest" ls-tree --name-only HEAD)" = "state"
+            test -f "$dest/state/clock.json"
+            test -f "$dest/state/shadow.db"
           done
-      - name: Collect serial bounded batch
+
+      - name: Collect serial reliability batch
         working-directory: repo
         env:
-          MPS_TARGET: ${{ inputs.mps_target }}
-          MOIT_TARGET: ${{ inputs.moit_target }}
-          LOOKBACK: ${{ inputs.lookback }}
-          CAP: ${{ inputs.cap }}
+          TARGET_DATE: ${{ inputs.target_date }}
         run: |
           set -euo pipefail
+          case "$GITHUB_EVENT_NAME" in
+            schedule)
+              test -z "${TARGET_DATE:-}"
+              set --
+              ;;
+            workflow_dispatch)
+              test -n "${TARGET_DATE:-}" || { echo "::error::manual recovery requires target_date"; exit 1; }
+              set -- --mps-target "$TARGET_DATE" --moit-target "$TARGET_DATE"
+              ;;
+            *) exit 1 ;;
+          esac
           python scripts/vietnam_ministry_remote.py \
             --root "${RUNNER_TEMP}/vn-ministry-state" \
             --gate-dir "${RUNNER_TEMP}/vn-ministry-host-gate" \
-            --mps-target "$MPS_TARGET" --moit-target "$MOIT_TARGET" \
-            --lookback "$LOOKBACK" --cap "$CAP" \
+            "$@" --lookback 6 --cap 40 \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --commit "$(git rev-parse HEAD)" 2>&1 | tee "${RUNNER_TEMP}/vn-ministry-run.log"
+            --commit "$(git rev-parse HEAD)" \
+            --event-name "$GITHUB_EVENT_NAME" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --cron-utc "18:17" 2>&1 | tee "${RUNNER_TEMP}/vn-ministry-run.log"
+
       - name: Assert collector checkout preservation
         if: always()
         working-directory: repo
         run: |
           set -euo pipefail
           test -z "$(git status --porcelain --untracked-files=all)"
+
       - name: Publish successful state only
         if: success()
         run: |
@@ -106,13 +125,18 @@ jobs:
               shadow/vietnam-mps-foreign-affairs|shadow/vietnam-moit-energy|shadow/vietnam-moit-foundational-industry) ;;
               *) exit 1 ;;
             esac
+            test ! -e "$dest/state/shadow.db-wal"
+            test ! -e "$dest/state/shadow.db-shm"
+            test ! -e "$dest/state/shadow.db-journal"
             git -C "$dest" config user.name 'github-actions[bot]'
             git -C "$dest" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git -C "$dest" add state
+            git -C "$dest" diff --cached --quiet && continue
             git -C "$dest" commit -m "shadow(${slug}): run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
               -m "Collector ${collector}. Successful state only; never merged to main."
             git -C "$dest" push origin "HEAD:refs/heads/${branch}"
           done
+
       - name: Preserve complete attempt evidence
         if: always()
         uses: actions/upload-artifact@v4

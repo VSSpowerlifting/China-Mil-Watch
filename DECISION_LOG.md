@@ -4,6 +4,32 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Vietnam ministry Day 0 accepted; daily reliability cadence approved
+
+Actions run `37656171920`, attempt 2 is the first durable remote success for
+the three approved Vietnam ministry sources. It establishes Day 0 on
+2026-10-07 from collector `2c21b0d091ffc288b1a106d5459d758aaaac6ff5`.
+Attempt 1 remains failed-attempt evidence only: MOIT robots returned HTTP 502
+and no state was published. The successful branch heads are
+`9098f48ea1e6d33d5a3600d08337e53f19270490` (MPS foreign affairs),
+`e4e97954011fffbe1fe5cb80a4a658cf09c58f8a` (MOIT energy), and
+`4da050e41ddddc068ada016d8fcd98b4348400e1` (MOIT foundational industry).
+
+Ben authorizes a separate merge-gated daily reliability cadence for these three
+sources only: one serial run at 18:17 UTC, six-day lookback, cap 40 per source,
+shared MOIT host gate, success-only publication to the three existing orphan
+branches, and 90-day attempt artifacts. Scheduled logical dates must use the
+repository schedule-slot resolver. A failed scheduled slot receives no
+automatic retry and must not use the Actions re-run button; recovery requires a
+fresh manual dispatch naming the explicit logical date. Missing/foreign state,
+history mutation, sidecars, budget violations, or source failure remain fatal.
+
+Human formal checkpoints are Day 7 (2026-10-14), Day 14 (2026-10-21), and
+Day 30 (2026-11-06), generated only from named reachable state commits after
+the relevant collecting run. No packet, signoff, qualification, production
+admission, schedule continuation beyond the reliability decision, or promotion
+is automatic. Government News remains outside this approval.
+
 ## 2026-10-07 — Vietnam ministry first-batch decisions; finalization only
 
 Ben authorizes integrating current main into draft PR #114, incorporating these

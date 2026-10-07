@@ -17,12 +17,17 @@ authorization recovery and QA evidence are in
 have not been refreshed by that work.
 
 Vietnam is declared at `research`; PR #107 merged on 2026-10-07 as
-`5ccc20ff9`. Its collectors remain unlaunched (§5). Remote activation readiness
-and commit-bound ministry review are prepared in draft PR #114. The owner
-approves narrow public MPS/MOIT shadow retention and exactly one 12-request
-ministry batch after separate owner merge, under the new Indo-Pacific Record
-collector identity. Government News remains unapproved for remote dispatch or
-public capture retention; no remote collection or schedule has started.
+`5ccc20ff9` and PR #114 merged the remote ministry path as `2c21b0d09`.
+Actions run `37656171920`, attempt 2 established durable Day 0 on 2026-10-07
+for MPS foreign affairs and the two MOIT families after attempt 1 stopped on a
+transient MOIT robots HTTP 502 without publication. State heads are
+`9098f48e` (MPS), `e4e97954` (MOIT energy), and `4da050e4` (MOIT
+foundational industry). A separate reliability-cadence PR proposes daily
+18:17 UTC collection with six-day lookback/cap 40 and explicit-date manual
+recovery, leading to human Day 7/14/30 checkpoints on 2026-10-14,
+2026-10-21, and 2026-11-06. Government News remains unapproved for remote
+dispatch or public capture retention; no production admission or automatic
+promotion is authorized.
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
