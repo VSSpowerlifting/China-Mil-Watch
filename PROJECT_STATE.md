@@ -610,6 +610,12 @@ review date, not a qualification threshold. Neither desk is promoted.
 
 ## 6. Known technical debt
 
+* **PR offline-check draft efficiency (owner review pending, 2026-10-07).**
+  `codex/pr-offline-efficiency-20261007` skips the heavyweight job while draft;
+  ready/non-draft events keep the full exact-head suite, Chromium, validator and
+  preservation gate. Skipped checks are never merge evidence. Accessible GitHub
+  APIs report main unprotected and no rulesets; owner exact-head review remains
+  necessary. Profiling and savings: `docs/PR_OFFLINE_CI_EFFICIENCY_2026-10-07.md`.
 * **Governed validator baseline: exactly 10 warnings.** Three
   no-date-source-trail warnings (eds. 2026-05-09/05-16/05-23), two
   `n_significant` warnings with no marked trail entry, one pilot week-span
