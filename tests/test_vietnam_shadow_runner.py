@@ -468,8 +468,8 @@ class TestWorkflow(unittest.TestCase):
         self.assertIn("    permissions:\n      contents: write\n", job)
         self.assertIn("persist-credentials: false", job)
         self.assertEqual(runner.USER_AGENT,
-                         "ChinaMilWatch-ShadowCollector/0.1 "
-                         "(+https://chinamilwatch.org; research archive; contact via site)")
+                         "IndoPacificRecord-ShadowCollector/0.1 "
+                         "(+https://indopacificrecord.org; research archive; contact via site)")
 
     def test_only_vietnam_state_can_be_pushed_without_force(self):
         self.assertEqual(re.findall(r"git push[^\n]+", CODE), ["git push origin shadow/vietnam"])

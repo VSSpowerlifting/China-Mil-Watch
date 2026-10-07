@@ -272,8 +272,10 @@ class TestFixtureIntegrity(unittest.TestCase):
             used = sum(1 for r in rows if r["phase"] == phase)
             self.assertEqual(PROBE["used"]["per_phase"][phase], used)
             self.assertLessEqual(used, PROBE["written_cap"][phase])
-        self.assertEqual(PROBE["user_agent"], vgp.USER_AGENT)
-        self.assertEqual(PROBE["request_headers"], vgp.REQUEST_HEADERS)
+        self.assertEqual(PROBE["user_agent"], "ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)")
+        self.assertNotEqual(PROBE["user_agent"], vgp.USER_AGENT)
+        self.assertEqual(PROBE["request_headers"],
+                         {"User-Agent": PROBE["user_agent"], "Accept-Encoding": "identity"})
         for before, after in zip(rows, rows[1:]):
             gap = (datetime.fromisoformat(after["requested_at_utc"])
                    - datetime.fromisoformat(before["completed_at_utc"])).total_seconds()

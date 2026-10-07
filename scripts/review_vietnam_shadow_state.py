@@ -59,6 +59,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from core.collection import status as st                       # noqa: E402
+from core.collection.vietnam_identity import USER_AGENT        # noqa: E402
 # Desk-agnostic Git provenance, shared rather than copied.
 from scripts.review_shadow_state import (                      # noqa: E402
     ReviewError, _git_bytes, resolve_state_repo, verify_state_commit)
@@ -142,8 +143,6 @@ LISTING = "https://en.baochinhphu.vn/defense.html"
 IDENTITY_PREFIX = "vgp-en:"
 ARTICLE_PATH_RE = re.compile(r"^/(?:[a-z0-9]+-)+?(\d+)\.htm$")
 CONTENT_HASH_RULE = "vgp-en-content-v1"
-USER_AGENT = ("ChinaMilWatch-ShadowCollector/0.1 "
-              "(+https://chinamilwatch.org; research archive; contact via site)")
 PUBLICATION_KIND = "newsroom report"
 BODY_STATUSES = ("text", "media_only")
 #: The tag page's wall clock: Ha Noi, UTC+07:00, the manifest's time zone.
