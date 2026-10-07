@@ -115,6 +115,14 @@ integration, all **7,411** tracked DB/output files matched the recovered baselin
 after integration a fresh **7,451**-file baseline is used for final preservation.
 No production database or output file is edited by the ministry implementation.
 
+Main subsequently advanced to `d0c6dbb` for Indonesia/Korea cadence. That update
+is also integrated, retaining its decisions and leaving Vietnam's scope and
+source code unchanged. Its affected integration/telemetry modules pass 106 tests.
+Vietnam, gate, map, registry and site-mode checks pass 289 tests on the updated
+source. The broader local run exposed an unavailable Chromium and a missing
+`httpx` dependency; `httpx` was installed and its telemetry module then passed.
+The browser gate remains separately reported rather than claimed as successful.
+
 Chromium's Playwright download returned invalid/truncated ZIP data in this
 environment. Browser-backed checks cannot be claimed as locally executed here;
 PR CI installs and smoke-launches Chromium. Output validation retains the

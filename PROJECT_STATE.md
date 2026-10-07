@@ -259,9 +259,16 @@ Both runs published append-only state successfully. Current pinned heads:
 captures, ledgers and first-success clocks remain unchanged. Machine packets have
 zero findings and supply no human sign-off. Each desk still has only one successful
 logical date, October 6: two same-day runs do not establish periodic reliability.
-The main tree remained unchanged by collection. Scheduling, human checkpoints,
-source reuse terms, completeness and cadence/silence review remain open. Nothing
-is promoted or qualified. Actions receipt:
+The main tree remained unchanged by collection. Human checkpoints, source reuse
+terms, completeness and cadence/silence review remain open. Nothing is promoted
+or qualified. Ben authorized daily shadow collection at 17:17 UTC for Indonesia
+and 17:47 UTC for South Korea, with the existing six-day lookback and 40-record cap.
+The cadence branch is synced to main `ba5885c30` (PR #112), without workflow or
+schedule conflicts. Main remains manual-only for these candidates until separate
+owner authorization and merge of the cadence PR. This phase stops at a clean,
+mergeable, CI-verified draft PR; no dispatch or activation is authorized.
+Reviewable scope and activation sequence:
+`docs/INDONESIA_KOREA_CADENCE_PROPOSAL_2026-10-06.md`. Actions receipt:
 `docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`. Initial native launch
 and CI/conflict history: `docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
 Initial research and reusable prompt:

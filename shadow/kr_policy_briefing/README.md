@@ -49,7 +49,7 @@ listing, four pages, four documents). These are temporary-state measurements.
 A separate fresh authorized run from collector `5ddca377e` stored four releases
 on `shadow/korea-policy-briefing` at `bbe2c8a2`; a clean remote clone and pinned
 integrity packet verified every state-file hash with zero machine findings.
-No scheduled evaluation interval follows. Multi-day reliability,
+Scheduled operation has not yet been verified. Multi-day reliability,
 visual/document extraction review, historical completeness, reuse terms and
 cadence thresholds remain open.
 
@@ -58,7 +58,9 @@ After PR #110 merged, one bounded October 6 Actions run retrieved/extracted all
 four releases as duplicates, with zero failures, and published state `a1088ea1`.
 Fresh remote-clone and artifact comparisons verified all original rows, captures,
 ledgers and the first-success clock unchanged. The manual workflow uses
-`shadow/korea-policy-briefing` and enables no cron. Checkpoints use
+`shadow/korea-policy-briefing`. Ben authorized daily 17:47 UTC shadow collection
+with six lookback days and cap forty; activation awaits separate owner merge of
+the cadence PR. Scheduled missing state/clock is fatal. Checkpoints use
 the new reviewer, require actual human comparisons/sign-off, and qualify nothing
 automatically. No rehearsal state or clock is transferred into durable state.
 
