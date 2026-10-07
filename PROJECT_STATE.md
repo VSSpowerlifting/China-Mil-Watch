@@ -442,7 +442,13 @@ graduate. Evidence, the per-gate checklist and immutable state/PR locators:
 `e890112` has 5 usable PDF bodies and 149 outstanding gaps (146 challenges,
 one size refusal, two PDFs without a text layer). The September 22–October 5
 RSS-date window has one stored body among 67 distinct URLs (1.49%); this is
-not all-MOD publication coverage. Dates and Joint Staff discovery remain blocked.
+not all-MOD publication coverage. Dates and broader HTML discovery remain
+blocked. A bounded GitHub Actions re-probe on 2026-10-07 (run
+`37678838045`) found readable/allowing robots policy, then HTTP 403 with
+`Cf-Mitigated: challenge` on Joint Staff Japanese, Joint Staff English,
+JMSDF English and JASDF English indexes. Public crawler visibility therefore
+does not change the collector boundary. No new Japan adapter or source is
+authorized; see `docs/JAPAN_OFFICIAL_ROUTE_REPROBE_2026-10-07.md`.
 **Policy defect repaired locally:** the old runner hard-coded `allowed` without
 reading robots. Source now enforces current policy before requests and records
 typed failed evidence on refusal; historical compliance remains unproven.

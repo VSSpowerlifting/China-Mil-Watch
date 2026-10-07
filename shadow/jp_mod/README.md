@@ -64,8 +64,21 @@ treat every document the same way:
 | `/en/press-release/` | **403**, `Cf-Mitigated: challenge` |
 | `/js/press/index-en.html` | **403**, `Cf-Mitigated: challenge` |
 
+A bounded GitHub Actions re-probe on **2026-10-07** confirmed the same boundary
+and extended it to service indexes. Run `37678838045` used the repository's
+declared collector identity, followed no redirects, fetched no linked documents
+and made five requests total. `/robots.txt` returned 200 and allowed all tested
+paths. Joint Staff Japanese, Joint Staff English, JMSDF English and JASDF English
+indexes each returned **403 with `Cf-Mitigated: challenge`**. The immutable
+artifact is `japan-official-route-probe-37678838045`, ID `11508166487`,
+digest
+`sha256:85404a821576205e9103919b2a6ee15167de7aca67f533608542bd638246ad52`.
+See `docs/JAPAN_OFFICIAL_ROUTE_REPROBE_2026-10-07.md`.
+
 **XML and PDF are served. HTML is challenged.** Robots permits every path this
 collector touches — the challenge is an edge policy, not a robots directive.
+Public/search-crawler visibility of those indexes does not establish reachability
+for the GitHub-hosted IPR collector.
 
 ### How much of it can actually be read
 
