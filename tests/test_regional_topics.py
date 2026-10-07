@@ -187,6 +187,16 @@ class AssignmentContract(unittest.TestCase):
             attach_topic(self.conn, self.assignment(record=bad))
 
 
+    def test_reading_an_unconfigured_store_is_read_only(self):
+        self.assertEqual(topics_for_record(self.conn, self.record), [])
+        self.assertEqual(
+            self.conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+            ).fetchone()[0],
+            0,
+        )
+
+
 class StorePortability(unittest.TestCase):
 
     def test_shadow_shaped_database_can_use_the_same_store_without_articles(self):
@@ -245,6 +255,23 @@ class StorePortability(unittest.TestCase):
         self.assertEqual(topic_count, 0)
         self.assertEqual(verified["counts"]["record_topics"], 0)
         self.assertTrue(verified["ok"])
+
+
+    def test_partial_migration_table_is_refused_not_blessed(self):
+        import migrations.versions.m0008_regional_record_topics as m8
+
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            "CREATE TABLE record_topics (desk_id TEXT, source_slug TEXT)"
+        )
+        self.assertFalse(m8.is_already_applied(conn))
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "partial record_topics"):
+            m8.up(conn)
+        columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(record_topics)")
+        }
+        self.assertEqual(columns, {"desk_id", "source_slug"})
+        conn.close()
 
 
 if __name__ == "__main__":
