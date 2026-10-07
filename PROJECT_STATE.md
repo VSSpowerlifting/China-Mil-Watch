@@ -242,6 +242,32 @@ disclosed, and never backfilled.
 
 ## 5. Desk evaluation and review status
 
+**Indonesia and South Korea — merged; bounded Actions collection verified
+(2026-10-06).** Ben authorized commit/PR and durable shadow collection, then
+reported the merge. PR #110 merged at `a8e6d5a26`; its exact-head full CI passed
+3,478 tests with two skipped, the ten-warning validator and DB/output preservation.
+Manifests remain outside `desks/`; neither desk enters production discovery or
+the public registry. Indonesia's scope is Kemhan Berita institutional news.
+South Korea's is the separately governed Policy Briefing portal's MND-labeled
+republications and linked HWPX; MND publication paths remain unrequested.
+One manual main-hosted run per desk traversed 2026-09-30 through 10-06, reread
+robots and retrieved/extracted all 14 Indonesia records and four Korean releases.
+All were duplicates: zero inserts, updates or fetch/extraction/access failures.
+Both runs published append-only state successfully. Current pinned heads:
+`shadow/indonesia-kemhan` (`9fe9f6fd`) and `shadow/korea-policy-briefing`
+(`a1088ea1`). Artifacts exactly match clean remote clones; all historical rows,
+captures, ledgers and first-success clocks remain unchanged. Machine packets have
+zero findings and supply no human sign-off. Each desk still has only one successful
+logical date, October 6: two same-day runs do not establish periodic reliability.
+The main tree remained unchanged by collection. Scheduling, human checkpoints,
+source reuse terms, completeness and cadence/silence review remain open. Nothing
+is promoted or qualified. Actions receipt:
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`. Initial native launch
+and CI/conflict history: `docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+Initial research and reusable prompt:
+`docs/INDONESIA_KOREA_DESK_EXECUTION_2026-10-06.md` and
+`docs/INDONESIA_KOREA_DESK_EXECUTION_PROMPT.md`.
+
 **Singapore was promoted to `live` on 2026-09-21 by owner sign-off**
 (`DECISION_LOG.md`). The Singapore observations below describe its earlier
 shadow period, not its current desk status. Japan remains in shadow evaluation.
@@ -294,6 +320,75 @@ never observed, and no evidence reachable from inside the corpus could. Loss is
 unobserved, which is a narrower claim than ruled out, and the limitation is
 recorded rather than rounded off.
 
+**Philippines AFP — scheduled shadow reliability evaluation; activation PR pending,
+2026-10-06.** PR #109 merged with exact-head guard on
+`31719bed3d5b4c5de0b248a8d2b9b1be06e66e2c` as
+`cc8d36646af1e2eb6026a17eaefd20378585faac`. Fresh Actions CI `37524618783`
+passed 3,436 tests (two skips), output validation with ten governed warnings,
+and tracked DB/output immutability. The earlier `0ab1eccf5` failure compared
+nominal CSS line-height 28.272px against Chromium's actual 28.265625px line.
+The test-only repair measures a natural rendered line without tolerance; its
+regression still rejects one-pixel viewport/element clipping. Product CSS and
+all nine AFP-specific source hashes were unchanged at that merge.
+
+**One live GitHub-hosted rehearsal completed successfully:** Actions
+`37527985057`, attempt 1, collector commit `cc8d36646`, dispatched manually with
+`publish_state=false` and no target-date override. Retained evidence reconciles
+1,090 unique rows across 11 pages ending in `next:null`; 13 recent eligible
+items, two body requests/retrievals (`afp:1398`, `afp:1397`), 11 explicitly
+unselected samples. All 15 requests stayed on direct official AFP hosts.
+Fresh www robots returned 200/Allow; API robots returned the reviewed 404 with
+`X-Robots-Tag: noindex, nofollow`; both payload hashes matched policy. No access,
+fetch, extraction or identity failure was recorded. IDs/slugs, listing/detail
+publication timestamps and original capture hashes were independently checked.
+The two additional rows explain growth from the historical 1,088-row replay;
+no prior identity/date metadata changed. Nine same-title/date groups remain
+visible and are not merged. Artifact `ph-afp-shadow-37527985057-1`
+(ID `11442459154`, 90-day retention) contains the ledger, request receipts,
+robots/listing originals, closed shadow DB with original detail captures, and log.
+
+**Scheduled shadow collection owner-authorized; no live AFP cron until separate
+PR merge.** Scheduling branch `codex/ph-afp-scheduled-shadow-20261006` starts
+from current main `a8e6d5a26`, including #108, #109 and subsequent #110. It proposes
+one daily cron at 06:40 UTC, normal 14-day/cap-100 collection with cron-aware
+logical dates and automatic successful isolated state publication. The manual
+path remains a two-body rehearsal, artifact-only by default, optional explicit
+publication and no clock start. Failed/partial attempts retain artifacts and do
+not publish state; non-force append-only publication rejects divergent writers.
+The AFP shadow manifest is enabled outside production discovery with desk
+`active: false`; AFP remains an anchor candidate and NSC supplemental. The current
+default-branch workflow remains manual-only until merge; the proposed event
+distinction is documented above. During the rehearsal, state publication was
+skipped; no `shadow/ph-afp`
+branch or reliability clock was created. Main, gh-pages and every shadow ref
+were unchanged across the rehearsal. Actual merge DB/output/desks object IDs
+match pre-merge main. No production DB/output generation or deployment occurred.
+Direct first-party API evaluation and honest IPR About-contact identity remain
+owner-approved (DECISION_LOG 2026-10-06); no proxy or alternate egress is allowed.
+Policy changes stop for review. This single bounded success does not establish
+ongoing reliability, full-window body coverage or qualification. Ben reviewed the
+live evidence and authorized recurring AFP shadow collection
+and isolated durable state. The scheduling PR still requires clean exact-head
+CI, final review and separate merge authorization. After activation, require
+seven consecutive terminal-successful scheduled days plus durable human review
+of every new record when five or fewer are inserted, otherwise at least five
+representative new records. Then assess reliability, review results, NSC
+supplementation, source breadth and historical backfill; never graduate
+automatically. Standing qualification gates remain. Focused AFP validation: 238
+tests pass; local validator passes with ten governed warnings and tracked
+DB/output/desks unchanged. Full offline suite and validator remain the PR gate.
+Full evidence and remaining gates:
+`docs/AFP_ACTIONS_GATE_2026-10-06.md`; historical preparation receipt:
+`docs/AFP_SHADOW_INTEGRATION_2026-10-06.md`.
+
+Japan's policy correctness repair merged in PR #108 at
+`ef89d5f3d11bf5a8ebb7e6be2c73785c6f10fb5c` after exact-head offline CI passed.
+Japan's 1.49% full-text coverage limitation remains unresolved. PR #79 is closed
+as superseded by #109. This current integration status supersedes the AFP PR
+status in the earlier Japan/Philippines completion assessment. The accurate post-run
+checkpoint is carried into the scheduling branch for commit, preserving later
+current-main work. No production or broader Philippine source is authorized.
+
 **Attribution is fixed at the source, forward-only.** Singapore and Japan
 shadow runs derive their logical target date through `core/shadow_schedule.py`:
 a scheduled first attempt takes the schedule-slot convention — the most recent
@@ -306,6 +401,24 @@ does not retroactively alter a single stored date, so historical missing-day
 anomalies remain and still require disposition. Recovery from a failed
 scheduled run is a manual dispatch naming the intended logical date, not a UI
 re-run; the procedure is in `docs/SHADOW_REVIEW.md`.
+
+**Japan/Philippines completion assessment — 2026-10-06.** Neither desk may
+graduate. Evidence, the per-gate checklist and immutable state/PR locators:
+`docs/JAPAN_PHILIPPINES_DESK_COMPLETION_2026-10-06.md`. Latest Japan state
+`e890112` has 5 usable PDF bodies and 149 outstanding gaps (146 challenges,
+one size refusal, two PDFs without a text layer). The September 22–October 5
+RSS-date window has one stored body among 67 distinct URLs (1.49%); this is
+not all-MOD publication coverage. Dates and Joint Staff discovery remain blocked.
+**Policy defect repaired locally:** the old runner hard-coded `allowed` without
+reading robots. Source now enforces current policy before requests and records
+typed failed evidence on refusal; historical compliance remains unproven.
+Correctness checkpoint in source; not run in Actions, activated or published.
+AFP PR #79 remains draft at `b29e7edb0`, conflicting with current main.
+Its existing adapter passed a bounded Mac rehearsal: 11 listing pages / 1,088
+rows and two usable recent bodies; no state or production writes. AFP+NSC is
+the proposed portfolio, not an approved desk. NSC has four healthy quiet runs
+and no stored bodies; Coast Guard policy is challenged, DND policy unreadable
+in the current probe. Existing AFP work was inspected, not replaced or modified.
 
 **Japan MOD** — selection repair merged in PR #95; measured post-merge on
 2026-10-02 in [run 37033909330](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37033909330),

@@ -78,6 +78,19 @@ Most sampled bodies remain challenged.
 
 ## What the collector does with that
 
+Current-policy enforcement is repaired in source on 2026-10-06. Before this
+repair the runner's `robots_status: allowed` was hard-coded and the adapter's
+policy checker was unused; historical ledger labels do not establish policy
+compliance. The runner now shares one live policy observation across its two
+same-host sources per run. It checks every requested feed/PDF path, records
+policy text/hash/status/time, observes supported crawl delays and refuses
+unsupported rules, unreadable policy and challenges. A refusal stops requests,
+fails the run and cannot advance the successful-run clock. An observed 404/410
+is `absent`, distinct from refusal. Redirects are not followed automatically.
+No historical ledger is rewritten. This local repair has not run in Actions;
+the measured scope, remaining gates and live evidence are in
+`docs/JAPAN_PHILIPPINES_DESK_COMPLETION_2026-10-06.md`.
+
 Discovery runs on the two official RSS feeds, which work. Bodies come from PDF
 documents, which work, through the existing `processing/pdf_text.py` extractor —
 the same one written for these releases, with its own status vocabulary for

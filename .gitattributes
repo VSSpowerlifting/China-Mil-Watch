@@ -14,3 +14,6 @@
 #     .venv/bin/python scripts/reconcile_db.py --install-driver
 #
 pla_watch.db merge=reconcile-db
+
+# Native shadow captures are exact-byte evidence; never normalize line endings.
+tests/fixtures/indonesia_korea/*.bin binary

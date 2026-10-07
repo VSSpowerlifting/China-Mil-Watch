@@ -1,0 +1,93 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": [
+    "SHADOW MANIFEST \u2014 deliberately NOT under desks/.",
+    "core.manifests.load_all_desks() globs desks/*/manifest.json. Placing this",
+    "file anywhere under desks/ would make sync_desk_config() write a",
+    "Philippines desk and source into the tracked production database on the",
+    "next migration run, which would put a non-collecting desk into public",
+    "counts. It lives here so production discovery cannot see it by accident,",
+    "and tests assert that desks/ contains only china and singapore.",
+    "",
+    "Nothing in this file is read by pipeline.py. Only the shadow runner",
+    "(scripts/shadow_collect_ph.py) reads it, and that runner writes only to a",
+    "state directory outside the repository.",
+    "",
+    "desks/registry.json declares no Philippines desk and is not touched by",
+    "this pilot. Declaring one is a public-presentation decision for the owner,",
+    "and it is not implied by this file existing."
+  ],
+  "desk": {
+    "desk_id": "philippines",
+    "display_name": "Philippines Desk (shadow evaluation)",
+    "jurisdiction_code": "PH",
+    "default_timezone": "Asia/Manila",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "shadow",
+    "active": false,
+    "_timezone_note": [
+      "Publication dates use the offset on the source published_at value, not an assumed desk timezone; the original timestamp and derived UTC instant are preserved."
+    ]
+  },
+  "institutions": [
+    {
+      "institution_id": "ph_afp",
+      "display_name": "Armed Forces of the Philippines",
+      "name_original": "Armed Forces of the Philippines (AFP)",
+      "institution_type": "armed_forces",
+      "notes": "Articles are published by the AFP Public Affairs Office (byline 'pao afp'). This is the armed forces speaking for itself. It is not the Department of National Defense, the Philippine Coast Guard, the National Security Council or the Philippine News Agency, and an article appearing here is not thereby a statement of any of them."
+    }
+  ],
+  "sources": [
+    {
+      "slug": "ph_afp_articles",
+      "display_name": "AFP website \u2014 articles",
+      "institution_id": "ph_afp",
+      "base_url": "https://www.afp.mil.ph",
+      "discovery_endpoints": [
+        "https://api.afp.mil.ph/articles/?page_size=100"
+      ],
+      "adapter": "scraper.sources.ph_afp:PHAfpAdapter",
+      "enabled": true,
+      "language_tags": [
+        "en"
+      ],
+      "authority_tier": "A",
+      "article_url_patterns": [
+        "^https://www\\.afp\\.mil\\.ph/news/[a-z0-9]+(?:-[a-z0-9]+)*$"
+      ],
+      "accepted_categories": [
+        "news-blog",
+        "uncategorised"
+      ],
+      "declared_scope": [
+        "The article stream of the official website of the Armed Forces of the Philippines, as served by the site's own public JSON backend, api.afp.mil.ph.",
+        "A Tier A first-party source: the institution speaking for itself. It is not comprehensive Philippine defense coverage.",
+        "This route represents AFP publication only. NSC is a separate supplemental shadow source; DND and Coast Guard are not collected by this adapter.",
+        "The complete bounded listing is reconciled to the API count and terminal next:null on every run. Window or listing cap overflow fails visibly; no relevance filter is applied.",
+        "Identity: the API's integer id, 'afp:<id>', cross-checked against the slug. Two different ids with the same title and date are two records and are reported, not merged.",
+        "The canonical URL https://www.afp.mil.ph/news/<slug> is the site's own client-side route, reconstructed from the slug. The URL actually requested is https://api.afp.mil.ph/articles/<slug>/, recorded on every capture.",
+        "Preserved original: the exact response bytes of the detail request, with requested URL, final URL, HTTP status, retrieval time and SHA-256.",
+        "Some statements are published as an image alone and carry no text in the payload. They are kept as metadata-only records: title, date and URL, empty text, nothing transcribed or inferred.",
+        "Only categories news-blog and uncategorised are collected. Any other category is counted as rejected so that a new one is visible.",
+        "Dates are publisher-stated, not independently verified originals. The prior pilot reported migration timestamps on historical items; that discarded scratch corpus remains unverified."
+      ],
+      "notes": "Status: scheduled shadow reliability evaluation. Not production. Owner authorized daily 06:40 UTC AFP shadow collection and isolated durable state on 2026-10-06 after reviewing rehearsal 37527985057; scheduling PR requires a separate merge decision. No historical backfill or production admission. See shadow/ph_afp/README.md.",
+      "access_policy": {
+        "www": {
+          "status": 200,
+          "sha256": "befa30284d46cf89ba3ab58ba65af7e987be472e9efcdd368c98cea0530e378b"
+        },
+        "api": {
+          "status": 404,
+          "sha256": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d"
+        },
+        "api_x_robots_tag": "noindex, nofollow"
+      }
+    }
+  ]
+}

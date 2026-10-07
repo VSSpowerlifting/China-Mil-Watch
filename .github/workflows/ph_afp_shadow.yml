@@ -1,0 +1,167 @@
+name: Philippines AFP Shadow Collection
+
+# Owner-authorized scheduled shadow evaluation; never production or deployment.
+# The cron becomes live only after this scheduling PR is separately merged.
+on:
+  schedule:
+    - cron: '40 6 * * *'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: Logical UTC date YYYY-MM-DD; required for recovery of an older slot.
+        required: false
+        default: ''
+      publish_state:
+        description: Publish verified public evidence to isolated shadow/ph-afp (never main).
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: ph-afp-shadow
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  shadow:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Check out the collector
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r repo/requirements.txt
+
+      - name: Check out isolated shadow state
+        env:
+          PUBLISH_STATE: ${{ github.event_name == 'schedule' || inputs.publish_state }}
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          if [ "$PUBLISH_STATE" != true ]; then
+            mkdir -p "${RUNNER_TEMP}/shadow-state"
+            exit 0
+          fi
+          status=0
+          git ls-remote --exit-code --heads "$STATE_REMOTE" refs/heads/shadow/ph-afp \
+            > "${RUNNER_TEMP}/ph-afp-head" || status=$?
+          if [ "$status" -eq 0 ]; then
+            git clone --branch shadow/ph-afp --single-branch "$STATE_REMOTE" \
+              "${RUNNER_TEMP}/shadow-state"
+          elif [ "$status" -eq 2 ]; then
+            git init "${RUNNER_TEMP}/shadow-state"
+            git -C "${RUNNER_TEMP}/shadow-state" checkout --orphan shadow/ph-afp
+            git -C "${RUNNER_TEMP}/shadow-state" remote add origin "$STATE_REMOTE"
+          else
+            exit "$status"
+          fi
+          cd "${RUNNER_TEMP}/shadow-state"
+          test "$(git branch --show-current)" = shadow/ph-afp
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            if git ls-tree --name-only HEAD | grep -v '^state$'; then
+              echo "::error::state branch contains files outside state/"
+              exit 1
+            fi
+          fi
+
+      - name: Record immutable history baseline
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          python scripts/check_ph_afp_state.py snapshot \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --baseline "${RUNNER_TEMP}/ph-afp-baseline.json"
+
+      - name: Run shadow collection or bounded rehearsal
+        id: collect
+        continue-on-error: true
+        working-directory: repo
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          set -euo pipefail
+          case "$GITHUB_EVENT_NAME" in
+            schedule)
+              set -- --cron-utc "06:40"
+              ;;
+            workflow_dispatch)
+              set -- --rehearsal --sample-limit 2
+              if [ -n "${TARGET_DATE:-}" ]; then
+                set -- "$@" --target-date "$TARGET_DATE"
+              fi
+              ;;
+            *) exit 2 ;;
+          esac
+          python scripts/shadow_collect_ph.py \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --lookback-days 14 --cap 100 \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" "$@" \
+            2>&1 | tee "${RUNNER_TEMP}/ph-afp-run.log"
+
+      - name: Assert the collector left the repository untouched
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+
+      - name: Verify completed attempt and append-only history
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          python scripts/check_ph_afp_state.py verify \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --baseline "${RUNNER_TEMP}/ph-afp-baseline.json" \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)"
+
+      - name: Preserve completed shadow attempt
+        if: success() && steps.collect.outcome == 'success' && (github.event_name == 'schedule' || inputs.publish_state)
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          test "$(git branch --show-current)" = shadow/ph-afp
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          git diff --cached --quiet && exit 0
+          collector_commit=$(git -C "${GITHUB_WORKSPACE}/repo" rev-parse HEAD)
+          git commit -m "shadow(ph-afp): run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Collector ${collector_commit}. State only; never merged to main."
+          git push origin HEAD:refs/heads/shadow/ph-afp
+
+      - name: Report incomplete collection after preserving evidence
+        if: steps.collect.outcome == 'failure'
+        run: |
+          echo "::error::collection failed or was partial; no successful-run clock advance"
+          exit 1
+
+      - name: Preserve run evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ph-afp-shadow-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/shadow-state/state/
+            ${{ runner.temp }}/ph-afp-run.log
+          if-no-files-found: warn
+          retention-days: 90

@@ -25,6 +25,23 @@ and no shadow record enters the published site or production collection. No
 private remote or new credentials are needed. The bounded post-merge verification
 procedure and remaining evidence gates are in `shadow/ph_nsc/README.md`.
 
+Ben authorized committing the Indonesia/South Korea candidates, opening their PR
+and establishing fresh durable shadow collection in this repository on 2026-10-06.
+The state branches are `shadow/indonesia-kemhan` and `shadow/korea-policy-briefing`;
+both use `scripts/shadow_collect_desk.py` from its immutable implementation commit.
+Initial native collections from collector `5ddca377e` published fresh state and
+were verified from clean remote clones; no rehearsal state was transferred. The
+`indonesia_korea_shadow.yml` merged in PR #110 and remains manual-only and
+main-only. One bounded October 6 run per desk verified Actions egress and
+append-only publication on the existing state branches; all retrieved records
+were duplicates and the original clocks stayed unchanged. See
+`docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
+No schedule, public declaration or promotion is authorized.
+Scope and limitations are in `shadow/id_kemhan/README.md` and
+`shadow/kr_policy_briefing/README.md`; DECISION_LOG records the authorization.
+Published commits and measured launch results are in
+`docs/INDONESIA_KOREA_SHADOW_LAUNCH_2026-10-06.md`.
+
 Each desk's manifest is authoritative for its sources; `desks/registry.json` is
 authoritative for its status and public presentation. Both are declared
 `shadow` there. Elapsed shadow days live in each desk's ledger and are

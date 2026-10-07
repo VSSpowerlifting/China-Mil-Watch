@@ -66,9 +66,13 @@ class Session:
         self.routes = routes
         self.calls = []
 
-    def get(self, url, headers=None, timeout=None):
+    def get(self, url, headers=None, timeout=None, allow_redirects=False):
         self.calls.append((url, dict(headers or {})))
+        assert allow_redirects is False, "policy and redirects must be checked before retrieval"
         route = self.routes.get(url)
+        if url == jp_mod.ROBOTS and url not in self.routes:
+            return Response(200, text=(FIXTURES / "robots.txt").read_text(),
+                            headers={"Content-Type": "text/plain"})
         if route is None:
             return Response(404, headers={"Content-Type": "text/html"})
         return route(headers or {}) if callable(route) else route
@@ -134,13 +138,130 @@ class TestRobotsIsObeyed(unittest.TestCase):
             with self.subTest(url=url):
                 a.assert_robots_allows(live, url)   # must not raise
 
-    def test_an_empty_robots_file_falls_back_to_the_measured_rules(self):
+    def test_an_observed_empty_robots_file_has_no_restrictions(self):
         a = adapter({})
-        with self.assertRaises(jp_mod.RobotsDisallowed):
-            a.assert_robots_allows("", "https://www.mod.go.jp/a/secret.pdf")
+        a.assert_robots_allows("", "https://www.mod.go.jp/a/secret.pdf")
 
 
 # ------------------------------------------------------------------ discovery
+
+class TestCurrentPolicyGate(unittest.TestCase):
+
+    def policy(self, text):
+        return Response(200, text=text, headers={"Content-Type": "text/plain"})
+
+    def test_policy_precedes_discovery_and_is_read_once_per_adapter(self):
+        a = adapter({jp_mod.FEEDS[0]: feed_ok, jp_mod.FEEDS[1]: feed_ok, PDF_URL: pdf_ok()})
+        a.discover(WINDOW)
+        a.fetch(_ref(PDF_URL))
+        urls = [u for u, _ in a._session.calls]
+        self.assertEqual(urls[0], jp_mod.ROBOTS)
+        self.assertEqual(urls.count(jp_mod.ROBOTS), 1)
+        self.assertEqual(a.robots_status, "allowed")
+        self.assertEqual(a.robots_observation["http_status"], 200)
+        self.assertEqual(a.robots_observation["text"], (FIXTURES / "robots.txt").read_text())
+
+    def test_unreadable_or_challenged_policy_stops_all_later_requests(self):
+        responses = [Response(code) for code in (301, 401, 403, 500)] + [
+            challenge(), Response(200, text=CHALLENGE_BODY,
+                                  headers={"Content-Type": "text/html"}),
+            self.policy("not a robots file"), self.policy("User-agent: *\n" + "#" * 64001),
+            Response(200, text="<html>maintenance</html>", headers={"Content-Type": "text/html"})]
+        for response in responses:
+            with self.subTest(code=response.status_code, body=response.text[:20]):
+                a = adapter({jp_mod.ROBOTS: response, jp_mod.FEEDS[0]: feed_ok})
+                result = a.discover(WINDOW)
+                self.assertIn(result.status, (st.AUTH_FAILURE, st.ACCESS_CHALLENGED))
+                self.assertEqual(result.references, [])
+                self.assertNotEqual(a.fetch(_ref(PDF_URL)).status, st.OK)
+                self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+
+    def test_transport_failure_is_no_permission_and_not_retried(self):
+        def unavailable(headers):
+            raise OSError("derived transport failure")
+        a = adapter({jp_mod.ROBOTS: unavailable})
+        self.assertEqual(a.discover(WINDOW).status, st.AUTH_FAILURE)
+        self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+
+    def test_policy_uses_utf8_bytes_and_refuses_invalid_encoding(self):
+        policy = "User-agent: *\nDisallow: /j/資料/\n".encode("utf-8")
+        a = adapter({jp_mod.ROBOTS: Response(200, text=policy.decode("latin-1"),
+                     content=policy, headers={"Content-Type": "text/plain"})})
+        result = a.fetch(_ref("https://www.mod.go.jp/j/資料/test.pdf"))
+        self.assertEqual(result.status, st.AUTH_FAILURE)
+        self.assertEqual(a.robots_observation["text"], policy.decode("utf-8"))
+        self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+        b = adapter({jp_mod.ROBOTS: Response(200, content=b"User-agent: *\n#\xff",
+                     headers={"Content-Type": "text/plain"})})
+        self.assertEqual(b.discover(WINDOW).status, st.AUTH_FAILURE)
+        self.assertEqual([u for u, _ in b._session.calls], [jp_mod.ROBOTS])
+
+    def test_observed_absent_or_empty_policy_is_distinct_from_refusal(self):
+        for response in [Response(404), Response(410), self.policy("")]:
+            with self.subTest(code=response.status_code):
+                a = adapter({jp_mod.ROBOTS: response, PDF_URL: pdf_ok()})
+                self.assertEqual(a.fetch(_ref(PDF_URL)).status, st.OK)
+                self.assertEqual(a.robots_status, "allowed" if response.status_code == 200 else "absent")
+
+    def test_disallowed_feed_and_pdf_are_checked_before_request(self):
+        for path, fetch in [("/j/rss/", False), ("/j/press/", True)]:
+            with self.subTest(path=path):
+                a = adapter({jp_mod.ROBOTS: self.policy("User-agent: *\nDisallow: " + path),
+                             jp_mod.FEEDS[0]: feed_ok, PDF_URL: pdf_ok()})
+                result = a.fetch(_ref(PDF_URL)) if fetch else a.discover(WINDOW)
+                self.assertEqual(result.status, st.AUTH_FAILURE)
+                self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+
+    def test_matching_groups_combine_with_specific_agent_and_longest_path_precedence(self):
+        a = adapter({})
+        a.assert_robots_allows("User-agent: *\nDisallow: /\n\n"
+                              "User-agent: ChinaMilWatch\nDisallow: /\n\n"
+                              "User-agent: ChinaMilWatch-ShadowCollector\nDisallow: /j/\n\n"
+                              "User-agent: chinamilwatch-shadowcollector\nAllow: /j/press/\n",
+                              PDF_URL)
+        with self.assertRaises(jp_mod.RobotsDisallowed):
+            a.assert_robots_allows("User-agent: *\nDisallow: /j/\n\n"
+                                  "User-agent: *\nDisallow: /a/\n", PDF_URL)
+        a.assert_robots_allows("User-agent: *\nDisallow: /j/press/\nAllow: /j/press/\n", PDF_URL)
+
+    def test_unsupported_patterns_and_delay_fail_closed(self):
+        for directive in ("Disallow: /*.pdf$", "Crawl-delay: unknown"):
+            a = adapter({jp_mod.ROBOTS: self.policy("User-agent: *\n" + directive)})
+            self.assertEqual(a.fetch(_ref(PDF_URL)).status, st.AUTH_FAILURE)
+            self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS])
+
+    def test_declared_delay_is_obeyed_and_conditional_headers_do_not_touch_policy(self):
+        sleeps = []
+        a = adapter({jp_mod.ROBOTS: self.policy("\ufeffUser-agent: *\r\nCrawl-delay: 7\r\n"),
+                     PDF_URL: pdf_ok()}, validators={PDF_URL: {"etag": '"pdf-1"'}})
+        a._sleep = sleeps.append
+        a.fetch(_ref(PDF_URL))
+        self.assertEqual(sleeps, [7])
+        self.assertNotIn("If-None-Match", a._session.calls[0][1])
+        self.assertEqual(a._session.calls[1][1]["If-None-Match"], '"pdf-1"')
+
+    def test_redirect_is_not_followed_to_unchecked_destination(self):
+        a = adapter({PDF_URL: Response(302, headers={"Location": "https://example.invalid/body.pdf"})})
+        self.assertEqual(a.fetch(_ref(PDF_URL)).status, st.FETCH_FAILURE)
+        self.assertEqual([u for u, _ in a._session.calls], [jp_mod.ROBOTS, PDF_URL])
+
+    def test_new_adapter_reads_changed_policy_instead_of_using_old_rules(self):
+        a = adapter({PDF_URL: pdf_ok()})
+        self.assertEqual(a.fetch(_ref(PDF_URL)).status, st.OK)
+        b = adapter({jp_mod.ROBOTS: self.policy("User-agent: *\nDisallow: /\n")})
+        self.assertEqual(b.fetch(_ref(PDF_URL)).status, st.AUTH_FAILURE)
+
+    def test_shared_host_policy_cache_propagates_refusal_without_another_request(self):
+        cache = {}
+        class Source:
+            slug = "jp_mod_news_ja"
+        first = jp_mod.JPModAdapter(Source(), session=Session({jp_mod.ROBOTS: challenge()}),
+                                    sleep=lambda _: None, robots_cache=cache)
+        second = jp_mod.JPModAdapter(Source(), session=Session({}), sleep=lambda _: None,
+                                     robots_cache=cache)
+        self.assertEqual(first.discover(WINDOW).status, st.ACCESS_CHALLENGED)
+        self.assertEqual(second.discover(WINDOW).status, st.ACCESS_CHALLENGED)
+        self.assertEqual(second._session.calls, [])
 
 class TestDiscovery(unittest.TestCase):
 
@@ -199,7 +320,7 @@ class TestDiscovery(unittest.TestCase):
         a = adapter(self.routes(),
                     validators={jp_mod.FEEDS[0]: {"etag": '"feed-1"'}})
         a.discover(WINDOW)
-        sent = dict(a._session.calls[0][1])
+        sent = dict(next(headers for url, headers in a._session.calls if url == jp_mod.FEEDS[0]))
         self.assertEqual(sent.get("If-None-Match"), '"feed-1"')
 
     def test_the_honest_user_agent_is_sent_on_every_request(self):
@@ -241,7 +362,7 @@ class TestChallengedPathsAreRecordedNotFought(unittest.TestCase):
     def test_a_challenge_is_never_retried(self):
         a = adapter({PDF_URL: challenge()})
         a.fetch(_ref(PDF_URL))
-        self.assertEqual(len(a._session.calls), 1)
+        self.assertEqual([url for url, _ in a._session.calls], [jp_mod.ROBOTS, PDF_URL])
 
     def test_a_challenge_served_with_200_is_still_a_challenge(self):
         served = Response(200, text=CHALLENGE_BODY,
