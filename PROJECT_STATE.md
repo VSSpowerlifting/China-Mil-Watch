@@ -16,6 +16,10 @@ authorization recovery and QA evidence are in
 `docs/BRIEF_RELEASE_REVIEW_2026-10-04.md`. The older desk measurements below
 have not been refreshed by that work.
 
+A Vietnam Desk is declared at `research` on `feat/vietnam-shadow-pilot` (draft
+PR, 2026-10-06): its collector is built and rehearsed locally, not launched
+(§5). Merging publishes the desk page and map entry; it starts no collection.
+
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
@@ -36,6 +40,7 @@ Durable documents, and what each one governs:
 | `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions; §7 the failed Singapore recovery |
 | `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` | Singapore screening defect, desk-scoped fix, re-screening plan (ids, cost, review path) |
 | `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` | Why `22sep26-infographic` blocked the batch, the structural rule that fixes it, what stays fail-closed, residual risks |
+| `docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md` | Vietnam source measurements, source decision, rehearsal evidence, activation and review commands |
 
 ---
 
@@ -549,6 +554,48 @@ them then. Gate wording and evidence:
 `shadow/ph_nsc/README.md` and
 `docs/PH_NSC_ADAPTER_REVIEW_RECEIPT_2026-10-01.md`.
 
+**Vietnam Desk: built and rehearsed, not launched (2026-10-06, draft PR from
+`feat/vietnam-shadow-pilot`).** An owner-authorized exception to the
+geographic deferral (DECISION_LOG 2026-10-05). The registry declares
+`vietnam` at `research`, manifest null, `has_production_records: false`; no
+count is shown. Pilot source: the English defense tag of Viet Nam Government
+News, `vn_vgp_defense_en`, Tier B newsroom reporting. Adapter
+`scraper/sources/vn_vgp.py`; runner `scripts/shadow_collect_vietnam.py`;
+dispatch-only `vietnam_shadow.yml`; review kit
+`scripts/review_vietnam_shadow_state.py`; manifest and scope in
+`shadow/vietnam/`. The orphan state branch `shadow/vietnam` does not exist on
+origin.
+
+**Ministry continuation (2026-10-07, same draft PR #107):** local-only adapters
+now read Public Security's Vietnamese foreign-affairs RSS and Industry and
+Trade's Vietnamese energy/foundational-industry first pages. All three passed
+body, duplicate and quiet live rehearsals (28 capped requests, five reports),
+with separate source state/clocks and deterministic local reviews. Both runners
+pass the shared cross-process host gate. Defence (`bqp.vn`/`mod.gov.vn`) remains
+at a robots script challenge; Finance (`www.mof.gov.vn`) at a robots app shell.
+No ministry workflow or remote state was published. Registry remains research;
+no activation, qualification, merge or deployment. Evidence and remaining formal
+review/activation work: `docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
+
+- **Measured 2026-10-06 UTC**, 26 requests under the full identity: the tag
+  page lists 24 items, 2023-11-16 to 2026-09-09, with no published
+  pagination, and 12 articles extracted from exact bytes. The tag is not a
+  complete defense category (two observed counterexamples). The ministry's
+  English site served a script page for `robots.txt`; the People's Army
+  Newspaper redirected to the same address. Both are unmeasured, not refusals.
+- **Rehearsed live, with state pushed only to a local bare remote:** a
+  body-bearing run (2026-08-05, two articles), a duplicate re-run and a quiet
+  seven-date window, with coherent state commits and a formal day-07 packet
+  that reproduces deterministically (built at shadow day 0, before the
+  checkpoint). This is persistence evidence, not Actions egress or
+  reliability.
+- **Open before the first dispatch (owner):** state location and visibility
+  given the publisher's "All rights reserved" notice; collector identity for
+  periodic use on this host; approval to dispatch, then to schedule. Promotion
+  would still need 30 collecting days and the Day 7/14/30 reviews.
+- Evidence and criteria: `docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`;
+  procedure: `shadow/vietnam/README.md`.
+
 **Production preservation uses separate baselines.** The earlier reviewed
 branches/Japan verification used a 7,209-file production DB/output snapshot;
 the later NSC run used its own 7,254-file before/after Git blob and file-list
@@ -711,6 +758,10 @@ about 13 KB to about 92 KB (69 KB of inline map geometry), inside the 120 KB
 page budget. The custom-property guard
 (`test_every_custom_property_used_is_declared`) now also allows the plates'
 inline placement properties (`--w*`, `--m*`) and the page-set `--on`.
+The Vietnam plate (`research`, seat Hanoi) makes five. From 760px to 1099px it
+hangs beside the seat instead of into a band (`is-mid-side`, narrower), the
+one exception, because Hanoi sits between Beijing and Singapore. A private
+render measured `desks.html` at 98,442 bytes.
 
 **Homepage atlas experiment (2026-10-01):**
 `styles.css` replaces the home page's margin grid with a compact pale blue-gray
@@ -819,7 +870,9 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    selection defect. Diagnose the DVIDS shadow failures without probing
    around them.
 
-Further geographic promotion remains gated by research and review. Frontend
+Further geographic promotion remains gated by research and review. The
+Vietnam pilot needs the owner decisions in DECISION_LOG 2026-10-05 before its
+first dispatch. Frontend
 work may proceed when explicitly authorized without changing desk status or
 editorial records.
 

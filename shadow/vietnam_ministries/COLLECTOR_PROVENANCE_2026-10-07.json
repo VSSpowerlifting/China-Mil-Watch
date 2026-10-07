@@ -1,0 +1,8 @@
+{
+  "collector_tree": "8da80553bbbed198fd7a352668d06032234a2c37",
+  "explanation": "The CLI had no GitHub credentials. The connected GitHub app published the identical collector tree with its own commit metadata. Original rehearsal ledgers retain their local collector SHA. This record preserves the raw local Git commit object, allowing that SHA to be reconstructed; published and local source trees are identical. This is local rehearsal provenance, not remote collection evidence.",
+  "local_collector_commit": "d603d2702b0a64e3aea3c10715498246ad9a3014",
+  "local_commit_object_utf8": "tree 8da80553bbbed198fd7a352668d06032234a2c37\nparent 31ffe31ba03df0e49fe9320a58be8d00a9b81cb0\nauthor Codex <codex@openai.com> 1791334661 +0900\ncommitter Codex <codex@openai.com> 1791334661 +0900\n\nAdd isolated Vietnamese ministry adapters and local review\n",
+  "published_collector_commit": "365d94b1b0d2b417a9fd75cfffbd9f3d9c5601a4",
+  "schema": "vietnam-local-collector-publication/1"
+}

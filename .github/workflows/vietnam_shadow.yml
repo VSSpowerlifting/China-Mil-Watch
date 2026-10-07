@@ -1,0 +1,177 @@
+name: Vietnam Shadow Collection
+
+# Isolated prospective evaluation only. State is on shadow/vietnam, outside the
+# collector checkout. No production collection, analysis or deployment.
+# This repository is public: its state branch is not confidential storage.
+# Source: the English `defense` tag page of Viet Nam Government News
+# (en.baochinhphu.vn), under the adapter's unchanged full
+# ChinaMilWatch-ShadowCollector/0.1 identity. Scope and limits:
+# shadow/vietnam/README.md.
+#
+# Manual dispatch only. No schedule is declared, so nothing runs unattended
+# until an owner activates it. The activation procedure is in
+# shadow/vietnam/README.md; it adds exactly this trigger and nothing else:
+#
+#   schedule:
+#     # 17:35 UTC = 00:35 in Ha Noi: the slot's UTC date is the Ha Noi calendar
+#     # day that has just ended. Clear of US (08:40), PH (10:10), the daily
+#     # window (12:23-14:23), Singapore (21:10) and Japan (22:40).
+#     - cron: '35 17 * * *'
+#
+# --cron-utc below already names that slot. It is read only by scheduled
+# events, so a dispatch records its own UTC date or the date it names.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: >-
+          Logical date, YYYY-MM-DD. Leave empty for today's UTC date. To
+          recover a failed run, name its intended logical date. The window is
+          that date and the six Ha Noi calendar dates before it. A UI re-run
+          without an explicit date is refused.
+        required: false
+        default: ''
+
+concurrency:
+  group: vietnam-shadow
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  shadow:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the collector
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r repo/requirements.txt
+
+      - name: Check out shadow state
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          status=0
+          git ls-remote --exit-code --heads "$STATE_REMOTE" refs/heads/shadow/vietnam \
+            > "${RUNNER_TEMP}/vietnam-head" || status=$?
+          if [ "$status" -eq 0 ]; then
+            git clone --branch shadow/vietnam --single-branch "$STATE_REMOTE" \
+              "${RUNNER_TEMP}/shadow-state"
+          elif [ "$status" -eq 2 ]; then
+            # Only an absent ref permits bootstrap. Network/auth failures stop.
+            git init "${RUNNER_TEMP}/shadow-state"
+            git -C "${RUNNER_TEMP}/shadow-state" checkout --orphan shadow/vietnam
+            git -C "${RUNNER_TEMP}/shadow-state" remote add origin "$STATE_REMOTE"
+          else
+            exit "$status"
+          fi
+
+      - name: Assert the state checkout is not the repository
+        run: |
+          set -euo pipefail
+          case "$(realpath "${RUNNER_TEMP}/shadow-state")" in
+            "$(realpath "${GITHUB_WORKSPACE}/repo")"*) exit 1 ;;
+          esac
+          cd "${RUNNER_TEMP}/shadow-state"
+          if [ "$(git branch --show-current)" != shadow/vietnam ]; then
+            exit 1
+          fi
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            if git ls-tree --name-only HEAD | grep -v '^state$'; then
+              echo "::error::state branch contains files outside state/"
+              exit 1
+            fi
+          fi
+
+      - name: Run shadow collection
+        id: collect
+        working-directory: repo
+        env:
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          set -euo pipefail
+          if [ -n "${TARGET_DATE:-}" ]; then
+            set -- --target-date "$TARGET_DATE"
+          else
+            set --
+          fi
+          python scripts/shadow_collect_vietnam.py \
+            --state-dir "${RUNNER_TEMP}/shadow-state/state" \
+            --lookback-days 6 --cap 40 \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --cron-utc "17:35" "$@" \
+            2>&1 | tee "${RUNNER_TEMP}/vietnam-run.log"
+
+      - name: Assert the collector left the repository untouched
+        if: always()
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --porcelain
+            exit 1
+          fi
+
+      - name: Assert the ledger is append-only
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            changed=$(git diff --name-status -- state/ledger state/clock.json state/captures | grep -E '^(M|D|R)' || true)
+            if [ -n "$changed" ]; then
+              echo "::error::historical ledger, clock or capture changed"
+              exit 1
+            fi
+          fi
+
+      - name: Publish shadow state
+        if: success()
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/shadow-state"
+          if [ -e state/shadow.db-wal ] || [ -e state/shadow.db-shm ]; then
+            echo "::error::refusing to commit a WAL/SHM sidecar"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          collector_commit=$(git -C "${GITHUB_WORKSPACE}/repo" rev-parse HEAD)
+          git commit -m "shadow(vietnam): run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Collector ${collector_commit}. State only; never merged to main."
+          # A divergent writer fails here. No force push or history repair.
+          git push origin shadow/vietnam
+
+      - name: Preserve run evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-shadow-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/shadow-state/state/
+            ${{ runner.temp }}/vietnam-run.log
+          if-no-files-found: warn
+          retention-days: 90

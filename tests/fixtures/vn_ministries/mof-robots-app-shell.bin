@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html translate="no">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image" href="/images/logomini.jpg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="google-site-verification" content="g0B3uiZADVYj3_SoGVMVHJ981WuEdnZz5R_cPx3R8kI" />
+	<title>Cổng thông tin điện tử Bộ Tài Chính</title>
+  <script type="module" crossorigin src="/assets/index-B1UYKE73.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C3ni1gzN.css">
+</head>
+
+<body>
+	<div id="app"></div>
+	<script type="text/javascript">
+		var _govaq = window._govaq || [];
+		_govaq.push(['trackPageView']);
+		_govaq.push(['enableLinkTracking']);
+		(function () {
+			_govaq.push(['setTrackerUrl', 'https://f-emc.ngsp.gov.vn/tracking']);
+			if (location.host == 'vidi.mof.gov.vn') {
+				_govaq.push(['setSiteId', '6912']);
+			}
+			else {
+				_govaq.push(['setSiteId', '6910']);
+			}
+			var d = document,
+				g = d.createElement('script'),
+				s = d.getElementsByTagName('script')[0];
+			g.type = 'text/javascript';
+			g.async = true;
+			g.defer = true;
+			g.src = 'https://f-emc.ngsp.gov.vn/embed/gov-tracking.min.js';
+			s.parentNode.insertBefore(g, s);
+		})();
+
+	</script>
+	<script>
+		window.tovaAsyncInit = function () {
+			tova.init({
+				tenant_id: "01KAZ54KK0RZYAPZ6G8V4GDBAK",
+				bot_code: "01KPCRAWZ4VVNB9ZG1CN2MAEE6",
+				ui_config: {
+					position: "right",
+					hide_greeting: false,
+					locale: "vi"
+				},
+				extra: {}
+			});
+		};
+		(function (d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "https://mof-agents.fpt.ai/connect/sdk.js";
+			js.onload = window.tovaAsyncInit;
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, "script", "tova-jssdk"));
+	</script>
+</body>
+<style>
+	.yhy-append-wrap {
+		position: fixed;
+		bottom: 0px;
+		max-width: 150px;
+	}
+</style>
+
+</html>

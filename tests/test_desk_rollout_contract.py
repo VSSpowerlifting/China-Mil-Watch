@@ -317,7 +317,126 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
     def test_no_planned_desk_is_counted_as_a_live_one(self):
         html = self.page("index.html")
         self.assertIn("2</b> collecting desk", html)
-        self.assertIn("of <b>4</b> declared", html)
+        self.assertIn("of <b>5</b> declared", html)
+
+    def test_the_volume_rows_still_name_the_joint_staff(self):
+        """The row subject moved from the template into the registry so each
+        desk can name what it counted; Japan's rows must read as before."""
+        html = self.page("japan.html")
+        for label, figure in load_registry().get("japan").research["observed_volume"]:
+            with self.subTest(label=label):
+                self.assertIn("<dt>Joint Staff press releases — %s</dt><dd>%s</dd>"
+                              % (label, figure), html)
+
+
+class TestVietnamDeskIsResearchNotCoverage(DeskCase):
+    """
+    Vietnam is declared at `research`. A collector for one Government News tag
+    page exists and was rehearsed outside production, but nothing runs on a
+    schedule and nothing has reached the record. Every surface has to say
+    exactly that: no count, no shadow clock, no coverage, and a shadow manifest
+    the production loader cannot find even though the desk is public.
+    """
+
+    def test_the_vietnam_desk_page_exists_and_is_linked(self):
+        self.assertTrue((self.out / "vietnam.html").is_file())
+        self.assertIn('href="vietnam.html"', self.page("desks.html"))
+
+    def test_the_registry_declares_research_with_no_manifest(self):
+        entry = load_registry().get("vietnam")
+        self.assertEqual(entry.status, "research")
+        self.assertTrue(entry.public)
+        self.assertIsNone(entry.manifest_path)
+        self.assertFalse(entry.has_production_records)
+        self.assertFalse(entry.is_collecting)
+        self.assertFalse(entry.may_show_record_count)
+        self.assertEqual((entry.configured_source_count,
+                          entry.enabled_source_count), (0, 0))
+
+    def test_no_vietnam_source_or_manifest_reaches_production(self):
+        """The shadow manifest exists, outside `desks/`; the production loader
+        and the database know nothing of Vietnam."""
+        from core.manifests import load_all_desks
+        self.assertTrue((REPO_ROOT / "shadow" / "vietnam" / "manifest.json").is_file())
+        self.assertFalse((MANIFESTS / "vietnam").exists())
+        self.assertNotIn("vietnam", load_all_desks())
+        with self.db() as con:
+            rows = con.execute(
+                "SELECT slug FROM sources WHERE desk_id = 'vietnam' "
+                "OR slug LIKE 'vn%'").fetchall()
+        self.assertEqual(rows, [])
+
+    def test_the_vietnam_page_states_no_records_and_no_enabled_source(self):
+        html = self.page("vietnam.html")
+        self.assertIn("Researched — not yet collecting", html)
+        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("Sources enabled</dt><dd>0", html)
+        self.assertNotIn("Sources enabled in shadow", html)
+        self.assertNotIn("Shadow evaluation", html)
+        self.assertIn("No source is enabled in production", html)
+
+    def test_the_vietnam_page_shows_no_collection_statistic(self):
+        """The volume rows count what a tag page listed, not what this project
+        holds, and no shadow clock has started."""
+        html = self.page("vietnam.html")
+        self.assertNotRegex(
+            html, r"\b\d[\d,]*\s+(records|articles)\s+collected\b")
+        lower = html.lower()
+        for counter in (r"day\s+\d+\s+of\s+30", r"\d+\s*/\s*30\s*days",
+                        r"\d+\s+shadow\s+days?", r"shadow\s+day\s+\d+"):
+            with self.subTest(pattern=counter):
+                self.assertNotRegex(lower, counter)
+        self.assertIn("thresholds remain unset", lower)
+        research = load_registry().get("vietnam").research
+        for label, figure in research["observed_volume"]:
+            with self.subTest(label=label):
+                self.assertIn("<dt>Items the defense tag page listed — %s</dt><dd>%s</dd>"
+                              % (label, figure), html)
+        self.assertIn("They are not a record count", html)
+
+    def test_the_vietnam_page_is_not_described_as_coverage(self):
+        html = re.sub(r"\s+", " ", self.page("vietnam.html").lower())
+        self.assertIn("it is not coverage", html)
+        self.assertIn("a tag that editors apply, not a complete defense category", html)
+        self.assertIn("a tag is not a category", html)
+        for claim in ("vietnam coverage", "covering vietnam", "vietnam corpus"):
+            with self.subTest(claim=claim):
+                self.assertNotIn(claim, html)
+
+    def test_the_unreached_sources_are_disclosed_without_a_workaround(self):
+        html = self.page("vietnam.html")
+        self.assertIn("Not reached — robots.txt returned a script page, twice", html)
+        self.assertIn("Not reached — HTTP 302 back to the same address", html)
+        for evasion in ("bypass", "circumvent", "user agent", "user-agent",
+                        "proxy", "captcha", "fingerprint"):
+            with self.subTest(term=evasion):
+                self.assertNotIn(evasion, html.lower())
+
+    def test_the_directory_plate_carries_the_same_state(self):
+        directory = self.page("desks.html")
+        block = [b.split("</section>", 1)[0]
+                 for b in directory.split('<section class="desk')[1:]
+                 if 'data-desk="vietnam"' in b][0]
+        self.assertIn("Researched — not yet collecting", block)
+        self.assertIn("Records</dt><dd>None collected", block)
+        self.assertNotIn("desk--live", block)
+        self.assertIn("Hanoi", block)
+
+    def test_only_a_side_hung_tablet_plate_is_narrowed(self):
+        """At tablet width plates hang into the bands above and below the map;
+        a plate hung sideways instead sits on the map and must be narrowed.
+        The class follows the geography file, not a slug."""
+        import json
+        places = json.loads((MANIFESTS / "geography.json")
+                            .read_text(encoding="utf-8"))["desks"]
+        side = {slug for slug, place in places.items()
+                if place["card"]["mid"]["hang"] in ("left", "right")}
+        html = self.page("desks.html")
+        narrowed = {slug for cls, slug in re.findall(
+            r'<section class="([^"]*\bdeskmap-plate\b[^"]*)"[^>]*data-desk="([^"]+)"', html)
+            if "is-mid-side" in cls.split()}
+        self.assertEqual(narrowed, side)
+        self.assertEqual(narrowed, {"vietnam"})
 
 
 class TestLegacyChinaRoutesSurvive(DeskCase):

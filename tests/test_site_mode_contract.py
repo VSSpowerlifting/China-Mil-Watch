@@ -280,7 +280,8 @@ class TestCandidateBuild(unittest.TestCase):
 
     def test_the_desk_routes_render(self):
         for route in ("index.html", "desks.html", "china.html",
-                      "singapore.html", "japan.html", "us-indopacific.html",
+                      "singapore.html", "japan.html", "vietnam.html",
+                      "us-indopacific.html",
                       "archive.html", "coverage.html", "sources.html",
                       "analysis.html", "pla-watch.html", "methodology.html",
                       "about.html", "corpus.html", "corpus-guide.html",
