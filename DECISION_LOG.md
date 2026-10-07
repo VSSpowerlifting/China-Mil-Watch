@@ -4,6 +4,31 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Pause US DVIDS scheduled shadow collection
+
+Ben authorizes disposition of the US DVIDS incident after direct review of the
+GitHub Actions evidence. Manual run `35476931301` succeeded on 2026-09-19 and
+published 40 records to `shadow/us-indopacom` at `a36f67aee`. Every scheduled
+run from 2026-09-20 through 2026-10-07 then failed before feed discovery because
+the first policy request to `https://www.dvidshub.net/robots.txt` returned HTTP
+502 or 504: 18 consecutive scheduled failures. The first was run
+`35512831659` (504); the latest was run `37646622735` (502). Failed attempts
+published no state.
+
+This is recorded as unresolved GitHub-hosted egress/access reliability, not a
+DVIDS refusal, because the observed response is an upstream 5xx rather than a
+published disallow or 403 and DVIDS continues to expose public pages and
+document RSS access. No evidence supports changing the adapter, bypassing
+robots, impersonating a browser, using a proxy/alternate host, or adding an
+automatic retry loop.
+
+The 08:40 UTC schedule is paused. `us_shadow.yml` remains manual-only and a
+manual re-probe requires a separate explicit owner authorization. The existing
+state branch and historical evidence remain untouched. The public US
+Indo-Pacific desk remains `access_blocked`; the DVIDS reference route never
+became public coverage and this decision does not change that status. Evidence
+and restart criteria are in `docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md`.
+
 ## 2026-10-07 — Vietnam ministry Day 0 accepted; daily reliability cadence approved
 
 Actions run `37656171920`, attempt 2 is the first durable remote success for
