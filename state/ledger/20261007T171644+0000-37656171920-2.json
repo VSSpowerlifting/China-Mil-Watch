@@ -1,0 +1,203 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 2,
+ "captures": [
+  {
+   "content_type": "text/html; charset=UTF-8",
+   "http_status": 200,
+   "payload_bytes": 166,
+   "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+   "retrieved_at": "2026-10-07T17:16:35+00:00",
+   "role": "robots",
+   "url": "https://moit.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "text/html; charset=UTF-8",
+   "http_status": 200,
+   "payload_bytes": 114703,
+   "payload_sha256": "c86ec5a699b14592f947f192d91840b12f90e237c3ff24690dc5115986d16e37",
+   "retrieved_at": "2026-10-07T17:16:38+00:00",
+   "role": "listing",
+   "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+  },
+  {
+   "content_sha256": "7d5bf295eb708dcf1c591ebb66a5f0d1e322d6c4bcd7b92123066c446dfe9858",
+   "content_type": "text/html; charset=UTF-8",
+   "final_url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 107377,
+   "payload_sha256": "c021c96e59a71afcc0687b5255f32d7b062ce8bd20494a5c068818b7ad8b9271",
+   "retrieved_at": "2026-10-07T17:16:41+00:00",
+   "role": "article",
+   "source_identity": "moit-energy-vi:/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+   "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+  },
+  {
+   "content_sha256": "7e377a0d9070060674a4cf9208e16a955fd41a0044b44fd4923340d267004d50",
+   "content_type": "text/html; charset=UTF-8",
+   "final_url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 114710,
+   "payload_sha256": "97342643bf447d96d8f42234baea8034e3c75b34ce7122e6dbae145218f772cb",
+   "retrieved_at": "2026-10-07T17:16:44+00:00",
+   "role": "article",
+   "source_identity": "moit-energy-vi:/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+   "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "2c21b0d091ffc288b1a106d5459d758aaaac6ff5",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "moit-vi-content-v1",
+ "corpus_range": [
+  "2026-09-30",
+  "2026-09-30"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:44+00:00",
+ "desk_id": "vietnam",
+ "discovered": 2,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-07T17:16:44+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 12,
+  "listed": [
+   [
+    "/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+    "2026-09-30"
+   ],
+   [
+    "/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+    "2026-09-30"
+   ],
+   [
+    "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-dieu-chinh-quy-hoach-dien-viii-tinh-dien-bien.html",
+    "2026-09-22"
+   ],
+   [
+    "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-don-doc-dia-phuong-phat-trien-dien-mat-troi-mai-nha.html",
+    "2026-09-18"
+   ],
+   [
+    "/tin-tuc/viet-nam-de-xuat-ket-noi-cong-nghe-dau-tu-va-nang-luc-trong-hop-tac-nang-luong.html",
+    "2026-09-11"
+   ],
+   [
+    "/tin-tuc/phat-trien-nang-luong/phat-trien-trung-tam-nang-luong-tai-tao-nhin-tu-thuc-tien-quoc-te.html",
+    "2026-09-10"
+   ],
+   [
+    "/tin-tuc/bo-cong-thuong-de-nghi-gian-doan-nguon-cung-xang-dau-dip-quoc-khanh-2-9.html",
+    "2026-08-28"
+   ],
+   [
+    "/tin-tuc/phat-trien-nang-luong/bao-dam-cung-ung-dien-cho-giai-doan-but-pha-2026-2030.html",
+    "2026-08-27"
+   ],
+   [
+    "/tin-tuc/nsmo-thong-bao-phuong-an-dam-bao-cung-cap-dien-cho-ky-le-quoc-khanh-2-9.html",
+    "2026-08-25"
+   ],
+   [
+    "/tin-tuc/mot-so-thong-tin-ve-viec-dieu-hanh-gia-xang-dau-ngay-13-8-2026.html",
+    "2026-08-13"
+   ],
+   [
+    "/tin-tuc/phat-trien-nang-luong/bo-cong-thuong-phe-duyet-khung-gia-phat-dien-nhiet-dien-khi-nam-2026.html",
+    "2026-07-27"
+   ],
+   [
+    "/tin-tuc/bo-cong-thuong-to-chuc-lay-y-kien-cho-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+    "2026-07-27"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong",
+  "newest_listed": "2026-09-30",
+  "oldest_listed": "2026-07-27",
+  "pages_read": 1,
+  "pagination": {
+   "older_pages": "script-only; not requested",
+   "page": 1,
+   "page_size": 12,
+   "total_items": 761
+  },
+  "selected": 2,
+  "window_end": "2026-09-30",
+  "window_start": "2026-09-30"
+ },
+ "listing_status": "ok",
+ "lookback_days": 0,
+ "new_records": 2,
+ "request_ceiling": 4,
+ "requests": [
+  {
+   "bytes": 166,
+   "ended_utc": "2026-10-07T17:16:35.785394+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:33+00:00",
+   "started_utc": "2026-10-07T17:16:33.967542+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 114703,
+   "ended_utc": "2026-10-07T17:16:38.703733+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:37+00:00",
+   "started_utc": "2026-10-07T17:16:37.788282+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+  },
+  {
+   "bytes": 107377,
+   "ended_utc": "2026-10-07T17:16:41.741937+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:40+00:00",
+   "started_utc": "2026-10-07T17:16:40.706532+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html"
+  },
+  {
+   "bytes": 114710,
+   "ended_utc": "2026-10-07T17:16:44.781235+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-07T17:16:43+00:00",
+   "started_utc": "2026-10-07T17:16:43.744260+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html"
+  }
+ ],
+ "result": "ok",
+ "retrieved": 2,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "37656171920-2",
+ "selected": 2,
+ "shadow_day": 0,
+ "source_anomalies": [
+  "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+ ],
+ "source_slug": "vn_moit_energy_vi",
+ "started_utc": "2026-10-07T17:16:33+00:00",
+ "state_sha256_after": "90e14e7b579eb9bdf0aa78414f21adc828ee6c26177bfb70c9142d3b53977d4c",
+ "state_sha256_before": null,
+ "stored_total": 2,
+ "target_date": "2026-09-30",
+ "target_date_source": "explicit",
+ "unchanged": 0,
+ "versions_total": 2,
+ "window_start": "2026-09-30"
+}
