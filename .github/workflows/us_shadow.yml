@@ -6,8 +6,9 @@ name: US Indo-Pacific Shadow Collection
 # Manual re-probe remains available only with explicit owner authorization.
 # This workflow publishes nothing, deploys nothing, and never writes to `main`.
 #
-# WHAT IT COLLECTS — a Tier B DoD media-service feed published by Defense Media
-# Activity. Unit tagging does not imply command authorship or comprehensive
+# WHAT IT COLLECTS — the DVIDS USINDOPACOM-tagged reference stream, a Tier B
+# DoD media-service feed published by Defense Media Activity. Unit tagging does
+# not imply command authorship or comprehensive
 # Indo-Pacific relevance. It is not a complete USINDOPACOM command-release wire
 # and not presently a peer of the China Desk. The public US Indo-Pacific
 # Reference Desk remains access_blocked; this run evaluates whether the source
