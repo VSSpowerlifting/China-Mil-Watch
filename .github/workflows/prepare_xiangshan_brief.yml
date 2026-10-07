@@ -1,0 +1,88 @@
+name: Prepare authorized Xiangshan Brief
+
+on:
+  push:
+    branches:
+      - editorial/xiangshan-brief-candidate
+    paths:
+      - .github/workflows/prepare_xiangshan_brief.yml
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      AUTHORIZED_HEAD: 0218c506e28813c79d80a5f38cc5cae70b999d95
+      BRIEF: briefs/xiangshan-security-frames-defense-ties.json
+    steps:
+      - name: Check out exact preparation branch
+        uses: actions/checkout@v4
+        with:
+          ref: editorial/xiangshan-brief-candidate
+          fetch-depth: 2
+          persist-credentials: true
+
+      - name: Prove the workflow was added directly to the authorized candidate
+        run: |
+          set -euo pipefail
+          parent="$(git rev-parse HEAD^)"
+          test "$parent" = "$AUTHORIZED_HEAD"
+          test "$(git diff --name-only "$AUTHORIZED_HEAD"..HEAD)" = ".github/workflows/prepare_xiangshan_brief.yml"
+          echo "Authorized candidate parent: $parent"
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Brief contract and readiness checks before approval
+        run: |
+          set -euo pipefail
+          python scripts/author_brief.py check "$BRIEF"
+          python scripts/author_brief.py ready "$BRIEF"
+
+      - name: Record owner approval and assign next Brief number
+        run: |
+          set -euo pipefail
+          python scripts/author_brief.py approve "$BRIEF" \
+            --approved-by "Benjamin Yang" \
+            --approved-on "2026-10-07" \
+            --approval-reference "ChatGPT authorization on 2026-10-07 for PR #118 at exact candidate head 0218c506e28813c79d80a5f38cc5cae70b999d95"
+          python scripts/author_brief.py check "$BRIEF"
+
+      - name: Commit approved source separately
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$BRIEF"
+          git commit -m "Approve and number Xiangshan Brief"
+          git push origin HEAD:editorial/xiangshan-brief-candidate
+
+      - name: Render production output without deployment
+        run: |
+          set -euo pipefail
+          python site/render.py --mode indo-pacific-record
+          python scripts/validate_output.py
+
+      - name: Commit rendered output and remove one-shot workflow
+        run: |
+          set -euo pipefail
+          git add output/
+          git rm .github/workflows/prepare_xiangshan_brief.yml
+          git commit -m "Render approved Xiangshan Brief candidate"
+          git push origin HEAD:editorial/xiangshan-brief-candidate
+
+      - name: Verify no deployment was invoked
+        run: |
+          set -euo pipefail
+          test ! -e .github/workflows/prepare_xiangshan_brief.yml
+          echo "Preparation complete. No merge or deploy command was run."
