@@ -49,6 +49,7 @@ Durable documents, and what each one governs:
 | `DECISION_LOG.md` | durable decisions that constrain future work |
 | `docs/DESK_STRENGTH_CRITERIA.md` | what a desk must prove before it is called strong |
 | `docs/DESK_RELIABILITY_REVIEW_2026-09-16.md` | measured per-desk assessment and source-feasibility evidence |
+| `docs/REGIONAL_TOPIC_TAXONOMY.md` | cross-desk topic vocabulary, assignment provenance, and storage contract |
 | `docs/DESK_CONSOLIDATION_AND_BRIEF_PREP_2026-09-28.md` | 14-day desk measurement, Day-30 packet evidence, first-brief candidate questions; §7 the failed Singapore recovery |
 | `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` | Singapore screening defect, desk-scoped fix, re-screening plan (ids, cost, review path) |
 | `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` | Why `22sep26-infographic` blocked the batch, the structural rule that fixes it, what stays fail-closed, residual risks |
@@ -99,6 +100,17 @@ for its **sources**.
 
 The site also publishes the record archive, per-record pages, coverage,
 methodology, and the legacy `/article/<id>.html` compatibility namespace.
+
+**Regional Topic Taxonomy v1 is now a separate classification layer.**
+`taxonomy/regional_topics.v1.json` defines 19 cross-desk subjects in six
+groups; `core/topics.py` validates the vocabulary and a storage-neutral
+`(desk_id, source_slug, canonical_url)` assignment identity. Migration
+`0008` adds an empty `record_topics` table only. The China Desk's 14 legacy
+`article_categories` remain byte-for-byte unchanged and are not automatically
+mapped. No record has been assigned a regional topic, no classifier or UI uses
+the vocabulary, and no shadow state is changed. The next gate is a small
+human-reviewed multi-desk classification pilot; see
+`docs/REGIONAL_TOPIC_TAXONOMY.md`.
 
 ## 3. Data and pipeline condition
 
