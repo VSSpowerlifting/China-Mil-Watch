@@ -1,9 +1,9 @@
 name: Next Desk Feasibility Probe
 
-# Disposable research probe. Compares one Australia Defence route and one
-# Taiwan MND English route from GitHub Actions before any desk engineering.
-# Six GETs maximum: robots, listing, and one current article per candidate.
-# No redirects, no linked documents, no repository/shadow/production writes.
+# Disposable research probe. Compares Australia Defence Ministers and Taiwan
+# MND English from GitHub Actions using the current Indo-Pacific Record shadow
+# identity. Six GETs maximum: robots, listing and one current article per desk.
+# No redirects, linked documents, repository/shadow/production writes.
 on:
   pull_request:
     paths:
@@ -37,7 +37,6 @@ jobs:
           OUT: ${{ runner.temp }}/next-desk-probe.json
         run: |
           python - <<'PY'
-          import ast
           import hashlib
           import json
           import os
@@ -46,6 +45,7 @@ jobs:
           from urllib import robotparser
 
           import requests
+          from core.collection.vietnam_identity import USER_AGENT
 
           MAX_SAMPLE = 256 * 1024
           TIMEOUT = 20
@@ -53,9 +53,9 @@ jobs:
           CANDIDATES = [
               {
                   "desk": "australia",
-                  "robots": "https://www.defence.gov.au/robots.txt",
-                  "listing": "https://www.defence.gov.au/news-events/releases",
-                  "article": "https://www.defence.gov.au/news-events/releases/2026-10-07/adf-strengthens-regional-security-through-exercise-bersama-lima-2026",
+                  "robots": "https://www.minister.defence.gov.au/robots.txt",
+                  "listing": "https://www.minister.defence.gov.au/media-releases",
+                  "article": "https://www.minister.defence.gov.au/media-releases/2026-09-09/24-billion-investment-air-missile-defence",
               },
               {
                   "desk": "taiwan",
@@ -65,21 +65,11 @@ jobs:
               },
           ]
 
-          tree = ast.parse(Path("scraper/base.py").read_text(encoding="utf-8"))
-          user_agent = None
-          for node in tree.body:
-              if isinstance(node, ast.Assign) and any(
-                  getattr(t, "id", None) == "_USER_AGENT" for t in node.targets
-              ):
-                  user_agent = ast.literal_eval(node.value)
-                  break
-          if not user_agent:
-              raise SystemExit("could not read _USER_AGENT")
-
           session = requests.Session()
           session.headers.update({
-              "User-Agent": user_agent,
+              "User-Agent": USER_AGENT,
               "Accept": "text/plain,text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+              "Accept-Encoding": "identity",
           })
 
           def fetch(url):
@@ -121,7 +111,7 @@ jobs:
                   }, ""
 
           report = {
-              "collector_user_agent": user_agent,
+              "collector_user_agent": USER_AGENT,
               "request_budget": 6,
               "redirects_followed": False,
               "linked_documents_fetched": False,
@@ -132,8 +122,10 @@ jobs:
               row = {"desk": candidate["desk"]}
               robots_meta, robots_text = fetch(candidate["robots"])
               row["robots"] = robots_meta
-              readable = robots_meta.get("status") == 200 and bool(robots_text.strip())
+              if robots_meta.get("status") == 200:
+                  row["robots_text"] = robots_text[:4096]
 
+              readable = robots_meta.get("status") == 200 and bool(robots_text.strip())
               rp = robotparser.RobotFileParser()
               if readable:
                   rp.set_url(candidate["robots"])
@@ -141,7 +133,7 @@ jobs:
 
               for kind in ("listing", "article"):
                   url = candidate[kind]
-                  allowed = bool(readable and rp.can_fetch(user_agent, url))
+                  allowed = bool(readable and rp.can_fetch(USER_AGENT, url))
                   if not allowed:
                       row[kind] = {
                           "url": url,
