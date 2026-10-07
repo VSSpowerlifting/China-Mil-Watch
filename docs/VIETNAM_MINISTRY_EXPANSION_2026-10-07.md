@@ -1,5 +1,12 @@
 # Vietnam ministry continuation — 2026-10-07 UTC
 
+The owner finalization in `VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`
+supersedes prospective activation choices below: narrow public ministry
+retention and exactly one batch after separate owner merge are approved. The
+shared transport now uses the selected Indo-Pacific Record identity. Historical
+rehearsal identities and evidence remain unchanged; Government News remote
+dispatch and public capture retention remain unapproved.
+
 Ben requested continuation after the earlier agent's usage limit. The recovered
 branch was `feat/vietnam-shadow-pilot`, head `31ffe31b`, draft PR #107. This pass
 completes local ministry collection and rehearsal review; it does not launch a

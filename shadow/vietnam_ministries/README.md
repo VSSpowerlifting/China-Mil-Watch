@@ -22,8 +22,9 @@ The exact October 6 request inventory is
 portal's attribution. MOIT fixtures replace prose and preserve measured DOM,
 identifiers and dates, with original and derived hashes recorded separately.
 They test structure and date handling, not MOIT source-text fidelity. Original
-live bytes may be retained in external rehearsal state under the existing
-unresolved state-visibility/reuse decisions; they are not published by this tool.
+rehearsal bytes stay external and are not transferred to remote state. The owner
+approves successful ministry remote state and original bytes on the public orphan
+branches and Actions evidence only for the shadow reliability period.
 
 Each source requires a different external state directory and has its own clock.
 The default external host gate directory is shared across local processes;
@@ -54,8 +55,13 @@ Day 7/14/30 complete-corpus packets with a blank structured signoff. Early packe
 cannot complete a checkpoint. `--check-signoff` validates a human's answers;
 it publishes nothing and qualifies nothing. See the activation proposal for
 commands, budgets, state/artifact visibility and publication failure behavior.
-Remote activation still requires owner decisions on visibility, rights, identity
-and dispatch; local rehearsal clocks are never transferred.
+The owner approves narrow public MPS/MOIT shadow-state/original-byte retention
+for the reliability period and exactly one 12-request ministry batch after
+separate owner merge. The current identity is
+`IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`.
+This session performs no dispatch. Government News retention/dispatch remain
+unapproved. No retry, second dispatch or schedule is approved; local rehearsal
+clocks are never transferred.
 
 Only the published first page/feed is requested. The oldest item must precede
 the window start, otherwise discovery fails without fetching. Quiet means an

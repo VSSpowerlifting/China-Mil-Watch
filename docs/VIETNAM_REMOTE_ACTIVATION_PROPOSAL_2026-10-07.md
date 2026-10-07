@@ -3,38 +3,41 @@
 Prepared for owner review only. PR #107 merged as
 `5ccc20ff94131f63d639aed840633776b829ef60` (reviewed head
 `ef4aedfc8cba45dc1ce2d1e1fe19497c72e9f46e`). This readiness branch starts at
-that current-main boundary. GitHub verification found no `shadow/vietnam`
+that main boundary; this finalization integrates current main
+`9b475d0d578f93e6d4b9dc7cc90d3ad38c627b10` without rewriting branch history. GitHub verification found no `shadow/vietnam`
 branch. Existing worktrees are preserved. No source requests were made in this
 session; Defence, Finance and the excluded trade-remedies estate remain
 unreached/excluded. Vietnam stays research with no production records or schedule.
 
-## Owner decisions
+## Owner decisions — finalization authority
 
-1. **State visibility and source-byte retention.** Recommend the existing public
-   repository's separate orphan branches and public Actions artifacts, only if
-   the owner approves retention/reuse of full original bytes for these exact
-   sources. Accessibility and prior local rehearsal do not establish permission;
-   Government News's “All rights reserved” notice remains material. Alternative:
-   a dedicated private state repository and access-controlled evidence, requiring
-   a separately reviewed credential/remote change before dispatch. “Shadow” means
-   nonproduction, not confidential. The prepared workflow supports public state
-   in this repository only; no private destination or new credentials are presumed.
-2. **Collector identity.** Recommend retaining exactly
-   `ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`
-   for the named hosts. This is the implemented legacy transport identity, not
-   the public masthead. Alternative: owner-selected project/contact identity,
-   requiring a tested transport change before activation. Previous NSC identity
-   approval does not authorize these hosts.
-3. **First dispatch and ordering.** Recommend the single ministry batch below,
-   then inspect its artifacts and clean-clone state before approving any second
-   dispatch. Alternative: launch the original Government News pilot first using
-   the separately bounded command below. Approving either action does not approve
-   a schedule, retry, another window, or production admission. Merge and dispatch
-   remain separate owner actions after reviewing this draft PR.
+1. **MPS/MOIT retention.** The owner approves successful shadow state and original
+   response bytes on this existing public repository's three ministry orphan
+   branches and associated Actions evidence for the shadow reliability period.
+   This covers only `vn_mps_foreign_affairs_vi`, `vn_moit_energy_vi` and
+   `vn_moit_foundational_industry_vi`. It is not blanket Vietnam permission or
+   a production retention policy. No private state repository is needed.
+2. **Government News remains unapproved.** Remote dispatch of
+   `vn_vgp_defense_en` / `vietnam_shadow.yml` and creation of `shadow/vietnam`
+   are not authorized. Its source-byte/public-retention question remains a
+   separate owner decision because of its documented rights notice.
+3. **Future Vietnam identity.** The owner selects exactly
+   `IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`.
+   `core/collection/vietnam_identity.py` is the sole current identity constant,
+   imported by the shared transport and formal reviewer. Government News also
+   inherits this constant but stays offline and unapproved for remote dispatch.
+   Historical probe/ledger identities remain immutable evidence; no request is
+   made to validate the new identity. Both new named robots rules and legacy
+   named refusals remain binding, without sending the legacy identity.
+4. **Exactly one ministry batch after separate owner merge.** The command below
+   is approved with an aggregate ceiling of 12 requests. In this finalization
+   session it is documentation only and MUST NOT be executed. Approval covers
+   no retry, second dispatch, schedule, production admission or Government News
+   collection. A separate owner merge is still required.
 
-## Exact recommended first operation
+## Exact approved first operation — after owner merge only
 
-After owner approval of the above decisions and a separate owner merge, verify
+After a separate owner merge, verify
 main contains the reviewed implementation, record that main SHA, verify all
 three proposed ministry branches are absent (if they exist unexpectedly, stop
 for owner review), and ensure no ministry collection is queued. Then:
@@ -110,29 +113,15 @@ this public repository must be treated as public. Durable successful state is
 on Git; failed attempts exist only in artifacts and need preservation for later
 checkpoint comparison before expiration, subject to the same visibility decision.
 
-## Original Government News pilot — separate approval/action
+## Original Government News pilot — remote action unapproved
 
-`vn_vgp_defense_en` uses `https://en.baochinhphu.vn/defense.html`, English
-newsroom reporting, Tier B, distinct from ministry reports. Its existing
-`vietnam_shadow.yml` remains dispatch-only, with seven Hanoi calendar dates,
-40 selected articles and **42 requests** (robots + first tag + bodies).
-State is `${RUNNER_TEMP}/shadow-state/state/` on `shadow/vietnam`, with the same
-public visibility/byte-retention decision; no ministry state or clock is reused.
-Response budgets are the same: at most **82,524,288 accepted body bytes**.
-
-If the owner chooses this as the first action instead, the exact existing pilot
-command is:
-
-```sh
-gh workflow run vietnam_shadow.yml --repo VSSpowerlifting/China-Mil-Watch \
-  --ref main -f target_date=2026-09-09
-```
-
-That window is September 3–9 inclusive, previously observed to contain one
-article (three expected requests); the configured hard ceiling remains 42.
-This is not included in the recommended ministry batch's 12-request approval.
-The pilot records its actual checkout SHA, which must be checked against the
-approved implementation and Actions event. No changed live rehearsal is needed.
+`vn_vgp_defense_en` is the English defense tag at
+`https://en.baochinhphu.vn/defense.html`, Tier B newsroom reporting, distinct from
+ministry reports. It remains built and tested offline, with no remote state,
+dispatch or collection approved. Do not dispatch `vietnam_shadow.yml` or create
+`shadow/vietnam`. The shared identity change is verified offline only; it grants
+no collection or source-byte/public-retention permission for Government News.
+That retention decision remains separate because of the documented rights notice.
 
 ## Post-run verification and formal review
 
@@ -177,32 +166,33 @@ step; there is no ministry review publisher. An incomplete template is not human
 review. Thirty consecutive collecting days, all three completed human reviews,
 desk-strength criteria and owner signoff are still required for any promotion.
 
-## Readiness verification
+## Finalization verification
 
-Native Python 3.9 focused checks passed **223 tests** (ministry adapters,
-remote batch/packet tests, original VGP adapter/runner/reviewer, screened HTTP
-and cross-process host gate). After the final timestamp-derived checkpoint age
-and distinct artifact-path refinement, **57 packet/VGP-review tests** passed.
-The initial focused invocation named a nonexistent VGP test module; that harness
-error was corrected before the 223-test run. An incomplete mock failure result
-was fixed during implementation; the final batch tests pass.
+Current main `9b475d0d578f93e6d4b9dc7cc90d3ad38c627b10` is integrated by
+ordinary merge, preserving Singapore image-only changes and Vietnam readiness.
+The only additional runtime behavior is the shared owner-selected identity and
+conservative new/legacy robots recognition; historical captures remain unchanged.
 
-Output validation passed with the **10 governed warnings**. Chromium
-**147.0.7727.15** launched locally. Workflow YAML and all four embedded shell
-blocks parse; `git diff --check` passes. The required structural
+Native Python 3.9 focused checks passed **255 tests**: ministry adapters,
+remote batch/packet tests, original VGP adapter/runner/reviewer, screened HTTP,
+cross-process host gate and the integrated Singapore image-only contracts. The
+first run failed one import allowlist for the new dependency-free identity module;
+that guard was updated and the entire focused group passed on rerun.
+
+Output validation passed with **10 governed warnings**. Chromium
+**147.0.7727.15** launched locally. `git diff --check` passes. Required
 `graphify update .` completed; its ignored graph output is not part of the PR.
 
-Preservation compared every **7,451 tracked DB/output files** to the base Git
-objects, all byte-identical, with clean scoped status and no WAL/SHM/journal
-residue. Database SHA-256:
+Preservation compared every **7,451 tracked DB/output files** directly to current
+main above, all byte-identical, with no WAL/SHM/journal residue. Database SHA-256:
 `b10890ddac59538b66041b10d13d08199f20be2279efa9bcb03a2d991d17decc`.
 No production content or generated-output change is included.
 
-The full offline suite was also started locally; that run began before the
-final refinement. The final-head required PR check (full Python 3.9 offline
-suite, Chromium launch, output validation and preservation) is authoritative;
-its run URL and results are recorded in the draft PR. Local focused success
-must not be used to claim that a failing broader check passed.
+The final integrated-head required PR check (full Python 3.9 offline suite,
+Chromium launch, output validation and preservation) is authoritative; its run
+URL, tested SHA and results are recorded in draft PR #114 after completion.
+Local focused success does not establish that the broader suite passed.
 
 No source collection, remote dispatch, schedule, main merge, regeneration,
-deployment or promotion occurred. This proposal is not activation approval.
+deployment or promotion occurred. Only the exact ministry first batch after
+separate owner merge is approved; this session performs no remote activation.

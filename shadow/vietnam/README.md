@@ -112,7 +112,7 @@ overwrite.
    appends a cache stamp); anything else is possible truncation.
 
 Requests carry the full identity
-`ChinaMilWatch-ShadowCollector/0.1 (+https://chinamilwatch.org; research archive; contact via site)`
+`IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`
 with `Accept-Encoding: identity`. Spacing is at least two seconds from the end
 of the previous request; a longer published `Crawl-delay` wins, and one over
 120 seconds stops collection. Timeouts are 30 seconds.
@@ -193,50 +193,17 @@ UTC slot, which is the Ha Noi date just ended. A UI re-run without a date is
 refused. Recovery writes a new ledger and never edits a failed attempt's
 evidence.
 
-## Activation
+## Activation — Government News remains unapproved
 
-Nothing below is authorized yet. Each step needs the owner.
-
-1. **Owner decisions, recorded in `DECISION_LOG.md`:**
-   - where Vietnam state may live, given that Government News marks its pages
-     "All rights reserved" and that state holds exact article bytes (feasibility
-     report §6). The 2026-10-02 public-state ruling covers the Philippines NSC
-     only;
-   - use of the unchanged full identity for scheduled collection from this
-     source;
-   - approval to activate.
-2. **Merge this PR.** The next site render then publishes `vietnam.html` and
-   the map entry at `research`. It does not start collection.
-3. **One bounded manual dispatch on main,** after checking that no run is
-   queued:
-
-   ```bash
-   gh workflow run vietnam_shadow.yml --repo VSSpowerlifting/China-Mil-Watch --ref main -f target_date=YYYY-MM-DD
-   ```
-
-   A current date most likely returns `ok_no_publications`, which verifies
-   robots and listing egress from Actions, not body egress. Measuring body
-   egress takes one owner-approved dispatch naming a date the tag lists. For
-   example, `2026-09-09` covers 2026-09-03 to 2026-09-09: one article, three
-   requests.
-4. **Verify,** as in `shadow/ph_nsc/README.md`: record the run URL, collector
-   SHA, target-date source, request and status counts, and health. Check that
-   the new state commit changes only `state/`, binds to the run, has no WAL or
-   SHM file, keeps old ledgers and the clock, and matches the ledger's database
-   hash. Confirm the production database and `output/` are unchanged. On
-   failure, confirm nothing was pushed, keep the artifact, and do not retry
-   around a refusal.
-5. **Schedule PR.** Move the commented block in the workflow header into `on:`
-   (removing the comment copy): `schedule:` / `- cron: '35 17 * * *'`. Then
-   replace `test_dispatch_only_with_the_activation_slot_documented_not_declared`
-   with a test that asserts exactly that schedule.
-   `test_any_schedule_must_match_the_cron_the_collector_is_told` already pins it
-   to `--cron-utc "17:35"`.
-6. **Registry PR, only once collection is actually running.** Set `status` to
-   `shadow` and `manifest` to `shadow/vietnam/manifest.json` (still outside
-   `desks/`), rewrite `status_explanation`, and update
-   `tests/test_desk_rollout_contract.py`'s Vietnam class. `has_production_records`
-   stays false.
+PR #107's engineering implementation is merged; PR #114 prepares ministries.
+The owner approves public shadow retention and one first ministry batch only,
+not Government News. Do not dispatch `vietnam_shadow.yml` or create
+`shadow/vietnam`. Government News's source-byte/public-retention question remains
+separate because of the documented rights notice. The new shared Vietnam
+identity above is verified offline only; it does not grant collection permission.
+No Government News dispatch, schedule, production admission or promotion is
+approved. Ministry budgets and the exact post-merge-only command are in
+`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
 
 ## Review path
 

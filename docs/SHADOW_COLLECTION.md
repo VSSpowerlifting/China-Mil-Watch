@@ -219,10 +219,11 @@ Three things hold wherever the source is described:
 * the English text is **what the newsroom published**, not a Vietnamese
   original, and nothing is translated.
 
-Launching needs the owner decisions left open in `DECISION_LOG.md`
-(2026-10-05): where the state lives and whether it may be public, the
-collector identity for periodic use on this host, and approval to dispatch and
-then to schedule. Scope, activation and recovery are in
+Government News remote dispatch, `shadow/vietnam` creation and public capture
+retention remain unapproved. Its rights-notice retention question is a separate
+owner decision. The shared Vietnam identity is now the owner-selected
+IndoPacificRecord-ShadowCollector/0.1, verified offline only; the identity change
+grants no Government News collection permission. Scope, activation and recovery are in
 `shadow/vietnam/README.md`; the measured evidence in
 `docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`. Checkpoint packets come from
 `scripts/review_vietnam_shadow_state.py`, never from Singapore's tooling.
@@ -237,7 +238,9 @@ has separate state and clock; both MOIT categories share the cross-process
 host gate. Defence and Finance remain unreached. See
 `docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md` for bounded rehearsal evidence;
 `docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md` for exact remote budgets,
-state/publication boundaries and unresolved owner decisions.
+approved narrow public ministry retention, the new shared Vietnam identity,
+state/publication boundaries and the single 12-request first batch approved only
+after separate owner merge. No retry, second dispatch or schedule is approved.
 
 ## The ledger and the clock
 

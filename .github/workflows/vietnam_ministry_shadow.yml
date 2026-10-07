@@ -1,6 +1,8 @@
 name: Vietnam Ministry Shadow Collection
 
-# Prepared only. Owner approval of visibility, identity and dispatch is required.
+# Owner-approved public MPS/MOIT shadow retention and new Vietnam identity.
+# Exactly one 12-request first batch is approved AFTER separate owner merge;
+# no dispatch, retry, schedule or Government News collection in this session.
 # No schedule; main-only; one serial batch, common cross-process host gate.
 on:
   workflow_dispatch:
