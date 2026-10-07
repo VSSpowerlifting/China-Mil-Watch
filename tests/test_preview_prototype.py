@@ -1085,7 +1085,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         and a stale unconditional plural check would flag that as broken.
         """
         html = self.page("coverage.html")
-        self.assertIn("collectors executed", html)
+        executed = self.run_status["executed"]
+        match = re.search(r"<b>(\d+)</b> collector(s?) executed</li>", html)
+        self.assertIsNotNone(match, "collector count line not found")
+        self.assertEqual(int(match.group(1)), executed)
+        self.assertEqual(match.group(2), "" if executed == 1 else "s",
+                         "collector grammar does not match its count")
         failed = self.run_status["failed"]
         match = re.search(r"<b>(\d+)</b> execution failure(s?)</li>", html)
         self.assertIsNotNone(match, "execution-failure count line not found")
@@ -1109,9 +1114,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         numerator is read from the run.
         """
         html = self.page("coverage.html")
-        self.assertIn("<b>%d</b> collectors executed" % self.run_status["executed"],
-                      html)
-        self.assertNotRegex(html, r"\d+\s+of\s+\d+\s+collectors")
+        executed = self.run_status["executed"]
+        noun = "collector" if executed == 1 else "collectors"
+        self.assertIn("<b>%d</b> %s executed</li>" % (executed, noun), html)
+        self.assertNotRegex(html, r"\d+\s+of\s+\d+\s+collectors?")
 
     def test_status_counts_are_derived_from_the_stored_run_record(self):
         data = gp.load_corpus(TRACKED_DB)
@@ -1213,16 +1219,43 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         Five sources map to one desk. If the derivation ever counts sources
         instead of distinct desks, this catches it.
         """
-        data = gp.load_corpus(TRACKED_DB)
+        with tempfile.TemporaryDirectory(prefix="desk-source-count-") as tmp:
+            db_path = Path(tmp) / "fixture.db"
+            build_legacy_db(db_path)
+            conn = connect(db_path)
+            try:
+                apply_all(conn)
+                slugs = ("pla_daily", "china_mil_online", "mod_china",
+                         "global_times_mil", "xinhua_mil")
+                for slug in slugs:
+                    row = conn.execute(
+                        "SELECT desk_id FROM sources WHERE slug = ?",
+                        (slug,)).fetchone()
+                    self.assertIsNotNone(row)
+                    self.assertEqual(row[0], "china")
+                conn.execute(
+                    "INSERT INTO scrape_runs (id, started_at, status) "
+                    "VALUES (999, '2026-09-22 00:00:00', 'completed')")
+                conn.executemany(
+                    "INSERT INTO source_run_results "
+                    "(scrape_run_id, source_slug, status) VALUES (999, ?, 'ok')",
+                    [(slug,) for slug in slugs])
+                conn.commit()
+            finally:
+                conn.close()
+            data = gp.load_corpus(db_path)
+
         executed = [r for r in data["run_results"]
                     if r["status"] not in ("not_implemented",
                                            "skipped_disabled")]
         by_desk = {s["desk_id"] for s in data["sources"]
                    if s["slug"] in {r["source_slug"] for r in executed}}
+        self.assertEqual(len(executed), 5)
+        self.assertEqual(by_desk, {"china"})
         self.assertGreater(len(executed), len(by_desk),
                            "fixture must have several sources sharing a desk "
                            "for this test to mean anything")
-        self.assertEqual(len(data["collecting_desks"]), len(by_desk))
+        self.assertEqual(set(data["collecting_desks"]), by_desk)
 
     def test_desk_count_is_withheld_when_a_source_cannot_be_mapped(self):
         """An unmappable source means the count is unknown, not smaller."""

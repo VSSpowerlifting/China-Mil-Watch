@@ -1747,6 +1747,8 @@ html.js-reveal.no-anim [data-reveal] .week-bars a::before {
   .ledger-label { padding-bottom: .35rem; }
   /* The run link keeps its 44px; the space comes out of the panel around it. */
   .ledger-foot { margin-top: 0; }
+  /* Keep a complete headline line visible when collection leads analysis. */
+  .ledger-note { margin-top: .25rem; }
   .lead-record { padding-block: .7rem 1.05rem; }
   .lead-meta { margin-bottom: .45rem; }
   .week-bars { gap: 2px; height: 64px; }

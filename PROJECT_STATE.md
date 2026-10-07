@@ -9,7 +9,10 @@ first-brief research packet are in
 Singapore recovery claim). The Singapore screening repair and re-screening
 plan are in `docs/SINGAPORE_SCREENING_REPAIR_2026-09-29.md` (merged, PR #84).
 The image-only-release repair is in
-`docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`.**
+`docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md`. The authorized September 22
+recovery is prepared for review (three inserts, eight duplicates; no analysis
+or rendering), with evidence in
+`docs/SINGAPORE_SEPT22_RECOVERY_2026-10-07.md`.**
 
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
@@ -880,10 +883,10 @@ Full ordering and rationale in `docs/ROADMAP.md`. In short:
    proposal, and decide what analysis follows a Singapore pass.
 4. Collection continuity:
    - recover or disclose the 09-15 China gap;
-   - review and merge the image-only repair (`22sep26-infographic` blocks any
-     window containing 09-22 until then), run the one Singapore-only,
-     no-analysis recovery for the 09-22 window, and rule on the residual
-     risks in `docs/SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md` §7;
+   - review the September 22 recovery PR (PR #85 repair merged; three records
+     recovered with no analysis). Evidence: `docs/SINGAPORE_SEPT22_RECOVERY_2026-10-07.md`.
+     Recovery is not yet on main or rendered; residual classification tradeoffs
+     were reviewed before the authorized run;
    - decide whether collection should depend on the pre-collection test
      gate.
 5. An explicit continue/pause decision on the Japan shadow desk, and its
