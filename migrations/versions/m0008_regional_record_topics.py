@@ -48,4 +48,11 @@ def is_already_applied(conn: sqlite3.Connection) -> bool:
 
 
 def up(conn: sqlite3.Connection) -> None:
+    if _table_exists(conn):
+        missing = _REQUIRED_COLUMNS - _columns(conn)
+        if missing:
+            raise sqlite3.IntegrityError(
+                "partial record_topics table is missing columns: %s" %
+                ", ".join(sorted(missing))
+            )
     ensure_topic_store(conn)
