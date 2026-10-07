@@ -1,0 +1,152 @@
+name: India Defence Feasibility Probe
+
+# Disposable research probe. Tests the Government of India PIB Ministry of
+# Defence release route from GitHub Actions using the current Indo-Pacific
+# Record shadow identity. Three GETs maximum: robots, one ministry-filtered
+# listing, and one current release. No redirects, linked documents, or writes.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/india_defence_probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.head_ref == 'research/india-defence-feasibility-20261007'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact probe head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install requests only
+        run: python -m pip install 'requests>=2.31,<3'
+
+      - name: Probe PIB Ministry of Defence route
+        env:
+          OUT: ${{ runner.temp }}/india-defence-probe.json
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import re
+          from pathlib import Path
+          from urllib import robotparser
+
+          import requests
+          from core.collection.vietnam_identity import USER_AGENT
+
+          MAX_SAMPLE = 256 * 1024
+          TIMEOUT = 20
+          ROBOTS = "https://www.pib.gov.in/robots.txt"
+          TARGETS = [
+              ("listing", "https://www.pib.gov.in/newsite/pmreleases.aspx?lang=2&mincode=33&reg=48"),
+              ("article", "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2319135&lang=2&reg=48"),
+          ]
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": USER_AGENT,
+              "Accept": "text/plain,text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+              "Accept-Encoding": "identity",
+          })
+
+          def fetch(url):
+              try:
+                  resp = session.get(url, timeout=TIMEOUT, allow_redirects=False, stream=True)
+                  chunks = []
+                  total = 0
+                  for chunk in resp.iter_content(16384):
+                      if not chunk:
+                          continue
+                      remaining = MAX_SAMPLE - total
+                      if remaining <= 0:
+                          break
+                      chunk = chunk[:remaining]
+                      chunks.append(chunk)
+                      total += len(chunk)
+                      if total >= MAX_SAMPLE:
+                          break
+                  body = b"".join(chunks)
+                  text = body.decode(resp.encoding or "utf-8", errors="replace")
+                  return {
+                      "url": url,
+                      "status": resp.status_code,
+                      "content_type": resp.headers.get("Content-Type"),
+                      "location": resp.headers.get("Location"),
+                      "server": resp.headers.get("Server"),
+                      "cf_mitigated": resp.headers.get("Cf-Mitigated"),
+                      "sample_bytes": len(body),
+                      "sample_sha256": hashlib.sha256(body).hexdigest(),
+                      "challenge_marker": bool(
+                          resp.headers.get("Cf-Mitigated")
+                          or re.search(r"cf-chl|challenge-platform|just a moment|captcha", text, re.I)
+                      ),
+                  }, text
+              except requests.RequestException as exc:
+                  return {
+                      "url": url,
+                      "transport_error": "%s: %s" % (type(exc).__name__, exc),
+                  }, ""
+
+          report = {
+              "collector_user_agent": USER_AGENT,
+              "request_budget": 3,
+              "redirects_followed": False,
+              "linked_documents_fetched": False,
+          }
+
+          robots_meta, robots_text = fetch(ROBOTS)
+          report["robots"] = robots_meta
+          if robots_meta.get("status") == 200:
+              report["robots_text"] = robots_text[:4096]
+
+          readable = robots_meta.get("status") == 200 and bool(robots_text.strip())
+          rp = robotparser.RobotFileParser()
+          if readable:
+              rp.set_url(ROBOTS)
+              rp.parse(robots_text.splitlines())
+
+          for kind, url in TARGETS:
+              allowed = bool(readable and rp.can_fetch(USER_AGENT, url))
+              if not allowed:
+                  report[kind] = {
+                      "url": url,
+                      "robots_allowed": False,
+                      "request_made": False,
+                  }
+                  continue
+              meta, text = fetch(url)
+              meta["robots_allowed"] = True
+              meta["request_made"] = True
+              meta["contains_ministry_of_defence"] = bool(
+                  re.search(r"Ministry\s+of\s+Defence", text, re.I)
+              )
+              report[kind] = meta
+
+          Path(os.environ["OUT"]).write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(report, indent=2, sort_keys=True))
+          PY
+
+      - name: Upload immutable probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: india-defence-feasibility-${{ github.run_id }}
+          path: ${{ runner.temp }}/india-defence-probe.json
+          if-no-files-found: error
+          retention-days: 90
