@@ -44,6 +44,7 @@ from __future__ import annotations
 import errno
 import fcntl
 import json
+import math
 import os
 import re
 import tempfile
@@ -144,6 +145,8 @@ class HostGate:
             for key in ("last_end", "open_since", "interval"):
                 if record.get(key) is not None:
                     record[key] = float(record[key])
+                    if not math.isfinite(record[key]):
+                        raise ValueError("%s is not finite" % key)
                 else:
                     record[key] = None
         except (ValueError, TypeError, AttributeError) as exc:
@@ -172,13 +175,18 @@ class HostGate:
         with self._locked(host) as record_path:
             return self._read(record_path)
 
-    def seed(self, host: str, epoch: float) -> None:
+    def seed(self, host: str, epoch: float, interval: Optional[float] = None) -> None:
         """Record that a request to `host` ended no later than `epoch`."""
+        if not math.isfinite(float(epoch)) or (interval is not None and
+                                              not 0 < interval <= MAX_INTERVAL):
+            raise GateError("invalid seeded timestamp or interval")
         with self._locked(host) as record_path:
             record = self._read(record_path)
             if record["last_end"] is None or float(epoch) > record["last_end"]:
                 record.update(host=host, last_end=float(epoch))
-                self._write(record_path, record)
+            if interval is not None:
+                record["interval"] = max(float(interval), record["interval"] or 0)
+            self._write(record_path, record)
 
     @contextmanager
     def slot(self, host: str, interval: float) -> Iterator[Slot]:

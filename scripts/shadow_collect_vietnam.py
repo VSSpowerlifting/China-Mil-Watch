@@ -29,6 +29,7 @@ import os
 import re
 import sqlite3
 import sys
+import tempfile
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -39,6 +40,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from core.collection import status as st
 from core.collection.contract import CollectionWindow
+from core.collection.host_gate import HostGate
+from core.collection.vietnam_sources import SOURCES as MINISTRY_SOURCES
 from core.shadow_schedule import SOURCE_EXPLICIT, ScheduleError, resolve_target_date
 from scraper.sources.vn_vgp import CONTENT_HASH_RULE, USER_AGENT, VNVgpAdapter
 
@@ -108,6 +111,15 @@ CREATE TABLE IF NOT EXISTS shadow_observations (
 CREATE INDEX IF NOT EXISTS idx_vn_published ON shadow_records(published_date);
 """
 
+MINISTRY_METADATA_SCHEMA = """
+CREATE TABLE IF NOT EXISTS shadow_metadata (
+    run_id TEXT NOT NULL,
+    source_identity TEXT NOT NULL,
+    metadata_json TEXT NOT NULL,
+    PRIMARY KEY (run_id, source_identity)
+);
+"""
+
 
 def assert_isolated(state_dir: Path) -> None:
     resolved = state_dir.resolve()
@@ -130,6 +142,49 @@ def file_sha256(path: Path):
     return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
 
 
+def assert_source_state(state_dir, source_slug):
+    """An existing clock/corpus cannot be borrowed by another source."""
+    ledgers = []
+    for path in sorted((state_dir / "ledger").glob("*.json")):
+        row = json.loads(path.read_text(encoding="utf-8"))
+        if (row.get("desk_id"), row.get("source_slug")) != (DESK_ID, source_slug):
+            raise ValueError("state ledger belongs to another desk/source")
+        ledgers.append(row)
+    clock_path = state_dir / "clock.json"
+    if clock_path.exists():
+        clock = json.loads(clock_path.read_text(encoding="utf-8"))
+        if not any(e.get("run_id") == clock.get("day_zero_run_id")
+                   and st.is_success(e.get("result", "")) for e in ledgers):
+            raise ValueError("clock is not bound to this source's successful ledger")
+    db = state_dir / "shadow.db"
+    if db.exists():
+        with sqlite3.connect(db.resolve().as_uri() + "?mode=ro&immutable=1", uri=True) as conn:
+            if any(slug != source_slug for (slug,) in conn.execute(
+                    "SELECT DISTINCT source_slug FROM shadow_records")):
+                raise ValueError("database belongs to another source")
+
+
+def host_gate(state_dir, gate_dir=None):
+    directory = Path(gate_dir) if gate_dir is not None else (
+        Path(tempfile.gettempdir()) / "ipr-vietnam-host-gate")
+    assert_isolated(directory)
+    gate = HostGate(directory)
+    # A fresh checkout can seed a new machine's gate from preserved request
+    # completions. The local shared directory also covers failed local runs.
+    for path in sorted((state_dir / "ledger").glob("*.json")):
+        entry = json.loads(path.read_text(encoding="utf-8"))
+        for request in entry.get("requests", []):
+            ended = request.get("ended_utc")
+            if ended:
+                from urllib.parse import urlparse
+                host = urlparse(request["url"]).hostname
+                stamp = datetime.fromisoformat(ended)
+                if stamp.tzinfo is None:
+                    raise ValueError("previous request completion has no UTC offset")
+                gate.seed(host, stamp.timestamp(), request.get("gate_interval_s", 2.0))
+    return gate
+
+
 def _store_capture(state_dir: Path, payload: bytes, sha: str) -> None:
     if hashlib.sha256(payload).hexdigest() != sha:
         raise ValueError("capture bytes disagree with transport hash")
@@ -147,6 +202,8 @@ def _finish(entry, state_dir, db_path, adapter=None):
     # (refusals included) keeps the requests it actually made.
     if adapter is not None:
         entry["requests"] = list(getattr(adapter, "request_log", []))
+        if getattr(adapter, "source_anomalies", None):
+            entry["source_anomalies"] = list(adapter.source_anomalies)
     entry["finished_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     entry["state_sha256_after"] = file_sha256(db_path)
     clock_path = state_dir / "clock.json"
@@ -174,6 +231,8 @@ def _finish(entry, state_dir, db_path, adapter=None):
 def _record(conn, run_id, capture, doc, entry) -> str:
     """Store one extracted document; returns the observation's outcome."""
     x = doc.extra
+    if doc.source_slug != entry["source_slug"]:
+        raise ValueError("extracted document belongs to another source")
     ident, digest = x["source_identity"], x["content_sha256"]
     anomalies = list(x["anomalies"])
     row = conn.execute(
@@ -219,16 +278,22 @@ def _record(conn, run_id, capture, doc, entry) -> str:
             x["publisher_jsonld"], x["category"], json.dumps(x["tags"], ensure_ascii=False),
             x["listing_title"], x["listing_local_time"], x["media_count"],
             x["related_boxes_excluded"], json.dumps(anomalies, ensure_ascii=False)))
+    if "source_metadata" in x:
+        conn.execute("INSERT INTO shadow_metadata VALUES (?,?,?)", (
+            run_id, ident, json.dumps(x["source_metadata"], ensure_ascii=False, sort_keys=True)))
     for anomaly in anomalies:
         entry["anomalies"].append({"source_identity": ident, "url": doc.url, "anomaly": anomaly})
     return outcome
 
 
 def run(state_dir: Path, target: date, lookback: int, cap: int,
-        run_id: str, commit: str, adapter=None, target_source=SOURCE_EXPLICIT):
+        run_id: str, commit: str, adapter=None, target_source=SOURCE_EXPLICIT,
+        source=None, content_hash_rule=CONTENT_HASH_RULE, gate_dir=None):
     assert_isolated(state_dir)
     if lookback < 0 or cap < 1 or not re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", run_id):
         raise ValueError("non-negative lookback, positive cap and safe run id required")
+    source = source or load_source()
+    assert_source_state(state_dir, source.slug)
     state_dir.mkdir(parents=True, exist_ok=True)
     (state_dir / "ledger").mkdir(exist_ok=True)
     db_path = state_dir / "shadow.db"
@@ -239,7 +304,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         "target_date": target.isoformat(), "target_date_source": target_source,
         "window_start": (target - timedelta(days=lookback)).isoformat(),
         "lookback_days": lookback, "cap": cap, "request_ceiling": cap + FIXED_REQUESTS,
-        "content_hash_rule": CONTENT_HASH_RULE,
+        "content_hash_rule": content_hash_rule,
         "source_slug": None, "robots_status": None, "listing_status": None,
         "listing_report": {}, "discovered": 0, "selected": 0, "retrieved": 0,
         "new_records": 0, "changed": 0, "reverted": 0, "unchanged": 0,
@@ -249,7 +314,6 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         "state_sha256_before": file_sha256(db_path),
         "result": None, "health": None, "error_detail": None,
     }
-    source = load_source()
     entry["source_slug"] = source.slug
     conn = None
     committed = False
@@ -257,7 +321,8 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         if source.enabled is not True:
             entry.update(result=st.SKIPPED_DISABLED, health="skipped")
             return _finish(entry, state_dir, db_path, adapter)
-        adapter = adapter or VNVgpAdapter(source, max_requests=cap + FIXED_REQUESTS)
+        adapter = adapter or VNVgpAdapter(source, max_requests=cap + FIXED_REQUESTS,
+                                         gate=host_gate(state_dir, gate_dir))
         discovery = adapter.discover(CollectionWindow(target, lookback))
         entry.update(listing_status=discovery.status, robots_status=adapter.robots_status,
                      listing_report=adapter.listing_report,
@@ -283,6 +348,8 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
             return _finish(entry, state_dir, db_path, adapter)
         conn = sqlite3.connect(str(db_path))
         conn.executescript(SCHEMA)
+        if source.slug in MINISTRY_SOURCES:
+            conn.executescript(MINISTRY_METADATA_SCHEMA)
         entry["selected"] = len(discovery.references)
         for position, ref in enumerate(discovery.references):
             capture = adapter.fetch(ref)
@@ -297,7 +364,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                                           "detail": capture.error_detail})
                 # A challenge or a 401/403 is the host refusing this collector.
                 # The rest of the window is named for recovery, never probed.
-                if capture.status == st.ACCESS_CHALLENGED or capture.http_status in (401, 403):
+                if (capture.status == st.ACCESS_CHALLENGED or
+                        capture.http_status in (401, 403, 429, 503) or
+                        any(r.get("stop_host") for r in adapter.request_log)):
                     entry["deferred_urls"] = [r.url for r in discovery.references[position + 1:]]
                     break
                 continue
@@ -365,6 +434,8 @@ def main(argv=None):
                     help="most articles one run may fetch; requests stay within cap + 2")
     ap.add_argument("--run-id", default=os.environ.get("GITHUB_RUN_ID", "local"))
     ap.add_argument("--commit", default="unknown")
+    ap.add_argument("--gate-dir", default=None,
+                    help="shared external host-gate directory; defaults to the system temp directory")
     ap.add_argument("--event-name", default=os.environ.get("GITHUB_EVENT_NAME"))
     ap.add_argument("--cron-utc", default=None)
     ap.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT") or "1")
@@ -373,7 +444,7 @@ def main(argv=None):
         target, source = resolve_target_date(datetime.now(timezone.utc), args.event_name,
                                              args.cron_utc, args.target_date, args.run_attempt)
         entry = run(Path(args.state_dir), target, args.lookback_days, args.cap,
-                    args.run_id, args.commit, target_source=source)
+                    args.run_id, args.commit, target_source=source, gate_dir=args.gate_dir)
     except (ScheduleError, ValueError) as exc:
         print("collection refused: %s" % exc, file=sys.stderr)
         return 2

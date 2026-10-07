@@ -309,6 +309,10 @@ class ShadowHttpAdapter(SourceAdapter):
             self._session.cookies.clear()
             headers = {k.lower(): v for k, v in (resp.headers or {}).items()}
             log["status"] = resp.status_code
+            if resp.status_code in (429, 503) or "retry-after" in headers:
+                log["stop_host"] = True
+                raise Refusal(generic, "%s: host requested a stop (HTTP %d)" %
+                              (url, resp.status_code), url, resp.status_code)
             if headers.get("location"):
                 log["location"] = headers["location"]
             encoding = headers.get("content-encoding", "").strip().lower()

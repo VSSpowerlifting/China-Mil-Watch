@@ -190,8 +190,9 @@ class TestRunner(RunnerCase):
         built = {}
         real = runner.VNVgpAdapter
 
-        def build(source, max_requests):
+        def build(source, max_requests, gate):
             built["max_requests"] = max_requests
+            self.assertIsInstance(gate, runner.HostGate)
             self.rig = Rig(max_requests=max_requests)
             return self.rig.adapter
         with mock.patch.object(runner, "VNVgpAdapter", side_effect=build):
@@ -366,7 +367,8 @@ class TestRunner(RunnerCase):
         imports = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)}
         self.assertEqual({m for m in imports if m.split(".")[0] in ("core", "scraper")},
                          {"core.collection", "core.collection.contract", "core.shadow_schedule",
-                          "scraper.sources.vn_vgp"})
+                          "scraper.sources.vn_vgp", "core.collection.host_gate",
+                          "core.collection.vietnam_sources"})
         plain = {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
         self.assertFalse({"requests", "storage", "pipeline", "config", "anthropic"} & plain)
         literals = [n.value for n in ast.walk(tree)

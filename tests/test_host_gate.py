@@ -142,6 +142,24 @@ class GateUnitTests(unittest.TestCase):
         self.gate.seed("moit.gov.vn", before - 100)
         self.assertEqual(self.gate.record("moit.gov.vn")["last_end"], before)
 
+    def test_seed_keeps_published_interval_on_a_new_machine(self):
+        self.gate.seed("moit.gov.vn", self.clock.now, 6.0)
+        self.gate.seed("moit.gov.vn", self.clock.now - 10, 2.0)
+        self.assertEqual(self.gate.record("moit.gov.vn")["interval"], 6.0)
+        with self.gate.slot("moit.gov.vn", 2.0) as slot:
+            self.assertEqual(slot.interval, 6.0)
+
+    def test_nonfinite_seed_and_record_fail_closed(self):
+        for value in (float("nan"), float("inf"), -float("inf")):
+            with self.assertRaises(GateError):
+                self.gate.seed("moit.gov.vn", value)
+            path = self.gate.directory / "moit.gov.vn.json"
+            path.write_text(json.dumps({"last_end": value, "interval": 2.0}))
+            with self.assertRaises(GateError):
+                with self.gate.slot("moit.gov.vn", 2.0):
+                    self.fail("corrupt timing record accepted")
+            path.unlink()
+
     def test_a_future_record_waits_at_most_the_interval(self):
         self.gate.seed("moit.gov.vn", self.clock.now + 3600)
         self.assertAlmostEqual(self.request().waited, 2.0 + MARGIN)

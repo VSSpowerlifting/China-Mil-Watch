@@ -1,0 +1,124 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "desk": {
+    "desk_id": "vietnam",
+    "display_name": "Vietnam ministry research",
+    "jurisdiction_code": "VN",
+    "default_timezone": "Asia/Ho_Chi_Minh",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "vi"
+    ],
+    "public_status": "research",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "vn_mps",
+      "display_name": "Ministry of Public Security",
+      "name_original": "Bộ Công an",
+      "institution_type": "other"
+    },
+    {
+      "institution_id": "vn_moit",
+      "display_name": "Ministry of Industry and Trade",
+      "name_original": "Bộ Công Thương",
+      "institution_type": "other"
+    }
+  ],
+  "sources": [
+    {
+      "slug": "vn_mps_foreign_affairs_vi",
+      "display_name": "Cổng thông tin điện tử Bộ Công an — Thông tin Đối ngoại",
+      "institution_id": "vn_mps",
+      "base_url": "https://bocongan.gov.vn",
+      "discovery_endpoints": [
+        "https://bocongan.gov.vn/api/rss/34.xml"
+      ],
+      "adapter": "scraper.sources.vn_ministries:VNMinistryAdapter",
+      "enabled": true,
+      "language_tags": [
+        "vi"
+      ],
+      "authority_tier": "A",
+      "state_branch": "shadow/vietnam-mps-foreign-affairs",
+      "content_hash_rule": "mps-vi-content-v1",
+      "declared_scope": [
+        "Thông tin Đối ngoại only; Vietnamese portal reports, not a comprehensive ministry archive.",
+        "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
+        "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
+        "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
+        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+      ]
+    },
+    {
+      "slug": "vn_moit_energy_vi",
+      "display_name": "Cổng thông tin điện tử Bộ Công Thương — Phát triển năng lượng",
+      "institution_id": "vn_moit",
+      "base_url": "https://moit.gov.vn",
+      "discovery_endpoints": [
+        "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+      ],
+      "adapter": "scraper.sources.vn_ministries:VNMinistryAdapter",
+      "enabled": true,
+      "language_tags": [
+        "vi"
+      ],
+      "authority_tier": "A",
+      "state_branch": "shadow/vietnam-moit-energy",
+      "content_hash_rule": "moit-vi-content-v1",
+      "declared_scope": [
+        "Phát triển năng lượng only; Vietnamese portal reports, not a comprehensive ministry archive.",
+        "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
+        "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
+        "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
+        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+      ]
+    },
+    {
+      "slug": "vn_moit_foundational_industry_vi",
+      "display_name": "Cổng thông tin điện tử Bộ Công Thương — Công nghiệp nền tảng",
+      "institution_id": "vn_moit",
+      "base_url": "https://moit.gov.vn",
+      "discovery_endpoints": [
+        "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+      ],
+      "adapter": "scraper.sources.vn_ministries:VNMinistryAdapter",
+      "enabled": true,
+      "language_tags": [
+        "vi"
+      ],
+      "authority_tier": "A",
+      "state_branch": "shadow/vietnam-moit-foundational-industry",
+      "content_hash_rule": "moit-vi-content-v1",
+      "declared_scope": [
+        "Công nghiệp nền tảng only; Vietnamese portal reports, not a comprehensive ministry archive.",
+        "Only the published first listing/feed; refuse windows whose oldest listing item does not precede the window start.",
+        "Publisher is the ministry portal; issuer and legal effective date are unset. No translation, subject filtering or inferred legal instrument.",
+        "Article publication date comes from its visible stamp. No assumed UTC instant. RSS UTC and raw article metadata are stored separately.",
+        "Local shadow rehearsal only; no remote publication, production manifest, workflow, scheduling or inherited clock."
+      ]
+    }
+  ],
+  "blocked_research": [
+    {
+      "url": "https://bqp.vn/",
+      "institution": "Ministry of National Defence",
+      "status": "robots script/cookie challenge; no listing or body reached",
+      "alias": "https://mod.gov.vn/"
+    },
+    {
+      "url": "https://www.mof.gov.vn/",
+      "institution": "Ministry of Finance",
+      "status": "robots app shell; no collection basis"
+    },
+    {
+      "url": "https://vntr.moit.gov.vn/",
+      "institution": "MOIT trade remedies",
+      "status": "robots disallows; not collected"
+    }
+  ],
+  "evidence": "tests/fixtures/vn_ministries/requests.json",
+  "rights": "MPS fixtures retain attribution. MOIT fixtures are derived structural examples; original source prose is not committed. Accessibility does not establish reuse permission."
+}
