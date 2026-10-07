@@ -175,16 +175,23 @@ partial, **pause** it pending a request for an official route, or **stop** it.
 Letting it run indefinitely without a ruling is the option to avoid — it
 accumulates evaluation days that cannot support a promotion argument.
 
-**US DVIDS shadow, same class of decision.**
+**US DVIDS shadow is paused, not awaiting more daily failures.**
 - The DVIDS route is separate from the `access_blocked` command website.
-- It has failed every scheduled run since 2026-09-20, all robots.txt 5xx, so
-  permission was undetermined. Its only success was a manual dispatch on
-  09-19.
-- The cause is not established. Any diagnosis is a single identified request,
-  never a workaround.
-- On every shadow desk, a failed run's ledger survives only as a 90-day
-  artifact, because state is persisted only on success. Whether to persist
-  failed-run ledgers is a decision for all three workflows together.
+- Manual run 35476931301 succeeded on 2026-09-19 and inserted 40 records.
+- Every scheduled run from 2026-09-20 through 2026-10-07 then failed before
+  feed discovery because the policy request returned HTTP 502/504: 18
+  consecutive scheduled failures. The first was run 35512831659 (504); the
+  latest was run 37646622735 (502).
+- DVIDS remains publicly available and documents RSS access, so this is recorded
+  as unresolved GitHub-Actions egress/access reliability, not a publisher
+  refusal and not a parser defect.
+- The daily cron is removed. The workflow remains manual-only behind an explicit
+  owner-authorization input for a future controlled re-probe. Do not add a
+  proxy, alternate identity/host, browser impersonation, or retry loop to make
+  the failure disappear.
+- Failed-run ledgers remain 90-day Actions evidence and are not imported into
+  the durable state branch. See
+  `docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md`.
 
 ### 6. Decouple preservation and rendering from LLM availability
 

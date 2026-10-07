@@ -125,33 +125,14 @@ class TestConcurrencyAndScheduling(unittest.TestCase):
         for other in ("singapore", "japan", "jp-mod", "daily"):
             self.assertNotIn(other, group)
 
-    def test_the_schedule_is_separated_from_every_other_workflow(self):
-        """
-        Separation is measured against the lateness each schedule has actually
-        shown, not its nominal time. Japan has run up to 7h38m late.
-        """
-        mine = crons(RAW)[0]
-        self.assertEqual(mine, "40 8 * * *")
-        others = set()
-        for path in WORKFLOWS.glob("*.yml"):
-            if path != US:
-                others.update(crons(path.read_text(encoding="utf-8")))
-        self.assertNotIn(mine, others)
-        # No other schedule sits in the same UTC hour.
-        my_hour = int(mine.split()[1])
-        for cron in others:
-            self.assertNotEqual(int(cron.split()[1]), my_hour, cron)
+    def test_the_paused_workflow_has_no_schedule(self):
+        self.assertEqual(crons(RAW), [])
 
-    def test_the_cron_and_the_collector_argument_agree(self):
-        """
-        `--cron-utc` is how the collector learns the LOGICAL slot. If it drifts
-        from the cron above it, a late run is stamped with the wrong day --
-        the exact defect that left two Singapore days with no ledger.
-        """
-        cron = crons(RAW)[0]
-        minute, hour = cron.split()[0], cron.split()[1]
-        expected = "%02d:%02d" % (int(hour), int(minute))
-        self.assertIn('--cron-utc "%s"' % expected, RAW)
+    def test_manual_reprobe_requires_explicit_owner_authorization(self):
+        self.assertIn("owner_authorized_reprobe:", RAW)
+        self.assertIn("default: false", RAW)
+        self.assertIn("inputs.owner_authorized_reprobe", RAW)
+        self.assertIn("github.event_name == 'workflow_dispatch'", RAW)
 
     def test_a_manual_dispatch_can_name_the_day_it_recovers(self):
         self.assertIn("workflow_dispatch:", RAW)
@@ -162,6 +143,7 @@ class TestConcurrencyAndScheduling(unittest.TestCase):
         # executed rather than parsed.
         self.assertIn("TARGET_DATE: ${{ inputs.target_date }}", RAW)
         self.assertNotIn('--target-date "${{', RAW)
+        self.assertNotIn("--cron-utc", RAW)
 
 
 class TestStateIsolation(unittest.TestCase):

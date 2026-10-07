@@ -4,6 +4,21 @@ Shadow evaluation only. This desk collects into an isolated state branch that
 reaches neither `pla_watch.db` nor `output/`, renders no records, and is
 counted nowhere. **A shadow desk is not a qualified desk.**
 
+## Current operational status — paused 2026-10-07
+
+The DVIDS adapter remains built and the September 19 manual run remains valid
+state evidence, but **scheduled collection is paused**. Eighteen consecutive
+scheduled runs from September 20 through October 7 failed before RSS discovery
+because the policy request to `/robots.txt` returned HTTP 502/504 from GitHub
+Actions. The durable state branch therefore remains at the September 19
+successful corpus.
+
+This is recorded as unresolved GitHub-hosted egress/access reliability, not a
+publisher refusal. The workflow is manual-only and a re-probe requires explicit
+owner authorization. Do not add a proxy, browser identity, alternate host,
+robots bypass, or automatic retry. Restart criteria and exact run evidence are
+in `docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md`.
+
 ## What this source is
 
 **DVIDS USINDOPACOM-tagged reference stream.**

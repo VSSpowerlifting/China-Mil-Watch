@@ -500,15 +500,24 @@ Two consequences of the source fix, both expected and neither retroactive:
   `finished_utc` against day zero, never from `target_date`, so no day count
   moves.
 
-**US Indo-Pacific, DVIDS route** — state branch `shadow/us-indopacom`
-(`a36f67aee`), `us_shadow.yml`, daily at 08:40 UTC. This route is distinct
-from the `access_blocked` command website and is not public coverage.
-- One successful manual dispatch: run 35476931301, 2026-09-19, 40 records
-  inserted.
-- Then **9 consecutive scheduled failures**, target dates 09-20 → 09-28. All
-  were `listing_failure`, caused by robots.txt returning HTTP 502/504, so
-  permission was undetermined. The cause is not established and was not
-  probed.
+**US Indo-Pacific, DVIDS route — paused 2026-10-07.** State branch
+`shadow/us-indopacom` remains at `a36f67aee`, containing the only successful
+remote collection: manual run 35476931301 on 2026-09-19, which inserted 40
+records. Scheduled collection then failed on **18 consecutive logical days,
+2026-09-20 through 2026-10-07**, every time before feed discovery because
+`robots.txt` returned HTTP 502 or 504; the first failure was run 35512831659
+(HTTP 504) and the latest was run 37646622735 (HTTP 502). No failed run
+published state.
+
+The source remains publicly present and DVIDS continues to advertise RSS as a
+supported product, but this repository has not established why its GitHub-hosted
+policy request fails. That is an egress/access-reliability finding, **not** a
+claim that DVIDS has disallowed the collector. The daily 08:40 UTC cron is
+removed in the pause PR; `us_shadow.yml` remains manual-only for a separately
+owner-authorized re-probe. No alternate host, browser identity, proxy, policy
+bypass or automatic retry is authorized. The public US Indo-Pacific desk remains
+`access_blocked` because the command website's own permission basis is still
+unavailable. See `docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md`.
 
 **Failure evidence is not a healthy-body claim.** Singapore and US
 workflows push state only after successful collection; failed attempts
