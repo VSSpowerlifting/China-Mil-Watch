@@ -1,0 +1,35 @@
+name: Verify Brief 17 Live
+
+on:
+  push:
+    branches:
+      - ops/verify-brief17-live
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify live Brief and Analysis pages
+        run: |
+          set -euo pipefail
+          brief="https://indopacificrecord.org/briefs/trident-resolve-regional-scale-specific-chinese-tasks.html"
+          analysis="https://indopacificrecord.org/analysis.html"
+          ok=0
+          for attempt in $(seq 1 30); do
+            echo "Attempt ${attempt}"
+            if curl -fsSL --max-time 20 -H "Cache-Control: no-cache" "${brief}?verify=${GITHUB_RUN_ID}-${attempt}" -o /tmp/brief17.html \
+              && curl -fsSL --max-time 20 -H "Cache-Control: no-cache" "${analysis}?verify=${GITHUB_RUN_ID}-${attempt}" -o /tmp/analysis.html \
+              && grep -Fq "Trident Resolve: What the Exercise Looked Like From Singapore and China" /tmp/brief17.html \
+              && grep -Fq "No. 17" /tmp/brief17.html \
+              && grep -Fq "Trident Resolve: What the Exercise Looked Like From Singapore and China" /tmp/analysis.html \
+              && grep -Fq "No. 17" /tmp/analysis.html; then
+              ok=1
+              break
+            fi
+            sleep 2
+          done
+          test "${ok}" = "1"
+          echo "Live Brief No. 17 verified."
