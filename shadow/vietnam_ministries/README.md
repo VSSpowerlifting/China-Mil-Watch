@@ -1,12 +1,13 @@
 # Vietnam ministry shadow research
 
 This manifest stays outside `desks/`. Vietnam remains `research`; the original
-Government News English pilot is retained in `shadow/vietnam/`. The prepared
-`vietnam_ministry_shadow.yml` is dispatch-only and main-only, using one serial
-batch and separate source branches. It has not been activated; no ministry
-remote state branch or production registration is created by this readiness work.
-The exact first-run proposal and owner decisions are in
-`docs/VIETNAM_REMOTE_ACTIVATION_PROPOSAL_2026-10-07.md`.
+Government News English pilot is retained in `shadow/vietnam/`. The ministry remote path established durable Day 0 on 2026-10-07 in Actions
+run `37656171920`, attempt 2, under collector commit
+`2c21b0d091ffc288b1a106d5459d758aaaac6ff5`. The three isolated state
+branches are live; production registration is unchanged. The reliability-cadence
+PR adds one daily 18:17 UTC schedule using the same serial batch. Its merge,
+not this document, activates scheduling. See
+`docs/VIETNAM_MINISTRY_RELIABILITY_CADENCE_2026-10-07.md`.
 
 | Institution | Bounded surface | Engineering result |
 |---|---|---|
@@ -56,12 +57,13 @@ cannot complete a checkpoint. `--check-signoff` validates a human's answers;
 it publishes nothing and qualifies nothing. See the activation proposal for
 commands, budgets, state/artifact visibility and publication failure behavior.
 The owner approves narrow public MPS/MOIT shadow-state/original-byte retention
-for the reliability period and exactly one 12-request ministry batch after
-separate owner merge. The current identity is
+for the reliability period. The current identity is
 `IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)`.
-This session performs no dispatch. Government News retention/dispatch remain
-unapproved. No retry, second dispatch or schedule is approved; local rehearsal
-clocks are never transferred.
+The reliability cadence is daily at 18:17 UTC with a six-day lookback and cap
+40 per source; failed scheduled slots are recovered only by a fresh manual
+dispatch naming the explicit logical date. Government News retention/dispatch
+remain unapproved, local rehearsal clocks are never transferred, and no
+checkpoint or promotion is automatic.
 
 Only the published first page/feed is requested. The oldest item must precede
 the window start, otherwise discovery fails without fetching. Quiet means an
