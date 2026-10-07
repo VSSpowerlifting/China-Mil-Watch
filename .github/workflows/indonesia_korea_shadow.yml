@@ -1,9 +1,11 @@
 name: Indonesia and South Korea Shadow Collection
 
-# Prepared manual launch only. No cron is enabled by this candidate build.
-# Running this workflow after an authorized merge publishes public state on the
-# selected desk's separate orphan branch. It never deploys or changes the record.
+# Owner-approved daily shadow cadence; separate owner merge activates scheduling.
+# State stays on each desk's separate orphan branch; no production deployment.
 on:
+  schedule:
+    - cron: '17 17 * * *'
+    - cron: '47 17 * * *'
   workflow_dispatch:
     inputs:
       desk:
@@ -22,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: candidate-shadow-${{ inputs.desk }}
+  group: candidate-shadow-${{ inputs.desk || (github.event.schedule == '17 17 * * *' && 'indonesia' || github.event.schedule == '47 17 * * *' && 'korea' || 'invalid') }}
   cancel-in-progress: false
 
 jobs:
@@ -43,15 +45,29 @@ jobs:
       - name: Select the fixed desk branch
         env:
           DESK_INPUT: ${{ inputs.desk }}
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE_INPUT: ${{ github.event.schedule }}
         run: |
           set -euo pipefail
+          case "$EVENT_NAME" in
+            schedule)
+              case "$SCHEDULE_INPUT" in
+                '17 17 * * *') DESK_INPUT=indonesia ;;
+                '47 17 * * *') DESK_INPUT=korea ;;
+                *) echo "::error::unknown shadow schedule"; exit 1 ;;
+              esac
+              ;;
+            workflow_dispatch) ;;
+            *) echo "::error::unsupported collection event"; exit 1 ;;
+          esac
           case "$DESK_INPUT" in
-            indonesia) state_branch=shadow/indonesia-kemhan ;;
-            korea) state_branch=shadow/korea-policy-briefing ;;
+            indonesia) state_branch=shadow/indonesia-kemhan; cron_utc=17:17 ;;
+            korea) state_branch=shadow/korea-policy-briefing; cron_utc=17:47 ;;
             *) exit 1 ;;
           esac
           echo "SHADOW_DESK=$DESK_INPUT" >> "$GITHUB_ENV"
           echo "STATE_BRANCH=$state_branch" >> "$GITHUB_ENV"
+          echo "SHADOW_CRON_UTC=$cron_utc" >> "$GITHUB_ENV"
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
@@ -77,6 +93,10 @@ jobs:
             git clone --branch "$STATE_BRANCH" --single-branch "$STATE_REMOTE" \
               "${RUNNER_TEMP}/candidate-state"
           elif [ "$status" -eq 2 ]; then
+            if [ "$GITHUB_EVENT_NAME" = schedule ]; then
+              echo "::error::scheduled state branch missing; refusing to restart its clock"
+              exit 1
+            fi
             git init "${RUNNER_TEMP}/candidate-state"
             git -C "${RUNNER_TEMP}/candidate-state" checkout --orphan "$STATE_BRANCH"
             git -C "${RUNNER_TEMP}/candidate-state" remote add origin "$STATE_REMOTE"
@@ -90,6 +110,10 @@ jobs:
               echo "::error::non-state content on the state branch"
               exit 1
             fi
+          fi
+          if [ "$GITHUB_EVENT_NAME" = schedule ] && { [ ! -f state/clock.json ] || [ ! -f state/shadow.db ]; }; then
+            echo "::error::scheduled state is uninitialized; refusing to restart its clock"
+            exit 1
           fi
 
       - name: Collect the declared window
@@ -108,7 +132,7 @@ jobs:
             --lookback-days 6 --cap 40 \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
             --commit "$(git rev-parse HEAD)" --event-name "$GITHUB_EVENT_NAME" \
-            --run-attempt "$GITHUB_RUN_ATTEMPT" "$@" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" --cron-utc "$SHADOW_CRON_UTC" "$@" \
             2>&1 | tee "${RUNNER_TEMP}/candidate-run.log"
 
       - name: Assert collector and historical state preservation
@@ -145,7 +169,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: candidate-shadow-${{ inputs.desk }}-${{ github.run_id }}-${{ github.run_attempt }}
+          name: candidate-shadow-${{ env.SHADOW_DESK || 'unselected' }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/candidate-state/state/
             ${{ runner.temp }}/candidate-run.log

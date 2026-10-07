@@ -45,7 +45,9 @@ PR #110 subsequently merged the manual workflow. Its bounded October 6 Actions
 run retrieved/extracted all 14 records as duplicates, with zero failures, and
 published state `9fe9f6fd`. Fresh remote-clone and artifact comparisons verified
 all original rows, captures, ledgers and the first-success clock unchanged.
-The workflow uses `shadow/indonesia-kemhan` and has no cron. Rehearsal clocks
+The workflow uses `shadow/indonesia-kemhan`. Ben authorized daily 17:17 UTC
+shadow collection with six lookback days and cap forty; activation awaits separate
+owner merge of the cadence PR. Scheduled missing state/clock is fatal. Rehearsal clocks
 are not transferred. Failed batches write
 attempt evidence but no partial corpus and are not pushed. Stored original-text
 changes are refused pending human disposition. State never merges to main.

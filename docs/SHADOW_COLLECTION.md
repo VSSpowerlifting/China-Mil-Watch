@@ -36,7 +36,13 @@ main-only. One bounded October 6 run per desk verified Actions egress and
 append-only publication on the existing state branches; all retrieved records
 were duplicates and the original clocks stayed unchanged. See
 `docs/INDONESIA_KOREA_ACTIONS_VERIFICATION_2026-10-06.md`.
-No schedule, public declaration or promotion is authorized.
+Ben subsequently authorized daily shadow cadence at 17:17 UTC for Indonesia
+and 17:47 UTC for South Korea, retaining six lookback days and a forty-record cap.
+The dedicated cadence PR is pending; separate owner merge is the activation
+boundary. Scheduled runs refuse absent durable branches, databases or clocks,
+retain cron-aware dates and publish only successful append-only state. No manual
+dispatch, public declaration or promotion is authorized in this cadence phase.
+See `docs/INDONESIA_KOREA_CADENCE_PROPOSAL_2026-10-06.md`.
 Scope and limitations are in `shadow/id_kemhan/README.md` and
 `shadow/kr_policy_briefing/README.md`; DECISION_LOG records the authorization.
 Published commits and measured launch results are in
