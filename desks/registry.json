@@ -153,9 +153,9 @@
    "slug": "vietnam",
    "name": "Vietnam Desk",
    "route": "vietnam.html",
-   "scope": "One English-language publication family: the defense tag page of Viet Nam Government News, the Government's online newspaper at en.baochinhphu.vn, and the articles it lists. A tag that editors apply, not a complete defense category. Not the Ministry of National Defence, not the People's Army Newspaper, not the Vietnamese-language edition, and not formal government documents.",
+   "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
    "status": "research",
-   "status_explanation": "Researched, with a collector built but not launched. On 2026-10-06 UTC the Government News defense tag page and the articles it lists were retrieved under this project's full collector identity, and the site's robots.txt permits collection. A bounded rehearsal outside production then exercised the collector and its isolated storage; nothing it read reached the record or this site. Nothing is collected on a schedule, and the desk moves to shadow evaluation only once the collector is actually running.",
+   "status_explanation": "Researched, with collectors built but not launched. Bounded local rehearsals read Government News, Public Security foreign affairs, and Industry and Trade energy and foundational industry under the full collector identity. Each ministry family has separate external state; nothing reaches the public record. National Defence and Finance have recorded access blockers. Nothing runs on a schedule, and the desk moves to shadow evaluation only once ongoing collection actually runs.",
    "public": true,
    "manifest": null,
    "has_production_records": false,
@@ -164,12 +164,12 @@
      {
       "name": "Viet Nam Government News — defense tag page (English)",
       "format": "HTML tag page and HTML articles — 24 items listed on 2026-10-06 UTC",
-      "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The only family a collector has been built for."
+      "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The original English pilot is retained alongside separate ministry research."
      },
      {
       "name": "Ministry of National Defence — English portal",
       "format": "Not reached — robots.txt returned a script page, twice",
-      "note": "mod.gov.vn. Both requests for robots.txt on 2026-10-06 UTC, about six minutes apart, returned a page that sets a cookie by script and reloads, not a robots policy. With no readable policy, no ministry page was requested. Tier A if it is ever collected."
+      "note": "mod.gov.vn. Both requests for robots.txt on 2026-10-06 UTC, about six minutes apart, returned a page that sets a cookie by script and reloads, not a robots policy. With no readable policy, no ministry page was requested. Tier A if it is ever collected. The requested bqp.vn Vietnamese portal and mod.gov.vn alias also served a robots script/cookie challenge in the ministry pass. No listing or article body was reached."
      },
      {
       "name": "People's Army Newspaper — military news and international relations listings (English)",
@@ -180,6 +180,21 @@
       "name": "Government portal",
       "format": "HTML portal — homepage read, not collected",
       "note": "chinhphu.vn. Read once, which confirmed that it links the Government News estate as “Báo điện tử chính phủ”. It also links the Government's document system, vanban.chinhphu.vn; formal documents would be a separate Tier A family and are not part of this desk."
+     },
+     {
+      "name": "Ministry of Public Security — foreign affairs (Vietnamese)",
+      "format": "Published RSS 34 and linked portal reports; bounded local rehearsal passed",
+      "note": "bocongan.gov.vn. Thông tin Đối ngoại only, with original Vietnamese text. Publication date is the visible article stamp; the explicitly offset RSS instant is stored separately. No broad police-news feed or archive claim."
+     },
+     {
+      "name": "Ministry of Industry and Trade — energy and foundational industry (Vietnamese)",
+      "format": "Published first category pages and linked portal reports; bounded local rehearsals passed",
+      "note": "moit.gov.vn. Phát triển năng lượng and Công nghiệp nền tảng are separate source families and clocks sharing one host gate. Printed dates govern; conflicting metadata is kept separately. Script-only older pagination is not requested. These reports are not inferred legal instruments. The linked trade-remedies host disallows collection."
+     },
+     {
+      "name": "Ministry of Finance",
+      "format": "Not reached — robots.txt returned an app shell",
+      "note": "www.mof.gov.vn, the direct target of the supplied Google redirect. Its returned HTML was not a robots rules file; no ministry listing or body was requested."
      }
     ],
     "observed_volume_subject": "Items the defense tag page listed",
@@ -227,9 +242,9 @@
    },
    "limits": [
     "No source is enabled in production, and no collector runs on a schedule. Nothing here reaches the production database, the public site, or any public count.",
-    "One tag page on one newsroom's English edition. Not comprehensive Vietnamese defense coverage, not the Ministry of National Defence, not the People's Army Newspaper, not the Vietnamese-language edition, and not formal government documents.",
+    "Bounded newsroom and ministry publication families only. No comprehensive Vietnamese defense coverage, no complete ministry archive, no People’s Army Newspaper collection and no formal-document family.",
     "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
-    "English as published. An English article is the text the newsroom published in English, not a recovered Vietnamese original, and nothing is translated.",
+    "English and Vietnamese as published, in separate source families. No translation or recovered-original claim.",
     "Shadow collection has not started. No qualification period has elapsed and no desk-readiness claim follows from this page."
    ]
   },

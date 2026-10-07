@@ -168,6 +168,8 @@ def host_gate(state_dir, gate_dir=None):
     directory = Path(gate_dir) if gate_dir is not None else (
         Path(tempfile.gettempdir()) / "ipr-vietnam-host-gate")
     assert_isolated(directory)
+    if directory.resolve() == state_dir.resolve() or state_dir.resolve() in directory.resolve().parents:
+        raise ValueError("host gate must live outside source state")
     gate = HostGate(directory)
     # A fresh checkout can seed a new machine's gate from preserved request
     # completions. The local shared directory also covers failed local runs.

@@ -283,6 +283,10 @@ class ShadowHttpAdapter(SourceAdapter):
                 delay = settle(raw) if settle is not None else None
                 if delay is not None and delay > 0:
                     slot.require(min(delay, MAX_INTERVAL))
+                    # Preserve the newly learned requirement in the request
+                    # ledger too, so a fresh machine can seed it even when
+                    # robots was the run's last request.
+                    self.request_log[-1]["gate_interval_s"] = max(slot.interval, slot.required)
                 return raw
         except (GateError, OSError) as exc:
             # The request was not sent, or its end could not be recorded. Either

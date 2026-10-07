@@ -221,6 +221,14 @@ then to schedule. Scope, activation and recovery are in
 `docs/VIETNAM_DESK_FEASIBILITY_2026-10-05.md`. Checkpoint packets come from
 `scripts/review_vietnam_shadow_state.py`, never from Singapore's tooling.
 
+The October 7 ministry expansion adds local-only Vietnamese foreign-affairs
+RSS collection for Public Security and separate energy/foundational-industry
+first-page collection for Industry and Trade. Its manifest remains outside
+`desks/`, in `shadow/vietnam_ministries/`; no workflow invokes it. Each source
+has separate state and clock; both MOIT categories share the cross-process
+host gate. Defence and Finance remain unreached. See
+`docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md` for bounded evidence and limits.
+
 ## The ledger and the clock
 
 Every run appends one entry recording start and finish, run id, collector

@@ -26,6 +26,13 @@ anything else, and has no publisher and no review branch; the Singapore
 procedure below and `scripts/publish_shadow_review.py` do not apply to it. Its
 use is in `shadow/vietnam/README.md`.
 
+Vietnam's ministry families have a separate **local rehearsal** checker,
+`scripts/review_vietnam_ministry_state.py`, bound to exactly one source. It
+does not verify a remote commit, produce a formal checkpoint, collect signoff
+or qualify a desk. It cannot inherit Government News's clock. Ministry remote
+activation and formal review remain a later phase; scope and commands are in
+`shadow/vietnam_ministries/README.md`.
+
 `scripts/review_shadow_state.py` produces the evidence package. It validates
 what a machine can validate and then stops. **The checkpoint is a person
 reading stored records against the ministry's own pages.** Nothing in the tool

@@ -326,6 +326,7 @@ class GatedTransportTests(unittest.TestCase):
         adapter, _ = probe([text("User-agent: *\nCrawl-delay: 5\n")], self.gate, self.clock)
         adapter._load_robots(st.LISTING_FAILURE)
         self.assertEqual(self.record()["interval"], 5.0)
+        self.assertEqual(adapter.request_log[0]["gate_interval_s"], 5.0)
         # A second instance, which has read nothing, still waits 5 s.
         other, _ = probe([text("<html>ok</html>", "text/html")], self.gate, self.clock)
         other._get("https://moit.gov.vn/x", 1000, st.FETCH_FAILURE)

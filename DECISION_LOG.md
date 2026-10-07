@@ -4,6 +4,22 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Vietnam ministry engineering continuation; activation unchanged
+
+**Owner direction (Ben, this continuation):** continue the Vietnam Desk work
+after the earlier agent's weekly usage limit, retaining the requested Government
+portal, National Defence, Public Security, Industry and Trade and Finance sites.
+Within the existing engineering/PR authority, the local ministry adapters and
+bounded nonproduction rehearsals are completed on draft PR #107. The original
+Government News pilot remains. Three Vietnamese families passed local rehearsal;
+Defence and Finance remain unreached. Evidence:
+`docs/VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
+
+This records continuation authority, not new rights, periodic identity, state
+visibility, dispatch, scheduling, main merge or deployment approval. No ministry
+remote state is published; no local rehearsal clock is adopted as reliability
+day zero. The open Vietnam activation decisions below still apply.
+
 ## 2026-10-06 — AFP scheduled shadow reliability evaluation authorized
 
 **Owner direction (Ben, scheduling continuation brief):** after reviewing live

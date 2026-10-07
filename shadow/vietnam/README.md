@@ -1,5 +1,10 @@
 # Vietnam — Viet Nam Government News (English), `defense` tag
 
+The additional Public Security and Industry and Trade ministry research is
+separate, in `shadow/vietnam_ministries/`. It does not widen this adapter or
+reuse this source's clock. Both runners now pass the shared cross-process
+host gate; the original rehearsal's inter-process spacing lapse is historical.
+
 **Built and rehearsed outside production; not launched.** The workflow is
 manual-dispatch only and declares no schedule. It has never run in the
 project's automation, and origin has no `shadow/vietnam` branch. A bounded

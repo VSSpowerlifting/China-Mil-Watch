@@ -470,6 +470,13 @@ actually running.
 
 ## 14. Remaining limits and next actions
 
+**October 7 continuation:** the requested ministry pass is implemented and
+bounded local live rehearsals passed for Public Security foreign affairs and
+MOIT energy/foundational industry. Defence and Finance remain unreached. The
+original Government News pilot and historical evidence below are retained;
+current scope, new request hashes, source-specific clocks, transport fix and
+activation limits are in `VIETNAM_MINISTRY_EXPANSION_2026-10-07.md`.
+
 - One tag on one newsroom's English edition. It is not comprehensive Vietnamese
   defense publication and not a ministry voice.
 - The reach is 24 items. An item tagged after its window was read is reported

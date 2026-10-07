@@ -16,6 +16,7 @@ from core.collection.vietnam_sources import SOURCES
 from scraper.sources.vn_ministries import VNMinistryAdapter
 from scripts.shadow_collect_vietnam_ministry import collect, load_source
 from scripts.review_vietnam_ministry_state import review
+from scripts.shadow_collect_vietnam import host_gate
 from tests.test_vn_shadow_http import Clock, FakeResponse, FakeSession
 
 FIX = Path(__file__).parent / "fixtures/vn_ministries"
@@ -239,6 +240,17 @@ class MinistryRunnerCase(unittest.TestCase):
         ledger.write_text(json.dumps(entry))
         with self.assertRaises((ValueError, KeyError)):
             review(self.state, MPS)
+
+    def test_new_machine_seeds_longer_delay_from_preserved_request_ledger(self):
+        self.go()
+        ledger = next((self.state / "ledger").glob("*.json"))
+        entry = json.loads(ledger.read_text())
+        entry["requests"][-1]["gate_interval_s"] = 9.0
+        ledger.write_text(json.dumps(entry))
+        gate = host_gate(self.state, Path(self.temp.name) / "gate")
+        self.assertEqual(gate.record("bocongan.gov.vn")["interval"], 9.0)
+        with self.assertRaises(ValueError):
+            host_gate(self.state, self.state / "gate")
 
 
 if __name__ == "__main__":
