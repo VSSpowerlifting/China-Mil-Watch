@@ -329,7 +329,7 @@ class TestNothingUnexpectedIsDeclared(unittest.TestCase):
     """
 
     TOP_LEVEL = {"name", "on", "permissions", "concurrency", "jobs"}
-    JOB = {"runs-on", "timeout-minutes", "steps"}
+    JOB = {"if", "runs-on", "timeout-minutes", "steps"}
     STEP = {"name", "id", "uses", "with", "run", "if"}
 
     def test_the_document_declares_only_the_expected_top_level_keys(self):
@@ -392,6 +392,54 @@ class TestTrigger(unittest.TestCase):
                           "pull_request_target", "workflow_run",
                           "repository_dispatch", "release"):
             self.assertNotIn(forbidden, triggers)
+
+
+class TestDraftScheduling(unittest.TestCase):
+    """Drafts skip before runner allocation; ready events retain the full gate."""
+
+    def test_draft_guard_is_at_job_level(self):
+        self.assertEqual(
+            load_workflow()["jobs"]["offline-checks"]["if"],
+            "${{ github.event.pull_request.draft == false }}")
+
+    def scheduled(self, action, draft):
+        doc = load_workflow()
+        # Evaluate the pinned, single boolean comparison, not a second copy
+        # of the scheduling policy. GitHub supplies draft as a JSON boolean.
+        expression = doc["jobs"]["offline-checks"]["if"]
+        self.assertEqual(expression, "${{ github.event.pull_request.draft == false }}")
+        comparison = expression.removeprefix("${{ ").removesuffix(" }}")
+        expected = comparison.split(" == ")[1]
+        return (action in doc["on"]["pull_request"]["types"]
+                and str(draft).lower() == expected)
+
+    def test_all_draft_events_skip_the_runner(self):
+        for action in ("opened", "synchronize", "reopened"):
+            with self.subTest(action=action):
+                self.assertFalse(self.scheduled(action, True))
+
+    def test_all_non_draft_events_run_the_gate(self):
+        for action in ("opened", "ready_for_review", "reopened", "synchronize"):
+            with self.subTest(action=action):
+                self.assertTrue(self.scheduled(action, False))
+
+    def test_skipped_draft_then_ready_without_a_push_then_every_push(self):
+        events = [("opened", True), ("synchronize", True),
+                  ("ready_for_review", False), ("synchronize", False),
+                  ("synchronize", False)]
+        self.assertEqual([self.scheduled(*event) for event in events],
+                         [False, False, True, True, True])
+
+    def test_returning_to_draft_skips_until_ready_again(self):
+        self.assertFalse(self.scheduled("synchronize", True))
+        self.assertTrue(self.scheduled("ready_for_review", False))
+
+    def test_suite_and_validator_cannot_be_independently_skipped(self):
+        for step in steps_of(load_workflow()):
+            body = step.get("run", "")
+            if "unittest" in body or "validate_output.py" in body:
+                with self.subTest(step=step["name"]):
+                    self.assertNotIn("if", step)
 
 
 class TestPermissions(unittest.TestCase):
