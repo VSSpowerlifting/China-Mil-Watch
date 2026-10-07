@@ -257,6 +257,20 @@ ON record_topics (taxonomy_version, topic_slug, desk_id)
 """
 
 
+_RECORD_TOPICS_REQUIRED_COLUMNS = {
+    "desk_id",
+    "source_slug",
+    "record_url",
+    "topic_slug",
+    "taxonomy_version",
+    "assignment_method",
+    "assigned_by",
+    "assigned_at",
+    "confidence",
+    "evidence",
+}
+
+
 def topic_store_exists(conn: sqlite3.Connection) -> bool:
     """Whether this database has opted into regional topic assignments."""
     return conn.execute(
@@ -264,9 +278,30 @@ def topic_store_exists(conn: sqlite3.Connection) -> bool:
     ).fetchone() is not None
 
 
+def _topic_store_columns(conn: sqlite3.Connection) -> set:
+    return {
+        row[1]
+        for row in conn.execute("PRAGMA table_info(record_topics)").fetchall()
+    }
+
+
 def ensure_topic_store(conn: sqlite3.Connection) -> None:
-    """Install the assignment table in any IPR SQLite state store."""
-    conn.execute(RECORD_TOPICS_DDL)
+    """Install or validate the assignment table in an opted-in SQLite store.
+
+    This is intentionally storage-neutral and is not itself a production
+    migration. If a pre-existing table has only part of the v1 contract, fail
+    closed rather than treating it as compatible or mutating it in place.
+    """
+    if topic_store_exists(conn):
+        missing = _RECORD_TOPICS_REQUIRED_COLUMNS - _topic_store_columns(conn)
+        if missing:
+            raise TopicStoreError(
+                "partial record_topics table is missing columns: %s" %
+                ", ".join(sorted(missing))
+            )
+    else:
+        conn.execute(RECORD_TOPICS_DDL)
+
     conn.execute(RECORD_TOPICS_INDEX_DDL)
 
 
