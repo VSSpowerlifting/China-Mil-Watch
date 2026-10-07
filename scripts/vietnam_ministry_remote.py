@@ -3,13 +3,14 @@
 import argparse
 import re
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
+from core.shadow_schedule import SOURCE_EXPLICIT, parse_run_attempt, resolve_target_date
 from scripts.shadow_collect_vietnam import assert_isolated, host_gate
 from scripts.shadow_collect_vietnam_ministry import collect, load_source
 from scripts.review_vietnam_ministry_state import inventory, review, require
@@ -46,15 +47,35 @@ def prepare(root, gate_dir):
     return before
 
 
+def resolve_targets(event_name, run_attempt, cron_utc, mps_target=None, moit_target=None,
+                    started=None):
+    """Resolve one scheduled slot or an explicit manual recovery without guessing."""
+    parse_run_attempt(run_attempt)
+    explicit = mps_target is not None or moit_target is not None
+    if explicit:
+        require(mps_target is not None and moit_target is not None,
+                "manual recovery requires both ministry target dates")
+        require(event_name == "workflow_dispatch",
+                "explicit ministry target dates are manual recovery only")
+        return mps_target, moit_target, SOURCE_EXPLICIT
+    require(event_name == "schedule",
+            "manual dispatch requires an explicit target date")
+    target, target_source = resolve_target_date(
+        started or datetime.now(timezone.utc), event_name=event_name,
+        cron_utc=cron_utc, run_attempt=run_attempt)
+    return target, target, target_source
+
+
 def run_batch(root, gate_dir, mps_target, moit_target, lookback, cap, run_id, commit,
-              collector=collect):
+              collector=collect, target_source=SOURCE_EXPLICIT):
     require(lookback in (0, 6) and cap in (2, 40), "unapproved remote budget")
     require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None, "full collector SHA required")
     before = prepare(root, gate_dir)
     for slug in SOURCES:
         state = root / slug / "state"
         target = mps_target if slug == SOURCES[0] else moit_target
-        entry = collector(state, slug, target, lookback, cap, run_id, commit, gate_dir=gate_dir)
+        entry = collector(state, slug, target, lookback, cap, run_id, commit,
+                          gate_dir=gate_dir, target_source=target_source)
         require(entry["health"] == "ok", "batch stopped after %s: %s" % (slug, entry.get("result")))
         after = preserved(state)
         require(all(after.get(n) == h for n, h in before[slug].items()), "historical evidence changed")
@@ -67,16 +88,23 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, required=True)
     ap.add_argument("--gate-dir", type=Path, required=True)
-    ap.add_argument("--mps-target", type=date.fromisoformat, required=True)
-    ap.add_argument("--moit-target", type=date.fromisoformat, required=True)
+    ap.add_argument("--mps-target", type=date.fromisoformat)
+    ap.add_argument("--moit-target", type=date.fromisoformat)
     ap.add_argument("--lookback", type=int, choices=(0, 6), required=True)
     ap.add_argument("--cap", type=int, choices=(2, 40), required=True)
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--commit", required=True)
+    ap.add_argument("--event-name", choices=("schedule", "workflow_dispatch"), required=True)
+    ap.add_argument("--run-attempt", required=True)
+    ap.add_argument("--cron-utc", required=True)
     args = ap.parse_args(argv)
     try:
-        return run_batch(args.root, args.gate_dir, args.mps_target, args.moit_target,
-                         args.lookback, args.cap, args.run_id, args.commit)
+        mps_target, moit_target, target_source = resolve_targets(
+            args.event_name, args.run_attempt, args.cron_utc,
+            args.mps_target, args.moit_target)
+        return run_batch(args.root, args.gate_dir, mps_target, moit_target,
+                         args.lookback, args.cap, args.run_id, args.commit,
+                         target_source=target_source)
     except (ValueError, OSError, ReviewError) as exc:
         print("remote batch refused: %s" % exc, file=sys.stderr)
         return 1
