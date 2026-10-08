@@ -1,0 +1,37 @@
+name: Vietnam MOD Offline URL-Identity Canary
+
+# Parser/identity regression check ONLY. No public web fetch, model, shadow
+# state writes, SMTP, publication, or source-use rights implied by a pass.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/review_vietnam_mod_portal_links.py"
+      - "tests/test_vietnam_mod_portal_url_canary.py"
+      - ".github/workflows/vietnam_mod_offline_url_canary.yml"
+      - "docs/VIETNAM_MOD_PORTAL_CANARY_2026-10-08.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-mod-canary-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  offline-identity-boundaries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout PR without credential persistence
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run URL-shape and approval-boundary tests
+        run: python -m unittest tests.test_vietnam_mod_portal_url_canary -v
+      - name: Assert readonly checkout and no generated files
+        run: test -z "$(git status --porcelain --untracked-files=all)"
