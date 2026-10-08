@@ -122,6 +122,9 @@ def assemble(queue, curated, current_commit, week_ending):
         identity = "VN-MPS-" + match.group(1)
         current_ids.add(identity)
         day = exact_day(record["published_date"])
+        if identity in seen_seed:
+            require(record["published_date"] == seen_seed[identity]["published_date"],
+                    "curated publication date has drifted in current shadow state")
         if not start <= day <= cutoff:
             continue
         if not record["machine_review_candidate"] or record["machine_blockers"]:
