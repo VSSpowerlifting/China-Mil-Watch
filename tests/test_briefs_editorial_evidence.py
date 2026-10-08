@@ -245,6 +245,48 @@ class UnifiedWriterTests(unittest.TestCase):
                 with self.assertRaises(ReturnValidationError):
                     validate_return(packet_text, altered)
 
+    def test_ephemeral_week_packet_can_feed_the_same_private_sunday_writer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            staging = d / SAT
+            staging.mkdir()
+            packet_path = staging / (SAT + ".json")
+            packet_path.write_text(json.dumps(packet(), ensure_ascii=False),
+                                   encoding="utf-8")
+            original = d / "scaffold.json"
+            result = d / "one-draft.txt"
+            original.write_text(json.dumps(scaffold()), encoding="utf-8")
+            with patch("scripts.weekly_briefs_auto_writer.compose",
+                       return_value=manuscript()) as writer, \
+                 patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+                main(["--sidecar", str(original), "--out", str(result),
+                      "--write-automatic", "--full-week", "--include-research",
+                      "--research-packet", str(packet_path), "--as-of", SAT])
+            self.assertEqual(writer.call_args.kwargs["supplemental"],
+                             self.research)
+            self.assertIn("External source JP-W41-01", result.read_text())
+            mail.assert_not_called()
+
+    def test_malformed_ephemeral_packet_blocks_model_before_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            pack = packet()
+            pack["items"][0]["source_url"] = "https://evil.test/injected"
+            packet_path = d / (SAT + ".json")
+            packet_path.write_text(json.dumps(pack), encoding="utf-8")
+            original = d / "sidecar.json"
+            result = d / "unapproved.txt"
+            original.write_text(json.dumps(scaffold()), encoding="utf-8")
+            with patch("scripts.weekly_briefs_auto_writer.compose") as writer, \
+                 patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+                with self.assertRaises(EditorialEvidenceError):
+                    main(["--sidecar", str(original), "--out", str(result),
+                          "--write-automatic", "--full-week", "--include-research",
+                          "--research-packet", str(packet_path), "--as-of", SAT])
+            self.assertFalse(result.exists())
+            writer.assert_not_called()
+            mail.assert_not_called()
+
     def test_main_sunday_dry_run_writes_one_packet_and_no_email(self):
         sidecar = scaffold()
         with tempfile.TemporaryDirectory() as tmp:
