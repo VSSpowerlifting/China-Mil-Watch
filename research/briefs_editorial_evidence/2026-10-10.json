@@ -13,7 +13,6 @@
       "title_original": "JS Kunisaki Departs Indonesia after Completing International Disaster Relief Activities",
       "source_kind": "official-publisher-page-reviewed-for-research",
       "state_commit": null,
-      "body_sha256": null,
       "summary": "Japan's Ministry of Defense reported on October 6 that JS Kunisaki departed Kijing Port after disaster relief in Indonesia. The ministry attributed 56 firefighting missions and roughly 280 tons of water released to three CH-47 helicopters; the figures are ministry-reported, not independently verified.",
       "caveats": [
         "Departure does not mean all reported missions occurred on October 6.",
@@ -24,7 +23,9 @@
         "regional_partnerships"
       ],
       "status": "unapproved-source-linked-editorial-candidate",
-      "copy_scope": "private-model-drafting-only-no-source-body"
+      "copy_scope": "private-model-drafting-only-no-source-body",
+      "source_content_sha256": null,
+      "hash_rule": null
     },
     {
       "id": "JP-W41-02",
@@ -36,7 +37,6 @@
       "title_original": "Courtesy call on Defense Minister Koizumi by H. E. Mr. George Glass, the U.S. Ambassador to Japan",
       "source_kind": "official-publisher-page-reviewed-for-research",
       "state_commit": null,
-      "body_sha256": null,
       "summary": "Japan's Ministry of Defense reported Defense Minister Koizumi's October 6 meeting with U.S. Ambassador George Glass, including an expressed protest concerning a reported Okinawa incident and requests for cooperation and preventative measures. This records Japan's official account, not independent findings on the incident.",
       "caveats": [
         "The MOD account is not independent adjudication of the underlying Okinawa incident.",
@@ -47,7 +47,9 @@
         "regional_partnerships"
       ],
       "status": "unapproved-source-linked-editorial-candidate",
-      "copy_scope": "private-model-drafting-only-no-source-body"
+      "copy_scope": "private-model-drafting-only-no-source-body",
+      "source_content_sha256": null,
+      "hash_rule": null
     },
     {
       "id": "JP-W41-06",
@@ -59,7 +61,6 @@
       "title_original": "日米合同委員会合意について",
       "source_kind": "shadow-extracted-original",
       "state_commit": "d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13",
-      "body_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
       "summary": "A Japan MOD notice published October 5 reports a September 17 Japan–U.S. Joint Committee agreement on temporary limited use of extra Tsuiki Airfield facilities for Keen Sword 27 and aircraft-training-relocation activities. The roughly 29,000-square-meter land area and portions of four buildings were described for planned October 19–29 use, not completed exercises.",
       "caveats": [
         "The source is a Japanese text extraction pinned in shadow state; full-PDF fidelity has not received independent human approval.",
@@ -70,7 +71,9 @@
         "alliance_diplomacy"
       ],
       "status": "unapproved-source-linked-editorial-candidate",
-      "copy_scope": "private-model-drafting-only-no-source-body"
+      "copy_scope": "private-model-drafting-only-no-source-body",
+      "source_content_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
+      "hash_rule": "sha256-text-original-utf8"
     },
     {
       "id": "VN-MPS-1791199100",
@@ -82,7 +85,6 @@
       "title_original": "Mở rộng hợp tác công nghệ, công nghiệp an ninh với các đối tác Thổ Nhĩ Kỳ",
       "source_kind": "shadow-extracted-original",
       "state_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
-      "body_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
       "summary": "Vietnam's Ministry of Public Security described October 5 discussions with Turkish technology and security-industry firms, including ICT and ANVI, concerning prospective technology cooperation and potential transfer of security capabilities. The ministry did not establish a finalized purchase or an operational deployment in this account.",
       "caveats": [
         "This is a Ministry of Public Security statement, not a defense ministry weapons procurement.",
@@ -93,7 +95,9 @@
         "technology_cooperation"
       ],
       "status": "unapproved-source-linked-editorial-candidate",
-      "copy_scope": "private-model-drafting-only-no-source-body"
+      "copy_scope": "private-model-drafting-only-no-source-body",
+      "source_content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+      "hash_rule": "mps-vi-content-v1"
     },
     {
       "id": "VN-MPS-1791199677",
@@ -105,7 +109,6 @@
       "title_original": "Hợp tác đào tạo, nghiên cứu công nghệ an ninh với Đại học Concordia, Canada",
       "source_kind": "shadow-extracted-original",
       "state_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
-      "body_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
       "summary": "Vietnam's Ministry of Public Security reported an October 5 meeting with Concordia University representatives about security-related research, training, cybersecurity and AI. A memorandum mentioned in the release concerns Concordia and Vietnam's education ministry; the article does not show a newly signed MPS–Concordia agreement.",
       "caveats": [
         "Do not attribute the education ministry memorandum to the Ministry of Public Security.",
@@ -116,7 +119,9 @@
         "regional_partnerships"
       ],
       "status": "unapproved-source-linked-editorial-candidate",
-      "copy_scope": "private-model-drafting-only-no-source-body"
+      "copy_scope": "private-model-drafting-only-no-source-body",
+      "source_content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+      "hash_rule": "mps-vi-content-v1"
     }
   ]
 }
