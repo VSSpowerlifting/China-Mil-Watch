@@ -56,7 +56,7 @@ class SmtpPreflightTests(unittest.TestCase):
 
     def test_missing_or_multiple_recipient_refused_before_connect(self):
         for recipient in ("", "one@example.org, other@example.org",
-                          "editor@example.org\\r\\nBcc: bad@example.org"):
+                          "editor@example.org\r\nBcc: bad@example.org"):
             with self.subTest(recipient=recipient):
                 env = dict(VALID_ENV, IPR_EDITOR_TO=recipient)
                 with patch.dict(os.environ, env, clear=True):
@@ -82,7 +82,7 @@ class SmtpPreflightTests(unittest.TestCase):
         with patch("scripts.editor_smtp_preflight.check_smtp", return_value=True):
             with patch("builtins.print") as printed:
                 main()
-        lines = "\\n".join(call.args[0] for call in printed.call_args_list)
+        lines = "\n".join(call.args[0] for call in printed.call_args_list)
         self.assertIn("No email sent", lines)
         self.assertNotIn(VALID_ENV["IPR_SMTP_APP_PASSWORD"], lines)
         self.assertNotIn(VALID_ENV["IPR_SMTP_USER"], lines)
