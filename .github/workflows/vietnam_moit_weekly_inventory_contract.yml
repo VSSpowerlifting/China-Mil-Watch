@@ -1,0 +1,87 @@
+name: Vietnam MOIT Historical Weekly Source Inventory Contract
+
+# Exact historical state proof only. Does not activate a model, send email,
+# fetch ministry publishers, authorize reuse or make a live production desk.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/prepare_vietnam_moit_weekly_candidates.py"
+      - "tests/test_vietnam_moit_weekly_candidates.py"
+      - ".github/workflows/vietnam_moit_weekly_inventory_contract.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-moit-inventory-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  audit-exact-historical-state:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install independent shadow-state reviewer dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Confirm real energy and foundational-industry archives by exact Git commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          work="$(mktemp -d "$RUNNER_TEMP/vn-moit-historical-XXXXXXXX")"
+          for tuple in \
+            "vn_moit_energy_vi|shadow/vietnam-moit-energy|aac24cb4c2bc7e63da80df5212954d48cf492945|2" \
+            "vn_moit_foundational_industry_vi|shadow/vietnam-moit-foundational-industry|5e414cf28cf99bb6ae8b64052f701ea27fcf19b7|1"; do
+            IFS='|' read -r source branch commit archive_count <<< "$tuple"
+            target="$work/$source"
+            git clone --quiet --branch "$branch" --single-branch \
+              "https://github.com/$GITHUB_REPOSITORY.git" "$target"
+            test "$(git -C "$target" branch --show-current)" = "$branch"
+            test "$(git -C "$target" ls-tree --name-only HEAD)" = "state"
+            test -z "$(git -C "$target" status --porcelain)"
+            # First, check that genuine September 30 archives remain correctly
+            # accounted for in the September 27–October 3 editorial week.
+            python -m scripts.prepare_vietnam_moit_weekly_candidates \
+              --state-repo "$target" --state-commit "$commit" --source "$source" \
+              --week-ending 2026-10-03 --out "$work/$source-september.json"
+            # Then verify no October 4–10 candidate is fabricated from the old
+            # archive; this does NOT assert later daily collections completed.
+            python -m scripts.prepare_vietnam_moit_weekly_candidates \
+              --state-repo "$target" --state-commit "$commit" --source "$source" \
+              --week-ending 2026-10-10 --out "$work/$source-october.json"
+            SOURCE="$source" WORK="$work" EXPECTED="$archive_count" python - <<'PY'
+          import json,os
+          from pathlib import Path
+          w=Path(os.environ["WORK"])
+          source=os.environ["SOURCE"]
+          old=json.loads((w/(source+"-september.json")).read_text())
+          current=json.loads((w/(source+"-october.json")).read_text())
+          assert old["machine_eligible_in_window"]==int(os.environ["EXPECTED"])
+          assert old["in_window_record_count"]==int(os.environ["EXPECTED"])
+          assert current["total_archived_records"]==int(os.environ["EXPECTED"])
+          assert current["out_of_window_archived_records"]==int(os.environ["EXPECTED"])
+          assert current["in_window_record_count"]==0
+          assert current["machine_eligible_in_window"]==0
+          assert current["last_successful_observed_target"]=="2026-10-07"
+          assert current["full_week_collection_verified"] is False
+          assert current["publisher_silence_verified"] is False
+          assert current["qualified_production_desk"] is False
+          assert current["original_full_text_included"] is False
+          assert current["human_approvals"]==0
+          assert current["source_use_approvals"]==0
+          assert current["items"]==[]
+          print(source+": historical archive verified, no October research candidate falsely admitted")
+          PY
+          done
