@@ -118,7 +118,8 @@ class FeederTests(unittest.TestCase):
 
     def test_missing_synopsis_does_not_invent_new_claims(self):
         notes = copy.deepcopy(NOTES)
-        notes["entries"] = notes["entries"][:1]
+        notes["entries"] = [next(n for n in NOTES["entries"]
+                                 if n["source_identity"] == "mps-vi:1791199100")]
         result = make_packet(queue(), notes, SAT)
         self.assertEqual(len(result["items"]), 1)
 
@@ -290,7 +291,9 @@ class FeederTests(unittest.TestCase):
             versions = [
                 {"broken": True},
                 {"schema": "vietnam-editorial-notes/1",
-                 "entries": [dict(NOTES["entries"][0], content_sha256="f" * 64)]},
+                 "entries": [dict(next(n for n in NOTES["entries"]
+                                   if n["source_identity"] == "mps-vi:1791199100"),
+                              content_sha256="f" * 64)]},
             ]
             for payload in versions:
                 notes.write_text(canonical_json(payload), encoding="utf-8")
