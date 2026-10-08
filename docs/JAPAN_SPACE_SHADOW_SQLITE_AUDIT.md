@@ -40,6 +40,8 @@ The local repository must have the exact historical commit and blob. Missing obj
 
 The code resolves only the supplied 40-hex commit:path Git object and validates the exact blob SHA-1. It copies that blob to an auto-cleaned temporary directory outside the tracked checkout, then uses an immutable read-only SQLite URI, PRAGMA query_only and PRAGMA integrity_check. A missing table, unknown table or malformed body fails closed. The optional --commit and --blob flags must agree on the exact same historical object and cannot refer to symbolic branches. Running against another commit is a different checkpoint, not a replacement for the October 8 measurement.
 
+The source-admission input is also **pinned**: JSP01–JSP06 must match the six exact official URLs in PR #169. Even another plausible official URL under the same host is rejected until a newly reviewed audit contract is created. This prevents a silently altered candidate list from producing a misleading report. These URLs are research candidates, **not archived-body identities**.
+
 The JSON report contains historical commit/path/blob and SHA-256 provenance, counts per table, source/reason breakdowns, exact URL hits for each of six candidates and limits on interpretation. It produces no labels, accuracy estimates, owner approvals or source collection.
 
 ## Tests
