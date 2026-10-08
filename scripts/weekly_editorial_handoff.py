@@ -216,7 +216,7 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
     if vietnam_candidates:
         lines.extend((
             "",
-            "=== VIETNAM SHADOW CANDIDATES — HUMAN REVIEW REQUIRED ==="
+            "=== VIETNAM SHADOW CANDIDATES — HUMAN REVIEW REQUIRED ===",
             "NOT production record IDs, NOT model input, NOT reviewed or approved.",
             "These official-source pointers are for Dylan's independent source",
             "inspection. Cite the original publisher URL only after reviewing",
