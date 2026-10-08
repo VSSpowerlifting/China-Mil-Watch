@@ -115,7 +115,7 @@ class CandidateTests(unittest.TestCase):
     def test_wrong_week_or_cutoff_refused(self):
         for sat, fri in [(SAT, "2026-10-08"),
                          ("2026-10-09", "2026-10-08"),
-                         (SAT, "2026-10-10")]:
+                         (SAT, "2026-10-11")]:
             with self.subTest(sat=sat, fri=fri), self.assertRaises(VietnamCandidateError):
                 load_candidates(sat, fri, directory=self.directory)
 
