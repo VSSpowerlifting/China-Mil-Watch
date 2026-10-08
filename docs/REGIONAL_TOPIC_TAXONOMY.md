@@ -71,8 +71,10 @@ making shadow tables mimic the production corpus.
 Version 1 does **not** register a production database migration and does not
 modify `pla_watch.db`. `core.topics.ensure_topic_store()` is the explicit,
 storage-neutral opt-in path: it creates an empty `record_topics` table in a
-writable SQLite store, or validates an existing compatible store and refuses a
-partial schema.
+writable SQLite store, or validates an existing store against the complete v1
+column order, declared types, nullability, composite primary key, and required
+CHECK constraints. Partial or merely lookalike schemas are refused rather than
+blessed or repaired in place.
 
 The table has no foreign key to `articles` or a shadow record table. Its
 integrity comes from the explicit record identity plus taxonomy validation.
