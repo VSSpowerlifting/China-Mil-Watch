@@ -29,7 +29,7 @@ class ThreeMinistryRollupTests(unittest.TestCase):
     def packet(self, slug, index, *, checkpoint="day-07", as_of="2026-10-14",
                shadow_day=7, missing=None, uncovered=None, anomalies=None,
                signoff=False):
-        folder = self.root / ("p%02d" % index)
+        folder = self.root / ("p%02d" % len(self.folders))
         folder.mkdir()
         payloads = {
             "record_inventory.jsonl": plain({"synthetic_id": index}),
