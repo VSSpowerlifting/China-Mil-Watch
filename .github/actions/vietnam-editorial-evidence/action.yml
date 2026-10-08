@@ -1,0 +1,84 @@
+name: "Prepare verified Vietnam MPS research evidence"
+description: "Read-only official shadow Git-state review and ephemeral Vietnam-to-Sunday thematic Briefs packet; does not send email or approve sources"
+inputs:
+  week-ending:
+    description: "Exact reporting Saturday, YYYY-MM-DD"
+    required: true
+  notes:
+    description: "Repository file of source-version-bound Vietnam synopsis notes"
+    required: true
+  existing-packet:
+    description: "Optional existing regional packet with Japan and other non-Vietnam sources"
+    required: false
+    default: ""
+  state-commit:
+    description: "Optional exact historic MPS shadow commit for reproducible testing; otherwise newest branch head"
+    required: false
+    default: ""
+outputs:
+  packet:
+    description: "Absolute path to validated private combined official-source research JSON; never upload as a public artifact"
+    value: ${{ steps.prepare.outputs.packet }}
+  source-commit:
+    description: "Exact verified Vietnam MPS shadow Git commit"
+    value: ${{ steps.prepare.outputs.state_commit }}
+  vietnam-count:
+    description: "Number of Vietnam MPS research candidates admitted to private model evidence"
+    value: ${{ steps.prepare.outputs.vietnam_count }}
+runs:
+  using: composite
+  steps:
+    - id: prepare
+      name: "Audit Vietnam isolated MPS state and stage a private Sunday evidence packet"
+      shell: bash
+      env:
+        VN_WEEK_END: ${{ inputs.week-ending }}
+        VN_NOTES: ${{ inputs.notes }}
+        VN_EXISTING: ${{ inputs.existing-packet }}
+        VN_PINNED_COMMIT: ${{ inputs.state-commit }}
+      run: |
+        set -euo pipefail
+        # Inputs are environment values, never interpolated into shell syntax.
+        [[ "$VN_WEEK_END" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+        [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+        test -n "$RUNNER_TEMP"
+        test -f "$VN_NOTES" || {
+          echo "::error::No version-bound Vietnam editorial notes for this reporting week"
+          exit 1
+        }
+        working="$(mktemp -d "$RUNNER_TEMP/ipr-vietnam-shadow-XXXXXXXX")"
+        state="$working/mps"
+        # Official isolated branch only. Public read-only Git HTTPS; do not
+        # grant the shadow clone a push credential or merge it into main.
+        git clone --quiet --branch shadow/vietnam-mps-foreign-affairs           --single-branch "https://github.com/$GITHUB_REPOSITORY.git" "$state"
+        test "$(git -C "$state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+        test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
+        test -z "$(git -C "$state" status --porcelain)"
+        # A pinned historical commit is permissible for a no-send replay
+        # only when the independent verifier proves its ancestry on this
+        # exact orphan source branch; production defaults to the current tip.
+        state_sha="${VN_PINNED_COMMIT:-$(git -C "$state" rev-parse HEAD)}"
+        [[ "$state_sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
+        mkdir "$working/editorial"
+        destination="$working/editorial/$VN_WEEK_END.json"
+        args=(--state-repo "$state"
+          --state-commit "$state_sha"
+          --notes "$VN_NOTES"
+          --week-ending "$VN_WEEK_END"
+          --out "$destination")
+        if [[ -n "$VN_EXISTING" ]]; then
+          test -f "$VN_EXISTING" || {
+            echo "::error::The existing Japan/regional research packet is missing"
+            exit 1
+          }
+          args+=(--existing "$VN_EXISTING")
+        fi
+        python -m scripts.build_vietnam_sunday_packet "${args[@]}"
+        test -s "$destination"
+        # Expose only file path and counts; source notes stay on runner.
+        vietnam_count="$(python -c 'import json,sys; data=json.load(open(sys.argv[1])); print(sum(x["desk"]=="vietnam" for x in data["items"]))' "$destination")"
+        {
+          echo "packet=$destination"
+          echo "state_commit=$state_sha"
+          echo "vietnam_count=$vietnam_count"
+        } >> "$GITHUB_OUTPUT"
