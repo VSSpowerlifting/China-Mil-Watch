@@ -122,7 +122,8 @@ class TopicAssignment:
     def validate(self, taxonomy: Optional[TopicTaxonomy] = None) -> None:
         taxonomy = taxonomy or load_taxonomy()
         self.record.validate()
-        if self.taxonomy_version != taxonomy.taxonomy_version:
+        if (type(self.taxonomy_version) is not int or
+                self.taxonomy_version != taxonomy.taxonomy_version):
             raise TopicTaxonomyError(
                 "assignment taxonomy version %r does not match loaded version %r"
                 % (self.taxonomy_version, taxonomy.taxonomy_version)
@@ -136,6 +137,11 @@ class TopicAssignment:
         if not isinstance(self.assigned_by, str) or not self.assigned_by.strip():
             raise TopicTaxonomyError("assigned_by must be a non-empty provenance label")
         _parse_utc(self.assigned_at)
+        if self.evidence is not None:
+            if not isinstance(self.evidence, str) or not self.evidence.strip():
+                raise TopicTaxonomyError(
+                    "evidence must be non-empty text or null"
+                )
         if self.confidence is not None:
             if isinstance(self.confidence, bool) or not isinstance(
                     self.confidence, (int, float)):
@@ -171,9 +177,10 @@ def load_taxonomy(path: Optional[Path] = None) -> TopicTaxonomy:
             "taxonomy_id must be %r, got %r" %
             (TAXONOMY_ID, raw.get("taxonomy_id"))
         )
-    if raw.get("taxonomy_version") != TAXONOMY_VERSION:
+    raw_version = raw.get("taxonomy_version")
+    if type(raw_version) is not int or raw_version != TAXONOMY_VERSION:
         raise TopicTaxonomyError(
-            "unsupported taxonomy_version %r" % raw.get("taxonomy_version")
+            "unsupported taxonomy_version %r" % raw_version
         )
 
     groups: List[TopicGroup] = []
