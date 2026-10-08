@@ -1,0 +1,60 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": "Research candidate only. The two home URLs are alternate desktop/mobile views of the same English-language journal; no source is enabled and no workflow, remote dispatch, production record or capture retention is authorized.",
+  "desk": {
+    "desk_id": "vietnam",
+    "display_name": "Vietnam Desk — National Defence Journal research",
+    "jurisdiction_code": "VN",
+    "default_timezone": "Asia/Ho_Chi_Minh",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "research",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "vn_national_defence_journal",
+      "display_name": "National Defence Journal",
+      "name_original": "Tạp chí Quốc phòng toàn dân",
+      "institution_type": "state_linked_media"
+    }
+  ],
+  "sources": [
+    {
+      "slug": "vn_national_defence_journal_en",
+      "institution_id": "vn_national_defence_journal",
+      "display_name": "National Defence Journal — English edition",
+      "base_url": "https://tapchiqptd.vn",
+      "language_tag": "en",
+      "access_method": "html",
+      "authority_tier": "B",
+      "source_type": "military_journal_editorial",
+      "originality": "original",
+      "enabled": false,
+      "adapter": "scraper.sources.vn_defence_journal:offline research only",
+      "listing_endpoints": [
+        "https://tapchiqptd.vn/en/default.html",
+        "https://m.tapchiqptd.vn/en"
+      ],
+      "article_url_patterns": [
+        "^https://tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+/[0-9]{4,9}\\.html$",
+        "^https://m\\.tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+-[0-9]{4,9}\\.html$"
+      ],
+      "notes": "ONE publication with two site layouts, not two independent sources. Main/mobile articles canonicalized to desktop permalink and one vndj-en numeric identity; first-party English as published, not translated. Military journal commentary/editorial analysis (Tier B), not a Ministry of National Defence directive. Homepages repeat items and do not prove a date-bounded complete feed. Robots policy not established by the 2026-10-07 research tool, no live collector, state, schedule or permissions to republish full text. Copyright notice: All rights reserved. See README.md."
+    }
+  ],
+  "blocked_research": [
+    {
+      "url": "https://tapchiqptd.vn/robots.txt",
+      "status": "No readable robots policy confirmed in external research; do not activate fetching before direct identifiable Actions-side policy probe."
+    },
+    {
+      "url": "https://m.tapchiqptd.vn/robots.txt",
+      "status": "No readable robots policy confirmed; mobile host not a fallback around main-host restrictions."
+    }
+  ],
+  "rights": "Publisher site states Copyright © National Defence Journal 2013. All rights reserved. No content bytes collected or reproduced in this candidate; publication and long-term source-text retention need specific reviewed rights basis."
+}
