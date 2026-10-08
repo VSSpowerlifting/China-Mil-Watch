@@ -1,0 +1,96 @@
+name: Sunday Briefs — Read-only Production Corpus Readiness
+
+# No API/model call, email, new country source, collect, or source approval.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/sunday_corpus_readiness.py
+      - tests/test_sunday_corpus_readiness.py
+      - .github/workflows/sunday_corpus_readiness_audit.yml
+      - docs/SUNDAY_CORPUS_READINESS_AUDIT.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sunday-corpus-readiness-read-only
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing read-only corpus dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test no-false-readiness and source-body non-disclosure
+        run: python -m unittest tests.test_sunday_corpus_readiness -v
+      - name: Resolve most recent or upcoming reporting Saturday in New York
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+          today = datetime.now(ZoneInfo("America/New_York")).date()
+          # Sunday reviews Saturday's completed week; Mon-Sat may inspect the
+          # currently unfolding week without claiming it is complete.
+          if today.weekday() == 6:
+              saturday = today - timedelta(days=1)
+          else:
+              saturday = today + timedelta(days=(5 - today.weekday()) % 7)
+          cutoff = min(saturday, today)
+          print("SUNDAY_READINESS_WEEK_END=" + saturday.isoformat())
+          print("SUNDAY_READINESS_AS_OF=" + cutoff.isoformat())
+          print("SUNDAY_READINESS_LOCAL_DAY=" + today.isoformat())
+          PY
+      - name: Inspect actual production SQLite through read-only copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_corpus_readiness \
+            --week-ending "$SUNDAY_READINESS_WEEK_END" \
+            --as-of "$SUNDAY_READINESS_AS_OF" \
+            --review-local-day "$SUNDAY_READINESS_LOCAL_DAY" \
+            --output "$RUNNER_TEMP/sunday-readiness-metadata.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "sunday-readiness-metadata.json"
+          report = json.loads(p.read_text(encoding="utf-8"))
+          assert report["changes_production_archive"] is False
+          assert report["actual_model_draft_reviewed"] is False
+          assert report["publication_authorized"] is False
+          assert report["editor_delivery_authorized"] is False
+          assert len(report["production_desks"]) >= 2
+          print(json.dumps({
+            "week_ending": report["reporting_saturday"],
+            "source_as_of": report["source_as_of"],
+            "production_desks": report["production_desks"],
+            "usable_text_records": report["usable_text_records"],
+            "gates": report["unmet_gates"],
+            "machine_preflight_verdict": report["machine_preflight_verdict"]
+          }, sort_keys=True))
+          PY
+      - name: Preserve metadata only (no original article bodies)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sunday-corpus-readiness-${{ github.run_id }}
+          path: ${{ runner.temp }}/sunday-readiness-metadata.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Verify original tracked repository remains untouched
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain)"
