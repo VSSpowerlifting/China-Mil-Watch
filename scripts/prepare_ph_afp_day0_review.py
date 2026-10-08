@@ -152,6 +152,8 @@ def make_queue_from_objects(objects: dict[str, bytes], *,
                     str(rec["url"]).startswith("https://www.afp.mil.ph/news/"),
                     "unexpected source identity, missing body or changed collection run"
                 )
+                require(rec["content_sha256"] == sha256(rec["text_original"].encode("utf-8")),
+                        source_id + ": stored source text digest mismatch")
                 seen.add(source_id)
                 captures = conn.execute(
                     "SELECT * FROM captures WHERE source_identity = ? AND run_id = ?",
