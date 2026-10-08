@@ -142,6 +142,9 @@ jobs:
               "test_vietnam_briefs_evidence_feeder",
               "test_vietnam_private_synopses",
               "test_vietnam_shadow_logical_slot_watchdog",
+              # One-theme Sunday model source typing, return and date contracts.
+              "test_briefs_editorial_evidence",
+              "test_weekly_briefs_sunday_window",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
