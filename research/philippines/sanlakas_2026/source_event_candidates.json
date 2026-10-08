@@ -244,6 +244,12 @@
       "status": "requires_human_review",
       "kind": "source_reuse_review_pending",
       "note": "AFP API response indexing header and source terms/rights require separate editorial review; this candidate only references preserved hashes and short snippets."
+    },
+    {
+      "id": "F06",
+      "status": "requires_human_review",
+      "kind": "opening_venue_conflict",
+      "note": "AFP opening story afp:1391 has a Camp Aguinaldo/Quezon City dateline and uses 'here' for the September 30 opening; publicly indexed PCG reporting places the opening at PCG National Headquarters. Do not assign a verified opening venue or coordinates without independent original-source review. Third-party and social search results are not pinned archive evidence."
     }
   ],
   "verification_scope": "offline exact pinned historical source and excerpt substring matches; no independent factual corroboration"
