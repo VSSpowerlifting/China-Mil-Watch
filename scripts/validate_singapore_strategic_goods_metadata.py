@@ -46,7 +46,7 @@ RIGHTS_FIELDS = {
     "terms_url", "terms_last_updated", "provisional_reading",
     "relevant_clauses", "observed_conditions", "ipr_use_compliance_adjudicated",
     "full_body_retention_approved", "public_body_display_approved",
-    "automated_collection_approved",
+    "automated_collection_approved", "website_caching_scope_adjudicated",
 }
 CONDITIONS = {
     "singapore_government_copyright_acknowledgment",
@@ -111,15 +111,17 @@ def validate(packet: dict, vocabulary: dict) -> dict:
     require(type(r) is dict and set(r) == RIGHTS_FIELDS
             and r["terms_url"] == "https://www.egazette.gov.sg/terms-of-use/"
             and r["terms_last_updated"] == "2026-07-10"
-            and "Conditional" in r["provisional_reading"]
-            and r["relevant_clauses"] == ["6", "11", "12", "17"]
+            and "Clause 11" in r["provisional_reading"]
+            and "clause 16" in r["provisional_reading"]
+            and r["relevant_clauses"] == ["6", "11", "12", "16", "17"]
             and type(r["observed_conditions"]) is list
             and set(r["observed_conditions"]) == CONDITIONS
             and len(r["observed_conditions"]) == len(CONDITIONS),
             "Gazette terms gate")
     require(all(r[k] is False for k in (
         "ipr_use_compliance_adjudicated", "full_body_retention_approved",
-        "public_body_display_approved", "automated_collection_approved"
+        "public_body_display_approved", "automated_collection_approved",
+        "website_caching_scope_adjudicated"
     )), "source-use signoff gate")
     docs = packet["documents"]
     require(packet["source_document_count"] == 2
