@@ -52,6 +52,7 @@ def run(*, adapter=None):
             return report, False
         extracted = adapter.extract(capture)
         entry["extraction_status"] = extracted.status
+        entry["extraction_error_detail"] = extracted.error_detail
         if extracted.status != st.OK or len(extracted.documents) != 1:
             return report, False
         doc = extracted.documents[0]
