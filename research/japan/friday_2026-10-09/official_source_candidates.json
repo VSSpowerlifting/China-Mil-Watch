@@ -1,0 +1,241 @@
+{
+  "protocol": "ipr_japan_week41_editorial_supplement_v1",
+  "status": "unsigned_source_discovery_only_not_in_brief",
+  "reporting_week_start": "2026-10-04",
+  "reporting_friday": "2026-10-09",
+  "reviewed_as_of": "2026-10-08",
+  "timezone": "Asia/Tokyo",
+  "purpose": "Independent first-party source discovery for optional, explicitly human-edited Japan paragraph in Friday's IPR Briefs draft; NOT eligible for automated production DB citation IDs.",
+  "origin_scope": "Japanese Ministry of Defense official English HTML; one paired Japanese original; source webpage views do not establish IPR archival capture.",
+  "workflow": {
+    "automatic_friday_writer_includes_japan": false,
+    "editorial_supplement_only": true,
+    "allow_model_citation_id_synthesis": false,
+    "may_copy_into_dylan_draft_only_after_independent_review": true,
+    "email_sent": false,
+    "editorial_inclusion_approved": false,
+    "source_admission_approved": false,
+    "full_original_archive_capture_available": false,
+    "publication_approved": false,
+    "production_mutation": false
+  },
+  "source_candidates": [
+    {
+      "candidate_id": "JP-W41-01",
+      "title": "JS Kunisaki Departs Indonesia after Completing International Disaster Relief Activities",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_press_release",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/5fc631a5d1b2f36a9b697a611082a85af444ea54.html",
+      "japanese_original_url": "https://www.mod.go.jp/j/press/news/2026/10/06a.html",
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_indonesia_disaster_relief_completion",
+      "support_class": "english_and_japanese_official_mod_pages_checked",
+      "editorial_priority": "primary",
+      "provisional_claims": [
+        "The October 6 MOD release reports that JS Kunisaki departed Kijing Port for Japan after the conclusion of the Indonesia international disaster-relief operation.",
+        "The MOD reports that three JGSDF CH-47 helicopters were aboard the departing ship and carried out 56 firefighting missions totaling approximately 280 tons of water released."
+      ],
+      "caveats": [
+        "The release describes conclusion and departure on October 6; do not represent the missions as all occurring on October 6.",
+        "Do not infer Japanese-Indonesian military cooperation terms or effectiveness beyond the issuing ministry's wording.",
+        "This development is not automatically the same incident as Philippines Sanlakas emergency-response exercises."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-02",
+      "title": "Courtesy call on Defense Minister Koizumi by H. E. Mr. George Glass, the U.S. Ambassador to Japan",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/92045078e2a66f0957658c577e65cb0832261b17.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "secondary",
+      "provisional_claims": [
+        "The MOD says Koizumi met U.S. Ambassador George Glass on October 6 and protested a reported robbery-murder incident in Naha, Okinawa.",
+        "According to the ministry, the Japanese government called for investigative cooperation, discipline, recurrence-prevention measures, and consideration for the bereaved family."
+      ],
+      "caveats": [
+        "The robbery-murder characterization and demands are explicitly attributed to the Japanese Ministry of Defense; no independent criminal-case adjudication is implied.",
+        "A separate October 6 McCormick meeting repeats the ministry's protest and is not independent corroboration of the incident."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-03",
+      "title": "Courtesy call on Minister of Defense Koizumi by U.S. Senator David McCormick",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/310c36ee3042840e8ea24c951cacaa1766cba0a0.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "context",
+      "provisional_claims": [
+        "The ministry says Koizumi received Senator David McCormick on October 6 and voiced intentions to deepen the Japan–U.S. alliance.",
+        "The official account also repeats the government's protest and investigative and discipline requests concerning the reported Naha incident."
+      ],
+      "caveats": [
+        "This is a separate meeting, but the repeated protest is not a separate criminal incident.",
+        "Do not mistake two MOD pages for independent diplomatic or law-enforcement corroboration."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-04",
+      "title": "Courtesy call on State Minister of Defense Kiyoshi Odawara by the delegation of the U.S. Senator Michael Bennet",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/1aaec60496e51175d95622df5ffc904a24af6c9c.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-05",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "context",
+      "provisional_claims": [
+        "Japan's state minister of defense received Senator Michael Bennet and his delegation on October 5, according to MOD.",
+        "The MOD account thanked Bennet for alliance support and repeated Japan's stated concerns over the reported Naha incident."
+      ],
+      "caveats": [
+        "Do not assume this meeting resolved the issue or constituted a defense-policy agreement.",
+        "Context, not a separate institutional voice or a second Naha incident."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    }
+  ],
+  "source_relationships": {
+    "japan_indonesia_disaster_relief_completion": {
+      "candidate_ids": [
+        "JP-W41-01"
+      ],
+      "distinct_mod_source_pages": 1,
+      "distinct_provisionally_attributed_issuing_institutions": 1,
+      "independently_verified_external_institutions": 0
+    },
+    "japan_us_alliance_communications": {
+      "candidate_ids": [
+        "JP-W41-02",
+        "JP-W41-03",
+        "JP-W41-04"
+      ],
+      "distinct_mod_source_pages": 3,
+      "distinct_provisionally_attributed_issuing_institutions": 1,
+      "independently_verified_external_institutions": 0,
+      "recurring_issue": "shared Ministry of Defense protests concerning one reported Naha incident; three distinct diplomatic courtesy calls"
+    }
+  },
+  "independent_review_needed": [
+    "Review the actual October 5 archived Japan MOD PDF original and compare its preserved extracted Japanese text and two-page agreement details; verify FAC 5121 Tsuiki, approximate areas, October 19–29 future use dates and September 17 agreement approval. Do not mistake planned exercise facility use for an exercise already performed.",
+    "Check each official source URL and entire HTML text, archive the precise version only if authorized, and record verified capture SHA-256.",
+    "Check the Oct 6 Japanese original against English version, retaining language/translation distinction.",
+    "Confirm the source's actual publication date and whether Friday brings later material; this October 8 discovery is not a finished October 9 weekly review.",
+    "Decide if the Indonesia disaster-relief update fits a substantive cross-desk development and is worth a short Japan paragraph.",
+    "Check MOD terms of use, source attribution, editorial translation and any embedded third-party photos before any reuse.",
+    "Do not make up production record IDs or alter the Friday production-backed desk list; cite source URLs clearly as supplementary, unarchived material.",
+    "Read the complete Japanese 05a HTML notice separately from the shadow-extracted 05b PDF; do not confuse Type II category with actual aircraft count, or treat two MOD releases as independent institutional corroboration."
+  ],
+  "source_terms_url": "https://www.mod.go.jp/en/notice.html",
+  "rights_note": "MOD terms permit specified reuse with attribution and edited-work labeling, with third-party and exceptions; specific source handling still requires editorial review, especially photos.",
+  "no_classification": true,
+  "no_publication": true,
+  "shadow_current_week_original": {
+    "status": "archived_shadow_source_candidate_not_production_or_editor_approved",
+    "source_record_identifier": "shadow/jp-mod:jp_mod_news_ja:2026-10-05:05b.pdf",
+    "source_id_namespace": "shadow_only_no_numeric_ipr_record_id",
+    "state_branch": "shadow/jp-mod",
+    "historical_state_commit": "d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13",
+    "sqlite_path": "state/shadow.db",
+    "sqlite_git_blob_sha1": "60f126db5a36369ade81f44f12c3a838cddbfb59",
+    "source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "source_slug": "jp_mod_news_ja",
+    "title_original": "日米合同委員会合意について",
+    "title_english_working": "Regarding a Japan–U.S. Joint Committee Agreement",
+    "publication_date_original": "2026-10-05",
+    "original_language": "ja",
+    "publication_kind": "press release",
+    "text_chars_reported": 580,
+    "extracted_body_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
+    "captured_response_sha256": "4788557ba554cd8af8211906174f44fc60eecaa53f46e2c1818b418c2d0d57bf",
+    "original_capture_recorded_at_utc": "2026-10-06T02:29:24+00:00",
+    "first_seen_shadow_run": "37404326269-1",
+    "document_reference": "Fukuoka Prefecture — FAC 5121 Tsuiki Airfield",
+    "agreement_approval_date": "2026-09-17",
+    "public_notice_date": "2026-10-05",
+    "planned_facility_use_start": "2026-10-19",
+    "planned_facility_use_end": "2026-10-29",
+    "land_area_m2_approx": 29000,
+    "building_area_m2_approx": 11000,
+    "building_scope": "portions of four buildings",
+    "exercise_mentions": [
+      "Keen Sword 27",
+      "aircraft training relocation"
+    ],
+    "provisional_interpretation": "The preserved Japanese MOD PDF reports Joint Committee approval for temporary additional limited-use land and building portions at Tsuiki Airfield in support of planned bilateral exercises. Approval predates October 5 public notice, and the October 19–29 use period is future as of review cutoff.",
+    "caution_flags": [
+      "A joint committee agreement does not prove the exercises have started; October 19–29 is prospective.",
+      "The public notice is October 5; the internal approval is dated September 17. Do not use approval date as publication date.",
+      "The extracted text is preserved in shadow SQLite but has not undergone independent full-PDF human source-fidelity review.",
+      "The live PDF endpoint was not directly replayed in this assessment; source-readiness is grounded in the immutable shadow extraction.",
+      "The source is not yet a production-backed IPR record and has no numeric production citation ID."
+    ],
+    "exact_historical_source_replay_completed": false,
+    "human_original_source_review_complete": false,
+    "editorial_inclusion_approved": false,
+    "source_promoted_to_production": false
+  },
+  "linked_public_mod_tsuiki_training_notice": {
+    "candidate_id": "JP-W41-05",
+    "status": "public_official_html_editor_candidate_not_archived",
+    "publication_date": "2026-10-05",
+    "institution": "Japan Ministry of Defense",
+    "language": "ja",
+    "url": "https://www.mod.go.jp/j/press/news/2026/10/05a.html",
+    "linked_shadow_source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "relationship": "Separate same-ministry MOD announcement; not independent institutional corroboration",
+    "subject": "Kadena-to-Tsuiki aircraft training relocation",
+    "planned_training_start": "2026-10-19",
+    "planned_training_end": "2026-10-29",
+    "training_relocation_sequence_at_tsuiki": 12,
+    "type_ii_aircraft_range": [
+      6,
+      12
+    ],
+    "type_ii_days_range": [
+      8,
+      14
+    ],
+    "reviewer_verified_full_page": false,
+    "editorial_approved": false,
+    "ipr_record_id": null,
+    "original_capture_sha256": null,
+    "caveats": [
+      "Date is October 5 publication, not an exercise-completion date; projected October 19–29 training has not yet been conducted.",
+      "Type II is the exercise category defined by MOD, not evidence that exactly 6–12 aircraft deployed.",
+      "05a HTML and 05b shadow-extracted PDF are separate MOD publications by the same issuer; neither should be counted as independent confirmation.",
+      "The source does not state that this relocation encompasses all Keen Sword 27 exercises."
+    ],
+    "provisional_claims": [
+      "MOD announced on October 5 a Kadena-to-Tsuiki U.S. aircraft training relocation planned for October 19–29 and described it as the twelfth transfer to Tsuiki.",
+      "MOD categorizes the planned training as Type II, normally six to twelve aircraft over eight to fourteen days, under a program intended to improve interoperability and reduce training impacts near U.S. airfields."
+    ]
+  }
+}
