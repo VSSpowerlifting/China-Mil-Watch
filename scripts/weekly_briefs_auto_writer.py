@@ -75,14 +75,23 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
     desks = list(dict.fromkeys(sidecar["desks"]))
     chosen = []
     ids = set()
-    # Guarantee two candidate records per desk where possible.
-    for desk in desks:
-        same = sorted((pair for pair in verified if pair[0]["desk_id"] == desk),
-                      key=rank, reverse=True)
-        for pair in same[:2]:
-            if pair[0]["id"] not in ids:
-                chosen.append(pair)
-                ids.add(pair[0]["id"])
+    # One per desk first, then a second per desk as space permits. Never
+    # exceed MAX_RECORDS if more than five live desks have candidate bodies.
+    by_desk = {
+        desk: sorted((pair for pair in verified if pair[0]["desk_id"] == desk),
+                     key=rank, reverse=True)
+        for desk in desks
+    }
+    for pass_number in (0, 1):
+        for desk in desks:
+            if len(chosen) >= MAX_RECORDS:
+                break
+            candidate = by_desk[desk]
+            if len(candidate) > pass_number:
+                pair = candidate[pass_number]
+                if pair[0]["id"] not in ids:
+                    chosen.append(pair)
+                    ids.add(pair[0]["id"])
     for pair in sorted(verified, key=rank, reverse=True):
         if len(chosen) >= MAX_RECORDS:
             break
