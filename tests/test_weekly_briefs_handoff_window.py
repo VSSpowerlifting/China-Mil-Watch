@@ -87,7 +87,7 @@ class HandoffWindowTests(unittest.TestCase):
         for value, expected in (
             ("2026-10-09", "future Friday"),
             ("2026-10-08", "must identify a Friday"),
-            ("20261002", "must identify a Friday"),
+            ("20261002", "must be a valid YYYY-MM-DD"),
             ("not-a-date", "must be a valid"),
             ("2026-01-02", "beyond 91 days"),
         ):
