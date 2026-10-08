@@ -150,7 +150,8 @@
     "Confirm the source's actual publication date and whether Friday brings later material; this October 8 discovery is not a finished October 9 weekly review.",
     "Decide if the Indonesia disaster-relief update fits a substantive cross-desk development and is worth a short Japan paragraph.",
     "Check MOD terms of use, source attribution, editorial translation and any embedded third-party photos before any reuse.",
-    "Do not make up production record IDs or alter the Friday production-backed desk list; cite source URLs clearly as supplementary, unarchived material."
+    "Do not make up production record IDs or alter the Friday production-backed desk list; cite source URLs clearly as supplementary, unarchived material.",
+    "Read the complete Japanese 05a HTML notice separately from the shadow-extracted 05b PDF; do not confuse Type II category with actual aircraft count, or treat two MOD releases as independent institutional corroboration."
   ],
   "source_terms_url": "https://www.mod.go.jp/en/notice.html",
   "rights_note": "MOD terms permit specified reuse with attribution and edited-work labeling, with third-party and exceptions; specific source handling still requires editorial review, especially photos.",
@@ -200,5 +201,41 @@
     "human_original_source_review_complete": false,
     "editorial_inclusion_approved": false,
     "source_promoted_to_production": false
+  },
+  "linked_public_mod_tsuiki_training_notice": {
+    "candidate_id": "JP-W41-05",
+    "status": "public_official_html_editor_candidate_not_archived",
+    "publication_date": "2026-10-05",
+    "institution": "Japan Ministry of Defense",
+    "language": "ja",
+    "url": "https://www.mod.go.jp/j/press/news/2026/10/05a.html",
+    "linked_shadow_source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "relationship": "Separate same-ministry MOD announcement; not independent institutional corroboration",
+    "subject": "Kadena-to-Tsuiki aircraft training relocation",
+    "planned_training_start": "2026-10-19",
+    "planned_training_end": "2026-10-29",
+    "training_relocation_sequence_at_tsuiki": 12,
+    "type_ii_aircraft_range": [
+      6,
+      12
+    ],
+    "type_ii_days_range": [
+      8,
+      14
+    ],
+    "reviewer_verified_full_page": false,
+    "editorial_approved": false,
+    "ipr_record_id": null,
+    "original_capture_sha256": null,
+    "caveats": [
+      "Date is October 5 publication, not an exercise-completion date; projected October 19–29 training has not yet been conducted.",
+      "Type II is the exercise category defined by MOD, not evidence that exactly 6–12 aircraft deployed.",
+      "05a HTML and 05b shadow-extracted PDF are separate MOD publications by the same issuer; neither should be counted as independent confirmation.",
+      "The source does not state that this relocation encompasses all Keen Sword 27 exercises."
+    ],
+    "provisional_claims": [
+      "MOD announced on October 5 a Kadena-to-Tsuiki U.S. aircraft training relocation planned for October 19–29 and described it as the twelfth transfer to Tsuiki.",
+      "MOD categorizes the planned training as Type II, normally six to twelve aircraft over eight to fourteen days, under a program intended to improve interoperability and reduce training impacts near U.S. airfields."
+    ]
   }
 }
