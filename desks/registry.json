@@ -153,9 +153,9 @@
    "slug": "vietnam",
    "name": "Vietnam Desk",
    "route": "vietnam.html",
-   "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
+   "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The English National Defence Journal is a separate disabled military-journal research candidate, not an operating ministry source. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
    "status": "research",
-   "status_explanation": "Researched, with collectors built but not launched. Bounded local rehearsals read Government News, Public Security foreign affairs, and Industry and Trade energy and foundational industry under the full collector identity. Each ministry family has separate external state; nothing reaches the public record. The Ministry of National Defence and Ministry of Finance have recorded access blockers. Nothing runs on a schedule, and the desk moves to shadow evaluation only once ongoing collection actually runs.",
+   "status_explanation": "Three ministry publication families have been collecting to isolated remote shadow state since 2026-10-07, with daily reliability monitoring and Day 7/14/30 review gates; none is admitted to production. Government News remote dispatch remains unapproved. National Defence Journal English is a newly researched, disabled source with no collector or shadow clock; its two hosts are alternate layouts of one publisher, with access and reuse gates still unresolved. The Ministry of National Defence and Ministry of Finance remain access-constrained. Registry status remains research pending full desk promotion.",
    "public": true,
    "manifest": null,
    "has_production_records": false,
@@ -190,6 +190,11 @@
       "name": "Ministry of Industry and Trade — energy and foundational industry (Vietnamese)",
       "format": "Published first category pages and linked portal reports; bounded local rehearsals passed",
       "note": "moit.gov.vn. Phát triển năng lượng and Công nghiệp nền tảng are separate source families and clocks sharing one host gate. Printed dates govern; conflicting metadata is kept separately. Script-only older pagination is not requested. These reports are not inferred legal instruments. The linked trade-remedies host disallows collection."
+     },
+     {
+      "name": "National Defence Journal — English edition (military journal)",
+      "format": "HTML English desktop and mobile presentations, one publication, disabled source candidate",
+      "note": "tapchiqptd.vn/en/default.html and m.tapchiqptd.vn/en. The two interfaces publish the same article IDs and are one National Defence Journal source, not two ministry feeds. Military-journal doctrine, commentary and defence scholarship are Tier B institutional media, not MOD-issued directives. Offline ID-based canonicalization is implemented; date-bounded discovery, robots permissions, extraction integrity and rights to preserve original text are not established. Footer states all rights reserved. No shadow or production collection is authorized."
      },
      {
       "name": "Ministry of Finance",
@@ -241,11 +246,11 @@
     ]
    },
    "limits": [
-    "No source is enabled in production, and no collector runs on a schedule. Nothing here reaches the production database, the public site, or any public count.",
+    "No Vietnam source is enabled in production, and no shadow record contributes to public counts. MPS/MOIT ministry sources run on separate isolated daily shadow cadence; National Defence Journal has no active collection, remote dispatch, state or reliability clock.",
     "Bounded newsroom and ministry publication families only. No comprehensive Vietnamese defense coverage, no complete ministry archive, no People’s Army Newspaper collection and no formal-document family.",
     "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
     "English and Vietnamese as published, in separate source families. No translation or recovered-original claim.",
-    "Shadow collection has not started. No qualification period has elapsed and no desk-readiness claim follows from this page."
+    "The three ministry families established remote Day 0 on 2026-10-07; required 7/14/30 human reviews and source-level rights gates remain. National Defence Journal is research-only and cannot inherit those ministry clocks or count as qualified."
    ]
   },
   {
