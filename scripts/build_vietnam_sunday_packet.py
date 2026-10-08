@@ -11,6 +11,8 @@ import json
 import tempfile
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 from scripts import prepare_vietnam_mps_review_queue as queue_builder
 from scripts.prepare_vietnam_briefs_evidence import (
     VietnamFeederError, canonical_json, load, make_packet, require, window,
@@ -28,6 +30,9 @@ def build(*, state_repo, state_commit, week_ending, notes, output,
             "refuse to overwrite previous country research")
     require(out.parent.is_dir() and not out.parent.is_symlink(),
             "output parent must already exist")
+    resolved_out = out.resolve()
+    require(ROOT != resolved_out and ROOT not in resolved_out.parents,
+            "refuse writing private editorial evidence inside checkout")
     previous = load(existing, 40000) if existing else None
     authored = load(notes, 20000)
     # The queue builder verifies exact shadow Git commit, source state tree,
