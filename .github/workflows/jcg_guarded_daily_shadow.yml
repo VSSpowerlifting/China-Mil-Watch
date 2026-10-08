@@ -1,0 +1,118 @@
+name: Japan Coast Guard — Guarded Daily Shadow Qualification
+
+# This adds NO enabled schedule by itself. GitHub repository variable
+# JCG_SHADOW_DAILY_ENABLED must be deliberately set to the exact string 'true'
+# only after the pinned Day 0 original-source review and owner authorization.
+on:
+  schedule:
+    - cron: '13 19 * * *'
+
+permissions:
+  contents: read
+
+# Share a concurrency lock with the owner-dispatched manual JCG collector.
+concurrency:
+  group: japan-jcg-manual-shadow
+  cancel-in-progress: false
+
+jobs:
+  shadow:
+    if: github.event_name == 'schedule' && github.ref == 'refs/heads/main' && vars.JCG_SHADOW_DAILY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout reviewed production source, not shadow branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: repo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing source dependencies
+        run: pip install -r repo/requirements.txt
+      - name: Run scoped shadow fidelity and date contracts
+        working-directory: repo
+        run: |
+          python -m unittest tests.test_japan_jcg_shadow_adapter \
+            tests.test_japan_jcg_manual_shadow_gate \
+            tests.test_jcg_guarded_daily_shadow_contracts -q
+      - name: Clone pre-existing shadow state; never initialize scheduled branch
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch=shadow/japan-jcg
+          echo "STATE_BRANCH=$branch" >> "$GITHUB_ENV"
+          git ls-remote --exit-code --heads "$STATE_REMOTE" "refs/heads/$branch" \
+            > "$RUNNER_TEMP/jcg-pinned-shadow-head"
+          git clone --branch "$branch" --single-branch "$STATE_REMOTE" \
+            "$RUNNER_TEMP/jcg-state"
+          test "$(git -C "$RUNNER_TEMP/jcg-state" branch --show-current)" = "$branch"
+          cd "$RUNNER_TEMP/jcg-state"
+          test -f state/clock.json
+          test -s state/shadow.db
+          test -d state/ledger
+          test "$(git ls-tree --name-only HEAD)" = state
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          clock = json.loads(Path("state/clock.json").read_text())
+          assert clock["desk"] == "japan_jcg"
+          assert clock["day_zero_run_id"]
+          PY
+      - name: Collect one scheduled logical day on isolated state only
+        working-directory: repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/shadow_collect_desk.py \
+            --desk japan_jcg \
+            --state-dir "$RUNNER_TEMP/jcg-state/state" \
+            --lookback-days 9 --cap 20 \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
+            --event-name schedule \
+            --cron-utc 19:13 \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            2>&1 | tee "$RUNNER_TEMP/jcg-scheduled-run.log"
+      - name: Check original state and main checkout were not rewritten
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git -C repo status --porcelain)"
+          cd "$RUNNER_TEMP/jcg-state"
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            changed="$(git diff --name-status -- state/ledger state/clock.json | grep -E '^(M|D|R)' || true)"
+            test -z "$changed"
+          fi
+      - name: Append successful state commit without force
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/jcg-state"
+          test "$(git branch --show-current)" = "$STATE_BRANCH"
+          test ! -e state/shadow.db-wal
+          test ! -e state/shadow.db-shm
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          if git diff --cached --quiet; then exit 0; fi
+          source_sha="$(git -C "$GITHUB_WORKSPACE/repo" rev-parse HEAD)"
+          git commit -m "shadow(japan_jcg): scheduled run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Collector $source_sha. Nominal UTC date from cron 19:13. State only."
+          git push origin "HEAD:refs/heads/$STATE_BRANCH"
+      - name: Preserve metadata log only, no publisher original bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jcg-scheduled-shadow-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-scheduled-run.log
+          retention-days: 90
+          if-no-files-found: warn

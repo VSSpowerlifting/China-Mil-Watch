@@ -140,6 +140,7 @@ jobs:
               "test_topic_v2_evidence_verifier",
               "test_topic_v2_crossdesk_hadr",
               "test_vietnam_briefs_evidence_feeder",
+              "test_vietnam_private_synopses",
               "test_vietnam_weekly_model_readiness",
           )
           for name in required:
