@@ -100,8 +100,10 @@ def summary(html, article=False):
     return {"html_document_present": True}
 
 
-def response_probe(session, url, allowance, gate, monotonic=time.monotonic, sleeper=time.sleep):
+def response_probe(session, url, allowance, gate, monotonic=None, sleeper=None):
     """One request with exact host gate and bounded payload. No raw bytes in report."""
+    monotonic = monotonic or time.monotonic
+    sleeper = sleeper or time.sleep
     if allowance["requests"] >= MAX_REQUESTS:
         raise ProbeRefused("six-request aggregate cap exceeded")
     host = urlsplit(url).netloc
