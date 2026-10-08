@@ -74,6 +74,7 @@
 {% endblock %}
 
 {% block content %}
+{% if timeline_briefs is defined and timeline_briefs[brief.slug] %}<aside class="trail-panel" aria-label="Related evidence timelines"><h2>Evidence Timelines</h2>{% for item in timeline_briefs[brief.slug] %}<p><a href="../{{ item.route }}">{{ item.title }}</a>{% if item.is_review %} · unpublished draft{% endif %}</p>{% endfor %}</aside>{% endif %}
 {{ breadcrumb([('Analysis', '../analysis.html'), (brief.title, none)]) }}
 <div class="brief-layout">
   <nav class="brief-toc" aria-label="In this brief">

@@ -163,8 +163,61 @@ def validate(output_dir: Path) -> tuple[list[str], list[str]]:
     _validate_db_coverage(output_dir, errors, warnings)
 
     _validate_briefs(output_dir, errors)
+    _validate_timelines(output_dir, errors)
 
     return (errors, warnings)
+
+
+def _validate_timelines(output_dir, errors):
+    """A private draft, stale route or unbound editorial version cannot deploy."""
+    from core.timelines import load_timelines
+    from core.brief_collection import load_briefs, brief_entry
+    from core.desk_registry import load_registry
+    from html import escape
+    try:
+        numbers = [json.loads(p.read_text(encoding="utf-8"))["issue_number"]
+                   for p in (REPO_ROOT / "output/the-pla-watch/posts").glob("*.json")]
+        published, _ = load_briefs(REPO_ROOT / "briefs", load_registry(), historical_numbers=numbers)
+        timelines, _ = load_timelines(REPO_ROOT / "pla_watch.db",
+                                     {slug: brief_entry(slug, sc) for slug, sc in published},
+                                     REPO_ROOT / "timelines")
+    except (OSError, ValueError, KeyError) as exc:
+        errors.append("Timeline sources: %s" % exc)
+        return
+    expected = {item["route"] for item in timelines}
+    for path in (output_dir / "timeline").rglob("*"):
+        if path.is_file() and path.relative_to(output_dir).as_posix() not in expected:
+            errors.append("%s: no approved timeline source; drafts/stale files cannot deploy" % path)
+    if not timelines:
+        if (output_dir / "timelines.html").exists():
+            errors.append("timelines.html exists without approved timelines")
+        analysis = output_dir / "analysis.html"
+        if analysis.exists() and 'href="timelines.html"' in analysis.read_text(encoding="utf-8"):
+            errors.append("Analysis exposes Timelines without approved timelines")
+        return
+    texts = {route: (output_dir / route).read_text(encoding="utf-8")
+             if (output_dir / route).is_file() else ""
+             for route in ("analysis.html", "timelines.html", "sitemap.xml")}
+    if 'href="timelines.html"' not in texts["analysis.html"]:
+        errors.append("Analysis is missing the approved Timelines navigation")
+    if 'content="noindex' in texts["timelines.html"] or 'rel="canonical"' not in texts["timelines.html"]:
+        errors.append("timelines.html requires indexable metadata and a canonical")
+    for item in timelines:
+        route = item["route"]
+        page = output_dir / route
+        text = page.read_text(encoding="utf-8") if page.is_file() else ""
+        for marker in (escape(item["title"]), 'data-editorial-status="approved"',
+                       'data-editorial-digest="%s"' % item["approval"]["content_sha256"]):
+            if marker not in text:
+                errors.append("%s is absent or differs from its approved editorial source" % route)
+                break
+        if 'content="noindex' in text or 'rel="canonical"' not in text:
+            errors.append("%s requires indexable metadata and a canonical" % route)
+        if ('href="%s"' % route) not in texts["timelines.html"] or ("/%s</loc>" % route) not in texts["sitemap.xml"]:
+            errors.append("%s is missing from the library or sitemap" % route)
+        for rec in item["ledger"]:
+            if ('href="../record/%s.html"' % rec["id"]) not in text or not (output_dir / ("record/%s.html" % rec["id"])).is_file():
+                errors.append("%s has a missing preserved-record link: %s" % (route, rec["id"]))
 
 
 def _validate_briefs(output_dir, errors):

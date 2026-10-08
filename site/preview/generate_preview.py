@@ -119,6 +119,7 @@ from core.brief_collection import (                                  # noqa: E40
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
 from core.brief_contract import validate_readiness
+from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
@@ -2324,7 +2325,8 @@ def build(out_dir: Path, title: str, db_path: Path,
           site_origin: str = None, allow_test_origin: bool = False,
           daily_run_date: str = None, briefs_dir: Path = None,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
-          review_brief: Path = None) -> dict:
+          review_brief: Path = None, timelines_dir: Path = None,
+          review_timeline: Path = None) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2347,8 +2349,12 @@ def build(out_dir: Path, title: str, db_path: Path,
     turns the workflow's environment into this argument.
     """
     out_dir = Path(out_dir).resolve()
-    if review_brief and site_origin:
+    if (review_brief or review_timeline) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
+    if review_timeline and (out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents or out_dir in REPO_ROOT.parents):
+        raise ValueError("timeline review requires a disposable destination outside the repository")
+    if review_brief and review_timeline:
+        raise ValueError("review one editorial artifact at a time")
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
             "refusing to write inside production output/: %s\n"
@@ -2380,6 +2386,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     env.filters["count"] = (
         lambda n: "{:,}".format(n) if isinstance(n, int) else n)
     env.filters["reader_date"] = reader_date
+    import calendar
+    env.filters["month_name"] = lambda n: calendar.month_name[n]
     env.filters["language_label"] = language_label
     env.filters["script_lang"] = script_lang
     env.filters["weekday"] = weekday
@@ -2445,6 +2453,17 @@ def build(out_dir: Path, title: str, db_path: Path,
         collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
                                 withheld=collection.withheld,
                                 sidecars=dict(collection.sidecars, **{path.stem: draft}))
+    timeline_options = {"source_dir": Path(timelines_dir)} if timelines_dir is not None else {}
+    timelines, timelines_withheld = load_timelines(
+        db_path, {e["slug"]: e for e in collection.briefs},
+        review_path=review_timeline, **timeline_options)
+    timeline_records = defaultdict(list)
+    timeline_briefs = defaultdict(list)
+    for item in timelines:
+        for rec in item["ledger"]:
+            timeline_records[rec["id"]].append(item)
+        for brief in item["related_briefs"]:
+            timeline_briefs[brief].append(item)
     briefs_feed = bool(collection.briefs) and bool((site_origin or "").strip())
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
@@ -2469,7 +2488,10 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     ctx = {
         "title": title,
-        "review_mode": bool(review_brief),
+        "review_mode": bool(review_brief or review_timeline),
+        "timelines": timelines,
+        "timeline_records": timeline_records,
+        "timeline_briefs": timeline_briefs,
         "tagline": TAGLINE,
         "corpus_eyebrow": CORPUS_EYEBROW,
         "identity": identity,
@@ -2605,6 +2627,37 @@ def build(out_dir: Path, title: str, db_path: Path,
             env.get_template(template).render(page=target, **ctx),
             encoding="utf-8")
         written.append(target)
+
+    if timelines:
+        (out_dir / "timeline").mkdir()
+        (out_dir / "timelines.html").write_text(
+            env.get_template("timelines.html").render(page="analysis.html", **ctx), encoding="utf-8")
+        written.append("timelines.html")
+        for timeline in timelines:
+            (out_dir / timeline["route"]).write_text(
+                env.get_template("timeline.html").render(page="analysis.html", nested=True,
+                                                          timeline=timeline, **ctx), encoding="utf-8")
+            written.append(timeline["route"])
+        # Compact the unchanged shared rules for this page family's 120 KB budget.
+        # Strings remain byte-for-byte intact; only comments and boundary whitespace go.
+        import re
+        token = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|/\*.*?\*/|\s*([{};])\s*|\s+', re.S)
+        def compact_css(text):
+            return token.sub(lambda m: "" if m.group().startswith("/*") else
+                             (m.group(1) if m.group(1) else (" " if m.group().isspace() else m.group())), text)
+        shared = (Path(__file__).parent / "styles.css").read_text(encoding="utf-8")
+        # The common shell, labels, footer, motion and responsive/print rules
+        # remain authored in styles.css. Page-family component rules (search,
+        # records, home, maps, Briefs) are unnecessary on a chronology.
+        shell_rules = (shared[:shared.index("/* ═══ Controls")]
+                       + shared[shared.index("/* ═══ Footer:"):shared.index("/* ── Corpus index tables")]
+                       + shared[shared.index("/* ═══ Motion"):])
+        shell = compact_css(shell_rules) + "\n" + compact_css(
+            (Path(__file__).parent / "topography.css").read_text(encoding="utf-8"))
+        (out_dir / "timeline-shell.css").write_text(shell, encoding="utf-8")
+        (out_dir / "timelines.css").write_text(
+            (Path(__file__).parent / "timelines.css").read_text(encoding="utf-8"), encoding="utf-8")
+        written.extend(("timeline-shell.css", "timelines.css"))
 
     # ── The component and state gallery (maintenance only) ────────────────
     # Off by default and never requested by `site/render.py`, so no published
@@ -3104,6 +3157,8 @@ def build(out_dir: Path, title: str, db_path: Path,
             "briefs": len(collection.briefs),
             "briefs_withheld": len(collection.withheld),
             "briefs_feed": bool(briefs_feed and origin),
+            "timelines": len(timelines),
+            "timelines_withheld": len(timelines_withheld),
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
             "sources": len(source_views),

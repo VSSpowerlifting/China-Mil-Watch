@@ -1,0 +1,232 @@
+{
+  "timeline_schema": 1,
+  "slug": "maritime-cooperation-2026",
+  "title": "Maritime Cooperation 2026: one exercise, different starting dates",
+  "dek": "Follow the preparations, opening, sea phase and conclusion through five preserved official records—and see where the published accounts diverge.",
+  "editorial_status": "draft",
+  "scope": "What dates do Singapore and Chinese official sources assign to Maritime Cooperation 2026? This chronology compares five records selected in approved Brief No. 15. It establishes what those sources reported, not an independently verified operational history.",
+  "methodology_note": "Entries follow source-stated event dates; source publication dates are shown separately. A prospective announcement is labelled as a plan, and a retrospective as a later report. Original-language excerpts are preserved verbatim. English claim descriptions are editorial paraphrases prepared for review. The ministry starting-date disagreement remains unresolved. This selected packet cannot establish all preparations, the reason for the wider Chinese interval, or comparative combat effectiveness.",
+  "updated_on": "2026-10-07",
+  "reviewed_on": "2026-10-07",
+  "author_name": "Codex (draft preparation)",
+  "editor_name": "Pending owner review",
+  "related_briefs": [
+    "maritime-cooperation-2026"
+  ],
+  "entries": [
+    {
+      "id": "ministry-interval",
+      "headline": "China’s ministry gives the wider interval",
+      "event": {
+        "start": "2026-09-03",
+        "end": "2026-09-09",
+        "precision": "interval",
+        "date_basis": "Explicit interval in China’s ministry answer."
+      },
+      "event_kind": "claim",
+      "observation": "In its September 14 answer, China’s ministry dates the exercise to September 3–9. The record does not explain the earlier starting boundary.",
+      "evidence": [
+        {
+          "record_id": 4164,
+          "desk": "china",
+          "source_id": "mod_china",
+          "institution_id": "cn_mnd",
+          "published_on": "2026-09-14",
+          "url": "http://www.mod.gov.cn/gfbw/xwfyr/yzxwfb/16486365.html",
+          "basis": "retrospective",
+          "claim": "China’s ministry gives September 3–9 as the exercise interval.",
+          "excerpt": "9月3日至9日，中国和新加坡海军在广东湛江附近海空域举行“海上合作－2026”联合演习"
+        }
+      ],
+      "contested": true,
+      "disagreement_note": "MINDEF gives September 5–9. These are attributed boundaries, not a resolved starting date."
+    },
+    {
+      "id": "preparatory-meetings",
+      "headline": "Preparations precede the opening",
+      "event": {
+        "start": "2026-09-04",
+        "end": "2026-09-04",
+        "precision": "day",
+        "date_basis": "The September 5 dispatch explicitly names the preceding day, September 4."
+      },
+      "event_kind": "occurrence",
+      "observation": "PLA Daily reports high-level meetings and planning discussions on September 4. Preparatory activity is kept distinct from the reported opening ceremony.",
+      "evidence": [
+        {
+          "record_id": 3924,
+          "desk": "china",
+          "source_id": "pla_daily",
+          "institution_id": "cn_cmc_political_work",
+          "published_on": "2026-09-06",
+          "url": "http://www.81.cn/yw_208727/16483866.html",
+          "basis": "retrospective",
+          "claim": "PLA Daily reports September 4 meetings and planning discussions.",
+          "excerpt": "港岸阶段，中新双方已于4日举行了高层会见与筹划研讨"
+        }
+      ],
+      "contested": false
+    },
+    {
+      "id": "opening-ceremony",
+      "headline": "Both opening accounts point to September 5",
+      "event": {
+        "start": "2026-09-05",
+        "end": "2026-09-05",
+        "precision": "day",
+        "date_basis": "Explicit September 5 dateline in PLA Daily; “earlier today” relative to MINDEF’s September 5 publication."
+      },
+      "event_kind": "occurrence",
+      "observation": "MINDEF reports an opening ceremony earlier that day. PLA Daily’s account, published September 6 with a September 5 dateline, reports the opening on September 5.",
+      "evidence": [
+        {
+          "record_id": 4466,
+          "desk": "singapore",
+          "source_id": "sg_mindef_releases",
+          "institution_id": "sg_mindef",
+          "published_on": "2026-09-05",
+          "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/",
+          "basis": "reported",
+          "claim": "MINDEF reports the opening ceremony earlier on September 5.",
+          "excerpt": "co-officiated the opening ceremony of XMC 2026 at Ma Xie Naval Base in Zhanjiang earlier today."
+        },
+        {
+          "record_id": 3924,
+          "desk": "china",
+          "source_id": "pla_daily",
+          "institution_id": "cn_cmc_political_work",
+          "published_on": "2026-09-06",
+          "url": "http://www.81.cn/yw_208727/16483866.html",
+          "basis": "retrospective",
+          "claim": "PLA Daily reports a September 5 opening.",
+          "excerpt": "中国和新加坡“海上合作-2026”联合演习5日在广东湛江某军港开幕"
+        }
+      ],
+      "contested": false
+    },
+    {
+      "id": "singapore-interval",
+      "headline": "MINDEF’s exercise window begins on September 5",
+      "event": {
+        "start": "2026-09-05",
+        "end": "2026-09-09",
+        "precision": "interval",
+        "date_basis": "Explicit intervals in both MINDEF releases."
+      },
+      "event_kind": "claim",
+      "observation": "Singapore’s opening release places participation in the exercise on September 5–9. Its September 9 closing release repeats that exercise interval.",
+      "evidence": [
+        {
+          "record_id": 4466,
+          "desk": "singapore",
+          "source_id": "sg_mindef_releases",
+          "institution_id": "sg_mindef",
+          "published_on": "2026-09-05",
+          "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/",
+          "basis": "reported",
+          "claim": "MINDEF’s opening release gives September 5–9.",
+          "excerpt": "The Republic of Singapore Navy (RSN) is in Zhanjiang, China from 5 to 9 September 2026 to participate in bilateral Exercise Maritime Cooperation (XMC)"
+        },
+        {
+          "record_id": 4472,
+          "desk": "singapore",
+          "source_id": "sg_mindef_releases",
+          "institution_id": "sg_mindef",
+          "published_on": "2026-09-09",
+          "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/9sep26-nr/",
+          "basis": "reported",
+          "claim": "MINDEF’s closing release repeats September 5–9.",
+          "excerpt": "Held from 5 to 9 September 2026 in Zhanjiang, China"
+        }
+      ],
+      "contested": true,
+      "disagreement_note": "This starts two days later than the September 3–9 interval in China’s ministry answer."
+    },
+    {
+      "id": "sea-phase",
+      "headline": "An announced sea phase, followed by a retrospective",
+      "event": {
+        "start": "2026-09-08",
+        "end": "2026-09-09",
+        "precision": "interval",
+        "date_basis": "MINDEF explicitly announces the interval; PLA Daily explicitly reports its starting day."
+      },
+      "event_kind": "occurrence",
+      "observation": "On September 5, MINDEF announces a sea phase for September 8–9. PLA Daily’s September 12 retrospective reports the transition to the sea phase on September 8. The planned interval and later account are shown as distinct evidence.",
+      "evidence": [
+        {
+          "record_id": 4466,
+          "desk": "singapore",
+          "source_id": "sg_mindef_releases",
+          "institution_id": "sg_mindef",
+          "published_on": "2026-09-05",
+          "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/",
+          "basis": "planned",
+          "claim": "MINDEF announces a September 8–9 sea phase.",
+          "excerpt": "a sea phase in waters off Zhanjiang from 8 to 9 September 2026."
+        },
+        {
+          "record_id": 4102,
+          "desk": "china",
+          "source_id": "pla_daily",
+          "institution_id": "cn_cmc_political_work",
+          "published_on": "2026-09-12",
+          "url": "http://www.81.cn/yw_208727/16485244.html",
+          "basis": "retrospective",
+          "claim": "PLA Daily later reports that the exercise moved to sea on September 8.",
+          "excerpt": "9月8日，联演转入海上演习阶段。"
+        }
+      ],
+      "contested": false
+    },
+    {
+      "id": "conclusion",
+      "headline": "The exercise concludes on September 9",
+      "event": {
+        "start": "2026-09-09",
+        "end": "2026-09-09",
+        "precision": "day",
+        "date_basis": "“Earlier today” relative to MINDEF’s September 9 publication; explicit September 9 date in PLA Daily."
+      },
+      "event_kind": "occurrence",
+      "observation": "MINDEF reports the conclusion earlier on September 9. PLA Daily’s September 12 retrospective also describes a five-day exercise ending on September 9. That later report does not explain China’s ministry’s wider starting interval.",
+      "evidence": [
+        {
+          "record_id": 4472,
+          "desk": "singapore",
+          "source_id": "sg_mindef_releases",
+          "institution_id": "sg_mindef",
+          "published_on": "2026-09-09",
+          "url": "https://www.mindef.gov.sg/news-and-events/latest-releases/9sep26-nr/",
+          "basis": "reported",
+          "claim": "MINDEF reports the conclusion earlier on September 9.",
+          "excerpt": "concluded the fifth edition of Exercise Maritime Cooperation (XMC) earlier today."
+        },
+        {
+          "record_id": 4102,
+          "desk": "china",
+          "source_id": "pla_daily",
+          "institution_id": "cn_cmc_political_work",
+          "published_on": "2026-09-12",
+          "url": "http://www.81.cn/yw_208727/16485244.html",
+          "basis": "retrospective",
+          "claim": "PLA Daily retrospectively reports a five-day exercise ending on September 9.",
+          "excerpt": "9月9日，历时5天的中国和新加坡“海上合作-2026”联合演习圆满结束。"
+        }
+      ],
+      "contested": false
+    }
+  ],
+  "reconciliation": [
+    {
+      "heading": "The starting boundary remains unresolved",
+      "note": "China’s ministry gives September 3–9; MINDEF gives September 5–9. PLA Daily reports September 4 preparations and a September 5 opening. Those distinctions are retained here. This packet provides no official explanation for the ministry’s September 3 starting boundary.",
+      "entry_ids": [
+        "ministry-interval",
+        "preparatory-meetings",
+        "opening-ceremony",
+        "singapore-interval"
+      ]
+    }
+  ]
+}

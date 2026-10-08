@@ -181,7 +181,8 @@ class MissingSiteOrigin(RuntimeError):
 
 def render_site(mode: str = None, output_dir=None, db_path=None,
                 environ=None, snapshot=None, site_origin=None,
-                allow_test_origin=False, daily_run_date=None, review_brief=None) -> dict:
+                allow_test_origin=False, daily_run_date=None, review_brief=None,
+                review_timeline=None) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
@@ -196,8 +197,11 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     unusable value stops the build instead of falling back.
     """
     resolved = resolve_site_mode(mode, environ)
-    if review_brief and resolved == LEGACY:
+    private_review = bool(review_brief or review_timeline)
+    if private_review and resolved == LEGACY:
         raise ValueError("draft review requires the production Indo-Pacific Record renderer")
+    if review_timeline and site_origin:
+        raise ValueError("timeline review cannot have a site origin")
 
     if resolved == LEGACY:
         target = Path(output_dir) if output_dir else OUTPUT_DIR
@@ -219,8 +223,10 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     # `generate_preview.build()`: that guard still stands, and the publish
     # below satisfies it by building into a scratch tree and exchanging it in.
     target = Path(output_dir).resolve() if output_dir else OUTPUT_DIR.resolve()
-    if review_brief and (target == OUTPUT_DIR.resolve() or OUTPUT_DIR.resolve() in target.parents):
+    if private_review and (target == OUTPUT_DIR.resolve() or OUTPUT_DIR.resolve() in target.parents):
         raise ValueError("a draft review needs --out outside output/; it cannot be published")
+    if review_timeline and (target == ROOT or ROOT in target.parents or target in ROOT.parents):
+        raise ValueError("timeline review requires a disposable destination outside the repository")
 
     import importlib.util
     spec = importlib.util.spec_from_file_location(
@@ -295,11 +301,13 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
 
     def _render(destination):
         review_options = {"review_brief": Path(review_brief)} if review_brief else {}
+        if review_timeline:
+            review_options["review_timeline"] = Path(review_timeline)
         return gp.build(destination, INDO_PACIFIC_RECORD_TITLE,
                         selected_db,
                         snapshot=effective_snapshot,
                         legacy_routes=True,
-                        site_origin=None if review_brief else origin,
+                        site_origin=None if private_review else origin,
                         allow_test_origin=allow_test_origin,
                         daily_run_date=run_date, **review_options)
 
@@ -315,7 +323,7 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
                   "carried_pages_listed_in_sitemap": listed}
     else:
         result = _render(target)
-        if review_brief:
+        if private_review:
             # A successfully built review tree must not retain public artifacts.
             for route in ("sitemap.xml", "briefs/feed.xml"):
                 (target / route).unlink(missing_ok=True)
@@ -437,6 +445,7 @@ def main(argv=None) -> int:
                         % INDO_PACIFIC_RECORD)
     p.add_argument("--db", default=None, help="database to read (read-only)")
     p.add_argument("--review-brief", help="private unnumbered draft review; requires --out outside output/")
+    p.add_argument("--review-timeline", help="private unpublished timeline review; requires --out outside the repository")
     p.add_argument("--site-origin", default=None,
                    help="absolute origin the site will be published under. "
                         "Required for %s; may also come from %s."
@@ -449,7 +458,7 @@ def main(argv=None) -> int:
         report = render_site(args.mode, args.out, args.db,
                              site_origin=args.site_origin,
                              allow_test_origin=args.allow_test_origin,
-                             review_brief=args.review_brief)
+                             review_brief=args.review_brief, review_timeline=args.review_timeline)
     except (UnsupportedSiteMode, MissingSiteOrigin, InvalidDailyRunDate, ValueError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2

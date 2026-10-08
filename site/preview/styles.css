@@ -269,6 +269,12 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 }
 
 .wrap { max-width: var(--shell); margin: 0 auto; padding: 0 var(--gutter); }
+.analysis-nav { display: flex; gap: 1.6rem; border-bottom: 1px solid var(--rule); margin: 0 0 2rem; }
+.analysis-nav a { position: relative; min-height: 44px; display: flex; align-items: center; text-decoration: none; color: var(--ink-2); }
+.analysis-nav a::after { content: ""; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 150ms var(--ease-rule); }
+.analysis-nav a[aria-current]::after, .analysis-nav a:hover::after { transform: scaleX(1); }
+.analysis-nav a[aria-current] { color: var(--ink); font-weight: 600; }
+.analysis-nav a:hover, .analysis-nav a:focus-visible { text-decoration: underline; }
 main { display: block; padding: 2rem 0 4rem; min-width: 0; }
 main.leads-with-hero { padding-top: 0; }
 
