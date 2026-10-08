@@ -5,6 +5,7 @@ All reviewer data in this test module are SYNTHETIC fixtures, never human judgme
 from __future__ import annotations
 
 import copy
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -64,6 +65,15 @@ class ReviewerPacket(unittest.TestCase):
             self.assertNotIn(forbidden, text)
             self.assertNotIn(forbidden, str(review.make_template()))
 
+    def test_documented_cli_is_importable_outside_package_mode(self):
+        process = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/topic_v2_hadr_review.py"), "template"],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertIn('"frozen_11_record_hadr_v2_editorial_review_only"',
+                      process.stdout)
+
     def test_model_selection_bias_is_disclosed(self):
         self.assertIn("model-selected", review.blind_packet().lower())
 
@@ -79,7 +89,6 @@ class ReviewerPacket(unittest.TestCase):
         self.assertEqual(review.validate_decisions(
             completed, require_complete=True)["reviewed"], 11)
         report = review.compare(completed)
-        self.assertIn("nine", "nine")  # Event-count evidence checked below.
         self.assertIn("9 **event/context** groups", report)
         self.assertIn("| sanlakas_philippines | P51 |", report)
         self.assertIn("| sanlakas_philippines | P52 |", report)
