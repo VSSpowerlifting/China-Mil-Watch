@@ -80,7 +80,7 @@ def rewrite_packet(folder, *, rows=None, edits=None):
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if rows is not None:
         (folder / "run_inventory.jsonl").write_text(
-            "".join(doc(item) for item in rows), encoding="utf-8")
+            "".join(json.dumps(item, sort_keys=True, ensure_ascii=False, separators=(",", ":")) + "\n" for item in rows), encoding="utf-8")
     if edits:
         manifest.update(edits)
     files = ("record_inventory.jsonl", "run_inventory.jsonl", "corpus_evidence.json",
