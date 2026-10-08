@@ -125,11 +125,20 @@ class JCGEnglishAdapter(ListingShadowAdapter):
         title = one(section.select("h1.entry-title"), "release title").get_text(" ", strip=True)
         time = one(section.select("time"), "publisher release date")
         raw_date = time.get_text(" ", strip=True)
-        candidates = [source_date(raw_date)]
-        if time.get("datetime"):
-            candidates.append(source_date(time["datetime"]))
-        if len(set(candidates)) != 1:
-            raise ValueError("publisher release date labels disagree")
+        published_date = source_date(raw_date)
+        machine_value = (time.get("datetime") or "").strip()
+        machine_state = "absent"
+        if machine_value:
+            if machine_value == "2021-3-1":
+                # Observed publisher-wide stale HTML template value on
+                # October 6 page; make the disagreement inspectable, not
+                # a silently trusted machine date. Listing still supplies
+                # an independent *element* for runtime cross-check.
+                machine_state = "observed_stale_template_2021-3-1"
+            elif source_date(machine_value) == published_date:
+                machine_state = "matches_visible"
+            else:
+                raise ValueError("publisher visible and datetime attribute dates disagree")
         body = one(section.select("div.topics-article__main.tich-text"),
                    "official release body")
         for node in body.select("script, style, noscript, nav, form, iframe, svg"):
@@ -153,13 +162,16 @@ class JCGEnglishAdapter(ListingShadowAdapter):
         prose = "\n\n".join(paragraphs)
         return ExtractedDocument(
             url=url, source_slug=self.slug, title_original=title,
-            text_original=prose, published_date=candidates[0],
+            text_original=prose, published_date=published_date,
             language_tag="en", extra={
                 "source_identity": "jcg-en:" + RELEASE.fullmatch(urlsplit(url).path)[1],
                 "publisher": "Japan Coast Guard",
                 "issuer": "Japan Coast Guard",
                 "publication_kind": "english_official_press_release",
                 "published_date_original": raw_date,
+                "date_basis": "visible_publisher_time_and_archive_listing",
+                "html_datetime_original": machine_value or None,
+                "html_datetime_verdict": machine_state,
                 "body_scope": "published_html_text_only",
                 "attachments_collected": False,
                 "attachment_urls": sorted(set(pdf_links)),
