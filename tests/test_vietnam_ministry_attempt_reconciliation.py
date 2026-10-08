@@ -34,7 +34,7 @@ def ledger(run="37700200951-1", result="ok", target="2026-10-07",
 def packet():
     p = {
         "schema": SCHEMA, "workflow": WORKFLOW,
-        "review_window": {"from": "2026-10-07", "through": "2026-10-14"},
+        "review_window": {"from": "2026-10-07", "through": "2026-10-07"},
         "expected_target_dates": ["2026-10-07"],
         "github_attempts": [action()],
         "source_ledgers": {},
@@ -50,6 +50,10 @@ def packet():
 
 
 class AttemptReconciliationTests(unittest.TestCase):
+    def extend_date(self, data):
+        data["review_window"]["through"] = "2026-10-08"
+        data["expected_target_dates"] = ["2026-10-07", "2026-10-08"]
+
     def test_successful_triplet_matches_without_forging_completeness(self):
         output = reconcile(packet())
         self.assertEqual(output["github_attempts_supplied"], 1)
@@ -101,7 +105,6 @@ class AttemptReconciliationTests(unittest.TestCase):
     def test_ledger_without_action_receipt_never_silently_accepted(self):
         data = packet()
         data["github_attempts"] = []
-        data["expected_target_dates"] = []
         warnings = reconcile(data)["warnings"]
         self.assertEqual(sum(x["kind"] == "source_ledger_missing_actions_receipt"
                              for x in warnings), 3)
@@ -109,6 +112,7 @@ class AttemptReconciliationTests(unittest.TestCase):
     def test_latest_source_run_mismatch_flagged_even_after_valid_history(self):
         data = packet()
         slug = "vn_moit_energy_vi"
+        self.extend_date(data)
         data["source_ledgers"][slug]["runs"].append(
             ledger("37710000000-1", target="2026-10-08",
                    at="2026-10-08T23:06:00+00:00"))
@@ -128,7 +132,8 @@ class AttemptReconciliationTests(unittest.TestCase):
         data = packet()
         data["github_attempts"][0]["target_date"] = None
         data["github_attempts"][0]["target_date_basis"] = None
-        data["expected_target_dates"] = []
+        data["review_window"]["through"] = "2026-10-08"
+        data["expected_target_dates"].append("2026-10-08")
         data["source_ledgers"]["vn_moit_energy_vi"]["runs"][0]["target_date"] = "2026-10-08"
         kinds = [w["kind"] for w in reconcile(data)["warnings"]]
         self.assertIn("source_batch_target_dates_disagree", kinds)
@@ -145,6 +150,7 @@ class AttemptReconciliationTests(unittest.TestCase):
 
     def test_source_and_action_logical_day_must_agree_when_both_grounded(self):
         data = packet()
+        self.extend_date(data)
         data["source_ledgers"]["vn_mps_foreign_affairs_vi"]["runs"][0]["target_date"] = "2026-10-08"
         with self.assertRaisesRegex(AttemptEvidenceRefused, "logical day disagrees"):
             reconcile(data)
@@ -153,7 +159,6 @@ class AttemptReconciliationTests(unittest.TestCase):
         data = packet()
         data["github_attempts"][0]["target_date"] = None
         data["github_attempts"][0]["target_date_basis"] = None
-        data["expected_target_dates"] = []
         warnings = reconcile(data)["warnings"]
         self.assertEqual(sum(x["kind"] == "actions_target_date_unverified"
                              for x in warnings), 3)
@@ -165,6 +170,34 @@ class AttemptReconciliationTests(unittest.TestCase):
         warnings = reconcile(data)["warnings"]
         self.assertIn("scheduled_workflow_rerun_requires_review",
                       [x["kind"] for x in warnings])
+
+    def test_omitting_missed_calendar_date_is_not_permitted(self):
+        data = packet()
+        data["review_window"]["through"] = "2026-10-09"
+        data["expected_target_dates"] = ["2026-10-07", "2026-10-09"]
+        with self.assertRaisesRegex(AttemptEvidenceRefused, "enumerate every"):
+            reconcile(data)
+
+    def test_all_dates_expected_and_absent_day_explicitly_warned(self):
+        data = packet()
+        self.extend_date(data)
+        warning_kinds = [w["kind"] for w in reconcile(data)["warnings"]]
+        self.assertIn("expected_day_without_fully_evidenced_three_source_attempt",
+                      warning_kinds)
+
+    def test_review_cannot_skip_initial_day_zero(self):
+        data = packet()
+        data["review_window"]["from"] = "2026-10-08"
+        data["review_window"]["through"] = "2026-10-08"
+        data["expected_target_dates"] = ["2026-10-08"]
+        with self.assertRaisesRegex(AttemptEvidenceRefused, "approved October 7"):
+            reconcile(data)
+
+    def test_expected_dates_cannot_be_empty(self):
+        data = packet()
+        data["expected_target_dates"] = []
+        with self.assertRaisesRegex(AttemptEvidenceRefused, "enumerate every"):
+            reconcile(data)
 
     def test_malicious_duplicate_evidence_identity_refused(self):
         data = packet()
