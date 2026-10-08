@@ -1,0 +1,33 @@
+name: IPR Editorial SMTP Authentication Preflight (No Send)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-editorial-smtp-preflight
+  cancel-in-progress: false
+
+jobs:
+  smtp-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository (read-only)
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Validate sender, recipient, and Gmail SMTP login (do not send)
+        env:
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+          IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
+          IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+        run: python -m scripts.editor_smtp_preflight
+
+      # Manual only: no schedule, no email payload, no model API, no publish.
