@@ -42,7 +42,7 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Run synthetic no-network roster-refusal tests
         run: python -m unittest tests.test_vietnam_sunday_roster_attestation -v
-      - name: Verify real MPS Git state versus current Sunday candidate branch
+      - name: Verify real MPS Git state against merged Sunday packet on main
         env:
           REPORTING_SATURDAY: ${{ inputs.reporting_saturday || '2026-10-10' }}
         shell: bash
@@ -54,8 +54,9 @@ jobs:
           [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
           work="$(mktemp -d "$RUNNER_TEMP/ipr-vietnam-sunday-roster-XXXXXXXX")"
           git clone --quiet --branch shadow/vietnam-mps-foreign-affairs --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/mps"
-          git clone --quiet --branch feat/sunday-briefs-mainline-20261008 --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/sunday"
+          git clone --quiet --branch main --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/sunday"
           test "$(git -C "$work/mps" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$work/sunday" branch --show-current)" = "main"
           test "$(git -C "$work/mps" ls-tree --name-only HEAD)" = "state"
           test -z "$(git -C "$work/mps" status --porcelain)"
           git -C "$work/sunday" show HEAD:research/briefs_editorial_evidence/2026-10-10.json             > "$work/2026-10-10-offered.json"
@@ -63,7 +64,7 @@ jobs:
           sunday_sha="$(git -C "$work/sunday" rev-parse HEAD)"
           [[ "$mps_sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
           echo "Attesting source version match against exact MPS Git head $mps_sha"
-          echo "Sunday packet supplied by PR #237 head $sunday_sha"
+          echo "Merged Sunday roster supplied by main commit $sunday_sha"
           python -m scripts.attest_vietnam_sunday_roster             --state-repo "$work/mps"             --state-commit "$mps_sha"             --week-ending "$REPORTING_SATURDAY"             --notes research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json             --offered-packet "$work/2026-10-10-offered.json"             --require-all-eligible             --out "$work/attestation.json"
           python - "$work/attestation.json" <<'PY'
           import json,sys
