@@ -29,7 +29,8 @@ PILOT_BEGIN = "2026-09-01"
 DATE_DMY = re.compile(r"^(\d{1,2})\s+(\d{1,2})\s+(\d{4})$")
 DATE_ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
 DATE_DOTTED = re.compile(r"^(\d{4})[./](\d{1,2})[./](\d{1,2})$")
-DATE_ENGLISH = ("%B %d, %Y", "%b %d, %Y", "%d %B %Y", "%d %b %Y")
+DATE_ENGLISH = ("%B %d, %Y", "%b %d, %Y", "%d %B %Y", "%d %b %Y",
+                "%d %B, %Y", "%d %b, %Y")
 
 
 def one(nodes, purpose):
