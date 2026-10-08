@@ -4,6 +4,26 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — National Defence Journal declared as a disabled Vietnam research source
+
+The owner supplied both `http://tapchiqptd.vn/en/default.html` and
+`https://m.tapchiqptd.vn/en` for inclusion on the Vietnam Desk. They
+identify one National Defence Journal English-language publication, not two
+source institutions. The source is registered under
+`shadow/vietnam_journal/manifest.json` with `enabled: false`, military
+journal commentary classification, and deterministic desktop/mobile
+article-ID canonicalization. The Vietnam research inventory may show the
+candidate but must not claim collection, records, completed reviews, or
+ministry-issued policy for journal prose.
+
+No compliant remote robots-policy result, date-bounded completeness proof,
+validated body extraction, or full-text reuse authority was established.
+The site states all rights reserved. Hence no requests, collector schedule,
+new state branch, production registration, source bytes or public full-text
+preservation are authorized. This independent source inherits none of the
+existing Vietnam ministry Day 7/14/30 evidence and does not modify their
+cadence. See `shadow/vietnam_journal/README.md`.
+
 ## 2026-10-07 — Regional topics are a separate cross-desk classification axis
 
 Indo-Pacific Record will use a versioned regional subject vocabulary rather
