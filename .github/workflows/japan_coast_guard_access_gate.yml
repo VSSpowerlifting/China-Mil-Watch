@@ -1,0 +1,46 @@
+name: Japan Coast Guard — Read-only Source Access Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_japan_coast_guard_access.py
+      - tests/test_probe_japan_coast_guard_access.py
+      - .github/workflows/japan_coast_guard_access_gate.yml
+      - docs/JAPAN_COAST_GUARD_SOURCE_GATE_2026-10-08.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-coast-guard-access-gate
+  cancel-in-progress: false
+
+jobs:
+  access-check:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run offline probe contracts before network
+        run: python -m unittest tests.test_probe_japan_coast_guard_access -v
+      - name: Measure exactly scoped, permission-checked JCG access
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.probe_japan_coast_guard_access | tee "$RUNNER_TEMP/japan-jcg-source-access.json"
+      - name: Upload metadata only (no article text/PDF)
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-jcg-access-${{ github.run_id }}
+          path: ${{ runner.temp }}/japan-jcg-source-access.json
+          retention-days: 90
+          if-no-files-found: error
+      # No database, corpus, production manifest, shadow state or deploy.
