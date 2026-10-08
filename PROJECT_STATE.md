@@ -32,6 +32,13 @@ recovery, leading to human Day 7/14/30 checkpoints on 2026-10-14,
 dispatch or public capture retention; no production admission or automatic
 promotion is authorized.
 
+National Defence Journal English (desktop `tapchiqptd.vn/en/default.html`,
+mobile `m.tapchiqptd.vn/en`) is now one additional **disabled, research-only**
+Vietnam source candidate. Its article IDs normalize across hosts; no
+production or shadow collection is active. Robots access, real HTML extraction,
+listing completeness and republication rights are pending. See
+`shadow/vietnam_journal/README.md`.
+
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
