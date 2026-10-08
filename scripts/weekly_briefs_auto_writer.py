@@ -15,6 +15,17 @@ from core.brief_contract import trail_entry
 from scripts.reconcile_db import read_only
 from storage.db import get_articles_for_desks
 
+def live_editorial_desks():
+    """Read actual live production-backed desks, only on the editorial path.
+
+    The GitHub workflow calls this helper rather than importing the rendering
+    registry into its own collection-flow configuration.
+    """
+    from core.brief_contract import eligible_desks
+    from core.desk_registry import load_registry
+    return eligible_desks(load_registry())
+
+
 MODEL = "claude-sonnet-4-6"
 MAX_RECORDS = 14
 MAX_BODY_CHARS = 3800

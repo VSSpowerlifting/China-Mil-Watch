@@ -88,6 +88,21 @@ class EditorialWorksheetTests(unittest.TestCase):
                         send_packet(path, "2026-10-03")
                     smtp.assert_not_called()
 
+    def test_rejects_non_app_password_before_smtp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "IPR-week.txt"
+            path.write_text("test", encoding="utf-8")
+            env = {
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_SMTP_USER": "author@gmail.com",
+                "IPR_SMTP_APP_PASSWORD": "not-a-generated-app-password",
+            }
+            with patch.dict(os.environ, env, clear=True):
+                with patch("scripts.weekly_editorial_handoff.smtplib.SMTP_SSL") as smtp:
+                    with self.assertRaisesRegex(ValueError, "16-character"):
+                        send_packet(path, "2026-10-03")
+                    smtp.assert_not_called()
+
     def test_delivery_uses_single_recipient_and_attachment(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "IPR-week.txt"
@@ -95,13 +110,13 @@ class EditorialWorksheetTests(unittest.TestCase):
             env = {
                 "IPR_EDITOR_TO": "editor@example.com",
                 "IPR_SMTP_USER": "author@gmail.com",
-                "IPR_SMTP_APP_PASSWORD": "not-real",
+                "IPR_SMTP_APP_PASSWORD": "abcdefghijklmnop",
             }
             with patch.dict(os.environ, env, clear=True):
                 with patch("scripts.weekly_editorial_handoff.smtplib.SMTP_SSL") as smtp:
                     send_packet(path, "2026-10-03")
                     client = smtp.return_value.__enter__.return_value
-                    client.login.assert_called_once_with("author@gmail.com", "not-real")
+                    client.login.assert_called_once_with("author@gmail.com", "abcdefghijklmnop")
                     mail = client.send_message.call_args.args[0]
                     self.assertEqual(mail["To"], "editor@example.com")
                     self.assertEqual(mail["Reply-To"], "author@gmail.com")
