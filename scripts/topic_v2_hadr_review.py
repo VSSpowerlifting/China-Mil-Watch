@@ -12,10 +12,13 @@ import json
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-
-from scripts import validate_topic_v2_crossdesk_hadr as evidence
+import sys
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts import validate_topic_v2_crossdesk_hadr as evidence  # noqa: E402
 VOCAB = ROOT / "taxonomy" / "regional_topics.v2.json"
 PROTOCOL = 1
 SCOPE = "frozen_11_record_hadr_v2_editorial_review_only"
