@@ -175,8 +175,8 @@ def validate(data):
                 g.get("distinct_provisionally_attributed_issuing_institutions") == 1 and
                 g.get("independently_verified_external_institutions") == 0,
                 group + ": distinct MOD links are not independent institutions")
-    require("same" in grouped["japan_us_alliance_communications"].get(
-        "recurring_issue", "").lower() and
+    require("one reported Naha incident" in grouped["japan_us_alliance_communications"].get(
+        "recurring_issue", "") and
         type(data.get("independent_review_needed")) is list and
         len(data["independent_review_needed"]) >= 5,
         "related Okinawa protests and independent-review warnings cannot disappear")
