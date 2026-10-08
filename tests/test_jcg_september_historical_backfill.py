@@ -156,6 +156,30 @@ class JCGBackfillSafety(unittest.TestCase):
                                 for f in report["findings"]))
             self.assertEqual(report["qualifying_ledgers"], 1)
 
+    def test_changed_index_rejected_before_historical_article_fetch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = Path(tmp) / "state"
+            self.bootstrap(state)
+            source = session()
+            page = source.pages[LISTING]
+            page.data = page.data.replace(
+                b"article9424.html", b"article9422.html")
+            adapter = JCGEnglishAdapter(self.source, session=source,
+                                        sleeper=lambda _: None)
+            clock = (state / "clock.json").read_bytes()
+            result = collector.run("japan_jcg", state, date(2026, 10, 8),
+                                   lookback=38, cap=5, run_id="wrong-index-proof",
+                                   adapter=adapter, historical_backfill=True)
+            self.assertEqual(result["health"], "fail")
+            self.assertEqual(result["result"], "listing_failure")
+            self.assertEqual(result["retrieved"], 0)
+            self.assertEqual(result["selected"], 0)
+            self.assertEqual(len(source.calls), 2)  # policy and index only
+            self.assertEqual((state / "clock.json").read_bytes(), clock)
+            with sqlite3.connect(state / "shadow.db") as db:
+                count = db.execute("SELECT count(*) FROM shadow_records").fetchone()[0]
+            self.assertEqual(count, 3)
+
     def test_backfill_requires_day_zero_and_fixed_window(self):
         with tempfile.TemporaryDirectory() as tmp:
             state = Path(tmp) / "state"
