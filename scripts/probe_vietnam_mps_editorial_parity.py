@@ -213,8 +213,8 @@ def screen(repo, commit, output, session=None):
         meta = None
         robots = None
         try:
+            requests_made += 1
             meta, robots = safe_fetch(http, ROBOTS)
-            requests_made = 1
             if rules_file_problem(robots) is not None:
                 raise ScreeningRefused("robots policy is not readable")
             parsed_rules = parse_robots(robots.decode("utf-8", "strict"))
@@ -239,8 +239,8 @@ def screen(repo, commit, output, session=None):
                     raise ScreeningRefused("aggregate GET cap exceeded")
                 time.sleep(max(2, delay))
                 try:
-                    meta, html = safe_fetch(http, rec["url"])
                     requests_made += 1
+                    meta, html = safe_fetch(http, rec["url"])
                     current = extracted(adapter, rec["url"], html, rec["published_date"])
                     current_report = compare_record(rec, version, None, current)
                     for k in (
