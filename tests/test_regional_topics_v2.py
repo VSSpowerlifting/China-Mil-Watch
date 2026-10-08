@@ -49,8 +49,8 @@ class VocabularyV2(unittest.TestCase):
         self.assertIn("Disaster Response", v2.topic(HADR).display_name)
         self.assertIn("dedicated HADR training", v2.topic(HADR).scope_note)
         self.assertIn("military/security-linked", v2.topic("space_security").scope_note)
-        self.assertIn("geographic", v2.topic("east_china_sea").scope_note.lower() if "geographic" in v2.topic("east_china_sea").scope_note.lower() else "geographic")
-        self.assertIn("Generic", v2.topic("critical_minerals_supply_chains").scope_note.capitalize())
+        self.assertIn("merely located", v2.topic("east_china_sea").scope_note.lower())
+        self.assertIn("Generic supplier", v2.topic("critical_minerals_supply_chains").scope_note)
 
     def test_v1_file_never_changes_when_loading_v2(self):
         before = V1_PATH.read_bytes()
