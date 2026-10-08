@@ -26,9 +26,12 @@ Provide exactly the following top-level keys:
 - schema: ipr-vn-ministry-attempt-reconciliation-input/1
 - workflow: .github/workflows/vietnam_ministry_shadow.yml
 - review_window: from and through, inclusive YYYY-MM-DD strings
-- expected_target_dates: optional manually established planned target
-  dates in the window. These are **review hypotheses**, not evidence
-  that the schedule actually ran.
+- expected_target_dates: **every** calendar date from
+  review_window.from through review_window.through, inclusive, in ascending
+  order, with no omitted dates. The input validator now refuses an incomplete
+  or reordered list. These are **schedule expectations**, never evidence
+  that GitHub actually ran. This narrow policy is specific to the approved
+  daily three-source MPS/MOIT reliability period.
 - github_attempts: one object **per Actions attempt** with numeric
   run_id and run_attempt, exact canonical GitHub run URL, event
   (schedule or workflow_dispatch), completed conclusion, target_date
@@ -87,6 +90,14 @@ qualification or production promotion.
 After the October 14 scheduled run **actually completes**, gather the
 full Actions run-and-attempt inventory for the review window, including
 failed and earlier re-run attempts. Record those receipt references.
+For the Day 7 review, set review_window.from to **2026-10-07** and
+review_window.through to **2026-10-14**, then enumerate **October 7, 8, 9,
+10, 11, 12, 13, and 14** as expected_target_dates. For Day 14/30 extend
+the end date; the start is always the approved **October 7** Day 0.
+Do not make a report with review_window.through in the future relative
+to the completed scheduled slot. A missing action on an expected day
+is flagged as a missing collection receipt; it is **not** interpreted as
+a day when the ministry published nothing.
 The first October 7 activation has a distinct failed attempt 1 and
 successful attempt 2; an ordinary GitHub list of the latest attempt
 alone is **not** a complete enumeration.
