@@ -112,6 +112,52 @@ schedule, API-writing credential, SMTP secret, model call, deployment or
 artifact upload. It can be run after merging PR #211 independently of the
 shared Sunday generator, which remains the responsibility of PR #203.
 
+## Per-Sunday explicit missing-synopsis policy
+
+The default **remains strict**. If this Sunday's source-specific Vietnam
+research catalog does not exist, the Action refuses to stage a regional
+packet. The independent Oct 10 manual rehearsal also sets
+`require-vietnam: "true"`: it must prove that at least one source from this
+week survives full immutable MPS verification, not merely an empty placeholder.
+
+For future Sundays, the owner can **explicitly** tell the same Action to
+preserve other desks' research while Vietnam has no current synopsis:
+
+```yaml
+- name: Independently audit MPS and preserve common regional model input
+  id: vn
+  uses: ./.github/actions/vietnam-editorial-evidence
+  with:
+    week-ending: ${{ env.IPR_SUNDAY_WEEK_END }}
+    notes: research/vietnam_briefs_candidates/editorial_notes_MISSING-WEEK.json
+    missing-notes-policy: continue-without-vietnam
+    require-vietnam: "false"
+    existing-packet: research/briefs_editorial_evidence/2026-10-10.json
+```
+
+The `notes` example above is **illustrative**: the real workflow must
+construct the exact reporting-Saturday path and same-week regional packet.
+If no notes file exists, the exporter still verifies the complete MPS Git
+source-state and raw capture chain, writes **zero** Vietnam items in an
+unapproved private research packet, preserves existing Japan entries
+unchanged and emits a machine-readable
+`vietnam-readiness-status` (e.g. `missing-notes-with-eligible-archives`)
+and `notes-catalog-missing=true`. It prints an explicit warning. A missing
+synopsis is never treated as evidence of Vietnamese government silence.
+
+This **does not silently ignore existing but invalid notes**. A present
+catalog that has an obsolete source digest, malformed structure, unsupported
+URL, or broken symlink still fails before any output. For a rehearsal that
+explicitly **requires** Vietnam to be included, use `require-vietnam: "true"`
+and the CLI `--require-vietnam`; zero matching candidates then fails
+even if the operator opted into the missing-notes fallback.
+
+This option must not be used to represent Vietnam as a contributing desk in
+an article when its source count is zero. The source-count and status outputs
+make omission auditable. It exists only so an otherwise source-supported
+single regional manuscript can proceed without invented Vietnam claims.
+The shared Sunday writer and delivery authorization remain independent.
+
 ## Source eligibility, rights and omissions
 
 - Only MPS foreign-affairs Vietnamese originals, exact canonical HTTPS URL
