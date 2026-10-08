@@ -93,7 +93,7 @@ class JournalIdentity(unittest.TestCase):
     def test_source_manifest_is_disabled_and_one_institution(self):
         cfg = load_manifest(MANIFEST)
         self.assertEqual(cfg.desk.desk_id, "vietnam")
-        self.assertEqual(cfg.desk.public_status, "research")
+        self.assertEqual(cfg.desk.public_status, "shadow")
         self.assertEqual(len(cfg.sources), 1)
         src = cfg.sources[0]
         self.assertFalse(src.enabled)
