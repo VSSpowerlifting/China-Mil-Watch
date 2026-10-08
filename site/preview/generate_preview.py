@@ -120,6 +120,7 @@ from core.brief_collection import (                                  # noqa: E40
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
 from core.brief_contract import validate_readiness
 from core.desk_registry import load_registry                         # noqa: E402
+from core.reviewed_source_links import load_reviewed_links            # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
 #: Where brief sidecars are kept: source at the repository root, never under
@@ -2689,9 +2690,14 @@ def build(out_dir: Path, title: str, db_path: Path,
     # Every public desk gets a page, including the ones that collect nothing.
     # A declared desk with no page would be a desk a reader cannot check.
     desk_tmpl = env.get_template("desk.html")
+    # Individually approved official-source references are distinct from the
+    # production corpus and never change a desk's collection status or counts.
+    vietnam_reviewed_links = load_reviewed_links()
     for desk in desks:
         (out_dir / desk.route).write_text(
             desk_tmpl.render(page=desk.route, desk=desk,
+                             reviewed_source_links=(vietnam_reviewed_links
+                                                    if desk.slug == "vietnam" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")

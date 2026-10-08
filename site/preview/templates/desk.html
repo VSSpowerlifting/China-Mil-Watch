@@ -20,6 +20,28 @@
   </div>
 </div>
 
+{# A deliberately separate bibliography: these are individually approved
+   links to publisher pages, NOT locally archived records, desk qualification,
+   translated source texts, or eligible Briefs trail entries. #}
+{% if desk.slug == 'vietnam' and reviewed_source_links %}
+<section aria-labelledby="vietnam-reviewed-source-heading">
+  <h2 id="vietnam-reviewed-source-heading">Individually reviewed source links</h2>
+  <p>These Vietnamese-language publications were checked individually against
+  their issuing institutions and approved for linking. They remain on the
+  publishers’ websites; they are not part of IPR's collected record, do not
+  imply complete ministry coverage, and do not qualify Vietnam as a live desk.</p>
+  <ol>
+  {% for item in reviewed_source_links %}
+    <li>
+      <p><a href="{{ item.source_url }}" lang="vi" rel="noopener noreferrer">{{ item.title_original }}</a></p>
+      <p class="meta">{{ item.source_name }} · Published {{ item.published_date }}
+      · Source link reviewed {{ item.reviewed_on }}</p>
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
 {% if desk.record_count is not none %}
 <h2 class="plain">The record, as it actually stands</h2>
 <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
