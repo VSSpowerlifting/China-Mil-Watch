@@ -90,7 +90,7 @@ class JapanWeeklyShadowIntake(unittest.TestCase):
     def test_invalid_date_scope_rejected(self):
         for saturday, cutoff in [
             ("2026-10-11","2026-10-11"),
-            ("2026-10-10","2026-10-08"),
+            ("2026-10-10","2026-10-03"),
             ("2026-10-10","2026-10-11"),
             ("2026-10-10","2026-10-9"),
         ]:
@@ -98,6 +98,17 @@ class JapanWeeklyShadowIntake(unittest.TestCase):
                 with self.assertRaises(IntakeError):
                     summarize(fake_db(),state_commit=STATE_SHA,
                               week_ending=saturday, as_of=cutoff)
+
+    def test_partial_week_never_claims_snapshot_completeness(self):
+        r = report(as_of="2026-10-08")
+        self.assertEqual(r["source_cutoff"], "2026-10-08")
+        self.assertIs(r["full_reporting_week_elapsed_at_cutoff"], False)
+        self.assertIs(r["source_snapshot_completeness_attested"], False)
+        self.assertEqual(r["current_week_text_records"], 1)
+        self.assertTrue(r["known_publication_coverage_incomplete"])
+        full_cutoff = report(as_of="2026-10-10")
+        self.assertIs(full_cutoff["full_reporting_week_elapsed_at_cutoff"], True)
+        self.assertIs(full_cutoff["source_snapshot_completeness_attested"], False)
 
     def test_text_hash_or_capture_digest_tamper_refused(self):
         for key in ("bad_hash", "malformed_capture"):
