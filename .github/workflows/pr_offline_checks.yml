@@ -126,7 +126,11 @@ jobs:
           tests_dir = Path("tests")
           # Explicitly bounded, so newly added expensive/browser-backed
           # suites cannot silently turn the preflight into a second full CI.
-          required = ("test_regional_topics", "test_extraction_interface")
+          required = (
+              "test_regional_topics",
+              "test_extraction_interface",
+              "test_pr_workflow_contract",
+          )
           optional = (
               "test_regional_topics_v2",
               "test_topic_pilot",
