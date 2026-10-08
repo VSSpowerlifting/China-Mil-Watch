@@ -77,6 +77,41 @@ depend on a Git source it cannot actually clone: an unavailable immutable
 state must fail before invoking the model, not silently act as complete
 Vietnam coverage.
 
+## Reusable Sunday step and independent manual proof
+
+PR #211 also provides the private-only composite Action
+`.github/actions/vietnam-editorial-evidence/action.yml`. After merging the
+PR and checking out `main` in the Sunday workflow, it can be called as:
+
+```yaml
+- name: Audited Vietnam source evidence
+  id: vn
+  uses: ./.github/actions/vietnam-editorial-evidence
+  with:
+    week-ending: ${{ env.IPR_SUNDAY_WEEK_END }}
+    notes: research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json
+    existing-packet: research/briefs_editorial_evidence/2026-10-10.json
+```
+
+Then append the composite Action's `steps.vn.outputs.packet` to the
+shared `scripts.weekly_editorial_handoff` invocation using
+`--include-research --research-packet`. The source content and full private
+model prompt are never uploaded to a public artifact by the Action.
+
+**These paths are for the October 10, 2026 initial pilot**. Future Sundays
+must use newly pinned notes matching the actual reporting Saturday and the
+latest verified shadow-version checksums; passing an older file on purpose
+will not create a valid new-week Vietnam contribution.
+
+There is a separate, manually dispatched no-email
+`.github/workflows/vietnam_sunday_evidence_preview.yml` for an end-to-end
+GitHub-runner rehearsal. It fetches only the actual MPS state branch,
+runs the independent full state/capture audit, checks the combined research
+packet and prints source **counts** rather than body content. It has no
+schedule, API-writing credential, SMTP secret, model call, deployment or
+artifact upload. It can be run after merging PR #211 independently of the
+shared Sunday generator, which remains the responsibility of PR #203.
+
 ## Source eligibility, rights and omissions
 
 - Only MPS foreign-affairs Vietnamese originals, exact canonical HTTPS URL
