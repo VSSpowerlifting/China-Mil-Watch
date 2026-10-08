@@ -178,6 +178,10 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
         raise ValueError("writer returned no structured manuscript")
     evidence = {row["id"]: row["desk_id"] for row, _ in chosen}
     extras = {item["id"]: item["desk"] for item in supplemental}
+    metadata_only = {
+        item["id"] for item in supplemental
+        if item["source_kind"] == "shadow-metadata-only"
+    }
     if len(extras) != len(supplemental):
         raise ValueError("duplicate supplemental source IDs")
     if extras:
@@ -210,6 +214,8 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
             not all(isinstance(i, str) and i in extras for i in more) or
             len(more) != len(set(more))):
             raise ValueError("writer used absent/unverified external source ids for " + field)
+        if metadata_only.intersection(more) and field != "what_im_watching_next":
+            raise ValueError("metadata-only shadow headline cannot support substantive claims: " + field)
         if not ids and not more:
             raise ValueError("factual section has neither production nor external citations: " + field)
     compared = {evidence[i] for i in cites["cross_desk_comparison"]}
@@ -294,6 +300,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
          "Use supplemental_citations by exact string ID in each factual section; "
          "use numeric citations only for actual production records. "
          "Every section needs at least one genuine citation across both types. "
+         "A METADATA-ONLY source can only be cited in what_im_watching_next "
+         "as a publication-discovery question, NEVER as support for a "
+         "development, its consequences, a comparison, or a factual event. "
          "Research summaries are NOT verbatim primary-source bodies; do not "
          "quote them as such. Publisher URLs and tentative paraphrases require "
          "Dylan's source verification before any public Brief approval. "
