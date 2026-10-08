@@ -204,8 +204,8 @@ class PacketContract(unittest.TestCase):
 
     def test_original_capture_hash_changed_even_with_valid_json_fails(self):
         self.fake.mutate_db(
-            "UPDATE captures SET payload_sha256='0' || "
-            "substr(payload_sha256, 2) WHERE source_identity='afp:1400'"
+            "UPDATE captures SET payload_sha256='" + "0"*64 + "' "
+            "WHERE source_identity='afp:1400'"
         )
         with self.assertRaisesRegex(review.AFPReviewError, "capture mismatch"):
             self.fake.packet()
