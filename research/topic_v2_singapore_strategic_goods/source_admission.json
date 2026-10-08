@@ -1,0 +1,120 @@
+{
+  "packet_id": "ipr_singapore_strategic_goods_metadata_review_20261008",
+  "schema_version": 1,
+  "research_date": "2026-10-08",
+  "purpose": "curator_metadata_only_source_admission_review",
+  "selection_origin": "Assistant-curated, source-first original Government Gazette research; candidate roles are not human judgments.",
+  "desk_candidate": "singapore",
+  "topic_under_review": "export_controls_sanctions",
+  "taxonomy_id": "ipr_regional_topics",
+  "taxonomy_version": 2,
+  "source_document_count": 2,
+  "distinct_regulatory_succession_count": 1,
+  "production_manifest": {
+    "path": "desks/singapore/manifest.json",
+    "observed_git_blob": "8b0cdf32159c6c385a070153fa282428221fe695",
+    "registered_source_slugs": [
+      "sg_mindef_releases"
+    ],
+    "gazette_source_registered": false,
+    "customs_source_registered": false
+  },
+  "source_use_review": {
+    "terms_url": "https://www.egazette.gov.sg/terms-of-use/",
+    "terms_last_updated": "2026-07-10",
+    "provisional_reading": "Conditional Gazette reproduction permission under clause 11, not an unrestricted or irrevocable license; IPR-specific compliance remains for human decision.",
+    "relevant_clauses": [
+      "6",
+      "11",
+      "12",
+      "17"
+    ],
+    "observed_conditions": [
+      "singapore_government_copyright_acknowledgment",
+      "notice_of_government_permission_for_reproduction",
+      "direct_users_to_latest_egazette",
+      "producer_responsible_for_reproduction_accuracy",
+      "avoid_government_affiliation_implication",
+      "non_abusive_non_disruptive_non_deceptive_automated_extraction",
+      "permission_revocable_or_modifiable",
+      "hyperlink_without_embedding_or_framing"
+    ],
+    "ipr_use_compliance_adjudicated": false,
+    "full_body_retention_approved": false,
+    "public_body_display_approved": false,
+    "automated_collection_approved": false
+  },
+  "archived_bodies_in_this_packet": 0,
+  "human_source_review_complete": false,
+  "human_topic_approvals": [],
+  "topic_attachments_authorized": false,
+  "production_or_shadow_collection_authorized": false,
+  "documents": [
+    {
+      "candidate_id": "SGEC25",
+      "title_original": "Strategic Goods (Control) Order 2025",
+      "gazette_number": "S 660/2025",
+      "official_pdf_url": "https://assets.egazette.gov.sg/2025/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/660.pdf",
+      "language": "en",
+      "gazette_publisher": "Government of Singapore — Government Gazette",
+      "legal_maker": "Minister for Trade and Industry",
+      "administrative_guidance_institution": "Singapore Customs",
+      "source_document_type": "subsidiary_legislation_original_gazette",
+      "made_on": "2025-09-30",
+      "first_published_on": "2025-10-01",
+      "first_published_local_time": "17:00",
+      "source_timezone": "Asia/Singapore",
+      "commences_on": "2025-12-01",
+      "revokes_gazette_number": "S 641/2024",
+      "page_count": 519,
+      "source_page_anchors": {
+        "publication_commencement_revocation": 1,
+        "maker_signature_date": 519
+      },
+      "regulatory_context_key": "singapore_strategic_goods_2025_to_2026_succession",
+      "status_as_of_research_date": "effective_predecessor",
+      "editor_only_role_hypothesis": "potential_positive_specific_control_in_force",
+      "archival_status": "unpreserved_for_this_admission_review",
+      "archive_record_id": null,
+      "captured_pdf_sha256": null,
+      "captured_body_sha256": null,
+      "captured_at_utc": null,
+      "archived_quote_offsets": [],
+      "owner_source_admission_approval": null,
+      "human_topic_approval": null
+    },
+    {
+      "candidate_id": "SGEC26",
+      "title_original": "Strategic Goods (Control) Order 2026",
+      "gazette_number": "S 741/2026",
+      "official_pdf_url": "https://assets.egazette.gov.sg/2026/Legislative%20Supplements/Subsidiary%20Legislation%20Supplement/26sls741.pdf",
+      "language": "en",
+      "gazette_publisher": "Government of Singapore — Government Gazette",
+      "legal_maker": "Minister for Trade and Industry (Trade)",
+      "administrative_guidance_institution": "Singapore Customs",
+      "source_document_type": "subsidiary_legislation_original_gazette",
+      "made_on": "2026-09-24",
+      "first_published_on": "2026-10-01",
+      "first_published_local_time": "17:00",
+      "source_timezone": "Asia/Singapore",
+      "commences_on": "2026-12-01",
+      "revokes_gazette_number": "S 660/2025",
+      "page_count": 523,
+      "source_page_anchors": {
+        "publication_commencement_revocation": 1,
+        "maker_signature_date": 523
+      },
+      "regulatory_context_key": "singapore_strategic_goods_2025_to_2026_succession",
+      "status_as_of_research_date": "made_and_published_future_effective",
+      "editor_only_role_hypothesis": "potential_positive_formal_future_effective_control",
+      "archival_status": "unpreserved_for_this_admission_review",
+      "archive_record_id": null,
+      "captured_pdf_sha256": null,
+      "captured_body_sha256": null,
+      "captured_at_utc": null,
+      "archived_quote_offsets": [],
+      "owner_source_admission_approval": null,
+      "human_topic_approval": null
+    }
+  ]
+}
