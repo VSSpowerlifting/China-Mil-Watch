@@ -25,8 +25,8 @@ TAGS = frozenset((
 ))
 FIELDS = {
     "id", "desk", "source_name", "source_url", "published_date", "language",
-    "title_original", "source_kind", "state_commit", "body_sha256",
-    "summary", "caveats", "topics", "status", "copy_scope",
+    "title_original", "source_kind", "state_commit", "source_content_sha256",
+    "hash_rule", "summary", "caveats", "topics", "status", "copy_scope",
 }
 KINDS = {"shadow-extracted-original", "official-publisher-page-reviewed-for-research"}
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
@@ -119,13 +119,16 @@ def _item(item, start, cutoff):
     _require(_line(item["title_original"], min_length=10, max_length=350),
              "missing original-language headline")
     _require(item["source_kind"] in KINDS, "unknown provenance class")
-    commit, digest = item["state_commit"], item["body_sha256"]
+    commit, digest = item["state_commit"], item["source_content_sha256"]
     if item["source_kind"] == "shadow-extracted-original":
+        expected_rule = ("mps-vi-content-v1" if item["desk"] == "vietnam"
+                         else "sha256-text-original-utf8")
         _require(isinstance(commit, str) and HEX40.fullmatch(commit)
-                 and isinstance(digest, str) and HEX64.fullmatch(digest),
-                 "shadow source must pin a Git commit and body hash")
+                 and isinstance(digest, str) and HEX64.fullmatch(digest)
+                 and item["hash_rule"] == expected_rule,
+                 "shadow source must pin Git commit, exact version digest and hash rule")
     else:
-        _require(commit is None and digest is None,
+        _require(commit is None and digest is None and item["hash_rule"] is None,
                  "public webpage is not a verified shadow capture")
     _require(_line(item["summary"], min_length=65, max_length=700),
              "short attributed editorial synopsis required; not a full article")
