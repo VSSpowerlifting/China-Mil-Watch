@@ -1,0 +1,166 @@
+{
+  "schema": "ipr_ph_pcg_pia_source_admission_v1",
+  "state": "discovery_only_not_archived_or_approved",
+  "desk": "philippines",
+  "scope": "pia_hosted_pages_explicitly_attributed_to_pcg",
+  "host_domain": "pia.gov.ph",
+  "host_institution": "Philippine Information Agency (PIA)",
+  "claimed_original_issuer": "Philippine Coast Guard (PCG)",
+  "claimed_issuer_evidence": "explicit 'By PCG' visible article byline on host page; independently authenticate issuer before admission",
+  "review_cutoff_date": "2026-10-08",
+  "rights_note": "PIA webpage footer says public domain unless otherwise stated; this is not a clearance for PCG-origin text, images, embedded media, machine republication or third-party material. Human source-specific rights review required.",
+  "assertions": {
+    "collection_enabled": false,
+    "production_registered": false,
+    "archive_capture_present": false,
+    "archival_bytes_verified": false,
+    "original_issuer_independently_authenticated": false,
+    "html_extraction_reviewed": false,
+    "full_body_capture_approved": false,
+    "publisher_date_precision_verified": false,
+    "republishing_rights_approved": false,
+    "indexing_approved": false,
+    "human_review_complete": false,
+    "desk_qualification_granted": false
+  },
+  "candidates": [
+    {
+      "id": "PCG-PIA-01",
+      "page_kind": "press-release",
+      "url": "https://pia.gov.ph/press-release/pcg-commandant-activates-coast-guard-auxiliary-district-in-kalayaan-island-group-kalayaan-mayor-leads-new-pcga-members-in-oath-taking/",
+      "title": "PCG COMMANDANT ACTIVATES COAST GUARD AUXILIARY DISTRICT IN KALAYAAN ISLAND GROUP; KALAYAAN MAYOR LEADS NEW PCGA MEMBERS IN OATH-TAKING",
+      "host_page_date": "2026-10-07",
+      "byline": "PCG",
+      "provisional_relevance": "Kalayaan Island Group institutional footprint and interagency maritime activity",
+      "review_status": "awaiting_human_source_admission",
+      "archive_identity": null,
+      "body_sha256": null,
+      "payload_sha256": null,
+      "origin_commit": null,
+      "owner_approval": null
+    },
+    {
+      "id": "PCG-PIA-02",
+      "page_kind": "news",
+      "url": "https://pia.gov.ph/news/pcg-deploys-aircraft-and-brp-teresa-magbanua-to-challenge-china-coast-guard-vessel-near-cabra-island-pla-navy-warships-monitored-in-the-area/",
+      "title": "PCG deploys aircraft and BRP Teresa Magbanua to challenge China Coast Guard vessel near Cabra island; PLA Navy warships monitored in the area",
+      "host_page_date": "2026-09-28",
+      "byline": "PCG",
+      "provisional_relevance": "Maritime domain awareness, China Coast Guard and PLA Navy encounters",
+      "review_status": "awaiting_human_source_admission",
+      "archive_identity": null,
+      "body_sha256": null,
+      "payload_sha256": null,
+      "origin_commit": null,
+      "owner_approval": null
+    },
+    {
+      "id": "PCG-PIA-03",
+      "page_kind": "news",
+      "url": "https://pia.gov.ph/news/pcg-conducts-mda-flight-in-support-of-bfars-kbbm-at-bajo-de-masinloc/",
+      "title": "PCG conducts MDA flight in support of BFAR’s KBBM at Bajo de Masinloc",
+      "host_page_date": "2026-09-18",
+      "byline": "PCG",
+      "provisional_relevance": "Maritime domain awareness and civilian fishing support",
+      "review_status": "awaiting_human_source_admission",
+      "archive_identity": null,
+      "body_sha256": null,
+      "payload_sha256": null,
+      "origin_commit": null,
+      "owner_approval": null
+    },
+    {
+      "id": "PCG-PIA-04",
+      "page_kind": "news",
+      "url": "https://pia.gov.ph/news/pla-fires-flares-at-unarmed-pcg-aircraft-during-maritime-domain-awareness-flight-over-kalayaan-island-group",
+      "title": "PLA fires flares at unarmed PCG aircraft during maritime domain awareness flight over Kalayaan Island Group",
+      "host_page_date": "2026-09-10",
+      "byline": "PCG",
+      "provisional_relevance": "Philippines-PRC maritime and aerial safety allegations",
+      "review_status": "awaiting_human_source_admission",
+      "archive_identity": null,
+      "body_sha256": null,
+      "payload_sha256": null,
+      "origin_commit": null,
+      "owner_approval": null
+    },
+    {
+      "id": "PCG-PIA-05",
+      "page_kind": "news",
+      "url": "https://pia.gov.ph/news/pcg-conducts-medical-evacuation-of-injured-afp-personnel-from-ayungin-shoal-despite-china-coast-guard-obstruction/",
+      "title": "PCG conducts medical evacuation of injured AFP personnel from Ayungin Shoal despite China coast guard obstruction",
+      "host_page_date": "2026-07-21",
+      "byline": "PCG",
+      "provisional_relevance": "Maritime HADR/medical evacuation and coast-guard escort allegation",
+      "review_status": "awaiting_human_source_admission",
+      "archive_identity": null,
+      "body_sha256": null,
+      "payload_sha256": null,
+      "origin_commit": null,
+      "owner_approval": null
+    }
+  ],
+  "excluded_or_separately_classified_leads": [
+    {
+      "url": "https://pia.gov.ph/news/luzon/ncr/pnp-reaffirms-stronger-law-enforcement-ties-with-international-partners/",
+      "host": "PIA",
+      "byline": "Jimmyley Guzman",
+      "speaker_context": "PNP officials mentioned",
+      "category": "pia_staff_reporting_about_pnp_not_pnp_original",
+      "do_not_admit_as_pcg_or_pnp_issued": true
+    },
+    {
+      "url": "https://radyopilipinas.ph/2026/10/01/sinimulan-ng-pcg-afp-at-pnp-ang-tatlong-araw-na-inter-agency-disaster-response-exercise-na-pagsasanay-sanlakas-para-palakasin-ang-kahandaan-sa-posibleng-malakas-na-lindol/",
+      "host": "Radyo Pilipinas",
+      "byline": null,
+      "speaker_context": "PCG exercise reporting",
+      "category": "newsroom_report_about_pcg_not_pcg_original",
+      "do_not_admit_as_pcg_or_pnp_issued": true
+    },
+    {
+      "url": "https://pco.gov.ph/news_releases/pbbm-to-new-pcg-leaders-lead-by-example-serve-with-courage/",
+      "host": "Presidential Communications Office (PCO)",
+      "byline": null,
+      "speaker_context": "President discusses PCG",
+      "category": "pco_original_not_pcg_original",
+      "do_not_admit_as_pcg_or_pnp_issued": true
+    }
+  ],
+  "open_checks": [
+    {
+      "id": "host_access",
+      "status": "pending",
+      "question": "Verify accessible HTML, robots/terms, redirects, rate limits, and response format with explicitly authorized isolated access; refuse challenged or unsupported pages."
+    },
+    {
+      "id": "author_authentication",
+      "status": "pending",
+      "question": "Confirm 'By PCG' text is from PCG and is not PIA-authored paraphrase or copy of an unverified agency social post."
+    },
+    {
+      "id": "rights_per_piece",
+      "status": "pending",
+      "question": "Determine whether PIA footer's unless-otherwise-stated language applies to PCG text and images and whether storage/indexing/republication is permitted."
+    },
+    {
+      "id": "date_precision",
+      "status": "pending",
+      "question": "Check first-party original publish date, host date timezone/precision, update dates and delayed redistribution; do not invent exact time."
+    },
+    {
+      "id": "canonical_dedup",
+      "status": "pending",
+      "question": "Link mirror PIA URL and later-discovered original PCG URL to one source object if identical; don't double-count institutional evidence."
+    },
+    {
+      "id": "text_parsing",
+      "status": "pending",
+      "question": "Separate article body from host navigation, article credits and media captions using test fixtures before any automatic collection."
+    },
+    {
+      "id": "event_corroboration",
+      "status": "pending",
+      "question": "PCG-attributed release on PIA does not independently corroborate a duplicate PCG original; preserve publisher, issuer, and attribution separately."
+    }
+  ]
+}
