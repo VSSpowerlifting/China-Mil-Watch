@@ -55,6 +55,17 @@ class JCGPinnedReviewReceiptTests(unittest.TestCase):
         self.assertEqual(receipt["machine_findings_count"], 1)
         self.assertFalse(receipt["human_review_completed"])
 
+    def test_zero_official_publications_can_be_reviewed_without_claiming_coverage(self):
+        item = report()
+        item["records"] = 0
+        item["ledgers"] = 1
+        receipt = make_receipt(item, COMMIT, "2026-10-08", "12345")
+        self.assertEqual(receipt["reviewed_record_count"], 0)
+        self.assertEqual(receipt["machine_integrity_verdict"],
+                         "no_records_not_a_coverage_attestation")
+        self.assertFalse(receipt["human_review_completed"])
+        self.assertFalse(receipt["promotion_authorized"])
+
     def test_rejects_wrong_ref_wrong_head_wrong_cutoff(self):
         for key, value in (
             ("state_ref", "shadow/japan-mod"),
@@ -73,7 +84,7 @@ class JCGPinnedReviewReceiptTests(unittest.TestCase):
         for key, value in (
             ("human_review_completed", True),
             ("promotion_authorized", True),
-            ("records", 0),
+            ("records", -1),
             ("ledgers", -1),
             ("findings", "approved"),
             ("review_holds", None),
