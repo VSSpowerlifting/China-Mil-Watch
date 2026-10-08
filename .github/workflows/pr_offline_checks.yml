@@ -124,19 +124,26 @@ jobs:
           import unittest
 
           tests_dir = Path("tests")
-          targets = sorted({
-              path.stem
-              for pattern in ("test_regional_topics*.py", "test_topic_*.py")
-              for path in tests_dir.glob(pattern)
-          })
-          # The original failure was a shared collector/editorial
-          # boundary contract, not a taxonomy unit test.
+          # Explicitly bounded, so newly added expensive/browser-backed
+          # suites cannot silently turn the preflight into a second full CI.
           required = ("test_regional_topics", "test_extraction_interface")
+          optional = (
+              "test_regional_topics_v2",
+              "test_topic_pilot",
+              "test_topic_pilot_review",
+              "test_topic_review_gate",
+              "test_topic_owner_queue",
+              "test_topic_v2_evidence_verifier",
+              "test_topic_v2_crossdesk_hadr",
+          )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
                   raise SystemExit("Missing mandatory fast check: " + name)
-              targets.append(name)
-          targets = sorted(set(targets))
+          targets = list(required)
+          targets.extend(
+              name for name in optional
+              if (tests_dir / (name + ".py")).is_file()
+          )
           print("Pre-browser contracts: " + ", ".join(targets), flush=True)
           suite = unittest.defaultTestLoader.loadTestsFromNames(
               ["tests." + name for name in targets]
