@@ -142,7 +142,7 @@ def single_address(value, name):
     return parsed[0][1]
 
 
-def send_packet(path, week_ending):
+def send_packet(path, week_ending, *, provisional=False):
     recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
     password = "".join(os.environ.get("IPR_SMTP_APP_PASSWORD", "").split())
@@ -152,13 +152,16 @@ def send_packet(path, week_ending):
     message["From"] = sender
     message["To"] = recipient
     message["Reply-To"] = sender
-    message["Subject"] = "IPR Briefs | week ending {} | editorial worksheet".format(week_ending)
+    message["Subject"] = "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
     message.set_content(
-        "Hi Dylan,\n\nAttached is this week's unnumbered IPR editorial worksheet "
-        "and record-level source list. Please edit the writing sections, leave "
-        "the source appendix intact, and reply within 48 hours with the "
-        "edited .txt attached.\n\nNothing in this handoff is approved for "
-        "publication. Ben will review claims and finalize the Brief.\n"
+        "Hi Dylan,\n\nAttached is the provisional AI-assisted Indo-Pacific Record Brief "
+        "with a source-record appendix and section-level citation IDs. "
+        "The Friday draft is not the complete Saturday-ending week, so please "
+        "check the citations and leave room for Saturday developments. "
+        "Please edit the prose, flag questionable claims, preserve the source appendix, "
+        "and reply with the edited .txt attached within 48 hours.\n\n"
+        "This text is not approved or numbered for publication. Ben will "
+        "verify the full-week sources and authorize any final publication.\n"
     )
     message.add_attachment(
         path.read_bytes(), maintype="text", subtype="plain", filename=path.name
@@ -193,7 +196,7 @@ def main(argv=None):
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
         args.out.name, len(sidecar["source_trail"])))
     if args.send:
-        send_packet(args.out, sidecar["week_ending"])
+        send_packet(args.out, sidecar["week_ending"], provisional=args.write_automatic)
         print("Editorial worksheet delivered via configured SMTP account.")
     else:
         print("Email not enabled: no delivery occurred.")
