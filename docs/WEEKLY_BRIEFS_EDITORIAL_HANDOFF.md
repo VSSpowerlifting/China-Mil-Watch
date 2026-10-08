@@ -20,7 +20,7 @@ separate source-bounded assisted writer for **Indo-Pacific Record Briefs**.
    up to two per desk before filling by the existing model's triage ranking.
    Each body is capped at 3,000 characters. Short/unavailable bodies are
    not represented as full evidence.
-5. With `ANTHROPIC_API_KEY`, request **one streaming** structured Claude draft using
+5. With `ANTHROPIC_API_KEY`, request a streaming structured Claude draft using
    the existing `claude-sonnet-4-6` model. Return a working title, dek,
    development, flowing article sections, a cross-desk comparison, and
    editorial follow-up questions. Require IDs of actual supplied source
@@ -29,8 +29,15 @@ separate source-bounded assisted writer for **Indo-Pacific Record Briefs**.
    it does NOT mechanically certify a claim's accuracy.
    The response is accumulated privately using the Anthropic SDK's streaming
    interface, preventing the prior 90-second single-response read timeout.
-   An incomplete/failed stream stops the job and never sends mail. API retries
-   are disabled to bound repeat charges.
+   Every cited section's array is schema-constrained to at least one unique
+   ID among the actually supplied full-text records (dynamic per run). The
+   independent validator checks both ID membership and cross-desk coverage.
+   An invalid completed manuscript permits **one** additional full-draft
+   generation with corrective instructions; a second invalid manuscript
+   fails closed and never sends mail. An incomplete/failed stream or network
+   error stops immediately. SDK/API retries remain disabled, so model calls
+   are bounded at two per run. Citation membership does not prove semantic
+   support; Dylan and Ben must verify every factual assertion.
 6. Compose a single editable `.txt` with the prose, section-level record
    IDs, source URLs and untouched original source-trail metadata. Every
    packet is conspicuously **PROVISIONAL THROUGH FRIDAY / UNAPPROVED**.
@@ -132,3 +139,20 @@ per body), a longer streaming idle timeout, and no automatic API retries.
 The correction still requires a **new** real dry run to demonstrate that
 Claude successfully completes an acceptable manuscript before email delivery
 is activated.
+
+## October 8 manual delivery attempt: unsupported/missing citation
+
+After the successful no-email test, manual delivery
+[#37725802214](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37725802214)
+reached model generation, but failed before file writing or SMTP:
+`ValueError: writer used absent/unverified source ids for opening_note`.
+This was **not** a Gmail error and **no email was sent**. The citation
+validator correctly prevented an unverified packet from leaving the runner.
+
+The correction narrows the model's `citations` schema dynamically to the
+actual selected IDs, requires a nonempty cited array for each factual section,
+and allows one bounded regeneration on mechanically invalid model output.
+Continue to treat Claude's text and ID selections as provisional, even if
+validation succeeds. Leave the repository delivery variable disabled until
+a fresh manual send completes successfully. Remember to turn it on only
+after reviewing the dry-run and setting the authorized recipient.
