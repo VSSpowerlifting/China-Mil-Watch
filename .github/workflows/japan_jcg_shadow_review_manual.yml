@@ -80,7 +80,7 @@ jobs:
           out="$RUNNER_TEMP/japan-jcg-pinned-review"
           mkdir -p "$out"
           rc=0
-          python scripts/review_desk_shadow.py \
+          python -m scripts.review_desk_shadow \
             --desk japan_jcg \
             --state-repo "$RUNNER_TEMP/japan-jcg-state" \
             --state-commit "$REVIEW_STATE_COMMIT" \
