@@ -6,7 +6,9 @@ A fixed Japan/Vietnam JSON roster may have legitimate official-source research n
 
 `scripts/attest_vietnam_sunday_roster.py` re-derives its Vietnam portion from the **current exact MPS orphan-state Git commit** using the already-approved read-only review chain (`prepare_vietnam_mps_review_queue` and `build_vietnam_sunday_packet`). It then compares every advertised Vietnam identity, URL, language, issuer, date, title, content SHA-256, attributed synopsis, caveat, topic and no-approval flags with the freshly audited private packet.
 
-Only the state commit pointer may be historically pinned: every static commit is separately proven to be a genuine ancestor of `shadow/vietnam-mps-foreign-affairs` and the source content MUST still match the latest independently verified archive. The original Japan rows are neither changed nor considered proof of Japanese source review.
+Only the state commit pointer may be historically pinned: every static commit is separately proven to be a genuine ancestor of `shadow/vietnam-mps-foreign-affairs` and the source content MUST still match the latest independently verified archive.
+
+The **attestation's current-source commit** (unlike each historically pinned static row) must match the trusted MPS orphan branch's actual HEAD exactly. A replay from a prior state may be useful for historical research, but it must not pass the current-state freshness gate. The original Japan rows are neither changed nor considered proof of Japanese source review.
 
 A **strict optional gate** `--require-all-eligible` refuses this week's Sunday preview when the current archive has additional machine-eligible MPS publications that are missing source-specific private synopses. They cannot be silently omitted while the workflow claims a complete Vietnam research roster. This does **not** infer ministry silence; collection and limited publisher listing coverage are deliberately tracked separately.
 
