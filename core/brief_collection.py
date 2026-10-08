@@ -132,13 +132,21 @@ def paragraphs(text) -> list:
 
 
 def linked_prose(text) -> str:
-    """Escape all prose; only numeric record markers become source-trail links."""
+    """Escape prose; link only strict production IDs and reviewed external IDs."""
     def links(match):
         ids = re.findall(r"\d+", match.group(1))
         return '<span class="brief-prose-cites">[' + ', '.join(
             '<a href="#r-%s" aria-label="Source record %s">%s</a>' % (rid, rid, rid)
             for rid in ids) + ']</span>'
-    return re.sub(r"\[Records? (\d+(?:,\s*\d+)*)\]", links, escape(str(text)))
+    def external(match):
+        ident = match.group(1)
+        anchor = "ext-" + ident.replace(":", "-")
+        return ('<span class="brief-prose-cites">[<a href="#%s" '
+                'aria-label="Reviewed external official source %s">External %s</a>]</span>'
+                % (anchor, ident, ident))
+    escaped = escape(str(text))
+    escaped = re.sub(r"\[Records? (\d+(?:,\s*\d+)*)\]", links, escaped)
+    return re.sub(r"\[External (mps-vi:[1-9][0-9]{6,20})\]", external, escaped)
 
 
 def _iso(value):
@@ -578,6 +586,20 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
             "entries": [t for t in trail.values() if t["desk"] == d],
         } for d in sidecar["desks"]],
         "trail_count": len(trail),
+        # Additional *publisher-linked* references: never count these as
+        # archived corpus rows, production desk coverage or source-trail IDs.
+        "external_evidence": [{
+            "anchor": "ext-" + e["source_identity"].replace(":", "-"),
+            "source_identity": e["source_identity"],
+            "source_name": e["source_name"],
+            "desk_name": name(e["desk"]),
+            "original_title": e["original_title"],
+            "lang": e["lang"],
+            "url": e["url"],
+            "date": e["date"],
+            "original_summary": e["original_summary"],
+            "reviewed_on": e["human_review"]["reviewed_on"],
+        } for e in sidecar.get("external_evidence") or []],
         "author_name": identity["author_name"],
         "author_title": identity["author_title"],
         "author_bio": identity["author_bio"],

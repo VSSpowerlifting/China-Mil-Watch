@@ -59,6 +59,8 @@ from datetime import date
 from typing import Iterable, Mapping
 from urllib.parse import urlsplit
 
+from core.brief_external_evidence import validate_external_evidence
+
 from core.edition_identity import (
     COLLECTION_NAME, SERIES_NAME, IdentityError, is_brief,
 )
@@ -341,6 +343,11 @@ def validate_brief(sidecar: Mapping, registry, *,
         if not any(e.get("desk") == d for e in entries.values()):
             problems.append("desk %r is declared but no source-trail entry "
                             "comes from it" % d)
+
+    # Human-reviewed publisher links may support analysis without being
+    # misrepresented as production-backed, archived source-trail records.
+    # They never count toward the two-live-desk requirement above.
+    problems.extend(validate_external_evidence(sidecar, registry))
 
     # The development the brief begins with.
     development = sidecar.get("development")
