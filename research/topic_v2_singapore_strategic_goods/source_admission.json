@@ -22,11 +22,12 @@
   "source_use_review": {
     "terms_url": "https://www.egazette.gov.sg/terms-of-use/",
     "terms_last_updated": "2026-07-10",
-    "provisional_reading": "Conditional Gazette reproduction permission under clause 11, not an unrestricted or irrevocable license; IPR-specific compliance remains for human decision.",
+    "provisional_reading": "Clause 11 grants conditional reproduction permission; clause 16 separately restricts caching of the Website or Contents except as provided in the Terms. How these provisions apply to the proposed IPR retained-PDF archive is not adjudicated; no retention or automated extraction is approved.",
     "relevant_clauses": [
       "6",
       "11",
       "12",
+      "16",
       "17"
     ],
     "observed_conditions": [
@@ -42,7 +43,8 @@
     "ipr_use_compliance_adjudicated": false,
     "full_body_retention_approved": false,
     "public_body_display_approved": false,
-    "automated_collection_approved": false
+    "automated_collection_approved": false,
+    "website_caching_scope_adjudicated": false
   },
   "archived_bodies_in_this_packet": 0,
   "human_source_review_complete": false,
