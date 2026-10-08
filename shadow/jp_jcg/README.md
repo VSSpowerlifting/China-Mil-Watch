@@ -1,7 +1,9 @@
 # Japan Coast Guard official English releases — disabled shadow candidate
 
-**Status: adapter under fidelity review, source disabled, no state branch or
-scheduled collection authorized by this folder. No production record exists.**
+**Status: manual-only shadow collection candidate. The source is enabled only
+inside the isolated shadow runner; no schedule, production source, public
+records, or owner-approved promotion follows. The state branch is initialized
+only on explicit post-merge workflow dispatch.**
 
 The Japan Coast Guard is a maritime law-enforcement authority, **not** the
 Japanese Ministry of Defense or Joint Staff. Its English official press-release
@@ -64,13 +66,18 @@ The source is not a translation of Japanese MOD publications.
 - Live read-only tests: `python -m scripts.probe_japan_jcg_adapter_live`.
   Fixed October 8 source window; no database, no original HTML/PDF persistence,
   no owner approval, no clock and no email.
-- `enabled: false` in this candidate manifest. The ordinary production
+- `enabled: true` is confined to the shadow manifest and the explicitly
+  manual-only `japan_jcg_shadow_manual.yml` workflow. No cron is present.
+  The ordinary production
   manifest loader reads only `desks/*/manifest.json`; this remains under
   `shadow/`.
 
-**Before a live shadow run:** pass actual index+article extraction proof and
-independent source-use check; review a dedicated isolated runner entry and
-state-branch policy; obtain owner authorization to activate manually.
+**Before a live shadow run:** the exact-source egress and three real-page
+index/fetch/extract proof passed in Actions #37819470782; confirm publisher
+content-use exclusions, approve this manual-only runner PR and its exact source
+scope, then launch the named manual workflow on main. A manual run may
+initialize the `shadow/japan-jcg` state branch and store original official HTML
+captures there; it must not change the production database.
 **Before production:** measure source-specific retrieval and extraction
 continuity; complete the Day 7, 14 and 30 human reviews; fix date, charset,
 attachment and omission issues; rehearse correction/promotion on a disposable
