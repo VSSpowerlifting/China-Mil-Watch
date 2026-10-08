@@ -26,6 +26,9 @@ SUCCESS_RESULTS = frozenset(("ok", "ok_no_publications", "ok_all_duplicates"))
 HEX40 = re.compile(r"[a-f0-9]{40}\Z")
 RUN_IDENT = re.compile(r"([1-9][0-9]{6,14})-([1-9][0-9]*)\Z")
 MAX_INPUT_BYTES = 2_000_000
+# This specifically governed MPS/MOIT cadence was first activated Oct 7.
+# Review ranges must not trim its Day 0, and planned dates cannot be omitted.
+MINISTRY_SHADOW_START = date(2026, 10, 7)
 
 
 class AttemptEvidenceRefused(ValueError):
@@ -81,6 +84,8 @@ def reconcile(packet):
             "wrong ministry workflow or evidence schema")
     exact(packet["review_window"], ("from", "through"), "review_window")
     start, end = valid_day(packet["review_window"]["from"]), valid_day(packet["review_window"]["through"])
+    require(start == MINISTRY_SHADOW_START,
+            "ministry review window must include the approved October 7 Day 0")
     require(start <= end and (end - start).days <= 45, "unbounded review date range")
     targets = packet["expected_target_dates"]
     require(isinstance(targets, list) and len(targets) <= 46, "invalid expected target dates")
@@ -88,6 +93,15 @@ def reconcile(packet):
     require(len(set(checked_targets)) == len(checked_targets)
             and all(start <= d <= end for d in checked_targets),
             "duplicate or out-of-scope planned target date")
+    # Daily schedule is explicitly approved, so a shorter handwritten list
+    # cannot make a missed slot disappear. A missing Actions receipt will
+    # produce a warning; it cannot silently erase its expected calendar day.
+    expected_calendar = [
+        (start + timedelta(days=i)).isoformat()
+        for i in range((end - start).days + 1)
+    ]
+    require(targets == expected_calendar,
+            "expected target dates must enumerate every ministry shadow calendar day")
 
     attempts = packet["github_attempts"]
     require(isinstance(attempts, list) and len(attempts) <= 500,
