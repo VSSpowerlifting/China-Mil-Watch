@@ -97,6 +97,15 @@ class JCGSourceContracts(unittest.TestCase):
             self.adapter.parse_listing(listing(("06 10 2026", "foo", "Bad URL")),
                                        (LISTING, None), 1)
 
+    def test_unqualified_historical_format_counted_not_misrepresented(self):
+        html = listing(("06 10 2026", "9455", "Recent"),
+                       ("11 08 2025", "old-pdf", "Historical PDF"))
+        page = self.adapter.parse_listing(html, (LISTING, None), 1)
+        self.assertEqual(len(page.items), 1)
+        self.assertEqual(self.adapter.listing_observation["publisher_index_rows_total"], 2)
+        self.assertEqual(self.adapter.listing_observation["outside_declared_pilot_scope"], 1)
+        self.assertEqual(self.adapter.listing_observation["pilot_source_begin"], "2026-09-01")
+
     def test_article_extracts_only_tightly_scoped_html_original(self):
         url = "https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html"
         parsed = self.adapter.parse_article(article("9455", "PCG Training"), url)
