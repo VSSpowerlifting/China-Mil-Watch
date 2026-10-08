@@ -35,6 +35,10 @@ jobs:
       - name: Install source dependencies
         run: python -m pip install -r repo/requirements.txt
 
+      - name: Run Korea original-document adversarial regressions
+        working-directory: repo
+        run: python -m unittest tests.test_korea_source_fidelity -v
+
       - name: Replay the real current Korea state branch without writing it
         shell: bash
         env:
