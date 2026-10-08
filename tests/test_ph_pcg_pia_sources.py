@@ -54,7 +54,8 @@ class DisallowedInstitutionalImpersonation(unittest.TestCase):
     def test_issuer_claim_cannot_be_rewritten_as_verified(self):
         data = copy.deepcopy(self.data)
         data["claimed_issuer_evidence"] = "PCG original verified"
-        with self.assertRaisesRegex(validator.SourceAdmissionError, "unverified"):
+        with self.assertRaisesRegex(validator.SourceAdmissionError,
+                                    "cannot be represented as verified"):
             validator.validate(data)
 
     def test_no_arbitrary_new_or_substituted_urls(self):
