@@ -1,0 +1,32 @@
+# DISPOSABLE focused check for draft PR #180. DELETE before review/merge.
+name: Journal byte-bound offline integration (disposable)
+on:
+  push:
+    branches:
+      - feat/vietnam-journal-byte-bound-observations-20261008
+permissions:
+  contents: read
+jobs:
+  focused-tests:
+    if: ${{ github.event.head_commit.message == 'Run isolated journal byte integration tests' && github.ref == 'refs/heads/feat/vietnam-journal-byte-bound-observations-20261008' }
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout isolated research branch, no token persistence
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install offline parser dependency
+        run: python -m pip install 'beautifulsoup4>=4.12,<5'
+      - name: Test real parser to byte-bound assembler and comparator
+        run: |
+          python -m unittest \
+            tests.test_vn_journal_listing \
+            tests.test_vn_journal_window_drift \
+            tests.test_vn_journal_observation \
+            tests.test_vn_journal_byte_observation -v
