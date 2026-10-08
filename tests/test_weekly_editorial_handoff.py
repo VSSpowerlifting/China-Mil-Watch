@@ -108,6 +108,49 @@ class EditorialWorksheetTests(unittest.TestCase):
                     mail.assert_not_called()
                     self.assertFalse(output.exists())
 
+    def test_saturday_packet_is_unapproved_and_not_false_friday_provisional(self):
+        text = render_packet(draft(), as_of="2026-10-03")
+        self.assertIn("SATURDAY COMPLETE; CAPTURE COMPLETENESS UNVERIFIED", text)
+        self.assertIn("NOT APPROVED OR PUBLISHED", text)
+        self.assertNotIn("FRIDAY PROVISIONAL", text)
+        friday = render_packet(draft(), as_of="2026-10-02")
+        self.assertIn("FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED", friday)
+
+    def test_full_week_flag_refuses_incompatible_cutoff_before_model_or_mail(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            sidecar = Path(tmp) / "original.json"
+            output = Path(tmp) / "draft.txt"
+            import json
+            sidecar.write_text(json.dumps(draft()), encoding="utf-8")
+            with patch("scripts.weekly_editorial_handoff.send_packet") as send, \
+                 patch("scripts.weekly_briefs_auto_writer.compose") as compose:
+                with self.assertRaises(SystemExit):
+                    main(["--sidecar", str(sidecar), "--out", str(output),
+                          "--write-automatic", "--full-week",
+                          "--as-of", "2026-10-02", "--send"])
+                compose.assert_not_called()
+                send.assert_not_called()
+                self.assertFalse(output.exists())
+
+    def test_sunday_mail_has_monday_deadline_and_returns_to_sender(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "IPR-2026-10-10.txt"
+            path.write_text("full week draft", encoding="utf-8")
+            env = {
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_SMTP_USER": "ben@gmail.com",
+                "IPR_SMTP_APP_PASSWORD": "abcdefghijklmnop",
+            }
+            with patch.dict(os.environ, env, clear=True):
+                with patch("scripts.weekly_editorial_handoff.smtplib.SMTP_SSL") as smtp:
+                    send_packet(path, "2026-10-10", full_week=True)
+                    mail = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
+                    self.assertIn("Sunday editorial draft", mail["Subject"])
+                    self.assertEqual(mail["Reply-To"], "ben@gmail.com")
+                    self.assertIn("Monday at 8 p.m. Eastern", mail.get_body(preferencelist=("plain",)).get_content())
+                    self.assertIn("not approved", mail.get_body(preferencelist=("plain",)).get_content().lower())
+                    self.assertEqual(list(mail.iter_attachments())[0].get_filename(), path.name)
+
     def test_sender_needs_secrets_no_network(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "IPR-week.txt"
