@@ -1,0 +1,116 @@
+{
+  "protocol": "ipr_ph_source_evidence_lineage_v1",
+  "status": "unsigned_research_only",
+  "derived_from": "research/philippines/sanlakas_2026/source_event_candidates.json",
+  "review_cutoff": "2026-10-08",
+  "scope_note": "Two provisional 2026 Philippines events; identify documentary witnesses separately from host pages and record count.",
+  "institutional_origins": {
+    "ph-afp": {
+      "name": "Armed Forces of the Philippines",
+      "status": "first_party_archived_not_human_approved"
+    },
+    "ph-pcg": {
+      "name": "Philippine Coast Guard",
+      "status": "byline_attribution_only_unverified"
+    },
+    "ph-pia": {
+      "name": "Philippine Information Agency",
+      "status": "hosting_institution_not_equivalent_to_pcg"
+    }
+  },
+  "event_memberships": [
+    {
+      "candidate_event_id": "ph-2026-iax-02-pagsasanay-sanlakas",
+      "source_record_ids": [
+        "afp:1391",
+        "afp:1393",
+        "afp:1394"
+      ],
+      "candidate_only": true
+    },
+    {
+      "candidate_event_id": "ph-2026-09-29-jpscc-sixth-meeting",
+      "source_record_ids": [
+        "afp:1390"
+      ],
+      "candidate_only": true
+    }
+  ],
+  "archived_record_lineages": [
+    {
+      "record_id": "afp:1390",
+      "origin_institution": "ph-afp",
+      "host_institution": "ph-afp",
+      "attribution_basis": "pinned_first_party_AFP_capture",
+      "human_review_complete": false,
+      "mirror_of": null,
+      "issuer_independent_approval": false
+    },
+    {
+      "record_id": "afp:1391",
+      "origin_institution": "ph-afp",
+      "host_institution": "ph-afp",
+      "attribution_basis": "pinned_first_party_AFP_capture",
+      "human_review_complete": false,
+      "mirror_of": null,
+      "issuer_independent_approval": false
+    },
+    {
+      "record_id": "afp:1393",
+      "origin_institution": "ph-afp",
+      "host_institution": "ph-afp",
+      "attribution_basis": "pinned_first_party_AFP_capture",
+      "human_review_complete": false,
+      "mirror_of": null,
+      "issuer_independent_approval": false
+    },
+    {
+      "record_id": "afp:1394",
+      "origin_institution": "ph-afp",
+      "host_institution": "ph-afp",
+      "attribution_basis": "pinned_first_party_AFP_capture",
+      "human_review_complete": false,
+      "mirror_of": null,
+      "issuer_independent_approval": false
+    }
+  ],
+  "external_unadmitted_hosts": [
+    {
+      "candidate_id": "PCG-PIA-01",
+      "source_url": "https://pia.gov.ph/press-release/pcg-commandant-activates-coast-guard-auxiliary-district-in-kalayaan-island-group-kalayaan-mayor-leads-new-pcga-members-in-oath-taking/",
+      "host_institution": "ph-pia",
+      "credited_issuer": "ph-pcg",
+      "byline_observation": "By PCG",
+      "issuer_authenticated": false,
+      "source_capture_sha256": null,
+      "original_pcg_url": null,
+      "link_to_candidate_event_ids": [],
+      "source_authorized_for_archiving": false,
+      "rights_review_complete": false
+    },
+    {
+      "candidate_id": "PCG-PIA-02",
+      "source_url": "https://pia.gov.ph/news/pcg-deploys-aircraft-and-brp-teresa-magbanua-to-challenge-china-coast-guard-vessel-near-cabra-island-pla-navy-warships-monitored-in-the-area/",
+      "host_institution": "ph-pia",
+      "credited_issuer": "ph-pcg",
+      "byline_observation": "By PCG",
+      "issuer_authenticated": false,
+      "source_capture_sha256": null,
+      "original_pcg_url": null,
+      "link_to_candidate_event_ids": [],
+      "source_authorized_for_archiving": false,
+      "rights_review_complete": false
+    }
+  ],
+  "review_gates": {
+    "source_lineage_human_approved": false,
+    "origin_issuer_authenticated": false,
+    "repeat_host_dedup_adjudicated": false,
+    "event_memberships_approved": false,
+    "archival_rights_confirmed": false,
+    "topic_classifications_approved": false,
+    "timeline_approved": false,
+    "production_data_write_authorized": false
+  },
+  "interpretation": "An AFP publication is one source record, not a unique agency and not automatically a unique event. PIA hosting a page credited PCG is an unverified origination claim and never evidence for an unrelated AFP exercise."
+}
