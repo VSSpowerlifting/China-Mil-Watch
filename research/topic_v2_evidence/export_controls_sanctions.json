@@ -1,0 +1,71 @@
+{
+  "sample_version": 1,
+  "topic": "export_controls_sanctions",
+  "source_commit": "e649b5d11b51aa3334fddfb4952d132b6780eb30",
+  "source_index_path": "output/corpus-index.json",
+  "source_index_blob_sha": "38b256ec7884d0b9b69b3b4dcd31ac3dace72ff8",
+  "text_extraction": "Archive record HTML div.original-text; strip tags, HTML-decode, collapse whitespace, trim; offsets in Unicode code units of resulting text",
+  "classification_status": "provisional_control_candidates_only",
+  "records": [
+    {
+      "record_id": 1667,
+      "desk_id": "china",
+      "source_slug": "china_mil_online",
+      "source_stated_date": "2026-06-22",
+      "title_original": "China adds 10 U.S. entities to export control list",
+      "title_english": null,
+      "canonical_url": "http://eng.chinamil.com.cn/2025xb/H_251454/L_251456/16468736.html",
+      "archive_path": "output/record/1667.html",
+      "archive_blob_sha": "d521054da732d763161afd16f24f50f91b66510d",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "The archived English report specifies 10 U.S. entities added to China's dual-use export-control list and a prohibition on exporting covered items: a concrete export restriction, not just a policy slogan.",
+      "stored_text_chars": 1478,
+      "evidence": {
+        "offset_start": 470,
+        "offset_end": 629,
+        "quote": " date of this announcement, export operators are prohibited from exporting dual-use items to the 10 entities that also include Red Cat Holdings, Inc., Teal Dro"
+      }
+    },
+    {
+      "record_id": 1296,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-06-11",
+      "title_original": "中方对菲律宾国防部长特奥多罗及其亲属实施制裁",
+      "title_english": null,
+      "canonical_url": "http://www.81.cn/fyr/16466779.html",
+      "archive_path": "output/record/1296.html",
+      "archive_blob_sha": "78b361e4e07d9a03de3c8894f40427146bcd4ce6",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "The preserved Chinese announcement specifies entry bans and transaction/cooperation bans against the Philippine defense minister and relatives; sanction mechanism is the subject.",
+      "stored_text_chars": 124,
+      "evidence": {
+        "offset_start": 36,
+        "offset_end": 124,
+        "quote": "系。为维护中国国家主权、安全、发展利益，中方决定，禁止特奥多罗及其配偶、子女入境中国内地和香港、澳门，禁止中国境内的组织、个人与特奥多罗及其配偶、子女进行任何交易、合作等活动。"
+      }
+    },
+    {
+      "record_id": 3506,
+      "desk_id": "china",
+      "source_slug": "china_mil_online",
+      "source_stated_date": "2026-08-25",
+      "title_original": "China warns against unilateral sanctions after U.S. vows \"economic asphyxiation\" of Iran",
+      "title_english": null,
+      "canonical_url": "http://eng.chinamil.com.cn/2025xb/V_251452/16481282.html",
+      "archive_path": "output/record/3506.html",
+      "archive_blob_sha": "5b368973a8ff1916db2b9a8e5efbeac1c3f75787",
+      "review_state": "pending_human",
+      "provisional_status": "borderline",
+      "rationale": "The source substantively criticizes reported secondary-sanctions threats against Iran, but does not document a new implemented control; a future owner rule must decide how commentary about proposed measures is handled.",
+      "stored_text_chars": 1317,
+      "evidence": {
+        "offset_start": 450,
+        "offset_end": 603,
+        "quote": "c asphyxiation\" of Iran, expanding Washington's secondary sanctions threats and warning of dire consequences for countries that do not join the campaign."
+      }
+    }
+  ]
+}

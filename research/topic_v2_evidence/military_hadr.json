@@ -1,0 +1,92 @@
+{
+  "sample_version": 1,
+  "topic": "military_hadr",
+  "proposed_topic_only": true,
+  "source_commit": "e649b5d11b51aa3334fddfb4952d132b6780eb30",
+  "source_index_path": "output/corpus-index.json",
+  "source_index_blob_sha": "38b256ec7884d0b9b69b3b4dcd31ac3dace72ff8",
+  "text_extraction": "Archive record HTML div.original-text; strip tags, HTML-decode, collapse whitespace, trim; offsets in Unicode code units of resulting text",
+  "classification_status": "provisional_control_candidates_only",
+  "records": [
+    {
+      "record_id": 3927,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-09-06",
+      "title_original": "子弟兵在赣闽多地持续展开抢险救援",
+      "title_english": "Soldiers Continue to Carry Out Disaster Relief and Rescue Operations Across Multiple Locations in Jiangxi and Fujian",
+      "canonical_url": "http://www.81.cn/yw_208727/16483879.html",
+      "archive_path": "output/record/3927.html",
+      "archive_blob_sha": "c744be916628e6af78f74077034d4ec7a297f072",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "Describes actual PLA, armed-police and militia civilian evacuation, debris removal and recovery-support operations in Jiangxi/Fujian following heavy rain. This is a described mission rather than generic preparedness.",
+      "stored_text_chars": 511,
+      "evidence": {
+        "offset_start": 88,
+        "offset_end": 204,
+        "quote": "民兵持续展开救援，全力保障人民群众生命财产安全。 9月4日以来，武警江西总队吉安支队持续在江西省吉安市遂川县受灾村镇开展救援，转移受困群众100余名。截至记者发稿时，救援仍在继续。井冈山市多个村庄出现河水暴涨等险情，市人武部迅速组织"
+      }
+    },
+    {
+      "record_id": 1903,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-06-29",
+      "title_original": "四川宜宾地震，子弟兵迅速投入抢险救灾",
+      "title_english": "Sichuan Yibin Earthquake: Troops Rapidly Deploy for Disaster Relief Operations",
+      "canonical_url": "http://www.81.cn/yw_208727/16470480.html",
+      "archive_path": "output/record/1903.html",
+      "archive_blob_sha": "c713e7849b68e4f54412737e521fe9d3788f8116",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "Named Sichuan earthquake response includes mobilization, damage checks, road clearance and civilian resettlement, providing a separate disaster and mission context.",
+      "stored_text_chars": 507,
+      "evidence": {
+        "offset_start": 39,
+        "offset_end": 154,
+        "quote": "。震中位于北纬28.50度，东经104.69度。 地震发生后，解放军、武警部队官兵和民兵闻令而动，第一时间奔赴震区展开抢险救援行动。 西部战区联合作战指挥中心迅速启动应急机制，连夜指挥调度力量摸排灾情，主动对接地方用兵需求，随时做"
+      }
+    },
+    {
+      "record_id": 184,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-05-12",
+      "title_original": "武警第一机动总队某支队跨昼夜演练锤炼抢险救援硬功",
+      "title_english": "A Subordinate Brigade of the PAP 1st Mobile Corps Conducts Day-and-Night Drill to Forge Disaster Relief and Rescue Capabilities",
+      "canonical_url": "http://www.81.cn/wj_208567/16460109.html",
+      "archive_path": "output/record/184.html",
+      "archive_blob_sha": "a1a2d65e8a117ad8b97c65ca71515d0274f85882",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "A dedicated armed-police disaster-response training scenario tests bridge repair, search and rescue. Should qualify HADR preparedness, and military_exercises independently, without pretending an actual disaster occurred.",
+      "stored_text_chars": 876,
+      "evidence": {
+        "offset_start": 14,
+        "offset_end": 128,
+        "quote": "之际，武警第一机动总队某支队以突发自然灾害为背景，模拟桥梁损毁、房屋坍塌、人员被困埋压等险情，在陌生地域组织跨昼夜抢险救援演练，全面锤炼官兵在复杂环境下的应急处突、协同作战和快速反应能力。 演练官兵正在组织车辆编队。李明恒 摄 "
+      }
+    },
+    {
+      "record_id": 856,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-05-30",
+      "title_original": "军人健康丨防汛救灾，提防病从水入",
+      "title_english": null,
+      "canonical_url": "http://www.81.cn/yw_208727/16464447.html",
+      "archive_path": "output/record/856.html",
+      "archive_blob_sha": "f45d1abc7a0d731e9da0d71f6381bc350cf62d2b",
+      "review_state": "pending_human",
+      "provisional_status": "negative",
+      "rationale": "The body is medical/health-protection guidance for troops deployed in flood relief. It mentions relief context but does not itself describe military civilian-relief response or dedicated disaster-response preparedness; exclude under proposed materiality threshold.",
+      "stored_text_chars": 835,
+      "evidence": {
+        "offset_start": 0,
+        "offset_end": 112,
+        "quote": "今年入汛以来，我国局部地区遭遇持续性强降雨。官兵在防汛一线抢险救灾时，既要战洪水，也要守护好自身健康，预防疾病发生。 注意饮水安全。洪水极易淹没水井、供水设施，导致水源被粪便、化工污染物、腐烂有机物等污染。如果直接饮用或误食"
+      }
+    }
+  ]
+}
