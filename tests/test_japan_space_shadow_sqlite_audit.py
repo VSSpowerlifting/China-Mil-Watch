@@ -29,7 +29,7 @@ def synthetic_packet():
         "human_review_complete": False,
         "candidates": [{
             "id": "JSP%02d" % i,
-            "url": "https://www.mod.go.jp/test/path/%d.html" % i,
+            "url": audit.EXPECTED_SOURCES["JSP%02d" % i],
             "archive_identity": None,
             "body_sha256": None,
             "owner_approval": None,
@@ -54,7 +54,7 @@ def synthetic_db(db_path: Path):
         """)
         db.executemany(
             "INSERT INTO shadow_records VALUES (?,?,?,?)", [
-                ("https://www.mod.go.jp/test/path/1.html",
+                ("https://www.mod.go.jp/j/press/wp/wp2026/html/n310204000.html",
                  "jp_mod_news_ja", "2026-09-01", "SYNTHETIC ONLY"),
                 ("https://www.mod.go.jp/other.pdf",
                  "jp_mod_news_ja", "2026-09-02", "SYNTHETIC ONLY"),
@@ -62,17 +62,17 @@ def synthetic_db(db_path: Path):
         )
         db.executemany(
             "INSERT INTO shadow_unretrieved VALUES (?,?,?,?)", [
-                ("https://www.mod.go.jp/test/path/2.html",
+                ("https://www.mod.go.jp/j/press/kisha/2026/0306a.html",
                  "jp_mod_siteupdate_ja", "2026-09-03", "access_challenged"),
                 ("https://www.mod.go.jp/another.html",
                  None, "2026-09-04", "pdf: no_text_layer"),
             ]
         )
         db.execute("INSERT INTO shadow_pre_bootstrap VALUES (?,?,?)",
-                   ("https://www.mod.go.jp/test/path/3.html",
+                   ("https://www.mod.go.jp/asdf/ssa/activities/report01/",
                     "jp_mod_news_ja", "2026-08-20"))
         db.execute("INSERT INTO shadow_validators VALUES (?,?)",
-                   ("https://www.mod.go.jp/test/path/1.html", '"SYNTHETIC"'))
+                   ("https://www.mod.go.jp/j/press/wp/wp2026/html/n310204000.html", '"SYNTHETIC"'))
 
 
 def git_cmd(repo: Path, *args: str) -> bytes:
@@ -164,6 +164,15 @@ class SnapshotAuditContracts(unittest.TestCase):
         p["candidates"][0]["archive_identity"] = "made-up-git-record"
         self.packet.write_text(json.dumps(p), encoding="utf-8")
         with self.assertRaisesRegex(audit.SnapshotAuditError, "archived or approved"):
+            audit.load_candidates(self.packet)
+
+    def test_candidate_url_substitution_is_refused_even_when_official(self):
+        candidate_packet = synthetic_packet()
+        candidate_packet["candidates"][0]["url"] = (
+            "https://www.mod.go.jp/j/press/kisha/2026/0307a.html"
+        )
+        self.packet.write_text(json.dumps(candidate_packet), encoding="utf-8")
+        with self.assertRaisesRegex(audit.SnapshotAuditError, "frozen source packet"):
             audit.load_candidates(self.packet)
 
     def test_duplicate_candidate_and_owner_approval_are_rejected(self):
