@@ -29,6 +29,11 @@ DEFAULT_TAXONOMY_PATH = REPO_ROOT / "taxonomy" / "regional_topics.v1.json"
 
 TAXONOMY_ID = "ipr_regional_topics"
 TAXONOMY_VERSION = 1
+SUPPORTED_TAXONOMY_VERSIONS = (1, 2)
+TAXONOMY_PATHS = {
+    version: REPO_ROOT / "taxonomy" / ("regional_topics.v%d.json" % version)
+    for version in SUPPORTED_TAXONOMY_VERSIONS
+}
 ASSIGNMENT_METHODS = ("human", "rule", "model")
 _SLUG = re.compile(r"^[a-z][a-z0-9_]*$")
 _ID = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
@@ -120,7 +125,7 @@ class TopicAssignment:
     taxonomy_version: int = TAXONOMY_VERSION
 
     def validate(self, taxonomy: Optional[TopicTaxonomy] = None) -> None:
-        taxonomy = taxonomy or load_taxonomy()
+        taxonomy = taxonomy or load_taxonomy(version=self.taxonomy_version)
         self.record.validate()
         if (type(self.taxonomy_version) is not int or
                 self.taxonomy_version != taxonomy.taxonomy_version):
@@ -161,8 +166,15 @@ def _require_text(raw: dict, key: str, where: str) -> str:
     return value.strip()
 
 
-def load_taxonomy(path: Optional[Path] = None) -> TopicTaxonomy:
-    path = Path(path or DEFAULT_TAXONOMY_PATH)
+def load_taxonomy(
+    path: Optional[Path] = None,
+    *,
+    version: int = TAXONOMY_VERSION,
+) -> TopicTaxonomy:
+    """Select v1 by default; v2 requires explicit version and exact file match."""
+    if type(version) is not int or version not in SUPPORTED_TAXONOMY_VERSIONS:
+        raise TopicTaxonomyError("unsupported taxonomy_version %r" % version)
+    path = Path(path) if path is not None else TAXONOMY_PATHS[version]
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -178,7 +190,7 @@ def load_taxonomy(path: Optional[Path] = None) -> TopicTaxonomy:
             (TAXONOMY_ID, raw.get("taxonomy_id"))
         )
     raw_version = raw.get("taxonomy_version")
-    if type(raw_version) is not int or raw_version != TAXONOMY_VERSION:
+    if type(raw_version) is not int or raw_version != version:
         raise TopicTaxonomyError(
             "unsupported taxonomy_version %r" % raw_version
         )
@@ -363,7 +375,7 @@ def attach_topic(
     repeat. If the same record/topic key already exists with different
     provenance, raises instead of silently replacing evidence.
     """
-    taxonomy = taxonomy or load_taxonomy()
+    taxonomy = taxonomy or load_taxonomy(version=assignment.taxonomy_version)
     assignment.validate(taxonomy)
     if not topic_store_exists(conn):
         raise TopicStoreError(
@@ -422,7 +434,7 @@ def topics_for_record(
 ) -> List[TopicAssignment]:
     """Return deterministic assignments for one record without mutating schema."""
     record.validate()
-    taxonomy = load_taxonomy()
+    taxonomy = load_taxonomy(version=taxonomy_version)
     if (type(taxonomy_version) is not int or
             taxonomy_version != taxonomy.taxonomy_version):
         raise TopicTaxonomyError(
