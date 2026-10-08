@@ -2,11 +2,10 @@
   "manifest_version": 1,
   "_shadow": true,
   "_comment": [
-    "Japan Coast Guard standalone English-press-source pilot, SOURCE DISABLED.",
-    "This file is outside desks/ and cannot create production source registration.",
-    "Do not mark enabled true until real-page adapter proof, reuse review and an",
-    "explicit owner-approved isolated-shadow activation have been completed.",
-    "Not Japanese MOD or Joint Staff. Does not claim general Japanese coverage."
+    "Shadow-only manual dispatch pilot: source is enabled for the isolated runner only.",
+    "No scheduler, no production manifest, no public desk or records.",
+    "No publication or promotion without source-fidelity and human checkpoint review.",
+    "First state branch may be initialized only via an explicit GitHub manual run."
   ],
   "desk": {
     "desk_id": "japan_jcg",
@@ -14,7 +13,9 @@
     "jurisdiction_code": "JP",
     "default_timezone": "Asia/Tokyo",
     "default_calendar": "gregorian",
-    "supported_language_tags": ["en"],
+    "supported_language_tags": [
+      "en"
+    ],
     "public_status": "shadow",
     "active": false
   },
@@ -37,11 +38,15 @@
       "authority_tier": "A",
       "source_type": "maritime_law_enforcement_official_release",
       "originality": "original",
-      "enabled": false,
+      "enabled": true,
       "adapter": "scraper.sources.jp_jcg_en:JCGEnglishAdapter",
-      "listing_endpoints": ["https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"],
-      "article_url_patterns": ["^https://www\\.kaiho\\.mlit\\.go\\.jp/e/topics_archive/article[0-9]+\\.html$"],
-      "notes": "Narrow first-party English HTML release family; Sept 1, 2026 forward only. Historic archive entries older than this cutoff counted but not admitted. Only HTML body is included; linked PDFs, images and third-party materials are excluded. Separate source and capture-rights review, shadow activation and human fidelity gate needed. See README.md."
+      "listing_endpoints": [
+        "https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"
+      ],
+      "article_url_patterns": [
+        "^https://www\\.kaiho\\.mlit\\.go\\.jp/e/topics_archive/article[0-9]+\\.html$"
+      ],
+      "notes": "Narrow first-party English HTML release family; Sept 1, 2026 forward only. Historic archive entries older than this cutoff counted but not admitted. Only HTML body is included; linked PDFs, images and third-party materials are excluded. Initial Actions fidelity proof passed October 8; manual-only shadow capture is governed by separate workflow and review. No production eligibility follows. See README.md."
     }
   ]
 }
