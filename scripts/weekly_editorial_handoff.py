@@ -45,13 +45,21 @@ def render_packet(sidecar):
     desks = sidecar["desks"]
     trail = sidecar["source_trail"]
     represented = {entry["desk"] for entry in trail}
-    if len(represented.intersection(desks)) < 2:
-        raise ValueError("fewer than two desks supplied source candidates; editorial review required")
+    if not trail:
+        raise ValueError("no source candidates in this week; refuse empty editorial email")
+    coverage_warning = (
+        "COVERAGE WARNING: fewer than two desks have source candidates. "
+        "This worksheet is NOT eligible for an ordinary cross-desk Brief; "
+        "a single-desk Brief would require Ben's separately recorded exception."
+        if len(represented.intersection(desks)) < 2 else
+        "Coverage: candidate records are present from at least two desks; not editorial approval."
+    )
     lines = [
         "INDO-PACIFIC RECORD | BRIEFS EDITORIAL WORKSHEET",
         "Packet: IPR-" + week_end.isoformat(),
         "Week: " + one_line(sidecar["week_start"]) + " through " + week_end.isoformat(),
         "Status: UNNUMBERED DRAFT — NOT APPROVED OR PUBLISHED",
+        coverage_warning,
         "Desks: " + ", ".join(desks),
         "",
         "DYLAN: Edit the writing sections below and REPLY with this .txt attached.",
