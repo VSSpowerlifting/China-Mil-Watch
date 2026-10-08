@@ -52,7 +52,7 @@ CLAIM_ORIGIN = {
     "J02": ("jpscc_meeting", "afp:1390"),
     "J03": ("jpscc_meeting", "afp:1390"),
 }
-FLAGS = frozenset(("F01", "F02", "F03", "F04", "F05"))
+FLAGS = frozenset(("F01", "F02", "F03", "F04", "F05", "F06"))
 LOCKED_FALSE = (
     "publisher_reuse_review_complete",
     "human_source_review_complete",
