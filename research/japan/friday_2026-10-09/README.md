@@ -35,6 +35,14 @@ The script requires the **exact** historical commit and Git blob, opens a tempor
 
 All four lie inside the official IPR Friday source window **Sunday October 4 – Friday October 9** in New York. However **Friday is not over**, and the Thursday research snapshot cannot substitute for the final Friday/Saturday delta review.
 
+### Separate Japanese MOD document — Kadena-to-Tsuiki training-relocation notice
+
+**October 5:** A distinct [Japanese MOD HTML notice](https://www.mod.go.jp/j/press/news/2026/10/05a.html) announces planned U.S. aircraft training relocation from **Kadena Airfield** to **JASDF Tsuiki Air Base**, scheduled for **October 19–29**. It describes this as the **twelfth** transfer to Tsuiki and assigns the **Type II** category (**6–12 aircraft over 8–14 days**). These are category limits, **not confirmation of an actual number of deployed aircraft**. MOD describes the program as intended to improve interoperability and lessen training impacts at U.S. airfields.
+
+It is a **separate same-ministry** document that complements the shadow-archived October 5 **05b.pdf** Joint Committee agreement. The HTML has **no archived Japan body, IPR record ID, original capture hash or human editorial approval**. Both sources describe **future** October training and must not be presented as two independently issuing institutions. The source does not establish that this particular relocation constitutes all of Keen Sword 27.
+
+The source is pinned as **JP-W41-05** in `linked_public_mod_tsuiki_training_notice`; it is not one of the four English-page `source_candidates`, and therefore leaves those existing source-independence groups unchanged. The optional rendered editor supplement includes its official URL and the separation caveat.
+
 ### Strong secondary lead — Japanese international disaster-relief operations in Indonesia
 
 **October 6:** The Japan MOD press release [JS Kunisaki Departs Indonesia after Completing International Disaster Relief Activities](https://www.mod.go.jp/en/article/2026/10/5fc631a5d1b2f36a9b697a611082a85af444ea54.html) says that the vessel departed Indonesia's **Kijing Port** bound for Japan with three JGSDF **CH-47** helicopters after the firefighting mission. The MOD reports **56** helicopter firefighting missions and **approximately 280 tons of water** released. A matching dated [original-language Japanese MOD release](https://www.mod.go.jp/j/press/news/2026/10/06a.html) independently supports those numbers as the *same institutional release in another language*, **not** an independent second institutional confirmation.
