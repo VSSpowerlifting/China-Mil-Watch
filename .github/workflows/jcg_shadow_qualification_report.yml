@@ -1,0 +1,114 @@
+name: JCG Shadow Qualification — Pinned Evidence Status (Read Only)
+
+# PR checks rehearse immutable verified Day 0. Future state reviews may be
+# explicitly dispatched on main with a pinned state commit and as-of date.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/jcg_shadow_qualification_status.py
+      - tests/test_jcg_shadow_qualification_status.py
+      - .github/workflows/jcg_shadow_qualification_report.yml
+      - docs/JAPAN_JCG_SHADOW_QUALIFICATION_STATUS.md
+      - shadow/jp_jcg/README.md
+  workflow_dispatch:
+    inputs:
+      state_commit:
+        description: Full 40-character commit on shadow/japan-jcg
+        required: true
+        type: string
+      as_of:
+        description: UTC evidence cutoff YYYY-MM-DD
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jcg-shadow-qualification-readonly
+  cancel-in-progress: false
+
+jobs:
+  evidence:
+    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout reviewed source with no stored credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exercise 10 offline qualification integrity contracts
+        run: python -m unittest tests.test_jcg_shadow_qualification_status -v
+      - name: Pin exact source and as-of date
+        shell: bash
+        env:
+          REQUESTED_COMMIT: ${{ inputs.state_commit }}
+          REQUESTED_AS_OF: ${{ inputs.as_of }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            sha=81558026117067cbcf54bd7a7859a2d9db168a0c
+            asof=2026-10-08
+          else
+            sha="$REQUESTED_COMMIT"
+            asof="$REQUESTED_AS_OF"
+          fi
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || exit 2
+          [[ "$asof" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 2
+          echo "STATE_COMMIT=$sha" >> "$GITHUB_ENV"
+          echo "AS_OF=$asof" >> "$GITHUB_ENV"
+      - name: Clone authorized state branch read-only, pin reviewed commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c credential.helper= clone --single-branch --branch shadow/japan-jcg \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/jcg-qualification-state"
+          cd "$RUNNER_TEMP/jcg-qualification-state"
+          git cat-file -e "$STATE_COMMIT^{commit}"
+          git merge-base --is-ancestor "$STATE_COMMIT" refs/heads/shadow/japan-jcg
+          test "$(git ls-tree --name-only "$STATE_COMMIT")" = state
+          git checkout --detach "$STATE_COMMIT"
+          test "$(git rev-parse HEAD)" = "$STATE_COMMIT"
+      - name: Compare actual collection-day evidence, never production
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.jcg_shadow_qualification_status \
+            --state-dir "$RUNNER_TEMP/jcg-qualification-state/state" \
+            --state-commit "$STATE_COMMIT" \
+            --as-of "$AS_OF" \
+            --output "$RUNNER_TEMP/jcg-qualification-metadata.json"
+          python - <<'PY'
+          import json, os, pathlib
+          p = pathlib.Path(os.environ["RUNNER_TEMP"]) / "jcg-qualification-metadata.json"
+          r = json.loads(p.read_text())
+          assert r["state_commit"] == os.environ["STATE_COMMIT"]
+          assert r["as_of"] == os.environ["AS_OF"]
+          assert r["report_is_machine_only"] is True
+          assert r["owner_promotion_authorized"] is False
+          assert r["production_eligible"] is False
+          assert r["weekly_writer_eligible"] is False
+          if os.environ["GITHUB_EVENT_NAME"] == "pull_request":
+            assert r["archived_records"] == 3
+            assert r["ledger_count"] == 1
+            assert r["collected_days_from_day_zero"] == 1
+            assert r["missing_days"] == []
+          PY
+      - name: Archive metadata only, never original publisher body/captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jcg-shadow-qualification-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-qualification-metadata.json
+          retention-days: 90
+          if-no-files-found: warn
+      # No schedule, no token write, no original HTML/PDF/body archival and no
+      # promotion or change to shadow state, production DB, renderer or writer.
