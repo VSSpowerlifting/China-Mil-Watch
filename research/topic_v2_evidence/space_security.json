@@ -1,0 +1,91 @@
+{
+  "sample_version": 1,
+  "topic": "space_security",
+  "source_commit": "e649b5d11b51aa3334fddfb4952d132b6780eb30",
+  "source_index_path": "output/corpus-index.json",
+  "source_index_blob_sha": "38b256ec7884d0b9b69b3b4dcd31ac3dace72ff8",
+  "text_extraction": "Archive record HTML div.original-text; strip tags, HTML-decode, collapse whitespace, trim; offsets in Unicode code units of resulting text",
+  "classification_status": "provisional_control_candidates_only",
+  "records": [
+    {
+      "record_id": 787,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-05-28",
+      "title_original": "日方在太空领域谋求军事松绑逆历史潮流、违时代大势",
+      "title_english": null,
+      "canonical_url": "http://www.81.cn/fyr/16464050.html",
+      "archive_path": "output/record/787.html",
+      "archive_blob_sha": "04bfd44a3aebb91fdf922c0b7338b673eebd8920",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "An official Chinese defense response substantively addresses Japan's claimed low-orbit military reconnaissance constellation and military-space exercises. Record is evidence of the Chinese statement, not independent verification of Japanese capabilities.",
+      "stored_text_chars": 312,
+      "evidence": {
+        "offset_start": 27,
+        "offset_end": 144,
+        "quote": "蒋斌大校答记者问。 记者：据报道，日本防卫省公布加强太空领域防御能力相关措施，还宣称已启用低轨军事侦察卫星星座。请问对此有何评论？ 蒋斌：近年来，日本在军事扩张的道路上越走越远，一步步突破“和平宪法”约束，大肆布局太空军事力量。日执政"
+      }
+    },
+    {
+      "record_id": 2293,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-07-09",
+      "title_original": "【双语】国防部：日本加速推动太空武器化、战场化",
+      "title_english": null,
+      "canonical_url": "http://www.81.cn/yw_208727/16472683.html",
+      "archive_path": "output/record/2293.html",
+      "archive_blob_sha": "f63de14b855e7c79db1f17f3c0d0f45df2dc3677",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "An official Chinese defense response addresses proposed institutional reorganization of Japan's military space force and space-domain operational posture. This is a separate official statement, but not a second independent country perspective.",
+      "stored_text_chars": 1510,
+      "evidence": {
+        "offset_start": 113,
+        "offset_end": 226,
+        "quote": "本参议院近日通过《防卫省设置法》修正案，将航空自卫队更名为“航空宇宙自卫队”，并配套组建“宇宙作战集团”。请问对此有何评论？ Question:According to reports, Japan's House of Co"
+      }
+    },
+    {
+      "record_id": 4588,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-09-24",
+      "title_original": "我国成功发射遥感四十号04组卫星",
+      "title_english": null,
+      "canonical_url": "http://www.81.cn/yw_208727/16488978.html",
+      "archive_path": "output/record/4588.html",
+      "archive_blob_sha": "00188c10607f02d6acbf99c395d9740a1ef90a89",
+      "review_state": "pending_human",
+      "provisional_status": "negative",
+      "rationale": "Describes a satellite launch and electromagnetic-environment experiment without an explicit military/security use. Do not infer a security mission from a state media outlet or launch location.",
+      "stored_text_chars": 148,
+      "evidence": {
+        "offset_start": 32,
+        "offset_end": 129,
+        "quote": "国在太原卫星发射中心使用长征六号改运载火箭，成功将遥感四十号04组卫星发射升空，卫星顺利进入预定轨道，发射任务取得圆满成功。 遥感四十号04组卫星主要用于开展电磁环境探测及相关技术试验。 这次任"
+      }
+    },
+    {
+      "record_id": 3005,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-08-07",
+      "title_original": "最美新时代革命军人风采丨军事航天部队某部军士高德宝：无名山上的守望者",
+      "title_english": "The Most Beautiful Revolutionary Soldier of the New Era | Sergeant Gao Debao of a Unit Under the Military Space Force: Sentinel on a Nameless Hill",
+      "canonical_url": "http://www.81.cn/yw_208727/16478187.html",
+      "archive_path": "output/record/3005.html",
+      "archive_blob_sha": "beb3f7b61302b04bb6fb3dc59ee6bef16dd42646",
+      "review_state": "pending_human",
+      "provisional_status": "borderline",
+      "rationale": "The issuer identifies a Military Space Force member, equipment repair and sustainment, but does not identify the mission of the equipment. Affiliation alone may not establish substantive space-security capability.",
+      "stored_text_chars": 832,
+      "evidence": {
+        "offset_start": 0,
+        "offset_end": 75,
+        "quote": "军事航天部队某部军士高德宝—— 无名山上的守望者 ■郝明鑫 解放军报记者 李伟欣 夏日清晨，一座海拔不到300米的无名山上，军事航天部队某部军士高德宝"
+      }
+    }
+  ]
+}
