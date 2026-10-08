@@ -1,0 +1,35 @@
+name: JCG One-time September Backfill — Offline Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/shadow_collect_desk.py
+      - tests/test_jcg_september_historical_backfill.py
+      - .github/workflows/jcg_september_historical_backfill.yml
+      - .github/workflows/jcg_september_backfill_contracts.yml
+      - docs/JAPAN_JCG_GOVERNED_BACKFILL_RUNBOOK.md
+
+permissions:
+  contents: read
+
+jobs:
+  historical-content-only:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Verify two-record addition with unchanged Day 0 and prevention of replay
+        run: python -m unittest tests.test_jcg_september_historical_backfill -v
+      - name: Check source code does not mutate repository outputs
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          test ! -e desks/japan/manifest.json
