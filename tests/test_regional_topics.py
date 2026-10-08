@@ -220,6 +220,22 @@ class AssignmentContract(unittest.TestCase):
             0,
         )
 
+    def test_read_rejects_boolean_taxonomy_version(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "unsupported taxonomy_version"):
+            topics_for_record(self.conn, self.record, taxonomy_version=True)
+
+    def test_read_rejects_unknown_version_even_without_a_store(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "unsupported taxonomy_version"):
+            topics_for_record(self.conn, self.record, taxonomy_version=99)
+        self.assertEqual(
+            self.conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+            ).fetchone()[0],
+            0,
+        )
+
 
 class StorePortability(unittest.TestCase):
 
