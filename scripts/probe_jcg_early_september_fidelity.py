@@ -57,7 +57,7 @@ def inspect(*, adapter=None):
     for ref in discovery.references:
         parts = ref.url.split("/")
         key = "jcg-en:" + parts[-1].removeprefix("article").removesuffix(".html")
-        if key in found or key not in EXPECTED_ALL or str(ref.published_date) != EXPECTED_ALL[key]:
+        if key in found or key not in EXPECTED_ALL or str(ref.hint_published_date) != EXPECTED_ALL[key]:
             result["failure"] = "unexpected_listing_identity_or_date"
             return result, False
         found[key] = ref
