@@ -110,13 +110,31 @@ class ReviewDocketContracts(unittest.TestCase):
     def test_article_host_and_missing_text_refused(self):
         for key, value in (("source_url", "https://evil.example/news/test"),
                            ("source_url", "https://www.afp.mil.ph/news/test?x=1"),
-                           ("text_status", "no_text"),
+                           ("text_status", "corrupt"),
                            ("body_chars", 0),
                            ("text_sha256", "nonhash")):
             bad = copy.deepcopy(self.first)
             bad["records"][0][key] = value
             with self.subTest(key=key), self.assertRaises(docket.DocketError):
                 docket.build_docket([bad])
+
+    def test_no_text_record_is_not_hidden_and_requires_human_disposition(self):
+        no_text = copy.deepcopy(self.first)
+        no_text["records"][0]["text_status"] = "no_text"
+        no_text["records"][0]["body_chars"] = 0
+        result = docket.build_docket([no_text])
+        self.assertEqual(result["total_source_records"], 2)
+        self.assertEqual(result["body_unavailable_records"], 1)
+        self.assertEqual(result["batches"][0]["records"][0]["review_status"], "not_started")
+        self.assertEqual(result["batches"][0]["records"][0]["extraction_review_priority"],
+                         "body_unavailable_requires_human_disposition")
+        self.assertIn("No text", docket.markdown_docket(result))
+        self.assertFalse(result["human_review_completed"])
+        self.assertFalse(result["production_eligible"])
+        wrong = copy.deepcopy(no_text)
+        wrong["records"][0]["body_chars"] = 20
+        with self.assertRaises(docket.DocketError):
+            docket.build_docket([wrong])
 
     def test_run_binding_and_future_date_refused(self):
         for field, value in (("first_seen_run", RUN_2),
