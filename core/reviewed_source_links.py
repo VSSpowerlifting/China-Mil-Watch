@@ -96,9 +96,15 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
         _require(slug in SOURCES, "unregistered or research-disabled source")
         url = item["source_url"]
         _require(isinstance(url, str) and len(url) <= 2048, "invalid source URL")
-        p = urlsplit(url)
+        _require(not any(ord(ch) <= 32 or ord(ch) == 127 for ch in url),
+                 "source URL must contain no whitespace or controls")
+        try:
+            p = urlsplit(url)
+            allowed_port = p.port is None
+        except ValueError as exc:
+            raise ReviewedLinkError("invalid official-source URL") from exc
         _require(p.scheme == "https" and p.hostname == SOURCES[slug][0]
-                 and not p.username and not p.password and p.port is None
+                 and not p.username and not p.password and allowed_port
                  and p.path.startswith("/") and not p.fragment,
                  "URL must be an exact HTTPS official-source URL without fragment")
         _require(url not in seen_urls, "duplicate source URL")
