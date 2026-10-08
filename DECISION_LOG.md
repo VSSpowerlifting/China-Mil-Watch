@@ -4,6 +4,12 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Retire U.S. Indo-Pacific reference desk
+
+Owner decision: remove the U.S. Indo-Pacific reference desk from the active desk registry and future public desk presentation. It had no production records or approved production source, and its `access_blocked` declaration is not an active coverage commitment. Do not reintroduce it as a desk without a new explicit owner decision.
+
+Preserve the existing historical DVIDS shadow collection state, incident evidence and 2026-10-07 scheduled-collection pause as historical audit records only; they do not constitute an active desk. No DVIDS dispatch, source activation, production promotion, archived-evidence deletion or unrelated desk change is authorized here. Public generated output is updated only through the normal reviewed rendering/deployment process.
+
 ## 2026-10-07 — Regional topics are a separate cross-desk classification axis
 
 Indo-Pacific Record will use a versioned regional subject vocabulary rather
