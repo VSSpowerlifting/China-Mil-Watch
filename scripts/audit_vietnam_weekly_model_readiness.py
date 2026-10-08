@@ -126,6 +126,8 @@ def audit(queue, notes, week_ending, *, existing=None):
         "non_vietnam_sources_preserved": sum(
             x["desk"] != "vietnam" for x in packet["items"]),
         "never_infer_official_silence": True,
+        "complete_reporting_week_capture_verified": False,
+        "latest_run_covers_reporting_saturday": None,
         "publication_approval": False,
         "desk_qualified": False,
         "editorial_email_sent": False,
@@ -161,6 +163,7 @@ def main(argv=None):
         "status": report["status"],
         "counts": report["counts"],
         "official_silence_verified": False,
+        "complete_reporting_week_capture_verified": False,
         "production_desk_promoted": False,
     }, sort_keys=True))
     if args.require_ready and not report["counts"]["ready_private_model"]:
