@@ -1,0 +1,44 @@
+name: Sunday Unified Briefs — Focused Offline and No-Send Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - .github/workflows/sunday_briefs_focused_checks.yml
+      - scripts/sunday_briefs_auto_writer.py
+      - scripts/sunday_editorial_handoff.py
+      - scripts/weekly_briefs_sunday_window.py
+      - core/brief_editorial_evidence.py
+      - scripts/validate_editorial_return.py
+      - tests/test_briefs_editorial_evidence.py
+      - tests/test_weekly_briefs_sunday_window.py
+      - research/briefs_editorial_evidence/2026-10-10.json
+
+permissions:
+  contents: read
+
+jobs:
+  no-send:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install declared offline test dependencies
+        run: pip install -r requirements.txt
+      - name: Verify one synthesized manuscript, typed sources, Saturday window, return validation and no SMTP
+        run: python -m unittest tests.test_briefs_editorial_evidence tests.test_weekly_briefs_sunday_window -v
+      - name: Preserve tracked corpus and prevent any draft artifact leak
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          test ! -e desks/japan/manifest.json
+      # No tokens required, no actual Anthropic calls, no secrets, no email,
+      # no original research packet or unfinished manuscript uploaded.
