@@ -1,0 +1,35 @@
+{
+  "schema": "vietnam-editorial-notes/1",
+  "entries": [
+    {
+      "source_identity": "mps-vi:1791199100",
+      "source_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+      "published_date": "2026-10-05",
+      "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+      "summary": "Vietnam's Ministry of Public Security described October 5 discussions with Turkish technology and security-industry firms, including ICT and ANVI, concerning prospective technology cooperation and potential transfer of security capabilities. The ministry did not establish a finalized purchase or an operational deployment in this account.",
+      "caveats": [
+        "This is a Ministry of Public Security statement, not a defense ministry weapons procurement.",
+        "Exploratory talks must not be described as signed contracts, acquisitions or delivered technologies."
+      ],
+      "topics": [
+        "security_industry",
+        "technology_cooperation"
+      ]
+    },
+    {
+      "source_identity": "mps-vi:1791199677",
+      "source_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+      "published_date": "2026-10-05",
+      "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+      "summary": "Vietnam's Ministry of Public Security reported an October 5 meeting with Concordia University representatives about security-related research, training, cybersecurity and AI. A memorandum mentioned in the release concerns Concordia and Vietnam's education ministry; the article does not show a newly signed MPS–Concordia agreement.",
+      "caveats": [
+        "Do not attribute the education ministry memorandum to the Ministry of Public Security.",
+        "The discussion does not independently establish procurement, implementation or a completed bilateral security program."
+      ],
+      "topics": [
+        "technology_cooperation",
+        "regional_partnerships"
+      ]
+    }
+  ]
+}
