@@ -1,0 +1,377 @@
+{
+  "packet_id": "ipr_regional_v2_hadr_crossdesk_20261007",
+  "version": 1,
+  "scope_topic": "military_hadr",
+  "source_pilot_taxonomy_version": 1,
+  "target_taxonomy_version": 2,
+  "classification_status": "provisional_source_first_editorial_controls_only",
+  "selection_note": "Curated by assistant using an earlier model-selected pilot; positive/negative roles are NOT independent human review. Original excerpts were selected by prior model. No source text was newly collected.",
+  "pilot_ledger_path": "research/topic_pilot_v1/ledger.json",
+  "pilot_ledger_blob_sha": "a4af23d199550df81b7e8292afda2c6e330a8cc5",
+  "pilot_sample_size": 60,
+  "record_count": 11,
+  "distinct_desk_count": 7,
+  "distinct_event_key_count": 9,
+  "provisional_role_counts": {
+    "positive_candidate": 6,
+    "negative_control": 4,
+    "unassessable_body": 1
+  },
+  "reviewer_gate": "Not a blind reviewer packet; use PR #142's source-first process for actual independent review.",
+  "cases": [
+    {
+      "pilot_id": "P16",
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_url": "http://www.81.cn/yw_208727/16490084.html",
+      "source_stated_date": "2026-09-29",
+      "title_original": "中老“和平列车-2026”人道主义医学救援联合演习暨医疗服务活动纪事",
+      "origin_key": "production",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "origin_blob": "4ad8cda873c5ed31b5ff009ac90271fd629f78ed",
+      "origin_path": "pla_watch.db",
+      "origin_ref": "refs/heads/main",
+      "storage_table": "articles",
+      "body_sha256": "e7d0bcbc1f1bffb88a69b679fa9a51ed205d8ecfbe0fe545663cf19e71a41d85",
+      "body_chars": 1345,
+      "record_identity": "16718946afff7483f16ee9f2b3a75d08506128ae03a7592176dba24b29e28fec",
+      "role": "positive_candidate",
+      "event_key": "peace_train_china_laos",
+      "review_question": "Humanitarian medical rescue exercise and delivered medical services; distinguish exercise from direct service",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 0,
+          "end": 104,
+          "quote": "占芭花常开 兄弟情常在 ——中老“和平列车-2026”人道主义医学救援联合演习暨医疗服务活动纪事 ■刘小薇 杨 超 近日，随着我军卫生列车驶离老挝万象，穿越中老铁路“友谊隧道”，驶入云南磨憨口岸，为期17天的"
+        },
+        {
+          "id": "E2",
+          "field": "text_original",
+          "start": 154,
+          "end": 262,
+          "quote": "训场内通力协作、密切配合，在医疗服务中探讨新兴技术应用、交流疑难病例。中老两军卫勤力量以精湛医术与赤诚仁心，把守望相助的深情写在绵延铁路上。 占芭花常开，兄弟情常在。从2017年到2026年，“和平列车”医疗队六度奔"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P35",
+      "desk_id": "singapore",
+      "source_slug": "sg_mindef_releases",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/22sep26-nr/",
+      "source_stated_date": "2026-09-22",
+      "title_original": "Largest ASEAN Defence Ministers’ Meeting (ADMM)-Plus Exercise in a Decade with the Participation of 2,200 Personnel from 19 Countries",
+      "origin_key": "production",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "origin_blob": "4ad8cda873c5ed31b5ff009ac90271fd629f78ed",
+      "origin_path": "pla_watch.db",
+      "origin_ref": "refs/heads/main",
+      "storage_table": "articles",
+      "body_sha256": "10866200805dcb0d67974d98e34e12400c4dfd179ffdfb5bcd3408d493f21177",
+      "body_chars": 4165,
+      "record_identity": "092b3c01bd065e30db7fba58f9d8aa4ec7febb760a3e5e6f59f82d7c7762d317",
+      "role": "positive_candidate",
+      "event_key": "trident_resolve_admm_plus",
+      "review_question": "Disaster-response combined field training; verify full text before treating its HADR objective as developed",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 133,
+          "end": 257,
+          "quote": "lian agencies are participating in Exercise Trident Resolve (XTR), held in Banten, Indonesia from 20 to 26 September 2026. P"
+        },
+        {
+          "id": "E2",
+          "field": "text_original",
+          "start": 1139,
+          "end": 1248,
+          "quote": "6 September 2026. XTR is the first ADMM-Plus Combined Field Training Exercise (FTX) involving three Experts’ "
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P38",
+      "desk_id": "japan",
+      "source_slug": "jp_mod_news_ja",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/08/28a.pdf",
+      "source_stated_date": "2026-08-28",
+      "title_original": "令和８年熊本地震復旧に係る対応",
+      "origin_key": "jp-mod",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "origin_blob": "ad4e296baa201126dfe92a8d798cc2b497b6b26e",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/jp-mod",
+      "storage_table": "shadow_records",
+      "body_sha256": "92c3546b6ef898a2bccadcf297e640a8f3fe60a94252673b73c5b5708486a068",
+      "body_chars": 232,
+      "record_identity": "29afb60ffc874ab196ee780a0e98d642690f81008369e4cc102cd560ca0579bc",
+      "role": "positive_candidate",
+      "event_key": "kumamoto_earthquake_support",
+      "review_question": "Military disaster-recovery support expenditure and vessel bathing services; no automatic procurement",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "○ 人件費（災害派遣等手当、航海手当、航空作業手当） 約１．３億円 ○ 民間船舶の運営費 約３．２億円 令和８年熊本地震復旧に係る対応 令和８年 ８ 月 防衛省 （注）これらの施策の実施に当たっては、既定経費の活用も検討 〇「はくおうⅡ」による入浴等支援 災害"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P51",
+      "desk_id": "philippines",
+      "source_slug": "ph_afp_articles",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-conclude-interagency-exercise-pagsasanay-sanlakas-2026",
+      "source_stated_date": "2026-10-03",
+      "title_original": "AFP, PNP, PCG Conclude Interagency Exercise “Pagsasanay Sanlakas” 2026",
+      "origin_key": "ph-afp",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "origin_blob": "e42f8f0dde480a99452d89bcfc7ee84b5aa55f13",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/ph-afp",
+      "storage_table": "shadow_records",
+      "body_sha256": "0f99d426c5860b25788a152f7a487463bf6979db84915b58c9509b5817dce003",
+      "body_chars": 1382,
+      "record_identity": "e95e4f07ef94fec2192af9b9f1a04bc062e0661547922080969b94fa244ba255",
+      "role": "positive_candidate",
+      "event_key": "sanlakas_philippines",
+      "review_question": "Interagency earthquake-response exercise; coast guard participation does not imply maritime coercion",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 126,
+          "end": 246,
+          "quote": "t Guard (PCG) concluded the second Interagency Exercise (IAX 02-2026), dubbed “Pagsasanay Sanlakas,” on October 2, 2026,"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P52",
+      "desk_id": "philippines",
+      "source_slug": "ph_afp_articles",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-sustain-joint-readiness-through-2026-inter-agency-exercise",
+      "source_stated_date": "2026-10-01",
+      "title_original": "AFP, PNP, PCG Sustain Joint Readiness Through 2026 Inter-Agency Exercise",
+      "origin_key": "ph-afp",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "origin_blob": "e42f8f0dde480a99452d89bcfc7ee84b5aa55f13",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/ph-afp",
+      "storage_table": "shadow_records",
+      "body_sha256": "2207cc71ef080ebfecbf35dba117ce775b3583b043415b39352a65622d62f724",
+      "body_chars": 1241,
+      "record_identity": "7300f6288eba84b619a9847948229d9d3cda0cf17bbd97b861babd045fdadf03",
+      "role": "positive_candidate",
+      "event_key": "sanlakas_philippines",
+      "review_question": "Second source record describing the same Sanlakas event as P51; count one context, not two independent events",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 147,
+          "end": 273,
+          "quote": "t Guard (PCG), formally opened the 2026 Inter-Agency Exercise during a ceremony held on September 30, here.\n\nThe opening cerem"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P57",
+      "desk_id": "indonesia",
+      "source_slug": "id_kemhan_news",
+      "source_url": "https://www.kemhan.go.id/2026/09/30/atas-nama-negara-menhan-sjafrie-anugerahkan-satyalancana-dharma-samudera-kepada-personel-jmsdf-yang-terlibat-penanganan-karhutla.html",
+      "source_stated_date": "2026-09-30",
+      "title_original": "Atas Nama Negara, Menhan Sjafrie Anugerahkan Satyalancana Dharma Samudera kepada Personel JMSDF yang Terlibat Penanganan Karhutla",
+      "origin_key": "indonesia-kemhan",
+      "origin_commit": "dc6a76193d17f3513c32ec1de02902ed01421437",
+      "origin_blob": "777987fe1bb7c0b4f0333463a91049c4d6f2959c",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/indonesia-kemhan",
+      "storage_table": "shadow_records",
+      "body_sha256": "b1c3a242582abce3750908bb9649e05e3aafcae7d33dec59bdc7061deea1157f",
+      "body_chars": 2845,
+      "record_identity": "9317e065dbe31cab06b56ae92fe2314766baa50ee9f19a4101335260b5f9c84f",
+      "role": "positive_candidate",
+      "event_key": "wildfire_jmsdf_indonesia",
+      "review_question": "Official description of JMSDF wildfire-response assistance; medal ceremony itself is not HADR",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 1480,
+          "end": 1598,
+          "quote": "an wujud konkret dari implementasi hubungan bilateral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA) "
+        },
+        {
+          "id": "E2",
+          "field": "text_original",
+          "start": 1528,
+          "end": 1661,
+          "quote": "teral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA) antara Indonesia dan Jepang, baik yang sedang berjalan maupun d"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P21",
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_url": "http://www.81.cn/wj_208567/16491191.html",
+      "source_stated_date": "2026-10-05",
+      "title_original": "国庆坚守战位，武警官兵担负巡逻执勤任务守护群众平安",
+      "origin_key": "production",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "origin_blob": "4ad8cda873c5ed31b5ff009ac90271fd629f78ed",
+      "origin_path": "pla_watch.db",
+      "origin_ref": "refs/heads/main",
+      "storage_table": "articles",
+      "body_sha256": "8000f6d67bfedb2b6cba7fa30e2b11c76370fd985b33ce3acc8ea13513d9d86c",
+      "body_chars": 214,
+      "record_identity": "bb58abd53ded786ef86a1edd3f8cdc82c39335f9bbade08fe9b7880713f49772",
+      "role": "negative_control",
+      "event_key": "holiday_public_order_patrol",
+      "review_question": "Routine armed-police/public-order patrol without disaster relief or humanitarian response",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "国庆佳节，处处洋溢着喜庆的节日氛围。武警广西总队河池支队官兵坚守战位，在河池西站及驻地商圈等人流密集区域，与公安民警开展联勤武装巡逻，全力维护驻地秩序、守护群众平安过节。 巡逻中，武警官兵采取“步巡+车巡”相结合、定点警戒与动态巡控相结合的模式，科学统筹执勤力"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P44",
+      "desk_id": "vietnam",
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "source_url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646",
+      "source_stated_date": "2026-10-02",
+      "title_original": "Việt Nam và Myanmar chú trọng hợp tác đấu tranh với các loại tội phạm mới",
+      "origin_key": "vietnam-mps-foreign-affairs",
+      "origin_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "origin_blob": "62aab439f7f8f2f980e0253669f8588f71d65f3e",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/vietnam-mps-foreign-affairs",
+      "storage_table": "shadow_records",
+      "body_sha256": "420a79b902de06951c8cd7108e297e8fa48c3bac028d007cca9ad886cf0b38d0",
+      "body_chars": 5076,
+      "record_identity": "f0135487e64ce77c5d67fc778f07c1b5c89525d710c8d1cbd200ce805401e1ac",
+      "role": "negative_control",
+      "event_key": "vietnam_myanmar_crime_cooperation",
+      "review_question": "Diplomatic police/crime cooperation without military disaster-relief mission",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "Chiều 02/10/2026, tại Hà Nội, Thượng tướng Lê Văn Tuyến, Ủy viên Trung ương Đảng, Thứ trưởng Bộ Công an đã có buổi làm việc với Th"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P49",
+      "desk_id": "philippines",
+      "source_slug": "ph_afp_articles",
+      "source_url": "https://www.afp.mil.ph/news/afp-chief-recognizes-naval-personnel-underscores-maritime-readiness",
+      "source_stated_date": "2026-10-06",
+      "title_original": "AFP Chief Recognizes Naval Personnel, Underscores Maritime Readiness",
+      "origin_key": "ph-afp",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "origin_blob": "e42f8f0dde480a99452d89bcfc7ee84b5aa55f13",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/ph-afp",
+      "storage_table": "shadow_records",
+      "body_sha256": "a1ac7efd29b9e66a3c2868cb5d593c53f69e96b9e09fac1d4b809f9dc26eaf02",
+      "body_chars": 1325,
+      "record_identity": "07b5ace2e6f4a909c2879c28ad99c8851e58ba2013d03abbe688c9f2616faf24",
+      "role": "negative_control",
+      "event_key": "philippines_maritime_readiness",
+      "review_question": "Substantive naval security and awards; no described disaster assistance",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 866,
+          "end": 991,
+          "quote": " personnel in sustaining the AFP’s maritime security mission.\n\nThe visit reaffirmed the AFP’s commitment to maintaining a str"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P58",
+      "desk_id": "korea",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "source_stated_date": "2026-10-06",
+      "title_original": "북한 탄도미사일 발사 관련 국방부 입장",
+      "origin_key": "korea-policy-briefing",
+      "origin_commit": "c20b7eb826b34e208ce5dccb7ea3c5306693718a",
+      "origin_blob": "1062669d621e9c72805174204168d5f7f6a2c59d",
+      "origin_path": "state/shadow.db",
+      "origin_ref": "refs/heads/shadow/korea-policy-briefing",
+      "storage_table": "shadow_records",
+      "body_sha256": "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284",
+      "body_chars": 429,
+      "record_identity": "02b194ad6634efab5077d58df9fb5f8b2db2f3b22fce098f808f93fd05673290",
+      "role": "negative_control",
+      "event_key": "korea_ballistic_missile_statement",
+      "review_question": "Missile monitoring and combined defense posture, not civilian disaster response",
+      "evidence": [
+        {
+          "id": "E1",
+          "field": "text_original",
+          "start": 115,
+          "end": 229,
+          "quote": "후 미사일을 탐지·추적하고 발사 원점을 정확히 식별하였음.\n□ 한미는 확고한 연합방위태세를 유지하고 있으며, 북한이 최근 발사한 미사일은 한미가 보유한 방어자산으로 충분히 탐지·요격 가능한 수준으로 평가하"
+        }
+      ],
+      "review_state": "pending_human",
+      "owner_approval": null
+    },
+    {
+      "pilot_id": "P36",
+      "desk_id": "singapore",
+      "source_slug": "sg_mindef_releases",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/22sep26-infographic/",
+      "source_stated_date": "2026-09-22",
+      "title_original": "Infographic: Ex Trident Resolve 2026",
+      "origin_key": "production",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "origin_blob": "4ad8cda873c5ed31b5ff009ac90271fd629f78ed",
+      "origin_path": "pla_watch.db",
+      "origin_ref": "refs/heads/main",
+      "storage_table": "articles",
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_chars": 0,
+      "record_identity": "182274e95b7413b66de66283af9831cef737195a6af8ed72a98ab2c9296ce1ac",
+      "role": "unassessable_body",
+      "event_key": "trident_resolve_admm_plus",
+      "review_question": "Infographic stored body unavailable; do not borrow HADR contents from P35",
+      "evidence": [],
+      "review_state": "pending_human",
+      "owner_approval": null
+    }
+  ]
+}
