@@ -64,7 +64,7 @@ def source_date(value):
             return datetime.strptime(text, fmt).date().isoformat()
         except ValueError:
             continue
-    raise ValueError("unrecognized JCG publisher date (no inferred fallback)")
+    raise ValueError("unrecognized JCG publisher date (no inferred fallback): " + repr(text[:64]))
 
 
 class JCGEnglishAdapter(ListingShadowAdapter):
