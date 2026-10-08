@@ -164,6 +164,12 @@ class CandidateTests(unittest.TestCase):
         with self.assertRaises(VietnamCandidateError):
             load_candidates(SAT, FRI, directory=self.directory)
 
+    def test_dangling_symlink_packet_refused(self):
+        dangling = self.directory / (SAT + ".json")
+        dangling.symlink_to(self.directory / "absent.json")
+        with self.assertRaisesRegex(VietnamCandidateError, "unsafe candidate"):
+            load_candidates(SAT, FRI, directory=self.directory)
+
     def test_packet_is_separate_from_production_records(self):
         rows = self.load()
         text = render_packet(scaffold(), as_of=FRI, vietnam_candidates=rows)
