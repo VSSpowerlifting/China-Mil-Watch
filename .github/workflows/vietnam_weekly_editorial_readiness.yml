@@ -1,0 +1,121 @@
+name: Vietnam Sunday Model-Evidence Readiness Audit
+
+# Collection evidence audit, NOT a source-finding or model-writing job.
+# Runs before the separately gated Sunday editorial email service.
+# No Anthropic, SMTP, public artifact, license assertion, or production write.
+on:
+  schedule:
+    # Sunday 15:07 UTC, ahead of the proposed Sunday 19:17 UTC editor handoff.
+    - cron: '7 15 * * 0'
+  workflow_dispatch:
+    inputs:
+      reporting_saturday:
+        description: "Optional exact reporting Saturday; blank selects last Saturday UTC"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-sunday-readiness
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout reviewed code only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install offline shadow review dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Select exact last reporting Saturday
+        id: week
+        env:
+          OWNER_WEEK: ${{ inputs.reporting_saturday }}
+        run: |
+          set -euo pipefail
+          saturday="$(python - <<'PY'
+          import datetime,os
+          today=datetime.datetime.now(datetime.timezone.utc).date()
+          named=os.environ.get("OWNER_WEEK","").strip()
+          if named:
+              d=datetime.date.fromisoformat(named)
+          else:
+              # Last completed Saturday, never a future partial week.
+              days_since=(today.weekday()-5)%7
+              if days_since==0:
+                  days_since=7
+              d=today-datetime.timedelta(days=days_since)
+          if d.weekday()!=5 or d>today:
+              raise ValueError("reporting date must be a completed Saturday")
+          print(d.isoformat())
+          PY
+          )"
+          [[ "$saturday" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          echo "saturday=$saturday" >> "$GITHUB_OUTPUT"
+
+      - name: Recheck exact MPS orphan-state source, raw captures and ledger
+        id: state
+        env:
+          SATURDAY: ${{ steps.week.outputs.saturday }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          work="$(mktemp -d "$RUNNER_TEMP/ipr-vn-readiness-XXXXXXXX")"
+          state="$work/mps-state"
+          # Deliberately no persisted Git push token.
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs \
+            --single-branch "https://github.com/$GITHUB_REPOSITORY.git" "$state"
+          test "$(git -C "$state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
+          test -z "$(git -C "$state" status --porcelain)"
+          commit="$(git -C "$state" rev-parse HEAD)"
+          [[ "$commit" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          python -m scripts.prepare_vietnam_mps_review_queue \
+            --state-repo "$state" --state-commit "$commit" \
+            --out-dir "$work/verified-queue"
+          echo "queue=$work/verified-queue/review_queue.json" >> "$GITHUB_OUTPUT"
+          echo "work=$work" >> "$GITHUB_OUTPUT"
+
+      - name: Count ready, missing, stale and blocked source research
+        env:
+          SATURDAY: ${{ steps.week.outputs.saturday }}
+          QUEUE: ${{ steps.state.outputs.queue }}
+          WORK: ${{ steps.state.outputs.work }}
+        run: |
+          set -euo pipefail
+          notes="research/vietnam_briefs_candidates/editorial_notes_$SATURDAY.json"
+          args=(--queue "$QUEUE" --week-ending "$SATURDAY" --out "$WORK/readiness.json")
+          if test -f "$notes"; then
+            args+=(--notes "$notes")
+          else
+            echo "::notice::No version-pinned Vietnam synopsis catalog for $SATURDAY. This is an editorial preparation gap, NOT government silence."
+          fi
+          python -m scripts.audit_vietnam_weekly_model_readiness "${args[@]}"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ["WORK"])/"readiness.json"
+          d=json.loads(p.read_text(encoding="utf-8"))
+          c=d["counts"]
+          print("Vietnam private model-readiness:",d["status"])
+          print("Available:",c["ready_private_model"])
+          print("Missing synopsis:",c["awaiting_source_specific_synopsis"])
+          print("Stale synopsis:",c["stale_source_version_synopsis"])
+          print("Collector integrity holds:",c["machine_held_in_window"])
+          if c["awaiting_source_specific_synopsis"] or c["stale_source_version_synopsis"]:
+              print("::warning::Verified MPS sources exist but some have no current research synopsis for the Sunday model.")
+          print("Source availability != institutional silence or publication authorization.")
+          PY
