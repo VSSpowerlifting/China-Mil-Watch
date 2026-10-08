@@ -48,6 +48,35 @@ PR #203. The Sunday writer then loads the temporary packet via its
 `--include-research --research-packet /tmp/sunday/2026-10-10.json` flags.
 This feeder is a **reusable tool**, not a deployed Sunday action yet.
 
+## Single-step audited runner interface
+
+For future CI, once the source state is available as a **read-only Git checkout**,
+the feeder can generate the same unified packet without persisting an unsigned
+review queue:
+
+```sh
+python -m scripts.build_vietnam_sunday_packet \
+  --state-repo /tmp/mps-shadow-clone \
+  --state-commit <exact-complete-shadow-Git-SHA> \
+  --notes research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json \
+  --week-ending 2026-10-10 \
+  --existing /tmp/regional/2026-10-10.json \
+  --out /tmp/vietnam-unified/2026-10-10.json
+```
+
+Both temporary directories must already exist, and output must remain
+**outside** the checked-out repository. The command performs the existing
+independent full raw-capture, state tree, SQLite and content-version validation
+before selecting any source. No local temp JSON is sent anywhere by this
+command. It prints only counts and approval=false flags, not source text.
+
+The shared Sunday writer in PR #203 can consume the output using
+`--full-week --include-research --research-packet /tmp/vietnam-unified/2026-10-10.json`
+after its independent source and cutoff checks. Do not make the Sunday job
+depend on a Git source it cannot actually clone: an unavailable immutable
+state must fail before invoking the model, not silently act as complete
+Vietnam coverage.
+
 ## Source eligibility, rights and omissions
 
 - Only MPS foreign-affairs Vietnamese originals, exact canonical HTTPS URL
