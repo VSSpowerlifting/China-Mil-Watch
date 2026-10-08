@@ -8,13 +8,13 @@ permissions:
   contents: read
 jobs:
   listing-parity:
-    if: \${{ github.head_ref == 'research/vietnam-journal-listing-live-parity-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.head_ref == 'research/vietnam-journal-listing-live-parity-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: \${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
@@ -25,7 +25,7 @@ jobs:
         run: python -m unittest tests.test_vn_defence_journal tests.test_vn_journal_article tests.test_vn_journal_listing -v
       - name: Read-only bounded listing parity (4 categories plus robots)
         env:
-          REPORT: \${{ runner.temp }}/vietnam-journal-listing-parity.json
+          REPORT: ${{ runner.temp }}/vietnam-journal-listing-parity.json
         run: |
           python - <<'PY'
           import hashlib, json, os, re, time
@@ -138,7 +138,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vietnam-journal-listing-parity-\${{ github.run_id }}
-          path: \${{ runner.temp }}/vietnam-journal-listing-parity.json
+          name: vietnam-journal-listing-parity-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-journal-listing-parity.json
           if-no-files-found: warn
           retention-days: 30
