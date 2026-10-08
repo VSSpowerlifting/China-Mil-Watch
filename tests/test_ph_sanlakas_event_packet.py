@@ -209,6 +209,9 @@ class ProvisionalPacketContract(unittest.TestCase):
         self.assertTrue(any(
             x["kind"] == "event_date_vs_publication_date" for x in flags
         ))
+        self.assertTrue(any(
+            x["kind"] == "opening_venue_conflict" for x in flags
+        ))
 
     def test_cli_does_not_fake_missing_git_shadow_history(self):
         with tempfile.TemporaryDirectory() as temp:
