@@ -41,13 +41,12 @@ jobs:
           python - <<'PY' >> "$GITHUB_ENV"
           from datetime import datetime, timedelta
           from zoneinfo import ZoneInfo
-          from core.brief_contract import eligible_desks
-          from core.desk_registry import load_registry
+          from scripts.weekly_briefs_auto_writer import live_editorial_desks
 
           today = datetime.now(ZoneInfo("America/New_York")).date()
           friday = today - timedelta(days=(today.weekday() - 4) % 7)
           saturday = friday + timedelta(days=1)
-          desks = eligible_desks(load_registry())
+          desks = live_editorial_desks()
           if len(desks) < 2:
               raise SystemExit("Refused: fewer than two live production-backed desks")
           print("IPR_EDITOR_AS_OF=" + friday.isoformat())
@@ -65,8 +64,6 @@ jobs:
           import os
           from pathlib import Path
           from config import DB_PATH
-          from core.brief_contract import eligible_desks
-          from core.desk_registry import load_registry
           from scripts.author_brief import build_draft
           from scripts.reconcile_db import read_only
           from storage.db import get_articles_for_desks
