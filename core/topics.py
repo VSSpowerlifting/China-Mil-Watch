@@ -250,7 +250,7 @@ def load_taxonomy(
 
     return TopicTaxonomy(
         taxonomy_id=TAXONOMY_ID,
-        taxonomy_version=TAXONOMY_VERSION,
+        taxonomy_version=version,
         groups=groups,
         topics=topics,
     )
