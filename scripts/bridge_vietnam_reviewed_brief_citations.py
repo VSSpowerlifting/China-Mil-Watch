@@ -75,6 +75,8 @@ def load(path, max_size=80000):
                           object_pairs_hook=_unique,
                           parse_constant=lambda value: (_ for _ in ()).throw(
                               CitationBridgeRefused("non-finite JSON token")))
+    except CitationBridgeRefused:
+        raise
     except (ValueError, UnicodeError) as exc:
         raise CitationBridgeRefused("bad JSON or encoding") from exc
 
