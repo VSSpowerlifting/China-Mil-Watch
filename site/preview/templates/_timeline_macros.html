@@ -1,0 +1,15 @@
+{% macro period(start, end) -%}
+<time datetime="{{ start }}">{{ start|reader_date }}</time>{% if start != end %} – <time datetime="{{ end }}">{{ end|reader_date }}</time>{% endif %}
+{%- endmacro %}
+{% macro date_mark(event) -%}
+{% if event.start[:7] == event.end[:7] %}<span class="tl-date-month">{{ event.start[5:7] | int | month_name }} {{ event.start[:4] }}</span>
+<span class="tl-date-day">{{ event.start[8:]|int }}{% if event.start != event.end %}<span class="tl-date-to">–</span>{{ event.end[8:]|int }}{% endif %}</span>
+{% else %}<span class="tl-date-month">{{ period(event.start, event.end) }}</span>{% endif %}
+{% if event.precision == 'uncertain_interval' %}<span>Uncertain interval</span>{% endif %}
+{%- endmacro %}
+{% macro citations(entry, root='../') -%}
+<p class="tl-citations">Evidence {% for ev in entry.evidence %}<a href="{{ root }}record/{{ ev.record_id }}.html">Record {{ ev.record_id }}</a>{% if not loop.last %}<span aria-hidden="true"> · </span>{% endif %}{% endfor %}</p>
+{%- endmacro %}
+{% macro original(record) -%}
+<p class="tl-original" lang="{{ record.lang }}">{{ record.title_original }}</p>
+{%- endmacro %}

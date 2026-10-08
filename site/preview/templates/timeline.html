@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% set timeline_surface = true %}
+{% from '_timeline_macros.html' import period, date_mark, citations, original with context %}
+{% block title %}{{ timeline.title }} — {{ title }}{% endblock %}
+{% block description %}{{ timeline.dek }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="../timeline-shell.css"><link rel="stylesheet" href="../timelines.css">{% endblock %}
+{% block head_scripts %}<script src="../reveal.js"></script>{% endblock %}
+{% block main_class %} class="timeline-page"{% endblock %}
+{% block body_open %}<body class="timeline-shell">{% endblock %}
+{% block content %}
+{% set analysis_current = 'timelines' %}{% include '_analysis_nav.html' %}
+<nav class="tl-breadcrumb" aria-label="Breadcrumb"><a href="../analysis.html">Analysis</a><span aria-hidden="true"> / </span><a href="../timelines.html">Evidence Timelines</a></nav>
+<article data-timeline-slug="{{ timeline.slug }}" data-editorial-status="{{ timeline.editorial_status }}"{% if timeline.approval %} data-editorial-digest="{{ timeline.approval.content_sha256 }}"{% endif %}>
+<header class="tl-hero">
+  <p class="evidence evidence--analysis">Evidence Timeline{% if timeline.is_review %} · unpublished draft{% endif %}</p>
+  <h1>{{ timeline.title }}</h1>
+  <p class="tl-dek">{{ timeline.dek }}</p>
+  <dl class="tl-meta">
+    <div><dt>Reported event period</dt><dd>{{ period(timeline.event_start, timeline.event_end) }}</dd></div>
+    <div><dt>Source publication period</dt><dd>{{ period(timeline.publication_start, timeline.publication_end) }}</dd></div>
+    <div><dt>Evidence packet</dt><dd>{{ timeline.source_count }} preserved records · {{ timeline.desk_count }} desks</dd></div>
+  </dl>
+  <p class="tl-byline">{{ timeline.author_name }}<br>Editor: {{ timeline.editor_name }} · {% if timeline.is_review %}Source reconciliation{% else %}Reviewed{% endif %} <time datetime="{{ timeline.reviewed_on }}">{{ timeline.reviewed_on|reader_date }}</time></p>
+</header>
+
+<section class="tl-premise" aria-labelledby="tl-question"><h2 id="tl-question">The question this chronology answers</h2><p>{{ timeline.scope }}</p>
+{% if timeline.reconciliation %}<p class="tl-premise-note">{{ timeline.reconciliation[0].note }}</p>{% endif %}</section>
+
+<section class="tl-overview" aria-labelledby="tl-overview-heading">
+  <div class="tl-section-head"><h2 id="tl-overview-heading">Two ways to read the dates</h2><p>Ordered sequences; spacing does not measure elapsed time.</p></div>
+  <nav aria-label="Reported event chronology" class="tl-track"><h3>Events as reported</h3><ol>
+    {% for e in timeline.entries %}<li><a href="#{{ e.id }}"><span>{{ period(e.event.start, e.event.end) }}</span><b>{{ e.headline }}</b>{% if e.contested %}<small>Contested boundary</small>{% endif %}</a></li>{% endfor %}
+  </ol></nav>
+  <nav aria-label="Source publication chronology" class="tl-track tl-track-publications"><h3>When sources published</h3><ol>
+    {% for group in timeline.publication_groups %}<li><span>{{ group.date|reader_date }}</span>{% for r in group.records %}<a href="#source-{{ r.id }}">{{ r.source_name }}<small>Record {{ r.id }}</small></a>{% endfor %}</li>{% endfor %}
+  </ol></nav>
+</section>
+
+<section class="tl-narrative" aria-labelledby="tl-narrative-heading">
+  <h2 id="tl-narrative-heading">The chronology</h2>
+  <ol class="tl-spine">
+  {% for e in timeline.entries %}
+    <li id="{{ e.id }}" class="tl-entry{% if e.contested %} tl-entry-contested{% endif %}" tabindex="-1" data-reveal>
+      <svg class="tl-spine-segment" aria-hidden="true" focusable="false" preserveAspectRatio="none" viewBox="0 0 2 100"><path d="M1 0V100" /></svg>
+      <div class="tl-date">{{ date_mark(e.event) }}<span class="tl-kind">{{ 'Attributed interval' if e.event_kind == 'claim' else ('Publication / report' if e.event_kind == 'report' else 'Reported event') }}</span></div>
+      <div class="tl-entry-body">
+        {% if e.contested %}<p class="tl-status">Contested starting boundary</p>{% endif %}
+        <h3>{{ e.headline }}</h3>
+        <p class="tl-observation">{{ e.observation }}</p>
+        {{ citations(e) }}
+        <p class="tl-publication">Source publication{% if e.evidence|length != 1 %}s{% endif %}: {% for ev in e.evidence %}<span>{{ ev.record.source_name }}, {{ ev.published_on|reader_date }}{% if ev.basis == 'planned' %} (prospective announcement){% elif ev.basis == 'retrospective' %} (retrospective){% endif %}</span>{{ '; ' if not loop.last }}{% endfor %}</p>
+        {% if e.contested %}<p class="tl-contested-note">{{ e.disagreement_note }}</p>{% endif %}
+        <details class="tl-evidence"><summary>Inspect the source evidence <span>{{ e.evidence|length }} record{{ 's' if e.evidence|length != 1 }}</span></summary>
+          <p class="tl-date-basis"><b>Date basis:</b> {{ e.event.date_basis }}</p>
+          {% for ev in e.evidence %}<section class="tl-evidence-item" aria-labelledby="ev-{{ e.id }}-{{ ev.record_id }}">
+            <h4 id="ev-{{ e.id }}-{{ ev.record_id }}"><a href="../record/{{ ev.record_id }}.html">Record {{ ev.record_id }}</a> · {{ ev.record.source_name }}</h4>
+            <p>{{ ev.record.institution_name }} · Published {{ ev.published_on|reader_date }}</p>
+            {{ original(ev.record) }}
+            <p><b>Attributed claim:</b> {{ ev.claim }}</p>
+            <blockquote lang="{{ ev.record.lang }}">{{ ev.excerpt }}</blockquote>
+            <p><a href="{{ ev.url }}" rel="noopener nofollow">Original source</a> <span class="tl-original-url">{{ ev.url }}</span></p>
+          </section>{% endfor %}
+        </details>
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+
+{% for panel in timeline.reconciliation %}<section class="tl-reconciliation" aria-labelledby="tl-reconcile-{{ loop.index }}">
+  <p class="evidence evidence--analysis">Comparing official accounts</p><h2 id="tl-reconcile-{{ loop.index }}">{{ panel.heading }}</h2><p class="tl-reconcile-note">{{ panel.note }}</p>
+  <div class="tl-accounts">{% for e in panel.entries %}<article><p>{{ period(e.event.start, e.event.end) }}</p><h3>{{ e.headline }}</h3>{% for ev in e.evidence %}<p>{{ ev.record.source_name }}: {{ ev.claim }} <a href="../record/{{ ev.record_id }}.html">Record {{ ev.record_id }}</a> (published {{ ev.published_on|reader_date }})</p>{% endfor %}</article>{% endfor %}</div>
+</section>{% endfor %}
+
+<section class="tl-ledger" aria-labelledby="tl-ledger-heading"><div class="tl-section-head"><h2 id="tl-ledger-heading">The source ledger</h2><p>Every cited record, once. Ordered by publication date.</p></div>
+<ol>{% for r in timeline.ledger %}<li id="source-{{ r.id }}"><div class="tl-ledger-date"><time datetime="{{ r.published_date }}">{{ r.published_date|reader_date }}</time><a href="../record/{{ r.id }}.html">Record {{ r.id }}</a></div><div><h3>{{ r.source_name }}</h3><p>{{ r.institution_name }}</p>{{ original(r) }}{% if r.title_english and r.lang != 'en' %}<p class="tl-translation">Stored model translation: {{ r.title_english }}</p>{% endif %}<a href="{{ r.url }}" rel="noopener nofollow">Original source <span aria-hidden="true">↗</span></a><span class="tl-original-url">{{ r.url }}</span></div></li>{% endfor %}</ol></section>
+
+<footer class="tl-method"><section aria-labelledby="tl-limits"><h2 id="tl-limits">Scope and limitations</h2><p>{{ timeline.methodology_note }}</p><p>Last editorial update: {{ timeline.updated_on|reader_date }}.{% if timeline.is_review %} Source parity has been checked; this new timeline still requires human editorial approval.{% endif %} <a href="../methodology.html">IPR methodology</a>.</p></section>
+<section aria-labelledby="tl-related"><h2 id="tl-related">Read the related analysis</h2>{% for b in timeline.related %}<p><a href="../{{ b.url }}">{{ b.title }}</a> · Brief No. {{ b.issue }}</p>{% endfor %}<p><a href="../timelines.html">All Evidence Timelines</a></p></section></footer>
+</article>
+{% endblock %}

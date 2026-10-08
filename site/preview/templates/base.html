@@ -38,14 +38,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
+{% block stylesheets %}<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
 <link rel="stylesheet" href="{{ '../' if nested else '' }}topography.css">
+{% endblock %}
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
 {% block head_scripts %}{% endblock %}
 </head>
+{% block body_open %}
 <body>
+{% endblock %}
 <a class="skip" href="#main">Skip to content</a>
 {% set root = '../' if nested else '' %}
 {# The masthead: one shell on every record-site page, light and static, with
@@ -125,7 +128,7 @@
    — so a single "last updated" would have to pick a story. An unknown value
    says so rather than borrowing a plausible neighbour. One quiet line under
    the navigation; the home page states the same view in its opening ledger. #}
-{% if run_status and page != 'index.html' %}
+{% if run_status and page != 'index.html' and not (timeline_surface|default(false)) %}
 <aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     {# The labels are not shortened: these three dates exist precisely because
@@ -158,7 +161,8 @@
 {% endif %}
 {# A decorative profile follows the actual address, including nested pages.
    It never represents geography, collection volume or analytical meaning. #}
-{% if brief is defined %}{% set terrain_key = brief.route %}
+{% if timeline is defined %}{% set terrain_key = timeline.route %}
+{% elif brief is defined %}{% set terrain_key = brief.route %}
 {% elif source is defined %}{% set terrain_key = source.route %}
 {% elif record is defined %}{% set terrain_key = 'record/' ~ record.id %}
 {% elif week is defined %}{% set terrain_key = week.path ~ '-' ~ (page_no | default(1)) %}
