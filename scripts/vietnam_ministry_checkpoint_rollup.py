@@ -84,6 +84,9 @@ def read_packet(directory):
     require(manifest.get("language") == "vi"
             and manifest.get("state_branch") == load_source(source).state_branch,
             "source or state branch mismatch")
+    require(isinstance(manifest.get("latest_run_id"), str)
+            and re.fullmatch(r"[A-Za-z0-9_.-]{5,100}", manifest["latest_run_id"]),
+            "invalid latest run attempt identity")
     require(all(isinstance(manifest.get(k), str) and HEX40.fullmatch(manifest[k])
                 for k in ("state_commit", "state_tree", "latest_collector_commit")),
             "unbound state or collector commit")
