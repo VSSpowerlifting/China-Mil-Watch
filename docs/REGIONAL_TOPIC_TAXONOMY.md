@@ -68,16 +68,25 @@ making shadow tables mimic the production corpus.
 
 ## Storage contract
 
-Migration `0008` creates an empty `record_topics` table in the production
-database. `core.topics.ensure_topic_store()` creates the identical table in any
-SQLite shadow state store that later opts into topic assignment.
+Version 1 does **not** register a production database migration and does not
+modify `pla_watch.db`. `core.topics.ensure_topic_store()` is the explicit,
+storage-neutral opt-in path: it creates an empty `record_topics` table in a
+writable SQLite store, or validates an existing compatible store and refuses a
+partial schema.
 
 The table has no foreign key to `articles` or a shadow record table. Its
 integrity comes from the explicit record identity plus taxonomy validation.
 This avoids coupling the regional layer to one desk's storage model.
 
-The phase creates **no rows**. Existing articles, `article_categories`,
-analyses, shadow databases, and public output are unchanged.
+When production adoption is authorized, it must be a separate schema phase:
+add a numbered migration that installs this same contract, apply it to the
+tracked production database in that same change, prove existing record rows are
+preserved, and only then permit production assignments. Shadow stores follow
+the same explicit opt-in boundary.
+
+This foundation creates **no assignment rows** and changes no production or
+shadow database. Existing articles, `article_categories`, analyses, shadow
+state, and public output are unchanged.
 
 ## Assignment provenance
 
