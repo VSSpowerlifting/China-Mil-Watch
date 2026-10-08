@@ -26,6 +26,8 @@ class ReadinessTests(unittest.TestCase):
         self.assertFalse(report["publication_approval"])
         self.assertFalse(report["desk_qualified"])
         self.assertTrue(report["never_infer_official_silence"])
+        self.assertFalse(report["complete_reporting_week_capture_verified"])
+        self.assertIsNone(report["latest_run_covers_reporting_saturday"])
         self.assertEqual({row["id"] for row in pack["items"]},
                          {"VN-MPS-1791199100", "VN-MPS-1791199677"})
 
