@@ -1,7 +1,7 @@
 {
   "manifest_version": 1,
   "_shadow": true,
-  "_comment": "Research candidate only. The two home URLs are alternate desktop/mobile views of the same English-language journal; no source is enabled and no workflow, remote dispatch, production record or capture retention is authorized.",
+  "_comment": "Disabled research candidate, not an activated collector. Two verified offline parsers and bounded in-memory real-page proof do not authorize retention, publication, exhaustive backfill or Day-0 scheduling; see readiness.v1.json and issues #154/#155.",
   "desk": {
     "desk_id": "vietnam",
     "display_name": "Vietnam Desk — National Defence Journal research",
@@ -43,7 +43,7 @@
         "^https://tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+/[0-9]{4,9}\\.html$",
         "^https://m\\.tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+-[0-9]{4,9}\\.html$"
       ],
-      "notes": "ONE publication across desktop/mobile, not two independent sources. Article identity vndj-en numeric ID canonicalizes to desktop permalink; only desktop site has a verified 2026-10-08 UTC robots/access path (article 26936 HTTP 200). This is Tier B original English military journal commentary, not a Ministry of National Defence directive. The desktop homepage listed 26 distinct IDs but completeness and article-body extraction are unverified; mobile robots.txt returned 404 and was not probed further. No shadow/production collector is enabled. Copyright notice: All rights reserved. See README.md and docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md."
+      "notes": "ONE National Defence Journal publication across desktop/mobile (not two sources). Tier B English military-journal commentary, never Vietnam MOD directives. Desktop access permitted for narrowly tested URLs by bounded robots-gated proof. Exact article identity and four English category pages have strict offline parsers (#138/#143); two article pages parsed only in memory; live listing identity parity matched 71 observed IDs on four desktop category pages. The observed list is not a complete historical archive; listing date hints are unverified and may conflict with article-specific dates. Mobile robots file 404 led to no mobile article/listing access. Source remains disabled, with no live collector, shadow Day 0, DB/output write or text-retention permission. Historical discovery #154 and source use/retention #155 are unresolved; see readiness.v1.json."
     }
   ],
   "blocked_research": [
@@ -56,5 +56,5 @@
       "status": "Actions run 37712715499: HTTP 404, no robots file at requested path, NOT an explicit disallow. No mobile listing or article request was made. Do not treat this host as bypass/fallback."
     }
   ],
-  "rights": "Publisher footer says Copyright © National Defence Journal 2013. All rights reserved. Bounded in-memory Actions probe accessed desktop article bytes without retaining source prose or HTML; no reproduction rights or long-term text retention has been established."
+  "rights": "Copyright © National Defence Journal 2013. All rights reserved. Publisher permission and the precise legal basis for ongoing metadata, full-text, translation, excerpt and media retention/public use have not been approved; issue #155 remains open. Successful bounded in-memory extraction is not authorization for future crawling, storage or republication."
 }
