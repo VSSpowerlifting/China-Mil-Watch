@@ -1,8 +1,11 @@
 """Read-only provenance validator for the v2 HADR cross-desk review packet.
 
-Replays source IDs, stored excerpts, source-date and Git-blob *references*
-against the merged v1 pilot ledger. Does NOT reread archived original blobs,
-independently verify official claims, or classify/attach topics.
+Default: replays source IDs, stored excerpts, source dates and Git
+object pointers against the frozen v1 pilot ledger (zero snapshot downloads).
+--verify-sources: additionally invokes the established v1 pilot source-replay
+contract on only the 11 selected records and their pinned origin Git blobs,
+using temporary immutable SQLite snapshots; missing blobs fail closed.
+Neither mode corroborates official claims or classifies/attaches topics.
 """
 from __future__ import annotations
 
@@ -187,21 +190,70 @@ def validate(packet: dict, pilot: dict, ledger_blob_sha: str) -> dict:
     }
 
 
-def validate_files(packet_path: Path = PACKET, ledger_path: Path = LEDGER) -> dict:
+def replay_original_sources(packet: dict, pilot: dict) -> dict:
+    """Recheck the 11 selected original bodies using the frozen Git database blobs.
+
+    Opt-in and offline. The existing pilot verifier enforces immutable scratch
+    database reads, exact body hashes and exact Python-character quote offsets.
+    Never fall back to current/shadow branch tips or a public URL on missing Git
+    objects; fetch the exact historical commits before invoking this option.
+    """
+    from scripts import topic_pilot
+
+    # Enforce all of the original ledger's v1 identity, ordering, and storage
+    # rules before handing a selected subset to its source replay function.
+    topic_pilot.validate(pilot)
+    by_id = {record["pilot_id"]: record for record in pilot["records"]}
+    selected_ids = [case["pilot_id"] for case in packet["cases"]]
+    _require(len(selected_ids) == len(set(selected_ids)) == 11,
+             "source replay requires exactly 11 distinct pilot IDs")
+    selected_records = [by_id[ident] for ident in selected_ids]
+    selected_origins = {record["origin"] for record in selected_records}
+    original = {
+        "origins": {name: origin for name, origin in pilot["origins"].items()
+                    if name in selected_origins},
+        "records": selected_records,
+    }
+    _require(set(original["origins"]) == selected_origins,
+             "missing exact source origin for selected cases")
+    count = topic_pilot.verify_sources(original)
+    _require(type(count) is int and count == len(selected_records),
+             "historical blob replay did not cover every selected case")
+    return {
+        "records_replayed": count,
+        "source_blobs_replayed": len(original["origins"]),
+        "historical_snapshot_replay": True,
+        "human_approval": False,
+    }
+
+
+def validate_files(packet_path: Path = PACKET, ledger_path: Path = LEDGER,
+                   verify_sources: bool = False) -> dict:
     raw = ledger_path.read_bytes()
     pilot = json.loads(raw.decode("utf-8"))
     packet = json.loads(packet_path.read_text(encoding="utf-8"))
-    return validate(packet, pilot, _git_blob_sha(raw))
+    result = validate(packet, pilot, _git_blob_sha(raw))
+    if verify_sources:
+        result["original_source_replay"] = replay_original_sources(packet, pilot)
+    else:
+        result["original_source_replay"] = None
+    return result
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--packet", type=Path, default=PACKET)
     parser.add_argument("--ledger", type=Path, default=LEDGER)
+    parser.add_argument(
+        "--verify-sources", action="store_true",
+        help="Replay only selected historical Git blobs in immutable temporary "
+             "SQLite copies; fail if pinned Git objects are unavailable.",
+    )
     args = parser.parse_args()
     try:
-        print(json.dumps(validate_files(args.packet, args.ledger),
-                         indent=2, ensure_ascii=False))
+        print(json.dumps(validate_files(
+            args.packet, args.ledger, verify_sources=args.verify_sources),
+            indent=2, ensure_ascii=False))
     except (OSError, ValueError, KeyError, TypeError) as exc:
         parser.exit(1, "HADR provenance check failed: %s\n" % exc)
     return 0
