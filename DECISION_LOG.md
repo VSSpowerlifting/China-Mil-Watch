@@ -4,6 +4,40 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-07 — Regional topics are a separate cross-desk classification axis
+
+Indo-Pacific Record will use a versioned regional subject vocabulary rather
+than repurposing any desk's existing analytical labels. Version 1 lives at
+`taxonomy/regional_topics.v1.json` and defines 19 multi-label topics across
+operations, diplomacy, capabilities, regional flashpoints, geoeconomics, and
+doctrine.
+
+The China Desk's 14 stored `article_categories` remain legacy desk-scoped
+labels. Similar names do not imply equivalence: no automatic China-category
+crosswalk is authorized. Document genre in `core/domain.py` also remains a
+separate axis.
+
+Regional topic assignments identify records by the stable
+`(desk_id, source_slug, canonical_url)` triple so the same contract can live
+beside production or isolated shadow SQLite stores without moving records
+between them. Every assignment must preserve taxonomy version, method
+(`human`, `rule`, or `model`), named provenance, UTC time, and optional
+evidence/confidence. Conflicting provenance may not silently overwrite an
+existing assignment.
+
+Version 1 deliberately does not register a production migration or modify
+`pla_watch.db`. The storage-neutral `ensure_topic_store()` contract may be
+used only when a SQLite store explicitly opts in; it creates no assignment row
+and refuses a partial schema. Production adoption requires a separate numbered
+migration that installs the same contract and is applied to the tracked
+database in that same reviewed change.
+
+Version 1 authorizes vocabulary and storage foundation only: no bulk
+classification, model prompt, legacy remap, public UI, shadow-state mutation,
+entity graph, timeline, or dossier is part of this decision. The next evidence
+gate is a small human-reviewed classification pilot spanning multiple desks.
+See `docs/REGIONAL_TOPIC_TAXONOMY.md`.
+
 ## 2026-10-07 — Japan official HTML routes remain challenge-gated from Actions
 
 A read-only bounded GitHub Actions re-probe tested the official Joint Staff and

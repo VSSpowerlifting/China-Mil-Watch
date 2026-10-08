@@ -82,9 +82,10 @@ ACCESS_METHODS = ("html", "rss", "api", "telegram", "manual")
 ORIGINALITY = ("original", "mirror", "syndicated", "unknown")
 
 #: Universal, cross-desk document genre. Kept small on purpose: it must mean
-#: the same thing for a PLA Daily feature and a US DoD transcript. Desk-specific
-#: topical labels (Taiwan, South China Sea, …) live in the desk taxonomy and are
-#: never promoted into this list.
+#: the same thing for a PLA Daily feature and a US DoD transcript. Subject matter
+#: is a separate axis: legacy desk labels remain in desk taxonomies, while the
+#: versioned cross-desk regional subject vocabulary lives in
+#: taxonomy/regional_topics.v1.json. Neither is folded into document genre.
 GENRES = (
     "directive_law",
     "speech_transcript",

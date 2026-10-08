@@ -1,0 +1,445 @@
+"""Regional Topic Taxonomy v1 contracts.
+
+The regional layer must be useful across production and shadow stores without
+reinterpreting the China Desk's existing article_categories.
+"""
+
+from __future__ import annotations
+
+import json
+import sqlite3
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from core.topics import (  # noqa: E402
+    RecordRef,
+    TopicAssignment,
+    TopicStoreError,
+    TopicTaxonomyError,
+    attach_topic,
+    ensure_topic_store,
+    load_taxonomy,
+    topics_for_record,
+)
+
+
+class TaxonomyContract(unittest.TestCase):
+
+    def test_v1_is_cross_desk_and_contains_the_approved_core_topics(self):
+        taxonomy = load_taxonomy()
+        self.assertEqual(taxonomy.taxonomy_id, "ipr_regional_topics")
+        self.assertEqual(taxonomy.taxonomy_version, 1)
+        self.assertEqual(len(taxonomy.topics), 19)
+        required = {
+            "military_exercises",
+            "defense_diplomacy",
+            "procurement_acquisition",
+            "defense_industry",
+            "maritime_security",
+            "taiwan_strait",
+            "south_china_sea",
+            "economic_security",
+            "cyber_information",
+            "space_security",
+            "export_controls_sanctions",
+            "critical_minerals_supply_chains",
+        }
+        self.assertTrue(required.issubset(set(taxonomy.topic_slugs)))
+
+    def test_every_slug_and_group_is_unique(self):
+        taxonomy = load_taxonomy()
+        self.assertEqual(
+            len(taxonomy.topic_slugs),
+            len(set(taxonomy.topic_slugs)),
+        )
+        groups = [g.slug for g in taxonomy.groups]
+        self.assertEqual(len(groups), len(set(groups)))
+        self.assertTrue(all(topic.group in groups for topic in taxonomy.topics))
+
+    def test_boolean_taxonomy_version_is_not_version_one(self):
+        raw = json.loads(
+            (REPO_ROOT / "taxonomy" / "regional_topics.v1.json")
+            .read_text(encoding="utf-8")
+        )
+        raw["taxonomy_version"] = True
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topics.json"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.assertRaisesRegex(
+                    TopicTaxonomyError, "unsupported taxonomy_version"):
+                load_taxonomy(path)
+
+    def test_malformed_duplicate_topic_is_refused(self):
+        raw = json.loads(
+            (REPO_ROOT / "taxonomy" / "regional_topics.v1.json")
+            .read_text(encoding="utf-8")
+        )
+        raw["topics"].append(dict(raw["topics"][0]))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topics.json"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.assertRaisesRegex(TopicTaxonomyError, "duplicate topic"):
+                load_taxonomy(path)
+
+    def test_the_legacy_china_labels_remain_a_separate_unchanged_vocabulary(self):
+        raw = json.loads(
+            (REPO_ROOT / "desks" / "china" / "taxonomy.json")
+            .read_text(encoding="utf-8")
+        )
+        legacy = [item["slug"] for item in raw["topical_labels"]]
+        self.assertEqual(legacy, [
+            "taiwan",
+            "south_china_sea",
+            "east_china_sea",
+            "us_china_military",
+            "exercises",
+            "modernization",
+            "doctrine",
+            "personnel",
+            "nuclear",
+            "cyber_info",
+            "internal_security",
+            "coast_guard",
+            "military_diplomacy",
+            "political_work",
+        ])
+        self.assertNotIn("regional_topics", raw)
+
+
+class AssignmentContract(unittest.TestCase):
+
+    def setUp(self):
+        self.conn = sqlite3.connect(":memory:")
+        ensure_topic_store(self.conn)
+        self.record = RecordRef(
+            desk_id="singapore",
+            source_slug="sg_mindef_releases",
+            canonical_url="https://www.mindef.gov.sg/news-and-events/latest-releases/example/",
+        )
+
+    def tearDown(self):
+        self.conn.close()
+
+    def assignment(self, **overrides):
+        values = {
+            "record": self.record,
+            "topic_slug": "military_exercises",
+            "assignment_method": "human",
+            "assigned_by": "editorial-review",
+            "assigned_at": "2026-10-07T23:15:00Z",
+            "evidence": "The release describes a named bilateral exercise.",
+        }
+        values.update(overrides)
+        return TopicAssignment(**values)
+
+    def test_attach_is_idempotent_and_query_order_is_deterministic(self):
+        self.assertTrue(attach_topic(self.conn, self.assignment()))
+        self.assertFalse(attach_topic(self.conn, self.assignment()))
+        self.assertTrue(attach_topic(
+            self.conn,
+            self.assignment(
+                topic_slug="defense_diplomacy",
+                evidence="The release records formal military-to-military engagement.",
+            ),
+        ))
+        got = topics_for_record(self.conn, self.record)
+        self.assertEqual(
+            [assignment.topic_slug for assignment in got],
+            ["defense_diplomacy", "military_exercises"],
+        )
+
+    def test_unknown_topic_fails_before_write(self):
+        with self.assertRaisesRegex(TopicTaxonomyError, "unknown regional topic"):
+            attach_topic(self.conn, self.assignment(topic_slug="made_up_topic"))
+        self.assertEqual(
+            self.conn.execute("SELECT COUNT(*) FROM record_topics").fetchone()[0],
+            0,
+        )
+
+    def test_valid_assignment_refuses_unconfigured_store_without_creating_schema(self):
+        conn = sqlite3.connect(":memory:")
+        try:
+            with self.assertRaisesRegex(
+                    TopicStoreError, "store is not configured"):
+                attach_topic(conn, self.assignment())
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master "
+                    "WHERE type='table' AND name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
+
+    def test_conflicting_provenance_never_silently_overwrites(self):
+        attach_topic(self.conn, self.assignment())
+        with self.assertRaises(TopicStoreError):
+            attach_topic(
+                self.conn,
+                self.assignment(
+                    assigned_by="different-review",
+                    evidence="Different provenance must not overwrite the first row.",
+                ),
+            )
+        row = self.conn.execute(
+            "SELECT assigned_by FROM record_topics"
+        ).fetchone()
+        self.assertEqual(row[0], "editorial-review")
+
+    def test_evidence_must_be_text_when_present(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "evidence must be non-empty text"):
+            attach_topic(self.conn, self.assignment(evidence=123))
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "evidence must be non-empty text"):
+            attach_topic(self.conn, self.assignment(evidence="   "))
+
+    def test_boolean_assignment_version_is_refused(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "assignment taxonomy version"):
+            attach_topic(self.conn, self.assignment(taxonomy_version=True))
+
+    def test_human_assignment_cannot_invent_a_confidence_score(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "human assignments do not carry"):
+            attach_topic(self.conn, self.assignment(confidence=0.9))
+
+    def test_model_assignment_must_name_provenance_and_valid_confidence(self):
+        assignment = self.assignment(
+            assignment_method="model",
+            assigned_by="topic-classifier:v1",
+            confidence=0.82,
+        )
+        self.assertTrue(attach_topic(self.conn, assignment))
+        stored = topics_for_record(self.conn, self.record)[0]
+        self.assertAlmostEqual(stored.confidence, 0.82)
+
+    def test_record_identity_requires_a_stable_absolute_url(self):
+        bad = RecordRef("singapore", "sg_mindef_releases", "/relative")
+        with self.assertRaisesRegex(TopicTaxonomyError, "absolute http"):
+            attach_topic(self.conn, self.assignment(record=bad))
+
+
+    def test_reading_an_unconfigured_store_is_read_only(self):
+        conn = sqlite3.connect(":memory:")
+        try:
+            self.assertEqual(topics_for_record(conn, self.record), [])
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
+
+    def test_read_rejects_boolean_taxonomy_version(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "unsupported taxonomy_version"):
+            topics_for_record(self.conn, self.record, taxonomy_version=True)
+
+    def test_read_rejects_unknown_version_even_without_a_store(self):
+        conn = sqlite3.connect(":memory:")
+        try:
+            with self.assertRaisesRegex(
+                    TopicTaxonomyError, "unsupported taxonomy_version"):
+                topics_for_record(conn, self.record, taxonomy_version=99)
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
+
+
+class StorePortability(unittest.TestCase):
+
+    def test_shadow_shaped_database_can_use_the_same_store_without_articles(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            "CREATE TABLE shadow_records (canonical_url TEXT PRIMARY KEY, body TEXT)"
+        )
+        record = RecordRef(
+            "vietnam",
+            "vn_mps_foreign_affairs_vi",
+            "https://bocongan.gov.vn/bai-viet/example-1234567890",
+        )
+        ensure_topic_store(conn)
+        attach_topic(
+            conn,
+            TopicAssignment(
+                record=record,
+                topic_slug="defense_diplomacy",
+                assignment_method="rule",
+                assigned_by="fixture-rule:v1",
+                assigned_at="2026-10-07T23:15:00+00:00",
+                confidence=1.0,
+                evidence="Fixture proves storage portability only.",
+            ),
+        )
+        self.assertEqual(
+            conn.execute("SELECT COUNT(*) FROM record_topics").fetchone()[0],
+            1,
+        )
+        self.assertEqual(
+            conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master WHERE name='articles'"
+            ).fetchone()[0],
+            0,
+        )
+        conn.close()
+
+    def test_opt_in_store_is_empty_and_preserves_existing_rows(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            "CREATE TABLE articles (id INTEGER PRIMARY KEY, title TEXT NOT NULL)"
+        )
+        conn.executemany(
+            "INSERT INTO articles (id, title) VALUES (?, ?)",
+            [(i, "record-%d" % i) for i in range(1, 8)],
+        )
+        before_ids = [
+            row[0] for row in conn.execute(
+                "SELECT id FROM articles ORDER BY id"
+            ).fetchall()
+        ]
+
+        ensure_topic_store(conn)
+
+        after_ids = [
+            row[0] for row in conn.execute(
+                "SELECT id FROM articles ORDER BY id"
+            ).fetchall()
+        ]
+        topic_count = conn.execute(
+            "SELECT COUNT(*) FROM record_topics"
+        ).fetchone()[0]
+        self.assertEqual(after_ids, before_ids)
+        self.assertEqual(topic_count, 0)
+        self.assertEqual(
+            conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master "
+                "WHERE type='table' AND name='schema_migrations'"
+            ).fetchone()[0],
+            0,
+        )
+        conn.close()
+
+    def test_partial_topic_store_is_refused_not_blessed(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            "CREATE TABLE record_topics (desk_id TEXT, source_slug TEXT)"
+        )
+        with self.assertRaisesRegex(TopicStoreError, "incompatible record_topics"):
+            ensure_topic_store(conn)
+        columns = {
+            row[1] for row in conn.execute("PRAGMA table_info(record_topics)")
+        }
+        self.assertEqual(columns, {"desk_id", "source_slug"})
+        conn.close()
+
+    def test_full_columns_without_primary_key_are_refused(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT
+            )
+            """
+        )
+        with self.assertRaisesRegex(TopicStoreError, "incompatible record_topics column"):
+            ensure_topic_store(conn)
+        self.assertEqual(
+            conn.execute("PRAGMA table_info(record_topics)").fetchall()[0][5],
+            0,
+        )
+        conn.close()
+
+    def test_primary_key_without_required_checks_is_refused(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT,
+                PRIMARY KEY (
+                    desk_id, source_slug, record_url, topic_slug, taxonomy_version
+                )
+            )
+            """
+        )
+        with self.assertRaisesRegex(TopicStoreError, "missing required CHECK"):
+            ensure_topic_store(conn)
+        conn.close()
+
+    def test_read_path_refuses_malformed_store_without_repairing_it(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT
+            )
+            """
+        )
+        record = RecordRef(
+            "singapore",
+            "sg_mindef_releases",
+            "https://www.mindef.gov.sg/news-and-events/latest-releases/example/",
+        )
+        before_sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='record_topics'"
+        ).fetchone()[0]
+        with self.assertRaises(TopicStoreError):
+            topics_for_record(conn, record)
+        after_sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='record_topics'"
+        ).fetchone()[0]
+        self.assertEqual(after_sql, before_sql)
+        self.assertEqual(
+            conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master "
+                "WHERE type='index' AND name='idx_record_topics_topic'"
+            ).fetchone()[0],
+            0,
+        )
+        conn.close()
+
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

@@ -1,0 +1,177 @@
+{
+  "taxonomy_id": "ipr_regional_topics",
+  "taxonomy_version": 1,
+  "_comment": [
+    "Cross-desk subject vocabulary for Indo-Pacific Record.",
+    "This is separate from desks/china/taxonomy.json topical_labels, which are the legacy China analysis categories already stored in article_categories.",
+    "No legacy category is renamed, reinterpreted, or automatically mapped by this file.",
+    "Assignments are multi-label and evidence-bearing. Version 1 defines vocabulary only; it does not classify any record."
+  ],
+  "groups": [
+    {
+      "slug": "operations",
+      "display_name": "Operations & Posture",
+      "description": "Military activity, posture, access, and operational competition."
+    },
+    {
+      "slug": "diplomacy",
+      "display_name": "Defense Diplomacy & Partnerships",
+      "description": "Intergovernmental and military relationships, agreements, and cooperative activity."
+    },
+    {
+      "slug": "capabilities",
+      "display_name": "Capabilities & Defense Industry",
+      "description": "Acquisition, industrial capacity, strategic capabilities, and enabling technologies."
+    },
+    {
+      "slug": "flashpoints",
+      "display_name": "Regional Flashpoints",
+      "description": "Geographically bounded security questions that recur across multiple desks."
+    },
+    {
+      "slug": "geoeconomics",
+      "display_name": "Economic Security & Statecraft",
+      "description": "Economic instruments, supply chains, and controls with security implications."
+    },
+    {
+      "slug": "ideas",
+      "display_name": "Doctrine & Strategy",
+      "description": "Formal or semi-formal concepts about strategy, doctrine, force employment, and planning."
+    }
+  ],
+  "topics": [
+    {
+      "slug": "military_exercises",
+      "display_name": "Military Exercises",
+      "group": "operations",
+      "description": "Exercises, drills, training events, readiness activity, and combined or joint training.",
+      "scope_note": "Use for an identifiable training or exercise event. Routine operations without a training purpose belong elsewhere."
+    },
+    {
+      "slug": "force_posture_basing",
+      "display_name": "Force Posture & Basing",
+      "group": "operations",
+      "description": "Deployments, rotations, access arrangements, bases, ports, facilities, and persistent force posture.",
+      "scope_note": "Use when the location, duration, access, or distribution of forces is substantively at issue."
+    },
+    {
+      "slug": "maritime_security",
+      "display_name": "Maritime Security",
+      "group": "operations",
+      "description": "Naval and maritime security activity, sea-lane protection, maritime domain awareness, and maritime incidents.",
+      "scope_note": "Geographic disputes may also receive a flashpoint topic. Coast-guard or coercive gray-zone activity may also receive gray_zone_coast_guard."
+    },
+    {
+      "slug": "gray_zone_coast_guard",
+      "display_name": "Gray-Zone & Coast Guard",
+      "group": "operations",
+      "description": "Coast-guard operations, maritime law-enforcement coercion, militia activity, and sub-threshold military pressure.",
+      "scope_note": "Use for coercive or security-relevant activity below conventional armed conflict; do not apply to routine civilian enforcement without a security dimension."
+    },
+    {
+      "slug": "defense_diplomacy",
+      "display_name": "Defense Diplomacy",
+      "group": "diplomacy",
+      "description": "Defense-ministry, military-to-military, senior-official, and institutional diplomatic engagement.",
+      "scope_note": "Use for substantive defense or military engagement. Ceremonial contact alone is insufficient unless it records an official defense relationship."
+    },
+    {
+      "slug": "alliances_partnerships",
+      "display_name": "Alliances & Security Partnerships",
+      "group": "diplomacy",
+      "description": "Alliance commitments, defense agreements, security partnerships, access frameworks, and recurring cooperative mechanisms.",
+      "scope_note": "Use when the durable relationship or formal framework is itself substantive, not merely because two countries appear in the same record."
+    },
+    {
+      "slug": "procurement_acquisition",
+      "display_name": "Procurement & Acquisition",
+      "group": "capabilities",
+      "description": "Purchases, tenders, acquisition programs, deliveries, upgrades, sustainment decisions, and capability procurement.",
+      "scope_note": "Use for a concrete acquisition or sustainment action. Broad industrial policy belongs under defense_industry."
+    },
+    {
+      "slug": "defense_industry",
+      "display_name": "Defense Industry",
+      "group": "capabilities",
+      "description": "Defense production, industrial-base capacity, co-production, shipbuilding, munitions capacity, and defense-sector investment.",
+      "scope_note": "Use when production capacity, firms, industrial policy, or manufacturing is substantively discussed."
+    },
+    {
+      "slug": "emerging_technology",
+      "display_name": "Emerging Technology",
+      "group": "capabilities",
+      "description": "Artificial intelligence, autonomy, quantum, advanced sensing, uncrewed systems, and other emerging defense technologies.",
+      "scope_note": "Apply only when the technology is materially part of the record, not for generic modernization language."
+    },
+    {
+      "slug": "nuclear_deterrence",
+      "display_name": "Nuclear Forces & Deterrence",
+      "group": "capabilities",
+      "description": "Nuclear forces, nuclear posture, extended deterrence, strategic weapons, and nuclear command or signaling.",
+      "scope_note": "Use for nuclear-specific capability, posture, policy, or signaling."
+    },
+    {
+      "slug": "cyber_information",
+      "display_name": "Cyber & Information Operations",
+      "group": "capabilities",
+      "description": "Cyber operations, information warfare, influence operations, electronic warfare, and information-domain capabilities.",
+      "scope_note": "Use for security-relevant cyber or information activity; routine public communications do not qualify."
+    },
+    {
+      "slug": "space_security",
+      "display_name": "Space Security",
+      "group": "capabilities",
+      "description": "Military and security space systems, counterspace activity, space-domain awareness, launches, and space cooperation.",
+      "scope_note": "Use when space capability or security is substantive rather than incidental."
+    },
+    {
+      "slug": "taiwan_strait",
+      "display_name": "Taiwan Strait",
+      "group": "flashpoints",
+      "description": "Cross-strait security, Taiwan-related military posture, coercion, deterrence, and contingency planning.",
+      "scope_note": "This regional topic is distinct from the China Desk's legacy category slug taiwan; no automatic equivalence is implied."
+    },
+    {
+      "slug": "south_china_sea",
+      "display_name": "South China Sea",
+      "group": "flashpoints",
+      "description": "Security activity, disputes, operations, coercion, and defense policy tied materially to the South China Sea.",
+      "scope_note": "Use only when the South China Sea is a substantive subject, not merely a geographic transit reference."
+    },
+    {
+      "slug": "east_china_sea",
+      "display_name": "East China Sea",
+      "group": "flashpoints",
+      "description": "Security activity, disputes, operations, and defense policy tied materially to the East China Sea.",
+      "scope_note": "Use only when the East China Sea is a substantive subject."
+    },
+    {
+      "slug": "economic_security",
+      "display_name": "Economic Security",
+      "group": "geoeconomics",
+      "description": "Economic policy explicitly linked to national security, resilience, strategic dependency, or defense preparedness.",
+      "scope_note": "Use for security-linked economic policy. Ordinary trade or macroeconomic policy is out of scope."
+    },
+    {
+      "slug": "export_controls_sanctions",
+      "display_name": "Export Controls & Sanctions",
+      "group": "geoeconomics",
+      "description": "Export controls, sanctions, investment restrictions, technology controls, and related coercive economic measures.",
+      "scope_note": "Use when the control or restriction itself is a substantive subject."
+    },
+    {
+      "slug": "critical_minerals_supply_chains",
+      "display_name": "Critical Minerals & Supply Chains",
+      "group": "geoeconomics",
+      "description": "Critical minerals, strategic materials, defense-relevant supply chains, stockpiles, and industrial resilience.",
+      "scope_note": "Use when the material or supply-chain issue is explicitly strategic, defense-related, or security-relevant."
+    },
+    {
+      "slug": "doctrine_strategy",
+      "display_name": "Doctrine & Strategy",
+      "group": "ideas",
+      "description": "Doctrine, strategic concepts, operational concepts, force-employment theory, and formal strategic planning.",
+      "scope_note": "Use for substantive ideas about how force or state power should be organized or employed, not for routine policy announcements."
+    }
+  ]
+}
