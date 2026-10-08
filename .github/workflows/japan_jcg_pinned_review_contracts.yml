@@ -1,0 +1,31 @@
+name: Japan JCG Pinned Review — Offline Contract Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/japan_jcg_pinned_review_receipt.py
+      - tests/test_japan_jcg_pinned_review_receipt.py
+      - .github/workflows/japan_jcg_shadow_review_manual.yml
+      - .github/workflows/japan_jcg_pinned_review_contracts.yml
+      - docs/JAPAN_JCG_PINNED_REVIEW_ACTIONS.md
+
+permissions:
+  contents: read
+
+jobs:
+  audit-contracts:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check review receipts and read-only workflow contract
+        run: python -m unittest tests.test_japan_jcg_pinned_review_receipt -v
+      - name: Ensure no unexpected changes to tracked repository
+        run: test -z "$(git status --porcelain)"
