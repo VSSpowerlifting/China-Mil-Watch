@@ -217,7 +217,7 @@ def assemble(queue, curated, current_commit, week_ending):
 
 
 def prepare(state_repo, state_commit, week_ending, out_path, *,
-            curated_dir=None, japan_packet=None):
+            curated_dir=None, japan_packet=None, observed_on=None):
     """Export immutable MPS source-state and prepare exact-week private packet."""
     start, cutoff = _publication_window(week_ending)
     del start, cutoff
@@ -265,7 +265,8 @@ def prepare(state_repo, state_commit, week_ending, out_path, *,
         state = formal.export_state_tree(
             state_repo, state_commit, Path(tmp) / "state")
         reviewed = ministry.review(state, SOURCE)
-        current_target = require_current_week_shadow(reviewed, week_ending)
+        current_target = require_current_week_shadow(
+            reviewed, week_ending, observed_on=observed_on)
         queue = compile_queue(
             reviewed, state_commit, provenance["state_tree"])
         packet, stats = assemble(queue, curated, state_commit, week_ending)
