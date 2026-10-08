@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts.weekly_briefs_auto_writer import (
-    choose_evidence, compose, validate_manuscript, MAX_RECORDS,
+    choose_evidence, compose, validate_manuscript, writing_schema, MAX_RECORDS,
 )
 
 
@@ -62,6 +62,20 @@ class WriterContractTests(unittest.TestCase):
         result = valid_manuscript()
         self.assertIs(validate_manuscript(result, evidence()), result)
 
+    def test_schema_limits_every_citation_to_offered_nonempty_ids(self):
+        schema = writing_schema([2, 1, 2])
+        for section in ("development", "opening_note", "what_stood_out",
+                        "why_it_matters", "what_was_routine", "what_im_watching_next",
+                        "cross_desk_comparison"):
+            field = schema["properties"]["citations"]["properties"][section]
+            self.assertEqual(field["items"]["enum"], [1, 2])
+            self.assertEqual(field["minItems"], 1)
+            self.assertIs(field["uniqueItems"], True)
+        with self.assertRaisesRegex(ValueError, "citation vocabulary"):
+            writing_schema([])
+        with self.assertRaisesRegex(ValueError, "citation vocabulary"):
+            writing_schema([True])
+
     def test_unknown_citation_refused(self):
         result = valid_manuscript()
         result["citations"]["why_it_matters"] = [999]
@@ -111,6 +125,9 @@ class WriterContractTests(unittest.TestCase):
             self.assertEqual(compose(sidecar, "2026-10-09", client=fake), manuscript)
         self.assertEqual(len(recorded), 1)
         self.assertEqual(recorded[0]["tool_choice"]["name"], "compose_editorial_draft")
+        schema = recorded[0]["tools"][0]["input_schema"]
+        self.assertEqual(schema["properties"]["citations"]["properties"]["opening_note"]["items"]["enum"], [1, 2])
+        self.assertIn("The only allowed record IDs are 1, 2.", recorded[0]["messages"][0]["content"])
         self.assertNotIn("messages", str(manuscript))
         self.assertLessEqual(MAX_RECORDS, 20)
 
@@ -123,6 +140,52 @@ class WriterContractTests(unittest.TestCase):
         with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
             with self.assertRaisesRegex(ValueError, "did not complete"):
                 compose(sidecar, "2026-10-09", client=fake)
+
+    def test_invalid_citations_regenerated_once_then_accepted(self):
+        bad = valid_manuscript()
+        bad["citations"]["opening_note"] = [999]
+        good = valid_manuscript()
+        inputs = [bad, good]
+        calls = []
+
+        def stream(**kwargs):
+            calls.append(kwargs)
+            content = inputs.pop(0)
+            response = SimpleNamespace(
+                stop_reason="tool_use",
+                content=[SimpleNamespace(type="tool_use", name="compose_editorial_draft", input=content)],
+            )
+            return nullcontext(SimpleNamespace(get_final_message=lambda: response))
+
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=stream))
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"], "source_trail": []}
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
+            self.assertEqual(compose(sidecar, "2026-10-09", client=fake), good)
+        self.assertEqual(len(calls), 2)
+        self.assertIn("PREVIOUS DRAFT WAS REJECTED", calls[1]["messages"][0]["content"])
+        self.assertNotIn("PREVIOUS DRAFT WAS REJECTED", calls[0]["messages"][0]["content"])
+
+    def test_invalid_citations_refused_after_two_attempts(self):
+        calls = []
+
+        def stream(**kwargs):
+            calls.append(kwargs)
+            bad = valid_manuscript()
+            bad["citations"]["opening_note"] = []
+            response = SimpleNamespace(
+                stop_reason="tool_use",
+                content=[SimpleNamespace(type="tool_use", name="compose_editorial_draft", input=bad)],
+            )
+            return nullcontext(SimpleNamespace(get_final_message=lambda: response))
+
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=stream))
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"], "source_trail": []}
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
+            with self.assertRaisesRegex(ValueError, "opening_note"):
+                compose(sidecar, "2026-10-09", client=fake)
+        self.assertEqual(len(calls), 2)
 
     def test_stream_timeout_does_not_synthesize_draft(self):
         class BrokenStream:
