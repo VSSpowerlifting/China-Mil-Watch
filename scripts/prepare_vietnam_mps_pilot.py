@@ -135,11 +135,12 @@ def candidates(evidence, approval):
 
 
 def apply_to_copy(db_path, planned, authorization, provenance):
-    target = Path(db_path).resolve()
+    given = Path(db_path)
+    require(not given.is_symlink(), "refusing a symlink target")
+    target = given.resolve()
     require(target.is_file(), "target must be an existing migrated disposable DB")
     require(target != (ROOT / "pla_watch.db").resolve()
             and ROOT not in target.parents, "refusing any in-repository database")
-    require(not target.is_symlink(), "refusing a symlink target")
     inserted = already = 0
     con = sqlite3.connect(str(target))
     try:
