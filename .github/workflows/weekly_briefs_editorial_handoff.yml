@@ -1,9 +1,8 @@
-name: Friday IPR Briefs Automatic Draft to Editor
+name: Friday IPR Briefs — Legacy Manual Preview (No Automatic Delivery)
 
+# Sunday is the intended editorial handoff. This legacy workflow is manual-
+# only: never schedule a parallel Friday manuscript or email.
 on:
-  schedule:
-    # Friday ~4:17 p.m. EDT / 3:17 p.m. EST (UTC scheduling; may run late).
-    - cron: '17 20 * * 5'
   workflow_dispatch:
     inputs:
       send_email:
@@ -31,10 +30,10 @@ concurrency:
 
 jobs:
   editor-handoff:
-    if: github.event_name == 'workflow_dispatch' || vars.IPR_EDITOR_DELIVERY_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
-      SHOULD_SEND: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_email == true)) }}
+      SHOULD_SEND: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' && github.event_name == 'workflow_dispatch' && inputs.send_email == true }}
     timeout-minutes: 20
     steps:
       - name: Checkout triggered source
