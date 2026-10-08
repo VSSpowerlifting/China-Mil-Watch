@@ -264,18 +264,18 @@ ON record_topics (taxonomy_version, topic_slug, desk_id)
 """
 
 
-_RECORD_TOPICS_REQUIRED_COLUMNS = {
-    "desk_id",
-    "source_slug",
-    "record_url",
-    "topic_slug",
-    "taxonomy_version",
-    "assignment_method",
-    "assigned_by",
-    "assigned_at",
-    "confidence",
-    "evidence",
-}
+_RECORD_TOPICS_COLUMN_CONTRACT = (
+    ("desk_id", "TEXT", 1, 1),
+    ("source_slug", "TEXT", 1, 2),
+    ("record_url", "TEXT", 1, 3),
+    ("topic_slug", "TEXT", 1, 4),
+    ("taxonomy_version", "INTEGER", 1, 5),
+    ("assignment_method", "TEXT", 1, 0),
+    ("assigned_by", "TEXT", 1, 0),
+    ("assigned_at", "TEXT", 1, 0),
+    ("confidence", "REAL", 0, 0),
+    ("evidence", "TEXT", 0, 0),
+)
 
 
 def topic_store_exists(conn: sqlite3.Connection) -> bool:
@@ -285,30 +285,70 @@ def topic_store_exists(conn: sqlite3.Connection) -> bool:
     ).fetchone() is not None
 
 
-def _topic_store_columns(conn: sqlite3.Connection) -> set:
-    return {
-        row[1]
-        for row in conn.execute("PRAGMA table_info(record_topics)").fetchall()
-    }
+def _validate_topic_store(conn: sqlite3.Connection) -> None:
+    """Validate the complete v1 table contract without mutating the store."""
+    rows = conn.execute("PRAGMA table_info(record_topics)").fetchall()
+    actual_names = tuple(row[1] for row in rows)
+    expected_names = tuple(item[0] for item in _RECORD_TOPICS_COLUMN_CONTRACT)
+    if actual_names != expected_names:
+        missing = sorted(set(expected_names) - set(actual_names))
+        unexpected = sorted(set(actual_names) - set(expected_names))
+        details = []
+        if missing:
+            details.append("missing columns: %s" % ", ".join(missing))
+        if unexpected:
+            details.append("unexpected columns: %s" % ", ".join(unexpected))
+        if not details:
+            details.append("column order differs from the v1 contract")
+        raise TopicStoreError(
+            "incompatible record_topics table (%s)" % "; ".join(details)
+        )
+
+    for row, expected in zip(rows, _RECORD_TOPICS_COLUMN_CONTRACT):
+        name, declared_type, not_null, pk_position = expected
+        actual = (
+            row[1],
+            (row[2] or "").upper(),
+            int(row[3]),
+            int(row[5]),
+        )
+        wanted = (name, declared_type, not_null, pk_position)
+        if actual != wanted or row[4] is not None:
+            raise TopicStoreError(
+                "incompatible record_topics column %s: expected type=%s "
+                "not_null=%d pk_position=%d and no default" %
+                (name, declared_type, not_null, pk_position)
+            )
+
+    schema_row = conn.execute(
+        "SELECT sql FROM sqlite_master "
+        "WHERE type='table' AND name='record_topics'"
+    ).fetchone()
+    if not schema_row or not schema_row[0]:
+        raise TopicStoreError("record_topics table has no inspectable schema")
+    normalized = re.sub(r"\s+", "", schema_row[0].lower())
+    required_checks = (
+        "check(assignment_methodin('human','rule','model'))",
+        "check(confidenceisnullor(confidence>=0.0andconfidence<=1.0))",
+    )
+    missing_checks = [check for check in required_checks if check not in normalized]
+    if missing_checks:
+        raise TopicStoreError(
+            "incompatible record_topics table is missing required CHECK constraints"
+        )
 
 
 def ensure_topic_store(conn: sqlite3.Connection) -> None:
     """Install or validate the assignment table in an opted-in SQLite store.
 
     This is intentionally storage-neutral and is not itself a production
-    migration. If a pre-existing table has only part of the v1 contract, fail
-    closed rather than treating it as compatible or mutating it in place.
+    migration. Existing stores must match the complete v1 column, key, and
+    CHECK-constraint contract; malformed lookalikes fail closed rather than
+    being blessed or repaired in place.
     """
-    if topic_store_exists(conn):
-        missing = _RECORD_TOPICS_REQUIRED_COLUMNS - _topic_store_columns(conn)
-        if missing:
-            raise TopicStoreError(
-                "partial record_topics table is missing columns: %s" %
-                ", ".join(sorted(missing))
-            )
-    else:
+    if not topic_store_exists(conn):
         conn.execute(RECORD_TOPICS_DDL)
-
+    _validate_topic_store(conn)
     conn.execute(RECORD_TOPICS_INDEX_DDL)
 
 
@@ -379,6 +419,7 @@ def topics_for_record(
     record.validate()
     if not topic_store_exists(conn):
         return []
+    _validate_topic_store(conn)
     taxonomy = load_taxonomy()
     if taxonomy_version != taxonomy.taxonomy_version:
         raise TopicTaxonomyError(
