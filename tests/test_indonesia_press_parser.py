@@ -58,6 +58,34 @@ class PressParserPreview(unittest.TestCase):
                          sorted((r.published_date for r in page.records), reverse=True))
         self.assertTrue(all("www.kemhan.go.id" in r.url for r in page.records))
 
+    def test_offline_audit_reports_consistency_never_source_approval(self):
+        import hashlib
+        import tempfile
+        from pathlib import Path
+        from scripts.audit_indonesia_press_fixture import audit
+        url, original = self.synthetic_article()
+        with tempfile.TemporaryDirectory() as root:
+            listing = Path(root) / "listing.html"
+            article = Path(root) / "article.html"
+            listing.write_text(self.synthetic_listing(), encoding="utf-8")
+            article.write_text(original, encoding="utf-8")
+            result = audit(listing, article, source_url=url)
+            self.assertEqual(result["article_url"], url)
+            self.assertEqual(result["finding"],
+                             "locally_consistent_not_authenticity_verified")
+            self.assertEqual(result["article_capture_sha256"],
+                             hashlib.sha256(article.read_bytes()).hexdigest())
+            for name in ("native_source_policy_verified",
+                         "real_source_capture_authenticated",
+                         "human_original_language_review",
+                         "source_admission_approved", "production_writes"):
+                self.assertIs(result[name], False)
+            with self.assertRaises(ValueError):
+                audit(listing, article, source_url="https://www.kemhan.go.id/2026/10/01/unknown.html")
+            listing.write_bytes(fixture("kemhan-news.bin"))
+            with self.assertRaises(ValueError):
+                audit(listing, article, source_url=url)
+
     def test_real_berita_page_does_not_masquerade_as_press(self):
         with self.assertRaises(ValueError):
             parse_press_listing(fixture("kemhan-news.bin").decode())
