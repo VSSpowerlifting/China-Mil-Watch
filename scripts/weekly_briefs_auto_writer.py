@@ -256,7 +256,7 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
     if supplemental:
         source_notes = []
         for source in supplemental:
-            source_notes.append("\\n".join((
+            source_notes.append("\n".join((
                 '<supplemental_japan_source id="{}">'.format(source["id"]),
                 "Japan Desk: EXTERNAL EDITORIAL RESEARCH, NOT PRODUCTION",
                 "Publisher: " + source["issuer"],
@@ -272,9 +272,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
                 "</supplemental_japan_source>",
             )))
         prompt += (
-            "\\n\\nEXTERNAL JAPAN SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE):\\n"
-            + "\\n\\n".join(source_notes)
-            + "\\nEND EXTERNAL JAPAN SOURCE RESEARCH\\n"
+            "\n\nEXTERNAL JAPAN SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE):\n"
+            + "\n\n".join(source_notes)
+            + "\nEND EXTERNAL JAPAN SOURCE RESEARCH\n"
             + "Use these source-specific, explicitly provisional Japan claims only "
               "when supported. Synthesize a coherent central article concept "
               "from the supplied production bodies and, where substantively "
