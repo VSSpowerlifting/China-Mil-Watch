@@ -20,7 +20,7 @@ on:
         required: true
         type: string
       as_of:
-        description: Friday or Saturday YYYY-MM-DD source cutoff
+        description: Reporting-week cutoff YYYY-MM-DD; before Saturday is partial
         required: true
         type: string
 
@@ -98,6 +98,8 @@ jobs:
           assert report["source_rights_approved"] is False
           assert report["eligible_for_automatic_model_drafting"] is False
           assert report["state_or_production_writes"] == 0
+          assert report["source_snapshot_completeness_attested"] is False
+          assert report["full_reporting_week_elapsed_at_cutoff"] == (os.environ["JP_WEEK_CUTOFF"] == os.environ["JP_WEEK_END"])
           print(json.dumps({
             "state_commit": report["state_commit"],
             "week_ending": report["reporting_saturday"],
