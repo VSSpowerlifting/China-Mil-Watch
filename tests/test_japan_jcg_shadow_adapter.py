@@ -127,6 +127,7 @@ class JCGSourceContracts(unittest.TestCase):
         self.assertEqual(parsed.published_date, "2026-10-06")
         self.assertEqual(parsed.language_tag, "en")
         self.assertEqual(parsed.extra["source_identity"], "jcg-en:9455")
+        self.assertEqual(parsed.extra["html_datetime_verdict"], "matches_visible")
         self.assertEqual(parsed.extra["body_scope"], "published_html_text_only")
         self.assertFalse(parsed.extra["attachments_collected"])
         self.assertEqual(parsed.extra["attachment_urls"],
@@ -134,10 +135,22 @@ class JCGSourceContracts(unittest.TestCase):
         self.assertIn("maritime law enforcement", parsed.text_original)
         self.assertNotIn("IGNORE", parsed.text_original)
 
+    def test_observed_2021_stale_html_datetime_is_disclosed_not_hidden(self):
+        url = "https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html"
+        html = article("9455", "PCG Training", iso="2021-3-1")
+        doc = self.adapter.parse_article(html, url)
+        self.assertEqual(doc.published_date, "2026-10-06")
+        self.assertEqual(doc.extra["html_datetime_original"], "2021-3-1")
+        self.assertEqual(doc.extra["html_datetime_verdict"],
+                         "observed_stale_template_2021-3-1")
+        self.assertEqual(doc.extra["date_basis"],
+                         "visible_publisher_time_and_archive_listing")
+
     def test_title_date_and_body_missing_rejected(self):
         url = "https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html"
         for broken in (
             article("9455", "PCG Training", iso="2026-10-07"),
+            article("9455", "PCG Training", iso="2024-09-06"),
             article("9455", "PCG Training", body="read the linked PDF"),
             article("9455", "PCG Training").replace("topics-article__main", "WRONG"),
             article("9455", "PCG Training").replace("entry-title", "WRONG"),
