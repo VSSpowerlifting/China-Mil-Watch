@@ -50,14 +50,14 @@ class JCGSourceContracts(unittest.TestCase):
     def setUp(self):
         self.adapter = JCGEnglishAdapter(jcg_source())
 
-    def test_declaration_is_disabled_and_outside_production_discovery(self):
+    def test_declaration_is_manual_shadow_only_and_outside_production_discovery(self):
         root = Path(__file__).resolve().parents[1]
         manifest = json.loads((root / "shadow/jp_jcg/manifest.json").read_text())
         self.assertEqual(manifest["desk"]["desk_id"], "japan_jcg")
         self.assertEqual(manifest["desk"]["public_status"], "shadow")
         self.assertFalse(manifest["desk"]["active"])
         self.assertEqual(len(manifest["sources"]), 1)
-        self.assertFalse(manifest["sources"][0]["enabled"])
+        self.assertTrue(manifest["sources"][0]["enabled"])
         self.assertEqual(manifest["sources"][0]["slug"], "jp_jcg_press_en")
         self.assertFalse((root / "desks/japan/manifest.json").exists())
 
