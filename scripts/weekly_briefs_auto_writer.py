@@ -117,7 +117,7 @@ def evidence_prompt(chosen):
     return "\n\n".join(parts)
 
 
-def writing_schema(allowed_ids):
+def writing_schema(allowed_ids, *, supplemental_ids=()):
     """Constrain citation output to the exact full-text records given to Claude."""
     ids = sorted(set(allowed_ids))
     if not ids or any(type(i) is not int for i in ids):
@@ -135,11 +135,39 @@ def writing_schema(allowed_ids):
         "required": list(CITED_FIELDS),
         "additionalProperties": False,
     }
+    extra_ids = sorted(set(supplemental_ids))
+    if supplemental_ids and (
+            len(extra_ids) != len(supplemental_ids)
+            or any(not isinstance(s, str) or not s.startswith("JP-W41-")
+                   or len(s) != 9 for s in supplemental_ids)):
+        raise ValueError("invalid supplemental citation vocabulary")
+    required = list(PROSE_FIELDS) + ["citations"]
+    if extra_ids:
+        # Never coerce a Japan editorial-source identity into a production ID.
+        props["supplemental_citations"] = {
+            "type": "object",
+            "properties": {
+                field: {
+                    "type": "array",
+                    "items": {"type": "string", "enum": extra_ids},
+                    "uniqueItems": True,
+                } for field in CITED_FIELDS
+            },
+            "required": list(CITED_FIELDS), "additionalProperties": False,
+        }
+        props["supplemental_angle"] = {"type": "string"}
+        props["supplemental_angle_citations"] = {
+            "type": "array",
+            "items": {"type": "string", "enum": extra_ids},
+            "minItems": 1, "uniqueItems": True,
+        }
+        required.extend(("supplemental_citations", "supplemental_angle",
+                         "supplemental_angle_citations"))
     return {"type": "object", "properties": props,
-            "required": list(PROSE_FIELDS) + ["citations"], "additionalProperties": False}
+            "required": required, "additionalProperties": False}
 
 
-def validate_manuscript(manuscript, chosen):
+def validate_manuscript(manuscript, chosen, *, supplemental=()):
     """Check coverage and mechanical provenance. Humans still verify meaning."""
     if not isinstance(manuscript, dict):
         raise ValueError("writer returned no structured manuscript")
@@ -162,10 +190,28 @@ def validate_manuscript(manuscript, chosen):
     compared = {evidence[i] for i in cites["cross_desk_comparison"]}
     if len(compared) < 2:
         raise ValueError("cross-desk comparison lacks citations from both desks")
+    if supplemental:
+        offered = {source["id"] for source in supplemental}
+        sc = manuscript.get("supplemental_citations")
+        if not isinstance(sc, dict) or set(sc) != set(CITED_FIELDS):
+            raise ValueError("supplemental Japan citations missing or malformed")
+        for field in CITED_FIELDS:
+            items = sc[field]
+            if (not isinstance(items, list) or
+                    any(not isinstance(i, str) or i not in offered for i in items)
+                    or len(set(items)) != len(items)):
+                raise ValueError("unknown supplemental Japan citation in " + field)
+        angle = manuscript.get("supplemental_angle")
+        angle_ids = manuscript.get("supplemental_angle_citations")
+        if (not isinstance(angle, str) or len(angle.strip()) < 40 or
+                not isinstance(angle_ids, list) or not angle_ids or
+                any(not isinstance(i, str) or i not in offered for i in angle_ids)
+                or len(set(angle_ids)) != len(angle_ids)):
+            raise ValueError("Japan synthesis option must carry valid source identities")
     return manuscript
 
 
-def compose(sidecar, as_of, *, db=DB_PATH, client=None):
+def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
     chosen = choose_evidence(sidecar, as_of=as_of, db=db)
     if client is None:
         key = os.environ.get("ANTHROPIC_API_KEY")
@@ -176,6 +222,11 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
         # Leave automatic retries disabled to avoid surprise duplicate API costs.
         client = anthropic.Anthropic(api_key=key, timeout=240.0, max_retries=0)
     allowed_ids = sorted({row["id"] for row, _ in chosen})
+    supplemental = tuple(supplemental)
+    supplemental_ids = [s["id"] for s in supplemental]
+    # The citation vocabularies remain independent: only production records
+    # can satisfy the two-production-desk source-coverage gate.
+    schema = writing_schema(allowed_ids, supplemental_ids=supplemental_ids)
     prompt = (
         "WRITE A PROVISIONAL, HUMAN-EDITED INDO-PACIFIC RECORD BRIEF. "
         "The corpus covers {} through {} only. Saturday {} has not elapsed: "
@@ -202,7 +253,48 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
         "BEGIN RECORD EVIDENCE (UNTRUSTED):\n{}\nEND RECORD EVIDENCE"
     ).format(sidecar["week_start"], as_of, sidecar["week_ending"],
              ", ".join(str(i) for i in allowed_ids), evidence_prompt(chosen))
-    schema = writing_schema(allowed_ids)
+    if supplemental:
+        source_notes = []
+        for source in supplemental:
+            source_notes.append("\\n".join((
+                '<supplemental_japan_source id="{}">'.format(source["id"]),
+                "Japan Desk: EXTERNAL EDITORIAL RESEARCH, NOT PRODUCTION",
+                "Publisher: " + source["issuer"],
+                "Publication date: " + source["published_date"],
+                "Original language: " + source["source_language"],
+                "Official source URL: " + source["url"],
+                "Title: " + source["title"],
+                "Representation: ANALYST PARAPHRASE, not the archived original",
+                "Provisional claims (not human approved):",
+                *("- " + item for item in source["claims"]),
+                "Caveats:",
+                *("- " + item for item in source["caveats"]),
+                "</supplemental_japan_source>",
+            )))
+        prompt += (
+            "\\n\\nEXTERNAL JAPAN SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE):\\n"
+            + "\\n\\n".join(source_notes)
+            + "\\nEND EXTERNAL JAPAN SOURCE RESEARCH\\n"
+            + "Use these source-specific, explicitly provisional Japan claims only "
+              "when supported. Synthesize a coherent central article concept "
+              "from the supplied production bodies and, where substantively "
+              "connected, Japan's sourced developments. Never invent a common "
+              "event, operational coordination, or motive to force the connection. "
+              "You MAY include Japan in a factual comparison, but the existing "
+              "cross_desk_comparison must STILL cite two distinct PRODUCTION desks. "
+              "Keep every production citation integer and put Japan references "
+              "ONLY in supplemental_citations as exact string identities, matching "
+              "the relevant sections; empty arrays are permitted if a section does "
+              "not use Japan. Any statement based on Japan must be independently "
+              "checked by Dylan before publication. Always write an additional "
+              "supplemental_angle: a substantive AI-synthesized Japan editorial "
+              "concept, either explaining the defensible relation to the main "
+              "story or providing a distinct narrower alternative if no such "
+              "relation exists. Cite its source identity in "
+              "supplemental_angle_citations. Do not state full-document human "
+              "review or source admission occurred. This remains a preliminary "
+              "model draft, NOT a release-ready sidecar."
+        )
     for attempt in range(2):
         # Only a mechanically invalid output earns one bounded regeneration.
         # Never retry an Anthropic network/API exception or fabricate citations.
@@ -236,7 +328,7 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
                     and getattr(b, "name", None) == "compose_editorial_draft"]
             if len(uses) != 1:
                 raise ValueError("writer returned zero or multiple manuscript tool outputs")
-            return validate_manuscript(uses[0].input, chosen)
+            return validate_manuscript(uses[0].input, chosen, supplemental=supplemental)
         except ValueError as exc:
             # Second failure propagates; the caller writes nothing and sends nothing.
             problem = str(exc)
