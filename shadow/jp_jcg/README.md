@@ -40,6 +40,19 @@ HTML is merely a links page fails text-quality review rather than becoming
 a fake full-text record. Subsequent optional PDF integration requires
 separate extraction, content-boundary and reuse gates.
 
+### Date integrity caveat observed in the real source
+
+On October 8, the Actions adapter-fidelity proof found an October 6, 2026
+release whose visible HTML `<time>` text said `06 October, 2026`, but whose
+`datetime` attribute was `2021-3-1`. This appears to be stale publisher
+template markup, not a valid source event date. It must **not** be silently
+treated as valid machine-readable metadata. The adapter recognizes that one
+observed constant as a flagged conflict, records the original attribute and
+reason in each extracted record, and uses the visible published date **only
+when it matches the independently rendered index date**. Any different or
+unexplained `datetime` discrepancy is a failure. The reported condition
+requires human review before production approval.
+
 Every eligible captured record must include the original English title,
 original body, official URL and publisher's article date, plus capture and
 content SHA-256 digests. The schema never uses a repeating headline as identity.
