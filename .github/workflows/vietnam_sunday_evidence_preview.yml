@@ -1,0 +1,96 @@
+name: Vietnam Sunday Shadow-to-Briefs Evidence Preview
+
+# Manual, private-draft source-preflight only. No cron, Anthropic key, SMTP,
+# public Actions artifact or production publication of any country source.
+on:
+  workflow_dispatch:
+    inputs:
+      reporting_saturday:
+        description: "Exact reporting Saturday (YYYY-MM-DD)"
+        required: true
+        type: string
+        default: "2026-10-10"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-sunday-evidence-preview
+  cancel-in-progress: true
+
+jobs:
+  verify-and-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout editor/collector code, read-only
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies for the independent MPS review
+        run: python -m pip install -r requirements.txt
+
+      - name: Check for optional regional research and required versioned Vietnam notes
+        id: research
+        env:
+          WEEK_END: ${{ inputs.reporting_saturday }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$WEEK_END" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          notes="research/vietnam_briefs_candidates/editorial_notes_$WEEK_END.json"
+          test -f "$notes" || {
+            echo "::error::No source-version-bound Vietnam notes for $WEEK_END"
+            exit 1
+          }
+          regional="research/briefs_editorial_evidence/$WEEK_END.json"
+          if test -f "$regional"; then
+            echo "existing=$regional" >> "$GITHUB_OUTPUT"
+          else
+            echo "existing=" >> "$GITHUB_OUTPUT"
+          fi
+          echo "notes=$notes" >> "$GITHUB_OUTPUT"
+
+      - name: Independently verify entire MPS shadow state and produce a private unified packet
+        id: vietnam
+        uses: ./.github/actions/vietnam-editorial-evidence
+        with:
+          week-ending: ${{ inputs.reporting_saturday }}
+          notes: ${{ steps.research.outputs.notes }}
+          existing-packet: ${{ steps.research.outputs.existing }}
+
+      - name: Verify combined candidate identities and private drafting boundary
+        env:
+          PRIVATE_PACKET: ${{ steps.vietnam.outputs.packet }}
+          EXPECTED_SATURDAY: ${{ inputs.reporting_saturday }}
+          PINNED_MPS_COMMIT: ${{ steps.vietnam.outputs.source-commit }}
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          path=Path(os.environ["PRIVATE_PACKET"])
+          assert path.is_file()
+          packet=json.loads(path.read_text(encoding="utf-8"))
+          assert packet["week_ending"]==os.environ["EXPECTED_SATURDAY"]
+          rows=packet["items"]
+          assert all(x["status"]=="unapproved-source-linked-editorial-candidate"
+                     for x in rows)
+          assert all("article_body" not in x and "text_original" not in x
+                     for x in rows)
+          assert len({r["id"] for r in rows})==len(rows)
+          vietnam=[x for x in rows if x["desk"]=="vietnam"]
+          assert all(x["state_commit"]==os.environ["PINNED_MPS_COMMIT"]
+                     and x["hash_rule"]=="mps-vi-content-v1"
+                     and re.fullmatch(r"VN-MPS-[1-9][0-9]{9}", x["id"])
+                     for x in vietnam)
+          print("Verified private drafting references:",len(rows))
+          print("Verified Vietnam MPS candidate count:",len(vietnam))
+          print("No source bodies, editor approval, production writes, email or publishing.")
+          PY
