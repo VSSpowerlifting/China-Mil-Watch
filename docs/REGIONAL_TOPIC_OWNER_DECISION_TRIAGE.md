@@ -32,3 +32,18 @@ The queue is intentionally **editor-facing, not blind-reviewer-facing**: it incl
 The machine-readable file pins both the merged v1 pilot ledger and skeptical assessment by Git blob SHA, then preserves each disputed record's stable source URL, desk, source-stated date, title and body SHA-256. Its seven groups partition exactly 19 distinct pilot IDs. The queue contains no accepted labels, no human review artifacts and no DB write path. It is safe to maintain as **research documentation** without implying the decisions have been made.
 
 **Relationship to other PRs:** #128 is merged (underlying evidence study); #133 houses this proposal/triage work; #135 contains additional frozen positive and negative controls; #137 implements v2 vocabulary/loader while checks are pending; #142 supplies the separate blind human review tool; #145 fixes an unrelated CI test over the weekly Briefs handoff.
+
+## Machine-enforced queue integrity gate
+
+The queue is *intentionally read-only and perpetually pending* in this research PR. Run these checks before using its source pointers or reviewer questions:
+
+```sh
+python3 scripts/validate_topic_owner_queue.py
+python3 -m unittest tests.test_topic_owner_queue -v
+```
+
+The validator compares the queue with both frozen, merged PR #128 model-authored pilot artifacts using their exact Git blob fingerprints. It checks the 19 flagged case identities and seven fixed clusters, source-issued URLs/dates/original titles, body fingerprints, both model recommendation sets, and each original owner question. It rejects missing, duplicate, moved, altered, or extra cases and any populated owner approval, reviewer name, decision rationale or review timestamp. It refuses production-attachment, activation and gold-label claims.
+
+A successful check proves only that this **editor-facing triage copy matches those particular archived model proposals**. It does not independently verify the original government statements, prove a language-qualified human review, check all historical source bytes, or authorize a topic assignment. Future *actual* human decisions belong in a separately approved and source-pinned review artifact; they must not be silently filled into this pending queue.
+
+The new offline Python unit tests are submitted in draft PR #133 but have **not yet passed exact-head CI**. A connected GitHub ledger/assessment comparison has separately confirmed all 19 records, source fields and their pending states.
