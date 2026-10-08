@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Optional
 from urllib.parse import urljoin, urlsplit
 
 from bs4 import BeautifulSoup, Tag
@@ -41,7 +42,7 @@ class ListingCandidate:
     canonical_url: str
     category_from_permalink: str
     category_page: str
-    date_hint: str | None
+    date_hint: Optional[str]
     # This is not permission to archive prose or an authoritative article date.
     article_date_verified: bool = False
 
