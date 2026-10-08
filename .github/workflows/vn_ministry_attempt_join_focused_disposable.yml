@@ -1,0 +1,29 @@
+# Disposable offline synthetic tests; remove before owner review.
+name: Vietnam source packet attempt join focused verification
+on:
+  push:
+    branches:
+      - feat/vietnam-ministry-verified-packet-attempt-join-20261008
+permissions:
+  contents: read
+jobs:
+  focused:
+    if: ${{ github.event.head_commit.message == 'Run source-packet attempt join focused tests' && github.ref == 'refs/heads/feat/vietnam-ministry-verified-packet-attempt-join-20261008' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install offline test dependencies
+        run: pip install -r requirements.txt
+      - name: Test joined packet and Actions metadata, pure synthetic
+        run: |
+          python -m unittest \
+            tests.test_vietnam_ministry_checkpoint_attempt_join \
+            tests.test_vietnam_ministry_attempt_reconciliation \
+            tests.test_vietnam_ministry_checkpoint_rollup -v
