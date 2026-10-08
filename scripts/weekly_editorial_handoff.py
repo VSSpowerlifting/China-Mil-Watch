@@ -36,7 +36,7 @@ def one_line(value):
     return " ".join(str(value or "").split())
 
 
-def render_packet(sidecar):
+def render_packet(sidecar, *, manuscript=None, as_of=None):
     if sidecar.get("editorial_status") != "draft" or sidecar.get("issue_number") is not None:
         raise ValueError("only unnumbered, unapproved draft scaffolds may be emailed")
     week_end = date.fromisoformat(sidecar["week_ending"])
@@ -59,6 +59,8 @@ def render_packet(sidecar):
         "Packet: IPR-" + week_end.isoformat(),
         "Week: " + one_line(sidecar["week_start"]) + " through " + week_end.isoformat(),
         "Status: UNNUMBERED DRAFT — NOT APPROVED OR PUBLISHED",
+        ("AS-OF CUT-OFF: " + as_of + " (FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED)"
+         if as_of else "Complete-week editorial worksheet; still unapproved"),
         coverage_warning,
         "Desks: " + ", ".join(desks),
         "",
@@ -70,8 +72,32 @@ def render_packet(sidecar):
         "",
         "=== EDITABLE MANUSCRIPT ===",
     ]
-    for name, instruction in EDIT_SECTIONS:
-        lines.extend(("\n## " + name, "[" + instruction + "]", ""))
+    if manuscript is None:
+        for name, instruction in EDIT_SECTIONS:
+            lines.extend(("\n## " + name, "[" + instruction + "]", ""))
+    else:
+        # Only mechanically validated model output is interpolated here.
+        from scripts.weekly_briefs_auto_writer import CITED_FIELDS, validate_manuscript
+        # The caller validated against the full-text evidence selection;
+        # do not silently convert the article into a release-ready sidecar.
+        headings = (
+            ("title", "WORKING TITLE"),
+            ("dek", "DEK"),
+            ("development", "CONCRETE DEVELOPMENT"),
+            ("opening_note", "OPENING NOTE"),
+            ("what_stood_out", "WHAT STOOD OUT"),
+            ("why_it_matters", "WHY IT MATTERS"),
+            ("what_was_routine", "WHAT WAS ROUTINE"),
+            ("what_im_watching_next", "WHAT I'M WATCHING NEXT"),
+            ("cross_desk_comparison", "CROSS-DESK COMPARISON"),
+            ("editorial_questions", "EDITORIAL QUESTIONS / SATURDAY FOLLOW-UP"),
+        )
+        for key, heading in headings:
+            lines.extend(("\n## " + heading, manuscript[key], ""))
+            if key in CITED_FIELDS:
+                lines.append("SOURCE RECORD IDS: " + ", ".join(
+                    str(i) for i in manuscript["citations"][key]))
+                lines.append("")
     lines.extend((
         "=== SOURCE APPENDIX — DO NOT EDIT ===",
         "The appendix comes from the tracked production corpus; URLs and titles",
@@ -148,11 +174,24 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--send", action="store_true",
                         help="email via explicit SMTP secrets; otherwise write locally only")
+    parser.add_argument("--write-automatic", action="store_true",
+                        help="compose an AI-assisted provisional manuscript from source bodies")
+    parser.add_argument("--as-of", help="Friday cut-off (YYYY-MM-DD), used only for automatic writing")
     args = parser.parse_args(argv)
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
-    text = render_packet(sidecar)
+    manuscript = None
+    if args.write_automatic:
+        if not args.as_of:
+            parser.error("--write-automatic requires --as-of Friday date")
+        from scripts.weekly_briefs_auto_writer import compose
+        # Raises on absent full-text evidence, missing API key, API errors or
+        # invalid citations. No email or file is produced on these failures.
+        manuscript = compose(sidecar, args.as_of)
+    text = render_packet(sidecar, manuscript=manuscript, as_of=args.as_of)
     args.out.write_text(text, encoding="utf-8")
-    print("Prepared unapproved editorial worksheet: {} ({} record candidates)".format(
+    print("Prepared unapproved {}: {} ({} record candidates)".format(
+        "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
+
         args.out.name, len(sidecar["source_trail"])))
     if args.send:
         send_packet(args.out, sidecar["week_ending"])
