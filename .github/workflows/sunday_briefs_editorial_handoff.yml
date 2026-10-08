@@ -17,6 +17,11 @@ on:
         type: string
         required: false
         default: ''
+      preview_to_owner:
+        description: "Email a private manuscript preview to the OWNER ONLY (not Dylan)? Requires IPR_PREVIEW_TO secret."
+        type: boolean
+        required: true
+        default: false
       allow_historical_send:
         description: "Explicitly authorize emailing a previous week's Saturday packet"
         type: boolean
@@ -135,14 +140,23 @@ jobs:
           IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
           IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
           IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
         shell: bash
         run: |
           args=(--sidecar "$RUNNER_TEMP/ipr-sunday-scaffold.json"
                 --out "$RUNNER_TEMP/IPR-Briefs-Editorial-$IPR_SUNDAY_WEEK_END.txt"
                 --write-automatic --full-week --include-research --as-of "$IPR_SUNDAY_AS_OF")
           if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
+            [[ "$IPR_PREVIEW_REQUESTED" != "true" ]] || {
+              echo "::error::Editor delivery and owner-only preview cannot both be requested"; exit 2;
+            }
             args+=(--send)
+          elif [[ "$IPR_PREVIEW_REQUESTED" == "true" ]]; then
+            args+=(--preview-to-owner)
           fi
           python -m scripts.sunday_editorial_handoff "${args[@]}"
 
+      # Private owner's preview requires BOTH input preview_to_owner=true and
+      # a distinct configured IPR_PREVIEW_TO secret; cannot contact Dylan.
       # No public manuscript artifact; no push, approval, numbering or deploy.
