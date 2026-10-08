@@ -44,6 +44,27 @@ Each source ledger row contains run_id such as
 37700200951-1, result, health, target_date, target_date_source,
 collector_commit and finished_utc. **Extract these fields from actual
 state ledger JSON and leave all publisher prose/capture bytes out.**
+
+**Exception for the one genuine October 7 historical bootstrap.** The
+successful run 37656171920 attempt 2 was a manually dispatched, explicitly
+source-targeted first collection, not a daily scheduled slot: MPS used
+2026-10-05, while *both* MOIT families used 2026-09-30. Those were the
+logical dates recorded in their committed ledgers; all three batches
+finished on October 7 with collector
+2c21b0d091ffc288b1a106d5459d758aaaac6ff5. The validator checks
+those exact source-specific historical targets and code identity for
+run_id 37656171920-2. In its **Actions attempt** receipt, represent
+target_date and target_date_basis as **null** for this single run: there
+is no truthful single target date for all three sources. Do not write
+2026-10-07 as its target or automatically call the earlier source dates
+missed schedule days. The separate October 7 *scheduled* follow-up
+37700200951-1 has target 2026-10-07 and must appear separately.
+
+The review_window and complete expected_target_dates grid describe the
+daily **observation/calendar** period beginning October 7; the one
+anchored Day 0 bootstrap has earlier explicit *historical lookback*
+targets and is the only such exception. Every other source run target
+must fall inside the stated review window.
 Do not invent missing Actions attempts or clone state into production.
 
 A GitHub attempt's target_date should be populated only when separately
