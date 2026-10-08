@@ -33,8 +33,12 @@ def make_receipt(report, expected_sha, as_of, run_id):
     if report.get("human_review_completed") is not False or report.get("promotion_authorized") is not False:
         raise ValueError("a machine report may not assert human approval/promotion")
     for key in ("records", "ledgers"):
-        if not isinstance(report.get(key), int) or report[key] < 1:
-            raise ValueError("empty/invalid captured state is not a formal review")
+        if not isinstance(report.get(key), int) or report[key] < 0:
+            raise ValueError("invalid record or ledger count")
+    if report["ledgers"] < 1:
+        raise ValueError("a formal review requires a recorded shadow attempt")
+    # A legitimate official-source day may have no publications. Preserve
+    # that zero explicitly; do not treat it as failed collection or coverage.
     for key in ("findings", "review_holds", "missing_successful_days"):
         if not isinstance(report.get(key), list) or any(
                 not isinstance(item, str) for item in report[key]):
@@ -55,8 +59,9 @@ def make_receipt(report, expected_sha, as_of, run_id):
         "human_review_holds_count": len(report["review_holds"]),
         "missing_successful_days_count": len(report["missing_successful_days"]),
         "machine_integrity_verdict": (
-            "checks_clear_not_human_approved" if not report["findings"] else
-            "integrity_findings_require_disposition"),
+            "integrity_findings_require_disposition" if report["findings"] else
+            "no_records_not_a_coverage_attestation" if not report["records"] else
+            "checks_clear_not_human_approved"),
         "human_review_completed": False,
         "promotion_authorized": False,
         "production_database_changed": False,
