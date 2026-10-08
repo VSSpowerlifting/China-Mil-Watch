@@ -53,6 +53,7 @@ class JCGSourceContracts(unittest.TestCase):
         self.assertEqual(source_date("2026-10-06"), "2026-10-06")
         self.assertEqual(source_date("2026.10.06"), "2026-10-06")
         self.assertEqual(source_date("October 6, 2026"), "2026-10-06")
+        self.assertEqual(source_date("06 October, 2026"), "2026-10-06")
         with self.assertRaises(ValueError):
             source_date("last updated 2026-10-06")
         with self.assertRaises(ValueError):
