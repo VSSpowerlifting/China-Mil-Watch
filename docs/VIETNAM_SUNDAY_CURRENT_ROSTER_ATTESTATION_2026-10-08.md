@@ -2,7 +2,7 @@
 
 ## What this closes
 
-A fixed Japan/Vietnam JSON roster may have legitimate official-source research notes but fail to reflect the **latest** independently collected Vietnamese Ministry of Public Security source versions. The Sunday AI writer in #237 must not silently assume that its hard-coded October 10 source list is complete or unchanged.
+A fixed Japan/Vietnam JSON roster may have legitimate official-source research notes but fail to reflect the **latest** independently collected Vietnamese Ministry of Public Security source versions. The Sunday AI writer merged through #237 must not silently assume that its hard-coded October 10 source list is complete or unchanged.
 
 `scripts/attest_vietnam_sunday_roster.py` re-derives its Vietnam portion from the **current exact MPS orphan-state Git commit** using the already-approved read-only review chain (`prepare_vietnam_mps_review_queue` and `build_vietnam_sunday_packet`). It then compares every advertised Vietnam identity, URL, language, issuer, date, title, content SHA-256, attributed synopsis, caveat, topic and no-approval flags with the freshly audited private packet.
 
@@ -18,7 +18,7 @@ The read-only `Vietnam Sunday Current MPS Roster Attestation` PR contract:
 
 1. Runs synthetic no-network refusal tests on the proposed code.
 2. Clones the real isolated MPS orphan state via unauthenticated read-only HTTPS, verifies its exact head and state-only tree.
-3. Separately reads the current `feat/sunday-briefs-mainline-20261008` (#237) branch at its own exact resolved commit and obtains its October 10 private editorial roster. This is a **cross-branch preview only**, not merge, push or branch modification.
+3. Separately clones the authoritative `main` branch at its exact resolved commit and reads the October 10 private editorial roster merged from #237. This is a **read-only merged-production-code comparison**, not a push, approval, or change to the official roster.
 4. Independently replays the actual MPS source-state/capture/SQLite/version chain and checks the packet against `editorial_notes_2026-10-10.json`.
 5. Demands **two source-version-matched October 5 MPS rows** and that both account for all machine-eligible observed MPS articles in that exact bounded week as of the archived snapshot. If newly eligible source evidence appears, the check fails until separately source-authored synopses exist, rather than fabricating an English claim.
 
@@ -41,6 +41,6 @@ Never treat the output as human review, full publisher coverage, legal permissio
 
 ## Follow-on coordination
 
-After #237 merges, the Sunday workstream can invoke the attestation on the actual Sunday private packet immediately before the model call. This PR purposely does not modify #237's shared writer, scheduled workflow, model prompts or email controls. Longer-term weeks should generate the whole unified regional roster from source-version-audited country feeders, and use #235's explicit no-Vietnam fallback where Vietnam has no qualifying notes. The October 10 strict complete-Vietnam check must not accidentally become a hard dependency blocking unrelated regional Sundays.
+Now that #237 has merged, the Sunday workstream can invoke this attestation on the actual private packet immediately before the model call, after this PR itself passes review and merges. This PR purposely does not modify #237's shared writer, scheduled workflow, model prompts or email controls. Longer-term weeks should generate the whole unified regional roster from source-version-audited country feeders, and use #235's explicit no-Vietnam fallback where Vietnam has no qualifying notes. The October 10 strict complete-Vietnam check must not accidentally become a hard dependency blocking unrelated regional Sundays.
 
-If #237's branch is renamed/deleted after integration, adapt the dedicated CI proof to use the merged `main` packet as a separately reviewed follow-on; do not silently change the source roster or disable the independent provenance checks.
+The CI proof already uses `main`, not the retired #237 development branch, so deletion of that branch cannot disable this check. If the merged roster's schema or exact-week source file changes, fail closed until the verification is explicitly reviewed and adapted.
