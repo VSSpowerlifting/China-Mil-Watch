@@ -10,6 +10,9 @@ on:
     paths:
       - "scripts/prepare_vietnam_briefs_evidence.py"
       - "scripts/build_vietnam_sunday_packet.py"
+      - "scripts/audit_vietnam_weekly_model_readiness.py"
+      - ".github/workflows/vietnam_weekly_editorial_readiness.yml"
+      - "tests/test_vietnam_weekly_model_readiness.py"
       - "research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json"
       - ".github/actions/vietnam-editorial-evidence/**"
       - ".github/workflows/vietnam_mps_real_state_contract.yml"
@@ -71,4 +74,41 @@ jobs:
           assert not any("text_original" in x or "article_body" in x for x in rows)
           print("Verified 2 unapproved Vietnamese publisher references from immutable shadow state.")
           print("No mail, model, output database mutation, public article body, or publication.")
+          PY
+
+      - name: Verify true archived-source readiness counts without source bodies
+        env:
+          HISTORICAL_SHA: ${{ steps.vietnam.outputs.source-commit }}
+        run: |
+          set -euo pipefail
+          [[ "$HISTORICAL_SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          workspace="$(mktemp -d "$RUNNER_TEMP/vn-real-readiness-XXXXXXXX")"
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs \
+            --single-branch "https://github.com/$GITHUB_REPOSITORY.git" "$workspace/mps"
+          python -m scripts.prepare_vietnam_mps_review_queue \
+            --state-repo "$workspace/mps" \
+            --state-commit "$HISTORICAL_SHA" \
+            --out-dir "$workspace/review"
+          python -m scripts.audit_vietnam_weekly_model_readiness \
+            --queue "$workspace/review/review_queue.json" \
+            --notes research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json \
+            --week-ending 2026-10-10 \
+            --require-ready --out "$workspace/readiness.json"
+          PRIVATE_REPORT="$workspace/readiness.json" python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads(Path(os.environ["PRIVATE_REPORT"]).read_text())
+          c=d["counts"]
+          assert d["status"]=="ready", d["status"]
+          assert c["ready_private_model"]==2, c
+          assert c["in_window_machine_eligible"]==2, c
+          assert c["stale_source_version_synopsis"]==0, c
+          assert c["awaiting_source_specific_synopsis"]==0, c
+          assert d["never_infer_official_silence"] is True
+          assert d["complete_reporting_week_capture_verified"] is False
+          assert d["latest_run_covers_reporting_saturday"] is None
+          assert d["publication_approval"] is False
+          assert d["desk_qualified"] is False
+          print("Actual MPS archive: 2 unapproved private research candidates; complete-week coverage not asserted.")
           PY
