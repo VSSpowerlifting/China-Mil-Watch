@@ -49,7 +49,7 @@ class SundayOwnerPreviewTests(unittest.TestCase):
             self.assertEqual(message["To"], "owner@example.com")
             self.assertNotIn("dylan@example.com", str(message))
             self.assertIn("OWNER-ONLY", message["Subject"])
-            self.assertIn("NOT delivered to Dylan", message.get_content().split("--", 1)[0])
+            self.assertIn("NOT delivered to Dylan", message.get_body(preferencelist=("plain",)).get_content())
             self.assertEqual(next(message.iter_attachments()).get_content(),
                              "PRIVATE ONE-THEME DRAFT")
 
