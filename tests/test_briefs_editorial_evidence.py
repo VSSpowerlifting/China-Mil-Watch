@@ -86,7 +86,7 @@ class RealResearchEvidenceTests(unittest.TestCase):
                 self.assertEqual(item["source_url"], record["canonical_url"])
                 self.assertEqual(item["published_date"], record["published_date"])
                 self.assertEqual(item["title_original"], record["original_title"])
-                self.assertEqual(item["body_sha256"], record["content_sha256"])
+                self.assertEqual(item["source_content_sha256"], record["content_sha256"])
                 self.assertEqual(item["state_commit"], vn["state_commit"])
             elif item["source_kind"] == "shadow-extracted-original":
                 original = jp["shadow_current_week_original"]
@@ -94,7 +94,7 @@ class RealResearchEvidenceTests(unittest.TestCase):
                 self.assertEqual(item["title_original"], original["title_original"])
                 self.assertEqual(item["state_commit"],
                                  original["historical_state_commit"])
-                self.assertEqual(item["body_sha256"],
+                self.assertEqual(item["source_content_sha256"],
                                  original["extracted_body_sha256"])
             else:
                 matching = [x for x in jp["source_candidates"]
@@ -140,7 +140,7 @@ class RealResearchEvidenceTests(unittest.TestCase):
                 self.load_data(data)
 
     def test_invalid_hash_duplicate_identity_and_out_of_window(self):
-        for field, value in (("body_sha256", "b" * 63),
+        for field, value in (("source_content_sha256", "b" * 63),
                              ("state_commit", "f" * 39),
                              ("published_date", "2026-10-03"),
                              ("status", "approved")):
