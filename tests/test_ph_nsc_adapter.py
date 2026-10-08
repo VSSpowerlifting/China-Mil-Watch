@@ -1267,8 +1267,11 @@ class TestProductionIsolation(unittest.TestCase):
                 imported |= {a.name for a in node.names}
             elif isinstance(node, ast.ImportFrom):
                 imported.add(node.module)
+        # The narrow parser-rejection guard imports the exception from bs4.builder.
+        # Keep all other imports forbidden: this is a known third-party parser
+        # module, not permission to reach any state or production store.
         allowed = {"__future__", "hashlib", "re", "time", "dataclasses", "datetime", "typing",
-                   "urllib.parse", "requests", "bs4"}
+                   "urllib.parse", "requests", "bs4", "bs4.builder"}
         extra = {m for m in imported if m not in allowed and not m.startswith("core.collection")}
         self.assertEqual(extra, set())
 
