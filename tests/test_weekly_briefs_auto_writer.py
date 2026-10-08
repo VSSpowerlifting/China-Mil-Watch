@@ -94,11 +94,30 @@ class WriterContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "legacy series"):
             validate_manuscript(result, evidence())
 
-    def test_friday_window_required_before_db_query(self):
+    def test_friday_or_saturday_cutoff_required_before_db_query(self):
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
                    "desks": ["china", "singapore"], "source_trail": []}
-        with self.assertRaises(ValueError):
-            choose_evidence(sidecar, as_of="2026-10-10")
+        for cutoff in ("2026-10-08", "2026-10-11"):
+            with self.subTest(cutoff=cutoff), self.assertRaisesRegex(
+                    ValueError, "Friday or Saturday"):
+                choose_evidence(sidecar, as_of=cutoff)
+
+    def test_saturday_uses_full_week_window_in_read_only_mode(self):
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"],
+                   "source_trail": [{"record_id": 1}, {"record_id": 2}]}
+        with patch("scripts.weekly_briefs_auto_writer.read_only",
+                   return_value=nullcontext("DB")) as read, \
+             patch("scripts.weekly_briefs_auto_writer.get_articles_for_desks",
+                   return_value=[row for row, _ in evidence()]) as get, \
+             patch("scripts.weekly_briefs_auto_writer.trail_entry",
+                   side_effect=lambda row: {"record_id": row["id"]}):
+            actual = choose_evidence(sidecar, as_of="2026-10-10", db="/tmp/mock.db")
+        self.assertEqual({row["desk_id"] for row, _ in actual},
+                         {"china", "singapore"})
+        get.assert_called_once_with("2026-10-04", "2026-10-10",
+                                    ["china", "singapore"], conn="DB")
+        read.assert_called_once()
 
     def test_no_model_call_when_evidence_missing(self):
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
