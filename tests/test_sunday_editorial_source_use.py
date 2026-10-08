@@ -31,16 +31,22 @@ class PrivateSourceUseReceiptTests(unittest.TestCase):
     def test_exact_source_citations_not_just_all_research_offered(self):
         report = summarize_source_use(manuscript(), PROD, self.research)
         self.assertEqual(report["schema"], "ipr-private-manuscript-source-use/1")
-        self.assertEqual(report["research_by_desk"]["japan"]["offered"], 3)
+        self.assertEqual(report["research_by_desk"]["japan"]["offered"],
+                         sum(x["desk"] == "japan" for x in self.research))
         self.assertEqual(report["research_by_desk"]["japan"]["cited"], 1)
-        self.assertEqual(report["research_by_desk"]["vietnam"]["offered"], 2)
+        self.assertEqual(report["research_by_desk"]["vietnam"]["offered"],
+                         sum(x["desk"] == "vietnam" for x in self.research))
         self.assertEqual(report["research_by_desk"]["vietnam"]["cited"], 1)
         self.assertEqual(len(report["research_used"]), 2)
         self.assertEqual({r["id"] for r in report["research_used"]},
                          {"JP-W41-01", "VN-MPS-1791199100"})
-        self.assertEqual(report["research_by_desk"]["japan"]["unused_source_ids"],
-                         ["JP-W41-02", "JP-W41-06"])
-        self.assertEqual(report["research_used"][1]["sections"], ["why_it_matters"])
+        self.assertEqual(
+            report["research_by_desk"]["japan"]["unused_source_ids"],
+            sorted(x["id"] for x in self.research
+                   if x["desk"] == "japan" and x["id"] != "JP-W41-01"))
+        vn_cited = next(item for item in report["research_used"]
+                        if item["id"] == "VN-MPS-1791199100")
+        self.assertEqual(vn_cited["sections"], ["why_it_matters"])
         self.assertTrue(report["external_research_is_not_production"])
         for marker in ("source_accuracy_or_rights_verified",
                        "claim_level_support_verified",
@@ -73,8 +79,12 @@ class PrivateSourceUseReceiptTests(unittest.TestCase):
             "=== MANUSCRIPT SOURCE USE — EDITORIAL TRIAGE ONLY ==="), 1)
         self.assertLess(original.index("=== SOURCE APPENDIX — DO NOT EDIT ==="),
                         original.index("=== MANUSCRIPT SOURCE USE"))
-        self.assertIn("japan: 3 offered; 1 cited", original)
-        self.assertIn("vietnam: 2 offered; 1 cited", original)
+        self.assertIn(
+            "japan: {} offered; 1 cited".format(
+                sum(x["desk"] == "japan" for x in self.research)), original)
+        self.assertIn(
+            "vietnam: {} offered; 1 cited".format(
+                sum(x["desk"] == "vietnam" for x in self.research)), original)
         self.assertIn("Uncited research IDs: JP-W41-02, JP-W41-06", original)
         changed_prose = original.replace(
             "Official statements around a concrete development",
