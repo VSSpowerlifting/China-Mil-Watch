@@ -122,7 +122,7 @@ def validate_observation(payload):
         indexed[category] = ids
     if set(indexed) != set(CATEGORIES):
         raise ObservationRefused("four-category observation incomplete")
-    return instant, indexed
+    return instant, indexed, canonical_by_id
 
 
 def _ordered(ids):
@@ -134,6 +134,12 @@ def compare_observations(observations):
     if not isinstance(observations, list) or len(observations) < 2:
         raise ObservationRefused("need at least two observation snapshots")
     validated = [validate_observation(item) for item in observations]
+    canonical_history = {}
+    for _, _, canonical_by_id in validated:
+        for ident, url in canonical_by_id.items():
+            if ident in canonical_history and canonical_history[ident] != url:
+                raise ObservationRefused("canonical URL changed for one ID across observations")
+            canonical_history[ident] = url
     if len(set(x["observation_id"] for x in observations)) != len(observations):
         raise ObservationRefused("duplicate evidence snapshot identity")
     for i in range(1, len(validated)):
