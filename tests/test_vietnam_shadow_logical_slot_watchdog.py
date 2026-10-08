@@ -152,6 +152,20 @@ class VietnamWatchdogTests(unittest.TestCase):
         reviewer.assert_called_once_with(Path("/fake/state"), SOURCE)
         self.assertEqual(result["status"], "verified-scheduled-slots-present")
 
+    def test_daily_watch_workflow_has_no_source_writes_or_automatic_recovery(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github" /
+                    "workflows/vietnam_shadow_logical_slot_watchdog.yml"
+                    ).read_text(encoding="utf-8")
+        self.assertIn("7 12 * * *", workflow)
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertIn("shadow/vietnam-mps-foreign-affairs", workflow)
+        self.assertIn("scripts.watch_vietnam_shadow_slots", workflow)
+        self.assertIn("Do NOT rerun a past scheduled job.", workflow)
+        for forbidden in ("git push", "actions/upload-artifact",
+                          "ANTHROPIC_API_KEY", "IPR_SMTP_APP_PASSWORD",
+                          "workflow_dispatch --ref", "--mps-target"):
+            self.assertNotIn(forbidden, workflow)
+
     def test_cli_rejects_future_asof_and_no_public_output(self):
         import scripts.watch_vietnam_shadow_slots as watch
         from io import StringIO
