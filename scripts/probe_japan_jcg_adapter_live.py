@@ -66,6 +66,8 @@ def run(*, adapter=None):
             "capture_sha256": capture.payload_sha256,
             "original_text_chars": len(doc.text_original),
             "html_only": doc.extra["body_scope"] == "published_html_text_only",
+            "html_datetime_verdict": doc.extra["html_datetime_verdict"],
+            "html_datetime_original": doc.extra["html_datetime_original"],
             "uncollected_attachment_count": len(doc.extra["attachment_urls"]),
         })
         if identity in got or doc.published_date != EXPECTED.get(identity):
