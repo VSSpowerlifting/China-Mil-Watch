@@ -68,6 +68,8 @@ def load_indonesia_writer_sources(week_ending, as_of, *, packet_path=DEFAULT_PAC
         raise IndonesiaEditorialSourceError("invalid Indonesia source packet")
     for key, expected in (
         ("protocol", "ipr_indonesia_week41_nonproduction_research_v1"),
+        ("status", "source_verified_analyst_research_without_human_approval"),
+        ("source_scope", "Indonesia Ministry of Defense original-language Kemhan Berita; NOT a production desk"),
         ("week_start", "2026-10-04"),
         ("reporting_friday", "2026-10-09"),
         ("week_ending", "2026-10-10"),
@@ -84,6 +86,7 @@ def load_indonesia_writer_sources(week_ending, as_of, *, packet_path=DEFAULT_PAC
     row = rows[0]
     expected = {
         "candidate_id": SOURCE_ID, "public_source_url": SOURCE_URL,
+        "title": "Menhan Sjafrie Terima Courtesy Call Athan Singapura, Apresiasi Dedikasi Selama Bertugas",
         "publisher_date": "2026-10-06", "event_date": "2026-10-05",
         "institution": "Kementerian Pertahanan Republik Indonesia",
         "source_family": "Kemhan Berita", "source_language": "id",
