@@ -61,7 +61,7 @@ jobs:
           python - <<'PY' >> "$GITHUB_ENV"
           import os
           from pathlib import Path
-          from scripts.weekly_briefs_auto_writer import live_editorial_desks
+          from scripts.sunday_briefs_auto_writer import live_editorial_desks
           from scripts.weekly_briefs_sunday_window import resolve_sunday_handoff
 
           marker = Path(".github/state/last_daily_run_date.txt")
@@ -143,6 +143,6 @@ jobs:
           if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
             args+=(--send)
           fi
-          python -m scripts.weekly_editorial_handoff "${args[@]}"
+          python -m scripts.sunday_editorial_handoff "${args[@]}"
 
       # No public manuscript artifact; no push, approval, numbering or deploy.
