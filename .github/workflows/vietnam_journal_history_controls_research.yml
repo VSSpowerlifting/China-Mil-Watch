@@ -2,25 +2,23 @@
 # URL budget: robots.txt + four desktop English category first pages +
 # one publisher-exposed "Defence" keyword results page.
 # No schedule, extra page clicks, article requests, DB, publisher text or IDs.
+# Exact commit-message guard prevents repeated live requests on subsequent pushes.
 name: Vietnam journal historical controls one-shot research
 on:
-  pull_request:
-    branches: [main]
-    types: [opened]
-    paths:
-      - '.github/workflows/vietnam_journal_history_controls_research.yml'
+  push:
+    branches: [research/vietnam-journal-history-controls-20261008]
 permissions:
   contents: read
 jobs:
   research-only:
-    if: ${{ github.head_ref == 'research/vietnam-journal-history-controls-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.ref == 'refs/heads/research/vietnam-journal-history-controls-20261008' && github.event.head_commit.message == 'Trigger one-shot Vietnam journal navigation proof' }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - name: Checkout unmerged research head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Python 3.9
         uses: actions/setup-python@v5
