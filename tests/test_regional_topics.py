@@ -228,13 +228,17 @@ class AssignmentContract(unittest.TestCase):
 
 
     def test_reading_an_unconfigured_store_is_read_only(self):
-        self.assertEqual(topics_for_record(self.conn, self.record), [])
-        self.assertEqual(
-            self.conn.execute(
-                "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
-            ).fetchone()[0],
-            0,
-        )
+        conn = sqlite3.connect(":memory:")
+        try:
+            self.assertEqual(topics_for_record(conn, self.record), [])
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
 
     def test_read_rejects_boolean_taxonomy_version(self):
         with self.assertRaisesRegex(
@@ -242,15 +246,19 @@ class AssignmentContract(unittest.TestCase):
             topics_for_record(self.conn, self.record, taxonomy_version=True)
 
     def test_read_rejects_unknown_version_even_without_a_store(self):
-        with self.assertRaisesRegex(
-                TopicTaxonomyError, "unsupported taxonomy_version"):
-            topics_for_record(self.conn, self.record, taxonomy_version=99)
-        self.assertEqual(
-            self.conn.execute(
-                "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
-            ).fetchone()[0],
-            0,
-        )
+        conn = sqlite3.connect(":memory:")
+        try:
+            with self.assertRaisesRegex(
+                    TopicTaxonomyError, "unsupported taxonomy_version"):
+                topics_for_record(conn, self.record, taxonomy_version=99)
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master WHERE name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
 
 
 class StorePortability(unittest.TestCase):
