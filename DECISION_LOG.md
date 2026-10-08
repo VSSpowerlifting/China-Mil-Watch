@@ -25,12 +25,18 @@ between them. Every assignment must preserve taxonomy version, method
 evidence/confidence. Conflicting provenance may not silently overwrite an
 existing assignment.
 
-Migration `0008` creates an empty `record_topics` table and writes no
-assignment or existing row. Version 1 authorizes vocabulary and storage
-foundation only: no bulk classification, model prompt, legacy remap, public UI,
-shadow-state mutation, entity graph, timeline, or dossier is part of this
-decision. The next evidence gate is a small human-reviewed classification pilot
-spanning multiple desks. See `docs/REGIONAL_TOPIC_TAXONOMY.md`.
+Version 1 deliberately does not register a production migration or modify
+`pla_watch.db`. The storage-neutral `ensure_topic_store()` contract may be
+used only when a SQLite store explicitly opts in; it creates no assignment row
+and refuses a partial schema. Production adoption requires a separate numbered
+migration that installs the same contract and is applied to the tracked
+database in that same reviewed change.
+
+Version 1 authorizes vocabulary and storage foundation only: no bulk
+classification, model prompt, legacy remap, public UI, shadow-state mutation,
+entity graph, timeline, or dossier is part of this decision. The next evidence
+gate is a small human-reviewed classification pilot spanning multiple desks.
+See `docs/REGIONAL_TOPIC_TAXONOMY.md`.
 
 ## 2026-10-07 — Japan official HTML routes remain challenge-gated from Actions
 
