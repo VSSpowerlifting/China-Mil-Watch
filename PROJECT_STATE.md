@@ -104,12 +104,15 @@ methodology, and the legacy `/article/<id>.html` compatibility namespace.
 **Regional Topic Taxonomy v1 is now a separate classification layer.**
 `taxonomy/regional_topics.v1.json` defines 19 cross-desk subjects in six
 groups; `core/topics.py` validates the vocabulary and a storage-neutral
-`(desk_id, source_slug, canonical_url)` assignment identity. Migration
-`0008` adds an empty `record_topics` table only. The China Desk's 14 legacy
-`article_categories` remain byte-for-byte unchanged and are not automatically
-mapped. No record has been assigned a regional topic, no classifier or UI uses
-the vocabulary, and no shadow state is changed. The next gate is a small
-human-reviewed multi-desk classification pilot; see
+`(desk_id, source_slug, canonical_url)` assignment identity. Its
+`ensure_topic_store()` path can explicitly install an empty assignment store
+in a writable SQLite database, but v1 does not register a production migration
+or modify `pla_watch.db`. Production adoption requires a later numbered
+migration that is applied to the tracked database in the same reviewed change.
+The China Desk's 14 legacy `article_categories` remain byte-for-byte unchanged
+and are not automatically mapped. No record has been assigned a regional
+topic, no classifier or UI uses the vocabulary, and no shadow state is changed.
+The next gate is a small human-reviewed multi-desk classification pilot; see
 `docs/REGIONAL_TOPIC_TAXONOMY.md`.
 
 ## 3. Data and pipeline condition
