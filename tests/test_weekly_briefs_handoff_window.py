@@ -109,7 +109,7 @@ class HandoffWindowTests(unittest.TestCase):
 
     def test_spring_daylight_saving_and_fall_standard_time(self):
         for value, date_str in (
-            ("2027-03-12T20:17:00", "2027-03-12"),
+            ("2027-03-19T20:17:00", "2027-03-19"),
             ("2027-11-12T20:17:00", "2027-11-12"),
         ):
             with self.subTest(value=value):
