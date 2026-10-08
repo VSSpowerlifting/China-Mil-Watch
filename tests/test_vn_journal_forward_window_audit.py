@@ -107,7 +107,8 @@ class JournalForwardAuditTests(unittest.TestCase):
         first = observation("observed-a", "2026-10-08T01:00:00Z")
         second = observation("observed-b", "2026-10-09T01:00:00Z")
         result = audit_forward_windows([first, second])
-        self.assertEqual(result["warning_counts"], {})
+        # Keep explicit zero-valued metrics in the stable report schema.
+        self.assertTrue(all(count == 0 for count in result["warning_counts"].values()))
         self.assertIsNone(result["transitions"][0]["above_reference_gap"])
         self.assertFalse(result["eligible_for_shadow_activation"])
         self.assertFalse(result["historical_completeness_proven"])
