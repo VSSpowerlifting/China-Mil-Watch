@@ -89,6 +89,15 @@ def examine(*, opener=None, request=get_once, sleep=time.sleep):
     policy = {k: v for k, v in robots.items() if k != "_raw"}
     raw = robots.get("_raw")
     robot = None
+    # RFC 9309 §2.3.1.3 permits access when /robots.txt is absent (404).
+    # Unlike a 403, 429 or 5xx, this status reports no published policy.
+    # Treat ONLY an exact 404 as absence; do not equate access refusal with it.
+    no_robots_file = (
+        robots.get("status") == 404
+        and robots.get("result") == "http_not_served"
+    )
+    if no_robots_file:
+        policy["verdict"] = "policy_absent_404_no_robots_restrictions"
     if (robots.get("status") == 200 and isinstance(raw, bytes)
             and robots.get("mime") in ("text/plain", "text/x-robots", "")):
         policy_text = raw.decode("utf-8-sig", errors="replace")
@@ -97,7 +106,7 @@ def examine(*, opener=None, request=get_once, sleep=time.sleep):
             robot = urllib.robotparser.RobotFileParser()
             robot.parse(policy_text.splitlines())
             policy["verdict"] = "readable"
-    if robot is None:
+    if robot is None and not no_robots_file:
         policy["verdict"] = "unreadable_no_further_requests"
 
     outcomes = []
@@ -109,9 +118,9 @@ def examine(*, opener=None, request=get_once, sleep=time.sleep):
                 or parsed.query or parsed.fragment):
             raise AssertionError("unrecognized route")
         item = {"id": ident, "url": url, "kind": kind}
-        if robot is None:
+        if robot is None and not no_robots_file:
             item["verdict"] = "blocked_policy_unavailable"
-        elif not robot.can_fetch(UA, url):
+        elif robot is not None and not robot.can_fetch(UA, url):
             item["verdict"] = "blocked_by_robots"
         else:
             sleep(INTERVAL)
