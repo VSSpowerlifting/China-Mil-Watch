@@ -26,9 +26,9 @@ MAX_PACKET_BYTES = 2_000_000
 HEADING = re.compile(r"^## ([^\r\n]+)$", re.MULTILINE)
 SOURCE_RECORD = re.compile(r"^Record ([0-9]+) \|", re.MULTILINE)
 CITATION_LINE = re.compile(r"^SOURCE RECORD IDS:\s*(.*)$", re.MULTILINE)
-EXTERNAL_SOURCE = re.compile(r"^External source ([A-Z0-9-]+) \\|", re.MULTILINE)
+EXTERNAL_SOURCE = re.compile(r"^External source ([A-Z0-9-]+) \|", re.MULTILINE)
 EXTERNAL_LINE = re.compile(r"^EXTERNAL SOURCE IDS:\s*(.*)$", re.MULTILINE)
-EXTERNAL_IDS_LIST = re.compile(r"[A-Z0-9-]+(?:\\s*,\\s*[A-Z0-9-]+)*\\Z")
+EXTERNAL_IDS_LIST = re.compile(r"[A-Z0-9-]+(?:\s*,\s*[A-Z0-9-]+)*\Z")
 IDS_LIST = re.compile(r"[0-9]+(?:\s*,\s*[0-9]+)*\Z")
 
 
