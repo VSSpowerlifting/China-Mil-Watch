@@ -68,6 +68,10 @@ def resolve_sunday_handoff(*, event: str, now: datetime = None,
         target = _date(reporting_saturday) if reporting_saturday else latest_saturday
         if target > today:
             raise SundayHandoffRefused("future Saturday evidence is unavailable")
+        if target == today:
+            raise SundayHandoffRefused(
+                "reporting Saturday has not ended in New York; wait until Sunday"
+            )
         if target < latest_saturday - timedelta(days=91):
             raise SundayHandoffRefused("historical editions older than 91 days require separate review")
         sending = send_email
