@@ -33,11 +33,15 @@ dispatch or public capture retention; no production admission or automatic
 promotion is authorized.
 
 National Defence Journal English (desktop `tapchiqptd.vn/en/default.html`,
-mobile `m.tapchiqptd.vn/en`) is now one additional **disabled, research-only**
+mobile `m.tapchiqptd.vn/en`) is one additional **disabled, research-only**
 Vietnam source candidate. Its article IDs normalize across hosts; no
-production or shadow collection is active. Robots access, real HTML extraction,
-listing completeness and republication rights are pending. See
-`shadow/vietnam_journal/README.md`.
+production or shadow collection is active. Exact GitHub Actions probe
+`37712715499` verified desktop robots access, 26 distinct homepage article IDs
+and a 200 response for article 26936. Mobile robots.txt gave 404 (not an
+explicit denial); no mobile article request. Body/title extraction and
+publication-date isolation failed to qualify; listing completeness and
+republication rights remain unverified. See
+`docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md`.
 
 This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
