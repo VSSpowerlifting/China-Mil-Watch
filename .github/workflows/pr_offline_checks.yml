@@ -107,6 +107,48 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Fail quickly on taxonomy/reviewer/source-integrity regressions before
+      # downloading a full Chromium runtime and running the ~4k-test suite.
+      # Every selected test is run again in the complete suite below; this is
+      # NOT a substitute, an approval gate, a collector or a deployment step.
+      # The smoke stage is read-only and uses no secrets, network operations,
+      # production database writes or generated output.
+      - name: Run fast taxonomy and collection-boundary contracts
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          import unittest
+
+          tests_dir = Path("tests")
+          targets = sorted({
+              path.stem
+              for pattern in ("test_regional_topics*.py", "test_topic_*.py")
+              for path in tests_dir.glob(pattern)
+          })
+          # The original failure was a shared collector/editorial
+          # boundary contract, not a taxonomy unit test.
+          required = ("test_regional_topics", "test_extraction_interface")
+          for name in required:
+              if not (tests_dir / (name + ".py")).is_file():
+                  raise SystemExit("Missing mandatory fast check: " + name)
+              targets.append(name)
+          targets = sorted(set(targets))
+          print("Pre-browser contracts: " + ", ".join(targets), flush=True)
+          suite = unittest.defaultTestLoader.loadTestsFromNames(
+              ["tests." + name for name in targets]
+          )
+          count = suite.countTestCases()
+          if count == 0:
+              raise SystemExit("Refused: no fast contract tests discovered")
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          print("Pre-browser check: %d tests, success=%s" %
+                (count, result.wasSuccessful()), flush=True)
+          if not result.wasSuccessful():
+              sys.exit(1)
+          PY
+
       # The browser binary, with its system libraries. Same command the daily
       # workflow uses, so the two runs exercise one browser story rather than
       # two. `--with-deps` shells out to the runner's package manager; it needs
