@@ -1,0 +1,157 @@
+"""Build an unnumbered Indo-Pacific Record editorial worksheet, optionally email it.
+
+The scaffold must come from scripts/author_brief.py. This script NEVER authors
+analytical claims, changes the corpus, opens a PR, approves or publishes briefs.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import smtplib
+import ssl
+from datetime import date
+from email.message import EmailMessage
+from email.utils import getaddresses
+from pathlib import Path
+
+
+EDIT_SECTIONS = (
+    ("WORKING TITLE", "One concrete development, not a regional roundup"),
+    ("DEK", "One or two sentences; scope claims to the records"),
+    ("DEVELOPMENT AND SOURCE RECORD IDS", "Name the development and cite its record IDs"),
+    ("OPENING NOTE", "Open with the concrete development"),
+    ("WHAT STOOD OUT", "Attribute details to specific source records"),
+    ("WHY IT MATTERS", "Separate observations from interpretation"),
+    ("WHAT WAS ROUTINE", "Be willing to say when little changed"),
+    ("TERM TO KNOW", "Give the term, original language and cautious explanation"),
+    ("WHAT I'M WATCHING NEXT", "A specific question or observable indicator"),
+    ("CROSS-DESK COMPARISONS AND RECORD IDS", "Do not infer coordination from timing"),
+    ("EDITORIAL QUESTIONS FOR BEN", "Unverified wording, corrections, uncertainties"),
+)
+
+
+def one_line(value):
+    """Prevent source-supplied line breaks from masquerading as packet headings."""
+    return " ".join(str(value or "").split())
+
+
+def render_packet(sidecar):
+    if sidecar.get("editorial_status") != "draft" or sidecar.get("issue_number") is not None:
+        raise ValueError("only unnumbered, unapproved draft scaffolds may be emailed")
+    week_end = date.fromisoformat(sidecar["week_ending"])
+    if week_end.weekday() != 5:
+        raise ValueError("the Briefs editorial week must end on Saturday")
+    desks = sidecar["desks"]
+    trail = sidecar["source_trail"]
+    represented = {entry["desk"] for entry in trail}
+    if len(represented.intersection(desks)) < 2:
+        raise ValueError("fewer than two desks supplied source candidates; editorial review required")
+    lines = [
+        "INDO-PACIFIC RECORD | BRIEFS EDITORIAL WORKSHEET",
+        "Packet: IPR-" + week_end.isoformat(),
+        "Week: " + one_line(sidecar["week_start"]) + " through " + week_end.isoformat(),
+        "Status: UNNUMBERED DRAFT — NOT APPROVED OR PUBLISHED",
+        "Desks: " + ", ".join(desks),
+        "",
+        "DYLAN: Edit the writing sections below and REPLY with this .txt attached.",
+        "Keep the source appendix intact. Give record IDs for factual claims.",
+        "Do not guess at translations, infer coordination, or assign an issue number.",
+        "Source listings are candidates, not endorsed editorial selections.",
+        "Ben retains final editorial, approval, numbering and publication authority.",
+        "",
+        "=== EDITABLE MANUSCRIPT ===",
+    ]
+    for name, instruction in EDIT_SECTIONS:
+        lines.extend(("\n## " + name, "[" + instruction + "]", ""))
+    lines.extend((
+        "=== SOURCE APPENDIX — DO NOT EDIT ===",
+        "The appendix comes from the tracked production corpus; URLs and titles",
+        "are pointers for verification, not full-text evidence or checked quotations.",
+        "",
+        "COVERAGE SNAPSHOT (per desk; do not infer institutional silence):",
+    ))
+    for desk in desks:
+        stats = sidecar.get("coverage_by_desk", {}).get(desk, {})
+        screened = stats.get("by_screening", {})
+        lines.append(
+            "- {}: {} stored records; {} offered candidates; screening: {}".format(
+                desk, stats.get("records", 0),
+                sum(1 for record in trail if record["desk"] == desk),
+                ", ".join("{}={}".format(k, v) for k, v in sorted(screened.items())) or "none"))
+    lines.append("")
+    for entry in trail:
+        lines.extend((
+            "Record {} | {} | {} | {}".format(
+                entry["record_id"], one_line(entry["desk"]),
+                one_line(entry["date"]), one_line(entry["source"])),
+            "Title: " + one_line(entry["title"]),
+            "Original (" + one_line(entry["lang"]) + "): " + one_line(entry["title_original"]),
+            "URL: " + one_line(entry["url"]),
+            "Screening: " + one_line(entry["screening"]),
+            "",
+        ))
+    lines.extend((
+        "END OF SOURCE APPENDIX",
+        "END OF UNAPPROVED WORKSHEET",
+        "",
+    ))
+    return "\n".join(lines)
+
+
+def single_address(value, name):
+    if not value or "\r" in value or "\n" in value:
+        raise ValueError(name + " must contain one valid email address")
+    parsed = getaddresses([value])
+    if len(parsed) != 1 or "@" not in parsed[0][1] or parsed[0][1].count("@") != 1:
+        raise ValueError(name + " must contain one valid email address")
+    return parsed[0][1]
+
+
+def send_packet(path, week_ending):
+    recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+    sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
+    password = os.environ.get("IPR_SMTP_APP_PASSWORD", "")
+    if not password:
+        raise ValueError("IPR_SMTP_APP_PASSWORD is missing")
+    message = EmailMessage()
+    message["From"] = sender
+    message["To"] = recipient
+    message["Reply-To"] = sender
+    message["Subject"] = "IPR Briefs | week ending {} | editorial worksheet".format(week_ending)
+    message.set_content(
+        "Hi Dylan,\n\nAttached is this week's unnumbered IPR editorial worksheet "
+        "and record-level source list. Please edit the writing sections, leave "
+        "the source appendix intact, and reply within 48 hours with the "
+        "edited .txt attached.\n\nNothing in this handoff is approved for "
+        "publication. Ben will review claims and finalize the Brief.\n"
+    )
+    message.add_attachment(
+        path.read_bytes(), maintype="text", subtype="plain", filename=path.name
+    )
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context(), timeout=30) as smtp:
+        smtp.login(sender, password)
+        smtp.send_message(message)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sidecar", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--send", action="store_true",
+                        help="email via explicit SMTP secrets; otherwise write locally only")
+    args = parser.parse_args(argv)
+    sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
+    text = render_packet(sidecar)
+    args.out.write_text(text, encoding="utf-8")
+    print("Prepared unapproved editorial worksheet: {} ({} record candidates)".format(
+        args.out.name, len(sidecar["source_trail"])))
+    if args.send:
+        send_packet(args.out, sidecar["week_ending"])
+        print("Editorial worksheet delivered via configured SMTP account.")
+    else:
+        print("Email not enabled: no delivery occurred.")
+
+
+if __name__ == "__main__":
+    main()
