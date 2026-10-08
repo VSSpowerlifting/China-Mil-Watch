@@ -1,0 +1,84 @@
+# Issue #168: one-off pinned historical Singapore production evidence replay.
+# Read-only permissions; no publisher requests, collectors or production writes.
+# Only network access is an exact historical Git commit fetch inside this repository.
+name: Issue 168 Singapore frozen evidence audit
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - .github/workflows/issue168_singapore_frozen_audit.yml
+      - scripts/audit_issue168_singapore_production.py
+      - tests/test_issue168_singapore_production.py
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-evidence-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out isolated PR merge without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Record tracked database and output baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/ipr168-baseline-db.sha256"
+          if [ -d output ]; then
+            find output -type f -print0 | sort -z | xargs -0 -r sha256sum > "$RUNNER_TEMP/ipr168-baseline-output.sha256"
+          else
+            : > "$RUNNER_TEMP/ipr168-baseline-output.sha256"
+          fi
+          git status --porcelain > "$RUNNER_TEMP/ipr168-baseline-status.txt"
+
+      - name: Run synthetic-only fail-closed regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest tests.test_issue168_singapore_production -v
+
+      - name: Fetch only the exact historical Git object
+        shell: bash
+        env:
+          FROZEN_COMMIT: 4efa9c086f70ae3fe4d24720754f323c8e393ebf
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$FROZEN_COMMIT"
+          test "$(git rev-parse --verify "$FROZEN_COMMIT^{commit}")" = "$FROZEN_COMMIT"
+          test "$(git rev-parse "$FROZEN_COMMIT:pla_watch.db")" = "4ad8cda873c5ed31b5ff009ac90271fd629f78ed"
+          test "$(git cat-file -t a4af23d199550df81b7e8292afda2c6e330a8cc5)" = "blob"
+
+      - name: Audit immutable SQLite and P25-P36 (do not log source bodies)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/audit_issue168_singapore_production.py --repo "$GITHUB_WORKSPACE"
+
+      - name: Prove production DB and rendered output were not changed
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd "$GITHUB_WORKSPACE" && sha256sum -c "$RUNNER_TEMP/ipr168-baseline-db.sha256")
+          if [ -d output ]; then
+            (cd "$GITHUB_WORKSPACE" && sha256sum -c "$RUNNER_TEMP/ipr168-baseline-output.sha256" >/dev/null)
+          else
+            test ! -s "$RUNNER_TEMP/ipr168-baseline-output.sha256"
+          fi
+          git diff --exit-code -- pla_watch.db output
+          diff -u "$RUNNER_TEMP/ipr168-baseline-status.txt" <(git status --porcelain)
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
+          echo "PASS: tracked DB/output unmodified and no SQLite sidecars"
