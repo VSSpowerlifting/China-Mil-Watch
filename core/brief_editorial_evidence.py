@@ -118,7 +118,8 @@ def _item(item, start, cutoff):
              "research evidence published outside the reporting cutoff")
     _require(_line(item["title_original"], min_length=10, max_length=350),
              "missing original-language headline")
-    _require(item["source_kind"] in KINDS, "unknown provenance class")
+    _require(isinstance(item["source_kind"], str) and
+             item["source_kind"] in KINDS, "unknown provenance class")
     commit, digest = item["state_commit"], item["source_content_sha256"]
     if item["source_kind"] == "shadow-extracted-original":
         expected_rule = ("mps-vi-content-v1" if item["desk"] == "vietnam"
@@ -138,6 +139,7 @@ def _item(item, start, cutoff):
              "missing bounded source-accuracy cautions")
     tags = item["topics"]
     _require(isinstance(tags, list) and 1 <= len(tags) <= 3
+             and all(isinstance(t, str) for t in tags)
              and len(set(tags)) == len(tags) and set(tags) <= TAGS,
              "invalid topical labels")
     return dict(item)
