@@ -117,6 +117,15 @@ class WindowDriftTest(unittest.TestCase):
         with self.assertRaisesRegex(ObservationRefused, "repeated identity"):
             validate_observation(p)
 
+    def test_rejects_canonical_url_drift_across_snapshots(self):
+        a = observation("first-run", "2026-10-08T01:00:00Z", {"news": [26936]})
+        b = observation("second-run", "2026-10-09T01:00:00Z", {"news": [26936]})
+        b["sections"][0]["candidates"][0]["canonical_url"] = (
+            "https://tapchiqptd.vn/en/theory-and-practice/changed-slug/26936.html"
+        )
+        with self.assertRaisesRegex(ObservationRefused, "changed for one ID"):
+            compare_observations([a, b])
+
     def test_rejects_fake_completeness_and_aggregate_only(self):
         p = observation("first-run", "2026-10-08T01:00:00Z")
         p["historical_completeness_proven"] = True
