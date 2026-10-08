@@ -6,8 +6,8 @@
   "author_bio": "Benjamin Yang is the creator and editor of Indo-Pacific Record. He studies International Affairs at George Washington University’s Elliott School, with interests in U.S.–China relations, public diplomacy, and security affairs. He writes Indo-Pacific Record Briefs and maintains the project’s collection pipeline.",
   "collection": "Indo-Pacific Record Briefs",
   "brief_schema": 1,
-  "editorial_status": "draft",
-  "issue_number": null,
+  "editorial_status": "approved",
+  "issue_number": 17,
   "desks": [
     "china",
     "singapore"
@@ -150,5 +150,10 @@
       "Record 4392’s machine-generated English title and summary are not used as authoritative evidence; claims are bounded by the stored source text.",
       "The records describe the exercise design and China’s planned participation; they do not establish performance, combat interoperability, strategic alignment, or Chinese participation in every exercise component."
     ]
+  },
+  "approval": {
+    "approved_by": "Benjamin Yang",
+    "approved_on": "2026-10-07",
+    "reference": "ChatGPT authorization on 2026-10-07 after merge of PR #122 at exact candidate head 95a073501b6292ca13620dab6edf0569749970b7"
   }
 }
