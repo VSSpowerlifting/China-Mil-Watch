@@ -1,0 +1,54 @@
+name: Vietnam Journal One-shot Access Proof
+
+# Research only. Exactly one PR branch can run this; there is no cron, manual
+# dispatch, production admission or site deploy. Maximum six GETs (two hosts:
+# robots, homepage, one already-listed article each), with independent policy
+# checks and no full-text artifact.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_journal_access_probe.yml'
+      - 'scripts/probe_vietnam_journal.py'
+      - 'tests/test_vietnam_journal_probe.py'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: ${{ github.head_ref == 'research/vietnam-journal-access-proof-20261007' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact probe head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install bounded-probe dependencies
+        run: python -m pip install 'requests>=2.31,<3' 'beautifulsoup4>=4.12,<5'
+
+      - name: Validate source and probe contracts offline
+        run: |
+          python -m unittest tests.test_vn_defence_journal tests.test_vietnam_journal_probe -v
+
+      - name: Probe two exact journal hosts (maximum six requests)
+        env:
+          OUT: ${{ runner.temp }}/vietnam-journal-access.json
+        run: |
+          python scripts/probe_vietnam_journal.py --out "$OUT"
+
+      - name: Save metadata-only evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-journal-access-proof-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-journal-access.json
+          if-no-files-found: warn
+          retention-days: 90
