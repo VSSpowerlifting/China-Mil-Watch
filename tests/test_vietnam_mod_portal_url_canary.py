@@ -87,7 +87,7 @@ class URLIdentityCanaryTests(unittest.TestCase):
             JAPAN + "&urile=another",
             JAPAN + "&current=false",
             JAPAN.replace("current=true", "current=1"),
-            JAPAN.replace("/sa-en-news-rela/", "/sa-en-news-world/"),
+            JAPAN.replace("sa-en-news-rela%2F", "sa-en-news-world%2F"),
             JAPAN.replace("sa-en-news-rela%2F", "sa-en-news-world%2F"),
             JAPAN.replace("sa-mod-en%2F", "sa-mod-vi%2F"),
             JAPAN.replace("sa-mod-en%2F", "sa-mod-en%252F"),
