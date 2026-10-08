@@ -5,6 +5,8 @@ on:
   pull_request:
     paths:
       - '.github/workflows/vietnam_journal_parser_proof.yml'
+      - 'scraper/sources/vn_journal_article.py'
+      - 'tests/test_vn_journal_article.py'
 
 permissions:
   contents: read
