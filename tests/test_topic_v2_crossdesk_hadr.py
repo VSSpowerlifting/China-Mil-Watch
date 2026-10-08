@@ -6,6 +6,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -16,6 +17,7 @@ from scripts.validate_topic_v2_crossdesk_hadr import (  # noqa: E402
     _git_blob_sha,
     validate,
     validate_files,
+    replay_original_sources,
 )
 
 LEDGER = ROOT / "research" / "topic_pilot_v1" / "ledger.json"
@@ -148,6 +150,59 @@ class CrossDeskPacket(unittest.TestCase):
         packet = self.copy()
         packet["selection_note"] = "All evidence independently approved."
         self.assert_refused(packet, "disclose non-human model-selected origin")
+
+
+    def test_default_fast_mode_does_not_load_snapshot_blobs(self):
+        from scripts import topic_pilot
+        with patch.object(topic_pilot, "verify_sources") as git_replay:
+            report = validate_files()
+        self.assertIsNone(report["original_source_replay"])
+        git_replay.assert_not_called()
+
+    def test_optional_replay_limits_historical_git_snapshots_to_selected_sources(self):
+        from scripts import topic_pilot
+        with patch.object(topic_pilot, "verify_sources", return_value=11) as git_replay:
+            report = validate_files(verify_sources=True)
+        self.assertTrue(report["original_source_replay"]["historical_snapshot_replay"])
+        self.assertEqual(report["original_source_replay"]["records_replayed"], 11)
+        self.assertEqual(report["original_source_replay"]["source_blobs_replayed"], 6)
+        self.assertFalse(report["original_source_replay"]["human_approval"])
+        git_replay.assert_called_once()
+        selected = git_replay.call_args.args[0]
+        self.assertEqual(
+            {r["pilot_id"] for r in selected["records"]},
+            {r["pilot_id"] for r in self.packet["cases"]},
+        )
+        self.assertEqual(
+            set(selected["origins"]),
+            {"production", "jp-mod", "ph-afp", "indonesia-kemhan",
+             "vietnam-mps-foreign-affairs", "korea-policy-briefing"},
+        )
+        self.assertEqual(len(selected["records"]), 11)
+
+    def test_optin_source_replay_refuses_partial_verification(self):
+        from scripts import topic_pilot
+        with patch.object(topic_pilot, "verify_sources", return_value=10):
+            with self.assertRaisesRegex(
+                CrossDeskEvidenceError, "did not cover every selected case"
+            ):
+                validate_files(verify_sources=True)
+
+    def test_optin_source_replay_fails_closed_on_missing_git_blob(self):
+        from scripts import topic_pilot
+        with patch.object(
+            topic_pilot, "verify_sources",
+            side_effect=ValueError("Pinned Git evidence unavailable"),
+        ):
+            with self.assertRaisesRegex(ValueError, "Pinned Git evidence unavailable"):
+                validate_files(verify_sources=True)
+
+    def test_optin_source_replay_never_claims_human_approval(self):
+        from scripts import topic_pilot
+        with patch.object(topic_pilot, "verify_sources", return_value=11):
+            result = replay_original_sources(self.packet, self.ledger)
+        self.assertFalse(result["human_approval"])
+        self.assertNotIn("approved_topics", result)
 
 
 if __name__ == "__main__":
