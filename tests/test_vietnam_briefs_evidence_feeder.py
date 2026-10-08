@@ -7,7 +7,9 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
+from scripts.build_vietnam_sunday_packet import build as build_from_state
 from scripts.prepare_vietnam_briefs_evidence import (
     VietnamFeederError, canonical_json, make_packet, main,
 )
@@ -154,6 +156,44 @@ class FeederTests(unittest.TestCase):
             q["records"][0][field] = value
             with self.subTest(field=field), self.assertRaises(VietnamFeederError):
                 make_packet(signed(q), NOTES, SAT)
+
+    def test_read_only_state_orchestrator_preserves_japan_and_stops_on_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            parent = d / "editor"
+            parent.mkdir()
+            notes = d / "notes.json"
+            notes.write_text(canonical_json(NOTES), encoding="utf-8")
+            output = parent / (SAT + ".json")
+
+            def fake_queue(_repo, _commit, target):
+                target.mkdir()
+                (target / "review_queue.json").write_text(
+                    canonical_json(queue()), encoding="utf-8")
+                return {"machine_review_candidate_count": 2}
+
+            with patch("scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                       side_effect=fake_queue) as gen:
+                result = build_from_state(
+                    state_repo=d, state_commit="a" * 40,
+                    week_ending=SAT, notes=notes, output=output)
+            gen.assert_called_once()
+            self.assertEqual(result["vietnam_sources"], 2)
+            self.assertIs(result["email_sent"], False)
+            self.assertEqual(len(json.loads(output.read_text())["items"]), 2)
+            with self.assertRaises(VietnamFeederError):
+                build_from_state(
+                    state_repo=d, state_commit="a" * 40,
+                    week_ending=SAT, notes=notes, output=output)
+
+            output.unlink()
+            with patch("scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                       side_effect=ValueError("inconsistent shadow receipts")):
+                with self.assertRaisesRegex(ValueError, "inconsistent"):
+                    build_from_state(
+                        state_repo=d, state_commit="a" * 40,
+                        week_ending=SAT, notes=notes, output=output)
+            self.assertFalse(output.exists())
 
     def test_no_output_on_bad_queue_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as tmp:
