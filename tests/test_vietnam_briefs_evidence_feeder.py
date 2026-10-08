@@ -157,6 +157,20 @@ class FeederTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(VietnamFeederError):
                 make_packet(signed(q), NOTES, SAT)
 
+    def test_manual_real_state_preview_cannot_dispatch_mail_or_publish(self):
+        workflow = (ROOT / ".github/workflows/vietnam_sunday_evidence_preview.yml"
+                    ).read_text(encoding="utf-8")
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertNotIn("  schedule:", workflow)
+        self.assertIn("  contents: read", workflow)
+        self.assertIn("uses: ./.github/actions/vietnam-editorial-evidence", workflow)
+        self.assertIn("steps.vietnam.outputs.packet", workflow)
+        self.assertNotIn("actions/upload-artifact", workflow)
+        self.assertNotIn("--send", workflow)
+        self.assertNotIn("ANTHROPIC_API_KEY", workflow)
+        self.assertNotIn("IPR_SMTP_APP_PASSWORD", workflow)
+        self.assertNotIn("git push", workflow)
+
     def test_composite_action_is_read_only_and_exports_one_shared_packet(self):
         action = (ROOT / ".github/actions/vietnam-editorial-evidence/action.yml"
                   ).read_text(encoding="utf-8")
