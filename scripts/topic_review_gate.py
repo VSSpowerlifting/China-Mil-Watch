@@ -114,6 +114,7 @@ def blind_packet(version: int = 1) -> str:
     for topic in vocabulary["topic_slugs"]:
         parts.append("- " + topic)
     for record in ledger["records"]:
+        origin = ledger["origins"][record["origin"]]
         parts.extend([
             "",
             "## %s — %s" % (record["pilot_id"], record["desk_id"]),
@@ -128,6 +129,12 @@ def blind_packet(version: int = 1) -> str:
             % (record["desk_id"], record["source_slug"], record["canonical_url"]),
             "",
             "**Preserved body SHA-256:** " + record["body_sha256"],
+            "",
+            "**Pinned archive:** %s:%s (Git blob %s)"
+            % (origin["commit"], origin["path"], origin["blob"]),
+            "",
+            "**Stored row:** %s / %s"
+            % (record["row_locator"]["table"], record["row_locator"]["url"]),
             "",
             "**Original source excerpts (context only):**",
             "",
@@ -176,7 +183,7 @@ def validate_decisions(
         if not isinstance(entry, dict):
             raise ReviewGateError("review entry must be an object")
         pilot_id = entry.get("pilot_id")
-        if pilot_id not in originals or not isinstance(pilot_id, str):
+        if type(pilot_id) is not str or pilot_id not in originals:
             raise ReviewGateError("unknown pilot ID")
         if originals[pilot_id] is None:
             raise ReviewGateError("%s appears twice" % pilot_id)
@@ -188,7 +195,7 @@ def validate_decisions(
                 raise ReviewGateError("%s: %s identity changed" % (pilot_id, field))
         originals[pilot_id] = None  # every identity occurs exactly once
         decision = entry.get("decision")
-        if decision not in DECISIONS:
+        if type(decision) is not str or decision not in DECISIONS:
             raise ReviewGateError("%s: invalid decision" % pilot_id)
         counts[decision] += 1
         topics = entry.get("topics")
