@@ -1,0 +1,82 @@
+name: Japan Sunday Research — Immutable MOD Source Attestation
+
+# Read-only research evidence; NO Japan production activation or automated send.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/attest_japan_sunday_research.py
+      - tests/test_japan_sunday_source_attestation.py
+      - .github/workflows/japan_sunday_source_attestation.yml
+      - docs/JAPAN_SUNDAY_RESEARCH_ATTESTATION.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-sunday-research-attestation-readonly
+  cancel-in-progress: false
+
+jobs:
+  original-version:
+    if: (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test exact source identity and nonapproval contracts
+        run: python -m unittest tests.test_japan_sunday_source_attestation -v
+      - name: Fetch Japan MOD isolated state branch read-only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c credential.helper= clone --single-branch --branch shadow/jp-mod \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/jp-mod-shadow"
+          cd "$RUNNER_TEMP/jp-mod-shadow"
+          git cat-file -e d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13^{commit}
+          git merge-base --is-ancestor \
+            d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13 \
+            refs/heads/shadow/jp-mod
+          test "$(git ls-tree --name-only d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13)" = state
+      - name: Verify Oct 10 Japan research against exact Git object
+        run: |
+          set -euo pipefail
+          python -m scripts.attest_japan_sunday_research \
+            --week-ending 2026-10-10 --as-of 2026-10-10 \
+            --state-repo "$RUNNER_TEMP/jp-mod-shadow" \
+            --output "$RUNNER_TEMP/japan-sunday-source-attestation.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ["RUNNER_TEMP"]) / "japan-sunday-source-attestation.json"
+          item = json.loads(path.read_text(encoding="utf-8"))
+          assert item["status"] == "exact_versions_verified_not_editorial_approval"
+          assert item["japan_records"] == 3
+          assert item["human_source_review_completed"] is False
+          assert item["editorial_inclusion_approved"] is False
+          assert item["archived_original_pdf_bytes_verified"] is False
+          assert item["japan_production_eligible"] is False
+          assert item["smtp_or_production_writes"] == 0
+          print("Three Japan evidence identities machine-checked, NOT human approved.")
+          PY
+      - name: Upload metadata only (no Japanese PDF text or captures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-sunday-source-attestation-${{ github.run_id }}
+          path: ${{ runner.temp }}/japan-sunday-source-attestation.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Verify production checkout unmodified
+        if: always()
+        run: test -z "$(git status --porcelain)"
+      # No source body in logs or artifacts. No model call, SMTP or writes.
