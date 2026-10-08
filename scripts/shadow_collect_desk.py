@@ -95,7 +95,8 @@ def finish(entry, state_dir):
     entry["day_zero_utc"] = clock["day_zero_utc"] if clock else None
     entry["shadow_day"] = ((datetime.fromisoformat(entry["finished_utc"]) -
                             datetime.fromisoformat(clock["day_zero_utc"])).days
-                           if clock and st.is_success(entry["result"]) else None)
+                           if clock and st.is_success(entry["result"]) and
+                           entry.get("counts_as_qualifying_shadow_day") is not False else None)
     stamp = entry["finished_utc"].replace(":", "").replace("-", "")
     with (state_dir / "ledger" / (stamp + "-" + entry["run_id"] + ".json")).open("x", encoding="utf-8") as fh:
         fh.write(json.dumps(entry, indent=2, ensure_ascii=False) + "\n")
