@@ -2,10 +2,11 @@
   "manifest_version": 1,
   "_shadow": true,
   "_comment": [
-    "Shadow-only manual dispatch pilot: source is enabled for the isolated runner only.",
-    "No scheduler, no production manifest, no public desk or records.",
-    "No publication or promotion without source-fidelity and human checkpoint review.",
-    "First state branch may be initialized only via an explicit GitHub manual run."
+    "This is still a SHADOW-only Japan Coast Guard institutional source.",
+    "The first state/clock was created by owner-dispatched manual collection on 2026-10-08.",
+    "A candidate daily schedule is default-off and requires explicit repository variable JCG_SHADOW_DAILY_ENABLED=true.",
+    "No production manifest, public records, AI writer eligibility or automatic source promotion.",
+    "Review captures and pinned Day 0 state before owner enables any daily qualification schedule."
   ],
   "desk": {
     "desk_id": "japan_jcg",
