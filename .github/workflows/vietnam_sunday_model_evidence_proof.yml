@@ -41,7 +41,7 @@ jobs:
 
       - name: Fast offline source-integrity and source-citation contracts
         run: |
-          python -m unittest -q tests.test_vietnam_briefs_model_feed tests.test_briefs_editorial_evidence
+          python -m unittest -q tests.test_japan_weekly_writer_sources tests.test_vietnam_briefs_model_feed tests.test_briefs_editorial_evidence tests.test_weekly_briefs_auto_writer tests.test_weekly_editorial_handoff tests.test_editorial_return_validation tests.test_weekly_briefs_sunday_window
 
       - name: Clone exact Vietnam MPS shadow state read-only
         env:
