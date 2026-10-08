@@ -72,6 +72,24 @@ class JournalExtractorTests(unittest.TestCase):
         self.assertNotIn("Deputy Director", record.text_original)
         self.assertEqual(len(record.body_blocks), 1)
 
+    def test_rank_qualified_author_may_precede_trailing_paragraphs(self):
+        body = ("<p>Original fictional article lead.</p>"
+                "<p>Second editorial paragraph.</p>"
+                "<p><strong><em>Colonel EXAMPLE AUTHOR</em></strong></p>"
+                "<p>Trailing translator or editorial note.</p>")
+        record = journal.parse_desktop_article(page(body=body), URL)
+        self.assertEqual(record.author_credit_original, "Colonel EXAMPLE AUTHOR")
+        self.assertNotIn("EXAMPLE AUTHOR", record.text_original)
+        self.assertIn("Trailing translator", record.text_original)
+        self.assertEqual(len(record.body_blocks), 3)
+
+    def test_two_competing_credits_near_end_are_ambiguous(self):
+        body = ("<p>Actual fictional prose.</p>"
+                "<p><strong><em>Colonel AUTHOR A</em></strong></p>"
+                "<p><strong><em>Major General AUTHOR B</em></strong></p>")
+        with self.assertRaisesRegex(journal.ExtractionRefused, "ambiguous author"):
+            journal.parse_desktop_article(page(body=body), URL)
+
     def test_rank_mentioned_in_body_does_not_automatically_remove_prose(self):
         body = ("<p>A report about a Major General's service.</p>"
                 "<p><em>Professor of strategy, quoted in the story.</em></p>")
