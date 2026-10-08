@@ -22,10 +22,10 @@ CHECKS = {
     "pinned_content_version_checked", "original_summary_fact_checked",
     "no_copied_article_body",
 }
-IDENTITY = re.compile(r"mps-vi:([1-9][0-9]{6,20})\\Z")
-HEX40 = re.compile(r"[0-9a-f]{40}\\Z")
-HEX64 = re.compile(r"[0-9a-f]{64}\\Z")
-REFERENCE = re.compile(r"\\[External ([^\\]\\r\\n]+)\\]")
+IDENTITY = re.compile(r"mps-vi:([1-9][0-9]{6,20})\Z")
+HEX40 = re.compile(r"[0-9a-f]{40}\Z")
+HEX64 = re.compile(r"[0-9a-f]{64}\Z")
+REFERENCE = re.compile(r"\[External ([^\]\r\n]+)\]")
 MAX_ITEMS = 5
 FIELDS = {
     "schema", "source_identity", "desk", "source_slug", "source_name",
