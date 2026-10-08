@@ -900,6 +900,15 @@ deploy gate's governed baseline is 10 warnings.
 
 ## 7. Immediate priorities
 
+**Regional Topic Taxonomy v1 classification pilot (provisional review):**
+`research/topic_pilot_v1/ledger.json` freezes 60 records from seven desks
+(36 production / 24 shadow), with evidence-linked Codex proposals and pending
+human review. Sixteen of nineteen topics have examples; fifteen records abstain.
+`docs/REGIONAL_TOPIC_PILOT.md` records scope questions and the recommendation
+for independent adjudication before production adoption. No topic is approved
+or attached; no DB/schema, existing desk-label, vocabulary or output change.
+The US desk is excluded from this pilot by owner direction.
+
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
 1. Restore the human analytical publication cadence. The first brief is
