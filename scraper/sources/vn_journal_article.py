@@ -106,9 +106,17 @@ def parse_desktop_article(html, url):
         raise ExtractionRefused("empty or excessive article body structure")
     if any(child.name not in {"p", "table"} for child in children):
         raise ExtractionRefused("unknown journal body structure")
-    author_credit = classify_author(children[-1])
-    if author_credit is not None:
-        children.pop()
+    # Both measured samples place the rank-qualified credit near the end,
+    # but not at the absolute final p. Search the final six direct elements,
+    # refuse competing credits, and remove only the recognized paragraph.
+    candidates = [(index, credit) for index, child in enumerate(children)
+                  if index >= max(0, len(children) - 6)
+                  for credit in [classify_author(child)] if credit is not None]
+    if len(candidates) > 1:
+        raise ExtractionRefused("ambiguous author credit in journal body")
+    author_credit = candidates[0][1] if candidates else None
+    if candidates:
+        children.pop(candidates[0][0])
     blocks = []
     for child in children:
         prose = clean_text(child)
