@@ -27,6 +27,10 @@ class SundayMPSIntegration(unittest.TestCase):
         offsets = [code.index(s) for s in steps]
         self.assertEqual(offsets, sorted(offsets))
         self.assertIn("uses: ./.github/actions/vietnam-editorial-evidence", code)
+        self.assertIn('REPORTING_SATURDAY="$IPR_SUNDAY_WEEK_END"', code)
+        self.assertIn('echo "week_ending=$REPORTING_SATURDAY" >> "$GITHUB_OUTPUT"', code)
+        self.assertIn("week-ending: $" + "{{ steps.vietnam_sources.outputs.week_ending }}", code)
+        self.assertNotIn("week-ending: $" + "{{ env.IPR_SUNDAY_WEEK_END }}", code)
         self.assertIn("PRIVATE_WEEK_PACKET: $" + "{{ steps.vietnam_current.outputs.packet }}", code)
         self.assertIn('--research-packet "$PRIVATE_WEEK_PACKET"', code)
         self.assertIn('[[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]]', code)
