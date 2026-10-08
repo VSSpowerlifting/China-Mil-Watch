@@ -123,9 +123,10 @@ def prepare(state_repo, state_commit, week_ending, input_path, out_path, *,
     require(type(observed_on) is date, "observed_on must be a date")
     require(isinstance(state_commit, str) and SHA.fullmatch(state_commit),
             "literal forty-character state commit required")
-    state_repo = Path(state_repo).resolve()
-    require(state_repo.is_dir() and not state_repo.is_symlink(),
-            "state repo missing or symlinked")
+    untrusted_repo = Path(state_repo)
+    require(not untrusted_repo.is_symlink(), "state repo symlink refused")
+    state_repo = untrusted_repo.resolve()
+    require(state_repo.is_dir(), "state repo missing")
     require(git(state_repo, "rev-parse", "--verify", "refs/heads/" + BRANCH) == state_commit,
             "Korean snapshot must equal current branch tip")
     require(git(state_repo, "ls-tree", "--name-only", state_commit) == "state",
