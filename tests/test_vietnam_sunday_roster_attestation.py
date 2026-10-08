@@ -41,7 +41,8 @@ def attest_with_queue(root, *, original=None, queue_override=None,
                    "scripts.attest_vietnam_sunday_roster.formal.resolve_state_repo",
                    return_value=root), patch(
                    "scripts.attest_vietnam_sunday_roster.formal.verify_state_commit",
-                   return_value={"state_tree": "b" * 40}) as ancestry:
+                   return_value={"state_tree": "b" * 40,
+                                 "state_ref_tip": "a" * 40}) as ancestry:
         result = attest(
             state_repo=root, state_commit="a" * 40, week_ending=SAT,
             notes=notes_path, offered_packet=offered,
@@ -89,6 +90,28 @@ class CurrentRosterTests(unittest.TestCase):
                                    "scripts.attest_vietnam_sunday_roster.formal.verify_state_commit",
                                    side_effect=ValueError("not an ancestor")):
                 with self.assertRaisesRegex(ValueError, "not an ancestor"):
+                    attest(state_repo=root, state_commit="a" * 40,
+                           week_ending=SAT, notes=notes,
+                           offered_packet=offered, require_all_eligible=True)
+
+    def test_pinned_historical_replay_cannot_claim_current_shadow_tip(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            offered, notes = provision(root)
+
+            def fake_queue(_repo, _sha, directory):
+                directory.mkdir()
+                (directory / "review_queue.json").write_text(
+                    canonical_json(queue()), encoding="utf-8")
+
+            with patch("scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                       side_effect=fake_queue), patch(
+                           "scripts.attest_vietnam_sunday_roster.formal.resolve_state_repo",
+                           return_value=root), patch(
+                           "scripts.attest_vietnam_sunday_roster.formal.verify_state_commit",
+                           return_value={"state_ref_tip": "b" * 40}):
+                with self.assertRaisesRegex(VietnamFeederError,
+                                            "latest exact MPS shadow branch head"):
                     attest(state_repo=root, state_commit="a" * 40,
                            week_ending=SAT, notes=notes,
                            offered_packet=offered, require_all_eligible=True)
