@@ -1,0 +1,39 @@
+name: IPR Briefs Source Readiness Preflight (No Model, No Send)
+
+on:
+  workflow_dispatch:
+    inputs:
+      reporting_friday:
+        description: "Reporting cutoff Friday (YYYY-MM-DD), e.g. 2026-10-02"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-briefs-source-preflight
+  cancel-in-progress: false
+
+jobs:
+  inspect-source-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout tracked corpus (read-only)
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Inspect Friday source coverage without Claude or email
+        env:
+          REPORTING_FRIDAY: ${{ inputs.reporting_friday }}
+        run: python -m scripts.weekly_briefs_source_preflight --friday "$REPORTING_FRIDAY"
+
+      # No secrets, no SMTP, no model, no artifact, no publish.
