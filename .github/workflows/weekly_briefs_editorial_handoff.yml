@@ -24,10 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout production source
+      - name: Checkout triggered source
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Set up production Python version
         uses: actions/setup-python@v5
