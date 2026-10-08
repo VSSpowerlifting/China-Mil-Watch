@@ -194,6 +194,7 @@ jobs:
         env:
           PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
           PRIVATE_VN_COUNT: ${{ steps.vietnam_current.outputs.vietnam-count }}
+          PRIVATE_VN_MACHINE_ELIGIBLE: ${{ steps.vietnam_current.outputs.machine-eligible-count }}
         run: |
           python - <<'PY'
           import os
@@ -208,8 +209,15 @@ jobs:
           vn = sum(row["desk"] == "vietnam" for row in rows)
           if vn != int(os.environ["PRIVATE_VN_COUNT"]):
               raise SystemExit("Refused: MPS review count differs from model evidence")
-          print("Current-shadow-approved-for-private-drafting roster: %d Vietnam items, %d other desk items"
-                % (vn, len(rows) - vn))
+          eligible = int(os.environ["PRIVATE_VN_MACHINE_ELIGIBLE"])
+          if eligible < vn or eligible < 0:
+              raise SystemExit("Refused: impossible current MPS source eligibility count")
+          if week == "2026-10-10" and eligible != vn:
+              raise SystemExit("Refused: strict pilot must account for all in-window MPS sources before model/email")
+          if eligible > vn:
+              print("::warning::%d verified MPS sources currently lack short, version-matched private synopses; omission is NOT official silence." % (eligible - vn))
+          print("Source-audited private research roster: %d Vietnam items, %d other desk items, %d eligible in MPS archive"
+                % (vn, len(rows) - vn, eligible))
           print("Neither source rights nor official silence nor publication approved.")
           PY
 
