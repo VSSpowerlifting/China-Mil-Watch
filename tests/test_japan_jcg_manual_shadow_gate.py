@@ -10,6 +10,7 @@ from unittest import mock
 from core.manifests import load_all_desks, load_manifest
 from scraper.sources.jp_jcg_en import JCGEnglishAdapter, LISTING
 from scripts import shadow_collect_desk as runner
+from scripts import review_desk_shadow as reviewer
 
 ROOT = Path(__file__).resolve().parents[1]
 HOST = "https://www.kaiho.mlit.go.jp"
@@ -128,6 +129,85 @@ class JapanJCGManualShadow(unittest.TestCase):
             self.assertEqual(second["duplicates"], 1)
             self.assertEqual(second["health"], "ok")
             self.assertEqual(len(list((state / "ledger").glob("*.json"))), 2)
+
+    def test_reviewer_detects_jcg_stale_dates_and_keeps_approval_unset(self):
+        config = load_manifest(ROOT / "shadow/jp_jcg/manifest.json")
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp) / "state"
+            sample = JCGEnglishAdapter(config.sources[0], session=MemorySession(),
+                                       sleeper=lambda _: None)
+            entry = runner.run("japan_jcg", state, date(2026, 10, 8),
+                               lookback=9, cap=20, adapter=sample, run_id="review-first")
+            self.assertEqual(entry["inserted"], 1)
+            original = reviewer.hash_files(state)
+            report = reviewer.review(state, "japan_jcg", Path(temp) / "review",
+                                     date(2026, 10, 8))
+            self.assertEqual(report["records"], 1)
+            self.assertEqual(report["ledgers"], 1)
+            self.assertEqual(report["findings"], [])
+            self.assertEqual(len(report["review_holds"]), 1)
+            self.assertIn("2021-3-1", report["review_holds"][0])
+            self.assertEqual(report["mode"], "rehearsal")
+            self.assertIsNone(report["state_commit"])
+            self.assertFalse(report["human_review_completed"])
+            self.assertFalse(report["promotion_authorized"])
+            self.assertEqual(reviewer.hash_files(state), original)
+            prose = (Path(temp) / "review/report.md").read_text()
+            self.assertIn("Coast Guard is not Japan MOD", prose)
+            self.assertIn("JCG: linked PDFs/photos", prose)
+
+    def test_reviewer_catches_jcg_original_text_tampering(self):
+        config = load_manifest(ROOT / "shadow/jp_jcg/manifest.json")
+        with tempfile.TemporaryDirectory() as temp:
+            state = Path(temp) / "state"
+            sample = JCGEnglishAdapter(config.sources[0], session=MemorySession(),
+                                       sleeper=lambda _: None)
+            runner.run("japan_jcg", state, date(2026, 10, 8),
+                       lookback=9, cap=20, adapter=sample, run_id="tamper-first")
+            with sqlite3.connect(state / "shadow.db") as db:
+                db.execute("UPDATE shadow_records SET text_original='altered text'")
+                db.commit()
+            report = reviewer.review(state, "japan_jcg", Path(temp) / "packet",
+                                     date(2026, 10, 8))
+            self.assertTrue(any("Original-text hash mismatch" in f
+                                for f in report["findings"]))
+            self.assertFalse(report["human_review_completed"])
+
+    def test_formal_jcg_review_requires_pinned_commit_on_approved_branch(self):
+        import shutil
+        import subprocess
+        config = load_manifest(ROOT / "shadow/jp_jcg/manifest.json")
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "original-state"
+            sample = JCGEnglishAdapter(config.sources[0], session=MemorySession(),
+                                       sleeper=lambda _: None)
+            runner.run("japan_jcg", source, date(2026, 10, 8),
+                       lookback=9, cap=20, adapter=sample, run_id="commit-first")
+            repo = Path(temp) / "git-state"
+            repo.mkdir()
+            shutil.copytree(source, repo / "state")
+            def git(*args):
+                return subprocess.check_output(
+                    ["git", "-C", str(repo), *args], stderr=subprocess.DEVNULL)
+            git("init")
+            git("checkout", "--orphan", reviewer.BRANCHES["japan_jcg"])
+            git("add", "state")
+            git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                "commit", "-m", "Isolated JCG sample")
+            head = git("rev-parse", "HEAD").decode().strip()
+            export = Path(temp) / "pinned"
+            tree = reviewer.export_commit(repo, head, "japan_jcg", export)
+            report = reviewer.review(export / "state", "japan_jcg",
+                                     Path(temp) / "review", date(2026, 10, 8),
+                                     head, tree)
+            self.assertEqual(report["mode"], "formal_commit_snapshot")
+            self.assertEqual(report["state_ref"], "shadow/japan-jcg")
+            self.assertEqual(report["state_commit"], head)
+            self.assertEqual(report["findings"], [])
+            self.assertFalse(report["human_review_completed"])
+            with self.assertRaises(subprocess.CalledProcessError):
+                reviewer.export_commit(repo, head, "indonesia",
+                                       Path(temp) / "wrong-desk")
 
     def test_refuses_to_write_inside_source_checkout(self):
         with self.assertRaises(ValueError):
