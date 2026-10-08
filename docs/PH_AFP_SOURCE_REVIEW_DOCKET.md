@@ -17,7 +17,9 @@ python3 -m scripts.prepare_ph_afp_review_docket \
 
 This should list 18 first-seen records if both actual preserved historical commits are available and validated. It is a **deterministic expected result**, not a claim of a live replay on this development branch. JSON is available with `--format json`. Output excludes article bodies and original API JSON; it includes the original *article titles*, publication dates, official URLs and hashed evidence identities. Do not publish source-sensitive review annotations or the private originals alongside this index.
 
-The docket deliberately does not choose topics, produce executive summaries, rank sources by strategic significance, count independent events, add taxonomy labels, certify reuse rights, identify the reviewer or mark records verified. Every source remains **Pending**. Three AFP reports describing the Sanlakas exercise are still evidence for one provisional exercise, not three independently corroborated exercises.
+The docket deliberately does not choose topics, produce executive summaries, rank sources by strategic significance, count independent events, add taxonomy labels, certify reuse rights, identify the reviewer or mark records verified. Every source remains **Pending**.
+
+**Missing body text is an explicit review item, not a reason to hide a record.** A successfully captured record marked `no_text` is listed with its source identity and a **No text — review extraction** indicator, and increases the docket's unavailable-body count. The human reviewer must disposition whether the original is legitimately image-only or whether extraction failed; the docket cannot mark it verified or eligible for the AI writer. Three AFP reports describing the Sanlakas exercise are still evidence for one provisional exercise, not three independently corroborated exercises.
 
 ## How to complete actual human review
 
@@ -37,7 +39,7 @@ Keep the full packets under access control. The original API's observed `X-Robot
 
 ## Engineering guardrails
 
-- Per-run original packets must be regenerated from literal Git commits. The docket rejects unexpected protocol/state flags, any non-pending or fabricated reviewer status, missing full-text records, wrong AFP URL hosts/paths, inconsistent hashes, duplicate source IDs and malformed run references.
+- Per-run original packets must be regenerated from literal Git commits. The docket rejects unexpected protocol/state flags, any non-pending or fabricated reviewer status, contradictory `text`/`no_text` body-length metadata, wrong AFP URL hosts/paths, inconsistent hashes, duplicate source IDs and malformed run references. Missing-body originals are **retained visibly** with a mandatory human disposition, not silently dropped.
 - Neither the docket nor its output contains raw source bodies, original API responses, model text, editorial judgment or a source approval.
 - No modification to `desks/`, AFP/NSC collector schedules, production SQLite, Briefs or the Sunday workflow. Do not use this document to place shadow records into the AI writer.
 - The review validator, reliability audit and independent Actions provenance audit remain separate stages of the eventual owner-controlled production admission.
