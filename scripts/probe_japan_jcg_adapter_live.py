@@ -33,6 +33,7 @@ def run(*, adapter=None):
         "archive_method": "none", "shadow_state_written": False,
         "production_state_written": False,
         "discovery_status": discovered.status,
+        "discovery_error_detail": discovered.error_detail,
         "robots_status": adapter.robots_status,
         "discover_count": len(discovered.references),
         "records": [],
