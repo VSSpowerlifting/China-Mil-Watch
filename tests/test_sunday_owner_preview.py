@@ -98,6 +98,25 @@ class SundayOwnerPreviewTests(unittest.TestCase):
                         main(args)
                     self.assertFalse(output.exists())
 
+    def test_owner_preview_secrets_are_checked_before_model_usage(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        preflight = workflow.index(
+            "- name: Preflight private owner preview and exclusive delivery intent")
+        generate = workflow.index(
+            "- name: Generate source-cited Sunday manuscript and optionally email Dylan")
+        self.assertLess(preflight, generate)
+        self.assertIn("IPR_EDITOR_SEND_REQUESTED", workflow[preflight:generate])
+        self.assertIn("IPR_PREVIEW_REQUESTED", workflow[preflight:generate])
+        self.assertIn("IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}",
+                      workflow[preflight:generate])
+        self.assertIn("IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}",
+                      workflow[preflight:generate])
+        self.assertIn("owner.casefold() == editor.casefold()",
+                      workflow[preflight:generate])
+        self.assertIn("single_address(", workflow[preflight:generate])
+        self.assertIn("cannot both be true", workflow[preflight:generate])
+        self.assertNotIn("ANTHROPIC_API_KEY", workflow[preflight:generate])
+
     def test_workflow_owner_preview_is_opt_in_and_email_secret_is_separate(self):
         code = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("      preview_to_owner:", code)
