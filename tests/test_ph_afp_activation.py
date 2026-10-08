@@ -30,12 +30,19 @@ class OfflineGate(unittest.TestCase):
 
     def test_fully_supported_still_never_activates(self):
         out = preflight.summarize(self.audit, self.reviews)
-        self.assertTrue(out["machine_evidence_candidate_for_independent_decision"])
+        self.assertTrue(out["seven_day_machine_evidence_candidate_for_human_checkpoint"])
+        self.assertEqual(out["production_minimum_consecutive_collecting_days"], 30)
+        self.assertFalse(out["thirty_day_continuity_assessed"])
+        self.assertFalse(out["day_7_human_checkpoint_completed"])
+        self.assertFalse(out["day_14_human_checkpoint_completed"])
+        self.assertFalse(out["day_30_human_checkpoint_completed"])
         self.assertFalse(out["production_eligible"])
         self.assertFalse(out["weekly_AI_model_eligible"])
         self.assertFalse(out["desk_activated"])
         self.assertEqual(out["database_or_output_writes"], 0)
-        self.assertEqual(len(out["unresolved_external_gates"]), 5)
+        self.assertEqual(len(out["unresolved_external_gates"]), 6)
+        self.assertIn("C13_thirty_consecutive_collecting_days_and_day_7_14_30_human_checkpoints",
+                      out["unresolved_external_gates"])
 
     def test_before_seventh_day_remains_blocked(self):
         partial = copy.deepcopy(self.audit)
