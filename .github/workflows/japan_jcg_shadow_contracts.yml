@@ -1,0 +1,37 @@
+name: Japan JCG Manual Shadow — Offline Safety Contracts
+
+on:
+  pull_request:
+    branches: [main, feat/japan-jcg-shadow-adapter-20261008]
+    paths:
+      - scripts/shadow_collect_desk.py
+      - shadow/jp_jcg/**
+      - tests/test_japan_jcg_manual_shadow_gate.py
+      - tests/test_japan_jcg_shadow_adapter.py
+      - .github/workflows/japan_jcg_shadow_manual.yml
+      - .github/workflows/japan_jcg_shadow_contracts.yml
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-state-rehearsal:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Simulate publisher capture to isolated temporary state only
+        run: python -m unittest tests.test_japan_jcg_shadow_adapter tests.test_japan_jcg_manual_shadow_gate -v
+      - name: Check production database, manifest and outputs unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          test ! -e desks/japan/manifest.json

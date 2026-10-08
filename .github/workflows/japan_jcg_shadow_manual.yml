@@ -1,0 +1,124 @@
+name: Japan Coast Guard — Manual Isolated Shadow Pilot
+
+# Deliberately no schedule; not a production or publishing workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: Logical UTC date (YYYY-MM-DD), empty = current UTC date
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-jcg-manual-shadow
+  cancel-in-progress: false
+
+jobs:
+  shadow:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Check out exact reviewed main collector
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: repo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing dependencies
+        run: pip install -r repo/requirements.txt
+      - name: Run offline Japan shadow contracts
+        working-directory: repo
+        run: python -m unittest tests.test_japan_jcg_shadow_adapter tests.test_japan_jcg_manual_shadow_gate -q
+      - name: Get isolated state branch (never main)
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch=shadow/japan-jcg
+          echo "STATE_BRANCH=$branch" >> "$GITHUB_ENV"
+          status=0
+          git ls-remote --exit-code --heads "$STATE_REMOTE" "refs/heads/$branch" \
+            > "$RUNNER_TEMP/jcg-shadow-head" || status=$?
+          if [ "$status" -eq 0 ]; then
+            git clone --branch "$branch" --single-branch "$STATE_REMOTE" \
+              "$RUNNER_TEMP/jcg-state"
+          elif [ "$status" -eq 2 ]; then
+            git init "$RUNNER_TEMP/jcg-state"
+            git -C "$RUNNER_TEMP/jcg-state" checkout --orphan "$branch"
+            git -C "$RUNNER_TEMP/jcg-state" remote add origin "$STATE_REMOTE"
+          else
+            exit "$status"
+          fi
+          cd "$RUNNER_TEMP/jcg-state"
+          test "$(git branch --show-current)" = "$branch"
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            extra="$(git ls-tree --name-only HEAD | grep -v '^state$' || true)"
+            test -z "$extra"
+          fi
+      - name: Collect one bounded JCG source window (shadow only)
+        working-directory: repo
+        env:
+          TARGET_DATE_INPUT: ${{ inputs.target_date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$TARGET_DATE_INPUT" ]; then
+            set -- --target-date "$TARGET_DATE_INPUT"
+          else
+            set --
+          fi
+          python scripts/shadow_collect_desk.py \
+            --desk japan_jcg \
+            --state-dir "$RUNNER_TEMP/jcg-state/state" \
+            --lookback-days 9 --cap 20 \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
+            --event-name "$GITHUB_EVENT_NAME" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" "$@" \
+            2>&1 | tee "$RUNNER_TEMP/jcg-run.log"
+      - name: Assert main checkout and prior ledger unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git -C repo status --porcelain)"
+          cd "$RUNNER_TEMP/jcg-state"
+          if git rev-parse --verify --quiet HEAD >/dev/null; then
+            changed="$(git diff --name-status -- state/ledger state/clock.json | grep -E '^(M|D|R)' || true)"
+            test -z "$changed"
+          fi
+      - name: Commit only shadow state, without force
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/jcg-state"
+          test "$(git branch --show-current)" = "$STATE_BRANCH"
+          test ! -e state/shadow.db-wal
+          test ! -e state/shadow.db-shm
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          if git diff --cached --quiet; then exit 0; fi
+          collector_commit="$(git -C "$GITHUB_WORKSPACE/repo" rev-parse HEAD)"
+          git commit -m "shadow(japan_jcg): manual run ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Collector $collector_commit. Isolated state, never merged to main."
+          git push origin "HEAD:refs/heads/$STATE_BRANCH"
+      - name: Preserve only metadata log (not original page captures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-jcg-shadow-attempt-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-run.log
+          retention-days: 90
+          if-no-files-found: warn
