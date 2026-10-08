@@ -180,7 +180,8 @@ def assemble(queue, curated, current_commit, week_ending):
     }
 
 
-def prepare(state_repo, state_commit, week_ending, out_path, *, curated_dir=None):
+def prepare(state_repo, state_commit, week_ending, out_path, *,
+            curated_dir=None, japan_packet=None):
     """Export immutable MPS source-state and prepare exact-week private packet."""
     start, cutoff = _publication_window(week_ending)
     del start, cutoff
@@ -205,6 +206,17 @@ def prepare(state_repo, state_commit, week_ending, out_path, *, curated_dir=None
                 ROOT / "research" / "briefs_editorial_evidence")
     curated = load_editorial_evidence(week_ending, week_ending,
                                      directory=seed_dir)
+    if japan_packet is not None:
+        independent = Path(japan_packet)
+        require(independent.name == week_ending + ".json"
+                and independent.is_file() and not independent.is_symlink(),
+                "Japan export must be an existing exact-week regular JSON packet")
+        independently_validated = load_editorial_evidence(
+            week_ending, week_ending, directory=independent.parent)
+        require(all(item["desk"] == "japan"
+                    for item in independently_validated),
+                "Japan packet cannot overwrite or inject Vietnam state")
+        curated = [item for item in curated if item["desk"] == "vietnam"] + independently_validated
     # Assert the pinned curated MPS history really belongs to the same
     # immutable branch. An unrelated valid-looking SHA is not evidence.
     for item in curated:
@@ -244,11 +256,14 @@ def main(argv=None):
     ap.add_argument("--week-ending", required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--curated-dir", type=Path)
+    ap.add_argument("--japan-packet", type=Path,
+                    help="optional independently source-validated exact-week Japan JSON")
     args = ap.parse_args(argv)
     try:
         summary = prepare(args.state_repo, args.state_commit,
                           args.week_ending, args.out,
-                          curated_dir=args.curated_dir)
+                          curated_dir=args.curated_dir,
+                          japan_packet=args.japan_packet)
     except (VietnamFeedRefused, ValueError, OSError, formal.ReviewError) as exc:
         print("Vietnam Sunday research refused: " + str(exc), file=sys.stderr)
         return 2
