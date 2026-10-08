@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/review_desk_shadow.py \
+          python -m scripts.review_desk_shadow \
             --desk japan_jcg \
             --state-repo "$RUNNER_TEMP/jcg-state" \
             --state-commit 81558026117067cbcf54bd7a7859a2d9db168a0c \
