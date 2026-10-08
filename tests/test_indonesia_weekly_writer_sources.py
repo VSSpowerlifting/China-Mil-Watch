@@ -56,6 +56,8 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         self.assertIn("not_an_archived_body", rows[0]["evidence_representation"])
         self.assertIn("www.kemhan.go.id/2026/10/06/", rows[0]["url"])
         self.assertNotIn("production_record_id", rows[0])
+        self.assertEqual(rows[0]["shadow_state_commit"], STATE_COMMIT)
+        self.assertEqual(rows[0]["captured_response_sha256"], CAPTURE_SHA256)
 
     def test_shadow_provenance_is_pinned_but_not_fake_production_admission(self):
         packet = json.loads(DEFAULT_PACKET.read_text(encoding="utf-8"))
@@ -190,6 +192,8 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         self.assertIn("AI-SYNTHESIZED REGIONAL EDITORIAL CONCEPT", txt)
         self.assertIn("EXTERNAL NONPRODUCTION SOURCE IDS", txt)
         self.assertIn("INDONESIA SOURCE RESEARCH — NOT PRODUCTION", txt)
+        self.assertIn("Isolated source commit: " + STATE_COMMIT, txt)
+        self.assertIn("Captured response SHA-256: " + CAPTURE_SHA256, txt)
         self.assertIn("JAPAN EDITORIAL RESEARCH APPENDIX — NOT PRODUCTION", txt)
         self.assertIn("NOT production desk coverage", txt)
         self.assertIn("Record 1 | china", txt)
@@ -220,6 +224,10 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         self.assertFalse(gate["eligible_for_production"])
         self.assertFalse(gate["scheduled"])
         self.assertEqual(gate["evidence"]["source_article_byte_captures"], 0)
+        workflow = (DEFAULT_PACKET.parents[3] /
+                    ".github/workflows/weekly_briefs_editorial_handoff.yml")
+        self.assertIn("--use-japan-research --use-indonesia-research",
+                      workflow.read_text(encoding="utf-8"))
         from scripts.indonesia_weekly_writer_sources import DEFAULT_PACKET as source
         self.assertNotEqual(path, source)
 
