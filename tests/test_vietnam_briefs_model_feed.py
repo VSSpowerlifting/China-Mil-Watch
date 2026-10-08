@@ -216,7 +216,8 @@ class VietnamSundayFeedTests(unittest.TestCase):
                        }]}), \
                  patch("scripts.prepare_vietnam_briefs_model_evidence.compile_queue",
                        return_value=queue()):
-                result = prepare(state, COMMIT, SAT, output)
+                result = prepare(state, COMMIT, SAT, output,
+                                 observed_on=date(2026, 10, 11))
             self.assertEqual(result["vietnam_original_synopses_retained"], 2)
             self.assertEqual(result["public_records_admitted"], 0)
             self.assertTrue(output.is_file())
