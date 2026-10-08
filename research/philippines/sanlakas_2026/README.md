@@ -13,14 +13,14 @@ The dossier is pinned to the October 7 AFP Day-0 historical shadow state:
 - Ledger: run `37631681338-1`, successful scheduled shadow run
 - Sources: four original AFP PAO English-language releases, each with preserved original-text SHA-256, API capture SHA-256, and stable AFP article identity
 
-The JSON sidecar `source_event_candidates.json` holds **four distinct source-record references**, **two separate proposed events**, **eleven claim-and-excerpt links**, and **five unresolved editorial warnings**. It does **not** duplicate complete publisher articles or grant republication rights.
+The JSON sidecar `source_event_candidates.json` holds **four distinct source-record references**, **two separate proposed events**, **eleven claim-and-excerpt links**, and **six unresolved editorial warnings**. It does **not** duplicate complete publisher articles or grant republication rights.
 
 ### Proposed timeline — source-stated, not independently corroborated
 
 | Reported event date | Provisional occurrence | Preserved AFP record | AFP publication timestamp |
 |---|---|---|---|
 | September 29, 2026 | **Separate sixth JPSCC coordination meeting** in Malate, Manila; AFP reports signing of a National JPSCC Cyber Plan | `afp:1390` | Sep 30, 12:22 Philippine time |
-| September 30, 2026 | **Opening ceremony** for AFP–PNP–PCG 2026 Inter-Agency Exercise at Camp Aguinaldo, Quezon City | `afp:1391` | Oct 1, 12:24 Philippine time |
+| September 30, 2026 | **Opening ceremony** for AFP–PNP–PCG 2026 Inter-Agency Exercise; **venue not yet reconciled** (the AFP release has a Camp Aguinaldo dateline) | `afp:1391` | Oct 1, 12:24 Philippine time |
 | October 1, 2026 | **Exercise field-training stage** at HNTCEN-NCR, Intramuros, Manila | `afp:1393` | Oct 2, 12:39 Philippine time |
 | October 2, 2026 | **Exercise closing ceremony** at Eva Macapagal Super Terminal, Pier 15, Manila | `afp:1394` | Oct 3, 12:42 Philippine time |
 
@@ -31,6 +31,16 @@ The separate **September 29 JPSCC meeting** involved overlapping AFP–PNP–PCG
 ## Entity-reconciliation warning
 
 The two preserved AFP releases spell the PCG commandant's surname differently: **`Galvan`** in `afp:1390` and **`Gavan`** in `afp:1394`, with similar initials and the same stated office. Do **not** silently normalize these publisher strings to one person or assert an identity merge. A later human editor must compare authoritative original-language institutional records and decide which string, if any, is canonical. The discrepancy is tracked as unresolved flag F02.
+
+## External primary-source discovery requiring separate admission
+
+These findings came from **public source discovery**, NOT from new pinned IPR archive captures. They are hypotheses for a future independent reviewer, and they do **not** expand the four-source immutable packet:
+
+- **Opening venue is not settled.** The archived AFP opening article `afp:1391` uses a `CAMP AGUINALDO, Quezon City` dateline and the word *here*. A publicly indexed September 30, 2026 official Philippine Coast Guard announcement instead describes the inauguration of IAX 02-2026 at **PCG National Headquarters**. The present research does not establish whether the AFP dateline identified where the story was prepared or the precise opening-ceremony venue. **Do not geocode the opening stage** without an authenticated first-party source replay. The PCG's separately hosted social announcement is a discovery lead, not preserved evidence (flag F06).
+- **Gavan is externally better supported, but the archived discrepancy remains.** The <https://pco.gov.ph/presidential-speech/speech-by-president-ferdinand-r-marcos-jr-at-the-oath-taking-of-the-newly-promoted-philippine-coast-guard-pcg-flag-officers/> from **September 1, 2026** identifies the PCG commandant as **Admiral Ronnie Gil Gavan**. The <https://www.pna.gov.ph/articles/1212144> October 19, 2023 government news report identifies him as **Ronnie Gil Latorilla Gavan**. Neither external page has been independently admitted to the IPR historical archive in this PR. A human reviewer should determine whether the AFP's `Galvan` is a typo; **do not alter `afp:1390` or auto-merge a person entity** (flag F02).
+- A public **Philippine Coast Guard** September/October Sanlakas posting and a **Philippine National Police** public announcement are promising independent institutional sources. Their content access, issuance, publication-time precision, archival suitability and republication rights have **not** passed the source-admission process. Do not count a news article that republishes AFP remarks as independent PCG/PNP corroboration.
+
+These checks are substantive lead discovery, not source acceptance, human adjudication, new event facts in the dossier's claim ledger, or a permission to bypass any social platform's access controls.
 
 ## How the packet is engineered
 
