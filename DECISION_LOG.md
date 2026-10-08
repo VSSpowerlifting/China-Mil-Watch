@@ -4,6 +4,50 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-08 UTC — Desktop Vietnam National Defence Journal access proved; publication held
+
+A single bounded GitHub Actions experiment (PR #130, run
+[37712715499](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37712715499),
+head `4c150bd1ec2bc8f7390077c55ebbb2b1b7371d0b`) made four GET requests
+with the declared IPR shadow collector identity and passed 19 offline tests.
+The desktop robots policy returned 200 and permitted the exact English
+homepage and sample article URL; the homepage returned 200 with 26 deduplicated
+article identities, and sample article 26936 returned 200. Source HTML was
+not retained or published. The tested title/body extraction selectors
+matched nothing, and the sample showed both a September 30 article date and
+an October 8 site clock, so extraction and date provenance remain **unverified**.
+
+The mobile robots endpoint returned HTTP 404 (no rules file at the tested
+URL, not an affirmative disallow); the mobile listing and article were not
+requested. Do not treat its presentation as a fallback around any refusal.
+
+Decision: keep this source disabled and in research status. No shadow
+activation, production admission, original-text retention/republication,
+date-bounded completeness claim or 7/14/30 clock follows from this proof.
+Next work is page-structure verification and source-rights assessment.
+Evidence: `docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md`. The disposable
+workflow/PR is closed unmerged after result preservation.
+
+## 2026-10-07 — National Defence Journal declared as a disabled Vietnam research source
+
+The owner supplied both `http://tapchiqptd.vn/en/default.html` and
+`https://m.tapchiqptd.vn/en` for inclusion on the Vietnam Desk. They
+identify one National Defence Journal English-language publication, not two
+source institutions. The source is registered under
+`shadow/vietnam_journal/manifest.json` with `enabled: false`, military
+journal commentary classification, and deterministic desktop/mobile
+article-ID canonicalization. The Vietnam research inventory may show the
+candidate but must not claim collection, records, completed reviews, or
+ministry-issued policy for journal prose.
+
+No compliant remote robots-policy result, date-bounded completeness proof,
+validated body extraction, or full-text reuse authority was established.
+The site states all rights reserved. Hence no requests, collector schedule,
+new state branch, production registration, source bytes or public full-text
+preservation are authorized. This independent source inherits none of the
+existing Vietnam ministry Day 7/14/30 evidence and does not modify their
+cadence. See `shadow/vietnam_journal/README.md`.
+
 ## 2026-10-07 — Regional topics are a separate cross-desk classification axis
 
 Indo-Pacific Record will use a versioned regional subject vocabulary rather

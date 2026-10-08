@@ -1,0 +1,60 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": "Research candidate only. The two home URLs are alternate desktop/mobile views of the same English-language journal; no source is enabled and no workflow, remote dispatch, production record or capture retention is authorized.",
+  "desk": {
+    "desk_id": "vietnam",
+    "display_name": "Vietnam Desk — National Defence Journal research",
+    "jurisdiction_code": "VN",
+    "default_timezone": "Asia/Ho_Chi_Minh",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "en"
+    ],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "vn_national_defence_journal",
+      "display_name": "National Defence Journal",
+      "name_original": "Tạp chí Quốc phòng toàn dân",
+      "institution_type": "state_linked_media"
+    }
+  ],
+  "sources": [
+    {
+      "slug": "vn_national_defence_journal_en",
+      "institution_id": "vn_national_defence_journal",
+      "display_name": "National Defence Journal — English edition",
+      "base_url": "https://tapchiqptd.vn",
+      "language_tag": "en",
+      "access_method": "html",
+      "authority_tier": "B",
+      "source_type": "military_journal_editorial",
+      "originality": "original",
+      "enabled": false,
+      "adapter": "scraper.sources.vn_defence_journal:offline research only",
+      "listing_endpoints": [
+        "https://tapchiqptd.vn/en/default.html",
+        "https://m.tapchiqptd.vn/en"
+      ],
+      "article_url_patterns": [
+        "^https://tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+/[0-9]{4,9}\\.html$",
+        "^https://m\\.tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+-[0-9]{4,9}\\.html$"
+      ],
+      "notes": "ONE publication across desktop/mobile, not two independent sources. Article identity vndj-en numeric ID canonicalizes to desktop permalink; only desktop site has a verified 2026-10-08 UTC robots/access path (article 26936 HTTP 200). This is Tier B original English military journal commentary, not a Ministry of National Defence directive. The desktop homepage listed 26 distinct IDs but completeness and article-body extraction are unverified; mobile robots.txt returned 404 and was not probed further. No shadow/production collector is enabled. Copyright notice: All rights reserved. See README.md and docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md."
+    }
+  ],
+  "blocked_research": [
+    {
+      "url": "https://tapchiqptd.vn/robots.txt",
+      "status": "Actions run 37712715499 (2026-10-08 UTC): HTTP 200 text/plain, allowed the tested homepage and article 26936. Desktop listing and article HTTP 200; extraction, listing completeness and text reuse remain unverified."
+    },
+    {
+      "url": "https://m.tapchiqptd.vn/robots.txt",
+      "status": "Actions run 37712715499: HTTP 404, no robots file at requested path, NOT an explicit disallow. No mobile listing or article request was made. Do not treat this host as bypass/fallback."
+    }
+  ],
+  "rights": "Publisher footer says Copyright © National Defence Journal 2013. All rights reserved. Bounded in-memory Actions probe accessed desktop article bytes without retaining source prose or HTML; no reproduction rights or long-term text retention has been established."
+}
