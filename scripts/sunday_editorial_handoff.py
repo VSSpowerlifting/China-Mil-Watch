@@ -129,6 +129,15 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
                 if external_ids:
                     lines.append("EXTERNAL SOURCE IDS: " + ", ".join(external_ids))
                 lines.append("")
+    if manuscript is not None:
+        # Only private worksheet content: explicitly disclose which country
+        # research sources the model actually used versus those merely offered.
+        # This does NOT upgrade a source to human-verified status or force
+        # Japan/Vietnam citations into an unrelated article.
+        from core.brief_editorial_source_use import format_private_source_use
+        lines.extend(format_private_source_use(
+            manuscript, trail, research_evidence))
+        lines.append("")
     lines.extend((
         "=== SOURCE APPENDIX — DO NOT EDIT ===",
         "The appendix comes from the tracked production corpus; URLs and titles",
