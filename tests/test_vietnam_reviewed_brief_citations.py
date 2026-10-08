@@ -227,6 +227,10 @@ class VietnamReviewedCitationBridgeTests(unittest.TestCase):
                     "--human-source-review", str(base / "human-review.json"),
                     "--out", str(base / "review-fragment.json")]
             from unittest.mock import patch
+            initial_digest = {
+                name: hashlib.sha256((base / name).read_bytes()).hexdigest()
+                for name in ("draft.json", "sources.json", "human-review.json")
+            }
             with patch("scripts.bridge_vietnam_reviewed_brief_citations.load_registry",
                        return_value=REGISTRY):
                 self.assertEqual(main(args), 0)
@@ -235,10 +239,10 @@ class VietnamReviewedCitationBridgeTests(unittest.TestCase):
             self.assertTrue(got["final_brief_approval_required"])
             with self.assertRaises(CitationBridgeRefused):
                 main(args)
-            self.assertEqual(hashlib.sha256(
-                (base / "draft.json").read_bytes()).hexdigest(),
-                hashlib.sha256(
-                    (base / "draft.json").read_bytes()).hexdigest())
+            self.assertEqual({
+                name: hashlib.sha256((base / name).read_bytes()).hexdigest()
+                for name in initial_digest
+            }, initial_digest)
 
 
 if __name__ == "__main__":
