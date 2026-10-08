@@ -1,0 +1,50 @@
+name: JCG Attached PDF — Research-Only Completeness Audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_japan_jcg_pdf_completeness.py
+      - tests/test_jcg_pdf_completeness_audit.py
+      - docs/JAPAN_JCG_HTML_PDF_SCOPE_REVIEW_2026-10-08.md
+      - .github/workflows/jcg_pdf_completeness_audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jcg-pdf-completeness-research
+  cancel-in-progress: false
+
+jobs:
+  metadata-only:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing project dependencies
+        run: pip install -r requirements.txt
+      - name: Test bounded and nonpersistent PDF audit contract
+        run: python -m unittest tests.test_jcg_pdf_completeness_audit -v
+      - name: Compare three original JCG PDFs in memory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.probe_japan_jcg_pdf_completeness \
+            | tee "$RUNNER_TEMP/jcg-pdf-metadata.json"
+      - name: Upload metadata only; never HTML or PDF bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jcg-pdf-completeness-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-pdf-metadata.json
+          retention-days: 90
+          if-no-files-found: warn
+      # No collector, state branch, database, output, production workflow or email.
