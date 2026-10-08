@@ -87,7 +87,7 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         "Keep the source appendix intact. Give record IDs for factual claims.",
         "Do not guess at translations, infer coordination, or assign an issue number.",
         "Source listings are candidates, not endorsed editorial selections.",
-        ("Private model research: {} source-linked Japan/Vietnam candidate(s) "
+        ("Private model research: {} source-linked regional candidate(s) "
          "available for drafting; all require independent human verification. "
          "They are NOT production records, desk promotion, or publication approval."
          .format(len(research_evidence)) if research_evidence else

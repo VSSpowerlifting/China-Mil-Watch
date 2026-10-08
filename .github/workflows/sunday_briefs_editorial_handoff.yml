@@ -105,7 +105,7 @@ jobs:
         run: |
           set -euo pipefail
           state="$RUNNER_TEMP/ipr-vietnam-mps-state"
-          target="$RUNNER_TEMP/ipr-sunday-model-research/$IPR_SUNDAY_WEEK_END.json"
+          target="$RUNNER_TEMP/ipr-sunday-model-research/vietnam/$IPR_SUNDAY_WEEK_END.json"
           current="$(git -C "$state" rev-parse HEAD)"
           python -m scripts.prepare_vietnam_briefs_model_evidence \
             --state-repo "$state" \
@@ -121,10 +121,46 @@ jobs:
           rows = load_editorial_evidence(
               os.environ["IPR_SUNDAY_WEEK_END"],
               os.environ["IPR_SUNDAY_AS_OF"],
-              directory=Path(os.environ["RUNNER_TEMP"]) / "ipr-sunday-model-research",
+              directory=Path(os.environ["RUNNER_TEMP"]) / "ipr-sunday-model-research" / "vietnam",
           )
           print("Private model research: {} candidate sources (still unapproved).".format(len(rows)))
           print("Verification does NOT imply public archive admission or source permission.")
+          PY
+
+      - name: Optionally extend the same private model pool with Korean source metadata
+        env:
+          KOREA_ENABLED: ${{ vars.IPR_SUNDAY_KOREA_RESEARCH_ENABLED == 'true' }}
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          input="$RUNNER_TEMP/ipr-sunday-model-research/vietnam/$IPR_SUNDAY_WEEK_END.json"
+          combined="$RUNNER_TEMP/ipr-sunday-model-research/combined/$IPR_SUNDAY_WEEK_END.json"
+          mkdir -p "$(dirname "$combined")"
+          if [[ "$KOREA_ENABLED" == "true" ]]; then
+            state="$RUNNER_TEMP/ipr-korea-state"
+            git clone --quiet --single-branch --branch shadow/korea-policy-briefing \
+              "$STATE_REMOTE" "$state"
+            test "$(git -C "$state" branch --show-current)" = "shadow/korea-policy-briefing"
+            current="$(git -C "$state" rev-parse HEAD)"
+            python -m scripts.prepare_korea_briefs_model_evidence \
+              --state-repo "$state" --state-commit "$current" \
+              --week-ending "$IPR_SUNDAY_WEEK_END" --input-packet "$input" \
+              --out "$combined"
+            test -z "$(git -C "$state" status --porcelain --untracked-files=all)"
+          else
+            cp "$input" "$combined"
+            echo "Korea source evaluation remains off; no change to Japan/Vietnam pool."
+          fi
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from core.brief_editorial_evidence import load_editorial_evidence
+          rows = load_editorial_evidence(
+              os.environ["IPR_SUNDAY_WEEK_END"], os.environ["IPR_SUNDAY_AS_OF"],
+              directory=Path(os.environ["RUNNER_TEMP"]) / "ipr-sunday-model-research" / "combined")
+          print("One combined private model research pool: {} sources.".format(len(rows)))
+          print("Korea metadata is never independently verified Korean event reporting.")
           PY
 
       - name: Create read-only full Saturday-ending week source scaffold
@@ -169,7 +205,7 @@ jobs:
           args=(--sidecar "$RUNNER_TEMP/ipr-sunday-scaffold.json"
                 --out "$RUNNER_TEMP/IPR-Briefs-Editorial-$IPR_SUNDAY_WEEK_END.txt"
                 --write-automatic --full-week --include-research
-                --research-packet "$RUNNER_TEMP/ipr-sunday-model-research/$IPR_SUNDAY_WEEK_END.json"
+                --research-packet "$RUNNER_TEMP/ipr-sunday-model-research/combined/$IPR_SUNDAY_WEEK_END.json"
                 --as-of "$IPR_SUNDAY_AS_OF")
           if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
             args+=(--send)

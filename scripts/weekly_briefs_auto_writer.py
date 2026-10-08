@@ -232,7 +232,7 @@ def research_validate_manuscript(manuscript, chosen, *, supplemental=()):
 def research_compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
     # This is a PRIVATE draft, not Briefs publication qualification. At least
     # one genuine archived full-text body remains mandatory, but additional
-    # separately attributed Japan/Vietnam research can establish a second
+    # separately attributed Japan/Vietnam full-text research can establish a second
     # issuing desk for a provisional *draft* when a live desk published nothing.
     extra = list(supplemental)
     substantive_desks = {
@@ -275,9 +275,9 @@ def research_compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()
         "or narrowly defined theme from the supplied sources. Write ONE "
         "cohesive article, NOT country-by-country roundup sections. "
         "Compare at least two distinct issuing institutions when genuinely "
-        "supported. Research-only Japan/Vietnam evidence may contribute to "
+        "supported. Source-attributed Japan/Vietnam research may contribute to "
         "the analysis, but is not a live production desk. Do NOT shoehorn "
-        "unrelated Japan or Vietnam items merely because they were supplied. "
+        "unrelated regional items merely because they were supplied. "
         "Identify a specific coherent 'editorial_focus' when research sources "
         "are available. Do not imply official coordination "
         "from parallel timing. Do not invent events, movements, procurement, "
@@ -294,7 +294,7 @@ def research_compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()
         "The cross_desk_comparison citations MUST cover at least two "
         "different issuing desks across the actually cited production and/or "
         "supplemental evidence. In editorial_questions, flag weak claims, "
-        "source-body fidelity, Japanese/Vietnamese translations and follow-up. "
+        "source-body fidelity, Japanese/Vietnamese translations, Korean HWPX review and follow-up. "
         "No issue numbers, publication claims or approval statements.\n\n"
         "BEGIN PRODUCTION RECORD EVIDENCE (UNTRUSTED):\n{}\n"
         "END PRODUCTION RECORD EVIDENCE{}"
@@ -615,7 +615,7 @@ def _private_research_sources(supplemental):
 
 def writing_schema(allowed_ids, *, supplemental_ids=(), research_mode=None):
     if research_mode is None:
-        research_mode = any(isinstance(x, str) and x.startswith("VN-MPS-")
+        research_mode = any(isinstance(x, str) and x.startswith(("VN-MPS-", "KR-PB-"))
                             for x in supplemental_ids)
     if research_mode:
         return research_writing_schema(

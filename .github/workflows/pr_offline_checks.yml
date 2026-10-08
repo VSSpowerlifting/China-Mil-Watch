@@ -143,6 +143,7 @@ jobs:
               # enough to fail fast before the browser/full-suite gate.
               "test_briefs_editorial_evidence",
               "test_vietnam_briefs_model_feed",
+              "test_korea_briefs_model_feed",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
