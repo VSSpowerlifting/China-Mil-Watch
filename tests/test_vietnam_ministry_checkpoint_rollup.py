@@ -63,7 +63,7 @@ class ThreeMinistryRollupTests(unittest.TestCase):
             "as_of": as_of,
             "checkpoint_reached": shadow_day >= {"day-07": 7, "day-14": 14, "day-30": 30}[checkpoint],
             "latest_shadow_day": shadow_day,
-            "latest_run_id": "synthetic-run-%s" % index,
+            "latest_run_id": "synthetic-run-same-attempt",
             "latest_collector_commit": ("%040x" % (index + 300)),
             "day_zero_utc": "2026-10-07T17:16:%02d+00:00" % (index + 1),
             "collecting_days": ["2026-10-07", "2026-10-08"],
@@ -100,6 +100,7 @@ class ThreeMinistryRollupTests(unittest.TestCase):
         self.assertTrue(report["all_three_review_packets_integrity_checked"])
         self.assertTrue(report["all_three_machine_checkpoints_reached"])
         self.assertEqual(report["machine_warnings"], [])
+        self.assertTrue(report["latest_published_run_attempts_aligned"])
         self.assertEqual([x["source_slug"] for x in report["sources"]], sorted(SOURCES))
         self.assertTrue(all(x["required_review_record_count"] == 1 for x in report["sources"]))
         self.assertFalse(report["desk_qualified"])
@@ -107,6 +108,18 @@ class ThreeMinistryRollupTests(unittest.TestCase):
         self.assertFalse(report["production_promotion_authorized"])
         self.assertFalse(report["rights_to_publicly_republish_established"])
         self.assertTrue(report["requires_human_complete_corpus_review"])
+
+    def test_partial_publication_run_divergence_is_warning_not_green_alignment(self):
+        folders = self.triplet()
+        m = json.loads((folders[1] / "review_manifest.json").read_text())
+        m["latest_run_id"] = "synthetic-run-partial-push"
+        self.rewrite(folders[1], m)
+        report = rollup(folders)
+        self.assertFalse(report["latest_published_run_attempts_aligned"])
+        self.assertEqual(report["machine_warnings"][0]["kind"],
+                         "latest_published_run_attempts_diverge")
+        self.assertEqual(len(report["machine_warnings"][0]["source_run_ids"]), 3)
+        self.assertFalse(report["desk_qualified"])
 
     def test_not_yet_day_seven_reports_machine_hold_not_failure_of_integrity(self):
         paths = [self.packet(s, i, shadow_day=6) for i,s in enumerate(sorted(SOURCES))]
