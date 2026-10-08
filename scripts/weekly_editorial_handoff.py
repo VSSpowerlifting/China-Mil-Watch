@@ -279,6 +279,8 @@ def main(argv=None):
                         help="Sunday full-week draft from records through Saturday")
     parser.add_argument("--include-research", action="store_true",
                         help="privately synthesize checked-format Japan/Vietnam official source notes")
+    parser.add_argument("--research-packet", type=Path,
+                        help="optional exact-week temporary private JSON from a separately validated shadow exporter")
     args = parser.parse_args(argv)
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
     if args.full_week and (not args.write_automatic
@@ -286,10 +288,19 @@ def main(argv=None):
         parser.error("--full-week requires Saturday --as-of and --write-automatic")
     if args.include_research and not (args.full_week and args.write_automatic):
         parser.error("--include-research is private Sunday automatic drafting only")
+    if args.research_packet and not args.include_research:
+        parser.error("--research-packet requires private --include-research")
     research = []
     if args.include_research:
         from core.brief_editorial_evidence import load_editorial_evidence
-        research = load_editorial_evidence(sidecar["week_ending"], args.as_of)
+        if args.research_packet and (
+                args.research_packet.name != sidecar["week_ending"] + ".json"):
+            parser.error("--research-packet basename must match exact reporting Saturday")
+        research_dir = (args.research_packet.parent if args.research_packet else None)
+        research = (load_editorial_evidence(sidecar["week_ending"], args.as_of,
+                                            directory=research_dir)
+                    if research_dir is not None else
+                    load_editorial_evidence(sidecar["week_ending"], args.as_of))
     manuscript = None
     if args.write_automatic:
         if not args.as_of:
