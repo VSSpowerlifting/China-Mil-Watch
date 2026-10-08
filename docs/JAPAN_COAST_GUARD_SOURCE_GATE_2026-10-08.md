@@ -19,11 +19,11 @@ This evidence is directly relevant to cross-desk maritime law enforcement, Phili
 
 ## Actual GitHub egress test
 
-The self-contained probe is deliberately not a collector. It reads robots.txt once from the exact official hostname, then requests at most these 5 declared official URLs *if and only if* the policy can be read and permits them: the archive index, the two Philippine original HTML articles, the Indonesia article, and one linked SAPPHIRE26 official PDF.
+The self-contained probe is deliberately not a collector. It reads robots.txt once from the exact official hostname, then requests at most these 5 declared official URLs *only if a readable policy permits them OR the endpoint returns an exact HTTP 404 indicating no published robots file*. RFC 9309 §2.3.1.3 and IPR's Desk Strength Criteria distinguish 404 (absence) from an access refusal, while this probe still stops on 403, 429, redirects, 5xx or malformed 200 bodies: the archive index, the two Philippine original HTML articles, the Indonesia article, and one linked SAPPHIRE26 official PDF.
 
 One GET per URL, no redirects or retry, single clearly identified client, bounded body sizes, no cookie/session reuse or challenge solving. Raw original bytes and extracted visible text are used in memory only for signature and headline checks. They are never written, logged, uploaded or committed. The run preserves only status/mime/size/SHA-256 counts in a metadata artifact.
 
-Success requires a compliant policy response, full HTML bodies with expected title markers, and PDF magic/response type for the test document. **Success is just accessibility; not editorial validation, institutional scope verification, complete PDF extraction, or a license to add a manifest.** If policy is unavailable (as MOFA and METI were in run 37815162333) the script makes zero document requests.
+Success requires readable, compliant robots rules or confirmed robots-file absence (404), followed by full HTML bodies with expected title markers, and PDF magic/response type for the test document. **Success is just accessibility; not editorial validation, institutional scope verification, complete PDF extraction, or a license to add a manifest.** If policy is unavailable (as MOFA and METI were in run 37815162333) the script makes zero document requests.
 
 ## If it passes
 
@@ -34,3 +34,7 @@ Success requires a compliant policy response, full HTML bodies with expected tit
 5. Only then admit JCG as a production source under Japan Desk and allow its native source records to reach the weekly AI writer. Describe coverage as *Japan Coast Guard*, not full Japanese defense policymaking.
 
 PR #202's dated, externally labeled AI-source path is temporary and remains independent.
+
+## First observed GitHub-runner status
+
+In Actions run 37816662133 (job 113446923340), the Coast Guard host's `/robots.txt` returned **HTTP 404**. In the original conservative probe version, this prevented all follow-on requests; no article availability verdict was possible. Unlike MOFA and METI's 403s, an exact 404 is evidence of a missing policy file, not an explicit prohibition. The next code revision uses the standards-based distinction and repeats the bounded test. A positive 404 result is **not** permission to circumvent any site challenge or override separate publisher terms; every later page response must be served directly to the identified client.
