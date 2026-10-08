@@ -41,7 +41,7 @@ class DayZeroAuditContracts(unittest.TestCase):
         self.assertIn('receipt["editorial_release_authorized"] is False', self.source)
 
     def test_artifacts_are_metadata_not_original_text_or_captures(self):
-        self.assertIn("scripts/review_desk_shadow.py", self.source)
+        self.assertIn("scripts.review_desk_shadow", self.source)
         self.assertIn("scripts/japan_jcg_pinned_review_receipt.py", self.source)
         area = self.source.split("path: |", 1)[-1].split(
             "retention-days:", 1)[0]
