@@ -417,14 +417,15 @@ def topics_for_record(
 ) -> List[TopicAssignment]:
     """Return deterministic assignments for one record without mutating schema."""
     record.validate()
-    if not topic_store_exists(conn):
-        return []
-    _validate_topic_store(conn)
     taxonomy = load_taxonomy()
-    if taxonomy_version != taxonomy.taxonomy_version:
+    if (type(taxonomy_version) is not int or
+            taxonomy_version != taxonomy.taxonomy_version):
         raise TopicTaxonomyError(
             "unsupported taxonomy_version %r" % taxonomy_version
         )
+    if not topic_store_exists(conn):
+        return []
+    _validate_topic_store(conn)
     rows = conn.execute(
         """
         SELECT topic_slug, assignment_method, assigned_by, assigned_at,
