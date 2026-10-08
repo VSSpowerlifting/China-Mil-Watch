@@ -270,6 +270,23 @@ retrieval/extraction/capture evidence, reuse/republishing, historical
 completeness, the earlier anomaly and human checkpoint review remain open.
 The October 1 adapter review receipt is historical evidence and is not rewritten.
 
+## Pending parser-refusal correctness repair (#99, review-only)
+
+A 2026-10-08 targeted repair narrows the HTML challenge-screen handling to
+`bs4.builder.ParserRejectedMarkup`, caught only when BeautifulSoup is constructed.
+A legitimately parser-refused HTML body must be processed through the existing
+typed robots/body-failure paths; that refusal alone does not prove the site
+presented an access challenge. Explicit `cf-mitigated: challenge` and recognized
+challenge markup remain authoritative. Unexpected selector or programming errors
+must **not** be silently converted to harmless HTML: unlike the older draft's
+broad exception handler, they propagate for diagnosis.
+
+This repair has **not** been merged or applied to running NSC schedules.
+It adds two additional synthetic regression tests to the previous two PR #99
+tests; tests/CI have to pass at the final exact head. No page retrieval,
+source-policy change, collector identity change, credential change, production
+data or shadow-state modification is part of this update.
+
 ## Bounded verification after activation merges
 
 1. Fetch main and verify it contains the activation merge. Record its SHA, the
