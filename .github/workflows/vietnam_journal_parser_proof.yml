@@ -1,0 +1,149 @@
+name: Vietnam Journal Parser In-memory One-shot Proof
+
+# Disposable research PR. Strict three-GET bound; never merge to main.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_journal_parser_proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    if: ${{ github.head_ref == 'research/vietnam-journal-extractor-proof-20261007' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact parser proof head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install narrow extraction-test dependencies
+        run: python -m pip install 'requests>=2.31,<3' 'beautifulsoup4>=4.12,<5'
+
+      - name: Verify offline source and parser contracts first
+        run: |
+          python -m unittest tests.test_vn_defence_journal tests.test_vn_journal_article -v
+
+      - name: Read two policy-permitted samples and report only metrics
+        env:
+          OUT: ${{ runner.temp }}/vietnam-journal-parser-proof.json
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import time
+          from pathlib import Path
+
+          import requests
+          from core.collection.vietnam_identity import USER_AGENT
+          from scraper.sources.desk_shadow_http import robots_allows, robots_policy
+          from scraper.sources.vn_journal_article import parse_desktop_article
+
+          ROOT = "https://tapchiqptd.vn"
+          URLS = [
+              ROOT + "/en/theory-and-practice/military-technical-academy-proactively-embraces-international-integration-and-elevates-int/26936.html",
+              ROOT + "/en/research-and-discussion/distinctive-features-of-military-art-in-the-tay-ninh-campaign-of-1966/26919.html",
+          ]
+          s = requests.Session()
+          s.trust_env = False
+          s.headers.update({
+              "User-Agent": USER_AGENT,
+              "Accept-Encoding": "identity",
+              "Accept": "text/plain,text/html",
+          })
+          calls = 0
+
+          def fetch(url, kind):
+              global calls
+              calls += 1
+              if calls > 3:
+                  raise ValueError("request cap")
+              response = None
+              try:
+                  response = s.get(url, timeout=20, stream=True, allow_redirects=False)
+                  chunks = bytearray()
+                  for fragment in response.iter_content(32768):
+                      chunks.extend(fragment)
+                      if len(chunks) > 256_000:
+                          raise ValueError("source exceeded per-request cap")
+                  if response.status_code != 200 or response.url != url or response.headers.get("Location"):
+                      raise ValueError("source not directly reachable")
+                  if response.headers.get("Cf-Mitigated") or response.headers.get("Content-Encoding", "identity").lower() != "identity":
+                      raise ValueError("access or encoding restriction")
+                  if not response.headers.get("Content-Type","").lower().startswith(kind):
+                      raise ValueError("wrong response type")
+                  text = bytes(chunks).decode("utf-8","strict")
+                  if "cf-chl" in text[:4000].lower() or "just a moment" in text[:4000].lower():
+                      raise ValueError("challenge encountered")
+                  return text, hashlib.sha256(chunks).hexdigest()
+              finally:
+                  if response is not None:
+                      response.close()
+                  s.cookies.clear()
+
+          robots_text, robots_digest = fetch(ROOT + "/robots.txt", "text/plain")
+          if not robots_text.strip() or robots_text.lstrip().startswith("<"):
+              raise ValueError("no readable robots policy")
+          rules, delay = robots_policy(robots_text)
+          if delay > 60:
+              raise ValueError("crawl delay exceeds bounded probe")
+          report = {
+              "schema": "vietnam-journal-parser-proof/1",
+              "collector_identity": USER_AGENT,
+              "request_cap": 3,
+              "source_prose_retained": False,
+              "source_html_retained": False,
+              "production_modified": False,
+              "robots_sha256": robots_digest,
+              "records": [],
+          }
+          for url in URLS:
+              if not robots_allows(rules, url):
+                  raise ValueError("robots policy did not allow requested article")
+              time.sleep(max(2.0, delay))
+              html, digest = fetch(url, "text/html")
+              article = parse_desktop_article(html, url)
+              metric = {
+                  "source_identity": article.source_identity,
+                  "capture_sha256": digest,
+                  "title_sha256": hashlib.sha256(article.title_original.encode("utf-8")).hexdigest(),
+                  "published_date": article.published_date,
+                  "body_characters": len(article.text_original),
+                  "body_block_count": len(article.body_blocks),
+                  "caption_table_count": sum(1 for kind, _ in article.body_blocks if kind == "caption_or_table"),
+                  "author_credit_present": article.author_credit_original is not None,
+                  "author_credit_sha256": hashlib.sha256(article.author_credit_original.encode("utf-8")).hexdigest() if article.author_credit_original else None,
+                  "author_name_verified": article.author_name_verified,
+                  "full_text_reuse_authorized": article.full_text_reuse_authorized,
+              }
+              if metric["body_characters"] < 100 or metric["body_block_count"] < 2:
+                  raise ValueError("incomplete extracted article body")
+              report["records"].append(metric)
+              del article
+              del html
+
+          report["requests_made"] = calls
+          assert calls == 3
+          assert report["records"][0]["published_date"] == "2026-09-30"
+          Path(os.environ["OUT"]).write_text(json.dumps(report, indent=2, sort_keys=True)+"\n", encoding="utf-8")
+          print(json.dumps(report, indent=2, sort_keys=True))
+          PY
+
+      - name: Preserve metrics only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-journal-parser-proof-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-journal-parser-proof.json
+          if-no-files-found: warn
+          retention-days: 30
