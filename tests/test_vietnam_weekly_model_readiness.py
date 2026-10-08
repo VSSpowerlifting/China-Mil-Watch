@@ -109,6 +109,23 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(merged["items"][0], original["items"][0])
         self.assertEqual(len(merged["items"]), 3)
 
+    def test_sunday_preflight_is_read_only_and_precedes_editorial_delivery(self):
+        path = (Path(__file__).resolve().parents[1] / ".github/workflows" /
+                "vietnam_weekly_editorial_readiness.yml")
+        content = path.read_text(encoding="utf-8")
+        self.assertIn("7 15 * * 0", content)
+        self.assertIn("permissions:\n  contents: read", content)
+        self.assertIn("shadow/vietnam-mps-foreign-affairs", content)
+        self.assertIn("scripts.prepare_vietnam_mps_review_queue", content)
+        self.assertIn("scripts.audit_vietnam_weekly_model_readiness", content)
+        self.assertIn("awaiting_source_specific_synopsis", content)
+        self.assertIn("stale_source_version_synopsis", content)
+        for blocked in ("ANTHROPIC_API_KEY", "IPR_SMTP_APP_PASSWORD",
+                        "actions/upload-artifact", "git push",
+                        "scripts.weekly_editorial_handoff --send"):
+            self.assertNotIn(blocked, content)
+        self.assertIn("NOT government silence", content)
+
     def test_console_reports_only_counts_and_explicit_strict_opt_in(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
