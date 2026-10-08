@@ -1,0 +1,30 @@
+{
+  "baseline_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+  "protected_tracked_files": 7510,
+  "production_db_output_files": 7457,
+  "production_db_sha256": "712fa29a5f0356a216d47cd05f69839da757e806d42d04ff7be8d449f8f9f63b",
+  "production_file_list_and_sha256_digest": "8eb87d443a4c636cd9db0260c65584731861558de983cc6055b5d58b5f792c22",
+  "result": "All protected files match baseline Git blobs; production file list unchanged; no SQLite sidecars",
+  "focused_tests": {
+    "count": 114,
+    "result": "passed",
+    "command": "python -m unittest tests.test_topic_pilot tests.test_regional_topics tests.test_manifests tests.test_migrations tests.test_migration_byte_stability -q"
+  },
+  "regression_tests": {
+    "count": 349,
+    "result": "passed",
+    "command": "python -m unittest tests.test_singapore_shadow tests.test_japan_shadow_runner tests.test_vietnam_shadow_runner tests.test_vietnam_shadow_review tests.test_ph_shadow_runner tests.test_ph_nsc_shadow_runner tests.test_indonesia_korea_shadow tests.test_shadow_promotion -q"
+  },
+  "source_replay": {
+    "rows": 60,
+    "database_blobs": 8,
+    "result": "passed",
+    "command": "python3 scripts/topic_pilot.py --verify-sources"
+  },
+  "output_validator": {
+    "result": "passed",
+    "warnings": 10,
+    "command": "python scripts/validate_output.py"
+  },
+  "ci": "Draft PR offline job skips by repository policy; local tests and replay are separate evidence, not a full CI suite claim."
+}

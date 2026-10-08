@@ -135,3 +135,7 @@ families. Compare human labels against any proposed deterministic or model
 classifier, record ambiguous cases, and revise the taxonomy before assigning at
 scale. Only after that should the public renderer or search index consume
 regional topics.
+
+The provisional seven-desk classification pilot and its review-only follow-up
+recommendations are in `docs/REGIONAL_TOPIC_PILOT.md`; its proposals are not
+approved assignments and do not authorize production schema adoption.

@@ -1,0 +1,3407 @@
+{
+  "review_version": 1,
+  "reviewed_head": "0f368eb3131b7cac7d6d1db9e9f00ed7d889a57f",
+  "ledger_sha256": "5b7e6a6d330db25395efbeea371106ebca7cd4f3684ae93e3d0670e79da2e766",
+  "taxonomy_sha256": "4ba7f8554105b1a7d56be61a7a25381efe03efded6d5a4be787596fc57379c82",
+  "reviewer": "Codex editorial-skeptic second pass",
+  "human_approved": false,
+  "status": "recommendations_only",
+  "independence_limit": "Same assistant/chat previously produced the pilot. Source-first reassessment is separate but not blinded, independent-human validation, or an inter-rater reliability measurement.",
+  "records": [
+    {
+      "pilot_id": "P01",
+      "record_id": "5f9c0d8729ec4447b5a75d16a46b3b995898b9001e4141655722c43f1a81981d",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16491198.html",
+      "source_date": "2026-10-05",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "bc87b38c83f5a0f8b6ad42e5d0c0c3db20146f96038af352a3536f7bf6239549",
+      "original_flagged": true,
+      "original_topics": [
+        "maritime_security",
+        "south_china_sea"
+      ],
+      "recommended_topics": [
+        "maritime_security",
+        "south_china_sea",
+        "gray_zone_coast_guard"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "south_china_sea",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "gray_zone_coast_guard",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain maritime/South China Sea. Add gray-zone for the described PLA monitoring, warning and expulsion below armed conflict; the actor is not a coast guard. Treat sovereignty and illegality language as Chinese assertions, not adjudicated facts.",
+      "owner_question": "Define when military warning/expulsion becomes sub-threshold pressure; recommendation adds gray-zone without claiming coast-guard involvement.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 34,
+          "end": 140,
+          "quote": "8型机未经中国政府批准，非法侵入中国黄岩岛领空。中国人民解放军南部战区组织海空兵力，依法依规跟踪监视、警告驱离。黄岩岛是中国固有领土。菲方行为严重侵犯中国主权，极易引发海空意外事件。我们正告菲方立即停止侵权挑衅。",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 17,
+          "end": 120,
+          "quote": "示，10月3日，菲律宾1架C-208型机未经中国政府批准，非法侵入中国黄岩岛领空。中国人民解放军南部战区组织海空兵力，依法依规跟踪监视、警告驱离。黄岩岛是中国固有领土。菲方行为严重侵犯中国主权，极易引发海空",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 35,
+          "end": 171,
+          "quote": "型机未经中国政府批准，非法侵入中国黄岩岛领空。中国人民解放军南部战区组织海空兵力，依法依规跟踪监视、警告驱离。黄岩岛是中国固有领土。菲方行为严重侵犯中国主权，极易引发海空意外事件。我们正告菲方立即停止侵权挑衅。战区部队时刻保持高度戒备，坚决捍卫国家主权安全和地区和平稳定。",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P02",
+      "record_id": "9ebd1bb95e736a9b9f02d31e08c4aac7a9a8e62db0f664e00913451ab19584eb",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16491052.html",
+      "source_date": "2026-10-04",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "20804fd3ff51120c16ba0bdf08acfdc9dd38d826c98484cd538220b17639ae6a",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises",
+        "emerging_technology"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "emerging_technology"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain the identifiable multinational exercise and developed uncrewed-system employment. Country co-participation and tactical consultation do not independently establish a durable partnership or diplomatic engagement.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 99,
+          "quote": "风雨激战切巴尔库尔 ——参加俄罗斯“中部-二〇二六”战略演习实兵演练侧记 ■解放军报记者 张科进 宋子洵 特约记者 康 克 当地时间10月2日下午，俄罗斯“中部-2026”战略演习在俄罗斯车里雅宾斯",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1015,
+          "end": 1123,
+          "quote": "行进边打击，战斗协同精确到秒，战场衔接分毫不差。 近距离观摩这场演习，无人装备的大规模、全过程应用让记者大开眼界。战斗中，低空一直被各型无人机占据，“嗡嗡”声不绝于耳；各种无人战斗车辆经过加改装，广泛应用于火力打击、",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P03",
+      "record_id": "97160e7a2464fa5c39acbc1f443f717df322958cbd1423defeb929eaf59189e8",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16491129.html",
+      "source_date": "2026-10-05",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "1edc7f342d03e5f3a8db8b6c86f489fff4760e48632b726164e384e29fdb6d7e",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises"
+      ],
+      "recommended_topics": [
+        "military_exercises"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain simulated-launch training. Rocket Force affiliation and a communications-disruption inject establish neither nuclear capability nor a substantive cyber operation.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 199,
+          "end": 303,
+          "quote": "们越要绷紧战备弦，以战斗姿态守护祖国安宁！”张班长简短动员后，一场融合模拟发射和原理串讲的训练紧张展开。 “号手就位！”随着口令声下达，官兵迅速奔向各自战位。 “与营指挥所通信中断，立即处置！”特情突至，二级",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P04",
+      "record_id": "cd5455a85e2d9179140feb210e6dc7ac06c5f998d57ded33208d122353e2105f",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.mod.gov.cn/gfbw/wzll/yw_214068/16491149.html",
+      "source_date": "2026-10-05",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "b0d45e3a27a3915cb06de5649392a74ce0de350520efa2544ad56e1f9135ecbc",
+      "original_flagged": true,
+      "original_topics": [
+        "cyber_information",
+        "military_exercises"
+      ],
+      "recommended_topics": [
+        "cyber_information",
+        "military_exercises"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain identifiable joint training and the developed military network/information capability, including network defense. Neither cloud terminology nor the local modernization category establishes emerging technology; information support is not evidence of a cyberattack.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 405,
+          "end": 511,
+          "quote": "，该部官兵以攻坚姿态推进转型，加快建设符合现代战争要求、具有我军特色的网络信息体系，在昆仑雪线上织出一张数据赋能的信息“天网”。 翻过思想“达坂”，立起打仗思维 夜已深，该部某维护分中心值班大厅内依旧一派忙碌景象",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 24,
+          "end": 132,
+          "quote": "的观察报告 ■张大鹏 王石萌 解放军报记者 李蕾 深夜，喀喇昆仑，一场多军兵种联合训练进入关键阶段。 千里之外，信息支援部队某部某维护分中心值班大厅内，告警声骤然响起——某重要用户主用链路中断，备用链路同时告急。 大",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P05",
+      "record_id": "aef2b9a3b471d7509261c38507af8d633db0991b9a3a8fa0c3fdb878b6fe0c9a",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "https://www.news.cn/milpro/20261001/f58cffe51ef64573bde27441efb513ec/c.html",
+      "source_date": "2026-10-01",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "01a5396a902d04021c3e5a9a3cab3f8928d9d658de06a6b3e41fbf2a8992cd72",
+      "original_flagged": true,
+      "original_topics": [
+        "nuclear_deterrence"
+      ],
+      "recommended_topics": [
+        "nuclear_deterrence",
+        "military_exercises",
+        "force_posture_basing"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "nuclear_deterrence",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain explicit nuclear signaling. Add the geographically and temporally identifiable June/August exercises and developed Kaliningrad deployments/Baltic military presence. These are attributed reports, not verified NATO plans; China-source ownership does not make this an Indo-Pacific event.",
+      "owner_question": "Confirm whether out-of-region/historical source subjects remain classifiable within this cross-desk vocabulary; this is not a Russia Desk.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 60,
+          "end": 165,
+          "quote": "的海地区军事活动发出严厉警告，称如果北约封锁加里宁格勒州，俄方准备动用包括核武器在内的一切手段保卫领土。北约秘书长吕特9月30日回应称，北约是“防御性联盟”，并谴责俄方“核威胁”。 加里宁格勒州发生了什么？北约",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 472,
+          "end": 705,
+          "quote": "境的军事活动出现前所未有的增长，加里宁格勒州受到特别关注，北约正对其演练具体封锁场景。 据媒体报道，6月，立陶宛、波兰、法国等国在附近地区举行演练，内容包括切断通往加里宁格勒州的铁路等。8月，数十架北约成员国军机在加里宁格勒州周边进行演练，模拟切断当地通信并压制防空系统。此外，北约的相关动向还包括：立陶宛议会启动从宪法中删除禁止部署核武器条款的程序，波兰正与德国合作在附近挖掘战壕等。 此前，俄总统普京曾警告，试图封锁加里宁格勒州可能导致紧张局势急剧升级，并演变为",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 308,
+          "end": 541,
+          "quote": "勒州与俄罗斯本土不相连，它位于波罗的海沿岸，夹在北约成员国波兰和立陶宛之间，是俄罗斯重要的军事基地，部署有防空系统、导弹和海军力量。芬兰和瑞典加入北约后，俄罗斯在波罗的海方向的战略环境进一步发生变化。 俄方称，今年以来，北约有意演练封锁加里宁格勒州。俄维也纳军事安全和军控谈判代表团团长尤利娅·日达诺娃9月30日表示，北约在俄边境的军事活动出现前所未有的增长，加里宁格勒州受到特别关注，北约正对其演练具体封锁场景。 据媒体报道，6月，立陶宛、波兰、法国等国在附近地区",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P06",
+      "record_id": "bde7363d8eb53b9cd4d18a0a3563d78003d7ebef13199187cdc748e46205037e",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/fyr/16490654.html",
+      "source_date": "2026-09-30",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "c5c1a58a964a694bf2bdc0913e7a143fd8fb378c4f85c17b9b927ee93f9450ad",
+      "original_flagged": false,
+      "original_topics": [
+        "nuclear_deterrence"
+      ],
+      "recommended_topics": [
+        "nuclear_deterrence"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "nuclear_deterrence",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain nuclear policy/nonproliferation. A foreign-ministry press answer is not itself substantive military diplomatic engagement; no acquisition or exercise is established.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 92,
+          "end": 197,
+          "quote": "挑衅和公然践踏，再次暴露日本右翼势力拥核企图。国际社会应敦促日本恪守“无核三原则”，严格履行《不扩散核武器条约》义务。 当日例行记者会上，有记者问：据报道，日本防卫大臣小泉进次郎28日表示，在修订“安保三文件”",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P07",
+      "record_id": "9c18205642b669ef6c0bcf5b19368428f352f5b826e811f2b131d3e67fef5a4e",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16486191.html",
+      "source_date": "2026-09-14",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e0996b5e3192d0116a9c1388c0de9a68da290f25f8a6649b4838e278ec10761d",
+      "original_flagged": true,
+      "original_topics": [
+        "cyber_information"
+      ],
+      "recommended_topics": [
+        "cyber_information",
+        "emerging_technology"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain military cyber hygiene under the broad security-activity scope. Add AI/large-model risks, data poisoning and deepfakes: technological consequences are developed, not merely modernization language. Do not turn ideological-security language into a verified influence operation.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 279,
+          "end": 385,
+          "quote": "主席深刻指出：“没有网络安全就没有国家安全，没有信息化就没有现代化。”军营网络安全是国家网络安全的重要组成部分，事关政治安全和意识形态安全，事关部队战斗力建设，网络安全问题已成为全军面临的最复杂、最现实、最严峻的",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1031,
+          "end": 1246,
+          "quote": "意识培养是一场持久战。如今，人工智能、大语言模型等快速发展，网络安全出现了许多新问题，比如AI造谣、数据污染、深度伪造等，都需要我们紧跟其变化，有针对性地采取措施加以解决。国家网络安全宣传周时间很短，但维护网络安全没有“终点线”。各部队要以网络安全宣传周为契机，不断提高官兵对网络技术的驾驭能力、对网络安全的保障能力、对网络风险的识别能力，切实把互联网这个最大变量变为赋能强军事业的最大增量，为强军兴军和备战打仗筑牢网络安全防线。",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P08",
+      "record_id": "a6edde9d67ac368e3a03fab6e097e3a7d3d6c135f45fc3d3ee44c4a8b9d782fd",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/fyr/16484734.html",
+      "source_date": "2026-09-09",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "7a2756958d5e8ddbbe30df868df021acb94536c5da762c950615d9ee4b32e779",
+      "original_flagged": true,
+      "original_topics": [
+        "cyber_information",
+        "economic_security"
+      ],
+      "recommended_topics": [
+        "cyber_information",
+        "economic_security",
+        "emerging_technology"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "economic_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain the security advisory and explicit national-security/commercial-policy linkage. Add developed AI model-distillation technology. Sanctions threats are mentioned, but the restriction itself is not developed sufficiently for a separate sanctions topic; the US advisory is not a sanction.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 6,
+          "end": 112,
+          "quote": "月9日电 商务部新闻发言人9日就美发布中国人工智能企业对美蒸馏活动相关网络安全公告答记者问时表示，中方认为，美方所谓中国人工智能企业从事“工业规模”蒸馏美模型的指控，于事无凭，于法无据。美方此举，是将蒸馏这一业内",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 609,
+          "end": 718,
+          "quote": "以打击蒸馏为名，行产业垄断之实。美方由安全部门发布公告，是将个别企业和资本利益与国家安全相捆绑，动用国家强权机构干涉正常商业活动。我们注意到，美个别人工智能企业滥用竞争优势地位，在用户协议中设置宽泛的地域限制等霸王条款",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 0,
+          "end": 217,
+          "quote": "新华社北京9月9日电 商务部新闻发言人9日就美发布中国人工智能企业对美蒸馏活动相关网络安全公告答记者问时表示，中方认为，美方所谓中国人工智能企业从事“工业规模”蒸馏美模型的指控，于事无凭，于法无据。美方此举，是将蒸馏这一业内正常的技术和商业问题政治化、工具化，并在实践中搞双重标准。美方相关公告，是其在人工智能领域推行科技霸权、搞算力垄断，打压竞争的又一明证。中方对此坚决反对。 有记者问：美东时间9月8日，美国家安全局、网络安全与基",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P09",
+      "record_id": "4a5eb04e5601223298c18d48fe1fea7558ba4a6c6c3a38170786b6eebb6550b9",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16482936.html",
+      "source_date": "2026-09-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "01d64822aa6b2732d057897ef9634e9c8dd79481df4d0927c5d8d47b2139a6d6",
+      "original_flagged": false,
+      "original_topics": [
+        "emerging_technology"
+      ],
+      "recommended_topics": [
+        "emerging_technology",
+        "doctrine_strategy",
+        "maritime_security"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "doctrine_strategy",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain uncrewed amphibious technology. Add the developed naval/amphibious operational subject and force-employment concepts (swarming, distributed assault, human control). Historical tests and firm names are contextual, not a concrete central procurement action or production-capacity discussion.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 44,
+          "end": 150,
+          "quote": "耳其“泰克诺费斯特蓝色祖国”活动中，该国FNSS公司的8吨级U-MAV无人两栖战车正式亮相，成为重型两栖无人装备发展的新注脚。 这种技术演进并非孤例。数月前，美国海军陆战队曾在彭德尔顿营的测试中，验证“蜂群”无人",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 234,
+          "end": 466,
+          "quote": "机器人突破俄军海岸防线，首次实现跨海投送、自主登陆与目标打击的全链条作战。 这些技术展示、研发计划、战术测试乃至实战验证，都在表明一个趋势：全球范围内两栖无人装备的发展正呈现多维突破特征，传统抢滩登陆的血火之路，正在被智能化的钢铁洪流加速重构。 当两栖无人装备跨海投送、自主抵岸、独立开火，一连串深刻而紧迫的问题便浮出水面——两栖无人装备究竟发展到了何种水平？其技战术性能优势如何？未来军事应用面临哪些挑战？请看本期解读。 土耳其U-MAV无人两栖战车。 两栖无人",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 173,
+          "end": 408,
+          "quote": "装甲车研发项目，旨在提升所谓“离岛作战能力”。更值得关注的是实战验证，今年某次两栖突袭行动中，乌克兰无人登陆艇成功投送陆战机器人突破俄军海岸防线，首次实现跨海投送、自主登陆与目标打击的全链条作战。 这些技术展示、研发计划、战术测试乃至实战验证，都在表明一个趋势：全球范围内两栖无人装备的发展正呈现多维突破特征，传统抢滩登陆的血火之路，正在被智能化的钢铁洪流加速重构。 当两栖无人装备跨海投送、自主抵岸、独立开火，一连串深刻而紧迫的问题便浮出水面——两栖无人装备究竟发展到",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P10",
+      "record_id": "edbc4e85c87c201bf1ce1b2ca13d7233c7fd46f71d42a278f79e0c0be6e120ae",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16482944.html",
+      "source_date": "2026-09-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "dfe9d143ab1a7f4b2dbd4ad5d82530c4ec76177dd62b7487417478891df360f5",
+      "original_flagged": true,
+      "original_topics": [
+        "defense_industry"
+      ],
+      "recommended_topics": [
+        "defense_industry",
+        "critical_minerals_supply_chains"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "defense_industry",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain historical wartime shipbuilding capacity. Add defense supply and industrial resilience: replacement production and delivery of tanks, ammunition, fuel and personnel are developed. History is not excluded by v1; do not present this as current acquisition or assert its historical claims independently verified.",
+      "owner_question": "Confirm historical wartime merchant production and logistics scope, rather than silently excluding history.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 503,
+          "end": 607,
+          "quote": "少工时，将最多物资送到前线。 真正让“自由轮”载入史册的，是其革命性的建造方式。美国船厂大规模引入分段建造法和焊接技术，来取代耗时费力的传统铆接工艺：将船体切分成数百个预制单元，各工厂同步生产，最终像拼图般在",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 870,
+          "end": 1105,
+          "quote": "阵地，昼夜不息轮转接力，将工业生产线化为反法西斯的前沿战壕。 这些“自由轮”穿行在大西洋与太平洋，将坦克、弹药、燃料、食品乃至兵员源源不断运往欧洲、非洲和亚洲战场。战后统计显示，若无“自由轮”提供的庞大运力，盟军诺曼底登陆至少要推迟一年。 战后，绝大多数“自由轮”或被拆解，或出售给民间航运公司。如今，全世界尚存美国的“约翰·W·布朗”号等4艘“自由轮”，它们静静泊于港湾，无声地诉说着那个钢铁时代的传奇。 “自由轮”的意义，早已超越了一型货船本身。它是将标准化、流水线",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P11",
+      "record_id": "3c7020736dc0e881045dbb3b7dccb78dec371f9a6ba94d8842eb882d43bb13c5",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16490222.html",
+      "source_date": "2026-09-29",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "852092ac1947c6b0723a11c6301fc42eb68b366e3a41c4b8a5fa91f1e71c6c0e",
+      "original_flagged": true,
+      "original_topics": [
+        "taiwan_strait",
+        "maritime_security",
+        "gray_zone_coast_guard"
+      ],
+      "recommended_topics": [
+        "taiwan_strait",
+        "maritime_security",
+        "gray_zone_coast_guard"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "taiwan_strait",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "gray_zone_coast_guard",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain Taiwan security, maritime patrol and security-relevant coast-guard pressure. Routine wording does not neutralize the explicit sovereignty/control framing. East of Taiwan does not establish an East China Sea subject; the source does not settle sovereignty.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 79,
+          "quote": "中国海警位中国台湾岛以东海域依法开展常态化执法巡查 China Coast Guard Conducts Routine Law-enforcement Pa",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 0,
+          "end": 90,
+          "quote": "中国海警位中国台湾岛以东海域依法开展常态化执法巡查 China Coast Guard Conducts Routine Law-enforcement Patrols in th",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 142,
+          "end": 252,
+          "quote": " with the Law 中国海警局新闻发言人姜略表示，9月29日，中国海警朱家尖舰编队位中国台湾岛以东海域依法开展常态化执法巡查。9月以来，朱家尖舰编队持续加强相关海域管控，有力保障正常航行和作业秩序，切实维护包括台",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P12",
+      "record_id": "35af617490124529c19e144080d03496e118e138a9292a3e92dbdeb80c54f5ee",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.mod.gov.cn/gfbw/wzll/hj/16486972.html",
+      "source_date": "2026-09-17",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "cfa90c466509c1af6f5fec68f3e41d3b568f05d449719df2a89c4014c5ea2d7c",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises",
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "maritime_security"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain identifiable amphibious naval training and maritime activity. East China Sea is the setting, without a developed regional security question. No inference of persistent deployment, acquisition or Taiwan contingency.",
+      "owner_question": "Does substantive regional operation require developed regional security context, or is an exercise located in the East China Sea enough?",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 91,
+          "quote": "“野马”蹈海 踏浪飞驰 ——海军某部组织舰艇协同训练见闻 初秋，东海某海域，海军某部两栖攻击舰耕波犁浪，向预定海域航渡。坞舱内，气垫艇蓄势待发，一场实战背景下的两栖攻击舰与气垫艇协同",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 7,
+          "end": 112,
+          "quote": "踏浪飞驰 ——海军某部组织舰艇协同训练见闻 初秋，东海某海域，海军某部两栖攻击舰耕波犁浪，向预定海域航渡。坞舱内，气垫艇蓄势待发，一场实战背景下的两栖攻击舰与气垫艇协同训练拉开战幕。 “气垫艇进出坞部署！”指令",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P13",
+      "record_id": "198e5e820ea78d744d6a446d64124c8f52e06aeec725ed7b96d05509b45178b9",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16489796.html",
+      "source_date": "2026-09-28",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e8269b49917595a3a581678e55ca13c6fa5c4650c54744d4a3a31bdbfdb0e02b",
+      "original_flagged": false,
+      "original_topics": [
+        "military_exercises",
+        "south_china_sea",
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "south_china_sea",
+        "maritime_security",
+        "gray_zone_coast_guard"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "south_china_sea",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "gray_zone_coast_guard",
+          "recommendation": "add",
+          "evidence": [
+            "R4"
+          ]
+        }
+      ],
+      "rationale": "Retain exercises, maritime security and South China Sea. Add gray-zone: the full body explicitly links PLA deterrence with coast-guard rights-enforcement activity. Rescue messaging is secondary; the source assertions about Philippine conduct remain attributed.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 99,
+          "quote": "9月27日，中国人民解放军南部战区位黄岩岛周边海空域组织海空联合演训，这是针对菲律宾破坏南海地区和平稳定的必要行动和严正警告。中国人民解放军时刻保持高度戒备，以坚决行动遏制菲方祸乱南海的恶劣行径，坚",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 7,
+          "end": 117,
+          "quote": "国人民解放军南部战区位黄岩岛周边海空域组织海空联合演训，这是针对菲律宾破坏南海地区和平稳定的必要行动和严正警告。中国人民解放军时刻保持高度戒备，以坚决行动遏制菲方祸乱南海的恶劣行径，坚决捍卫国家主权、安全、发展利益。 近",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 0,
+          "end": 91,
+          "quote": "9月27日，中国人民解放军南部战区位黄岩岛周边海空域组织海空联合演训，这是针对菲律宾破坏南海地区和平稳定的必要行动和严正警告。中国人民解放军时刻保持高度戒备，以坚决行动遏制菲方祸乱南",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 610,
+          "end": 842,
+          "quote": "土要求。中国对南海诸岛及相关海域拥有无可争辩的主权。 中国的主权红线不可逾越。此次，中国组织海空军和海警等力量，在黄岩岛周边海域开展联合演训。中国海空军主要提供整体态势感知，发挥威慑作用，为中国海警的执法行动提供坚强后盾。中国海警发挥执法主体的功能作用，重点指向“维权执法管控”“海空联合搜救”两大内容。整个演训过程正当合法、专业规范，体现出相互协同、精准慑压，空海联动、立体封控，随时能战、回击挑衅等鲜明特点，充分展示出维护国家领土主权和海洋权益的强大能力。 在",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P14",
+      "record_id": "cbd1ca1442e559827c4895dcbbf606feb755ac3f0895d2121633ce7bcdb20816",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16488940.html",
+      "source_date": "2026-09-24",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "ca2402e86ec50e8052a212de977d01150c98836b184f0cf15a60485cd21e1231",
+      "original_flagged": false,
+      "original_topics": [
+        "south_china_sea",
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "south_china_sea",
+        "maritime_security",
+        "gray_zone_coast_guard"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "south_china_sea",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "gray_zone_coast_guard",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain maritime incident and South China Sea. Add gray-zone/coast guard: the preserved English portion explicitly identifies the Chinese coast-guard vessel in the collision narrative. No invented translation is needed; blame and legality remain contested source assertions.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 79,
+          "quote": "国防部敦促日方停止在南海问题上搬弄是非 MND Urges the Japanese Side to Stop Sowing Discord in the S",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 104,
+          "end": 207,
+          "quote": "部举行例行记者会，国防部新闻发言人蒋斌大校答记者问。 记者：菲律宾一艘公务船在中国南沙群岛仙宾礁附近海域挑衅滋事，事情发生后日本驻菲律宾大使馆迅速在社交平台发文，对中方“采取危险行动”“深表关切”，还自我标",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 948,
+          "end": 1189,
+          "quote": "near Xianbin Jiao and deliberately rammed a China Coast Guard vessel. Though Japan is not a country directly involved in the South China Sea issue, it has actively joined the Philippine side in distorting facts. The real intention is to make",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P15",
+      "record_id": "cf17bba1810581465d192e150e1557bb013ccf6681a37bf2ed8f036b9e7a45a4",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16490925.html",
+      "source_date": "2026-10-03",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "ae69bf60facec449c79c8ffb23ec91119fa769517cd59e72c8554ee44ad8d04e",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "alliances_partnerships",
+        "defense_diplomacy"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain named training and developed recurring cooperation. Add defense diplomacy for explicitly described high-level exchanges, meetings and expanding military-to-military relationships, beyond technical exercise coordination.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 101,
+          "quote": "携手砺精兵 并肩卫和平 ——专访中方参加俄罗斯“中部-2026”战略演习部队指挥员 ■解放军报记者 张科进 宋子洵 特约记者 康克 组织联合突击。付超 摄 9月中旬至10月上旬，我军派出部队参加俄罗斯“",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 282,
+          "end": 392,
+          "quote": "密切，联合演习、海空巡航常态化开展，后勤、院校、军兵种交往、人员培训等专业领域合作持续拓展，充分体现了两国关系的高水平与特殊性，为促进两国国防和军队发展、塑造有利周边态势发挥了积极作用。今年，根据中俄双方事先达成的共识和",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 817,
+          "end": 1051,
+          "quote": "重点开展侦察引导、协同破障、协同攻击等战术训练，以及信息保障、装备维修、战场急救等训练。期间穿插组织会谈会晤、文化交流等活动。在演习实施阶段，首先组织指挥演练，尔后划分3个行动阶段组织实兵演练，重点演练立体侦察、信火打击、引导进入、多向突击、快速驱歼等行动。 演习现场。付超 摄 记者：这次中方参加演习任务的主要特点有哪些？ 中方指挥员：这次中方参加俄罗斯“中部-2026”战略演习，立足复杂情况，构设逼真环境，预设典型行动场景，主要有3个特点：一是实战程度高。各参演",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P16",
+      "record_id": "16718946afff7483f16ee9f2b3a75d08506128ae03a7592176dba24b29e28fec",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16490084.html",
+      "source_date": "2026-09-29",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e7d0bcbc1f1bffb88a69b679fa9a51ed205d8ecfbe0fe545663cf19e71a41d85",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises",
+        "defense_diplomacy"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "defense_diplomacy",
+        "emerging_technology",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "add",
+          "evidence": [
+            "R4"
+          ]
+        }
+      ],
+      "rationale": "Retain training and defense engagement. Add uncrewed/AI rescue technology developed through specific uses, and the recurring Peace Train mechanism (six visits since 2017). This does not assert a formal alliance. Humanitarian mission remains missing from v1.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 104,
+          "quote": "占芭花常开 兄弟情常在 ——中老“和平列车-2026”人道主义医学救援联合演习暨医疗服务活动纪事 ■刘小薇 杨 超 近日，随着我军卫生列车驶离老挝万象，穿越中老铁路“友谊隧道”，驶入云南磨憨口岸，为期17天的",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 154,
+          "end": 262,
+          "quote": "训场内通力协作、密切配合，在医疗服务中探讨新兴技术应用、交流疑难病例。中老两军卫勤力量以精湛医术与赤诚仁心，把守望相助的深情写在绵延铁路上。 占芭花常开，兄弟情常在。从2017年到2026年，“和平列车”医疗队六度奔",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 456,
+          "end": 690,
+          "quote": "地血液中心远程运血。 无影灯下，中老医护混编手术组迅速就位，展开紧急手术；手术室外，我军自主研发的“AI哨兵”多模态影像诊断系统高速运转，迅即完成X光检查初步诊断，超声扫查同步实现影像实时分析，大幅压缩诊断时长。 首次投入使用的伤病员收治指挥决策系统，提供精准化诊疗方案、指挥调度、物资调配等建议，辅助伤病员救治。科技赋能救援，实现了全流程追溯、全环节管控。 从2017年的帐篷医院，到2022年我军卫生列车首次出境参演、跨境投送，再到如今无人智能装备成体系运用与AI",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 209,
+          "end": 441,
+          "quote": "守望相助的深情写在绵延铁路上。 占芭花常开，兄弟情常在。从2017年到2026年，“和平列车”医疗队六度奔赴老挝。中老双方紧密协作、并肩工作，既积累了联合卫勤保障经验，也结下了真挚宝贵的情谊。 此次人道主义医学救援联合演习中，中老两军携手直面“超强台风灾害”的极端情境。无人机广域勘察、机器狗精准搜救、无人车前出转运……无人智能装备首次成体系加入这场“跨国救援”。 “‘伤员’血型特殊，请求提供血液补充！”演练现场，一名“重伤员”伤情恶化，前方联合指挥部果断调度，",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P17",
+      "record_id": "bc1a5208ca144acc67d2511065c0812bb5d656d4d00c1829b18f1abaf059e73e",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16487901.html",
+      "source_date": "2026-09-21",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "14c3b2799008e1055b7c91210f110396224f05b2e276e16a53d3dbde460b6f04",
+      "original_flagged": false,
+      "original_topics": [
+        "emerging_technology",
+        "doctrine_strategy"
+      ],
+      "recommended_topics": [
+        "emerging_technology",
+        "doctrine_strategy",
+        "procurement_acquisition",
+        "defense_industry",
+        "critical_minerals_supply_chains"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "doctrine_strategy",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "procurement_acquisition",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "defense_industry",
+          "recommendation": "add",
+          "evidence": [
+            "R4"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "add",
+          "evidence": [
+            "R5"
+          ]
+        }
+      ],
+      "rationale": "Retain uncrewed technology and force-organization concepts. Add named SERVAL LAD procurement, wartime production/industrial-capacity constraints, and imported chip/sensor dependency. These distinct passages support multiple topics; generic NATO compatibility is not an alliance commitment.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 100,
+          "quote": "无人作战能力成为法军建设重点 ■许芳铭 近年来，法国将无人作战能力建设作为填补安全真空、践行战略自主的重要抓手。其核心目的是要在确保技术主权的前提下，以智能化、集群化突破传统战力瓶颈，构建高度协同、快",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 11,
+          "end": 115,
+          "quote": "设重点 ■许芳铭 近年来，法国将无人作战能力建设作为填补安全真空、践行战略自主的重要抓手。其核心目的是要在确保技术主权的前提下，以智能化、集群化突破传统战力瓶颈，构建高度协同、快速响应的无人作战体系，以维持其",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 901,
+          "end": 1139,
+          "quote": "实时共享与协同决策，提升体系作战效能。在反无人作战方面，针对战场需求积极研发电磁、激光反无人机武器，采购SERVAL LAD反无人机装甲车等装备，形成攻防互补的无人作战体系。法军通过深化战术协同、增强数据共享以及作战体系适配对接，构建起多维协同体系。为了在“重新武装欧洲”进程中掌握主导权，法军还积极推动无人装备适配北约标准、参与跨大西洋军演，既通过欧洲资源整合强化防务自主地位，又借助跨域协作弥补本土防御短板。 然而，制约法军无人作战力量发展的瓶颈依然存在，短期难以破解。无",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 1141,
+          "end": 1334,
+          "quote": "备的核心芯片、高端传感器等依赖进口，自主可控的技术链路尚未完全打通，难以彻底摆脱对美国技术依赖。法国军工产能弹性有待检验，民企转军工生产线的效率有限，低成本无人机战时量产能力还缺乏实战验证，持续补给保障能力存在不确定性。此外，法军跨军种指挥与战术规范不统一，欧洲内部同类无人项目竞争、中东欧国家偏好美制装备等因素，也对法国无人作战能力的体系化生成有一定的影响。 （作者单位：军事科学院）",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R5",
+          "field": "text_original",
+          "start": 1093,
+          "end": 1327,
+          "quote": "助跨域协作弥补本土防御短板。 然而，制约法军无人作战力量发展的瓶颈依然存在，短期难以破解。无人装备的核心芯片、高端传感器等依赖进口，自主可控的技术链路尚未完全打通，难以彻底摆脱对美国技术依赖。法国军工产能弹性有待检验，民企转军工生产线的效率有限，低成本无人机战时量产能力还缺乏实战验证，持续补给保障能力存在不确定性。此外，法军跨军种指挥与战术规范不统一，欧洲内部同类无人项目竞争、中东欧国家偏好美制装备等因素，也对法国无人作战能力的体系化生成有一定的影响。 （作者单位",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P18",
+      "record_id": "1851086b69d759a6c69e54e56906dc0e3b414999be8ebb8f973bf583d15296a8",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.mod.gov.cn/gfbw/wzll/hj/16488209.html",
+      "source_date": "2026-09-22",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e97b4e7f793c799308946f96eeafb501f4d677a409aafac53fdd9c29b971721a",
+      "original_flagged": false,
+      "original_topics": [
+        "cyber_information",
+        "military_exercises",
+        "emerging_technology"
+      ],
+      "recommended_topics": [
+        "cyber_information",
+        "military_exercises",
+        "emerging_technology"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain training, electronic warfare and materially developed uncrewed remote jamming stations under the broad wording. This is not evidence of offensive cyber intrusion. A conventional upgrade could also be arguable, but a concrete acquisition/sustainment decision is not clearly recorded.",
+      "owner_question": "Does remote unattended equipment qualify as emerging uncrewed technology absent autonomy, and when does a reported technical upgrade become a sustainment decision?",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 60,
+          "end": 168,
+          "quote": "，操作号手敲击键盘，一道道指令瞬间传送至数公里外分散布设的无人干扰站。多站协同干扰压制，“敌”通信信号眨眼之间被切断。 从过去“守着装备转”到如今“盯着屏幕战”，这一变化得益于该旅探索推行的装备值守新模式。 该旅领导",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 11,
+          "end": 115,
+          "quote": "战需求展开技术攻关—— 山地密林，东部战区海军某旅一场复杂电磁环境下的对抗训练紧张进行。指挥方舱内，操作号手敲击键盘，一道道指令瞬间传送至数公里外分散布设的无人干扰站。多站协同干扰压制，“敌”通信信号眨眼之间",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 54,
+          "end": 159,
+          "quote": "。指挥方舱内，操作号手敲击键盘，一道道指令瞬间传送至数公里外分散布设的无人干扰站。多站协同干扰压制，“敌”通信信号眨眼之间被切断。 从过去“守着装备转”到如今“盯着屏幕战”，这一变化得益于该旅探索推行的装备值守",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P19",
+      "record_id": "5ee1643e4255045628241c3634716bbe081a0ec7185128955b0f867afde7ebca",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.mod.gov.cn/gfbw/wzll/kj/16487888.html",
+      "source_date": "2026-09-21",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "fd01ba0ee0442a750ca37acc2c2f1b84acf65ec8724c7623e540a59ed9c63d50",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "doctrine_strategy"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "doctrine_strategy",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain aircraft-conversion training. Add the full captured body’s substantial war/training coupling and tactical force-employment commentary. The capture contains multiple related segments; the first excerpt alone misses this. A new-aircraft context is not a procurement decision.",
+      "owner_question": "Accept record-level topics over the complete composite capture or require a later separately authorized source-extraction assessment?",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 36,
+          "end": 142,
+          "quote": "海军航空大学某团机场，迎来了第二批前来改装新机的飞行教官，开展改装后的首次飞行训练。 “计时起飞！”随着塔台指挥员指令下达，数架战机依次升空。与以往新教官改装不同的是，这批曾执教某型教练机多年的改装飞行教官，首次",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 4858,
+          "end": 5095,
+          "quote": "现作战和训练一体化，确保全时待战、随时能战。这深刻揭示了战与训的内在逻辑，道出亘古不变的练兵铁律。 战训耦合的本质，是构建训练与作战双向贯通的闭环，让训练供给精准对接战场需求。近年来，随着人民海军航空兵快速发展，飞行院校机构教学必须主动转型，紧盯一线部队需要和战场变化培养飞行人才，让战训耦合理念贯穿教学训练全过程。 打仗需要什么就教什么，部队需要什么就练什么。飞行院校机构必须坚持需求牵引、战建结合、能力主导，紧跟转型要求、改装任务、部队需求，建立常态化训练评估调整机制，",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P20",
+      "record_id": "f3a17aa66e7c80d9f9ed6444ec4c7543acbafe99769c17c606c740772ee4c1d1",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16491218.html",
+      "source_date": "2026-10-06",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e8f642f6dcded6bbcd1dbf7767e695c84e9a11accd58e53a4422c818e30bacc0",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: Party cadre supervision and discipline. Political doctrine is not force-employment doctrine, and reminders/public communications are not information warfare.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "及时“咬咬”耳朵、扯扯袖子 ——推动学习贯彻习近平党建思想走深走实系列谈⑩ ■顺 亮 中秋国庆双节之际，不少单位以短信、倡议、教育等方式，提醒广大官兵严守廉洁规定、严防违规行为，过一个风清气正的假期。这种提醒，及时到位，充满温情，是爱护，也是帮助。 生活中，我",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P21",
+      "record_id": "bb58abd53ded786ef86a1edd3f8cdc82c39335f9bbade08fe9b7880713f49772",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/wj_208567/16491191.html",
+      "source_date": "2026-10-05",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "8000f6d67bfedb2b6cba7fa30e2b11c76370fd985b33ce3acc8ea13513d9d86c",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: domestic holiday armed policing and public services. Actual patrol is not an exercise; no maritime or security-relevant coercive interstate activity is established.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "国庆佳节，处处洋溢着喜庆的节日氛围。武警广西总队河池支队官兵坚守战位，在河池西站及驻地商圈等人流密集区域，与公安民警开展联勤武装巡逻，全力维护驻地秩序、守护群众平安过节。 巡逻中，武警官兵采取“步巡+车巡”相结合、定点警戒与动态巡控相结合的模式，科学统筹执勤力",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P22",
+      "record_id": "4d4fb0f6714fde618b5003aba3883d4d25e7bcae343fdf06358972d612205157",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16490762.html",
+      "source_date": "2026-10-01",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "404ec59364cb3191133e3f1c5c0c821d2703b08ead0b331ccacf7c202458fea4",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Retain abstention on a security-nexus reading: astronaut holiday greetings with civil on-orbit background. However, v1 also says substantive space capability; the full body contains repairs/payload operations. Civil-space boundary needs an owner ruling, not affiliation-based inference.",
+      "owner_question": "Require a military/security nexus for space_security, or admit substantive civilian space capability?",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "新华社北京10月1日电（李国利、邓孟）10月1日，新中国迎来77岁生日。举国欢庆的时刻，正在中国空间站执行任务的神舟二十三号航天员乘组，向伟大祖国送上来自苍穹的特别祝福。 身处约400公里外的太空家园，朱杨柱、张志远、黎家盈3名航天员心里对祖国家园始终念念不忘",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P23",
+      "record_id": "7f5353c698ce3ef04c8db6e5b80b9f4499c2b399af8acd770ce1e059f4134d9b",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16488441.html",
+      "source_date": "2026-09-23",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "c989ab4f401729d10a92ac1a73038ce5ae14566d56e384b9ef687a095347f7cc",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Retain abstention pending the same civil-space boundary: substantive life-support/space-medicine capability exists, but a military/security connection is not established. A military outlet and local modernization tag do not supply that connection.",
+      "owner_question": "Same civilian-space-capability boundary as P22; abstention is not a claim that space capability is absent.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "我国首届航天医学工程大会召开 解放军报讯 特约记者占康、记者李伟欣报道：9月19日至20日，我国首届航天医学工程大会在天津召开。大会以“铸人・铸器・智创未来”为主题，聚焦航天医学工程关键科学问题、技术创新与转化应用，为太空健康保障体系建设和深空探测发展提供新思",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P24",
+      "record_id": "2c55cc4773c1512e21d5f11d1a69cb671e6a5d4343a389805dad3ca9f93ed627",
+      "desk_id": "china",
+      "storage_layer": "production",
+      "source_url": "http://www.81.cn/yw_208727/16491226.html",
+      "source_date": "2026-10-06",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "9a7fecaacf9a3e341d867e17f82f20527c74e79e6f80b0707dbb94c0cce5bb08",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: holiday gifts, discipline and corruption prevention, with no operational doctrine or other v1 subject.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "过节更须“守节” ■张迪 国庆长假，军队党员干部如何正确面对礼尚往来，走出“人情困境”？学会拒绝是一个好办法。 从近年来查处的各类违纪违法案件来看，“礼”的背后往往是“利”，节礼中可能暗藏着请托和攀附。一些党员干部正是在一瓶酒、一条烟等看似不起眼的“小意思”上",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P25",
+      "record_id": "f5f9c208382a6ad4a82737f843a34d689f91bc9f5343508a33554f480f513f06",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/05oct26-mq/",
+      "source_date": "2026-10-05",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "f908abdc4d4759510a5188e970849f3407d9997d12d5ffc3e4bf2ad80139e251",
+      "original_flagged": true,
+      "original_topics": [
+        "force_posture_basing"
+      ],
+      "recommended_topics": [
+        "force_posture_basing"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Accept force_posture_basing: actual permission for a routine technical stop at Changi Naval Base makes access substantive. The definition includes ports/access and does not require persistence. Withhold maritime mission and diplomacy inferred solely from the escort-taskforce name; this is not a permanent base.",
+      "owner_question": "Confirm the literal v1 access reading; requiring persistent basing would change the scope, not correct this source.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 110,
+          "end": 227,
+          "quote": "re for a routine technical stop at Changi Naval Base. Singapore regularly facilitates transits, port calls, and stopo",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P26",
+      "record_id": "e5638271e75c8e51b07e36d7c3b353c738e09a9d4be42cde655da8c79dd604c2",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/4oct26-nr/",
+      "source_date": "2026-10-04",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "25278e0665e6abb8d65e63078b41f142635704d6d44a08a21b31afc1837e4cef",
+      "original_flagged": false,
+      "original_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain ministerial defense engagement and a developed recurring relationship under the HLJC. The committee is not itself described as a defense treaty. A brief welcome for GUIDE participation is insufficient to add its maritime subject here.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 16,
+          "end": 140,
+          "quote": "inister for Defence Chan Chun Sing met with his counterpart, Deputy Prime Minister and Minister of State for Defence Affairs",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1273,
+          "end": 1399,
+          "quote": "e framework of the Qatar-Singapore High-Level Joint Committee (HLJC). Minister Chan welcomed Qatar’s regular participation in ",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P27",
+      "record_id": "fea83f7f10f1725166aaa98f76d8e447ea32c2b4d0cd4531483eee6d231e278e",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/2oct26-fs/",
+      "source_date": "2026-10-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "a7a5647f9a5062ec52e7e28538016b423d74c407e8ee188445885a117ee983bb",
+      "original_flagged": true,
+      "original_topics": [
+        "procurement_acquisition",
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "procurement_acquisition",
+        "maritime_security"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "procurement_acquisition",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain the concrete OPV acquisition program and developed maritime missions. Named contracting parties alone do not require defense_industry; limited boat-launch features do not make uncrewed technology a developed subject. Coast-guard coordination is not coercive gray-zone activity.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 379,
+          "end": 502,
+          "quote": "iption of OPVs The Sentinel -class Offshore Patrol Vessels (OPVs) are Singapore Government Vessels purpose-built to meet th",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 506,
+          "end": 623,
+          "quote": "creased demands and wider scope of maritime security operations. Signed between the Ministry of Defence and Fr. Fassm",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P28",
+      "record_id": "568a098cd8cade5fa5ddabe665459b5ab311ca2aa3e57a29bcaab34d9aa9e7ad",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/2oct26-nr/",
+      "source_date": "2026-10-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "fc8fba52b8e07d5da932d232555e5d64ae083b44c346d6627a762c4864c45164",
+      "original_flagged": true,
+      "original_topics": [
+        "procurement_acquisition",
+        "defense_industry",
+        "defense_diplomacy"
+      ],
+      "recommended_topics": [
+        "procurement_acquisition",
+        "defense_industry",
+        "defense_diplomacy",
+        "maritime_security",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "procurement_acquisition",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "defense_industry",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "add",
+          "evidence": [
+            "R4"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "add",
+          "evidence": [
+            "R5"
+          ]
+        }
+      ],
+      "rationale": "Retain acquisition, shipbuilding (three further hulls under construction), and official bilateral defense engagement. Add the developed maritime missions and enhanced DCA framework. Cyber defense is an agenda item here, not a developed capability; distinguish this from P33.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 431,
+          "end": 559,
+          "quote": "f the Republic of Singapore Navy’s first Offshore Patrol Vessel in Berne, Germany. German Federal Minister of Defence Boris Pist",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 160,
+          "end": 267,
+          "quote": "rol Vessel (OPV), Sentinel, at the Fassmer shipyard in Berne, Germany, on 1 October 2026. The Republic of S",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 479,
+          "end": 613,
+          "quote": "e Patrol Vessel in Berne, Germany. German Federal Minister of Defence Boris Pistorius delivering his speech at the launch of the Repub",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 2638,
+          "end": 2896,
+          "quote": " to meet the increased demands and wider scope of maritime security operations. The OPVs are equipped with calibrated capabilities, enabling them to respond to a range of maritime incidents in a measured and proportionate manner. Inheriting the missions of t",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R5",
+          "field": "text_original",
+          "start": 3616,
+          "end": 3874,
+          "quote": "lations have strengthened with the signing of the enhanced Defence Cooperation Agreement (eDCA) in 2018. The eDCA underpins bilateral defence cooperation in areas of mutual interest, such as in submarine training, defence technology, and cyber defence. Both ",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P29",
+      "record_id": "943108ac9b8d6fb3ad7635a0ac81d20054d9a3c38540e570954ba2d7a0ed3668",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/2oct26-nr2/",
+      "source_date": "2026-10-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "6ade2add7c9d738b63f6ee2b100b4d33d6f4bf67fc5d1cdab29232134d6fa224",
+      "original_flagged": false,
+      "original_topics": [
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "alliances_partnerships",
+        "defense_diplomacy"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain named exercise and new recurring Vanguard framework. Add the two air chiefs’ official engagement launching a relationship milestone: the ceremony records an official defense relationship, satisfying the explicit exception. UAV/C-UAS participation alone is insufficient for emerging technology.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 91,
+          "end": 208,
+          "quote": "Brunei Air Force (RBAirF) launched Exercise Vanguard, a new overarching bilateral exercise framework to deepen cooper",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 116,
+          "end": 256,
+          "quote": " launched Exercise Vanguard, a new overarching bilateral exercise framework to deepen cooperation between both air forces. The Republic of S",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 419,
+          "end": 664,
+          "quote": " (U) Haji Haszahaidi bin Haji Ahmad Daud (right). Both air chiefs co-launched Exercise Vanguard to mark 50 years of bilateral defence relations between Singapore and Brunei. (MG) Kelvin Fan (left) met with the Commander of the Royal Brunei Air F",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P30",
+      "record_id": "bee76f40e4cbec2e97bfc3629b19746e235eb9d906f7b018a57c7865afa6dfd6",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/2oct26-nr3/",
+      "source_date": "2026-10-02",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "ced43fd969de5301f2297ec64867b7a2a88e2870b071d743a540ac1e1cb2ef77",
+      "original_flagged": false,
+      "original_topics": [
+        "military_exercises",
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "maritime_security",
+        "alliances_partnerships",
+        "defense_diplomacy"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "add",
+          "evidence": [
+            "R4"
+          ]
+        }
+      ],
+      "rationale": "Retain exercises and maritime security. Add recurring ADMM-Plus framework and developed expert exchanges/confidence-building military dialogue. IRIS information sharing serves maritime awareness; a web-based system does not establish cyber operations. Disaster-relief serials are secondary mission evidence.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 41,
+          "end": 170,
+          "quote": "Navy (RSN) participated in the 2nd ASEAN-India Maritime Exercise (AIME) from 28 September to 2 October 2026, and the ASEAN Defenc",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 199,
+          "end": 316,
+          "quote": "MM-Plus) Experts’ Working Group on Maritime Security (EWG-MS) Joint Cooperative Activity (JCA) from 21 to 25 Septembe",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 1183,
+          "end": 1425,
+          "quote": "heir co-chairmanship of the ADMM-Plus EWG-MS from 2024 to 2027 and involved the ADMM-Plus Navies. Both exercises were conducted in the waters off Subic Bay, the Philippines. The RSN participated in both exercises with its Independence -class ",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 2848,
+          "end": 3106,
+          "quote": "bject Matter Experts’ Exchanges on issues such as confidence-building measures to reduce the risk of miscalculation, and conducted serials such as maritime search and rescue, casualty evacuation, and maritime security drills. Commanding Officer of RSS Justic",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P31",
+      "record_id": "cfcad1fd0a4d7be5d8f53043536dc688edb5855ef5454aa27d8fdbd8fd2171dd",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/1oct26-nr/",
+      "source_date": "2026-10-01",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "9599fb1f8f9b2e1c7373c0b30cdb3b08e31fd988799f96ce1a790faa44b03bdf",
+      "original_flagged": true,
+      "original_topics": [
+        "defense_diplomacy",
+        "cyber_information",
+        "defense_industry",
+        "critical_minerals_supply_chains"
+      ],
+      "recommended_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships",
+        "maritime_security"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "cyber_information",
+          "recommendation": "reject",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "defense_industry",
+          "recommendation": "reject",
+          "evidence": [
+            "R3"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "reject",
+          "evidence": [
+            "R4"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "add",
+          "evidence": [
+            "R5"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "add",
+          "evidence": [
+            "R6"
+          ]
+        }
+      ],
+      "rationale": "Retain defense diplomacy; reject cyber, industry and supply-chain tags as unelaborated cooperation agenda items. Add developed enhanced-DCA relationship and GUIDE’s concrete underwater-infrastructure security initiative. Ministerial agreement is real source evidence, but the materiality cutoff is editorial judgment.",
+      "owner_question": "Adopt developed-subject materiality or tag formally agreed agenda items? Under the latter, the three rejected labels could be retained.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 16,
+          "end": 149,
+          "quote": "inister for Defence Chan Chun Sing called on German Federal Minister of Defence Boris Pistorius this afternoon. Minister for Defence ",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 697,
+          "end": 810,
+          "quote": "reas of mutual interest, including cybersecurity, countering hybrid threats, defence industry, supply chain resil",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 739,
+          "end": 855,
+          "quote": "curity, countering hybrid threats, defence industry, supply chain resilience and upholding international law. Minist",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 757,
+          "end": 880,
+          "quote": " hybrid threats, defence industry, supply chain resilience and upholding international law. Minister Chan welcomed Germany'",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R5",
+          "field": "text_original",
+          "start": 2036,
+          "end": 2152,
+          "quote": "he two defence establishments, underpinned by the enhanced Defence Cooperation Agreement signed in 2018. Back to top",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R6",
+          "field": "text_original",
+          "start": 1012,
+          "end": 1276,
+          "quote": "ountries with common interests in the security of critical underwater infrastructure launched earlier in May 2026 at the Shangri-La Dialogue. Prior to the call, Minister Chan inspected the Guard of Honour at the Federal Ministry of Defence in Berlin and laid a wre",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P32",
+      "record_id": "f75ccba10dc536600681635212ba5fb3e62b3e1954d2b9287594a96be7e843f3",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/28sep26-mq/",
+      "source_date": "2026-09-28",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "575f17e48623c6a2436115be9f238878740874bfe064cbf7a81625e535ae8340",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: conviction, suspension and possible discharge concern personnel discipline. No regional topic is established; do not extrapolate operational implications.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "28 September 2026 The Singapore Armed Forces (SAF) holds its service personnel to high standards of discipline and integrity. Serv",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P33",
+      "record_id": "ab0dff341074ff2fe424113f90feb6dbdb9917e47d493bf54d3a0c9fd9fa4037",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/28sep26-speech/",
+      "source_date": "2026-09-28",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "84379abcaf0963b82bad2e4bd326bf2403714c6c886090e8c550334846ad8a24",
+      "original_flagged": true,
+      "original_topics": [
+        "doctrine_strategy",
+        "emerging_technology",
+        "cyber_information",
+        "economic_security",
+        "critical_minerals_supply_chains"
+      ],
+      "recommended_topics": [
+        "doctrine_strategy",
+        "emerging_technology",
+        "cyber_information",
+        "economic_security",
+        "critical_minerals_supply_chains",
+        "maritime_security",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "doctrine_strategy",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R3",
+            "R8"
+          ]
+        },
+        {
+          "topic": "economic_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R4"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "accept",
+          "evidence": [
+            "R5",
+            "R9"
+          ]
+        },
+        {
+          "topic": "maritime_security",
+          "recommendation": "add",
+          "evidence": [
+            "R6"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "add",
+          "evidence": [
+            "R7"
+          ]
+        }
+      ],
+      "rationale": "Retain all five developed original topics. Add maritime critical-underwater-infrastructure security and GUIDE’s 17-country principles/cooperation framework. A long strategic speech may legitimately carry seven labels, with distinct passages; neither length nor repeated keywords alone warrants labels.",
+      "owner_question": "Confirm substantive multi-label passage standard rather than a label-count cap; GUIDE additions are developed subject matter.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 1693,
+          "end": 1815,
+          "quote": " such as drones are changing their concepts of operations. This includes rapid developments in AI and cyberspace. Larger a",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1753,
+          "end": 1870,
+          "quote": "his includes rapid developments in AI and cyberspace. Larger and more sophisticated militaries must increasingly expe",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 1753,
+          "end": 1870,
+          "quote": "his includes rapid developments in AI and cyberspace. Larger and more sophisticated militaries must increasingly expe",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R4",
+          "field": "text_original",
+          "start": 2059,
+          "end": 2227,
+          "quote": "plement conventional capabilities. Economic security has also become inseparable from national security. Military power depends not only on the capabilities a country p",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R5",
+          "field": "text_original",
+          "start": 2259,
+          "end": 2390,
+          "quote": "rial capacity, infrastructure, and supply chains that sustain them. These developments have understandably prompted us to think and",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R6",
+          "field": "text_original",
+          "start": 6910,
+          "end": 7174,
+          "quote": "ges will require countries to work together. Take critical underwater infrastructure as an example. Subsea cables carry much of the data and communications on which modern economies and societies depend. Of course, satellite communication will have its role, but t",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R7",
+          "field": "text_original",
+          "start": 7341,
+          "end": 7583,
+          "quote": "ing their security a shared challenge. This year, 17 countries, led by Singapore, launched the Guiding Principles for Underwater Infrastructure Defence Exchanges, or GUIDE, on the sidelines of the Shangri-La Dialogue. GUIDE sets out shared pr",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R8",
+          "field": "text_original",
+          "start": 3448,
+          "end": 3692,
+          "quote": "which our militaries must operate. Cyber threats, disinformation and other forms of digital contestation can affect our security even short of full-scale war. We have changed how the SAF is organised. In 2022, we established the Digital and Int",
+          "provenance": "full-body second-pass locator"
+        },
+        {
+          "id": "R9",
+          "field": "text_original",
+          "start": 2244,
+          "end": 2487,
+          "quote": "o on the industrial capacity, infrastructure, and supply chains that sustain them. These developments have understandably prompted us to think and rethink about how our militaries must change. But as we prepare for the future, we must be clear",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P34",
+      "record_id": "b93442c54d0f235548f61347400217043bc0e4091b848968ff8cc4e0a436f84c",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/25sep26-speech/",
+      "source_date": "2026-09-25",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "ad52c164d3ffd8831027f435fd3a283ce02528de00394dcf6dfd936d04c42e6b",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: ageing, community health, models of care and hospital philanthropy. The speaker’s defense portfolio does not create defense subject matter or military humanitarian assistance.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "25 September 2026 Good evening, everyone. Congratulations to all for your 30th anniversary, 30 years of service. Tonight, the real",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P35",
+      "record_id": "092b3c01bd065e30db7fba58f9d8aa4ec7febb760a3e5e6f59f82d7c7762d317",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/22sep26-nr/",
+      "source_date": "2026-09-22",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "10866200805dcb0d67974d98e34e12400c4dfd179ffdfb5bcd3408d493f21177",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "military_exercises",
+        "alliances_partnerships",
+        "cyber_information"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "cyber_information",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain disaster-response exercise and ADMM-Plus institutional cooperation. Add explicit cybersecurity protection against disruption/compromise during the response. Military humanitarian response remains an uncaptured mission; medical ships do not by themselves establish maritime security.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 133,
+          "end": 257,
+          "quote": "lian agencies are participating in Exercise Trident Resolve (XTR), held in Banten, Indonesia from 20 to 26 September 2026. P",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1139,
+          "end": 1248,
+          "quote": "6 September 2026. XTR is the first ADMM-Plus Combined Field Training Exercise (FTX) involving three Experts’ ",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 2124,
+          "end": 2378,
+          "quote": " FTX of the ADMM-Plus EWG on Cyber Security, with cybersecurity activities focused on protecting information systems and information integrity against disruption or compromise during the multinational disaster response. As part of XTR’s activities, parti",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P36",
+      "record_id": "182274e95b7413b66de66283af9831cef737195a6af8ed72a98ab2c9296ce1ac",
+      "desk_id": "singapore",
+      "storage_layer": "production",
+      "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/22sep26-infographic/",
+      "source_date": "2026-09-22",
+      "origin_commit": "4efa9c086f70ae3fe4d24720754f323c8e393ebf",
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept evidence abstention: captured body is empty. A title and related press release do not prove the contents of this infographic. No cross-record borrowing or image interpretation was performed.",
+      "owner_question": null,
+      "evidence_assessment": "empty captured body; evidence abstention",
+      "evidence": []
+    },
+    {
+      "pilot_id": "P37",
+      "record_id": "60f7b4cfa7f592de5cfca30bb935bda8a200d86f714baf607a49b7e420d5e9a0",
+      "desk_id": "japan",
+      "storage_layer": "shadow",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+      "source_date": "2026-10-05",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "body_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain all three: concrete limited facility access, named Keen Sword/ATR training, and the SOFA/Joint Committee framework. Planned exercise authorization is not evidence that the exercise subsequently occurred.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 32,
+          "end": 136,
+          "quote": "について 日米合同委員会において、ＦＡＣ５１２１築城飛行場の追加財産の限定使用 について合意しましたのでお知らせします。 なお、合意概要については別添のとおりです。 日米合同委員会合意事案概要 件 名 ＦＡＣ",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 309,
+          "end": 418,
+          "quote": "帯 施 設： － 【事案内容】 本件は、日米共同統合演習（実動演習）「キーン・ソード２７」及び航空機訓練 移転（ＡＴＲ）に係る共同訓練を実施するため、標記施設の一部を日米地位協定第 ２条第４項（ｂ）に基づき限定使用する",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 357,
+          "end": 463,
+          "quote": "空機訓練 移転（ＡＴＲ）に係る共同訓練を実施するため、標記施設の一部を日米地位協定第 ２条第４項（ｂ）に基づき限定使用することについて、日米合同委員会の承認を得 たものである。 記 土 地：約 29,000 ㎡ ",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P38",
+      "record_id": "29afb60ffc874ab196ee780a0e98d642690f81008369e4cc102cd560ca0579bc",
+      "desk_id": "japan",
+      "storage_layer": "shadow",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/08/28a.pdf",
+      "source_date": "2026-08-28",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "body_sha256": "92c3546b6ef898a2bccadcf297e640a8f3fe60a94252673b73c5b5708486a068",
+      "original_flagged": true,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Retain abstention under a narrow capability-action reading: disaster allowances and vessel operating costs are not clearly acquisition. Bathing/water/rescue support establishes military disaster-relief purpose, not maritime security or economic security. Sustainment’s boundary remains a genuine competing reading.",
+      "owner_question": "Does earmarked disaster vessel operating expenditure itself constitute a concrete sustainment action? If yes, add procurement_acquisition; otherwise preserve abstention until HADR vocabulary work.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "○ 人件費（災害派遣等手当、航海手当、航空作業手当） 約１．３億円 ○ 民間船舶の運営費 約３．２億円 令和８年熊本地震復旧に係る対応 令和８年 ８ 月 防衛省 （注）これらの施策の実施に当たっては、既定経費の活用も検討 〇「はくおうⅡ」による入浴等支援 災害",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P39",
+      "record_id": "c55c362c6292b11b10a026ec468b489011a350dcb23ddf242936c0283454d77b",
+      "desk_id": "japan",
+      "storage_layer": "shadow",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/08/28b.pdf",
+      "source_date": "2026-08-28",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "body_sha256": "383bf4256d8de47e529f3f766226dadd9c175c993bb0efd20f45c27423867d77",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain facility access, named Freedom Edge training and formal SOFA framework. Distinct attached facility cases belong to the same preserved record. No security flashpoint can be inferred from a facility location.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 132,
+          "end": 236,
+          "quote": "合同委員会合意事案概要 件 名 ＦＡＣ３１９３浜松飛行場における財産の限定使用について 承 認 年 月 日 令和８年８月１８日 施設・区域名称 ＦＡＣ３１９３浜松飛行場 合意対象所在地 静岡県浜松市 合意対象",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 310,
+          "end": 421,
+          "quote": "。） 附 帯 施 設： － 【事案内容】 □□本件は、日米韓共同訓練（フリーダム・エッジ２６）を実施するため、日米地位 協定第２条第４項（ｂ）の適用ある施設及び区域として、標記施設の一部を限定使 用することについて、日米合",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 330,
+          "end": 434,
+          "quote": " □□本件は、日米韓共同訓練（フリーダム・エッジ２６）を実施するため、日米地位 協定第２条第４項（ｂ）の適用ある施設及び区域として、標記施設の一部を限定使 用することについて、日米合同委員会の承認を得たもので",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P40",
+      "record_id": "c446702e8f43f7c26c89f69ec1b0a290811d7bcc420dbd3177a8801d2a97d0ba",
+      "desk_id": "japan",
+      "storage_layer": "shadow",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/08/28f.pdf",
+      "source_date": "2026-08-28",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "body_sha256": "82435e345942c5ec3345c1457c4ad4e9935cbf07096ec36f6c6536031362b627",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "force_posture_basing",
+        "military_exercises",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain joint use of multiple bases, named Yama Sakura command-post training, and bilateral SOFA framework. Port/base property does not independently establish maritime security; some attached survey work is access rather than training.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 68,
+          "end": 172,
+          "quote": "、ＦＡＣ６０４４キャ ンプ瑞慶覧及びＦＡＣ６０５６牧港補給地区の一部の共同使用についてほか２ 件について合意しましたのでお知らせします。 なお、合意概要については別添のとおりです。 日米合同委員会合意事案概要",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 470,
+          "end": 578,
+          "quote": "物： － 附帯施設： － 【事案内容】 本件は、日米豪共同指揮所演習「ヤマサクラ－９１」を実施するため、日米地位 協定第２条第４項（ａ）に基づき、標記施設の一部を共同使用することについて、 日米合同委員会の承認を得た",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 487,
+          "end": 591,
+          "quote": "容】 本件は、日米豪共同指揮所演習「ヤマサクラ－９１」を実施するため、日米地位 協定第２条第４項（ａ）に基づき、標記施設の一部を共同使用することについて、 日米合同委員会の承認を得たものである。 記 （１）Ｆ",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P41",
+      "record_id": "72a40948d83a710ba65089cb2b628c6b41c49157bbe0ece24a994dc3fbdd2bc7",
+      "desk_id": "japan",
+      "storage_layer": "shadow",
+      "source_url": "https://www.mod.go.jp/j/press/news/2026/08/27b.pdf",
+      "source_date": "2026-08-27",
+      "origin_commit": "e362cbc6b16633d80d3c4425468526ffde3dad21",
+      "body_sha256": "fd4eaf5138625f63dc3ec14f6c71bbc25de1b2676b597d487edad3a4a5c59120",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "force_posture_basing",
+        "alliances_partnerships",
+        "military_exercises"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "military_exercises",
+          "recommendation": "add",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain basing and bilateral framework. Add named Orient Shield exercise access later in this ten-case document, missed by first-page excerpts. Facility works are substantive posture, but do not automatically count every construction item as capability procurement or disaster-response operations.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 36,
+          "end": 142,
+          "quote": "合意について 日米合同委員会において、ＦＡＣ２００１三沢飛行場における誘導路の設置 に係る施設整備計画についてほか９件について合意しましたのでお知らせしま す。 なお、合意概要については別添のとおりです。 日米合",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 0,
+          "end": 101,
+          "quote": "（お知らせ） 令和 8 年 8 月 27 日 防 衛 省 日米合同委員会合意について 日米合同委員会において、ＦＡＣ２００１三沢飛行場における誘導路の設置 に係る施設整備計画についてほか９件について合意",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 2941,
+          "end": 3181,
+          "quote": "び設置物を含む工作物一式（関連備品を含 む。） 附帯施設： － 【事案内容】 □□本件は、共同訓練「オリエント・シールド２６」を実施するため、日米地位協定第 ２条第４項（ｂ）の適用ある施設及び区域として、標記施設の一部を限定使用するこ とについて、日米合同委員会の承認を得たものである。 記 建 物：1棟、約6,000㎡ 工 作 物：定着物及び設置物を含む工作物一式（関連備品を含む。） 使用期間：展開及び撤収のための期間を含む、令和8年9月15日から同月25日まで の間 日米合",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P42",
+      "record_id": "36cdb93d83bd5b977055590a4039628a7a52c159e9d7768f70ec0f8cf06aa7d0",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+      "source_date": "2026-10-05",
+      "origin_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "body_sha256": "d7c22a5ed0d6d6b6b1dba03df20bab1d6352d80d75adcdba6853b68d23fdc1d2",
+      "original_flagged": true,
+      "original_topics": [
+        "cyber_information",
+        "emerging_technology"
+      ],
+      "recommended_topics": [
+        "cyber_information",
+        "emerging_technology"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "cyber_information",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain security-linked AI/cyber research, grounded in the explicit public-security/training purpose. This is police/university cooperation, not defense diplomacy. Applying defense-technologies wording to public-security AI is a scope judgment that must be ruled consistently with P43 and P07/P08.",
+      "owner_question": "Does emerging defense technologies encompass explicitly security-linked police AI? Retention here uses the broad security reading, not military identity.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 755,
+          "end": 867,
+          "quote": "c Concordia trong các lĩnh vực AI, an ninh mạng, quản trị dữ liệu và công nghệ số, đồng thời khẳng định đây là n",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 751,
+          "end": 867,
+          "quote": "i học Concordia trong các lĩnh vực AI, an ninh mạng, quản trị dữ liệu và công nghệ số, đồng thời khẳng định đây là n",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P43",
+      "record_id": "1e06edc274b3ab8fd09d03def4d9b6c23498a2afa622f480fa83e3bf94f71129",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+      "source_date": "2026-10-05",
+      "origin_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "body_sha256": "a74afdee76e0937e514d7551fdaae618ac91b5ca95ab291c51cd6c789f0277f9",
+      "original_flagged": true,
+      "original_topics": [
+        "emerging_technology"
+      ],
+      "recommended_topics": [
+        "emerging_technology"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "emerging_technology",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain materially developed AI/uncrewed threats in public-security applications. Police security-industry production is not defense_industry without a defense-sector connection; prospective transfer/manufacture does not establish a defense purchase. Same technology-scope caveat as P42.",
+      "owner_question": "Same public-security technology boundary as P42; separate security-industry coverage is not yet justified as a new topic.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 3035,
+          "end": 3146,
+          "quote": " cơ sở giam giữ, tích hợp dữ liệu, ứng dụng AI và các giải pháp ứng phó với những thách thức an ninh mới.\nBộ tr",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P44",
+      "record_id": "f0135487e64ce77c5d67fc778f07c1b5c89525d710c8d1cbd200ce805401e1ac",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646",
+      "source_date": "2026-10-02",
+      "origin_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "body_sha256": "420a79b902de06951c8cd7108e297e8fa48c3bac028d007cca9ad886cf0b38d0",
+      "original_flagged": true,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Retain abstention provisionally on the defense/security-domain reading, but the original rationale is incomplete: annual Security Dialogues and legal agreements could fit alliances_partnerships’ literal security-partnership language. This is an unresolved label candidate, not merely an automatic police exclusion. Online fraud alone is not cyber warfare.",
+      "owner_question": "Does alliances_partnerships admit formal police Security Dialogues/crime agreements? If yes, add that topic; neither defense_diplomacy nor online-fraud cyber tagging follows automatically.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 1201,
+          "end": 1448,
+          "quote": " cấp Bộ trưởng định kỳ 2 năm/lần, tổ chức 7 phiên Đối thoại An ninh thường niên cấp Thứ trưởng; ký kết nhiều văn bản pháp lý quan trọng trong phòng, chống tội phạm và kiểm soát ma túy, các chất hướng thần, tiền chất.\nHai bên thống nhất một số phươ",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P45",
+      "record_id": "6cec8430284e9034b36532ea797fe9e32f05864cc7d0a8025eb7286e999fb986",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://moit.gov.vn/tin-tuc/bo-cong-thuong-lay-y-kien-du-thao-nghi-dinh-ve-kinh-doanh-xang-dau.html",
+      "source_date": "2026-09-30",
+      "origin_commit": "aac24cb4c2bc7e63da80df5212954d48cf492945",
+      "body_sha256": "e6f9d70b9536324cc36160e984f6f1a1746d210fe595ea559658a0b129268266",
+      "original_flagged": true,
+      "original_topics": [
+        "economic_security"
+      ],
+      "recommended_topics": [
+        "economic_security",
+        "critical_minerals_supply_chains"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "economic_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "add",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain explicit energy-security-linked fuel regulation. Add supply-chain resilience: supply obligations, reserves and responses to geopolitical disruption are substantive and explicitly security-linked. The original single label was incomplete under the same broad scope used for P47. Market regulation/data administration is not cyber or sanctions.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 1396,
+          "end": 1514,
+          "quote": "hời liên quan chặt chẽ đến bảo đảm an ninh năng lượng, cung ứng xăng dầu và ổn định kinh tế vĩ mô. Tinh thần xuyên suố",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 5654,
+          "end": 5891,
+          "quote": "biến động lớn, thiên tai, xung đột địa chính trị, đứt gãy nguồn cung hoặc các tình huống bất thường.\nVề điều kiện kinh doanh và thủ tục hành chính, nguyên tắc được đặt ra là chỉ duy trì những điều kiện thực sự cần thiết để bảo đảm an nin",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P46",
+      "record_id": "a1bb30256a234ad1d09fc72b93f04d4ffd640f119adf9b416ac9b2de6f6eb758",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+      "source_date": "2026-09-30",
+      "origin_commit": "aac24cb4c2bc7e63da80df5212954d48cf492945",
+      "body_sha256": "6e7ca7a61de495b1710490ebf517c748d14df4728b6b12f3d2c11d0354456717",
+      "original_flagged": true,
+      "original_topics": [
+        "economic_security"
+      ],
+      "recommended_topics": [
+        "economic_security"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "economic_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain economic security: the tax measure explicitly allows adjustment for energy security. This is a thin but concrete policy-purpose link; no minimum paragraph count is required. Tax relief is not sanctions, and fuel mention alone is insufficient for supply-chain resilience.",
+      "owner_question": "Confirm that a concrete policy-purpose energy-security clause suffices; rejecting this would require a stronger explicitness/materiality rule.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 1497,
+          "end": 1615,
+          "quote": "át triển kinh tế - xã hội, đảm bảo an ninh năng lượng, ổn định thị trường xăng, dầu, Bộ Công Thương có ý kiến đề xuất ",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P47",
+      "record_id": "a77e10ad96ed6ed0dce3cfcbace0cdf1287fb570c986e28a28e742f4e9b6449e",
+      "desk_id": "vietnam",
+      "storage_layer": "shadow",
+      "source_url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+      "source_date": "2026-09-30",
+      "origin_commit": "5e414cf28cf99bb6ae8b64052f701ea27fcf19b7",
+      "body_sha256": "f32cd4760f744620dca3a2278c79c89a5d246d8bb682f47e3e30af4fb0c7fe59",
+      "original_flagged": true,
+      "original_topics": [
+        "economic_security",
+        "critical_minerals_supply_chains"
+      ],
+      "recommended_topics": [
+        "economic_security",
+        "critical_minerals_supply_chains"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "economic_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "critical_minerals_supply_chains",
+          "recommendation": "accept",
+          "evidence": [
+            "R2",
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Accept both economic security and industrial/supply resilience under current definitions. Strategic autonomy and economic security are explicit; the full text discusses supporting industry/value chains. No minerals, defense production or defense AI application is established. Broad-topic usability is separate from invalidating this assignment.",
+      "owner_question": "Confirm industrial-resilience scope without minerals. Restricting this slug to minerals would require a versioned vocabulary change.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 5745,
+          "end": 5860,
+          "quote": " đồng thời là vấn đề liên quan đến an ninh kinh tế, tự chủ chiến lược và mục tiêu đưa Việt Nam trở thành nước phát ",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 2948,
+          "end": 3065,
+          "quote": "ích then chốt, quyết định năng lực tự chủ chiến lược, khả năng cạnh tranh quốc gia.\nĐồng chí Nguyễn Thanh Nghị - Ủy v",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 5730,
+          "end": 5975,
+          "quote": "ền công nghiệp; đồng thời là vấn đề liên quan đến an ninh kinh tế, tự chủ chiến lược và mục tiêu đưa Việt Nam trở thành nước phát triển, thu nhập cao vào năm 2045.\nPhó Thủ tướng Thường trực đánh giá Việt Nam đã có nền tảng phát triển công nghiệp",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P48",
+      "record_id": "b3e9cde250a289d75ed17a90c8241e1c47854e4045d84d948f8f8607a079f47b",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-chief-calls-for-one-visayas-command-under-new-commander",
+      "source_date": "2026-10-06",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "197500c043dab7e88e673243dc4050a4f62f0f8a22abf6212a03032a5d7e20c0",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: commander appointment and unity/readiness exhortation do not establish basing redistribution, doctrine or an identifiable exercise. Location is the ceremony venue.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "CAMP AGUINALDO, Quezon City -- The Armed Forces of the Philippines (AFP) welcomed Major General Moises Micor PAF as the new Comman",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P49",
+      "record_id": "07b5ace2e6f4a909c2879c28ad99c8851e58ba2013d03abbe688c9f2616faf24",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-chief-recognizes-naval-personnel-underscores-maritime-readiness",
+      "source_date": "2026-10-06",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "a1ac7efd29b9e66a3c2868cb5d593c53f69e96b9e09fac1d4b809f9dc26eaf02",
+      "original_flagged": true,
+      "original_topics": [
+        "maritime_security"
+      ],
+      "recommended_topics": [
+        "maritime_security"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "maritime_security",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain maritime security: specific Visayas naval presence/security mission is developed beyond awards. No concrete new deployment/access arrangement or exercise is recorded; do not add basing solely for the naval-base venue.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 866,
+          "end": 991,
+          "quote": " personnel in sustaining the AFP’s maritime security mission.\n\nThe visit reaffirmed the AFP’s commitment to maintaining a str",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P50",
+      "record_id": "3f0873cede68455874a0cb000386861e60a04873901b1520b93c88ba12e88f6f",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-marks-36-years-of-code-of-conduct-honors-excellence-in-service",
+      "source_date": "2026-10-05",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "e6c9986e9f5aca93774687a49bf0d9cfe98bc397b7ff334dd6656c199b63da47",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: integrity/code-of-conduct ceremony and service awards. Transformation branding and a roadmap reference are not substantive force-employment theory.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "CAMP AGUINALDO, Quezon City - The Armed Forces of the Philippines (AFP) marked the 36th Year of the AFP Code of Conduct and recogn",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P51",
+      "record_id": "e95e4f07ef94fec2192af9b9f1a04bc062e0661547922080969b94fa244ba255",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-conclude-interagency-exercise-pagsasanay-sanlakas-2026",
+      "source_date": "2026-10-03",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "0f99d426c5860b25788a152f7a487463bf6979db84915b58c9509b5817dce003",
+      "original_flagged": true,
+      "original_topics": [
+        "military_exercises"
+      ],
+      "recommended_topics": [
+        "military_exercises"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain identifiable earthquake-response exercise. Maritime casualty evacuation is humanitarian transport, without a developed maritime-security mission; coast-guard participation is not coercion. Domestic interagency coordination is not an international security partnership. Strong disaster-relief gap evidence.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 126,
+          "end": 246,
+          "quote": "t Guard (PCG) concluded the second Interagency Exercise (IAX 02-2026), dubbed “Pagsasanay Sanlakas,” on October 2, 2026,",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P52",
+      "record_id": "7300f6288eba84b619a9847948229d9d3cda0cf17bbd97b861babd045fdadf03",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-sustain-joint-readiness-through-2026-inter-agency-exercise",
+      "source_date": "2026-10-01",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "2207cc71ef080ebfecbf35dba117ce775b3583b043415b39352a65622d62f724",
+      "original_flagged": false,
+      "original_topics": [
+        "military_exercises"
+      ],
+      "recommended_topics": [
+        "military_exercises"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "military_exercises",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain identified interagency disaster-readiness exercise. Generic interoperability does not establish doctrine or alliance. This and P51 concern the same exercise and must not be counted as independent HADR events.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 147,
+          "end": 273,
+          "quote": "t Guard (PCG), formally opened the 2026 Inter-Agency Exercise during a ceremony held on September 30, here.\n\nThe opening cerem",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P53",
+      "record_id": "5b6d10e3160d4ef4d623972e6d36bccda3076117563337e930c47ea001c0ec16",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-chief-visits-lumbia-air-base-highlights-continuing-development",
+      "source_date": "2026-09-27",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "525c01e30c10b4d9066846b16079a9261b18492e759129b00be9f363217212be",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing"
+      ],
+      "recommended_topics": [
+        "force_posture_basing"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain basing: named unit relocation/integration and operational base development are substantive. No formal allied-access arrangement or concrete capability purchase is recorded.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 251,
+          "end": 377,
+          "quote": "\nGeneral Nafarrete highlighted the relocation and integration of the 15th Strike Wing and the 590th Air Base Group, Philippine",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P54",
+      "record_id": "afd48dac19aa80b6c9f9e059e9b8bdc8110dbd89282b615bbad89ac03b59fe5c",
+      "desk_id": "philippines",
+      "storage_layer": "shadow",
+      "source_url": "https://www.afp.mil.ph/news/afp-advances-leadership-continuity-with-confirmation-of-35-senior-officers",
+      "source_date": "2026-09-25",
+      "origin_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+      "body_sha256": "0ee012b8f3c19a7ee58f041e3102aeca0dca0fa9fe1446726bee96126bc8ae4b",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: officer confirmations and leadership continuity. Generic readiness/national-security language does not establish operational topics or doctrine.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "CAMP AGUINALDO, Quezon City - The Armed Forces of the Philippines (AFP) strengthened its senior leadership following the Commissio",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P55",
+      "record_id": "946a784e57a23677d2af088c0adfb8191753ca47ca909d879d728ad044fcdd7c",
+      "desk_id": "indonesia",
+      "storage_layer": "shadow",
+      "source_url": "https://www.kemhan.go.id/2026/10/07/disaksikan-presiden-menhan-hadiri-penyerahan-rp132-triliun-dan-259-ribu-hektare-kawasan-hutan-kepada-negara.html",
+      "source_date": "2026-10-07",
+      "origin_commit": "dc6a76193d17f3513c32ec1de02902ed01421437",
+      "body_sha256": "1d645e81aa7d42e80ec6b2c94f4897893f5a861aa08a4cfa8a6d3d78916c0197",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: forest restitution/fines and government asset governance. The defense minister’s attendance, mining acreage and safeguarding national wealth do not establish strategic minerals, defense industry or an explicit security-economic policy.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "Jakarta – Menteri Pertahanan RI Sjafrie Sjamsoeddin menghadiri acara Pemyerahan Denda Administratif Rp13,2 triliun dan Penguasaan ",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P56",
+      "record_id": "c472f68992999b995f6e816bae4f0bfe6db8b5355a217d9b4733b7870ac3c468",
+      "desk_id": "indonesia",
+      "storage_layer": "shadow",
+      "source_url": "https://www.kemhan.go.id/2026/10/06/menhan-sjafrie-terima-courtesy-call-athan-singapura-apresiasi-dedikasi-selama-bertugas.html",
+      "source_date": "2026-10-06",
+      "origin_commit": "dc6a76193d17f3513c32ec1de02902ed01421437",
+      "body_sha256": "f4bc6ef7beec542e21c238d4b2c0e4880a615266d22f096255f131bb7f5375d8",
+      "original_flagged": false,
+      "original_topics": [
+        "defense_diplomacy"
+      ],
+      "recommended_topics": [
+        "defense_diplomacy"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain defense diplomacy under the ceremony exception: the defense attaché’s official role, contribution to bilateral defense relations and multiple senior meetings are substantive relationship evidence. No specific durable framework is developed enough for a separate partnership label.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 253,
+          "end": 373,
+          "quote": "ut merupakan bagian dari rangkaian diplomasi pertahanan antara Indonesia dan Singapura, sekaligus menjadi momentum berak",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P57",
+      "record_id": "9317e065dbe31cab06b56ae92fe2314766baa50ee9f19a4101335260b5f9c84f",
+      "desk_id": "indonesia",
+      "storage_layer": "shadow",
+      "source_url": "https://www.kemhan.go.id/2026/09/30/atas-nama-negara-menhan-sjafrie-anugerahkan-satyalancana-dharma-samudera-kepada-personel-jmsdf-yang-terlibat-penanganan-karhutla.html",
+      "source_date": "2026-09-30",
+      "origin_commit": "dc6a76193d17f3513c32ec1de02902ed01421437",
+      "body_sha256": "b1c3a242582abce3750908bb9649e05e3aafcae7d33dec59bdc7061deea1157f",
+      "original_flagged": true,
+      "original_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        }
+      ],
+      "rationale": "Retain defense diplomacy and explicitly invoked DCA partnership. Detailed helicopter assistance under Indonesian taskforce control supports the military HADR gap. A shipboard medal ceremony is neither training nor a maritime-security mission; do not infer permanent basing from the berth.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 1480,
+          "end": 1598,
+          "quote": "an wujud konkret dari implementasi hubungan bilateral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA) ",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 1528,
+          "end": 1661,
+          "quote": "teral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA) antara Indonesia dan Jepang, baik yang sedang berjalan maupun d",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P58",
+      "record_id": "02b194ad6634efab5077d58df9fb5f8b2db2f3b22fce098f808f93fd05673290",
+      "desk_id": "korea",
+      "storage_layer": "shadow",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "source_date": "2026-10-06",
+      "origin_commit": "c20b7eb826b34e208ce5dccb7ea3c5306693718a",
+      "body_sha256": "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284",
+      "original_flagged": true,
+      "original_topics": [
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "accept",
+      "label_decisions": [
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R1"
+          ]
+        }
+      ],
+      "rationale": "Retain alliances_partnerships: combined Korea-US defense assets and readiness directly answer the reported launch, beyond country co-mention. Coverage is partial. No nuclear-specific claim, military exercise, new deployment or detailed sanction measure is established by ballistic missiles/UN-resolution language alone.",
+      "owner_question": "Confirm that a short event-linked collective-defense capability statement is substantive partnership evidence. A Peninsula topic needs a broader positive sample.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 115,
+          "end": 229,
+          "quote": "후 미사일을 탐지·추적하고 발사 원점을 정확히 식별하였음.\n□ 한미는 확고한 연합방위태세를 유지하고 있으며, 북한이 최근 발사한 미사일은 한미가 보유한 방어자산으로 충분히 탐지·요격 가능한 수준으로 평가하",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P59",
+      "record_id": "cdb4c586219d9a014b2317a262e9761dac62663bb7d1f2030fd00a191b7f5af0",
+      "desk_id": "korea",
+      "storage_layer": "shadow",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784196",
+      "source_date": "2026-10-02",
+      "origin_commit": "c20b7eb826b34e208ce5dccb7ea3c5306693718a",
+      "body_sha256": "bcf6c5e77f3f3e08005bdd2dee68740cc8fcf9576d6707031d2dd7bc0f0c7914",
+      "original_flagged": false,
+      "original_topics": [
+        "force_posture_basing",
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "recommended_topics": [
+        "defense_diplomacy",
+        "alliances_partnerships"
+      ],
+      "classification_recommendation": "revise",
+      "label_decisions": [
+        {
+          "topic": "force_posture_basing",
+          "recommendation": "reject",
+          "evidence": [
+            "R1"
+          ]
+        },
+        {
+          "topic": "defense_diplomacy",
+          "recommendation": "accept",
+          "evidence": [
+            "R2"
+          ]
+        },
+        {
+          "topic": "alliances_partnerships",
+          "recommendation": "accept",
+          "evidence": [
+            "R3"
+          ]
+        }
+      ],
+      "rationale": "Retain ministerial military engagement and developed combined-defense relationship. Reject force_posture_basing: Camp Humphreys is a visit venue and symbolic alliance site; the source gives no substantive location/access/duration/distribution decision. Combined readiness language alone is not basing evidence.",
+      "owner_question": "Confirm substantive basing versus visit venue: rejection follows the location/access/duration/distribution test used for P48/P49.",
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 191,
+          "end": 298,
+          "quote": "철 장관은 먼저 환영 의장행사에 참석하여 ‘한미동맹의 심장’인 험프리스 기지에서 헌신하고 있는 한미 장병들을 격려하였습니다.\n◦ 강신철 장관은 전쟁의 역사를 통해 ‘함께 싸우겠다는 의지의 중요",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R2",
+          "field": "text_original",
+          "start": 381,
+          "end": 488,
+          "quote": "Xavier T. Brunson) 한미연합사/주한미군사/유엔사 사령관을 접견하여 주요 현안에 대해 논의하였습니다.\n□ 또한, 강신철 장관은 한반도의 평화와 안정을 위해 헌신하고 있는 한미연합사",
+          "provenance": "original-ledger excerpt"
+        },
+        {
+          "id": "R3",
+          "field": "text_original",
+          "start": 58,
+          "end": 163,
+          "quote": "리스 방문\n- 취임 후 첫 방문을 통해 굳건한 연합방위태세 및 한미 공조 재확인\n□ 강신철 국방부장관은 10월 2일(금) 오전, 취임 후 처음으로 캠프 험프리스를 방문하여 굳건한 연합방위태",
+          "provenance": "original-ledger excerpt"
+        }
+      ]
+    },
+    {
+      "pilot_id": "P60",
+      "record_id": "bc269d23bf53b8bb49d151c7186cc7caf3d8e11861cfd62bfa4c226865368dd9",
+      "desk_id": "korea",
+      "storage_layer": "shadow",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156783602",
+      "source_date": "2026-09-30",
+      "origin_commit": "c20b7eb826b34e208ce5dccb7ea3c5306693718a",
+      "body_sha256": "e4aaf200e520b3f69b83583ba7f221759a11ea3b86b244d261c109a48d576165",
+      "original_flagged": false,
+      "original_topics": [],
+      "recommended_topics": [],
+      "classification_recommendation": "accept",
+      "label_decisions": [],
+      "rationale": "Accept abstention: war-dead recovery remembrance exhibition and public engagement. Historical war, QR codes and information displays do not establish current operations or information warfare.",
+      "owner_question": null,
+      "evidence_assessment": "complete pinned body inspected; sufficient for attributed subject assessment, not event corroboration",
+      "evidence": [
+        {
+          "id": "R1",
+          "field": "text_original",
+          "start": 0,
+          "end": 130,
+          "quote": "보도 자료\n보도시점\n배포 이후\n배포\n2026.9.30.(수) 08:30\n국방부 유해발굴감식단, 6·25 전사자 귀환 주제 「국유단: 귀환작전」 피규어 전시\n- 제78주년 국군의 날 맞아 10월 한 달 동안 12만 미수습 6·25 전사",
+          "provenance": "full-body second-pass locator"
+        }
+      ]
+    }
+  ]
+}

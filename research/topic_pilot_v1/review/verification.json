@@ -1,0 +1,12 @@
+{
+  "reviewed_head": "0f368eb3131b7cac7d6d1db9e9f00ed7d889a57f",
+  "protected_tracked_files_unchanged": 7510,
+  "production_files_unchanged": 7457,
+  "production_db_sha256": "712fa29a5f0356a216d47cd05f69839da757e806d42d04ff7be8d449f8f9f63b",
+  "original_and_second_pass_source_rows_verified": 60,
+  "focused_tests_passed": 127,
+  "output_validator_warnings": 10,
+  "database_writes": false,
+  "original_proposals_changed": false,
+  "human_approval": false
+}
