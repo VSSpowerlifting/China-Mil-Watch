@@ -10,6 +10,9 @@ on:
     paths:
       - "scripts/prepare_vietnam_briefs_evidence.py"
       - "scripts/build_vietnam_sunday_packet.py"
+      - "scripts/watch_vietnam_shadow_slots.py"
+      - "tests/test_vietnam_shadow_logical_slot_watchdog.py"
+      - ".github/workflows/vietnam_shadow_logical_slot_watchdog.yml"
       - "research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json"
       - ".github/actions/vietnam-editorial-evidence/**"
       - ".github/workflows/vietnam_mps_real_state_contract.yml"
@@ -71,4 +74,33 @@ jobs:
           assert not any("text_original" in x or "article_body" in x for x in rows)
           print("Verified 2 unapproved Vietnamese publisher references from immutable shadow state.")
           print("No mail, model, output database mutation, public article body, or publication.")
+          PY
+
+      - name: Verify observed October 7 shadow slot using real archived ledgers
+        env:
+          HISTORICAL_SHA: ${{ steps.vietnam.outputs.source-commit }}
+        run: |
+          set -euo pipefail
+          [[ "$HISTORICAL_SHA" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          folder="$(mktemp -d "$RUNNER_TEMP/vn-slot-historical-XXXXXXXX")"
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs \
+            --single-branch "https://github.com/$GITHUB_REPOSITORY.git" "$folder/mps"
+          python -m scripts.watch_vietnam_shadow_slots \
+            --state-repo "$folder/mps" \
+            --state-commit "$HISTORICAL_SHA" \
+            --as-of-utc 2026-10-08T21:15:00Z \
+            --require-current-slot \
+            --out "$folder/slot-report.json"
+          REPORT="$folder/slot-report.json" python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads(Path(os.environ["REPORT"]).read_text())
+          assert d["latest_successful_logical_date"]=="2026-10-07"
+          assert d["latest_mature_scheduled_slot"]=="2026-10-07"
+          assert d["overdue_logical_dates"]==[]
+          assert d["evaluated_slots"]==1
+          assert d["government_silence_established"] is False
+          assert d["collection_window_complete_for_editorial"] is False
+          print("Real October 7 MPS ledger: no overdue mature slot as of October 8 21:15 UTC.")
           PY

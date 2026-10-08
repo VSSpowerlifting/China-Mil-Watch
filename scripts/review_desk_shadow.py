@@ -76,6 +76,7 @@ def review(state, desk, out, as_of, commit=None, tree=None):
     if clock.get("desk") != desk:
         raise ValueError("clock desk mismatch")
     findings, ledgers = [], []
+    historical_backfills = []
     for path in sorted((state / "ledger").glob("*.json")):
         ledger = json.loads(path.read_text())
         if ledger.get("desk") != desk:
@@ -83,6 +84,22 @@ def review(state, desk, out, as_of, commit=None, tree=None):
         if ledger.get("target_date_source") not in ("explicit", "schedule-slot", "manual-utc-date"):
             raise ValueError("unknown logical-date provenance")
         target = date.fromisoformat(ledger["target_date"])
+        historical = ledger.get("operation") == "jcg_2026_09_historical_backfill"
+        if desk == "japan_jcg":
+            if historical:
+                if (ledger.get("counts_as_qualifying_shadow_day") is not False or
+                        ledger.get("backfill_anchor_day_zero_run_id") != "37828199188-1" or
+                        ledger.get("target_date") != "2026-10-08" or
+                        ledger.get("lookback_days") != 38 or
+                        ledger.get("cap") != 5 or
+                        ledger.get("shadow_day") is not None):
+                    findings.append("Unrecognized or misclassified historical backfill: " + ledger["run_id"])
+                historical_backfills.append(ledger["run_id"])
+            elif (ledger.get("operation") is not None or
+                  ledger.get("counts_as_qualifying_shadow_day") is False):
+                findings.append("Unrecognized JCG operation or shadow-day exclusion: " + ledger["run_id"])
+        elif ledger.get("operation") is not None:
+            findings.append("Unexpected historical operation on other desk: " + ledger["run_id"])
         if target <= as_of:
             ledgers.append(ledger)
         if ledger["health"] != "ok":
@@ -93,8 +110,15 @@ def review(state, desk, out, as_of, commit=None, tree=None):
                 findings.append("Missing or changed request capture: " + digest)
     if not ledgers:
         raise ValueError("no ledgers on or before as-of date")
-    covered = {l["target_date"] for l in ledgers if l["health"] == "ok"}
-    first = min(date.fromisoformat(l["target_date"]) for l in ledgers)
+    # Historical content backfills are NOT successful new collection dates.
+    # Reject malformed backfill markers above; even a healthy backfill must not
+    # repair a missing logical-day ledger or advance the Day-7/14/30 clock.
+    qualifying = [l for l in ledgers if l.get("operation") is None and
+                  l.get("counts_as_qualifying_shadow_day") is not False]
+    if not qualifying:
+        raise ValueError("formal checkpoint lacks any qualifying collection day")
+    covered = {l["target_date"] for l in qualifying if l["health"] == "ok"}
+    first = min(date.fromisoformat(l["target_date"]) for l in qualifying)
     missing = [str(first + timedelta(days=n)) for n in range((as_of - first).days + 1)
                if str(first + timedelta(days=n)) not in covered]
     if missing:
@@ -177,7 +201,10 @@ def review(state, desk, out, as_of, commit=None, tree=None):
     report = {"desk": desk, "as_of": str(as_of), "mode": "formal_commit_snapshot" if commit else "rehearsal",
               "review_holds": review_holds,
               "state_commit": commit, "state_tree": tree, "state_ref": BRANCHES[desk] if commit else None,
-              "records": len(records), "ledgers": len(ledgers), "findings": findings,
+              "records": len(records), "ledgers": len(ledgers),
+              "qualifying_ledgers": len(qualifying),
+              "historical_backfill_run_ids": sorted(historical_backfills),
+              "findings": findings,
               "missing_successful_days": missing, "input_hashes": before,
               "human_review_completed": False, "promotion_authorized": False}
     out.mkdir(parents=True)
@@ -198,6 +225,10 @@ def review(state, desk, out, as_of, commit=None, tree=None):
                  "JCG: Coast Guard is not Japan MOD or its Joint Staff.",
              ]),
              "Review holds: " + ("; ".join(review_holds) if review_holds else "None."), "",
+             "Historical content backfills (NOT qualifying days): " +
+             (", ".join(sorted(historical_backfills)) if historical_backfills else "None."), "",
+             "Qualifying collection ledgers: " + str(len(qualifying)) + " of " +
+             str(len(ledgers)) + " total ledgers.", "",
              "Findings: " + ("; ".join(findings) if findings else "No machine integrity findings."), "",
              "Human sign-off (unfilled): reviewer; actual completion timestamp; records reviewed;",
              "source comparisons; anomaly dispositions; verdict. Preserve this packet and the actual sign-off",
