@@ -22,13 +22,27 @@ MAX_ITEMS = 8
 TAGS = frozenset((
     "hadr", "defense_exercises", "alliance_diplomacy", "maritime_security",
     "technology_cooperation", "security_industry", "regional_partnerships",
+    "source_discovery",
 ))
 FIELDS = {
     "id", "desk", "source_name", "source_url", "published_date", "language",
     "title_original", "source_kind", "state_commit", "source_content_sha256",
     "hash_rule", "summary", "caveats", "topics", "status", "copy_scope",
 }
-KINDS = {"shadow-extracted-original", "official-publisher-page-reviewed-for-research"}
+KINDS = {"shadow-extracted-original", "official-publisher-page-reviewed-for-research",
+         "shadow-metadata-only"}
+
+
+def metadata_only_summary(published_date):
+    """Deterministic, publisher-metadata-only observation, never a source fact claim."""
+    return (
+        "Vietnam Ministry of Public Security published a Vietnamese-language "
+        "foreign-affairs article dated {}. Its original headline is listed "
+        "separately. The article contents and any events mentioned have not "
+        "been independently established for this draft; read the full original "
+        "before making substantive claims."
+    ).format(published_date)
+
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 JAPAN_ID = re.compile(r"JP-W[0-9]{2}-[0-9]{2}\Z")
@@ -121,7 +135,7 @@ def _item(item, start, cutoff):
     _require(isinstance(item["source_kind"], str) and
              item["source_kind"] in KINDS, "unknown provenance class")
     commit, digest = item["state_commit"], item["source_content_sha256"]
-    if item["source_kind"] == "shadow-extracted-original":
+    if item["source_kind"] in ("shadow-extracted-original", "shadow-metadata-only"):
         expected_rule = ("mps-vi-content-v1" if item["desk"] == "vietnam"
                          else "sha256-text-original-utf8")
         _require(isinstance(commit, str) and HEX40.fullmatch(commit)
@@ -133,6 +147,11 @@ def _item(item, start, cutoff):
                  "public webpage is not a verified shadow capture")
     _require(_line(item["summary"], min_length=65, max_length=700),
              "short attributed editorial synopsis required; not a full article")
+    if item["source_kind"] == "shadow-metadata-only":
+        _require(item["desk"] == "vietnam" and
+                 item["summary"] == metadata_only_summary(item["published_date"]) and
+                 item["topics"] == ["source_discovery"],
+                 "metadata-only entries cannot assert unreviewed source-body claims")
     caveats = item["caveats"]
     _require(isinstance(caveats, list) and 1 <= len(caveats) <= 4 and
              all(_line(t, min_length=15, max_length=270) for t in caveats),
@@ -200,6 +219,11 @@ def evidence_prompt(items):
             "Topics (clustering suggestions, NOT proof of a shared event): " +
                 ", ".join(row["topics"]),
             "Research provenance: " + row["source_kind"],
+            ("METADATA-ONLY DISCOVERY: DO NOT CITE THIS ITEM AS EVIDENCE "
+             "OF THE EVENTS DISCUSSED; ONLY THE PUBLICATION DATE, ISSUER "
+             "AND HEADLINE ARE ESTABLISHED HERE."
+             if row["source_kind"] == "shadow-metadata-only" else
+             "This synopsis is provisional; source-specific review remains required."),
             "Short, unapproved, source-attributed research synopsis: " + row["summary"],
             "Accuracy cautions: " + " | ".join(row["caveats"]),
             "WARNING: source requires human review before public Brief approval.",
