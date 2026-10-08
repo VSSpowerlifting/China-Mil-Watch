@@ -32,6 +32,7 @@ from unittest import mock
 
 import requests
 from bs4 import BeautifulSoup
+from bs4.builder import ParserRejectedMarkup
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -1266,8 +1267,11 @@ class TestProductionIsolation(unittest.TestCase):
                 imported |= {a.name for a in node.names}
             elif isinstance(node, ast.ImportFrom):
                 imported.add(node.module)
+        # The narrow parser-rejection guard imports the exception from bs4.builder.
+        # Keep all other imports forbidden: this is a known third-party parser
+        # module, not permission to reach any state or production store.
         allowed = {"__future__", "hashlib", "re", "time", "dataclasses", "datetime", "typing",
-                   "urllib.parse", "requests", "bs4"}
+                   "urllib.parse", "requests", "bs4", "bs4.builder"}
         extra = {m for m in imported if m not in allowed and not m.startswith("core.collection")}
         self.assertEqual(extra, set())
 
@@ -1325,6 +1329,64 @@ class TestReviewRegressions(unittest.TestCase):
                 self.assertEqual(cap.status, st.ACCESS_CHALLENGED)
                 self.assertIsNone(cap.body)
 
+    def test_challenge_guard_does_not_hide_non_parser_programming_errors(self):
+        # A real markup rejection is a handled input error. Unexpected failures
+        # in the DOM or selector logic must not turn into a benign 'not challenged'.
+        with mock.patch.object(nsc, "BeautifulSoup",
+                               side_effect=RuntimeError("synthetic parser defect")):
+            with self.assertRaisesRegex(RuntimeError, "synthetic parser defect"):
+                nsc.looks_challenged({}, "<html>not a challenge</html>")
+
+    def test_challenge_guard_keeps_header_authoritative_when_html_refused(self):
+        with mock.patch.object(nsc, "BeautifulSoup",
+                               side_effect=ParserRejectedMarkup("rejected")):
+            self.assertTrue(nsc.looks_challenged(
+                {"cf-mitigated": "challenge"}, "<html>synthetic invalid</html>"
+            ))
+
+    def test_markup_the_parser_rejects_is_a_status_never_a_raise(self):
+        # The challenge screen parses every body before any status is read, and bs4
+        # raises ParserRejectedMarkup for markup html.parser refuses outright, so
+        # `fetch` and the robots step of `discover` used to raise instead of
+        # returning a status. Which markup is refused depends on the interpreter
+        # (`<![foo[` on CPython 3.9.6), so the guard is pinned with a parser that
+        # always refuses; the real markup below may be refused or read and only
+        # has to stay a status.
+        with mock.patch.object(nsc, "BeautifulSoup",
+                               side_effect=ParserRejectedMarkup("rejected")):
+            for status in (200, 403, 404, 500):
+                with self.subTest(refused=status):
+                    rig = Rig(routes({ARTICLE_URL[1]: FakeResponse(ARTICLE_BIN[1], status)}))
+                    cap = rig.adapter.fetch(ref(ARTICLE_URL[1]))
+                    self.assertEqual(cap.ok, status == 200)
+                    result = rig.adapter.extract(cap)
+                    self.assertEqual(result.status, st.EXTRACTION_FAILURE)
+                    self.assertEqual(result.documents, [])
+            rig = Rig(routes({ROBOTS_URL: FakeResponse(b"<html></html>", 200, TEXT_PLAIN)}))
+            result = rig.discover(COVERED)
+            self.assertEqual(result.status, st.UNEXPECTED_CONTENT_TYPE)
+            self.assertEqual((result.references, result.failed_endpoints, rig.urls),
+                             ([], [ROBOTS_URL], [ROBOTS_URL]))
+        bare = b"<![foo[ bar ]]>"
+        inside = swap(P1, "</body>", "<![foo[ bar ]]></body>").encode()
+        for body in (bare, inside):
+            for status in (200, 403, 404, 500):
+                with self.subTest(fetch=body[:12], status=status):
+                    rig = Rig(routes({ARTICLE_URL[1]: FakeResponse(body, status)}))
+                    cap = rig.adapter.fetch(ref(ARTICLE_URL[1]))
+                    self.assertEqual(cap.ok, status == 200)
+                    result = rig.adapter.extract(cap)
+                    self.assertEqual(bool(result.documents), result.status == st.OK)
+                    if body is bare or status != 200:       # nothing to read, or nothing fetched
+                        self.assertEqual(result.status, st.EXTRACTION_FAILURE)
+            for headers in (TEXT_PLAIN, {}):
+                with self.subTest(robots=body[:12], headers=headers):
+                    rig = Rig(routes({ROBOTS_URL: FakeResponse(body, 200, headers)}))
+                    result = rig.discover(COVERED)
+                    self.assertEqual(result.status, st.UNEXPECTED_CONTENT_TYPE)
+                    self.assertEqual((result.references, result.failed_endpoints, rig.urls),
+                                     ([], [ROBOTS_URL], [ROBOTS_URL]))
+
     def test_malformed_listing_links_return_failure_and_no_references(self):
         for selector in ("h2.wp-block-post-title a", "next-link"):
             with self.subTest(selector=selector):
@@ -1370,6 +1432,15 @@ class TestReviewRegressions(unittest.TestCase):
         self.assertEqual(result.references, [])
         self.assertEqual(rig.adapter._listing_ids, {})
         self.assertEqual(rig.adapter.listing_report, {})
+
+    def test_repeated_post_id_under_a_changed_url_fails_required_pagination(self):
+        second = BeautifulSoup(listing_page([2, 3, 4, 5]).decode(), "html.parser")
+        link = second.select_one("ul.wp-block-post-template > li h2.wp-block-post-title a")
+        link["href"] = link["href"].rstrip("/") + "-x/"       # same post id and date, new permalink
+        rig = Rig(TestAMultiPageWalk().pages(str(second).encode()))
+        result = rig.discover(MID)
+        self.assertEqual((result.status, result.references), (st.LISTING_FAILURE, []))
+        self.assertIn("repeats an item", result.error_detail)
 
     def test_unrepresentable_utc_date_is_refused_instead_of_raising(self):
         self.assertIsNone(nsc.parse_published("0001-01-01T00:00:00+08:00"))

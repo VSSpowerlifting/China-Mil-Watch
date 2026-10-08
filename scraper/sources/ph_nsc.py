@@ -63,8 +63,8 @@ RULES THAT MATTER TO THIS FILE
 
 Deliberately absent: relevance filtering, translation, classification and any
 editorial judgement. Absent for later, with the reason recorded in
-`shadow/ph_nsc/README.md`: a runner, retries, `Crawl-delay`, percent-decoding
-of robots paths.
+`shadow/ph_nsc/README.md`: retries, `Crawl-delay`, percent-decoding of robots
+paths.
 """
 
 from __future__ import annotations
@@ -79,6 +79,7 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup, NavigableString
+from bs4.builder import ParserRejectedMarkup
 
 from core.collection import status as st
 from core.collection.contract import (
@@ -310,7 +311,15 @@ def looks_challenged(headers: Dict[str, str], text: str) -> bool:
     """
     if headers.get("cf-mitigated", "").lower() == "challenge":
         return True
-    soup = BeautifulSoup(text, "html.parser")
+    try:
+        soup = BeautifulSoup(text, "html.parser")
+    except ParserRejectedMarkup:
+        # The parser rejected the response itself; this alone does not prove
+        # a challenge. Fetch/extract and robots validation still reject malformed
+        # source content through their existing typed failure paths.
+        return not _THEME_BODY_RE.search(text) and bool(_CHALLENGE_RE.search(text))
+    # Keep selector and script defects visible: they are not source markup
+    # refusals and must not be misreported as innocuous HTML.
     if soup.select("form#challenge-form, #cf-browser-verification"):
         return True
     if any(re.search(r"\b(?:window\.)?_cf_chl_opt\s*=", script.get_text(), re.I)
@@ -510,7 +519,7 @@ class PHNscAdapter(SourceAdapter):
         self._last_request: Optional[float] = None
         self._rules: Optional[List[Tuple[bool, str]]] = None
         self._listing_ids: Dict[str, str] = {}
-        #: Populated by `discover()`; a runner would write it to the ledger.
+        #: Populated by `discover()`; the shadow runner writes it to the ledger.
         self.robots_status: Optional[str] = None
         self.listing_report: Dict[str, object] = {}
 

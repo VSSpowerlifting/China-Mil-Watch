@@ -105,6 +105,19 @@ is on record.
    The sitemap exposes only the homepage. The two-page author archive exposes the same six
    Official Statements and page 3 is 404. Windows reaching to 2026-06-03 or earlier continue
    to fail closed rather than claim historical completeness.
+   The pagination logic rests on three tiers of evidence. *Observed*: the 2026-10-01 capture
+   (`tests/fixtures/ph_nsc/nsc-listing.bin`) is one listing page of six items and holds no
+   pagination markup (no `rel=next`, `wp-block-query-pagination`, `next` class, `/page/N` link or
+   `paged=` query; checked by text search), as the first sentence of this gate records. The only
+   paginated NSC listing on record is the author archive above (two pages, page 3 is 404); its
+   markup was not kept as a fixture and this adapter does not walk it. Scheduled runs since were
+   not examined for this note. *Synthetic*: every multi-page walk (next link, numbered links,
+   repeat, loop, skip, order, page cap) is tested only on pagination markup the tests build.
+   *Assumed*: that a paginating category would publish links in the forms the parser reads
+   (`rel=next`, `wp-block-query-pagination-next`, `/category/official-statements/page/N/`), and
+   that a page lists the newest posts first (each page's order is checked; that it is the newest
+   set is not). A pagination form the parser does not read is reported as `unsupported_pagination`
+   and never counts as coverage, so a window the pages read cannot prove fails the run.
 5. **Category anomaly: unresolved but not reproduced on 2026-10-02.** The earlier gambling-content
    observation is neither dismissed nor treated as proof of compromise.
 6. **Collector identity: owner-approved unchanged for scheduled use (2026-10-02).**
@@ -256,6 +269,23 @@ persistence is measured above; periodic reliability, Actions article-body
 retrieval/extraction/capture evidence, reuse/republishing, historical
 completeness, the earlier anomaly and human checkpoint review remain open.
 The October 1 adapter review receipt is historical evidence and is not rewritten.
+
+## Pending parser-refusal correctness repair (#99, review-only)
+
+A 2026-10-08 targeted repair narrows the HTML challenge-screen handling to
+`bs4.builder.ParserRejectedMarkup`, caught only when BeautifulSoup is constructed.
+A legitimately parser-refused HTML body must be processed through the existing
+typed robots/body-failure paths; that refusal alone does not prove the site
+presented an access challenge. Explicit `cf-mitigated: challenge` and recognized
+challenge markup remain authoritative. Unexpected selector or programming errors
+must **not** be silently converted to harmless HTML: unlike the older draft's
+broad exception handler, they propagate for diagnosis.
+
+This repair has **not** been merged or applied to running NSC schedules.
+It adds two additional synthetic regression tests to the previous two PR #99
+tests; tests/CI have to pass at the final exact head. No page retrieval,
+source-policy change, collector identity change, credential change, production
+data or shadow-state modification is part of this update.
 
 ## Bounded verification after activation merges
 
