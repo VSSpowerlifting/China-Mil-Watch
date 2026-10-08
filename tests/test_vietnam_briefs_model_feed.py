@@ -5,6 +5,7 @@ import copy
 import json
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
@@ -168,15 +169,27 @@ class VietnamSundayFeedTests(unittest.TestCase):
             }]}
             with self.subTest(target=target_date), self.assertRaisesRegex(
                     VietnamFeedRefused, "stale"):
-                require_current_week_shadow(evidence, SAT)
+                require_current_week_shadow(
+                    evidence, SAT, observed_on=date(2026, 10, 11))
         valid = {"runs": [{
             "health": "ok", "target_date": "2026-10-10",
             "finished_utc": "2026-10-10T19:03:00+00:00",
         }]}
-        self.assertEqual(require_current_week_shadow(valid, SAT), SAT)
+        self.assertEqual(require_current_week_shadow(
+            valid, SAT, observed_on=date(2026, 10, 11)), SAT)
+        rehearsal = {"runs": [{
+            "health": "ok", "target_date": "2026-10-07",
+            "finished_utc": "2026-10-07T19:03:00+00:00",
+        }]}
+        self.assertEqual(require_current_week_shadow(
+            rehearsal, SAT, observed_on=date(2026, 10, 8)), "2026-10-07")
+        with self.assertRaisesRegex(VietnamFeedRefused, "stale"):
+            require_current_week_shadow(
+                rehearsal, SAT, observed_on=date(2026, 10, 11))
         valid["runs"][0]["health"] = "fail"
         with self.assertRaisesRegex(VietnamFeedRefused, "not healthy"):
-            require_current_week_shadow(valid, SAT)
+            require_current_week_shadow(
+                valid, SAT, observed_on=date(2026, 10, 11))
 
     def test_private_output_only_after_git_and_source_review(self):
         with tempfile.TemporaryDirectory() as temp:
