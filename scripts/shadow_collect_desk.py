@@ -103,9 +103,33 @@ def finish(entry, state_dir):
 
 
 def run(desk, state_dir, target, lookback=6, cap=40, run_id="local", commit="unknown",
-        adapter=None, target_source=SOURCE_EXPLICIT):
-    if desk not in DESKS or not 0 <= lookback <= 30 or not 1 <= cap <= 40:
-        raise ValueError("known desk, 0–30 lookback days and 1–40 cap required")
+        adapter=None, target_source=SOURCE_EXPLICIT, historical_backfill=False):
+    if desk not in DESKS or not 1 <= cap <= 40:
+        raise ValueError("known desk and 1–40 cap required")
+    if historical_backfill:
+        # One narrowly bounded historical *content* import. This is NOT a
+        # backdated shadow collecting day and does not relax other desks.
+        if (desk != "japan_jcg" or target != date(2026, 10, 8) or
+                lookback != 38 or cap != 5 or target_source != SOURCE_EXPLICIT):
+            raise ValueError("JCG historical backfill requires exact Oct 8 cutoff, 38-day window and cap 5")
+        root = state_dir.resolve()
+        clock = root / "clock.json"
+        db = root / "shadow.db"
+        if not clock.is_file() or not db.is_file():
+            raise ValueError("historical backfill cannot bootstrap shadow state")
+        saved = json.loads(clock.read_text())
+        if (saved.get("desk") != "japan_jcg" or
+                saved.get("day_zero_run_id") != "37828199188-1"):
+            raise ValueError("JCG historical backfill requires verified original Day 0 clock")
+        ledgers = list((root / "ledger").glob("*.json"))
+        if not any(json.loads(p.read_text()).get("run_id") == "37828199188-1"
+                   for p in ledgers):
+            raise ValueError("pinned original JCG Day 0 ledger is missing")
+        if any(json.loads(p.read_text()).get("operation") == "jcg_2026_09_historical_backfill"
+               for p in ledgers):
+            raise ValueError("one-time JCG historical backfill already recorded")
+    elif not 0 <= lookback <= 30:
+        raise ValueError("ordinary shadow collections allow 0–30 lookback days")
     if not re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", run_id):
         raise ValueError("unsafe run identifier")
     state_dir = state_dir.absolute()
@@ -127,6 +151,10 @@ def run(desk, state_dir, target, lookback=6, cap=40, run_id="local", commit="unk
              "inserted": 0, "updated": 0, "duplicates": 0, "fetch_failures": 0,
              "extraction_failures": 0, "access_failures": 0, "failures": [],
              "state_sha256_before": sha(db_path), "result": None, "health": "fail"}
+    if historical_backfill:
+        entry["operation"] = "jcg_2026_09_historical_backfill"
+        entry["counts_as_qualifying_shadow_day"] = False
+        entry["backfill_anchor_day_zero_run_id"] = "37828199188-1"
     conn = None
     try:
         if not source.enabled:
@@ -233,12 +261,17 @@ def main(argv=None):
     parser.add_argument("--event-name", default=os.environ.get("GITHUB_EVENT_NAME"))
     parser.add_argument("--cron-utc")
     parser.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
+    parser.add_argument("--jcg-september-backfill", action="store_true",
+                        help="one-time owner-approved JCG historical content backfill only")
     args = parser.parse_args(argv)
     try:
         target, provenance = resolve_target_date(datetime.now(timezone.utc), args.event_name,
                                                 args.cron_utc, args.target_date, args.run_attempt)
+        if args.jcg_september_backfill and args.event_name != "workflow_dispatch":
+            raise ValueError("JCG historical backfill requires explicit owner manual dispatch")
         entry = run(args.desk, args.state_dir, target, args.lookback_days, args.cap,
-                    args.run_id, args.commit, target_source=provenance)
+                    args.run_id, args.commit, target_source=provenance,
+                    historical_backfill=args.jcg_september_backfill)
     except (ValueError, ScheduleError, sqlite3.Error) as exc:
         print("collection refused: " + str(exc), file=sys.stderr)
         return 2
