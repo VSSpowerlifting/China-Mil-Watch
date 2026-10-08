@@ -62,6 +62,16 @@ class JournalExtractorTests(unittest.TestCase):
         self.assertIn("Article ends without", record.text_original)
         self.assertEqual(len(record.body_blocks), 2)
 
+    def test_terminal_rank_qualified_credit_with_trailing_role(self):
+        body = ("<p>Fictional article body.</p>"
+                "<p><strong><em>Major General, Prof., PhD EXAMPLE AUTHOR</em></strong>"
+                ", Deputy Director of the Academy</p>")
+        record = journal.parse_desktop_article(page(body=body), URL)
+        self.assertEqual(record.author_credit_original,
+                         "Major General, Prof., PhD EXAMPLE AUTHOR , Deputy Director of the Academy")
+        self.assertNotIn("Deputy Director", record.text_original)
+        self.assertEqual(len(record.body_blocks), 1)
+
     def test_rank_mentioned_in_body_does_not_automatically_remove_prose(self):
         body = ("<p>A report about a Major General's service.</p>"
                 "<p><em>Professor of strategy, quoted in the story.</em></p>")
