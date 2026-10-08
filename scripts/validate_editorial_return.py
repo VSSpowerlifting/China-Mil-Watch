@@ -26,6 +26,9 @@ MAX_PACKET_BYTES = 2_000_000
 HEADING = re.compile(r"^## ([^\r\n]+)$", re.MULTILINE)
 SOURCE_RECORD = re.compile(r"^Record ([0-9]+) \|", re.MULTILINE)
 CITATION_LINE = re.compile(r"^SOURCE RECORD IDS:\s*(.*)$", re.MULTILINE)
+EXTERNAL_SOURCE = re.compile(r"^External source ([A-Z0-9-]+) \\|", re.MULTILINE)
+EXTERNAL_LINE = re.compile(r"^EXTERNAL SOURCE IDS:\s*(.*)$", re.MULTILINE)
+EXTERNAL_IDS_LIST = re.compile(r"[A-Z0-9-]+(?:\\s*,\\s*[A-Z0-9-]+)*\\Z")
 IDS_LIST = re.compile(r"[0-9]+(?:\s*,\s*[0-9]+)*\Z")
 
 
@@ -105,6 +108,20 @@ def _cited_ids(section: str):
     return parsed
 
 
+def _external_citations(section: str):
+    lines = EXTERNAL_LINE.findall(section)
+    ids_by_section = []
+    for line in lines:
+        line = line.strip()
+        if not EXTERNAL_IDS_LIST.fullmatch(line):
+            raise ReturnValidationError("malformed EXTERNAL SOURCE IDS list")
+        ids = [part.strip() for part in line.split(",")]
+        if len(ids) != len(set(ids)):
+            raise ReturnValidationError("duplicate external source ID")
+        ids_by_section.append(ids)
+    return ids_by_section
+
+
 def validate_return(original: str, edited: str) -> dict:
     """Return safe structural metrics; never approve or import any Brief."""
     base_header, base_body, base_appendix = _split(original)
@@ -127,6 +144,10 @@ def validate_return(original: str, edited: str) -> dict:
     if not allowed_ids or len(allowed_ids) != len(set(allowed_ids)):
         raise ReturnValidationError("original appendix has no unique source record listing")
     allowed = set(allowed_ids)
+    allowed_external_ids = EXTERNAL_SOURCE.findall(base_appendix)
+    if len(allowed_external_ids) != len(set(allowed_external_ids)):
+        raise ReturnValidationError("original packet contains duplicate external sources")
+    allowed_external = set(allowed_external_ids)
 
     edited_sections = 0
     cited_sections = 0
@@ -137,14 +158,22 @@ def validate_return(original: str, edited: str) -> dict:
             raise ReturnValidationError("blank editorial section: " + label)
         original_ids = _cited_ids(old)
         returned_ids = _cited_ids(new)
-        if len(returned_ids) != len(original_ids):
+        old_external = _external_citations(old)
+        new_external = _external_citations(new)
+        if (len(returned_ids) != len(original_ids) or
+                len(new_external) != len(old_external)):
             raise ReturnValidationError("changed source-citation structure: " + label)
+        for row in new_external:
+            if not set(row).issubset(allowed_external):
+                raise ReturnValidationError(
+                    "external citation absent from immutable source appendix: " + label)
+            cited_sections += 1
         for row in returned_ids:
             if not set(row).issubset(allowed):
                 raise ReturnValidationError("citation not present in original source appendix: " + label)
             cited_sections += 1
         # A citation-only section cannot stand in for actual editorial prose.
-        prose = CITATION_LINE.sub("", new).strip()
+        prose = EXTERNAL_LINE.sub("", CITATION_LINE.sub("", new)).strip()
         if not prose:
             raise ReturnValidationError("editorial section contains no prose: " + label)
 
@@ -154,6 +183,7 @@ def validate_return(original: str, edited: str) -> dict:
         "sections": len(new_sections),
         "changed_sections": edited_sections,
         "source_records": len(allowed),
+        "external_sources": len(allowed_external),
         "citation_lines": cited_sections,
         "appendix_sha256": hashlib.sha256(base_appendix.encode("utf-8")).hexdigest(),
         "review_status": "STRUCTURAL REVIEW ONLY — UNAPPROVED",
