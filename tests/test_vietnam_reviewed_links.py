@@ -77,6 +77,9 @@ class VietnamReviewedLinksTests(unittest.TestCase):
             ("https://bocongan.gov.vn.evil.example/article", "vn_mps_foreign_affairs_vi"),
             ("https://moit.gov.vn/article", "vn_mps_foreign_affairs_vi"),
             ("https://tapchiqptd.vn/en/article", "vn_journal_en"),
+            ("https://bocongan.gov.vn:bad/article", "vn_mps_foreign_affairs_vi"),
+            ("https://bocongan.gov.vn/article#fragment", "vn_mps_foreign_affairs_vi"),
+            ("https://bocongan.gov.vn/article\\nmalicious", "vn_mps_foreign_affairs_vi"),
         ]
         for url, slug in cases:
             row = example()
