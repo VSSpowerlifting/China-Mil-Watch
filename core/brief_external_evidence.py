@@ -63,12 +63,10 @@ def validate_external_evidence(sidecar, registry, *, require_citations=True):
     verified facts. The publisher pages / archived captures must actually
     be compared by a human reviewer before the sidecar receives these fields.
     """
-    if "external_evidence" not in sidecar:
-        return []
-    values = sidecar["external_evidence"]
+    values = sidecar.get("external_evidence", [])
     if not isinstance(values, list) or len(values) > MAX_ITEMS:
         return ["external_evidence must be a list of at most five reviewed entries"]
-    if not values:
+    if not values and not require_citations:
         return []
     desks = {getattr(d, "slug", None) for d in registry}
     start, end = _day(sidecar.get("week_start")), _day(sidecar.get("week_ending"))
@@ -142,7 +140,8 @@ def validate_external_evidence(sidecar, registry, *, require_citations=True):
     if require_citations:
         prose = [sidecar.get(field) for field in (
             "title", "dek", "signal", "opening_note", "what_stood_out",
-            "why_it_matters", "what_was_routine", "what_im_watching_next")]
+            "why_it_matters", "what_was_routine", "what_im_watching_next",
+            "term_to_know_explanation")]
         development = sidecar.get("development")
         if isinstance(development, dict):
             prose.append(development.get("summary"))
