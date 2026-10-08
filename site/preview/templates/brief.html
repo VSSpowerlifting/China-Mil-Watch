@@ -87,6 +87,7 @@
       {% if brief.claims %}<li><a href="#s-compare">Across desks</a></li>{% endif %}
       {% if brief.coverage %}<li><a href="#s-coverage">Coverage by desk</a></li>{% endif %}
       <li><a href="#s-sources">Source trail</a></li>
+      {% if brief.external_evidence %}<li><a href="#s-external">Reviewed external sources</a></li>{% endif %}
       <li><a href="#s-cite">Cite this brief</a></li>
     </ol>
   </nav>
@@ -210,6 +211,27 @@
       </ol>
       {% endfor %}
     </section>
+
+    {% if brief.external_evidence %}
+    <section class="brief-section brief-trail" id="s-external" aria-labelledby="h-external">
+      <h2 id="h-external">Reviewed external official sources <span class="brief-count">{{ brief.external_evidence|length }} publisher link{{ 's' if brief.external_evidence|length != 1 }}</span></h2>
+      <p class="section-note">These sources were reviewed individually by an editor and linked
+        directly to their publishers. Their full texts are not part of IPR's
+        preserved corpus, and they do not count as production-backed desk
+        coverage or as collected record IDs. Original Vietnamese wording remains
+        authoritative; short English summaries are analyst-authored.</p>
+      <ol class="brief-trail-list">
+      {% for ext in brief.external_evidence %}
+        <li id="{{ ext.anchor }}" class="brief-record">
+          <a class="brief-record-title" href="{{ ext.url }}" rel="noopener noreferrer" lang="{{ ext.lang }}">{{ ext.original_title }}</a>
+          <span class="brief-record-meta">{{ ext.desk_name }} · {{ ext.source_name }} ·
+            <time datetime="{{ ext.date }}">{{ ext.date }}</time> · Source link reviewed {{ ext.reviewed_on }} · Publisher-hosted, not archived</span>
+          <p>{{ ext.original_summary }}</p>
+        </li>
+      {% endfor %}
+      </ol>
+    </section>
+    {% endif %}
 
     <section class="brief-author" aria-label="Author">
       <p class="brief-author-label">Author</p>
