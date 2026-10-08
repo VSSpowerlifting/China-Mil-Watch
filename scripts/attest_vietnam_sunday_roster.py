@@ -67,6 +67,11 @@ def attest(*, state_repo, state_commit, week_ending, notes, offered_packet,
     require(len(fresh) == len(snapshot) and set(fresh) == set(snapshot),
             "static Sunday Vietnam IDs differ from current verified sources")
     repo = formal.resolve_state_repo(state_repo)
+    # A historical replay is not a current-head attestation, even if the
+    # research content happens to be unchanged. Refuse false freshness claims.
+    current_proof = formal.verify_state_commit(repo, state_commit, BRANCH)
+    require(current_proof["state_ref_tip"] == state_commit,
+            "attestation must use latest exact MPS shadow branch head")
     for ident, old in snapshot.items():
         latest = fresh[ident]
         require(isinstance(old["state_commit"], str) and
