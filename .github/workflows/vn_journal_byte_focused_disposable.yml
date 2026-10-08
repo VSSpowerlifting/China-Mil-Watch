@@ -8,14 +8,14 @@ permissions:
   contents: read
 jobs:
   focused-tests:
-    if: ${{ github.event.head_commit.message == 'Run isolated journal byte integration tests' && github.ref == 'refs/heads/feat/vietnam-journal-byte-bound-observations-20261008' }
+    if: ${{ github.event.head_commit.message == 'Run corrected isolated journal byte integration tests' && github.ref == 'refs/heads/feat/vietnam-journal-byte-bound-observations-20261008' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
       - name: Checkout isolated research branch, no token persistence
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Python 3.9
         uses: actions/setup-python@v5
