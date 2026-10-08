@@ -90,3 +90,57 @@ bounded, policy-gated in-memory evaluation after its tests pass.
 
 No dependency on the existing MPS/MOIT clocks or the MPS pilot
 review queue is implied.
+
+
+## Live parser parity proof — second bounded observation, October 8 UTC
+
+The offline listing parser itself (not merely a research-only URL scanner)
+was tested against four **live** desktop English category pages in
+[Actions run 37721439408](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37721439408)
+(job `113129755123`, proof branch
+`research/vietnam-journal-listing-live-parity-20261008`).
+The one-shot check first passed **32 offline source/article/listing tests**
+and then made exactly **five** bounded GET requests: official desktop
+robots.txt plus one permitted read of each named category. It followed no
+pagination and did not fetch article bodies.
+
+| English listing | Independently scanned article IDs | Offline parser IDs | Parser date hints | Missing/extra IDs |
+| --- | ---: | ---: | ---: | ---: |
+| News | 18 | 18 | 18 | 0 |
+| Theory and Practice | 19 | 19 | 17 | 0 |
+| Events and Comments | 15 | 15 | 15 | 0 |
+| Research and Discussion | 19 | 19 | 18 | 0 |
+| **All four** | **71** | **71** | **68** | **0** |
+
+**All four section-level canonical-ID comparisons passed.** The independent
+scanner and offline parser agreed on exact IDs and URLs, with no missing,
+extra or conflicting canonical article link on the pages observed. Of
+71 current candidates, **68** had locally attributable *date hints*;
+these hints remain unverified publication dates, and the three undated
+candidates are retained rather than silently dropped.
+
+This differs from the earlier [research run 37716446432](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37716446432),
+which saw 74 IDs across the same page set and 58 local date hints.
+The **Events and Comments** page exposed 18 IDs in the earlier
+observation, versus 15 in this one. The difference establishes that the
+visible listing window may change; it does **not** establish that any
+publisher article has been deleted or that the journal's historical record
+is complete. The independent older hint heuristic was also not identical
+to the current stricter parser, so differences in the two date-hint
+counts are **not** evidence that ten formerly undated source articles
+were newly published or independently verified.
+
+The metadata-only evidence artifact
+[11526017404](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37721439408/artifacts/11526017404)
+has archive digest
+`sha256:4bac4f7c0a0da98678758335300f2cf838a3e27697794bea2713b75f49b21c2d`
+and expires November 7, 2026. It contains response hashes,
+counts and verification booleans, **not journal HTML or prose**.
+
+**Disposition:** identity discovery on the four observed category pages
+has passed a real-host parity test. Date hints are provisional.
+Historical pagination, date-window completeness, source-use rights and
+collector activation remain separate **unpassed** gates; no shadow
+state, public records, full text or production database has changed.
+The disposable parity workflow remains in PR #151 and must be
+closed **unmerged**, not promoted as a production job.
