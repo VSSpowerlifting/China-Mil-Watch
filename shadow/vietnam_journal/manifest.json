@@ -43,18 +43,18 @@
         "^https://tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+/[0-9]{4,9}\\.html$",
         "^https://m\\.tapchiqptd\\.vn/en/(news|theory-and-practice|events-and-comments|research-and-discussion)/[a-z0-9-]+-[0-9]{4,9}\\.html$"
       ],
-      "notes": "ONE publication with two site layouts, not two independent sources. Main/mobile articles canonicalized to desktop permalink and one vndj-en numeric identity; first-party English as published, not translated. Military journal commentary/editorial analysis (Tier B), not a Ministry of National Defence directive. Homepages repeat items and do not prove a date-bounded complete feed. Robots policy not established by the 2026-10-07 research tool, no live collector, state, schedule or permissions to republish full text. Copyright notice: All rights reserved. See README.md."
+      "notes": "ONE publication across desktop/mobile, not two independent sources. Article identity vndj-en numeric ID canonicalizes to desktop permalink; only desktop site has a verified 2026-10-08 UTC robots/access path (article 26936 HTTP 200). This is Tier B original English military journal commentary, not a Ministry of National Defence directive. The desktop homepage listed 26 distinct IDs but completeness and article-body extraction are unverified; mobile robots.txt returned 404 and was not probed further. No shadow/production collector is enabled. Copyright notice: All rights reserved. See README.md and docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md."
     }
   ],
   "blocked_research": [
     {
       "url": "https://tapchiqptd.vn/robots.txt",
-      "status": "No readable robots policy confirmed in external research; do not activate fetching before direct identifiable Actions-side policy probe."
+      "status": "Actions run 37712715499 (2026-10-08 UTC): HTTP 200 text/plain, allowed the tested homepage and article 26936. Desktop listing and article HTTP 200; extraction, listing completeness and text reuse remain unverified."
     },
     {
       "url": "https://m.tapchiqptd.vn/robots.txt",
-      "status": "No readable robots policy confirmed; mobile host not a fallback around main-host restrictions."
+      "status": "Actions run 37712715499: HTTP 404, no robots file at requested path, NOT an explicit disallow. No mobile listing or article request was made. Do not treat this host as bypass/fallback."
     }
   ],
-  "rights": "Publisher site states Copyright © National Defence Journal 2013. All rights reserved. No content bytes collected or reproduced in this candidate; publication and long-term source-text retention need specific reviewed rights basis."
+  "rights": "Publisher footer says Copyright © National Defence Journal 2013. All rights reserved. Bounded in-memory Actions probe accessed desktop article bytes without retaining source prose or HTML; no reproduction rights or long-term text retention has been established."
 }
