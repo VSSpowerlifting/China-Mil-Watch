@@ -23,6 +23,9 @@ from scraper.sources.desk_shadow_http import ListingShadowAdapter, Page
 HOST = "www.kaiho.mlit.go.jp"
 LISTING = "https://" + HOST + "/e/topics_archive/index.html"
 RELEASE = re.compile(r"^/e/topics_archive/article([0-9]+)\.html$")
+# Initial bounded pilot scope; older publisher rows are counted as discovery
+# history but are not admitted until their URL/document families are reviewed.
+PILOT_BEGIN = "2026-09-01"
 DATE_DMY = re.compile(r"^(\d{1,2})\s+(\d{1,2})\s+(\d{4})$")
 DATE_ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
 DATE_DOTTED = re.compile(r"^(\d{4})[./](\d{1,2})[./](\d{1,2})$")
@@ -70,6 +73,12 @@ class JCGEnglishAdapter(ListingShadowAdapter):
     def first_request(self, window):
         return self.listing, None
 
+    def discover(self, window):
+        outcome = super().discover(window)
+        if outcome.ok and hasattr(self, "listing_observation"):
+            self.listing_report.update(self.listing_observation)
+        return outcome
+
     def parse_listing(self, text, request, number):
         if request != (LISTING, None) or number != 1:
             raise ValueError("only the publisher's complete English index is scoped")
@@ -82,18 +91,29 @@ class JCGEnglishAdapter(ListingShadowAdapter):
             raise ValueError("publisher listing date/article pairs incomplete")
         items = []
         seen = set()
+        all_dates = []
+        excluded_earlier = 0
         for dnode, link in zip(date_nodes, links):
             if dnode.find_parent("dl") is not link.find_parent("dl"):
                 raise ValueError("date paired across different publisher year groups")
             stated = source_date(dnode.get_text(" ", strip=True))
+            all_dates.append(stated)
+            if stated < PILOT_BEGIN:
+                excluded_earlier += 1
+                continue
             url = canon(urljoin(LISTING, link["href"]))
             title = link.get_text(" ", strip=True)
             if not title or url in seen:
                 raise ValueError("missing title or repeated publisher article identity")
             seen.add(url)
             items.append({"url": url, "date": stated, "title": title})
-        if [x["date"] for x in items] != sorted((x["date"] for x in items), reverse=True):
+        if all_dates != sorted(all_dates, reverse=True):
             raise ValueError("JCG source listing chronology changed")
+        self.listing_observation = {
+            "publisher_index_rows_total": len(all_dates),
+            "outside_declared_pilot_scope": excluded_earlier,
+            "pilot_source_begin": PILOT_BEGIN,
+        }
         return Page(items, None)
 
     def parse_article(self, text, url):
