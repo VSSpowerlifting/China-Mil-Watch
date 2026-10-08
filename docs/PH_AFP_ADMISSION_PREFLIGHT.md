@@ -25,7 +25,7 @@ The report identifies each of seven dates as successful-evidence, future, missin
 
 ## Human review decisions, when genuinely completed
 
-Use `scripts/prepare_ph_afp_day0_review.py` for the frozen October 7 batch and `scripts/prepare_ph_afp_run_review.py` for subsequent insertion batches. Each independently reviewed original must have genuine source-specific fidelity checks, attribution, timestamp, complete-body comparison and capture provenance; the `verified`/`hold` distinction is retained. An operator's typed reviewer name is **not** independently authenticated by software. Never invent a human attestation.
+The merged Day-0 review queue (`scripts/prepare_ph_afp_day0_review.py`) is an orientation packet, but **this preflight accepts only the newer per-run packet schema**. Generate both the October 7 and subsequent insertion-batch decisions using `scripts/prepare_ph_afp_run_review.py packet` against the corresponding exact historical commit, and validate them with that same script before admission preflight. Each independently reviewed original must have genuine source-specific fidelity checks, attribution, timestamp, complete-body comparison and capture provenance; the `verified`/`hold` distinction is retained. An operator's typed reviewer name is **not** independently authenticated by software. Never invent a human attestation.
 
 Use a local, access-controlled manifest (not committed into `main`, `shadow/`, or `output/`) to bind a submitted review file to its own **historical state commit**, not the later latest commit. Example syntax **only**, with no claim that these files or decisions exist:
 
