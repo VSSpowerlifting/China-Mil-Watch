@@ -70,6 +70,25 @@ SOURCE_SUPPORT = {
 }
 
 
+SHADOW_ARCHIVED = {
+    "historical_state_commit": "d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13",
+    "sqlite_git_blob_sha1": "60f126db5a36369ade81f44f12c3a838cddbfb59",
+    "source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "source_slug": "jp_mod_news_ja",
+    "title_original": "日米合同委員会合意について",
+    "publication_date_original": "2026-10-05",
+    "extracted_body_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
+    "captured_response_sha256": "4788557ba554cd8af8211906174f44fc60eecaa53f46e2c1818b418c2d0d57bf",
+    "first_seen_shadow_run": "37404326269-1",
+    "agreement_approval_date": "2026-09-17",
+    "planned_facility_use_start": "2026-10-19",
+    "planned_facility_use_end": "2026-10-29",
+    "land_area_m2_approx": 29000,
+    "building_area_m2_approx": 11000,
+    "text_chars_reported": 580,
+}
+
+
 class JapanBriefError(ValueError):
     """An unsigned Friday candidate misstates its source or privileges."""
 
@@ -157,6 +176,40 @@ def validate(data):
                 ident + ": do not fabricate archived record IDs or reviewer authority")
         seen[ident] = row
     require(set(seen) == set(SOURCES), "missing Japanese source candidates")
+    original = data.get("shadow_current_week_original")
+    require(type(original) is dict and
+            original.get("status") ==
+            "archived_shadow_source_candidate_not_production_or_editor_approved" and
+            original.get("state_branch") == "shadow/jp-mod" and
+            original.get("source_id_namespace") ==
+            "shadow_only_no_numeric_ipr_record_id" and
+            original.get("sqlite_path") == "state/shadow.db" and
+            original.get("source_record_identifier") ==
+            "shadow/jp-mod:jp_mod_news_ja:2026-10-05:05b.pdf",
+            "Japan October 5 source must remain a shadow-only candidate")
+    require(all(original.get(key) == value
+                for key, value in SHADOW_ARCHIVED.items()) and
+            original.get("original_language") == "ja" and
+            original.get("publication_kind") == "press release" and
+            original.get("building_scope") == "portions of four buildings" and
+            original.get("exercise_mentions") ==
+            ["Keen Sword 27", "aircraft training relocation"] and
+            type(original.get("caution_flags")) is list and
+            len(original["caution_flags"]) >= 5,
+            "Japan source archival pin, date, use period or volume changed")
+    require(valid_date(original["publication_date_original"]) <= REVIEW_CUTOFF and
+            valid_date(original["agreement_approval_date"]) <
+            valid_date(original["publication_date_original"]) <
+            valid_date(original["planned_facility_use_start"]) <=
+            valid_date(original["planned_facility_use_end"]),
+            "original agreement, notice and future training dates must remain separate")
+    require(all(original.get(k) is False for k in (
+        "exact_historical_source_replay_completed",
+        "human_original_source_review_complete",
+        "editorial_inclusion_approved",
+        "source_promoted_to_production",
+    )),
+            "archived Japan text does not imply source verification or admission")
     grouped = data.get("source_relationships")
     require(type(grouped) is dict and
             set(grouped) == {"japan_indonesia_disaster_relief_completion",
@@ -184,6 +237,7 @@ def validate(data):
         "week": "2026-10-04/2026-10-09",
         "discovery_as_of": REVIEW_CUTOFF.isoformat(),
         "official_mod_public_urls": len(seen),
+        "shadow_current_week_full_text_records": 1,
         "japanese_original_paired_to_english_release": 1,
         "japan_production_records_added": 0,
         "japan_records_admitted_to_weekly_writer": 0,
@@ -201,10 +255,26 @@ def render(data):
         "INDO-PACIFIC RECORD — JAPAN DESK | PROVISIONAL FRIDAY EDITOR SUPPLEMENT",
         "Reporting window: Sunday, October 4 to Friday, October 9, 2026",
         "Sources inspected through Thursday, October 8; Friday still incomplete.",
-        "NOT an automated Briefs source-trail appendix; NOT approved, archived, or emailed.",
+        "NOT a production Briefs source-trail appendix; NOT approved or emailed.",
         "Japan is not an eligible production-backed desk and has no production record IDs.",
         "",
-        "EDITORIAL PRIORITY: Japanese disaster-response operations in Indonesia",
+        "PRIMARY SHADOW-ARCHIVED LEAD: Japan–U.S. Joint Committee agreement",
+        "Official Japanese MOD notice dated October 5, 2026. The notice reports",
+        "September 17 approval of limited use of additional land and buildings",
+        "at Tsuiki Airfield (FAC 5121) for Keen Sword 27 and aircraft training",
+        "relocation. It lists approximately 29,000 m2 land and portions of four",
+        "buildings totaling around 11,000 m2. Planned use is October 19–29,",
+        "with additional time as needed for deployment and withdrawal.",
+        "This does NOT mean that the exercise has already occurred.",
+        "Status: original Japanese extracted text preserved in Japan shadow SQLite;",
+        "source PDF bytes are not proven retained by the shadow database.",
+        "No production ID, full-PDF human review, or editorial approval exists.",
+        "  Source: " + data["shadow_current_week_original"]["source_url"],
+        "  Shadow commit: " + data["shadow_current_week_original"]["historical_state_commit"],
+        "  Archived extracted-text SHA-256: " +
+            data["shadow_current_week_original"]["extracted_body_sha256"],
+        "",
+        "SECONDARY EDITORIAL LEAD: Japanese disaster-response operations in Indonesia",
         "MOD reports departure of JS Kunisaki from Kijing Port on October 6 after",
         "relief operations. It reports three CH-47s, 56 missions and approximately",
         "280 tons of water released. This is MOD's own account; the paired Japanese",
