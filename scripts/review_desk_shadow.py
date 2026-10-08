@@ -11,7 +11,11 @@ from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BRANCHES = {"indonesia": "shadow/indonesia-kemhan", "korea": "shadow/korea-policy-briefing"}
+BRANCHES = {
+    "indonesia": "shadow/indonesia-kemhan",
+    "korea": "shadow/korea-policy-briefing",
+    "japan_jcg": "shadow/japan-jcg",
+}
 STATE_PATH = re.compile(r"state/(shadow\.db|clock\.json|ledger/[A-Za-z0-9_.+-]+\.json|captures/[0-9a-f]{64}\.bin)$")
 
 
@@ -109,18 +113,53 @@ def review(state, desk, out, as_of, commit=None, tree=None):
         for row in conn.execute("SELECT * FROM shadow_records ORDER BY published_date, source_identity"):
             record = dict(row)
             record["metadata"] = json.loads(record.pop("metadata_json"))
-            pattern = (r"https://www\.kemhan\.go\.id/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html"
-                       if desk == "indonesia" else r"https://www\.korea\.kr/briefing/pressReleaseView\.do\?newsId=([0-9]+)")
+            patterns = {
+                "indonesia": (r"https://www\.kemhan\.go\.id/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html",
+                              "id_kemhan_news", "id"),
+                "korea": (r"https://www\.korea\.kr/briefing/pressReleaseView\.do\?newsId=([0-9]+)",
+                          "kr_policy_mnd_releases", "ko"),
+                "japan_jcg": (r"https://www\.kaiho\.mlit\.go\.jp/e/topics_archive/article([0-9]+)\.html",
+                              "jp_jcg_press_en", "en"),
+            }
+            pattern, expected_slug, expected_language = patterns[desk]
             match = re.fullmatch(pattern, record["url"])
-            expected_slug = "id_kemhan_news" if desk == "indonesia" else "kr_policy_mnd_releases"
-            expected_language = "id" if desk == "indonesia" else "ko"
             if not match or record["source_slug"] != expected_slug or record["language_tag"] != expected_language:
                 findings.append("Record outside declared desk scope: " + record["source_identity"])
             elif desk == "indonesia":
                 if "-".join(match.groups()) != record["published_date"] or record["source_identity"] != "kemhan:" + record["url"].split(".go.id", 1)[1]:
                     findings.append("Record date/identity mismatch: " + record["source_identity"])
-            elif record["source_identity"] != "korea-policy:" + match[1] or record["metadata"].get("issuer") != "국방부":
-                findings.append("Release identity/issuer mismatch: " + record["source_identity"])
+            elif desk == "korea":
+                if record["source_identity"] != "korea-policy:" + match[1] or record["metadata"].get("issuer") != "국방부":
+                    findings.append("Release identity/issuer mismatch: " + record["source_identity"])
+            else:
+                metadata = record["metadata"]
+                if (record["source_identity"] != "jcg-en:" + match[1] or
+                        record["published_date"] < "2026-09-01" or
+                        metadata.get("source_identity") != record["source_identity"] or
+                        metadata.get("issuer") != "Japan Coast Guard" or
+                        metadata.get("publisher") != "Japan Coast Guard" or
+                        metadata.get("publication_kind") != "english_official_press_release" or
+                        metadata.get("body_scope") != "published_html_text_only" or
+                        metadata.get("attachments_collected") is not False):
+                    findings.append("JCG identity, publisher, period or body-scope mismatch: " +
+                                    record["source_identity"])
+                from scraper.sources.jp_jcg_en import source_date
+                try:
+                    if (source_date(metadata["published_date_original"]) != record["published_date"] or
+                            metadata.get("date_basis") != "visible_publisher_time_and_archive_listing"):
+                        findings.append("JCG visible/index publication date mismatch: " + record["source_identity"])
+                    stamp = metadata.get("html_datetime_original")
+                    if stamp == "2021-3-1":
+                        if metadata.get("html_datetime_verdict") != "observed_stale_template_2021-3-1":
+                            findings.append("JCG stale machine date undocumented: " + record["source_identity"])
+                    elif stamp:
+                        if (source_date(stamp) != record["published_date"] or
+                                metadata.get("html_datetime_verdict") != "matches_visible"):
+                            findings.append("JCG machine publication date mismatch: " + record["source_identity"])
+                    elif metadata.get("html_datetime_verdict") != "absent":
+                        findings.append("JCG absent machine date lacks provenance: " + record["source_identity"])
+                except (ValueError, KeyError, TypeError):
+                    findings.append("JCG publisher date evidence unparseable: " + record["source_identity"])
             if hashlib.sha256(record["text_original"].encode()).hexdigest() != record["content_sha256"]:
                 findings.append("Original-text hash mismatch: " + record["source_identity"])
             for digest in (record["capture_sha256"], record["metadata"].get("document_capture_sha256")):
@@ -131,7 +170,12 @@ def review(state, desk, out, as_of, commit=None, tree=None):
         conn.close()
     if hash_files(state) != before:
         raise ValueError("state changed during review")
+    review_holds = (["JCG publisher datetime=2021-3-1 is stale; compare visible article date to official archive before human signoff"]
+                    if desk == "japan_jcg" and any(
+                        record["metadata"].get("html_datetime_verdict") == "observed_stale_template_2021-3-1"
+                        for record in records) else [])
     report = {"desk": desk, "as_of": str(as_of), "mode": "formal_commit_snapshot" if commit else "rehearsal",
+              "review_holds": review_holds,
               "state_commit": commit, "state_tree": tree, "state_ref": BRANCHES[desk] if commit else None,
               "records": len(records), "ledgers": len(ledgers), "findings": findings,
               "missing_successful_days": missing, "input_hashes": before,
@@ -147,6 +191,13 @@ def review(state, desk, out, as_of, commit=None, tree=None):
              "Read every exported record against its canonical page and, for Korea, its linked HWPX document.",
              "Confirm identity, title, portal/source date, issuer, complete extraction and capture correspondence.",
              "Distinguish a document's distribution/event date from the portal posting date.", "",
+             *([] if desk != "japan_jcg" else [
+                 "JCG: verify the original English HTML body against the captured original.",
+                 "JCG: compare archive index date and visible time; resolve stale datetime=2021-3-1.",
+                 "JCG: linked PDFs/photos are NOT part of this captured HTML body.",
+                 "JCG: Coast Guard is not Japan MOD or its Joint Staff.",
+             ]),
+             "Review holds: " + ("; ".join(review_holds) if review_holds else "None."), "",
              "Findings: " + ("; ".join(findings) if findings else "No machine integrity findings."), "",
              "Human sign-off (unfilled): reviewer; actual completion timestamp; records reviewed;",
              "source comparisons; anomaly dispositions; verdict. Preserve this packet and the actual sign-off",

@@ -1,0 +1,50 @@
+name: Japan JCG Adapter — Read-only Fidelity Proof
+
+on:
+  pull_request:
+    branches: [main, research/japan-coast-guard-route-gate-20261008]
+    paths:
+      - scraper/sources/jp_jcg_en.py
+      - scripts/probe_japan_jcg_adapter_live.py
+      - tests/test_japan_jcg_shadow_adapter.py
+      - .github/workflows/japan_jcg_adapter_proof.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-jcg-adapter-proof
+  cancel-in-progress: false
+
+jobs:
+  source-fidelity-proof:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact unapproved adapter
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing repository dependencies
+        run: pip install -r requirements.txt
+      - name: Source identity and extraction integrity tests
+        run: python -m unittest tests.test_japan_jcg_shadow_adapter -v
+      - name: Prove source capture and extraction without writing source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.probe_japan_jcg_adapter_live | tee "$RUNNER_TEMP/jcg-adapter-fidelity.json"
+      - name: Upload metadata-only fidelity report
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-jcg-adapter-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-adapter-fidelity.json
+          retention-days: 90
+          if-no-files-found: error
+      # No source bodies, sqlite, state branch, production corpus, deploy or email.

@@ -24,10 +24,12 @@ from core.shadow_schedule import resolve_target_date, ScheduleError, SOURCE_EXPL
 from scraper.sources.desk_shadow_http import USER_AGENT
 from scraper.sources.id_kemhan import KemhanAdapter
 from scraper.sources.kr_policy_briefing import KoreaPolicyAdapter
+from scraper.sources.jp_jcg_en import JCGEnglishAdapter
 
 DESKS = {
     "indonesia": ("id_kemhan", KemhanAdapter, "shadow/indonesia-kemhan"),
     "korea": ("kr_policy_briefing", KoreaPolicyAdapter, "shadow/korea-policy-briefing"),
+    "japan_jcg": ("jp_jcg", JCGEnglishAdapter, "shadow/japan-jcg"),
 }
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS shadow_meta (desk TEXT PRIMARY KEY);
