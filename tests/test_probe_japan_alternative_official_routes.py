@@ -20,7 +20,7 @@ def payload(raw, mime="text/html"):
 
 
 class RouteProbeTests(unittest.TestCase):
-    def fake(self, robots="User-agent: *\\nAllow: /\\n", blocked_urls=(),
+    def fake(self, robots="User-agent: *\nAllow: /\n", blocked_urls=(),
              wrong_marker=False):
         called = []
         def request(url, *, limit, opener):
@@ -54,7 +54,7 @@ class RouteProbeTests(unittest.TestCase):
         self.assertIn("noncollecting", result["kind"])
 
     def test_robots_disallow_stops_all_article_requests(self):
-        called, request = self.fake(robots="User-agent: *\\nDisallow: /\\n")
+        called, request = self.fake(robots="User-agent: *\nDisallow: /\n")
         result = run(opener=object(), fetch=request, sleep=lambda x: None)
         self.assertEqual(len(called), 2)
         self.assertTrue(all(
