@@ -1,0 +1,104 @@
+name: Vietnam MPS Metadata-Only Preflight One-shot
+
+# Disposable PR-only test. Do NOT merge this workflow.
+# Only a separate SQLite preview; no production or tracked output write.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_mps_metadata_preview_proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  metadata-preview:
+    if: ${{ github.head_ref == 'research/vietnam-mps-metadata-preview-proof-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact candidate SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install pinned project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run offline metadata-preview and existing MPS contracts
+        run: |
+          python -m unittest \
+            tests.test_vietnam_mps_metadata_preview \
+            tests.test_vietnam_mps_review_queue \
+            tests.test_vietnam_mps_pilot -v
+
+      - name: Verify source-state and production hashes before proof
+        run: |
+          set -euo pipefail
+          git clone --single-branch --branch shadow/vietnam-mps-foreign-affairs \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "${RUNNER_TEMP}/vietnam-mps-state"
+          git -C "${RUNNER_TEMP}/vietnam-mps-state" \
+            cat-file -e 46f6a0e59e25b03868bf7ad600963d6921ee5124^{commit}
+          cp pla_watch.db "${RUNNER_TEMP}/ipr-production-snapshot.db"
+          sha256sum pla_watch.db \
+            "${RUNNER_TEMP}/ipr-production-snapshot.db"
+          sha256sum pla_watch.db | cut -d' ' -f1 > "${RUNNER_TEMP}/tracked-sha-before"
+          sha256sum "${RUNNER_TEMP}/ipr-production-snapshot.db" | cut -d' ' -f1 > "${RUNNER_TEMP}/copy-sha-before"
+
+      - name: Generate three-record unapproved metadata preview
+        env:
+          OUT: ${{ runner.temp }}/vietnam-mps-metadata-preview
+        run: |
+          set -euo pipefail
+          python scripts/preview_vietnam_mps_metadata.py \
+            --state-repo "${RUNNER_TEMP}/vietnam-mps-state" \
+            --state-commit 46f6a0e59e25b03868bf7ad600963d6921ee5124 \
+            --production-snapshot "${RUNNER_TEMP}/ipr-production-snapshot.db" \
+            --out-dir "$OUT"
+          python - <<'PY'
+          import json
+          import os
+          import sqlite3
+          from pathlib import Path
+          base=Path(os.environ["OUT"])
+          j=json.loads((base/"preview_manifest.json").read_text(encoding="utf-8"))
+          assert j["records_in_isolated_preview"] == 3
+          assert j["human_approvals"] == j["rights_approvals"] == 0
+          assert j["publication_authorizations"] == 0
+          assert j["production_articles_inserted"] == 0
+          assert j["full_original_article_bodies_retained"] == 0
+          assert not j["desk_promoted"] and not j["production_database_modified"]
+          with sqlite3.connect(base/"unapproved_metadata_preview.db") as db:
+              assert db.execute("SELECT count(*) FROM preview_records").fetchone()[0] == 3
+              assert db.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='articles'").fetchone()[0] == 0
+              assert db.execute("SELECT sum(publication_authorized+original_article_body_retained) FROM preview_records").fetchone()[0] == 0
+          print("Metadata-only preview verified: 3 candidates, 0 original article bodies, 0 approvals or imports")
+          print("Production URL collisions:",j["existing_production_url_collisions"])
+          print("Preview SHA256:",j["isolated_preview_db_sha256"])
+          PY
+
+      - name: Verify production input and output remain byte-identical
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "$(cat "${RUNNER_TEMP}/tracked-sha-before")"
+          test "$(sha256sum "${RUNNER_TEMP}/ipr-production-snapshot.db" | cut -d' ' -f1)" = "$(cat "${RUNNER_TEMP}/copy-sha-before")"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "Tracked corpus and production snapshot are unchanged"
+
+      - name: Preserve metadata-only preview evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-mps-unapproved-metadata-preview-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-mps-metadata-preview/
+          retention-days: 30
+          if-no-files-found: error
