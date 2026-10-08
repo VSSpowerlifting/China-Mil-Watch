@@ -1,4 +1,4 @@
-"""Offline, metadata-only Vietnam source candidates for Friday Briefs handoffs.
+"""Offline Vietnam shadow candidates for Friday or Sunday Briefs handoffs.
 
 This stage offers official-source *links to a human editor*, not evidence to
 the model, production records, a qualified desk, or pre-approved brief claims.
@@ -88,7 +88,7 @@ def _candidate(item, start, cutoff):
     ), "URL is not the exact MPS article corresponding to the source identity")
     published = _parse_date(item["published_date"])
     _fail_if(not start <= published <= cutoff,
-             "candidate publication date falls outside Friday reporting window")
+             "candidate publication date falls outside this packet's Sunday-Friday source window")
     title = _clean_text(item["original_title"], 350, "original-language title")
     angle = _clean_text(item["editorial_angle"], 400, "unapproved editorial question")
     _fail_if(HEX64.fullmatch(str(item["content_sha256"])) is None,
@@ -113,10 +113,14 @@ def load_candidates(week_ending, as_of, *, directory=PACKS_DIR):
     failure, never an excuse to use stale or fabricated source material.
     """
     saturday = _parse_date(week_ending)
-    friday = _parse_date(as_of)
-    _fail_if(saturday.weekday() != 5 or friday.weekday() != 4
-             or friday != saturday - timedelta(days=1),
-             "Vietnam candidate pack requires exact Friday/Saturday cutoffs")
+    cutoff = _parse_date(as_of)
+    friday = saturday - timedelta(days=1)
+    _fail_if(saturday.weekday() != 5 or cutoff not in (friday, saturday),
+             "Vietnam candidate pack requires this Friday or Saturday cutoff")
+    # The Friday packet is pinned to source versions reviewed for the
+    # provisional handoff. A Sunday full-week draft must not silently treat
+    # this packet as covering Saturday publications it has not captured.
+    # Saturday additions require a separate, version-checked editorial review.
     start = saturday - timedelta(days=6)
     path = Path(directory) / (week_ending + ".json")
     # Even a dangling symlink is a configuration error, not a missing packet.
