@@ -1,0 +1,49 @@
+name: JCG Earlier September Originals — Read-only Evidence Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_jcg_early_september_fidelity.py
+      - tests/test_jcg_early_september_source_fidelity.py
+      - .github/workflows/jcg_early_september_fidelity.yml
+      - docs/JAPAN_JCG_SEPTEMBER_BACKFILL_SCOPE.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jcg-september-backfill-fidelity-read-only
+  cancel-in-progress: false
+
+jobs:
+  publisher-original-proof:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing source dependencies
+        run: pip install -r requirements.txt
+      - name: Enforce exact five-ID and no-archive proof contracts
+        run: python -m unittest tests.test_jcg_early_september_source_fidelity -v
+      - name: Probe only two previously uncollected first-party HTML releases
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.probe_jcg_early_september_fidelity \
+            | tee "$RUNNER_TEMP/jcg-september-originals.json"
+      - name: Preserve metadata only, never original HTML body captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jcg-september-original-fidelity-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-september-originals.json
+          retention-days: 90
+          if-no-files-found: warn
+      # No state branch, SQLite write, scheduled collection, promotion or email.
