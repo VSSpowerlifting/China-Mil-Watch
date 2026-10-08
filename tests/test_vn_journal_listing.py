@@ -57,6 +57,32 @@ class JournalCategoryListingTest(unittest.TestCase):
         self.assertEqual(len(page.candidates),2)
         self.assertEqual(page.dated_hint_count,0)
 
+    def test_live_site_clock_in_ancestor_cannot_become_article_date(self):
+        # The header clock and one linked article may share a wrapper.
+        # That does not make the clock an article publication date.
+        html_text = (
+            "<html><body><div class='shared-layout'>"
+            "<span id='subTopMenu-time'>Thursday, October 08, 2026, 10:23 (GMT+7)</span>"
+            "<div class='undated-story'><a href='%s'>Synthetic story</a></div>"
+            "</div></body></html>" % url(26936)
+        )
+        page = l.parse_category_html(html_text, l.CATEGORY_URLS["news"])
+        self.assertEqual(len(page.candidates), 1)
+        self.assertIsNone(page.candidates[0].date_hint)
+        self.assertEqual(page.dated_hint_count, 0)
+
+    def test_local_article_date_remains_valid_beside_site_clock(self):
+        html_text = (
+            "<html><body><div class='shared-layout'>"
+            "<span id='subTopMenu-time'>Thursday, October 08, 2026, 10:23 (GMT+7)</span>"
+            "<div class='local-story'><a href='%s'>Synthetic story</a>"
+            "<span>Wednesday, September 30, 2026, 14:48 (GMT+7)</span></div>"
+            "</div></body></html>" % url(26936)
+        )
+        page = l.parse_category_html(html_text, l.CATEGORY_URLS["news"])
+        self.assertEqual(page.candidates[0].date_hint, "2026-09-30")
+        self.assertEqual(page.dated_hint_count, 1)
+
     def test_bad_date_weekday_is_refused_not_silently_corrected(self):
         with self.assertRaisesRegex(l.ListingRefused,"inconsistent"):
             l.parse_category_html(
