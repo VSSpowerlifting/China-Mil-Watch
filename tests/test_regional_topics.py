@@ -298,12 +298,104 @@ class StorePortability(unittest.TestCase):
         conn.execute(
             "CREATE TABLE record_topics (desk_id TEXT, source_slug TEXT)"
         )
-        with self.assertRaisesRegex(TopicStoreError, "partial record_topics"):
+        with self.assertRaisesRegex(TopicStoreError, "incompatible record_topics"):
             ensure_topic_store(conn)
         columns = {
             row[1] for row in conn.execute("PRAGMA table_info(record_topics)")
         }
         self.assertEqual(columns, {"desk_id", "source_slug"})
+        conn.close()
+
+    def test_full_columns_without_primary_key_are_refused(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT
+            )
+            """
+        )
+        with self.assertRaisesRegex(TopicStoreError, "incompatible record_topics column"):
+            ensure_topic_store(conn)
+        self.assertEqual(
+            conn.execute("PRAGMA table_info(record_topics)").fetchall()[0][5],
+            0,
+        )
+        conn.close()
+
+    def test_primary_key_without_required_checks_is_refused(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT,
+                PRIMARY KEY (
+                    desk_id, source_slug, record_url, topic_slug, taxonomy_version
+                )
+            )
+            """
+        )
+        with self.assertRaisesRegex(TopicStoreError, "missing required CHECK"):
+            ensure_topic_store(conn)
+        conn.close()
+
+    def test_read_path_refuses_malformed_store_without_repairing_it(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            """
+            CREATE TABLE record_topics (
+                desk_id TEXT NOT NULL,
+                source_slug TEXT NOT NULL,
+                record_url TEXT NOT NULL,
+                topic_slug TEXT NOT NULL,
+                taxonomy_version INTEGER NOT NULL,
+                assignment_method TEXT NOT NULL,
+                assigned_by TEXT NOT NULL,
+                assigned_at TEXT NOT NULL,
+                confidence REAL,
+                evidence TEXT
+            )
+            """
+        )
+        record = RecordRef(
+            "singapore",
+            "sg_mindef_releases",
+            "https://www.mindef.gov.sg/news-and-events/latest-releases/example/",
+        )
+        before_sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='record_topics'"
+        ).fetchone()[0]
+        with self.assertRaises(TopicStoreError):
+            topics_for_record(conn, record)
+        after_sql = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name='record_topics'"
+        ).fetchone()[0]
+        self.assertEqual(after_sql, before_sql)
+        self.assertEqual(
+            conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master "
+                "WHERE type='index' AND name='idx_record_topics_topic'"
+            ).fetchone()[0],
+            0,
+        )
         conn.close()
 
 
