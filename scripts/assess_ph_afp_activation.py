@@ -65,7 +65,12 @@ def summarize(audit_report, review_counts):
         elif rid in review_counts:
             if review_counts[rid].get("total") != n:
                 raise AdmissionPreflightError("reviewed count conflicts with immutable run")
-            if review_counts[rid].get("decisions", {}).get("hold"):
+            decisions = review_counts[rid].get("decisions")
+            if type(decisions) is not dict or set(decisions) != {"verified", "hold", "pending"} or \
+                    any(type(decisions[k]) is not int or decisions[k] < 0 for k in decisions) or \
+                    sum(decisions.values()) != n:
+                raise AdmissionPreflightError("malformed or incomplete review decision counts")
+            if decisions["hold"] or decisions["pending"]:
                 review_status = "source_fidelity_held_not_admissible"
                 held_review_runs.append(rid)
             else:
