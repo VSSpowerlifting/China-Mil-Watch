@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import unittest
+from contextlib import nullcontext
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -88,7 +89,7 @@ class WriterContractTests(unittest.TestCase):
     def test_no_model_call_when_evidence_missing(self):
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
                    "desks": ["china", "singapore"], "source_trail": []}
-        fake = SimpleNamespace(messages=SimpleNamespace(create=lambda **kw:
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kw:
             self.fail("must not call the model")))
         with patch("scripts.weekly_briefs_auto_writer.choose_evidence", side_effect=ValueError("no evidence")):
             with self.assertRaisesRegex(ValueError, "no evidence"):
@@ -101,8 +102,9 @@ class WriterContractTests(unittest.TestCase):
             content=[SimpleNamespace(type="tool_use", name="compose_editorial_draft", input=manuscript)],
         )
         recorded = []
-        fake = SimpleNamespace(messages=SimpleNamespace(create=lambda **kwargs:
-            (recorded.append(kwargs), response)[1]))
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kwargs:
+            (recorded.append(kwargs), nullcontext(SimpleNamespace(
+                get_final_message=lambda: response)))[1]))
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
                    "desks": ["china", "singapore"], "source_trail": []}
         with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
@@ -114,12 +116,32 @@ class WriterContractTests(unittest.TestCase):
 
     def test_model_fails_closed_if_incomplete(self):
         response = SimpleNamespace(stop_reason="max_tokens", content=[])
-        fake = SimpleNamespace(messages=SimpleNamespace(create=lambda **kw: response))
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kw:
+            nullcontext(SimpleNamespace(get_final_message=lambda: response))))
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
                    "desks": ["china", "singapore"], "source_trail": []}
         with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
             with self.assertRaisesRegex(ValueError, "did not complete"):
                 compose(sidecar, "2026-10-09", client=fake)
+
+    def test_stream_timeout_does_not_synthesize_draft(self):
+        class BrokenStream:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_exc):
+                return False
+
+            def get_final_message(self):
+                raise TimeoutError("mock API connection timed out")
+
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kw: BrokenStream()))
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"], "source_trail": []}
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence", return_value=evidence()):
+            with self.assertRaisesRegex(TimeoutError, "timed out"):
+                compose(sidecar, "2026-10-09", client=fake)
+
 
 
 if __name__ == "__main__":

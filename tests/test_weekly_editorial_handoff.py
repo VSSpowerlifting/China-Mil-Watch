@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.weekly_editorial_handoff import render_packet, send_packet
+from scripts.weekly_editorial_handoff import render_packet, send_packet, main
 
 
 def draft():
@@ -77,6 +77,21 @@ class EditorialWorksheetTests(unittest.TestCase):
         text = render_packet(item)
         self.assertIn("Title: real ## FAKE HEADER", text)
         self.assertNotIn("\n## FAKE HEADER", text)
+
+    def test_timeout_prevents_email_even_when_send_is_requested(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            sidecar = Path(tmp) / "scaffold.json"
+            output = Path(tmp) / "unapproved.txt"
+            import json
+            sidecar.write_text(json.dumps(draft()), encoding="utf-8")
+            with patch("scripts.weekly_briefs_auto_writer.compose",
+                       side_effect=TimeoutError("mock API timeout")):
+                with patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+                    with self.assertRaisesRegex(TimeoutError, "mock API timeout"):
+                        main(["--sidecar", str(sidecar), "--out", str(output),
+                              "--write-automatic", "--as-of", "2026-10-02", "--send"])
+                    mail.assert_not_called()
+                    self.assertFalse(output.exists())
 
     def test_sender_needs_secrets_no_network(self):
         with tempfile.TemporaryDirectory() as tmp:

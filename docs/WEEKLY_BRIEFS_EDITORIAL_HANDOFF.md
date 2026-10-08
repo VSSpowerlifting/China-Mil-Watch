@@ -16,17 +16,21 @@ separate source-bounded assisted writer for **Indo-Pacific Record Briefs**.
 3. Create a temporary *unnumbered* scaffold with per-desk coverage statistics
    and original record-level links. Exclude records explicitly screened
    not-selected (as the governed authoring scaffold already does).
-4. From full-text-bearing eligible records, choose up to **14** bodies, with
+4. From full-text-bearing eligible records, choose up to **10** bodies, with
    up to two per desk before filling by the existing model's triage ranking.
-   Each body is capped at 3,800 characters. Short/unavailable bodies are
+   Each body is capped at 3,000 characters. Short/unavailable bodies are
    not represented as full evidence.
-5. With `ANTHROPIC_API_KEY`, request **one** structured Claude draft using
+5. With `ANTHROPIC_API_KEY`, request **one streaming** structured Claude draft using
    the existing `claude-sonnet-4-6` model. Return a working title, dek,
    development, flowing article sections, a cross-desk comparison, and
    editorial follow-up questions. Require IDs of actual supplied source
    records for every analytical section, including from **two different
    desks** for the cross-desk section. This proves ID membership only:
    it does NOT mechanically certify a claim's accuracy.
+   The response is accumulated privately using the Anthropic SDK's streaming
+   interface, preventing the prior 90-second single-response read timeout.
+   An incomplete/failed stream stops the job and never sends mail. API retries
+   are disabled to bound repeat charges.
 6. Compose a single editable `.txt` with the prose, section-level record
    IDs, source URLs and untouched original source-trail metadata. Every
    packet is conspicuously **PROVISIONAL THROUGH FRIDAY / UNAPPROVED**.
@@ -116,3 +120,15 @@ a cost/quality guardrail, not an assertion that all relevant publications
 were considered. Model-cited record IDs ensure links can be audited but do
 not prove the prose faithfully describes the full records. Neither the
 automated draft nor the email is an approved IPR Brief.
+
+## October 8 manual test: network timeout and correction
+
+The owner's no-email dry run [#37722903583](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37722903583)
+completed desk discovery and read-only source scaffolding, then failed at
+`anthropic.APITimeoutError` during a non-streamed request. The 90-second read
+limit was reached. The repair uses the SDK's streaming message accumulator,
+a less voluminous evidence packet (10 source bodies maximum × 3,000 characters
+per body), a longer streaming idle timeout, and no automatic API retries.
+The correction still requires a **new** real dry run to demonstrate that
+Claude successfully completes an acceptable manuscript before email delivery
+is activated.
