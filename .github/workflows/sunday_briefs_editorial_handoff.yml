@@ -56,6 +56,36 @@ jobs:
       - name: Install project dependencies
         run: python -m pip install -r requirements.txt
 
+      - name: Preflight private owner preview and exclusive delivery intent
+        env:
+          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+          IPR_EDITOR_SEND_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.send_email == true }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from scripts.sunday_editorial_handoff import single_address
+          if os.environ["IPR_PREVIEW_REQUESTED"] == "true":
+              if os.environ["IPR_EDITOR_SEND_REQUESTED"] == "true":
+                  raise SystemExit(
+                      "Refused: editor send and owner preview inputs cannot both be true"
+                  )
+              editor = single_address(
+                  os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+              owner = single_address(
+                  os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
+              if owner.casefold() == editor.casefold():
+                  raise SystemExit(
+                      "Refused: owner preview email must differ from editor"
+                  )
+              print("Private owner preview recipient is configured and distinct.")
+          else:
+              print("Owner-only preview not requested.")
+          PY
+
       - name: Verify reporting Saturday and Sunday's successful database update
         env:
           IPR_EVENT: ${{ github.event_name }}
