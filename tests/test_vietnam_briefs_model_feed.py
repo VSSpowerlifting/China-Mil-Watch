@@ -16,6 +16,8 @@ from scripts.prepare_vietnam_briefs_model_evidence import (
     VietnamFeedRefused, assemble, metadata_card, prepare,
     require_current_week_shadow,
 )
+from scripts.weekly_briefs_auto_writer import validate_manuscript
+from tests.test_weekly_briefs_auto_writer import evidence, valid_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 SAT = "2026-10-10"
@@ -100,6 +102,24 @@ class VietnamSundayFeedTests(unittest.TestCase):
         self.assertNotIn("article_body", json.dumps(current))
         self.assertIn("not the truth", " ".join(current["caveats"]))
         self.assertEqual(current["source_content_sha256"], "d" * 64)
+
+    def test_metadata_only_discovery_cannot_support_model_fact_claims(self):
+        q = queue()
+        q["records"].append(new_source())
+        packet, _stats = assemble(q, original(), COMMIT, SAT)
+        result = valid_manuscript()
+        result["editorial_focus"] = "A narrow official-source account with individual evidence"
+        result["supplemental_citations"] = {
+            field: [] for field in result["citations"]
+        }
+        metadata_id = "VN-MPS-1791200000"
+        result["supplemental_citations"]["development"] = [metadata_id]
+        with self.assertRaisesRegex(ValueError, "metadata-only"):
+            validate_manuscript(result, evidence(), supplemental=packet["items"])
+        result["supplemental_citations"]["development"] = []
+        result["supplemental_citations"]["what_im_watching_next"] = [metadata_id]
+        self.assertIs(validate_manuscript(
+            result, evidence(), supplemental=packet["items"]), result)
 
     def test_changed_original_cannot_keep_old_substantive_synopsis(self):
         q = queue()
