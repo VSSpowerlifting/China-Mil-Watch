@@ -26,7 +26,7 @@ The records are original-language Vietnamese **Ministry of Public Security porta
 The report concerns an October 5 meeting in Hanoi between Minister of Public Security Lương Tam Quang and representatives of Turkish companies **ICT** and **ANVI**. It identifies Murat Kaya with ICT and Adalat Bakhisov/Bakhishov with ANVI (different spellings appear in the visible report). Discussion covers security technology, prison-management systems, data integration, AI, UAV-related threats and prospective transfer/industrial cooperation. **Important distinction:** the minister **requested or discussed potential cooperation**, and the report describes willingness and agreed discussion topics. It does **not establish that a binding technology transfer, procurement award, UAV acquisition or signed industrial agreement occurred**. A future brief or entity ledger must not promote aspiration to executed agreement. The name-spelling inconsistency is a **source-text caveat**, not permission to silently harmonize the Vietnamese original.
 
 **Source-page title/date:** visibly concordant with the pinned queue.  
-**Archival-body exact comparison:** pending separate measured parity test.  
+**Archival-body exact comparison:** verified in the pinned read-only technical proof described below; independent human signoff remains pending.  
 **Editorial disposition:** hold for version/parity check, attribution reconciliation and lawful reuse decision.
 
 ### 2. `mps-vi:1791199677` — Concordia University
@@ -42,7 +42,7 @@ The report concerns an October 5 meeting in Hanoi between Minister of Public Sec
 The October 5 Hanoi meeting was between Minister Lương Tam Quang and Concordia University president **Graham Carr**. The MPS source outlines prospective cooperation on training, research, AI, cybersecurity, data governance and digital technology. It also refers to a **memorandum involving Concordia and Vietnam's Ministry of Education and Training**, associated with a recent high-level trip. **That separate memorandum must not be attributed to the Ministry of Public Security or treated as a signed MPS–Concordia agreement.** The MPS–Concordia relationship described here is a discussion/proposed future programming, not a documented executed contract.
 
 **Source-page title/date:** visibly concordant with the pinned queue.  
-**Archival-body exact comparison:** pending.  
+**Archival-body exact comparison:** verified in the pinned read-only technical proof described below; independent human signoff remains pending.  
 **Editorial disposition:** hold for version/parity check, institutional distinctions and lawful reuse decision.
 
 ### 3. `mps-vi:1790933646` — Vietnam–Myanmar transnational crime cooperation
@@ -58,8 +58,43 @@ The October 5 Hanoi meeting was between Minister Lương Tam Quang and Concordia
 The October 2 Hanoi discussion involved Vietnamese Deputy Minister of Public Security **Lê Văn Tuyến** and Myanmar Deputy Minister of Home Affairs **Min Thu**. The report distinguishes **previously established** cooperation, including the 2004 crime-prevention cooperation agreement and drug-control cooperation, from **future proposals** to restart regular ministerial and deputy-ministerial dialogue, negotiate a mutual legal assistance treaty, and consider a trafficking-related memorandum. Cyber-enabled fraud, narcotics, human trafficking and wanted fugitives are mentioned as cooperation priorities. **Do not describe the proposed MLA treaty or trafficking memorandum as signed or in force** on the strength of this report.
 
 **Source-page title/date:** visibly concordant with the pinned queue.  
-**Archival-body exact comparison:** pending.  
+**Archival-body exact comparison:** verified in the pinned read-only technical proof described below; independent human signoff remains pending.  
 **Editorial disposition:** hold for version/parity check, instrument-status care and lawful reuse decision.
+
+## Verified technical parity — exact pinned state, 2026-10-08 UTC
+
+The disposable read-only GitHub Actions proof
+[37717428323](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37717428323),
+job `113117023815`, completed successfully against exact shadow commit
+`46f6a0e59e25b03868bf7ad600963d6921ee5124`. It used the existing
+source parser on original archived captures and on freshly fetched
+robots-permitted ministry HTML, then compared exact normalized Vietnamese
+title, publication date, entire extracted body and content-version hash.
+The run made **4 GET requests** total (robots policy plus the three
+named articles); the metadata-only artifact is
+[11523709917](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37717428323/artifacts/11523709917)
+(digest `sha256:d63c9a71604a0046ae1543346f39e84cdc599ba4573c3d66951114776296c3c8`,
+30-day expiry 2026-11-07). Synthetic fail-closed tests passed first.
+
+| Identity | Archived original re-extraction matches pinned text/date/title/version | Current official page matches pinned full text/date/title/version | Signoff |
+| --- | --- | --- | --- |
+| `mps-vi:1791199100` | Yes | Yes | **Not authorized** |
+| `mps-vi:1791199677` | Yes | Yes | **Not authorized** |
+| `mps-vi:1790933646` | Yes | Yes | **Not authorized** |
+
+**3/3 mechanical parity passes, zero human approvals and zero rights approvals.**
+No raw archived bodies, publisher HTML or original source prose were retained
+in the proof artifact or log. This is stronger evidence than machine hash-chain
+integrity alone, but is **not** a human confirmation of editorial completeness,
+original-author attribution, translation interpretation or reuse permission.
+Future source amendments must be compared against this exact pinned version;
+a clean check today does not authorize automatic future import.
+
+**Updated disposition for all three records:** technically ready for the
+separate human source/rights decision; **HOLD** against full-text staging or
+publication until the named reviewer completes the six explicit integrity
+checks and documents the lawful basis for each intended use. Do not write
+`reuse_approved: true` on the strength of parity alone.
 
 ## Cross-record source-use decision
 
@@ -74,6 +109,6 @@ Every page identifies the publisher as **Cổng Thông tin điện tử Bộ Cô
 
 ## Next independent technical gate
 
-Run a separate **read-only, commit-bound, metadata-only** comparison against the exact three pinned raw captures and the publisher's current pages, using the existing Vietnam MPS source adapter for normalized title, date and complete body. Any mismatch is a human-review **hold**, not evidence to overwrite historical captured text or the signed state. The result should list archive parse consistency, live title/date/content hash comparison, and author-attribution differences, but retain **no original article bodies**.
+Technical live/source parity **has passed** on the exact three pinned versions. The remaining gate is a named human's source-integrity and reuse-rights signoff: verify individual author credits and article classification, review any future changes to the pinned versions, and document a specific lawful basis for retaining/publishing full original Vietnamese prose. A clean technical parity result must not be converted into an automatic approval.
 
 Only a named human reviewer using the original source and exact archived versions can sign the six checks required by `scripts/prepare_vietnam_mps_pilot.py`. A documented specific legal basis is additionally required for the intended text retention/reuse. Even a completed authorization permits **disposable DB staging only**, not a production merge, deployed site change or Vietnam Desk promotion.
