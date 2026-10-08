@@ -78,10 +78,9 @@ def summarize(db_bytes, *, state_commit, week_ending, as_of):
     if not isinstance(state_commit, str) or not SHA40.fullmatch(state_commit):
         raise IntakeError("immutable exact state commit required")
     saturday, cutoff = _day(week_ending), _day(as_of)
-    if saturday.weekday() != 5 or cutoff not in (
-            saturday, saturday - timedelta(days=1)):
-        raise IntakeError("Friday or Saturday cutoff for Saturday-ending week required")
     start = saturday - timedelta(days=6)
+    if saturday.weekday() != 5 or not start <= cutoff <= saturday:
+        raise IntakeError("source cutoff must be inside the Saturday-ending reporting week")
     if not isinstance(db_bytes, bytes) or not db_bytes.startswith(b"SQLite format 3\0"):
         raise IntakeError("expected a real SQLite source snapshot")
     with tempfile.TemporaryDirectory(prefix="japan-shadow-weekly-") as tmp:
@@ -158,6 +157,8 @@ def summarize(db_bytes, *, state_commit, week_ending, as_of):
         "reporting_week_start": start.isoformat(),
         "reporting_saturday": saturday.isoformat(),
         "source_cutoff": cutoff.isoformat(),
+        "full_reporting_week_elapsed_at_cutoff": cutoff == saturday,
+        "source_snapshot_completeness_attested": False,
         "archive_total_original_text_records": total,
         "current_week_text_records": len(candidates),
         "source_candidates": candidates,
@@ -189,7 +190,8 @@ def main(argv=None):
     p.add_argument("--state-repo", required=True, type=Path)
     p.add_argument("--state-commit", required=True)
     p.add_argument("--week-ending", required=True)
-    p.add_argument("--as-of", required=True)
+    p.add_argument("--as-of", required=True,
+                   help="ISO date within reporting week; pre-Saturday is partial evidence")
     p.add_argument("--output", required=True, type=Path)
     args = p.parse_args(argv)
     if args.output.exists():
