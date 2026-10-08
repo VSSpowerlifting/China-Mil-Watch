@@ -29,6 +29,16 @@ MAX_INPUT_BYTES = 2_000_000
 # This specifically governed MPS/MOIT cadence was first activated Oct 7.
 # Review ranges must not trim its Day 0, and planned dates cannot be omitted.
 MINISTRY_SHADOW_START = date(2026, 10, 7)
+# Day 0 was a deliberately limited historical bootstrap, with different
+# *explicit* dates per source. These are evidence from the verified Day 0
+# committed source ledgers, not assumptions about GitHub dispatch inputs.
+DAY_ZERO_RUN_ID = "37656171920-2"
+DAY_ZERO_COLLECTOR_COMMIT = "2c21b0d091ffc288b1a106d5459d758aaaac6ff5"
+DAY_ZERO_SOURCE_TARGETS = {
+    "vn_mps_foreign_affairs_vi": "2026-10-05",
+    "vn_moit_energy_vi": "2026-09-30",
+    "vn_moit_foundational_industry_vi": "2026-09-30",
+}
 
 
 class AttemptEvidenceRefused(ValueError):
@@ -122,7 +132,14 @@ def reconcile(packet):
                 and row["conclusion"] in TERMINAL_CONCLUSIONS,
                 "unrecognized completed workflow attempt")
         target, basis = row["target_date"], row["target_date_basis"]
-        if target is None:
+        if key == DAY_ZERO_RUN_ID:
+            # One Actions-level date cannot represent three independent,
+            # verified bootstrap target inputs. Preserve unknown at action
+            # level and check each ledger against its source-specific anchor.
+            require(row["event"] == "workflow_dispatch"
+                    and target is None and basis is None,
+                    "Day 0 Actions receipt must preserve source-specific dates")
+        elif target is None:
             require(basis is None, "unverified date cannot carry provenance")
         else:
             d = valid_day(target)
@@ -163,10 +180,17 @@ def reconcile(packet):
             require(isinstance(row["collector_commit"], str)
                     and HEX40.fullmatch(row["collector_commit"]), "unbound collector identity")
             target = valid_day(row["target_date"])
-            require(start <= target <= end, "source run target outside review window")
             require(row["target_date_source"] in ("schedule-slot", "explicit"),
                     "unverified source target-date origin")
-            utc_instant(row["finished_utc"])
+            finished = utc_instant(row["finished_utc"])
+            if identifier == DAY_ZERO_RUN_ID:
+                require(row["target_date"] == DAY_ZERO_SOURCE_TARGETS[slug]
+                        and row["target_date_source"] == "explicit"
+                        and row["collector_commit"] == DAY_ZERO_COLLECTOR_COMMIT
+                        and finished.date() == MINISTRY_SHADOW_START,
+                        "Day 0 source-specific historical bootstrap identity mismatch")
+            else:
+                require(start <= target <= end, "source run target outside review window")
             outcomes[identifier] = row
             action = actions.get(identifier)
             if action is None:
@@ -180,7 +204,11 @@ def reconcile(packet):
                 expected_source = "schedule-slot" if action["event"] == "schedule" else "explicit"
                 require(row["target_date_source"] == expected_source,
                         "source logical-date basis disagrees with Actions event")
-                if action["target_date"] is not None:
+                if identifier == DAY_ZERO_RUN_ID:
+                    # Verified *ledger* target is deliberately different for
+                    # MPS and MOIT; never synthesize a single Actions day.
+                    pass
+                elif action["target_date"] is not None:
                     require(row["target_date"] == action["target_date"],
                             "source logical day disagrees with separately evidenced Actions target")
                 else:
@@ -198,6 +226,8 @@ def reconcile(packet):
         for field, kind in (("target_date", "source_batch_target_dates_disagree"),
                             ("target_date_source", "source_batch_date_origins_disagree"),
                             ("collector_commit", "source_batch_collector_commits_disagree")):
+            if identifier == DAY_ZERO_RUN_ID and field == "target_date":
+                continue  # The authorized bootstrap was source-specific.
             values = {slug: row[field] for slug, row in reported.items()}
             if len(set(values.values())) > 1:
                 warnings.append({"kind": kind, "run_id": identifier,
