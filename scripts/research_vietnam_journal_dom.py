@@ -191,7 +191,7 @@ def fetch(session, url, delay, previous):
             return meta, None
         return meta, body
     finally:
-        if resp:
+        if resp is not None:
             resp.close()
         session.cookies.clear()
 
