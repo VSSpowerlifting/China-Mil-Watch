@@ -102,7 +102,9 @@ def summarize(evidence, *, state_commit, as_of, source_slug=SOURCE):
     for record in runs:
         require(isinstance(record, dict) and
                 isinstance(record.get("run_id"), str)
-                and record["run_id"] not in seen_run_ids, "invalid run ledger ID")
+                and bool(record["run_id"]), "invalid run ledger ID")
+        require(record["run_id"] not in seen_run_ids,
+                "duplicate run ledger ID")
         seen_run_ids.add(record["run_id"])
         day = strict_day(record.get("target_date"))
         started = utc_moment(record.get("started_utc"))
