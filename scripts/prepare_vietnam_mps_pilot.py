@@ -61,7 +61,8 @@ def iso_instant(value):
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as exc:
         raise Refused("invalid approval instant") from exc
-    require(parsed.utcoffset() is not None, "approval instant lacks timezone")
+    require(parsed.utcoffset() is not None and parsed.utcoffset().total_seconds() == 0,
+            "approval instant must be explicitly UTC")
     return value
 
 
@@ -125,7 +126,9 @@ def candidates(evidence, approval):
         require(obs is not None and obs["content_sha256"] == digest
                 and obs["capture_sha256"] == version["first_capture_sha256"],
                 "version has no matching first capture observation")
-        require(not json.loads(obs["anomalies_json"]), "unresolved article anomaly")
+        require(not any(json.loads(o["anomalies_json"]) for o in evidence["observations"]
+                        if o["source_identity"] == ident),
+                "unresolved article anomaly")
         require(record["url"] == record["canonical_url"]
                 and SOURCES[PILOT_SOURCE].identity(record["url"]) == ident,
                 "invalid source identity")
