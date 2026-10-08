@@ -1,7 +1,8 @@
 # Vietnam journal — byte-bound metadata observation seam
 
-**Status:** pure offline integration candidate stacked on PR #163 (metadata
-assembler). No publisher network access, article retention, authorized
+**Status:** pure offline integration candidate targeting `main`. Its prerequisite,
+PR #163 (metadata assembler), and the independent forward-window audit #176
+are merged. No publisher network access, article retention, authorized
 metadata persistence, source activation, shadow Day 0 or production changes.
 
 ## Integrity gap addressed
@@ -73,7 +74,7 @@ identical responses, malformed encoding, wrong categories, missing/invalid
 timestamps, a time span over 30 minutes, oversized payloads and
 injected nonarticle HTML.
 
-Focused offline run once PR #163 is merged:
+Focused offline run (PR #163 is merged):
 
 ~~~bash
 python -m unittest tests.test_vn_journal_byte_observation -v
@@ -86,9 +87,10 @@ completeness, first publication dates, zero missed articles, or future
 collection reliability. None of those are established by matching
 response digests.
 
-**Merge choreography:** this PR is initially stacked on #163 only
-because it needs the assembler module. Once #163 has independently
-passed CI and merged to main, retarget this change to main; independently
-verify its exact-head CI and diff (this module, synthetic integration
-tests, documentation), and stop for separate owner review. The
-future-window diagnostic #176 is independent.
+**Merge review:** PR #163 merged at `e39cf8f41ceec6932ce1ba94efa508102fd5dd0c`
+and PR #176 merged at `97fce10535b49958a21ed749274d3499134f703d`.
+This follow-up is now retargeted directly to `main`; its intended diff
+is only this module, synthetic integration tests and documentation.
+A separate synthetic focused run of the earlier exact code passed 44 tests,
+but owner merge review requires **independent green full CI on the current
+head**. Neither that test result nor future success authorizes collection.
