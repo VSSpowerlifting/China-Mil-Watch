@@ -242,7 +242,7 @@ class EvidenceVerifierSyntheticGit(unittest.TestCase):
     def test_unknown_archive_commit_is_refused(self):
         for doc in self.docs.values():
             doc["source_commit"] = "0" * 40
-        with self.assertRaisesRegex(ValueError, "git rev-parse failed"):
+        with self.assertRaisesRegex(ValueError, "git rev-parse .* failed"):
             self._validate()
 
     def test_mutated_reviewer_state_cannot_be_laundered_as_human(self):
