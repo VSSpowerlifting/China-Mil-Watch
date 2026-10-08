@@ -223,8 +223,15 @@ def single_address(value, name):
     return parsed[0][1]
 
 
-def send_packet(path, week_ending, *, provisional=False, full_week=False):
-    recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+def send_packet(path, week_ending, *, provisional=False, full_week=False,
+                preview_to_owner=False):
+    editor = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+    if preview_to_owner:
+        recipient = single_address(os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
+        if recipient.casefold() == editor.casefold():
+            raise ValueError("preview recipient must differ from Dylan/editor address")
+    else:
+        recipient = editor
     sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
     password = "".join(os.environ.get("IPR_SMTP_APP_PASSWORD", "").split())
     if len(password) != 16 or not password.isascii() or not password.isalnum():
@@ -233,7 +240,20 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False):
     message["From"] = sender
     message["To"] = recipient
     message["Reply-To"] = sender
-    if full_week:
+    if preview_to_owner:
+        if not full_week:
+            raise ValueError("owner previews require the complete Saturday-ending week")
+        message["Subject"] = "IPR Briefs | OWNER-ONLY UNSENT EDITORIAL PREVIEW | {}".format(week_ending)
+        message.set_content(
+            "Private owner-only preview of the unapproved Sunday IPR Brief.\n\n"
+            "This attachment was NOT delivered to Dylan. Inspect the generated "
+            "single-theme manuscript, all numeric production record citations, "
+            "Japan/Vietnam typed official-source references, their source-language "
+            "meaning and any unsupported claims. You must separately authorize "
+            "editor delivery after independent source verification.\n\n"
+            "Do not publish, number or forward as an approved Brief.\n"
+        )
+    elif full_week:
         message["Subject"] = "IPR Briefs | week ending {} | one thematic Sunday draft".format(week_ending)
         message.set_content(
             "Hi Dylan,\n\nAttached is one coherent, provisional IPR Brief drafted "
@@ -272,7 +292,9 @@ def main(argv=None):
     parser.add_argument("--sidecar", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--send", action="store_true",
-                        help="email via explicit SMTP secrets; otherwise write locally only")
+                        help="send to Dylan only when explicitly authorized")
+    parser.add_argument("--preview-to-owner", action="store_true",
+                        help="explicit private owner-only preview; never send to Dylan")
     parser.add_argument("--write-automatic", action="store_true",
                         help="compose an AI-assisted provisional manuscript from source bodies")
     parser.add_argument("--as-of", help="Friday or Saturday source cutoff (YYYY-MM-DD)")
@@ -283,6 +305,10 @@ def main(argv=None):
     parser.add_argument("--research-packet", type=Path,
                         help="optional exact-week temporary private JSON from a separately validated shadow exporter")
     args = parser.parse_args(argv)
+    if args.send and args.preview_to_owner:
+        parser.error("owner-only preview and Dylan delivery are mutually exclusive")
+    if args.preview_to_owner and (not args.write_automatic or not args.full_week):
+        parser.error("owner-only preview requires automatic full-week manuscript")
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
     if args.full_week and (not args.write_automatic
                            or args.as_of != sidecar["week_ending"]):
@@ -326,10 +352,13 @@ def main(argv=None):
     print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review)".format(
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
         args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates)))
-    if args.send:
+    if args.send or args.preview_to_owner:
         send_packet(args.out, sidecar["week_ending"],
-                    provisional=args.write_automatic, full_week=args.full_week)
-        print("Editorial worksheet delivered via configured SMTP account.")
+                    provisional=args.write_automatic, full_week=args.full_week,
+                    preview_to_owner=args.preview_to_owner)
+        print("OWNER-ONLY PREVIEW emailed; Dylan was not contacted."
+              if args.preview_to_owner else
+              "Editorial worksheet delivered to configured editor.")
     else:
         print("Email not enabled: no delivery occurred.")
 
