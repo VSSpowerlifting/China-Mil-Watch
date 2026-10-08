@@ -15,7 +15,7 @@ import json
 import re
 import sys
 import tempfile
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from core.brief_editorial_evidence import (
@@ -62,6 +62,30 @@ def _publication_window(week_ending):
     saturday = exact_day(week_ending)
     require(saturday.weekday() == 5, "editorial week must end Saturday")
     return saturday - timedelta(days=6), saturday
+
+
+def require_current_week_shadow(evidence, week_ending):
+    """Reject an old successful clock standing in for this week's coverage."""
+    _start, saturday = _publication_window(week_ending)
+    del _start
+    runs = evidence.get("runs") if isinstance(evidence, dict) else None
+    require(isinstance(runs, list) and runs, "no verified MPS shadow attempt history")
+    latest = runs[-1]
+    require(latest.get("health") == "ok", "latest MPS shadow run is not healthy")
+    try:
+        target = exact_day(latest.get("target_date"))
+        finished = datetime.fromisoformat(latest["finished_utc"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise VietnamFeedRefused("invalid latest MPS attempt date") from exc
+    require(finished.tzinfo is not None and finished.utcoffset() is not None,
+            "last source attempt must carry UTC timestamp")
+    require(finished.utcoffset() == timedelta(0),
+            "last source attempt must be timestamped in UTC")
+    require(saturday - timedelta(days=2) <= target <= saturday + timedelta(days=1),
+            "MPS shadow state is stale or does not belong to this editorial week")
+    require(target <= finished.astimezone(timezone.utc).date(),
+            "future MPS collection target cannot be treated as completed")
+    return target.isoformat()
 
 
 def metadata_card(record, commit):
@@ -232,6 +256,7 @@ def prepare(state_repo, state_commit, week_ending, out_path, *,
         state = formal.export_state_tree(
             state_repo, state_commit, Path(tmp) / "state")
         reviewed = ministry.review(state, SOURCE)
+        current_target = require_current_week_shadow(reviewed, week_ending)
         queue = compile_queue(
             reviewed, state_commit, provenance["state_tree"])
         packet, stats = assemble(queue, curated, state_commit, week_ending)
@@ -249,7 +274,8 @@ def prepare(state_repo, state_commit, week_ending, out_path, *,
     out.parent.mkdir(parents=True, exist_ok=True)
     require(not out.exists(), "private output already exists")
     out.write_text(encoded, encoding="utf-8")
-    return dict(stats, source_commit=state_commit, state_tree=provenance["state_tree"])
+    return dict(stats, source_commit=state_commit, state_tree=provenance["state_tree"],
+                latest_source_target=current_target)
 
 
 def main(argv=None):
