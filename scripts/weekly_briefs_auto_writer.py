@@ -202,13 +202,13 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
     for field in CITED_FIELDS:
         ids = cites.get(field)
         if (not isinstance(ids, list) or (not extras and not ids)
-            or len(ids) != len(set(ids)) or not all(
-                type(i) is int and i in evidence for i in ids
-            )):
+            or not all(type(i) is int and i in evidence for i in ids)
+            or len(ids) != len(set(ids))):
             raise ValueError("writer used absent/unverified source ids for " + field)
         more = external_cites[field] if extras else []
-        if (not isinstance(more, list) or len(more) != len(set(more)) or
-            not all(isinstance(i, str) and i in extras for i in more)):
+        if (not isinstance(more, list) or
+            not all(isinstance(i, str) and i in extras for i in more) or
+            len(more) != len(set(more))):
             raise ValueError("writer used absent/unverified external source ids for " + field)
         if not ids and not more:
             raise ValueError("factual section has neither production nor external citations: " + field)
