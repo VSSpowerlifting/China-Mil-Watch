@@ -305,6 +305,8 @@ class FeederTests(unittest.TestCase):
         self.assertIn('default: "refuse"', action)
         self.assertIn("continue-without-vietnam", action)
         self.assertIn("VN_REQUIRE_VIETNAM", action)
+        self.assertIn('if [[ -n "$VN_NOTES" ]]', action)
+        self.assertIn('args+=(--notes "$VN_NOTES")', action)
         self.assertIn("args+=(--allow-missing-notes)", action)
         self.assertIn("args+=(--require-vietnam)", action)
         self.assertIn("vietnam_status=$vietnam_status", action)
