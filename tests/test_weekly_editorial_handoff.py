@@ -103,6 +103,16 @@ class EditorialWorksheetTests(unittest.TestCase):
                         send_packet(path, "2026-10-03")
                     smtp.assert_not_called()
 
+    def test_runner_launches_handoff_as_a_module(self):
+        # The workflow must keep the repository root on sys.path. Launching
+        # 'python scripts/weekly_editorial_handoff.py' breaks absolute
+        # 'from scripts.*' imports at runtime even though unit tests pass.
+        project = Path(__file__).resolve().parents[1]
+        workflow = (project / ".github" / "workflows" /
+                    "weekly_briefs_editorial_handoff.yml").read_text(encoding="utf-8")
+        self.assertIn('python -m scripts.weekly_editorial_handoff "${args[@]}"', workflow)
+        self.assertNotIn('python scripts/weekly_editorial_handoff.py', workflow)
+
     def test_delivery_uses_single_recipient_and_attachment(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "IPR-week.txt"

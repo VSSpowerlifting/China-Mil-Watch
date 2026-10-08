@@ -101,6 +101,6 @@ jobs:
           if [[ "$SHOULD_SEND" == "true" ]]; then
             args+=(--send)
           fi
-          python scripts/weekly_editorial_handoff.py "${args[@]}"
+          python -m scripts.weekly_editorial_handoff "${args[@]}"
 
       # No uploaded unpublished artifact; no push, approval, numbering or deploy.
