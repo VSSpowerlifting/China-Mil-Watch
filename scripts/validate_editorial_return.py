@@ -46,7 +46,13 @@ def _load(path: Path) -> str:
 
 
 def _split(packet: str):
-    """Split exactly once; source and status sections are immutable."""
+    """Split exactly once; source and status sections are immutable.
+
+    render_packet ends with a trailing newline, while text editors may add
+    or remove blank lines at EOF. Normalize only that terminal whitespace
+    before comparing the exact immutable header and source appendix.
+    """
+    packet = packet.replace("\r\n", "\n").replace("\r", "\n").rstrip("\n")
     for marker in (BEGIN_EDIT, BEGIN_APPENDIX, END_APPENDIX, END_PACKET):
         if sum(line == marker for line in packet.split("\n")) != 1:
             raise ReturnValidationError("missing or repeated packet marker: " + marker)
