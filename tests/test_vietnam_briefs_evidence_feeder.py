@@ -21,8 +21,12 @@ SAT = "2026-10-10"
 
 
 def queue():
-    first = NOTES["entries"][0]
-    second = NOTES["entries"][1]
+    # Historical synthetic two-source queue is pinned to its October 7
+    # capture, even as future October 8+ source notes are appended.
+    first = next(n for n in NOTES["entries"]
+                 if n["source_identity"] == "mps-vi:1791199100")
+    second = next(n for n in NOTES["entries"]
+                  if n["source_identity"] == "mps-vi:1791199677")
     rows = []
     for n in (first, second):
         rows.append({
