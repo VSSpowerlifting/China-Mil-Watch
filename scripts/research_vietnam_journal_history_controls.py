@@ -49,7 +49,7 @@ def inspect_controls(html, source_url):
     if soup.html is None or soup.body is None:
         raise ProbeRefused("not a complete HTML page")
     anchors = []
-    for a in soup.select("a[href], button"):
+    for a in soup.select("a[href], a[onclick], button"):
         label = a.get_text(" ", strip=True)
         # Capture only explicit paging-like labels, and never site headings.
         if len(label) > 14 or not PAGE_RE.fullmatch(label):
