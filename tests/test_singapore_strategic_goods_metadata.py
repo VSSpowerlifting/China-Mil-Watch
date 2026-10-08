@@ -64,13 +64,17 @@ class SingaporeGazetteMetadataReview(unittest.TestCase):
         p["source_use_review"]["relevant_clauses"] = ["11"]
         self.rejected(p, "Gazette terms gate")
         p = self.packet_copy()
+        p["source_use_review"]["relevant_clauses"] = ["6", "11", "12", "17"]
+        self.rejected(p, "Gazette terms gate")
+        p = self.packet_copy()
         p["source_use_review"]["observed_conditions"].remove(
             "permission_revocable_or_modifiable")
         self.rejected(p, "Gazette terms gate")
 
     def test_rights_have_no_ipr_signoff(self):
         for key in ("ipr_use_compliance_adjudicated", "full_body_retention_approved",
-                    "public_body_display_approved", "automated_collection_approved"):
+                    "public_body_display_approved", "automated_collection_approved",
+                    "website_caching_scope_adjudicated"):
             p = self.packet_copy()
             p["source_use_review"][key] = True
             with self.subTest(key=key):
