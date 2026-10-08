@@ -6,10 +6,12 @@
 # deploys. Reviewing a change therefore meant either trusting a local run or
 # running production. This job closes that gap and nothing else.
 #
-# Deliberately narrow. It runs exactly two things the repository already
-# governs — the offline suite and the deploy validator — and then proves it
-# changed nothing. It does not collect, migrate, reconcile, render, deploy,
-# commit, push, or read a secret.
+# Deliberately narrow. It first reruns a focused subset of existing
+# taxonomy/source and collector-boundary tests as a fail-fast preflight, then
+# runs the entire offline suite and the deploy validator; finally it proves
+# nothing changed. The preflight is NOT an alternative to full CI. No step
+# collects, migrates, reconciles, renders, deploys, commits, pushes, or reads
+# a secret.
 #
 # Chromium. `requirements.txt` carries the playwright PACKAGE, which is why
 # `from playwright.sync_api import ...` has always succeeded here — but `pip
