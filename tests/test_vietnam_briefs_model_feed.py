@@ -13,6 +13,7 @@ from core.brief_editorial_evidence import (
 )
 from scripts.prepare_vietnam_briefs_model_evidence import (
     VietnamFeedRefused, assemble, metadata_card, prepare,
+    require_current_week_shadow,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -159,6 +160,24 @@ class VietnamSundayFeedTests(unittest.TestCase):
         with self.assertRaises(VietnamFeedRefused):
             assemble(q, original(), COMMIT, SAT)
 
+    def test_stale_healthy_shadow_state_rejected_before_model_evidence(self):
+        for target_date in ("2026-10-05", "2026-10-12"):
+            evidence = {"runs": [{
+                "health": "ok", "target_date": target_date,
+                "finished_utc": "2026-10-12T18:17:00+00:00",
+            }]}
+            with self.subTest(target=target_date), self.assertRaisesRegex(
+                    VietnamFeedRefused, "stale"):
+                require_current_week_shadow(evidence, SAT)
+        valid = {"runs": [{
+            "health": "ok", "target_date": "2026-10-10",
+            "finished_utc": "2026-10-10T19:03:00+00:00",
+        }]}
+        self.assertEqual(require_current_week_shadow(valid, SAT), SAT)
+        valid["runs"][0]["health"] = "fail"
+        with self.assertRaisesRegex(VietnamFeedRefused, "not healthy"):
+            require_current_week_shadow(valid, SAT)
+
     def test_private_output_only_after_git_and_source_review(self):
         with tempfile.TemporaryDirectory() as temp:
             d = Path(temp)
@@ -178,7 +197,10 @@ class VietnamSundayFeedTests(unittest.TestCase):
                  patch("scripts.prepare_vietnam_briefs_model_evidence.formal.export_state_tree",
                        side_effect=lambda repo, sha, dest: dest), \
                  patch("scripts.prepare_vietnam_briefs_model_evidence.ministry.review",
-                       return_value={"fixture": True}), \
+                       return_value={"runs": [{
+                           "health": "ok", "target_date": "2026-10-10",
+                           "finished_utc": "2026-10-10T19:03:00+00:00",
+                       }]}), \
                  patch("scripts.prepare_vietnam_briefs_model_evidence.compile_queue",
                        return_value=queue()):
                 result = prepare(state, COMMIT, SAT, output)
