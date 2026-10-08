@@ -89,6 +89,13 @@ def _local_date_hint(anchor, canonical_url):
             break
         if parent.name not in ("div", "p", "li", "td", "article"):
             continue
+        # The publisher places a live site clock in #subTopMenu-time.
+        # Some outer layout wrappers also contain only one article link;
+        # their clock must NEVER become that article's publication hint.
+        # A genuinely local date inside the smaller article row remains
+        # admissible; only this contaminated ancestor is skipped.
+        if parent.select_one("#subTopMenu-time") is not None:
+            continue
         text = parent.get_text(" ", strip=True)
         if len(text) > 650:
             continue
