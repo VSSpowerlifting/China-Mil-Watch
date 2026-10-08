@@ -48,6 +48,10 @@ class CoastGuardAccessSafetyTests(unittest.TestCase):
         self.assertEqual(requests[0][1], MAX_ROBOTS)
         self.assertEqual(requests[-1][1], MAX_PDF)
         self.assertEqual(requests[1][1], MAX_HTML)
+        self.assertTrue(data["routes"][0]["article_structure"]["semantic_node_count"] >= 1)
+        self.assertIn("semantic_nodes", data["routes"][1]["article_structure"])
+        self.assertTrue(all("chunks" not in x["article_structure"]
+                            for x in data["routes"] if x["kind"] == "html"))
         self.assertNotIn("_raw", str(data))
         self.assertNotIn("This is test text", str(data))
 
