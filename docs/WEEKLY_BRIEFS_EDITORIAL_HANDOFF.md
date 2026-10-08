@@ -19,10 +19,12 @@ EST). GitHub Actions is not a precisely timed mail scheduler; delayed starts
 are possible. Any manual run uses the last **completed** Saturday, never
 the current Saturday while still in progress.
 
-A week without candidate records from at least two live desks causes an
-**explicit failure**, not a made-up cross-desk comparison or an illicit
-single-desk exception. A draft cannot be numbered or approved here.
-Unscreened records remain clearly marked, not treated as verified analysis.
+A week with candidates from only one live desk still produces a worksheet,
+but carries a conspicuous **coverage warning**: it is not eligible as an
+ordinary cross-desk Brief, and a single-desk Brief needs Ben's separate,
+recorded approval. A week with no candidate records fails explicitly rather
+than emailing an empty draft. Nothing here assigns a number or editorial
+approval. Unscreened records remain marked, not treated as verified analysis.
 
 ## Turn on emailing (required owner-controlled configuration)
 
