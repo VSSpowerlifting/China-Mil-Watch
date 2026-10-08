@@ -70,9 +70,13 @@ def classify_author(paragraph):
         return None
     text = clean_text(paragraph)
     credit = clean_text(emphasis[0])
-    if not text or text != credit or not AUTHOR_PREFIX.search(text):
+    # Measured pages put a rank-qualified name in strong/em, but may add
+    # affiliation or a role after that emphasis in the *same final p*.
+    # Preserve that entire credit as metadata, not a prose paragraph.
+    if (not text or not credit or not text.startswith(credit)
+            or not AUTHOR_PREFIX.search(credit) or len(text) > 500):
         return None
-    return credit
+    return text
 
 
 def parse_desktop_article(html, url):
