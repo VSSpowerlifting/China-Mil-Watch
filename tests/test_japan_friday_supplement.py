@@ -41,11 +41,16 @@ class JapanFridayUnsignedPacket(unittest.TestCase):
 
     def test_render_contains_editorial_notes_and_exact_source_links(self):
         result = japan.render(self.packet)
+        self.assertIn("PRIMARY SHADOW-ARCHIVED LEAD", result)
+        self.assertIn("Keen Sword 27", result)
+        self.assertIn("Tsuiki Airfield", result)
+        self.assertIn("29,000 m2", result)
+        self.assertIn("October 19–29", result)
         self.assertIn("JS Kunisaki", result)
         self.assertIn("56 missions", result)
         self.assertIn("280 tons", result)
         self.assertIn("Japanese original", result)
-        self.assertIn("NOT approved, archived, or emailed", result)
+        self.assertIn("NOT approved or emailed", result)
         self.assertIn("Do NOT fabricate record IDs", result)
         for row in self.packet["source_candidates"]:
             self.assertIn(row["public_source_url"], result)
@@ -62,6 +67,45 @@ class JapanFridayUnsignedPacket(unittest.TestCase):
             with self.subTest(key=key):
                 with self.assertRaises(japan.JapanBriefError):
                     self.validate(data)
+
+    def test_archived_oct05_source_is_one_shadow_only_candidate(self):
+        report = self.validate()
+        self.assertEqual(report["shadow_current_week_full_text_records"], 1)
+        original = self.packet["shadow_current_week_original"]
+        self.assertEqual(original["source_record_identifier"],
+                         "shadow/jp-mod:jp_mod_news_ja:2026-10-05:05b.pdf")
+        self.assertEqual(original["publication_date_original"], "2026-10-05")
+        self.assertEqual(original["agreement_approval_date"], "2026-09-17")
+        self.assertEqual(original["planned_facility_use_start"], "2026-10-19")
+        self.assertEqual(original["planned_facility_use_end"], "2026-10-29")
+        self.assertFalse(original["human_original_source_review_complete"])
+        self.assertFalse(original["source_promoted_to_production"])
+
+    def test_archived_pdf_hash_and_future_use_date_cannot_change(self):
+        for key, fake in (
+            ("extracted_body_sha256", "0" * 64),
+            ("captured_response_sha256", "f" * 64),
+            ("publication_date_original", "2026-09-17"),
+            ("planned_facility_use_start", "2026-10-05"),
+            ("land_area_m2_approx", 50000),
+        ):
+            doc = copy.deepcopy(self.packet)
+            doc["shadow_current_week_original"][key] = fake
+            with self.subTest(key=key):
+                with self.assertRaises(japan.JapanBriefError):
+                    self.validate(doc)
+
+    def test_shadow_body_does_not_grant_full_pdf_review_or_auto_publishing(self):
+        for key in ("exact_historical_source_replay_completed",
+                    "human_original_source_review_complete",
+                    "editorial_inclusion_approved",
+                    "source_promoted_to_production"):
+            doc = copy.deepcopy(self.packet)
+            doc["shadow_current_week_original"][key] = True
+            with self.subTest(key=key):
+                with self.assertRaisesRegex(japan.JapanBriefError,
+                                             "does not imply source verification"):
+                    self.validate(doc)
 
     def test_source_date_never_exceeds_thursday_cutoff(self):
         data = copy.deepcopy(self.packet)
