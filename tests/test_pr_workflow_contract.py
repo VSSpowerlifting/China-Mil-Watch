@@ -517,7 +517,7 @@ class TestItRunsTheRealChecks(unittest.TestCase):
         )
         direct_suites = [
             body for body in bodies
-            if re.search(r"\\bpython(?:3)?\\s+-m\\s+unittest\\b", body)
+            if re.search(r"\bpython(?:3)?\s+-m\s+unittest\b", body)
         ]
         self.assertEqual(
             direct_suites, [self.OFFLINE_SUITE],
