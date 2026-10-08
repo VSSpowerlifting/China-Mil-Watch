@@ -161,7 +161,8 @@ class CurrentRosterTests(unittest.TestCase):
             offered, notes = provision(root)
             dest = root / "status.json"
             with patch("scripts.attest_vietnam_sunday_roster.attest",
-                       return_value={"schema": "test"}) as attester:
+                       return_value={"schema": "test", "current_source_version_matches": 2,
+                                     "in_window_machine_eligible": 2}) as attester:
                 self.assertEqual(main([
                     "--state-repo", str(root), "--state-commit", "a" * 40,
                     "--week-ending", SAT, "--notes", str(notes),
@@ -172,7 +173,7 @@ class CurrentRosterTests(unittest.TestCase):
                         "--state-repo", str(root), "--state-commit", "a" * 40,
                         "--week-ending", SAT, "--notes", str(notes),
                         "--offered-packet", str(offered), "--out", str(dest)])
-            self.assertEqual(json.loads(dest.read_text()), {"schema": "test"})
+            self.assertEqual(json.loads(dest.read_text())["schema"], "test")
 
     def test_no_publisher_fetch_model_email_or_production_write(self):
         source = (ROOT / "scripts/attest_vietnam_sunday_roster.py").read_text()
