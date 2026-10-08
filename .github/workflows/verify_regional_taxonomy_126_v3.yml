@@ -1,0 +1,52 @@
+name: Verify Regional Taxonomy PR 126 v3
+
+on:
+  push:
+    branches:
+      - ops/verify-regional-taxonomy-126-v3
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: 7beb966bcefbd49af2d44a47c9d9086b97ec38eb
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Record preservation baseline
+        run: |
+          sha256sum pla_watch.db > /tmp/db.before
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/output.before
+
+      - name: Compile taxonomy module
+        run: python -m py_compile core/topics.py
+
+      - name: Run regional taxonomy contract tests
+        run: python -m unittest tests.test_regional_topics -v
+
+      - name: Validate taxonomy loads
+        run: |
+          python - <<'PY'
+          from core.topics import load_taxonomy
+          taxonomy = load_taxonomy()
+          assert taxonomy.taxonomy_id == "ipr_regional_topics"
+          assert taxonomy.taxonomy_version == 1
+          assert len(taxonomy.groups) == 6
+          assert len(taxonomy.topics) == 19
+          PY
+
+      - name: Assert production DB and output unchanged
+        run: |
+          sha256sum pla_watch.db > /tmp/db.after
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/output.after
+          diff -u /tmp/db.before /tmp/db.after
+          diff -u /tmp/output.before /tmp/output.after
