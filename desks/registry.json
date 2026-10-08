@@ -194,7 +194,7 @@
      {
       "name": "National Defence Journal — English edition (military journal)",
       "format": "HTML English desktop and mobile presentations, one publication, disabled source candidate",
-      "note": "tapchiqptd.vn/en/default.html and m.tapchiqptd.vn/en. The two interfaces publish the same article IDs and are one National Defence Journal source, not two ministry feeds. Military-journal doctrine, commentary and defence scholarship are Tier B institutional media, not MOD-issued directives. Offline ID-based canonicalization is implemented; date-bounded discovery, robots permissions, extraction integrity and rights to preserve original text are not established. Footer states all rights reserved. No shadow or production collection is authorized."
+      "note": "tapchiqptd.vn/en/default.html and m.tapchiqptd.vn/en. The two interfaces publish the same article IDs and are one National Defence Journal source, not two ministry feeds. Military-journal doctrine, commentary and defense scholarship are Tier B institutional media, not MOD-issued directives. Offline ID-based canonicalization is implemented; date-bounded discovery, robots permissions, extraction integrity and rights to preserve original text are not established. Footer states all rights reserved. No shadow or production collection is authorized."
      },
      {
       "name": "Ministry of Finance",
@@ -246,7 +246,7 @@
     ]
    },
    "limits": [
-    "No Vietnam source is enabled in production, and no shadow record contributes to public counts. MPS/MOIT ministry sources run on separate isolated daily shadow cadence; National Defence Journal has no active collection, remote dispatch, state or reliability clock.",
+    "No source is enabled in production for Vietnam, and no shadow record contributes to public counts. MPS/MOIT ministry sources run on separate isolated daily shadow cadence; National Defence Journal has no active collection, remote dispatch, state or reliability clock.",
     "Bounded newsroom and ministry publication families only. No comprehensive Vietnamese defense coverage, no complete ministry archive, no People’s Army Newspaper collection and no formal-document family.",
     "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
     "English and Vietnamese as published, in separate source families. No translation or recovered-original claim.",

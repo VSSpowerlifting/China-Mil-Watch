@@ -258,11 +258,23 @@ class TestThisEnablesNothing(unittest.TestCase):
         collection = [REPO_ROOT / "pipeline.py"]
         collection += list((REPO_ROOT / "scraper").rglob("*.py"))
         collection += list((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
+        editorial_workflow = "weekly_briefs_editorial_handoff.yml"
         for path in collection:
             text = path.read_text(encoding="utf-8")
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
                 self.assertNotIn("core.viewmodel", text)
-                self.assertNotIn("desk_registry", text)
+                if path.name != editorial_workflow:
+                    self.assertNotIn("desk_registry", text)
+                else:
+                    # This is an editorial consumer of production records,
+                    # not a collector. It may read desk metadata, but may
+                    # not gain a database-write or collection path.
+                    self.assertIn("permissions:\n  contents: read", text)
+                    self.assertIn("from scripts.reconcile_db import read_only", text)
+                    self.assertIn("with read_only(Path(DB_PATH)) as conn:", text)
+                    self.assertNotIn("from pipeline import", text)
+                    self.assertNotIn("pipeline.run(", text)
+                    self.assertNotIn("git push", text)
 
     def test_the_desk_registry_cannot_be_discovered_as_a_manifest(self):
         """

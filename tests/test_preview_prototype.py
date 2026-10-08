@@ -52,6 +52,7 @@ PRODUCTION_OUT = REPO_ROOT / "output"
 OFFICIAL_NAMES_WITH_BRITISH_SPELLING = (
     "Singapore Ministry of Defence",
     "Ministry of National Defence",
+    "National Defence Journal",
 )
 
 

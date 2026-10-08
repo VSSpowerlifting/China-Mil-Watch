@@ -68,6 +68,13 @@ Durable documents, and what each one governs:
 
 ---
 
+PR #128 now includes a separate [editorial-skeptic second pass](research/topic_pilot_v1/review/REVIEW.md)
+against original head `0f368eb3131b7cac7d6d1db9e9f00ed7d889a57f`: all 60
+records assessed; 21 topic sets recommended for revision and 19 owner questions
+remain. Both model passes remain provisional; this same-chat second pass is not
+blinded or human approval. No vocabulary changes or assignments are applied.
+PR remains draft pending owner review.
+
 ## 1. Production state
 
 * **Public identity: Indo-Pacific Record.** Live at
@@ -910,6 +917,15 @@ render-and-deploy workflow must regenerate and validate `output/` first. The
 deploy gate's governed baseline is 10 warnings.
 
 ## 7. Immediate priorities
+
+**Regional Topic Taxonomy v1 classification pilot (provisional review):**
+`research/topic_pilot_v1/ledger.json` freezes 60 records from seven desks
+(36 production / 24 shadow), with evidence-linked Codex proposals and pending
+human review. Sixteen of nineteen topics have examples; fifteen records abstain.
+`docs/REGIONAL_TOPIC_PILOT.md` records scope questions and the recommendation
+for independent adjudication before production adoption. No topic is approved
+or attached; no DB/schema, existing desk-label, vocabulary or output change.
+The US desk is excluded from this pilot by owner direction.
 
 Full ordering and rationale in `docs/ROADMAP.md`. In short:
 
