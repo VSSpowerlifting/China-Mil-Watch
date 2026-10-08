@@ -508,12 +508,21 @@ class TestItRunsTheRealChecks(unittest.TestCase):
         self.assertIn("run: %s" % self.VALIDATOR, daily)
 
     def test_the_suite_is_not_narrowed_to_a_subset(self):
-        for body in run_bodies(load_workflow()):
-            if "unittest" in body:
-                self.assertIn("discover", body,
-                              "the PR job must run the whole suite")
-                for narrowing in ("-k ", "--failfast", "tests.test_"):
-                    self.assertNotIn(narrowing, body)
+        # A focused preflight imports unittest and prints "discovered";
+        # neither string makes that step the mandatory full test suite.
+        bodies = run_bodies(load_workflow())
+        self.assertEqual(
+            bodies.count(self.OFFLINE_SUITE), 1,
+            "the exact mandatory full-suite command must appear once",
+        )
+        direct_suites = [
+            body for body in bodies
+            if re.search(r"\\bpython(?:3)?\\s+-m\\s+unittest\\b", body)
+        ]
+        self.assertEqual(
+            direct_suites, [self.OFFLINE_SUITE],
+            "no alternate or narrowed direct unittest suite is permitted",
+        )
 
     def test_the_validator_is_not_given_a_softening_flag(self):
         for body in run_bodies(load_workflow()):
