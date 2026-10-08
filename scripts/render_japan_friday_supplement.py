@@ -57,6 +57,27 @@ REQUIRED_TRUE_FLAGS = (
     "editorial_supplement_only",
     "may_copy_into_dylan_draft_only_after_independent_review",
 )
+LINKED_TSU_IKI = {
+    "candidate_id": "JP-W41-05",
+    "status": "public_official_html_editor_candidate_not_archived",
+    "publication_date": "2026-10-05",
+    "institution": "Japan Ministry of Defense",
+    "language": "ja",
+    "url": "https://www.mod.go.jp/j/press/news/2026/10/05a.html",
+    "linked_shadow_source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "relationship": "Separate same-ministry MOD announcement; not independent institutional corroboration",
+    "subject": "Kadena-to-Tsuiki aircraft training relocation",
+    "planned_training_start": "2026-10-19",
+    "planned_training_end": "2026-10-29",
+    "training_relocation_sequence_at_tsuiki": 12,
+    "type_ii_aircraft_range": [6, 12],
+    "type_ii_days_range": [8, 14],
+    "reviewer_verified_full_page": False,
+    "editorial_approved": False,
+    "ipr_record_id": None,
+    "original_capture_sha256": None,
+}
+
 EMPTY_ARCHIVE_FIELDS = (
     "first_party_original_capture_sha256", "ipr_record_id",
 )
@@ -210,6 +231,20 @@ def validate(data):
         "source_promoted_to_production",
     )),
             "archived Japan text does not imply source verification or admission")
+    extra = data.get("linked_public_mod_tsuiki_training_notice")
+    require(type(extra) is dict and
+            all(extra.get(k) == v for k, v in LINKED_TSU_IKI.items()) and
+            type(extra.get("caveats")) is list and len(extra["caveats"]) >= 4 and
+            type(extra.get("provisional_claims")) is list and
+            len(extra["provisional_claims"]) == 2 and
+            all(isinstance(x, str) and len(x) > 40
+                for x in extra["provisional_claims"]),
+            "secondary Tsuiki notice cannot fabricate capture or change original source")
+    require(valid_date(extra["publication_date"]) <= REVIEW_CUTOFF and
+            valid_date(extra["publication_date"]) <
+            valid_date(extra["planned_training_start"]) <=
+            valid_date(extra["planned_training_end"]),
+            "secondary Tsuiki notice must remain a future event")
     grouped = data.get("source_relationships")
     require(type(grouped) is dict and
             set(grouped) == {"japan_indonesia_disaster_relief_completion",
@@ -239,6 +274,7 @@ def validate(data):
         "official_mod_public_urls": len(seen),
         "shadow_current_week_full_text_records": 1,
         "japanese_original_paired_to_english_release": 1,
+        "separate_official_japanese_html_editor_leads": 1,
         "japan_production_records_added": 0,
         "japan_records_admitted_to_weekly_writer": 0,
         "editorial_claims_approved": 0,
@@ -273,6 +309,15 @@ def render(data):
         "  Shadow commit: " + data["shadow_current_week_original"]["historical_state_commit"],
         "  Archived extracted-text SHA-256: " +
             data["shadow_current_week_original"]["extracted_body_sha256"],
+        "",
+        "SEPARATE OFFICIAL MOD HTML: planned Kadena-to-Tsuiki transfer",
+        "October 5: MOD announced the 12th aircraft-training relocation to",
+        "Tsuiki from Kadena, planned October 19–29; the Type II category",
+        "means 6–12 aircraft over 8–14 days, NOT a confirmed deployment count.",
+        "This public HTML is unarchived. It complements the 05b PDF shadow",
+        "record, but both documents come from the SAME issuing ministry.",
+        "  Source: " + data["linked_public_mod_tsuiki_training_notice"]["url"],
+        "No completed training, full-source human signoff, or IPR ID is claimed.",
         "",
         "SECONDARY EDITORIAL LEAD: Japanese disaster-response operations in Indonesia",
         "MOD reports departure of JS Kunisaki from Kijing Port on October 6 after",
