@@ -1,0 +1,87 @@
+{
+  "sample_version": 1,
+  "topic": "east_china_sea",
+  "source_commit": "e649b5d11b51aa3334fddfb4952d132b6780eb30",
+  "source_index_path": "output/corpus-index.json",
+  "source_index_blob_sha": "38b256ec7884d0b9b69b3b4dcd31ac3dace72ff8",
+  "text_extraction": "Archive record HTML div.original-text; strip tags, HTML-decode, collapse whitespace, trim; offsets in Unicode code units of resulting text",
+  "classification_status": "provisional_control_candidates_only",
+  "records": [
+    {
+      "record_id": 4047,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-09-10",
+      "title_original": "中国海警舰艇编队9月10日在我钓鱼岛及其附属岛屿领海内维权巡航",
+      "title_english": "China Coast Guard Task Group Conducts Rights-Protection Patrol (维权巡航) in the Territorial Waters of China's Diaoyu Dao and Its Affiliated Islands on September 10",
+      "canonical_url": "http://www.81.cn/yw_208727/16484929.html",
+      "archive_path": "output/record/4047.html",
+      "archive_blob_sha": "8c0af5acc846bbfbe2d50f8e5e8c138418270d66",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "Specific China Coast Guard sovereignty-related rights patrol around Diaoyu/Senkaku Islands makes the disputed East China Sea flashpoint substantive, not merely a sea-location reference.",
+      "stored_text_chars": 524,
+      "evidence": {
+        "offset_start": 159,
+        "offset_end": 283,
+        "quote": "ated Islands on September 10 9月10日，中国海警登步舰编队在我钓鱼岛及其附属岛屿领海内维权巡航。这是中国海警依法开展的维权巡航活动。 On September 10, the China Coast Guard (CC"
+      }
+    },
+    {
+      "record_id": 702,
+      "desk_id": "china",
+      "source_slug": "pla_daily",
+      "source_stated_date": "2026-05-26",
+      "title_original": "中国海警依法驱离日非法进入我钓鱼岛领海船只",
+      "title_english": "China Coast Guard Lawfully Expels Japanese Vessel That Illegally Entered China's Territorial Waters Around the Diaoyu Islands",
+      "canonical_url": "http://www.81.cn/yw_208727/16463547.html",
+      "archive_path": "output/record/702.html",
+      "archive_blob_sha": "aa47637c5ec86b7d2d3fc27bebea08c784bca65e",
+      "review_state": "pending_human",
+      "provisional_status": "positive",
+      "rationale": "A separate dated official China Coast Guard account describes an encounter and expulsion involving a Japanese vessel around disputed islands; legality and sovereignty assertions remain attributed to the issuer.",
+      "stored_text_chars": 139,
+      "evidence": {
+        "offset_start": 0,
+        "offset_end": 110,
+        "quote": "中国海警局新闻发言人姜略表示，5月26日，日本“狮子”号渔船非法进入中国钓鱼岛领海，中国海警舰艇依法对其采取必要管控措施并警告驱离。钓鱼岛及其附属岛屿是中国固有领土，我们敦促日方立即停止在该海域的一切侵权挑衅行径。中国海"
+      }
+    },
+    {
+      "record_id": 4245,
+      "desk_id": "china",
+      "source_slug": "mod_china",
+      "source_stated_date": "2026-09-17",
+      "title_original": "东海某海域，一场实战背景下的两栖攻击舰与气垫艇协同训练拉开战幕",
+      "title_english": "In a certain sea area of the East China Sea, a curtain rises on coordinated training between an amphibious assault ship and hovercraft under combat-realistic conditions",
+      "canonical_url": "http://www.mod.gov.cn/gfbw/wzll/hj/16486972.html",
+      "archive_path": "output/record/4245.html",
+      "archive_blob_sha": "8f8a1b1d4a25879634cbc19181e8ffe739472edf",
+      "review_state": "pending_human",
+      "provisional_status": "negative",
+      "rationale": "Amphibious-ship/hovercraft training is substantively documented, but East China Sea is just a location; no regional dispute or specifically East China Sea security situation is developed.",
+      "stored_text_chars": 807,
+      "evidence": {
+        "offset_start": 0,
+        "offset_end": 117,
+        "quote": "“野马”蹈海 踏浪飞驰 ——海军某部组织舰艇协同训练见闻 初秋，东海某海域，海军某部两栖攻击舰耕波犁浪，向预定海域航渡。坞舱内，气垫艇蓄势待发，一场实战背景下的两栖攻击舰与气垫艇协同训练拉开战幕。 “气垫艇进出坞部署！”指令下达，各战"
+      }
+    },
+    {
+      "record_id": 1857,
+      "desk_id": "china",
+      "source_slug": "global_times_mil",
+      "source_stated_date": "2026-06-27",
+      "title_original": "China, Russia conduct 11th joint strategic air patrol over Sea of Japan, East China Sea and Western Pacific: Chinese MND",
+      "title_english": null,
+      "canonical_url": "https://www.globaltimes.cn/page/202606/1364568.shtml",
+      "archive_path": "output/record/1857.html",
+      "archive_blob_sha": "4e5adf76508fa736c6ea56eb9e68e03474ba2272",
+      "review_state": "pending_human",
+      "provisional_status": "unassessable",
+      "rationale": "This indexed Global Times article mentions an East China Sea strategic patrol in its title, but the archived source body is unavailable. Title alone cannot establish a substantive topic assignment.",
+      "stored_text_chars": 0,
+      "evidence": null
+    }
+  ]
+}
