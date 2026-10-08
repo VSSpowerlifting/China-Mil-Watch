@@ -4,10 +4,10 @@
 
 ## 0. Stack verification before any state write
 
-1. [PR #206](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/206): confirm the final-head access probe and **full PR offline checks** are green before squash merge.
-2. [PR #208](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/208): after #206 lands on `main`, rebase/carry **only its adapter, proof workflow/tests and disabled shadow declaration** onto updated `main`; run the full main-target suite. Verify its three source-body fidelity records again if the adapter changed.
-3. [PR #209](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/209): after #208 lands on `main`, rebase/carry **only its shadow-runner, reviewer, manual workflow and manifest activation/test changes** onto updated `main`; rerun the full suite. Preserve the separate source declaration and refusal guards. Draft must not be treated as approved just because PR-local tests are green.
-4. For #209, explicitly inspect and approve first-party text reuse and document-specific exclusions under the publisher's usage terms. Confirm that no PDF attachment, photo or logo is intended to be copied or represented as collected. Confirm the observed stale `datetime=2021-3-1` discrepancy is documented and acceptable *only with original index/visible-date equality*.
+1. [PR #206](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/206) was squash-merged into `main` with successful source-access and full offline checks.
+2. Stacked [PR #208](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/208) and [PR #209](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/209) were merged into **intermediate branches**, not `main`. A GitHub "merged" status on those PRs is not evidence of mainline installation. Do **not** merge or cherry-pick those branches wholesale.
+3. [PR #212](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/212) consolidates the exact required adapter, shadow runner, pinned reviewer and test files into a single clean branch off the post-#206 `main`. Review its own full main-target PR checks and source boundary before squash-merging.
+4. For #212, explicitly inspect and approve first-party text reuse and document-specific exclusions under the publisher's usage terms. Confirm that no PDF attachment, photo or logo is intended to be copied or represented as collected. Confirm the observed stale `datetime=2021-3-1` discrepancy is documented and acceptable *only with original index/visible-date equality*.
 5. Verify there is **no new production Japan manifest**, no changed production DB or public output, no cron, and the workflow is guarded by `github.ref == 'refs/heads/main'`. Do not merge any `shadow/japan-jcg` branch into `main`.
 
 ## 1. First owner-authorized manual collection
