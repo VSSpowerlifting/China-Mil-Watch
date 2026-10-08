@@ -83,8 +83,10 @@ This avoids coupling the regional layer to one desk's storage model.
 When production adoption is authorized, it must be a separate schema phase:
 add a numbered migration that installs this same contract, apply it to the
 tracked production database in that same change, prove existing record rows are
-preserved, and only then permit production assignments. Shadow stores follow
-the same explicit opt-in boundary.
+preserved, and only then permit production assignments. `attach_topic()` does
+not create the table implicitly; it refuses an unconfigured store, so a write
+cannot silently become the schema-migration event. Shadow stores follow the
+same explicit opt-in boundary.
 
 This foundation creates **no assignment rows** and changes no production or
 shadow database. Existing articles, `article_categories`, analyses, shadow
