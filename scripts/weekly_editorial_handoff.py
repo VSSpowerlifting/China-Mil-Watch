@@ -297,6 +297,8 @@ def main(argv=None):
         if args.research_packet and (
                 args.research_packet.name != sidecar["week_ending"] + ".json"):
             parser.error("--research-packet basename must match exact reporting Saturday")
+        if args.research_packet and not args.research_packet.is_file():
+            raise ValueError("explicit private research packet missing; refuse silent fallback")
         research_dir = (args.research_packet.parent if args.research_packet else None)
         research = (load_editorial_evidence(sidecar["week_ending"], args.as_of,
                                             directory=research_dir)
