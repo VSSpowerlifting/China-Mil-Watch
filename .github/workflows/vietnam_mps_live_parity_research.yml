@@ -1,0 +1,77 @@
+name: Vietnam MPS Three-Record Live Parity One-shot
+
+# Disposable metadata-only comparison; no cron, no production write,
+# no captured article prose published or stored in workflow artifacts.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_mps_live_parity_research.yml'
+      - 'scripts/probe_vietnam_mps_editorial_parity.py'
+      - 'tests/test_vietnam_mps_editorial_parity.py'
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    if: ${{ github.head_ref == 'research/vietnam-mps-live-parity-proof-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out immutable research commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install pinned project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run synthetic parity guard tests before any source GET
+        run: python -m unittest tests.test_vietnam_mps_editorial_parity -v
+
+      - name: Read immutable MPS shadow branch via Git only
+        run: |
+          set -euo pipefail
+          git clone --single-branch --branch shadow/vietnam-mps-foreign-affairs \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "${RUNNER_TEMP}/vietnam-mps-state"
+          test "$(git -C "${RUNNER_TEMP}/vietnam-mps-state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          git -C "${RUNNER_TEMP}/vietnam-mps-state" cat-file -e 46f6a0e59e25b03868bf7ad600963d6921ee5124^{commit}
+          git -C "${RUNNER_TEMP}/vietnam-mps-state" ls-tree --name-only 46f6a0e59e25b03868bf7ad600963d6921ee5124 | grep -qx state
+
+      - name: Verify three original captures and compare live publisher pages
+        env:
+          OUT: ${{ runner.temp }}/vietnam-mps-live-parity.json
+        run: |
+          python scripts/probe_vietnam_mps_editorial_parity.py \
+            --state-repo "${RUNNER_TEMP}/vietnam-mps-state" \
+            --state-commit 46f6a0e59e25b03868bf7ad600963d6921ee5124 \
+            --out "$OUT"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          d=json.loads(Path(os.environ["OUT"]).read_text())
+          assert d["human_approvals"] == 0
+          assert d["reuse_rights_approvals"] == 0
+          assert d["production_record_imports"] == 0
+          assert d["publisher_html_retained"] is False
+          assert d["publisher_article_text_retained"] is False
+          assert len(d["records"]) == 3
+          print("Verified metadata-only and unsigned; no production writes.")
+          PY
+
+      - name: Upload metadata-only research packet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-mps-three-record-parity-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-mps-live-parity.json
+          if-no-files-found: warn
+          retention-days: 30
