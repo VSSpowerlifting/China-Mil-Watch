@@ -120,6 +120,29 @@ class WriterContractTests(unittest.TestCase):
         )
         read.assert_called_once()
 
+    def test_more_than_five_live_desks_never_exceeds_evidence_budget(self):
+        desks = ["desk-" + str(n) for n in range(7)]
+        rows = []
+        for n, desk in enumerate(desks):
+            for j in range(2):
+                rows.append(FakeRecord(
+                    id=(n * 2 + j + 1), desk_id=desk, analyzed_at=None,
+                    is_significant=0, published_date="2026-10-10",
+                    text_english="X" * 300, text_original="X" * 300,
+                ))
+        packet = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                  "desks": desks,
+                  "source_trail": [{"record_id": r["id"]} for r in rows]}
+        with patch("scripts.weekly_briefs_auto_writer.read_only",
+                   return_value=nullcontext("DB")), \
+             patch("scripts.weekly_briefs_auto_writer.get_articles_for_desks",
+                   return_value=rows), \
+             patch("scripts.weekly_briefs_auto_writer.trail_entry",
+                   side_effect=lambda row: {"record_id": row["id"]}):
+            selected = choose_evidence(packet, as_of="2026-10-10", db="/tmp/mock.db")
+        self.assertEqual(len(selected), MAX_RECORDS)
+        self.assertEqual(len({r["desk_id"] for r, _ in selected}), len(desks))
+
     def test_sunday_draft_prompt_does_not_call_week_unfinished(self):
         data = valid_manuscript()
         response = SimpleNamespace(
