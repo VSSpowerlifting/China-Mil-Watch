@@ -20,11 +20,13 @@ The existing Sunday workflow still verifies that its Saturday reporting week has
 
 ### October 10 pilot
 
+The private MPS composite now exports both the number of model-ready Vietnam source synopses and the number of in-window machine-eligible archive records, including records with **no** synopsis. The Sunday verification step refuses any impossible count and requires **exact parity** for the October 10 pilot *before* Anthropic/SMTP secrets are available to the drafting step. This catches new same-week MPS articles that were archived after the static editorial packet was prepared. Its first live manifestation was the October 8 capture of the October 7 Australia meeting, later covered by separate research PR #245.
+
 The initial October 10 packet is special: **Vietnam is required** to enter the owner preview. If the current archive shows a source revision without a matching synopsis, or the two expected current source notes disappear, the job refuses **before** any AI or email step. Do not silently claim Vietnam contributed when no authenticated source-version-matched research exists.
 
 ### Later weeks
 
-When no Vietnam note catalog exists, the policy explicitly permits zero private Vietnam model inputs **after** independently checking the real current MPS shadow archive. The composite action records that absence separately from observed publications. This prevents a permanent production-wide model outage merely because Vietnam has no reviewed notes yet.
+When no Vietnam note catalog exists, the policy explicitly permits zero private Vietnam model inputs **after** independently checking the real current MPS shadow archive. In future weeks, if eligible archive records outnumber model-ready synopses, the workflow prints an explicit GitHub warning before drafting; it must not equate that omission with government silence. The composite action records that absence separately from observed publications. This prevents a permanent production-wide model outage merely because Vietnam has no reviewed notes yet.
 
 A **present but invalid, version-stale, or symlinked** research file always fails closed, even for later weeks. A source article found only in shadow state is **not** automatically eligible for third-party AI use or published Briefs; the action consumes only separately authored, source-version-matched short research synopses. No article bodies go to the Sunday model.
 
