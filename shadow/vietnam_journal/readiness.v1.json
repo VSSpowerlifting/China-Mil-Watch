@@ -1,0 +1,37 @@
+{
+  "schema": "ipr-vietnam-journal-readiness/1",
+  "source_slug": "vn_national_defence_journal_en",
+  "source_role": "disabled_research_candidate",
+  "authority_tier": "B",
+  "content_kind": "military_journal_editorial",
+  "gates": {
+    "desktop_robots_tested_paths": "bounded_proof",
+    "canonical_identity": "offline_verified",
+    "article_extraction": "two_pages_in_memory",
+    "four_category_discovery": "live_identity_parity_observed",
+    "historical_enumeration": "unproven",
+    "forward_listing_reliability": "not_started",
+    "metadata_retention_rights": "unreviewed",
+    "full_text_retention_rights": "unapproved",
+    "public_republication_rights": "unapproved",
+    "owner_shadow_activation": "not_authorized",
+    "owner_production_promotion": "not_authorized"
+  },
+  "evidence": {
+    "desktop_access": "https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37712715499",
+    "article_parser": "https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37715526834",
+    "listing_parser": "https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37721439408",
+    "historical_investigation": "https://github.com/VSSpowerlifting/China-Mil-Watch/issues/154",
+    "source_use_decision": "https://github.com/VSSpowerlifting/China-Mil-Watch/issues/155"
+  },
+  "derived_permissions": {
+    "automatic_collection": false,
+    "shadow_source_activation": false,
+    "metadata_persistence": false,
+    "article_text_retention": false,
+    "public_excerpt_or_translation": false,
+    "public_full_text": false,
+    "production_promotion": false
+  },
+  "note": "Current evidence snapshot only. False permissions mean no authorization is documented; this file is neither a legal opinion nor a source-use licence. A future change requires a separate owner decision and updated audited contract."
+}

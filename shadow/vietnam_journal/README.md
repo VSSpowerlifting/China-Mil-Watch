@@ -2,6 +2,20 @@
 
 **Status: declared research candidate, source disabled, no remote collection.**
 
+**Current engineering checkpoint, October 8, 2026:** article extraction and
+four-category listing parsers are merged (#138/#143). A bounded in-memory
+proof recovered article fields from two desktop pages; the four live category
+pages exposed 71 candidate IDs with exact parser/scanner identity parity.
+Those results do **not** prove complete history or validated publication
+dates for all links. Historical coverage and use/retention rights remain
+open in #154/#155.
+
+`readiness.v1.json` records the exact evidence and unapproved-use posture.
+`scripts/validate_vietnam_journal_readiness.py` rejects accidental rights
+or activation claims against the disabled manifest. This is an offline
+preflight only, **not** enforcement inside any future source collector.
+
+
 Source slug: `vn_national_defence_journal_en`, publisher: National
 Defence Journal (`Tạp chí Quốc phòng toàn dân`). This is military-journal
 editorial writing and analysis, not the Ministry of National Defence's formal
@@ -48,15 +62,17 @@ does not invent a UTC instant.
    payload hashes are in docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md. No proxy, challenge solver,
    browser impersonation, alternate host circumvention, undocumented pagination
    or retries.
-2. The homepages are *not* a timestamped, exhaustive release feed.
-   The successful desktop sample also exposed an extraction gap: the initially
-   tested title/body selectors returned no article body or title, and the
-   page contained both its September 30 publication date and the October 8
-   running site clock. A source-specific, date-bounded listing and pagination
-   proof, a measured missed-item audit, validated complete extraction,
-   content signatures and a bounded remote budget must precede shadow
-   activation. The offline link contract is deliberately **not** a runnable
-   remote adapter.
+2. The homepages are *not* an exhaustive timestamped release feed.
+   The original access probe exposed a genuine extraction gap and a separate
+   live site clock. The later article parser (#138) resolved the article DOM
+   fields on **two** real desktop samples, only in memory; it does not verify
+   every article genre. The four-category parser (#143) matched an independent
+   scanner on **71 distinct IDs** in one bounded live observation. These are
+   observed candidate URLs and provisional date hints, not a proven dated
+   archive or complete backfill. There is no verified pagination mechanism.
+   Future work must evaluate missed-item risk, historically bounded discovery,
+   explicit original-text retention rights and an owner-authorized new shadow
+   reliability cadence. The parsers are **not** an active remote adapter.
 3. Both site footers say **All rights reserved**. Public visibility is not a
    blanket permission for archiving and republishing full article text.
    Evaluate permissions for the precise proposed retention/display behavior;
@@ -84,6 +100,15 @@ Run offline:
 python -m unittest tests.test_vn_defence_journal -v
 ```
 
-Promotion path: human access/reuse decision -> bounded dated discovery and
-extraction proof -> tested shadow adapter -> separate owner activation ->
-remote Day 0 -> Day 7/14/30 review -> explicit production promotion.
+Promotion path: explicit source-use/retention decision and historical
+discovery assessment -> tested fail-closed shadow adapter (with rights
+checks integrated, not simply documented) -> separate owner activation ->
+journal-specific remote Day 0 -> Day 7/14/30 human reviews -> explicit
+production promotion. No MPS/MOIT collection evidence is inherited.
+
+Validate the current research hold offline:
+
+```sh
+python -m scripts.validate_vietnam_journal_readiness
+python -m unittest tests.test_vietnam_journal_readiness -v
+```
