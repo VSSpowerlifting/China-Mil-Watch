@@ -64,6 +64,11 @@ class SundayHandoffTests(unittest.TestCase):
         self.assertEqual(r["IPR_SUNDAY_AS_OF"], "2026-10-10")
         self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "true")
 
+    def test_saturday_is_not_complete_even_with_manual_override(self):
+        with self.assertRaisesRegex(SundayHandoffRefused, "has not ended"):
+            window(utc("2026-10-10T20:00:00"), event="workflow_dispatch",
+                   send=True, historical=True, marker="")
+
     def test_manual_historical_preview_stays_unsent_and_needs_no_marker(self):
         now = utc("2026-10-15T16:00:00")
         r = window(now, event="workflow_dispatch", send=False, marker="",
