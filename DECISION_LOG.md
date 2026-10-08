@@ -4,6 +4,30 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-08 UTC — Desktop Vietnam National Defence Journal access proved; publication held
+
+A single bounded GitHub Actions experiment (PR #130, run
+[37712715499](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37712715499),
+head `4c150bd1ec2bc8f7390077c55ebbb2b1b7371d0b`) made four GET requests
+with the declared IPR shadow collector identity and passed 19 offline tests.
+The desktop robots policy returned 200 and permitted the exact English
+homepage and sample article URL; the homepage returned 200 with 26 deduplicated
+article identities, and sample article 26936 returned 200. Source HTML was
+not retained or published. The tested title/body extraction selectors
+matched nothing, and the sample showed both a September 30 article date and
+an October 8 site clock, so extraction and date provenance remain **unverified**.
+
+The mobile robots endpoint returned HTTP 404 (no rules file at the tested
+URL, not an affirmative disallow); the mobile listing and article were not
+requested. Do not treat its presentation as a fallback around any refusal.
+
+Decision: keep this source disabled and in research status. No shadow
+activation, production admission, original-text retention/republication,
+date-bounded completeness claim or 7/14/30 clock follows from this proof.
+Next work is page-structure verification and source-rights assessment.
+Evidence: `docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md`. The disposable
+workflow/PR is closed unmerged after result preservation.
+
 ## 2026-10-07 — National Defence Journal declared as a disabled Vietnam research source
 
 The owner supplied both `http://tapchiqptd.vn/en/default.html` and
