@@ -139,6 +139,9 @@ jobs:
               "test_topic_owner_queue",
               "test_topic_v2_evidence_verifier",
               "test_topic_v2_crossdesk_hadr",
+              # Bounded, no-network source and citation contracts are cheap
+              # enough to fail fast before the browser/full-suite gate.
+              "test_briefs_editorial_evidence",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
