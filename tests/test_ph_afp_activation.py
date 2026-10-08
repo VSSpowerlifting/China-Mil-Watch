@@ -24,8 +24,8 @@ class OfflineGate(unittest.TestCase):
             ],
         }
         self.reviews = {
-            "SYNTHETIC-7": {"total": 13, "decisions": {"verified": 13, "hold": 0}},
-            "SYNTHETIC-8": {"total": 5, "decisions": {"verified": 5, "hold": 0}},
+            "SYNTHETIC-7": {"total": 13, "decisions": {"verified": 13, "hold": 0, "pending": 0}},
+            "SYNTHETIC-8": {"total": 5, "decisions": {"verified": 5, "hold": 0, "pending": 0}},
         }
 
     def test_fully_supported_still_never_activates(self):
@@ -55,7 +55,7 @@ class OfflineGate(unittest.TestCase):
 
     def test_hold_blocks_even_complete_packet(self):
         reviews = copy.deepcopy(self.reviews)
-        reviews["SYNTHETIC-8"]["decisions"] = {"verified": 4, "hold": 1}
+        reviews["SYNTHETIC-8"]["decisions"] = {"verified": 4, "hold": 1, "pending": 0}
         out = preflight.summarize(self.audit, reviews)
         self.assertFalse(out["source_review_packet_gate"])
         self.assertEqual(out["held_review_runs"], ["SYNTHETIC-8"])
@@ -65,6 +65,15 @@ class OfflineGate(unittest.TestCase):
         reviews["SYNTHETIC-7"]["total"] = 12
         with self.assertRaisesRegex(preflight.AdmissionPreflightError, "conflicts"):
             preflight.summarize(self.audit, reviews)
+
+    def test_missing_or_inconsistent_review_decisions_block(self):
+        for fake in ({}, {"verified": 13, "hold": 0, "pending": 0},
+                     {"verified": 13, "hold": 1, "pending": 0}):
+            fake_reviews = copy.deepcopy(self.reviews)
+            fake_reviews["SYNTHETIC-8"]["decisions"] = fake
+            with self.subTest(fake=fake), self.assertRaisesRegex(
+                    preflight.AdmissionPreflightError, "decision counts"):
+                preflight.summarize(self.audit, fake_reviews)
 
     def test_manifest_rejects_duplicate_unknown_and_traversal(self):
         base = {"protocol": "ipr_ph_afp_activation_review_manifest_v1",
