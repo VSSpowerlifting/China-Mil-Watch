@@ -190,7 +190,10 @@ def validate_decisions(
         expected = originals[pilot_id]
         if set(entry) != set(expected):
             raise ReviewGateError("%s: unexpected or missing entry fields" % pilot_id)
-        for field in _identity(expected):
+        # expected is already a normalized review-template entry. Do not
+        # pass it through _identity(), which expects ledger canonical_url.
+        for field in ("pilot_id", "record_id", "desk_id",
+                      "source_url", "body_sha256"):
             if entry.get(field) != expected[field]:
                 raise ReviewGateError("%s: %s identity changed" % (pilot_id, field))
         originals[pilot_id] = None  # every identity occurs exactly once
