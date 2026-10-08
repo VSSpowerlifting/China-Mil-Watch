@@ -38,7 +38,8 @@ The selection manifest is the ordered record list itself: replay selects these
 identities, never whatever happens to be newest on a branch. Full source text is
 retained in the pinned stores; only short relevant excerpts are copied here.
 Offsets count Unicode characters in the preserved `text_original`, not bytes or
-PDF page coordinates. No translation is stored as authoritative source text.
+PDF page coordinates. Markdown display trims line-end whitespace; the canonical
+JSON excerpts preserve it exactly for replay. No translation is stored as authoritative source text.
 English rationales are Codex interpretations requiring original-language review.
 
 Codex proposed labels through one-time reading of the selected records. There is

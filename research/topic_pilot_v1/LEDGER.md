@@ -684,7 +684,7 @@ E1 · `text_original[16:140]` (Unicode characters, end exclusive):
 
 E2 · `text_original[1273:1399]` (Unicode characters, end exclusive):
 
-> e framework of the Qatar-Singapore High-Level Joint Committee (HLJC). Minister Chan welcomed Qatar’s regular participation in 
+> e framework of the Qatar-Singapore High-Level Joint Committee (HLJC). Minister Chan welcomed Qatar’s regular participation in
 
 ## P27 · singapore · production
 
@@ -824,7 +824,7 @@ Existing desk labels: none recorded.
 
 E1 · `text_original[16:149]` (Unicode characters, end exclusive):
 
-> inister for Defence Chan Chun Sing called on German Federal Minister of Defence Boris Pistorius this afternoon. Minister for Defence 
+> inister for Defence Chan Chun Sing called on German Federal Minister of Defence Boris Pistorius this afternoon. Minister for Defence
 
 E2 · `text_original[697:810]` (Unicode characters, end exclusive):
 
@@ -950,7 +950,7 @@ E1 · `text_original[133:257]` (Unicode characters, end exclusive):
 
 E2 · `text_original[1139:1248]` (Unicode characters, end exclusive):
 
-> 6 September 2026. XTR is the first ADMM-Plus Combined Field Training Exercise (FTX) involving three Experts’ 
+> 6 September 2026. XTR is the first ADMM-Plus Combined Field Training Exercise (FTX) involving three Experts’
 
 Review question/limitation: ADMM-Plus framework supports partnership topic; disaster response remains only indirectly represented.
 
@@ -1000,7 +1000,7 @@ E2 · `text_original[309:418]` (Unicode characters, end exclusive):
 
 E3 · `text_original[357:463]` (Unicode characters, end exclusive):
 
-> 空機訓練 移転（ＡＴＲ）に係る共同訓練を実施するため、標記施設の一部を日米地位協定第 ２条第４項（ｂ）に基づき限定使用することについて、日米合同委員会の承認を得 たものである。 記 土 地：約 29,000 ㎡ 
+> 空機訓練 移転（ＡＴＲ）に係る共同訓練を実施するため、標記施設の一部を日米地位協定第 ２条第４項（ｂ）に基づき限定使用することについて、日米合同委員会の承認を得 たものである。 記 土 地：約 29,000 ㎡
 
 ## P38 · japan · shadow
 
@@ -1227,7 +1227,7 @@ Existing desk labels: none recorded.
 
 E1 · `text_original[1497:1615]` (Unicode characters, end exclusive):
 
-> át triển kinh tế - xã hội, đảm bảo an ninh năng lượng, ổn định thị trường xăng, dầu, Bộ Công Thương có ý kiến đề xuất 
+> át triển kinh tế - xã hội, đảm bảo an ninh năng lượng, ổn định thị trường xăng, dầu, Bộ Công Thương có ý kiến đề xuất
 
 Review question/limitation: Energy-security rationale supports economic_security, but broad tax measures do not constitute export_controls_sanctions.
 
@@ -1251,7 +1251,7 @@ Existing desk labels: none recorded.
 
 E1 · `text_original[5745:5860]` (Unicode characters, end exclusive):
 
->  đồng thời là vấn đề liên quan đến an ninh kinh tế, tự chủ chiến lược và mục tiêu đưa Việt Nam trở thành nước phát 
+>  đồng thời là vấn đề liên quan đến an ninh kinh tế, tự chủ chiến lược và mục tiêu đưa Việt Nam trở thành nước phát
 
 E2 · `text_original[2948:3065]` (Unicode characters, end exclusive):
 
@@ -1299,7 +1299,7 @@ Existing desk labels: none recorded.
 E1 · `text_original[866:991]` (Unicode characters, end exclusive):
 
 >  personnel in sustaining the AFP’s maritime security mission.
-> 
+>
 > The visit reaffirmed the AFP’s commitment to maintaining a str
 
 Review question/limitation: Awards surround substantive maritime-readiness content; topic rests on mission discussion, not naval affiliation.
@@ -1365,7 +1365,7 @@ Existing desk labels: none recorded.
 E1 · `text_original[147:273]` (Unicode characters, end exclusive):
 
 > t Guard (PCG), formally opened the 2026 Inter-Agency Exercise during a ceremony held on September 30, here.
-> 
+>
 > The opening cerem
 
 ## P53 · philippines · shadow
@@ -1386,7 +1386,7 @@ Existing desk labels: none recorded.
 
 E1 · `text_original[251:377]` (Unicode characters, end exclusive):
 
-> 
+>
 > General Nafarrete highlighted the relocation and integration of the 15th Strike Wing and the 590th Air Base Group, Philippine
 
 ## P54 · philippines · shadow
@@ -1427,7 +1427,7 @@ Unclassified: Forest restitution/fines ceremony attended by defense minister lac
 
 E1 · `text_original[0:130]` (Unicode characters, end exclusive):
 
-> Jakarta – Menteri Pertahanan RI Sjafrie Sjamsoeddin menghadiri acara Pemyerahan Denda Administratif Rp13,2 triliun dan Penguasaan 
+> Jakarta – Menteri Pertahanan RI Sjafrie Sjamsoeddin menghadiri acara Pemyerahan Denda Administratif Rp13,2 triliun dan Penguasaan
 
 ## P56 · indonesia · shadow
 
@@ -1469,7 +1469,7 @@ Existing desk labels: none recorded.
 
 E1 · `text_original[1480:1598]` (Unicode characters, end exclusive):
 
-> an wujud konkret dari implementasi hubungan bilateral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA) 
+> an wujud konkret dari implementasi hubungan bilateral serta Kerja Sama Pertahanan (Defense Cooperation Agreement/DCA)
 
 E2 · `text_original[1528:1661]` (Unicode characters, end exclusive):
 

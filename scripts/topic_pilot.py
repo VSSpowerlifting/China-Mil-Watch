@@ -228,7 +228,7 @@ def markdown(data):
             lines += ['', 'Unclassified: ' + r['unclassified_reason']]
         for e in r['evidence']:
             lines += ['', '%s · `text_original[%d:%d]` (Unicode characters, end exclusive):' %
-                      (e['id'], e['start'], e['end']), '', '> ' + e['quote'].replace('\n', '\n> ')]
+                      (e['id'], e['start'], e['end']), '', '\n'.join(('> ' + line).rstrip() for line in e['quote'].split('\n'))]
         if r['review_issue']:
             lines += ['', 'Review question/limitation: ' + r['review_issue']]
     return '\n'.join(lines) + '\n'
