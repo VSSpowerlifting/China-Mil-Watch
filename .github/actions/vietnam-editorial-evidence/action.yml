@@ -11,6 +11,10 @@ inputs:
     description: "Optional existing regional packet with Japan and other non-Vietnam sources"
     required: false
     default: ""
+  state-commit:
+    description: "Optional exact historic MPS shadow commit for reproducible testing; otherwise newest branch head"
+    required: false
+    default: ""
 outputs:
   packet:
     description: "Absolute path to validated private combined official-source research JSON; never upload as a public artifact"
@@ -31,6 +35,7 @@ runs:
         VN_WEEK_END: ${{ inputs.week-ending }}
         VN_NOTES: ${{ inputs.notes }}
         VN_EXISTING: ${{ inputs.existing-packet }}
+        VN_PINNED_COMMIT: ${{ inputs.state-commit }}
       run: |
         set -euo pipefail
         # Inputs are environment values, never interpolated into shell syntax.
@@ -49,7 +54,10 @@ runs:
         test "$(git -C "$state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
         test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
         test -z "$(git -C "$state" status --porcelain)"
-        state_sha="$(git -C "$state" rev-parse HEAD)"
+        # A pinned historical commit is permissible for a no-send replay
+        # only when the independent verifier proves its ancestry on this
+        # exact orphan source branch; production defaults to the current tip.
+        state_sha="${VN_PINNED_COMMIT:-$(git -C "$state" rev-parse HEAD)}"
         [[ "$state_sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
         mkdir "$working/editorial"
         destination="$working/editorial/$VN_WEEK_END.json"
