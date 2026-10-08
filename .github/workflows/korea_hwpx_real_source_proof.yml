@@ -1,0 +1,83 @@
+name: Korea HWPX Original Source Proof (Read Only)
+
+# Prove the *actual* archived Korea shadow capture bytes match their stored
+# Korean text. This is not semantic/human review or desk/publishing approval.
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'scripts/audit_korea_source_fidelity.py'
+      - 'tests/test_korea_source_fidelity.py'
+      - '.github/workflows/korea_hwpx_real_source_proof.yml'
+      - '.github/workflows/korea_source_fidelity_review.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-real-hwpx-proof-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify-real-korean-originals:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install source dependencies
+        run: python -m pip install -r repo/requirements.txt
+
+      - name: Run Korea original-document adversarial regressions
+        working-directory: repo
+        run: python -m unittest tests.test_korea_source_fidelity -v
+
+      - name: Replay the real current Korea state branch without writing it
+        shell: bash
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/korea-proof-source"
+          git clone --quiet --single-branch --branch shadow/korea-policy-briefing \
+            "$STATE_REMOTE" "$state"
+          test "$(git -C "$state" branch --show-current)" = "shadow/korea-policy-briefing"
+          test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
+          commit="$(git -C "$state" rev-parse HEAD)"
+          ( cd repo && python -m scripts.audit_korea_source_fidelity \
+              --state-repo "$state" --state-commit "$commit" \
+              --as-of "$(date -u +%F)" \
+              --out "$RUNNER_TEMP/korea-real-hwpx-proof" )
+          test -z "$(git -C "$state" status --porcelain --untracked-files=all)"
+          test -z "$(git -C repo status --porcelain --untracked-files=all)"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ["RUNNER_TEMP"]) / "korea-real-hwpx-proof" / "machine_fidelity.json"
+          report = json.loads(path.read_text(encoding="utf-8"))
+          if report["machine_hwp_original_parity"] != "PASS" or report["records_checked"] < 1:
+              raise SystemExit("Real Korean HWPX/source parity did not pass")
+          if report["source_eligible_for_substantive_weekly_claims"]:
+              raise SystemExit("Machine proof falsely approved editorial content")
+          print("REAL source-byte parity passed for", report["records_checked"],
+                "republications; human and rights review unapproved.")
+          print("Separate daily continuity verdict:", report["scheduled_continuity"])
+          PY
+
+      - name: Upload source metadata and blank reviewer assignments
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-real-hwpx-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/korea-real-hwpx-proof/
+          if-no-files-found: warn
+          retention-days: 30
+
+      # No LLM, email, promotion, write token, source collection or deployment.
