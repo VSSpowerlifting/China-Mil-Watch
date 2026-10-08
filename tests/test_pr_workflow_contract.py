@@ -508,12 +508,21 @@ class TestItRunsTheRealChecks(unittest.TestCase):
         self.assertIn("run: %s" % self.VALIDATOR, daily)
 
     def test_the_suite_is_not_narrowed_to_a_subset(self):
-        for body in run_bodies(load_workflow()):
-            if "unittest" in body:
-                self.assertIn("discover", body,
-                              "the PR job must run the whole suite")
-                for narrowing in ("-k ", "--failfast", "tests.test_"):
-                    self.assertNotIn(narrowing, body)
+        # A focused preflight imports unittest and prints "discovered";
+        # neither string makes that step the mandatory full test suite.
+        bodies = run_bodies(load_workflow())
+        self.assertEqual(
+            bodies.count(self.OFFLINE_SUITE), 1,
+            "the exact mandatory full-suite command must appear once",
+        )
+        direct_suites = [
+            body for body in bodies
+            if re.search(r"\bpython(?:3)?\s+-m\s+unittest\b", body)
+        ]
+        self.assertEqual(
+            direct_suites, [self.OFFLINE_SUITE],
+            "no alternate or narrowed direct unittest suite is permitted",
+        )
 
     def test_the_validator_is_not_given_a_softening_flag(self):
         for body in run_bodies(load_workflow()):
@@ -591,8 +600,12 @@ class TestStepOrder(unittest.TestCase):
         self.baseline = index_of(self.doc, lambda s: s.get("id") == "baseline")
         self.install = index_of(
             self.doc, lambda s: "pip install" in s.get("run", ""))
+        # A fast pre-browser subset also imports unittest. This position
+        # must identify the exact mandatory *full* suite, not its preflight.
         self.suite = index_of(
-            self.doc, lambda s: "unittest" in s.get("run", ""))
+            self.doc,
+            lambda s: s.get("run", "").strip()
+            == TestItRunsTheRealChecks.OFFLINE_SUITE)
         self.validator = index_of(
             self.doc, lambda s: "validate_output.py" in s.get("run", ""))
         self.guard = index_of(
@@ -720,11 +733,39 @@ class TestBrowserBackedTestsActuallyRun(unittest.TestCase):
                          lambda s: "chromium.launch()" in s.get("run", ""))
         deps = index_of(self.doc,
                         lambda s: "pip install" in s.get("run", ""))
-        suite = index_of(self.doc, lambda s: "unittest" in s.get("run", ""))
+        suite = index_of(
+            self.doc, lambda s: s.get("run", "").strip()
+            == TestItRunsTheRealChecks.OFFLINE_SUITE)
         names = [s["name"] for s in steps_of(self.doc)]
         self.assertLess(deps, install, names)     # playwright CLI must exist
         self.assertLess(install, smoke, names)
         self.assertLess(smoke, suite, names)
+
+    def test_the_fast_preflight_cannot_replace_the_full_suite(self):
+        """Focused contracts run before Chromium, full suite after launch."""
+        steps = steps_of(self.doc)
+        names = [step["name"] for step in steps]
+        preflight = index_of(
+            self.doc, lambda step: step["name"] ==
+            "Run fast taxonomy and collection-boundary contracts")
+        install = index_of(
+            self.doc, lambda step: self.INSTALL.search(step.get("run", "")))
+        smoke = index_of(
+            self.doc, lambda step: "chromium.launch()" in
+            step.get("run", ""))
+        suite = index_of(
+            self.doc, lambda step: step.get("run", "").strip()
+            == TestItRunsTheRealChecks.OFFLINE_SUITE)
+        self.assertLess(preflight, install, names)
+        self.assertLess(install, smoke, names)
+        self.assertLess(smoke, suite, names)
+        self.assertIn("unittest", steps[preflight]["run"])
+        self.assertEqual(
+            sum(step.get("run", "").strip()
+                == TestItRunsTheRealChecks.OFFLINE_SUITE
+                for step in steps),
+            1,
+        )
 
     def test_the_job_allows_time_for_the_browser_assertions(self):
         """
