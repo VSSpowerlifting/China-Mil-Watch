@@ -131,4 +131,6 @@ def load_indonesia_writer_sources(week_ending, as_of, *, packet_path=DEFAULT_PAC
         "source_language": "id",
         "evidence_representation": row["evidence_representation"],
         "status": STATUS, "claims": list(claims), "caveats": list(caveats),
+        "shadow_state_commit": STATE_COMMIT, "shadow_run_id": "37693074726-1",
+        "captured_response_sha256": CAPTURE_SHA256,
     }]
