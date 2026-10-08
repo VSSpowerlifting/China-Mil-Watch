@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 V1_PATH = ROOT / "taxonomy" / "regional_topics.v1.json"
 V2_PATH = ROOT / "taxonomy" / "regional_topics.v2.json"
 V1_GIT_BLOB = "a068839cb0bd9227b3edcc92991e21865119c23a"
+V2_GIT_BLOB = "c3bd2e51661055ce61fd439c582ab5d44604ad0a"
 TAXONOMY_ID = "ipr_regional_topics"
 TOPIC_FIELDS = ("display_name", "group", "description", "scope_note")
 MODIFIED_LEGACY_FIELDS = {
@@ -99,6 +100,8 @@ def audit(v1, v2, *, v1_pin, v2_pin, v1_sha256="", v2_sha256=""):
     """Compare only vocabulary definitions; no per-record assignment access."""
     require(v1_pin == V1_GIT_BLOB,
             "v1 reference blob changed; preserve frozen v1")
+    require(v2_pin == V2_GIT_BLOB,
+            "v2 definition blob changed; new editorial review required")
     old = index_topics(v1, 1)
     new = index_topics(v2, 2)
     require(len(old) == 19 and len(new) == 20,
