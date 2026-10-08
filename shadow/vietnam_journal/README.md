@@ -38,19 +38,25 @@ does not invent a UTC instant.
 
 ## Activation gates not met
 
-1. The external research browser showed readable public homepages and article
-   text. It did **not** yield a verifiable machine-readable response from
-   either host's `/robots.txt`. The identified GitHub Actions collector must
-   read the applicable robots policy and confirm each listing and article route
-   is allowed before any automated collection. Mobile is not a workaround for
-   an inaccessible or disallowing desktop host. No proxy, challenge solver,
+1. **Actions-side desktop access has been established in a bounded probe.**
+   Run 37712715499 on 2026-10-08 UTC read the desktop host's robots.txt
+   (HTTP 200, paths allowed), English homepage (HTTP 200, 26 unique article
+   IDs) and article 26936 (HTTP 200). The mobile robots.txt instead returned
+   HTTP 404: that is a missing policy file, **not an explicit prohibition**.
+   The probe made no mobile listing or article request and neither host may
+   be used to bypass a refusal on the other. The full results and pinned
+   payload hashes are in docs/VIETNAM_JOURNAL_ACCESS_FINDINGS_2026-10-08.md. No proxy, challenge solver,
    browser impersonation, alternate host circumvention, undocumented pagination
    or retries.
 2. The homepages are *not* a timestamped, exhaustive release feed.
-   A source-specific, date-bounded listing and pagination proof, a measured
-   missed-item audit, extraction against real captured fixtures, content
-   signatures and a bounded remote budget must precede shadow activation.
-   The offline link contract is deliberately **not** a runnable remote adapter.
+   The successful desktop sample also exposed an extraction gap: the initially
+   tested title/body selectors returned no article body or title, and the
+   page contained both its September 30 publication date and the October 8
+   running site clock. A source-specific, date-bounded listing and pagination
+   proof, a measured missed-item audit, validated complete extraction,
+   content signatures and a bounded remote budget must precede shadow
+   activation. The offline link contract is deliberately **not** a runnable
+   remote adapter.
 3. Both site footers say **All rights reserved**. Public visibility is not a
    blanket permission for archiving and republishing full article text.
    Evaluate permissions for the precise proposed retention/display behavior;
