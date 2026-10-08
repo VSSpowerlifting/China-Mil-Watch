@@ -90,6 +90,36 @@ def reviewer_receipt():
 
 
 class VietnamReviewedCitationBridgeTests(unittest.TestCase):
+    def test_real_october_ten_review_template_remains_unsigned_and_pinned(self):
+        source = json.loads((ROOT / "research/vietnam_briefs_candidates" /
+                             "2026-10-10.json").read_text(encoding="utf-8"))
+        receipt = json.loads((ROOT / "research/vietnam_briefs_candidates" /
+                              "unsigned_2026-10-10_publication_review.json"
+                              ).read_text(encoding="utf-8"))
+        self.assertEqual(receipt["schema"], SCHEMA)
+        self.assertEqual(receipt["week_ending"], source["week_ending"])
+        self.assertEqual(len(receipt["records"]), len(source["candidates"]))
+        source_by_id = {x["source_identity"]: x for x in source["candidates"]}
+        for row in receipt["records"]:
+            original = source_by_id[row["source_identity"]]
+            self.assertEqual(row["external_id"],
+                             "VN-MPS-" + row["source_identity"].split(":")[1])
+            self.assertEqual(row["source_url"], original["canonical_url"])
+            self.assertEqual(row["published_date"], original["published_date"])
+            self.assertEqual(row["original_title"], original["original_title"])
+            self.assertEqual(row["state_commit"], source["state_commit"])
+            self.assertEqual(row["source_content_sha256"],
+                             original["content_sha256"])
+            self.assertIsNone(row["reviewed_by"])
+            self.assertIsNone(row["reviewed_on"])
+            self.assertIsNone(row["link_and_summary_use_basis"])
+            self.assertIsNone(row["original_summary"])
+            self.assertEqual(set(row["checks"]), CHECKS)
+            self.assertTrue(all(value is False for value in row["checks"].values()))
+        # The real candidate source metadata is not an authorized review.
+        with self.assertRaises(CitationBridgeRefused):
+            build(sidecar(), packet(), receipt, REGISTRY)
+
     def test_exact_review_version_and_real_citation_yield_draft_fragment(self):
         sc = sidecar()
         result = build(sc, packet(), reviewer_receipt(), REGISTRY)
