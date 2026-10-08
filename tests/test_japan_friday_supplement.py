@@ -31,6 +31,7 @@ class JapanFridayUnsignedPacket(unittest.TestCase):
         result = self.validate()
         self.assertEqual(result["official_mod_public_urls"], 4)
         self.assertEqual(result["japanese_original_paired_to_english_release"], 1)
+        self.assertEqual(result["separate_official_japanese_html_editor_leads"], 1)
         self.assertEqual(result["japan_production_records_added"], 0)
         self.assertEqual(result["japan_records_admitted_to_weekly_writer"], 0)
         self.assertEqual(result["editorial_claims_approved"], 0)
@@ -47,6 +48,9 @@ class JapanFridayUnsignedPacket(unittest.TestCase):
         self.assertIn("29,000 m2", result)
         self.assertIn("October 19–29", result)
         self.assertIn("JS Kunisaki", result)
+        self.assertIn("Kadena-to-Tsuiki", result)
+        self.assertIn("12th aircraft-training relocation", result)
+        self.assertIn("05b PDF shadow", result)
         self.assertIn("56 missions", result)
         self.assertIn("280 tons", result)
         self.assertIn("Japanese original", result)
@@ -126,6 +130,26 @@ class JapanFridayUnsignedPacket(unittest.TestCase):
             with self.subTest(bad=bad):
                 with self.assertRaisesRegex(japan.JapanBriefError, "URL"):
                     self.validate(data)
+
+    def test_separate_tsuiki_notice_is_unarchived_and_not_signed_off(self):
+        extra = self.packet["linked_public_mod_tsuiki_training_notice"]
+        self.assertEqual(extra["candidate_id"], "JP-W41-05")
+        self.assertIsNone(extra["ipr_record_id"])
+        self.assertIsNone(extra["original_capture_sha256"])
+        self.assertFalse(extra["editorial_approved"])
+        for key, val in (
+            ("url", "https://example.org/not-the-official-notice"),
+            ("publication_date", "2026-09-17"),
+            ("type_ii_aircraft_range", [1, 5]),
+            ("editorial_approved", True),
+            ("ipr_record_id", 123),
+            ("linked_shadow_source_url", extra["url"]),
+        ):
+            packet = copy.deepcopy(self.packet)
+            packet["linked_public_mod_tsuiki_training_notice"][key] = val
+            with self.subTest(key=key):
+                with self.assertRaises(japan.JapanBriefError):
+                    self.validate(packet)
 
     def test_japanese_original_link_may_not_be_invented(self):
         data = copy.deepcopy(self.packet)
