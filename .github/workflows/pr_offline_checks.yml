@@ -143,6 +143,10 @@ jobs:
               "test_vietnam_private_synopses",
               "test_vietnam_shadow_logical_slot_watchdog",
               "test_vietnam_moit_weekly_candidates",
+              # Sunday thematic citation, window and owner-only preview contracts.
+              "test_briefs_editorial_evidence",
+              "test_weekly_briefs_sunday_window",
+              "test_sunday_owner_preview",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
