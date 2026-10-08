@@ -96,8 +96,17 @@ def summarize(audit_report, review_counts):
         "source_review_packet_gate": all_packs,
         "pending_review_runs": pending_review_runs,
         "held_review_runs": held_review_runs,
-        "machine_evidence_candidate_for_independent_decision": supported and all_packs,
+        # Seven days are a checkpoint, not production-promotion maturity.
+        # docs/DESK_STRENGTH_CRITERIA.md C13 requires 30 consecutive collecting
+        # days and independent Day-7, Day-14, and Day-30 human checkpoints.
+        "seven_day_machine_evidence_candidate_for_human_checkpoint": supported and all_packs,
+        "production_minimum_consecutive_collecting_days": 30,
+        "thirty_day_continuity_assessed": False,
+        "day_7_human_checkpoint_completed": False,
+        "day_14_human_checkpoint_completed": False,
+        "day_30_human_checkpoint_completed": False,
         "unresolved_external_gates": [
+            "C13_thirty_consecutive_collecting_days_and_day_7_14_30_human_checkpoints",
             "independent_GitHub_Actions_event_and_failed_attempt_audit",
             "real_human_original_source_review_and_identity_authentication",
             "original_source_access_indexing_and_reuse_rights_ruling",
