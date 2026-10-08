@@ -135,11 +135,10 @@ def make_packet(queue, authored, week_ending, *, previous=None):
             continue
         if not (sunday <= published <= saturday):
             continue
-        note = indexed.get(row["source_identity"])
-        if note is None:
-            continue   # No source-specific synopsis: do not invent prose.
+        # Validate candidate identity even if it has no matching editorial
+        # note; unrecognized queue identities must not be quietly skipped.
         identity = row["source_identity"]
-        require(isinstance(identity, str) and re.fullmatch(r"mps-vi:\d{10}", identity),
+        require(isinstance(identity, str) and re.fullmatch(r"mps-vi:[1-9]\d{9}", identity),
                 "invalid MPS article identifier")
         url = row["canonical_url"]
         u = urlsplit(url)
@@ -148,6 +147,9 @@ def make_packet(queue, authored, week_ending, *, previous=None):
                 and not u.username and not u.password and
                 u.path.endswith("-" + identity.partition(":")[2])
                 and u.path.startswith("/bai-viet/"), "noncanonical MPS source URL")
+        note = indexed.get(identity)
+        if note is None:
+            continue   # Legitimate new source; never invent an editorial claim.
         require(row["source_slug"] == SOURCE and row["body_status"] == "text"
                 and row["human_source_reviewed"] is False
                 and row["reuse_rights_reviewed"] is False
