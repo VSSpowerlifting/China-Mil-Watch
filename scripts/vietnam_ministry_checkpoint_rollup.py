@@ -106,9 +106,12 @@ def read_packet(directory):
     require(type(manifest.get("required_collecting_days")) is int
             and manifest["required_collecting_days"] == 30,
             "wrong minimum consecutive collecting-day requirement")
-    for key in ("collecting_days", "missing_collecting_days", "consecutive_collecting_days",
+    for key in ("collecting_days", "missing_collecting_days",
                 "window_coverage", "uncovered_dates", "anomalies", "required_review_records"):
         require(isinstance(manifest.get(key), list), "missing full machine evidence: " + key)
+    require(type(manifest.get("consecutive_collecting_days")) is int
+            and manifest["consecutive_collecting_days"] >= 0,
+            "invalid consecutive collecting-day count")
     require(isinstance(manifest.get("input_sha256"), dict)
             and HEX64.fullmatch(manifest["input_sha256"].get("shadow.db", "")) is not None,
             "absent shadow database evidence digest")
@@ -140,7 +143,7 @@ def read_packet(directory):
         "checkpoint_reached": manifest["checkpoint_reached"],
         "collecting_days_count": len(manifest["collecting_days"]),
         "missing_collecting_days_count": len(manifest["missing_collecting_days"]),
-        "consecutive_collecting_days_count": len(manifest["consecutive_collecting_days"]),
+        "consecutive_collecting_days_count": manifest["consecutive_collecting_days"],
         "uncovered_date_count": len(manifest["uncovered_dates"]),
         "anomaly_count": len(manifest["anomalies"]),
         "required_review_record_count": len(manifest["required_review_records"]),
