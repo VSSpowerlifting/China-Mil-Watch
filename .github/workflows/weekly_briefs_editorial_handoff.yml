@@ -1,0 +1,109 @@
+name: Friday IPR Briefs Automatic Draft to Editor
+
+on:
+  schedule:
+    # Friday ~4:17 p.m. EDT / 3:17 p.m. EST (UTC scheduling; may run late).
+    - cron: '17 20 * * 5'
+  workflow_dispatch:
+    inputs:
+      send_email:
+        description: "Email Dylan? Must also enable IPR_EDITOR_DELIVERY_ENABLED"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-weekly-editorial-handoff
+  cancel-in-progress: false
+
+jobs:
+  editor-handoff:
+    if: github.event_name == 'workflow_dispatch' || vars.IPR_EDITOR_DELIVERY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout triggered source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Resolve last complete Friday (Saturday week-ending)
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+          from core.brief_contract import eligible_desks
+          from core.desk_registry import load_registry
+
+          today = datetime.now(ZoneInfo("America/New_York")).date()
+          friday = today - timedelta(days=(today.weekday() - 4) % 7)
+          saturday = friday + timedelta(days=1)
+          desks = eligible_desks(load_registry())
+          if len(desks) < 2:
+              raise SystemExit("Refused: fewer than two live production-backed desks")
+          print("IPR_EDITOR_AS_OF=" + friday.isoformat())
+          print("IPR_EDITOR_WEEK_END=" + saturday.isoformat())
+          print("IPR_EDITOR_WEEK_START=" + (friday - timedelta(days=5)).isoformat())
+          print("IPR_EDITOR_DESKS=" + ",".join(desks))
+          PY
+
+      - name: Create read-only Friday-bounded source scaffold
+        env:
+          PACKET_SIDECAR: ${{ runner.temp }}/ipr-editorial-scaffold.json
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from config import DB_PATH
+          from core.brief_contract import eligible_desks
+          from core.desk_registry import load_registry
+          from scripts.author_brief import build_draft
+          from scripts.reconcile_db import read_only
+          from storage.db import get_articles_for_desks
+
+          desks = os.environ["IPR_EDITOR_DESKS"].split(",")
+          with read_only(Path(DB_PATH)) as conn:
+              records = get_articles_for_desks(
+                  os.environ["IPR_EDITOR_WEEK_START"],
+                  os.environ["IPR_EDITOR_AS_OF"], desks, conn=conn
+              )
+          draft = build_draft(
+              records, desks=desks,
+              week_start=os.environ["IPR_EDITOR_WEEK_START"],
+              week_ending=os.environ["IPR_EDITOR_WEEK_END"],
+          )
+          Path(os.environ["PACKET_SIDECAR"]).write_text(
+              json.dumps(draft, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          print("Provisional unapproved scaffold prepared from records dated through Friday")
+          PY
+
+      - name: Draft full prose from source bodies and optionally email Dylan
+        env:
+          SHOULD_SEND: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_email == true)) }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+          IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
+          IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+        shell: bash
+        run: |
+          args=(--sidecar "$RUNNER_TEMP/ipr-editorial-scaffold.json"
+                --out "$RUNNER_TEMP/IPR-Briefs-Provisional-$IPR_EDITOR_WEEK_END.txt"
+                --write-automatic --as-of "$IPR_EDITOR_AS_OF")
+          if [[ "$SHOULD_SEND" == "true" ]]; then
+            args+=(--send)
+          fi
+          python scripts/weekly_editorial_handoff.py "${args[@]}"
+
+      # No uploaded unpublished artifact; no push, approval, numbering or deploy.
