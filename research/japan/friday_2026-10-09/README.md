@@ -8,13 +8,34 @@ The existing `weekly_briefs_editorial_handoff.yml` reads `live_editorial_desks()
 
 The most recent observed Japan shadow state commit is `d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13` on `shadow/jp-mod`, scheduled logical October 7 (completed October 8 UTC). Its ledger `20261008T021529+0000-37716894616-1.json` reported `health: partial`, `inserted: 0`, `stored_total: 5`, `unretrieved_total: 155`, `listing_failures: 0`, `fetch_failures: 1`, and `extraction_failures: 2`. The two exposed MOD Japanese RSS feeds yield substantial link coverage but access to most HTML article bodies remains challenged from GitHub Actions. **A public HTML page visible to a separate browser does not magically become an IPR archived original.**
 
-This patch does **not** modify that collector, add source credentials, bypass an access challenge, add an archived Japan record, or loosen production eligibility.
+This patch does **not** modify that collector, add source credentials, bypass an access challenge, insert a new archived Japan record, or loosen production eligibility. The existing Japan October 5 shadow PDF-derived text remains an isolated source candidate.
 
-## Four current-week first-party leads, researched through October 8
+## Primary actionable current-week Japan record — already in the shadow SQLite
+
+**October 5:** A Japanese-language Ministry of Defense notice titled *日米合同委員会合意について* (“Regarding a Japan–U.S. Joint Committee Agreement”) is already present in the isolated `shadow/jp-mod` database, unlike the four publicly viewed October 5–6 web pages below. It is dated **October 5**, was initially stored under Japan shadow run `37404326269-1`, and has **580 characters of preserved Japanese extracted text**. Pinned metadata:
+
+- Official [original PDF source URL](https://www.mod.go.jp/j/press/news/2026/10/05b.pdf)
+- Frozen Japan state commit: `d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13`
+- Frozen SQLite Git blob: `60f126db5a36369ade81f44f12c3a838cddbfb59`
+- Text SHA-256: `d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8`
+- Recorded original HTTP response digest: `4788557ba554cd8af8211906174f44fc60eecaa53f46e2c1818b418c2d0d57bf`
+
+The preserved text describes **FAC 5121 Tsuiki Airfield (築城飛行場)** and a **September 17 Japan–U.S. Joint Committee approval** for limited additional facility use for **Keen Sword 27** and aircraft training relocation. The notice identifies approximately **29,000 m² of land** and parts of **four buildings totaling about 11,000 m²**. The projected use period is **October 19–29**, with extra periods if necessary for deployment and withdrawal. These are **planned use dates**, NOT evidence that October exercises already occurred. The agreement was approved in September but made public in the source dated October 5, which is the **reporting-window publication date**.
+
+**This is the strongest Japan–U.S. defense-cooperation candidate for the current Brief.** It is relevant to forward exercise posture and access arrangements, but whether it belongs in the week's chosen story is still editorial judgment. The shadow DB stores *extracted text* and a separate original-capture hash; the original PDF bytes themselves are not proven retained by this row, and the original full-PDF fidelity has not been independently human-checked. A separate direct PDF retrieval attempt was unavailable; the preserved source is the bounded basis of this finding.
+
+To reproduce the immutable extraction verification when the `shadow/jp-mod` historical Git commit is **already locally fetched**:
+
+    python3 scripts/audit_japan_oct05_brief_source.py \
+      --state-repo /path/to/checkout-with-japan-shadow-history
+
+The script requires the **exact** historical commit and Git blob, opens a temporary immutable query-only SQLite copy, checks the five body-bearing stored records and the **one** October 4–8 body, verifies extracted-body SHA-256 and content phrases, and reports no completed human/PDF replay or editorial signoff. It does **not** download original PDFs, fetch a Git branch, solve challenges or alter shadow/production data.
+
+## Four additional first-party public HTML leads, researched through October 8
 
 All four lie inside the official IPR Friday source window **Sunday October 4 – Friday October 9** in New York. However **Friday is not over**, and the Thursday research snapshot cannot substitute for the final Friday/Saturday delta review.
 
-### Highest-value lead — Japanese international disaster-relief operations in Indonesia
+### Strong secondary lead — Japanese international disaster-relief operations in Indonesia
 
 **October 6:** The Japan MOD press release [JS Kunisaki Departs Indonesia after Completing International Disaster Relief Activities](https://www.mod.go.jp/en/article/2026/10/5fc631a5d1b2f36a9b697a611082a85af444ea54.html) says that the vessel departed Indonesia's **Kijing Port** bound for Japan with three JGSDF **CH-47** helicopters after the firefighting mission. The MOD reports **56** helicopter firefighting missions and **approximately 280 tons of water** released. A matching dated [original-language Japanese MOD release](https://www.mod.go.jp/j/press/news/2026/10/06a.html) independently supports those numbers as the *same institutional release in another language*, **not** an independent second institutional confirmation.
 
@@ -45,9 +66,9 @@ For manual use, provide Dylan the separately labeled supplement **only after an 
 
 ## Rights and scope
 
-[Japan MOD terms of use](https://www.mod.go.jp/en/notice.html) provide broad reuse permission for ministry content, subject to **proper attribution, clear labels for edited material, exceptions, and third-party rights**. This is a source policy, not proof that every photograph or external contribution can be republished. This research packet uses only metadata, source URLs and original analytical paraphrases, not full reproduced ministry texts or images. The official English Kunisaki release is paired to its Japanese original; editorial reviewers should keep translation provenance visible.
+[Japan MOD terms of use](https://www.mod.go.jp/en/notice.html) provide broad reuse permission for ministry content, subject to **proper attribution, clear labels for edited material, exceptions, and third-party rights**. This is a source policy, not proof that every photograph or external contribution can be republished. This research packet uses only metadata, preserved extracted-text **hashes**, source URLs and original analytical paraphrases, not full reproduced ministry texts or images. The official English Kunisaki release is paired to its Japanese original; editorial reviewers should keep translation provenance visible.
 
-No article body has been newly captured to IPR or replayed under the Japan shadow admission protocol. The underlying archive rights/access process remains distinct from this time-limited editorial supplement.
+No article body has been **newly captured by this PR**. The already archived October 5 Japanese PDF extraction is separately pinned here for source-first editorial review; original PDF bytes and independent full-document fidelity remain unverified. The underlying archive rights/access process remains distinct from this time-limited editorial supplement.
 
 ## Tomorrow's decision gate
 
@@ -61,6 +82,6 @@ No article body has been newly captured to IPR or replayed under the Japan shado
 
     python3 -m unittest tests.test_japan_friday_supplement -v
 
-The 18 synthetic contracts check date scope, source URL/date identity, the primary Japanese/English pair, preservation of exact source grouping, citation-ID non-fabrication, production isolation, disabled mail/publish toggles and read-only rendering.
+The 21 supplement contracts plus 15 archived-source audit tests check date scope, source URL/date identity, the primary Japanese/English pair, preservation of exact source grouping, citation-ID non-fabrication, production isolation, disabled mail/publish toggles and read-only rendering.
 
 **This PR does not change the Friday email workflow.** It gives a ready-to-review, independent written supplement to use if and only if the human editorial team wants it.
