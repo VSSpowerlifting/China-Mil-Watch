@@ -5,8 +5,10 @@ import copy
 import json
 import tempfile
 import unittest
+from contextlib import nullcontext
 from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from core.brief_editorial_evidence import (
@@ -16,7 +18,9 @@ from scripts.prepare_vietnam_briefs_model_evidence import (
     VietnamFeedRefused, assemble, metadata_card, prepare,
     require_current_week_shadow,
 )
-from scripts.weekly_briefs_auto_writer import validate_manuscript
+from scripts.weekly_briefs_auto_writer import (
+    choose_evidence, compose, validate_manuscript,
+)
 from tests.test_weekly_briefs_auto_writer import evidence, valid_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +92,59 @@ class VietnamSundayFeedTests(unittest.TestCase):
         vn = [x for x in packet["items"] if x["desk"] == "vietnam"]
         self.assertTrue(all(x["state_commit"] == COMMIT for x in vn))
         self.assertTrue(all(x["source_kind"] == "shadow-extracted-original" for x in vn))
+
+    def test_private_writer_can_use_one_archive_body_plus_japan_vietnam_research(self):
+        m = valid_manuscript()
+        m["editorial_focus"] = "A narrow regional institutional account from separate sources"
+        m["citations"] = {field: [1] for field in m["citations"]}
+        m["supplemental_citations"] = {
+            field: [] for field in m["citations"]
+        }
+        m["supplemental_citations"]["cross_desk_comparison"] = ["JP-W41-01"]
+        response = SimpleNamespace(
+            stop_reason="tool_use",
+            content=[SimpleNamespace(type="tool_use",
+                                     name="compose_editorial_draft", input=m)],
+        )
+        fake_client = SimpleNamespace(messages=SimpleNamespace(
+            stream=lambda **_kwargs: nullcontext(
+                SimpleNamespace(get_final_message=lambda: response))))
+        sidecar = {
+            "week_start": "2026-10-04", "week_ending": SAT,
+            "desks": ["china", "singapore"], "source_trail": [],
+        }
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence",
+                   return_value=evidence()[:1]) as selected:
+            written = compose(sidecar, SAT, client=fake_client,
+                              supplemental=original())
+        self.assertEqual(written["editorial_focus"], m["editorial_focus"])
+        selected.assert_called_once_with(
+            sidecar, as_of=SAT, db=__import__("config").DB_PATH,
+            required_desk_count=1)
+        # Only metadata discoverables cannot substitute for another real voice.
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence",
+                   return_value=evidence()[:1]):
+            with self.assertRaisesRegex(ValueError, "single institutional voice"):
+                compose(sidecar, SAT, client=fake_client,
+                        supplemental=[metadata_card(new_source(), COMMIT)])
+
+    def test_archive_chooser_maintains_two_desk_gate_without_research(self):
+        sidecar = {
+            "week_start": "2026-10-04", "week_ending": SAT,
+            "desks": ["china", "singapore"],
+            "source_trail": [{"record_id": 1}],
+        }
+        row = evidence()[0][0]
+        with patch("scripts.weekly_briefs_auto_writer.read_only",
+                   return_value=nullcontext("DB")), \
+             patch("scripts.weekly_briefs_auto_writer.get_articles_for_desks",
+                   return_value=[row]), \
+             patch("scripts.weekly_briefs_auto_writer.trail_entry",
+                   return_value={"record_id": 1}):
+            selected = choose_evidence(sidecar, as_of=SAT, required_desk_count=1)
+            self.assertEqual(len(selected), 1)
+            with self.assertRaisesRegex(ValueError, "fewer than 2"):
+                choose_evidence(sidecar, as_of=SAT)
 
     def test_new_source_enters_as_title_only_not_invented_translation(self):
         q = queue()
