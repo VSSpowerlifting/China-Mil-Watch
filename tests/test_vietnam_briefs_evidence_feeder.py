@@ -157,6 +157,21 @@ class FeederTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(VietnamFeederError):
                 make_packet(signed(q), NOTES, SAT)
 
+    def test_composite_action_is_read_only_and_exports_one_shared_packet(self):
+        action = (ROOT / ".github/actions/vietnam-editorial-evidence/action.yml"
+                  ).read_text(encoding="utf-8")
+        self.assertIn("using: composite", action)
+        self.assertIn("shadow/vietnam-mps-foreign-affairs", action)
+        self.assertIn("git clone --quiet", action)
+        self.assertIn("git -C \"$state\" ls-tree --name-only HEAD", action)
+        self.assertIn("scripts.build_vietnam_sunday_packet", action)
+        self.assertIn("args+=(--existing \"$VN_EXISTING\")", action)
+        self.assertIn("echo \"packet=$destination\"", action)
+        self.assertNotIn("git push", action)
+        self.assertNotIn("upload-artifact", action)
+        self.assertNotIn("ANTHROPIC_API_KEY", action)
+        self.assertNotIn("IPR_SMTP_APP_PASSWORD", action)
+
     def test_read_only_state_orchestrator_preserves_japan_and_stops_on_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
