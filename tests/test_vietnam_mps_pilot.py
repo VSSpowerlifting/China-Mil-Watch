@@ -116,6 +116,12 @@ class VietnamPilotAuthorizationTests(unittest.TestCase):
         with self.assertRaisesRegex(pilot.Refused, "reviewer"):
             self.read(a)
 
+    def test_non_utc_approval_is_refused(self):
+        a = approval()
+        a["reviewed_at_utc"] = "2026-10-08T07:00:00+07:00"
+        with self.assertRaisesRegex(pilot.Refused, "explicitly UTC"):
+            self.read(a)
+
     def test_duplicate_and_mass_approvals_refused(self):
         a = approval()
         a["records"].append(dict(a["records"][0]))
@@ -142,6 +148,15 @@ class VietnamPilotAuthorizationTests(unittest.TestCase):
         e = evidence()
         e["observations"][0]["capture_sha256"] = "e" * 64
         with self.assertRaisesRegex(pilot.Refused, "first capture"):
+            pilot.candidates(e, approval())
+
+    def test_later_observation_anomalies_cannot_be_ignored(self):
+        e = evidence()
+        later = dict(e["observations"][0])
+        later["run_id"] = "run-2"
+        later["anomalies_json"] = '["published_time_changed"]'
+        e["observations"].append(later)
+        with self.assertRaisesRegex(pilot.Refused, "anomaly"):
             pilot.candidates(e, approval())
 
     def test_anomalous_and_empty_bodies_refused(self):
