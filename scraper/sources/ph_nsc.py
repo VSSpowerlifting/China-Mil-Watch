@@ -79,6 +79,7 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup, NavigableString
+from bs4.builder import ParserRejectedMarkup
 
 from core.collection import status as st
 from core.collection.contract import (
@@ -312,17 +313,18 @@ def looks_challenged(headers: Dict[str, str], text: str) -> bool:
         return True
     try:
         soup = BeautifulSoup(text, "html.parser")
-        if soup.select("form#challenge-form, #cf-browser-verification"):
-            return True
-        if any(re.search(r"\b(?:window\.)?_cf_chl_opt\s*=", script.get_text(), re.I)
-               for script in soup.find_all("script")):
-            return True
-    except Exception:
-        # bs4 raises ParserRejectedMarkup when html.parser refuses a body outright
-        # (`<![foo[` on CPython 3.9.6). That is no evidence of a challenge, and
-        # every caller reaches here before it can handle an exception; `extract`
-        # and the robots check still refuse the body on their own terms.
-        pass
+    except ParserRejectedMarkup:
+        # The parser rejected the response itself; this alone does not prove
+        # a challenge. Fetch/extract and robots validation still reject malformed
+        # source content through their existing typed failure paths.
+        return not _THEME_BODY_RE.search(text) and bool(_CHALLENGE_RE.search(text))
+    # Keep selector and script defects visible: they are not source markup
+    # refusals and must not be misreported as innocuous HTML.
+    if soup.select("form#challenge-form, #cf-browser-verification"):
+        return True
+    if any(re.search(r"\b(?:window\.)?_cf_chl_opt\s*=", script.get_text(), re.I)
+           for script in soup.find_all("script")):
+        return True
     return not _THEME_BODY_RE.search(text) and bool(_CHALLENGE_RE.search(text))
 
 
