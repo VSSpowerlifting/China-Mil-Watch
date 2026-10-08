@@ -1,0 +1,51 @@
+name: Vietnam Journal Category Discovery One-shot
+
+# Disposable PR-only research; not a collector. Max 5 GETs:
+# desktop robots + four exact official English category listing pages.
+# No article HTTP or full text retention; do not merge this workflow.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_journal_category_research.yml'
+      - 'scripts/research_vietnam_journal_categories.py'
+      - 'tests/test_research_vietnam_journal_categories.py'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    if: ${{ github.head_ref == 'research/vietnam-journal-category-discovery-20261007' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Exact-head checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install minimal bounded-probe dependencies
+        run: python -m pip install 'requests>=2.31,<3' 'beautifulsoup4>=4.12,<5'
+
+      - name: Synthetic tests must pass before remote reads
+        run: python -m unittest tests.test_research_vietnam_journal_categories -v
+
+      - name: Probe exact four categories via independent robots permission
+        env:
+          OUT: ${{ runner.temp }}/vietnam-journal-category-metadata.json
+        run: python scripts/research_vietnam_journal_categories.py --out "$OUT"
+
+      - name: Preserve metadata-only evidence for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-journal-categories-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-journal-category-metadata.json
+          retention-days: 30
+          if-no-files-found: warn
