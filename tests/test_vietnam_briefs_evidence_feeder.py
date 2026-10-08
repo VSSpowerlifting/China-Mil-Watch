@@ -38,7 +38,7 @@ def queue():
             "production_publication_authorized": False,
         })
     q = {
-        "schema": "vietnam-mps-review-queue/1",
+        "schema": "vietnam-mps-pilot-review-queue/1",
         "source_slug": "vn_mps_foreign_affairs_vi",
         "state_branch": "shadow/vietnam-mps-foreign-affairs",
         "state_commit": "a" * 40,
