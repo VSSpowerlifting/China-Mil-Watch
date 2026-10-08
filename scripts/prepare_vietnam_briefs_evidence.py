@@ -22,7 +22,7 @@ from urllib.parse import urlsplit
 SCHEMA = "ipr-private-drafting-evidence/1"
 STATUS = "unapproved-source-linked-editorial-candidate"
 SCOPE = "private-model-drafting-only-no-source-body"
-QUEUE_SCHEMA = "vietnam-mps-review-queue/1"
+QUEUE_SCHEMA = "vietnam-mps-pilot-review-queue/1"
 SOURCE = "vn_mps_foreign_affairs_vi"
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
@@ -78,7 +78,8 @@ def window(value):
 
 
 def verified_queue(queue):
-    require(isinstance(queue, dict) and queue.get("source_slug") == SOURCE,
+    require(isinstance(queue, dict) and queue.get("schema") == QUEUE_SCHEMA
+            and queue.get("source_slug") == SOURCE,
             "not the MPS foreign-affairs verified queue")
     require(queue.get("state_branch") == "shadow/vietnam-mps-foreign-affairs",
             "foreign shadow branch")
