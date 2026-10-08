@@ -65,6 +65,7 @@ jobs:
           week-ending: ${{ inputs.reporting_saturday }}
           notes: ${{ steps.research.outputs.notes }}
           existing-packet: ${{ steps.research.outputs.existing }}
+          require-vietnam: "true"
 
       - name: Verify combined candidate identities and private drafting boundary
         env:
