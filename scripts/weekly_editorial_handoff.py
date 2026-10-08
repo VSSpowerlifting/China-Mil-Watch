@@ -145,9 +145,9 @@ def single_address(value, name):
 def send_packet(path, week_ending):
     recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
-    password = os.environ.get("IPR_SMTP_APP_PASSWORD", "")
-    if not password:
-        raise ValueError("IPR_SMTP_APP_PASSWORD is missing")
+    password = "".join(os.environ.get("IPR_SMTP_APP_PASSWORD", "").split())
+    if len(password) != 16 or not password.isascii() or not password.isalnum():
+        raise ValueError("IPR_SMTP_APP_PASSWORD must be a Google-generated 16-character app password")
     message = EmailMessage()
     message["From"] = sender
     message["To"] = recipient
@@ -191,7 +191,6 @@ def main(argv=None):
     args.out.write_text(text, encoding="utf-8")
     print("Prepared unapproved {}: {} ({} record candidates)".format(
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
-
         args.out.name, len(sidecar["source_trail"])))
     if args.send:
         send_packet(args.out, sidecar["week_ending"])
