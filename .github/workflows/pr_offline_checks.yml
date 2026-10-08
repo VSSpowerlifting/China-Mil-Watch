@@ -145,6 +145,7 @@ jobs:
               # One-theme Sunday model source typing, return and date contracts.
               "test_briefs_editorial_evidence",
               "test_weekly_briefs_sunday_window",
+              "test_sunday_owner_preview",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():
