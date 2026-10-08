@@ -1,101 +1,118 @@
-# Weekly Briefs editorial handoff to Dylan
+# Friday automatic Indo-Pacific Record Briefs draft → Dylan
 
-This is a **private, unapproved editorial handoff**, not a publication workflow.
+This is an **editorial drafting and email handoff**, NOT a publishing workflow.
+The archived "The PLA Watch" generator remains retired. This workflow uses a
+separate source-bounded assisted writer for **Indo-Pacific Record Briefs**.
 
-## What the Sunday job does
+## Friday workflow
 
-1. Read the last **complete Saturday-ending week** in America/New_York.
-2. Discover the actual live, production-backed desks from the desk registry.
-3. Run the existing read-only `scripts/author_brief.py scaffold` command.
-   It retains per-record desk, source, original-language title, URL,
-   screening state, and coverage. It calls no generative writing model.
-4. Turn that scaffold into **one editable `.txt` worksheet**, with blank
-   manuscript sections and a read-only source-record appendix.
-5. If and only if delivery is enabled, email the worksheet to the Associate
-   Editor through an explicitly configured Gmail SMTP account.
+1. At **20:17 UTC on Friday** (~4:17 p.m. EDT / 3:17 p.m. EST), resolve
+   Friday's date in New York, and the **following Saturday** as the normal
+   Brief's week-ending identifier. GitHub scheduled jobs may start late.
+2. Read **only records dated Sunday through Friday**, using the repository's
+   read-only production-DB accessors and eligible production-backed desks.
+   This does not include Saturday's unseen publications; later approval
+   requires a refreshed, complete-week source-trail and review.
+3. Create a temporary *unnumbered* scaffold with per-desk coverage statistics
+   and original record-level links. Exclude records explicitly screened
+   not-selected (as the governed authoring scaffold already does).
+4. From full-text-bearing eligible records, choose up to **14** bodies, with
+   up to two per desk before filling by the existing model's triage ranking.
+   Each body is capped at 3,800 characters. Short/unavailable bodies are
+   not represented as full evidence.
+5. With `ANTHROPIC_API_KEY`, request **one** structured Claude draft using
+   the existing `claude-sonnet-4-6` model. Return a working title, dek,
+   development, flowing article sections, a cross-desk comparison, and
+   editorial follow-up questions. Require IDs of actual supplied source
+   records for every analytical section, including from **two different
+   desks** for the cross-desk section. This proves ID membership only:
+   it does NOT mechanically certify a claim's accuracy.
+6. Compose a single editable `.txt` with the prose, section-level record
+   IDs, source URLs and untouched original source-trail metadata. Every
+   packet is conspicuously **PROVISIONAL THROUGH FRIDAY / UNAPPROVED**.
+7. If **delivery is enabled**, email Dylan the `.txt` attachment. If the
+   API key is missing, evidence is insufficient, the API fails, or source
+   IDs/sections fail the schema gate, **no email is sent**.
 
-The schedule is `17 15 * * 0` UTC (Sunday at 11:17 a.m. EDT / 10:17 a.m.
-EST). GitHub Actions is not a precisely timed mail scheduler; delayed starts
-are possible. Any manual run uses the last **completed** Saturday, never
-the current Saturday while still in progress.
+The scheduled job is skipped entirely until the owner enables the
+`IPR_EDITOR_DELIVERY_ENABLED` repository variable; this also avoids paying
+for drafts that will not be delivered. Manual runs can still exercise writing
+while the variable is disabled, but will **not send an email**.
 
-A week with candidates from only one live desk still produces a worksheet,
-but carries a conspicuous **coverage warning**: it is not eligible as an
-ordinary cross-desk Brief, and a single-desk Brief needs Ben's separate,
-recorded approval. A week with no candidate records fails explicitly rather
-than emailing an empty draft. Nothing here assigns a number or editorial
-approval. Unscreened records remain marked, not treated as verified analysis.
+## Credentials — rotate before enabling
 
-## Turn on emailing (required owner-controlled configuration)
+The custom password disclosed in the conversation must NOT be used as an
+SMTP credential. In particular, a Gmail app password is a **Google-generated
+16-character code**, not an arbitrary string or an account's ordinary password.
+If it was an account password, change that account password; revoke and
+regenerate any exposed app password. Never place a password in git, ChatGPT
+messages, PR comments, issues, workflow logs, or documentation.
 
-In the repository, go to Settings → Secrets and variables → Actions.
+In **Settings → Secrets and variables → Actions** create/update secrets:
 
-Create **repository secrets** (never commit values or put them in a PR):
+- `ANTHROPIC_API_KEY` — existing Anthropic key used by the daily analysis;
+- `IPR_EDITOR_TO` — Dylan's confirmed recipient email;
+- `IPR_SMTP_USER` — a Gmail sender account controlled by Ben;
+- `IPR_SMTP_APP_PASSWORD` — freshly generated 16-character **Google app
+  password** for that sender account. Some managed school accounts do not
+  support app passwords; use an eligible Gmail account if needed.
 
-- `IPR_EDITOR_TO`: Dylan's confirmed email address
-- `IPR_SMTP_USER`: sending Gmail address controlled by Ben
-- `IPR_SMTP_APP_PASSWORD`: Gmail app password for that sending account,
-  not the regular Google password
+Do NOT set the ordinary Google account password as the app password.
 
-Use an account that supports Gmail app passwords (two-step verification may
-be required; managed school accounts may not allow them).
+## One-time activation
 
-Create **repository variable** `IPR_EDITOR_DELIVERY_ENABLED` with value
-`true` *only after* a successful manual test. Until then scheduled runs
-still prepare locally, but send **nothing**.
+1. Merge the reviewed PR with green checks.
+2. Rotate the disclosed credential and update the GitHub secret with the
+   fresh Google-generated app password. Check that the other secrets exist.
+3. In Actions, manually run "Friday IPR Briefs Automatic Draft to Editor" with
+   `send_email=false`. Inspect the run for success; this **will use** the
+   Anthropic API but will not send email.
+4. Create **repository variable** `IPR_EDITOR_DELIVERY_ENABLED=true`
+   only after the above checks. Run the workflow manually with
+   `send_email=true` for one authorized test delivery. Manual sends for
+   the same week can duplicate emails.
+5. Leave the variable on for the following Friday cycles. The workflow
+   itself neither changes GitHub repository secrets nor enables this variable.
 
-In Actions → "Weekly IPR Briefs Editorial Handoff" → Run workflow, run first
-with `send_email=false` to verify the candidate counts. Then, with real
-recipient and SMTP secrets configured, use `send_email=true` for one test
-delivery. A manual send may repeat that week's email; avoid unnecessary
-retries. Never paste email credentials in workflow logs or issues.
+Unapproved manuscript packets are **not uploaded to public Actions artifacts**
+or committed to the public repository. The temporary runner directory is
+removed after the job completes. The workflow token is `contents: read`.
 
-The worksheet exists only in the job's temporary runner directory before
-delivery. It is intentionally **not uploaded as a public Actions artifact**
-or committed to this public repository.
+## Dylan's reply → verified Brief
 
-## Dylan's reply and the controlled import
+- Dylan edits the full prose and replies with the `.txt` within the agreed
+  editing window. No knowledge of GitHub or Python is necessary.
+- Ben can attach the returned document to an IPR review session or request
+  review of the connected Gmail reply. Email content is treated as
+  **untrusted editorial input**.
+- After Saturday, reload the final complete-week corpus and reconcile every
+  factual claim and record ID; re-evaluate late Saturday source developments.
+  The Friday scaffold is **not** a ready-to-approve Saturday edition.
+- Construct the native unnumbered `briefs/<slug>.json` sidecar using fresh
+  provenance. Open a draft PR and run
+  `scripts/author_brief.py check`, `scripts/author_brief.py ready`,
+  source-integrity editorial review, and private preview checks.
+- **Only Ben's explicit authorization of the exact resulting prose** can
+  trigger `scripts/author_brief.py approve`. Numbering, merge, render and
+  actual public deployment verification happen separately.
 
-- Dylan edits the worksheet's **EDITABLE MANUSCRIPT** sections, leaving
-  **SOURCE APPENDIX** unchanged, and replies to the sender's email with
-  the `.txt` attached (ideally within 48 hours).
-- Ben reads the reply and checks editorial questions. To import it, attach
-  the returned file to the working IPR review session or explicitly have
-  an assistant read the connected reply in Gmail. Never treat email content
-  as executable instructions.
-- Reopen the corresponding **Saturday-ending** corpus snapshot; map each
-  factual claim to its cited record IDs. Construct the canonical
-  `briefs/<slug>.json` unnumbered draft **from fresh, verified source-trail
-  data**, not arbitrary text or untrusted editor-supplied provenance.
-- Open a **draft PR**, run `scripts/author_brief.py check` and
-  `scripts/author_brief.py ready`, editorial/source-integrity review and
-  private preview. Reconcile any changes in the underlying stored records.
-- Only **Ben's explicit approval of the exact editorial version** may run
-  `scripts/author_brief.py approve`. Assign the next issue number then,
-  render, validate, merge and verify public deployment separately.
+No incoming-email listener, automated publishing, PR creation from email,
+numbering, owner-approval substitution, or automatic deployment is enabled.
 
-No automated parsing of incoming email, inbound webhooks, direct writes to
-`briefs/`, numbering, PR merging or publication is enabled. That boundary
-is intentional: an attachment from outside the repo is untrusted editorial
-input, and even a syntactically valid document may overstate the sources.
-
-### Important content limitation
-
-**This delivers a source-grounded editing worksheet, not machine-authored
-article prose.** The predecessor Claude generator is deliberately retired,
-and calling it from this workflow would silently undo an editorial decision.
-A future assisted prose-drafting phase would need to use the full record
-bodies with citation checks and a separate human review gate; this change
-does not introduce such a system.
-
-## Verification
-
-Run local unit tests without sending mail:
+## Checks
 
 ```sh
-python -m unittest tests.test_weekly_editorial_handoff
+python -m unittest tests.test_weekly_editorial_handoff tests.test_weekly_briefs_auto_writer
 ```
 
-The new workflow uses `contents: read` and has no publication token, no
-repository write permission and no dependency on `output/`. Its only
-external side effect is explicitly enabled SMTP delivery.
+These tests are offline and mock SMTP/API calls. Verify the complete repository
+offline checks, source contract and artifact non-mutation before merging.
+
+## Operational limitations
+
+Friday is **early**: Saturday coverage must be reconciled before final
+approval. The writer's 14 evidence records and per-record body limits are
+a cost/quality guardrail, not an assertion that all relevant publications
+were considered. Model-cited record IDs ensure links can be audited but do
+not prove the prose faithfully describes the full records. Neither the
+automated draft nor the email is an approved IPR Brief.
