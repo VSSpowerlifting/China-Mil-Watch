@@ -109,9 +109,11 @@ def build_docket(packets):
                     type(url) is str and URL_RE.fullmatch(url) is not None and
                     type(pub) is str and DAY_RE.fullmatch(pub) is not None and
                     type(title) is str and bool(title.strip()) and
-                    row.get("text_status") == "text" and
-                    type(row.get("body_chars")) is int and row["body_chars"] > 0,
-                    "duplicate, unsupported or empty AFP archival identity")
+                    row.get("text_status") in ("text", "no_text") and
+                    type(row.get("body_chars")) is int and
+                    ((row["text_status"] == "text" and row["body_chars"] > 0) or
+                     (row["text_status"] == "no_text" and row["body_chars"] == 0)),
+                    "duplicate, unsupported or contradictory AFP archival identity")
             try:
                 pub_day = datetime.date.fromisoformat(pub)
                 require(pub_day.isoformat() == pub and pub_day <= date_,
@@ -130,6 +132,11 @@ def build_docket(packets):
                 "text_sha256": row["text_sha256"],
                 "capture_sha256": row["capture_sha256"],
                 "review_status": "not_started",
+                "body_status": row["text_status"],
+                "extraction_review_priority": (
+                    "body_unavailable_requires_human_disposition"
+                    if row["text_status"] == "no_text" else "ordinary_fidelity_review"
+                ),
                 "human_review_authenticated": False,
             })
         batches.append({
@@ -142,6 +149,10 @@ def build_docket(packets):
         "protocol": "ipr_ph_afp_metadata_review_docket_v1",
         "source": "philippines_afp_shadow",
         "total_source_records": total,
+        "body_unavailable_records": sum(
+            r["body_status"] == "no_text"
+            for batch in batches for r in batch["records"]
+        ),
         "batches": batches,
         "required_fidelity_checks": list(review.CHECKS),
         "source_bodies_or_raw_api_responses_included": False,
@@ -163,6 +174,8 @@ def markdown_docket(docket):
         "",
         "**{} source records across {} original scheduled runs**".format(
             docket["total_source_records"], len(docket["batches"])),
+        "**{} archived bodies unavailable: require human extraction disposition.**".format(
+            docket["body_unavailable_records"]),
     ]
     for batch in docket["batches"]:
         lines += [
@@ -171,13 +184,15 @@ def markdown_docket(docket):
             "Pinned state: \x60{}\x60 | run: \x60{}\x60".format(
                 batch["historical_state_commit"], batch["run_id"]),
             "",
-            "| ID | AFP publication date | Original article | Review |",
-            "|---|---|---|---|",
+            "| ID | AFP publication date | Original article | Body | Review |",
+            "|---|---|---|---|---|",
         ]
         for r in batch["records"]:
-            lines.append("| \x60{}\x60 | {} | [{}]({}) | Pending |".format(
+            lines.append("| \x60{}\x60 | {} | [{}]({}) | {} | Pending |".format(
                 r["source_identity"], r["published_date"],
-                markdown_safe(r["title_original"]), r["source_url"]))
+                markdown_safe(r["title_original"]), r["source_url"],
+                "Full text" if r["body_status"] == "text" else
+                "No text — review extraction"))
     lines += [
         "",
         "## Six checks for each original, completed only by a real reviewer",
