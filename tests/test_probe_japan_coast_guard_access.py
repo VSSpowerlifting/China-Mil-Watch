@@ -70,6 +70,35 @@ class CoastGuardAccessSafetyTests(unittest.TestCase):
         self.assertTrue(all(x["verdict"] == "blocked_policy_unavailable"
                             for x in output["routes"]))
 
+    def test_exact_404_means_no_published_robots_rules_under_rfc9309(self):
+        calls, fetch_body = self.simulate()
+
+        def fetch(url, limit, *, opener):
+            if url.endswith("/robots.txt"):
+                calls.append((url, limit))
+                return {"status": 404, "result": "http_not_served"}
+            return fetch_body(url, limit, opener=opener)
+
+        result = examine(opener=object(), request=fetch, sleep=lambda _: None)
+        self.assertEqual(result["robots"]["verdict"],
+                         "policy_absent_404_no_robots_restrictions")
+        self.assertEqual(len(calls), 1 + len(ROUTES))
+        self.assertEqual(result["routes"][0]["verdict"],
+                         "readable_original_html")
+
+    def test_429_and_5xx_are_not_treated_like_missing_robots(self):
+        for status in (403, 429, 503):
+            calls = []
+
+            def fetch(url, limit, *, opener):
+                calls.append(url)
+                return {"status": status, "result": "http_not_served"}
+
+            result = examine(opener=object(), request=fetch, sleep=lambda _: None)
+            self.assertEqual(len(calls), 1)
+            self.assertTrue(all(r["verdict"] == "blocked_policy_unavailable"
+                                for r in result["routes"]))
+
     def test_html_challenge_does_not_count_as_source(self):
         target = "https://" + HOST + ROUTES[1][1]
         calls, fetch = self.simulate(fail_route=target)
