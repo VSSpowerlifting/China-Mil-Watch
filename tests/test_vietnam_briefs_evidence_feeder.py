@@ -186,6 +186,135 @@ class FeederTests(unittest.TestCase):
         self.assertNotIn("ANTHROPIC_API_KEY", action)
         self.assertNotIn("IPR_SMTP_APP_PASSWORD", action)
 
+    def test_explicit_missing_note_fallback_preserves_japan_without_fake_vietnam(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / (SAT + ".json")
+            previous = root / "japan.json"
+            japan = {
+                "id": "JP-W41-01", "desk": "japan",
+                "source_name": "Japan Ministry of Defense",
+                "source_url": "https://www.mod.go.jp/en/article/2026/10/example.html",
+                "published_date": "2026-10-06", "language": "en",
+                "title_original": "Official ministry historical source",
+                "source_kind": "official-publisher-page-reviewed-for-research",
+                "state_commit": None, "source_content_sha256": None,
+                "hash_rule": None,
+                "summary": ("Japan's ministry discussed an attributed situation, "
+                            "without independent evidence of implementation."),
+                "caveats": ["Official statements alone do not verify operational outcomes."],
+                "topics": ["hadr"],
+                "status": "unapproved-source-linked-editorial-candidate",
+                "copy_scope": "private-model-drafting-only-no-source-body",
+            }
+            prior = {
+                "schema": "ipr-private-drafting-evidence/1",
+                "week_ending": SAT,
+                "status": "unapproved-source-linked-editorial-candidate",
+                "items": [japan],
+            }
+            previous.write_text(canonical_json(prior), encoding="utf-8")
+            def synth_queue(_repo, _sha, queue_dir):
+                queue_dir.mkdir()
+                (queue_dir / "review_queue.json").write_text(
+                    canonical_json(queue()), encoding="utf-8")
+            no_notes = root / "missing-notes.json"
+            with patch("scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                       side_effect=synth_queue) as audited:
+                with self.assertRaisesRegex(VietnamFeederError, "explicit"):
+                    build_from_state(
+                        state_repo=root, state_commit="a" * 40,
+                        week_ending=SAT, notes=no_notes, output=output,
+                        existing=previous)
+                self.assertFalse(output.exists())
+                self.assertEqual(audited.call_count, 0)
+                result = build_from_state(
+                    state_repo=root, state_commit="a" * 40,
+                    week_ending=SAT, notes=no_notes, output=output,
+                    existing=previous, allow_missing_notes=True)
+            self.assertEqual(audited.call_count, 1)
+            self.assertEqual(result["vietnam_sources"], 0)
+            self.assertEqual(result["other_sources"], 1)
+            self.assertTrue(result["notes_catalog_missing"])
+            self.assertEqual(result["in_window_machine_eligible"], 2)
+            self.assertEqual(result["vietnam_readiness_status"],
+                             "missing-notes-with-eligible-archives")
+            self.assertFalse(result["publisher_silence_verified"])
+            self.assertFalse(result["source_review_approved"])
+            self.assertFalse(result["email_sent"])
+            saved = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(saved["items"], [japan])
+            self.assertEqual(json.loads(previous.read_text()), prior)
+
+    def test_required_vietnam_rehearsal_refuses_zero_source_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / (SAT + ".json")
+            def synth_queue(_repo, _sha, queue_dir):
+                queue_dir.mkdir()
+                (queue_dir / "review_queue.json").write_text(
+                    canonical_json(queue()), encoding="utf-8")
+            with patch("scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                       side_effect=synth_queue):
+                with self.assertRaisesRegex(VietnamFeederError, "explicitly required"):
+                    build_from_state(
+                        state_repo=root, state_commit="a" * 40,
+                        week_ending=SAT, notes=root / "unprepared.json",
+                        output=output, allow_missing_notes=True,
+                        require_vietnam=True)
+                self.assertFalse(output.exists())
+                notes = root / "notes.json"
+                notes.write_text(canonical_json(NOTES), encoding="utf-8")
+                result = build_from_state(
+                    state_repo=root, state_commit="a" * 40,
+                    week_ending=SAT, notes=notes, output=output,
+                    require_vietnam=True)
+            self.assertEqual(result["vietnam_sources"], 2)
+            self.assertEqual(result["vietnam_readiness_status"], "ready")
+            self.assertFalse(result["notes_catalog_missing"])
+            self.assertEqual(result["in_window_machine_eligible"], 2)
+
+    def test_present_but_stale_or_invalid_notes_never_become_optional(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / (SAT + ".json")
+            notes = root / "notes.json"
+            def synth_queue(_repo, _sha, queue_dir):
+                queue_dir.mkdir()
+                (queue_dir / "review_queue.json").write_text(
+                    canonical_json(queue()), encoding="utf-8")
+            versions = [
+                {"broken": True},
+                {"schema": "vietnam-editorial-notes/1",
+                 "entries": [dict(NOTES["entries"][0], content_sha256="f" * 64)]},
+            ]
+            for payload in versions:
+                notes.write_text(canonical_json(payload), encoding="utf-8")
+                with self.subTest(payload=payload), patch(
+                    "scripts.build_vietnam_sunday_packet.queue_builder.prepare",
+                    side_effect=synth_queue), self.assertRaises(VietnamFeederError):
+                    build_from_state(
+                        state_repo=root, state_commit="a" * 40,
+                        week_ending=SAT, notes=notes, output=output,
+                        allow_missing_notes=True)
+                self.assertFalse(output.exists())
+
+    def test_composite_action_missing_notes_switch_is_explicit_and_readonly(self):
+        action = (ROOT / ".github/actions/vietnam-editorial-evidence/action.yml"
+                  ).read_text(encoding="utf-8")
+        self.assertIn('default: "refuse"', action)
+        self.assertIn("continue-without-vietnam", action)
+        self.assertIn("VN_REQUIRE_VIETNAM", action)
+        self.assertIn('if [[ -n "$VN_NOTES" ]]', action)
+        self.assertIn('args+=(--notes "$VN_NOTES")', action)
+        self.assertIn("args+=(--allow-missing-notes)", action)
+        self.assertIn("args+=(--require-vietnam)", action)
+        self.assertIn("vietnam_status=$vietnam_status", action)
+        self.assertIn("notes_missing=$notes_missing", action)
+        self.assertNotIn("git push", action)
+        self.assertNotIn("ANTHROPIC_API_KEY", action)
+        self.assertNotIn("IPR_SMTP_APP_PASSWORD", action)
+
     def test_read_only_state_orchestrator_preserves_japan_and_stops_on_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
