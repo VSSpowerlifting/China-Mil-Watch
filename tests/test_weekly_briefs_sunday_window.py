@@ -125,7 +125,7 @@ class SundayHandoffTests(unittest.TestCase):
         self.assertIn("last_daily_run_date.txt", yaml)
         self.assertIn("IPR_EDITOR_DELIVERY_ENABLED", yaml)
         self.assertIn("vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true'", yaml)
-        self.assertIn("python -m scripts.weekly_editorial_handoff", yaml)
+        self.assertIn("python -m scripts.sunday_editorial_handoff", yaml)
         self.assertIn("--full-week", yaml)
         self.assertIn("permissions:\n  contents: read", yaml)
         self.assertNotIn("contents: write", yaml)
