@@ -204,7 +204,7 @@ def review_candidate(data, archived_rows):
             "scope cannot imply independent corroboration")
     return {
         "source_records_verified_against_pin": len(records),
-        "provisional_distinct_event_candidates": len(found) if False else len(events),
+        "provisional_distinct_event_candidates": len(events),
         "source_grounded_claim_count": len(claims),
         "all_review_flags_still_pending": True,
         "human_review_complete": False,
