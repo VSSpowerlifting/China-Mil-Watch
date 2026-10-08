@@ -1,0 +1,85 @@
+name: Vietnam Shadow Logical Collection Slot Watchdog
+
+# Read-only health check for the isolated MPS state. Separate from the
+# nightly collector and Sunday model-readiness audit. Never re-run historical
+# jobs, backdate stored state, infer government silence, or send editorial mail.
+on:
+  schedule:
+    # 12:07 UTC daily; previous 18:17 UTC slot is >12h old by this check.
+    - cron: '7 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-mps-logical-slot-watch
+  cancel-in-progress: true
+
+jobs:
+  inspect-mps-slot:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout audited source-state reviewer with no push credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install exact review dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Clone only Vietnam MPS isolated shadow state
+        id: state
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          workspace="$(mktemp -d "$RUNNER_TEMP/vn-logical-slots-XXXXXXXX")"
+          state="$workspace/mps"
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs \
+            --single-branch "https://github.com/$GITHUB_REPOSITORY.git" "$state"
+          test "$(git -C "$state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
+          test -z "$(git -C "$state" status --porcelain)"
+          sha="$(git -C "$state" rev-parse HEAD)"
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          echo "repo=$state" >> "$GITHUB_OUTPUT"
+          echo "commit=$sha" >> "$GITHUB_OUTPUT"
+          echo "tmp=$workspace" >> "$GITHUB_OUTPUT"
+
+      - name: Independently inspect immutable run history and mature schedule gaps
+        env:
+          STATE_PATH: ${{ steps.state.outputs.repo }}
+          STATE_COMMIT: ${{ steps.state.outputs.commit }}
+          PRIVATE_WORK: ${{ steps.state.outputs.tmp }}
+        run: |
+          set -euo pipefail
+          python -m scripts.watch_vietnam_shadow_slots \
+            --state-repo "$STATE_PATH" \
+            --state-commit "$STATE_COMMIT" \
+            --out "$PRIVATE_WORK/mps-slot-watch.json"
+          PRIVATE_REPORT="$PRIVATE_WORK/mps-slot-watch.json" python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads(Path(os.environ["PRIVATE_REPORT"]).read_text())
+          assert d["government_silence_established"] is False
+          assert d["collection_window_complete_for_editorial"] is False
+          assert d["desk_qualified"] is False
+          assert d["email_sent"] is False
+          if d["overdue_logical_dates"]:
+              print("::warning::Vietnam MPS collection has overdue logical slots: " +
+                    ", ".join(d["overdue_logical_dates"]))
+              print("Recover from Actions > Vietnam Ministry Shadow Collection > " +
+                    "Run workflow, with target_date set to the exact missing day. " +
+                    "Do NOT rerun a past scheduled job.")
+          else:
+              print("Vietnam MPS state has a successful ledger for every due slot " +
+                    "in the inspected window; this does not prove publisher coverage.")
+          PY
