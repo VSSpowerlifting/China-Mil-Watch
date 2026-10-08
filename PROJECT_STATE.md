@@ -335,10 +335,12 @@ now enabled only under `shadow/ph_nsc/`; no Philippines production manifest
 or registry entry exists. State remains outside the checkout, captures retain
 exact bytes and hashes, ledgers preserve adapter window/policy evidence and
 post-ID provenance, and failed attempts push nothing. The dedicated adapter
-suite is 103 tests (a 2026-10-04 focused review added two: markup the parser
-rejects is a status, not a raise; a repeated post ID under a new URL fails
-pagination); additional runner/workflow tests exercise fixtures
-and a local bare remote. Neither output nor the production database is changed.
+suite now contains 105 authored tests: two 2026-10-04 cases for
+parser-rejected markup and repeated post IDs, plus two follow-ups pinning
+the specific ParserRejectedMarkup exception boundary and authoritative
+challenge headers. Exact-head CI is required before claiming a passing suite;
+additional runner/workflow tests exercise fixtures and a local bare remote.
+Neither output nor the production database is changed by this PR.
 [Run 37072106688](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37072106688)
 used collector `302a74555a3503ea344351b1c99c64c128911104`, explicit target
 2026-10-02 and the September 26–October 2 window. Result `ok_no_publications`,
