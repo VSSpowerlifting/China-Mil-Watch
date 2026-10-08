@@ -118,6 +118,21 @@ class AttemptReconciliationTests(unittest.TestCase):
         self.assertIn("successful_workflow_missing_source_ledger", kinds)
         self.assertIn("source_latest_committed_attempts_diverge", kinds)
 
+    def test_cross_source_collector_disagreement_is_flagged(self):
+        data = packet()
+        data["source_ledgers"]["vn_moit_energy_vi"]["runs"][0]["collector_commit"] = "b" * 40
+        kinds = [w["kind"] for w in reconcile(data)["warnings"]]
+        self.assertIn("source_batch_collector_commits_disagree", kinds)
+
+    def test_cross_source_date_disagreement_is_flagged_even_if_actions_date_unknown(self):
+        data = packet()
+        data["github_attempts"][0]["target_date"] = None
+        data["github_attempts"][0]["target_date_basis"] = None
+        data["expected_target_dates"] = []
+        data["source_ledgers"]["vn_moit_energy_vi"]["runs"][0]["target_date"] = "2026-10-08"
+        kinds = [w["kind"] for w in reconcile(data)["warnings"]]
+        self.assertIn("source_batch_target_dates_disagree", kinds)
+
     def test_target_date_claim_cannot_hide_schedule_dispatch_disagreement(self):
         data = packet()
         data["github_attempts"][0]["target_date_basis"] = "verified_dispatch_input"
