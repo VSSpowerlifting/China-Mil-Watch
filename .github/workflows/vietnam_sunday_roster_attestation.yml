@@ -1,0 +1,82 @@
+name: Vietnam Sunday Current MPS Roster Attestation
+
+# Private evidence only: no publisher requests, model, SMTP, published
+# artifacts, main database changes or automatic source approval.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/attest_vietnam_sunday_roster.py"
+      - "tests/test_vietnam_sunday_roster_attestation.py"
+      - ".github/workflows/vietnam_sunday_roster_attestation.yml"
+      - "docs/VIETNAM_SUNDAY_CURRENT_ROSTER_ATTESTATION_2026-10-08.md"
+  workflow_dispatch:
+    inputs:
+      reporting_saturday:
+        description: "Exact reporting Saturday for a manual no-send check"
+        required: true
+        type: string
+        default: "2026-10-10"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-current-roster-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code read-only without persisted Git credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing offline audit dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run synthetic no-network roster-refusal tests
+        run: python -m unittest tests.test_vietnam_sunday_roster_attestation -v
+      - name: Verify real MPS Git state versus current Sunday candidate branch
+        env:
+          REPORTING_SATURDAY: ${{ inputs.reporting_saturday || '2026-10-10' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REPORTING_SATURDAY" == "2026-10-10" ]] || {
+            echo "::error::Only the explicitly evidenced October 10 Sunday packet is integrated in this contract"; exit 1;
+          }
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          work="$(mktemp -d "$RUNNER_TEMP/ipr-vietnam-sunday-roster-XXXXXXXX")"
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/mps"
+          git clone --quiet --branch feat/sunday-briefs-mainline-20261008 --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/sunday"
+          test "$(git -C "$work/mps" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$work/mps" ls-tree --name-only HEAD)" = "state"
+          test -z "$(git -C "$work/mps" status --porcelain)"
+          git -C "$work/sunday" show HEAD:research/briefs_editorial_evidence/2026-10-10.json             > "$work/2026-10-10-offered.json"
+          mps_sha="$(git -C "$work/mps" rev-parse HEAD)"
+          sunday_sha="$(git -C "$work/sunday" rev-parse HEAD)"
+          [[ "$mps_sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          echo "Attesting source version match against exact MPS Git head $mps_sha"
+          echo "Sunday packet supplied by PR #237 head $sunday_sha"
+          python -m scripts.attest_vietnam_sunday_roster             --state-repo "$work/mps"             --state-commit "$mps_sha"             --week-ending "$REPORTING_SATURDAY"             --notes research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json             --offered-packet "$work/2026-10-10-offered.json"             --require-all-eligible             --out "$work/attestation.json"
+          python - "$work/attestation.json" <<'PY'
+          import json,sys
+          from pathlib import Path
+          result=json.loads(Path(sys.argv[1]).read_text())
+          assert result["current_source_version_matches"]==2
+          assert result["in_window_machine_eligible"]==2
+          assert result["all_eligible_notes_required"] is True
+          assert result["full_reporting_week_collection_verified"] is False
+          assert result["publisher_silence_verified"] is False
+          assert result["source_use_approved"] is False
+          assert result["email_sent"] is False
+          print("REAL MPS proof: two version-matched Oct5 source notes; zero approvals or mail.")
+          PY
+      - name: Assert production checkout preservation
+        run: test -z "$(git status --porcelain --untracked-files=all)"
