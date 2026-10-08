@@ -33,8 +33,17 @@ KINDS = {"shadow-extracted-original", "official-publisher-page-reviewed-for-rese
          "shadow-metadata-only"}
 
 
-def metadata_only_summary(published_date):
-    """Deterministic, publisher-metadata-only observation, never a source fact claim."""
+def metadata_only_summary(published_date, *, desk="vietnam"):
+    """Fixed metadata statement, not an account of anything in a source body."""
+    if desk == "korea":
+        return (
+            "Korea Policy Briefing posted a Korean-language republication labeled "
+            "Ministry of National Defense on {}. Its headline is listed separately. "
+            "Neither its document contents nor events implied by that headline "
+            "have been independently verified for this draft."
+        ).format(published_date)
+    if desk != "vietnam":
+        raise EditorialEvidenceError("unknown metadata-only source family")
     return (
         "Vietnam Ministry of Public Security published a Vietnamese-language "
         "foreign-affairs article dated {}. Its original headline is listed "
@@ -47,6 +56,7 @@ HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 JAPAN_ID = re.compile(r"JP-W[0-9]{2}-[0-9]{2}\Z")
 VIETNAM_ID = re.compile(r"VN-MPS-([1-9][0-9]{6,20})\Z")
+KOREA_ID = re.compile(r"KR-PB-([1-9][0-9]{5,19})\Z")
 
 
 class EditorialEvidenceError(ValueError):
@@ -90,9 +100,12 @@ def _official(item):
     _require(isinstance(ident, str), "external ID must be a string")
     is_jp = item["desk"] == "japan"
     is_vn = item["desk"] == "vietnam"
-    _require(is_jp or is_vn, "only bounded Japan and Vietnam research families")
-    _require(bool(JAPAN_ID.fullmatch(ident)) if is_jp else
-             bool(VIETNAM_ID.fullmatch(ident)), "bad typed source identity")
+    is_kr = item["desk"] == "korea"
+    _require(is_jp or is_vn or is_kr, "unknown regional research source family")
+    valid_id = (JAPAN_ID.fullmatch(ident) if is_jp else
+                VIETNAM_ID.fullmatch(ident) if is_vn else
+                KOREA_ID.fullmatch(ident))
+    _require(bool(valid_id), "bad typed source identity")
     url = item["source_url"]
     _require(_line(url, min_length=35, max_length=1800), "invalid source URL")
     try:
@@ -101,7 +114,8 @@ def _official(item):
     except ValueError as exc:
         raise EditorialEvidenceError("invalid source URL") from exc
     _require(p.scheme == "https" and no_port and not p.username and
-             not p.password and not p.query and not p.fragment,
+             not p.password and not p.fragment and
+             (not p.query if not is_kr else True),
              "official source URL must be HTTPS and unmodified")
     if is_jp:
         _require(item["source_name"] == "Japan Ministry of Defense"
@@ -111,7 +125,7 @@ def _official(item):
                      p.path.endswith((".html", ".pdf"))),
                  "unrecognized Japan MOD publisher/source family")
         _require(item["language"] in ("ja", "en"), "invalid Japan source language")
-    else:
+    elif is_vn:
         match = VIETNAM_ID.fullmatch(ident)
         _require(item["source_name"] == "Vietnam Ministry of Public Security"
                  and p.hostname == "bocongan.gov.vn"
@@ -119,6 +133,15 @@ def _official(item):
                  and p.path.endswith("-" + match.group(1))
                  and item["language"] == "vi",
                  "unrecognized Vietnam MPS publisher/source family")
+    else:
+        match = KOREA_ID.fullmatch(ident)
+        _require(item["source_name"] ==
+                 "Korea Policy Briefing (MND-labeled republication)"
+                 and p.hostname == "www.korea.kr"
+                 and p.path == "/briefing/pressReleaseView.do"
+                 and p.query == "newsId=" + match.group(1)
+                 and item["language"] == "ko",
+                 "unrecognized Korea government republication")
 
 
 def _item(item, start, cutoff):
@@ -148,8 +171,9 @@ def _item(item, start, cutoff):
     _require(_line(item["summary"], min_length=65, max_length=700),
              "short attributed editorial synopsis required; not a full article")
     if item["source_kind"] == "shadow-metadata-only":
-        _require(item["desk"] == "vietnam" and
-                 item["summary"] == metadata_only_summary(item["published_date"]) and
+        _require(item["desk"] in ("vietnam", "korea") and
+                 item["summary"] == metadata_only_summary(
+                     item["published_date"], desk=item["desk"]) and
                  item["topics"] == ["source_discovery"],
                  "metadata-only entries cannot assert unreviewed source-body claims")
     caveats = item["caveats"]
