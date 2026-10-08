@@ -10,6 +10,8 @@ on:
       - '.github/workflows/vietnam_journal_access_probe.yml'
       - 'scripts/probe_vietnam_journal.py'
       - 'tests/test_vietnam_journal_probe.py'
+      - 'tests/test_vn_defence_journal.py'
+      - 'shadow/vietnam_journal/manifest.json'
 
 permissions:
   contents: read
