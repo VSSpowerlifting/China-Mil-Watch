@@ -144,6 +144,7 @@
     }
   },
   "independent_review_needed": [
+    "Review the actual October 5 archived Japan MOD PDF original and compare its preserved extracted Japanese text and two-page agreement details; verify FAC 5121 Tsuiki, approximate areas, October 19–29 future use dates and September 17 agreement approval. Do not mistake planned exercise facility use for an exercise already performed.",
     "Check each official source URL and entire HTML text, archive the precise version only if authorized, and record verified capture SHA-256.",
     "Check the Oct 6 Japanese original against English version, retaining language/translation distinction.",
     "Confirm the source's actual publication date and whether Friday brings later material; this October 8 discovery is not a finished October 9 weekly review.",
@@ -154,5 +155,50 @@
   "source_terms_url": "https://www.mod.go.jp/en/notice.html",
   "rights_note": "MOD terms permit specified reuse with attribution and edited-work labeling, with third-party and exceptions; specific source handling still requires editorial review, especially photos.",
   "no_classification": true,
-  "no_publication": true
+  "no_publication": true,
+  "shadow_current_week_original": {
+    "status": "archived_shadow_source_candidate_not_production_or_editor_approved",
+    "source_record_identifier": "shadow/jp-mod:jp_mod_news_ja:2026-10-05:05b.pdf",
+    "source_id_namespace": "shadow_only_no_numeric_ipr_record_id",
+    "state_branch": "shadow/jp-mod",
+    "historical_state_commit": "d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13",
+    "sqlite_path": "state/shadow.db",
+    "sqlite_git_blob_sha1": "60f126db5a36369ade81f44f12c3a838cddbfb59",
+    "source_url": "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+    "source_slug": "jp_mod_news_ja",
+    "title_original": "日米合同委員会合意について",
+    "title_english_working": "Regarding a Japan–U.S. Joint Committee Agreement",
+    "publication_date_original": "2026-10-05",
+    "original_language": "ja",
+    "publication_kind": "press release",
+    "text_chars_reported": 580,
+    "extracted_body_sha256": "d8ec17263a4465f75f79e03d2096ce82b9094da649d2ee0d7f198778d0cd0eb8",
+    "captured_response_sha256": "4788557ba554cd8af8211906174f44fc60eecaa53f46e2c1818b418c2d0d57bf",
+    "original_capture_recorded_at_utc": "2026-10-06T02:29:24+00:00",
+    "first_seen_shadow_run": "37404326269-1",
+    "document_reference": "Fukuoka Prefecture — FAC 5121 Tsuiki Airfield",
+    "agreement_approval_date": "2026-09-17",
+    "public_notice_date": "2026-10-05",
+    "planned_facility_use_start": "2026-10-19",
+    "planned_facility_use_end": "2026-10-29",
+    "land_area_m2_approx": 29000,
+    "building_area_m2_approx": 11000,
+    "building_scope": "portions of four buildings",
+    "exercise_mentions": [
+      "Keen Sword 27",
+      "aircraft training relocation"
+    ],
+    "provisional_interpretation": "The preserved Japanese MOD PDF reports Joint Committee approval for temporary additional limited-use land and building portions at Tsuiki Airfield in support of planned bilateral exercises. Approval predates October 5 public notice, and the October 19–29 use period is future as of review cutoff.",
+    "caution_flags": [
+      "A joint committee agreement does not prove the exercises have started; October 19–29 is prospective.",
+      "The public notice is October 5; the internal approval is dated September 17. Do not use approval date as publication date.",
+      "The extracted text is preserved in shadow SQLite but has not undergone independent full-PDF human source-fidelity review.",
+      "The live PDF endpoint was not directly replayed in this assessment; source-readiness is grounded in the immutable shadow extraction.",
+      "The source is not yet a production-backed IPR record and has no numeric production citation ID."
+    ],
+    "exact_historical_source_replay_completed": false,
+    "human_original_source_review_complete": false,
+    "editorial_inclusion_approved": false,
+    "source_promoted_to_production": false
+  }
 }
