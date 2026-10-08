@@ -35,7 +35,9 @@ clocks belonging to the same original five-minute activation batch.
 It rejects missing/duplicate/foreign sources, wrong branch assignments,
 mixed checkpoint days, mismatched dates, unexpected files, symlinks,
 corrupt artifacts, contradictory threshold flags, and in-band human
-signoffs. Its output describes per-source collecting days, gaps,
+signoffs. It also **warns** when the three latest published run IDs differ,
+which can expose a partial cross-branch publication or recovery mismatch;
+that mismatch requires reconciliation, not automatic state repair. Its output describes per-source collecting days, gaps,
 uncovered publication windows, anomalies and records awaiting review.
 
 ## Procedure
