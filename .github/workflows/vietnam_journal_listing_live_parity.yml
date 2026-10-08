@@ -1,0 +1,144 @@
+name: Vietnam Journal Four-Category Listing Parity Research
+# Disposable research only. Never merge or schedule.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_journal_listing_live_parity.yml'
+permissions:
+  contents: read
+jobs:
+  listing-parity:
+    if: \${{ github.head_ref == 'research/vietnam-journal-listing-live-parity-20261008' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install narrow dependencies
+        run: python -m pip install 'requests>=2.31,<3' 'beautifulsoup4>=4.12,<5'
+      - name: Test source, article, listing parsers without network
+        run: python -m unittest tests.test_vn_defence_journal tests.test_vn_journal_article tests.test_vn_journal_listing -v
+      - name: Read-only bounded listing parity (4 categories plus robots)
+        env:
+          REPORT: \${{ runner.temp }}/vietnam-journal-listing-parity.json
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, re, time
+          from pathlib import Path
+          from urllib.parse import urljoin, urlsplit
+          import requests
+          from bs4 import BeautifulSoup
+          from core.collection.vietnam_identity import USER_AGENT
+          from scraper.sources.vn_shadow_http import (
+              parse_robots, robots_rules, robots_crawl_delay,
+              robots_allows, rules_file_problem
+          )
+          from scraper.sources.vn_defence_journal import canonical_article_url, article_identity
+          from scraper.sources.vn_journal_listing import (
+              CATEGORY_URLS, parse_category_html, merge_category_observations
+          )
+          HOST="https://tapchiqptd.vn"
+          s=requests.Session()
+          s.trust_env=False
+          s.headers.update({"User-Agent":USER_AGENT,"Accept-Encoding":"identity","Accept":"text/plain,text/html"})
+          calls=0
+          def get(url,content_type):
+              global calls
+              if not url.startswith(HOST+"/") or urlsplit(url).netloc!="tapchiqptd.vn" or calls>=5:
+                  raise ValueError("unapproved host or request limit")
+              calls+=1
+              response=None
+              try:
+                  response=s.get(url,allow_redirects=False,timeout=20,stream=True)
+                  raw=bytearray()
+                  for chunk in response.iter_content(32768):
+                      raw.extend(chunk)
+                      if len(raw)>256000: raise ValueError("response too large")
+                  if response.status_code!=200 or response.url!=url or response.headers.get("Location") or response.headers.get("Cf-Mitigated"):
+                      raise ValueError("inaccessible or challenged")
+                  if response.headers.get("Content-Encoding","identity").lower()!="identity":
+                      raise ValueError("unexpected compression")
+                  if not response.headers.get("Content-Type","").lower().startswith(content_type):
+                      raise ValueError("wrong content type")
+                  text=bytes(raw).decode("utf-8","strict")
+                  if re.search(r"cf-chl|challenge-platform|just a moment|captcha",text[:3500],re.I):
+                      raise ValueError("challenge")
+                  return text,hashlib.sha256(raw).hexdigest()
+              finally:
+                  if response is not None: response.close()
+                  s.cookies.clear()
+          robots_text,robots_digest=get(HOST+"/robots.txt","text/plain")
+          if rules_file_problem(robots_text.encode("utf-8")) is not None:
+              raise ValueError("unreadable robots")
+          groups=parse_robots(robots_text)
+          rules=robots_rules(groups)
+          delay=robots_crawl_delay(groups)
+          delay=2.0 if delay is None else max(2.0,delay)
+          if delay>60: raise ValueError("crawl delay outside budget")
+          report={"schema":"vietnam-journal-listing-parity/1","robots_sha256":robots_digest,
+                  "source_html_retained":False,"article_text_retained":False,
+                  "publication_authorized":False,"production_modified":False,
+                  "pagination_proven":False,"historical_completeness_proven":False,
+                  "sections":[]}
+          observations=[]
+          for category,url in CATEGORY_URLS.items():
+              if not robots_allows(rules,urlsplit(url).path):
+                  raise ValueError("robots disallows category")
+              time.sleep(delay)
+              html,digest=get(url,"text/html")
+              observation=parse_category_html(html,url)
+              observations.append(observation)
+              independent={}
+              for a in BeautifulSoup(html,"html.parser").select("a[href]"):
+                  candidate=urljoin(url,a["href"].strip())
+                  parts=urlsplit(candidate)
+                  if parts.netloc!="tapchiqptd.vn" or parts.scheme!="https": continue
+                  try:
+                      canonical=canonical_article_url(candidate)
+                      identity=article_identity(candidate)
+                  except ValueError: continue
+                  if canonical!=candidate: continue
+                  if identity in independent and independent[identity]!=canonical:
+                      raise ValueError("independent canonical collision")
+                  independent[identity]=canonical
+              parsed={v.source_identity:v.canonical_url for v in observation.candidates}
+              missing=set(independent)-set(parsed)
+              extra=set(parsed)-set(independent)
+              changed={x for x in set(parsed)&set(independent) if parsed[x]!=independent[x]}
+              report["sections"].append({
+                  "category":category,"response_sha256":digest,
+                  "independent_ids":len(independent),"parser_ids":len(parsed),
+                  "dated_hints":observation.dated_hint_count,
+                  "parser_duplicate_links":observation.duplicate_links,
+                  "missing_ids_count":len(missing),"extra_ids_count":len(extra),
+                  "canonical_mismatches":len(changed),
+                  "parity":not(missing or extra or changed),
+                  "date_hints_not_verified":True,
+              })
+              del html
+          union=merge_category_observations(observations)
+          report["request_count"]=calls
+          report["unique_ids_across_four_pages"]=union["unique_observed_article_count"]
+          report["date_hints_across_four_pages"]=union["dated_hint_count"]
+          report["all_four_identity_parity"]=all(z["parity"] for z in report["sections"])
+          assert calls==5 and len(report["sections"])==4
+          assert report["historical_completeness_proven"] is False
+          Path(os.environ["REPORT"]).write_text(json.dumps(report,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+          print(json.dumps({"requests":calls,"unique_ids":report["unique_ids_across_four_pages"],
+              "date_hints":report["date_hints_across_four_pages"],"identity_parity":report["all_four_identity_parity"],
+              "sections":[{k:z[k] for k in ("category","independent_ids","parser_ids","dated_hints","missing_ids_count","extra_ids_count","parity")} for z in report["sections"]],
+              "historical_completeness_proven":False,"rights_approved":False},indent=2))
+          PY
+      - name: Preserve metadata only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-journal-listing-parity-\${{ github.run_id }}
+          path: \${{ runner.temp }}/vietnam-journal-listing-parity.json
+          if-no-files-found: warn
+          retention-days: 30
