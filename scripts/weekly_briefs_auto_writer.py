@@ -608,7 +608,9 @@ def _private_research_sources(supplemental):
     flags = ["source_kind" in row for row in supplemental]
     if any(flags) and not all(flags):
         raise ValueError("cannot combine incompatible Japan Friday and Sunday research")
-    return bool(flags)
+    # A non-empty legacy Friday Japan packet has no source_kind. It must
+    # retain PR #202's own angle and numeric production-citation contract.
+    return bool(flags) and all(flags)
 
 
 def writing_schema(allowed_ids, *, supplemental_ids=(), research_mode=None):
