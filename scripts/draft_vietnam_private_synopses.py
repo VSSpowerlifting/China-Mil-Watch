@@ -30,7 +30,7 @@ BRANCH = "shadow/vietnam-mps-foreign-affairs"
 EXCERPT_SCOPE = "private-third-party-model-bounded-excerpt"
 MAX_SOURCES = 3
 MAX_CHARS = 1400
-MODEL = "claude-sonnet-4-5-20250929"
+MODEL = "claude-sonnet-4-6"
 TOPICS = (
     "hadr", "defense_exercises", "alliance_diplomacy", "maritime_security",
     "technology_cooperation", "security_industry", "regional_partnerships",
@@ -224,6 +224,13 @@ def make_note(record, version, excerpt, *, client):
     require(isinstance(summary, str) and 65 <= len(summary) <= 700
             and not any(ord(c) < 32 for c in summary),
             "model summary not bounded")
+    # Research notes must not reproduce large verbatim passages even when
+    # a restricted private excerpt was legitimately model-processed.
+    from difflib import SequenceMatcher
+    overlap = SequenceMatcher(None, summary, excerpt, autojunk=False)
+    require(overlap.find_longest_match(0, len(summary),
+                                      0, len(excerpt)).size < 120,
+            "model attempted to copy an extensive source passage")
     require(isinstance(caveats, list) and 1 <= len(caveats) <= 4
             and all(isinstance(c, str) and 15 <= len(c) <= 270
                     and not any(ord(ch) < 32 for ch in c) for c in caveats),
