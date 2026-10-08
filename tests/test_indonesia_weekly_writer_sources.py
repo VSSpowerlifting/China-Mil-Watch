@@ -85,6 +85,7 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         original = json.loads(DEFAULT_PACKET.read_text(encoding="utf-8"))
         mutations = (
             ("candidate_id", "ID-W41-22"),
+            ("title", "Fabricated strategic defense agreement"),
             ("public_source_url", "https://bad.example/report"),
             ("publisher_date", "2026-10-11"),
             ("event_date", "2026-10-07"),
