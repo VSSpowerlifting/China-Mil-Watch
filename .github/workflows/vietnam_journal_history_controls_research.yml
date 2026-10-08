@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   research-only:
-    if: ${{ github.ref == 'refs/heads/research/vietnam-journal-history-controls-20261008' && github.event.head_commit.message == 'Trigger corrected one-shot Vietnam journal navigation proof' }}
+    if: ${{ github.ref == 'refs/heads/research/vietnam-journal-history-controls-20261008' && github.event.head_commit.message == 'Trigger tested one-shot Vietnam journal navigation proof' }}
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
