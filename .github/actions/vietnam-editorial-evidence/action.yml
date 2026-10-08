@@ -91,9 +91,11 @@ runs:
         destination="$working/editorial/$VN_WEEK_END.json"
         args=(--state-repo "$state"
           --state-commit "$state_sha"
-          --notes "$VN_NOTES"
           --week-ending "$VN_WEEK_END"
           --out "$destination")
+        if [[ -n "$VN_NOTES" ]]; then
+          args+=(--notes "$VN_NOTES")
+        fi
         if [[ "$VN_MISSING_POLICY" == "continue-without-vietnam" ]]; then
           args+=(--allow-missing-notes)
         fi
