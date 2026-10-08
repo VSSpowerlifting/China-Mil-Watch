@@ -142,6 +142,7 @@ jobs:
               # Bounded, no-network source and citation contracts are cheap
               # enough to fail fast before the browser/full-suite gate.
               "test_briefs_editorial_evidence",
+              "test_vietnam_briefs_model_feed",
           )
           for name in required:
               if not (tests_dir / (name + ".py")).is_file():

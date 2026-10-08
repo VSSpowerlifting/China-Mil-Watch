@@ -44,7 +44,7 @@ CITED_FIELDS = (
 )
 
 
-def choose_evidence(sidecar, *, as_of, db=DB_PATH):
+def choose_evidence(sidecar, *, as_of, db=DB_PATH, required_desk_count=2):
     """Balanced, deterministic evidence selection with an explicit text-availability gate."""
     start = date.fromisoformat(sidecar["week_start"])
     end = date.fromisoformat(sidecar["week_ending"])
@@ -98,8 +98,11 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
         if pair[0]["id"] not in ids:
             chosen.append(pair)
             ids.add(pair[0]["id"])
-    if len({pair[0]["desk_id"] for pair in chosen}) < 2:
-        raise ValueError("fewer than two desks with full-text evidence; not safe to generate a cross-desk Brief")
+    if required_desk_count not in (1, 2):
+        raise ValueError("model evidence requires one or two production desks")
+    if len({pair[0]["desk_id"] for pair in chosen}) < required_desk_count:
+        raise ValueError("fewer than {} production desks with full-text evidence".format(
+            required_desk_count))
     return chosen
 
 
@@ -178,6 +181,10 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
         raise ValueError("writer returned no structured manuscript")
     evidence = {row["id"]: row["desk_id"] for row, _ in chosen}
     extras = {item["id"]: item["desk"] for item in supplemental}
+    metadata_only = {
+        item["id"] for item in supplemental
+        if item["source_kind"] == "shadow-metadata-only"
+    }
     if len(extras) != len(supplemental):
         raise ValueError("duplicate supplemental source IDs")
     if extras:
@@ -210,6 +217,8 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
             not all(isinstance(i, str) and i in extras for i in more) or
             len(more) != len(set(more))):
             raise ValueError("writer used absent/unverified external source ids for " + field)
+        if metadata_only.intersection(more) and field != "what_im_watching_next":
+            raise ValueError("metadata-only shadow headline cannot support substantive claims: " + field)
         if not ids and not more:
             raise ValueError("factual section has neither production nor external citations: " + field)
     compared = {evidence[i] for i in cites["cross_desk_comparison"]}
@@ -221,10 +230,25 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
 
 
 def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
-    chosen = choose_evidence(sidecar, as_of=as_of, db=db)
-    # Research sources supply short, attributed notes rather than scraped
-    # source text. They are offered only to THIS private editorial model.
+    # This is a PRIVATE draft, not Briefs publication qualification. At least
+    # one genuine archived full-text body remains mandatory, but additional
+    # separately attributed Japan/Vietnam research can establish a second
+    # issuing desk for a provisional *draft* when a live desk published nothing.
     extra = list(supplemental)
+    substantive_desks = {
+        e["desk"] for e in extra
+        if e["source_kind"] != "shadow-metadata-only"
+    }
+    needed_production = 1 if substantive_desks else 2
+    if needed_production == 1:
+        chosen = choose_evidence(sidecar, as_of=as_of, db=db,
+                                 required_desk_count=1)
+    else:
+        chosen = choose_evidence(sidecar, as_of=as_of, db=db)
+    represented = {row["desk_id"] for row, _ in chosen}
+    if len(represented | substantive_desks) < 2:
+        raise ValueError("single institutional voice cannot substantiate a cross-desk thematic draft")
+    # Research inputs never count as live, production-backed corpus desks.
     used_urls = {row["url"] for row, _ in chosen}
     if len(extra) > 8 or any(e.get("source_url") in used_urls or
                              e.get("status") != "unapproved-source-linked-editorial-candidate"
@@ -294,6 +318,11 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
          "Use supplemental_citations by exact string ID in each factual section; "
          "use numeric citations only for actual production records. "
          "Every section needs at least one genuine citation across both types. "
+         "This is a PRIVATE research-assisted draft: external sources do not "
+         "satisfy the live-desk requirement for approving a numbered Brief. "
+         "A METADATA-ONLY source can only be cited in what_im_watching_next "
+         "as a publication-discovery question, NEVER as support for a "
+         "development, its consequences, a comparison, or a factual event. "
          "Research summaries are NOT verbatim primary-source bodies; do not "
          "quote them as such. Publisher URLs and tentative paraphrases require "
          "Dylan's source verification before any public Brief approval. "

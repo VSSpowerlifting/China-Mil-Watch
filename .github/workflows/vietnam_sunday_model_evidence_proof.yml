@@ -1,0 +1,94 @@
+name: Vietnam Sunday Model Evidence (Read-Only Proof)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare_vietnam_briefs_model_evidence.py'
+      - 'core/brief_editorial_evidence.py'
+      - 'tests/test_vietnam_briefs_model_feed.py'
+      - 'research/briefs_editorial_evidence/**'
+      - '.github/workflows/vietnam_sunday_model_evidence_proof.yml'
+  workflow_dispatch:
+    inputs:
+      reporting_saturday:
+        description: 'Exact Saturday YYYY-MM-DD for an authorized private rehearsal'
+        required: false
+        type: string
+        default: '2026-10-10'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-vn-sunday-readonly-proof-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  real-source-research-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout PR's isolated source code (no production writes)
+        uses: actions/checkout@v4
+
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install existing review dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Fast offline source-integrity and source-citation contracts
+        run: |
+          python -m unittest -q tests.test_vietnam_briefs_model_feed tests.test_briefs_editorial_evidence
+
+      - name: Clone exact Vietnam MPS shadow state read-only
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet --single-branch --branch shadow/vietnam-mps-foreign-affairs \
+            "$STATE_REMOTE" "$RUNNER_TEMP/vn-mps-proof-state"
+          state="$RUNNER_TEMP/vn-mps-proof-state"
+          test "$(git -C "$state" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$state" ls-tree --name-only HEAD)" = "state"
+          test -f "$state/state/clock.json"
+          test -f "$state/state/shadow.db"
+
+      - name: Verify current shadow state and exact-week model source packet
+        env:
+          REPORTING_SATURDAY: ${{ inputs.reporting_saturday || '2026-10-10' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/vn-mps-proof-state"
+          commit="$(git -C "$state" rev-parse HEAD)"
+          output="$RUNNER_TEMP/ipr-private-model-packet/$REPORTING_SATURDAY.json"
+          python -m scripts.prepare_vietnam_briefs_model_evidence \
+            --state-repo "$state" \
+            --state-commit "$commit" \
+            --week-ending "$REPORTING_SATURDAY" \
+            --out "$output"
+          REPORTING_SATURDAY="$REPORTING_SATURDAY" \
+          MODEL_PACKET_DIR="$RUNNER_TEMP/ipr-private-model-packet" \
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from core.brief_editorial_evidence import load_editorial_evidence
+
+          sat = os.environ["REPORTING_SATURDAY"]
+          rows = load_editorial_evidence(
+              sat, sat, directory=Path(os.environ["MODEL_PACKET_DIR"]))
+          vietnam = [row for row in rows if row["desk"] == "vietnam"]
+          # For this first source-audited week there must be at least two
+          # current MPS captures. New weeks may naturally have no releases.
+          if sat == "2026-10-10" and len(vietnam) < 2:
+              raise SystemExit("October 10 Vietnam source contribution missing")
+          print("Read-only full-source proof: {} Vietnam, {} Japan sources".format(
+              len(vietnam), len(rows) - len(vietnam)))
+          print("Zero production admissions; no model call, source-body export, or email.")
+          PY
+          test -z "$(git -C "$state" status --porcelain --untracked-files=all)"
+          test -z "$(git status --porcelain --untracked-files=all)"
