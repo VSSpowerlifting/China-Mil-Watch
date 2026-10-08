@@ -18,10 +18,10 @@ from unittest.mock import patch
 from core.brief_editorial_evidence import (
     EditorialEvidenceError, load_editorial_evidence, evidence_prompt,
 )
-from scripts.weekly_briefs_auto_writer import (
+from scripts.sunday_briefs_auto_writer import (
     compose, validate_manuscript, writing_schema,
 )
-from scripts.weekly_editorial_handoff import main, render_packet
+from scripts.sunday_editorial_handoff import main, render_packet
 from scripts.validate_editorial_return import (
     ReturnValidationError, validate_return,
 )
@@ -206,7 +206,7 @@ class UnifiedWriterTests(unittest.TestCase):
             params.append(kw), nullcontext(SimpleNamespace(
                 get_final_message=lambda: response)))[1]))
         x = scaffold()
-        with patch("scripts.weekly_briefs_auto_writer.choose_evidence",
+        with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
                    return_value=evidence()):
             result = compose(x, SAT, client=fake, supplemental=self.research)
         self.assertEqual(result["editorial_focus"], manuscript()["editorial_focus"])
@@ -256,9 +256,9 @@ class UnifiedWriterTests(unittest.TestCase):
             original = d / "scaffold.json"
             result = d / "one-draft.txt"
             original.write_text(json.dumps(scaffold()), encoding="utf-8")
-            with patch("scripts.weekly_briefs_auto_writer.compose",
+            with patch("scripts.sunday_briefs_auto_writer.compose",
                        return_value=manuscript()) as writer, \
-                 patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+                 patch("scripts.sunday_editorial_handoff.send_packet") as mail:
                 main(["--sidecar", str(original), "--out", str(result),
                       "--write-automatic", "--full-week", "--include-research",
                       "--research-packet", str(packet_path), "--as-of", SAT])
@@ -273,7 +273,7 @@ class UnifiedWriterTests(unittest.TestCase):
             sidecar = d / "sidecar.json"
             sidecar.write_text(json.dumps(scaffold()), encoding="utf-8")
             out = d / "article.txt"
-            with patch("scripts.weekly_briefs_auto_writer.compose") as writer:
+            with patch("scripts.sunday_briefs_auto_writer.compose") as writer:
                 with self.assertRaisesRegex(ValueError, "explicit private research packet missing"):
                     main(["--sidecar", str(sidecar), "--out", str(out),
                           "--full-week", "--include-research", "--write-automatic",
@@ -292,8 +292,8 @@ class UnifiedWriterTests(unittest.TestCase):
             original = d / "sidecar.json"
             result = d / "unapproved.txt"
             original.write_text(json.dumps(scaffold()), encoding="utf-8")
-            with patch("scripts.weekly_briefs_auto_writer.compose") as writer, \
-                 patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+            with patch("scripts.sunday_briefs_auto_writer.compose") as writer, \
+                 patch("scripts.sunday_editorial_handoff.send_packet") as mail:
                 with self.assertRaises(EditorialEvidenceError):
                     main(["--sidecar", str(original), "--out", str(result),
                           "--write-automatic", "--full-week", "--include-research",
@@ -308,9 +308,9 @@ class UnifiedWriterTests(unittest.TestCase):
             p = Path(tmp) / "sidecar.json"
             dest = Path(tmp) / "one-article.txt"
             p.write_text(json.dumps(sidecar), encoding="utf-8")
-            with patch("scripts.weekly_briefs_auto_writer.compose",
+            with patch("scripts.sunday_briefs_auto_writer.compose",
                        return_value=manuscript()) as writer, \
-                 patch("scripts.weekly_editorial_handoff.send_packet") as mail:
+                 patch("scripts.sunday_editorial_handoff.send_packet") as mail:
                 main(["--sidecar", str(p), "--out", str(dest),
                       "--write-automatic", "--full-week",
                       "--include-research", "--as-of", SAT])
