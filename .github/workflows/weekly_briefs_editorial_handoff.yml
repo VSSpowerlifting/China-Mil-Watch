@@ -114,7 +114,7 @@ jobs:
           args=(--sidecar "$RUNNER_TEMP/ipr-editorial-scaffold.json"
                 --out "$RUNNER_TEMP/IPR-Briefs-Provisional-$IPR_EDITOR_WEEK_END.txt"
                 --write-automatic --as-of "$IPR_EDITOR_AS_OF"
-                --use-japan-research)
+                --use-japan-research --use-indonesia-research)
           if [[ "$SHOULD_SEND" == "true" ]]; then
             args+=(--send)
           fi

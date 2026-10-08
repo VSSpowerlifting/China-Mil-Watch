@@ -1,0 +1,51 @@
+{
+  "protocol": "ipr_indonesia_week41_nonproduction_research_v1",
+  "week_start": "2026-10-04",
+  "reporting_friday": "2026-10-09",
+  "week_ending": "2026-10-10",
+  "status": "source_verified_analyst_research_without_human_approval",
+  "source_scope": "Indonesia Ministry of Defense original-language Kemhan Berita; NOT a production desk",
+  "shadow_state_branch": "shadow/indonesia-kemhan",
+  "shadow_state_commit": "dc6a76193d17f3513c32ec1de02902ed01421437",
+  "shadow_run_id": "37693074726-1",
+  "shadow_ledger_path": "state/ledger/20261007T215950.014595+0000-37693074726-1.json",
+  "source_candidates": [
+    {
+      "candidate_id": "ID-W41-01",
+      "institution": "Kementerian Pertahanan Republik Indonesia",
+      "source_family": "Kemhan Berita",
+      "source_language": "id",
+      "publisher_date": "2026-10-06",
+      "event_date": "2026-10-05",
+      "title": "Menhan Sjafrie Terima Courtesy Call Athan Singapura, Apresiasi Dedikasi Selama Bertugas",
+      "public_source_url": "https://www.kemhan.go.id/2026/10/06/menhan-sjafrie-terima-courtesy-call-athan-singapura-apresiasi-dedikasi-selama-bertugas.html",
+      "captured_response_sha256": "62e3d7d48601d2395adb1d2a3fc88d20c6b67d572a247bd9e8408fa25ae8af0b",
+      "evidence_representation": "analyst_paraphrase_of_official_original_not_an_archived_body_in_prompt",
+      "provisional_claims": [
+        "The Indonesian Ministry of Defense reports that Defense Minister Sjafrie Sjamsoeddin received outgoing Singapore defense attaché ME7 Gan Chee Weng Melvin at the ministry in Jakarta on October 5; the ministry published this account on October 6.",
+        "The ministry characterized the courtesy call as defense diplomacy and appreciation for the attaché's work supporting Indonesia–Singapore defense communications; its account also reports meetings with the deputy minister and secretary-general."
+      ],
+      "caveats": [
+        "The October 6 publication recounts October 5 meetings; do not report the meeting as taking place on October 6.",
+        "The account is Indonesia's ministry's characterization, not a joint statement or independent confirmation from Singapore.",
+        "A courtesy call does not by itself establish a new agreement, exercise, procurement commitment, operational coordination or concrete policy change.",
+        "Do not infer a causal or operational connection to Japan's October 6 Kunisaki departure or Philippine emergency-response exercises.",
+        "Full original Indonesian text and captured response need independent human source-to-claim and translation checks before publication."
+      ],
+      "shadow_record_id": null,
+      "production_record_id": null,
+      "original_body_independently_human_verified": false,
+      "source_admission_approved": false,
+      "editorial_inclusion_approved": false,
+      "source_reuse_cleared": false
+    }
+  ],
+  "editorial_handling": {
+    "may_offer_to_single_provisional_ai_call": true,
+    "requires_two_live_production_desks": true,
+    "section_citations_must_keep_separate_namespace": true,
+    "independent_human_verification_before_publication": true,
+    "never_counts_as_live_desk": true,
+    "never_modify_production_database": true
+  }
+}

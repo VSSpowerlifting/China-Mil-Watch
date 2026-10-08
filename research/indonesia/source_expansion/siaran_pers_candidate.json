@@ -1,0 +1,39 @@
+{
+  "protocol": "ipr_indonesia_source_family_candidate_v1",
+  "institution": "Kementerian Pertahanan Republik Indonesia",
+  "candidate_slug": "id_kemhan_siaran_pers",
+  "family": "Siaran Pers",
+  "listing_url": "https://www.kemhan.go.id/category/siaran-pers",
+  "status": "discovery_research_only_unimplemented",
+  "enabled": false,
+  "eligible_for_production": false,
+  "scheduled": false,
+  "evidence": {
+    "source_category_separate_from_berita": true,
+    "manual_public_page_inspected_on": "2026-10-08",
+    "native_collector_robots_authorization_for_this_family": false,
+    "native_dated_listing_window_proven": false,
+    "source_article_byte_captures": 0,
+    "extraction_fixture_count": 0,
+    "original_language_source_comparison_completed": false,
+    "rights_reuse_permission_confirmed": false
+  },
+  "required_gates": [
+    "Identifiable native HTTP request to robots.txt and source listing using existing collector transport and rules",
+    "Snapshot stable dated listing and follow only directly published pagination; refuse loops, page/date drift and cap overflow",
+    "Inspect linked canonical publication URLs, dates and article bodies; preserve exact capture bytes and hash",
+    "Verify original-language text and timestamp/date parity using synthetic plus real captured fixtures",
+    "Deduplicate across Berita and Siaran Pers by canonical URL and content hash without collapsing distinct news",
+    "Run isolated collection on fresh state or behind separate source scope with immutable existing Kemhan archive",
+    "Create source-specific append-only health and provenance reports and human Day 7/14/30 review checkpoints",
+    "Recheck content rights and owner authorization before any live collector/source enablement"
+  ],
+  "exclusions": [
+    "TNI",
+    "military service portals",
+    "attachments",
+    "procurement",
+    "social media"
+  ],
+  "implementation_note": "Structured gate only; this JSON is not imported into any manifest, registry, source loader, runner or production pipeline."
+}
