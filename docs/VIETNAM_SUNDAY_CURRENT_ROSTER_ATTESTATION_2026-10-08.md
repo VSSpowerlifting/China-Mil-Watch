@@ -20,7 +20,7 @@ The read-only `Vietnam Sunday Current MPS Roster Attestation` PR contract:
 2. Clones the real isolated MPS orphan state via unauthenticated read-only HTTPS, verifies its exact head and state-only tree.
 3. Separately clones the authoritative `main` branch at its exact resolved commit and reads the October 10 private editorial roster merged from #237. This is a **read-only merged-production-code comparison**, not a push, approval, or change to the official roster.
 4. Independently replays the actual MPS source-state/capture/SQLite/version chain and checks the packet against `editorial_notes_2026-10-10.json`.
-5. Demands **two source-version-matched October 5 MPS rows** and that both account for all machine-eligible observed MPS articles in that exact bounded week as of the archived snapshot. If newly eligible source evidence appears, the check fails until separately source-authored synopses exist, rather than fabricating an English claim.
+5. Demands **every currently machine-eligible, in-window MPS row** have an exact source-version-matched short editorial synopsis (one to three, under the existing quota). The October 8 collection added a third, October 7 Vietnam–Australia item and the check correctly failed while the packet had only two; #245 prepares the third note. If additional source evidence arrives, the gate fails until independently source-specific research exists. It does not fabricate English claims or imply publisher silence.
 
 The workflow does not call a language model, transfer source article bodies, send SMTP, upload public artifacts, schedule a collector, request write tokens, modify the archive or assert publisher/source-use rights. No actual Sunday email is sent by this milestone.
 
