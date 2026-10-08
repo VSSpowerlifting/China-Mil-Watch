@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 from scripts.audit_topic_v2_compatibility import (  # noqa: E402
     CompatibilityError,
     V1_GIT_BLOB,
+    V2_GIT_BLOB,
     V1_PATH,
     V2_PATH,
     audit,
@@ -35,7 +36,7 @@ class VocabularyCompatibility(unittest.TestCase):
 
     def run_audit(self, v1, v2, pin=V1_GIT_BLOB):
         return audit(
-            v1, v2, v1_pin=pin, v2_pin="synthetic-v2-blob"
+            v1, v2, v1_pin=pin, v2_pin=V2_GIT_BLOB
         )
 
     def test_real_file_diff_is_pinned_and_nonallocative(self):
@@ -48,6 +49,7 @@ class VocabularyCompatibility(unittest.TestCase):
         self.assertEqual(report["summary"]["new_topics"], 1)
         self.assertEqual(report["summary"]["automatic_assignment_promotions"], 0)
         self.assertEqual(report["pins"]["v1"]["git_blob_sha"], V1_GIT_BLOB)
+        self.assertEqual(report["pins"]["v2"]["git_blob_sha"], V2_GIT_BLOB)
         self.assertEqual(len(report["changes"]), 20)
         self.assertTrue(all(not row["automatic_record_promotion"]
                             for row in report["changes"]))
@@ -115,6 +117,17 @@ class VocabularyCompatibility(unittest.TestCase):
                                         "v1 reference blob changed"):
                 audit_files(altered, V2_PATH)
 
+    def test_actual_v2_file_edit_requires_new_review(self):
+        with tempfile.TemporaryDirectory() as folder:
+            altered = Path(folder) / "v2.json"
+            altered.write_text(
+                V2_PATH.read_text(encoding="utf-8") + " ",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(CompatibilityError,
+                                        "v2 definition blob changed"):
+                audit_files(V1_PATH, altered)
+
     def test_v1_and_v2_misnumbering_is_refused(self):
         a, b = self.fixture()
         a["taxonomy_version"] = 2
@@ -174,7 +187,7 @@ class VocabularyCompatibility(unittest.TestCase):
                                     "unreviewed v2 definition changes"):
             self.run_audit(a, b)
 
-    def test_silent_change_within_already_modified_legacy_scope_is_described(self):
+    def test_changed_text_is_described_by_pure_comparison_but_file_gate_still_pins_bytes(self):
         a, b = self.fixture()
         old = next(x for x in b["topics"]
                    if x["slug"] == "force_posture_basing")
