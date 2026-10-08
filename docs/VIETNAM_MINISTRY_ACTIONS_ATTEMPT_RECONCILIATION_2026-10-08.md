@@ -62,6 +62,8 @@ target date by assuming an on-time runner start.
   receipt (possible incomplete Actions attempt inventory).
 - MPS/MOIT branch latest run identities diverging after partial
   publication or recovery.
+- The same serial batch claiming different logical target days, different
+  date-origin labels, or incompatible collector commit SHA-1s across sources.
 - Re-run of an ordinary scheduled job, which needs manual review because
   the supported recovery path is a new dispatch naming the explicit day.
 - Action event versus ledger provenance mismatch, independently known
