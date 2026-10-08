@@ -1326,6 +1326,21 @@ class TestReviewRegressions(unittest.TestCase):
                 self.assertEqual(cap.status, st.ACCESS_CHALLENGED)
                 self.assertIsNone(cap.body)
 
+    def test_challenge_guard_does_not_hide_non_parser_programming_errors(self):
+        # A real markup rejection is a handled input error. Unexpected failures
+        # in the DOM or selector logic must not turn into a benign 'not challenged'.
+        with mock.patch.object(nsc, "BeautifulSoup",
+                               side_effect=RuntimeError("synthetic parser defect")):
+            with self.assertRaisesRegex(RuntimeError, "synthetic parser defect"):
+                nsc.looks_challenged({}, "<html>not a challenge</html>")
+
+    def test_challenge_guard_keeps_header_authoritative_when_html_refused(self):
+        with mock.patch.object(nsc, "BeautifulSoup",
+                               side_effect=ParserRejectedMarkup("rejected")):
+            self.assertTrue(nsc.looks_challenged(
+                {"cf-mitigated": "challenge"}, "<html>synthetic invalid</html>"
+            ))
+
     def test_markup_the_parser_rejects_is_a_status_never_a_raise(self):
         # The challenge screen parses every body before any status is read, and bs4
         # raises ParserRejectedMarkup for markup html.parser refuses outright, so
