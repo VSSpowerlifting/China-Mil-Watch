@@ -2,7 +2,7 @@
 
 ## Why this exists
 
-The **model-generated Sunday draft** from PR #203 may use short, attributed
+The **model-generated Sunday draft** merged in PR #237 may use short, attributed
 official-source research from Japan and Vietnam. It does **not** establish
 that a cited source is reviewed for a published Indo-Pacific Record Brief.
 Dylan edits **one coherent draft**, not supplements, but Ben still needs a
@@ -118,6 +118,39 @@ python -m scripts.bridge_vietnam_reviewed_brief_citations \
    publish workflow. The external references may not substitute for a live
    production desk, a review of the actual prose, or an issue approval.
 
+## Prepare a reviewer worksheet from ACTUAL edited citations
+
+The original static October 10 worksheet covers only the two October 5
+MPS sources known at its historical creation. The independently archived
+October 7 Vietnam–Australia meeting can be part of the same Sunday packet
+via #245, but **must not inherit those two old review decisions**.
+
+After Dylan's revised structured draft exists, run the helper with its exact
+week-specific private evidence packet. It scans the actual [External mps-vi:...]
+citations in the draft prose and selects ONLY those source IDs, whether one,
+two or three:
+
+    python -m scripts.prepare_vietnam_unsigned_citation_review \
+      --draft-sidecar /private/sunday-edited-draft.json \
+      --private-research-packet /private/2026-10-10.json \
+      --out /private/unsigned-cited-vietnam-review.json
+
+Every emitted source identity, publisher URL, original-language title,
+publication date, content SHA and historical state commit comes from the
+version-bound private packet. All eight verification fields are FALSE;
+reviewer, review date, original checked summary and source-use rationale
+are NULL. The helper never reads or exports article bodies. Nothing is
+source-reviewed or publication-approved by this output.
+
+The human reviewer separately verifies the publisher original and exact
+archived version, records which short analyst claims are supportable and
+the source-link/original-summary use basis, and fills **only the actually
+cited rows**. The existing bridge then refuses anything missing or version-
+mismatched, even if the worksheet looks plausible. Do not run the bridge
+against an AI draft or a no-source-approval checklist and call it published.
+
+Future weeks with a different set of Vietnam articles use the same helper;
+there is no hard-coded two-source or three-source approval roster.
 ## Security / provenance boundaries
 
 - Never treat signed-looking review JSON as proof of an independently
@@ -142,7 +175,7 @@ python -m scripts.bridge_vietnam_reviewed_brief_citations \
 ## CI
 
 ```sh
-python -m unittest tests.test_vietnam_reviewed_brief_citations -v
+python -m unittest tests.test_vietnam_reviewed_brief_citations tests.test_vietnam_unsigned_citation_review -v
 ```
 
 Synthetic-only, no-network fixtures must prove missing human review,
