@@ -119,9 +119,11 @@ def load_candidates(week_ending, as_of, *, directory=PACKS_DIR):
              "Vietnam candidate pack requires exact Friday/Saturday cutoffs")
     start = saturday - timedelta(days=6)
     path = Path(directory) / (week_ending + ".json")
+    # Even a dangling symlink is a configuration error, not a missing packet.
+    _fail_if(path.is_symlink(), "unsafe candidate file")
     if not path.exists():
         return []
-    _fail_if(path.is_symlink() or not path.is_file(), "unsafe candidate file")
+    _fail_if(not path.is_file(), "unsafe candidate file")
     _fail_if(path.stat().st_size > 25000, "candidate pack over 25KB")
     try:
         data = json.loads(path.read_text(encoding="utf-8"),
