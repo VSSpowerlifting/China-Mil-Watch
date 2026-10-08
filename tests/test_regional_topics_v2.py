@@ -131,7 +131,7 @@ class AssignmentV2(unittest.TestCase):
         self.assertEqual(
             [(a.topic_slug, a.taxonomy_version)
              for a in topics_for_record(self.conn, self.record, taxonomy_version=2)],
-            [(HADR, 2), ("military_exercises", 2)],
+            [("military_exercises", 2), (HADR, 2)],
         )
         self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM record_topics").fetchone()[0], 3)
 
