@@ -51,9 +51,17 @@ class EditorialWorksheetTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 render_packet(item)
 
-    def test_missing_second_desk_refused(self):
+    def test_missing_second_desk_warns_without_inventing_exception(self):
         item = draft()
         item["source_trail"] = item["source_trail"][:1]
+        text = render_packet(item)
+        self.assertIn("COVERAGE WARNING", text)
+        self.assertIn("single-desk Brief would require", text)
+        self.assertIn("NOT APPROVED OR PUBLISHED", text)
+
+    def test_no_candidates_refused(self):
+        item = draft()
+        item["source_trail"] = []
         with self.assertRaises(ValueError):
             render_packet(item)
 
