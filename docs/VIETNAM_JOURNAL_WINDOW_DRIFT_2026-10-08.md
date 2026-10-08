@@ -71,7 +71,8 @@ a stated response digest is genuine.
 
 The validator refuses unknown keys (preventing accidental prose embedding),
 missing or empty category observations, duplicate IDs, incompatible canonical
-URLs for the same numeric ID, contradictory local date hints, non-UTC
+URLs for the same numeric ID (within **or across** snapshots), contradictory
+local date hints, non-UTC
 observation times, false completeness claims, non-HTTPS/foreign URLs and
 more than 150 candidates in any category. Sidebars and recommendations may
 repeat links across sections; a listing page is **not an authoritative
