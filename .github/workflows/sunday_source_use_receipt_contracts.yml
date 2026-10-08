@@ -1,0 +1,35 @@
+name: Sunday Private Manuscript — Citation Use and Omission Receipt
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/brief_editorial_source_use.py
+      - scripts/sunday_editorial_handoff.py
+      - tests/test_sunday_editorial_source_use.py
+      - .github/workflows/sunday_source_use_receipt_contracts.yml
+      - docs/SUNDAY_EDITORIAL_SOURCE_USE_RECEIPT.md
+
+permissions:
+  contents: read
+
+jobs:
+  private-audit-contract:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing offline test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test external source use, unreferenced omissions and return-immutable receipt
+        run: |
+          python -m unittest tests.test_sunday_editorial_source_use tests.test_briefs_editorial_evidence -v
+      - name: Check archive and output untouched
+        run: test -z "$(git status --porcelain)"
+      # No web/source fetches, original copies, API calls, email or artifact uploads.
