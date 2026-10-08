@@ -269,7 +269,7 @@ class TestThisEnablesNothing(unittest.TestCase):
                     # This is an editorial consumer of production records,
                     # not a collector. It may read desk metadata, but may
                     # not gain a database-write or collection path.
-                    self.assertIn("permissions:\\n  contents: read".replace("\\n", "\n"), text)
+                    self.assertIn("permissions:\n  contents: read", text)
                     self.assertIn("from scripts.reconcile_db import read_only", text)
                     self.assertIn("with read_only(Path(DB_PATH)) as conn:", text)
                     self.assertNotIn("from pipeline import", text)
