@@ -103,3 +103,44 @@ metadata-only reference records in a new dedicated table with an
 approved reader, or retains full original body under a lawful source-use
 basis. **Do not insert placeholder bodies into the existing articles
 table as a shortcut.**
+
+
+## Verified disposable production preflight — October 8, 2026 UTC
+
+[GitHub Actions run 37719031120](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37719031120)
+(job `113122141300`) completed **successfully**, validating the exact
+pinned MPS state against a temporary copied, migrated production database.
+
+- **36 focused tests passed, zero failures:** the 11 new preview cases and
+  the existing Vietnam MPS queue and pilot contracts.
+- Exact committed source/queue validation produced **3 metadata-only rows**
+  in `unapproved_metadata_preview.db`, a separate SQLite file.
+- **0 existing production URL collisions**, verified with read-only
+  `mode=ro&immutable=1` against the copied current production snapshot.
+- **0 approval records, 0 retained full original source bodies,
+  0 production article imports**. The separate preview database contains
+  `preview_records` only, no `articles` table.
+- Tracked `pla_watch.db`, `output/` and the temporary source snapshot
+  passed exact before/after byte-preservation checks.
+- SHA-256 of the isolated SQLite preview:
+  `45f3f592f3742f61674ad7d1756d9dacf7a378858f43c34addd0393d1690f007`.
+- Temporary metadata-only artifact:
+  [11525201613](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37719031120/artifacts/11525201613),
+  30-day retention ending November 7, 2026. Archive digest:
+  `sha256:a93cea4553327662e1dec16cf58f970a4446003dbb7a2ee72b2f1306c8370998`.
+
+The disposable proof workflow was kept in PR #149 and **closed without
+merging**. Its successful result is evidence of a technically compatible
+*metadata-only preflight*, **not** an approval to publish these records
+or to introduce a production metadata table.
+
+### Realistic next decision
+
+The **architecture choice** is now the next non-editorial gating question.
+A future IPR record can either require full licensed source text (through
+the existing article pipeline and its separately human-gated staging
+contract) or use an explicitly designed **source-reference-only record
+kind** with a different public UI, provenance/coverage label, and a
+separate archive-integrity contract. No code here changes that choice.
+Editors still must sign record- and use-specific approvals before public
+display of either a full original body or a synthesized draft summary.
