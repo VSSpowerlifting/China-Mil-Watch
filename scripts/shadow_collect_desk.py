@@ -31,6 +31,16 @@ DESKS = {
     "korea": ("kr_policy_briefing", KoreaPolicyAdapter, "shadow/korea-policy-briefing"),
     "japan_jcg": ("jp_jcg", JCGEnglishAdapter, "shadow/japan-jcg"),
 }
+# Explicit publisher identities for the one-time, Oct8-bound source import.
+# This is not a new general historical crawler or production source registry.
+JCG_BACKFILL_EXPECTED = {
+    "https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html": "2026-10-06",
+    "https://www.kaiho.mlit.go.jp/e/topics_archive/article9453.html": "2026-10-06",
+    "https://www.kaiho.mlit.go.jp/e/topics_archive/article9436.html": "2026-09-29",
+    "https://www.kaiho.mlit.go.jp/e/topics_archive/article9424.html": "2026-09-18",
+    "https://www.kaiho.mlit.go.jp/e/topics_archive/article9399.html": "2026-09-07",
+}
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS shadow_meta (desk TEXT PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS shadow_records (
@@ -168,6 +178,11 @@ def run(desk, state_dir, target, lookback=6, cap=40, run_id="local", commit="unk
             if not discovery.ok:
                 entry.update(result=discovery.status, error_detail=discovery.error_detail)
                 entry["access_failures"] += discovery.status in (st.AUTH_FAILURE, st.ACCESS_CHALLENGED)
+            elif historical_backfill and (
+                    len(discovery.references) != len(JCG_BACKFILL_EXPECTED) or
+                    {r.url: r.hint_published_date for r in discovery.references} != JCG_BACKFILL_EXPECTED):
+                entry.update(result=st.LISTING_FAILURE,
+                             error_detail="publisher index differs from exactly five authorized JCG September source URLs/dates; no bodies fetched")
             elif len(discovery.references) > cap:
                 entry.update(result=st.LISTING_FAILURE, error_detail="window exceeds cap; no bodies fetched",
                              deferred_urls=[r.url for r in discovery.references])
