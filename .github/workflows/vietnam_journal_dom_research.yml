@@ -1,0 +1,50 @@
+name: Vietnam Journal DOM One-shot Research
+
+# Disposable metadata-only research. Do not merge to main.
+# At most three GETs, each gated by a readable desktop robots policy.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vietnam_journal_dom_research.yml'
+      - 'scripts/research_vietnam_journal_dom.py'
+      - 'tests/test_research_vietnam_journal_dom.py'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    if: ${{ github.head_ref == 'research/vietnam-journal-dom-20261007' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact diagnostic commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install narrow offline dependencies
+        run: python -m pip install 'requests>=2.31,<3' 'beautifulsoup4>=4.12,<5'
+
+      - name: Validate boundaries with synthetic fixtures
+        run: python -m unittest tests.test_research_vietnam_journal_dom -v
+
+      - name: Verify real article DOM without retaining publisher bytes
+        env:
+          OUT: ${{ runner.temp }}/vietnam-journal-dom-metadata.json
+        run: python scripts/research_vietnam_journal_dom.py --out "$OUT"
+
+      - name: Retain only structure metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-journal-dom-research-${{ github.run_id }}
+          path: ${{ runner.temp }}/vietnam-journal-dom-metadata.json
+          if-no-files-found: warn
+          retention-days: 30
