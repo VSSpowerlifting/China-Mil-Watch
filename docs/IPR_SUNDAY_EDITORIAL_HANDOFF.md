@@ -112,3 +112,12 @@ The Sunday editor's single synthesized manuscript may use a strict, week-specifi
 The returned text includes a unified immutable appendix that distinguishes real production record IDs from external, publisher-hosted source IDs. Dylan edits ONE draft and reviews any external citations; no separate national supplement is expected. The external material does not qualify the desks as live, does not become a production DB record, and is **not preapproved for publication**. Before a final Brief, human editorial checking and the independent publication contract still apply.
 
 The Sunday workflow uses `--full-week --include-research` and **cannot send** before the owner enables the new Sunday delivery variable. Do not activate until the current-week full CI and no-send Sunday preview pass.
+
+### Synchronization with the Vietnam desk-page publisher-link lane
+
+This Sunday editorial draft lane is separate from the individually reviewed
+publisher-link feature merged in PR #195. The branch's explicit mainline
+synchronization preserves both: the public Vietnam desk may display vetted
+publisher bibliography links, while the private Sunday writer uses separately
+typed, clearly unapproved candidate evidence. Neither feature promotes the
+Vietnam Desk to live production coverage or grants a source's reuse rights.
