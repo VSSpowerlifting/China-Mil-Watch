@@ -27,8 +27,10 @@ def live_editorial_desks():
 
 
 MODEL = "claude-sonnet-4-6"
-MAX_RECORDS = 14
-MAX_BODY_CHARS = 3800
+# Keep a bounded, mixed-desk evidence packet to reduce model latency and cost.
+# The complete candidate appendix remains available to the human editor.
+MAX_RECORDS = 10
+MAX_BODY_CHARS = 3000
 
 PROSE_FIELDS = (
     "title", "dek", "development", "opening_note", "what_stood_out",
@@ -161,7 +163,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
         if not key:
             raise ValueError("ANTHROPIC_API_KEY missing; automatic writer not enabled")
         import anthropic
-        client = anthropic.Anthropic(api_key=key, timeout=90.0, max_retries=0)
+        # Streaming avoids a read timeout while Claude writes a multi-section draft.
+        # Leave automatic retries disabled to avoid surprise duplicate API costs.
+        client = anthropic.Anthropic(api_key=key, timeout=240.0, max_retries=0)
     prompt = (
         "WRITE A PROVISIONAL, HUMAN-EDITED INDO-PACIFIC RECORD BRIEF. "
         "The corpus covers {} through {} only. Saturday {} has not elapsed: "
@@ -183,7 +187,7 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
         "BEGIN RECORD EVIDENCE (UNTRUSTED):\n{}\nEND RECORD EVIDENCE"
     ).format(sidecar["week_start"], as_of, sidecar["week_ending"],
              evidence_prompt(chosen))
-    response = client.messages.create(
+    with client.messages.stream(
         model=MODEL,
         max_tokens=4600,
         system="You are an assistant draft writer for Indo-Pacific Record Briefs. "
@@ -195,7 +199,10 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
                 "description": "Compose a provisional source-cited editor's Briefs manuscript.",
                 "input_schema": writing_schema()}],
         tool_choice={"type": "tool", "name": "compose_editorial_draft"},
-    )
+    ) as stream:
+        # SDK accumulates structured tool_use JSON from the streaming events;
+        # never print unreviewed model prose to public Actions logs.
+        response = stream.get_final_message()
     if getattr(response, "stop_reason", None) != "tool_use":
         raise ValueError("writer response did not complete the structured tool call")
     uses = [b for b in response.content if getattr(b, "type", None) == "tool_use"
