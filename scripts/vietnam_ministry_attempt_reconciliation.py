@@ -174,6 +174,21 @@ def reconcile(packet):
                                      "source_slug": slug, "run_id": identifier})
         by_source[slug] = outcomes
 
+    # Even if an Actions receipt has no independently established target,
+    # the SAME serial ministry batch cannot claim conflicting dates,
+    # date-origin rules, or collector code SHAs across source states.
+    recorded_keys = set().union(*(set(records) for records in by_source.values()))
+    for identifier in sorted(recorded_keys, key=lambda x: tuple(map(int, x.split("-")))):
+        reported = {slug: by_source[slug][identifier] for slug in sorted(SOURCES)
+                    if identifier in by_source[slug]}
+        for field, kind in (("target_date", "source_batch_target_dates_disagree"),
+                            ("target_date_source", "source_batch_date_origins_disagree"),
+                            ("collector_commit", "source_batch_collector_commits_disagree")):
+            values = {slug: row[field] for slug, row in reported.items()}
+            if len(set(values.values())) > 1:
+                warnings.append({"kind": kind, "run_id": identifier,
+                                 "values_by_source": values})
+
     for key in sorted(actions, key=lambda x: tuple(map(int, x.split("-")))):
         action = actions[key]
         present = [slug for slug in sorted(SOURCES) if key in by_source[slug]]
