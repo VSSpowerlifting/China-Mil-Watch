@@ -85,17 +85,46 @@ jobs:
           print("IPR_SUNDAY_DESKS=" + ",".join(desks))
           PY
 
-      - name: Verify bounded Japan/Vietnam editorial source packet offline
+      - name: Clone latest Vietnam MPS shadow state READ-ONLY
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
         run: |
+          set -euo pipefail
+          dest="$RUNNER_TEMP/ipr-vietnam-mps-state"
+          git clone --quiet --single-branch --branch shadow/vietnam-mps-foreign-affairs \
+            "$STATE_REMOTE" "$dest"
+          test "$(git -C "$dest" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$dest" ls-tree --name-only HEAD)" = "state"
+          test -f "$dest/state/shadow.db"
+          test -f "$dest/state/clock.json"
+          echo "Vietnam MPS exact isolated branch available; no state write permitted."
+
+      - name: Assemble audited Vietnam and pinned Japan model evidence OFFLINE
+        shell: bash
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/ipr-vietnam-mps-state"
+          target="$RUNNER_TEMP/ipr-sunday-model-research/$IPR_SUNDAY_WEEK_END.json"
+          current="$(git -C "$state" rev-parse HEAD)"
+          python -m scripts.prepare_vietnam_briefs_model_evidence \
+            --state-repo "$state" \
+            --state-commit "$current" \
+            --week-ending "$IPR_SUNDAY_WEEK_END" \
+            --out "$target"
+          test -f "$target"
+          test -z "$(git -C "$state" status --porcelain --untracked-files=all)"
           python - <<'PY'
           from core.brief_editorial_evidence import load_editorial_evidence
+          from pathlib import Path
           import os
           rows = load_editorial_evidence(
               os.environ["IPR_SUNDAY_WEEK_END"],
               os.environ["IPR_SUNDAY_AS_OF"],
+              directory=Path(os.environ["RUNNER_TEMP"]) / "ipr-sunday-model-research",
           )
-          print("Private source-linked research candidates:", len(rows))
-          print("This verification is NOT source approval or corpus admission.")
+          print("Private model research: {} candidate sources (still unapproved).".format(len(rows)))
+          print("Verification does NOT imply public archive admission or source permission.")
           PY
 
       - name: Create read-only full Saturday-ending week source scaffold
@@ -139,7 +168,9 @@ jobs:
         run: |
           args=(--sidecar "$RUNNER_TEMP/ipr-sunday-scaffold.json"
                 --out "$RUNNER_TEMP/IPR-Briefs-Editorial-$IPR_SUNDAY_WEEK_END.txt"
-                --write-automatic --full-week --include-research --as-of "$IPR_SUNDAY_AS_OF")
+                --write-automatic --full-week --include-research
+                --research-packet "$RUNNER_TEMP/ipr-sunday-model-research/$IPR_SUNDAY_WEEK_END.json"
+                --as-of "$IPR_SUNDAY_AS_OF")
           if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
             args+=(--send)
           fi
