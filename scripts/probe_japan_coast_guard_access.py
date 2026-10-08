@@ -46,8 +46,18 @@ class MainText(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.suppressed = 0
         self.chunks = []
+        self.semantic_nodes = []
+        self.tag_count = {}
 
     def handle_starttag(self, tag, attrs):
+        self.tag_count[tag] = self.tag_count.get(tag, 0) + 1
+        if tag in ("main", "article", "h1", "h2", "h3", "section", "time"):
+            properties = dict(attrs)
+            self.semantic_nodes.append({
+                "tag": tag,
+                "class": " ".join((properties.get("class") or "").split())[:100],
+                "id": (properties.get("id") or "")[:100],
+            })
         if tag in ("script", "style", "svg", "noscript"):
             self.suppressed += 1
 
@@ -142,6 +152,13 @@ def examine(*, opener=None, request=get_once, sleep=time.sleep):
                 words = " ".join(parser.chunks)
                 item["visible_chars"] = len(words.strip())
                 item["marker_found"] = marker.casefold() in words.casefold()
+                # Structural footprint ONLY, no publisher text is logged.
+                item["article_structure"] = {
+                    "semantic_nodes": parser.semantic_nodes[:24],
+                    "semantic_node_count": len(parser.semantic_nodes),
+                    "paragraph_tags": parser.tag_count.get("p", 0),
+                    "time_tags": parser.tag_count.get("time", 0),
+                }
                 item["verdict"] = (
                     "readable_original_html" if item["marker_found"]
                     and len(words.strip()) >= 400 else "body_not_verified"
