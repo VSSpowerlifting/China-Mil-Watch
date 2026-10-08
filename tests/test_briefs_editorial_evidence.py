@@ -267,6 +267,21 @@ class UnifiedWriterTests(unittest.TestCase):
             self.assertIn("External source JP-W41-01", result.read_text())
             mail.assert_not_called()
 
+    def test_explicit_missing_ephemeral_packet_never_falls_back_silently(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            sidecar = d / "sidecar.json"
+            sidecar.write_text(json.dumps(scaffold()), encoding="utf-8")
+            out = d / "article.txt"
+            with patch("scripts.weekly_briefs_auto_writer.compose") as writer:
+                with self.assertRaisesRegex(ValueError, "explicit private research packet missing"):
+                    main(["--sidecar", str(sidecar), "--out", str(out),
+                          "--full-week", "--include-research", "--write-automatic",
+                          "--research-packet", str(d / (SAT + ".json")),
+                          "--as-of", SAT])
+            self.assertFalse(out.exists())
+            writer.assert_not_called()
+
     def test_malformed_ephemeral_packet_blocks_model_before_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
