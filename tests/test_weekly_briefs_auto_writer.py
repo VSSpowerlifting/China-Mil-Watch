@@ -94,11 +94,52 @@ class WriterContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "legacy series"):
             validate_manuscript(result, evidence())
 
-    def test_friday_window_required_before_db_query(self):
+    def test_non_friday_saturday_cutoff_refused_before_db_query(self):
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
                    "desks": ["china", "singapore"], "source_trail": []}
-        with self.assertRaises(ValueError):
-            choose_evidence(sidecar, as_of="2026-10-10")
+        for cutoff in ("2026-10-08", "2026-10-11"):
+            with self.subTest(cutoff=cutoff):
+                with self.assertRaisesRegex(ValueError, "Friday or Saturday"):
+                    choose_evidence(sidecar, as_of=cutoff)
+
+    def test_saturday_cutoff_uses_complete_week_readonly_selection(self):
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"],
+                   "source_trail": [{"record_id": 1}, {"record_id": 2}]}
+        with patch("scripts.weekly_briefs_auto_writer.read_only",
+                   return_value=nullcontext("DB")) as read, \
+             patch("scripts.weekly_briefs_auto_writer.get_articles_for_desks",
+                   return_value=[x[0] for x in evidence()]) as rows, \
+             patch("scripts.weekly_briefs_auto_writer.trail_entry",
+                   side_effect=lambda row: {"record_id": row["id"]}):
+            chosen = choose_evidence(sidecar, as_of="2026-10-10", db="/tmp/fake.db")
+        self.assertEqual({row["desk_id"] for row, _ in chosen}, {"china", "singapore"})
+        rows.assert_called_once_with(
+            "2026-10-04", "2026-10-10",
+            ["china", "singapore"], conn="DB",
+        )
+        read.assert_called_once()
+
+    def test_sunday_draft_prompt_does_not_call_week_unfinished(self):
+        data = valid_manuscript()
+        response = SimpleNamespace(
+            stop_reason="tool_use",
+            content=[SimpleNamespace(type="tool_use",
+                                     name="compose_editorial_draft", input=data)],
+        )
+        calls = []
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kw:
+            (calls.append(kw), nullcontext(SimpleNamespace(
+                get_final_message=lambda: response)))[1]))
+        sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
+                   "desks": ["china", "singapore"], "source_trail": []}
+        with patch("scripts.weekly_briefs_auto_writer.choose_evidence",
+                   return_value=evidence()):
+            compose(sidecar, "2026-10-10", client=fake)
+        prompt = calls[0]["messages"][0]["content"]
+        self.assertIn("SUNDAY DRAFT", prompt)
+        self.assertIn("source-capture completeness", prompt)
+        self.assertNotIn("Saturday 2026-10-10 has not elapsed", prompt)
 
     def test_no_model_call_when_evidence_missing(self):
         sidecar = {"week_start": "2026-10-04", "week_ending": "2026-10-10",
