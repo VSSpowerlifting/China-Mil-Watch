@@ -57,6 +57,13 @@ Durable documents, and what each one governs:
 
 ---
 
+PR #128 now includes a separate [editorial-skeptic second pass](research/topic_pilot_v1/review/REVIEW.md)
+against original head `0f368eb3131b7cac7d6d1db9e9f00ed7d889a57f`: all 60
+records assessed; 21 topic sets recommended for revision and 19 owner questions
+remain. Both model passes remain provisional; this same-chat second pass is not
+blinded or human approval. No vocabulary changes or assignments are applied.
+PR remains draft pending owner review.
+
 ## 1. Production state
 
 * **Public identity: Indo-Pacific Record.** Live at
