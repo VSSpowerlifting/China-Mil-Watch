@@ -150,10 +150,13 @@ class MOITCandidateTests(unittest.TestCase):
 
     def test_cli_fails_closed_on_source_or_output_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(MOITInventoryRefused):
+            existing = Path(tmp) / "existing.json"
+            existing.write_text("not authorized", encoding="utf-8")
+            with self.assertRaisesRegex(MOITInventoryRefused, "new private file"):
                 main(["--state-repo", tmp, "--state-commit", SHADOW,
                       "--source", E, "--week-ending", "2026-10-03",
-                      "--out", str(Path(tmp) / "not-a-proven-source.json")])
+                      "--out", str(existing)])
+            self.assertEqual(existing.read_text(), "not authorized")
 
 
 if __name__ == "__main__":
