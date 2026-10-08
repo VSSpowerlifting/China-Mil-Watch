@@ -24,14 +24,25 @@ All selected excerpts were originally chosen by a model, not an independent huma
 
 Each row in [`packet.json`](packet.json) pins the exact original pilot ID, origin desk/source, issuer URL, source-stated date, title in its original language, source blob/commit/ref and original stored-body SHA-256. Excerpts are copied exactly from the merged pilot, including any truncated wording. No replacement English translation is invented. The origin and row locators allow a qualified reviewer to find and inspect the **entire** frozen body in the corresponding production or shadow snapshot.
 
-Check the packet against the saved pilot:
+Check the packet against the saved pilot, then optionally replay its exact historical source bodies:
 
 ```sh
+# Default: fast source-ledger fingerprint and excerpt comparisons.
 python3 scripts/validate_topic_v2_crossdesk_hadr.py
+
+# Stronger offline provenance: read the six pinned original database Git blobs
+# through temporary immutable SQLite snapshots, validating all 11 source bodies.
+# The exact historical commits must be present locally; no substitute or fetch.
+python3 scripts/validate_topic_v2_crossdesk_hadr.py --verify-sources
+
 python3 -m unittest tests.test_topic_v2_crossdesk_hadr -v
 ```
 
-The offline validator replays every identity, source/date, original excerpt, archived-origin pointer, case role, duplicate-event family and pending approval state against the **unchanged pilot ledger**, verifying that ledger's exact Git blob SHA. It does **not** independently open all historical production/shadow database Git blobs or verify factual statements by the governments concerned. To upgrade from source-pinned candidate to accepted human label, the original full bodies and language must be independently inspected.
+The fast validator checks every identity, source/date, original excerpt, archived-origin pointer, case role, duplicate-event family and pending approval state against the **unchanged pilot ledger**, verifying the ledger's exact Git blob SHA. It verifies consistency with prior stored excerpts, **not** the full underlying source body.
+
+The optional `--verify-sources` mode first enforces the original 60-record pilot's ledger contract, then calls its established historical source verifier for **only the 11 selected cases from six pinned database Git blobs**. That verifier resolves each original commit:path blob, reads it into a temporary immutable SQLite snapshot, checks precise row identity, body SHA-256, body length and original-language excerpt offsets, and proves the scratch copy was unchanged. Missing Git objects cause a hard failure; this tool never uses current branch tips, external URLs, or reconstructed text as substitute evidence.
+
+Neither mode proves the *factual truth* of any government's account, resolves the proposed HADR scopes, or constitutes independent human review. A true reviewer must inspect the entire source-language body separately, record their own judgment, and leave this model-assisted editor-facing queue out of any blind exercise.
 
 ## Editorial review questions
 
