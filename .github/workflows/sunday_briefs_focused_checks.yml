@@ -13,6 +13,7 @@ on:
       - scripts/validate_editorial_return.py
       - tests/test_briefs_editorial_evidence.py
       - tests/test_weekly_briefs_sunday_window.py
+      - tests/test_sunday_owner_preview.py
       - research/briefs_editorial_evidence/2026-10-10.json
 
 permissions:
@@ -33,7 +34,7 @@ jobs:
       - name: Install declared offline test dependencies
         run: pip install -r requirements.txt
       - name: Verify one synthesized manuscript, typed sources, Saturday window, return validation and no SMTP
-        run: python -m unittest tests.test_briefs_editorial_evidence tests.test_weekly_briefs_sunday_window -v
+        run: python -m unittest tests.test_briefs_editorial_evidence tests.test_weekly_briefs_sunday_window tests.test_sunday_owner_preview -v
       - name: Preserve tracked corpus and prevent any draft artifact leak
         shell: bash
         run: |
