@@ -116,6 +116,7 @@ class AssignmentContract(unittest.TestCase):
 
     def setUp(self):
         self.conn = sqlite3.connect(":memory:")
+        ensure_topic_store(self.conn)
         self.record = RecordRef(
             desk_id="singapore",
             source_slug="sg_mindef_releases",
@@ -156,11 +157,26 @@ class AssignmentContract(unittest.TestCase):
     def test_unknown_topic_fails_before_write(self):
         with self.assertRaisesRegex(TopicTaxonomyError, "unknown regional topic"):
             attach_topic(self.conn, self.assignment(topic_slug="made_up_topic"))
-        ensure_topic_store(self.conn)
         self.assertEqual(
             self.conn.execute("SELECT COUNT(*) FROM record_topics").fetchone()[0],
             0,
         )
+
+    def test_valid_assignment_refuses_unconfigured_store_without_creating_schema(self):
+        conn = sqlite3.connect(":memory:")
+        try:
+            with self.assertRaisesRegex(
+                    TopicStoreError, "store is not configured"):
+                attach_topic(conn, self.assignment())
+            self.assertEqual(
+                conn.execute(
+                    "SELECT COUNT(*) FROM sqlite_master "
+                    "WHERE type='table' AND name='record_topics'"
+                ).fetchone()[0],
+                0,
+            )
+        finally:
+            conn.close()
 
     def test_conflicting_provenance_never_silently_overwrites(self):
         attach_topic(self.conn, self.assignment())
@@ -249,6 +265,7 @@ class StorePortability(unittest.TestCase):
             "vn_mps_foreign_affairs_vi",
             "https://bocongan.gov.vn/bai-viet/example-1234567890",
         )
+        ensure_topic_store(conn)
         attach_topic(
             conn,
             TopicAssignment(
