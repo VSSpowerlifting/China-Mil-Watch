@@ -13,7 +13,6 @@ import re
 import sqlite3
 import subprocess
 import tempfile
-from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -28,7 +27,15 @@ TABLES = (
     "shadow_pre_bootstrap",
     "shadow_validators",
 )
-EXPECTED_IDS = frozenset(("JSP01", "JSP02", "JSP03", "JSP04", "JSP05", "JSP06"))
+EXPECTED_SOURCES = {
+    "JSP01": "https://www.mod.go.jp/j/press/wp/wp2026/html/n310204000.html",
+    "JSP02": "https://www.mod.go.jp/j/press/kisha/2026/0306a.html",
+    "JSP03": "https://www.mod.go.jp/asdf/ssa/activities/report01/",
+    "JSP04": "https://www.mofa.go.jp/mofaj/gaiko/bluebook/2026/html/chapter3_01_02.html",
+    "JSP05": "https://www.jaxa.jp/press/2026/06/20260612-1_j.html",
+    "JSP06": "https://www.jaxa.jp/press/2026/08/20260820-1_j.html"
+}
+EXPECTED_IDS = frozenset(EXPECTED_SOURCES)
 
 
 class SnapshotAuditError(ValueError):
@@ -58,6 +65,8 @@ def load_candidates(path: Path) -> list[dict]:
                 ident in ids or not isinstance(url, str) or
                 not url.startswith("https://") or url in urls):
             raise SnapshotAuditError("duplicate, malformed or unexpected candidate identity")
+        if url != EXPECTED_SOURCES[ident]:
+            raise SnapshotAuditError("candidate URL changed from frozen source packet")
         if (candidate.get("archive_identity") is not None or
                 candidate.get("body_sha256") is not None or
                 candidate.get("owner_approval") is not None or
