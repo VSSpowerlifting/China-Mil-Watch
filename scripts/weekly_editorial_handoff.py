@@ -36,7 +36,8 @@ def one_line(value):
     return " ".join(str(value or "").split())
 
 
-def render_packet(sidecar, *, manuscript=None, as_of=None):
+def render_packet(sidecar, *, manuscript=None, as_of=None,
+                  vietnam_candidates=()):
     if sidecar.get("editorial_status") != "draft" or sidecar.get("issue_number") is not None:
         raise ValueError("only unnumbered, unapproved draft scaffolds may be emailed")
     week_end = date.fromisoformat(sidecar["week_ending"])
@@ -44,6 +45,12 @@ def render_packet(sidecar, *, manuscript=None, as_of=None):
         raise ValueError("the Briefs editorial week must end on Saturday")
     desks = sidecar["desks"]
     trail = sidecar["source_trail"]
+    if vietnam_candidates and not as_of:
+        raise ValueError("Vietnam shadow candidates require a Friday as-of cutoff")
+    if vietnam_candidates and any(row["review_status"] !=
+                                  "requires_independent_human_review"
+                                  for row in vietnam_candidates):
+        raise ValueError("candidate incorrectly claims human review")
     represented = {entry["desk"] for entry in trail}
     if not trail:
         raise ValueError("no source candidates in this week; refuse empty editorial email")
@@ -68,6 +75,10 @@ def render_packet(sidecar, *, manuscript=None, as_of=None):
         "Keep the source appendix intact. Give record IDs for factual claims.",
         "Do not guess at translations, infer coordination, or assign an issue number.",
         "Source listings are candidates, not endorsed editorial selections.",
+        ("Vietnam: {} isolated shadow-source link(s) require independent review; "
+         "NOT model evidence, NOT production record IDs, NOT live desk coverage."
+         .format(len(vietnam_candidates)) if vietnam_candidates else
+         "Vietnam: no separately offered shadow-source candidates."),
         "Ben retains final editorial, approval, numbering and publication authority.",
         "",
         "=== EDITABLE MANUSCRIPT ===",
@@ -125,11 +136,33 @@ def render_packet(sidecar, *, manuscript=None, as_of=None):
             "Screening: " + one_line(entry["screening"]),
             "",
         ))
-    lines.extend((
-        "END OF SOURCE APPENDIX",
-        "END OF UNAPPROVED WORKSHEET",
-        "",
-    ))
+    lines.append("END OF SOURCE APPENDIX")
+    if vietnam_candidates:
+        lines.extend((
+            "",
+            "=== VIETNAM SHADOW CANDIDATES — HUMAN REVIEW REQUIRED ===",
+            "NOT production record IDs, NOT model input, NOT reviewed or approved.",
+            "These official-source pointers are for Dylan's independent source",
+            "inspection. Cite the original publisher URL only after reviewing",
+            "the original-language contents and confirming each factual claim.",
+            "The editorial and publishing gates remain unchanged.",
+            "",
+        ))
+        for item in vietnam_candidates:
+            lines.extend((
+                "Candidate identity: " + one_line(item["source_identity"]),
+                "Published: " + one_line(item["published_date"]),
+                "Publisher: " + one_line(item["source_name"]),
+                "Original (vi): " + one_line(item["original_title"]),
+                "URL: " + one_line(item["canonical_url"]),
+                "Pinned source commit: " + one_line(item["state_commit"]),
+                "Current content SHA-256: " + one_line(item["content_sha256"]),
+                "Editorial question (not a verified claim): " + one_line(item["editorial_angle"]),
+                "Review status: REQUIRES INDEPENDENT HUMAN REVIEW",
+                "",
+            ))
+        lines.append("END OF VIETNAM SHADOW CANDIDATES")
+    lines.extend(("END OF UNAPPROVED WORKSHEET", ""))
     return "\n".join(lines)
 
 
@@ -190,11 +223,19 @@ def main(argv=None):
         # Raises on absent full-text evidence, missing API key, API errors or
         # invalid citations. No email or file is produced on these failures.
         manuscript = compose(sidecar, args.as_of)
-    text = render_packet(sidecar, manuscript=manuscript, as_of=args.as_of)
+    # These unapproved metadata pointers appear only in the PRIVATE human
+    # handoff after the immutable production source appendix. Never send them
+    # to the model or count them as live, production-backed desk evidence.
+    vietnam_candidates = []
+    if args.as_of:
+        from core.vietnam_briefs_handoff import load_candidates
+        vietnam_candidates = load_candidates(sidecar["week_ending"], args.as_of)
+    text = render_packet(sidecar, manuscript=manuscript, as_of=args.as_of,
+                         vietnam_candidates=vietnam_candidates)
     args.out.write_text(text, encoding="utf-8")
-    print("Prepared unapproved {}: {} ({} record candidates)".format(
+    print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review)".format(
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
-        args.out.name, len(sidecar["source_trail"])))
+        args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates)))
     if args.send:
         send_packet(args.out, sidecar["week_ending"], provisional=args.write_automatic)
         print("Editorial worksheet delivered via configured SMTP account.")

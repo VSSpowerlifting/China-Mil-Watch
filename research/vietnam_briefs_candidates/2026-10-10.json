@@ -1,0 +1,27 @@
+{
+  "schema": "vietnam-briefs-human-review-candidates/1",
+  "week_ending": "2026-10-10",
+  "state_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+  "candidates": [
+    {
+      "source_identity": "mps-vi:1791199100",
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "canonical_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+      "published_date": "2026-10-05",
+      "original_title": "Mở rộng hợp tác công nghệ, công nghiệp an ninh với các đối tác Thổ Nhĩ Kỳ",
+      "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+      "editorial_angle": "Review whether exploratory Vietnamese public-security technology discussions with Turkish firms are relevant to this week's regional security story; do not infer a contract or delivered technology.",
+      "review_status": "requires_independent_human_review"
+    },
+    {
+      "source_identity": "mps-vi:1791199677",
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "canonical_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+      "published_date": "2026-10-05",
+      "original_title": "Hợp tác đào tạo, nghiên cứu công nghệ an ninh với Đại học Concordia, Canada",
+      "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+      "editorial_angle": "Review whether the October 5 MPS meeting with Concordia bears on security-technology capacity; distinguish any separate education-sector memorandum from an MPS agreement.",
+      "review_status": "requires_independent_human_review"
+    }
+  ]
+}
