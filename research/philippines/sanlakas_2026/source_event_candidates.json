@@ -1,0 +1,250 @@
+{
+  "schema": "ipr_philippines_provisional_source_event_v1",
+  "status": "unsigned_research_candidate_requires_human_review",
+  "archive": {
+    "state_branch": "shadow/ph-afp",
+    "state_commit": "492001f34ba6176169b6acc96a237f05592a3395",
+    "state_db_blob": "e42f8f0dde480a99452d89bcfc7ee84b5aa55f13",
+    "state_path": "state/shadow.db",
+    "original_run_id": "37631681338-1",
+    "source_scope": "four_afp_english_original_body_records",
+    "pin_scope": "single_day0_immutable_archive_not_live_url"
+  },
+  "permissions": {
+    "publisher_reuse_review_complete": false,
+    "human_source_review_complete": false,
+    "event_grouping_approved": false,
+    "entity_resolution_approved": false,
+    "topic_classification_approved": false,
+    "timeline_publication_approved": false,
+    "production_writes_authorized": false
+  },
+  "records": [
+    {
+      "id": "afp:1390",
+      "group": "jpscc_meeting",
+      "published_at_original": "2026-09-30T12:22:00+08:00",
+      "title": "AFP, PNP, PCG Strengthen Joint Peace and Security Coordination",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-strengthen-joint-peace-and-security-coordination",
+      "content_sha256": "c51136832b8271f81957a021bc68b6588fa7e1d65fff4ca9979ec74593e2faea",
+      "capture_sha256": "4120dd834b5bb5fbce8616f51e5bf0fe8c1c4fc289c04476187d2af48b4fc864"
+    },
+    {
+      "id": "afp:1391",
+      "group": "sanlakas_exercise",
+      "published_at_original": "2026-10-01T12:24:00+08:00",
+      "title": "AFP, PNP, PCG Sustain Joint Readiness Through 2026 Inter-Agency Exercise",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-sustain-joint-readiness-through-2026-inter-agency-exercise",
+      "content_sha256": "2207cc71ef080ebfecbf35dba117ce775b3583b043415b39352a65622d62f724",
+      "capture_sha256": "721e5379732008b4a1ecfe9b45fe93b41200e9bda97243fef157f1247bcd22ae"
+    },
+    {
+      "id": "afp:1393",
+      "group": "sanlakas_exercise",
+      "published_at_original": "2026-10-02T12:39:00+08:00",
+      "title": "AFP, PNP, PCG Strengthen Interagency Response Through Field Training Exercise",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-strengthen-interagency-response-through-field-training-exercise",
+      "content_sha256": "b6b50aea327ea452e62f7ba0b9d5278c165a27da08686cbeddee65e5f54a71da",
+      "capture_sha256": "b00b39d3647c7786e2d63b8775125e7a1bbd790ec463b79e3d089a6f5df7bf64"
+    },
+    {
+      "id": "afp:1394",
+      "group": "sanlakas_exercise",
+      "published_at_original": "2026-10-03T12:42:00+08:00",
+      "title": "AFP, PNP, PCG Conclude Interagency Exercise “Pagsasanay Sanlakas” 2026",
+      "source_url": "https://www.afp.mil.ph/news/afp-pnp-pcg-conclude-interagency-exercise-pagsasanay-sanlakas-2026",
+      "content_sha256": "0f99d426c5860b25788a152f7a487463bf6979db84915b58c9509b5817dce003",
+      "capture_sha256": "168ba1fba196d133676c68f8fd79365d86666473f0b9959185111fa795c51064"
+    }
+  ],
+  "event_candidates": [
+    {
+      "key": "sanlakas_exercise",
+      "candidate_event_id": "ph-2026-iax-02-pagsasanay-sanlakas",
+      "candidate_kind": "interagency_disaster_response_exercise",
+      "event_date_start": "2026-09-30",
+      "event_date_end": "2026-10-02",
+      "record_ids": [
+        "afp:1391",
+        "afp:1393",
+        "afp:1394"
+      ],
+      "status": "provisional_source_based_grouping",
+      "stage_claim_ids": [
+        "S03",
+        "S04",
+        "S05"
+      ]
+    },
+    {
+      "key": "jpscc_meeting",
+      "candidate_event_id": "ph-2026-09-29-jpscc-sixth-meeting",
+      "candidate_kind": "separate_interagency_coordination_meeting",
+      "event_date_start": "2026-09-29",
+      "event_date_end": "2026-09-29",
+      "record_ids": [
+        "afp:1390"
+      ],
+      "status": "provisional_source_based_grouping",
+      "stage_claim_ids": [
+        "J01"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "S01",
+      "event_key": "sanlakas_exercise",
+      "statement": "The closing account identifies this as IAX 02-2026, called Pagsasanay Sanlakas.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "the second Interagency Exercise (IAX 02-2026), dubbed “Pagsasanay Sanlakas,”"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "event_key": "sanlakas_exercise",
+      "statement": "The AFP describes the September 30–October 2 National Capital Region exercise as PCG-led.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "Held from September 30 to October 2 in the National Capital Region, with the PCG as lead agency"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "event_key": "sanlakas_exercise",
+      "statement": "The 2026 interagency exercise opening ceremony occurred September 30.",
+      "evidence": [
+        {
+          "record_id": "afp:1391",
+          "exact_excerpt": "formally opened the 2026 Inter-Agency Exercise during a ceremony held on September 30"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "event_key": "sanlakas_exercise",
+      "statement": "A field exercise occurred October 1 at HNTCEN-NCR in Intramuros, Manila.",
+      "evidence": [
+        {
+          "record_id": "afp:1393",
+          "exact_excerpt": "Field Training Exercise (FTX) held on October 1 at the Humanitarian and Natural Disaster Training Center–National Capital Region (HNTCEN-NCR) in Intramuros, Manila"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "event_key": "sanlakas_exercise",
+      "statement": "The closing ceremony was held October 2 at Eva Macapagal Super Terminal, Pier 15, Manila.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "on October 2, 2026, at the Eva Macapagal Super Terminal, Pier 15, Port Area, Manila"
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "event_key": "sanlakas_exercise",
+      "statement": "The AFP closing account reports more than 530 participating personnel in tabletop and field exercises simulating a large earthquake.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "More than 530 personnel participated in tabletop and field training exercises simulating a large-scale earthquake"
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "event_key": "sanlakas_exercise",
+      "statement": "The AFP lists search-and-rescue, humanitarian assistance, triage and maritime casualty evacuation scenarios.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "search and rescue, humanitarian assistance, triage, and maritime casualty evacuation"
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "event_key": "sanlakas_exercise",
+      "statement": "The AFP describes the joint AFP–PNP–PCG education, training and doctrine cell as the exercise organizer.",
+      "evidence": [
+        {
+          "record_id": "afp:1394",
+          "exact_excerpt": "Joint AFP-PNP-PCG Education, Training and Doctrine Cell (JAPPETDC)"
+        }
+      ]
+    },
+    {
+      "id": "J01",
+      "event_key": "jpscc_meeting",
+      "statement": "AFP describes a sixth JPSCC meeting held September 29 in Malate, Manila.",
+      "evidence": [
+        {
+          "record_id": "afp:1390",
+          "exact_excerpt": "6th National Joint Peace and Security Coordinating Center (JPSCC) Meeting on September 29 in Malate, Manila"
+        }
+      ]
+    },
+    {
+      "id": "J02",
+      "event_key": "jpscc_meeting",
+      "statement": "AFP reports the meeting included signing a National JPSCC Cyber Plan.",
+      "evidence": [
+        {
+          "record_id": "afp:1390",
+          "exact_excerpt": "signing of the National JPSCC Cyber Plan"
+        }
+      ]
+    },
+    {
+      "id": "J03",
+      "event_key": "jpscc_meeting",
+      "statement": "The AFP account connects the JPSCC cyber-coordination plan to security concerns in the West Philippine Sea.",
+      "evidence": [
+        {
+          "record_id": "afp:1390",
+          "exact_excerpt": "particularly in addressing security concerns in the West Philippine Sea"
+        }
+      ]
+    }
+  ],
+  "editorial_review_flags": [
+    {
+      "id": "F01",
+      "status": "requires_human_review",
+      "kind": "do_not_merge_events",
+      "note": "Record 1390 is a September 29 JPSCC meeting and cyber-plan signing, not an opening/field/closing stage of Sanlakas. Shared AFP/PNP/PCG participants do not imply event identity."
+    },
+    {
+      "id": "F02",
+      "status": "requires_human_review",
+      "kind": "unresolved_name_variation",
+      "note": "The JPSCC article spells the PCG commandant Ronnie Gil L. Galvan; the exercise closing article spells Ronnie Gil L. Gavan. Do not silently collapse these person strings into one canonical entity."
+    },
+    {
+      "id": "F03",
+      "status": "requires_human_review",
+      "kind": "publisher_claim_not_independent_corroboration",
+      "note": "Three exercise reports are all published by AFP PAO, so they provide a multi-record chronology but not three independent institutional confirmations."
+    },
+    {
+      "id": "F04",
+      "status": "requires_human_review",
+      "kind": "event_date_vs_publication_date",
+      "note": "The event's stage dates and the AFP release dates differ. Timeline should index event dates separately from release dates and captured-at timestamps."
+    },
+    {
+      "id": "F05",
+      "status": "requires_human_review",
+      "kind": "source_reuse_review_pending",
+      "note": "AFP API response indexing header and source terms/rights require separate editorial review; this candidate only references preserved hashes and short snippets."
+    }
+  ],
+  "verification_scope": "offline exact pinned historical source and excerpt substring matches; no independent factual corroboration"
+}
