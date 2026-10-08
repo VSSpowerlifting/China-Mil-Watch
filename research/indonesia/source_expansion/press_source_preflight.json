@@ -1,0 +1,41 @@
+{
+  "schema": "ipr_indonesia_press_preflight_v1",
+  "observed_at": "2026-10-08",
+  "status": "public_page_metadata_only_no_native_raw_capture",
+  "institution": "Kementerian Pertahanan Republik Indonesia",
+  "source_family": "Siaran Pers",
+  "listing_url": "https://www.kemhan.go.id/category/siaran-pers",
+  "source_language": "id",
+  "discovery_method": "public_html_page_view_not_native_collector",
+  "original_page_bytes_sha256": null,
+  "robots_allowed_in_new_source_pilot": null,
+  "observed_listing_size_first_page": 10,
+  "latest_visible_date": "2026-08-23",
+  "records": [
+    {
+      "url": "https://www.kemhan.go.id/2024/08/20/pernyataan-bersama-tingkat-menteri-tentang-kerja-sama-pertahanan-australia-indonesia.html",
+      "published_date": "2024-08-20",
+      "title": "Pernyataan Bersama Tingkat Menteri tentang Kerja Sama Pertahanan Australia-Indonesia",
+      "kind_hint": "ministerial_joint_statement",
+      "source_note": "Statement describes agreement negotiation conclusion and forthcoming domestic approval; do not classify as implementation."
+    },
+    {
+      "url": "https://www.kemhan.go.id/2026/03/23/kemhan-dan-tni-siapkan-langkah-efisiensi-bbm-secara-terukur-operasional-pertahanan-tetap-menjadi-prioritas.html",
+      "published_date": "2026-03-23",
+      "title": "Kemhan dan TNI Siapkan Langkah Efisiensi BBM Secara Terukur, Operasional Pertahanan Tetap Menjadi Prioritas",
+      "kind_hint": "ministry_press_release",
+      "source_note": "Historical institutional position on fuel-use efficiency, not an October 2026 development."
+    }
+  ],
+  "review_needed": [
+    "Native identified robots and listing checks without redirect/proxy/challenge workaround",
+    "Exact source HTML captures and article hash verification; this research inventory is not an archive",
+    "Real page markup and extractor fidelity against complete Indonesian original including signatures, dates and press-release numbers",
+    "Check whether the same canonical record appears in Berita and Siaran Pers; avoid duplicate corpus rows",
+    "Differentiate a historically quiet source from failed discovery; source-specific cadence alarm calibration",
+    "Rights/use rules before any text republishing"
+  ],
+  "production_admission": false,
+  "shadow_activation": false,
+  "editorial_approval": false
+}

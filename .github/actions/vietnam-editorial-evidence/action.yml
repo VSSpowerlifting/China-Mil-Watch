@@ -5,8 +5,17 @@ inputs:
     description: "Exact reporting Saturday, YYYY-MM-DD"
     required: true
   notes:
-    description: "Repository file of source-version-bound Vietnam synopsis notes"
-    required: true
+    description: "Source-version-bound Vietnam notes path; absence requires an explicit missing-notes policy"
+    required: false
+    default: ""
+  missing-notes-policy:
+    description: "refuse (default) or continue-without-vietnam; malformed existing notes always refuse"
+    required: false
+    default: "refuse"
+  require-vietnam:
+    description: "true for a strict no-send preview requiring at least one current Vietnam research source"
+    required: false
+    default: "false"
   existing-packet:
     description: "Optional existing regional packet with Japan and other non-Vietnam sources"
     required: false
@@ -25,6 +34,12 @@ outputs:
   vietnam-count:
     description: "Number of Vietnam MPS research candidates admitted to private model evidence"
     value: ${{ steps.prepare.outputs.vietnam_count }}
+  vietnam-readiness-status:
+    description: "ready / missing-notes-with-eligible-archives / missing-notes-no-eligible-archives / no-version-matched-notes / no-eligible-observed-publications"
+    value: ${{ steps.prepare.outputs.vietnam_status }}
+  notes-catalog-missing:
+    description: "true when optional Vietnam notes did not exist"
+    value: ${{ steps.prepare.outputs.notes_missing }}
 runs:
   using: composite
   steps:
@@ -34,6 +49,8 @@ runs:
       env:
         VN_WEEK_END: ${{ inputs.week-ending }}
         VN_NOTES: ${{ inputs.notes }}
+        VN_MISSING_POLICY: ${{ inputs.missing-notes-policy }}
+        VN_REQUIRE_VIETNAM: ${{ inputs.require-vietnam }}
         VN_EXISTING: ${{ inputs.existing-packet }}
         VN_PINNED_COMMIT: ${{ inputs.state-commit }}
       run: |
@@ -42,10 +59,21 @@ runs:
         [[ "$VN_WEEK_END" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
         [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
         test -n "$RUNNER_TEMP"
-        test -f "$VN_NOTES" || {
-          echo "::error::No version-bound Vietnam editorial notes for this reporting week"
+        [[ "$VN_MISSING_POLICY" == "refuse" || "$VN_MISSING_POLICY" == "continue-without-vietnam" ]] || {
+          echo "::error::Missing-notes policy must be refuse or continue-without-vietnam"
           exit 1
         }
+        [[ "$VN_REQUIRE_VIETNAM" == "true" || "$VN_REQUIRE_VIETNAM" == "false" ]] || {
+          echo "::error::Require-Vietnam policy must be true or false"
+          exit 1
+        }
+        if [[ -z "$VN_NOTES" || ! -e "$VN_NOTES" ]]; then
+          if [[ "$VN_MISSING_POLICY" != "continue-without-vietnam" ]]; then
+            echo "::error::No version-bound Vietnam notes; strict source-preparation preflight refused"
+            exit 1
+          fi
+          echo "::warning::Vietnam source notes absent; versioned MPS evidence will be audited but not added to this model input. Do not infer ministry silence."
+        fi
         working="$(mktemp -d "$RUNNER_TEMP/ipr-vietnam-shadow-XXXXXXXX")"
         state="$working/mps"
         # Official isolated branch only. Public read-only Git HTTPS; do not
@@ -63,9 +91,17 @@ runs:
         destination="$working/editorial/$VN_WEEK_END.json"
         args=(--state-repo "$state"
           --state-commit "$state_sha"
-          --notes "$VN_NOTES"
           --week-ending "$VN_WEEK_END"
           --out "$destination")
+        if [[ -n "$VN_NOTES" ]]; then
+          args+=(--notes "$VN_NOTES")
+        fi
+        if [[ "$VN_MISSING_POLICY" == "continue-without-vietnam" ]]; then
+          args+=(--allow-missing-notes)
+        fi
+        if [[ "$VN_REQUIRE_VIETNAM" == "true" ]]; then
+          args+=(--require-vietnam)
+        fi
         if [[ -n "$VN_EXISTING" ]]; then
           test -f "$VN_EXISTING" || {
             echo "::error::The existing Japan/regional research packet is missing"
@@ -73,12 +109,18 @@ runs:
           }
           args+=(--existing "$VN_EXISTING")
         fi
-        python -m scripts.build_vietnam_sunday_packet "${args[@]}"
+        python -m scripts.build_vietnam_sunday_packet "${args[@]}" > "$working/result.json"
         test -s "$destination"
+        # Count and classification only; no external source text/synopsis logs.
+        cat "$working/result.json"
         # Expose only file path and counts; source notes stay on runner.
         vietnam_count="$(python -c 'import json,sys; data=json.load(open(sys.argv[1])); print(sum(x["desk"]=="vietnam" for x in data["items"]))' "$destination")"
+        vietnam_status="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["vietnam_readiness_status"])' "$working/result.json")"
+        notes_missing="$(python -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["notes_catalog_missing"]).lower())' "$working/result.json")"
         {
           echo "packet=$destination"
           echo "state_commit=$state_sha"
           echo "vietnam_count=$vietnam_count"
+          echo "vietnam_status=$vietnam_status"
+          echo "notes_missing=$notes_missing"
         } >> "$GITHUB_OUTPUT"

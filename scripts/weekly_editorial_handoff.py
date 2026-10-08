@@ -37,7 +37,7 @@ def one_line(value):
 
 
 def render_packet(sidecar, *, manuscript=None, as_of=None,
-                  vietnam_candidates=(), japan_sources=()):
+                  vietnam_candidates=(), japan_sources=(), indonesia_sources=()):
     if sidecar.get("editorial_status") != "draft" or sidecar.get("issue_number") is not None:
         raise ValueError("only unnumbered, unapproved draft scaffolds may be emailed")
     week_end = date.fromisoformat(sidecar["week_ending"])
@@ -47,8 +47,8 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
     trail = sidecar["source_trail"]
     if vietnam_candidates and not as_of:
         raise ValueError("Vietnam shadow candidates require a Friday as-of cutoff")
-    if japan_sources and (not as_of or manuscript is None):
-        raise ValueError("Japan AI research requires an automatic provisional manuscript")
+    if (japan_sources or indonesia_sources) and (not as_of or manuscript is None):
+        raise ValueError("supplemental AI research requires an automatic provisional manuscript")
     if vietnam_candidates and any(row["review_status"] !=
                                   "requires_independent_human_review"
                                   for row in vietnam_candidates):
@@ -76,6 +76,10 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
          "NOT production desk coverage or approved article facts."
          .format(len(japan_sources)) if japan_sources else
          "Japan: no external research submitted to the AI writer."),
+        ("Indonesia: {} source-labeled shadow research item(s) offered to the AI writer; "
+         "NOT production desk coverage or approved claims."
+         .format(len(indonesia_sources)) if indonesia_sources else
+         "Indonesia: no source-labeled shadow evidence offered to the AI writer."),
         "",
         "DYLAN: Edit the writing sections below and REPLY with this .txt attached.",
         "Keep the source appendix intact. Give record IDs for factual claims.",
@@ -114,17 +118,23 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
             if key in CITED_FIELDS:
                 lines.append("SOURCE RECORD IDS: " + ", ".join(
                     str(i) for i in manuscript["citations"][key]))
-                if japan_sources:
+                if japan_sources or indonesia_sources:
                     external = manuscript["supplemental_citations"][key]
                     if external:
-                        lines.append("EXTERNAL JAPAN SOURCE IDS (NOT IPR RECORD IDS): "
-                                     + ", ".join(external))
+                        label = ("EXTERNAL JAPAN SOURCE IDS (NOT IPR RECORD IDS): "
+                                 if not indonesia_sources else
+                                 "EXTERNAL NONPRODUCTION SOURCE IDS (NOT IPR RECORD IDS): ")
+                        lines.append(label + ", ".join(external))
                 lines.append("")
-        if japan_sources:
+        if japan_sources or indonesia_sources:
             lines.extend((
-                "\n## AI-SYNTHESIZED JAPAN EDITORIAL CONCEPT (PROVISIONAL)",
+                ("\n## AI-SYNTHESIZED JAPAN EDITORIAL CONCEPT (PROVISIONAL)"
+                 if not indonesia_sources else
+                 "\n## AI-SYNTHESIZED REGIONAL EDITORIAL CONCEPT (PROVISIONAL)"),
                 manuscript["supplemental_angle"],
-                "EXTERNAL JAPAN SOURCE IDS (NOT IPR RECORD IDS): " +
+                ("EXTERNAL JAPAN SOURCE IDS (NOT IPR RECORD IDS): "
+                 if not indonesia_sources else
+                 "EXTERNAL NONPRODUCTION SOURCE IDS (NOT IPR RECORD IDS): ") +
                     ", ".join(manuscript["supplemental_angle_citations"]),
                 "This is an optional research angle, not a separate approved brief.",
                 "",
@@ -180,6 +190,32 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
                 "",
             ))
         lines.append("END OF JAPAN NON-PRODUCTION APPENDIX")
+    if indonesia_sources:
+        lines.extend((
+            "",
+            "=== INDONESIA SOURCE RESEARCH — NOT PRODUCTION ===",
+            "Original-language Indonesian ministry claims were offered as",
+            "attributed analyst paraphrases, never as production record IDs.",
+            "The archived shadow bytes and complete source must be checked",
+            "independently before any human-approved editorial use.",
+            "",
+        ))
+        for item in indonesia_sources:
+            lines.extend((
+                "External ID: " + one_line(item["id"]),
+                "Issuer: " + one_line(item["issuer"]),
+                "Published: " + one_line(item["published_date"]),
+                "Title: " + one_line(item["title"]),
+                "Source URL: " + one_line(item["url"]),
+                "Representation: " + one_line(item["evidence_representation"]),
+                "Source status: " + one_line(item["status"]),
+                "Isolated source commit: " + one_line(item["shadow_state_commit"]),
+                "Isolated source run: " + one_line(item["shadow_run_id"]),
+                "Captured response SHA-256: " + one_line(item["captured_response_sha256"]),
+                "Review: NO human approval; source use and translations remain unchecked.",
+                "",
+            ))
+        lines.append("END OF INDONESIA NON-PRODUCTION APPENDIX")
     if vietnam_candidates:
         lines.extend((
             "",
@@ -258,15 +294,23 @@ def main(argv=None):
     parser.add_argument("--as-of", help="Friday cut-off (YYYY-MM-DD), used only for automatic writing")
     parser.add_argument("--use-japan-research", action="store_true",
                         help="offer the exact-week non-production Japan source packet to AI")
+    parser.add_argument("--use-indonesia-research", action="store_true",
+                        help="offer the exact-week shadow-captured Indonesia source research to AI")
     args = parser.parse_args(argv)
-    if args.use_japan_research and (not args.write_automatic or not args.as_of):
-        parser.error("--use-japan-research requires --write-automatic and --as-of")
+    if (args.use_japan_research or args.use_indonesia_research) and (
+            not args.write_automatic or not args.as_of):
+        parser.error("supplemental research requires --write-automatic and --as-of")
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
     manuscript = None
     japan_sources = []
+    indonesia_sources = []
     if args.use_japan_research:
         from scripts.japan_weekly_writer_sources import load_japan_writer_sources
         japan_sources = load_japan_writer_sources(
+            sidecar["week_ending"], args.as_of)
+    if args.use_indonesia_research:
+        from scripts.indonesia_weekly_writer_sources import load_indonesia_writer_sources
+        indonesia_sources = load_indonesia_writer_sources(
             sidecar["week_ending"], args.as_of)
     if args.write_automatic:
         if not args.as_of:
@@ -274,8 +318,9 @@ def main(argv=None):
         from scripts.weekly_briefs_auto_writer import compose
         # Raises on absent full-text evidence, missing API key, API errors or
         # invalid citations. No email or file is produced on these failures.
-        manuscript = (compose(sidecar, args.as_of, supplemental=japan_sources)
-                      if japan_sources else compose(sidecar, args.as_of))
+        supplemental_sources = japan_sources + indonesia_sources
+        manuscript = (compose(sidecar, args.as_of, supplemental=supplemental_sources)
+                      if supplemental_sources else compose(sidecar, args.as_of))
     # These unapproved metadata pointers appear only in the PRIVATE human
     # handoff after the immutable production source appendix. Never send them
     # to the model or count them as live, production-backed desk evidence.
@@ -285,11 +330,12 @@ def main(argv=None):
         vietnam_candidates = load_candidates(sidecar["week_ending"], args.as_of)
     text = render_packet(sidecar, manuscript=manuscript, as_of=args.as_of,
                          vietnam_candidates=vietnam_candidates,
-                         japan_sources=japan_sources)
+                         japan_sources=japan_sources,
+                         indonesia_sources=indonesia_sources)
     args.out.write_text(text, encoding="utf-8")
-    print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review; {} Japan research sources)".format(
+    print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review; {} Japan research sources; {} Indonesia research sources)".format(
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
-        args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates), len(japan_sources)))
+        args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates), len(japan_sources), len(indonesia_sources)))
     if args.send:
         send_packet(args.out, sidecar["week_ending"], provisional=args.write_automatic)
         print("Editorial worksheet delivered via configured SMTP account.")

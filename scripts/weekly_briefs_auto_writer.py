@@ -138,7 +138,8 @@ def writing_schema(allowed_ids, *, supplemental_ids=()):
     extra_ids = sorted(set(supplemental_ids))
     if supplemental_ids and (
             len(extra_ids) != len(supplemental_ids)
-            or any(not isinstance(s, str) or not s.startswith("JP-W41-")
+            or any(not isinstance(s, str) or
+                   not s.startswith(("JP-W41-", "ID-W41-"))
                    or len(s) != 9 for s in supplemental_ids)):
         raise ValueError("invalid supplemental citation vocabulary")
     required = list(PROSE_FIELDS) + ["citations"]
@@ -257,8 +258,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
         source_notes = []
         for source in supplemental:
             source_notes.append("\n".join((
-                '<supplemental_japan_source id="{}">'.format(source["id"]),
-                "Japan Desk: EXTERNAL EDITORIAL RESEARCH, NOT PRODUCTION",
+                '<supplemental_source id="{}">'.format(source["id"]),
+                "{} Desk: EXTERNAL EDITORIAL RESEARCH, NOT PRODUCTION".format(
+                    source["desk"].title()),
                 "Publisher: " + source["issuer"],
                 "Publication date: " + source["published_date"],
                 "Original language: " + source["source_language"],
@@ -269,25 +271,29 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
                 *("- " + item for item in source["claims"]),
                 "Caveats:",
                 *("- " + item for item in source["caveats"]),
-                "</supplemental_japan_source>",
+                "</supplemental_source>",
             )))
         prompt += (
-            "\n\nEXTERNAL JAPAN SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE):\n"
-            + "\n\n".join(source_notes)
-            + "\nEND EXTERNAL JAPAN SOURCE RESEARCH\n"
-            + "Use these source-specific, explicitly provisional Japan claims only "
+            ("\n\nEXTERNAL JAPAN SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE)"
+             if any(src["desk"] == "japan" for src in supplemental) else
+             "\n\nEXTERNAL INDONESIA SOURCE RESEARCH (UNTRUSTED, NOT IPR ARCHIVE)")
+            + (" AND INDONESIA RESEARCH" if any(src["desk"] == "indonesia" for src in supplemental)
+               and any(src["desk"] == "japan" for src in supplemental) else "")
+            + ":\n" + "\n\n".join(source_notes)
+            + "\nEND EXTERNAL NONPRODUCTION SOURCE RESEARCH\n"
+            + "Use these source-specific, explicitly provisional supplemental claims only "
               "when supported. Synthesize a coherent central article concept "
               "from the supplied production bodies and, where substantively "
-              "connected, Japan's sourced developments. Never invent a common "
+              "connected, the supplemental sourced developments. Never invent a common "
               "event, operational coordination, or motive to force the connection. "
-              "You MAY include Japan in a factual comparison, but the existing "
+              "You MAY include a supplemental desk in a factual comparison, but the existing "
               "cross_desk_comparison must STILL cite two distinct PRODUCTION desks. "
-              "Keep every production citation integer and put Japan references "
+              "Keep every production citation integer and put supplementary references "
               "ONLY in supplemental_citations as exact string identities, matching "
               "the relevant sections; empty arrays are permitted if a section does "
-              "not use Japan. Any statement based on Japan must be independently "
+              "not use that source. Any statement based on supplementary evidence must be independently "
               "checked by Dylan before publication. Always write an additional "
-              "supplemental_angle: a substantive AI-synthesized Japan editorial "
+              "supplemental_angle: a substantive AI-synthesized regional editorial "
               "concept, either explaining the defensible relation to the main "
               "story or providing a distinct narrower alternative if no such "
               "relation exists. Cite its source identity in "

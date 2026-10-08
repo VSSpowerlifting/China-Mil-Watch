@@ -1,9 +1,11 @@
-# Japan Coast Guard official English releases — disabled shadow candidate
+# Japan Coast Guard official English releases — isolated shadow pilot
 
-**Status: manual-only shadow collection candidate. The source is enabled only
-inside the isolated shadow runner; no schedule, production source, public
-records, or owner-approved promotion follows. The state branch is initialized
-only on explicit post-merge workflow dispatch.**
+**Status (October 8, 2026): the owner-dispatched shadow collector has archived
+three official English HTML releases on isolated `shadow/japan-jcg` (Day 0
+commit `81558026117067cbcf54bd7a7859a2d9db168a0c`). A guarded daily
+qualification workflow exists but remains **OFF** unless the owner separately
+sets `JCG_SHADOW_DAILY_ENABLED=true` after source review. Japan is not a
+production desk, and these records do not yet feed the native AI writer.**
 
 The Japan Coast Guard is a maritime law-enforcement authority, **not** the
 Japanese Ministry of Defense or Joint Staff. Its English official press-release
@@ -66,18 +68,22 @@ The source is not a translation of Japanese MOD publications.
 - Live read-only tests: `python -m scripts.probe_japan_jcg_adapter_live`.
   Fixed October 8 source window; no database, no original HTML/PDF persistence,
   no owner approval, no clock and no email.
-- `enabled: true` is confined to the shadow manifest and the explicitly
-  manual-only `japan_jcg_shadow_manual.yml` workflow. No cron is present.
-  The ordinary production
-  manifest loader reads only `desks/*/manifest.json`; this remains under
-  `shadow/`.
+- `enabled: true` is confined to the isolated shadow manifest. The manual
+  collector and guarded daily schedule share an isolated state branch and
+  concurrency lock; the daily job is default OFF pending explicit owner
+  approval and a separate Actions repository variable.
+- The production manifest loader reads only `desks/*/manifest.json`;
+  this declaration remains under `shadow/`. The [read-only qualification
+  report](../../docs/JAPAN_JCG_SHADOW_QUALIFICATION_STATUS.md) distinguishes
+  actual collecting days from publication dates and backfills.
 
-**Before a live shadow run:** the exact-source egress and three real-page
-index/fetch/extract proof passed in Actions #37819470782; confirm publisher
-content-use exclusions, approve this manual-only runner PR and its exact source
-scope, then launch the named manual workflow on main. A manual run may
-initialize the `shadow/japan-jcg` state branch and store original official HTML
-captures there; it must not change the production database.
+**Confirmed original Day 0:** GitHub Actions [run #37828199188](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37828199188)
+created the actual `shadow/japan-jcg` state branch on October 8, 2026.
+The frozen Day 0 had three releases, zero fetch/extraction failures and
+machine-integrity review with zero findings. Its publisher date-template
+inconsistency and excluded original PDF companions still require independent
+human review. Two older September sources have been independently verified
+but have **not** been imported into the shadow state.
 **Before production:** measure source-specific retrieval and extraction
 continuity; complete the Day 7, 14 and 30 human reviews; fix date, charset,
 attachment and omission issues; rehearse correction/promotion on a disposable
