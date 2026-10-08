@@ -1,0 +1,111 @@
+name: JCG Day 0 — Immutable Pinned Source Integrity Review
+
+# A one-time research/CI review of an EXACT archived commit, not owner
+# approval, a state-branch write, or a source production promotion.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/jcg_day0_pinned_audit.yml
+      - tests/test_jcg_day0_pinned_audit_contract.py
+      - docs/JAPAN_JCG_DAY0_PINNED_AUDIT.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jcg-day0-original-integrity-read-only
+  cancel-in-progress: false
+
+jobs:
+  read-only-review:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install declared runtime dependencies
+        run: pip install -r requirements.txt
+      - name: Clone named isolated branch with read permissions only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c credential.helper= clone \
+            --single-branch --branch shadow/japan-jcg \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/jcg-state"
+          test "$(git -C "$RUNNER_TEMP/jcg-state" branch --show-current)" = shadow/japan-jcg
+          git -C "$RUNNER_TEMP/jcg-state" cat-file -e 81558026117067cbcf54bd7a7859a2d9db168a0c^{commit}
+          git -C "$RUNNER_TEMP/jcg-state" merge-base --is-ancestor \
+            81558026117067cbcf54bd7a7859a2d9db168a0c \
+            refs/heads/shadow/japan-jcg
+      - name: Machine-verify October 8 Day 0 frozen source and hash provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/review_desk_shadow.py \
+            --desk japan_jcg \
+            --state-repo "$RUNNER_TEMP/jcg-state" \
+            --state-commit 81558026117067cbcf54bd7a7859a2d9db168a0c \
+            --as-of 2026-10-08 \
+            --out "$RUNNER_TEMP/jcg-day0-review/formal"
+          python scripts/japan_jcg_pinned_review_receipt.py \
+            --report "$RUNNER_TEMP/jcg-day0-review/formal/report.json" \
+            --state-commit 81558026117067cbcf54bd7a7859a2d9db168a0c \
+            --as-of 2026-10-08 \
+            --actions-run-id "$GITHUB_RUN_ID" \
+            --output "$RUNNER_TEMP/jcg-day0-review/receipt.json"
+      - name: Assert Day 0 record/ledger counts and unapproved source status
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          folder = Path(os.environ["RUNNER_TEMP"]) / "jcg-day0-review"
+          report = json.loads((folder/"formal/report.json").read_text())
+          receipt = json.loads((folder/"receipt.json").read_text())
+          assert report["mode"] == "formal_commit_snapshot"
+          assert report["state_ref"] == "shadow/japan-jcg"
+          assert report["state_commit"] == "81558026117067cbcf54bd7a7859a2d9db168a0c"
+          assert report["as_of"] == "2026-10-08"
+          assert report["records"] == 3
+          assert report["ledgers"] == 1
+          assert report["missing_successful_days"] == []
+          assert report["findings"] == []
+          assert len(report["review_holds"]) >= 1
+          assert receipt["machine_findings_count"] == 0
+          assert receipt["human_review_holds_count"] >= 1
+          assert receipt["human_review_completed"] is False
+          assert receipt["promotion_authorized"] is False
+          assert receipt["editorial_release_authorized"] is False
+          print(json.dumps({
+            "state_commit": receipt["state_commit"],
+            "records": receipt["reviewed_record_count"],
+            "ledgers": receipt["reviewed_ledger_count"],
+            "findings": receipt["machine_findings_count"],
+            "human_holds": receipt["human_review_holds_count"],
+            "promotion_authorized": False
+          }))
+          PY
+      - name: Upload reviewer/receipt metadata only — no original records
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-jcg-day0-pinned-integrity-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jcg-day0-review/receipt.json
+            ${{ runner.temp }}/jcg-day0-review/formal/report.json
+            ${{ runner.temp }}/jcg-day0-review/formal/report.md
+          retention-days: 90
+          if-no-files-found: warn
+      # NEVER upload formal/records.jsonl, state/shadow.db, captures/, or source HTML.
+      # No write token; no state commits, no source release, no production changes.
