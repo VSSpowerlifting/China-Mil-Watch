@@ -133,6 +133,7 @@ def read_packet(directory):
         "source_slug": source,
         "state_branch": manifest["state_branch"],
         "state_commit": manifest["state_commit"],
+        "latest_run_id": manifest["latest_run_id"],
         "state_tree": manifest["state_tree"],
         "manifest_sha256": hashlib.sha256(blob).hexdigest(),
         "packet_sha256": digest,
@@ -168,7 +169,13 @@ def rollup(directories):
             "source Day 0 clocks do not form one verified activation batch")
     ordered = [indexed[k] for k in sorted(SOURCE_SET)]
     reached = all(x["checkpoint_reached"] for x in ordered)
+    latest_runs_aligned = len({x["latest_run_id"] for x in ordered}) == 1
     warnings = []
+    if not latest_runs_aligned:
+        warnings.append({
+            "kind": "latest_published_run_attempts_diverge",
+            "source_run_ids": {x["source_slug"]: x["latest_run_id"] for x in ordered},
+        })
     for p in ordered:
         slug = p["source_slug"]
         if not p["checkpoint_reached"]:
@@ -186,6 +193,7 @@ def rollup(directories):
         "all_three_machine_checkpoints_reached": reached,
         "all_three_review_packets_integrity_checked": True,
         "source_count": len(ordered),
+        "latest_published_run_attempts_aligned": latest_runs_aligned,
         "sources": ordered,
         "machine_warnings": warnings,
         "requires_human_complete_corpus_review": True,
