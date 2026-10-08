@@ -48,9 +48,16 @@ class MainText(HTMLParser):
         self.chunks = []
         self.semantic_nodes = []
         self.tag_count = {}
+        self.structure_counts = {}
 
     def handle_starttag(self, tag, attrs):
         self.tag_count[tag] = self.tag_count.get(tag, 0) + 1
+        if tag in ("div", "ul", "li", "dl", "dt", "dd", "p", "a", "span", "h1", "time", "section"):
+            props = dict(attrs)
+            cls = (props.get("class") or "").strip()
+            if cls:
+                key = tag + "." + ".".join(cls.split()[:3])
+                self.structure_counts[key] = self.structure_counts.get(key, 0) + 1
         if tag in ("main", "article", "h1", "h2", "h3", "section", "time"):
             properties = dict(attrs)
             self.semantic_nodes.append({
@@ -158,6 +165,9 @@ def examine(*, opener=None, request=get_once, sleep=time.sleep):
                     "semantic_node_count": len(parser.semantic_nodes),
                     "paragraph_tags": parser.tag_count.get("p", 0),
                     "time_tags": parser.tag_count.get("time", 0),
+                    "structure_counts": dict(sorted(
+                        parser.structure_counts.items(),
+                        key=lambda x: (-x[1], x[0]))[:35]),
                 }
                 item["verdict"] = (
                     "readable_original_html" if item["marker_found"]
