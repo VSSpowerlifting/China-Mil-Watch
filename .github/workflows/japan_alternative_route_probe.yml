@@ -1,0 +1,58 @@
+name: Japan Alternative Official Routes — Bounded Access Probe
+
+# Explicitly noncollecting source feasibility. No production, shadow, or
+# editorial flow calls this workflow. A single PR/test run may make at most
+# six URLs' worth of one-shot GETs: two robots files and four allowlisted pages.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_japan_alternative_official_routes.py
+      - tests/test_probe_japan_alternative_official_routes.py
+      - .github/workflows/japan_alternative_route_probe.yml
+      - docs/JAPAN_ALTERNATIVE_OFFICIAL_SOURCE_FEASIBILITY_2026-10-08.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-alternative-official-route-probe
+  cancel-in-progress: false
+
+jobs:
+  bounded-probe:
+    # Only owner-repository code can trigger this intentionally networked run.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout proposed source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Prove finite and fail-closed probe behavior offline
+        run: python -m unittest tests.test_probe_japan_alternative_official_routes -v
+
+      - name: Observe official robots and fixed document routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.probe_japan_alternative_official_routes \
+            | tee "${RUNNER_TEMP}/japan-alt-route-probe.json"
+
+      - name: Preserve only status/count/hash evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: japan-alternative-official-route-probe-${{ github.run_id }}
+          path: ${{ runner.temp }}/japan-alt-route-probe.json
+          retention-days: 90
+          if-no-files-found: error
+
+      # No state or corpus write; no adapter enablement; no deploy or email.
