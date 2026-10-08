@@ -11,7 +11,11 @@ synopsis targets an older MPS content digest or different official URL.
 
 Treat none of these as proof that the Vietnamese Ministry of Public Security
 was silent. This PR makes those distinctions machine-visible **ahead of the
-Sunday model-generated Brief**.
+Sunday model-generated Brief**. Even a ready result does **not** establish
+that collection covered all Saturday publications. The JSON explicitly states
+complete_reporting_week_capture_verified=false and
+latest_run_covers_reporting_saturday=null; collector scheduling, publisher
+coverage and Saturday editorial follow-up remain separate responsibilities.
 
 ## Data path and recurring cadence
 
