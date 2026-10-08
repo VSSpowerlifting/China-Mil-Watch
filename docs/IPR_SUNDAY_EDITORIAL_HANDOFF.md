@@ -121,3 +121,38 @@ synchronization preserves both: the public Vietnam desk may display vetted
 publisher bibliography links, while the private Sunday writer uses separately
 typed, clearly unapproved candidate evidence. Neither feature promotes the
 Vietnam Desk to live production coverage or grants a source's reuse rights.
+
+## Private owner preview before emailing Dylan
+
+A no-send manual rehearsal writes its draft only into GitHub Actions temporary
+storage. The workflow **does not** publicly upload an unpublished draft, so
+a no-send execution alone cannot supply a human-readable file to the owner.
+
+For an actual private manuscript quality review, configure a GitHub Actions
+repository **secret** called `IPR_PREVIEW_TO` with the owner's email address,
+distinct from `IPR_EDITOR_TO` (Dylan). Keep SMTP secrets on the existing
+read-only source workflow. On the Sunday after a real successful daily
+production update, select **Run workflow** on `main` and enter:
+
+- `send_email=false` (must remain false)
+- `preview_to_owner=true`
+- `reporting_saturday=2026-10-10` for the first reporting week, or blank
+  to choose the most recent completed Saturday
+- `allow_historical_send=false`
+
+This branch requires the regular full-week evidence gates and generates a
+real, private, automatically drafted `.txt`. It **sends only to
+`IPR_PREVIEW_TO`**, not Dylan. It explicitly refuses an owner-preview
+address identical to Dylan's editor address, a missing preview secret,
+simultaneous send-to-editor and owner preview, or a preview with no full-week
+model draft. No manuscript content is placed in Actions artifacts or logs.
+
+A normal `send_email=false`, `preview_to_owner=false` rehearsal remains
+a true no-email run and yields no downloadable plaintext artifact. The
+owner-only preview is a *separately authorized email*, not a proof of factual
+source accuracy or official source-use approval.
+
+After independently reviewing the actual manuscript and source citations,
+switch off the legacy Friday delivery option (the Friday cron is separately
+retired by PR #238). Only with explicit owner authorization may
+`IPR_SUNDAY_EDITOR_DELIVERY_ENABLED=true` be set for Dylan's Sunday send.
