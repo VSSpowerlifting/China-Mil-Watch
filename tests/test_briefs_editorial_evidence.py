@@ -109,9 +109,7 @@ class RealResearchEvidenceTests(unittest.TestCase):
         prompt = evidence_prompt(load_editorial_evidence(SAT, SAT))
         self.assertIn('id="JP-W41-01"', prompt)
         self.assertIn('id="VN-MPS-1791199100"', prompt)
-        self.assertIn("NOT verbatim", prompt.replace("not an actual", "NOT verbatim")
-                      if "NOT verbatim" in prompt else
-                      prompt + " NOT verbatim")
+        self.assertIn("Short, unapproved, source-attributed research synopsis", prompt)
         self.assertNotIn("<source_record id=", prompt)
 
     def test_wrong_cutoffs_fail_and_future_weeks_not_backfilled(self):
