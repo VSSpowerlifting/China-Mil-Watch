@@ -59,7 +59,9 @@ def render_packet(sidecar, *, manuscript=None, as_of=None):
         "Packet: IPR-" + week_end.isoformat(),
         "Week: " + one_line(sidecar["week_start"]) + " through " + week_end.isoformat(),
         "Status: UNNUMBERED DRAFT — NOT APPROVED OR PUBLISHED",
-        ("AS-OF CUT-OFF: " + as_of + " (FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED)"
+        (("AS-OF CUT-OFF: " + as_of + " (SATURDAY COMPLETE; CAPTURE COMPLETENESS UNVERIFIED)"
+          if as_of == sidecar["week_ending"] else
+          "AS-OF CUT-OFF: " + as_of + " (FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED)")
          if as_of else "Complete-week editorial worksheet; still unapproved"),
         coverage_warning,
         "Desks: " + ", ".join(desks),
@@ -142,7 +144,7 @@ def single_address(value, name):
     return parsed[0][1]
 
 
-def send_packet(path, week_ending, *, provisional=False):
+def send_packet(path, week_ending, *, provisional=False, full_week=False):
     recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
     password = "".join(os.environ.get("IPR_SMTP_APP_PASSWORD", "").split())
@@ -152,17 +154,37 @@ def send_packet(path, week_ending, *, provisional=False):
     message["From"] = sender
     message["To"] = recipient
     message["Reply-To"] = sender
-    message["Subject"] = "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
-    message.set_content(
-        "Hi Dylan,\n\nAttached is the provisional AI-assisted Indo-Pacific Record Brief "
-        "with a source-record appendix and section-level citation IDs. "
-        "The Friday draft is not the complete Saturday-ending week, so please "
-        "check the citations and leave room for Saturday developments. "
-        "Please edit the prose, flag questionable claims, preserve the source appendix, "
-        "and reply with the edited .txt attached within 48 hours.\n\n"
-        "This text is not approved or numbered for publication. Ben will "
-        "verify the full-week sources and authorize any final publication.\n"
-    )
+    if full_week:
+        message["Subject"] = (
+            "IPR Briefs | week ending {} | Sunday editorial draft".format(week_ending)
+        )
+        message.set_content(
+            "Hi Dylan,\n\nAttached is this week's AI-assisted Indo-Pacific Record "
+            "Brief draft, including records dated through Saturday and a source "
+            "appendix with section-level citation IDs. It still needs human "
+            "fact-checking; the archived source corpus may not be exhaustive.\n\n"
+            "Please edit the prose, check each citation, flag weak or uncertain "
+            "claims, and preserve the source appendix. Reply to this message "
+            "with your edited .txt attached by Monday at 8 p.m. Eastern "
+            "so Ben can review it Tuesday. If the deadline is difficult, "
+            "reply to let Ben know.\n\n"
+            "This is not approved, numbered, or published. Ben retains final "
+            "editorial and publication authority.\n"
+        )
+    else:
+        message["Subject"] = (
+            "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
+        )
+        message.set_content(
+            "Hi Dylan,\n\nAttached is the provisional AI-assisted Indo-Pacific Record Brief "
+            "with a source-record appendix and section-level citation IDs. "
+            "The Friday draft is not the complete Saturday-ending week, so please "
+            "check the citations and leave room for Saturday developments. "
+            "Please edit the prose, flag questionable claims, preserve the source appendix, "
+            "and reply with the edited .txt attached within 48 hours.\n\n"
+            "This text is not approved or numbered for publication. Ben will "
+            "verify the full-week sources and authorize any final publication.\n"
+        )
     message.add_attachment(
         path.read_bytes(), maintype="text", subtype="plain", filename=path.name
     )
@@ -179,9 +201,13 @@ def main(argv=None):
                         help="email via explicit SMTP secrets; otherwise write locally only")
     parser.add_argument("--write-automatic", action="store_true",
                         help="compose an AI-assisted provisional manuscript from source bodies")
-    parser.add_argument("--as-of", help="Friday cut-off (YYYY-MM-DD), used only for automatic writing")
+    parser.add_argument("--as-of", help="Friday or Saturday cut-off (YYYY-MM-DD), for automatic writing")
+    parser.add_argument("--full-week", action="store_true",
+                        help="Sunday delivery based on the Saturday-ending week, never Friday provisional")
     args = parser.parse_args(argv)
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
+    if args.full_week and (not args.write_automatic or args.as_of != sidecar["week_ending"]):
+        parser.error("--full-week requires --write-automatic and --as-of equal to Saturday week_ending")
     manuscript = None
     if args.write_automatic:
         if not args.as_of:
@@ -196,7 +222,8 @@ def main(argv=None):
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
         args.out.name, len(sidecar["source_trail"])))
     if args.send:
-        send_packet(args.out, sidecar["week_ending"], provisional=args.write_automatic)
+        send_packet(args.out, sidecar["week_ending"],
+                    provisional=args.write_automatic, full_week=args.full_week)
         print("Editorial worksheet delivered via configured SMTP account.")
     else:
         print("Email not enabled: no delivery occurred.")

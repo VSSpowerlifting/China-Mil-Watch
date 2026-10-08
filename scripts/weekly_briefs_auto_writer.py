@@ -7,7 +7,7 @@ No issue is numbered, approved, published or written to a canonical sidecar.
 from __future__ import annotations
 
 import os
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from config import DB_PATH
@@ -48,8 +48,9 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
     start = date.fromisoformat(sidecar["week_start"])
     end = date.fromisoformat(sidecar["week_ending"])
     cutoff = date.fromisoformat(as_of)
-    if not (start <= cutoff < end) or cutoff.weekday() != 4 or end.weekday() != 5:
-        raise ValueError("Friday cut-off must precede the Saturday week-ending")
+    if (end.weekday() != 5 or not start <= cutoff <= end
+            or cutoff not in (end - timedelta(days=1), end)):
+        raise ValueError("evidence cutoff must be Friday or Saturday of the reporting week")
     with read_only(Path(db)) as conn:
         rows = get_articles_for_desks(start.isoformat(), as_of, sidecar["desks"], conn=conn)
     offered = {entry["record_id"]: entry for entry in sidecar["source_trail"]}
@@ -74,14 +75,23 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
     desks = list(dict.fromkeys(sidecar["desks"]))
     chosen = []
     ids = set()
-    # Guarantee two candidate records per desk where possible.
-    for desk in desks:
-        same = sorted((pair for pair in verified if pair[0]["desk_id"] == desk),
-                      key=rank, reverse=True)
-        for pair in same[:2]:
-            if pair[0]["id"] not in ids:
-                chosen.append(pair)
-                ids.add(pair[0]["id"])
+    # One per desk first, then a second per desk as space permits. Never
+    # exceed MAX_RECORDS if more than five live desks have candidate bodies.
+    by_desk = {
+        desk: sorted((pair for pair in verified if pair[0]["desk_id"] == desk),
+                     key=rank, reverse=True)
+        for desk in desks
+    }
+    for pass_number in (0, 1):
+        for desk in desks:
+            if len(chosen) >= MAX_RECORDS:
+                break
+            candidate = by_desk[desk]
+            if len(candidate) > pass_number:
+                pair = candidate[pass_number]
+                if pair[0]["id"] not in ids:
+                    chosen.append(pair)
+                    ids.add(pair[0]["id"])
     for pair in sorted(verified, key=rank, reverse=True):
         if len(chosen) >= MAX_RECORDS:
             break
@@ -178,8 +188,10 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
     allowed_ids = sorted({row["id"] for row, _ in chosen})
     prompt = (
         "WRITE A PROVISIONAL, HUMAN-EDITED INDO-PACIFIC RECORD BRIEF. "
-        "The corpus covers {} through {} only. Saturday {} has not elapsed: "
-        "NEVER claim full-week coverage or reference future developments.\n\n"
+        "The stored corpus covers {} through {} for the week ending {}. "
+        "{} "
+        "Never assert that source collection is exhaustive or that a silence "
+        "by an institution is confirmed. Do not reference future developments.\n\n"
         "Begin with one real, specific development. Compare how at least two "
         "distinct live desks' institutions describe or respond to it, grounded "
         "solely in the supplied bodies. Do not imply official coordination "
@@ -201,6 +213,10 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None):
         "No issue numbers, publication claims or approval statements.\n\n"
         "BEGIN RECORD EVIDENCE (UNTRUSTED):\n{}\nEND RECORD EVIDENCE"
     ).format(sidecar["week_start"], as_of, sidecar["week_ending"],
+             ("FRIDAY PROVISIONAL: Saturday has not elapsed and is excluded."
+              if as_of != sidecar["week_ending"] else
+              "SUNDAY DRAFT: the Saturday reporting window has elapsed; "
+              "source-capture completeness still requires human review."),
              ", ".join(str(i) for i in allowed_ids), evidence_prompt(chosen))
     schema = writing_schema(allowed_ids)
     for attempt in range(2):
