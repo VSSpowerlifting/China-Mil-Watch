@@ -64,10 +64,17 @@ def _publication_window(week_ending):
     return saturday - timedelta(days=6), saturday
 
 
-def require_current_week_shadow(evidence, week_ending):
-    """Reject an old successful clock standing in for this week's coverage."""
-    _start, saturday = _publication_window(week_ending)
-    del _start
+def require_current_week_shadow(evidence, week_ending, *, observed_on=None):
+    """Require a healthy recent run at proof time; Sunday remains stringent.
+
+    Thursday rehearsal may use Wednesday's completed run; on Sunday the same
+    rule necessarily requires a Friday-or-later target. Future target dates
+    are never accepted, and no past-week state can be replayed as current.
+    """
+    start, saturday = _publication_window(week_ending)
+    if observed_on is None:
+        observed_on = datetime.now(timezone.utc).date()
+    require(type(observed_on) is date, "freshness check requires an actual calendar day")
     runs = evidence.get("runs") if isinstance(evidence, dict) else None
     require(isinstance(runs, list) and runs, "no verified MPS shadow attempt history")
     latest = runs[-1]
@@ -81,8 +88,10 @@ def require_current_week_shadow(evidence, week_ending):
             "last source attempt must carry UTC timestamp")
     require(finished.utcoffset() == timedelta(0),
             "last source attempt must be timestamped in UTC")
-    require(saturday - timedelta(days=2) <= target <= saturday + timedelta(days=1),
-            "MPS shadow state is stale or does not belong to this editorial week")
+    oldest = max(start, observed_on - timedelta(days=2))
+    newest = min(saturday + timedelta(days=1), observed_on)
+    require(oldest <= target <= newest,
+            "MPS shadow state is stale, future-dated, or not in this editorial week")
     require(target <= finished.astimezone(timezone.utc).date(),
             "future MPS collection target cannot be treated as completed")
     return target.isoformat()
