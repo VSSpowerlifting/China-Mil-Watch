@@ -37,7 +37,7 @@ def one_line(value):
 
 
 def render_packet(sidecar, *, manuscript=None, as_of=None,
-                  vietnam_candidates=(), japan_sources=()):
+                  vietnam_candidates=(), research_evidence=(), japan_sources=()):
     if sidecar.get("editorial_status") != "draft" or sidecar.get("issue_number") is not None:
         raise ValueError("only unnumbered, unapproved draft scaffolds may be emailed")
     week_end = date.fromisoformat(sidecar["week_ending"])
@@ -45,8 +45,10 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         raise ValueError("the Briefs editorial week must end on Saturday")
     desks = sidecar["desks"]
     trail = sidecar["source_trail"]
-    if vietnam_candidates and not as_of:
-        raise ValueError("Vietnam shadow candidates require a Friday as-of cutoff")
+    if (vietnam_candidates or research_evidence) and not as_of:
+        raise ValueError("research evidence requires an explicit reporting cutoff")
+    if research_evidence and (vietnam_candidates or japan_sources):
+        raise ValueError("Sunday research is one synthesized input, not separate country supplements")
     if japan_sources and (not as_of or manuscript is None):
         raise ValueError("Japan AI research requires an automatic provisional manuscript")
     if vietnam_candidates and any(row["review_status"] !=
@@ -68,7 +70,11 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         "Packet: IPR-" + week_end.isoformat(),
         "Week: " + one_line(sidecar["week_start"]) + " through " + week_end.isoformat(),
         "Status: UNNUMBERED DRAFT — NOT APPROVED OR PUBLISHED",
-        ("AS-OF CUT-OFF: " + as_of + " (FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED)"
+        (("AS-OF CUT-OFF: " + as_of +
+          " (SATURDAY COMPLETE; CAPTURE COMPLETENESS UNVERIFIED)"
+          if as_of == sidecar["week_ending"] else
+          "AS-OF CUT-OFF: " + as_of +
+          " (FRIDAY PROVISIONAL; SATURDAY NOT INCLUDED)")
          if as_of else "Complete-week editorial worksheet; still unapproved"),
         coverage_warning,
         "Desks: " + ", ".join(desks),
@@ -81,10 +87,14 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         "Keep the source appendix intact. Give record IDs for factual claims.",
         "Do not guess at translations, infer coordination, or assign an issue number.",
         "Source listings are candidates, not endorsed editorial selections.",
-        ("Vietnam: {} isolated shadow-source link(s) require independent review; "
-         "NOT model evidence, NOT production record IDs, NOT live desk coverage."
-         .format(len(vietnam_candidates)) if vietnam_candidates else
-         "Vietnam: no separately offered shadow-source candidates."),
+        ("Private model research: {} source-linked Japan/Vietnam candidate(s) "
+         "available for drafting; all require independent human verification. "
+         "They are NOT production records, desk promotion, or publication approval."
+         .format(len(research_evidence)) if research_evidence else
+         ("Vietnam: {} isolated shadow-source link(s) require independent review; "
+          "NOT model evidence, NOT production record IDs, NOT live desk coverage."
+          .format(len(vietnam_candidates)) if vietnam_candidates else
+          "Vietnam: no separately offered shadow-source candidates.")),
         "Ben retains final editorial, approval, numbering and publication authority.",
         "",
         "=== EDITABLE MANUSCRIPT ===",
@@ -95,6 +105,10 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
     else:
         # Only mechanically validated model output is interpolated here.
         from scripts.weekly_briefs_auto_writer import CITED_FIELDS, validate_manuscript
+        if research_evidence and not manuscript.get("editorial_focus"):
+            raise ValueError("research-assisted manuscript has no single editorial focus")
+        if research_evidence:
+            lines.extend(("\n## EDITORIAL FOCUS", one_line(manuscript["editorial_focus"]), ""))
         # The caller validated against the full-text evidence selection;
         # do not silently convert the article into a release-ready sidecar.
         headings = (
@@ -112,13 +126,19 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         for key, heading in headings:
             lines.extend(("\n## " + heading, manuscript[key], ""))
             if key in CITED_FIELDS:
-                lines.append("SOURCE RECORD IDS: " + ", ".join(
-                    str(i) for i in manuscript["citations"][key]))
+                production_ids = manuscript["citations"][key]
+                external_ids = (manuscript["supplemental_citations"][key]
+                                if research_evidence else [])
+                if production_ids:
+                    lines.append("SOURCE RECORD IDS: " + ", ".join(
+                        str(i) for i in production_ids))
+                if external_ids:
+                    lines.append("EXTERNAL SOURCE IDS: " + ", ".join(external_ids))
                 if japan_sources:
-                    external = manuscript["supplemental_citations"][key]
-                    if external:
+                    japanese = manuscript["supplemental_citations"][key]
+                    if japanese:
                         lines.append("EXTERNAL JAPAN SOURCE IDS (NOT IPR RECORD IDS): "
-                                     + ", ".join(external))
+                                     + ", ".join(japanese))
                 lines.append("")
         if japan_sources:
             lines.extend((
@@ -180,6 +200,34 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
                 "",
             ))
         lines.append("END OF JAPAN NON-PRODUCTION APPENDIX")
+    if research_evidence:
+        lines.extend((
+            "",
+            "=== MODEL-AVAILABLE OFFICIAL SOURCE RESEARCH — UNAPPROVED ===",
+            "Private editorial candidate evidence, not IPR archived record IDs.",
+            "Sources are publisher-hosted; original wording must be checked by",
+            "Dylan and Ben before any source-backed claim enters a published Brief.",
+            "Model inputs were cautious synopses, NOT article bodies or approved quotes.",
+            "",
+        ))
+        for item in research_evidence:
+            lines.extend((
+                "External source {} | {} | {}".format(
+                    one_line(item["id"]), one_line(item["desk"]),
+                    one_line(item["published_date"])),
+                "Original (" + one_line(item["language"]) + "): " +
+                    one_line(item["title_original"]),
+                "Publisher: " + one_line(item["source_name"]),
+                "URL: " + one_line(item["source_url"]),
+                "Evidence class: " + one_line(item["source_kind"]),
+                "Pinned shadow commit: " + one_line(item["state_commit"] or "not archived"),
+                "Version/content SHA-256: " + one_line(item["source_content_sha256"] or "not archived"),
+                "Hash rule: " + one_line(item["hash_rule"] or "not archived"),
+                "Research synopsis (not approved): " + one_line(item["summary"]),
+                "Required source checks: " + one_line("; ".join(item["caveats"])),
+                "",
+            ))
+        lines.append("END OF MODEL-AVAILABLE OFFICIAL SOURCE RESEARCH")
     if vietnam_candidates:
         lines.extend((
             "",
@@ -218,7 +266,7 @@ def single_address(value, name):
     return parsed[0][1]
 
 
-def send_packet(path, week_ending, *, provisional=False):
+def send_packet(path, week_ending, *, provisional=False, full_week=False):
     recipient = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     sender = single_address(os.environ.get("IPR_SMTP_USER", ""), "IPR_SMTP_USER")
     password = "".join(os.environ.get("IPR_SMTP_APP_PASSWORD", "").split())
@@ -228,17 +276,32 @@ def send_packet(path, week_ending, *, provisional=False):
     message["From"] = sender
     message["To"] = recipient
     message["Reply-To"] = sender
-    message["Subject"] = "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
-    message.set_content(
-        "Hi Dylan,\n\nAttached is the provisional AI-assisted Indo-Pacific Record Brief "
-        "with a source-record appendix and section-level citation IDs. "
-        "The Friday draft is not the complete Saturday-ending week, so please "
-        "check the citations and leave room for Saturday developments. "
-        "Please edit the prose, flag questionable claims, preserve the source appendix, "
-        "and reply with the edited .txt attached within 48 hours.\n\n"
-        "This text is not approved or numbered for publication. Ben will "
-        "verify the full-week sources and authorize any final publication.\n"
-    )
+    if full_week:
+        message["Subject"] = "IPR Briefs | week ending {} | one thematic Sunday draft".format(week_ending)
+        message.set_content(
+            "Hi Dylan,\n\nAttached is one coherent, provisional IPR Brief drafted "
+            "from this week's available official-source evidence through Saturday. "
+            "Please edit the article's existing argument and structure rather than "
+            "assemble separate country supplements. Check every cited record and "
+            "the separately labeled, not-yet-reviewed Japan/Vietnam external links; "
+            "remove unsupported claims and references. Preserve both source appendices. "
+            "Reply with the edited .txt attached by Monday 8 p.m. Eastern.\n\n"
+            "No shadow research source is automatically approved for the public "
+            "archive or a published Brief. Ben retains final source review, "
+            "editorial approval, numbering and publication authority.\n"
+        )
+    else:
+        message["Subject"] = "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
+        message.set_content(
+            "Hi Dylan,\n\nAttached is the provisional AI-assisted Indo-Pacific Record Brief "
+            "with a source-record appendix and section-level citation IDs. "
+            "The Friday draft is not the complete Saturday-ending week, so please "
+            "check the citations and leave room for Saturday developments. "
+            "Please edit the prose, flag questionable claims, preserve the source appendix, "
+            "and reply with the edited .txt attached within 48 hours.\n\n"
+            "This text is not approved or numbered for publication. Ben will "
+            "verify the full-week sources and authorize any final publication.\n"
+        )
     message.add_attachment(
         path.read_bytes(), maintype="text", subtype="plain", filename=path.name
     )
@@ -255,43 +318,73 @@ def main(argv=None):
                         help="email via explicit SMTP secrets; otherwise write locally only")
     parser.add_argument("--write-automatic", action="store_true",
                         help="compose an AI-assisted provisional manuscript from source bodies")
-    parser.add_argument("--as-of", help="Friday cut-off (YYYY-MM-DD), used only for automatic writing")
+    parser.add_argument("--as-of", help="Friday or Saturday source cutoff (YYYY-MM-DD)")
+    parser.add_argument("--full-week", action="store_true",
+                        help="Sunday full-week draft from records through Saturday")
+    parser.add_argument("--include-research", action="store_true",
+                        help="privately synthesize checked-format Japan/Vietnam official source notes")
+    parser.add_argument("--research-packet", type=Path,
+                        help="optional exact-week temporary private JSON from a separately validated shadow exporter")
     parser.add_argument("--use-japan-research", action="store_true",
-                        help="offer the exact-week non-production Japan source packet to AI")
+                        help="retain independently reviewed-format Friday Japan concept lane")
     args = parser.parse_args(argv)
+    sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
+    if args.full_week and (not args.write_automatic
+                           or args.as_of != sidecar["week_ending"]):
+        parser.error("--full-week requires Saturday --as-of and --write-automatic")
+    if args.include_research and not (args.full_week and args.write_automatic):
+        parser.error("--include-research is private Sunday automatic drafting only")
+    if args.research_packet and not args.include_research:
+        parser.error("--research-packet requires private --include-research")
+    if args.use_japan_research and (args.include_research or args.full_week):
+        parser.error("Friday Japan concept and unified Sunday research are exclusive")
     if args.use_japan_research and (not args.write_automatic or not args.as_of):
         parser.error("--use-japan-research requires --write-automatic and --as-of")
-    sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
-    manuscript = None
     japan_sources = []
     if args.use_japan_research:
         from scripts.japan_weekly_writer_sources import load_japan_writer_sources
         japan_sources = load_japan_writer_sources(
             sidecar["week_ending"], args.as_of)
+    research = []
+    if args.include_research:
+        from core.brief_editorial_evidence import load_editorial_evidence
+        if args.research_packet and (
+                args.research_packet.name != sidecar["week_ending"] + ".json"):
+            parser.error("--research-packet basename must match exact reporting Saturday")
+        if args.research_packet and not args.research_packet.is_file():
+            raise ValueError("explicit private research packet missing; refuse silent fallback")
+        research_dir = (args.research_packet.parent if args.research_packet else None)
+        research = (load_editorial_evidence(sidecar["week_ending"], args.as_of,
+                                            directory=research_dir)
+                    if research_dir is not None else
+                    load_editorial_evidence(sidecar["week_ending"], args.as_of))
+    manuscript = None
     if args.write_automatic:
         if not args.as_of:
-            parser.error("--write-automatic requires --as-of Friday date")
+            parser.error("--write-automatic requires --as-of source cutoff")
         from scripts.weekly_briefs_auto_writer import compose
-        # Raises on absent full-text evidence, missing API key, API errors or
-        # invalid citations. No email or file is produced on these failures.
-        manuscript = (compose(sidecar, args.as_of, supplemental=japan_sources)
+        # Fail closed before file creation/email if any evidence or model check fails.
+        manuscript = (compose(sidecar, args.as_of, supplemental=research)
+                      if research else
+                      compose(sidecar, args.as_of, supplemental=japan_sources)
                       if japan_sources else compose(sidecar, args.as_of))
     # These unapproved metadata pointers appear only in the PRIVATE human
     # handoff after the immutable production source appendix. Never send them
     # to the model or count them as live, production-backed desk evidence.
     vietnam_candidates = []
-    if args.as_of:
+    if args.as_of and not research:
         from core.vietnam_briefs_handoff import load_candidates
         vietnam_candidates = load_candidates(sidecar["week_ending"], args.as_of)
     text = render_packet(sidecar, manuscript=manuscript, as_of=args.as_of,
                          vietnam_candidates=vietnam_candidates,
-                         japan_sources=japan_sources)
+                         research_evidence=research, japan_sources=japan_sources)
     args.out.write_text(text, encoding="utf-8")
-    print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review; {} Japan research sources)".format(
+    print("Prepared unapproved {}: {} ({} production records; {} Vietnam shadow links requiring human review)".format(
         "machine-drafted editorial manuscript" if manuscript is not None else "editorial worksheet",
-        args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates), len(japan_sources)))
+        args.out.name, len(sidecar["source_trail"]), len(vietnam_candidates)))
     if args.send:
-        send_packet(args.out, sidecar["week_ending"], provisional=args.write_automatic)
+        send_packet(args.out, sidecar["week_ending"],
+                    provisional=args.write_automatic, full_week=args.full_week)
         print("Editorial worksheet delivered via configured SMTP account.")
     else:
         print("Email not enabled: no delivery occurred.")
