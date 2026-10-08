@@ -1,0 +1,40 @@
+name: IPR Briefs Saturday Source Audit (No Model, No Send)
+
+on:
+  workflow_dispatch:
+    inputs:
+      week_ending_saturday:
+        description: "Complete Saturday YYYY-MM-DD (run Sunday or later)"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-briefs-saturday-source-audit
+  cancel-in-progress: false
+
+jobs:
+  reconcile-saturday:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout tracked production corpus (read-only)
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Audit Saturday records against Friday's provisional cutoff
+        env:
+          IPR_SATURDAY: ${{ inputs.week_ending_saturday }}
+        run: python -m scripts.weekly_briefs_saturday_audit --saturday "$IPR_SATURDAY"
+
+      # No private packet inputs in public Actions logs.
+      # No API secrets, SMTP, drafts, publication, or artifacts.
