@@ -72,7 +72,7 @@ def build(*, state_repo, state_commit, week_ending, notes, output,
     vietnam_count = sum(item["desk"] == "vietnam" for item in packet["items"])
     if require_vietnam:
         require(vietnam_count > 0,
-                "Vietnam contribution explicitly required; no current approved-for-private-drafting source")
+                "Vietnam contribution explicitly required; no current eligible private research source")
     # Explicitly distinguish two kinds of zero-source model inputs, neither
     # of which implies the ministry was quiet across its full publication scope.
     status = ("ready" if vietnam_count else
