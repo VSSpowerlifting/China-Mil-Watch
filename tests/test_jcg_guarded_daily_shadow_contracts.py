@@ -77,7 +77,7 @@ class JCGDailyQualifications(unittest.TestCase):
         source = (ROOT / "shadow/jp_jcg/manifest.json").read_text(encoding="utf-8")
         self.assertIn("shadow", source)
         self.assertIn("jp_jcg_press_en", source)
-        self.assertIn("attachments", source.lower())
+        self.assertIn("linked PDFs", source)
         self.assertFalse((ROOT / "desks/japan/manifest.json").exists())
 
 
