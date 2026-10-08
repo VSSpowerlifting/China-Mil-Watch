@@ -136,7 +136,7 @@ class JCGPinnedReviewReceiptTests(unittest.TestCase):
         self.assertIn("github.ref == 'refs/heads/main'", workflow)
         self.assertIn("permissions:\n  contents: read", workflow)
         self.assertIn("shadow/japan-jcg", workflow)
-        self.assertIn("scripts/review_desk_shadow.py", workflow)
+        self.assertIn("scripts.review_desk_shadow", workflow)
         self.assertIn("--state-commit", workflow)
         self.assertIn("records.jsonl", workflow)  # explicit exclusion comment
         artifact = workflow.split("path: |", 1)[1].split(

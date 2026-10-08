@@ -1,0 +1,154 @@
+name: JCG September 2026 — One-time Historical Shadow Backfill
+
+# Owner manual-only, not a scheduled collector and not a new collection day.
+on:
+  workflow_dispatch:
+    inputs:
+      expected_state_commit:
+        description: Exact full 40-character current HEAD on shadow/japan-jcg
+        required: true
+        type: string
+      approval:
+        description: Type APPROVE_JCG_SEPTEMBER_BACKFILL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: japan-jcg-manual-shadow
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    if: github.ref == 'refs/heads/main' && inputs.approval == 'APPROVE_JCG_SEPTEMBER_BACKFILL'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout reviewed main collector
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: repo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing requirements
+        run: pip install -r repo/requirements.txt
+      - name: Offline proof that Day 0 cannot be forged or overwritten
+        working-directory: repo
+        run: python -m unittest tests.test_jcg_september_historical_backfill -v
+      - name: Pin existing isolated state and verify actual Day 0 ancestry
+        shell: bash
+        env:
+          EXPECTED_STATE_COMMIT: ${{ inputs.expected_state_commit }}
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_STATE_COMMIT" =~ ^[0-9a-f]{40}$ ]] || exit 2
+          branch=shadow/japan-jcg
+          echo "STATE_BRANCH=$branch" >> "$GITHUB_ENV"
+          git ls-remote --exit-code --heads "$STATE_REMOTE" "refs/heads/$branch"
+          git clone --single-branch --branch "$branch" "$STATE_REMOTE" "$RUNNER_TEMP/jcg-state"
+          cd "$RUNNER_TEMP/jcg-state"
+          test "$(git branch --show-current)" = "$branch"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_STATE_COMMIT"
+          git merge-base --is-ancestor 81558026117067cbcf54bd7a7859a2d9db168a0c HEAD
+          test "$(git ls-tree --name-only HEAD)" = state
+          test -s state/shadow.db
+          test -f state/clock.json
+          python - <<'PY'
+          import json, pathlib
+          root = pathlib.Path("state")
+          clock = json.loads((root/"clock.json").read_text())
+          assert clock["desk"] == "japan_jcg"
+          assert clock["day_zero_run_id"] == "37828199188-1"
+          ledgers = [json.loads(x.read_text()) for x in (root/"ledger").glob("*.json")]
+          assert any(e["run_id"] == "37828199188-1" for e in ledgers)
+          assert not any(e.get("operation") == "jcg_2026_09_historical_backfill"
+                         for e in ledgers)
+          PY
+      - name: Backfill five exact-scope September originals, two new
+        working-directory: repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/shadow_collect_desk.py \
+            --desk japan_jcg \
+            --state-dir "$RUNNER_TEMP/jcg-state/state" \
+            --target-date 2026-10-08 \
+            --lookback-days 38 --cap 5 \
+            --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --commit "$(git rev-parse HEAD)" \
+            --event-name workflow_dispatch \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --jcg-september-backfill \
+            2>&1 | tee "$RUNNER_TEMP/jcg-september-backfill-metadata.log"
+      - name: Verify exact five identities and append-only Day 0 preservation
+        env:
+          CURRENT_RUN: ${{ github.run_id }}
+          CURRENT_ATTEMPT: ${{ github.run_attempt }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git -C repo status --porcelain)"
+          cd "$RUNNER_TEMP/jcg-state"
+          test -z "$(git diff --name-status -- state/clock.json state/ledger | grep -E '^(M|D|R)' || true)"
+          python - <<'PY'
+          import json, os, pathlib, sqlite3
+          root = pathlib.Path("state")
+          run_id = os.environ["CURRENT_RUN"] + "-" + os.environ["CURRENT_ATTEMPT"]
+          ledger = list((root/"ledger").glob("*-" + run_id + ".json"))
+          assert len(ledger) == 1
+          item = json.loads(ledger[0].read_text())
+          assert item["health"] == "ok" and item["result"] == "ok"
+          assert (item["discovered"], item["selected"], item["retrieved"],
+                  item["extracted"], item["inserted"], item["duplicates"]) == (5,5,5,5,2,3)
+          assert item["operation"] == "jcg_2026_09_historical_backfill"
+          assert item["counts_as_qualifying_shadow_day"] is False
+          assert item["target_date"] == "2026-10-08"
+          assert item["backfill_anchor_day_zero_run_id"] == "37828199188-1"
+          clock = json.loads((root/"clock.json").read_text())
+          assert clock["day_zero_run_id"] == "37828199188-1"
+          expected = {"jcg-en:9455":"2026-10-06",
+                      "jcg-en:9453":"2026-10-06",
+                      "jcg-en:9436":"2026-09-29",
+                      "jcg-en:9424":"2026-09-18",
+                      "jcg-en:9399":"2026-09-07"}
+          with sqlite3.connect(root/"shadow.db") as conn:
+            found = dict(conn.execute(
+              "SELECT source_identity, published_date FROM shadow_records").fetchall())
+            new_ids = dict(conn.execute(
+              "SELECT source_identity, first_seen_run FROM shadow_records"
+              " WHERE source_identity IN ('jcg-en:9424', 'jcg-en:9399')").fetchall())
+          assert found == expected
+          assert set(new_ids.values()) == {run_id}
+          PY
+      - name: Publish successful shadow-only append with non-force push
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/jcg-state"
+          test "$(git branch --show-current)" = "$STATE_BRANCH"
+          test ! -e state/shadow.db-wal
+          test ! -e state/shadow.db-shm
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state
+          git diff --cached --quiet && { echo "::error::No historical source addition"; exit 1; }
+          git commit -m "shadow(japan_jcg): one-time Sep 2026 original-body backfill ${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            -m "Original Day 0 clock/ledger unchanged; two earlier HTML releases; not a collecting day."
+          git push origin "HEAD:refs/heads/$STATE_BRANCH"
+      - name: Retain metadata log only, not publisher original text
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jcg-september-backfill-metadata-${{ github.run_id }}
+          path: ${{ runner.temp }}/jcg-september-backfill-metadata.log
+          retention-days: 90
+          if-no-files-found: warn
