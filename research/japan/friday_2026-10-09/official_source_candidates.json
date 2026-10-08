@@ -1,0 +1,158 @@
+{
+  "protocol": "ipr_japan_week41_editorial_supplement_v1",
+  "status": "unsigned_source_discovery_only_not_in_brief",
+  "reporting_week_start": "2026-10-04",
+  "reporting_friday": "2026-10-09",
+  "reviewed_as_of": "2026-10-08",
+  "timezone": "Asia/Tokyo",
+  "purpose": "Independent first-party source discovery for optional, explicitly human-edited Japan paragraph in Friday's IPR Briefs draft; NOT eligible for automated production DB citation IDs.",
+  "origin_scope": "Japanese Ministry of Defense official English HTML; one paired Japanese original; source webpage views do not establish IPR archival capture.",
+  "workflow": {
+    "automatic_friday_writer_includes_japan": false,
+    "editorial_supplement_only": true,
+    "allow_model_citation_id_synthesis": false,
+    "may_copy_into_dylan_draft_only_after_independent_review": true,
+    "email_sent": false,
+    "editorial_inclusion_approved": false,
+    "source_admission_approved": false,
+    "full_original_archive_capture_available": false,
+    "publication_approved": false,
+    "production_mutation": false
+  },
+  "source_candidates": [
+    {
+      "candidate_id": "JP-W41-01",
+      "title": "JS Kunisaki Departs Indonesia after Completing International Disaster Relief Activities",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_press_release",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/5fc631a5d1b2f36a9b697a611082a85af444ea54.html",
+      "japanese_original_url": "https://www.mod.go.jp/j/press/news/2026/10/06a.html",
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_indonesia_disaster_relief_completion",
+      "support_class": "english_and_japanese_official_mod_pages_checked",
+      "editorial_priority": "primary",
+      "provisional_claims": [
+        "The October 6 MOD release reports that JS Kunisaki departed Kijing Port for Japan after the conclusion of the Indonesia international disaster-relief operation.",
+        "The MOD reports that three JGSDF CH-47 helicopters were aboard the departing ship and carried out 56 firefighting missions totaling approximately 280 tons of water released."
+      ],
+      "caveats": [
+        "The release describes conclusion and departure on October 6; do not represent the missions as all occurring on October 6.",
+        "Do not infer Japanese-Indonesian military cooperation terms or effectiveness beyond the issuing ministry's wording.",
+        "This development is not automatically the same incident as Philippines Sanlakas emergency-response exercises."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-02",
+      "title": "Courtesy call on Defense Minister Koizumi by H. E. Mr. George Glass, the U.S. Ambassador to Japan",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/92045078e2a66f0957658c577e65cb0832261b17.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "secondary",
+      "provisional_claims": [
+        "The MOD says Koizumi met U.S. Ambassador George Glass on October 6 and protested a reported robbery-murder incident in Naha, Okinawa.",
+        "According to the ministry, the Japanese government called for investigative cooperation, discipline, recurrence-prevention measures, and consideration for the bereaved family."
+      ],
+      "caveats": [
+        "The robbery-murder characterization and demands are explicitly attributed to the Japanese Ministry of Defense; no independent criminal-case adjudication is implied.",
+        "A separate October 6 McCormick meeting repeats the ministry's protest and is not independent corroboration of the incident."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-03",
+      "title": "Courtesy call on Minister of Defense Koizumi by U.S. Senator David McCormick",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/310c36ee3042840e8ea24c951cacaa1766cba0a0.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-06",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "context",
+      "provisional_claims": [
+        "The ministry says Koizumi received Senator David McCormick on October 6 and voiced intentions to deepen the Japan–U.S. alliance.",
+        "The official account also repeats the government's protest and investigative and discipline requests concerning the reported Naha incident."
+      ],
+      "caveats": [
+        "This is a separate meeting, but the repeated protest is not a separate criminal incident.",
+        "Do not mistake two MOD pages for independent diplomatic or law-enforcement corroboration."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    },
+    {
+      "candidate_id": "JP-W41-04",
+      "title": "Courtesy call on State Minister of Defense Kiyoshi Odawara by the delegation of the U.S. Senator Michael Bennet",
+      "institution": "Japan Ministry of Defense",
+      "page_kind": "official_security_dialogue",
+      "source_language": "en",
+      "public_source_url": "https://www.mod.go.jp/en/article/2026/10/1aaec60496e51175d95622df5ffc904a24af6c9c.html",
+      "japanese_original_url": null,
+      "publisher_date": "2026-10-05",
+      "proposed_group": "japan_us_alliance_communications",
+      "support_class": "official_mod_english_page_checked",
+      "editorial_priority": "context",
+      "provisional_claims": [
+        "Japan's state minister of defense received Senator Michael Bennet and his delegation on October 5, according to MOD.",
+        "The MOD account thanked Bennet for alliance support and repeated Japan's stated concerns over the reported Naha incident."
+      ],
+      "caveats": [
+        "Do not assume this meeting resolved the issue or constituted a defense-policy agreement.",
+        "Context, not a separate institutional voice or a second Naha incident."
+      ],
+      "first_party_original_capture_sha256": null,
+      "ipr_record_id": null,
+      "reviewer_verified_full_page": false,
+      "editorial_approved": false
+    }
+  ],
+  "source_relationships": {
+    "japan_indonesia_disaster_relief_completion": {
+      "candidate_ids": [
+        "JP-W41-01"
+      ],
+      "distinct_mod_source_pages": 1,
+      "distinct_provisionally_attributed_issuing_institutions": 1,
+      "independently_verified_external_institutions": 0
+    },
+    "japan_us_alliance_communications": {
+      "candidate_ids": [
+        "JP-W41-02",
+        "JP-W41-03",
+        "JP-W41-04"
+      ],
+      "distinct_mod_source_pages": 3,
+      "distinct_provisionally_attributed_issuing_institutions": 1,
+      "independently_verified_external_institutions": 0,
+      "recurring_issue": "shared Ministry of Defense protests concerning one reported Naha incident; three distinct diplomatic courtesy calls"
+    }
+  },
+  "independent_review_needed": [
+    "Check each official source URL and entire HTML text, archive the precise version only if authorized, and record verified capture SHA-256.",
+    "Check the Oct 6 Japanese original against English version, retaining language/translation distinction.",
+    "Confirm the source's actual publication date and whether Friday brings later material; this October 8 discovery is not a finished October 9 weekly review.",
+    "Decide if the Indonesia disaster-relief update fits a substantive cross-desk development and is worth a short Japan paragraph.",
+    "Check MOD terms of use, source attribution, editorial translation and any embedded third-party photos before any reuse.",
+    "Do not make up production record IDs or alter the Friday production-backed desk list; cite source URLs clearly as supplementary, unarchived material."
+  ],
+  "source_terms_url": "https://www.mod.go.jp/en/notice.html",
+  "rights_note": "MOD terms permit specified reuse with attribution and edited-work labeling, with third-party and exceptions; specific source handling still requires editorial review, especially photos.",
+  "no_classification": true,
+  "no_publication": true
+}
