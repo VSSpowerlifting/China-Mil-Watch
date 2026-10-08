@@ -365,7 +365,12 @@ def attach_topic(
     """
     taxonomy = taxonomy or load_taxonomy()
     assignment.validate(taxonomy)
-    ensure_topic_store(conn)
+    if not topic_store_exists(conn):
+        raise TopicStoreError(
+            "record_topics store is not configured; call ensure_topic_store() "
+            "only in an explicit schema or opt-in phase"
+        )
+    _validate_topic_store(conn)
 
     key = (
         assignment.record.desk_id,
