@@ -98,7 +98,7 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
             lines.extend(("\n## " + name, "[" + instruction + "]", ""))
     else:
         # Only mechanically validated model output is interpolated here.
-        from scripts.weekly_briefs_auto_writer import CITED_FIELDS, validate_manuscript
+        from scripts.sunday_briefs_auto_writer import CITED_FIELDS, validate_manuscript
         if research_evidence and not manuscript.get("editorial_focus"):
             raise ValueError("research-assisted manuscript has no single editorial focus")
         if research_evidence:
@@ -308,7 +308,7 @@ def main(argv=None):
     if args.write_automatic:
         if not args.as_of:
             parser.error("--write-automatic requires --as-of source cutoff")
-        from scripts.weekly_briefs_auto_writer import compose
+        from scripts.sunday_briefs_auto_writer import compose
         # Fail closed before file creation/email if any evidence or model check fails.
         manuscript = (compose(sidecar, args.as_of, supplemental=research)
                       if research else compose(sidecar, args.as_of))
