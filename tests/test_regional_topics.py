@@ -27,8 +27,6 @@ from core.topics import (  # noqa: E402
     load_taxonomy,
     topics_for_record,
 )
-from migrations.runner import apply_all, connect, verify  # noqa: E402
-from tests.test_migrations import build_legacy_db  # noqa: E402
 
 
 class TaxonomyContract(unittest.TestCase):
@@ -233,44 +231,55 @@ class StorePortability(unittest.TestCase):
         )
         conn.close()
 
-    def test_migration_adds_an_empty_store_and_preserves_every_article_id(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            db_path = Path(tmp) / "legacy.db"
-            before = build_legacy_db(db_path, articles=7)
-            conn = connect(db_path)
-            report = apply_all(conn)
-            after_ids = [
-                row[0] for row in conn.execute(
-                    "SELECT id FROM articles ORDER BY id"
-                ).fetchall()
-            ]
-            topic_count = conn.execute(
-                "SELECT COUNT(*) FROM record_topics"
-            ).fetchone()[0]
-            verified = verify(conn)
-            conn.close()
+    def test_opt_in_store_is_empty_and_preserves_existing_rows(self):
+        conn = sqlite3.connect(":memory:")
+        conn.execute(
+            "CREATE TABLE articles (id INTEGER PRIMARY KEY, title TEXT NOT NULL)"
+        )
+        conn.executemany(
+            "INSERT INTO articles (id, title) VALUES (?, ?)",
+            [(i, "record-%d" % i) for i in range(1, 8)],
+        )
+        before_ids = [
+            row[0] for row in conn.execute(
+                "SELECT id FROM articles ORDER BY id"
+            ).fetchall()
+        ]
 
-        self.assertIn("0008", report["applied"])
-        self.assertEqual(after_ids, before["article_ids"])
+        ensure_topic_store(conn)
+
+        after_ids = [
+            row[0] for row in conn.execute(
+                "SELECT id FROM articles ORDER BY id"
+            ).fetchall()
+        ]
+        topic_count = conn.execute(
+            "SELECT COUNT(*) FROM record_topics"
+        ).fetchone()[0]
+        self.assertEqual(after_ids, before_ids)
         self.assertEqual(topic_count, 0)
-        self.assertTrue(verified["ok"])
+        self.assertEqual(
+            conn.execute(
+                "SELECT COUNT(*) FROM sqlite_master "
+                "WHERE type='table' AND name='schema_migrations'"
+            ).fetchone()[0],
+            0,
+        )
+        conn.close()
 
-
-    def test_partial_migration_table_is_refused_not_blessed(self):
-        import migrations.versions.m0008_regional_record_topics as m8
-
+    def test_partial_topic_store_is_refused_not_blessed(self):
         conn = sqlite3.connect(":memory:")
         conn.execute(
             "CREATE TABLE record_topics (desk_id TEXT, source_slug TEXT)"
         )
-        self.assertFalse(m8.is_already_applied(conn))
-        with self.assertRaisesRegex(sqlite3.IntegrityError, "partial record_topics"):
-            m8.up(conn)
+        with self.assertRaisesRegex(TopicStoreError, "partial record_topics"):
+            ensure_topic_store(conn)
         columns = {
             row[1] for row in conn.execute("PRAGMA table_info(record_topics)")
         }
         self.assertEqual(columns, {"desk_id", "source_slug"})
         conn.close()
+
 
 
 if __name__ == "__main__":
