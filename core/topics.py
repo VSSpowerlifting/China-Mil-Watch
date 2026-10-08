@@ -125,6 +125,12 @@ class TopicAssignment:
     taxonomy_version: int = TAXONOMY_VERSION
 
     def validate(self, taxonomy: Optional[TopicTaxonomy] = None) -> None:
+        if (type(self.taxonomy_version) is not int or
+                self.taxonomy_version not in SUPPORTED_TAXONOMY_VERSIONS):
+            raise TopicTaxonomyError(
+                "assignment taxonomy version %r is unsupported" %
+                self.taxonomy_version
+            )
         taxonomy = taxonomy or load_taxonomy(version=self.taxonomy_version)
         self.record.validate()
         if (type(self.taxonomy_version) is not int or
@@ -375,6 +381,12 @@ def attach_topic(
     repeat. If the same record/topic key already exists with different
     provenance, raises instead of silently replacing evidence.
     """
+    if (type(assignment.taxonomy_version) is not int or
+            assignment.taxonomy_version not in SUPPORTED_TAXONOMY_VERSIONS):
+        raise TopicTaxonomyError(
+            "assignment taxonomy version %r is unsupported" %
+            assignment.taxonomy_version
+        )
     taxonomy = taxonomy or load_taxonomy(version=assignment.taxonomy_version)
     assignment.validate(taxonomy)
     if not topic_store_exists(conn):
