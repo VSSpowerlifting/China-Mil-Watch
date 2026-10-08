@@ -62,6 +62,19 @@ class TaxonomyContract(unittest.TestCase):
         self.assertEqual(len(groups), len(set(groups)))
         self.assertTrue(all(topic.group in groups for topic in taxonomy.topics))
 
+    def test_boolean_taxonomy_version_is_not_version_one(self):
+        raw = json.loads(
+            (REPO_ROOT / "taxonomy" / "regional_topics.v1.json")
+            .read_text(encoding="utf-8")
+        )
+        raw["taxonomy_version"] = True
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "topics.json"
+            path.write_text(json.dumps(raw), encoding="utf-8")
+            with self.assertRaisesRegex(
+                    TopicTaxonomyError, "unsupported taxonomy_version"):
+                load_taxonomy(path)
+
     def test_malformed_duplicate_topic_is_refused(self):
         raw = json.loads(
             (REPO_ROOT / "taxonomy" / "regional_topics.v1.json")
@@ -163,6 +176,19 @@ class AssignmentContract(unittest.TestCase):
             "SELECT assigned_by FROM record_topics"
         ).fetchone()
         self.assertEqual(row[0], "editorial-review")
+
+    def test_evidence_must_be_text_when_present(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "evidence must be non-empty text"):
+            attach_topic(self.conn, self.assignment(evidence=123))
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "evidence must be non-empty text"):
+            attach_topic(self.conn, self.assignment(evidence="   "))
+
+    def test_boolean_assignment_version_is_refused(self):
+        with self.assertRaisesRegex(
+                TopicTaxonomyError, "assignment taxonomy version"):
+            attach_topic(self.conn, self.assignment(taxonomy_version=True))
 
     def test_human_assignment_cannot_invent_a_confidence_score(self):
         with self.assertRaisesRegex(
