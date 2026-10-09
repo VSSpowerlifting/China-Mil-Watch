@@ -56,7 +56,17 @@ Sunday attachment's separate owner-reviewed SHA-256 requirement is
 unchanged. This is a diagnostic for [Issue #271](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/271),
 not a new production collector or an automatic typed-research admission.
 
-The focused tests use disposable local SQLite fixtures and mocked Git
-lineage to ensure missing, duplicated, modified and corrupt rows refuse or
-remain held; they never need a Git remote or publisher page. Full PR offline
-CI remains the merge gate.
+The focused unit tests use disposable local SQLite fixtures and mocked
+Git lineage to check missing, duplicated, modified and corrupt rows. In an
+in-repository PR, a **separate focused CI step** clones the repository's
+isolated `shadow/jp-mod` branch read-only via the GitHub-provided checkout
+token and runs the real historical/current row comparison. This uses GitHub
+Git history, **not the publisher website or PDF download**. The CI prints
+only the safe tri-state outcome and changed metadata *field names*, never
+the Japanese source text, publisher URL, Git credentials, or a private
+receipt artifact. Full PR offline CI remains the merge gate.
+
+If Git history is absent or the source row cannot be compared, the real
+step must fail; it cannot invent an unchanged result. A successful real
+row comparison still does NOT certify the live MOD publisher original,
+human interpretation, reuse rights or editorial authorization.
