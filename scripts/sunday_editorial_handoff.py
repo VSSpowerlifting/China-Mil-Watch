@@ -98,7 +98,8 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
             lines.extend(("\n## " + name, "[" + instruction + "]", ""))
     else:
         # Only mechanically validated model output is interpolated here.
-        from scripts.sunday_briefs_auto_writer import CITED_FIELDS, validate_manuscript
+        from scripts.sunday_briefs_auto_writer import CITED_FIELDS, validate_prose_boundaries
+        validate_prose_boundaries(manuscript)
         if research_evidence and not manuscript.get("editorial_focus"):
             raise ValueError("research-assisted manuscript has no single editorial focus")
         if research_evidence:
