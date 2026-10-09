@@ -143,6 +143,7 @@ jobs:
               "test_vietnam_private_synopses",
               "test_vietnam_shadow_logical_slot_watchdog",
               "test_vietnam_moit_weekly_candidates",
+              "test_vietnam_weekly_model_readiness",
               "test_vietnam_reviewed_brief_citations",
               "test_vietnam_unsigned_citation_review",
               # Sunday thematic citation, window and owner-only preview contracts.
