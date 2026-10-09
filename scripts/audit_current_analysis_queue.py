@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from config import DB_PATH  # noqa: E402
+DB_PATH = ROOT / "pla_watch.db"  # Tracked audit input; no dotenv/model dependency.
 from scripts.reconcile_db import read_only  # noqa: E402
 
 SCHEMA = "ipr-current-analysis-queue/1"
