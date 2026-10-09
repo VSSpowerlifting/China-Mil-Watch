@@ -1,0 +1,47 @@
+name: PLA Daily deterministic discovery contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scraper/sources/pla_daily.py'
+      - 'tests/test_pla_daily_discovery_order.py'
+      - 'docs/PLA_DAILY_DISCOVERY_ORDER.md'
+      - '.github/workflows/pla_daily_discovery_order_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  discovery-order-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin archive bytes
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/pla-daily-order-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Exercise the pure listing and existing parser contracts
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_pla_daily_discovery_order -v
+          python -m unittest tests.test_pla_daily_body_extraction -v
+          python -m unittest tests.test_pla_daily_target_date -v
+          python -m unittest tests.test_dedup_authority -v
+      - name: Assert tracked archive/public output unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/pla-daily-order-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
