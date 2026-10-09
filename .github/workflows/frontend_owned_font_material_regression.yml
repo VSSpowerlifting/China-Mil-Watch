@@ -3,6 +3,7 @@ name: Frontend owned-font and material regression
 on:
   pull_request:
     branches:
+      - main
       - codex/ipr-sitewide-enrichment-20261009
     paths:
       - 'tests/test_pla_watch_reading_ergonomics.py'
