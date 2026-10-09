@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import tempfile
 import unittest
@@ -113,16 +114,34 @@ class ThemeSundayHandoffTests(unittest.TestCase):
     def test_selected_writer_records_exactly_match_approved_ids(self):
         source_rows = [
             dict(id=42, desk_id="china", text_english="", text_original="A" * 400,
-                 analyzed_at=None, is_significant=None, published_date="2026-10-08"),
+                 analyzed_at=None, is_significant=None, published_date="2026-10-08",
+                 url="https://official.example/42", source_name="Publisher China",
+                 title_original="Official China statement", source_language_tag="en"),
             dict(id=47, desk_id="singapore", text_english="", text_original="B" * 400,
-                 analyzed_at=None, is_significant=None, published_date="2026-10-08"),
+                 analyzed_at=None, is_significant=None, published_date="2026-10-08",
+                 url="https://official.example/47", source_name="Publisher Singapore",
+                 title_original="Official Singapore statement", source_language_tag="en"),
             dict(id=99, desk_id="china", text_english="", text_original="C" * 400,
-                 analyzed_at=None, is_significant=None, published_date="2026-10-09"),
+                 analyzed_at=None, is_significant=None, published_date="2026-10-09",
+                 url="https://official.example/99", source_name="Publisher China",
+                 title_original="Later China statement", source_language_tag="en"),
         ]
         scaffold = {
             "week_start": "2026-10-04", "week_ending": SAT,
             "desks": ["china", "singapore"],
             "source_trail": [{"record_id": x["id"]} for x in source_rows],
+        }
+        pins = {
+            r["id"]: {
+                "desk": r["desk_id"], "source_url": r["url"],
+                "published_date": r["published_date"],
+                "stored_text_sha256": hashlib.sha256(
+                    r["text_original"].encode("utf-8")).hexdigest(),
+                "source_name": r["source_name"],
+                "title_original": r["title_original"],
+                "language": r["source_language_tag"],
+            }
+            for r in source_rows
         }
         with patch("scripts.sunday_briefs_auto_writer.read_only",
                    return_value=nullcontext(None)), patch(
@@ -130,14 +149,31 @@ class ThemeSundayHandoffTests(unittest.TestCase):
                    return_value=source_rows), patch(
                    "scripts.sunday_briefs_auto_writer.trail_entry",
                    side_effect=lambda r: {"record_id": r["id"]}):
-            selected = choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 47])
+            selected = choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 47],
+                                       selected_pins={i: pins[i] for i in (42, 47)})
             self.assertEqual([r["id"] for r, _ in selected], [42, 47])
             with self.assertRaisesRegex(ValueError, "absent"):
-                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 777])
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 777],
+                                selected_pins={42: pins[42], 777: pins[47]})
             with self.assertRaisesRegex(ValueError, "two desks"):
-                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 99])
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 99],
+                                selected_pins={42: pins[42], 99: pins[99]})
             with self.assertRaisesRegex(ValueError, "unique"):
-                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 42])
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 42],
+                                selected_pins={42: pins[42]})
+            with self.assertRaisesRegex(ValueError, "digest pins"):
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 47])
+            wrong_digest = copy.deepcopy(pins)
+            wrong_digest[42]["stored_text_sha256"] = "0" * 64
+            with self.assertRaisesRegex(ValueError, "drifted"):
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 47],
+                                selected_pins={i: wrong_digest[i] for i in (42, 47)})
+            wrong_url = copy.deepcopy(pins)
+            wrong_url[47]["source_url"] = "https://attacker.invalid/copied"
+            with self.assertRaisesRegex(ValueError, "drifted"):
+                choose_evidence(scaffold, as_of=SAT, selected_ids=[42, 47],
+                                selected_pins={i: wrong_url[i] for i in (42, 47)})
+
 
     def test_composer_includes_approved_focus_only_in_optional_private_mode(self):
         inv, review, proposals = scenario()
