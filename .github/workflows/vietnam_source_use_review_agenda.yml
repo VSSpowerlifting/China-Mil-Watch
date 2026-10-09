@@ -1,0 +1,85 @@
+name: Vietnam MPS Source-Use Review Agenda — Offline Real-State Proof
+
+# Never schedules external model use, authorizes copying, sends email,
+# creates public articles, uploads review dossiers, or changes source state.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/prepare_vietnam_source_use_review_agenda.py"
+      - "tests/test_vietnam_source_use_review_agenda.py"
+      - ".github/workflows/vietnam_source_use_review_agenda.yml"
+      - "docs/VIETNAM_MPS_SOURCE_USE_REVIEW_AGENDA_2026-10-08.md"
+  workflow_dispatch:
+    inputs:
+      reporting_saturday:
+        description: "Explicit Saturday for offline metadata-only review (no model)"
+        type: string
+        default: "2026-10-10"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-source-use-agenda-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  verified-unapproved-source-docket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Read-only PR/source-review code checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Project offline state-verifier dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run offline unsigned agenda refusal tests
+        run: python -m unittest tests.test_vietnam_source_use_review_agenda -v
+      - name: Replay current MPS state and compare missing source notes
+        env:
+          REPORTING_SATURDAY: ${{ inputs.reporting_saturday || '2026-10-10' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REPORTING_SATURDAY" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          [[ "$GITHUB_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || exit 1
+          work="$(mktemp -d "$RUNNER_TEMP/ipr-vn-source-use-agenda-XXXXXXXX")"
+          git clone --quiet --branch shadow/vietnam-mps-foreign-affairs --single-branch             "https://github.com/$GITHUB_REPOSITORY.git" "$work/mps"
+          test "$(git -C "$work/mps" branch --show-current)" = "shadow/vietnam-mps-foreign-affairs"
+          test "$(git -C "$work/mps" ls-tree --name-only HEAD)" = "state"
+          head="$(git -C "$work/mps" rev-parse HEAD)"
+          notes="research/vietnam_briefs_candidates/editorial_notes_$REPORTING_SATURDAY.json"
+          args=(--state-repo "$work/mps" --state-commit "$head"
+                --week-ending "$REPORTING_SATURDAY" --out "$work/agenda.json")
+          if [[ -f "$notes" && ! -L "$notes" ]]; then
+            args+=(--notes "$notes")
+          elif [[ -e "$notes" || -L "$notes" ]]; then
+            echo "::error::Untrusted symlink or non-file notes"; exit 1
+          fi
+          python -m scripts.prepare_vietnam_source_use_review_agenda "${args[@]}"
+          python - "$work/agenda.json" <<'PY'
+          import json,sys
+          from pathlib import Path
+          d=json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert d["schema"]=="vietnam-unapproved-model-source-use-review-agenda/1"
+          assert d["automatically_authorized_source_count"]==0
+          assert d["third_party_model_called"] is False
+          assert d["human_source_use_review_completed"] is False
+          assert d["editorial_email_sent"] is False
+          assert d["missing_or_stale_source_notes"]==len(d["source_version_review_leads"])
+          assert all(x["source_use_review_state"]=="not-authorized" and
+                     x["external_excerpt_authorized"] is False and
+                     x["ready_for_private_model"] is False for x in d["source_version_review_leads"])
+          print("Verified actual MPS archive; unsigned source-use review leads:",
+                d["missing_or_stale_source_notes"])
+          print("No original text uploaded; no source permission, model, or mail.")
+          PY
+      - name: Tracked checkout and provenance preserved
+        run: test -z "$(git status --porcelain --untracked-files=all)"

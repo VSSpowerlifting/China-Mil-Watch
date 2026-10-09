@@ -1,5 +1,6 @@
 """Sunday weekly source-readiness is factual, read-only and non-approving."""
 import json
+from datetime import date, timedelta
 import tempfile
 import unittest
 from pathlib import Path
@@ -119,6 +120,20 @@ class SundayCorpusReadinessTests(unittest.TestCase):
             evaluate(rows=[], desks=["china", "singapore"],
                      week_ending="2026-10-09", as_of="2026-10-08",
                      review_day="2026-10-08", marker="")
+
+    def test_historical_replay_bound_matches_saturday_resolver_week(self):
+        # The resolver's earliest Saturday is 91 days behind the latest
+        # reached Saturday; a Friday manual review can be 96 days after
+        # the original Sunday, not merely 91.
+        sunday = date(2026, 10, 11)
+        latest_allowed = (sunday + timedelta(days=96)).isoformat()
+        report = assess(review_day=latest_allowed, marker="")
+        self.assertEqual(report["evaluated_local_date"], latest_allowed)
+        self.assertEqual(report["unmet_gates"],
+                         ["same_sunday_success_marker_missing_or_stale"])
+        with self.assertRaisesRegex(ReadinessError, "outside permitted"):
+            assess(review_day=(sunday + timedelta(days=97)).isoformat(),
+                   marker="")
 
     def test_cli_refuses_overwriting_existing_readiness_report(self):
         with tempfile.TemporaryDirectory() as folder:
