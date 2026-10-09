@@ -447,8 +447,23 @@ class Analyzer:
                          model=RELEVANCE_MODEL, system=system,
                          task=TASK_RELEVANCE)
         data = self._parse_task_json(raw, TASK_RELEVANCE, RELEVANCE_MODEL)
-        score = float(max(0.0, min(1.0, data["score"])))
-        return score, str(data.get("reasoning", ""))
+        # Valid JSON is not necessarily a valid relevance judgment. Under the
+        # historical path, a missing/string score raised an uncaught Python
+        # error AFTER the usage ledger marked this paid response successful;
+        # bool scores silently became 0/1 and NaN could be clamped to 1.
+        # Treat a malformed semantic response as a failed *spent* model call.
+        score = data.get("score") if isinstance(data, dict) else None
+        reason = data.get("reasoning") if isinstance(data, dict) else None
+        if (isinstance(score, bool)
+                or not isinstance(score, (int, float))
+                or (isinstance(score, float) and not math.isfinite(score))
+                or not isinstance(reason, str) or not reason.strip()):
+            self.usage.mark_failed(TASK_RELEVANCE, RELEVANCE_MODEL)
+            raise AnalysisError("Invalid relevance JSON values (score/reasoning)")
+        # Keep legacy clamping for valid numerical out-of-range scores. Unlike
+        # the optional forced-tool path, this is not a new strict-range rule.
+        score = float(max(0.0, min(1.0, score)))
+        return score, reason
 
     def translate(self, title: str, body: str) -> tuple[str, str]:
         """
