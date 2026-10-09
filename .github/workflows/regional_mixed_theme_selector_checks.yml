@@ -1,0 +1,64 @@
+name: Owner-signed mixed regional model proposal - offline mock
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-reviewed-typed-slate-20261009
+    paths:
+      - core/regional_mixed_theme_selector.py
+      - tests/test_regional_mixed_theme_selector.py
+      - docs/REGIONAL_MIXED_THEME_OWNER_MODEL.md
+      - .github/workflows/regional_mixed_theme_selector_checks.yml
+
+permissions:
+  contents: read
+
+jobs:
+  mock-only-owner-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record production DB checksum
+        run: sha256sum pla_watch.db > "$RUNNER_TEMP/mixed-model-db.sha"
+      - name: Install existing project requirements
+        run: python -m pip install -r requirements.txt
+      - name: Signed model run and exact mixed-source regression tests
+        run: |
+          python -m unittest -v \
+            tests.test_regional_mixed_theme_selector \
+            tests.test_regional_reviewed_typed_slate \
+            tests.test_regional_typed_source_use_decision \
+            tests.test_regional_theme_selector \
+            tests.test_regional_sunday_theme_handoff
+      - name: No live model API provider, scheduled workflows or SMTP
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("core/regional_mixed_theme_selector.py").read_text()
+          wf = Path(".github/workflows/regional_mixed_theme_selector_checks.yml").read_text()
+          for forbidden in ("smtplib", "ANTHROPIC_API_KEY", "OPENAI_API_KEY",
+                            "Anthropic(", "OpenAI(", "requests.post(",
+                            "urllib.request", "send_packet(", "subprocess."):
+              assert forbidden not in p, forbidden
+          for required in ("owner_confirms_call is True", "allow_model is True",
+                           "hmac.compare_digest", "manual_theme_approval_required"):
+              assert required in p, required
+          assert ("  " + "schedule:") not in wf
+          assert "upload" + "-artifact" not in wf
+          PY
+      - name: Verify database and output preservation
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/mixed-model-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
