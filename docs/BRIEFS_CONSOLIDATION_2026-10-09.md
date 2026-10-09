@@ -75,3 +75,7 @@ branch has not been edited.
 
 This is a review candidate, not a merge or deployment. Exact-head CI and the
 normal publication gates still apply before release.
+
+## Historical graphics and author links — preservation follow-up
+
+The first shell pass omitted resolved legacy Signal Veils and historical author links. The corrected current-shell render preserves both curated and source-derived dated imagery, source/attribution links, alt text, original crop position, and the original issue's LinkedIn, email and historical organization links. A selected veil replaces, rather than duplicates, any in-page cover photograph. Unsafe historical link schemes are rejected. Every checked-in article must now match its deterministic sidecar render exactly. No sidecars, citations, feed identities, underlying archive records or publication URLs change. The corrective commit requires new exact-head CI before release.

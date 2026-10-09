@@ -23,6 +23,12 @@
 .historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}
 .historical-media img{width:100%;height:auto}
 .historical-media figcaption{font-size:.875rem;color:var(--muted)}
+.historical-veil{margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
+.historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
+.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
+.historical-veil a{color:inherit;text-underline-offset:.2em}
+.historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
+.historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
 @media print{.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
 </style>
 {% endblock %}
@@ -40,7 +46,12 @@
       <p class="brief-byline">By <span class="byline-name">{{ edition.author_name }}</span></p>
       <p class="historical-provenance">Originally published as {{ edition.series_name }}{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %} under {{ edition.publication }}. Part of <a href="{{ root }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
     </div>
-    {% if edition.cover_media_item and edition.cover_media_item.src %}
+{% if edition.pw_veil %}    <figure class="historical-veil" data-editorial-id="{{ edition.pw_veil.id }}">
+      <img src="{{ edition.pw_veil.duo }}" alt="{{ edition.pw_veil.alt }}" style="object-position:{{ edition.pw_veil.mask_focus }}" loading="eager" decoding="async">
+      <figcaption>Image: <a href="{{ edition.pw_veil.source_page }}" rel="noopener nofollow">{{ edition.pw_veil.source_id }}</a>{% if edition.pw_veil.subject %} · {{ edition.pw_veil.subject }}{% endif %} · Context, not evidence.</figcaption>
+    </figure>
+{% endif %}
+    {% if edition.cover_media_item and edition.cover_media_item.src and not edition.pw_veil %}
     <figure class="brief-opening-photo"><img src="{{ edition.cover_media_item.src }}" alt="{{ edition.cover_media_item.alt }}" fetchpriority="high"><figcaption>{% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source photograph</a> · Context, not evidence.{% if edition.cover_media_item.caption %} <span>{{ edition.cover_media_item.caption }}</span>{% endif %}</figcaption></figure>
     {% endif %}
   </div>
@@ -97,6 +108,8 @@
       <p class="author-block-name">{{ edition.author_name }}</p>
       {% if edition.author_title %}<p class="author-block-title">{{ edition.author_title }}</p>{% endif %}
       {% if edition.author_bio %}<p class="author-block-bio">{{ edition.author_bio }}</p>{% endif %}
+{% if historical_author_links %}      <p class="historical-author-links">{% for link in historical_author_links %}<a href="{{ link.url }}"{% if link.external %} rel="noopener noreferrer"{% endif %}>{{ link.label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+{% endif %}
       <p>This is the historical author information for this issue. <a href="{{ root }}about.html">About Indo-Pacific Record today</a>.</p>
     </div></details>
     <section class="brief-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>

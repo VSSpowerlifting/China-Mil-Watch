@@ -105,6 +105,52 @@ class HistoricalBriefShellTests(unittest.TestCase):
             self.assertEqual(author.select_one('.author-block-bio').get_text(), ctx["author_bio"])
             self.assertNotIn("China Mil Watch", soup.select_one('.brief-byline').get_text())
 
+    def test_signal_veils_and_credit_survive_all_real_issues(self):
+        for ctx, page, soup in self.posts:
+            with self.subTest(issue=ctx["issue_number"]):
+                original = ctx.get("pw_veil")
+                figures = soup.select("figure.historical-veil")
+                if not original:
+                    self.assertEqual(figures, [])
+                    continue
+                self.assertEqual(len(figures), 1)
+                figure = figures[0]
+                self.assertEqual(figure["data-editorial-id"], original["id"])
+                self.assertEqual(figure.img["src"], original["duo"])
+                self.assertEqual(figure.img["alt"], original["alt"])
+                self.assertIn(original["mask_focus"], figure.img["style"])
+                self.assertEqual(figure.a["href"], original["source_page"])
+                self.assertIn(original["source_id"], figure.get_text())
+                self.assertIn(original.get("subject") or "", figure.get_text())
+                self.assertIn("Context, not evidence", figure.get_text())
+                self.assertFalse(soup.select(".brief-opening-photo"),
+                    "Resolved Signal Veil replaces in-page cover, not duplicates it")
+
+    def test_original_author_links_preserved_and_unsafe_hrefs_rejected(self):
+        for ctx, page, soup in self.posts:
+            with self.subTest(issue=ctx["issue_number"]):
+                anchors = soup.select("details.historical-author .historical-author-links a")
+                actual = {a.get_text(): a["href"] for a in anchors}
+                self.assertEqual(actual, ctx.get("author_links") or {})
+        ctx = copy.deepcopy(self.posts[0][0])
+        ctx["author_links"] = {
+            "Unsafe": "javascript:alert(1)",
+            "Unsafe data": "data:text/html,bad",
+            "Unsafe relative": "../../secrets",
+            "Valid": "https://example.org/profile",
+        }
+        rendered = BeautifulSoup(render_historical_brief(ctx), "html.parser")
+        self.assertEqual(
+            [(a.get_text(), a["href"]) for a in rendered.select(".historical-author-links a")],
+            [("Valid", "https://example.org/profile")],
+        )
+
+    def test_checked_in_pages_equal_current_sidecar_render(self):
+        for ctx, rendered, _ in self.posts:
+            with self.subTest(issue=ctx["issue_number"]):
+                published = POSTS / (ctx["date"] + ".html")
+                self.assertEqual(published.read_text(encoding="utf-8"), rendered)
+
     def test_links_and_assets_use_the_correct_two_level_root(self):
         for ctx, page, soup in self.posts:
             self.assertEqual(soup.select_one('.brand')["href"], '../../index.html')

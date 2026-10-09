@@ -9,6 +9,7 @@ import html
 import importlib.util
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -36,6 +37,25 @@ def _site_definition():
     return module
 
 
+def _historical_author_links(links: dict) -> list[dict]:
+    """Carry historical links forward without admitting unsafe schemes."""
+    if not isinstance(links, dict):
+        return []
+    safe = []
+    for label, url in links.items():
+        if not isinstance(label, str) or not isinstance(url, str):
+            continue
+        if not label.strip() or not url or any(c in url for c in "\\r\\n\\t"):
+            continue
+        parsed = urlsplit(url)
+        external = parsed.scheme.lower() in ("https", "http") and bool(parsed.netloc)
+        email = parsed.scheme.lower() == "mailto" and bool(parsed.path) and not parsed.netloc
+        local = url == "../../index.html"
+        if external or email or local:
+            safe.append({"label": label, "url": url, "external": bool(external)})
+    return safe
+
+
 def render_historical_brief(context: dict) -> str:
     """Accept the existing resolved post context; only presentation changes."""
     gp = _site_definition()
@@ -61,6 +81,7 @@ def render_historical_brief(context: dict) -> str:
         live_base=SITE_ORIGIN, page="analysis.html", root_path="../../",
         brief={}, desks=[], timelines=[], review_mode=False,
         edition=edition, display_title=display_title,
+        historical_author_links=_historical_author_links(edition.get("author_links")),
         sections=[(key, anchor, heading) for key, anchor, heading in SECTIONS
                   if edition.get(key)],
     )
