@@ -86,12 +86,17 @@ jobs:
               print("Owner-only preview not requested.")
           PY
 
+      # The first Oct10 edition needs exact-week owner authorization and an
+      # exact reviewed-attachment digest BEFORE any AI call or Dylan email.
+      # No-send owner previews do not require either setting.
       - name: Verify reporting Saturday and Sunday's successful database update
         env:
           IPR_EVENT: ${{ github.event_name }}
           IPR_MANUAL_SATURDAY: ${{ inputs.reporting_saturday || '' }}
           IPR_HISTORICAL_SEND: ${{ inputs.allow_historical_send == true }}
           IPR_OLD_FRIDAY_ACTIVE: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' }}
+          IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
+          IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
         run: |
           python - <<'PY' >> "$GITHUB_ENV"
           import os
@@ -111,6 +116,8 @@ jobs:
               allow_historical_send=os.environ["IPR_HISTORICAL_SEND"] == "true",
               sunday_daily_marker=last_successful_update,
               friday_delivery_enabled=os.environ["IPR_OLD_FRIDAY_ACTIVE"] == "true",
+              pilot_owner_reviewed_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+              pilot_owner_reviewed_sha256=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_SHA256", ""),
           )
           desks = live_editorial_desks()
           if len(desks) < 2:
@@ -291,6 +298,8 @@ jobs:
           IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
           IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+          IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
+          IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
           PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
         shell: bash
         run: |
