@@ -21,6 +21,7 @@ from config import DB_PATH  # noqa: E402
 from core.brief_contract import eligible_desks  # noqa: E402
 from core.desk_registry import load_registry  # noqa: E402
 from core.regional_theme_handoff import sign_choice, verify_choice  # noqa: E402
+from core.regional_reviewed_evidence import private_model_packet  # noqa: E402
 from core.regional_weekly_inventory import inspect  # noqa: E402
 from scripts.author_brief import build_draft  # noqa: E402
 from scripts.reconcile_db import read_only  # noqa: E402
@@ -76,11 +77,25 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
     trail_ids = {row["record_id"] for row in sidecar["source_trail"]}
     if not set(chosen).issubset(trail_ids):
         raise ValueError("owner-selected thematic sources not present in current Sunday trail")
-    # The current writer applies an independent record-level trail check and
-    # full-text gate, then requires two distinct production desks once more.
+    # The separately reviewed synopsis scope does NOT permit sending the
+    # original publisher bodies to the thematic model. Reverify the review
+    # seal and pass ONLY exactly the editor-selected analyst synopses.
+    packet = private_model_packet(inventory, signed_review, secret)
+    notes = {
+        entry["id"]: {
+            "analyst_synopsis": entry["analyst_synopsis"],
+            "accuracy_limitations": entry["accuracy_limitations"],
+        }
+        for entry in packet["production_sources"]
+        if entry["id"] in chosen
+    }
+    if set(notes) != set(chosen):
+        raise ValueError("approved thematic sources lack current reviewed synopses")
+    # The writer independently verifies record-level source trail equality
+    # and text availability, but the actual LLM sees synopsis-only material.
     manuscript = compose(
         sidecar, inventory["week_ending"], db=db, client=client,
-        selected_theme=approved)
+        selected_theme=approved, reviewed_synopses=notes)
     if manuscript.get("_private_owner_selected_production_ids") != sorted(chosen):
         raise ValueError("writer did not offer precisely the owner-selected source IDs")
     text = render_packet(sidecar, manuscript=manuscript,
