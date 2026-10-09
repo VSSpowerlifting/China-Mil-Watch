@@ -361,8 +361,15 @@ class Analyzer:
             # This parser now only serves the three short-output tasks
             # (relevance, summary, categories), whose outputs are brief and
             # rarely carry embedded quotes.
+            # Never include raw model output in exceptions. The exception is
+            # logged by callers in GitHub Actions; malformed model text may
+            # contain a translated article, prompts, or other content that
+            # must not be copied into operational logs. Location and length
+            # are enough for diagnostics without leaking the response.
             raise AnalysisError(
-                f"JSON parse failed. Raw output was:\n{raw[:400]}"
+                "JSON parse failed (invalid model response; "
+                f"line={exc.lineno}, column={exc.colno}, "
+                f"response_chars={len(raw)})"
             ) from exc
 
     def _parse_task_json(self, raw: str, task: str, model: str) -> dict:
