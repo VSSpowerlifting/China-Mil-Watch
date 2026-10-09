@@ -1,0 +1,48 @@
+name: Unified Operations Center offline contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/operations_center_unified.py'
+      - 'scripts/operations_center.py'
+      - 'tests/test_operations_center_unified.py'
+      - 'docs/IPR_UNIFIED_OPERATIONS_CENTER.md'
+      - '.github/workflows/ipr_unified_operations_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-unified:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked production database baseline
+        id: baseline
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install standard dependencies
+        run: pip install -r requirements.txt
+      - name: Verify unified production, shadow and Daily evidence integration
+        run: |
+          python -m unittest tests.test_operations_center_unified -v
+          python -m unittest tests.test_operations_center -v
+          python -m unittest tests.test_operations_center_shadow_overlay -v
+          python -m unittest tests.test_daily_run_receipts -v
+      - name: Prove no tracked DB or published output changed
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
