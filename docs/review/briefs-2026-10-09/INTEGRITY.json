@@ -1,0 +1,180 @@
+{
+  "records_checked": 4980,
+  "approved_native_relations": 10,
+  "failures": [],
+  "budgets": [
+    {
+      "route": "index.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 58492,
+      "js_bytes": 11940,
+      "css": [
+        "fonts.css",
+        "home.css",
+        "styles.css"
+      ],
+      "js": [
+        "intro.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 2585195,
+      "assets": [
+        "assets/editorial/reagan-jmsdf-2015.jpg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/frontend/pacific-fleet-1600.webp",
+        "assets/frontend/pacific-fleet-2500.webp",
+        "assets/frontend/pacific-fleet-800.webp",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-ivory-160.png",
+        "assets/identity/selected-ipr/ipr-ivory-320.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": []
+    },
+    {
+      "route": "archive.html",
+      "html_css_limit": 300000,
+      "html_css_bytes": 126583,
+      "js_bytes": 9847,
+      "css": [
+        "archive.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "browse.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 242225,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png"
+      ],
+      "external_assets": []
+    },
+    {
+      "route": "analysis.html",
+      "html_css_limit": 300000,
+      "html_css_bytes": 95313,
+      "js_bytes": 3118,
+      "css": [
+        "briefs-catalog.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "reveal.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 262373,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg"
+      ],
+      "external_assets": []
+    },
+    {
+      "route": "record/3924.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 57260,
+      "js_bytes": 5322,
+      "css": [
+        "fonts.css",
+        "record.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 242225,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png"
+      ],
+      "external_assets": []
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 69167,
+      "js_bytes": 5322,
+      "css": [
+        "briefs.css",
+        "fonts.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 1210716,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": []
+    }
+  ],
+  "database_sha256": "4a8803d72f0efafcb6700f4286c39909c9fb11405b2acdbbade73573447be6f5",
+  "timeline_sha256": "0e922865856addb24786b088ee925c35ebab3809659fb252462a66090c9da332"
+}

@@ -47,19 +47,19 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Frontend implementation candidate (9 October 2026):** the reviewed 8 October
-refinement is integrated on `codex/ipr-frontend-production-20261008`, from main
-`2524d11c2` with current main `0e1b6b753` integrated before final verification.
-Selected `ipr` artwork, local licensed fonts, responsive natural photography and
-home/archive/record/Brief/timeline treatments use the governed renderer.
-Production output is regenerated only through `site/render.py`; canonical DB,
-Brief sidecars, historical issues, desk/source state and collectors are unchanged.
-All 4,980 record contents and 10 approved native Brief relations are verified;
-75 browser cases and 13 reader flows pass. The validator retains its 10 governed
-warnings. The full offline suite passes: 4,874 tests, one existing stale
-prototype snapshot readiness skip. Results and screenshots are recorded in
-`docs/FRONTEND_PRODUCTION_2026-10-09.md`. This is an implementation review
-candidate: no merge or deployment has occurred.
+**Frontend (9 October 2026):** the reviewed frontend was merged and released
+at `4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f` (owner checkpoint). The
+Briefs visual-enrichment pilot starts from current main `fe5e25064` in the
+isolated `codex/ipr-briefs-enrichment-20261009` worktree, with current main
+`38e1b3162` reconciled. It adds opt-in original
+contours, optimized paper material and finite decorative motion to the catalog
+through production source templates. Publication copy, all 60 catalog links,
+4,980 preserved records, selected ipr identity and historical issues are unchanged.
+Desktop/tablet/mobile visual review and 42 browser fallback/interaction cases
+pass; all 7,395 routes satisfy complete HTML/CSS/JS delivery budgets. Validator
+retains its 10 governed warnings. Full-suite result and final commits are in
+`docs/BRIEFS_VISUAL_ENRICHMENT_2026-10-09.md`. The pilot is a PR candidate,
+not merged or deployed. Wider route treatments are subsequent work.
 
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,

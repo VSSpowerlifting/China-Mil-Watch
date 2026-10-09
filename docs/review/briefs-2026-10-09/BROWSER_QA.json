@@ -1,0 +1,1516 @@
+{
+  "publication_links_preserved": 60,
+  "exact_body_contract": true,
+  "cases": [
+    {
+      "width": 320,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 320,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 335.609375,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 768,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 960,
+      "profile": "default",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "no-js",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 71.375,
+        "width": 384,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "default",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "no-js",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 84.171875,
+        "width": 512,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "default",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "no-js",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "print",
+      "title_box": {
+        "x": 80,
+        "y": 88.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    }
+  ],
+  "flows": [
+    "Keyboard skip, Browse anchor, visible row focus and native Brief navigation",
+    "Hover surface tint with unchanged row layout",
+    "Live reduced-motion preference leaves finished artwork"
+  ],
+  "errors": [],
+  "delivery": [
+    {
+      "route": "candidate",
+      "width": 375,
+      "cached": false,
+      "cls": 0.02322765783333333,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 92
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 92
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/analysis.html",
+          "transfer": 30343,
+          "body": 30043,
+          "duration": 91.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 4.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 4.5999999940395355
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs-catalog.css",
+          "transfer": 5258,
+          "body": 4958,
+          "duration": 4.799999982118607
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 5.5999999940395355
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 7.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 7.9000000059604645
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 12.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 4.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 3331,
+          "body": 3031,
+          "duration": 4.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 60.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 61
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 63.20000001788139
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 61.19999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 3331,
+          "body": 3031,
+          "duration": 11.400000005960464
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 56.29999998211861
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 24
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 24
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/analysis.html",
+          "transfer": 0,
+          "body": 30043,
+          "duration": 8.200000017881393
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs-catalog.css",
+          "transfer": 0,
+          "body": 4958,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 0,
+          "body": 3031,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 0,
+          "body": 3031,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.01848385803222656,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 172
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 172
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/analysis.html",
+          "transfer": 30343,
+          "body": 30043,
+          "duration": 169
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 5.200000017881393
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 6.0999999940395355
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 5.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs-catalog.css",
+          "transfer": 5258,
+          "body": 4958,
+          "duration": 6.9000000059604645
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 8.700000017881393
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 8.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 10.899999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 4.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 3331,
+          "body": 3031,
+          "duration": 3.9000000059604645
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 104.09999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 102.2000000178814
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 87.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 84.89999997615814
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 3331,
+          "body": 3031,
+          "duration": 14.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 97.80000001192093
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 44
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 44
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/analysis.html",
+          "transfer": 0,
+          "body": 30043,
+          "duration": 8.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs-catalog.css",
+          "transfer": 0,
+          "body": 4958,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 0,
+          "body": 3031,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 0,
+          "body": 3031,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 375,
+      "cached": false,
+      "cls": 0.022727114083333333,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 96
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 96
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/baseline/analysis.html",
+          "transfer": 29948,
+          "body": 29648,
+          "duration": 171
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 6.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 7.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 7.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 8.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 74.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 81.59999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 82.40000000596046
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 82.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 121.90000000596046
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 36
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 36
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/baseline/analysis.html",
+          "transfer": 0,
+          "body": 29648,
+          "duration": 13.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.014030038497359664,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 92
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 92
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/baseline/analysis.html",
+          "transfer": 29948,
+          "body": 29648,
+          "duration": 19.200000017881393
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 3.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 4.4000000059604645
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 9.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 5.899999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 32.400000005960464
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 30
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 32.70000001788139
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 28.700000017881393
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 42.79999998211861
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 36
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 36
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/baseline/analysis.html",
+          "transfer": 0,
+          "body": 29648,
+          "duration": 12.899999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/baseline/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 375,
+      "cached": false,
+      "cls": 0.022680061833333334,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 364
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 364
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/released/output/analysis.html",
+          "transfer": 29948,
+          "body": 29648,
+          "duration": 463.59999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 244.60000002384186
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 127.7999999821186
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 127.59999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 278.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 159.59999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 54.099999994039536
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 48.400000005960464
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 53.099999994039536
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 122.80000001192093
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 44
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 44
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/released/output/analysis.html",
+          "transfer": 0,
+          "body": 29648,
+          "duration": 10.099999994039536
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.008092891755280671,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 228
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 228
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/released/output/analysis.html",
+          "transfer": 29948,
+          "body": 29648,
+          "duration": 482.19999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 35.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 32.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 39.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 47.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 144.59999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 317.5
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 299.40000000596046
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 315.09999999403954
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 336.2999999821186
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 384
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 384
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/released/output/analysis.html",
+          "transfer": 0,
+          "body": 29648,
+          "duration": 351.40000000596046
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8767/released/output/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        }
+      ]
+    }
+  ],
+  "concept_images": false,
+  "browser": "147.0.7727.15"
+}
