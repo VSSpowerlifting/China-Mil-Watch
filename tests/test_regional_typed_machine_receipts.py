@@ -216,6 +216,23 @@ class RegionalMachineReceiptTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 audit_command(args)  # Exclusive mode refuses overwrite.
 
+    def test_tampered_hold_roster_or_self_reported_counts_refused(self):
+        holds, _ = holds_and_rows()
+        for mutate in (
+            lambda d: d["items"][0].update(publisher_url_sha256="f" * 64),
+            lambda d: d["items"][0].update(source_content_sha256="a" * 64),
+            lambda d: d["items"].reverse(),
+            lambda d: d["counts"].update(japan=8),
+            lambda d: d.update(typed_research_roster_sha256="0" * 64),
+            lambda d: d.update(source_metadata_digest_sha256="nonsense"),
+        ):
+            altered = copy.deepcopy(holds)
+            mutate(altered)
+            with self.subTest(changed=altered), self.assertRaisesRegex(
+                    MachineReceiptError, "checksum|counts|digest"):
+                reconcile_machine_receipts(altered)
+        self.assertEqual(len(reconcile_machine_receipts(holds)["items"]), 6)
+
     def test_fake_approval_holds_are_rejected_before_receipts(self):
         holds, _ = holds_and_rows()
         for field, val in (
