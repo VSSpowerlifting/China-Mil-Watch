@@ -330,8 +330,13 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
                       if selected_theme is not None else None),
         selected_pins=(selected_theme.get("reviewed_source_pins")
                        if selected_theme is not None else None))
-    # Research sources supply short, attributed notes rather than scraped
-    # source text. They are offered only to THIS private editorial model.
+    # A manually signed regional theme currently covers reviewed production
+    # synopses only. Research-lane Japan/Vietnam items require an independent
+    # exact-version/source-use attestation, so no caller may smuggle those in
+    # through the legacy supplemental parameter of the themed trial.
+    if selected_theme is not None and supplemental:
+        raise ValueError("themed trial refuses unattested supplemental research")
+    # Ordinary Sunday retains its separately governed research-note pathway.
     extra = list(supplemental)
     used_urls = {row["url"] for row, _ in chosen}
     if len(extra) > 8 or any(e.get("source_url") in used_urls or
