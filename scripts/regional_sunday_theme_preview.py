@@ -20,13 +20,13 @@ if str(ROOT) not in sys.path:
 from config import DB_PATH  # noqa: E402
 from core.brief_contract import eligible_desks  # noqa: E402
 from core.desk_registry import load_registry  # noqa: E402
-from core.regional_theme_handoff import sign_choice, verify_choice  # noqa: E402
+from core.regional_theme_handoff import sign_choice, verify_choice, digest  # noqa: E402
 from core.regional_reviewed_evidence import private_model_packet  # noqa: E402
 from core.regional_weekly_inventory import inspect  # noqa: E402
 from scripts.author_brief import build_draft  # noqa: E402
 from scripts.reconcile_db import read_only  # noqa: E402
 from scripts.regional_reviewed_evidence import _json, _out  # noqa: E402
-from scripts.sunday_briefs_auto_writer import compose  # noqa: E402
+from scripts.sunday_briefs_auto_writer import choose_evidence, compose  # noqa: E402
 from scripts.sunday_editorial_handoff import render_packet  # noqa: E402
 from storage.db import get_articles_for_desks  # noqa: E402
 
@@ -68,14 +68,15 @@ def prepare_scaffold(*, inventory, database=DB_PATH, registry=None):
                        week_ending=inventory["week_ending"])
 
 
-def build_private_manuscript(*, inventory, signed_review, proposal, choice,
-                             secret, db=DB_PATH, registry=None, client=None):
-    """Verify source+owner seals before ANY manuscript model can be invoked."""
+def preflight_theme(*, inventory, signed_review, proposal, choice,
+                    secret, db=DB_PATH, registry=None):
+    """Independent no-LLM rehearsal gate; receipt expires with the corpus.
+
+    The audit is advisory and has NO persistence/transport authority. A later
+    paid manuscript call must re-run every source gate on a fresh SQLite copy.
+    """
     approved = verify_choice(inventory, signed_review, secret, proposal, choice)
     chosen = approved["selected_source_ids"]
-    # Build these pins ONLY from the freshly authenticated review inventory,
-    # never from model output or an owner-typed ID list. Sunday's later SQLite
-    # source read must match these exact publisher and stored-body fingerprints.
     by_id = {entry["id"]: entry for entry in inventory["production_evidence"]}
     pins = {
         ident: {field: by_id[ident][field] for field in (
@@ -88,9 +89,6 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
     trail_ids = {row["record_id"] for row in sidecar["source_trail"]}
     if not set(chosen).issubset(trail_ids):
         raise ValueError("owner-selected thematic sources not present in current Sunday trail")
-    # The separately reviewed synopsis scope does NOT permit sending the
-    # original publisher bodies to the thematic model. Reverify the review
-    # seal and pass ONLY exactly the editor-selected analyst synopses.
     packet = private_model_packet(inventory, signed_review, secret)
     notes = {
         entry["id"]: {
@@ -102,6 +100,40 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
     }
     if set(notes) != set(chosen):
         raise ValueError("approved thematic sources lack current reviewed synopses")
+    # The ordinary Sunday writer's own source-trail gate and the owner-signed
+    # archive body/issuer pins are independently verified before any model
+    # token is spent. This audit never returns raw publisher text.
+    checked = choose_evidence(
+        sidecar, as_of=inventory["week_ending"], db=db,
+        selected_ids=chosen, selected_pins=pins)
+    actual_ids = [row["id"] for row, _body in checked]
+    if actual_ids != chosen:
+        raise ValueError("preflight did not recover exact signed source selection")
+    receipt = {
+        "schema": "ipr-regional-private-sunday-rehearsal-preflight/1",
+        "week_ending": inventory["week_ending"],
+        "source_metadata_digest_sha256": inventory["source_metadata_digest_sha256"],
+        "reviewed_source_pins_sha256": digest(pins),
+        "owner_choice_sha256": digest(choice),
+        "selected_source_ids": chosen,
+        "represented_desks": approved["represented_desks"],
+        "selected_source_count": len(chosen),
+        "publisher_body_text_in_receipt": False,
+        "model_called": False,
+        "source_audit_only_not_a_reusable_model_authorization": True,
+        "publication_authorized": False,
+        "editor_email_authorized": False,
+    }
+    return receipt, approved, sidecar, notes
+
+
+def build_private_manuscript(*, inventory, signed_review, proposal, choice,
+                             secret, db=DB_PATH, registry=None, client=None):
+    """Recheck fresh source pins and owner seals BEFORE model invocation."""
+    _receipt, approved, sidecar, notes = preflight_theme(
+        inventory=inventory, signed_review=signed_review, proposal=proposal,
+        choice=choice, secret=secret, db=db, registry=registry)
+    chosen = approved["selected_source_ids"]
     # The writer independently verifies record-level source trail equality
     # and text availability, but the actual LLM sees synopsis-only material.
     manuscript = compose(
@@ -123,13 +155,13 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
 
 def run(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("approve", "rehearse"))
+    parser.add_argument("mode", choices=("approve", "audit", "rehearse"))
     parser.add_argument("--week-ending", required=True)
     parser.add_argument("--as-of", required=True)
     parser.add_argument("--review-local-day", required=True)
     parser.add_argument("--signed-review", type=Path, required=True)
     parser.add_argument("--proposals", type=Path, required=True)
-    parser.add_argument("--choice", type=Path, help="Required for rehearsal")
+    parser.add_argument("--choice", type=Path, help="Required for audit or rehearsal")
     parser.add_argument("--theme-slug", help="Required for approve")
     parser.add_argument("--approved-by", help="Required for approve")
     parser.add_argument("--db", type=Path, default=ROOT / "pla_watch.db")
@@ -145,6 +177,10 @@ def run(argv=None):
         if (not args.theme_slug or not args.approved_by or args.choice
                 or args.allow_private_paid_writer):
             parser.error("approve requires theme slug and owner name; no writer authorization")
+    elif args.mode == "audit":
+        if (not args.choice or args.theme_slug or args.approved_by
+                or args.allow_private_paid_writer):
+            parser.error("audit requires signed choice and must not authorize a paid model")
     elif (not args.choice or args.theme_slug or args.approved_by
           or not args.allow_private_paid_writer):
         parser.error("rehearse requires signed choice and explicit private paid writer flag")
@@ -166,18 +202,25 @@ def run(argv=None):
             _out(args.out, result)
         else:
             choice = _json(args.choice)
-            # Reject tampered or stale source/thematic decisions BEFORE even
-            # asking for paid-model confirmation or importing a provider.
-            verify_choice(inventory, signed_review, key, proposal, choice)
-            if input("Exact one-call manuscript authorization phrase: ").strip() != CONFIRM_MODEL:
-                raise ValueError("private manuscript AI call not authorized")
-            if not os.environ.get("ANTHROPIC_API_KEY"):
-                raise ValueError("no Anthropic API key configured")
-            text = build_private_manuscript(
-                inventory=inventory, signed_review=signed_review,
-                proposal=proposal, choice=choice, secret=key,
-                db=args.db)
-            _out_text(args.out, text)
+            # The audit is local/no-call; model rehearsal rechecks everything
+            # after authorization. Neither path can reuse a stale audit receipt.
+            if args.mode == "audit":
+                receipt, _approved, _sidecar, _notes = preflight_theme(
+                    inventory=inventory, signed_review=signed_review,
+                    proposal=proposal, choice=choice, secret=key,
+                    db=args.db)
+                _out(args.out, receipt)
+            else:
+                verify_choice(inventory, signed_review, key, proposal, choice)
+                if input("Exact one-call manuscript authorization phrase: ").strip() != CONFIRM_MODEL:
+                    raise ValueError("private manuscript AI call not authorized")
+                if not os.environ.get("ANTHROPIC_API_KEY"):
+                    raise ValueError("no Anthropic API key configured")
+                text = build_private_manuscript(
+                    inventory=inventory, signed_review=signed_review,
+                    proposal=proposal, choice=choice, secret=key,
+                    db=args.db)
+                _out_text(args.out, text)
     except (ValueError, OSError) as exc:
         parser.error(str(exc))
     print("Private %s completed; NO Dylan email, site publication or PR." % args.mode)
