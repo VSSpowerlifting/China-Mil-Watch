@@ -158,15 +158,36 @@ class ThemeSundayHandoffTests(unittest.TestCase):
             "week_start": "2026-10-04", "week_ending": SAT,
             "desks": ["china", "singapore"], "source_trail": [],
         }
+        notes = {
+            1: {"analyst_synopsis": (
+                    "The official institution reported a dated dialogue about "
+                    "regional cooperation, with no evidence that it was implemented."),
+                "accuracy_limitations": (
+                    "This is an official announcement without independent implementation evidence.")},
+            2: {"analyst_synopsis": (
+                    "A second issuing institution presented an attributed account "
+                    "of regional discussions; no joint operational result is established."),
+                "accuracy_limitations": (
+                    "The publisher statement alone does not demonstrate policy coordination.")},
+        }
         with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
                    return_value=evidence()) as selected:
-            output = compose(scaffold, SAT, client=fake, selected_theme=directive)
+            with self.assertRaisesRegex(ValueError, "exact owner-reviewed synopsis"):
+                compose(scaffold, SAT, client=fake, selected_theme=directive)
+            output = compose(scaffold, SAT, client=fake, selected_theme=directive,
+                             reviewed_synopses=notes)
         self.assertEqual(selected.call_args.kwargs["selected_ids"], [1, 2])
         self.assertEqual(output["_private_owner_selected_production_ids"], [1, 2])
         self.assertEqual(output["_private_owner_selected_theme_slug"],
                          "regional-evidence-shift")
         self.assertIn(directive["approved_focus"],
                       recorded[0]["messages"][0]["content"])
+        self.assertIn("EDITOR-REVIEWED ANALYST SYNOPSIS",
+                      recorded[0]["messages"][0]["content"])
+        self.assertIn(notes[1]["analyst_synopsis"],
+                      recorded[0]["messages"][0]["content"])
+        self.assertNotIn("A" * 300, recorded[0]["messages"][0]["content"])
+        self.assertNotIn("B" * 300, recorded[0]["messages"][0]["content"])
         self.assertFalse("publication_authorized" in output)
 
     def test_build_private_manuscript_cannot_call_writer_without_current_trail(self):
