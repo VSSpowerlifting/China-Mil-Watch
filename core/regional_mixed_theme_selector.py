@@ -272,7 +272,18 @@ def propose_mixed_themes(
     ctx, prompt, approval = _verified_context(inputs, signed, run_secret)
     need(allow_model is True and callable(model_tool),
          "no model invocation without direct owner opt-in and injected callback")
+    signature = signed["hmac_sha256"]
+    approved_request = canonical(approval)
     response = model_tool(prompt, mixed_tool_schema(), approval["model_id"])
+    # A host-injected callback can mutate captured Python objects. Never let
+    # it swap owner/model approval or reviewed evidence after dispatch.
+    checked_context, checked_prompt, checked_approval = _verified_context(
+        inputs, signed, run_secret)
+    need(canonical(checked_context) == canonical(ctx)
+         and checked_prompt == prompt
+         and canonical(checked_approval) == approved_request
+         and signed["hmac_sha256"] == signature,
+         "model callback changed approved prompt, HMAC, or source evidence")
     try:
         preview = validate_manual_mixed_theme(response, **inputs)
     except (ValueError, TypeError) as exc:
