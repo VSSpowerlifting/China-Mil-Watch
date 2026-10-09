@@ -37,6 +37,26 @@ all fresh upstream owner-signed thematic selections and source evidence.
   equivalence or legal reuse permission**. It is a *mechanical and
   structural* evidence check.
 
+## Owner-pinned structured draft contract
+
+The pure offline `private_mixed_writing_schema` re-verifies the selected
+owner-signed focus and current publisher capture digests before returning an
+exact JSON-schema shape for a *future separately authorized* structured draft.
+It enumerates only the selected numeric production IDs and typed non-production
+Japan/Vietnam IDs, never the full stored archive, held research, article bodies
+or unsigned source text. Its separate citation arrays allow typed-only
+cross-desk themes with **zero numeric sources** without fabricating a source.
+The `editorial_focus` field, when typed research is included, is restricted
+to the literal owner-approved thesis, not a paraphrase supplied by a model.
+
+This schema is a guide, **not** an AI provider integration, model permission,
+source-rights determination, budget authorization, full factual validation or
+public release approval. Its JSON-schema constraints cannot alone prove that
+each factual section contains at least one relevant source across both citation
+lanes, that a comparison actually covers two desks, or that a cited source
+supports its claimed meaning. The separately mandatory post-validator checks
+those mechanical cross-lane rules and leaves factual review to humans.
+
 ## Outputs and confidentiality
 
 `validate_private_mixed_manuscript` returns a metadata-only receipt with
