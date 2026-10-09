@@ -8,8 +8,6 @@ institutional intent, or that every cited paragraph is actually supported.
 """
 from __future__ import annotations
 
-from collections import Counter
-
 SOURCE_FIELDS = (
     "development", "opening_note", "what_stood_out", "why_it_matters",
     "what_was_routine", "what_im_watching_next", "cross_desk_comparison",
@@ -60,6 +58,19 @@ def summarize_source_use(manuscript, production_trail, research=()):
             raise SourceUseError("research must remain unapproved")
         external[ident] = desk
 
+    # The editor's full production source trail is not the model's bounded
+    # prompt. Only the composer, after validation, attaches this private
+    # exact-input roster. Missing metadata is UNATTESTED, never imputed from
+    # the much larger editorial appendix.
+    model_offered = None
+    if "_model_offered_production_ids" in manuscript:
+        roster = manuscript["_model_offered_production_ids"]
+        if (not isinstance(roster, list)
+                or not all(type(ident) is int and ident in prod for ident in roster)
+                or len(set(roster)) != len(roster) or not roster):
+            raise SourceUseError("invalid exact model-offered production roster")
+        model_offered = set(roster)
+
     citations = manuscript.get("citations")
     extra_citations = manuscript.get("supplemental_citations")
     if (not isinstance(citations, dict) or set(citations) != set(SOURCE_FIELDS)):
@@ -90,6 +101,9 @@ def summarize_source_use(manuscript, production_trail, research=()):
         for ident in eids:
             by_external.setdefault(ident, []).append(field)
 
+    if model_offered is not None and not set(by_prod).issubset(model_offered):
+        raise SourceUseError("production citation not in the model-offered roster")
+
     def counts(ids, cited, desks):
         result = {}
         for desk in sorted(set(desks.values())):
@@ -103,9 +117,17 @@ def summarize_source_use(manuscript, production_trail, research=()):
             }
         return result
 
+    production_stats = counts(prod.keys(), by_prod, prod)
+    for desk, item in production_stats.items():
+        item["appendix_listed"] = item.pop("offered")
+        item["model_offered"] = (
+            sum(prod[ident] == desk for ident in model_offered)
+            if model_offered is not None else None
+        )
+
     return {
         "schema": "ipr-private-manuscript-source-use/1",
-        "production_by_desk": counts(prod.keys(), by_prod, prod),
+        "production_by_desk": production_stats,
         "research_by_desk": counts(external.keys(), by_external, external),
         "production_used": [
             {"record_id": ident, "desk": prod[ident],
@@ -132,6 +154,7 @@ def format_private_source_use(manuscript, production_trail, research=()):
     out = [
         "=== MANUSCRIPT SOURCE USE — EDITORIAL TRIAGE ONLY ===",
         "These counts describe citations supplied by the model, NOT verified claims.",
+        "The editor's production appendix may include records never shown to the AI.",
         "Offered means shown to the model/editor; cited means used in at least one",
         "manuscript section. An omitted source is NOT evidence of issuer silence.",
         "Source text, paraphrases, translations and source reuse require review.",
@@ -139,8 +162,10 @@ def format_private_source_use(manuscript, production_trail, research=()):
         "PRODUCTION RECORD USE BY DESK:",
     ]
     for desk, item in audit["production_by_desk"].items():
-        out.append("- {}: {} source(s) offered; {} cited.".format(
-            desk, item["offered"], item["cited"]))
+        roster_count = (str(item["model_offered"]) if item["model_offered"] is not None
+                        else "UNATTESTED")
+        out.append("- {}: {} in human appendix; {} actually model-offered; {} cited.".format(
+            desk, item["appendix_listed"], roster_count, item["cited"]))
     out.append("")
     out.append("NON-PRODUCTION JAPAN/VIETNAM RESEARCH USE:")
     for desk in ("japan", "vietnam"):
