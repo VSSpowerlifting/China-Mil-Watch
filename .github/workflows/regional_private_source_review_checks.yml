@@ -1,0 +1,69 @@
+name: Regional private source review focused checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-weekly-evidence-inventory-20261008
+    paths:
+      - core/regional_reviewed_evidence.py
+      - tests/test_regional_reviewed_evidence.py
+      - scripts/regional_reviewed_evidence.py
+      - docs/REGIONAL_PRIVATE_SOURCE_REVIEW.md
+      - .github/workflows/regional_private_source_review_checks.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-regional-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  offline-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Store tracked archive hash
+        id: before
+        run: echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline test requirements
+        run: python -m pip install -r requirements.txt
+      - name: Run three-phase source provenance contracts
+        run: >-
+          python -m unittest
+          tests.test_regional_editorial_slate
+          tests.test_regional_weekly_inventory
+          tests.test_regional_reviewed_evidence -v
+      - name: Assert no model or email coupling
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          paths = [Path('core/regional_reviewed_evidence.py'),
+                   Path('scripts/regional_reviewed_evidence.py')]
+          forbidden = ('import anthropic', 'Anthropic(', 'smtplib',
+                       'requests.', 'subprocess.', 'send_email(')
+          for path in paths:
+              data = path.read_text(encoding='utf-8')
+              for phrase in forbidden:
+                  assert phrase not in data, (path, phrase)
+          print('No external API or email invocation')
+          PY
+      - name: Verify tracked database/output preservation
+        if: always() && steps.before.outcome == 'success'
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "Offline review left production sources intact"
