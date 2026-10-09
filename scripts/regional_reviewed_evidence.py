@@ -53,13 +53,30 @@ def _out(path, data):
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     handle = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(handle)
         with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            handle = None  # The stream owns this descriptor now.
             json.dump(data, stream, ensure_ascii=False, sort_keys=True,
                       indent=2, allow_nan=False)
             stream.write("\n")
     except BaseException:
-        target.unlink(missing_ok=True)
+        if handle is not None:
+            try:
+                os.close(handle)
+            except OSError:
+                pass
+        # Do not erase a file another actor swapped into our output path.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink()
+                        and (current.st_dev, current.st_ino) ==
+                            (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
