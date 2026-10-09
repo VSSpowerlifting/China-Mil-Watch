@@ -133,6 +133,94 @@ jobs:
           print("This verification is NOT source approval or corpus admission.")
           PY
 
+      # A week-specific JSON file is an editorial seed, NOT proof that its
+      # Vietnam rows still match current independently collected MPS source.
+      # Re-derive the Vietnam section immediately before the one-theme model
+      # call; preserve Japan's separately supplied research rows byte-for-byte.
+      - name: Select bounded source notes and regional packet for this Sunday
+        id: vietnam_sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Previous step exported this via GITHUB_ENV at runner execution
+          # time. Turn it into an explicit step output for action expressions.
+          REPORTING_SATURDAY="$IPR_SUNDAY_WEEK_END"
+          [[ "$REPORTING_SATURDAY" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          echo "week_ending=$REPORTING_SATURDAY" >> "$GITHUB_OUTPUT"
+          packet="research/briefs_editorial_evidence/$REPORTING_SATURDAY.json"
+          notes="research/vietnam_briefs_candidates/editorial_notes_$REPORTING_SATURDAY.json"
+          for candidate in "$packet" "$notes"; do
+            if [[ -e "$candidate" && ! -f "$candidate" ]]; then
+              echo "::error::Invalid or non-regular week-specific research file: $candidate"
+              exit 1
+            fi
+            if [[ -L "$candidate" ]]; then
+              echo "::error::Symlinked week-specific evidence is not allowed"
+              exit 1
+            fi
+          done
+          if [[ -f "$packet" ]]; then
+            echo "existing=$packet" >> "$GITHUB_OUTPUT"
+          else
+            echo "existing=" >> "$GITHUB_OUTPUT"
+          fi
+          if [[ -f "$notes" ]]; then
+            echo "notes=$notes" >> "$GITHUB_OUTPUT"
+          else
+            echo "notes=" >> "$GITHUB_OUTPUT"
+          fi
+          # First Sunday pilot requires genuine current MPS research, rather
+          # than silently dropping Vietnam while claiming it contributed.
+          # Future weeks may be empty ONLY via explicit no-Vietnam policy.
+          if [[ "$REPORTING_SATURDAY" == "2026-10-10" ]]; then
+            echo "missing_policy=refuse" >> "$GITHUB_OUTPUT"
+            echo "require_vietnam=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "missing_policy=continue-without-vietnam" >> "$GITHUB_OUTPUT"
+            echo "require_vietnam=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Audit current Vietnam MPS shadow state and refresh private Sunday research
+        id: vietnam_current
+        uses: ./.github/actions/vietnam-editorial-evidence
+        with:
+          week-ending: ${{ steps.vietnam_sources.outputs.week_ending }}
+          notes: ${{ steps.vietnam_sources.outputs.notes }}
+          missing-notes-policy: ${{ steps.vietnam_sources.outputs.missing_policy }}
+          require-vietnam: ${{ steps.vietnam_sources.outputs.require_vietnam }}
+          existing-packet: ${{ steps.vietnam_sources.outputs.existing }}
+
+      - name: Verify refreshed exact-week research before the model call
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+          PRIVATE_VN_COUNT: ${{ steps.vietnam_current.outputs.vietnam-count }}
+          PRIVATE_VN_MACHINE_ELIGIBLE: ${{ steps.vietnam_current.outputs.machine-eligible-count }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from core.brief_editorial_evidence import load_editorial_evidence
+          week = os.environ["IPR_SUNDAY_WEEK_END"]
+          path = Path(os.environ["PRIVATE_WEEK_PACKET"])
+          if not path.is_file() or path.name != week + ".json":
+              raise SystemExit("Refused: missing or wrong-week MPS-verified research packet")
+          rows = load_editorial_evidence(week, os.environ["IPR_SUNDAY_AS_OF"],
+                                        directory=path.parent)
+          vn = sum(row["desk"] == "vietnam" for row in rows)
+          if vn != int(os.environ["PRIVATE_VN_COUNT"]):
+              raise SystemExit("Refused: MPS review count differs from model evidence")
+          eligible = int(os.environ["PRIVATE_VN_MACHINE_ELIGIBLE"])
+          if eligible < vn or eligible < 0:
+              raise SystemExit("Refused: impossible current MPS source eligibility count")
+          if week == "2026-10-10" and eligible != vn:
+              raise SystemExit("Refused: strict pilot must account for all in-window MPS sources before model/email")
+          if eligible > vn:
+              print("::warning::%d verified MPS sources currently lack short, version-matched private synopses; omission is NOT official silence." % (eligible - vn))
+          print("Source-audited private research roster: %d Vietnam items, %d other desk items, %d eligible in MPS archive"
+                % (vn, len(rows) - vn, eligible))
+          print("Neither source rights nor official silence nor publication approved.")
+          PY
+
       - name: Create read-only full Saturday-ending week source scaffold
         env:
           PACKET_SIDECAR: ${{ runner.temp }}/ipr-sunday-scaffold.json
@@ -172,11 +260,17 @@ jobs:
           IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
           IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
         shell: bash
         run: |
+          [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
+            echo "::error::Refused: no current-shadow-attested Sunday research packet"; exit 2;
+          }
           args=(--sidecar "$RUNNER_TEMP/ipr-sunday-scaffold.json"
                 --out "$RUNNER_TEMP/IPR-Briefs-Editorial-$IPR_SUNDAY_WEEK_END.txt"
-                --write-automatic --full-week --include-research --as-of "$IPR_SUNDAY_AS_OF")
+                --write-automatic --full-week --include-research
+                --research-packet "$PRIVATE_WEEK_PACKET"
+                --as-of "$IPR_SUNDAY_AS_OF")
           if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
             [[ "$IPR_PREVIEW_REQUESTED" != "true" ]] || {
               echo "::error::Editor delivery and owner-only preview cannot both be requested"; exit 2;

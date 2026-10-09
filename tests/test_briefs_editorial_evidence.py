@@ -62,7 +62,7 @@ def scaffold():
 class RealResearchEvidenceTests(unittest.TestCase):
     def test_exact_october_ten_packet_has_japan_and_vietnam(self):
         rows = load_editorial_evidence(SAT, SAT)
-        self.assertEqual(len(rows), 5)
+        self.assertEqual(len(rows), 6)
         self.assertEqual({x["desk"] for x in rows}, {"japan", "vietnam"})
         self.assertEqual(load_editorial_evidence(SAT, FRI), rows)
         self.assertEqual(load_editorial_evidence("2026-10-17", "2026-10-17"), [])
@@ -81,6 +81,24 @@ class RealResearchEvidenceTests(unittest.TestCase):
             if item["desk"] == "vietnam":
                 matching = [x for x in vn["candidates"]
                             if item["id"].endswith(x["source_identity"].split(":")[1])]
+                if not matching:
+                    # The first independent review packet is historically
+                    # pinned before the real October 8 MPS collector ran.
+                    # Do not rewrite that old receipt to claim new coverage.
+                    self.assertEqual(item["id"], "VN-MPS-1791366010")
+                    notes = json.loads((ROOT / "research/vietnam_briefs_candidates" /
+                                        "editorial_notes_2026-10-10.json").read_text())
+                    note = next(x for x in notes["entries"]
+                                if x["source_identity"] == "mps-vi:1791366010")
+                    self.assertEqual(item["state_commit"],
+                                     "c7c13dc7c15d855412afff99db23695dd50e51a5")
+                    self.assertEqual(item["source_url"], note["source_url"])
+                    self.assertEqual(item["published_date"], note["published_date"])
+                    self.assertEqual(item["source_content_sha256"],
+                                     note["content_sha256"])
+                    self.assertEqual(item["summary"], note["summary"])
+                    self.assertEqual(item["caveats"], note["caveats"])
+                    continue
                 self.assertEqual(len(matching), 1)
                 record = matching[0]
                 self.assertEqual(item["source_url"], record["canonical_url"])
@@ -206,10 +224,22 @@ class UnifiedWriterTests(unittest.TestCase):
             params.append(kw), nullcontext(SimpleNamespace(
                 get_final_message=lambda: response)))[1]))
         x = scaffold()
+        # The human appendix intentionally contains a third record that is
+        # NOT selected for the model's bounded source excerpt input.
+        x["source_trail"].append({
+            **x["source_trail"][0], "record_id": 99,
+            "url": "https://example.com/99",
+        })
         with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
                    return_value=evidence()):
             result = compose(x, SAT, client=fake, supplemental=self.research)
         self.assertEqual(result["editorial_focus"], manuscript()["editorial_focus"])
+        self.assertEqual(result["_model_offered_production_ids"], [1, 2])
+        owner_packet = render_packet(
+            x, manuscript=result, as_of=SAT, research_evidence=self.research)
+        self.assertIn("china: 2 in human appendix; 1 actually model-offered; 1 cited.",
+                      owner_packet)
+        self.assertIn("Record 99 | china", owner_packet)
         self.assertEqual(len(params), 1)
         sent = params[0]["messages"][0]["content"]
         self.assertIn("ONE cohesive article", sent)
@@ -233,7 +263,7 @@ class UnifiedWriterTests(unittest.TestCase):
             "Official statements around a concrete development",
             "Official accounts of regional cooperation reviewed for clarity", 1)
         valid = validate_return(packet_text, edit)
-        self.assertEqual(valid["external_sources"], 5)
+        self.assertEqual(valid["external_sources"], 6)
         self.assertEqual(valid["source_records"], 2)
         for altered in (
             edit.replace("EXTERNAL SOURCE IDS: JP-W41-01",

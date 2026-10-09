@@ -34,6 +34,9 @@ outputs:
   vietnam-count:
     description: "Number of Vietnam MPS research candidates admitted to private model evidence"
     value: ${{ steps.prepare.outputs.vietnam_count }}
+  machine-eligible-count:
+    description: "Number of real in-window machine-eligible archived MPS publications, including sources without a prepared synopsis"
+    value: ${{ steps.prepare.outputs.machine_eligible_count }}
   vietnam-readiness-status:
     description: "ready / missing-notes-with-eligible-archives / missing-notes-no-eligible-archives / no-version-matched-notes / no-eligible-observed-publications"
     value: ${{ steps.prepare.outputs.vietnam_status }}
@@ -115,12 +118,14 @@ runs:
         cat "$working/result.json"
         # Expose only file path and counts; source notes stay on runner.
         vietnam_count="$(python -c 'import json,sys; data=json.load(open(sys.argv[1])); print(sum(x["desk"]=="vietnam" for x in data["items"]))' "$destination")"
+        machine_eligible_count="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["in_window_machine_eligible"])' "$working/result.json")"
         vietnam_status="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["vietnam_readiness_status"])' "$working/result.json")"
         notes_missing="$(python -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["notes_catalog_missing"]).lower())' "$working/result.json")"
         {
           echo "packet=$destination"
           echo "state_commit=$state_sha"
           echo "vietnam_count=$vietnam_count"
+          echo "machine_eligible_count=$machine_eligible_count"
           echo "vietnam_status=$vietnam_status"
           echo "notes_missing=$notes_missing"
         } >> "$GITHUB_OUTPUT"

@@ -16,7 +16,7 @@ Each unresolved source row contains **only** its first-party publisher URL, orig
 
 All human source-use decisions default to **not-authorized**. Model excerpt authorization, private model readiness, public citation approval, full-reporting-week coverage, publisher silence and email sending are explicitly **false**. This is NOT a valid `vietnam-private-model-source-use/1` authorization file: it lacks a reviewer, reviewed time, source-use rationale, affirmative decision and any permitted excerpt length. Neither the existing gated synopsis generator nor the Brief publication bridge can consume it as approval.
 
-The October 8 MPS archive introduced source `mps-vi:1791366010`, covering the October 7 Vietnam–Australia security-cooperation meeting, after the first two October 5 source notes were prepared. As long as the third note from PR #245 is not on main, the check should identify it as missing; once the verified #245 notes merge, that gap should disappear. Both outcomes are valid, depending on exactly which current notebook and immutable source state are checked.
+The October 8 MPS archive introduced source `mps-vi:1791366010`, covering the October 7 Vietnam–Australia security-cooperation meeting, after the first two October 5 source notes were prepared. PR #245 has since merged, adding the third version-pinned note to main. For the pinned October 8 current state, the check should therefore find no missing note for that source. Later shadow-state changes can still create new missing or stale source notes; those must be reported, not ignored.
 
 ## How to run locally
 

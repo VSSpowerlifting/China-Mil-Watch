@@ -338,7 +338,13 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
                     and getattr(b, "name", None) == "compose_editorial_draft"]
             if len(uses) != 1:
                 raise ValueError("writer returned zero or multiple manuscript tool outputs")
-            return validate_manuscript(uses[0].input, chosen, supplemental=extra)
+            validated = validate_manuscript(uses[0].input, chosen, supplemental=extra)
+            # Writer-owned, post-validation metadata: the full human source
+            # appendix is larger than the <=10 production records seen by
+            # the model. Record that exact allowlist for truthful triage.
+            # Never ask the model to generate or modify this accounting.
+            validated["_model_offered_production_ids"] = allowed_ids
+            return validated
         except ValueError as exc:
             # Second failure propagates; the caller writes nothing and sends nothing.
             problem = str(exc)
