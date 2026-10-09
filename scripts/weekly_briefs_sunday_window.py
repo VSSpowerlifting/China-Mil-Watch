@@ -9,6 +9,10 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from scripts.sunday_pilot_owner_review import (
+    OwnerReviewRequired, require_approved_digest_format, require_owner_review,
+)
+
 NY = ZoneInfo("America/New_York")
 
 
@@ -35,7 +39,10 @@ def resolve_sunday_handoff(*, event: str, now: datetime = None,
                            send_email: bool = False,
                            allow_historical_send: bool = False,
                            sunday_daily_marker: str = "",
-                           friday_delivery_enabled: bool = False) -> dict:
+                           friday_delivery_enabled: bool = False,
+                           pilot_owner_reviewed_week: str = "",
+                           pilot_owner_reviewed_sha256: str = "",
+                           scheduled_owner_preview: bool = False) -> dict:
     """Resolve Saturday reporting dates, and refuse stale Sunday generation.
 
     A current Sunday requires the daily pipeline's *success marker* for that
@@ -60,10 +67,21 @@ def resolve_sunday_handoff(*, event: str, now: datetime = None,
         if reporting_saturday or allow_historical_send:
             raise SundayHandoffRefused("scheduled runs cannot select historical weeks")
         target = today - timedelta(days=1)
-        sending = True
-        if not send_email:
-            raise SundayHandoffRefused("scheduled Sunday delivery flag is not enabled")
+        if scheduled_owner_preview and send_email:
+            raise SundayHandoffRefused(
+                "scheduled owner-only preview and Dylan editor send cannot both be enabled"
+            )
+        if not send_email and not scheduled_owner_preview:
+            raise SundayHandoffRefused(
+                "scheduled Sunday requires an explicitly enabled owner preview "
+                "or editor delivery"
+            )
+        sending = send_email
     elif event == "workflow_dispatch":
+        if scheduled_owner_preview:
+            raise SundayHandoffRefused(
+                "scheduled owner-preview setting must not bypass manual dispatch controls"
+            )
         latest_saturday = today - timedelta(days=(today.weekday() - 5) % 7)
         target = _date(reporting_saturday) if reporting_saturday else latest_saturday
         if target > today:
@@ -93,6 +111,20 @@ def resolve_sunday_handoff(*, event: str, now: datetime = None,
             "refused parallel services: disable IPR_EDITOR_DELIVERY_ENABLED "
             "before emailing from the Sunday workflow"
         )
+    # Pilot-only, edition-specific owner's consent before generating a
+    # scheduled or manually requested draft intended for Dylan. The private
+    # no-send preview is always exempt, and later weeks are unchanged.
+    try:
+        require_owner_review(
+            week_ending=target.isoformat(), sending=sending,
+            approved_week=pilot_owner_reviewed_week,
+        )
+        require_approved_digest_format(
+            week_ending=target.isoformat(), sending=sending,
+            approved_sha256=pilot_owner_reviewed_sha256,
+        )
+    except OwnerReviewRequired as exc:
+        raise SundayHandoffRefused(str(exc)) from exc
     if today.weekday() == 6 and target == today - timedelta(days=1):
         if sunday_daily_marker.strip() != today.isoformat():
             raise SundayHandoffRefused(

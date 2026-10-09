@@ -1,0 +1,44 @@
+name: Sunday First-Edition Owner Sign-Off — No-Send Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/sunday_pilot_owner_review.py
+      - scripts/weekly_briefs_sunday_window.py
+      - scripts/sunday_editorial_handoff.py
+      - tests/test_sunday_pilot_owner_release.py
+      - tests/test_weekly_briefs_sunday_window.py
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - .github/workflows/sunday_pilot_owner_release_contracts.yml
+      - docs/SUNDAY_FIRST_PILOT_OWNER_RELEASE.md
+
+permissions:
+  contents: read
+
+jobs:
+  reject-unreviewed-pilot-editor-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing project test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test owner-release gate, Monday replay, no-send and SMTP bypass
+        run: |
+          python -m unittest \
+            tests.test_sunday_pilot_owner_release \
+            tests.test_weekly_briefs_sunday_window \
+            tests.test_sunday_owner_preview -v
+      - name: Verify production corpus and published output unchanged
+        run: |
+          test -z "$(git status --porcelain -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      # No real email, model call, source download, deployed artifact, or
+      # mutation of repository variables in the PR test workflow.

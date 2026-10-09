@@ -6,6 +6,7 @@ analytical claims, changes the corpus, opens a PR, approves or publishes briefs.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import smtplib
@@ -14,6 +15,8 @@ from datetime import date
 from email.message import EmailMessage
 from email.utils import getaddresses
 from pathlib import Path
+
+from scripts.sunday_pilot_owner_review import require_owner_review, require_exact_reviewed_manuscript
 
 
 EDIT_SECTIONS = (
@@ -235,6 +238,18 @@ def single_address(value, name):
 
 def send_packet(path, week_ending, *, provisional=False, full_week=False,
                 preview_to_owner=False):
+    require_owner_review(
+        week_ending=week_ending, sending=not preview_to_owner,
+        approved_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+    )
+    # Fingerprint the SAME immutable bytes ultimately attached to the email.
+    # A newly generated Sunday draft is not the file the owner reviewed.
+    original_attachment = path.read_bytes()
+    require_exact_reviewed_manuscript(
+        week_ending=week_ending, sending=not preview_to_owner,
+        manuscript_bytes=original_attachment,
+        approved_sha256=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_SHA256", ""),
+    )
     editor = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     if preview_to_owner:
         recipient = single_address(os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
@@ -261,7 +276,9 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False,
             "Japan/Vietnam typed official-source references, their source-language "
             "meaning and any unsupported claims. You must separately authorize "
             "editor delivery after independent source verification.\n\n"
-            "Do not publish, number or forward as an approved Brief.\n"
+            "Do not publish, number or forward as an approved Brief.\n\n"
+            "Exact attached manuscript SHA-256: "
+            + hashlib.sha256(original_attachment).hexdigest() + "\n"
         )
     elif full_week:
         message["Subject"] = "IPR Briefs | week ending {} | one thematic Sunday draft".format(week_ending)
@@ -290,7 +307,7 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False,
             "verify the full-week sources and authorize any final publication.\n"
         )
     message.add_attachment(
-        path.read_bytes(), maintype="text", subtype="plain", filename=path.name
+        original_attachment, maintype="text", subtype="plain", filename=path.name
     )
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context(), timeout=30) as smtp:
         smtp.login(sender, password)
@@ -320,6 +337,12 @@ def main(argv=None):
     if args.preview_to_owner and (not args.write_automatic or not args.full_week):
         parser.error("owner-only preview requires automatic full-week manuscript")
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
+    # Require exact-week owner release BEFORE any source expansion, model
+    # usage, attachment write, or possible SMTP call. Rechecked at send_packet.
+    require_owner_review(
+        week_ending=sidecar["week_ending"], sending=args.send,
+        approved_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+    )
     if args.full_week and (not args.write_automatic
                            or args.as_of != sidecar["week_ending"]):
         parser.error("--full-week requires Saturday --as-of and --write-automatic")
