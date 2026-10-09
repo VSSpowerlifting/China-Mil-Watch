@@ -234,9 +234,9 @@ def render_html(snapshot: dict) -> str:
           s["last_successful_collection_at"])
          for d in snapshot["desks"] for s in d["production_sources"]])
     shadows = table(
-        ("Source family", "Desk identifier", "Enabled / declared", "Classification",
+        ("Source family", "Manifest", "Desk identifier", "Enabled / declared", "Classification",
          "Live run evidence"),
-        [(s["manifest"], s["desk_id"],
+        [(s["display_name"], s["manifest"], s["desk_id"],
           "%s / %s" % (s["enabled_in_shadow_manifest"], s["declared_source_count"]),
           s["inventory_role"], "not inspected")
          for s in snapshot["shadow_source_manifests"]])
