@@ -19,8 +19,9 @@ sources: the database remains whatever was available in the checkout, and
 `production_report_generated_at` identifies the report's creation. This
 flag exists for deterministic interpretation of the committed daily marker.
 
-The tool refuses to overwrite an existing report or place its reports inside
-`output/`, `shadow/`, `desks/` or `briefs/`. It does not access the
+The tool refuses to overwrite an existing report or write anywhere inside
+the repository (including `output/`, source code or workflows). Write HTML/JSON
+to `/tmp` or another existing directory outside the checkout. It does not access the
 network, start a collector, publish a Brief, send email, import shadow rows,
 or write the tracked database. Production DB reads use
 `scripts.reconcile_db.read_only` through the existing
@@ -47,7 +48,9 @@ certifies scheduled GitHub Actions success, state-branch continuity, ingestion,
 source permissions, human checkpoint reviews, or production admission. A
 historical Singapore shadow manifest remains visible but is explicitly labeled
 historical rather than a second collecting desk. A source family outside the
-public registry is not silently added as a promoted desk.
+public registry is not silently added as a promoted desk; its public-roster
+status is shown explicitly as `not in public roster`. Source-family identifiers
+are never guessed into the nearest similarly named country desk.
 
 **Daily marker:** reads the committed
 `.github/state/last_daily_run_date.txt` if present. This local marker is
