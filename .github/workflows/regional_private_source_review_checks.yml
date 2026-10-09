@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feat/regional-editorial-slate-contract-20261008
       - feat/regional-weekly-evidence-inventory-20261008
     paths:
       - core/regional_reviewed_evidence.py
