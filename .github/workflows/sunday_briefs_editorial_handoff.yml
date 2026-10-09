@@ -1,0 +1,192 @@
+name: Sunday IPR Briefs Full-Week Draft to Dylan
+
+on:
+  schedule:
+    # Sunday ~3:17 p.m. EDT / ~2:17 p.m. EST (19:17 UTC).
+    # Fail closed if Sunday's collection did not complete first.
+    - cron: '17 19 * * 0'
+  workflow_dispatch:
+    inputs:
+      send_email:
+        description: "Email Dylan? Also requires IPR_SUNDAY_EDITOR_DELIVERY_ENABLED=true"
+        type: boolean
+        required: true
+        default: false
+      reporting_saturday:
+        description: "Optional YYYY-MM-DD reporting Saturday; blank selects most recently reached Saturday"
+        type: string
+        required: false
+        default: ''
+      preview_to_owner:
+        description: "Email a private manuscript preview to the OWNER ONLY (not Dylan)? Requires IPR_PREVIEW_TO secret."
+        type: boolean
+        required: true
+        default: false
+      allow_historical_send:
+        description: "Explicitly authorize emailing a previous week's Saturday packet"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-sunday-editorial-handoff
+  cancel-in-progress: false
+
+jobs:
+  sunday-editor-handoff:
+    if: github.event_name == 'workflow_dispatch' || vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUNDAY_SEND: ${{ vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_email == true)) }}
+    steps:
+      - name: Checkout production corpus on main (read-only)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Preflight private owner preview and exclusive delivery intent
+        env:
+          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+          IPR_EDITOR_SEND_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.send_email == true }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from scripts.sunday_editorial_handoff import single_address
+          if os.environ["IPR_PREVIEW_REQUESTED"] == "true":
+              if os.environ["IPR_EDITOR_SEND_REQUESTED"] == "true":
+                  raise SystemExit(
+                      "Refused: editor send and owner preview inputs cannot both be true"
+                  )
+              editor = single_address(
+                  os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+              owner = single_address(
+                  os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
+              if owner.casefold() == editor.casefold():
+                  raise SystemExit(
+                      "Refused: owner preview email must differ from editor"
+                  )
+              print("Private owner preview recipient is configured and distinct.")
+          else:
+              print("Owner-only preview not requested.")
+          PY
+
+      - name: Verify reporting Saturday and Sunday's successful database update
+        env:
+          IPR_EVENT: ${{ github.event_name }}
+          IPR_MANUAL_SATURDAY: ${{ inputs.reporting_saturday || '' }}
+          IPR_HISTORICAL_SEND: ${{ inputs.allow_historical_send == true }}
+          IPR_OLD_FRIDAY_ACTIVE: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' }}
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import os
+          from pathlib import Path
+          from scripts.sunday_briefs_auto_writer import live_editorial_desks
+          from scripts.weekly_briefs_sunday_window import resolve_sunday_handoff
+
+          marker = Path(".github/state/last_daily_run_date.txt")
+          last_successful_update = (
+              marker.read_text(encoding="utf-8").strip()
+              if marker.is_file() else ""
+          )
+          window = resolve_sunday_handoff(
+              event=os.environ["IPR_EVENT"],
+              reporting_saturday=os.environ["IPR_MANUAL_SATURDAY"],
+              send_email=os.environ["SUNDAY_SEND"] == "true",
+              allow_historical_send=os.environ["IPR_HISTORICAL_SEND"] == "true",
+              sunday_daily_marker=last_successful_update,
+              friday_delivery_enabled=os.environ["IPR_OLD_FRIDAY_ACTIVE"] == "true",
+          )
+          desks = live_editorial_desks()
+          if len(desks) < 2:
+              raise SystemExit("Refused: fewer than two production-backed desks")
+          for key, value in window.items():
+              print(key + "=" + value)
+          print("IPR_SUNDAY_DESKS=" + ",".join(desks))
+          PY
+
+      - name: Verify bounded Japan/Vietnam editorial source packet offline
+        run: |
+          python - <<'PY'
+          from core.brief_editorial_evidence import load_editorial_evidence
+          import os
+          rows = load_editorial_evidence(
+              os.environ["IPR_SUNDAY_WEEK_END"],
+              os.environ["IPR_SUNDAY_AS_OF"],
+          )
+          print("Private source-linked research candidates:", len(rows))
+          print("This verification is NOT source approval or corpus admission.")
+          PY
+
+      - name: Create read-only full Saturday-ending week source scaffold
+        env:
+          PACKET_SIDECAR: ${{ runner.temp }}/ipr-sunday-scaffold.json
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from config import DB_PATH
+          from scripts.author_brief import build_draft
+          from scripts.reconcile_db import read_only
+          from storage.db import get_articles_for_desks
+
+          desks = os.environ["IPR_SUNDAY_DESKS"].split(",")
+          with read_only(Path(DB_PATH)) as conn:
+              records = get_articles_for_desks(
+                  os.environ["IPR_SUNDAY_WEEK_START"],
+                  os.environ["IPR_SUNDAY_WEEK_END"], desks, conn=conn,
+              )
+          draft = build_draft(
+              records, desks=desks,
+              week_start=os.environ["IPR_SUNDAY_WEEK_START"],
+              week_ending=os.environ["IPR_SUNDAY_WEEK_END"],
+          )
+          Path(os.environ["PACKET_SIDECAR"]).write_text(
+              json.dumps(draft, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          print("Unapproved full-week scaffold prepared from stored records through Saturday.")
+          PY
+
+      - name: Generate source-cited Sunday manuscript and optionally email Dylan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+          IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
+          IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+        shell: bash
+        run: |
+          args=(--sidecar "$RUNNER_TEMP/ipr-sunday-scaffold.json"
+                --out "$RUNNER_TEMP/IPR-Briefs-Editorial-$IPR_SUNDAY_WEEK_END.txt"
+                --write-automatic --full-week --include-research --as-of "$IPR_SUNDAY_AS_OF")
+          if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
+            [[ "$IPR_PREVIEW_REQUESTED" != "true" ]] || {
+              echo "::error::Editor delivery and owner-only preview cannot both be requested"; exit 2;
+            }
+            args+=(--send)
+          elif [[ "$IPR_PREVIEW_REQUESTED" == "true" ]]; then
+            args+=(--preview-to-owner)
+          fi
+          python -m scripts.sunday_editorial_handoff "${args[@]}"
+
+      # Private owner's preview requires BOTH input preview_to_owner=true and
+      # a distinct configured IPR_PREVIEW_TO secret; cannot contact Dylan.
+      # No public manuscript artifact; no push, approval, numbering or deploy.
