@@ -72,8 +72,19 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
                              secret, db=DB_PATH, registry=None, client=None):
     """Verify source+owner seals before ANY manuscript model can be invoked."""
     approved = verify_choice(inventory, signed_review, secret, proposal, choice)
-    sidecar = prepare_scaffold(inventory=inventory, database=db, registry=registry)
     chosen = approved["selected_source_ids"]
+    # Build these pins ONLY from the freshly authenticated review inventory,
+    # never from model output or an owner-typed ID list. Sunday's later SQLite
+    # source read must match these exact publisher and stored-body fingerprints.
+    by_id = {entry["id"]: entry for entry in inventory["production_evidence"]}
+    pins = {
+        ident: {field: by_id[ident][field] for field in (
+            "desk", "source_url", "published_date", "stored_text_sha256",
+            "source_name", "title_original", "language")}
+        for ident in chosen
+    }
+    approved = dict(approved, reviewed_source_pins=pins)
+    sidecar = prepare_scaffold(inventory=inventory, database=db, registry=registry)
     trail_ids = {row["record_id"] for row in sidecar["source_trail"]}
     if not set(chosen).issubset(trail_ids):
         raise ValueError("owner-selected thematic sources not present in current Sunday trail")
