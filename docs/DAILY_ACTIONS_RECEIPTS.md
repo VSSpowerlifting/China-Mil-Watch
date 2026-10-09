@@ -35,7 +35,8 @@ Each run must identify `run_id` (positive integer), `attempt` (positive integer)
 
 - `collection_validation_deploy_candidate`: guard explicitly ran; all six key execution and publish stages are reported successful; successful workflow. Requires independent run/job/log verification before considering it proven.
 - `green_scheduling_guard_skip_candidate`: successful guard with explicit `should_run=false`, and all six execution/publish steps skipped. **Never count as another collection**.
-- `cancelled_execution_extent_unknown` or `timed_out_execution_extent_unknown`: do not infer if archived records were captured, why the run stopped or whether earlier steps completed.
+- `cancelled_pipeline_step_skipped_candidate`: a *supplied job* reported guard `should_run=true` but skipped the pipeline and all six inspected production/deployment stages before cancellation (the October 7 Playwright stall illustrates this). This is still **not authenticated** proof about all possible jobs or collections.
+- `cancelled_execution_extent_unknown` or `timed_out_execution_extent_unknown`: there is insufficient supplied step evidence to know whether the pipeline executed, why the run stopped or whether another job/attempt existed.
 - `pipeline_failed_attempt`, `post_deploy_health_gate_failed`, `failed_workflow_execution_requires_review`: distinguish a failed pipeline from a health notification after an actual deployment.
 - `green_workflow_work_not_established`: success is not enough to establish that every required collection/publish step ran.
 
@@ -45,4 +46,4 @@ Every output declares: source/authentication/production/queue/editor/publisher-s
 
 ## Merge/test gate
 
-The dedicated CI runs 25 synthetic contracts and verifies that the tracked production database and `output/` remain unchanged. The repository's full PR offline checks (Chromium, test suite, output validator and preservation) must also pass against current `main` before this component can merge. This issue-level milestone deliberately does not modify the pre-merge Operations Center UI or any collection workflow; a later gated integration may present authenticated receipts once available.
+The dedicated CI runs 27 synthetic contracts and verifies that the tracked production database and `output/` remain unchanged. The repository's full PR offline checks (Chromium, test suite, output validator and preservation) must also pass against current `main` before this component can merge. This issue-level milestone deliberately does not modify the pre-merge Operations Center UI or any collection workflow; a later gated integration may present authenticated receipts once available.
