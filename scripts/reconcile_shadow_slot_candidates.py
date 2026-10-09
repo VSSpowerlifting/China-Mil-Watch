@@ -137,7 +137,16 @@ def verify_row(row, contract, now):
         else:
             mode, reason = "scheduled", None
     elif row["target_date_source"] == SOURCE_EXPLICIT:
-        mode, reason = "recovery", None
+        # An explicitly named date is not *automatically* a recovery. A
+        # dispatch before that date's nominal cron would predate the slot it
+        # purports to repair. Keep the receipt visible but not qualifying.
+        cron_hour, cron_minute = parse_cron_utc(contract["cron_utc"])
+        nominal = datetime.combine(target, time(cron_hour, cron_minute),
+                                   tzinfo=timezone.utc)
+        if started < nominal:
+            reason = "manual_dispatch_predates_target_slot"
+        else:
+            mode, reason = "recovery", None
     success = (row["github_conclusion"] == "success" and
                row["ledger_health"] == "ok" and row["ledger_result"] in SUCCESS)
     attested_by_inputs = (row["action_identity_checked"] and
