@@ -130,7 +130,8 @@ def handoff(path, week_ending, *, send=False, owner_confirmed=False,
         )
     local_day = now.astimezone(NY).date()
     latest_saturday = local_day - timedelta(days=(local_day.weekday() - 5) % 7)
-    if week_ending != latest_saturday.isoformat() and not historical_override:
+    if (week_ending != latest_saturday.isoformat()
+            or local_day.weekday() != 6) and not historical_override:
         raise ReviewedHandoffRefused(
             "sending a past-week reviewed manuscript requires --allow-historical-send"
         )
