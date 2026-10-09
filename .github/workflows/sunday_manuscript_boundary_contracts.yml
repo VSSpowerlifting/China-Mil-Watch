@@ -1,0 +1,40 @@
+name: Sunday Manuscript Boundary and No-Send Integrity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/sunday_briefs_auto_writer.py
+      - scripts/sunday_editorial_handoff.py
+      - tests/test_sunday_manuscript_boundaries.py
+      - .github/workflows/sunday_manuscript_boundary_contracts.yml
+      - docs/SUNDAY_MANUSCRIPT_BOUNDARY_INTEGRITY.md
+
+permissions:
+  contents: read
+
+jobs:
+  packet-boundaries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout untrusted PR code without Git push credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install project offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run source-boundary and existing Sunday editorial contracts
+        run: |
+          python -m unittest \
+            tests.test_sunday_manuscript_boundaries \
+            tests.test_briefs_editorial_evidence \
+            tests.test_sunday_owner_preview -v
+      - name: Assert tracked archive and production output unchanged
+        run: |
+          test -z "$(git status --porcelain -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
