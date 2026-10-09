@@ -34,7 +34,8 @@ class OperationsCenterContracts(unittest.TestCase):
                     "articles_total": 4, "last_article_date": "2026-10-07",
                     "last_successful_collection_at": "2026-10-08 13:00:00",
                     "silence_verdict": "within_cadence",
-                    "config_health": "ok", "latest_run_result": {"status": "ok"},
+                    "config_health": "ok",
+                    "latest_run_result": {"status": "ok", "is_failure": 0},
                 })
         return {"sources": rows, "per_source_history_available": True,
                 "generated_at": "2026-10-08 15:00:00"}
@@ -152,6 +153,30 @@ class OperationsCenterContracts(unittest.TestCase):
         with self.assertRaisesRegex(ops.SnapshotError, "overwrite"):
             ops.safe_destination(existing)
         self.assertEqual("preserve", existing.read_text(encoding="utf-8"))
+
+    def test_recent_article_does_not_hide_failed_source_attempt(self):
+        report = self.report()
+        report["sources"][0]["latest_run_result"] = {
+            "status": "retrieval_error", "is_failure": 1,
+        }
+        snap = self.snapshot(report)
+        self.assertTrue(snap["desks"][0]["production_sources"][0]["latest_run_failed"])
+        self.assertIn("latest_source_collection_failed",
+                      snap["source_health_review_flags"][0]["reasons"])
+        self.assertFalse(snap["publication_authorized"])
+
+    def test_unknown_source_run_history_is_not_a_success_claim(self):
+        report = self.report()
+        report["sources"][0]["latest_run_result"] = None
+        snap = self.snapshot(report)
+        self.assertIsNone(snap["desks"][0]["production_sources"][0]["latest_run_failed"])
+        self.assertEqual([], snap["source_health_review_flags"])
+
+    def test_invalid_source_failure_evidence_refused(self):
+        report = self.report()
+        report["sources"][0]["latest_run_result"] = {"status": "ok"}
+        with self.assertRaisesRegex(ops.SnapshotError, "failure evidence"):
+            self.snapshot(report)
 
     def test_source_flag_does_not_promote_desk(self):
         report = self.report()
