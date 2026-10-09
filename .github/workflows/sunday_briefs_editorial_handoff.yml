@@ -120,6 +120,18 @@ jobs:
           print("IPR_SUNDAY_DESKS=" + ",".join(desks))
           PY
 
+      # Promote the independent #240 corpus diagnostic to an enforceable
+      # no-LLM/no-email gate. This uses only a scratch SQLite read and
+      # source-availability counts. Current Sunday requires the exact same-day
+      # successful collection marker; historical replays are marked unattested.
+      - name: Require real production full-text readiness before model and email
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_before_model_gate \
+            --week-ending "$IPR_SUNDAY_WEEK_END" \
+            --as-of "$IPR_SUNDAY_AS_OF"
+
       - name: Verify bounded Japan/Vietnam editorial source packet offline
         run: |
           python - <<'PY'

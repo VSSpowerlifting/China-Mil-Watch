@@ -49,7 +49,11 @@ def evaluate(*, rows, desks, week_ending, as_of, review_day, marker):
         raise ReadinessError("as-of outside reporting week or after Saturday")
     if cutoff > observed:
         raise ReadinessError("cannot inspect records from a future calendar day")
-    if observed < start or observed > sunday + timedelta(days=91):
+    # resolve_sunday_handoff permits a Saturday up to 91 days behind the
+    # latest reached Saturday. A manual run on the following Friday is six
+    # calendar days later: allow up to 96 days after that old Sunday here,
+    # without claiming that its Sunday update marker is still preserved.
+    if observed < start or observed > sunday + timedelta(days=96):
         raise ReadinessError("review date outside permitted calendar window")
     if marker and iso_day(marker) > observed:
         raise ReadinessError("success marker is dated after review date")
