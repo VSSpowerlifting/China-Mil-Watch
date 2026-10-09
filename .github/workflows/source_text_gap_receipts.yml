@@ -50,7 +50,7 @@ jobs:
           with read_only("pla_watch.db") as conn:
               conn.row_factory = sqlite3.Row
               rows = conn.execute("""
-                  SELECT a.id, a.url, a.published_date, a.text_original
+                  SELECT a.id, a.url, a.published_date, a.text_original, a.passed_relevance, a.processing_state
                   FROM articles a JOIN sources s ON s.id = a.source_id
                   WHERE s.slug='pla_daily'
                     AND substr(a.scraped_at, 1, 10)='2026-10-09'
@@ -63,8 +63,9 @@ jobs:
                     len(candidates))
               for row in candidates:
                   locator, identity = _url_receipt(row["url"])
-                  print("candidate_id=%s pubdate=%r locator=%r url_hash=%s"
-                        % (row["id"], row["published_date"], locator, identity))
+                  print("candidate_id=%s pubdate=%r locator=%r url_hash=%s relevance=%r state=%r"
+                        % (row["id"], row["published_date"], locator, identity,
+                           row["passed_relevance"], row["processing_state"]))
           PY
       - name: Assert archive and output byte preservation
         run: |
