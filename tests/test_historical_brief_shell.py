@@ -74,6 +74,15 @@ class HistoricalBriefShellTests(unittest.TestCase):
                                 for p in ctx[key].split("\n\n") if p.strip()]
                     self.assertEqual(actual, expected)
 
+    def test_current_ipr_title_and_social_sharing_preserve_original_citation(self):
+        for ctx, page, soup in self.posts:
+            with self.subTest(issue=ctx["issue_number"]):
+                expected = soup.select_one("#brief-title").get_text() + " — Indo-Pacific Record"
+                self.assertEqual(soup.title.get_text(), expected)
+                self.assertEqual(soup.select_one('meta[property="og:title"]')["content"], expected)
+                self.assertEqual(soup.select_one('meta[name="twitter:title"]')["content"], expected)
+                self.assertFalse(expected.startswith("The PLA Watch: "))
+
     def test_original_citation_is_exactly_the_existing_citation(self):
         old = make_pw_env().get_template("pla-watch-post.html")
         for ctx, page, soup in self.posts:

@@ -17,7 +17,9 @@ Historical pages omit the live-site dates disclosure rather than show empty date
 
 All 14 existing weekly article HTML files were regenerated from the existing
 sidecars. The article body, source trail, issue number, dates, title, canonical
-URL and exact citation remain intact. A short provenance note names the original
+URL and exact citation remain intact. The browser-tab and social-sharing titles use the displayed IPR headline; the
+original title remains intact in the sidecars and the exact historical citation.
+A short provenance note names the original
 series and publisher. Historical author wording remains verbatim inside a
 labelled disclosure; the normal byline names the author. Adjacent issue URLs and
 original feed IDs/URLs continue to work. Ordinary browsing returns to IPR Briefs.
