@@ -14,12 +14,13 @@ def utc(timestamp):
 
 def window(date_time, *, event="schedule", marker="2026-10-11",
            send=True, target="", historical=False, friday=False,
-           pilot="2026-10-10"):
+           pilot="2026-10-10", digest="a" * 64):
     return resolve_sunday_handoff(
         event=event, now=date_time, reporting_saturday=target,
         send_email=send, allow_historical_send=historical,
         sunday_daily_marker=marker, friday_delivery_enabled=friday,
         pilot_owner_reviewed_week=pilot,
+        pilot_owner_reviewed_sha256=digest,
     )
 
 
@@ -32,9 +33,18 @@ class SundayHandoffTests(unittest.TestCase):
         r = window(utc("2026-10-11T19:17:00"), pilot="2026-10-10")
         self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "true")
 
+    def test_first_sunday_send_requires_sha_setting_before_generation(self):
+        for malformed in ("", "true", "A" * 64, "a" * 63,
+                          "a" * 64 + " ", "a" * 64 + "\\n"):
+            with self.subTest(digest=repr(malformed)):
+                with self.assertRaisesRegex(
+                    SundayHandoffRefused, "IPR_SUNDAY_OWNER_REVIEWED_SHA256"
+                ):
+                    window(utc("2026-10-11T19:17:00"), digest=malformed)
+
     def test_first_sunday_no_send_preview_needs_no_signoff(self):
         r = window(utc("2026-10-11T19:17:00"),
-                   event="workflow_dispatch", send=False, pilot="")
+                   event="workflow_dispatch", send=False, pilot="", digest="")
         self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "false")
 
     def test_first_sunday_historical_editor_send_still_requires_signoff(self):
