@@ -69,7 +69,7 @@ class PrivateSourceUseReceiptTests(unittest.TestCase):
         self.assertEqual(report["production_by_desk"]["china"]["model_offered"], 1)
         self.assertEqual(report["production_by_desk"]["singapore"]["appendix_listed"], 2)
         self.assertEqual(report["production_by_desk"]["singapore"]["model_offered"], 1)
-        lines = "\\n".join(format_private_source_use(
+        lines = "\n".join(format_private_source_use(
             m, large_editor_appendix, self.research))
         self.assertIn("2 in human appendix; 1 actually model-offered", lines)
         self.assertNotIn("2 source(s) offered", lines)
@@ -85,7 +85,7 @@ class PrivateSourceUseReceiptTests(unittest.TestCase):
                 summarize_source_use(m, PROD, self.research)
 
     def test_missing_model_selection_is_explicitly_unattested(self):
-        lines = "\\n".join(format_private_source_use(
+        lines = "\n".join(format_private_source_use(
             manuscript(), PROD, self.research))
         self.assertIn("UNATTESTED actually model-offered", lines)
 
