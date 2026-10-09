@@ -77,7 +77,9 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     rows = conn.execute("""
         SELECT a.id, a.passed_relevance, a.analyzed_at, a.processing_state,
                a.scraped_at, a.published_date, a.processing_attempts,
-               length(trim(COALESCE(a.text_original, ''))) AS body_characters,
+               length(trim(COALESCE(a.text_original, ''),
+                           ' ' || char(9) || char(10) || char(11) ||
+                           char(12) || char(13))) AS body_characters,
                s.slug AS source_slug, s.desk_id
           FROM articles AS a
           LEFT JOIN sources AS s ON s.id = a.source_id
