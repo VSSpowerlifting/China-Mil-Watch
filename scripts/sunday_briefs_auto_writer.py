@@ -330,15 +330,15 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
     )
     if selected_theme is not None:
         prompt += (
-            "\\n\\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\\n"
+            "\n\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\n"
             + selected_theme["approved_focus"] +
-            "\\nYou have been given ONLY the editor-selected verified source IDs "
+            "\nYou have been given ONLY the editor-selected verified source IDs "
             "for this provisional focus. Build one coherent manuscript around "
             "the supported portions of this direction, not around unrelated "
             "desk items. If evidence fails to support the thesis, narrow it "
             "explicitly or flag that failure in editorial_questions. "
             "Do not claim source review amounts to a publishing decision. "
-            "No public one-desk exception is granted here.\\n"
+            "No public one-desk exception is granted here.\n"
         )
     schema = writing_schema(allowed_ids, supplemental_ids=extra_ids)
     for attempt in range(2):
