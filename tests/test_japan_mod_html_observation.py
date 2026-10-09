@@ -78,6 +78,37 @@ class MODHTMLObservationTests(unittest.TestCase):
         self.assertFalse(result["expected_date_text_found"])
         self.assertIn("manual_original_check_required", result["reason"])
 
+    def test_head_text_cannot_spoof_body_observation(self):
+        ident = "JP-W41-01"
+        spoof = (f"<html><head><p>{TARGETS[ident][2]}</p>"
+                 f"<p>October 6, 2026</p></head>"
+                 f"<body><main>Different official notice.</main></body></html>").encode()
+        result = observe(ident, spoof, fetched_url=TARGETS[ident][0],
+                         content_type="text/html", observed_utc=OBSERVED)
+        self.assertFalse(result["expected_title_text_found"])
+        self.assertFalse(result["expected_date_text_found"])
+
+    def test_explicitly_hidden_text_is_not_visible_body_evidence(self):
+        ident = "JP-W41-02"
+        spoof = (f"<html><body><main><p>Unrelated statement.</p></main>"
+                 f"<div hidden><h1>{TARGETS[ident][2]}</h1></div>"
+                 f"<p style='display:none'>October 6, 2026</p>"
+                 f"<div aria-hidden='true'><p>{TARGETS[ident][2]}</p></div>"
+                 f"<div inert><span>October 6, 2026</span></div>"
+                 f"</body></html>").encode()
+        result = observe(ident, spoof, fetched_url=TARGETS[ident][0],
+                         content_type="text/html", observed_utc=OBSERVED)
+        self.assertFalse(result["expected_title_text_found"])
+        self.assertFalse(result["expected_date_text_found"])
+
+    def test_body_element_is_required_not_just_html_root(self):
+        ident = "JP-W41-01"
+        misleading = (f"<html><main>{TARGETS[ident][2]}"
+                      f" October 6, 2026</main></html>").encode()
+        with self.assertRaises(MODObservationError):
+            observe(ident, misleading, fetched_url=TARGETS[ident][0],
+                    content_type="text/html", observed_utc=OBSERVED)
+
     def test_fingerprint_changes_when_original_html_changes(self):
         ident = "JP-W41-02"
         a = observe(ident, body(ident), fetched_url=TARGETS[ident][0],

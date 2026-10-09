@@ -52,33 +52,48 @@ class VisibleWords(HTMLParser):
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
-        self.suppressed = 0
+        self.ignored_tags = []
         self.parts = []
-        self.in_title = False
-        self.title = []
         self.html_seen = False
+        self.body_seen = False
+        self.in_body = False
+
+    @staticmethod
+    def _hidden(tag, attrs):
+        if tag in VisibleWords.SKIP:
+            return True
+        for name, value in attrs:
+            if name in ("hidden", "inert"):
+                return True
+            if name == "aria-hidden" and (value or "").strip().lower() == "true":
+                return True
+            if name == "style" and re.search(
+                r"(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)\b",
+                (value or "").lower(),
+            ):
+                return True
+        return False
 
     def handle_starttag(self, tag, attrs):
         if tag == "html":
             self.html_seen = True
-        if tag in self.SKIP:
-            self.suppressed += 1
-        if tag == "title":
-            self.in_title = True
+        if tag == "body":
+            self.body_seen = True
+            self.in_body = True
+        if self._hidden(tag, attrs):
+            self.ignored_tags.append(tag)
 
     def handle_endtag(self, tag):
-        if tag in self.SKIP:
-            self.suppressed = max(0, self.suppressed - 1)
-        if tag == "title":
-            self.in_title = False
+        if self.ignored_tags and tag == self.ignored_tags[-1]:
+            self.ignored_tags.pop()
+        if tag == "body":
+            self.in_body = False
 
     def handle_data(self, data):
-        if self.suppressed:
-            return
-        if self.in_title:
-            self.title.append(data)
-            return  # A metadata <title> alone does NOT prove body content.
-        self.parts.append(data)
+        # Never count <head> strings, scripts, styles, or explicitly hidden
+        # elements as visible article-body evidence.
+        if self.in_body and not self.ignored_tags:
+            self.parts.append(data)
 
 
 def attest_packet_scope(rows):
@@ -133,7 +148,7 @@ def observe(ident, payload, *, fetched_url, content_type, observed_utc):
         parser.close()
     except ValueError as exc:
         raise MODObservationError("malformed MOD source HTML") from exc
-    need(parser.html_seen and parser.parts,
+    need(parser.html_seen and parser.body_seen and parser.parts,
          "publisher HTML root or readable content missing")
     words = compact(" ".join(parser.parts))
     title_found = compact(title) in words

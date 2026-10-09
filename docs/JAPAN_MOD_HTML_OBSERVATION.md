@@ -31,8 +31,10 @@ mode 0600, and is never overwritten or uploaded to a CI artifact.
 - It computes SHA-256 of the **exact received raw HTML bytes** and the
   decoded visible text, noting whether the known title and publication-day
   wording is present in the body. It refuses to count an HTML `<title>`
-  metadata field or JavaScript string alone as evidence of visible article
-  wording. Missing body wording is a human-review task, not silent success.
+  metadata field, a string placed in the HTML head, JavaScript or explicitly
+  hidden body text as evidence of visible article wording; a real HTML body
+  is required. This is still a coarse signal, not rendered-page verification.
+  Missing body wording is a human-review task, not silent success.
 - The output contains only source IDs, observation time, byte count, digests,
   matching booleans, and strict FALSE source-use/release fields. It does
   **not** retain raw HTML, article text, publisher links, synopses, thumbnails,
