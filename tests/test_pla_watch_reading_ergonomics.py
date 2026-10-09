@@ -631,10 +631,10 @@ class BrowserCase(WeeklySurfaces):
         """
         Measures one page at one width.
 
-        `block_webfonts` aborts the Google Fonts requests, which is the
-        condition the CI runner reproduces and a developer machine with a warm
-        font cache does not. A fresh context per call means a font cached by an
-        earlier measurement cannot leak in and quietly re-run the webfont path.
+        `block_webfonts` aborts both self-hosted WOFF2 font files and any
+        legacy Google Fonts requests. Production now serves its own font
+        files; intercepting Google alone no longer exercised the fallback.
+        A fresh context per call prevents warm font cache leakage.
 
         `extra_css` injects a stylesheet after load. It exists so a test can
         restore a pre-fix condition and prove a diagnostic still names the
@@ -649,6 +649,10 @@ class BrowserCase(WeeklySurfaces):
                 def abort(route):
                     blocked["n"] += 1
                     route.abort()
+                # The locally owned font pipeline serves /assets/fonts/
+                # (including historical fonts) from this HTTP fixture.
+                # The old Google-only intercept was a false fallback test.
+                page.route("**/*.woff2*", abort)
                 page.route("**://fonts.googleapis.com/**", abort)
                 page.route("**://fonts.gstatic.com/**", abort)
             page.goto("http://127.0.0.1:%d/%s" % (self.port, page_path),
