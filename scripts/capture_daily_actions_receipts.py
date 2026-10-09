@@ -145,6 +145,12 @@ def convert_run(run, fetch, day):
             run.get("status") == "completed" and
             run.get("conclusion") in audit.CONCLUSIONS,
             "unexpected, unfinished or mismatched Daily workflow run")
+    # The run-list API reports the current attempt, but a general jobs-list
+    # response must not be silently attributed to that latest attempt. Until
+    # this exporter uses the attempt-specific jobs endpoint and validates
+    # its metadata, refuse reruns rather than invent attempt provenance.
+    require(run["run_attempt"] == 1,
+            "re-run attempt requires attempt-specific job provenance")
     identity = run["id"]
     created = audit.parse_utc(run.get("created_at"))
     require(created.date() == day, "Actions API run outside exact UTC day")
