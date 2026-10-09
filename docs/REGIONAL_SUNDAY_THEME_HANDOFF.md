@@ -78,6 +78,30 @@ python scripts/regional_sunday_theme_preview.py approve \
   --out /private/approved-theme-choice.json
 ```
 
+Before paying for a model call, run a separate **no-model audit**. It
+replays the source integrity, HMAC approval, current SQLite text fingerprints,
+two-desk requirement and exact Sunday worksheet eligibility gates. It creates
+a *new, private, metadata-only* receipt. This receipt is **not reusable**
+authorization: the actual manuscript call repeats all validations from fresh
+SQLite state, so a changed publisher or source text after this audit still
+stops the model.
+
+```bash
+python scripts/regional_sunday_theme_preview.py audit \
+  --week-ending 2026-10-10 --as-of 2026-10-10 \
+  --review-local-day 2026-10-11 \
+  --signed-review /private/source-review-sealed.json \
+  --proposals /private/editor-thematic-slate.json \
+  --choice /private/approved-theme-choice.json \
+  --out /private/editor-theme-preflight-receipt.json
+```
+
+The audit requires the owner's interactive review key but **no model key,
+model call or SMTP credentials**. Its receipt contains source IDs, desks,
+signed-source fingerprint commitments and negative authority flags, but not
+publisher body text or analyst synopses. An audit failure must not be
+bypassed by skipping to the paid manuscript command.
+
 To generate **one private manuscript trial** with no email:
 
 ```bash
