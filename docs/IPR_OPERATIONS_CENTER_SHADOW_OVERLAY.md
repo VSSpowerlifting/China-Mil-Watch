@@ -37,6 +37,12 @@ The resulting snapshot explicitly sets `input_origin_authenticated=false`, `coll
 
 **Non-goals:** no new scheduled jobs, fetches, archived state modifications, public page changes, source-rights determinations, automated recovery, Claude calls or editor emails. The Phase 1 command remains unchanged and works with no overlay.
 
+## Native cross-contract regression
+
+The focused suite includes `test_real_repository_binding_report_joins_exact_shadow_manifests`. It builds the **actual** `shadow/*/manifest.json` inventory and calls `scripts.audit_shadow_workflow_bindings.validate` directly, then tests the full 16-source versioned output against the Operations Center join without any invented fixture fields. This test is **skipped only while the upstream #257 module is genuinely absent** from the branch; after #257 merges, CI must execute it rather than silently reporting synthetic compatibility as proven.
+
+A successful native test still verifies configuration declarations, **not** live scheduled-run outcomes, state receipt authenticity, source permissions or editorial readiness.
+
 ## Merge and future activation
 
 Developed against the Phase 1 branch to keep dependencies isolated while #249 is awaiting its full CI. Do not merge this into main before Phase 1 is merged and retested; also require the independently reviewed #257 and #259 report schema contracts to be stable. The overlay's next step, **not part of this PR**, is to authenticate Actions query scope, attempts and source-specific pinned state receipts before ever showing live collection status.
