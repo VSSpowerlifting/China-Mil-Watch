@@ -114,6 +114,10 @@ def _review_payload(unsigned, inventory):
           inventory["source_metadata_digest_sha256"]
           and unsigned["scope"] == SCOPE,
           "review is not pinned to exact week/snapshot/private scope")
+    # The reporting/same-Sunday marker gate is checked before any manual
+    # review-date interpretation: a partial corpus must never be treated as
+    # source-reviewable merely because a docket claims a later review date.
+    sources = _inventory(inventory)
     _note(unsigned["reviewer"], "reviewer", 3, 100)
     today = _iso(unsigned["reviewed_on"])
     _need(_iso(inventory["week_ending"]) <= today <=
@@ -122,7 +126,6 @@ def _review_payload(unsigned, inventory):
     choices = unsigned["decisions"]
     _need(isinstance(choices, list) and 1 <= len(choices) <= MAX_SELECTED,
           "private model packet requires 1..20 explicitly reviewed records")
-    sources = _inventory(inventory)
     found = set()
     for choice in choices:
         _keys(choice, (
