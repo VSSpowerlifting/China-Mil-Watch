@@ -1,0 +1,75 @@
+/* Briefs pilot: opt-in materials and original, abstract IPR contours.
+   Text and photography stay still. No ambient loop or page-sized compositor. */
+.material-paper { background: var(--bg) url("assets/material/chart-paper.png") repeat; background-size: 256px 256px; }
+.page-briefs .masthead { background: transparent; }
+.page-briefs .briefs-head { position: relative; isolation: isolate; border-top-width: 1px; background: var(--band); }
+.terrain-stage { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; contain: strict; }
+.terrain-lines { position: absolute; inset: -20px; background-repeat: no-repeat; }
+.terrain-stage--hero { background: radial-gradient(ellipse at 4% 100%, #214b55, transparent 62%), linear-gradient(120deg, #102a34, var(--band)); }
+.terrain-stage--hero .terrain-lines {
+  background-image: url("assets/material/contours-hero.svg");
+  background-size: max(1440px, 100%) auto; background-position: 50% 20%;
+  mask-image: linear-gradient(90deg, #000b, #0005 9%, #0002 34%, #0001 65%, #0006);
+}
+.page-briefs .briefs-head-inner { padding-block: clamp(2rem, 4vw, 3.5rem); }
+.page-briefs .briefs-lead { border-top-color: var(--band-muted); }
+.page-briefs .briefs-index { position: relative; isolation: isolate; }
+.terrain-stage--margin { inset: 0 calc(-1 * var(--gutter)) auto; height: 760px; }
+.terrain-stage--margin .terrain-lines {
+  background-image: url("assets/material/contours-paper.svg");
+  background-size: 1150px auto; background-position: right top; opacity: .65;
+  mask-image: linear-gradient(90deg, transparent 65%, #000);
+}
+.page-briefs .issue-ledger-row { position: relative; }
+.page-briefs .issue-ledger-row::before {
+  content: ""; position: absolute; inset: 0 -.75rem; z-index: -1;
+  background: var(--surface); opacity: 0; pointer-events: none;
+}
+.page-briefs .issue-ledger-row:has(a:hover)::before,
+.page-briefs .issue-ledger-row:focus-within::before { opacity: .85; }
+.page-briefs .issue-ledger-row:has(a:hover) h3 a,
+.page-briefs .issue-ledger-row:focus-within h3 a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: .2em; }
+.page-briefs .btn--primary { border: 1px solid var(--focus-band); background: var(--focus-band); color: var(--ink); }
+.page-briefs .band .btn--primary:hover { background: var(--band-ink); color: var(--ink); }
+.page-briefs a:focus-visible, .page-briefs summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+.page-briefs .band a:focus-visible { outline-color: var(--focus-band); }
+.page-briefs #briefs-published { scroll-margin-top: 1.5rem; }
+@media (min-width: 960px) {
+  .page-briefs .briefs-head-inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 4vw, 4rem); }
+  .page-briefs .briefs-lead { margin-top: 0; padding: 0 0 0 clamp(1.5rem, 3vw, 3rem); border-top: 0; border-left: 1px solid var(--band-rule); }
+}
+@media (max-width: 959px) {
+  .terrain-stage--hero .terrain-lines { background-size: 1150px auto; background-position: 72% 38%; opacity: .75; mask-image: linear-gradient(90deg, #0009, #0001 60%, #0003); }
+}
+@media (max-width: 600px) {
+  .page-briefs .briefs-head-inner { padding-block: 2rem 2.3rem; }
+  .terrain-stage--margin { height: 520px; opacity: .4; }
+}
+/* Reuse the one-shot observer. Finished art is visible if it cannot run.
+   Override the generic reveal on the container; animate only its small field. */
+html.js-reveal .terrain-stage[data-reveal] { opacity: 1; transform: none; transition: none; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js-reveal:not(.no-anim) .terrain-stage--hero .terrain-lines { transition: opacity 780ms var(--ease-rule), transform 780ms var(--ease-rule); }
+  html.js-reveal:not(.no-anim) .terrain-stage--hero:not(.is-in) .terrain-lines { opacity: .2; transform: translate(-14px, 7px); }
+  .page-briefs .issue-ledger-row::before { transition: opacity 160ms var(--ease-rule); }
+}
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  html:not(.no-anim) .page-briefs .shell-menu[open] > div,
+  html:not(.no-anim) .page-briefs .shell-menu[open] > nav { animation: menu-arrive 150ms var(--ease-rule); }
+}
+@keyframes menu-arrive { from { opacity: .6; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+html.no-anim .page-briefs *, html.no-anim .page-briefs *::before { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .page-briefs *, .page-briefs *::before { animation: none !important; transition: none !important; }
+}
+@media print, (forced-colors: active) {
+  .page-briefs .terrain-stage { display: none !important; }
+  .material-paper { background-image: none; }
+  .page-briefs .issue-ledger-row::before { display: none; }
+}
+@media print {
+  .page-briefs .briefs-head { background: white; }
+}
+@media (forced-colors: active) {
+  .page-briefs .briefs-head, .page-briefs .btn--primary { background: Canvas; color: CanvasText; }
+}
