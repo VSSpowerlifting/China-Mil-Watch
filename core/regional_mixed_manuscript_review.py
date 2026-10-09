@@ -65,6 +65,65 @@ def _preflight(inputs, signed_run, run_key, proposal, signed_choice, choice_key)
     return choice, [by_id[ident] for ident in chosen_ids]
 
 
+
+def private_mixed_writing_schema(
+        inputs, signed_run, run_key, proposal, signed_choice, choice_key):
+    """Strict structured *private drafting* schema, from fresh signed sources.
+
+    Schema generation is offline; it neither authorizes a drafting-model
+    call nor requests external publisher text. The caller must still run
+    validate_private_mixed_manuscript on every returned draft.
+    """
+    choice, rows = _preflight(
+        inputs, signed_run, run_key, proposal, signed_choice, choice_key)
+    numeric = sorted(row["id"] for row in rows if type(row["id"]) is int)
+    typed = sorted(row["id"] for row in rows if type(row["id"]) is str)
+    if typed:
+        need(20 <= len(choice["approved_focus"]) <= 200,
+             "signed editorial focus cannot fit established manuscript contract")
+    prose = {
+        field: {"type": "string", "minLength": 1, "maxLength": 8000}
+        for field in PROSE_FIELDS
+    }
+    need(len(prose) == len(PROSE_FIELDS), "duplicate manuscript prose fields")
+
+    def citations(ids, kind, *, min_items):
+        return {
+            "type": "object",
+            "additionalProperties": False,
+            "required": list(CITED_FIELDS),
+            "properties": {
+                field: {
+                    "type": "array",
+                    "items": {"type": kind, "enum": ids},
+                    "minItems": min_items,
+                    "maxItems": len(ids),
+                    "uniqueItems": True,
+                }
+                for field in CITED_FIELDS
+            },
+        }
+
+    prose["citations"] = citations(
+        numeric, "integer", min_items=0 if typed else 1)
+    required = list(PROSE_FIELDS) + ["citations"]
+    if typed:
+        prose["editorial_focus"] = {
+            "type": "string", "enum": [choice["approved_focus"]],
+            "minLength": len(choice["approved_focus"]),
+            "maxLength": len(choice["approved_focus"]),
+        }
+        prose["supplemental_citations"] = citations(
+            typed, "string", min_items=0)
+        required += ["editorial_focus", "supplemental_citations"]
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": required,
+        "properties": prose,
+    }
+
+
 def validate_private_mixed_manuscript(
         inputs, signed_run, run_key, proposal, signed_choice, choice_key,
         manuscript):
