@@ -124,6 +124,7 @@ class MixedRegionalSlateTests(unittest.TestCase):
         self.assertTrue(preview["manual_only_no_model_was_invoked"])
         self.assertFalse(preview["publication_authorized"])
         self.assertEqual(len(preview["reviewed_synopsis_packet_sha256"]), 64)
+        self.assertEqual(len(preview["manual_theme_payload_sha256"]), 64)
         self.assertEqual(preview["reviewed_synopsis_packet_sha256"],
                          ctx["reviewed_synopsis_packet_sha256"])
         self.assertEqual(preview["production_review_seal_sha256"],
@@ -241,6 +242,7 @@ class MixedRegionalSlateTests(unittest.TestCase):
             preview, inv, sources, SECRET, rows, seal, TYPED_SECRET, **kw)
         self.assertEqual(verified, preview)
         changes = (
+            lambda x: x.update(manual_theme_payload_sha256="0" * 64),
             lambda x: x.update(reviewed_synopsis_packet_sha256="0" * 64),
             lambda x: x.update(typed_owner_decision_seal_sha256="f" * 64),
             lambda x: x.update(source_metadata_digest_sha256="a" * 64),
