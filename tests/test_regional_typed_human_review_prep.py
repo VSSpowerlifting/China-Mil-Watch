@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -121,6 +122,84 @@ class TypedHumanReviewPreparationTests(unittest.TestCase):
             self.assertFalse(out["publication_authorized"])
             with self.assertRaises(ValueError):
                 save_private(target, out)
+
+    def test_failed_serialization_removes_only_our_incomplete_worksheet(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private.json"
+            with self.assertRaises(TypeError):
+                save_private(path, {"not_json": object()})
+            self.assertFalse(path.exists())
+
+    def test_fdopen_failure_closes_descriptor_and_cleans_worksheet(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private.json"
+            raw_open, raw_close = os.open, os.close
+            opened = []
+
+            def record_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.regional_typed_human_review_prep.os.open",
+                       side_effect=record_open), patch(
+                    "scripts.regional_typed_human_review_prep.os.fdopen",
+                    side_effect=OSError("synthetic fdopen failure")), patch(
+                    "scripts.regional_typed_human_review_prep.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "synthetic fdopen failure"):
+                    save_private(path, {"private": True})
+            self.assertFalse(path.exists())
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+
+    def test_replaced_worksheet_survives_failed_write(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private.json"
+            independent = Path(folder) / "someone-elses-file.json"
+            independent.write_text("OTHER", encoding="utf-8")
+            raw_close = os.close
+
+            def replace_then_fail(fd, *args, **kwargs):
+                path.unlink()
+                os.link(independent, path)
+                raise OSError("synthetic replaced worksheet")
+
+            with patch("scripts.regional_typed_human_review_prep.os.fdopen",
+                       side_effect=replace_then_fail), patch(
+                    "scripts.regional_typed_human_review_prep.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "synthetic replaced worksheet"):
+                    save_private(path, {"private": True})
+            self.assertEqual(path.read_text(encoding="utf-8"), "OTHER")
+            self.assertEqual(independent.read_text(encoding="utf-8"), "OTHER")
+
+    def test_dangling_symlink_is_never_followed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private.json"
+            victim = Path(folder) / "must-not-be-created.json"
+            path.symlink_to(victim)
+            with self.assertRaises(ValueError):
+                save_private(path, {"private": True})
+            self.assertTrue(path.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_symlink_swap_during_resolve_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private.json"
+            victim = Path(folder) / "must-not-be-created.json"
+            original_resolve = Path.resolve
+
+            def swap(path_obj, *args, **kwargs):
+                if path_obj == path:
+                    path.symlink_to(victim)
+                return original_resolve(path_obj, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True, side_effect=swap):
+                with self.assertRaises(ValueError):
+                    save_private(path, {"private": True})
+            self.assertTrue(path.is_symlink())
+            self.assertFalse(victim.exists())
 
     def test_worksheet_cannot_write_into_repository(self):
         inv, rows = fixture()

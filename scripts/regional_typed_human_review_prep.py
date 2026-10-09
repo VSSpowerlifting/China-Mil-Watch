@@ -22,24 +22,43 @@ from core.regional_weekly_inventory import inspect  # noqa: E402
 
 
 def save_private(path, doc):
-    target = Path(path).expanduser()
-    dest = target.resolve()
+    # Preserve the requested pathname for the exclusive open. Resolving the
+    # leaf here would permit a dangling symlink introduced during preflight.
+    target = Path(path).expanduser().absolute()
+    resolved = target.resolve()
     root = ROOT.resolve()
     if (target.exists() or target.is_symlink() or
-            dest == root or root in dest.parents or
-            not dest.parent.is_dir() or target.parent.is_symlink()):
+            resolved == root or root in resolved.parents or
+            not target.parent.is_dir() or target.parent.is_symlink()):
         raise ValueError("private review worksheet must be a new file outside repo")
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
-    fd = os.open(str(dest), flags, 0o600)
+    fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            fd = None  # The stream now owns this descriptor.
             json.dump(doc, stream, ensure_ascii=False, sort_keys=True,
                       indent=2, allow_nan=False)
             stream.write("\n")
     except BaseException:
-        dest.unlink(missing_ok=True)
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Best-effort rollback: never unlink an observed replacement.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink() and
+                        (current.st_dev, current.st_ino) ==
+                        (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
