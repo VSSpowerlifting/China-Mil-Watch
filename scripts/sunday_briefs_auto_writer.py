@@ -121,7 +121,7 @@ def evidence_prompt(chosen, *, reviewed_synopses=None):
             # Do not expose stored original/translated article bodies through
             # a source-ID selection that was reviewed under a narrower scope.
             note = reviewed_synopses[row["id"]]
-            parts.append("\\n".join((
+            parts.append("\n".join((
                 '<source_record id="{}">'.format(row["id"]),
                 "Desk: {}".format(row["desk_id"]),
                 "Source: {}".format(row["source_name"]),
@@ -370,9 +370,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
     )
     if selected_theme is not None:
         prompt += (
-            "\\nOnly manually reviewed ANALYST SYNOPSES, not original publisher "
+            "\nOnly manually reviewed ANALYST SYNOPSES, not original publisher "
             "article bodies, were provided for this thematic trial. "
-            "Do not quote or treat a synopsis as independently corroborated text.\\n"
+            "Do not quote or treat a synopsis as independently corroborated text.\n"
         )
         prompt += (
             "\n\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\n"
