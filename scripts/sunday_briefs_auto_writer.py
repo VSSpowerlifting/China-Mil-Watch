@@ -44,7 +44,7 @@ CITED_FIELDS = (
 )
 
 
-def choose_evidence(sidecar, *, as_of, db=DB_PATH):
+def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None):
     """Balanced, deterministic evidence selection with an explicit text-availability gate."""
     start = date.fromisoformat(sidecar["week_start"])
     end = date.fromisoformat(sidecar["week_ending"])
@@ -98,6 +98,16 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
         if pair[0]["id"] not in ids:
             chosen.append(pair)
             ids.add(pair[0]["id"])
+    if selected_ids is not None:
+        if (not isinstance(selected_ids, (tuple, list))
+                or not 2 <= len(selected_ids) <= MAX_RECORDS
+                or any(type(i) is not int or i <= 0 for i in selected_ids)
+                or len(set(selected_ids)) != len(selected_ids)):
+            raise ValueError("approved theme requires 2–10 unique numeric source IDs")
+        verified_by_id = {pair[0]["id"]: pair for pair in verified}
+        if not set(selected_ids).issubset(verified_by_id):
+            raise ValueError("approved theme refers to absent, held or source-trail-mismatched full text")
+        chosen = [verified_by_id[i] for i in selected_ids]
     if len({pair[0]["desk_id"] for pair in chosen}) < 2:
         raise ValueError("fewer than two desks with full-text evidence; not safe to generate a cross-desk Brief")
     return chosen
@@ -220,8 +230,25 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
     return manuscript
 
 
-def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
-    chosen = choose_evidence(sidecar, as_of=as_of, db=db)
+def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
+            selected_theme=None):
+    # Optional owner theme guidance is deliberately NOT supplied by Sunday's
+    # scheduled job. Only scripts.regional_sunday_theme_preview verifies the
+    # separate owner HMAC and invokes it for a private no-send rehearsal.
+    if selected_theme is not None:
+        if (not isinstance(selected_theme, dict)
+                or selected_theme.get("permission") !=
+                "private_no_send_themed_sunday_manuscript_trial_only"
+                or selected_theme.get("week_ending") != sidecar.get("week_ending")
+                or as_of != sidecar.get("week_ending")
+                or not isinstance(selected_theme.get("approved_focus"), str)
+                or not 20 <= len(selected_theme["approved_focus"].strip()) <= 1000
+                or not isinstance(selected_theme.get("theme_slug"), str)):
+            raise ValueError("invalid or mismatched private owner theme directive")
+    chosen = choose_evidence(
+        sidecar, as_of=as_of, db=db,
+        selected_ids=(selected_theme["selected_source_ids"]
+                      if selected_theme is not None else None))
     # Research sources supply short, attributed notes rather than scraped
     # source text. They are offered only to THIS private editorial model.
     extra = list(supplemental)
@@ -301,6 +328,18 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
          "none genuinely fits the article's selected theme."
          if extra else "")
     )
+    if selected_theme is not None:
+        prompt += (
+            "\\n\\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\\n"
+            + selected_theme["approved_focus"] +
+            "\\nYou have been given ONLY the editor-selected verified source IDs "
+            "for this provisional focus. Build one coherent manuscript around "
+            "the supported portions of this direction, not around unrelated "
+            "desk items. If evidence fails to support the thesis, narrow it "
+            "explicitly or flag that failure in editorial_questions. "
+            "Do not claim source review amounts to a publishing decision. "
+            "No public one-desk exception is granted here.\\n"
+        )
     schema = writing_schema(allowed_ids, supplemental_ids=extra_ids)
     for attempt in range(2):
         # Only a mechanically invalid output earns one bounded regeneration.
@@ -344,6 +383,11 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
             # the model. Record that exact allowlist for truthful triage.
             # Never ask the model to generate or modify this accounting.
             validated["_model_offered_production_ids"] = allowed_ids
+            if selected_theme is not None:
+                # Program-owned provenance, not an LLM authorization claim.
+                validated["_private_owner_selected_theme_slug"] = selected_theme["theme_slug"]
+                validated["_private_owner_selected_production_ids"] = allowed_ids
+                validated["_private_owner_selected_focus"] = selected_theme["approved_focus"]
             return validated
         except ValueError as exc:
             # Second failure propagates; the caller writes nothing and sends nothing.
