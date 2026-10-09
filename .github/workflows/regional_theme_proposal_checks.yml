@@ -1,0 +1,85 @@
+name: Regional thematic proposal private model contracts
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-editorial-slate-contract-20261008
+      - feat/regional-weekly-evidence-inventory-20261008
+    paths:
+      - core/regional_theme_selector.py
+      - scripts/regional_theme_proposals.py
+      - tests/test_regional_theme_selector.py
+      - docs/REGIONAL_THEME_PROPOSALS.md
+      - .github/workflows/regional_theme_proposal_checks.yml
+      - core/regional_reviewed_evidence.py
+      - core/regional_weekly_inventory.py
+      - core/regional_editorial_slate.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-regional-themes-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-theme-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out read-only proposed code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked database digest
+        id: baseline
+        run: |
+          set -euo pipefail
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline test prerequisites
+        run: python -m pip install -r requirements.txt
+      - name: Validate regional slate, inventory, source review and theme selector
+        run: |
+          python -m unittest -v \
+            tests.test_regional_editorial_slate \
+            tests.test_regional_weekly_inventory \
+            tests.test_regional_reviewed_evidence \
+            tests.test_regional_theme_selector
+      - name: Check no email, publication or automatic model workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          core = Path("core/regional_theme_selector.py").read_text(encoding="utf-8")
+          cli = Path("scripts/regional_theme_proposals.py").read_text(encoding="utf-8")
+          workflow = Path(".github/workflows/regional_theme_proposal_checks.yml").read_text(encoding="utf-8")
+          assert "smtplib" not in core + cli
+          assert "send_email(" not in core + cli
+          assert "publication_authorized\": False" in core
+          assert "allow_model=False" in core
+          assert "--allow-private-paid-model" in cli
+          assert "if not sys.stdin.isatty()" in cli
+          # Avoid self-matching these guard strings in the assertion code.
+          # Concatenation keeps the forbidden literal out of this workflow.
+          forbidden = ("ANTHROPIC" + "_API_KEY", "  " + "schedule:",
+                       "actions/" + "upload-artifact", "git " + "push")
+          assert all(value not in workflow for value in forbidden)
+          print("Explicit private model authorization; no delivery/deployment coupling")
+          PY
+      - name: Preserve production source and rendered archive
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "No production database, output or sidecar changes"
