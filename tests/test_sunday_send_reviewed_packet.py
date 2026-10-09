@@ -191,7 +191,7 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
             with self.assertRaisesRegex(ReviewedHandoffRefused, "symlink"):
                 validate_file(link, WEEK, now=SUNDAY)
             invalid = Path(folder) / "invalid.txt"
-            invalid.write_bytes(b"\\xff" * 20)
+            invalid.write_bytes(b"\xff" * 20)
             with self.assertRaises(ReviewedHandoffRefused):
                 validate_file(invalid, WEEK, now=SUNDAY)
             oversize = Path(folder) / "huge.txt"
