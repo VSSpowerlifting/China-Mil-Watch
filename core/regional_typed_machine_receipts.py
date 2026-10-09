@@ -61,7 +61,7 @@ def _hold_index(holds):
     return by_id
 
 
-def reconcile_machine_receipts(holds, japan=None, vietnam_queue=None):
+def reconcile_machine_receipts(holds, japan=None, vietnam_queues=None):
     """Compare separately verified history to exact held ID/version fingerprints.
 
     A queue digest protects queue consistency, NOT source authenticity:
@@ -74,8 +74,11 @@ def reconcile_machine_receipts(holds, japan=None, vietnam_queue=None):
     japan_held = {i: x for i, x in indexed.items() if x["desk"] == "japan"}
     vietnam_held = {i: x for i, x in indexed.items() if x["desk"] == "vietnam"}
     need((japan is None or isinstance(japan, dict))
-         and (vietnam_queue is None or isinstance(vietnam_queue, dict)),
-         "machine receipts must be validated JSON objects")
+         and (vietnam_queues is None or
+              (isinstance(vietnam_queues, list) and
+               len(vietnam_queues) <= 4 and
+               all(isinstance(q, dict) for q in vietnam_queues))),
+         "machine receipts must be bounded validated JSON objects")
     if japan is not None:
         need(japan.get("schema") == JAPAN
              and japan.get("week_ending") == week
@@ -133,27 +136,38 @@ def reconcile_machine_receipts(holds, japan=None, vietnam_queue=None):
                        "machine_reconciliation": "independent_machine_receipt_missing",
                        "human_original_or_reuse_review_pending": True,
                        "eligible_for_regional_model": False} for ident in japan_held)
-    if vietnam_queue is not None:
-        need(vietnam_queue.get("schema") == VIETNAM
-             and len(vietnam_held) <= 5,
+    # A single reporting week may contain multiple historical MPS commit
+    # pins. The Oct10 packet has TWO distinct commits: the Oct5 notes
+    # use 46f6..., while the Oct7 Australia note uses c7c13....
+    # Never silently treat one aggregate queue as attesting both snapshots.
+    queue_by_commit = {}
+    for queue in vietnam_queues or []:
+        need(queue.get("schema") == VIETNAM and len(vietnam_held) <= 5,
              "not the bounded foreign-affairs ministry research queue")
         try:
-            candidates = verified_queue(vietnam_queue)
+            records = verified_queue(queue)
         except (ValueError, TypeError, KeyError) as exc:
             raise MachineReceiptError("Vietnam queue checksum/source contract failed") from exc
-        queue_commit = vietnam_queue["state_commit"]
+        commit = queue["state_commit"]
+        need(commit not in queue_by_commit
+             and commit in {h["state_commit"] for h in vietnam_held.values()},
+             "duplicated or unrelated Vietnam state-commit receipt")
         by_identity = {}
-        for record in candidates:
-            ident = record.get("source_identity")
+        for row in records:
+            ident = row.get("source_identity")
             need(isinstance(ident, str) and ident not in by_identity,
-                 "malformed or duplicate Vietnam source identity")
-            by_identity[ident] = record
-        for ident, hold in vietnam_held.items():
-            match = re.fullmatch(r"VN-MPS-([1-9][0-9]{9})", ident)
-            need(match is not None, "unknown Vietnam typed ID family")
-            entry = by_identity.get("mps-vi:" + match.group(1))
+                 "malformed or duplicate Vietnam queue identity")
+            by_identity[ident] = row
+        queue_by_commit[commit] = by_identity
+    for ident, hold in vietnam_held.items():
+        match = re.fullmatch(r"VN-MPS-([1-9][0-9]{9})", ident)
+        need(match is not None, "unknown Vietnam typed ID family")
+        snapshot = queue_by_commit.get(hold["state_commit"])
+        if snapshot is None:
+            level = "exact_historical_commit_review_queue_not_supplied"
+        else:
+            entry = snapshot.get("mps-vi:" + match.group(1))
             need(entry is not None
-                 and queue_commit == hold["state_commit"]
                  and entry.get("published_date") == hold["published_date"]
                  and entry.get("content_sha256") == hold["source_content_sha256"]
                  and isinstance(entry.get("canonical_url"), str)
@@ -162,21 +176,16 @@ def reconcile_machine_receipts(holds, japan=None, vietnam_queue=None):
                  and entry.get("human_source_reviewed") is False
                  and entry.get("reuse_rights_reviewed") is False
                  and entry.get("production_publication_authorized") is False,
-                 "Vietnam queue record is missing, stale, or falsely approved")
-            kind = ("queue_version_machine_eligible_not_human_approved"
-                    if entry.get("machine_review_candidate") is True
-                    and entry.get("machine_blockers") == [] and
-                    entry.get("body_status") == "text"
-                    else "queue_version_machine_held")
-            result.append({"id": ident, "desk": "vietnam",
-                           "machine_reconciliation": kind,
-                           "human_original_or_reuse_review_pending": True,
-                           "eligible_for_regional_model": False})
-    else:
-        result.extend({"id": ident, "desk": "vietnam",
-                       "machine_reconciliation": "independent_machine_receipt_missing",
+                 "Vietnam queue source is absent, stale or falsely approved")
+            level = ("queue_version_machine_eligible_not_human_approved"
+                     if entry.get("machine_review_candidate") is True
+                     and entry.get("machine_blockers") == []
+                     and entry.get("body_status") == "text"
+                     else "queue_version_machine_held")
+        result.append({"id": ident, "desk": "vietnam",
+                       "machine_reconciliation": level,
                        "human_original_or_reuse_review_pending": True,
-                       "eligible_for_regional_model": False} for ident in vietnam_held)
+                       "eligible_for_regional_model": False})
     result.sort(key=lambda x: (x["desk"], x["id"]))
     need(len(result) == len(indexed), "machine receipt did not account for every hold")
     return {
@@ -185,7 +194,7 @@ def reconcile_machine_receipts(holds, japan=None, vietnam_queue=None):
         "regional_inventory_digest_sha256": holds["source_metadata_digest_sha256"],
         "typed_hold_roster_sha256": holds["typed_research_roster_sha256"],
         "japan_attestation_supplied": japan is not None,
-        "vietnam_queue_supplied": vietnam_queue is not None,
+        "vietnam_queue_commits_supplied": sorted(queue_by_commit),
         "items": result,
         "original_publisher_current_version_not_proven": True,
         "historical_archive_is_not_source_reuse_permission": True,
