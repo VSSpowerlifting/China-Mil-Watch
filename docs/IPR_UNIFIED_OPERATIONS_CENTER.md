@@ -29,9 +29,9 @@ python scripts/operations_center_unified.py \
   --html /tmp/ipr-unified-with-queue.html
 ```
 
-This executes the existing \`audit_analysis_queue_by_source.snapshot\` read-only
+This executes the existing `audit_analysis_queue_by_source.snapshot` read-only
 scratch-copy audit against the specified database, and gives the joined section
-a distinct \`stored_analysis_queue_evidence.schema=ipr-operations-stored-queue-evidence/1\`.
+a distinct `stored_analysis_queue_evidence.schema=ipr-operations-stored-queue-evidence/1`.
 The section includes article totals, Daily-model-eligible unscored/pending counts,
 separately held-out desks such as Singapore, paused/unknown states, per-source
 breakdowns, UTC audit time, live backlog cutoff and the input SQLite SHA-256.
@@ -39,7 +39,7 @@ breakdowns, UTC audit time, live backlog cutoff and the input SQLite SHA-256.
 **Provenance boundary:** the entire view describes a **copied local tracked
 SQLite file**, not authenticated live production, a GitHub Actions success,
 upcoming intake, guaranteed model throughput, model spending authorization,
-site publication readiness or editor delivery. \`--as-of\` is a New York
+site publication readiness or editor delivery. `--as-of` is a New York
 display date, **not** a historical database time machine. The optional queue
 audit uses its actual UTC execution timestamp and refuses contradictory source
 totals, unsupported authority flags and database bytes changing between the
