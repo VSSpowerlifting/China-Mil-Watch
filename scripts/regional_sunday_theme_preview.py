@@ -35,11 +35,13 @@ CONFIRM_MODEL = "I AUTHORIZE ONE PRIVATE THEMATIC MANUSCRIPT MODEL CALL"
 
 
 def _out_text(path, content):
-    target = Path(path).expanduser()
+    # Resolve only for the repository boundary, not the exclusive open:
+    # a symlink substituted after the initial check must remain an EEXIST.
+    target = Path(path).expanduser().absolute()
     if target.is_symlink() or target.exists():
         raise ValueError("private manuscript output must be a new file")
-    target = target.resolve()
-    if target == ROOT.resolve() or ROOT.resolve() in target.parents:
+    resolved = target.resolve()
+    if resolved == ROOT.resolve() or ROOT.resolve() in resolved.parents:
         raise ValueError("private manuscript cannot be written in the repository")
     if not target.parent.is_dir():
         raise ValueError("private output directory must already exist")
@@ -47,11 +49,29 @@ def _out_text(path, content):
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            fd = None  # The text stream now owns the descriptor.
             stream.write(content)
     except BaseException:
-        target.unlink(missing_ok=True)
+        # If fdopen itself failed, the original raw descriptor is still ours.
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Never delete an output path another process replaced mid-write.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink()
+                        and (current.st_dev, current.st_ino) ==
+                            (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 

@@ -5,6 +5,7 @@ import copy
 import json
 import hashlib
 import json
+import os
 import tempfile
 import unittest
 from contextlib import nullcontext
@@ -507,6 +508,87 @@ class ThemeSundayHandoffTests(unittest.TestCase):
             self.assertEqual(dest.stat().st_mode & 0o777, 0o600)
             with self.assertRaises(ValueError):
                 _out_text(dest, "must not overwrite")
+
+    def test_private_output_encoding_error_removes_only_our_file(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "unsent.txt"
+            with self.assertRaises(UnicodeEncodeError):
+                _out_text(target, "invalid surrogate " + chr(0xD800))
+            self.assertFalse(target.exists())
+
+    def test_private_output_fdopen_failure_closes_fd_and_rolls_back(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "unsent.txt"
+            raw_open = os.open
+            raw_close = os.close
+            opened = []
+
+            def record_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.regional_sunday_theme_preview.os.open",
+                       side_effect=record_open), patch(
+                    "scripts.regional_sunday_theme_preview.os.fdopen",
+                    side_effect=OSError("simulated fdopen failure")), patch(
+                    "scripts.regional_sunday_theme_preview.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "simulated fdopen failure"):
+                    _out_text(target, "PRIVATE")
+            self.assertFalse(target.exists())
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+
+    def test_private_output_replaced_path_survives_writer_failure(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "unsent.txt"
+            successor = Path(root) / "someone-elses-file.txt"
+            successor.write_text("UNRELATED", encoding="utf-8")
+            raw_close = os.close
+
+            def replace_then_fail(fd, *args, **kwargs):
+                target.unlink()
+                os.link(successor, target)
+                raise OSError("simulated replaced path")
+
+            with patch("scripts.regional_sunday_theme_preview.os.fdopen",
+                       side_effect=replace_then_fail), patch(
+                    "scripts.regional_sunday_theme_preview.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "simulated replaced path"):
+                    _out_text(target, "PRIVATE")
+            self.assertEqual(target.read_text(encoding="utf-8"), "UNRELATED")
+            self.assertTrue(successor.exists())
+
+    def test_private_output_replaced_with_dangling_symlink_at_resolve(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "unsent.txt"
+            victim = Path(root) / "must-not-create.txt"
+            original_resolve = Path.resolve
+
+            def swap_just_before_resolve(path, *args, **kwargs):
+                if path == target:
+                    target.symlink_to(victim)
+                return original_resolve(path, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True,
+                              side_effect=swap_just_before_resolve):
+                with self.assertRaises(FileExistsError):
+                    _out_text(target, "PRIVATE")
+            self.assertTrue(target.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_private_output_existing_symlink_is_not_modified(self):
+        with tempfile.TemporaryDirectory() as root:
+            original = Path(root) / "another-document.txt"
+            original.write_text("NO CHANGE", encoding="utf-8")
+            target = Path(root) / "unsent.txt"
+            target.symlink_to(original)
+            with self.assertRaisesRegex(ValueError, "new file"):
+                _out_text(target, "PRIVATE")
+            self.assertTrue(target.is_symlink())
+            self.assertEqual(original.read_text(encoding="utf-8"), "NO CHANGE")
 
     def test_sunday_delivery_workflow_does_not_import_theme_module(self):
         workflow = (Path(__file__).resolve().parents[1] /

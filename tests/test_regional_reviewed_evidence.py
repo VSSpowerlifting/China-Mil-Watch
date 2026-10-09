@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from scripts.regional_reviewed_evidence import _out
 from core.regional_reviewed_evidence import (
     ReviewGateError, make_manual_review_template, private_model_packet,
     sign_private_review,
@@ -227,6 +228,68 @@ class SourceReviewGateTests(unittest.TestCase):
         sealed = sign_private_review(d, inventory, SECRET)
         with self.assertRaises(ReviewGateError):
             private_model_packet(inventory, sealed, b"another-secret" + b"Z" * 40)
+
+    def test_private_review_output_refuses_dangling_symlink(self):
+        with tempfile.TemporaryDirectory() as root:
+            dest = Path(root) / "review.json"
+            victim = Path(root) / "must-not-create.json"
+            dest.symlink_to(victim)
+            with self.assertRaisesRegex(ReviewGateError, "must be new"):
+                _out(dest, {"private": True})
+            self.assertTrue(dest.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_private_review_output_failing_fdopen_closes_and_unlinks(self):
+        with tempfile.TemporaryDirectory() as root:
+            dest = Path(root) / "review.json"
+            raw_close = os.close
+            raw_open = os.open
+            captured = []
+
+            def capture_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                captured.append(fd)
+                return fd
+
+            with patch("scripts.regional_reviewed_evidence.os.open",
+                       side_effect=capture_open), patch(
+                    "scripts.regional_reviewed_evidence.os.fdopen",
+                    side_effect=OSError("test fdopen failure")), patch(
+                    "scripts.regional_reviewed_evidence.os.close",
+                    wraps=raw_close) as closed:
+                with self.assertRaisesRegex(OSError, "test fdopen failure"):
+                    _out(dest, {"private": True})
+            self.assertFalse(dest.exists())
+            self.assertEqual(len(captured), 1)
+            closed.assert_called_once_with(captured[0])
+
+    def test_private_review_output_does_not_delete_replaced_path(self):
+        with tempfile.TemporaryDirectory() as root:
+            dest = Path(root) / "review.json"
+            original = Path(root) / "independent-owner-note.txt"
+            original.write_text("OTHER", encoding="utf-8")
+            raw_close = os.close
+
+            def swap_then_fail(fd, *args, **kwargs):
+                dest.unlink()
+                os.link(original, dest)
+                raise OSError("test replaced review output")
+
+            with patch("scripts.regional_reviewed_evidence.os.fdopen",
+                       side_effect=swap_then_fail), patch(
+                    "scripts.regional_reviewed_evidence.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "test replaced review output"):
+                    _out(dest, {"private": True})
+            self.assertEqual(dest.read_text(encoding="utf-8"), "OTHER")
+            self.assertEqual(original.read_text(encoding="utf-8"), "OTHER")
+
+    def test_private_review_output_json_failure_rolls_back(self):
+        with tempfile.TemporaryDirectory() as root:
+            dest = Path(root) / "review.json"
+            with self.assertRaises(TypeError):
+                _out(dest, {"unserializable": object()})
+            self.assertFalse(dest.exists())
 
     def test_coverage_roster_not_a_quota(self):
         inventory = make()

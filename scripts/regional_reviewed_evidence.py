@@ -44,8 +44,11 @@ def _json(path):
 
 
 def _out(path, data):
-    target = Path(path).expanduser().resolve()
-    if target == ROOT.resolve() or ROOT.resolve() in target.parents:
+    # Keep the requested leaf pathname for O_EXCL / O_NOFOLLOW. Resolving
+    # it for the actual open could follow a dangling symlink to a new target.
+    target = Path(path).expanduser().absolute()
+    resolved = target.resolve()
+    if resolved == ROOT.resolve() or ROOT.resolve() in resolved.parents:
         raise ReviewGateError("private review output may not be in the repository")
     if target.exists() or target.is_symlink() or not target.parent.is_dir():
         raise ReviewGateError("private review output must be new in an existing directory")
@@ -53,13 +56,30 @@ def _out(path, data):
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     handle = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(handle)
         with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            handle = None  # The stream owns this descriptor now.
             json.dump(data, stream, ensure_ascii=False, sort_keys=True,
                       indent=2, allow_nan=False)
             stream.write("\n")
     except BaseException:
-        target.unlink(missing_ok=True)
+        if handle is not None:
+            try:
+                os.close(handle)
+            except OSError:
+                pass
+        # Do not erase a file another actor swapped into our output path.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink()
+                        and (current.st_dev, current.st_ino) ==
+                            (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
