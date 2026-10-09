@@ -1,0 +1,82 @@
+name: Stored LLM capacity evidence contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_stored_llm_capacity.py'
+      - 'tests/test_stored_llm_capacity.py'
+      - 'docs/STORED_LLM_CAPACITY_EVIDENCE.md'
+      - '.github/workflows/stored_llm_capacity_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  usage-capacity-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin original DB and usage history before any computation
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/original-db.sha256"
+          sha256sum .github/state/llm_usage.jsonl > "$RUNNER_TEMP/original-usage.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
+      - name: Validate telemetry accounting and fail-closed safety contracts
+        run: python -m unittest tests.test_stored_llm_capacity -v
+      - name: Audit the real tracked model-usage history without model calls
+        run: |
+          set -euo pipefail
+          python scripts/audit_stored_llm_capacity.py \
+            --usage-jsonl .github/state/llm_usage.jsonl \
+            > "$RUNNER_TEMP/stored-capacity.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          r = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                          "stored-capacity.json").read_text())
+          totals = r["totals"]
+          assert r["schema"] == "ipr-stored-llm-capacity-evidence/1"
+          assert sum(d["articles_queued"] for d in r["daily"]) == totals["articles_queued"]
+          assert sum(d["articles_fully_analyzed"] for d in r["daily"]) == \
+                 totals["articles_fully_analyzed"]
+          assert sum(d["failed_calls"] for d in r["daily"]) == totals["failed_calls"]
+          assert sum(t["calls"] for t in r["task_model_rollup"]) == totals["calls"]
+          assert r["run_authenticity_beyond_pinned_input_proven"] is False
+          assert r["matching_actions_jobs_authenticated"] is False
+          assert r["analysis_cap_change_authorized"] is False
+          assert r["model_spend_authorized"] is False
+          assert r["publication_authorized"] is False
+          assert r["model_calls"] == 0 and r["writes"] == 0
+          print("Verified tracked usage history: run receipts=%d from %s through %s" % (
+              r["recorded_run_dates"], r["first_record_date"], r["last_record_date"]))
+          print("Recorded selected tasks=%d, fully analyzed=%d, calls=%d, failed=%d" % (
+              totals["articles_queued"], totals["articles_fully_analyzed"],
+              totals["calls"], totals["failed_calls"]))
+          print("Repository-price estimated cost USD=%.6f (not an invoice)" %
+                r["estimated_cost_usd"])
+          print("Dates without a usage receipt (not proven non-run): %s" %
+                json.dumps(r["calendar_dates_with_no_usage_record"]))
+          for t in r["task_model_rollup"]:
+              print("task=%s model=%s calls=%d failed=%d estimated_usd=%.6f" % (
+                  t["task"], t["model"], t["calls"], t["failed_calls"],
+                  t["estimated_cost_usd"]))
+          PY
+      - name: Verify archive, usage history and output still byte-identical
+        run: |
+          sha256sum -c "$RUNNER_TEMP/original-db.sha256"
+          sha256sum -c "$RUNNER_TEMP/original-usage.sha256"
+          git diff --exit-code -- pla_watch.db .github/state/llm_usage.jsonl output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db .github/state/llm_usage.jsonl output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
