@@ -1,0 +1,88 @@
+name: Private Ops body-readiness evidence contracts
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/operations_center.py'
+      - 'scripts/operations_center_unified.py'
+      - 'tests/test_operations_center_unified.py'
+      - 'docs/OPS_CENTER_DISPATCH_BODY_READINESS.md'
+      - '.github/workflows/ops_dispatch_body_readiness_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ops-body-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin production DB before read-only checks
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/ops-dispatch-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
+      - name: Verify source-pinned optional overlay using synthetic SQLite
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_operations_center_unified -v
+          python -m unittest tests.test_analysis_backlog_triage -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Inspect real tracked database without model calls or site writes
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          set -euo pipefail
+          TODAY_NY=$(TZ=America/New_York date +%F)
+          python scripts/operations_center_unified.py \
+            --db pla_watch.db --as-of "$TODAY_NY" \
+            --include-analysis-queue --include-dispatch-readiness \
+            --json "$RUNNER_TEMP/private-ops-dispatch.json" \
+            --html "$RUNNER_TEMP/private-ops-dispatch.html"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          folder = Path(os.environ["RUNNER_TEMP"])
+          report = json.loads((folder / "private-ops-dispatch.json").read_text())
+          panel = report["stored_analysis_queue_evidence"]
+          ready = panel["model_dispatch_body_readiness"]
+          assert ready["stored_daily_queue_eligible"] == \
+                 ready["body_ready"] + ready["body_withheld_for_source_review"]
+          assert ready["stored_daily_queue_eligible"] == \
+                 panel["stored_daily_queue_eligible"]
+          assert ready["input_file_sha256"] == panel["input_file_sha256"]
+          assert sum(s["body_ready"] for s in ready["sources"]) == ready["body_ready"]
+          assert sum(s["body_withheld"] for s in ready["sources"]) == \
+                 ready["body_withheld_for_source_review"]
+          assert ready["future_workload_authenticated"] is False
+          assert ready["model_spend_authorized"] is False
+          assert ready["source_extraction_verified"] is False
+          assert ready["publication_authorized"] is False
+          assert ready["writes"] == 0 and ready["model_calls"] == 0
+          assert panel["model_spend_authorized"] is False
+          assert report["publication_authorized"] is False
+          html = (folder / "private-ops-dispatch.html").read_text()
+          assert "Model-input body readiness" in html
+          assert "NOT the next Daily run" in html
+          print("Private Ops audited storage/readiness from same DB: stored=%d, "
+                "body-ready=%d, withheld=%d" %
+                (panel["stored_daily_queue_eligible"], ready["body_ready"],
+                 ready["body_withheld_for_source_review"]))
+          PY
+      - name: Verify tracked database and public output never changed
+        run: |
+          sha256sum -c "$RUNNER_TEMP/ops-dispatch-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
