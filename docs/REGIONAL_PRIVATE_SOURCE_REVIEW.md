@@ -55,20 +55,41 @@ to arbitrary CI jobs, LLMs, research packets or any publication tool.
 1. Produce a fresh full-week inventory through
    `scripts/regional_weekly_inventory.py` (which writes its JSON outside the repo).
    Do not begin if its `production_preflight` is a hold.
-2. Independently inspect each chosen original publisher article and the
-   current archived representation, then hand-author a source review docket.
-   Use only selected `production_evidence` IDs; copy exact metadata pins.
-3. In a real interactive terminal, seal it with the owner key:
+2. Explicitly choose the reviewable production record IDs (not all records
+   by default), then generate a **completely unsigned** private template.
+   It fills in source IDs, dates, URLs and content pins but leaves all human
+   review affirmations false and all analyst notes blank:
+
+```bash
+python scripts/regional_reviewed_evidence.py template \\
+  --week-ending 2026-10-10 --as-of 2026-10-10 \\
+  --review-local-day 2026-10-11 \\
+  --ids 42,47 --reviewer "Human reviewer" \\
+  --out /private/unsigned-source-review.json
+```
+
+   IDs `42,47` are **examples**, not a recommendation or assertion that they
+   exist in the current week's eligible source inventory. Replace with actual
+   numeric IDs from the fresh inventory; the template command refuses held,
+   duplicate, nonproduction and unknown IDs.
+3. Independently inspect each chosen original publisher article and the
+   corresponding archived representation. Hand-write a source-attributed
+   synopsis and limitations for each item. Only after conducting each review
+   change its disposition to `privately_reviewed` and the three explicit
+   human check booleans to `true`. Leave anything insufficiently verified
+   unsigned and out of the review packet.
+4. In a real interactive terminal, seal the completed template with the
+   owner key:
 
 ```bash
 python scripts/regional_reviewed_evidence.py seal \\
   --week-ending 2026-10-10 --as-of 2026-10-10 \\
   --review-local-day 2026-10-11 \\
-  --review /private/editor-reviewed-docket.json \\
+  --review /private/completed-source-review.json \\
   --out /private/editor-signed-docket.json
 ```
 
-4. Reinspect fresh SQLite data and verify a synopsis-only preview, using the
+5. Reinspect fresh SQLite data and verify a synopsis-only preview, using the
    **same** owner key without retaining it on disk:
 
 ```bash
