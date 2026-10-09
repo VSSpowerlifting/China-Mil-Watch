@@ -44,8 +44,8 @@ jobs:
               assert fragment not in a
           assert "model_input_authorized" in a
           assert "human_source_review_signed" in a
-          assert "schedule:" not in w
-          assert "upload-artifact" not in w
+          assert "  " + "schedule:" not in w
+          assert "upload" + "-artifact" not in w
           PY
       - name: Prove no production database or published-output mutation
         if: always()
