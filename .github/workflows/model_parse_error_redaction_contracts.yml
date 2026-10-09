@@ -1,0 +1,45 @@
+name: Model parse-error redaction contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'analysis/analyzer.py'
+      - 'tests/test_model_parse_error_redaction.py'
+      - 'docs/MODEL_PARSE_ERROR_REDACTION.md'
+      - '.github/workflows/model_parse_error_redaction_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  parse-error-redaction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin original database and output state
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-before.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install declared dependencies
+        run: pip install -r requirements.txt
+      - name: Verify no malformed model content is logged
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_model_parse_error_redaction -v
+          python -m unittest tests.test_llm_usage_telemetry -v
+      - name: Verify database and public output unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/db-before.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
