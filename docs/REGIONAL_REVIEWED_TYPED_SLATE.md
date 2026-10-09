@@ -54,14 +54,18 @@ exception.
 
 The mixed manual preview now includes the exact SHA-256 of all verified
 reviewed synopsis entries (including source-identifying metadata, wording and
-accuracy limitations) and both distinct owner-review HMAC digests, plus the
-weekly source snapshot and typed HOLD roster hashes. The separately callable
+accuracy limitations), a separate SHA-256 of the **manual thematic candidate
+payload**, and both distinct owner-review HMAC digests, plus the weekly
+source snapshot and typed HOLD roster hashes. The separately callable
 `verify_manual_mixed_preview` **recomputes** the entire candidate preview
 against fresh owner-secret verification, source inventory and current publisher
 capture bytes. An edited thesis, inserted held source, changed analyst synopsis,
 re-sealed owner decision or swapped capture is not silently accepted as the
-same editorial evidence packet. A digest is for replay detection only;
-**it is not a cryptographic signature or an authorization to dispatch**.
+same editorial evidence packet unless all hashes are deliberately recomputed.
+**These digests are non-secret accidental-change checks, not cryptographic
+signatures.** An adversary with edit access can recompute them; future release
+must require a separately owner-signed *editorial theme approval*, and no
+dispatch or publication is authorized by the hashes.
 
 ## Security and rights boundaries
 
