@@ -47,11 +47,29 @@ def _out_text(path, content):
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            fd = None  # The text stream now owns the descriptor.
             stream.write(content)
     except BaseException:
-        target.unlink(missing_ok=True)
+        # If fdopen itself failed, the original raw descriptor is still ours.
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Never delete an output path another process replaced mid-write.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink()
+                        and (current.st_dev, current.st_ino) ==
+                            (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
