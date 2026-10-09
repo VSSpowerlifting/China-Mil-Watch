@@ -77,6 +77,7 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     rows = conn.execute("""
         SELECT a.id, a.passed_relevance, a.analyzed_at, a.processing_state,
                a.scraped_at, a.published_date, a.processing_attempts,
+               a.text_original AS stored_original_body,
                length(trim(COALESCE(a.text_original, ''),
                            ' ' || char(9) || char(10) || char(11) ||
                            char(12) || char(13))) AS body_characters,
@@ -88,6 +89,7 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     queue_totals = Counter()
     lane_totals = Counter()
     stats = Counter()
+    dispatch_counts = Counter()
     source_counts = {}
     samples = {lane: [] for lane in REVIEW_LANES}
     for row in rows:
@@ -109,6 +111,17 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
         counters[lane] += 1
         if bucket in ELIGIBLE:
             counters["daily_eligible"] += 1
+            # The in-run paid queue checks Python str.strip() on the actual
+            # stored original body (see the separate model-dispatch guard).
+            # SQLite's ASCII-only TRIM can label a Unicode-only whitespace
+            # record as 'ready' for *review*, though it is unfit for a model
+            # request. Keep both measurements distinct; do not mutate the
+            # historical triage lanes or hide mismatches.
+            original = row["stored_original_body"]
+            dispatch_ready = isinstance(original, str) and bool(original.strip())
+            status = ("body_ready" if dispatch_ready else "body_withheld")
+            dispatch_counts[status] += 1
+            counters["daily_model_dispatch_" + status] += 1
             if not body_nonblank:
                 counters["daily_missing_body"] += 1
                 stats["daily_missing_body"] += 1
@@ -144,6 +157,11 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     )
     require(sum(lane_totals[x] for x in daily_lanes) ==
             base["stored_daily_queue_eligible"], "Daily review lanes do not reconcile")
+    require(dispatch_counts["body_ready"] + dispatch_counts["body_withheld"] ==
+            base["stored_daily_queue_eligible"],
+            "model dispatch/body readiness does not reconcile to stored Daily queue")
+    require(dispatch_counts["body_withheld"] >= lane_totals["missing_body_daily"],
+            "model dispatch withheld count misses canonical blank-body records")
     require(lane_totals["held_desk_separate_review"] ==
             base["stored_held_out_of_daily"], "held desk totals do not reconcile")
     require(lane_totals["paused_manual_review"] == base["totals"]["paused"] and
@@ -156,12 +174,19 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
             "source_slug": slug,
             "daily_eligible": counts["daily_eligible"],
             "daily_missing_body": counts["daily_missing_body"],
+            "daily_model_dispatch_body_ready": counts["daily_model_dispatch_body_ready"],
+            "daily_model_dispatch_body_withheld": counts["daily_model_dispatch_body_withheld"],
             "daily_has_previous_failures": counts["daily_has_previous_failures"],
             "daily_missing_publication_date": counts["daily_missing_publication_date"],
             **{lane: counts[lane] for lane in REVIEW_LANES},
         })
     require(sum(s["daily_eligible"] for s in sources) ==
             base["stored_daily_queue_eligible"], "source totals do not reconcile")
+    require(sum(s["daily_model_dispatch_body_ready"] for s in sources) ==
+            dispatch_counts["body_ready"] and
+            sum(s["daily_model_dispatch_body_withheld"] for s in sources) ==
+            dispatch_counts["body_withheld"],
+            "source-level dispatch readiness does not reconcile")
     return {
         "schema": SCHEMA,
         "snapshot_audit_generated_utc": when.isoformat().replace("+00:00", "Z"),
@@ -169,6 +194,11 @@ def audit(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
         "source_queue_audit_schema": existing.SCHEMA,
         "article_rows": base["article_rows"],
         "stored_daily_queue_eligible": base["stored_daily_queue_eligible"],
+        "stored_daily_model_dispatch_body_ready": dispatch_counts["body_ready"],
+        "stored_daily_model_dispatch_body_withheld": dispatch_counts["body_withheld"],
+        "model_dispatch_body_test_matches_python_strip": True,
+        "model_dispatch_preview_not_future_run_workload": True,
+        "model_dispatch_preview_not_spending_approval": True,
         "stored_held_out_of_daily": base["stored_held_out_of_daily"],
         "stored_paused": base["totals"]["paused"],
         "live_unscored_cutoff_utc_day": base["live_unscored_cutoff_utc_day"],

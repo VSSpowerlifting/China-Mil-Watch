@@ -190,5 +190,62 @@ class TriageContracts(unittest.TestCase):
         self.assertFalse(parsed["publication_authorized"])
 
 
+    def test_body_ready_dispatch_is_separate_from_stored_queue_count(self):
+        self.insert(1, body="Published statement")
+        self.insert(2, body="")
+        self.insert(3, body=" \n\t ")
+        self.insert(4, source=2, body="Held-desk statement")
+        self.insert(5, state="paused", body="Paused statement")
+        report = self.audit()
+        self.assertEqual(report["stored_daily_queue_eligible"], 3)
+        self.assertEqual(report["stored_daily_model_dispatch_body_ready"], 1)
+        self.assertEqual(report["stored_daily_model_dispatch_body_withheld"], 2)
+        self.assertEqual(report["metadata_flags"]["daily_missing_body"], 2)
+        self.assertEqual(report["stored_held_out_of_daily"], 1)
+        self.assertEqual(report["sources"][0]["daily_model_dispatch_body_ready"], 1)
+        self.assertEqual(report["sources"][0]["daily_model_dispatch_body_withheld"], 2)
+        self.assertFalse(report["model_spend_authorized"])
+        self.assertTrue(report["model_dispatch_preview_not_future_run_workload"])
+
+    def test_unicode_only_whitespace_has_no_dispatch_body(self):
+        self.insert(1, body="\u00a0\u2003\n")
+        report = self.audit()
+        # SQLite TRIM is ASCII-only, so prior review-lane counts are kept
+        # unchanged; the stricter new model dispatch contract is separate.
+        self.assertEqual(report["review_lanes"]["ready_recent_unscored"], 1)
+        self.assertEqual(report["metadata_flags"]["daily_missing_body"], 0)
+        self.assertEqual(report["stored_daily_model_dispatch_body_ready"], 0)
+        self.assertEqual(report["stored_daily_model_dispatch_body_withheld"], 1)
+
+    def test_sqlite_blob_cannot_masquerade_as_dispatchable_prose(self):
+        self.insert(1, body=b"Not verified decoded text")
+        report = self.audit()
+        self.assertEqual(report["stored_daily_queue_eligible"], 1)
+        self.assertEqual(report["stored_daily_model_dispatch_body_ready"], 0)
+        self.assertEqual(report["stored_daily_model_dispatch_body_withheld"], 1)
+
+    def test_no_queue_records_produce_no_dispatch_permission(self):
+        self.insert(1, source=2)
+        self.insert(2, state="paused")
+        self.insert(3, passed=0)
+        report = self.audit()
+        self.assertEqual(report["stored_daily_queue_eligible"], 0)
+        self.assertEqual(report["stored_daily_model_dispatch_body_ready"], 0)
+        self.assertEqual(report["stored_daily_model_dispatch_body_withheld"], 0)
+        self.assertFalse(report["model_spend_authorized"])
+        self.assertTrue(report["model_dispatch_preview_not_spending_approval"])
+
+    def test_only_counts_not_body_content_leave_the_audit(self):
+        sentinel = "PRIVATE_SOURCE_BODY_SENTINEL_NOT_IN_OPERATOR_REPORT"
+        self.insert(1, body=sentinel)
+        self.insert(2, body="\u2003")
+        report = self.audit()
+        dumped = json.dumps(report)
+        self.assertNotIn(sentinel, dumped)
+        self.assertNotIn("stored_original_body", dumped)
+        self.assertEqual(report["stored_daily_model_dispatch_body_ready"], 1)
+        self.assertEqual(report["stored_daily_model_dispatch_body_withheld"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

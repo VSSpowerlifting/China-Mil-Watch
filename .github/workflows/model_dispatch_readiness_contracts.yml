@@ -1,0 +1,71 @@
+name: Stored versus body-ready model dispatch contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_analysis_backlog_triage.py'
+      - 'tests/test_analysis_backlog_triage.py'
+      - 'docs/MODEL_DISPATCH_BODY_READINESS.md'
+      - '.github/workflows/model_dispatch_readiness_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-dispatch-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Hash pinned production SQLite without sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/original-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
+      - name: Verify current and new source/body accounting fixtures
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_analysis_backlog_triage -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Audit real tracked SQLite against canonical queue counts
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_backlog_triage.py --db pla_watch.db \
+            > "$RUNNER_TEMP/dispatch-readiness.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          r = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                          "dispatch-readiness.json").read_text())
+          ready = r["stored_daily_model_dispatch_body_ready"]
+          withheld = r["stored_daily_model_dispatch_body_withheld"]
+          eligible = r["stored_daily_queue_eligible"]
+          assert eligible == ready + withheld
+          assert sum(s["daily_model_dispatch_body_ready"] for s in r["sources"]) == ready
+          assert sum(s["daily_model_dispatch_body_withheld"] for s in r["sources"]) == withheld
+          assert r["model_dispatch_body_test_matches_python_strip"] is True
+          assert r["model_dispatch_preview_not_future_run_workload"] is True
+          assert r["model_dispatch_preview_not_spending_approval"] is True
+          assert r["model_spend_authorized"] is False
+          assert r["publication_authorized"] is False
+          assert r["model_calls"] == 0 and r["writes"] == 0
+          print("Tracked SQLite stored Daily-eligible=%d; body-ready=%d; "
+                "body-withheld=%d" % (eligible, ready, withheld))
+          PY
+      - name: Verify source SQLite and published output untouched
+        run: |
+          sha256sum -c "$RUNNER_TEMP/original-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
