@@ -180,6 +180,8 @@ def build_reviewed_mixed_context(
         "typed_owner_decision_seal_sha256": signed_typed_decisions["hmac_sha256"],
         "editorial_slate": empty,
         "reviewed_synopses": list(production) + typed_offered,
+        "reviewed_synopsis_packet_sha256": hashlib.sha256(canonical(
+            list(production) + typed_offered)).hexdigest(),
         "approved_typed_ids": sorted(approved),
         "held_typed_ids": sorted(set(all_holds) - set(approved)),
         "publisher_body_text_included": False,
@@ -242,6 +244,15 @@ def validate_manual_mixed_theme(
         "schema": PREVIEW_SCHEMA,
         "week_ending": context["week_ending"],
         "reviewed_slate_sha256": digest,
+        "reviewed_synopsis_packet_sha256":
+            context["reviewed_synopsis_packet_sha256"],
+        "production_review_seal_sha256":
+            context["production_review_seal_sha256"],
+        "typed_owner_decision_seal_sha256":
+            context["typed_owner_decision_seal_sha256"],
+        "typed_hold_roster_sha256": context["typed_hold_roster_sha256"],
+        "source_metadata_digest_sha256":
+            context["source_metadata_digest_sha256"],
         "proposal": candidate,
         "candidate_analysis": [{
             "slug": row["slug"],
