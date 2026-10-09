@@ -73,8 +73,9 @@ selected lowercase ipr identity and Instrument Serif / Inter / Source Serif 4.
 Paper Ledger remains the reading ground and Night Desk identifies analysis.
 The 2026-10-09 owner ruling requires historical articles to use the current IPR
 shell; historical publication identity survives in provenance and citations,
-not a competing masthead. This integration remains outstanding. Review evidence is
-`docs/FRONTEND_PRODUCTION_2026-10-09.md`. Keep
+not a competing masthead. The consolidation is implemented as a review candidate;
+evidence is `docs/BRIEFS_CONSOLIDATION_2026-10-09.md`, alongside the frontend
+review in `docs/FRONTEND_PRODUCTION_2026-10-09.md`. Keep
 one crimson signal family reserved for analytical meaning.
 No SaaS/dashboard/terminal aesthetics; no box shadows; mono never in prose;
 motion is reveal-based, reduced-motion-safe, transform/opacity only.

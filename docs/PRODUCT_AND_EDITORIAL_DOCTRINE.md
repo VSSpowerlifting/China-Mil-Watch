@@ -225,8 +225,12 @@ Affairs at George Washington University's Elliott School. The retired "incoming
 student" wording survives only as explicitly labelled historical author
 information. Current site navigation must not imply China Mil Watch is active.
 
-**Frontend integration handoff (outstanding).** Apply this correction within
-the active frontend work, using its approved IPR shell, logo and typography.
+**Frontend integration (review candidate).** The historical post renderer now
+uses the shared current IPR shell, logo and typography. Both authoring and
+sidecar re-render paths use `scripts/historical_brief_render.py`; all 14 existing
+weekly article HTML pages have been regenerated. Evidence and the boundary with
+the active frontend work are in `docs/BRIEFS_CONSOLIDATION_2026-10-09.md`.
+When integrating further frontend changes, keep this correction within that shell.
 Do not launch extra public components. Inspect `site/templates/pla-watch-base.html`,
 `site/templates/pla-watch-post.html`, `scripts/rerender_pla_watch.py` and the
 current native Brief template before choosing the smallest shared-shell change.
