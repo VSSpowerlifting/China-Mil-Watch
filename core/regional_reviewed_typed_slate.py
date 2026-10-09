@@ -268,3 +268,34 @@ def validate_manual_mixed_theme(
         "editor_email_authorized": False,
         "publication_authorized": False,
     }
+
+
+def verify_manual_mixed_preview(
+        preview, inventory, signed_production_review, production_key,
+        typed_research_rows, signed_typed_decisions, typed_key,
+        *, japan_machine_receipt=None, vietnam_queues=None,
+        current_official_captures=None):
+    """Reconstruct the complete manual preview from *fresh* signed evidence.
+
+    A previous preview file/dict, hash or signature marker alone is never
+    an admission authority. No source body, model, SMTP or publication.
+    """
+    need(isinstance(preview, dict) and preview.get("schema") == PREVIEW_SCHEMA,
+         "unexpected mixed manual preview schema")
+    slate = preview.get("proposal")
+    need(isinstance(slate, dict),
+         "untrusted manual preview missing source-grounded proposal")
+    candidate = {key: slate.get(key) for key in (
+        "candidates", "provisional_lead", "lead_rationale")}
+    rebuilt = validate_manual_mixed_theme(
+        candidate, inventory, signed_production_review, production_key,
+        typed_research_rows, signed_typed_decisions, typed_key,
+        japan_machine_receipt=japan_machine_receipt,
+        vietnam_queues=vietnam_queues,
+        current_official_captures=current_official_captures)
+    try:
+        need(canonical(rebuilt) == canonical(preview),
+             "manual preview or signed source synopsis provenance has changed")
+    except (ValueError, TypeError) as exc:
+        raise ReviewedTypedSlateError("malformed or stale mixed manual preview") from exc
+    return rebuilt
