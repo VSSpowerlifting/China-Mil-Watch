@@ -132,7 +132,15 @@ def interpret(receipt):
                     "queue log metrics attached to non-executed pipeline")
         conclusion = item["conclusion"]
         if conclusion == "cancelled":
-            status = "cancelled_execution_extent_unknown"
+            # Preserve the distinction between a cancelled run without job
+            # evidence, and a reviewed job whose pipeline step was skipped.
+            # An operator-supplied skipped step is not authenticated proof
+            # that no other job, dispatch or official publication existed.
+            if (guard["should_run"] is True and
+                all(steps[name] == "skipped" for name in STEP_NAMES)):
+                status = "cancelled_pipeline_step_skipped_candidate"
+            else:
+                status = "cancelled_execution_extent_unknown"
         elif conclusion == "timed_out":
             status = "timed_out_execution_extent_unknown"
         elif conclusion == "failure":
