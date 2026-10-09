@@ -41,6 +41,21 @@ def require_owner_review(*, week_ending, sending, approved_week):
 SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 
 
+
+def require_approved_digest_format(*, week_ending, sending, approved_sha256):
+    """Require the fingerprint setting BEFORE first-pilot LLM or SMTP work."""
+    if type(sending) is not bool:
+        raise OwnerReviewRequired("editor send state must be an explicit boolean")
+    if not sending or week_ending != PILOT_SATURDAY:
+        return False
+    if not isinstance(approved_sha256, str) or not SHA256.fullmatch(approved_sha256):
+        raise OwnerReviewRequired(
+            "Refused before model: Oct10 Dylan delivery requires exact "
+            "lowercase SHA-256 in IPR_SUNDAY_OWNER_REVIEWED_SHA256"
+        )
+    return True
+
+
 def require_exact_reviewed_manuscript(*, week_ending, sending, manuscript_bytes,
                                       approved_sha256):
     """Make pilot editor release specific to the ACTUAL reviewed attachment.
@@ -55,11 +70,9 @@ def require_exact_reviewed_manuscript(*, week_ending, sending, manuscript_bytes,
         return False
     if not isinstance(manuscript_bytes, bytes):
         raise OwnerReviewRequired("original reviewed manuscript bytes required")
-    if not isinstance(approved_sha256, str) or not SHA256.fullmatch(approved_sha256):
-        raise OwnerReviewRequired(
-            "Oct10 Dylan delivery requires exact reviewed manuscript "
-            "SHA-256 in IPR_SUNDAY_OWNER_REVIEWED_SHA256"
-        )
+    require_approved_digest_format(
+        week_ending=week_ending, sending=sending, approved_sha256=approved_sha256,
+    )
     actual = hashlib.sha256(manuscript_bytes).hexdigest()
     if actual != approved_sha256:
         raise OwnerReviewRequired(
