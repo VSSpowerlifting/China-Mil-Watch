@@ -119,7 +119,8 @@ def validate_slate(slate, *, expected_desks=()):
         _fields(row, ("desk", "state", "reason"), "coverage row")
         _slug(row["desk"], "desk")
         _require(row["desk"] not in desks, "duplicate desk coverage")
-        _require(row["state"] in STATES, "unknown coverage state")
+        _require(isinstance(row["state"], str) and row["state"] in STATES,
+                 "unknown coverage state")
         _text(row["reason"], "coverage reason")
         _require("no activity" not in row["reason"].lower() and
                  "institutional silence" not in row["reason"].lower(),
@@ -140,7 +141,8 @@ def validate_slate(slate, *, expected_desks=()):
             "role", "topic_suggestions",
         ), "source")
         _require(item["desk"] in desks, "source from undeclared desk")
-        _require(item["lane"] in LANES and item["role"] in ROLES,
+        _require(isinstance(item["lane"], str) and item["lane"] in LANES and
+                 isinstance(item["role"], str) and item["role"] in ROLES,
                  "invalid source lane or time role")
         _source_id(item)
         ident = item["id"]
@@ -152,6 +154,7 @@ def validate_slate(slate, *, expected_desks=()):
                  "out-of-window or future publication")
         topics = item["topic_suggestions"]
         _require(isinstance(topics, list) and len(topics) <= 12 and
+                 all(isinstance(v, str) for v in topics) and
                  len(set(topics)) == len(topics), "invalid topic suggestions")
         for topic in topics:
             _slug(topic, "provisional topic")
@@ -180,12 +183,13 @@ def validate_slate(slate, *, expected_desks=()):
             _text(item[key], key, 1000)
         ids = item["source_ids"]
         _require(isinstance(ids, list) and bool(ids) and
-                 len(ids) == len(set(ids)) and
                  all(type(i) is int or isinstance(i, str) for i in ids) and
+                 len(ids) == len(set(ids)) and
                  set(ids).issubset(identities) and bool(set(ids) & new_ids),
                  "candidate needs distinct, manifested in-week evidence")
         topics = item["topic_threads"]
         _require(isinstance(topics, list) and len(topics) <= 12 and
+                 all(isinstance(v, str) for v in topics) and
                  len(topics) == len(set(topics)), "invalid related topic threads")
         for topic in topics:
             _slug(topic, "related topic")
