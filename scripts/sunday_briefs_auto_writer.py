@@ -6,6 +6,7 @@ No issue is numbered, approved, published or written to a canonical sidecar.
 """
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 from datetime import date, timedelta
@@ -45,7 +46,8 @@ CITED_FIELDS = (
 )
 
 
-def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None):
+def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None,
+                    selected_pins=None):
     """Balanced, deterministic evidence selection with an explicit text-availability gate."""
     start = date.fromisoformat(sidecar["week_start"])
     end = date.fromisoformat(sidecar["week_ending"])
@@ -105,10 +107,31 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None):
                 or any(type(i) is not int or i <= 0 for i in selected_ids)
                 or len(set(selected_ids)) != len(selected_ids)):
             raise ValueError("approved theme requires 2–10 unique numeric source IDs")
+        if (not isinstance(selected_pins, dict)
+                or set(selected_pins) != set(selected_ids)):
+            raise ValueError("approved theme needs exact reviewed source digest pins")
         verified_by_id = {pair[0]["id"]: pair for pair in verified}
         if not set(selected_ids).issubset(verified_by_id):
             raise ValueError("approved theme refers to absent, held or source-trail-mismatched full text")
+        # Compare the selected SOURCE BYTES (not merely record IDs) against
+        # the HMAC-reviewed regional inventory. The default Sunday writer
+        # remains unchanged; only the owner-controlled themed mode uses pins.
+        for ident in selected_ids:
+            row, body = verified_by_id[ident]
+            actual = {
+                "desk": row["desk_id"],
+                "source_url": row["url"],
+                "published_date": row["published_date"],
+                "stored_text_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
+                "source_name": row["source_name"],
+                "title_original": row["title_original"],
+                "language": row["source_language_tag"],
+            }
+            if selected_pins[ident] != actual:
+                raise ValueError("owner-reviewed source bytes or provenance drifted")
         chosen = [verified_by_id[i] for i in selected_ids]
+    elif selected_pins is not None:
+        raise ValueError("source digest pins cannot alter ordinary Sunday selection")
     if len({pair[0]["desk_id"] for pair in chosen}) < 2:
         raise ValueError("fewer than two desks with full-text evidence; not safe to generate a cross-desk Brief")
     return chosen
@@ -304,7 +327,9 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
     chosen = choose_evidence(
         sidecar, as_of=as_of, db=db,
         selected_ids=(selected_theme["selected_source_ids"]
-                      if selected_theme is not None else None))
+                      if selected_theme is not None else None),
+        selected_pins=(selected_theme.get("reviewed_source_pins")
+                       if selected_theme is not None else None))
     # Research sources supply short, attributed notes rather than scraped
     # source text. They are offered only to THIS private editorial model.
     extra = list(supplemental)
