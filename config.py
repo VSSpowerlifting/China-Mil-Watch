@@ -57,6 +57,14 @@ RELEVANCE_THRESHOLD: float = 0.60      # LLM confidence score; articles below th
 # Full analysis (translation, summary, categorization) always uses ANALYSIS_MODEL.
 RELEVANCE_MODEL: str = os.environ.get("RELEVANCE_MODEL", "claude-haiku-4-5-20251001")
 
+# Explicitly disabled unless an owner opts into an approved live experiment.
+# The existing text/JSON relevance request remains the production default;
+# enabling this sends a forced tool-use response instead and may change token
+# overhead. Review usage-telemetry evidence before any scheduled enablement.
+RELEVANCE_TOOL_OUTPUT_ENABLED: bool = (
+    os.environ.get("RELEVANCE_TOOL_OUTPUT_ENABLED", "0") == "1"
+)
+
 # ANALYSIS_MODEL: used for translation, summarization, and categorization.
 # If the API returns a model-not-found error, verify the current ID at
 # https://docs.anthropic.com/en/docs/about-claude/models
