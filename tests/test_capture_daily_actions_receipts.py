@@ -163,6 +163,18 @@ class CaptureDailyActions(unittest.TestCase):
         with self.assertRaisesRegex(grab.CaptureError, "duplicated Daily"):
             grab.capture(DAY, fixture(rows))
 
+    def test_rerun_requires_attempt_specific_job_provenance(self):
+        row = run()
+        row["run_attempt"] = 2
+        fetch = fixture([row], jobs={row["id"]: [job()]})
+        with self.assertRaisesRegex(grab.CaptureError,
+                                    "attempt-specific job provenance"):
+            grab.capture(DAY, fetch)
+        self.assertEqual(
+            [path for path, _ in fetch.seen],
+            [grab.WORKFLOW_RUNS],
+            "must refuse rerun before requesting potentially wrong jobs")
+
     def test_incomplete_or_wrong_workflow_refused(self):
         for patch in ({"status": "in_progress"}, {"name": "Singapore Shadow Collection"},
                       {"event": "push"}, {"run_attempt": 0},
