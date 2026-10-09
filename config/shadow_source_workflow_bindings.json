@@ -1,0 +1,134 @@
+{
+  "schema": "ipr-shadow-source-workflow-bindings/1",
+  "status": "declaration_only_not_live_evidence",
+  "sources": [
+    {
+      "manifest": "shadow/id_kemhan/manifest.json",
+      "source_slug": "id_kemhan_news",
+      "state_branch": "shadow/indonesia-kemhan",
+      "workflow": ".github/workflows/indonesia_korea_shadow.yml",
+      "cron": "17 17 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/jp_jcg/manifest.json",
+      "source_slug": "jp_jcg_press_en",
+      "state_branch": "shadow/japan-jcg",
+      "workflow": ".github/workflows/jcg_guarded_daily_shadow.yml",
+      "cron": "13 19 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/jp_mod/manifest.json",
+      "source_slug": "jp_mod_news_ja",
+      "state_branch": "shadow/jp-mod",
+      "workflow": ".github/workflows/japan_shadow.yml",
+      "cron": "40 22 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/jp_mod/manifest.json",
+      "source_slug": "jp_mod_siteupdate_ja",
+      "state_branch": "shadow/jp-mod",
+      "workflow": ".github/workflows/japan_shadow.yml",
+      "cron": "40 22 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/jp_mod/manifest.json",
+      "source_slug": "jp_joint_staff_en",
+      "state_branch": "shadow/jp-mod",
+      "workflow": ".github/workflows/japan_shadow.yml",
+      "cron": "40 22 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/jp_mod/manifest.json",
+      "source_slug": "jp_mod_press_en",
+      "state_branch": "shadow/jp-mod",
+      "workflow": ".github/workflows/japan_shadow.yml",
+      "cron": "40 22 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/kr_policy_briefing/manifest.json",
+      "source_slug": "kr_policy_mnd_releases",
+      "state_branch": "shadow/korea-policy-briefing",
+      "workflow": ".github/workflows/indonesia_korea_shadow.yml",
+      "cron": "47 17 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/ph_afp/manifest.json",
+      "source_slug": "ph_afp_articles",
+      "state_branch": "shadow/ph-afp",
+      "workflow": ".github/workflows/ph_afp_shadow.yml",
+      "cron": "40 6 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/ph_nsc/manifest.json",
+      "source_slug": "ph_nsc_official_statements",
+      "state_branch": "shadow/ph-nsc",
+      "workflow": ".github/workflows/ph_nsc_shadow.yml",
+      "cron": "10 10 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/singapore_mindef/manifest.json",
+      "source_slug": "sg_mindef_releases",
+      "state_branch": "shadow/singapore-mindef",
+      "workflow": ".github/workflows/singapore_shadow.yml",
+      "cron": "10 21 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/us_indopacom/manifest.json",
+      "source_slug": "us_dvids_indopacom",
+      "state_branch": "shadow/us-indopacom",
+      "workflow": ".github/workflows/us_shadow.yml",
+      "cron": null,
+      "trigger": "manual_only"
+    },
+    {
+      "manifest": "shadow/vietnam/manifest.json",
+      "source_slug": "vn_vgp_defense_en",
+      "state_branch": "shadow/vietnam",
+      "workflow": ".github/workflows/vietnam_shadow.yml",
+      "cron": null,
+      "trigger": "manual_only"
+    },
+    {
+      "manifest": "shadow/vietnam_journal/manifest.json",
+      "source_slug": "vn_national_defence_journal_en",
+      "state_branch": null,
+      "workflow": null,
+      "cron": null,
+      "trigger": "research_only"
+    },
+    {
+      "manifest": "shadow/vietnam_ministries/manifest.json",
+      "source_slug": "vn_mps_foreign_affairs_vi",
+      "state_branch": "shadow/vietnam-mps-foreign-affairs",
+      "workflow": ".github/workflows/vietnam_ministry_shadow.yml",
+      "cron": "17 18 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/vietnam_ministries/manifest.json",
+      "source_slug": "vn_moit_energy_vi",
+      "state_branch": "shadow/vietnam-moit-energy",
+      "workflow": ".github/workflows/vietnam_ministry_shadow.yml",
+      "cron": "17 18 * * *",
+      "trigger": "scheduled"
+    },
+    {
+      "manifest": "shadow/vietnam_ministries/manifest.json",
+      "source_slug": "vn_moit_foundational_industry_vi",
+      "state_branch": "shadow/vietnam-moit-foundational-industry",
+      "workflow": ".github/workflows/vietnam_ministry_shadow.yml",
+      "cron": "17 18 * * *",
+      "trigger": "scheduled"
+    }
+  ]
+}
