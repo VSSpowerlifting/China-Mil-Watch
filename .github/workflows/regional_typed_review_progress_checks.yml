@@ -51,7 +51,7 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          (cd "$RUNNER_TEMP" && sha256sum -c typed-review-db.sha) || {
+          sha256sum -c "$RUNNER_TEMP/typed-review-db.sha" || {
             sha256sum pla_watch.db
             exit 1
           }
