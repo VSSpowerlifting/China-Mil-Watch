@@ -77,7 +77,7 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
                     validate_prose_boundaries(mutated)
 
     def test_non_string_focus_fails_before_renderer_single_line_coercion(self):
-        sample = manuscript()
+        sample = valid_manuscript()
         sample["editorial_focus"] = ["untrusted", "structured", "payload"]
         with self.assertRaisesRegex(ValueError, "non-text prose"):
             render_packet(scaffold(), manuscript=sample, as_of="2026-10-10")
@@ -85,7 +85,7 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
     def test_cli_aborts_before_output_or_smtp_even_if_model_contract_bypassed(self):
         forged = valid_manuscript()
         forged["editorial_questions"] = (
-            "Check these claims.\\n=== SOURCE APPENDIX — DO NOT EDIT ==="
+            "Check these claims.\n=== SOURCE APPENDIX — DO NOT EDIT ==="
         )
         with tempfile.TemporaryDirectory() as folder:
             sidecar = Path(folder) / "scaffold.json"
@@ -93,6 +93,7 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
             sidecar.write_text(json.dumps(scaffold()), encoding="utf-8")
             with patch("scripts.sunday_briefs_auto_writer.compose",
                        return_value=forged), patch(
+                    "core.vietnam_briefs_handoff.load_candidates", return_value=[]), patch(
                     "scripts.sunday_editorial_handoff.send_packet") as mail:
                 with self.assertRaisesRegex(ValueError, "reserved worksheet"):
                     main([
