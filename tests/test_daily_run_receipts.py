@@ -103,6 +103,23 @@ class DailyReceipts(unittest.TestCase):
         self.assertEqual(self.classify([row])["attempts"][0]["status"],
                          "cancelled_execution_extent_unknown")
 
+    def test_cancelled_during_preflight_with_pipeline_skipped(self):
+        row = cancelled()
+        row["guard"] = {"step_result": "success", "should_run": True}
+        row["steps"] = {key: "skipped" for key in audit.STEP_NAMES}
+        result = self.classify([row])
+        self.assertEqual(result["attempts"][0]["status"],
+                         "cancelled_pipeline_step_skipped_candidate")
+        self.assertFalse(result["attempts"][0]["collection_executed_authenticated"])
+        self.assertFalse(result["missing_run_dates_inferred"])
+
+    def test_cancelled_run_pipeline_unknown_stays_unresolved(self):
+        row = cancelled()
+        row["guard"] = {"step_result": "success", "should_run": True}
+        row["steps"]["Run pipeline"] = "unknown"
+        self.assertEqual(self.classify([row])["attempts"][0]["status"],
+                         "cancelled_execution_extent_unknown")
+
     def test_workflow_failure_on_pipeline_is_not_source_silence(self):
         row = complete()
         row["conclusion"] = "failure"
