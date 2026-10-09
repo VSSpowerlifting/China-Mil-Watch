@@ -68,10 +68,15 @@ Dates older than the bounded historical review window are refused.
 - The command defaults to **no-send**. Sending requires both `--send` and
   `--confirm-owner-reviewed`, matching exact-week/digest approvals and an
   eligible reporting Saturday. There is no scheduled action for this tool.
-- An actual manual delivery also refuses `IPR_EDITOR_DELIVERY_ENABLED=true`
-  (the old recurring Friday service) and requires that `IPR_PREVIEW_TO`
-  be a configured owner address **different** from `IPR_EDITOR_TO`.
-  The script does not configure recipients or disable any workflow.
+- An actual manual delivery also refuses local
+  `IPR_EDITOR_DELIVERY_ENABLED=true` (old Friday service) or
+  `IPR_SUNDAY_EDITOR_DELIVERY_ENABLED=true` (scheduled Sunday service), and
+  requires that `IPR_PREVIEW_TO` be a configured owner address **different**
+  from `IPR_EDITOR_TO`. This local tool cannot inspect live repository
+  variables: before sending, the operator must separately confirm **both**
+  GitHub Actions scheduled-delivery settings are disabled. Local unset flags
+  are **not proof** that remote scheduling is disabled. The script does not
+  configure recipients or disable any workflow.
 - The new wrapper uses IPR's existing `send_packet`, including its separate
   recipient check, SMTP credential validation and first-pilot owner/digest
   controls once #262 merges. The direct wrapper does **not** turn on scheduled
