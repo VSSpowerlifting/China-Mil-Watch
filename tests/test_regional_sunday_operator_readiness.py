@@ -108,7 +108,7 @@ class RegionalSundayOperatorTests(unittest.TestCase):
         changed["production_preflight"] = (
             "candidate_for_no_send_model_preview_not_approved")
         changed["unmet_production_gates"] = []
-        with self.assertRaisesRegex(OperatorReadinessError, "partial"):
+        with self.assertRaisesRegex(OperatorReadinessError, "before Sunday"):
             summarize(changed)
 
     def test_mismatched_held_desk_count_cannot_hide_in_valid_digest(self):
