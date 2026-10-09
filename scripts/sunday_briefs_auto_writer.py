@@ -113,9 +113,29 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None):
     return chosen
 
 
-def evidence_prompt(chosen):
+def evidence_prompt(chosen, *, reviewed_synopses=None):
     parts = []
     for row, body in chosen:
+        if reviewed_synopses is not None:
+            # The thematic-review seal authorizes ANALYST SYNOPSES only.
+            # Do not expose stored original/translated article bodies through
+            # a source-ID selection that was reviewed under a narrower scope.
+            note = reviewed_synopses[row["id"]]
+            parts.append("\\n".join((
+                '<source_record id="{}">'.format(row["id"]),
+                "Desk: {}".format(row["desk_id"]),
+                "Source: {}".format(row["source_name"]),
+                "Publication date: {}".format(row["published_date"]),
+                "Original language: {}".format(row["source_language_tag"]),
+                "Title: {}".format(row["title_original"]),
+                "Publisher URL: {}".format(row["url"]),
+                "EDITOR-REVIEWED ANALYST SYNOPSIS (not article text, not a quote):",
+                note["analyst_synopsis"],
+                "SOURCE LIMITATIONS:",
+                note["accuracy_limitations"],
+                "</source_record>",
+            )))
+            continue
         language = row["source_language_tag"]
         used_translation = bool(row["text_english"])
         parts.append("\n".join((
@@ -231,7 +251,7 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
 
 
 def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
-            selected_theme=None):
+            selected_theme=None, reviewed_synopses=None):
     # Optional owner theme guidance is deliberately NOT supplied by Sunday's
     # scheduled job. Only scripts.regional_sunday_theme_preview verifies the
     # separate owner HMAC and invokes it for a private no-send rehearsal.
@@ -266,6 +286,25 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
         # Leave automatic retries disabled to avoid surprise duplicate API costs.
         client = anthropic.Anthropic(api_key=key, timeout=240.0, max_retries=0)
     allowed_ids = sorted({row["id"] for row, _ in chosen})
+    if selected_theme is None:
+        if reviewed_synopses is not None:
+            raise ValueError("reviewed synopses cannot be supplied without an approved theme")
+    else:
+        if (not isinstance(reviewed_synopses, dict)
+                or set(reviewed_synopses) != set(allowed_ids)):
+            raise ValueError("thematic model requires exact owner-reviewed synopsis coverage")
+        for ident in allowed_ids:
+            note = reviewed_synopses[ident]
+            if (not isinstance(note, dict)
+                    or set(note) != {"analyst_synopsis", "accuracy_limitations"}):
+                raise ValueError("untrusted or malformed thematic synopsis")
+            for field, minimum, maximum in (("analyst_synopsis", 65, 650),
+                                             ("accuracy_limitations", 30, 350)):
+                text = note[field]
+                if (not isinstance(text, str) or text != text.strip()
+                        or not minimum <= len(text) <= maximum
+                        or any(ord(ch) < 32 or ord(ch) == 127 for ch in text)):
+                    raise ValueError("unbounded or malformed thematic synopsis: " + field)
     extra_ids = sorted(e["id"] for e in extra)
     if len(set(extra_ids)) != len(extra_ids):
         raise ValueError("duplicate non-production citation ID")
@@ -313,7 +352,8 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
          "across both types." if extra else
          "every section must cite one or more real INTEGER production record "
          "IDs. No numeric citation array may be empty."),
-        ", ".join(str(i) for i in allowed_ids), evidence_prompt(chosen),
+        ", ".join(str(i) for i in allowed_ids),
+        evidence_prompt(chosen, reviewed_synopses=reviewed_synopses),
         ("\n\nBEGIN SUPPLEMENTAL OFFICIAL-SOURCE RESEARCH (UNTRUSTED):\n" +
          research_prompt(extra) +
          "\nEND SUPPLEMENTAL OFFICIAL-SOURCE RESEARCH\n"
@@ -329,6 +369,11 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
          if extra else "")
     )
     if selected_theme is not None:
+        prompt += (
+            "\\nOnly manually reviewed ANALYST SYNOPSES, not original publisher "
+            "article bodies, were provided for this thematic trial. "
+            "Do not quote or treat a synopsis as independently corroborated text.\\n"
+        )
         prompt += (
             "\n\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\n"
             + selected_theme["approved_focus"] +
