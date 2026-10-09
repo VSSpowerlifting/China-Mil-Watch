@@ -1,0 +1,130 @@
+name: Vietnam MPS historical-current shadow version continuity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/vietnam_mps_source_version_drift.py
+      - scripts/vietnam_mps_source_version_drift.py
+      - tests/test_vietnam_mps_source_version_drift.py
+      - docs/VIETNAM_MPS_SHADOW_VERSION_DRIFT.md
+      - .github/workflows/vietnam_mps_shadow_version_drift.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mps-shadow-version-compare-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  readonly-compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Baseline tracked archive
+        id: baseline
+        run: echo "sha=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline requirements
+        run: python -m pip install -r requirements.txt
+      - name: Contract tests — exact two historic epochs, no source admission
+        run: |
+          python -m unittest -v \
+            tests.test_vietnam_mps_source_version_drift \
+            tests.test_regional_typed_machine_receipts \
+            tests.test_vietnam_mps_review_queue
+      - name: Fetch isolated Vietnam MPS Git history read-only
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c credential.helper= clone --single-branch \
+            --branch shadow/vietnam-mps-foreign-affairs \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/mps-shadow-state"
+          git -C "$RUNNER_TEMP/mps-shadow-state" rev-parse \
+            --verify refs/heads/shadow/vietnam-mps-foreign-affairs^{commit} \
+            > "$RUNNER_TEMP/mps-newer-commit"
+          for old in \
+            46f6a0e59e25b03868bf7ad600963d6921ee5124 \
+            c7c13dc7c15d855412afff99db23695dd50e51a5
+          do
+            git -C "$RUNNER_TEMP/mps-shadow-state" \
+              merge-base --is-ancestor "$old" \
+              refs/heads/shadow/vietnam-mps-foreign-affairs
+          done
+      - name: Export validated historical and current shadow queues
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          set -euo pipefail
+          python -m scripts.prepare_vietnam_mps_review_queue \
+            --state-repo "$RUNNER_TEMP/mps-shadow-state" \
+            --state-commit 46f6a0e59e25b03868bf7ad600963d6921ee5124 \
+            --out-dir "$RUNNER_TEMP/mps-oct5" > /dev/null
+          python -m scripts.prepare_vietnam_mps_review_queue \
+            --state-repo "$RUNNER_TEMP/mps-shadow-state" \
+            --state-commit c7c13dc7c15d855412afff99db23695dd50e51a5 \
+            --out-dir "$RUNNER_TEMP/mps-oct7" > /dev/null
+          python -m scripts.prepare_vietnam_mps_review_queue \
+            --state-repo "$RUNNER_TEMP/mps-shadow-state" \
+            --state-commit "$(cat "$RUNNER_TEMP/mps-newer-commit")" \
+            --out-dir "$RUNNER_TEMP/mps-current" > /dev/null
+      - name: Compare three REAL Vietnam MPS archived source versions
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          set -euo pipefail
+          python -m scripts.vietnam_mps_source_version_drift \
+            --historical-queue "$RUNNER_TEMP/mps-oct5/review_queue.json" \
+            --historical-queue "$RUNNER_TEMP/mps-oct7/review_queue.json" \
+            --current-queue "$RUNNER_TEMP/mps-current/review_queue.json" \
+            --out "$RUNNER_TEMP/mps-source-versions.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                               "mps-source-versions.json").read_text())
+          assert report["compared_sources"] == 3
+          assert report["model_input_authorized"] is False
+          assert report["dylan_editor_email_authorized"] is False
+          assert report["publication_authorized"] is False
+          assert report["current_publisher_body_independently_checked"] is False
+          assert report["source_body_or_publisher_url_in_report"] is False
+          print("Historical/current MPS version status:", report["comparison_counts"])
+          for row in report["items"]:
+              print(row["typed_id"], row["version_comparison"],
+                    ",".join(row["changed_fields"]) or "no_changed_fields")
+          PY
+      - name: Verify no model, SMTP, publisher fetching or schedule hook
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          sources = (Path("core/vietnam_mps_source_version_drift.py").read_text()
+                     + Path("scripts/vietnam_mps_source_version_drift.py").read_text())
+          wf = Path(".github/workflows/vietnam_mps_shadow_version_drift.yml").read_text()
+          assert "ANTHROPIC_API_KEY" not in sources
+          assert "smtplib" not in sources
+          assert "send_packet(" not in sources
+          assert "requests.get(" not in sources
+          assert "  " + "schedule:" not in wf
+          assert "actions/" + "upload-artifact" not in wf
+          assert '"publication_authorized": False' in sources
+          assert "O_EXCL" in sources
+          print("Shadow version comparison is NEVER source use/production authorization")
+          PY
+      - name: Preserve production archive and rendered site
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.sha }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
