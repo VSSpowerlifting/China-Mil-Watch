@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import io
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -200,6 +201,85 @@ class MODHTMLObservationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             write_private(Path(__file__).resolve().parents[1] /
                           "DO_NOT_WRITE_MOD_OBSERVATION.json", receipt)
+
+    def test_failed_receipt_serialization_removes_our_partial_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "receipt.json"
+            with self.assertRaises(TypeError):
+                write_private(target, {"invalid": object()})
+            self.assertFalse(target.exists())
+
+    def test_fdopen_failure_closes_raw_descriptor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "receipt.json"
+            raw_open, raw_close = os.open, os.close
+            opened = []
+
+            def count_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.japan_mod_html_observation.os.open",
+                       side_effect=count_open), patch(
+                    "scripts.japan_mod_html_observation.os.fdopen",
+                    side_effect=OSError("simulated fdopen failure")), patch(
+                    "scripts.japan_mod_html_observation.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "simulated fdopen failure"):
+                    write_private(target, {"private": True})
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+            self.assertFalse(target.exists())
+
+    def test_other_writers_replacement_file_is_not_deleted(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "receipt.json"
+            independent = Path(folder) / "independent.txt"
+            independent.write_text("KEEP", encoding="utf-8")
+            raw_close = os.close
+
+            def swap_and_fail(fd, *args, **kwargs):
+                target.unlink()
+                os.link(independent, target)
+                raise OSError("simulated replacement")
+
+            with patch("scripts.japan_mod_html_observation.os.fdopen",
+                       side_effect=swap_and_fail), patch(
+                    "scripts.japan_mod_html_observation.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "simulated replacement"):
+                    write_private(target, {"private": True})
+            self.assertEqual(target.read_text(encoding="utf-8"), "KEEP")
+            self.assertEqual(independent.read_text(encoding="utf-8"), "KEEP")
+
+    def test_existing_dangling_symlink_is_not_followed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "receipt.json"
+            victim = Path(folder) / "untouched.json"
+            target.symlink_to(victim)
+            with self.assertRaises(ValueError):
+                write_private(target, {"private": True})
+            self.assertTrue(target.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_symlink_swap_during_resolve_is_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "receipt.json"
+            victim = Path(folder) / "untouched.json"
+            original_resolve = Path.resolve
+
+            def swap_at_resolve(candidate, *args, **kwargs):
+                if candidate == target:
+                    target.symlink_to(victim)
+                return original_resolve(candidate, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True,
+                              side_effect=swap_at_resolve):
+                with self.assertRaises(ValueError):
+                    write_private(target, {"private": True})
+            self.assertTrue(target.is_symlink())
+            self.assertFalse(victim.exists())
 
     def test_cli_requires_explicit_live_fetch_and_never_sends_model_email(self):
         with tempfile.TemporaryDirectory() as d:

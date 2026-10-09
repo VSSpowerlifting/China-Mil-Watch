@@ -64,24 +64,41 @@ def read_official_html(ident):
 
 
 def write_private(path, result):
-    dest = Path(path).expanduser()
+    # Keep the originally requested leaf for O_EXCL / O_NOFOLLOW.
+    target = Path(path).expanduser().absolute()
     root = ROOT.resolve()
-    absolute = dest.resolve()
-    if (dest.exists() or dest.is_symlink() or
-            absolute == root or root in absolute.parents or
-            not absolute.parent.is_dir() or dest.parent.is_symlink()):
+    resolved = target.resolve()
+    if (target.exists() or target.is_symlink() or
+            resolved == root or root in resolved.parents or
+            not target.parent.is_dir() or target.parent.is_symlink()):
         raise ValueError("private metadata receipt must be new and outside repository")
     flags = os.O_CREAT | os.O_WRONLY | os.O_EXCL
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
-    fd = os.open(str(absolute), flags, 0o600)
+    fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as output:
+            fd = None  # stream now owns the descriptor.
             json.dump(result, output, ensure_ascii=False, sort_keys=True,
                       indent=2, allow_nan=False)
             output.write("\n")
     except BaseException:
-        absolute.unlink(missing_ok=True)
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink() and
+                        (current.st_dev, current.st_ino) ==
+                        (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
