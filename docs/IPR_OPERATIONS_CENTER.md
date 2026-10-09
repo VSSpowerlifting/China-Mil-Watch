@@ -39,6 +39,11 @@ from the tracked production SQLite and its source manifests. A silence verdict
 is a cadence-relative observation, not a proof that a ministry stopped
 publishing. Each count is source-attributed, not a claim of country-wide
 coverage, uniqueness across publishers, or editorial publication readiness.
+The most recent per-source attempt's recorded `is_failure` flag is shown
+separately from the latest article and last success, because a recent article
+must never hide a failed latest attempt. Missing run history is `not observed`,
+not a successful run. Failed latest attempts, overdue silence and unusable
+adapters generate independent review reasons; none qualifies a desk for promotion.
 
 **Shadow source families:** a deterministic inventory of
 `shadow/*/manifest.json` files. These are source-family configurations,
