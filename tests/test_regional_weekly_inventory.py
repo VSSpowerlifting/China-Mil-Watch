@@ -117,6 +117,22 @@ class RegionalInventoryTests(unittest.TestCase):
              "missing_original_title", "missing_source_language"},
         )
 
+    def test_short_english_rendering_cannot_fallback_to_original(self):
+        # Sunday writer uses (text_english or text_original), even when
+        # English is short. This inventory must not claim the record usable.
+        r = make(rows=[
+            row(42, "china", text_english="Brief translation",
+                text_original="Long complete original " * 50),
+            row(47, "singapore")])
+        self.assertEqual({x["id"] for x in r["production_evidence"]}, {47})
+        self.assertEqual(
+            {h["record_id"]: h["reason"] for h in r["held_production_records"]}[42],
+            "insufficient_stored_full_text")
+        self.assertEqual(next(c for c in r["coverage"] if c["desk"] == "china")["state"],
+                         "awaiting_validation")
+        self.assertIn("fewer_than_two_desks_with_usable_source_text",
+                      r["unmet_production_gates"])
+
     def test_distinct_numeric_identity_and_publisher_url(self):
         for rows in ([row(42, "china"), row(42, "singapore")],
                      [row(42, "china"),
