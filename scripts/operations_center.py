@@ -336,6 +336,44 @@ def render_html(snapshot: dict) -> str:
                 table(("NY creation date", "Interpretation", "Count"), summary),
             )
         )
+
+    queue_evidence = snapshot.get("stored_analysis_queue_evidence")
+    queue_section = ""
+    if queue_evidence is not None:
+        rows = sorted(queue_evidence["sources"], key=lambda item: (
+            -item["daily_eligible_stored"], item["desk_id"], item["source_slug"]))
+        # Source/desk counts are historical DB observations, never a model
+        # dispatch plan, output readiness or confirmation of live Actions.
+        queue_section = (
+            "<section><h2>Stored analysis queue — local SQLite snapshot</h2>"
+            "<p class='notice'>Source-attributed, copied SQLite evidence only. "
+            "NOT live production, a future Daily workload, a model-spend "
+            "approval or editorial-release authority. Held-out desks and "
+            "paused records remain outside the China Daily queue.</p>"
+            "<p class='meta'>%s stored articles · %s Daily-eligible "
+            "(%s unscored + %s pending analysis) · %s desk-held · "
+            "%s paused · %s unknown states</p>"
+            "<p class='meta'>Audit UTC: %s · live-window cutoff UTC: %s"
+            " · input DB SHA-256: %s (unsigned local identity)</p>"
+            "%s</section>"
+        ) % (
+            val(queue_evidence["article_rows"]),
+            val(queue_evidence["stored_daily_queue_eligible"]),
+            val(queue_evidence["stored_daily_unscored"]),
+            val(queue_evidence["stored_daily_pending_analysis"]),
+            val(queue_evidence["stored_held_out_of_daily"]),
+            val(queue_evidence["paused_stored"]),
+            val(queue_evidence["unknown_state_stored"]),
+            val(queue_evidence["audit_generated_utc"]),
+            val(queue_evidence["live_unscored_cutoff_utc_day"]),
+            val(queue_evidence["input_file_sha256"]["db"]),
+            table(("Desk", "Source", "Stored Daily eligible",
+                   "Desk-held", "Paused", "Unknown", "All stored rows"),
+                  [(r["desk_id"], r["source_slug"],
+                    r["daily_eligible_stored"], r["held_out_stored"],
+                    r["paused_stored"], r["unknown_state_stored"],
+                    r["rows_total"]) for r in rows]),
+        )
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
     :root{color-scheme:light;--navy:#142a38;--teal:#247e7d;--paper:#f7f5f0}
@@ -370,13 +408,13 @@ def render_html(snapshot: dict) -> str:
             "<section><h2>Shadow source inventory</h2>"
             "<p class='notice'>Configurations only. No live shadow Actions, ledgers, "
             "source-rights reviews, or qualification receipts were checked.</p>%s</section>"
-            "%s%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
+            "%s%s%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
             "</main></body></html>") % (
                 css, val(snapshot["as_of"]), val(snapshot["daily_marker"]["date"]),
                 val(snapshot["daily_marker"]["state"]),
                 val(len(snapshot["source_health_review_flags"])),
                 review, unknown_runs, desks, sources, shadows,
-                overlay_section, daily_section, notes)
+                overlay_section, daily_section, queue_section, notes)
 
 
 def safe_destination(path: Path) -> Path:
