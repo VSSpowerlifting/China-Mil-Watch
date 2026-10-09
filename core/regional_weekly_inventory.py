@@ -21,7 +21,7 @@ from core.brief_editorial_evidence import load_editorial_evidence
 from core.desk_registry import load_registry
 from core.regional_editorial_slate import SCHEMA as SLATE_SCHEMA, validate_slate
 from scripts.reconcile_db import read_only
-from scripts.sunday_corpus_readiness import evaluate, iso_day
+from scripts.sunday_corpus_readiness import ReadinessError, evaluate, iso_day
 from storage.db import get_articles_for_desks
 
 SCHEMA = "ipr-regional-weekly-evidence/1"
@@ -109,8 +109,11 @@ def build_inventory(*, registry, rows, week_ending, as_of, review_day,
     # Audit is necessary, but does NOT assert source completeness or publisher
     # rights. Its verdict is retained distinctly from editorial eligibility.
     snapshot = list(rows)
-    audit = evaluate(rows=snapshot, desks=live, week_ending=week_ending,
-                     as_of=as_of, review_day=review_day, marker=marker)
+    try:
+        audit = evaluate(rows=snapshot, desks=live, week_ending=week_ending,
+                         as_of=as_of, review_day=review_day, marker=marker)
+    except ReadinessError as exc:
+        raise InventoryError("Sunday readiness audit: " + str(exc)) from exc
 
     ids = set()
     urls = set()
