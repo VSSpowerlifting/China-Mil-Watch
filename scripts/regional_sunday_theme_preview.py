@@ -86,11 +86,11 @@ def build_private_manuscript(*, inventory, signed_review, proposal, choice,
     text = render_packet(sidecar, manuscript=manuscript,
                          as_of=inventory["week_ending"])
     prefix = (
-        "IPR PRIVATE OWNER-SELECTED THEMATIC REHEARSAL — NO EDITOR DELIVERY\\n"
-        "Selected focus: " + approved["approved_focus"].replace("\\n", " ") + "\\n"
-        "Selected evidence IDs: " + ", ".join(map(str, chosen)) + "\\n"
-        "Approval scope: private no-send trial only; source claims remain unverified.\\n"
-        "No single-desk exception, issue number, publication, or Dylan delivery.\\n\\n"
+        "IPR PRIVATE OWNER-SELECTED THEMATIC REHEARSAL — NO EDITOR DELIVERY\n"
+        "Selected focus: " + approved["approved_focus"].replace("\n", " ") + "\n"
+        "Selected evidence IDs: " + ", ".join(map(str, chosen)) + "\n"
+        "Approval scope: private no-send trial only; source claims remain unverified.\n"
+        "No single-desk exception, issue number, publication, or Dylan delivery.\n\n"
     )
     return prefix + text
 
