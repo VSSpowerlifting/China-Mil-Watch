@@ -427,8 +427,20 @@ class Analyzer:
             temperature=0.3,
             task=TASK_TRANSLATION,
         )
-        title_en, body_en = str(data.get("title_en", "")), str(data.get("body_en", ""))
-        if not title_en or not body_en:
+        # A forced tool call guarantees a structured *container*, not that each
+        # value respects the advertised string schema. str(None) -> "None"
+        # and whitespace-only text must not be stored as an English translation.
+        # Preserve valid text byte-for-byte; stripping is only for validation.
+        title_en, body_en = data.get("title_en"), data.get("body_en")
+        if (
+            not isinstance(title_en, str)
+            or not isinstance(body_en, str)
+            or not title_en.strip()
+            or not body_en.strip()
+        ):
+            # The API responded and charged tokens. Reclassify this one
+            # translation response as failed; pipeline retry/pause policy stays
+            # entirely unchanged.
             self.usage.mark_failed(TASK_TRANSLATION, ANALYSIS_MODEL)
             raise AnalysisError(
                 "Translation tool returned an empty title_en or body_en"
