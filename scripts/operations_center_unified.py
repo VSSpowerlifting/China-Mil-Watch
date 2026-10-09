@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import copy
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -231,29 +230,9 @@ def build_unified(registry, production_report, shadow_root, marker_path,
 
 
 def write_report_pair(json_path, json_text, html_path, html_text):
-    """Create only fresh external reports; roll back our own files on errors.
-
-    The files are not a transaction against concurrent readers. Rollback
-    prevents an ordinary I/O failure on the second report from leaving a
-    seemingly complete, unmatched first report behind.
-    """
-    created = []
-    try:
-        for path, content in ((json_path, json_text), (html_path, html_text)):
-            with path.open("x", encoding="utf-8") as stream:
-                info = os.fstat(stream.fileno())
-                created.append((path, info.st_dev, info.st_ino))
-                stream.write(content)
-    except OSError:
-        for path, device, inode in reversed(created):
-            try:
-                # Never unlink something another actor swapped into place.
-                info = path.lstat()
-                if not path.is_symlink() and (info.st_dev, info.st_ino) == (device, inode):
-                    path.unlink()
-            except OSError:
-                pass
-        raise
+    """Retain the unified API, sharing the guarded private-report writer."""
+    ops.write_private_reports(((json_path, json_text),
+                               (html_path, html_text)))
 
 
 def main(argv=None):
