@@ -95,6 +95,7 @@ def shadow_inventory(root: Path, registered: dict) -> list:
             "declared_source_count": len(slugs),
             "enabled_in_shadow_manifest": sum(s["enabled"] for s in sources),
             "registry_status": declared.status if declared else None,
+            "registry_binding": ("declared" if declared else "not_in_public_registry"),
             "inventory_role": ("historical_shadow_manifest" if historical
                                else "nonproduction_source_configuration"),
             "live_collection_verified": False,
@@ -234,9 +235,10 @@ def render_html(snapshot: dict) -> str:
           s["last_successful_collection_at"])
          for d in snapshot["desks"] for s in d["production_sources"]])
     shadows = table(
-        ("Source family", "Manifest", "Desk identifier", "Enabled / declared", "Classification",
-         "Live run evidence"),
+        ("Source family", "Manifest", "Desk identifier", "Public roster",
+         "Enabled / declared", "Classification", "Live run evidence"),
         [(s["display_name"], s["manifest"], s["desk_id"],
+          s["registry_status"] or "not in public roster",
           "%s / %s" % (s["enabled_in_shadow_manifest"], s["declared_source_count"]),
           s["inventory_role"], "not inspected")
          for s in snapshot["shadow_source_manifests"]])
@@ -283,8 +285,8 @@ def safe_destination(path: Path) -> Path:
         protected = (ROOT / name).resolve()
         if target == protected or protected in target.parents:
             raise SnapshotError("refusing report write inside protected %s/" % name)
-    if target == (ROOT / "pla_watch.db").resolve():
-        raise SnapshotError("refusing to overwrite the production database")
+    if target == ROOT.resolve() or ROOT.resolve() in target.parents:
+        raise SnapshotError("refusing report write inside the repository; use /tmp or another external directory")
     if path.exists():
         raise SnapshotError("refusing to overwrite an existing report: %s" % path)
     if not path.parent.is_dir():
