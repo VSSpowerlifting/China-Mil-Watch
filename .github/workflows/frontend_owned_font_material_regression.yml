@@ -1,6 +1,9 @@
 name: Frontend owned-font and material regression
 
 on:
+  push:
+    branches:
+      - fix/314-owned-font-fallback-and-png-contracts-20261009
   pull_request:
     branches:
       - main
