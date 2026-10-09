@@ -24,7 +24,7 @@ GitHub's job API exposes the `Scheduling guard` step **result** but not the text
 
 The API does **not** contain pipeline counts of newly archived articles, LLM-eligible queue items, backlog or spending. The exporter **ALWAYS writes `analysis=null`**, even for a completely green pipeline. An operator must separately examine the pinned run's job logs and, if desired, supply verified log interpretations using the offline schema. No log facts are manufactured or scraped by this exporter.
 
-A fetched file is **not a signed attestation**. Although the tool fetches official GitHub API metadata via HTTPS at execution time, the resulting JSON can be edited afterward and has no independently verified signature. The downstream classifier still correctly emits `supplied_actions_export_authenticated=false`, `production_health_certified=false`, `analysis_queue_current_state_verified=false`, `archive_capture_verified=false`, `publisher_silence_established`/absence claims false, and `publication_authorized=false`.
+A fetched file is **not a signed attestation**. Although the tool fetches official GitHub API metadata via HTTPS at execution time, the resulting JSON can be edited afterward and has no independently verified signature. The downstream classifier still correctly emits `supplied_actions_export_authenticated=false`, `production_health_certified=false`, `analysis_queue_current_state_verified=false`, `archive_capture_verified=false`, `no_publications_inferred=false`, and `publication_authorized=false`.
 
 Crucially, since `guard.should_run=null`, a green run with every required step present and marked successful still yields `green_workflow_work_not_established` until the actual guard output has been reviewed. This conservatism is intentional. A queued/cancelled job is not proof a source publisher fell silent or that a historic Daily date had zero publications.
 
@@ -35,6 +35,6 @@ python -m unittest tests.test_capture_daily_actions_receipts -v
 python -m unittest tests.test_daily_run_receipts -v
 ```
 
-Focused CI tests 22 synthetic API importer cases plus the upstream offline-classifier contract and confirms the tracked production SQLite database and `output/` are byte-unchanged. It performs **no real network API calls**, ensuring failures are deterministic and cannot affect production availability. The full repository PR offline/Chromium/render validation suite is still required on final main before merge.
+Focused CI tests 24 synthetic API importer cases plus the upstream offline-classifier contract and confirms the tracked production SQLite database and `output/` are byte-unchanged. It performs **no real network API calls**, ensuring failures are deterministic and cannot affect production availability. The full repository PR offline/Chromium/render validation suite is still required on final main before merge.
 
 **Next phase, out of scope:** authenticated Actions receipt handling with pinned job log retrieval and provenance linking, canonical production throughput metrics and first-party UI integration. Those require explicit trust contracts, bounded access and owner-reviewed promotion; nothing here automatically validates source publication or sends editorial material.
