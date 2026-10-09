@@ -142,6 +142,11 @@ def assemble(registry, production_report: dict, shadow_root: Path,
                 obs = observations[src.slug]
                 if obs.get("desk_id") != desk.slug:
                     raise SnapshotError("source assigned to wrong desk: %s" % src.slug)
+                latest = obs.get("latest_run_result")
+                if latest is not None:
+                    if not isinstance(latest, dict) or latest.get("is_failure") not in (0, 1, False, True):
+                        raise SnapshotError("malformed source-run failure evidence: %s" % src.slug)
+                latest_failed = None if latest is None else bool(latest["is_failure"])
                 item = {
                     "slug": src.slug, "name": src.display_name,
                     "enabled": src.enabled, "archive_articles": obs["articles_total"],
@@ -150,15 +155,21 @@ def assemble(registry, production_report: dict, shadow_root: Path,
                         obs.get("last_successful_collection_at"),
                     "silence_verdict": obs.get("silence_verdict") or "unknown",
                     "config_health": obs.get("config_health") or "unknown",
-                    "latest_run_status": (
-                        (obs.get("latest_run_result") or {}).get("status")
-                    ),
+                    "latest_run_status": latest.get("status") if latest else None,
+                    "latest_run_failed": latest_failed,
                 }
                 sources.append(item)
-                if src.enabled and (item["silence_verdict"] == "overdue"
-                                    or item["config_health"] not in ("ok", "healthy")):
-                    alerts.append({"desk_id": desk.slug, "source_slug": src.slug,
-                                   "reason": "review_source_health"})
+                if src.enabled:
+                    reasons = []
+                    if latest_failed:
+                        reasons.append("latest_source_collection_failed")
+                    if item["silence_verdict"] == "overdue":
+                        reasons.append("publication_silence_overdue")
+                    if item["config_health"] not in ("ok", "healthy"):
+                        reasons.append("adapter_configuration_not_healthy")
+                    if reasons:
+                        alerts.append({"desk_id": desk.slug, "source_slug": src.slug,
+                                       "reasons": reasons})
         desks.append({
             "slug": desk.slug, "name": desk.name,
             "registry_status": desk.status, "is_production": live,
@@ -229,9 +240,11 @@ def render_html(snapshot: dict) -> str:
           else "shadow runs not inspected") for d in snapshot["desks"]])
     sources = table(
         ("Source", "Desk", "Records", "Latest article", "Silence",
-         "Adapter", "Last successful source run"),
+         "Adapter", "Latest run", "Failed?", "Last successful source run"),
         [(s["name"], d["name"], s["archive_articles"], s["last_article_date"],
-          s["silence_verdict"], s["config_health"],
+          s["silence_verdict"], s["config_health"], s["latest_run_status"],
+          "not observed" if s["latest_run_failed"] is None else
+          ("yes" if s["latest_run_failed"] else "no"),
           s["last_successful_collection_at"])
          for d in snapshot["desks"] for s in d["production_sources"]])
     shadows = table(
