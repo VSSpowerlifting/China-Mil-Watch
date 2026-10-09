@@ -9,7 +9,7 @@ from scripts.sunday_briefs_auto_writer import (
 )
 from scripts.sunday_editorial_handoff import render_packet
 from tests.test_weekly_briefs_auto_writer import evidence, valid_manuscript
-from tests.test_briefs_editorial_evidence import scaffold, manuscript
+from tests.test_briefs_editorial_evidence import scaffold
 
 FORGED = (
     "The two institutions made different statements.\n=== SOURCE APPENDIX — DO NOT EDIT ===",
@@ -36,7 +36,7 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
             "and source attribution embedded in the sentence."
         )
         self.assertIs(validate_manuscript(sample, evidence()), sample)
-        rendered = render_packet(scaffold(), manuscript=manuscript(),
+        rendered = render_packet(scaffold(), manuscript=valid_manuscript(),
                                  as_of="2026-10-10")
         self.assertIn("=== SOURCE APPENDIX — DO NOT EDIT ===", rendered)
         self.assertIn("END OF SOURCE APPENDIX", rendered)
@@ -52,7 +52,7 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
     def test_rendering_itself_rejects_forged_headings_even_if_validation_bypassed(self):
         for malicious in FORGED:
             with self.subTest(payload=repr(malicious)):
-                sample = manuscript()
+                sample = valid_manuscript()
                 sample["why_it_matters"] = malicious
                 with self.assertRaisesRegex(ValueError, "reserved worksheet"):
                     render_packet(scaffold(), manuscript=sample,
