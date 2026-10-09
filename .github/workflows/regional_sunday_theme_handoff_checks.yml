@@ -53,7 +53,11 @@ jobs:
             tests.test_briefs_editorial_evidence \
             tests.test_weekly_briefs_sunday_window \
             tests.test_sunday_owner_preview \
-            tests.test_sunday_editorial_source_use
+            tests.test_sunday_editorial_source_use \
+            tests.test_sunday_manuscript_boundaries \
+            tests.test_sunday_before_model_gate \
+            tests.test_japan_sunday_source_attestation \
+            tests.test_vietnam_sunday_roster_attestation
       - name: Assert scheduled Sunday does not take an unapproved theme
         run: |
           python - <<'PY'
