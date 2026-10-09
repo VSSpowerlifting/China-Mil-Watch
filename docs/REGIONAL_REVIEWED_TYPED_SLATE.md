@@ -36,6 +36,11 @@ building the evidence manifest:
    coverage changes to `reviewable` only for this *private* editorial slate,
    expressly **not** for the production desk registry.
 
+The manual candidate validator intentionally takes the original fresh inventory,
+owner-signed review envelopes, machine receipts and operator-provided publisher
+bytes again and **recomputes** the reviewed context on each call. It does not
+accept a previously generated mutable slate as admission proof.
+
 The result is a strictly validated empty thematic slate, with no AI proposed
 themes and no approved lead. The independent
 `validate_manual_mixed_theme(context, candidate)` function can test a
