@@ -15,7 +15,7 @@ permissions:
 jobs:
   offline-transition-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,6 +54,61 @@ jobs:
           assert data["publication_authorized"] is False
           assert data["model_calls"] == 0 and data["writes"] == 0
           print("Canonical real-DB read-only source audit passed")
+          PY
+      - name: Reconcile verified October 6 and 8 historical tracked database blobs
+        run: |
+          set -euo pipefail
+          OLD=6b852f79a11ab7f7202c94a0effa4ccd42b04831
+          NEW=52155974e2aad14a45646257fe70a282314f8c2c
+          # Fetch only the two pinned commits, not a generated baseline.
+          # Partial clone avoids downloading historical rendered output trees.
+          git fetch --no-tags --filter=blob:none --depth=1 origin "$OLD" "$NEW"
+          test "$(git rev-parse "$OLD:pla_watch.db")" = 5e540a30ff6ca45d6639be071d25b1bc47c54929
+          test "$(git rev-parse "$NEW:pla_watch.db")" = 1dc74bb9b4291c37ce5cd41fc87dbd0c18586f1d
+          git show "$OLD:pla_watch.db" > "$RUNNER_TEMP/oct06.db"
+          git show "$NEW:pla_watch.db" > "$RUNNER_TEMP/oct08.db"
+          test ! -e "$RUNNER_TEMP/oct06.db-wal"
+          test ! -e "$RUNNER_TEMP/oct08.db-wal"
+          python scripts/audit_stored_queue_transitions.py \
+            --before-db "$RUNNER_TEMP/oct06.db" \
+            --after-db "$RUNNER_TEMP/oct08.db" \
+            --at-utc 2026-10-09T12:00:00Z \
+            > "$RUNNER_TEMP/oct06-oct08-transition.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                               "oct06-oct08-transition.json").read_text())
+          old, new = report["before"], report["after"]
+          change = report["daily_queue_change"]
+          assert report["schema"] == "ipr-stored-queue-transition/1"
+          assert old["input_sha256"]["db"] != new["input_sha256"]["db"]
+          assert new["daily_eligible"] - old["daily_eligible"] == (
+              change["new_ids_in_daily"] -
+              change["removed_ids_previously_daily"] +
+              change["shared_ids_entered_daily"] -
+              change["shared_ids_left_daily"])
+          assert report["snapshot_ancestry_authenticated"] is False
+          assert report["historical_model_execution_authenticated"] is False
+          assert report["successful_analysis_jobs_inferred"] is False
+          assert report["cost_or_budget_established"] is False
+          assert report["model_spend_authorized"] is False
+          assert report["publication_authorized"] is False
+          assert report["network_requests"] == 0
+          assert report["model_calls"] == 0 and report["writes"] == 0
+          print("October 6 -> 8 stored SQLite transition (not authenticated model throughput):")
+          print("Stored rows: %d -> %d; Daily-eligible: %d -> %d; held-out: %d -> %d" %
+                (old["article_rows"], new["article_rows"],
+                 old["daily_eligible"], new["daily_eligible"],
+                 old["desk_held"], new["desk_held"]))
+          print("Daily delta: %s" % json.dumps(change, sort_keys=True))
+          print("ID continuity: %s" %
+                json.dumps(report["identity_comparison"], sort_keys=True))
+          print("Daily exit categories: %s" %
+                json.dumps(report["shared_daily_exit_destinations"], sort_keys=True))
+          print("Bucket changes: %s" %
+                json.dumps(report["shared_record_bucket_transitions"], sort_keys=True))
           PY
       - name: Prove tracked archive and site output unchanged
         run: |
