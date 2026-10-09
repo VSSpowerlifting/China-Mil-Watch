@@ -194,8 +194,21 @@ def build_reviewed_mixed_context(
     }
 
 
-def validate_manual_mixed_theme(context, proposal):
-    """Validate typed/numeric citations in MANUAL proposals; never call an LLM."""
+def validate_manual_mixed_theme(
+        proposal, inventory, signed_production_review, production_key,
+        typed_research_rows, signed_typed_decisions, typed_key,
+        *, japan_machine_receipt=None, vietnam_queues=None,
+        current_official_captures=None):
+    """Reverify fresh source pins for every manual proposal; never call an LLM.
+
+    The caller may not pass a cached, editable context as proof of admission.
+    """
+    context = build_reviewed_mixed_context(
+        inventory, signed_production_review, production_key,
+        typed_research_rows, signed_typed_decisions, typed_key,
+        japan_machine_receipt=japan_machine_receipt,
+        vietnam_queues=vietnam_queues,
+        current_official_captures=current_official_captures)
     need(isinstance(context, dict) and context.get("schema") == SCHEMA
          and context.get("model_input_authorized") is False
          and context.get("publication_authorized") is False,
