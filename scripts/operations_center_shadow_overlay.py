@@ -169,8 +169,12 @@ def _slot_report(report, binding, snapshot_as_of):
             "slot report has wrong version or source/state identity")
     require(binding["trigger"] == "scheduled",
             "slot report attached to non-scheduled family")
-    require(report.get("cron_utc") ==
-            ":".join(binding["cron"].split(" ")[:2][::-1]).zfill(0) or False,
+    parts = binding["cron"].split(" ")
+    require(len(parts) == 5 and all(part.isdigit() for part in parts[:2]),
+            "binding has no fixed UTC daily hour/minute")
+    minute, hour = int(parts[0]), int(parts[1])
+    require(0 <= minute < 60 and 0 <= hour < 24 and
+            report.get("cron_utc") == ("%02d:%02d" % (hour, minute)),
             "slot report cron differs from source binding")
     require(report.get("supplied_actions_export_authenticated") is False and
             report.get("source_capture_chain_verified_by_this_audit") is False and
@@ -196,7 +200,7 @@ def _slot_report(report, binding, snapshot_as_of):
         require(type(row) is dict and type(row.get("logical_date")) is str and
                 bool(re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", row["logical_date"])) and
                 row["logical_date"] not in seen_dates and
-                row["status"] in SLOT_STATUSES and
+                row.get("status") in SLOT_STATUSES and
                 row.get("new_record_count_is_not_publication_completeness") is True,
                 "malformed/duplicate logical slot or readiness claim")
         seen_dates.add(row["logical_date"])
