@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import date
 from html import escape
@@ -432,6 +433,42 @@ def safe_destination(path: Path) -> Path:
     return path
 
 
+def write_private_reports(outputs):
+    """Exclusively create local owner-only files; undo unmatched reports.
+
+    Callers must validate destinations outside the repository first. Rollback
+    removes only files that still have their original inode identities.
+    This does not provide a two-file atomic transaction to concurrent readers.
+    """
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    created = []
+    try:
+        for path, content in outputs:
+            if path is None:
+                continue
+            fd = os.open(str(path), flags, 0o600)
+            try:
+                info = os.fstat(fd)
+                created.append((path, info.st_dev, info.st_ino))
+                with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                    fd = None  # The text stream now owns the FD.
+                    stream.write(content)
+            finally:
+                if fd is not None:
+                    os.close(fd)
+    except BaseException:
+        for path, device, inode in reversed(created):
+            try:
+                info = path.lstat()
+                if (not path.is_symlink() and
+                        (info.st_dev, info.st_ino) == (device, inode)):
+                    path.unlink()
+            except OSError:
+                pass
+        raise
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=Path(DB_PATH))
@@ -450,10 +487,7 @@ def main(argv=None):
         outputs = ((args.json, json.dumps(snapshot, ensure_ascii=False,
                         indent=2, sort_keys=True) + "\n"),
                    (args.html, render_html(snapshot)))
-        for path, content in outputs:
-            if path:
-                with path.open("x", encoding="utf-8") as stream:
-                    stream.write(content)
+        write_private_reports(outputs)
         if not destinations:
             print(json.dumps(snapshot, ensure_ascii=False, indent=2,
                              sort_keys=True))
