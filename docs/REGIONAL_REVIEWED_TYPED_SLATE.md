@@ -49,6 +49,20 @@ cannot generate a manuscript, select a theme automatically or change owner
 approval status. Single-desk drafts are tagged as requiring a separate public
 exception.
 
+
+## Handoff replay protection
+
+The mixed manual preview now includes the exact SHA-256 of all verified
+reviewed synopsis entries (including source-identifying metadata, wording and
+accuracy limitations) and both distinct owner-review HMAC digests, plus the
+weekly source snapshot and typed HOLD roster hashes. The separately callable
+`verify_manual_mixed_preview` **recomputes** the entire candidate preview
+against fresh owner-secret verification, source inventory and current publisher
+capture bytes. An edited thesis, inserted held source, changed analyst synopsis,
+re-sealed owner decision or swapped capture is not silently accepted as the
+same editorial evidence packet. A digest is for replay detection only;
+**it is not a cryptographic signature or an authorization to dispatch**.
+
 ## Security and rights boundaries
 
 This is a source selection and **human brainstorming** boundary. It never
