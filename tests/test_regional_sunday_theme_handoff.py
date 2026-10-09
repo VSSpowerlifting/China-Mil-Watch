@@ -21,6 +21,7 @@ from scripts.sunday_briefs_auto_writer import choose_evidence, compose
 from tests.test_regional_theme_selector import SECRET, candidate, answer, china_docket
 from tests.test_regional_weekly_inventory import make, row
 from tests.test_weekly_briefs_auto_writer import valid_manuscript, evidence
+from tests.test_weekly_editorial_handoff import draft as friday_fixture
 
 SAT, SUN = "2026-10-10", "2026-10-11"
 
@@ -272,6 +273,64 @@ class ThemeSundayHandoffTests(unittest.TestCase):
                     inventory=inv, signed_review=review,
                     proposal=proposals, choice=choice, secret=SECRET)
             writer.assert_not_called()
+
+    def test_complete_private_manuscript_flow_real_writer_and_renderer_no_network(self):
+        # Exercises signed source review, thematic HMAC, real Sunday composer,
+        # exact stored-body digest checks, and immutable appendix renderer.
+        # The production DB, Claude provider and SMTP are mocked ONLY here.
+        inv, review, proposals = scenario()
+        choice = approve(inv, review, proposals)
+        scaffold = friday_fixture()
+        scaffold["week_start"] = "2026-10-04"
+        scaffold["week_ending"] = SAT
+        id_map = {1: 42, 2: 47}
+        for item in scaffold["source_trail"]:
+            ident = id_map[item["record_id"]]
+            item.update(record_id=ident, date="2026-10-08",
+                        source="Official publisher",
+                        title="An original headline",
+                        title_original="An original headline",
+                        lang="en",
+                        url="https://official.example/" + str(ident))
+        actual_rows = [dict(row(42, "china"), title_english=""),
+                       dict(row(47, "singapore"), title_english="")]
+        by_id = {item["record_id"]: item for item in scaffold["source_trail"]}
+        original = valid_manuscript()
+        for field, ids in original["citations"].items():
+            original["citations"][field] = [id_map[i] for i in ids]
+        record = []
+        response = SimpleNamespace(
+            stop_reason="tool_use",
+            content=[SimpleNamespace(
+                type="tool_use", name="compose_editorial_draft",
+                input=original)],
+        )
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kwargs:
+            (record.append(kwargs), nullcontext(SimpleNamespace(
+                get_final_message=lambda: response)))[1]))
+        with patch("scripts.regional_sunday_theme_preview.prepare_scaffold",
+                   return_value=scaffold), patch(
+                   "scripts.sunday_briefs_auto_writer.read_only",
+                   return_value=nullcontext(None)), patch(
+                   "scripts.sunday_briefs_auto_writer.get_articles_for_desks",
+                   return_value=actual_rows), patch(
+                   "scripts.sunday_briefs_auto_writer.trail_entry",
+                   side_effect=lambda source: by_id[source["id"]]), patch(
+                   "scripts.sunday_editorial_handoff.send_packet") as mail:
+            text = build_private_manuscript(
+                inventory=inv, signed_review=review, proposal=proposals,
+                choice=choice, secret=SECRET, client=fake)
+        self.assertIn("PRIVATE OWNER-SELECTED THEMATIC REHEARSAL", text)
+        self.assertIn("NO EDITOR DELIVERY", text)
+        self.assertIn("source", text.lower())
+        self.assertIn("Record 42", text)
+        self.assertIn("Record 47", text)
+        self.assertEqual(len(record), 1)
+        prompt = record[0]["messages"][0]["content"]
+        self.assertIn("EDITOR-REVIEWED ANALYST SYNOPSIS", prompt)
+        self.assertNotIn("Original reported wording " * 10, prompt)
+        self.assertIn("42, 47", prompt)
+        mail.assert_not_called()
 
     def test_rehearsal_passes_only_signed_synopses_to_composer(self):
         inv, review, proposals = scenario()
