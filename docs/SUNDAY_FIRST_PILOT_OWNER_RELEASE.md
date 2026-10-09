@@ -28,6 +28,27 @@ thematic argument is supportable, and specifically approving **editorial
 handoff**. It is a human acknowledgement, **not independent cryptographic
 proof of the preview or any source-rights authorization**.
 
+**Exact manuscript identity is a separate, stronger requirement.** The first
+October 10 Dylan send also requires GitHub Actions variable
+`IPR_SUNDAY_OWNER_REVIEWED_SHA256` to be the **lowercase 64-character SHA-256**
+of the precise original `.txt` owner-review attachment. The owner-only preview
+email includes that hash for audit. When sending, IPR hashes the exact bytes
+it is about to attach and refuses email unless both the week variable and
+attachment digest match. A changed citation, sentence, appendixed record,
+research caution or model regeneration changes the hash and forces review
+again. This prevents interpreting an approved **week** as approval of a
+different **manuscript**. This is not proof that the owner actually performed
+the human review; only the owner can affirm that fact.
+
+**Operational note:** triggering the automated writer again generates a
+**new draft**, so it should normally fail the exact-file check even after
+the preview has been approved. For this first pilot, the safest editor handoff
+is for the owner to manually forward the **same reviewed attachment** to Dylan,
+rather than ask a second AI run to recreate an already approved text. Do not
+enable automated editorial delivery expecting it to reuse the email attachment;
+the workflow has no persisted private manuscript artifact and will not
+silently treat a different draft as approved.
+
 This exact-edition gate does not itself enable email. The existing
 `IPR_SUNDAY_EDITOR_DELIVERY_ENABLED` master switch and the separate Friday
 service exclusivity gate remain mandatory. It does not alter publisher reuse
@@ -45,13 +66,13 @@ run `sunday_briefs_editorial_handoff.yml` manually with:
 - `allow_historical_send=false`
 
 Owner previews use only the separately configured owner address, never Dylan.
-They are **not** blocked by the pilot owner-reviewed variable, and they do not
-set it. The variable is set manually **after** reviewing the real attachment,
-not by running the workflow or by receiving an email.
+They are **not** blocked by the owner-reviewed week or digest variables and do
+not set either. Both variables can be set only manually after inspecting the
+exact attachment. Never enable either simply because the preview was sent.
 
 If an unreleased send is attempted, `resolve_sunday_handoff` refuses it
 before the model call. The handoff CLI separately rejects `--send` before
-reading research or writing the attachment. Finally, `send_packet` refuses
+reading research or writing the attachment. Finally, `send_packet` validates the exact-reviewed SHA-256 and refuses
 a direct SMTP call even when another caller bypasses the CLI. A historical
 October 10 replay remains subject to the same owner-review requirement plus
 the existing historical-send override.
