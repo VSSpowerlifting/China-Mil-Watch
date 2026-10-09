@@ -244,6 +244,8 @@ def validate_manual_mixed_theme(
         "schema": PREVIEW_SCHEMA,
         "week_ending": context["week_ending"],
         "reviewed_slate_sha256": digest,
+        "manual_theme_payload_sha256": hashlib.sha256(canonical(
+            proposal_copy)).hexdigest(),
         "reviewed_synopsis_packet_sha256":
             context["reviewed_synopsis_packet_sha256"],
         "production_review_seal_sha256":
