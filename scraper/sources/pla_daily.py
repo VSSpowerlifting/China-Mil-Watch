@@ -74,6 +74,7 @@ class PLADailyScraper(BaseScraper):
     def get_article_urls(self) -> list[str]:
         today_str = self.target_date.strftime("%Y-%m-%d")  # e.g. "2026-05-07"
         seen: set[str] = set()
+        ordered_urls: list[str] = []
 
         for section_id, label in _SECTIONS.items():
             listing_url = f"{_BASE}/{section_id}/index.html"
@@ -95,11 +96,15 @@ class PLADailyScraper(BaseScraper):
                     and full_url not in seen
                 ):
                     seen.add(full_url)
+                    ordered_urls.append(full_url)
                     count += 1
 
             self.logger.debug("Section %s: %d today's articles", label, count)
 
-        return list(seen)
+        # Preserve section and on-page order, not Python set/hash iteration.
+        # The caller stores and cap-selects fresh documents in discovery order.
+        # A set remains only the membership guard for cross-section duplicates.
+        return ordered_urls
 
     # ── Article parsing ───────────────────────────────────────────────────────
 
