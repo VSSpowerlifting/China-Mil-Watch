@@ -125,6 +125,7 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertEqual(len(figures), 1)
                 figure = figures[0]
                 self.assertEqual(figure["data-editorial-id"], original["id"])
+                self.assertEqual(figure["aria-label"], "Historical visual context, not evidence")
                 self.assertEqual(figure.img["src"], original["duo"])
                 self.assertEqual(figure.img["alt"], original["alt"])
                 self.assertIn(original["mask_focus"], figure.img["style"])

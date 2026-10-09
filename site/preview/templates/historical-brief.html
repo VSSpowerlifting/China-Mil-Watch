@@ -46,7 +46,7 @@
       <p class="brief-byline">By <span class="byline-name">{{ edition.author_name }}</span></p>
       <p class="historical-provenance">Originally published as {{ edition.series_name }}{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %} under {{ edition.publication }}. Part of <a href="{{ root }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
     </div>
-{% if edition.pw_veil %}    <figure class="historical-veil" data-editorial-id="{{ edition.pw_veil.id }}">
+{% if edition.pw_veil %}    <figure class="historical-veil" data-editorial-id="{{ edition.pw_veil.id }}" aria-label="Historical visual context, not evidence">
       <img src="{{ edition.pw_veil.duo }}" alt="{{ edition.pw_veil.alt }}" style="object-position:{{ edition.pw_veil.mask_focus }}" loading="eager" decoding="async">
       <figcaption>Image: <a href="{{ edition.pw_veil.source_page }}" rel="noopener nofollow">{{ edition.pw_veil.source_id }}</a>{% if edition.pw_veil.subject %} · {{ edition.pw_veil.subject }}{% endif %} · Context, not evidence.</figcaption>
     </figure>
