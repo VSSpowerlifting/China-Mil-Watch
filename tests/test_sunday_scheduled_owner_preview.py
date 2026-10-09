@@ -62,7 +62,7 @@ class ScheduledOwnerPreviewContracts(unittest.TestCase):
         self.assertLess(src.index("Attest Japan research offer"), src.index("Generate source-cited Sunday manuscript"))
         self.assertIn("last_daily_run_date.txt", src)
         self.assertIn("IPR_SUNDAY_OWNER_REVIEWED_SHA256", src)
-        self.assertIn("permissions:\\n  contents: read", src)
+        self.assertIn("permissions:" + chr(10) + "  contents: read", src)
         self.assertNotIn("actions/upload-artifact", src)
         self.assertNotIn("git push", src)
 
