@@ -109,8 +109,10 @@ class SourceReviewGateTests(unittest.TestCase):
             sign_private_review(docket(not_ready), not_ready, SECRET)
 
     def test_unreviewed_and_held_id_cannot_be_signed(self):
+        # Keep a second usable China record so Sunday readiness itself is
+        # green: this must fail specifically on the held ID, not on the week.
         r = make(rows=[row(42, "china", text_original="short"),
-                       row(47, "singapore")])
+                       row(50, "china"), row(47, "singapore")])
         d = docket(r)
         held = d["decisions"][0]
         held["id"] = 42
