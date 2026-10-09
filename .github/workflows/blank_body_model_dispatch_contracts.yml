@@ -1,0 +1,70 @@
+name: No blank-body paid dispatch contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'pipeline.py'
+      - 'tests/test_blank_body_model_dispatch.py'
+      - 'docs/BLANK_BODY_MODEL_DISPATCH_GUARD.md'
+      - '.github/workflows/blank_body_model_dispatch_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-empty-body-dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin tracked SQLite and ensure no journal sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/initial-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Check pure dispatch guard and prior queue contracts offline
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_blank_body_model_dispatch -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+          python -m unittest tests.test_processing_state -v
+      - name: Real stored SQLite cross-check without model execution
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_failure_causes.py --db pla_watch.db \
+            > "$RUNNER_TEMP/stored-blank-bodies.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          r = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                          "stored-blank-bodies.json").read_text())
+          assert r["root_causes_established"] is False
+          assert r["model_calls"] == 0 and r["writes"] == 0
+          assert r["model_spend_authorized"] is False
+          blank = {s["article_id"] for s in
+                   r["samples_by_flag"]["daily_blank_body"]}
+          print("Original tracked SQLite eligible=%d, stored blank-body=%d" %
+                (r["stored_daily_queue_eligible"],
+                 r["totals"]["daily_blank_body"]))
+          print("Recurring Oct 6/8 translation-failure IDs with stored blank body:")
+          for ident in (1856, 1857, 1944):
+              print("article=%d blank_original_body=%s" %
+                    (ident, ident in blank))
+          PY
+      - name: Verify tracked database and public output unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/initial-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
