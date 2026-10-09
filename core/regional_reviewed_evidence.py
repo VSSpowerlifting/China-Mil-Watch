@@ -154,6 +154,50 @@ def _review_payload(unsigned, inventory):
     return sources
 
 
+
+def make_manual_review_template(inventory, record_ids, *, reviewer, reviewed_on):
+    """Prefill exact source pins; every substantive human approval stays FALSE.
+
+    Does not sign, admit research, call a model, or assert publisher checks.
+    Never selects articles for the editor: IDs must be chosen explicitly.
+    """
+    sources = _inventory(inventory)
+    _note(reviewer, "reviewer", 3, 100)
+    day = _iso(reviewed_on)
+    _need(_iso(inventory["week_ending"]) <= day <=
+          _iso(inventory["review_local_day"]),
+          "review template date must fall after week close and by review execution")
+    _need(isinstance(record_ids, list) and 1 <= len(record_ids) <= MAX_SELECTED
+          and all(type(i) is int and i in sources for i in record_ids)
+          and len(set(record_ids)) == len(record_ids),
+          "editor must explicitly select 1..20 distinct reviewable production IDs")
+    decisions = []
+    for ident in record_ids:
+        item = sources[ident]
+        decisions.append({
+            "id": ident,
+            "desk": item["desk"],
+            "source_url": item["source_url"],
+            "published_date": item["published_date"],
+            "stored_text_sha256": item["stored_text_sha256"],
+            "disposition": "awaiting_human_review",
+            "synopsis": "",
+            "limitations": "",
+            "original_language_checked": False,
+            "publisher_version_checked": False,
+            "not_a_quote_or_full_text": False,
+        })
+    return {
+        "schema": REVIEW_SCHEMA,
+        "week_ending": inventory["week_ending"],
+        "source_metadata_digest_sha256": inventory["source_metadata_digest_sha256"],
+        "reviewer": reviewer,
+        "reviewed_on": reviewed_on,
+        "scope": SCOPE,
+        "decisions": decisions,
+    }
+
+
 def sign_private_review(unsigned, inventory, secret):
     """Seal explicit manual decisions, WITHOUT invoking AI or collecting URLs.
 
