@@ -36,10 +36,23 @@ def new_article(q):
     return signed(q)
 
 
+def without_new_australia_note():
+    # The live Oct 7 source is now correctly included in NOTES on main.
+    # Build an intentionally INCOMPLETE catalog to test actionable gaps,
+    # rather than assuming the shared fixture still contains only two notes.
+    notes = copy.deepcopy(NOTES)
+    notes["entries"] = [
+        note for note in notes["entries"]
+        if note["source_identity"] != "mps-vi:1791366010"
+    ]
+    assert len(notes["entries"]) == 2
+    return notes
+
+
 class UnsignedAgendaTests(unittest.TestCase):
     def test_live_third_source_missing_note_is_exact_metadata_only(self):
         original = queue()
-        agenda = build_agenda(new_article(original), NOTES, SAT)
+        agenda = build_agenda(new_article(original), without_new_australia_note(), SAT)
         self.assertEqual(agenda["schema"], SCHEMA)
         self.assertEqual(agenda["in_window_machine_eligible"], 3)
         self.assertEqual(agenda["already_has_matching_private_notes"], 2)
@@ -67,6 +80,17 @@ class UnsignedAgendaTests(unittest.TestCase):
         self.assertNotIn("max_excerpt_chars", str(agenda))
         self.assertNotIn("allow-private-model-bounded-excerpt", str(agenda))
 
+    def test_all_three_current_notes_need_no_source_use_review(self):
+        # Once PR #245 merged, current research includes all three MPS notes;
+        # the agenda must not invent an outstanding human action.
+        agenda = build_agenda(new_article(queue()), NOTES, SAT)
+        self.assertEqual(agenda["in_window_machine_eligible"], 3)
+        self.assertEqual(agenda["already_has_matching_private_notes"], 3)
+        self.assertEqual(agenda["missing_or_stale_source_notes"], 0)
+        self.assertEqual(agenda["source_version_review_leads"], [])
+        self.assertEqual(agenda["automatically_authorized_source_count"], 0)
+        self.assertFalse(agenda["human_source_use_review_completed"])
+
     def test_matching_note_is_not_permission_and_has_no_agenda_row(self):
         agenda = build_agenda(queue(), NOTES, SAT)
         self.assertEqual(agenda["already_has_matching_private_notes"], 2)
@@ -76,7 +100,9 @@ class UnsignedAgendaTests(unittest.TestCase):
 
     def test_missing_and_stale_notes_not_interchangeable(self):
         notes = copy.deepcopy(NOTES)
-        notes["entries"][0]["content_sha256"] = "f" * 64
+        stale = next(note for note in notes["entries"]
+                     if note["source_identity"] == "mps-vi:1791199100")
+        stale["content_sha256"] = "f" * 64
         agenda = build_agenda(queue(), notes, SAT)
         self.assertEqual(agenda["missing_or_stale_source_notes"], 1)
         row = agenda["source_version_review_leads"][0]
@@ -128,7 +154,7 @@ class UnsignedAgendaTests(unittest.TestCase):
             q = new_article(queue())
             output = root / "agenda.json"
             notes = root / "notes.json"
-            notes.write_text(canonical_json(NOTES), encoding="utf-8")
+            notes.write_text(canonical_json(without_new_australia_note()), encoding="utf-8")
             def fake_queue(_repo, _sha, directory):
                 directory.mkdir()
                 (directory / "review_queue.json").write_text(
