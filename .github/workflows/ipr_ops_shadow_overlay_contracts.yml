@@ -32,6 +32,8 @@ jobs:
           echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
       - name: Verify isolated source-family candidate overlay
         run: python -m unittest tests.test_operations_center_shadow_overlay -v
       - name: Prove archive and website output unchanged
