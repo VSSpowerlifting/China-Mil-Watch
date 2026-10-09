@@ -190,6 +190,38 @@ class ThemeSundayHandoffTests(unittest.TestCase):
         self.assertNotIn("B" * 300, recorded[0]["messages"][0]["content"])
         self.assertFalse("publication_authorized" in output)
 
+    def test_one_owner_paid_model_call_only_even_on_bad_citations(self):
+        inv, review, proposals = scenario()
+        directive = verify_choice(inv, review, SECRET, proposals,
+                                  approve(inv, review, proposals))
+        directive = dict(directive, selected_source_ids=[1, 2])
+        synopsis = {
+            ident: {
+                "analyst_synopsis": (
+                    "The official institution reported a dated security discussion "
+                    "with no independently verified policy implementation or outcome."),
+                "accuracy_limitations": (
+                    "The published account establishes only the issuer's statement, not the result."),
+            } for ident in (1, 2)
+        }
+        bad = valid_manuscript()
+        bad["citations"]["cross_desk_comparison"] = [1]
+        response = SimpleNamespace(stop_reason="tool_use",
+            content=[SimpleNamespace(type="tool_use",
+                                     name="compose_editorial_draft", input=bad)])
+        calls = []
+        fake = SimpleNamespace(messages=SimpleNamespace(stream=lambda **kwargs: (
+            calls.append(kwargs), nullcontext(
+                SimpleNamespace(get_final_message=lambda: response)))[1]))
+        scaffold = {"week_start": "2026-10-04", "week_ending": SAT,
+                    "desks": ["china", "singapore"], "source_trail": []}
+        with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
+                   return_value=evidence()):
+            with self.assertRaisesRegex(ValueError, "both desks"):
+                compose(scaffold, SAT, client=fake, selected_theme=directive,
+                        reviewed_synopses=synopsis)
+        self.assertEqual(len(calls), 1)
+
     def test_build_private_manuscript_cannot_call_writer_without_current_trail(self):
         inv, review, proposals = scenario()
         choice = approve(inv, review, proposals)
