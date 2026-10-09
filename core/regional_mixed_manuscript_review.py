@@ -84,7 +84,13 @@ def validate_private_mixed_manuscript(
     except (TypeError, ValueError) as exc:
         raise PrivateMixedManuscriptError("malformed manuscript JSON") from exc
     need(len(draft_bytes) <= MAX_DRAFT_BYTES, "private manuscript exceeds bounded length")
+    need(isinstance(manuscript["citations"], dict)
+         and set(manuscript["citations"]) == set(CITED_FIELDS),
+         "manuscript must supply exact numeric citation sections")
     if typed:
+        need(isinstance(manuscript["supplemental_citations"], dict)
+             and set(manuscript["supplemental_citations"]) == set(CITED_FIELDS),
+             "manuscript must supply exact typed citation sections")
         need(isinstance(manuscript["editorial_focus"], str)
              and choice["approved_focus"] ==
                  manuscript["editorial_focus"],
