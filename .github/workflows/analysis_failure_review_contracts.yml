@@ -1,0 +1,89 @@
+name: Stored analysis failure-cause audit contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_analysis_failure_causes.py'
+      - 'tests/test_analysis_failure_causes.py'
+      - 'docs/ANALYSIS_FAILURE_REVIEW.md'
+      - '.github/workflows/analysis_failure_review_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  failure-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin original DB and require absent sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/baseline.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install standard dependencies
+        run: pip install -r requirements.txt
+      - name: Check source-attributed failure audit and canonical queue
+        run: |
+          python -m unittest tests.test_analysis_failure_causes -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Read original tracked SQLite without write or model call
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_failure_causes.py \
+            --db pla_watch.db > "$RUNNER_TEMP/failure-review.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          r = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                          "failure-review.json").read_text())
+          t = r["totals"]
+          assert r["schema"] == "ipr-analysis-failure-review/1"
+          assert t["daily_eligible"] == r["stored_daily_queue_eligible"]
+          assert t["daily_blank_and_prior_attempts"] <= min(
+              t["daily_blank_body"], t["daily_prior_attempts"])
+          assert all(sum(s[k] for s in r["sources"]) == v
+                     for k, v in t.items())
+          assert sum(r["recorded_failure_reasons_on_daily_queue"].values()) == \
+                 t["daily_prior_attempts"]
+          assert len(r["input_file_sha256"]["db"]) == 64
+          assert r["root_causes_established"] is False
+          assert r["retry_authorized"] is False
+          assert r["model_spend_authorized"] is False
+          assert r["publication_authorized"] is False
+          assert r["writes"] == 0 and r["model_calls"] == 0
+          print("Stored failure review: records=%d daily=%d blank=%d "
+                "attempts=%d both=%d inconsistent=%d" % (
+                    r["article_rows"], t["daily_eligible"],
+                    t["daily_blank_body"], t["daily_prior_attempts"],
+                    t["daily_blank_and_prior_attempts"],
+                    t["state_inconsistency"]))
+          for s in r["sources"]:
+              if s["daily_blank_body"] or s["daily_prior_attempts"] or \
+                 s["state_inconsistency"]:
+                  # Source/desk and counts only. Never print record prose.
+                  print("Review source=%s desk=%s blank=%d retries=%d both=%d "
+                        "state_flags=%d" % (
+                      s["source_slug"], s["desk_id"], s["daily_blank_body"],
+                      s["daily_prior_attempts"],
+                      s["daily_blank_and_prior_attempts"],
+                      s["state_inconsistency"]))
+          print("Stored reason counts: %s" %
+                json.dumps(r["recorded_failure_reasons_on_daily_queue"],
+                           sort_keys=True))
+          PY
+      - name: Verify original archive, sidecars and site output remain unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/baseline.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
