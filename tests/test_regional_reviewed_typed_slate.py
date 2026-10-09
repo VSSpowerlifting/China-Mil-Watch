@@ -8,7 +8,7 @@ import unittest
 
 from core.regional_reviewed_typed_slate import (
     ReviewedTypedSlateError, build_reviewed_mixed_context,
-    validate_manual_mixed_theme,
+    validate_manual_mixed_theme, verify_manual_mixed_preview,
 )
 from core.regional_typed_source_use_decision import (
     make_unsigned_decision, sign_owner_decision,
@@ -123,6 +123,13 @@ class MixedRegionalSlateTests(unittest.TestCase):
                          ["requires_public_single_desk_exception"])
         self.assertTrue(preview["manual_only_no_model_was_invoked"])
         self.assertFalse(preview["publication_authorized"])
+        self.assertEqual(len(preview["reviewed_synopsis_packet_sha256"]), 64)
+        self.assertEqual(preview["reviewed_synopsis_packet_sha256"],
+                         ctx["reviewed_synopsis_packet_sha256"])
+        self.assertEqual(preview["production_review_seal_sha256"],
+                         ctx["production_review_seal_sha256"])
+        self.assertEqual(preview["typed_owner_decision_seal_sha256"],
+                         ctx["typed_owner_decision_seal_sha256"])
         self.assertEqual(preview["proposal"]["candidates"][0]["source_ids"],
                          [42, "JP-W41-01", "VN-MPS-1791199100"])
 
@@ -223,6 +230,74 @@ class MixedRegionalSlateTests(unittest.TestCase):
             validate_manual_mixed_theme(
                 response, inv, signed(inv), SECRET, rows, seal, TYPED_SECRET,
                 **mismatched)
+
+    def test_preview_reconstruction_rejects_mutated_synopsis_or_candidate(self):
+        inv, rows, seal, kw = assemble()
+        sources = signed(inv)
+        choices = answer(candidate([42, "JP-W41-01"]))
+        preview = validate_manual_mixed_theme(
+            choices, inv, sources, SECRET, rows, seal, TYPED_SECRET, **kw)
+        verified = verify_manual_mixed_preview(
+            preview, inv, sources, SECRET, rows, seal, TYPED_SECRET, **kw)
+        self.assertEqual(verified, preview)
+        changes = (
+            lambda x: x.update(reviewed_synopsis_packet_sha256="0" * 64),
+            lambda x: x.update(typed_owner_decision_seal_sha256="f" * 64),
+            lambda x: x.update(source_metadata_digest_sha256="a" * 64),
+            lambda x: x["proposal"]["candidates"][0].update(
+                why_now="This was secretly changed after preview."),
+            lambda x: x["proposal"]["evidence"].append({
+                "id": "JP-W41-99", "desk": "japan",
+                "lane": "private_research", "scope": "private_drafting_candidate",
+                "source_url": "https://www.mod.go.jp/j/forged",
+                "published_date": "2026-10-09", "role": "new_week",
+                "topic_suggestions": [],
+            }),
+            lambda x: x.update(model_input_authorized=True),
+        )
+        for edit in changes:
+            altered = copy.deepcopy(preview)
+            edit(altered)
+            with self.subTest(edit=str(edit)), self.assertRaises(
+                    ReviewedTypedSlateError):
+                verify_manual_mixed_preview(
+                    altered, inv, sources, SECRET, rows, seal, TYPED_SECRET,
+                    **kw)
+        moved_source = copy.deepcopy(seal)
+        moved_source["review"]["decisions"][0]["independent_analyst_synopsis"] = (
+            "A different, stronger interpretation is being offered here. "
+            "No source was reproduced, but this was changed after signature.")
+        with self.assertRaises(ReviewedTypedSlateError):
+            verify_manual_mixed_preview(
+                preview, inv, sources, SECRET, rows, moved_source,
+                TYPED_SECRET, **kw)
+        changed = copy.deepcopy(kw)
+        changed["current_official_captures"]["JP-W41-01"] = b"not signed"
+        with self.assertRaises(ReviewedTypedSlateError):
+            verify_manual_mixed_preview(
+                preview, inv, sources, SECRET, rows, seal, TYPED_SECRET,
+                **changed)
+
+    def test_re_signing_different_analyst_synopsis_changes_packet_fingerprint(self):
+        inv, rows, seal, kw = assemble()
+        original = build_reviewed_mixed_context(
+            inv, signed(inv), SECRET, rows, seal, TYPED_SECRET, **kw)
+        altered = copy.deepcopy(seal["review"])
+        target = next(x for x in altered["decisions"]
+                      if x["id"] == "JP-W41-01")
+        target["independent_analyst_synopsis"] = (
+            "The official report presents a narrower interpretation after "
+            "analyst reconsideration, and external confirmation remains necessary.")
+        changed_seal = sign_owner_decision(
+            altered, inv, rows, TYPED_SECRET)
+        modified = build_reviewed_mixed_context(
+            inv, signed(inv), SECRET, rows, changed_seal, TYPED_SECRET, **kw)
+        self.assertEqual(original["editorial_slate"],
+                         modified["editorial_slate"])
+        self.assertNotEqual(original["reviewed_synopsis_packet_sha256"],
+                            modified["reviewed_synopsis_packet_sha256"])
+        self.assertNotEqual(original["typed_owner_decision_seal_sha256"],
+                            modified["typed_owner_decision_seal_sha256"])
 
     def test_no_original_pdf_or_html_bytes_leak_into_context_or_preview(self):
         inv, rows, seal, kw = assemble()
