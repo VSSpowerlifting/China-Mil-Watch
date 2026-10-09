@@ -149,6 +149,38 @@ class OptionalDailyActionsContracts(unittest.TestCase):
         self.assertFalse(self.paths()[0].exists())
         self.assertFalse(self.paths()[1].exists())
 
+    def test_report_pair_new_external_files_created(self):
+        output, html = self.paths()
+        unified.write_report_pair(output, '{"status":"candidate"}', html,
+                                  "<h1>Offline evidence</h1>")
+        self.assertEqual(output.read_text(), '{"status":"candidate"}')
+        self.assertIn("Offline evidence", html.read_text())
+
+    def test_existing_second_report_not_overwritten_and_first_rolled_back(self):
+        output, html = self.paths()
+        html.write_text("Original report", encoding="utf-8")
+        with self.assertRaises(FileExistsError):
+            unified.write_report_pair(output, '{"evidence":true}', html,
+                                      "replacement")
+        self.assertFalse(output.exists())
+        self.assertEqual(html.read_text(encoding="utf-8"), "Original report")
+
+    def test_second_report_io_failure_rolls_back_first(self):
+        output, html = self.paths()
+        original_open = Path.open
+
+        def fail_html_open(path, *args, **kwargs):
+            if path == html:
+                raise OSError("synthetic second-report disk failure")
+            return original_open(path, *args, **kwargs)
+
+        with patch.object(Path, "open", autospec=True,
+                          side_effect=fail_html_open):
+            with self.assertRaisesRegex(OSError, "synthetic second-report"):
+                unified.write_report_pair(output, '{"test":true}', html, "html")
+        self.assertFalse(output.exists())
+        self.assertFalse(html.exists())
+
     def test_future_display_receipt_fails_closed_without_output(self):
         bad = envelope([cancelled()])
         bad["runs"][0]["created_at"] = "2026-10-10T10:00:00Z"
