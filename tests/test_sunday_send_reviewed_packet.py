@@ -101,6 +101,8 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
             with patch.dict(os.environ, {
                 "IPR_SUNDAY_OWNER_REVIEWED_WEEK": WEEK,
                 "IPR_SUNDAY_OWNER_REVIEWED_SHA256": digest,
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
             }, clear=True), patch(
                 "scripts.sunday_send_reviewed_packet.send_packet",
                 side_effect=fake_send,
@@ -120,6 +122,8 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
             with patch.dict(os.environ, {
                 "IPR_SUNDAY_OWNER_REVIEWED_WEEK": WEEK,
                 "IPR_SUNDAY_OWNER_REVIEWED_SHA256": digest,
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
             }, clear=True), patch(
                 "scripts.sunday_send_reviewed_packet.send_packet"
             ) as send:
@@ -137,6 +141,30 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
                 )["email_sent"])
                 self.assertEqual(send.call_count, 1)
 
+    def test_manual_send_refuses_parallel_friday_or_same_owner_recipient(self):
+        with tempfile.TemporaryDirectory() as folder:
+            file = create_reviewed_packet(folder)
+            approved = hashlib.sha256(file.read_bytes()).hexdigest()
+            baseline = {
+                "IPR_SUNDAY_OWNER_REVIEWED_WEEK": WEEK,
+                "IPR_SUNDAY_OWNER_REVIEWED_SHA256": approved,
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
+            }
+            for override, expected in (
+                ({"IPR_EDITOR_DELIVERY_ENABLED": "true"}, "parallel editor service"),
+                ({"IPR_PREVIEW_TO": "EDITOR@example.com"}, "differ"),
+                ({"IPR_PREVIEW_TO": ""}, "distinct configured"),
+                ({"IPR_EDITOR_TO": ""}, "distinct configured"),
+            ):
+                with self.subTest(override=override), patch.dict(
+                    os.environ, dict(baseline, **override), clear=True
+                ), patch("scripts.sunday_send_reviewed_packet.send_packet") as smtp:
+                    with self.assertRaisesRegex(ReviewedHandoffRefused, expected):
+                        handoff(file, WEEK, send=True,
+                                owner_confirmed=True, now=SUNDAY)
+                    smtp.assert_not_called()
+
     def test_no_confirmation_means_no_smtp_even_when_digest_matches(self):
         with tempfile.TemporaryDirectory() as folder:
             file = create_reviewed_packet(folder)
@@ -144,6 +172,8 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
             with patch.dict(os.environ, {
                 "IPR_SUNDAY_OWNER_REVIEWED_WEEK": WEEK,
                 "IPR_SUNDAY_OWNER_REVIEWED_SHA256": digest,
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
             }, clear=True), patch(
                 "scripts.sunday_send_reviewed_packet.send_packet"
             ) as send:
