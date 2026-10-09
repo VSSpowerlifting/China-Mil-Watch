@@ -125,6 +125,32 @@ These examples are for **October 11 or later** only if the real October 11
 daily-production success marker and source reviews exist; this PR does not
 assert those conditions or run a paid model call.
 
+## First Sunday pilot and exact-manuscript owner release
+
+The **October 11, 2026** running Sunday editorial workflow is separately
+governed by [SUNDAY_FIRST_PILOT_OWNER_RELEASE.md](SUNDAY_FIRST_PILOT_OWNER_RELEASE.md).
+The reporting Saturday is **October 10**. Its first Dylan/editor email, whether
+automated or manually initiated through the published send path, requires an
+explicit owner-reviewed week and the **SHA-256 of the precise owner-reviewed
+manuscript attachment**. A newly generated model output will normally have
+different bytes and **must not** inherit that authorization.
+
+The regional `audit` metadata receipt is a **no-model readiness diagnostic**:
+it is NOT the manuscript file, not a source-use license, not proof of the
+owner's editorial signoff, and emphatically NOT
+`IPR_SUNDAY_OWNER_REVIEWED_SHA256`. Likewise, the signed regional thematic
+choice authorizes only a **private** trial. Neither may be substituted for
+the first-pilot Dylan release controls or used to enable a scheduled email.
+
+The live first-Sunday workflow has independent Japan and Vietnam
+source-roster/version checks. This regional trial still accepts only
+human-reviewed **numeric production** records and intentionally refuses
+extra unapproved typed research notes; it is therefore **not** a drop-in
+replacement for the live first-Sunday unified Japan/Vietnam-capable writer.
+The initial live issue should be owner-previewed and source-reviewed through
+its existing workflow. Future typed research participation in a regional
+thematic selector requires a separately audited source-use/edition contract.
+
 ## Deliberate boundaries and future work
 
 - The regular `.github/workflows/sunday_briefs_editorial_handoff.yml`
