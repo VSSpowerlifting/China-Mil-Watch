@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
@@ -46,6 +47,23 @@ class OptionalDailyActionsContracts(unittest.TestCase):
                 "--as-of", "2026-10-09", "--json", str(output),
                 "--html", str(html), *args,
             ])
+
+    def test_new_york_day_differs_from_utc_date_at_evening_cutover(self):
+        utc = datetime(2026, 10, 10, 1, 30, tzinfo=timezone.utc)
+        self.assertEqual("2026-10-09", unified.current_display_date(utc))
+        self.assertEqual("2026-10-10",
+                         unified.current_display_date(datetime(
+                             2026, 10, 10, 5, 30, tzinfo=timezone.utc)))
+
+    def test_new_york_default_handles_dst_and_refuses_naive_instant(self):
+        self.assertEqual("2026-03-07",
+                         unified.current_display_date(datetime(
+                             2026, 3, 8, 4, 59, tzinfo=timezone.utc)))
+        self.assertEqual("2026-03-08",
+                         unified.current_display_date(datetime(
+                             2026, 3, 8, 7, 1, tzinfo=timezone.utc)))
+        with self.assertRaisesRegex(unified.UnifiedError, "explicit timezone"):
+            unified.current_display_date(datetime(2026, 10, 9, 1, 0))
 
     def test_default_cli_avoids_github_even_when_token_configured(self):
         with patch.object(unified.capture, "capture",
