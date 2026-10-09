@@ -4,11 +4,24 @@ Durable doctrine. The Night Desk tokens below are the live values in
 `site/templates/pla-watch-base.html`. The Paper Ledger table in §3 describes
 `site/templates/base.html`, which is the **legacy rollback renderer** — the
 live record site is rendered by `site/preview/generate_preview.py` and its
-tokens are in `site/preview/styles.css`, a warm paper and compass-blue
-palette. That distinction is recorded in §3 rather than papered over. If a
+tokens are in `site/preview/styles.css`. The October implementation candidate
+uses the reviewed warm paper, turquoise identity and photograph-led direction;
+its exact source and verification are in `docs/FRONTEND_PRODUCTION_2026-10-09.md`. That distinction is recorded in §3 rather than papered over. If a
 template and this document disagree, reconcile deliberately — do not silently
 fork.
 Motion and flagship visual components: docs/VISUAL_AND_MOTION_SYSTEM.md.
+
+## October implementation candidate
+
+The owner's production request adopts design checkpoint `8cb2f23f` as the
+visual target for the current frontend. It supersedes the older record-site
+compass, masked Ocean Signal, six-record opening and display/metadata typography
+rules below. Current display is Instrument Serif, UI is Inter, longform reading
+is Source Serif 4 and hashes/IDs use system monospace. Selected turquoise `ipr`
+artwork and natural photographs are the identity direction. Historical weekly
+surfaces retain their original doctrine. Source/route CSS and verification are
+specified in `FRONTEND_PRODUCTION_2026-10-09.md`; this records implementation
+scope, not merge, deployment or timeline editorial approval.
 
 ## 1. North star
 
@@ -86,15 +99,15 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 ### Live record-site tokens (`site/preview/styles.css`)
 | Token | Value | Role |
 |---|---|---|
-| `--bg` | #F3F1EA | warm page ground |
-| `--surface` | #FAF8F3 | raised paper: masthead and data plates |
-| `--ink` | #17262F | body text and heavy editorial rules |
-| `--ink-2` | #3D4952 | secondary text |
-| `--rule` | #CFC9BC | hairline structure |
-| `--accent` | #255E7A | compass-blue links, chart marks, focus |
-| `--band` | #12222C | dark analysis band |
-| `--focus-band` | #8FC9DE | turquoise, on the band only (8.97 on `--band`, 1.71 on paper): focus there, and the Briefs mark |
-| `--surface-inset` | #EAE6DB | recessed ground (alias `--mist`, `--surface-2`): chart tracks (the Analysis page's former legacy-archive ground was retired 2026-09-30) |
+| `--bg` | #F3F2EC | warm page ground |
+| `--surface` | #FAFBF7 | raised paper: masthead and data plates |
+| `--ink` | #1D2D31 | body text and heavy editorial rules |
+| `--ink-2` | #405456 | secondary text |
+| `--rule` | #CDD5CF | hairline structure |
+| `--accent` | #176C6C | turquoise links, chart marks, focus |
+| `--band` | #142E38 | dark analysis band |
+| `--focus-band` | #92D5CC | turquoise, on the band only (used on the band): focus there, and the Briefs mark |
+| `--surface-inset` | #DDE7E3 | recessed ground (alias `--mist`, `--surface-2`): chart tracks (the Analysis page's former legacy-archive ground was retired 2026-09-30) |
 | `--signal` | #9C4B36 | rust: machine-generated material only |
 | `--signal-band` | #D4845F | rust on the edition plate's Night Desk ground (6.34 on #0E1520) |
 | `--positive` | #1C6450 | live collecting status |
@@ -360,13 +373,13 @@ archive is now a compact index of 18 weeks linking out to 85 generated
 old figure forward.
 
 Budgets for all future work:
-- HTML+inline CSS per page ≤ 120 KB; ≤ 300 KB for any index or archive
+- HTML plus all linked local CSS (including recursive imports and inline CSS) per page ≤ 120 KB; ≤ 300 KB for any index or archive
   surface. Re-open archive navigation only if a measurement crosses those.
-- Client JS ≤ 10 KB per page, vanilla only; no frameworks, no chart libs,
+- Client JS, including linked modules/imports and inline executable scripts, ≤ 10 KB per page, vanilla only; no frameworks, no chart libs,
   no canvas unless a spec explicitly justifies it.
 - Images: explicit width/height (no CLS), `loading="lazy"` below fold,
   cover thumbs ≤ 60 KB, full covers ≤ 250 KB, og-image PNG ≤ 300 KB.
-- Fonts: current three families, weights already capped — do not add more.
+- Current frontend candidate fonts: Instrument Serif (400 regular/italic), Inter (400/600), Source Serif 4 (400/600 regular, 400 italic). Self-hosted Latin WOFF2 subsets, OFL licenses and SHA-256 receipts live in `site/assets/fonts/`; CJK uses system stacks. Historical weekly fonts remain unchanged.
 - Animation: transform/opacity only (no layout properties); one ambient
   animation per page maximum.
 - No client-side rendering of primary content; the site must read fully

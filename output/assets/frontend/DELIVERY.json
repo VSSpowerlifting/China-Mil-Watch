@@ -1,0 +1,55 @@
+{
+  "builder": "scripts/build_frontend_assets.py",
+  "images": [
+    {
+      "file": "pacific-fleet-800.webp",
+      "source": "site/assets/editorial/reagan-jmsdf-2015.jpg",
+      "source_sha256": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "width": 800,
+      "height": 532,
+      "crop": null,
+      "bytes": 21284,
+      "sha256": "db9b8eb40f8e20e8506c6c890bcb228de110d01e254e83c3c0512da9183e09b4"
+    },
+    {
+      "file": "pacific-fleet-1600.webp",
+      "source": "site/assets/editorial/reagan-jmsdf-2015.jpg",
+      "source_sha256": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "width": 1600,
+      "height": 1064,
+      "crop": null,
+      "bytes": 98870,
+      "sha256": "15bec6dd2f78175e450c0c32439799bb153e4f11734750a01a809c81de5961a5"
+    },
+    {
+      "file": "pacific-fleet-2500.webp",
+      "source": "site/assets/editorial/reagan-jmsdf-2015.jpg",
+      "source_sha256": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "width": 2500,
+      "height": 1663,
+      "crop": null,
+      "bytes": 231276,
+      "sha256": "430dc6a064a1f23f8a85610eb113eefa1f61f052635328c30511e95e5335d6e4"
+    },
+    {
+      "file": "maritime-cooperation-2026-600.webp",
+      "source": "briefs/media/maritime-cooperation-2026-source-image.jpg",
+      "source_sha256": "657bd02c0b783dae00914a88a37481302ef99894cfebb6a2eda83d968b20e4d8",
+      "width": 600,
+      "height": 338,
+      "crop": null,
+      "bytes": 34088,
+      "sha256": "4b2aa2a5ea3bdb325ce578d42a3d23d523d6f807d2b884fc2c3e730ce5991f1c"
+    },
+    {
+      "file": "maritime-cooperation-2026-1200.webp",
+      "source": "briefs/media/maritime-cooperation-2026-source-image.jpg",
+      "source_sha256": "657bd02c0b783dae00914a88a37481302ef99894cfebb6a2eda83d968b20e4d8",
+      "width": 1200,
+      "height": 675,
+      "crop": null,
+      "bytes": 111758,
+      "sha256": "d3f0ed922cf900d0f65398c24f6d01063e1a5218ddc10d29b69a4b24f3040656"
+    }
+  ]
+}

@@ -26,11 +26,12 @@ Everything happens inside `~/pla-watch`. Never touch sibling repositories
 | Brief (human-controlled publication) | `pla_watch.db`, read through a scratch copy (`scripts.reconcile_db.read_only`) | `scripts/author_brief.py` + `core/brief_contract.py`; selection by desk via `storage.db.get_articles_for_desks` | canonical source in `briefs/<slug>.json`; draft/check/readiness/authorized approval; native article, Analysis, homepage, Atom feed and sitemap through the production renderer |
 | Weekly re-render (no API) | **sidecar JSON** (canonical edition record: metadata + trail + full body) | `scripts/rerender_pla_watch.py` + `site/templates/pla-watch-*.html` | posts/index/archive/terms HTML + feed.xml |
 | Shared weekly env | `scripts/pw_env.py` — one Jinja environment (autoescape ON), `format_date`, `inline_markup` (whitelists bare `<strong>/<em>` only), `first_cjk`, `build_atom_feed` | both weekly renderers | — |
+| Evidence Timeline (human-controlled chronology) | `timelines/<slug>.json` + exact preserved DB records via `scripts.reconcile_db.read_only` | `core/timelines.py`, `scripts/validate_timelines.py`, production renderer | approved-only `timelines.html` and `timeline/<slug>.html`; explicit private draft review outside the repository; no feed or DB migration; contract and review in `docs/EVIDENCE_TIMELINES.md` |
 | Deploy gate | `scripts/validate_output.py` (stdlib-only) | CI + local | non-zero exit blocks deploy |
 
 **Source (hand-maintained):** `site/templates/`, `scripts/`, `analysis/`,
 `scraper/`, `site/render.py`, `site/preview/`, `site/generator.py`,
-`pipeline.py`, `config.py`, `desks/`, `shadow/`, docs, sidecar prose (via
+`pipeline.py`, `config.py`, `desks/`, `shadow/`, `timelines/`, docs, sidecar prose (via
 publish flow only).
 **Generated (never hand-edit):** everything under `output/` — including
 `output/the-pla-watch/posts/*.html`. Fix templates or sidecars, then
@@ -54,6 +55,8 @@ HTML still requires its normal sidecar re-render to pick up base-template edits.
 .venv/bin/python scripts/author_brief.py check PATH      # schema/numbering contract; a draft may still have empty prose
 .venv/bin/python scripts/author_brief.py ready PATH      # complete prose/citations and exact parity with preserved records
 .venv/bin/python site/render.py --review-brief briefs/<slug>.json --out /tmp/<private-review>  # private candidate, no approval or number
+.venv/bin/python scripts/validate_timelines.py             # offline shape + preserved-source parity; no approval
+.venv/bin/python site/render.py --review-timeline timelines/<slug>.json --out /tmp/<private-review>  # unpublished chronology; no origin/feed/sitemap
 # scripts/generate_pla_watch.py authors nothing new: no issue is published as The PLA Watch after No. 14
 ```
 

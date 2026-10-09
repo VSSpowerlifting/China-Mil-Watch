@@ -1,0 +1,9 @@
+{
+  "builder": "scripts/build_frontend_social_card.py",
+  "file": "ipr-social-card-1200x630.png",
+  "width": 1200,
+  "height": 630,
+  "bytes": 43913,
+  "sha256": "01ff9f6f71b7bfbe5114854bfbe25887d9001563762f969cd8acd904576fc93e",
+  "logo_sha256": "eb6546a57c55e8bf3ace9671aee0bdc7b49b87812622aabc29324730b4779c14"
+}

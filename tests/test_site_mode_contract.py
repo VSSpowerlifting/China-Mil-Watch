@@ -333,8 +333,10 @@ class TestCandidateBuild(unittest.TestCase):
         html = (self.out / "desks.html").read_text(encoding="utf-8")
         self.assertIn("Live — collecting", html)
         self.assertIn("Access blocked — not collecting", html)
-        self.assertIn("2</b> collecting desk",
-                      (self.out / "index.html").read_text(encoding="utf-8"))
+        from bs4 import BeautifulSoup
+        home = BeautifulSoup((self.out / "index.html").read_text(encoding="utf-8"), "html.parser")
+        self.assertEqual({a.get("href") for a in home.select(".home-desk-list a")},
+                         {"china.html", "singapore.html"})
 
     def test_japan_renders_with_no_records_and_no_sources(self):
         html = (self.out / "japan.html").read_text(encoding="utf-8")

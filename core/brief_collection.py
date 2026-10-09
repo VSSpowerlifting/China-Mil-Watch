@@ -252,6 +252,7 @@ def brief_entry(slug: str, sidecar: Mapping, media_dir=None) -> dict:
     veil = brief_veil(slug, sidecar, media_dir)
     return {
         "slug": slug,
+        "photo": brief_photo(slug, sidecar, media_dir),
         "date": sidecar["week_ending"],
         "issue": assigned_number(sidecar),
         "title": sidecar["title"],
@@ -467,6 +468,41 @@ def brief_veil(slug: str, sidecar: Mapping, media_dir: Optional[Path]):
         "source_page": hit.get("url") or article_url,
         "credit": str(meta.get("note") or "").strip(),
     }
+
+
+def brief_photo(slug: str, sidecar: Mapping, media_dir: Optional[Path]):
+    """The unchanged full-color source frame, through the existing provenance gate.
+
+    Responsive derivatives are build assets, never canonical editorial records.
+    A missing or changed original leaves a text-led opening.
+    """
+    import hashlib
+    veil = brief_veil(slug, sidecar, media_dir)
+    if not veil:
+        return None
+    media_dir = Path(media_dir)
+    original = media_dir / (slug + "-source-image.jpg")
+    meta = json.loads((media_dir / source_image_name(slug)).read_text(encoding="utf-8"))
+    if not original.is_file() or hashlib.sha256(original.read_bytes()).hexdigest() != meta.get("source_sha256"):
+        return None
+    variants = []
+    assets = Path(__file__).resolve().parent.parent / "site/assets/frontend"
+    try:
+        delivery = json.loads((assets / "DELIVERY.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        delivery = {}
+    receipts = {e["file"]: e for e in delivery.get("images", [])}
+    for width in (600, 1200):
+        asset = assets / (slug + "-%s.webp" % width)
+        receipt = receipts.get(asset.name, {})
+        if (asset.is_file() and receipt.get("source_sha256") == meta.get("source_sha256")
+                and hashlib.sha256(asset.read_bytes()).hexdigest() == receipt.get("sha256")):
+            variants.append({"file": asset, "route": "media/" + asset.name, "width": width})
+    return dict(veil, file=original, route="media/" + original.name,
+                width=meta["original_width"], height=meta["original_height"],
+                alt=veil["alt"].replace("; rendered as a duotone source photograph.", "."),
+                variants=variants,
+                srcset=", ".join("%s %sw" % (v["route"], v["width"]) for v in variants))
 
 
 # ── One brief, ready to render ────────────────────────────────────────────────

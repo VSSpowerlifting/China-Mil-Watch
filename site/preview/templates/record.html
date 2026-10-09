@@ -7,34 +7,21 @@
 {% set display_title = record.title_english or record.title_original %}
 {% set months = ['January','February','March','April','May','June','July','August','September','October','November','December'] %}
 {% block title %}{{ display_title }} — {{ title }}{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="../record.css">{% endblock %}
+{% block main_class %} class="record-reading"{% endblock %}
 {% block content %}
 {# "Back to results" appears only when the reader arrived from a search or a
    week list on this site (citation.js reads the referrer). The record's own
    address never carries query parameters, so a copied link stays canonical. #}
 <p class="back-link" id="back-link" hidden><a href="../archive.html">Back to results</a></p>
-{% set path = [('Records', '../archive.html')] %}
-{% if record_desk %}{% set path = path + [(record_desk.name, '../' ~ record_desk.route)] %}{% endif %}
-{% set path = path + [(record.source_name, '../source/' ~ record.source_slug ~ '.html'), ('Record ' ~ record.id, none)] %}
-{{ breadcrumb(path) }}
-
 <article class="record-page">
   {# The almanac's date block: the date the institution stated, which is the
      record's place in time. Collection time is a different calendar and is
      stated in the custody line and the provenance table. #}
-  <div class="record-date">
-    <time datetime="{{ record.published_date }}"><span class="day-num">{{ record.published_date[8:10] | int }}</span>
-      <span class="day-month">{{ months[(record.published_date[5:7] | int) - 1] }} {{ record.published_date[:4] }}</span></time>
-    <span class="day-week">{{ record.published_date | weekday }}</span>
-    <span class="day-note">Source-stated publication date</span>
-    <p class="record-institution">{{ record.institution or record.source_name }}{% if record.institution %}<br>via <a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a>{% endif %}</p>
-  </div>
-
   <div class="record-body">
     {# The institution and the date are the date block's, beside this. #}
-    <div class="record-head">
-      <span class="evidence evidence--record">Source record</span>
-    </div>
     <h1{% if not record.title_english %} lang="{{ record.language_tag or 'zh' }}"{% endif %}>{{ display_title }}</h1>
+    <p class="record-source-line">Source-stated date: <time datetime="{{ record.published_date }}">{{ record.published_date | reader_date }}</time> · <a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a></p>
     {% if record.title_english and record.title_original %}
     {# Two distinct machine outputs. The English TITLE is a translation; the
        summary below is a different artifact. Labelling them identically would
@@ -48,12 +35,15 @@
 
     {# The custody line: four real stages, in the order they happened. Each is
        drawn from a stored field; a stage that did not happen says so. #}
+    <div class="record-actions"><a class="btn btn--primary" href="{{ record.url }}" rel="noopener nofollow">Open original source</a><a href="#record-citation">Cite this record</a></div>
+    <details class="record-history" data-wide-open><summary>Record history</summary>
     <ol class="custody" aria-label="How this record reached this page">
       <li><b>Published</b>{{ record.published_date | reader_date }}, by {{ record.institution or record.source_name }}</li>
       <li><b>Collected</b>{{ record.scraped_at }}{% if record.scraped_at | length == 19 %} UTC{% endif %}{% if record.scrape_run_id is not none %}, run {{ record.scrape_run_id }}{% endif %}</li>
       <li class="{{ 'is-machine' if record.state in ['analyzed', 'not_selected', 'analysis_incomplete'] else 'is-absent' }}"><b>Machine reading</b>{{ record.state_label }}</li>
       <li class="{{ 'is-analysis' if record.in_trails else 'is-absent' }}"><b>Analysis</b>{% if record.in_trails %}In the source trail of {% for ref in record.in_trails %}{{ ref.series_name }} No. {{ ref.issue }}{{ ', ' if not loop.last }}{% endfor %}{% else %}Not in a published issue's source trail{% endif %}</li>
     </ol>
+    </details>
 
     <nav class="reader-contents" aria-label="On this record page">
       <span>In this record</span>
@@ -180,7 +170,18 @@
     </section>
   </div>
 
+  <div class="record-date">
+    <time datetime="{{ record.published_date }}"><span class="day-num">{{ record.published_date[8:10] | int }}</span>
+      <span class="day-month">{{ months[(record.published_date[5:7] | int) - 1] }} {{ record.published_date[:4] }}</span></time>
+    <span class="day-week">{{ record.published_date | weekday }}</span>
+    <span class="day-note">Source-stated publication date</span>
+    <p class="record-institution">{{ record.institution or record.source_name }}{% if record.institution %}<br>via <a href="../source/{{ record.source_slug }}.html">{{ record.source_name }}</a>{% endif %}</p>
+  </div>
+
   <aside class="record-rail" aria-labelledby="rail-heading">
+    <div class="record-head">
+      <span class="evidence evidence--record">Source record</span>
+    </div>
     <div class="rail-block">
       <h2 id="rail-heading">This record at a glance</h2>
       <dl>
@@ -194,6 +195,7 @@
       </dl>
       <a class="original-link" href="{{ record.url }}" rel="noopener nofollow">Read the original page</a>
     </div>
+    {% if timeline_records is defined and timeline_records[record.id] %}<section class="record-section" aria-labelledby="record-timelines"><h2 id="record-timelines">In Evidence Timelines</h2>{% for item in timeline_records[record.id] %}<p><a href="../{{ item.route }}">{{ item.title }}</a>{% if item.is_review %} · unpublished draft{% endif %}</p>{% endfor %}</section>{% endif %}
     {% if record.in_trails %}
     {# Listed in a published issue's source trail, matched on this record's
        exact stored URL. The issue says which claim rests on it; this does not. #}
@@ -201,7 +203,7 @@
       <h2>In analysis</h2>
       <ul>
       {% for ref in record.in_trails %}
-        <li><a href="{{ ref.url }}" rel="noopener">{{ ref.title }}</a>
+        <li><a href="{{ ('../' if ref.kind | default('issue') == 'brief' else '') ~ ref.url }}#{{ ref.anchor | default('source-' ~ ref.position) }}" rel="noopener">{{ ref.title }}</a>
           <span class="meta">{{ ref.series_name }} No. {{ ref.issue }} · week ending {{ ref.date | reader_date }} · source-trail entry {{ ref.position }}</span></li>
       {% endfor %}
       </ul>
@@ -215,7 +217,12 @@
       </div>
       <p class="cite-status link-status" role="status" aria-live="polite"></p>
     </div>
-  </aside>
+  {% set path = [('Records', '../archive.html')] %}
+{% if record_desk %}{% set path = path + [(record_desk.name, '../' ~ record_desk.route)] %}{% endif %}
+{% set path = path + [(record.source_name, '../source/' ~ record.source_slug ~ '.html'), ('Record ' ~ record.id, none)] %}
+{{ breadcrumb(path) }}
+
+</aside>
 </article>
 {% endblock %}
 {% block scripts %}<script src="../citation.js" defer></script>{% endblock %}

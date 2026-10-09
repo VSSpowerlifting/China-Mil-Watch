@@ -369,7 +369,15 @@ class TestFailureNeverTraps(IntroCase):
         # It waits for nothing the page loads: a document still parsing after
         # 1.5s (here, held by the next head script) is shown without one.
         page = self.page()
-        page.route("**/reveal.js", lambda route: (time.sleep(2.2), route.continue_()))
+        # The reviewed home no longer loads reveal.js. Inject a blocking
+        # fixture script to hold parsing, independently of optional page assets.
+        def slow_document(route):
+            response = route.fetch()
+            route.fulfill(response=response, body=response.text().replace(
+                "</head>", '<script src="slow-parser.js"></script></head>'))
+        page.route("**/index.html", slow_document)
+        page.route("**/slow-parser.js", lambda route: (time.sleep(2.2), route.fulfill(
+            content_type="application/javascript", body="")))
         page.goto(self.url(), wait_until="load")
         self.assertFalse(page.evaluate("!!window.__seen"))
         self.assert_clean(page)

@@ -1,0 +1,12 @@
+{
+  "command": "python -m unittest discover -s tests -t . -v",
+  "runtime": "Python 3.9, Chromium 147.0.7727.15",
+  "tests_run": 4874,
+  "duration_seconds": 849.487,
+  "result": "OK",
+  "skipped": 1,
+  "skip_test": "tests.test_preview_prototype.TestLogicalFingerprint.test_the_accepted_database_matches_the_declared_fingerprint",
+  "skip_reason": "Existing frozen prototype release metadata is stale: declared 2026-08-26/3574/d5b897cd4802; current corpus 2026-10-08/4980/466bff4c2828. The production candidate is built and verified against its explicit current governed snapshot. No browser classes skipped.",
+  "log_sha256": "c3144a71e1dcbf64b4368b76eca68b5ee95fd0d3fe5b1449798849dc6ad662d7",
+  "environment": "Local managed implementation worktree; no CI or deployed-page result implied."
+}

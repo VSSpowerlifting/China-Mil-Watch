@@ -119,6 +119,7 @@ from core.brief_collection import (                                  # noqa: E40
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
 from core.brief_contract import validate_readiness
+from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.reviewed_source_links import load_reviewed_links            # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
@@ -354,8 +355,8 @@ PROCESSING_STATES = [
                    "record is stored; no translation or summary was produced."},
     {"code": "awaiting_screening", "label": "Awaiting screening",
      "model_flagged": False,
-     "definition": "Stored but not yet screened for relevance. No judgment "
-                   "of any kind has been made about this record."},
+     "definition": "Stored but not yet screened for machine relevance. No machine screening judgment "
+                   "has been made about this record."},
     {"code": "analysis_incomplete", "label": "Analysis incomplete",
      "model_flagged": False,
      "definition": "Passed relevance screening, but analysis did not "
@@ -977,7 +978,7 @@ def load_editions(repo_root: Path):
     return editions
 
 
-def trail_citations(repo_root: Path, editions: list) -> tuple:
+def trail_citations(repo_root: Path, editions: list, collection=None) -> tuple:
     """
     Which stored records appear in a published issue's source trail.
 
@@ -1026,6 +1027,23 @@ def trail_citations(repo_root: Path, editions: list) -> tuple:
                 "position": position,
             })
         flags[edition["slug"]] = marks
+    if collection is not None:
+        for brief in collection.briefs:
+            if brief.get("is_review"):
+                continue
+            sidecar = collection.sidecars[brief["slug"]]
+            for position, entry in enumerate(sidecar.get("source_trail") or [], 1):
+                url = entry.get("url")
+                if not url:
+                    continue
+                refs = by_url.setdefault(url, [])
+                if any(ref["slug"] == brief["slug"] for ref in refs):
+                    continue
+                refs.append({"slug": brief["slug"], "issue": brief["issue"],
+                             "date": brief["date"], "title": brief["title"],
+                             "url": brief["url"], "series_name": brief["series_name"],
+                             "publication": brief["publication"], "position": position,
+                             "kind": "brief", "anchor": "r-%s" % entry["record_id"]})
     return by_url, flags
 
 
@@ -2064,7 +2082,7 @@ CITATION_PROCESSING_NOTES = {
         "This record was screened and not selected for analysis. No "
         "translation and no summary were produced.",
     "awaiting_screening":
-        "This record has not been screened. No judgment of any kind has been "
+        "This record has not been machine-screened. No machine screening judgment has been "
         "made about it.",
     "analysis_incomplete":
         "This record passed relevance screening, but analysis did not "
@@ -2300,7 +2318,7 @@ IDENTITY_ASSETS = {
     "icon-32.png": "ipr-compass-icon-32.png",
     "apple-touch-icon.png": "ipr-compass-touch-180.png",
     "masthead-mark.png": "ipr-compass-masthead-112.png",
-    "social-card.png": "ipr-social-card-1200x630.png",
+    "social-card.png": "../frontend/ipr-social-card-1200x630.png",
 }
 
 LEGACY_REDIRECT = """<!doctype html>
@@ -2325,7 +2343,8 @@ def build(out_dir: Path, title: str, db_path: Path,
           site_origin: str = None, allow_test_origin: bool = False,
           daily_run_date: str = None, briefs_dir: Path = None,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
-          review_brief: Path = None) -> dict:
+          review_brief: Path = None, timelines_dir: Path = None,
+          review_timeline: Path = None) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2348,8 +2367,12 @@ def build(out_dir: Path, title: str, db_path: Path,
     turns the workflow's environment into this argument.
     """
     out_dir = Path(out_dir).resolve()
-    if review_brief and site_origin:
+    if (review_brief or review_timeline) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
+    if review_timeline and (out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents or out_dir in REPO_ROOT.parents):
+        raise ValueError("timeline review requires a disposable destination outside the repository")
+    if review_brief and review_timeline:
+        raise ValueError("review one editorial artifact at a time")
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
             "refusing to write inside production output/: %s\n"
@@ -2381,6 +2404,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     env.filters["count"] = (
         lambda n: "{:,}".format(n) if isinstance(n, int) else n)
     env.filters["reader_date"] = reader_date
+    import calendar
+    env.filters["month_name"] = lambda n: calendar.month_name[n]
     env.filters["language_label"] = language_label
     env.filters["script_lang"] = script_lang
     env.filters["weekday"] = weekday
@@ -2389,13 +2414,16 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     gaps = collection_gaps(data["run_days"])
     editions = load_editions(REPO_ROOT)
+    briefs_dir = BRIEFS_SOURCE if briefs_dir is None else Path(briefs_dir)
+    collection = load_collection(editions, load_registry(), briefs_dir=briefs_dir,
+                                 allow_synthetic=allow_synthetic_briefs)
     atmosphere = home_atmosphere(REPO_ROOT)
     veil = home_veil(REPO_ROOT)
 
     # Record <-> analysis, both ways, on the exact stored URL only. A record
     # page names the issues whose source trail lists it; the Records search can
     # narrow to those records. Nothing here reads or changes an issue.
-    trail_by_url, trail_marks = trail_citations(REPO_ROOT, editions)
+    trail_by_url, trail_marks = trail_citations(REPO_ROOT, editions, collection)
     # A list row's weekday and language name travel on the record, so the
     # `_records.html` macros need no custom filter (tests render them in a
     # bare Jinja environment). Both are derived, never stored.
@@ -2425,10 +2453,6 @@ def build(out_dir: Path, title: str, db_path: Path,
     # approved brief. With no brief this is exactly `editions`, in the same
     # order, so every page that lists analysis renders as it did before. A
     # sidecar that breaks the contract fails the build here.
-    briefs_dir = BRIEFS_SOURCE if briefs_dir is None else Path(briefs_dir)
-    collection = load_collection(editions, load_registry(),
-                                 briefs_dir=briefs_dir,
-                                 allow_synthetic=allow_synthetic_briefs)
     if review_brief:
         path = Path(review_brief).resolve()
         if path.parent != briefs_dir.resolve():
@@ -2446,6 +2470,17 @@ def build(out_dir: Path, title: str, db_path: Path,
         collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
                                 withheld=collection.withheld,
                                 sidecars=dict(collection.sidecars, **{path.stem: draft}))
+    timeline_options = {"source_dir": Path(timelines_dir)} if timelines_dir is not None else {}
+    timelines, timelines_withheld = load_timelines(
+        db_path, {e["slug"]: e for e in collection.briefs},
+        review_path=review_timeline, **timeline_options)
+    timeline_records = defaultdict(list)
+    timeline_briefs = defaultdict(list)
+    for item in timelines:
+        for rec in item["ledger"]:
+            timeline_records[rec["id"]].append(item)
+        for brief in item["related_briefs"]:
+            timeline_briefs[brief].append(item)
     briefs_feed = bool(collection.briefs) and bool((site_origin or "").strip())
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
@@ -2470,7 +2505,10 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     ctx = {
         "title": title,
-        "review_mode": bool(review_brief),
+        "review_mode": bool(review_brief or review_timeline),
+        "timelines": timelines,
+        "timeline_records": timeline_records,
+        "timeline_briefs": timeline_briefs,
         "tagline": TAGLINE,
         "corpus_eyebrow": CORPUS_EYEBROW,
         "identity": identity,
@@ -2491,6 +2529,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         # own page.
         "latest_analysis": collection.lead,
         "collection": collection,
+        "photo_brief": next((e for e in collection.briefs if e.get("photo")), None),
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
@@ -2607,6 +2646,20 @@ def build(out_dir: Path, title: str, db_path: Path,
             encoding="utf-8")
         written.append(target)
 
+    if timelines:
+        (out_dir / "timeline").mkdir()
+        (out_dir / "timelines.html").write_text(
+            env.get_template("timelines.html").render(page="analysis.html", **ctx), encoding="utf-8")
+        written.append("timelines.html")
+        for timeline in timelines:
+            (out_dir / timeline["route"]).write_text(
+                env.get_template("timeline.html").render(page="analysis.html", nested=True,
+                                                          timeline=timeline, **ctx), encoding="utf-8")
+            written.append(timeline["route"])
+        (out_dir / "timelines.css").write_text(
+            (Path(__file__).parent / "timelines.css").read_text(encoding="utf-8"), encoding="utf-8")
+        written.append("timelines.css")
+
     # ── The component and state gallery (maintenance only) ────────────────
     # Off by default and never requested by `site/render.py`, so no published
     # tree carries it. It renders the production macros with real records so
@@ -2666,6 +2719,14 @@ def build(out_dir: Path, title: str, db_path: Path,
                                state_labels=STATE_LABELS,
                                state_order=STATE_ORDER,
                                language_label=language_label, veil=veil_view)
+            brief["photo"] = entry.get("photo")
+            if brief["photo"]:
+                for image in [brief["photo"]] + brief["photo"]["variants"]:
+                    route = "%s/%s" % (BRIEFS_ROUTE_DIR, image["route"])
+                    target = out_dir / route
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(image["file"].read_bytes())
+                    written.append(route)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
             for group in brief["trail_groups"]:
@@ -2801,6 +2862,26 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
+    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "shell.js"):
+        (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
+        written.append(name)
+    # The full-color JPEG fallback must travel in fresh trees too; production
+    # carry-forward is not a source dependency for the home picture.
+    route = "assets/editorial/reagan-jmsdf-2015.jpg"
+    target = out_dir / route
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes((REPO_ROOT / "site/assets/editorial/reagan-jmsdf-2015.jpg").read_bytes())
+    written.append(route)
+    for folder in ("fonts", "identity/selected-ipr", "frontend"):
+        source = REPO_ROOT / "site/assets" / folder
+        for asset in sorted(source.iterdir()):
+            if not asset.is_file() or (folder == "frontend" and asset.suffix == ".webp" and not asset.name.startswith("pacific-fleet-")):
+                continue
+            route = "assets/%s/%s" % (folder, asset.name)
+            target = out_dir / route
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(asset.read_bytes())
+            written.append(route)
     (out_dir / "topography.css").write_text(
         (Path(__file__).parent / "topography.css").read_text(encoding="utf-8"),
         encoding="utf-8")
@@ -3110,6 +3191,8 @@ def build(out_dir: Path, title: str, db_path: Path,
             "briefs": len(collection.briefs),
             "briefs_withheld": len(collection.withheld),
             "briefs_feed": bool(briefs_feed and origin),
+            "timelines": len(timelines),
+            "timelines_withheld": len(timelines_withheld),
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
             "sources": len(source_views),

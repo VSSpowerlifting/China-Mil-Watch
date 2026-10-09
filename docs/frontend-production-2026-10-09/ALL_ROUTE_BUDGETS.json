@@ -1,0 +1,33 @@
+{
+  "routes_measured": 5122,
+  "scope": "Every changed generated HTML route relative to aaafe5652481980be34786f496f46cd97623b025, using core.frontend_budget.measure_page with complete local CSS/imports and executable JS/imports.",
+  "failures": [],
+  "default_html_css_cap": 120000,
+  "index_archive_cap": 300000,
+  "over_default_cap": [
+    {
+      "route": "archive.html",
+      "html_css_bytes": 126583,
+      "js_bytes": 9847
+    },
+    {
+      "route": "desks.html",
+      "html_css_bytes": 158693,
+      "js_bytes": 0
+    }
+  ],
+  "largest_record": {
+    "route": "record/476.html",
+    "html_css_bytes": 110284,
+    "js_bytes": 5322
+  },
+  "default_js_cap": 10000,
+  "existing_home_intro_js_cap": 12000,
+  "over_default_script_cap": [
+    {
+      "route": "index.html",
+      "html_css_bytes": 58492,
+      "js_bytes": 11940
+    }
+  ]
+}

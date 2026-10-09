@@ -67,7 +67,7 @@ class ResearchAtlasHierarchy(unittest.TestCase):
     def test_atlas_spine_uses_declared_states_and_snapshot(self):
         # The desk line is rendered where desk coverage is the subject —
         # Records, Coverage, Desks — rather than repeated above every page.
-        # The home page names every desk's status in its own Desks section.
+        # Home names the desks contributing public records and links to full scope.
         snapshot = gp.snapshot_from_corpus(gp.TRACKED_DB)
         for route in ("archive.html", "coverage.html", "desks.html"):
             page = self.html(route)
@@ -76,10 +76,15 @@ class ResearchAtlasHierarchy(unittest.TestCase):
                 self.assertIn(snapshot["date"], page)
                 for desk in load_registry().public_entries:
                     self.assertIn(desk.status_label, page)
-        home = self.html("index.html").split('<h2 id="desks">', 1)[1]
-        for desk in load_registry().public_entries:
-            with self.subTest(home_desk=desk.slug):
-                self.assertIn(desk.status_label, home)
+        from bs4 import BeautifulSoup
+        home = BeautifulSoup(self.html("index.html"), "html.parser").select_one(".home-desks")
+        self.assertIn("Coverage is selective", home.get_text(" "))
+        shown = home.select(".home-desk-list a")
+        public_desks = [d for d in gp.PublicView(gp.TRACKED_DB).desk_directory() if d.record_count]
+        self.assertEqual({a.get("href") for a in shown}, {d.route for d in public_desks})
+        for desk in public_desks:
+            self.assertIn("{:,} public records in this snapshot".format(desk.record_count), home.get_text(" "))
+        self.assertTrue(home.select('a[href="coverage.html"]'))
         self.assertIn("Paused — collection stopped", self.html("desks.html"))
         self.assertIn("Planned — nothing collected", self.html("desks.html"))
 

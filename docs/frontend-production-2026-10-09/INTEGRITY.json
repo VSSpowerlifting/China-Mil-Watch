@@ -1,0 +1,106 @@
+{
+  "records_checked": 4980,
+  "approved_native_relations": 10,
+  "failures": [],
+  "budgets": [
+    {
+      "route": "index.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 58492,
+      "js_bytes": 11940,
+      "css": [
+        "fonts.css",
+        "home.css",
+        "styles.css"
+      ],
+      "js": [
+        "intro.js",
+        "shell.js"
+      ],
+      "external": []
+    },
+    {
+      "route": "archive.html",
+      "html_css_limit": 300000,
+      "html_css_bytes": 126583,
+      "js_bytes": 9847,
+      "css": [
+        "archive.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "browse.js",
+        "shell.js"
+      ],
+      "external": []
+    },
+    {
+      "route": "record/3924.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 57260,
+      "js_bytes": 5322,
+      "css": [
+        "fonts.css",
+        "record.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": []
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 69167,
+      "js_bytes": 5322,
+      "css": [
+        "briefs.css",
+        "fonts.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": []
+    },
+    {
+      "route": "timelines.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 57318,
+      "js_bytes": 3118,
+      "css": [
+        "fonts.css",
+        "styles.css",
+        "timelines.css"
+      ],
+      "js": [
+        "reveal.js",
+        "shell.js"
+      ],
+      "external": []
+    },
+    {
+      "route": "timeline/maritime-cooperation-2026.html",
+      "html_css_limit": 120000,
+      "html_css_bytes": 83346,
+      "js_bytes": 3118,
+      "css": [
+        "fonts.css",
+        "styles.css",
+        "timelines.css"
+      ],
+      "js": [
+        "reveal.js",
+        "shell.js"
+      ],
+      "external": []
+    }
+  ],
+  "database_sha256": "4a8803d72f0efafcb6700f4286c39909c9fb11405b2acdbbade73573447be6f5",
+  "timeline_sha256": "0e922865856addb24786b088ee925c35ebab3809659fb252462a66090c9da332"
+}

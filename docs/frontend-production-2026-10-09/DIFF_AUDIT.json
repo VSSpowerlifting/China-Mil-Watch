@@ -1,0 +1,39 @@
+{
+  "baseline": "aaafe5652481980be34786f496f46cd97623b025",
+  "generated_files": 5166,
+  "generated_families": {
+    "root/support pages and files": 26,
+    "native Brief pages": 3,
+    "record pages": 4980,
+    "source pages": 10,
+    "publication-week pages": 113,
+    "frontend assets": 31,
+    "natural Brief images": 3
+  },
+  "protected_frontend_paths": {
+    "pla_watch.db": [],
+    "briefs": [],
+    "desks": [],
+    "collectors": [],
+    "shadow": [],
+    "output/the-pla-watch": [],
+    ".github/workflows": [],
+    "output/assets/editorial": []
+  },
+  "archive_index_changed_fields": [
+    "trail_ids"
+  ],
+  "approved_native_trail_additions": [
+    3924,
+    4102,
+    4164,
+    4207,
+    4211,
+    4392,
+    4426,
+    4466,
+    4472,
+    4935
+  ],
+  "review_method": "Shared shell/route template diff, complete generated file inventory, all 4980 record contents/provenance and exact six-field index parity in INTEGRITY.json; unchanged historical weekly/source assets and canonical inputs."
+}

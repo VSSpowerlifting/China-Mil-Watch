@@ -29,12 +29,7 @@
 {%- endmacro %}
 
 {% block hero %}
-<section class="band brief-hero{% if brief.veil %} brief-hero--veil{% endif %}" aria-labelledby="brief-title">
-  {% if brief.veil %}
-  <div class="brief-veil" role="img" aria-label="{{ brief.veil.alt }}"
-       data-editorial-id="{{ brief.veil.id }}"
-       style="background-image:url('{{ brief.veil.route }}'); background-position:{{ brief.veil.mask_focus }};"></div>
-  {% endif %}
+<section class="band brief-hero{% if brief.photo %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
     {% if brief.synthetic %}
@@ -42,40 +37,33 @@
       published brief: its number, title, records and image are invented to test
       rendering, and it never appears on the public site.</p>
     {% endif %}
-    <p class="brief-eyebrow"><a href="../analysis.html">{{ brief.series_name }}</a></p>
+    <div class="brief-heading">    <p class="brief-eyebrow"><a href="../analysis.html">{{ brief.series_name }}</a></p>
     <p class="brief-edition">{% if brief.number %}<span class="ed-no">No. {{ brief.number }}</span> · {% endif %}<span>Week ending <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></span>{% if brief.edition_type or brief.is_retrospective %} <span class="brief-status">{% if brief.edition_type %}<span class="brief-badge">{{ brief.edition_type }}</span>{% endif %}{% if brief.is_retrospective %} <span class="brief-badge">{{ brief.timing_label }}</span>{% endif %}</span>{% endif %}</p>
     <h1 id="brief-title" class="brief-title">{{ brief.title }}</h1>
-    <p class="brief-dek">{{ brief.dek }}</p>
+</div>
+    {% if brief.photo %}
+    <figure class="brief-opening-photo"><picture><source type="image/webp" srcset="{{ brief.photo.srcset }}" sizes="(max-width:900px) calc(100vw - 44px), 46vw"><img src="{{ brief.photo.route }}" width="{{ brief.photo.width }}" height="{{ brief.photo.height }}" fetchpriority="high" alt="{{ brief.photo.alt }}" data-editorial-id="{{ brief.photo.id }}" aria-label="{{ brief.photo.alt }}"></picture>
+      <figcaption>{{ brief.photo.credit }}. <a href="{{ brief.photo.source_page }}" rel="noopener nofollow">{{ brief.photo.source }}</a> · <a href="#{{ brief.photo.anchor }}">Cited record {{ brief.photo.record_id }}</a>. Context, not evidence.
+        <details class="brief-photo-credit-detail"><summary>Full photograph credit</summary><p>{{ brief.photo.credit }}. Image: <a href="{{ brief.photo.source_page }}" rel="noopener nofollow">{{ brief.photo.source }}</a>{% if brief.photo.subject %}, published with “{{ brief.photo.subject }}”{% endif %} (<a href="#{{ brief.photo.anchor }}">cited record {{ brief.photo.record_id }}</a>). Context, not evidence.</p></details>
+      </figcaption>
+    </figure>
+    {% endif %}
+    <div class="brief-context">    <p class="brief-dek">{{ brief.dek }}</p>
     <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>
     <ul class="brief-meta">
       <li>Covers <time datetime="{{ brief.week_start }}">{{ brief.week_start|reader_date }}</time> – <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></li>
       <li>{{ brief.desks | map(attribute='name') | join(' and ') if brief.desks | length < 3 else (brief.desks | length) ~ ' desks' }}</li>
       <li>{{ brief.trail_count }} cited record{{ 's' if brief.trail_count != 1 }}</li>
     </ul>
-    {% if brief.veil %}
-    <p class="brief-veil-credit">{{ brief.veil.credit }}. Image: <a href="{{ brief.veil.source_page }}" rel="noopener nofollow">{{ brief.veil.source }}</a>{% if brief.veil.subject %}, published with “{{ brief.veil.subject }}”{% endif %} (<a href="#{{ brief.veil.anchor }}">cited record {{ brief.veil.record_id }}</a>). Context, not evidence.</p>
-    {% endif %}
+</div>
   </div>
-  {% if brief.veil %}
-  {#- Desktop source mark, after the text so it is read and tabbed after the
-      headline; it is absolutely placed, so its position does not change. It
-      and the inline credit above are the same
-      attribution; exactly one is displayed at any width, and `display: none`
-      takes the other out of the accessibility tree. Both sit on a solid band
-      scrim, never on the photograph. -#}
-  <div class="brief-src-bracket">
-    <span class="bracket" aria-hidden="true"></span>
-    <p class="src-lines">{{ brief.veil.credit }}<br>IMG · <a href="{{ brief.veil.source_page }}" rel="noopener nofollow">{{ brief.veil.source }}</a><br>
-      <a href="#{{ brief.veil.anchor }}">Cited record {{ brief.veil.record_id }}</a><br>
-      Context, not evidence</p>
-  </div>
-  {% endif %}
 </section>
 {% endblock %}
 
 {% block content %}
 {{ breadcrumb([('Analysis', '../analysis.html'), (brief.title, none)]) }}
 <div class="brief-layout">
+  <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
   <nav class="brief-toc" aria-label="In this brief">
     <p class="brief-toc-label">In this brief</p>
     <ol>
@@ -90,7 +78,7 @@
       {% if brief.external_evidence %}<li><a href="#s-external">Reviewed external sources</a></li>{% endif %}
       <li><a href="#s-cite">Cite this brief</a></li>
     </ol>
-  </nav>
+  </nav></details>
 
   <article class="brief-main">
     {% if brief.signal %}
@@ -259,5 +247,6 @@
     <p class="meta brief-back"><a href="../analysis.html">← All analysis</a></p>
   </article>
 </div>
+{% if timeline_briefs is defined and timeline_briefs[brief.slug] %}<aside class="trail-panel" aria-label="Related evidence timelines"><h2>Evidence Timelines</h2>{% for item in timeline_briefs[brief.slug] %}<p><a href="../{{ item.route }}">{{ item.title }}</a>{% if item.is_review %} · unpublished draft{% endif %}</p>{% endfor %}</aside>{% endif %}
 {% endblock %}
 {% block scripts %}<script src="../citation.js" defer></script>{% endblock %}

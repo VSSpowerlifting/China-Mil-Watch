@@ -388,10 +388,9 @@ class TestTheDatesAreReadableOnANarrowViewport(unittest.TestCase):
         return match.group(1)
 
     def test_the_date_value_is_kept_on_one_line(self):
-        # Each label/value pair is one unbreakable unit, so a date can never
-        # split into "2026-08-" / "24".
-        self.assertIn("white-space: nowrap",
-                      self.rule(".freshness-bar dl > div"))
+        # Labels may wrap separately on the compact disclosure; each date
+        # value remains one unbroken unit.
+        self.assertIn("white-space: nowrap", self.rule(".freshness-bar dd"))
 
     def test_the_rule_targets_the_value_not_the_whole_row(self):
         """
@@ -403,4 +402,4 @@ class TestTheDatesAreReadableOnANarrowViewport(unittest.TestCase):
 
     def test_the_row_can_still_wrap_between_items(self):
         self.assertIn("flex-wrap: wrap", self.rule(".freshness-bar dl"))
-        self.assertIn("flex-wrap: wrap", self.rule(".freshness-bar .wrap"))
+        self.assertNotIn("white-space: nowrap", self.rule(".freshness-bar .wrap"))
