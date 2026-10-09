@@ -52,6 +52,28 @@ of billed model calls, expense, editorial value, source rights, website
 publication or a successful Daily workflow.** Those require exact original
 Actions/log receipts and source review.
 
+## Reproducible October 6–8 Git-history comparison
+
+The dedicated PR CI also compares two **existing** `pla_watch.db` revisions
+recorded by actual Daily-update commits, without manufacturing an artificial
+historical state or changing the current tracked database:
+
+| Daily update | Commit SHA | Database Git blob SHA |
+|---|---|---|
+| October 6, 2026 | `6b852f79a11ab7f7202c94a0effa4ccd42b04831` | `5e540a30ff6ca45d6639be071d25b1bc47c54929` |
+| October 8, 2026 | `52155974e2aad14a45646257fe70a282314f8c2c` | `1dc74bb9b4291c37ce5cd41fc87dbd0c18586f1d` |
+
+CI fetches these pinned commits, verifies their Git database-object identities,
+writes the two historical file versions **only under the runner temp directory**,
+then executes the same two-snapshot audit using a common October 9 UTC cutoff.
+The workflow prints only aggregate queue changes, bucket transitions and
+identity-continuity counts. It never uploads the database copies, article URLs
+or text. **Git object SHA identity and local SHA-256 input fingerprints are
+different forms of identity evidence**, and neither alone proves the DB
+commits match live production precisely at the Actions run timestamps.
+Any apparent model-throughput conclusion must be checked against the original
+October 6 and 8 Daily logs and the intervening October 7 cancelled attempts.
+
 ## Operational interpretation
 
 A fall in stored backlog may reflect completed processing, relevance
@@ -73,9 +95,9 @@ The report carries `snapshot_ancestry_authenticated=false`,
 `model_spend_authorized=false`, `publication_authorized=false`
 and `model_calls=network_requests=writes=0`.
 
-The dedicated CI uses two synthetic SQLite fixtures to validate the
+The dedicated CI uses synthetic SQLite fixtures to validate the
 accounting under additions, deletions, unchanged IDs, desk reassignment,
 paused resumes, relevance decisions, and completed-analysis state changes.
 It also proves the two original DBs and site output remain byte-identical.
-It **does not manufacture or upload a historical production snapshot**.
+It **does not manufacture or upload a historical production snapshot**; it additionally verifies and compares the two real historical Git revisions listed above.
 Full repository offline/Chromium/render/no-write CI must pass before merge.
