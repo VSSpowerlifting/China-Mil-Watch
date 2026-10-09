@@ -13,6 +13,10 @@ import sys
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 from core.shadow_schedule import (
     SOURCE_EXPLICIT, SOURCE_MANUAL, SOURCE_SCHEDULE,
     parse_cron_utc, parse_iso_date, scheduled_slot_date,
