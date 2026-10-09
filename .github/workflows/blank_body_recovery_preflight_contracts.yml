@@ -1,0 +1,79 @@
+name: Historical blank-body recovery preflight contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_blank_body_recovery.py'
+      - 'tests/test_blank_body_recovery.py'
+      - 'docs/BLANK_BODY_RECOVERY_PREFLIGHT.md'
+      - '.github/workflows/blank_body_recovery_preflight_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  blank-body-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin original DB and ensure no existing sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/baseline.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Test read-only historical body recovery and canonical queue
+        run: |
+          python -m unittest tests.test_blank_body_recovery -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Inspect actual tracked database without source fetch
+        run: |
+          set -euo pipefail
+          python scripts/audit_blank_body_recovery.py --db pla_watch.db \
+            > "$RUNNER_TEMP/blank-body-recovery.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          result = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                               "blank-body-recovery.json").read_text())
+          candidates = result["candidate_review_receipts"]
+          assert result["schema"] == "ipr-blank-body-recovery-preflight/1"
+          assert len(candidates) == result["blank_body_daily_candidates"]
+          assert sum(result["date_relations"].values()) == len(candidates)
+          assert sum(s["count"] for s in result["source_date_relations"]) == len(candidates)
+          assert len(candidates) <= 100
+          assert result["source_urls_included_by_operator"] is False
+          assert all("review_url_display_only" not in r for r in candidates)
+          assert len(result["input_file_sha256"]["db"]) == 64
+          assert result["publisher_page_rechecked"] is False
+          assert result["extraction_recovery_validated"] is False
+          assert result["retry_authorized"] is False
+          assert result["archive_rewrite_authorized"] is False
+          assert result["model_spend_authorized"] is False
+          assert result["publication_authorized"] is False
+          assert result["network_requests"] == 0
+          assert result["model_calls"] == 0 and result["writes"] == 0
+          print("Historical blank-body preflight: stored=%d blank_candidates=%d" %
+                (result["article_rows"], len(candidates)))
+          for s in result["source_date_relations"]:
+              # ONLY aggregate source/date metadata is permitted in public CI.
+              print("source=%s desk=%s relation=%s count=%d" %
+                    (s["source_slug"], s["desk_id"],
+                     s["fix_date_relation"], s["count"]))
+          PY
+      - name: Verify tracked DB and public output unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/baseline.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
