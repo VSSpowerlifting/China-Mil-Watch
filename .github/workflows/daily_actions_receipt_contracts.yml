@@ -1,0 +1,41 @@
+name: Daily Actions execution and backlog receipt contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_daily_run_receipts.py'
+      - 'tests/test_daily_run_receipts.py'
+      - 'docs/DAILY_ACTIONS_RECEIPTS.md'
+      - '.github/workflows/daily_actions_receipt_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-receipts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked database checksum
+        id: before
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Check candidate Daily actions execution receipts offline
+        run: python -m unittest tests.test_daily_run_receipts -v
+      - name: Prove no tracked database or output changes
+        if: ${{ !cancelled() && steps.before.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
