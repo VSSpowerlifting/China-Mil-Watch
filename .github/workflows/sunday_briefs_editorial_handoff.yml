@@ -221,6 +221,25 @@ jobs:
           print("Neither source rights nor official silence nor publication approved.")
           PY
 
+      # Confirm the ACTUAL scratch packet reaching the unified model still
+      # contains Japan. For the Oct10 pilot require the exact three pinned
+      # Japan MOD research IDs; for later weeks label omitted Japan explicitly.
+      # This step neither verifies original PDF fidelity nor approves sources.
+      - name: Attest Japan research offer in the refreshed single-theme packet
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
+            echo "::error::Refused: missing current-source research packet"
+            exit 2
+          }
+          python -m scripts.sunday_japan_offer_gate \\
+            --week-ending "$IPR_SUNDAY_WEEK_END" \\
+            --as-of "$IPR_SUNDAY_AS_OF" \\
+            --packet "$PRIVATE_WEEK_PACKET"
+
       - name: Create read-only full Saturday-ending week source scaffold
         env:
           PACKET_SIDECAR: ${{ runner.temp }}/ipr-sunday-scaffold.json
