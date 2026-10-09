@@ -122,15 +122,17 @@ class BindingContracts(unittest.TestCase):
         item = next(s for s in self.config["sources"]
                     if s["source_slug"] == "kr_policy_mnd_releases")
         item["state_branch"] = "shadow/indonesia-kemhan"
-        # Both branch literals occur in this shared YAML! Explicit row still
-        # cannot automatically prove correct routing: the audit is a text
-        # declaration match, not a runtime Actions/ledger attestation.
-        result = self.report()
-        korea = next(s for s in result["sources"]
-                     if s["source_slug"] == "kr_policy_mnd_releases")
-        self.assertEqual(korea["evidence"],
-                         "cron_and_branch_literals_found_not_run_verified")
-        self.assertFalse(korea["run_attested"])
+        # Both branches occur in this shared YAML, but the actual case arm
+        # must bind the Korea desk to the Korea branch and Korea cron.
+        with self.assertRaisesRegex(audit.BindingError, "routing mismatch"):
+            self.report()
+
+    def test_vietnam_ministry_swapped_branch_fails_routing(self):
+        source = next(s for s in self.config["sources"]
+                      if s["source_slug"] == "vn_mps_foreign_affairs_vi")
+        source["state_branch"] = "shadow/vietnam-moit-energy"
+        with self.assertRaisesRegex(audit.BindingError, "routing mismatch"):
+            self.report()
 
     def test_research_only_journal_cannot_claim_hidden_workflow(self):
         item = next(s for s in self.config["sources"]
