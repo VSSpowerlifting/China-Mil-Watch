@@ -177,8 +177,49 @@ class IndonesiaProvenance(unittest.TestCase):
 
     def test_schedule_wrong_logical_date_refused(self):
         self.actions[1]["created_at"] = "2026-10-08T21:58:00Z"
-        with self.assertRaisesRegex(audit.ProvenanceError, "logical target date"):
+        with self.assertRaisesRegex(audit.ProvenanceError, "logical slot date"):
             self.report()
+
+    def test_delayed_overnight_schedule_maps_to_previous_logical_date(self):
+        # Indonesia is scheduled at 17:17 UTC. A next-day runner start
+        # remains evidence for the previous day's nominal slot.
+        self.actions[1]["created_at"] = "2026-10-08T01:02:00Z"
+        self.ledgers[2]["started_utc"] = "2026-10-08T01:03:00+00:00"
+        self.ledgers[2]["finished_utc"] = "2026-10-08T01:04:00+00:00"
+        result = audit.assess(self.clock, self.ledgers, self.b2,
+                              audit.parse_actions_export({
+                                  "total_count": 2,
+                                  "workflow_runs": self.actions,
+                              }))
+        self.assertEqual(result["scheduled_run_matches"], 1)
+
+    def test_schedule_rerun_attempt_two_cannot_claim_original_slot(self):
+        self.ledgers[2]["run_id"] = "37693074726-2"
+        self.actions[1]["run_attempt"] = 2
+        with self.assertRaisesRegex(audit.ProvenanceError, "scheduled rerun"):
+            audit.assess(self.clock, self.ledgers, self.b2,
+                         audit.parse_actions_export({
+                             "total_count": 2, "workflow_runs": self.actions,
+                         }))
+
+    def test_actual_explicit_manual_target_date_is_allowed(self):
+        self.ledgers[1]["target_date_source"] = audit.SOURCE_EXPLICIT
+        self.ledgers[1]["target_date"] = "2026-10-05"
+        result = audit.assess(self.clock, self.ledgers, self.b2,
+                              audit.parse_actions_export({
+                                  "total_count": 2,
+                                  "workflow_runs": self.actions,
+                              }))
+        self.assertEqual(result["manual_run_matches"], 1)
+
+    def test_implicit_manual_date_cannot_claim_prior_day(self):
+        self.ledgers[1]["target_date"] = "2026-10-05"
+        with self.assertRaisesRegex(audit.ProvenanceError,
+                                    "implicit manual run"):
+            audit.assess(self.clock, self.ledgers, self.b2,
+                         audit.parse_actions_export({
+                             "total_count": 2, "workflow_runs": self.actions,
+                         }))
 
     def test_missing_action_run_is_not_silent_success(self):
         self.actions.pop()
