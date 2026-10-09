@@ -138,10 +138,12 @@ def handoff(path, week_ending, *, send=False, owner_confirmed=False,
     # A deliberate manual editor handoff must not run alongside the old
     # recurring Friday delivery service. The operator supplies the same
     # environment that IPR's weekly workflow uses; we do not update variables.
-    if os.environ.get("IPR_EDITOR_DELIVERY_ENABLED", "").lower() == "true":
-        raise ReviewedHandoffRefused(
-            "parallel editor service enabled: disable IPR_EDITOR_DELIVERY_ENABLED"
-        )
+    for service in ("IPR_EDITOR_DELIVERY_ENABLED",
+                    "IPR_SUNDAY_EDITOR_DELIVERY_ENABLED"):
+        if os.environ.get(service, "").strip().lower() == "true":
+            raise ReviewedHandoffRefused(
+                "parallel editor service enabled: disable " + service
+            )
     try:
         editor = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
         owner = single_address(os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
