@@ -45,6 +45,15 @@ must never hide a failed latest attempt. Missing run history is `not observed`,
 not a successful run. Failed latest attempts, overdue silence and unusable
 adapters generate independent review reasons; none qualifies a desk for promotion.
 
+**Source review flags in HTML:** a front-of-page table presents every
+recorded warning with its desk, source and reason, including an unsuccessful
+latest source attempt even when its most recent article is recent. A separate
+table lists enabled production sources with **no latest-run evidence**. That
+unknown condition is *not* labeled a failed run or a successful run. A zero
+warning count never proves completeness, collection continuity, source reuse
+rights, or editorial readiness. Both tables derive from the same read-only
+JSON snapshot; no new data authority is introduced.
+
 **Shadow source families:** a deterministic inventory of
 `shadow/*/manifest.json` files. These are source-family configurations,
 not independently validated running desks. A manifest with
