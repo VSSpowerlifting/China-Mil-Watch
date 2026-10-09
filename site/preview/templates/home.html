@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% from "_terrain.html" import terrain %}
 {% from "_records.html" import record_row %}
 {% block title %}{{ title }} — Explore official records{% endblock %}
 {% block main_class %} class="leads-with-hero home-page"{% endblock %}
 {% block head_scripts %}<link rel="stylesheet" href="home.css"><script src="intro.js" async></script>{% endblock %}
 {% block hero %}
 <section class="pacific-opening opening" aria-labelledby="home-title">
+  {{ terrain('photo-edge') }}
   <picture><source type="image/webp" srcset="assets/frontend/pacific-fleet-800.webp 800w, assets/frontend/pacific-fleet-1600.webp 1600w, assets/frontend/pacific-fleet-2500.webp 2500w" sizes="100vw"><img class="pacific-photo" src="assets/editorial/reagan-jmsdf-2015.jpg" alt="" width="2500" height="1663" fetchpriority="high"></picture>
   <div class="wrap pacific-copy">
     <p class="pacific-intro">Independent, source-grounded monitoring and analysis</p>
@@ -36,6 +38,7 @@
 {% set lead = collection.lead if collection else none %}
 {% set lead_row = collection.lead_row if collection else none %}
 <section id="analysis" class="home-coast-band" aria-labelledby="latest-analysis">
+  {{ terrain('coast') }}
   <div class="wrap home-coast-inner"><div class="home-latest-analysis"><p class="evidence evidence--analysis">Human-controlled analysis</p><h2 id="latest-analysis">Latest analysis</h2>
     {% if lead %}{% if lead.synthetic %}<p class="brief-fixture">Synthetic test fixture. Not a published brief.</p>{% endif %}<p class="home-small-label">{{ collection_name }}{% if lead.issue %} · No. {{ lead.issue }}{% endif %}</p><h3><a href="{{ lead.url }}">{{ lead.title }}</a></h3><p>{{ lead.dek }}</p><p class="meta">{{ lead.author_name or maintainer.name }} · Week ending {{ lead.date | reader_date }}{% if lead.is_retrospective %} · {{ lead.retrospective_label }}{% endif %}</p>{% if lead_row.kind == 'issue' %}<p class="meta">{{ lead_row.provenance }}</p>{% endif %}<a class="btn btn--light" href="{{ lead.url }}">Read this Brief</a>
     {% else %}<h3>Briefs in development</h3><p>Draft Briefs are withheld from the public collection until approved.</p>{% endif %}

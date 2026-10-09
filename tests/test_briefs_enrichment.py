@@ -16,6 +16,7 @@ class MaterialIntegrity(unittest.TestCase):
     def test_material_receipt_and_seamless_edges(self):
         directory = ROOT / 'site/assets/material'
         receipt = json.loads((directory / 'ASSET_RECEIPT.json').read_text())
+        self.assertEqual(set(receipt['assets']), {'chart-paper.png', 'contours-hero.svg', 'contours-paper.svg'})
         for name, values in receipt['assets'].items():
             content = (directory / name).read_bytes()
             self.assertEqual(hashlib.sha256(content).hexdigest(), values['sha256'])

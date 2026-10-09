@@ -2326,9 +2326,11 @@ LEGACY_REDIRECT = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Moved</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="%(target)s">
 <meta http-equiv="refresh" content="0; url=%(target)s">
+<style>html{color:#142e38;background:#f3f2ec;font:20px/1.6 Georgia,serif}body{max-width:40rem;margin:12vh auto;padding:2rem;border-top:3px double #899391}a{color:inherit;text-underline-offset:.2em}a:hover{text-decoration-thickness:2px}a:focus-visible{outline:2px solid #245e62;outline-offset:4px}@media(forced-colors:active){html{color:CanvasText;background:Canvas}a{color:LinkText}}</style>
 </head>
 <body>
 <p>This record has moved to <a href="%(target)s">its record page</a>.</p>
@@ -2862,7 +2864,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js"):
+    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "enrichment.css", "shell.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # The full-color JPEG fallback must travel in fresh trees too; production
@@ -2884,7 +2886,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             written.append(route)
     # Decorative pilot assets are explicitly delivered from source. The review
     # master/receipt never becomes a browser dependency; other routes opt out.
-    for name in ("chart-paper.png", "contours-hero.svg", "contours-paper.svg"):
+    for name in ("chart-paper.png", "navy-paper.png", "contours-hero.svg", "contours-paper.svg"):
         route = "assets/material/" + name
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
