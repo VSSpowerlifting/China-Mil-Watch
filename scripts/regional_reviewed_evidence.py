@@ -18,7 +18,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from core.regional_reviewed_evidence import (  # noqa: E402
-    ReviewGateError, private_model_packet, sign_private_review,
+    ReviewGateError, make_manual_review_template, private_model_packet,
+    sign_private_review,
 )
 from core.regional_weekly_inventory import inspect  # noqa: E402
 
@@ -64,41 +65,62 @@ def _out(path, data):
 
 def run(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("seal", "preview"))
+    parser.add_argument("action", choices=("template", "seal", "preview"))
     parser.add_argument("--week-ending", required=True)
     parser.add_argument("--as-of", required=True)
     parser.add_argument("--review-local-day", required=True)
     parser.add_argument("--db", type=Path, default=ROOT / "pla_watch.db")
     parser.add_argument("--marker", type=Path,
                         default=ROOT / ".github/state/last_daily_run_date.txt")
-    parser.add_argument("--review", type=Path, required=True,
-                        help="For seal: manually composed unsigned docket; "
+    parser.add_argument("--review", type=Path,
+                        help="For seal: manually completed template; "
                              "for preview: signed reviewed docket")
+    parser.add_argument("--ids",
+                        help="Template only: comma-separated source record IDs")
+    parser.add_argument("--reviewer",
+                        help="Template only: human reviewer identification")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
-    if not sys.stdin.isatty():
-        parser.error("owner-only reviewed source material requires an interactive TTY")
+    if args.action in ("seal", "preview") and not sys.stdin.isatty():
+        parser.error("owner-only signed source review requires an interactive TTY")
+    if args.action == "template":
+        if not args.ids or not args.reviewer or args.review is not None:
+            parser.error("template requires --ids and --reviewer, not --review")
+    elif args.review is None or args.ids is not None or args.reviewer is not None:
+        parser.error("seal/preview require --review, not --ids/--reviewer")
     try:
         inventory = inspect(week_ending=args.week_ending, as_of=args.as_of,
                             review_day=args.review_local_day,
                             database=args.db, marker_path=args.marker)
-        material = _json(args.review)
-        if args.action == "seal":
-            print("Sign only after independently checking the publisher's original")
-            print("and confirming each synopsis is appropriately source-attributed.")
-            print("This authorizes private synopsis review only, not publication.")
-            if input("Type the exact approval phrase: ").strip() != CONFIRM:
-                raise ReviewGateError("human source review confirmation missing")
-        secret = getpass.getpass(
-            "Owner-held review key (minimum 32 bytes, not stored): ").encode("utf-8")
-        if args.action == "seal":
-            result = sign_private_review(material, inventory, secret)
+        if args.action == "template":
+            ids = args.ids.split(",")
+            if not ids or any(not v.isdecimal() or not v
+                              or v.startswith("0") for v in ids):
+                raise ReviewGateError("template IDs must be distinct canonical positive integers")
+            result = make_manual_review_template(
+                inventory, [int(v) for v in ids],
+                reviewer=args.reviewer, reviewed_on=args.review_local_day)
         else:
-            result = private_model_packet(inventory, material, secret)
+            material = _json(args.review)
+            if args.action == "seal":
+                print("Sign only after independently checking the publisher's original")
+                print("and confirming each synopsis is appropriately source-attributed.")
+                print("This authorizes private synopsis review only, not publication.")
+                if input("Type the exact approval phrase: ").strip() != CONFIRM:
+                    raise ReviewGateError("human source review confirmation missing")
+            secret = getpass.getpass(
+                "Owner-held review key (minimum 32 bytes, not stored): ").encode("utf-8")
+            if args.action == "seal":
+                result = sign_private_review(material, inventory, secret)
+            else:
+                result = private_model_packet(inventory, material, secret)
         _out(args.out, result)
     except (ReviewGateError, OSError, ValueError) as exc:
         parser.error(str(exc))
-    if args.action == "seal":
+    if args.action == "template":
+        print("PRIVATE unapproved docket template created; review every item by hand.")
+        print("Human approvals in template: ZERO.")
+    elif args.action == "seal":
         print("PRIVATE review sealed; no AI model called or email sent.")
     else:
         print("PRIVATE synopsis packet verified; no AI model called or email sent.")
