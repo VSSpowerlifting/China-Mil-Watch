@@ -178,6 +178,36 @@ class OperationsCenterContracts(unittest.TestCase):
         with self.assertRaisesRegex(ops.SnapshotError, "failure evidence"):
             self.snapshot(report)
 
+    def test_html_displays_review_reasons_not_just_count(self):
+        report = self.report()
+        report["sources"][0]["latest_run_result"] = {
+            "status": "retrieval_error", "is_failure": 1,
+        }
+        report["sources"][0]["silence_verdict"] = "overdue"
+        report["sources"][0]["config_health"] = "unusable"
+        snap = self.snapshot(report)
+        self.assertEqual(3, len(snap["source_health_review_flags"][0]["reasons"]))
+        html = ops.render_html(snap)
+        self.assertIn("Source review flags", html)
+        self.assertIn("Latest source collection failed", html)
+        self.assertIn("Publication silence overdue", html)
+        self.assertIn("Adapter configuration requires review", html)
+        self.assertIn(snap["source_health_review_flags"][0]["source_slug"], html)
+        self.assertIn("Empty does not certify complete coverage", html)
+        self.assertFalse(snap["publication_authorized"])
+
+    def test_html_does_not_confuse_unknown_run_with_success(self):
+        report = self.report()
+        report["sources"][0]["latest_run_result"] = None
+        snap = self.snapshot(report)
+        html = ops.render_html(snap)
+        self.assertEqual([], snap["source_health_review_flags"])
+        self.assertIn("Source runs not observed", html)
+        self.assertIn("Unknown is not a successful collection", html)
+        source = snap["desks"][0]["production_sources"][0]["name"]
+        self.assertIn(source.replace("&", "&amp;"), html)
+        self.assertFalse(snap["editor_delivery_authorized"])
+
     def test_source_flag_does_not_promote_desk(self):
         report = self.report()
         report["sources"][0]["silence_verdict"] = "overdue"
