@@ -1,0 +1,45 @@
+name: Translation tool value validation contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'analysis/analyzer.py'
+      - 'tests/test_translation_tool_value_validation.py'
+      - 'docs/TRANSLATION_TOOL_VALUE_VALIDATION.md'
+      - '.github/workflows/translation_tool_value_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-translation-values:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record archive/output identity
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/unchanged-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install declared dependencies
+        run: pip install -r requirements.txt
+      - name: Prove invalid translation payloads cannot become successful analyses
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_translation_tool_value_validation -v
+          python -m unittest tests.test_llm_usage_telemetry -v
+      - name: Prove site and tracked archive have not changed
+        run: |
+          sha256sum -c "$RUNNER_TEMP/unchanged-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
