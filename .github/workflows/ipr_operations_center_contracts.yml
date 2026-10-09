@@ -1,0 +1,63 @@
+# Focused verification; full repository CI remains mandatory for merge.
+name: IPR Operations Center offline contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/operations_center.py'
+      - 'tests/test_operations_center.py'
+      - 'docs/IPR_OPERATIONS_CENTER.md'
+      - '.github/workflows/ipr_operations_center_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  operations-center:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - name: Record production artifacts
+        id: originals
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
+      - name: Run Ops Center focused contracts
+        run: python -m unittest tests.test_operations_center -v
+      - name: Smoke actual offline snapshot (no site render)
+        run: |
+          python scripts/operations_center.py --json "$RUNNER_TEMP/ipr-ops.json" --html "$RUNNER_TEMP/ipr-ops.html"
+          python - "$RUNNER_TEMP/ipr-ops.json" "$RUNNER_TEMP/ipr-ops.html" <<'PY'
+          import json
+          import pathlib
+          import sys
+          report = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          assert report["schema"] == "ipr-operations-snapshot/1"
+          assert report["publication_authorized"] is False
+          assert report["shadow_promotion_authorized"] is False
+          assert report["editor_delivery_authorized"] is False
+          assert report["collection_performed"] is False
+          assert len(report["desks"]) > 0
+          assert "<html " in pathlib.Path(sys.argv[2]).read_text()
+          print("Offline dashboard artifacts verified without publishing.")
+          PY
+      - name: Check tracked archive and output unchanged
+        if: ${{ !cancelled() && steps.originals.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.originals.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
