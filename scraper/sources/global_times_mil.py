@@ -62,6 +62,7 @@ class GlobalTimesMilScraper(BaseScraper):
         target_day = str(self.target_date.day)            # e.g. "7"
 
         seen: set[str] = set()
+        ordered_urls: list[str] = []
 
         # Each article entry is a pair: <a href> (link) + <div class="source_time">
         # (date).  Walk all links and validate against the date shown in source_time.
@@ -92,9 +93,11 @@ class GlobalTimesMilScraper(BaseScraper):
 
             if href not in seen:
                 seen.add(href)
+                ordered_urls.append(href)
 
         self.logger.debug("Global Times military: %d today's articles", len(seen))
-        return list(seen)
+        # Preserve the listing's observed order, not process-specific hash order.
+        return ordered_urls
 
     # ── Article parsing ───────────────────────────────────────────────────────
 
