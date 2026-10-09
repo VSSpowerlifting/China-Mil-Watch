@@ -1,0 +1,95 @@
+name: Regional Sunday operator readiness contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/regional_sunday_operator_readiness.py
+      - scripts/regional_sunday_operator_readiness.py
+      - tests/test_regional_sunday_operator_readiness.py
+      - docs/REGIONAL_SUNDAY_OPERATOR_READINESS.md
+      - .github/workflows/regional_sunday_operator_readiness.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regional-sunday-operator-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  offline-operator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Capture tracked corpus SHA
+        id: corpus
+        run: echo "sha=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Exercise Sunday production and regional diagnostic contracts
+        run: |
+          python -m unittest -v \
+            tests.test_regional_sunday_operator_readiness \
+            tests.test_regional_weekly_inventory \
+            tests.test_sunday_corpus_readiness \
+            tests.test_sunday_before_model_gate
+      - name: Read-only real archive Friday rehearsal must remain on HOLD
+        run: |
+          set -euo pipefail
+          private_dir="$(mktemp -d)"
+          trap 'rm -rf "$private_dir"' EXIT
+          python -m scripts.regional_sunday_operator_readiness \
+            --week-ending 2026-10-10 \
+            --as-of 2026-10-09 \
+            --review-local-day 2026-10-09 \
+            --marker "$private_dir/no-Sunday-marker-exists" \
+            --out "$private_dir/friday-archive.json"
+          python - "$private_dir/friday-archive.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          result = json.loads(Path(sys.argv[1]).read_text())
+          assert result["machine_corpus_gate"] == "hold_before_model_and_editor_delivery"
+          assert "reporting_week_not_complete" in result["blocking_corpus_gates"]
+          assert "sunday_production_update_not_due" in result["blocking_corpus_gates"]
+          assert result["model_called"] is False
+          assert result["model_input_authorized"] is False
+          assert result["editor_email_authorized"] is False
+          assert result["publication_authorized"] is False
+          assert "source_url" not in json.dumps(result)
+          print("Actual tracked archive Friday rehearsal held; no publisher text copied")
+          PY
+      - name: Prove no scheduled/model/editor-release pathway
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          code = (Path("core/regional_sunday_operator_readiness.py").read_text()
+                  + Path("scripts/regional_sunday_operator_readiness.py").read_text())
+          workflow = Path(".github/workflows/regional_sunday_operator_readiness.yml").read_text()
+          assert "ANTHROPIC_API_KEY" not in code
+          assert "smtplib" not in code
+          assert "send_packet(" not in code
+          assert "compose(" not in code
+          assert "  " + "schedule:" not in workflow
+          assert "actions/" + "upload-artifact" not in workflow
+          assert '"editor_email_authorized": False' in code
+          assert '"publication_authorized": False' in code
+          assert "O_EXCL" in code
+          print("Only read-only operational readiness; no publishing or SMTP authority")
+          PY
+      - name: Assert production archive and rendered site preserved
+        if: ${{ !cancelled() && steps.corpus.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.corpus.outputs.sha }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
