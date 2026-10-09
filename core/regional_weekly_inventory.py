@@ -147,19 +147,22 @@ def build_inventory(*, registry, rows, week_ending, as_of, review_day,
 
     research_pending = []
     seen_research = set()
+    seen_research_urls = set()
     for item in research_rows:
         # No raw article bodies or synopsis can cross this handoff. The
         # published corpus and shadow records remain separate trust lanes.
         ident, desk, url = item["id"], item["desk"], item["source_url"]
         if (not isinstance(ident, str) or not ident or ident.isdigit()
                 or ident in seen_research or desk not in stats
-                or desk in live or not _https_url(url) or url in urls):
+                or desk in live or not _https_url(url) or url in urls
+                or url in seen_research_urls):
             raise InventoryError("untrusted or production-duplicated research candidate")
         if not saturday - timedelta(days=6) <= iso_day(item["published_date"]) <= cutoff:
             raise InventoryError("research candidate outside the reporting window")
         if item.get("status") != "unapproved-source-linked-editorial-candidate":
             raise InventoryError("research candidate falsely claims approval")
         seen_research.add(ident)
+        seen_research_urls.add(url)
         research_pending.append({
             "id": ident, "desk": desk, "source_url": url,
             "published_date": item["published_date"],
