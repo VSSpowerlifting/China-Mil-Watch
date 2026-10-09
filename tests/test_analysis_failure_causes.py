@@ -81,6 +81,20 @@ class FailureReviewTests(unittest.TestCase):
         self.assertEqual(report["recorded_failure_reasons_on_daily_queue"],
                          {"analysis_incomplete": 1, "empty_body_unconfirmed": 1})
 
+    def test_blank_body_scrape_age_is_separate_from_current_adapter_health(self):
+        self.insert(1, body="", scraped="2026-10-08")
+        self.insert(2, body="", scraped="2026-08-01")
+        self.insert(3, passed=1, body="", scraped=None)
+        report = self.report()
+        totals = report["totals"]
+        self.assertEqual(totals["daily_blank_body"], 3)
+        self.assertEqual(totals["daily_blank_recent_scrapes"], 1)
+        self.assertEqual(totals["daily_blank_archive_scrapes"], 1)
+        self.assertEqual(totals["daily_blank_undated_scrapes"], 1)
+        self.assertEqual(report["samples_by_flag"]["daily_blank_body"][0][
+            "scraped_at"], "2026-10-08")
+        self.assertFalse(report["root_causes_established"])
+
     def test_paused_and_terminal_are_not_daily_backlog(self):
         self.insert(1, state="paused", reason="retry_budget_exhausted", attempts=5)
         self.insert(2, state="terminal", reason="unsupported_media_only", attempts=1)
