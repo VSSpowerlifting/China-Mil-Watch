@@ -9,10 +9,16 @@ The site's owned font delivery introduced local WOFF2 assets under
 `/assets/fonts/`, but `BrowserCase.measure(block_webfonts=True)` still
 blocked only Google Fonts domains. The test checking that the fallback
 condition was exercised failed because no Google font was requested.
-The new intercept blocks WOFF2 resources **and** the historic remote
-font addresses. It preserves a genuine requested-font count and
-warm-versus-fallback monospace text-width assertion. It does not block
-all same-origin CSS/JS/images or remove the source-domain wrap checks.
+Follow-up focused CI established the deeper fixture defect: browser tests
+only wrote rendered HTML into a temporary HTTP root, omitting the actual
+`historical-fonts.css`, `topography.css`, `historical-enrichment.css`, and
+`assets/fonts/historical/*.woff2` referenced by the HTML. Both warm and
+cold checks were therefore already on system fallbacks with **zero requests**.
+The corrected fixture now serves these checked-in files in their actual
+relative paths, and the new interceptor blocks WOFF2 resources **and**
+historic remote font addresses. It retains a genuine intercepted-font
+count and warm-versus-fallback monospace text-width assertion, and does
+not block all local CSS/JS/images or remove source-domain wrap checks.
 
 ## Navy paper pixel reproducibility
 
