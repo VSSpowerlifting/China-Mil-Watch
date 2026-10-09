@@ -1,0 +1,64 @@
+name: Source-attributed analysis backlog read-only contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_analysis_queue_by_source.py'
+      - 'tests/test_analysis_queue_source_audit.py'
+      - 'docs/ANALYSIS_QUEUE_SOURCE_SNAPSHOT.md'
+      - '.github/workflows/analysis_queue_source_audit_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  queue-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked production database SHA256
+        id: before
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install standard dependencies
+        run: pip install -r requirements.txt
+      - name: Verify exact stored analysis-queue and desk routing contracts
+        run: python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Smoke actual tracked production SQLite snapshot
+        run: |
+          python scripts/audit_analysis_queue_by_source.py --db pla_watch.db > "$RUNNER_TEMP/analysis-queue.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads((Path(os.environ["RUNNER_TEMP"]) / "analysis-queue.json").read_text())
+          total = report["article_rows"]
+          assert report["schema"] == "ipr-analysis-queue-by-source/1"
+          assert sum(report["totals"].values()) == total
+          assert sum(row["rows_total"] for row in report["sources"]) == total
+          assert report["stored_daily_queue_eligible"] == (
+              report["stored_daily_unscored"] + report["stored_daily_pending_analysis"])
+          assert report["model_calls"] == 0
+          assert report["writes"] == 0
+          assert report["live_production_state_authenticated"] is False
+          assert report["model_spend_authorized"] is False
+          assert report["publication_authorized"] is False
+          print("Source-attributed real SQLite queue accounting verified")
+          PY
+      - name: Verify DB and published site were not modified
+        if: ${{ !cancelled() && steps.before.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
