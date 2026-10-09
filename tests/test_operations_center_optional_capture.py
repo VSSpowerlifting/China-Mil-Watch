@@ -167,15 +167,14 @@ class OptionalDailyActionsContracts(unittest.TestCase):
 
     def test_second_report_io_failure_rolls_back_first(self):
         output, html = self.paths()
-        original_open = Path.open
+        original_open = unified.ops.os.open
 
         def fail_html_open(path, *args, **kwargs):
-            if path == html:
+            if Path(path) == html:
                 raise OSError("synthetic second-report disk failure")
             return original_open(path, *args, **kwargs)
 
-        with patch.object(Path, "open", autospec=True,
-                          side_effect=fail_html_open):
+        with patch.object(unified.ops.os, "open", side_effect=fail_html_open):
             with self.assertRaisesRegex(OSError, "synthetic second-report"):
                 unified.write_report_pair(output, '{"test":true}', html, "html")
         self.assertFalse(output.exists())
