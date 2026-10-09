@@ -35,6 +35,7 @@ jobs:
       - name: Verify unified production, shadow and Daily evidence integration
         run: |
           python -m unittest tests.test_operations_center_unified -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
           python -m unittest tests.test_operations_center -v
           python -m unittest tests.test_operations_center_shadow_overlay -v
           python -m unittest tests.test_daily_run_receipts -v
@@ -61,6 +62,36 @@ jobs:
           assert "Operations Center" in html
           assert "Shadow collection evidence candidates" in html
           print("Read-only real-DB unified snapshot passed")
+          PY
+      - name: Smoke pinned analysis queue overlay against real tracked SQLite
+        run: |
+          set -euo pipefail
+          python scripts/operations_center_unified.py \
+            --include-analysis-queue \
+            --html "$RUNNER_TEMP/ipr-unified-queue-real.html" \
+            --json "$RUNNER_TEMP/ipr-unified-queue-real.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          report = json.loads((root / "ipr-unified-queue-real.json").read_text())
+          html = (root / "ipr-unified-queue-real.html").read_text()
+          queue = report["stored_analysis_queue_evidence"]
+          assert queue["schema"] == "ipr-operations-stored-queue-evidence/1"
+          assert queue["article_rows"] == sum(x["rows_total"] for x in queue["sources"])
+          assert queue["stored_daily_queue_eligible"] == sum(
+              x["daily_eligible_stored"] for x in queue["sources"])
+          assert queue["stored_held_out_of_daily"] == sum(
+              x["held_out_stored"] for x in queue["sources"])
+          assert len(queue["input_file_sha256"]["db"]) == 64
+          assert queue["model_spend_authorized"] is False
+          assert queue["live_production_state_authenticated"] is False
+          assert report["publication_authorized"] is False
+          assert report["editor_delivery_authorized"] is False
+          assert "Stored analysis queue" in html
+          assert "NOT live production" in html
+          print("Pinned, read-only analysis queue overlay passed")
           PY
       - name: Prove no tracked DB or published output changed
         if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}

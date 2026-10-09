@@ -3,14 +3,16 @@ from __future__ import annotations
 
 import copy
 import json
+import sqlite3
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
 from core.desk_registry import load_registry
 from scripts import audit_daily_run_receipts as daily
+from scripts import audit_analysis_queue_by_source as queue_audit
 from scripts import audit_shadow_workflow_bindings as bindings
 from scripts import operations_center as ops
 from scripts import operations_center_unified as unified
@@ -50,15 +52,16 @@ class UnifiedOperationsContracts(unittest.TestCase):
         return ops.assemble(self.registry, self.report(),
                             self.shadow_root, self.marker, self.day)
 
-    def build(self, *, receipts=None, shadow_bindings=False):
+    def build(self, *, receipts=None, shadow_bindings=False, queue_report=None):
         if shadow_bindings:
             return unified.build_unified(
                 self.registry, self.report(), ops.SHADOW_ROOT,
                 self.marker, self.day, bindings.validate(unified.ROOT),
-                receipt=receipts, root=unified.ROOT)
+                receipt=receipts, queue_report=queue_report, root=unified.ROOT)
         return unified.build_unified(
             self.registry, self.report(), self.shadow_root,
-            self.marker, self.day, None, receipt=receipts)
+            self.marker, self.day, None, receipt=receipts,
+            queue_report=queue_report)
 
     def test_raw_daily_receipt_is_classified_and_not_authenticated(self):
         result = self.build(receipts=envelope([complete(), guard_only()]))
@@ -275,6 +278,147 @@ class UnifiedOperationsContracts(unittest.TestCase):
         with self.assertRaises(SystemExit):
             unified.main(["--json", str(unified.ROOT / "output/unsafe.json"),
                           "--html", str(self.temp / "out.html")])
+
+
+    def queue_db(self):
+        """Create an isolated minimal SQLite queue with both governed desks."""
+        db = self.temp / "queue-evidence.db"
+        conn = sqlite3.connect(db)
+        conn.executescript("""
+            CREATE TABLE sources (id INTEGER PRIMARY KEY, slug TEXT, desk_id TEXT);
+            CREATE TABLE articles (
+                id INTEGER PRIMARY KEY, source_id INTEGER,
+                passed_relevance INTEGER, analyzed_at TEXT,
+                processing_state TEXT, scraped_at TEXT
+            );
+        """)
+        conn.executemany("INSERT INTO sources VALUES (?,?,?)", [
+            (1, "cn_mod", "china"), (2, "sg_mindef", "singapore"),
+        ])
+        conn.executemany("INSERT INTO articles VALUES (?,?,?,?,?,?)", [
+            (1, 1, None, None, None, "2026-10-08 09:00:00"),
+            (2, 1, 1, None, None, "2026-10-08 09:00:00"),
+            (3, 1, 0, None, None, "2026-10-08 09:00:00"),
+            (4, 2, None, None, None, "2026-10-08 09:00:00"),
+            (5, 1, None, None, "paused", "2026-10-08 09:00:00"),
+        ])
+        conn.commit()
+        conn.close()
+        return db
+
+    def queue(self):
+        return queue_audit.snapshot(
+            self.queue_db(), at=datetime(2026, 10, 9, 12, tzinfo=timezone.utc))
+
+    def test_queue_opt_in_preserves_default_dashboard_and_auth_flags(self):
+        original = self.build()
+        html = ops.render_html(original)
+        self.assertNotIn("stored_analysis_queue_evidence", original)
+        self.assertNotIn("Stored analysis queue", html)
+        checked = self.build(queue_report=self.queue())
+        q = checked["stored_analysis_queue_evidence"]
+        self.assertEqual(unified.QUEUE_SCHEMA, q["schema"])
+        self.assertEqual(5, q["article_rows"])
+        self.assertEqual(2, q["stored_daily_queue_eligible"])
+        self.assertEqual(1, q["stored_daily_unscored"])
+        self.assertEqual(1, q["stored_daily_pending_analysis"])
+        self.assertEqual(1, q["stored_held_out_of_daily"])
+        self.assertEqual(1, q["paused_stored"])
+        self.assertFalse(q["live_production_state_authenticated"])
+        self.assertFalse(q["model_spend_authorized"])
+        self.assertFalse(q["publication_authorized"])
+        for key in ("desks", "daily_marker", "source_health_review_flags",
+                    "shadow_source_manifests", "production_report_generated_at"):
+            self.assertEqual(original[key], checked[key])
+        self.assertFalse(checked["publication_authorized"])
+        self.assertIn("Stored analysis queue — local SQLite snapshot",
+                      ops.render_html(checked))
+        self.assertIn("NOT live production", ops.render_html(checked))
+
+    def test_queue_and_daily_and_shadow_can_coexist_independently(self):
+        snapshot = self.build(
+            receipts=envelope([guard_only()]), shadow_bindings=True,
+            queue_report=self.queue())
+        self.assertIn("shadow_evidence_overlay", snapshot)
+        self.assertIn("daily_actions_evidence", snapshot)
+        self.assertIn("stored_analysis_queue_evidence", snapshot)
+        self.assertFalse(snapshot["editor_delivery_authorized"])
+        self.assertFalse(snapshot["shadow_promotion_authorized"])
+        self.assertFalse(snapshot["publication_authorized"])
+        html = ops.render_html(snapshot)
+        for label in ("Daily Actions evidence candidates",
+                      "Shadow collection evidence candidates",
+                      "Stored analysis queue"):
+            self.assertIn(label, html)
+
+    def test_queue_refuses_duplicate_and_bad_totals(self):
+        q = self.queue()
+        with self.assertRaisesRegex(unified.UnifiedError, "duplicate"):
+            unified.attach_queue(self.build(queue_report=q), q)
+        bad = copy.deepcopy(q)
+        bad["stored_daily_queue_eligible"] += 1
+        with self.assertRaisesRegex(unified.UnifiedError, "do not reconcile"):
+            unified.attach_queue(self.base(), bad)
+        bad = copy.deepcopy(q)
+        bad["sources"].append(copy.deepcopy(bad["sources"][0]))
+        with self.assertRaisesRegex(unified.UnifiedError, "duplicate"):
+            unified.attach_queue(self.base(), bad)
+
+    def test_queue_refuses_permission_and_unpinned_source(self):
+        q = self.queue()
+        for key, value in (("model_spend_authorized", True),
+                           ("publication_authorized", True),
+                           ("writes", 1)):
+            changed = copy.deepcopy(q)
+            changed[key] = value
+            with self.subTest(key=key):
+                with self.assertRaises(unified.UnifiedError):
+                    unified.attach_queue(self.base(), changed)
+        changed = copy.deepcopy(q)
+        changed["input_file_sha256"]["db"] = "not-an-identity"
+        with self.assertRaisesRegex(unified.UnifiedError, "digest"):
+            unified.attach_queue(self.base(), changed)
+
+    def test_queue_section_html_escapes_source_identifiers(self):
+        q = self.queue()
+        q["sources"][0]["source_slug"] = "<img src=x onerror=alert(1)>"
+        result = self.build(queue_report=q)
+        html = ops.render_html(result)
+        self.assertIn("&lt;img src=x onerror=alert(1)&gt;", html)
+        self.assertNotIn("<img src=x onerror=alert(1)>", html)
+
+    def test_queue_cli_real_scratch_sqlite_no_writes(self):
+        db = self.queue_db()
+        before = db.read_bytes()
+        output = self.temp / "with-queue.json"
+        html = self.temp / "with-queue.html"
+        with patch.object(unified, "build_report", return_value=self.report()):
+            result = unified.main([
+                "--db", str(db), "--as-of", "2026-10-09",
+                "--include-analysis-queue",
+                "--json", str(output), "--html", str(html),
+            ])
+        self.assertEqual(0, result)
+        data = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(5, data["stored_analysis_queue_evidence"]["article_rows"])
+        self.assertIn("Stored analysis queue", html.read_text(encoding="utf-8"))
+        self.assertEqual(before, db.read_bytes())
+        self.assertFalse(Path(str(db) + "-wal").exists())
+        self.assertFalse(Path(str(db) + "-shm").exists())
+
+    def test_queue_cli_fails_closed_without_partial_outputs(self):
+        output = self.temp / "bad-queue.json"
+        html = self.temp / "bad-queue.html"
+        with patch.object(unified.queue_audit, "snapshot",
+                          side_effect=queue_audit.QueueAuditError("changed bytes")):
+            with patch.object(unified, "build_report", return_value=self.report()):
+                with self.assertRaises(SystemExit):
+                    unified.main([
+                        "--db", str(self.queue_db()),
+                        "--as-of", "2026-10-09", "--include-analysis-queue",
+                        "--json", str(output), "--html", str(html)])
+        self.assertFalse(output.exists())
+        self.assertFalse(html.exists())
 
 
 if __name__ == "__main__":
