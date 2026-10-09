@@ -34,9 +34,12 @@ October 10 Dylan send also requires GitHub Actions variable
 of the precise original `.txt` owner-review attachment. The owner-only preview
 email includes that hash for audit. When sending, IPR hashes the exact bytes
 it is about to attach and refuses email unless both the week variable and
-attachment digest match. A changed citation, sentence, appendixed record,
-research caution or model regeneration changes the hash and forces review
-again. This prevents interpreting an approved **week** as approval of a
+attachment digest match. The Sunday date resolver first refuses a missing,
+uppercase, malformed or unset SHA-256 setting **before the AI request**, so
+the system does not spend on a manuscript it already knows cannot be sent.
+The final SMTP guard still compares the actual reviewed attachment bytes. A
+changed citation, sentence, appended record, research caution or model
+regeneration changes the hash and forces review again. This prevents interpreting an approved **week** as approval of a
 different **manuscript**. This is not proof that the owner actually performed
 the human review; only the owner can affirm that fact.
 
