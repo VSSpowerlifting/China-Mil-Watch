@@ -140,6 +140,21 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertIn("visual context only", note.get_text())
                 self.assertFalse(soup.select(".brief-opening-photo"))
 
+    def test_signal_veil_without_cover_uses_photo_grid(self):
+        context = next(copy.deepcopy(ctx) for ctx, _, _ in self.posts
+                       if ctx.get("pw_veil"))
+        context["cover_media_item"] = None
+        page = render_historical_brief(context)
+        soup = BeautifulSoup(page, "html.parser")
+        self.assertIn("brief-hero--photo",
+                      soup.select_one(".brief-hero").get("class", []))
+        self.assertIsNotNone(soup.select_one(
+            ".brief-hero-inner > figure.historical-veil"))
+        self.assertIn(".historical-veil{grid-area:photo",
+                      soup.select_one("style").get_text())
+        self.assertEqual(soup.select_one("figure.historical-veil img")["src"],
+                         context["pw_veil"]["duo"])
+
     def test_original_author_links_preserved_and_unsafe_hrefs_rejected(self):
         for ctx, page, soup in self.posts:
             with self.subTest(issue=ctx["issue_number"]):

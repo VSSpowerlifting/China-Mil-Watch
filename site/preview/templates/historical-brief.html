@@ -23,7 +23,7 @@
 .historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}
 .historical-media img{width:100%;height:auto}
 .historical-media figcaption{font-size:.875rem;color:var(--muted)}
-.historical-veil{margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
+.historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
 .historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
 .historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
 .historical-veil a{color:inherit;text-underline-offset:.2em}
@@ -34,7 +34,7 @@
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
 {% block hero %}
-<section class="band brief-hero{% if edition.cover_media_item and edition.cover_media_item.src %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+<section class="band brief-hero{% if edition.pw_veil or (edition.cover_media_item and edition.cover_media_item.src) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     <div class="brief-heading">
       <p class="brief-eyebrow"><a href="{{ root }}analysis.html">{{ collection_name }}</a></p>
