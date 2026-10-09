@@ -65,10 +65,11 @@ jobs:
           assert "allow_model=False" in core
           assert "--allow-private-paid-model" in cli
           assert "if not sys.stdin.isatty()" in cli
-          assert "ANTHROPIC_API_KEY" not in workflow
-          assert "  schedule:" not in workflow
-          assert "actions/upload-artifact" not in workflow
-          assert "git push" not in workflow
+          # Avoid self-matching these guard strings in the assertion code.
+          # Concatenation keeps the forbidden literal out of this workflow.
+          forbidden = ("ANTHROPIC" + "_API_KEY", "  " + "schedule:",
+                       "actions/" + "upload-artifact", "git " + "push")
+          assert all(value not in workflow for value in forbidden)
           print("Explicit private model authorization; no delivery/deployment coupling")
           PY
       - name: Preserve production source and rendered archive
