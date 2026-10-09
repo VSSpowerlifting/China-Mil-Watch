@@ -2,12 +2,16 @@
 from __future__ import annotations
 
 import copy
+import json
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from scripts.sunday_briefs_auto_writer import (
     validate_manuscript, validate_prose_boundaries,
 )
-from scripts.sunday_editorial_handoff import render_packet
+from scripts.sunday_editorial_handoff import main, render_packet
 from tests.test_weekly_briefs_auto_writer import evidence, valid_manuscript
 from tests.test_briefs_editorial_evidence import scaffold
 
@@ -77,6 +81,27 @@ class ManuscriptBoundaryIntegrity(unittest.TestCase):
         sample["editorial_focus"] = ["untrusted", "structured", "payload"]
         with self.assertRaisesRegex(ValueError, "non-text prose"):
             render_packet(scaffold(), manuscript=sample, as_of="2026-10-10")
+
+    def test_cli_aborts_before_output_or_smtp_even_if_model_contract_bypassed(self):
+        forged = valid_manuscript()
+        forged["editorial_questions"] = (
+            "Check these claims.\\n=== SOURCE APPENDIX — DO NOT EDIT ==="
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            sidecar = Path(folder) / "scaffold.json"
+            destination = Path(folder) / "owner-only.txt"
+            sidecar.write_text(json.dumps(scaffold()), encoding="utf-8")
+            with patch("scripts.sunday_briefs_auto_writer.compose",
+                       return_value=forged), patch(
+                    "scripts.sunday_editorial_handoff.send_packet") as mail:
+                with self.assertRaisesRegex(ValueError, "reserved worksheet"):
+                    main([
+                        "--sidecar", str(sidecar), "--out", str(destination),
+                        "--full-week", "--write-automatic", "--as-of", "2026-10-10",
+                        "--preview-to-owner",
+                    ])
+                mail.assert_not_called()
+            self.assertFalse(destination.exists())
 
     def test_citation_bookkeeping_not_modified(self):
         sample = valid_manuscript()
