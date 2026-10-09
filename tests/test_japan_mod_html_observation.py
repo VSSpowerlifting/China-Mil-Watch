@@ -122,10 +122,18 @@ class MODHTMLObservationTests(unittest.TestCase):
             lambda x: x[0].update(language="ja"),
         ):
             rows = copy.deepcopy(original)
-            change(rows)
+            target = next(x for x in rows if x["id"] == "JP-W41-01")
+            change([target])
             with self.subTest(change=change), self.assertRaises(
                     MODObservationError):
                 summarize(rows, entries(), OBSERVED)
+
+    def test_duplicate_japan_source_id_is_not_silently_deduplicated(self):
+        rows = source_rows()
+        first = next(x for x in rows if x["id"] == "JP-W41-01")
+        rows.append(copy.deepcopy(first))
+        with self.assertRaises(MODObservationError):
+            summarize(rows, entries(), OBSERVED)
 
     def test_missing_one_page_or_untrusted_third_page_fails(self):
         sources = source_rows()
