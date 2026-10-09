@@ -86,9 +86,9 @@ jobs:
               print("Owner-only preview not requested.")
           PY
 
-      # The October 10 first edition can reach Dylan only with exact-week
-      # owner acknowledgement plus the reviewed attachment's SHA-256.
-      # Owner-only unsent previews never require either variable.
+      # The first Oct10 edition needs exact-week owner authorization and an
+      # exact reviewed-attachment digest BEFORE any AI call or Dylan email.
+      # No-send owner previews do not require either setting.
       - name: Verify reporting Saturday and Sunday's successful database update
         env:
           IPR_EVENT: ${{ github.event_name }}
@@ -239,6 +239,25 @@ jobs:
                 % (vn, len(rows) - vn, eligible))
           print("Neither source rights nor official silence nor publication approved.")
           PY
+
+      # Confirm the ACTUAL scratch packet reaching the unified model still
+      # contains Japan. For the Oct10 pilot require the exact three pinned
+      # Japan MOD research IDs; for later weeks label omitted Japan explicitly.
+      # This step neither verifies original PDF fidelity nor approves sources.
+      - name: Attest Japan research offer in the refreshed single-theme packet
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
+            echo "::error::Refused: missing current-source research packet"
+            exit 2
+          }
+          python -m scripts.sunday_japan_offer_gate \
+            --week-ending "$IPR_SUNDAY_WEEK_END" \
+            --as-of "$IPR_SUNDAY_AS_OF" \
+            --packet "$PRIVATE_WEEK_PACKET"
 
       - name: Create read-only full Saturday-ending week source scaffold
         env:
