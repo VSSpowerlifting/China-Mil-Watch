@@ -32,7 +32,7 @@ The official GitHub jobs API **does not show the scheduling guard's stdout decis
 
 Every unified response continues to declare `input_origin_authenticated=false`, `collector_work_certified=false`, `current_analysis_queue_verified=false`, `publisher_silence_established=false`, `source_promotion_authorized=false`, `publication_authorized=false`, and `editor_delivery_authorized=false`. The fetched metadata has no content-authenticating signature after export. It is not a real-time or complete source-publication monitor.
 
-Both requested local files must be **new, distinct and outside the repository**. A failed fetch or malformed receipt refuses the report and does not write either output.
+Both requested local files must be **new, distinct and outside the repository**. A failed fetch or malformed receipt refuses the report and does not write either output. A later local file-write error attempts to roll back only the newly created report files (checking original file identity before unlinking), rather than leaving a misleading orphaned JSON file. This is not a transaction against concurrent readers or a promise of atomic two-file publication.
 
 ## Verification and merge sequence
 
