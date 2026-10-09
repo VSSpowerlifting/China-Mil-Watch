@@ -219,7 +219,7 @@ class ThemeSelectorTests(unittest.TestCase):
         out = validate_proposals(base, offered, answer(candidate()), packet)
         self.assertEqual(out["model_proposed_slate"]["evidence"], base["evidence"])
         self.assertEqual(out["model_proposed_slate"]["coverage"], base["coverage"])
-        self.assertIn("reviewed", out["model_proposed_slate"]["coverage"][0]["state"])
+        self.assertEqual(out["model_proposed_slate"]["coverage"][0]["state"], "reviewable")
 
     def test_model_exception_is_not_retried_or_replaced_with_fabrication(self):
         inv = make()
