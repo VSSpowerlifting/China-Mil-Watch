@@ -266,6 +266,7 @@ jobs:
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
           IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
           IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
+          IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
           PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
         shell: bash
         run: |
