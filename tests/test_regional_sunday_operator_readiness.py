@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -138,6 +139,84 @@ class RegionalSundayOperatorTests(unittest.TestCase):
         repo = Path(__file__).resolve().parents[1]
         with self.assertRaises(ValueError):
             _private_write(repo / "UNCREATED_SUNDAY_OPERATOR.json", report)
+
+    def test_failed_json_serialization_removes_partial_report(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "operator.json"
+            with self.assertRaises(TypeError):
+                _private_write(output, {"object": object()})
+            self.assertFalse(output.exists())
+
+    def test_failed_fdopen_closes_raw_descriptor_and_rolls_back(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "operator.json"
+            raw_open, raw_close = os.open, os.close
+            opened = []
+
+            def record_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.regional_sunday_operator_readiness.os.open",
+                       side_effect=record_open), patch(
+                    "scripts.regional_sunday_operator_readiness.os.fdopen",
+                    side_effect=OSError("simulated fdopen failure")), patch(
+                    "scripts.regional_sunday_operator_readiness.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "simulated fdopen failure"):
+                    _private_write(output, {"private": True})
+            self.assertFalse(output.exists())
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+
+    def test_unrelated_replacement_survives_failed_report_write(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "operator.json"
+            independent = Path(folder) / "unrelated-document.txt"
+            independent.write_text("UNRELATED", encoding="utf-8")
+            raw_close = os.close
+
+            def swap_then_fail(fd, *args, **kwargs):
+                output.unlink()
+                os.link(independent, output)
+                raise OSError("simulated replacement")
+
+            with patch("scripts.regional_sunday_operator_readiness.os.fdopen",
+                       side_effect=swap_then_fail), patch(
+                    "scripts.regional_sunday_operator_readiness.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "simulated replacement"):
+                    _private_write(output, {"private": True})
+            self.assertEqual(output.read_text(encoding="utf-8"), "UNRELATED")
+            self.assertEqual(independent.read_text(encoding="utf-8"), "UNRELATED")
+
+    def test_existing_dangling_symlink_is_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "operator.json"
+            victim = Path(folder) / "must-not-create.json"
+            output.symlink_to(victim)
+            with self.assertRaises(ValueError):
+                _private_write(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_symlink_swap_during_resolution_is_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "operator.json"
+            victim = Path(folder) / "must-not-create.json"
+            original_resolve = Path.resolve
+
+            def swap(path_obj, *args, **kwargs):
+                if path_obj == output:
+                    output.symlink_to(victim)
+                return original_resolve(path_obj, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True, side_effect=swap):
+                with self.assertRaises(ValueError):
+                    _private_write(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
 
     def test_cli_does_not_invoke_model_or_dylan_email(self):
         with tempfile.TemporaryDirectory() as folder:

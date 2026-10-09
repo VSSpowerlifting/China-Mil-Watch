@@ -22,24 +22,43 @@ from core.regional_weekly_inventory import inspect  # noqa: E402
 
 
 def _private_write(destination, report):
-    dest = Path(destination).expanduser()
-    target = dest.resolve()
+    # Use the original leaf for O_EXCL/O_NOFOLLOW; resolve only to check
+    # the repository boundary. Never follow a newly swapped output symlink.
+    target = Path(destination).expanduser().absolute()
+    resolved = target.resolve()
     root = ROOT.resolve()
-    if (dest.is_symlink() or dest.exists() or
-            target == root or root in target.parents or
-            not target.parent.is_dir() or dest.parent.is_symlink()):
+    if (target.is_symlink() or target.exists() or
+            resolved == root or root in resolved.parents or
+            not target.parent.is_dir() or target.parent.is_symlink()):
         raise ValueError("new operator report must be outside repo in an existing directory")
     flags = os.O_CREAT | os.O_WRONLY | os.O_EXCL
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as output:
+            fd = None  # The text stream owns the descriptor.
             json.dump(report, output, sort_keys=True,
                       ensure_ascii=False, allow_nan=False, indent=2)
             output.write("\n")
     except BaseException:
-        target.unlink(missing_ok=True)
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Best-effort cleanup only if the original inode still owns the path.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink() and
+                        (current.st_dev, current.st_ino) ==
+                        (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
