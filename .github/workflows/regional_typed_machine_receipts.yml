@@ -51,8 +51,8 @@ jobs:
           assert "send_packet(" not in a+b
           assert "ANTHROPIC_API_KEY" not in a+b
           assert "smtplib" not in a+b
-          assert "schedule:" not in w
-          assert "actions/upload-artifact" not in w
+          assert "  " + "schedule:" not in w
+          assert "actions/" + "upload-artifact" not in w
           assert '"model_input_authorized": False' in a
           assert '"publication_authorized": False' in a
           assert "O_EXCL" in b
