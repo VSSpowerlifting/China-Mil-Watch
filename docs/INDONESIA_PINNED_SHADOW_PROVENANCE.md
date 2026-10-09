@@ -23,7 +23,7 @@ The source and workflow identities are explicit and intentionally singular:
 - A pinned state Git commit exists on the declared state-branch history. Git reads the specified tree **without changing the working directory** and requires `state/clock.json`, `state/shadow.db`, and bounded ledger files.
 - The initial ledger agrees with the Day-0 clock; subsequent ledgers have monotonic run intervals and match their predecessor's `state_sha256_after` via `state_sha256_before`.
 - The SHA-256 computed from **actual pinned SQLite bytes** equals the latest ledger's `state_sha256_after` (stronger than comparing ledger text to ledger text).
-- Every non-local ledger matches an Actions export entry on workflow ID/name, run ID, attempt, main-branch collector commit, event and successful conclusion; scheduled dates must agree with the ledger's logical date.
+- Every non-local ledger matches an Actions export entry on workflow ID/name, run ID, attempt, main-branch collector commit, event and successful conclusion. Scheduled runs must be first attempts, and their logical dates follow the same 17:17 UTC nominal-slot resolver as the collector (including delayed starts after midnight). A real `explicit` manual target may refer to an earlier date; an implicit `manual-utc-date` cannot.
 - The entire supplied Actions pagination must be complete *as declared by the export*. Rejection on missing/duplicate runs, malformed hashes, source failures, changed dates or mismatched manual/scheduled identities.
 
 ## What it does **not** verify
