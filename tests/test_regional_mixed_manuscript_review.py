@@ -31,7 +31,8 @@ def manuscript_for(choice, *, prod=(42,), typed=(JP, VN)):
             k: [typed[0]] for k in SECTIONS
         }
         draft["supplemental_citations"]["cross_desk_comparison"] = list(typed)
-        draft["supplemental_citations"]["what_stood_out"] = []
+        if prod:
+            draft["supplemental_citations"]["what_stood_out"] = []
     return draft
 
 
