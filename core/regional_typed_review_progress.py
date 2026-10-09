@@ -38,7 +38,10 @@ def bounded_note(value):
 
 def evaluate_progress(worksheet, inventory, research_rows):
     """Reconstruct exact worksheet pins before evaluating human completion."""
-    expected = create_unsigned_worksheet(inventory, research_rows)
+    try:
+        expected = create_unsigned_worksheet(inventory, research_rows)
+    except ValueError as exc:
+        raise TypedReviewProgressError("fresh inventory or typed source roster invalid") from exc
     require(isinstance(worksheet, dict) and set(worksheet) == set(expected),
             "unexpected worksheet field or schema")
     for name in expected:
