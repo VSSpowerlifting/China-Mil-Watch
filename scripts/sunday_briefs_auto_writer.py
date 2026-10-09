@@ -386,8 +386,12 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
             "No public one-desk exception is granted here.\n"
         )
     schema = writing_schema(allowed_ids, supplemental_ids=extra_ids)
-    for attempt in range(2):
-        # Only a mechanically invalid output earns one bounded regeneration.
+    # The owner-approved thematic rehearsal authorizes exactly ONE paid model
+    # request; preserve the existing bounded mechanical retry for ordinary
+    # Sunday manuscripts, which have their own editorial delivery policy.
+    attempts = 1 if selected_theme is not None else 2
+    for attempt in range(attempts):
+        # Only the default Sunday writer may regenerate a malformed response.
         # Never retry an Anthropic network/API exception or fabricate citations.
         instruction = prompt
         if attempt:
@@ -437,6 +441,6 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
         except ValueError as exc:
             # Second failure propagates; the caller writes nothing and sends nothing.
             problem = str(exc)
-            if attempt:
+            if attempt + 1 >= attempts:
                 raise
-    raise AssertionError("unreachable: two model attempts exhausted")
+    raise AssertionError("unreachable: bounded model attempts exhausted")
