@@ -10,7 +10,7 @@ python scripts/operations_center_unified.py \
   --html /tmp/ipr-unified-default.html
 ```
 
-**No network requests** are made by that command; it reads the checked-out repository's existing production SQLite database, static shadow declarations and daily marker without changing them.
+**No network requests** are made by that command; it reads the checked-out repository's existing production SQLite database, static shadow declarations and daily marker without changing them. The default display date follows **America/New_York** rather than the runner machine's local timezone or UTC, matching the Daily scheduling guard. A deliberate `--as-of YYYY-MM-DD` overrides the display date without time-traveling the tracked database. UTC run-created dates in `--fetch-daily-utc-day` remain UTC and are explicitly separate.
 
 ## Explicit opt-in to real Actions metadata
 
@@ -36,6 +36,6 @@ Both requested local files must be **new, distinct and outside the repository**.
 
 ## Verification and merge sequence
 
-Focused tests verify the network-free default, explicit invocation of the correct UTC creation date, actual API-metadata-to-classifier-to-dashboard path without fabricated collection claims, offline file mode, mutually exclusive evidence options, future-date rejection and failure without output. CI runs them plus the parent unified suite, then asserts byte-identical tracked production database and published output. The full repository suite must pass Chromium, complete offline tests, rendered output validation and preservation against final `main` before merge.
+Focused tests verify New York day rollover and DST, the network-free default, explicit invocation of the correct UTC creation date, actual API-metadata-to-classifier-to-dashboard path without fabricated collection claims, offline file mode, mutually exclusive evidence options, future-date rejection and failure without output. CI runs them plus the parent unified suite, then asserts byte-identical tracked production database and published output. The full repository suite must pass Chromium, complete offline tests, rendered output validation and preservation against final `main` before merge.
 
 **Merge sequencing:** This PR targets #275's feature branch, so it does **not** hold up or modify #275's current full tests. After #275 merges, reconcile and retarget this follow-up to `main` and rerun all gates. This work does not activate a new scheduled monitor or public Operations Center page.
