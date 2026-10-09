@@ -167,6 +167,6 @@
   </div>
 </footer>
 {% block scripts %}{% endblock %}
-{% if week is not defined and (page != 'analysis.html' or timeline_surface | default(false)) %}<script src="{{ root }}shell.js" defer></script>{% endif %}
+{% if week is not defined and (page != 'analysis.html' or brief is defined or timeline_surface | default(false)) %}<script src="{{ root }}shell.js" defer></script>{% endif %}
 </body>
 </html>

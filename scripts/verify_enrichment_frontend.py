@@ -10,6 +10,7 @@ import argparse
 import json
 import re
 import sys
+import time
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
@@ -113,8 +114,8 @@ def compare_publication(candidate, baseline, require_enrichment=True):
             if current.script_count:
                 failures.append({'route': route, 'changed': ['script-free week']})
         if require_enrichment and not current.redirect:
-            if not any(urlsplit(url).path.endswith('/enrichment.css')
-                       or urlsplit(url).path == 'enrichment.css'
+            sheet='historical-enrichment.css' if route.startswith('the-pla-watch/') else 'enrichment.css'
+            if not any(Path(urlsplit(url).path).name == sheet
                        for url in current.stylesheets):
                 failures.append({'route': route, 'changed': ['missing enrichment stylesheet']})
     if 'timelines.html' in actual or any(route.startswith('timeline/') for route in actual):
@@ -216,25 +217,35 @@ def external_font_delivery(browser, url, route, out):
     page.goto(urljoin(url.rstrip('/')+'/',route),wait_until='networkidle')
     page.evaluate('document.fonts.ready')
     page.screenshot(path=str(Path(out)/'historical-external-fonts-desktop.png'))
-    result={'route':route,'mode':'Historical Google font requests allowed',
+    result={'route':route,'mode':'Network font probe: local fonts enabled and Google font requests allowed',
             'requests':list(requests.values()),'failures':failures,
             'remote_encoded_transfer_bytes':sum(r.get('encoded_transfer_bytes',0) for r in requests.values()),
+            'local_fonts':page.evaluate('performance.getEntriesByType("resource").filter(e=>/\\.woff2?(?:$|\\?)/.test(e.name)).map(e=>({url:e.name,transfer:e.transferSize,body:e.encodedBodySize}))'),
             'faces':page.evaluate('Array.from(document.fonts).map(f=>({family:f.family,status:f.status,weight:f.weight}))')}
     context.close()
     return result
 
 
+def settle_document_animations(page,timeout=6):
+    """Direct evaluation remains usable under the script-failure CSP."""
+    deadline=time.monotonic()+timeout
+    predicate='()=>document.getAnimations().every(a=>a.timeline!==document.timeline || a.effect.getComputedTiming().iterations===Infinity || a.playState!=="running")'
+    while not page.evaluate(predicate):
+        assert time.monotonic()<deadline,'Document-time animations did not settle'
+        page.wait_for_timeout(50)
+
+
 def focus_contrast(page, target, ground):
     target.focus();page.keyboard.press('Tab');page.keyboard.press('Shift+Tab')
     assert target.evaluate('(e)=>e.matches(":focus-visible")')
-    values=target.evaluate('''(e,selector)=>{const s=getComputedStyle(e),b=getComputedStyle(document.querySelector(selector));return {outline:s.outlineColor,width:parseFloat(s.outlineWidth),style:s.outlineStyle,background:b.backgroundColor}}''',ground)
+    values=target.evaluate('''(e,selector)=>{const s=getComputedStyle(e),b=getComputedStyle(document.querySelector(selector));return {outline:s.outlineColor,outline_width:parseFloat(s.outlineWidth),style:s.outlineStyle,background:b.backgroundColor}}''',ground)
     def luminance(color):
         channels=[float(value)/255 for value in re.findall(r'[\d.]+',color)[:3]]
         channels=[c/12.92 if c<=.04045 else ((c+.055)/1.055)**2.4 for c in channels]
         return sum(c*w for c,w in zip(channels,(.2126,.7152,.0722)))
     a,b=luminance(values['outline']),luminance(values['background'])
     values['contrast']=round((max(a,b)+.05)/(min(a,b)+.05),3)
-    assert values['width']>=2 and values['style']=='solid' and values['contrast']>=3,values
+    assert values['outline_width']>=2 and values['style']=='solid' and values['contrast']>=3,values
     return values
 
 
@@ -281,7 +292,11 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
                     page.goto(urljoin(url.rstrip('/') + '/', route), wait_until='networkidle')
                     page.evaluate('document.fonts.ready')
                     if profile in ('default', 'script-failure'):
-                        page.wait_for_function('document.getAnimations().every(a=>a.effect.getComputedTiming().iterations===Infinity || a.playState!=="running")', timeout=6000)
+                        # The legacy reading-progress ScrollTimeline tracks
+                        # the reader and never settles in document time.
+                        settle_document_animations(page)
+                    if label.startswith('historical-'):
+                        assert page.evaluate('()=>document.getAnimations().filter(a=>a.timeline===document.timeline).every(a=>a.effect.getComputedTiming().iterations!==Infinity)'),(route,width,profile,'autonomous infinite historical motion')
                     assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), (route, width, profile, 'overflow')
                     assert page.locator('h1').count() == 1, (route, width, profile, 'h1')
                     assert page.locator('h1').is_visible(), (route, width, profile, 'hidden heading')
@@ -339,7 +354,7 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
             page.set_viewport_size({'width':width,'height':844 if width<600 else 1000})
             page.goto(urljoin(url.rstrip('/')+'/',routes['home']),wait_until='networkidle')
             menu=next(item for item in page.locator('.shell-menu>summary').all() if item.is_visible())
-            for name,target,ground in [('menu',menu,'.masthead--dark'),
+            for name,target,ground in [('menu',menu,'.pacific-opening'),
                     ('hero',page.locator('.pacific-opening .btn').first,'.pacific-opening'),
                     ('coast',page.locator('.home-coast-band .btn').first,'.home-coast-band')]:
                 values=focus_contrast(page,target,ground)
@@ -448,7 +463,7 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
             receipt['external_font_delivery']=external_font_delivery(browser,url,routes['historical-largest'],out)
         browser.close()
     assert not receipt['errors'], receipt['errors'][:20]
-    receipt['external_font_mode'] = 'Historical Google font endpoints deliberately aborted; system-font fallback reviewed'
+    receipt['external_font_mode'] = 'Matrix blocks Google font endpoints; local font requests remain enabled. Separate network probe reports actual loaded faces and any remote delivery.'
     progress()
     return receipt
 

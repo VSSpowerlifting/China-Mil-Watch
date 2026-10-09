@@ -2864,7 +2864,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "enrichment.css", "shell.js"):
+    for name in ("fonts.css", "historical-fonts.css", "historical-enrichment.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "enrichment.css", "shell.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # The full-color JPEG fallback must travel in fresh trees too; production
@@ -2874,7 +2874,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes((REPO_ROOT / "site/assets/editorial/reagan-jmsdf-2015.jpg").read_bytes())
     written.append(route)
-    for folder in ("fonts", "identity/selected-ipr", "frontend"):
+    for folder in ("fonts", "fonts/historical", "identity/selected-ipr", "frontend"):
         source = REPO_ROOT / "site/assets" / folder
         for asset in sorted(source.iterdir()):
             if not asset.is_file() or (folder == "frontend" and asset.suffix == ".webp" and not asset.name.startswith("pacific-fleet-")):

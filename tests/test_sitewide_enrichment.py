@@ -54,6 +54,16 @@ class PublicationParity(unittest.TestCase):
         self.assertIn(['script-free week'],changed)
         self.assertIn(['missing enrichment stylesheet'],changed)
 
+    def test_historical_routes_require_their_bounded_stylesheet(self):
+        route='the-pla-watch/posts/fixture.html'
+        self.put(self.baseline,route,self.source)
+        for sheet,passes in [('historical-enrichment.css',True),('enrichment.css',False)]:
+            with self.subTest(sheet=sheet):
+                linked=self.source.replace('</head>','<link rel="stylesheet" href="../../'+sheet+'"></head>')
+                self.put(self.candidate,route,linked)
+                result=compare_publication(self.candidate,self.baseline)
+                self.assertEqual(not result['failures'],passes)
+
 
 class RepresentativeCoverage(unittest.TestCase):
     def test_discovers_real_briefs_historical_sources_and_largest_records(self):
@@ -87,6 +97,7 @@ class SharedShellRendering(unittest.TestCase):
                      desks=[],timelines=[],maintainer={'name':'Fixture','email':'fixture@example.invalid'},
                      collection_name='Fixture collection',live_base='https://example.invalid')
         cases=[('analysis.html',{},0),('analysis.html',{'timeline_surface':True},1),
+               ('analysis.html',{'brief':{'route':'briefs/fixture.html'}},1),
                ('week-fixture.html',{'week':{'path':'week-fixture.html'}},0),
                ('index.html',{},1),('about.html',{},1)]
         for page,extra,expected in cases:
