@@ -132,12 +132,11 @@ def _observation_stamp(value, review_date, publication_date):
 
 def _check_decisions(document, inventory, research_rows):
     base = _fresh(inventory, research_rows)
-    need(isinstance(document, dict) and
-         set(document) == set(make_unsigned_decision(
-             inventory, research_rows,
-             owner=document.get("owner", "") if isinstance(document, dict) else "",
-             decided_on=document.get("decided_on", "") if isinstance(document, dict) else "",
-         )),
+    need(isinstance(document, dict), "owner decision must be a dictionary")
+    original = make_unsigned_decision(
+        inventory, research_rows, owner=document.get("owner"),
+        decided_on=document.get("decided_on"))
+    need(set(document) == set(original),
          "missing or unexpected owner-decision fields")
     for field in (
         "schema", "week_ending", "source_metadata_digest_sha256",
@@ -146,11 +145,8 @@ def _check_decisions(document, inventory, research_rows):
         "editor_email_authorized", "publication_authorized",
         "japan_vietnam_production_activated",
     ):
-        expected = make_unsigned_decision(
-            inventory, research_rows,
-            owner=document["owner"], decided_on=document["decided_on"])[field]
-        need(type(document[field]) is type(expected)
-             and document[field] == expected,
+        need(type(document[field]) is type(original[field])
+             and document[field] == original[field],
              "owner decision source pins or scope/permission modified")
     need(line(document["owner"], 3, 100), "invalid signer identity")
     reviewed = day(document["decided_on"])
@@ -196,7 +192,8 @@ def _check_decisions(document, inventory, research_rows):
              "issuer edition/capture reference must be documented")
         need(line(chosen["translation_and_attribution_cautions"], 30, 400),
              "source interpretation and limitations must be explicit")
-        need(chosen["rights_basis_type"] in RIGHTS,
+        need(isinstance(chosen["rights_basis_type"], str)
+             and chosen["rights_basis_type"] in RIGHTS,
              "mere attribution/footer or unreviewed rights cannot authorize synopsis")
         need(line(chosen["rights_basis_reference"], 12, 500),
              "official license/rights-owner permission reference needed")
