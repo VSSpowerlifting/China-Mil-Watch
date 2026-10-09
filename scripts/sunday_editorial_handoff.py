@@ -136,6 +136,15 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         "",
         "COVERAGE SNAPSHOT (per desk; do not infer institutional silence):",
     ))
+    if manuscript is not None:
+        # This source-use receipt is part of the IMMUTABLE editor appendix.
+        # Dylan edits prose only, not the model's self-reported source use.
+        # It never promotes research into a production source or obliges
+        # the model to cite unrelated Japan/Vietnam evidence.
+        from core.brief_editorial_source_use import format_private_source_use
+        lines.extend(format_private_source_use(
+            manuscript, trail, research_evidence))
+        lines.append("")
     for desk in desks:
         stats = sidecar.get("coverage_by_desk", {}).get(desk, {})
         screened = stats.get("by_screening", {})

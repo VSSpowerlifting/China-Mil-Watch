@@ -224,10 +224,22 @@ class UnifiedWriterTests(unittest.TestCase):
             params.append(kw), nullcontext(SimpleNamespace(
                 get_final_message=lambda: response)))[1]))
         x = scaffold()
+        # The human appendix intentionally contains a third record that is
+        # NOT selected for the model's bounded source excerpt input.
+        x["source_trail"].append({
+            **x["source_trail"][0], "record_id": 99,
+            "url": "https://example.com/99",
+        })
         with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
                    return_value=evidence()):
             result = compose(x, SAT, client=fake, supplemental=self.research)
         self.assertEqual(result["editorial_focus"], manuscript()["editorial_focus"])
+        self.assertEqual(result["_model_offered_production_ids"], [1, 2])
+        owner_packet = render_packet(
+            x, manuscript=result, as_of=SAT, research_evidence=self.research)
+        self.assertIn("china: 2 in human appendix; 1 actually model-offered; 1 cited.",
+                      owner_packet)
+        self.assertIn("Record 99 | china", owner_packet)
         self.assertEqual(len(params), 1)
         sent = params[0]["messages"][0]["content"]
         self.assertIn("ONE cohesive article", sent)
