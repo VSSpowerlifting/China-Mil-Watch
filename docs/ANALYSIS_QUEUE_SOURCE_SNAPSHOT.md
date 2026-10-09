@@ -9,7 +9,7 @@ python scripts/audit_analysis_queue_by_source.py \
   --db pla_watch.db > /tmp/ipr-source-analysis-queue.json
 ```
 
-The command uses `scripts.reconcile_db.read_only`: a scratch copy of SQLite plus any WAL/SHM sidecars, so no SQLite journal or checkpoint is written beside `pla_watch.db`. It reports only aggregate **counts by original source slug and declared desk**, not article text, titles or URLs. It records SHA-256 of the input DB (plus existing sidecars) and UTC audit time, but this is **not** an external attestation of the file's origin or an immutable Git commit. Pin a Git commit and source separately in research notes when comparing snapshots.
+The command uses `scripts.reconcile_db.read_only`: a scratch copy of SQLite plus any WAL/SHM sidecars, so no SQLite journal or checkpoint is written beside `pla_watch.db`. It reports only aggregate **counts by original source slug and declared desk**, not article text, titles or URLs. It records SHA-256 of the input DB (plus existing sidecars) and UTC audit time, **refusing to produce a report if those input bytes change during the audit**. This is not an external attestation of the file's origin or an immutable Git commit. Pin a Git commit and source separately in research notes when comparing snapshots.
 
 ## Definitions match the production pipeline
 
@@ -37,7 +37,7 @@ The audit does not perform API calls or use environment secrets. It refuses miss
 
 ## CI and acceptance
 
-The dedicated CI runs 20 synthetic tests for all buckets, source and desk attribution, precise live cutoff, cross-source count conservation, malformed schema, SQLite scratch-copy read, missing file, a subprocess CLI invocation and no model/DB mutations. A separate smoke step runs the CLI against the **actual tracked production SQLite** and validates all bucket sums and zero authorization flags, without contacting GitHub or a publisher.
+The dedicated CI runs 21 synthetic tests for all buckets, source and desk attribution, precise live cutoff, cross-source count conservation, malformed schema, SQLite scratch-copy read, missing file, a subprocess CLI invocation and no model/DB mutations. A separate smoke step runs the CLI against the **actual tracked production SQLite** and validates all bucket sums and zero authorization flags, and logs aggregate counts only (never article text, titles or URLs), without contacting GitHub or a publisher.
 
 Merge only after exact-head focused tests **and** the repository's full offline/Chromium/render/DB-output-preservation suite pass. This milestone is independent of the currently running Unified Operations Center PR #275; a later optional integration may add its verified counts as a **separately scoped, explicitly labeled** section, never a surrogate for official source health.
 
