@@ -170,6 +170,23 @@ def validate(root=ROOT, contract_path=None):
             active_crons, active_text = workflow_cache[workflow_path]
             require(contains_literal_branch(active_text, branch),
                     "declared shadow branch not in active workflow text: " + branch)
+            # For multiplexed collectors, a branch appearing *somewhere* in
+            # the YAML is insufficient: prove its explicit source routing.
+            if workflow_path.name == "indonesia_korea_shadow.yml":
+                desk_id = desk_by_manifest[manifest]
+                hhmm = cron.split(" *", 1)[0].split(" ")
+                require(len(hhmm) == 2 and
+                        bool(re.search(
+                            r"(?m)^\s*" + re.escape(desk_id) +
+                            r"\)\s+state_branch=" + re.escape(branch) +
+                            r";\s+cron_utc=" + re.escape(hhmm[1] + ":" + hhmm[0]) +
+                            r"\s*;;\s*$", active_text)),
+                        "shared Indonesia/Korea desk-to-state/cron routing mismatch")
+            if workflow_path.name == "vietnam_ministry_shadow.yml":
+                require(bool(re.search(
+                    r"(?<![A-Za-z0-9_/-])" + re.escape(slug + ":" + branch) +
+                    r"(?![A-Za-z0-9_/-])", active_text)),
+                    "shared Vietnam ministry source-to-state routing mismatch")
             if trigger == "scheduled":
                 require(type(cron) is str and bool(CRON.fullmatch(cron)),
                         "invalid declared UTC cron expression")
