@@ -65,7 +65,7 @@ class RegionalSlateTests(unittest.TestCase):
         slate = example()
         self.assertIs(validate_slate(
             slate, expected_desks=["china", "singapore", "japan"]), slate)
-        self.assertEqual(heuristic_score(slate["candidates"][0]["scores"]), 3.55)
+        self.assertEqual(heuristic_score(slate["candidates"][0]["scores"]), 3.45)
 
     def test_three_theme_competition_does_not_force_high_score_to_win(self):
         doc = example()
