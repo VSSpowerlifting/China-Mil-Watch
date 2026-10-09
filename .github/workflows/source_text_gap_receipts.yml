@@ -1,0 +1,75 @@
+name: Source no-text identity receipt contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'pipeline.py'
+      - 'core/collection/text_gap_receipts.py'
+      - 'tests/test_source_no_text_receipts.py'
+      - 'docs/SOURCE_TEXT_GAP_RECEIPTS.md'
+      - '.github/workflows/source_text_gap_receipts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  metadata-receipts-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve tracked database identity before testing
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/metadata-receipts-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal project dependencies
+        run: pip install -r requirements.txt
+      - name: Test no-spend metadata-only and extraction contracts
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_source_no_text_receipts -v
+          python -m unittest tests.test_extraction_completeness -v
+          python -m unittest tests.test_pla_daily_body_extraction -v
+          python -m unittest tests.test_adapter_contract -v
+      - name: Read-only stored candidate check for October 9 PLA Daily
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from scripts.reconcile_db import read_only
+          from core.collection.text_gap_receipts import _url_receipt
+          with read_only("pla_watch.db") as conn:
+              conn.row_factory = sqlite3.Row
+              rows = conn.execute("""
+                  SELECT a.id, a.url, a.published_date, a.text_original
+                  FROM articles a JOIN sources s ON s.id = a.source_id
+                  WHERE s.slug='pla_daily'
+                    AND substr(a.scraped_at, 1, 10)='2026-10-09'
+                  ORDER BY a.id
+              """).fetchall()
+              candidates = [r for r in rows
+                            if not (r["text_original"] or "").strip()]
+              print("PLA Daily stored rows first scraped October 9:", len(rows))
+              print("Metadata-only stored candidates (NOT proof of gap identity):",
+                    len(candidates))
+              for row in candidates:
+                  locator, identity = _url_receipt(row["url"])
+                  print("candidate_id=%s pubdate=%r locator=%r url_hash=%s"
+                        % (row["id"], row["published_date"], locator, identity))
+          PY
+      - name: Assert archive and output byte preservation
+        run: |
+          sha256sum -c "$RUNNER_TEMP/metadata-receipts-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
