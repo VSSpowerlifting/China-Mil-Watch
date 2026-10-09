@@ -126,6 +126,20 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertFalse(soup.select(".brief-opening-photo"),
                     "Resolved Signal Veil replaces in-page cover, not duplicates it")
 
+    def test_replaced_cover_photographs_keep_original_source_credit(self):
+        for ctx, page, soup in self.posts:
+            if not (ctx.get("pw_veil") and ctx.get("cover_media_item")):
+                continue
+            with self.subTest(issue=ctx["issue_number"]):
+                note = next((p for p in soup.select("#s-snapshot .historical-source-meta")
+                             if "Edition cover (link-preview image)" in p.get_text()), None)
+                self.assertIsNotNone(note)
+                cover = ctx["cover_media_item"]
+                self.assertEqual(note.a["href"],
+                                 cover.get("source_page") or cover.get("source_url"))
+                self.assertIn("visual context only", note.get_text())
+                self.assertFalse(soup.select(".brief-opening-photo"))
+
     def test_original_author_links_preserved_and_unsafe_hrefs_rejected(self):
         for ctx, page, soup in self.posts:
             with self.subTest(issue=ctx["issue_number"]):

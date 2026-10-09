@@ -80,7 +80,7 @@
         {% if edition.days_covered %}<div><dt>Days observed</dt><dd>{{ edition.days_covered }}</dd></div>{% endif %}
       </dl>
       <p class="historical-source-meta">These figures describe the articles analyzed for this issue, not institutional output or complete collection. “Model-flagged” is an automated triage cue, not an editorial judgment. <a href="{{ root }}methodology.html#model-flagged">How flagging works</a>.</p>
-      {% if edition.cover_media_item and not edition.cover_media_item.src %}<p class="historical-source-meta">Edition cover (link-preview image): {% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source</a> · visual context only.</p>{% endif %}
+      {% if edition.cover_media_item and (not edition.cover_media_item.src or edition.pw_veil) %}<p class="historical-source-meta">Edition cover (link-preview image): {% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source</a> · visual context only.</p>{% endif %}
     </section>
     {% for key, anchor, heading in sections %}
     <section class="brief-section historical-section" id="{{ anchor }}" aria-labelledby="h-{{ anchor }}">

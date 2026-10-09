@@ -79,3 +79,5 @@ normal publication gates still apply before release.
 ## Historical graphics and author links — preservation follow-up
 
 The first shell pass omitted resolved legacy Signal Veils and historical author links. The corrected current-shell render preserves both curated and source-derived dated imagery, source/attribution links, alt text, original crop position, and the original issue's LinkedIn, email and historical organization links. A selected veil replaces, rather than duplicates, any in-page cover photograph. Unsafe historical link schemes are rejected. Every checked-in article must now match its deterministic sidecar render exactly. No sidecars, citations, feed identities, underlying archive records or publication URLs change. The corrective commit requires new exact-head CI before release.
+
+Supplementary attribution check: when a historically published Signal Veil replaces a distinct in-page cover photograph, the original cover image's source credit remains as text beside the coverage snapshot (the original OG cover URL remains unchanged). This retains both credited visuals without duplication.
