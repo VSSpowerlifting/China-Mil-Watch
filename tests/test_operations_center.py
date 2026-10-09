@@ -78,6 +78,7 @@ class OperationsCenterContracts(unittest.TestCase):
         self.assertFalse(item["live_collection_verified"])
         self.assertFalse(item["source_rights_verified"])
         self.assertIsNone(item["registry_status"])
+        self.assertEqual("not_in_public_registry", item["registry_binding"])
 
     def test_historical_shadow_manifest_is_not_an_active_shadow_claim(self):
         self.make_shadow(desk="singapore")
@@ -140,6 +141,12 @@ class OperationsCenterContracts(unittest.TestCase):
             ops.safe_destination(ops.ROOT / "output" / "operations.html")
         with self.assertRaises(ops.SnapshotError):
             ops.safe_destination(ops.ROOT / "pla_watch.db")
+        with self.assertRaisesRegex(ops.SnapshotError, "inside the repository"):
+            ops.safe_destination(ops.ROOT / ".github" / "workflows" / "new_report.yml")
+        with self.assertRaisesRegex(ops.SnapshotError, "inside the repository"):
+            ops.safe_destination(ops.ROOT / "new_report.html")
+        self.assertEqual(self.temp / "fresh.json",
+                         ops.safe_destination(self.temp / "fresh.json"))
         existing = self.temp / "exists.html"
         existing.write_text("preserve", encoding="utf-8")
         with self.assertRaisesRegex(ops.SnapshotError, "overwrite"):
