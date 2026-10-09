@@ -36,6 +36,31 @@ jobs:
         run: |
           python -m unittest tests.test_translation_tool_value_validation -v
           python -m unittest tests.test_llm_usage_telemetry -v
+      - name: Cross-check recurring October translation failures against stored blank-body flags
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_failure_causes.py --db pla_watch.db \
+            > "$RUNNER_TEMP/translation-review-metadata.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                               "translation-review-metadata.json").read_text())
+          assert report["model_calls"] == 0 and report["writes"] == 0
+          assert report["root_causes_established"] is False
+          assert report["model_spend_authorized"] is False
+          blank = {r["article_id"] for r in
+                   report["samples_by_flag"]["daily_blank_body"]}
+          # These IDs appeared in both Oct 6 and Oct 8 Daily log receipts,
+          # not directly in the run-level cost ledger.
+          for ident in (1856, 1857, 1944):
+              print("Previously repeated translation-failure article=%d "
+                    "currently_in_blank_body_audit_sample=%s" %
+                    (ident, ident in blank))
+          print("All stored Daily blank-body flags=%d; sample_size=%d" %
+                (report["totals"]["daily_blank_body"], len(blank)))
+          PY
       - name: Prove site and tracked archive have not changed
         run: |
           sha256sum -c "$RUNNER_TEMP/unchanged-db.sha256"
