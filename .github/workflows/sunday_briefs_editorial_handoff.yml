@@ -235,9 +235,9 @@ jobs:
             echo "::error::Refused: missing current-source research packet"
             exit 2
           }
-          python -m scripts.sunday_japan_offer_gate \\
-            --week-ending "$IPR_SUNDAY_WEEK_END" \\
-            --as-of "$IPR_SUNDAY_AS_OF" \\
+          python -m scripts.sunday_japan_offer_gate \
+            --week-ending "$IPR_SUNDAY_WEEK_END" \
+            --as-of "$IPR_SUNDAY_AS_OF" \
             --packet "$PRIVATE_WEEK_PACKET"
 
       - name: Create read-only full Saturday-ending week source scaffold
