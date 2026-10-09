@@ -69,24 +69,43 @@ def audit(repo, *, current_ref):
 
 
 def exclusive_private(path, result):
-    dest = Path(path).expanduser()
-    target = dest.resolve()
+    # Resolve for repository containment, but open the original leaf path:
+    # resolving the destination itself could follow a swapped symlink.
+    target = Path(path).expanduser().absolute()
+    resolved = target.resolve()
     root = ROOT.resolve()
-    need(not dest.exists() and not dest.is_symlink()
-         and target != root and root not in target.parents
-         and target.parent.is_dir() and not dest.parent.is_symlink(),
+    need(not target.exists() and not target.is_symlink()
+         and resolved != root and root not in resolved.parents
+         and target.parent.is_dir() and not target.parent.is_symlink(),
          "private audit must be a new output outside repo, never overwritten")
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            fd = None  # fdopen's text stream now owns the descriptor.
             json.dump(result, stream, indent=2, ensure_ascii=False,
                       sort_keys=True, allow_nan=False)
             stream.write("\n")
     except BaseException:
-        target.unlink(missing_ok=True)
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Never unlink a file replacing our originally created inode.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink() and
+                        (current.st_dev, current.st_ino) ==
+                        (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 

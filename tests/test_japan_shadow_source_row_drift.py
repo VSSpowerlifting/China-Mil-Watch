@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import os
 import sqlite3
 import tempfile
 import unittest
@@ -186,6 +187,86 @@ class JapanShadowRowDriftTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         with self.assertRaises(JapanRowDriftError):
             exclusive_private(root / "DO_NOT_CREATE_JAPAN_DRIFT.json", report)
+
+
+    def test_failed_json_serialization_cleans_only_new_private_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "private.json"
+            with self.assertRaises(TypeError):
+                exclusive_private(output, {"cannot_encode": object()})
+            self.assertFalse(output.exists())
+
+    def test_fdopen_failure_closes_still_owned_raw_descriptor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "private.json"
+            raw_open, raw_close = os.open, os.close
+            opened = []
+
+            def tracking_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.japan_shadow_source_row_drift.os.open",
+                       side_effect=tracking_open), patch(
+                    "scripts.japan_shadow_source_row_drift.os.fdopen",
+                    side_effect=OSError("simulated fdopen failure")), patch(
+                    "scripts.japan_shadow_source_row_drift.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "simulated fdopen failure"):
+                    exclusive_private(output, {"private": True})
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+            self.assertFalse(output.exists())
+
+    def test_failed_write_preserves_unrelated_replacement_inode(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "private.json"
+            independent = Path(folder) / "unrelated.txt"
+            independent.write_text("KEEP", encoding="utf-8")
+            raw_close = os.close
+
+            def replace_then_fail(fd, *args, **kwargs):
+                output.unlink()
+                os.link(independent, output)
+                raise OSError("simulated replacement")
+
+            with patch("scripts.japan_shadow_source_row_drift.os.fdopen",
+                       side_effect=replace_then_fail), patch(
+                    "scripts.japan_shadow_source_row_drift.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "simulated replacement"):
+                    exclusive_private(output, {"private": True})
+            self.assertEqual(output.read_text(encoding="utf-8"), "KEEP")
+            self.assertEqual(independent.read_text(encoding="utf-8"), "KEEP")
+
+    def test_dangling_symlink_refused_without_creating_target(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "private.json"
+            victim = Path(folder) / "never-create.json"
+            output.symlink_to(victim)
+            with self.assertRaises(JapanRowDriftError):
+                exclusive_private(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_symlink_swap_during_resolve_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "private.json"
+            victim = Path(folder) / "never-create.json"
+            original_resolve = Path.resolve
+
+            def replace_during_resolve(path_obj, *args, **kwargs):
+                if path_obj == output:
+                    output.symlink_to(victim)
+                return original_resolve(path_obj, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True,
+                              side_effect=replace_during_resolve):
+                with self.assertRaises(JapanRowDriftError):
+                    exclusive_private(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
 
 
 if __name__ == "__main__":
