@@ -102,6 +102,7 @@ class RegionalMachineReceiptTests(unittest.TestCase):
         holds, _ = holds_and_rows()
         jp = japan_receipt()
         for field, value in [
+            ("status", "no_japan_packet_for_this_week"),
             ("week_ending", "2026-10-17"),
             ("human_source_review_completed", True),
             ("editorial_inclusion_approved", True),
