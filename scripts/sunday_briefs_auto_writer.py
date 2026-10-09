@@ -181,7 +181,7 @@ def writing_schema(allowed_ids, *, supplemental_ids=()):
 # Legitimate prose paragraphs and ordinary inline Markdown emphasis are fine.
 PACKET_MARKER = re.compile(
     r"(?im)^\s*(?:"
-    r"={3,}\s*(?:SOURCE|MANUSCRIPT|EDITABLE|MODEL|VIETNAM|END|IPR)|"
+    r"={3,}|"
     r"#{1,6}\s+|"
     r"(?:SOURCE\s+RECORD\s+IDS|EXTERNAL\s+SOURCE\s+IDS)\s*:|"
     r"RECORD\s+[0-9]+\s*\||"
