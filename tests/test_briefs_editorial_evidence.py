@@ -210,6 +210,7 @@ class UnifiedWriterTests(unittest.TestCase):
                    return_value=evidence()):
             result = compose(x, SAT, client=fake, supplemental=self.research)
         self.assertEqual(result["editorial_focus"], manuscript()["editorial_focus"])
+        self.assertEqual(result["_model_offered_production_ids"], [1, 2])
         self.assertEqual(len(params), 1)
         sent = params[0]["messages"][0]["content"]
         self.assertIn("ONE cohesive article", sent)
