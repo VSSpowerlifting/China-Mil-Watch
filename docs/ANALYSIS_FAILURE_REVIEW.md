@@ -16,6 +16,7 @@ The output includes only aggregate metadata and at most 12 article-ID review rec
 ## Interpretation
 
 - Blank body: **potential extraction/adapter problem**, not a verified empty publisher article or an automatic permanent disposition. Check the original source and the adapter before spending model tokens.
+  The receipt splits blank-body records by **stored scrape age** against the configured 14-day UTC live window, with missing dates separate. This prevents an older stored extraction failure from automatically being misrepresented as a defect in the current adapter. Global Times already has September 16, 2026 flow-template extraction regression fixtures; source-level blank counts alone cannot establish that repair has regressed.
 - Prior failures: **recorded attempt history**, not proof that retries will be unsuccessful. Inspect `processing_reason` to distinguish `transient_failure`, `analysis_failed`, `analysis_incomplete` and `empty_body_unconfirmed`.
 - Overlap: count records with *both* blank body and prior failure explicitly. **Do not add the two marginal counts and call them distinct affected articles.**
 - Contradictory states: a human review flag. Legacy records or incomplete metadata may explain some; the audit does not auto-correct or retroactively reclassify them.
