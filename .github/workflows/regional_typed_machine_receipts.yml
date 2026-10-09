@@ -1,0 +1,69 @@
+name: Regional typed source machine receipt contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/regional_typed_machine_receipts.py
+      - scripts/regional_typed_machine_receipts.py
+      - tests/test_regional_typed_machine_receipts.py
+      - docs/REGIONAL_TYPED_MACHINE_RECEIPTS.md
+      - .github/workflows/regional_typed_machine_receipts.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regional-machine-receipts-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  receipts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Baseline archive bytes
+        id: before
+        run: echo "sha=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test multi-commit source receipt joins and nonapproval
+        run: |
+          python -m unittest -v \
+            tests.test_regional_typed_machine_receipts \
+            tests.test_regional_typed_research_holds \
+            tests.test_japan_sunday_source_attestation \
+            tests.test_vietnam_weekly_model_readiness \
+            tests.test_vietnam_briefs_evidence_feeder
+      - name: No model, SMTP, scheduled authoring, or publication hooks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          a = Path("core/regional_typed_machine_receipts.py").read_text()
+          b = Path("scripts/regional_typed_machine_receipts.py").read_text()
+          w = Path(".github/workflows/regional_typed_machine_receipts.yml").read_text()
+          assert "send_packet(" not in a+b
+          assert "ANTHROPIC_API_KEY" not in a+b
+          assert "smtplib" not in a+b
+          assert "  " + "schedule:" not in w
+          assert "actions/" + "upload-artifact" not in w
+          assert '"model_input_authorized": False' in a
+          assert '"publication_authorized": False' in a
+          assert "O_EXCL" in b
+          print("Machine provenance is NOT source-use or publication authorization")
+          PY
+      - name: Verify production database and site untouched
+        if: ${{ !cancelled() && steps.before.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.sha }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
