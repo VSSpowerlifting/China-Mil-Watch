@@ -15,6 +15,13 @@ import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+# The direct CLI must import the same date attribution contract as collectors.
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from core.shadow_schedule import (SOURCE_EXPLICIT, SOURCE_MANUAL,
+                                  SOURCE_SCHEDULE, scheduled_slot_date)
+
 FAMILY = "id_kemhan_news"
 DESK = "indonesia"
 STATE_BRANCH = "shadow/indonesia-kemhan"
@@ -219,10 +226,17 @@ def assess(clock, ledgers, actual_db_sha256, actions):
                     "Actions run did not complete successfully")
             event = action.get("event")
             if event == "schedule":
-                require(ledger.get("target_date_source") == "schedule-slot",
-                        "scheduled run lacks logical schedule-slot target")
-                require(utc(action.get("created_at")).date() == target,
-                        "Actions scheduled event date not equal logical target date")
+                require(attempt == 1 and
+                        ledger.get("target_date_source") == SOURCE_SCHEDULE,
+                        "scheduled rerun or noncanonical schedule-slot target")
+                # GitHub Actions can start after UTC midnight; use exactly the
+                # same nominal slot date rule as the collector, never
+                # action.created_at.date() or the first visible positive run.
+                require(scheduled_slot_date(utc(action.get("created_at")),
+                                            "17:17") == target,
+                        "Actions scheduled event disagrees with logical slot date")
+                require(scheduled_slot_date(started, "17:17") == target,
+                        "collector start disagrees with logical slot date")
                 require(target.isoformat() not in slot_dates,
                         "multiple scheduled successes for one logical date")
                 slot_dates.add(target.isoformat())
@@ -231,8 +245,11 @@ def assess(clock, ledgers, actual_db_sha256, actions):
             else:
                 require(event == "workflow_dispatch" and
                         ledger.get("target_date_source") in
-                        ("manual-utc-date", "explicit-target-date"),
+                        (SOURCE_MANUAL, SOURCE_EXPLICIT),
                         "manual run cannot count as scheduled slot")
+                if ledger["target_date_source"] == SOURCE_MANUAL:
+                    require(started.date() == target,
+                            "implicit manual run cannot claim historical target")
                 manual += 1
                 kind = "manual"
         observations.append({"run_id": run, "target_date": target.isoformat(),
