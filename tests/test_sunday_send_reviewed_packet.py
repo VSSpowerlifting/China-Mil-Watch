@@ -152,7 +152,8 @@ class ReviewedPacketManualHandoff(unittest.TestCase):
                 "IPR_PREVIEW_TO": "owner@example.com",
             }
             for override, expected in (
-                ({"IPR_EDITOR_DELIVERY_ENABLED": "true"}, "parallel editor service"),
+                ({"IPR_EDITOR_DELIVERY_ENABLED": "true"}, "IPR_EDITOR_DELIVERY_ENABLED"),
+                ({"IPR_SUNDAY_EDITOR_DELIVERY_ENABLED": "true"}, "IPR_SUNDAY_EDITOR_DELIVERY_ENABLED"),
                 ({"IPR_PREVIEW_TO": "EDITOR@example.com"}, "differ"),
                 ({"IPR_PREVIEW_TO": ""}, "distinct configured"),
                 ({"IPR_EDITOR_TO": ""}, "distinct configured"),
