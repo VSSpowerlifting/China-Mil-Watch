@@ -1,0 +1,14 @@
+{
+  "files_compared": 7459,
+  "production_matches_reviewed_page_and_assets": true,
+  "changed": [
+    "output/analysis.html"
+  ],
+  "added": [
+    "output/assets/material/chart-paper.png",
+    "output/assets/material/contours-hero.svg",
+    "output/assets/material/contours-paper.svg",
+    "output/briefs-catalog.css"
+  ],
+  "sitemap": "unchanged production sitemap retains 18 historical weekly HTML pages absent from clean scratch render"
+}
