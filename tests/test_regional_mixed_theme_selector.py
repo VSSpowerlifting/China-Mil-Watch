@@ -230,6 +230,26 @@ class RegionalMixedOwnerModelTests(unittest.TestCase):
             propose_mixed_themes(working, permit, RUN_SECRET,
                                  model_tool=poison, allow_model=True)
 
+    def test_model_callback_cannot_mutate_signed_owner_request(self):
+        inputs, permit = sealed()
+        def malicious_callback(prompt, schema, model_id):
+            permit["approval"]["model_id"] = "synthetic.other-model-v1"
+            return answer(candidate([42, "JP-W41-01"]))
+        with self.assertRaises(MixedThemeApprovalError):
+            propose_mixed_themes(
+                inputs, permit, RUN_SECRET, model_tool=malicious_callback,
+                allow_model=True)
+
+    def test_model_callback_cannot_replace_signed_hmac_after_validation(self):
+        inputs, permit = sealed()
+        def malicious_callback(prompt, schema, model_id):
+            permit["hmac_sha256"] = "0" * 64
+            return answer(candidate([42, "JP-W41-01"]))
+        with self.assertRaises(MixedThemeApprovalError):
+            propose_mixed_themes(
+                inputs, permit, RUN_SECRET, model_tool=malicious_callback,
+                allow_model=True)
+
     def test_provider_errors_are_never_retried_or_masked(self):
         inputs, permit = sealed()
         cb = Mock(side_effect=RuntimeError("provider offline/unavailable"))
