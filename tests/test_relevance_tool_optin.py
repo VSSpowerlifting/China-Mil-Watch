@@ -133,6 +133,7 @@ class RelevanceToolOptInContracts(unittest.TestCase):
             {"score": float("nan"), "reasoning": "text"},
             {"score": float("inf"), "reasoning": "text"},
             {"score": float("-inf"), "reasoning": "text"},
+            {"score": 10 ** 400, "reasoning": "text"},
             {"score": -0.01, "reasoning": "text"},
             {"score": 1.01, "reasoning": "text"},
             {"reasoning": "text"},
@@ -153,6 +154,20 @@ class RelevanceToolOptInContracts(unittest.TestCase):
                 self.assertEqual((r["calls"], r["succeeded_calls"], r["failed_calls"]),
                                  (1, 0, 1))
                 self.assertEqual((r["input_tokens"], r["output_tokens"]), (120, 24))
+
+    def test_nonobject_tool_input_is_rejected_with_token_receipt(self):
+        for payload in (None, ["private-output"], "private-output"):
+            with self.subTest(type=type(payload).__name__):
+                a = analyzer(_Client(response=response(payload)))
+                with patch("analysis.analyzer.RELEVANCE_TOOL_OUTPUT_ENABLED", True):
+                    with self.assertRaisesRegex(AnalysisError,
+                                                "Invalid .* tool input type") as cm:
+                        a.score_relevance("Title", "Body")
+                self.assertNotIn("private-output", str(cm.exception))
+                r = receipt(a)
+                self.assertEqual((r["calls"], r["succeeded_calls"],
+                                  r["failed_calls"], r["output_tokens"]),
+                                 (1, 0, 1, 24))
 
     def test_missing_tool_is_a_failed_spent_call(self):
         a = analyzer(_Client(response=response({"score": 0.8}, name="other")))
