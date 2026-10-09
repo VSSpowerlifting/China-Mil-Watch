@@ -345,6 +345,28 @@ def render_html(snapshot: dict) -> str:
             -item["daily_eligible_stored"], item["desk_id"], item["source_slug"]))
         # Source/desk counts are historical DB observations, never a model
         # dispatch plan, output readiness or confirmation of live Actions.
+        readiness = queue_evidence.get("model_dispatch_body_readiness")
+        readiness_html = ""
+        if readiness is not None:
+            preview_rows = sorted(readiness["sources"], key=lambda row: (
+                -row["body_withheld"], row["desk_id"], row["source_slug"]))
+            readiness_html = (
+                "<h3>Model-input body readiness — stored snapshot only</h3>"
+                "<p class='notice'>A source-body check, NOT the next Daily run's "
+                "workload, proof of extraction, an allowance to spend, or "
+                "publication approval. Withheld bodies remain archived for "
+                "human source review.</p>"
+                "<p class='meta'>%s body-ready of %s stored Daily-eligible; "
+                "%s withheld for source review.</p>%s"
+            ) % (
+                val(readiness["body_ready"]),
+                val(readiness["stored_daily_queue_eligible"]),
+                val(readiness["body_withheld_for_source_review"]),
+                table(("Desk", "Source", "Stored Daily eligible",
+                       "Body-ready for model input", "Body withheld"), [
+                    (r["desk_id"], r["source_slug"], r["stored_daily_eligible"],
+                     r["body_ready"], r["body_withheld"]) for r in preview_rows]),
+            )
         queue_section = (
             "<section><h2>Stored analysis queue — local SQLite snapshot</h2>"
             "<p class='notice'>Source-attributed, copied SQLite evidence only. "
@@ -356,7 +378,7 @@ def render_html(snapshot: dict) -> str:
             "%s paused · %s unknown states</p>"
             "<p class='meta'>Audit UTC: %s · live-window cutoff UTC: %s"
             " · input DB SHA-256: %s (unsigned local identity)</p>"
-            "%s</section>"
+            "%s%s</section>"
         ) % (
             val(queue_evidence["article_rows"]),
             val(queue_evidence["stored_daily_queue_eligible"]),
@@ -374,6 +396,7 @@ def render_html(snapshot: dict) -> str:
                     r["daily_eligible_stored"], r["held_out_stored"],
                     r["paused_stored"], r["unknown_state_stored"],
                     r["rows_total"]) for r in rows]),
+            readiness_html,
         )
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
