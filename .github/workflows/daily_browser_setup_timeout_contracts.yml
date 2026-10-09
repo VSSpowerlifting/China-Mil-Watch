@@ -1,0 +1,43 @@
+name: Daily browser setup timeout contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/daily_update.yml'
+      - '.github/workflows/daily_browser_setup_timeout_contracts.yml'
+      - 'docs/DAILY_BROWSER_PREFLIGHT_TIMEOUT.md'
+      - 'tests/test_daily_browser_preflight_timeout.py'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked database SHA256
+        id: baseline
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Verify bounded Daily browser setup and publication preconditions
+        run: |
+          python -m unittest tests.test_daily_browser_preflight_timeout -v
+          python -m unittest tests.test_workflow_contract -v
+      - name: Assert production archive and output unchanged
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
