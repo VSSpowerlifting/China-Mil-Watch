@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from scripts.sunday_pilot_owner_review import require_owner_review
+from scripts.sunday_pilot_owner_review import OwnerReviewRequired, require_owner_review
 
 NY = ZoneInfo("America/New_York")
 
@@ -99,10 +99,13 @@ def resolve_sunday_handoff(*, event: str, now: datetime = None,
     # Pilot-only, edition-specific owner's consent before generating a
     # scheduled or manually requested draft intended for Dylan. The private
     # no-send preview is always exempt, and later weeks are unchanged.
-    require_owner_review(
-        week_ending=target.isoformat(), sending=sending,
-        approved_week=pilot_owner_reviewed_week,
-    )
+    try:
+        require_owner_review(
+            week_ending=target.isoformat(), sending=sending,
+            approved_week=pilot_owner_reviewed_week,
+        )
+    except OwnerReviewRequired as exc:
+        raise SundayHandoffRefused(str(exc)) from exc
     if today.weekday() == 6 and target == today - timedelta(days=1):
         if sunday_daily_marker.strip() != today.isoformat():
             raise SundayHandoffRefused(
