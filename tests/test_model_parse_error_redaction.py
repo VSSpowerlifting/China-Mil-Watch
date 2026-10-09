@@ -92,9 +92,9 @@ class SafeMalformedModelMessages(unittest.TestCase):
         self.assertEqual(obj.usage.rows()[0]["succeeded_calls"], 1)
 
     def test_valid_fenced_json_still_parses(self):
-        raw = "    \`\`\`json\n" + json.dumps({
+        raw = "    ```json\n" + json.dumps({
             "summary": "Ordinary published summary."
-        }) + "\n\`\`\`   "
+        }) + "\n```   "
         obj = analyzer(raw)
         self.assertEqual(obj.summarize("Title", "Body"),
                          "Ordinary published summary.")
