@@ -289,6 +289,18 @@ def run(
             )
             continue
 
+        # Identify unreadable source pages before dedup/filtering can hide
+        # whether they were previously stored, rejected or newly inserted.
+        # Public official-source locator only; never the body or title.
+        from core.collection.text_gap_receipts import log_unreadable_source_receipts
+        no_text_count = log_unreadable_source_receipts(slug, documents, logger)
+        if (result.text_unavailable is not None
+                and no_text_count != result.text_unavailable):
+            logger.warning(
+                "%s: source text-gap receipt count (%d) disagrees with "
+                "adapter result (%d); investigate collection accounting",
+                slug, no_text_count, result.text_unavailable,
+            )
         all_scraped.extend(doc.as_article_dict() for doc in documents)
         source_results.append(result)
 
