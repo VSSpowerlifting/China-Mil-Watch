@@ -116,6 +116,35 @@ def build_unified(registry, production_report, shadow_root, marker_path,
     return base
 
 
+
+def write_report_pair(json_path, json_text, html_path, html_text):
+    """Create only fresh external reports; roll back our own files on errors.
+
+    The files are not a transaction against concurrent readers. Rollback
+    prevents an ordinary I/O failure on the second report from leaving a
+    seemingly complete, unmatched first report behind.
+    """
+    created = []
+    try:
+        for path, content in ((json_path, json_text), (html_path, html_text)):
+            with path.open("x", encoding="utf-8") as stream:
+                identity = stream.fileno()
+                import os
+                info = os.fstat(identity)
+                created.append((path, info.st_dev, info.st_ino))
+                stream.write(content)
+    except OSError:
+        for path, device, inode in reversed(created):
+            try:
+                # Never unlink something another actor swapped into place.
+                info = path.lstat()
+                if not path.is_symlink() and (info.st_dev, info.st_ino) == (device, inode):
+                    path.unlink()
+            except OSError:
+                pass
+        raise
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--as-of", default=current_display_date(),
@@ -160,12 +189,9 @@ def main(argv=None):
         json_text = json.dumps(report, ensure_ascii=False,
                                indent=2, sort_keys=True) + "\n"
         html_text = ops.render_html(report)
-        # Both destinations already passed ops.safe_destination and are new.
-        # No file in the repository or any source state is ever written.
-        with output.open("x", encoding="utf-8") as file:
-            file.write(json_text)
-        with html.open("x", encoding="utf-8") as file:
-            file.write(html_text)
+        # Both destinations passed ops.safe_destination and are new.
+        # An I/O error must not strand a partial unmatched local report.
+        write_report_pair(output, json_text, html, html_text)
         print("Read-only unified Operations Center: %s" % html)
     except (UnifiedError, daily.ReceiptError, bindings.BindingError,
             capture.CaptureError, shadow.OverlayError, ops.SnapshotError,
