@@ -31,7 +31,7 @@ python scripts/operations_center_unified.py \
   --json /tmp/ipr-unified-with-daily.json
 ```
 
-The unified CLI does not make a network request itself. It passes the raw receipt through the **actual** `audit_daily_run_receipts.interpret` contract, rejecting malformed, contradictory, missing-field, duplicate-attempt and future-as-of-display records. It refuses a pre-rendered audit summary where a raw receipt is required.
+The unified CLI makes no network request by default. An operator can explicitly request a bounded GitHub Actions metadata GET through `--fetch-daily-utc-day YYYY-MM-DD` **instead of** `--daily-receipts`; these input modes are mutually exclusive. Either path passes the raw receipt through the **actual** `audit_daily_run_receipts.interpret` contract, rejecting malformed, contradictory, missing-field, duplicate-attempt and future-as-of-display records. It refuses a pre-rendered audit summary where a raw receipt is required.
 
 Its new **Daily Actions evidence candidates** section shows per-run New York creation date, GitHub conclusion, *candidate* interpretation, guard decision if actually supplied, and separately sourced historical stored-article/backlog figures **only if those figures were supplied in the canonical receipt**. A green workflow whose guard stdout has not been reviewed is **not** called a successful collection. A cancelled job with no step evidence remains unknown. An empty report does not prove there were no runs or government publications.
 
