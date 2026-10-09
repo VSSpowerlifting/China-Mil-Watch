@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -185,6 +186,85 @@ class MPSHistoricalCurrentDriftTests(unittest.TestCase):
             new_private_report(
                 Path(__file__).resolve().parents[1] / "NO_WRITE_VIETNAM_DRIFT.json",
                 receipt)
+
+    def test_failed_encoding_cleans_partial_private_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "report.json"
+            with self.assertRaises(TypeError):
+                new_private_report(output, {"invalid": object()})
+            self.assertFalse(output.exists())
+
+    def test_failed_fdopen_closes_descriptor_and_removes_owned_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "report.json"
+            raw_open, raw_close = os.open, os.close
+            opened = []
+
+            def count_open(*args, **kwargs):
+                fd = raw_open(*args, **kwargs)
+                opened.append(fd)
+                return fd
+
+            with patch("scripts.vietnam_mps_source_version_drift.os.open",
+                       side_effect=count_open), patch(
+                    "scripts.vietnam_mps_source_version_drift.os.fdopen",
+                    side_effect=OSError("synthetic fdopen error")), patch(
+                    "scripts.vietnam_mps_source_version_drift.os.close",
+                    wraps=raw_close) as close:
+                with self.assertRaisesRegex(OSError, "synthetic fdopen error"):
+                    new_private_report(output, {"private": True})
+            self.assertEqual(len(opened), 1)
+            close.assert_called_once_with(opened[0])
+            self.assertFalse(output.exists())
+
+    def test_replacement_file_survives_rollback(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "report.json"
+            other = Path(folder) / "unrelated.txt"
+            other.write_text("KEEP", encoding="utf-8")
+            raw_close = os.close
+
+            def swap_and_fail(fd, *args, **kwargs):
+                output.unlink()
+                os.link(other, output)
+                raise OSError("synthetic path swap")
+
+            with patch("scripts.vietnam_mps_source_version_drift.os.fdopen",
+                       side_effect=swap_and_fail), patch(
+                    "scripts.vietnam_mps_source_version_drift.os.close",
+                    wraps=raw_close):
+                with self.assertRaisesRegex(OSError, "synthetic path swap"):
+                    new_private_report(output, {"private": True})
+            self.assertEqual(output.read_text(encoding="utf-8"), "KEEP")
+            self.assertEqual(other.read_text(encoding="utf-8"), "KEEP")
+
+    def test_existing_dangling_symlink_not_followed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "report.json"
+            victim = Path(folder) / "untouched.json"
+            output.symlink_to(victim)
+            with self.assertRaises(ValueError):
+                new_private_report(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
+
+    def test_symlink_substitution_during_resolve_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "report.json"
+            victim = Path(folder) / "untouched.json"
+            orig_resolve = Path.resolve
+
+            def replace_at_resolve(candidate, *args, **kwargs):
+                if candidate == output:
+                    output.symlink_to(victim)
+                return orig_resolve(candidate, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True,
+                              side_effect=replace_at_resolve):
+                with self.assertRaises(ValueError):
+                    new_private_report(output, {"private": True})
+            self.assertTrue(output.is_symlink())
+            self.assertFalse(victim.exists())
 
     def test_cli_mocks_only_external_queue_files_and_never_calls_smtp(self):
         rows, history, latest = scenario()

@@ -22,24 +22,43 @@ from scripts.prepare_vietnam_briefs_evidence import load as load_verified_json  
 
 
 def new_private_report(path, receipt):
-    target = Path(path).expanduser()
-    dest = target.resolve()
+    # Preserve the requested leaf for exclusive no-follow creation.
+    # Resolve separately only to enforce the repository boundary.
+    target = Path(path).expanduser().absolute()
+    resolved = target.resolve()
     root = ROOT.resolve()
     if (target.is_symlink() or target.exists() or
-            dest == root or root in dest.parents or
-            not dest.parent.is_dir() or target.parent.is_symlink()):
+            resolved == root or root in resolved.parents or
+            not target.parent.is_dir() or target.parent.is_symlink()):
         raise ValueError("new private MPS report must be outside repo and not overwrite")
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
-    fd = os.open(str(dest), flags, 0o600)
+    fd = os.open(str(target), flags, 0o600)
+    owned = None
     try:
+        owned = os.fstat(fd)
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            fd = None  # stream owns descriptor once fdopen succeeds.
             json.dump(receipt, stream, indent=2, sort_keys=True,
                       ensure_ascii=False, allow_nan=False)
             stream.write("\n")
     except BaseException:
-        dest.unlink(missing_ok=True)
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        # Cleanup only if the created inode still occupies this path.
+        if owned is not None:
+            try:
+                current = target.lstat()
+                if (not target.is_symlink() and
+                        (current.st_dev, current.st_ino) ==
+                        (owned.st_dev, owned.st_ino)):
+                    target.unlink()
+            except OSError:
+                pass
         raise
 
 
