@@ -1,0 +1,64 @@
+name: Stored queue two-snapshot accounting contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_stored_queue_transitions.py'
+      - 'tests/test_stored_queue_transitions.py'
+      - 'docs/STORED_QUEUE_TRANSITIONS.md'
+      - '.github/workflows/stored_queue_transition_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-transition-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin original production database without sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/tracked-before.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Test two-snapshot accounting and canonical source buckets
+        run: |
+          python -m unittest tests.test_stored_queue_transitions -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Assert canonical audit can still read real tracked SQLite
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_queue_by_source.py --db pla_watch.db \
+            > "$RUNNER_TEMP/real-stored-queue.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          data = json.loads((Path(os.environ["RUNNER_TEMP"]) /
+                             "real-stored-queue.json").read_text())
+          assert sum(data["totals"].values()) == data["article_rows"]
+          assert data["stored_daily_queue_eligible"] == (
+              data["stored_daily_unscored"] +
+              data["stored_daily_pending_analysis"])
+          assert sum(s["rows_total"] for s in data["sources"]) == data["article_rows"]
+          assert data["model_spend_authorized"] is False
+          assert data["publication_authorized"] is False
+          assert data["model_calls"] == 0 and data["writes"] == 0
+          print("Canonical real-DB read-only source audit passed")
+          PY
+      - name: Prove tracked archive and site output unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/tracked-before.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
