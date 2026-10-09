@@ -151,6 +151,20 @@ The initial live issue should be owner-previewed and source-reviewed through
 its existing workflow. Future typed research participation in a regional
 thematic selector requires a separately audited source-use/edition contract.
 
+## Integration gate (after the selector foundation merged)
+
+The themed pilot's source-review dependencies now live in the production
+`main` tree, but this handoff has its **own full PR offline CI** requirement.
+A focused 173-test pass on a stacked feature branch does not substitute for
+running the entire browser-backed, output-validation and SQLite-preservation
+suite on the exact new `main`-targeting PR head. Do not merge based on that
+older focused result alone.
+
+Even after a future handoff code merge, the `approve`, `audit` and
+`rehearse` commands remain **manual, owner-interactive, private and no-send**.
+They do not alter the October 11 scheduled workflow, the exact attachment
+digest gate, Japan/Vietnam source-use receipts or the authority to send Dylan.
+
 ## Deliberate boundaries and future work
 
 - The regular `.github/workflows/sunday_briefs_editorial_handoff.yml`
