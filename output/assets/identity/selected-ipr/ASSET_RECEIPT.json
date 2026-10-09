@@ -1,0 +1,107 @@
+{
+  "source_zip": "/Users/benjaminyang/Downloads/Indo-Pacfic Record (1).zip",
+  "source_zip_sha256": "beb672f7144426e4f9cf0ec28f39f13833ac9089b62bedabd5d82758297a651a",
+  "method": "Flat-canvas removal with source-palette edge unmatting; no redrawing, tracing, recoloring or alteration of proportions.",
+  "variants": [
+    {
+      "source": "1.png",
+      "source_sha256": "18ae5c15fc593048f8112944b657fbb2760cbad314bce57ee3a1fa702db04647",
+      "source_dimensions": [
+        2750,
+        2750
+      ],
+      "canvas_rgb": [
+        238,
+        237,
+        233
+      ],
+      "artwork_bounds": [
+        353,
+        649,
+        2455,
+        2351
+      ],
+      "crop_bounds": [
+        323,
+        619,
+        2485,
+        2381
+      ],
+      "master_dimensions": [
+        2162,
+        1762
+      ],
+      "recomposition_max_rgb_error": 1.0,
+      "exports": [
+        {
+          "path": "ipr-navy-160.png",
+          "width": 160,
+          "height": 130,
+          "bytes": 6844
+        },
+        {
+          "path": "ipr-navy-320.png",
+          "width": 320,
+          "height": 261,
+          "bytes": 14403
+        },
+        {
+          "path": "ipr-navy-640.png",
+          "width": 640,
+          "height": 522,
+          "bytes": 29444
+        }
+      ]
+    },
+    {
+      "source": "2.png",
+      "source_sha256": "cafe176d7452edb2dcbf72dba8864924e70e48b2da04c6112d96b1096a1f6c6b",
+      "source_dimensions": [
+        2750,
+        2750
+      ],
+      "canvas_rgb": [
+        20,
+        42,
+        56
+      ],
+      "artwork_bounds": [
+        382,
+        649,
+        2406,
+        2319
+      ],
+      "crop_bounds": [
+        352,
+        619,
+        2436,
+        2349
+      ],
+      "master_dimensions": [
+        2084,
+        1730
+      ],
+      "recomposition_max_rgb_error": 1.0,
+      "exports": [
+        {
+          "path": "ipr-ivory-160.png",
+          "width": 160,
+          "height": 133,
+          "bytes": 7752
+        },
+        {
+          "path": "ipr-ivory-320.png",
+          "width": 320,
+          "height": 266,
+          "bytes": 16048
+        },
+        {
+          "path": "ipr-ivory-640.png",
+          "width": 640,
+          "height": 531,
+          "bytes": 32944
+        }
+      ]
+    }
+  ]
+}
