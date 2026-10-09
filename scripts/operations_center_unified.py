@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 from core.desk_registry import load_registry
 from scripts import audit_daily_run_receipts as daily
 from scripts import audit_analysis_queue_by_source as queue_audit
+from scripts import audit_analysis_backlog_triage as triage_audit
 from scripts import audit_shadow_workflow_bindings as bindings
 from scripts import capture_daily_actions_receipts as capture
 from scripts import operations_center as ops
@@ -208,8 +209,100 @@ def attach_queue(snapshot, audit):
     return combined
 
 
+
+
+def attach_dispatch_readiness(snapshot, triage):
+    """Attach only body-level, locally pinned model-input readiness counts.
+
+    The operator must already have requested a canonical stored-queue view.
+    This is a snapshot of source text availability, never future Daily workload,
+    source authorization or an instruction to spend.
+    """
+    require(type(snapshot) is dict and
+            type(snapshot.get("stored_analysis_queue_evidence")) is dict,
+            "dispatch readiness requires the canonical stored queue overlay")
+    queue = snapshot["stored_analysis_queue_evidence"]
+    require("model_dispatch_body_readiness" not in queue,
+            "duplicate model dispatch body readiness")
+    require(type(triage) is dict and triage.get("schema") == triage_audit.SCHEMA,
+            "dispatch readiness requires canonical read-only backlog triage")
+    for key in ("model_spend_authorized", "publication_authorized",
+                "editor_delivery_authorized", "text_extraction_verified",
+                "live_production_state_authenticated", "next_run_workload_known"):
+        require(triage.get(key) is False, "triage may not authorize: " + key)
+    require(triage.get("model_dispatch_preview_not_future_run_workload") is True
+            and triage.get("model_dispatch_preview_not_spending_approval") is True
+            and triage.get("model_dispatch_body_test_matches_python_strip") is True,
+            "unverified body readiness contract")
+    require(triage.get("writes") == 0 and triage.get("model_calls") == 0,
+            "dispatch triage must be model-free and read-only")
+    require(triage.get("input_file_sha256") ==
+            queue["input_file_sha256"],
+            "readiness and queue audit use different database bytes")
+    eligible = queue["stored_daily_queue_eligible"]
+    require(triage.get("stored_daily_queue_eligible") == eligible,
+            "dispatch and stored queue eligibility disagree")
+    ready = triage.get("stored_daily_model_dispatch_body_ready")
+    withheld = triage.get("stored_daily_model_dispatch_body_withheld")
+    require(type(ready) is int and type(withheld) is int and
+            ready >= 0 and withheld >= 0 and ready + withheld == eligible,
+            "body-ready and withheld counts do not reconcile")
+    src = triage.get("sources")
+    require(type(src) is list and type(queue.get("sources")) is list,
+            "source-level dispatch readiness absent")
+    index = {}
+    for r in queue["sources"]:
+        key = (r["desk_id"], r["source_slug"])
+        require(key not in index, "duplicate stored queue source identity")
+        index[key] = r
+    seen = set()
+    rows = []
+    for r in src:
+        require(type(r) is dict and
+                type(r.get("desk_id")) is str and
+                type(r.get("source_slug")) is str,
+                "malformed source identity in dispatch triage")
+        key = (r["desk_id"], r["source_slug"])
+        require(key in index and key not in seen,
+                "unmatched or duplicate dispatch triage source")
+        seen.add(key)
+        n, w = r.get("daily_model_dispatch_body_ready"), r.get(
+            "daily_model_dispatch_body_withheld")
+        require(type(n) is int and type(w) is int and n >= 0 and w >= 0
+                and n + w == index[key]["daily_eligible_stored"],
+                "per-source dispatch counts do not reconcile")
+        rows.append({"desk_id": key[0], "source_slug": key[1],
+                     "body_ready": n, "body_withheld": w,
+                     "stored_daily_eligible": n + w})
+    # The canonical archive includes sources whose only rows were fully
+    # analyzed or relevance-rejected. Those sources legitimately have no
+    # review/dispatch triage row and must carry zero Daily eligibility.
+    require(all(index[key]["daily_eligible_stored"] == 0
+                for key in set(index) - seen) and
+            sum(r["body_ready"] for r in rows) == ready and
+            sum(r["body_withheld"] for r in rows) == withheld,
+            "dispatch sources do not reconcile with stored queue")
+    result = copy.deepcopy(snapshot)
+    result["stored_analysis_queue_evidence"]["model_dispatch_body_readiness"] = {
+        "schema": "ipr-ops-dispatch-body-readiness/1",
+        "body_ready": ready,
+        "body_withheld_for_source_review": withheld,
+        "stored_daily_queue_eligible": eligible,
+        "sources": rows,
+        "input_file_sha256": copy.deepcopy(triage["input_file_sha256"]),
+        "future_workload_authenticated": False,
+        "source_extraction_verified": False,
+        "model_spend_authorized": False,
+        "publication_authorized": False,
+        "writes": 0,
+        "model_calls": 0,
+    }
+    return result
+
+
 def build_unified(registry, production_report, shadow_root, marker_path,
-                  as_of, binding_report, slot_reports=(), receipt=None, queue_report=None, *, root=ROOT):
+                  as_of, binding_report, slot_reports=(), receipt=None, queue_report=None,
+                  dispatch_report=None, *, root=ROOT):
     """Join independently validated source declarations and optional evidence.
 
     The source health report remains solely based on the production DB;
@@ -225,6 +318,8 @@ def build_unified(registry, production_report, shadow_root, marker_path,
         base = attach_daily(base, receipt)
     if queue_report is not None:
         base = attach_queue(base, queue_report)
+    if dispatch_report is not None:
+        base = attach_dispatch_readiness(base, dispatch_report)
     return base
 
 
@@ -242,6 +337,8 @@ def main(argv=None):
     p.add_argument("--db", type=Path, default=Path(ops.DB_PATH))
     p.add_argument("--include-analysis-queue", action="store_true",
                    help="opt-in source-attributed read-only stored SQLite queue; not a live monitor")
+    p.add_argument("--include-dispatch-readiness", action="store_true",
+                   help="opt-in extra body-ready/withheld SQLite scan; requires --include-analysis-queue")
     evidence = p.add_mutually_exclusive_group()
     evidence.add_argument("--daily-receipts", type=Path,
                           help="operator-supplied raw Actions receipt JSON, no network")
@@ -257,6 +354,8 @@ def main(argv=None):
     args = p.parse_args(argv)
     try:
         as_of = ops.exact_date(args.as_of)
+        require(not args.include_dispatch_readiness or args.include_analysis_queue,
+                "--include-dispatch-readiness requires --include-analysis-queue")
         html = ops.safe_destination(args.html)
         output = ops.safe_destination(args.json)
         require(html.resolve() != output.resolve(),
@@ -280,6 +379,11 @@ def main(argv=None):
         if queue_report is not None:
             require(hashes_before == queue_report["input_file_sha256"],
                     "database changed between source-health and queue audits")
+        dispatch_report = (triage_audit.snapshot(args.db)
+                           if args.include_dispatch_readiness else None)
+        if dispatch_report is not None:
+            require(dispatch_report["input_file_sha256"] == hashes_before,
+                    "database changed during dispatch readiness audit")
         report = build_unified(
             load_registry(), production_report,
             ops.SHADOW_ROOT, ops.DAILY_MARKER, as_of,
@@ -287,6 +391,7 @@ def main(argv=None):
             [shadow.read_json(path) for path in args.slot_report],
             receipt,
             queue_report,
+            dispatch_report,
             root=ROOT,
         )
         json_text = json.dumps(report, ensure_ascii=False,
