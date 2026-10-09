@@ -101,6 +101,24 @@ class BindingContracts(unittest.TestCase):
         with self.assertRaisesRegex(audit.BindingError, "expected active schedule"):
             self.report()
 
+    def test_extra_active_schedule_must_be_explicitly_reviewed(self):
+        name = self.root / ".github/workflows/ph_afp_shadow.yml"
+        s = name.read_text()
+        name.write_text(s.replace("    - cron: '40 6 * * *'",
+                                  "    - cron: '40 6 * * *'\n    - cron: '15 12 * * *'", 1))
+        with self.assertRaisesRegex(audit.BindingError,
+                                    "unexpected, duplicated or missing active"):
+            self.report()
+
+    def test_duplicate_active_schedule_is_not_one_slot(self):
+        name = self.root / ".github/workflows/ph_afp_shadow.yml"
+        s = name.read_text()
+        name.write_text(s.replace("    - cron: '40 6 * * *'",
+                                  "    - cron: '40 6 * * *'\n    - cron: '40 6 * * *'", 1))
+        with self.assertRaisesRegex(audit.BindingError,
+                                    "unexpected, duplicated or missing active"):
+            self.report()
+
     def test_branch_mention_in_comment_does_not_count(self):
         name = self.root / ".github/workflows/ph_afp_shadow.yml"
         s = name.read_text()
