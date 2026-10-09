@@ -38,6 +38,30 @@ jobs:
           python -m unittest tests.test_operations_center -v
           python -m unittest tests.test_operations_center_shadow_overlay -v
           python -m unittest tests.test_daily_run_receipts -v
+      - name: Smoke unified snapshot against real tracked production database
+        run: |
+          set -euo pipefail
+          python scripts/operations_center_unified.py \
+            --html "$RUNNER_TEMP/ipr-unified-real.html" \
+            --json "$RUNNER_TEMP/ipr-unified-real.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          snapshot = json.loads((root / "ipr-unified-real.json").read_text())
+          html = (root / "ipr-unified-real.html").read_text()
+          assert snapshot["schema"] == "ipr-operations-snapshot/1"
+          assert snapshot["shadow_evidence_overlay"]["schema"]
+          assert snapshot["shadow_evidence_overlay"]["collection_verified"] is False
+          assert snapshot["publication_authorized"] is False
+          assert snapshot["editor_delivery_authorized"] is False
+          assert snapshot["shadow_promotion_authorized"] is False
+          assert "daily_actions_evidence" not in snapshot
+          assert "Operations Center" in html
+          assert "Shadow collection evidence candidates" in html
+          print("Read-only real-DB unified snapshot passed")
+          PY
       - name: Prove no tracked DB or published output changed
         if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
         run: |
