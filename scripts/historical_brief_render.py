@@ -45,7 +45,7 @@ def _historical_author_links(links: dict) -> list[dict]:
     for label, url in links.items():
         if not isinstance(label, str) or not isinstance(url, str):
             continue
-        if not label.strip() or not url or any(c in url for c in "\\r\\n\\t"):
+        if not label.strip() or not url or any(c in url for c in "\r\n\t"):
             continue
         parsed = urlsplit(url)
         external = parsed.scheme.lower() in ("https", "http") and bool(parsed.netloc)
