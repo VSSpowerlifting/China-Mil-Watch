@@ -1,0 +1,61 @@
+name: Regional typed human review progress — no admission
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/regional_typed_review_progress.py
+      - tests/test_regional_typed_review_progress.py
+      - docs/REGIONAL_TYPED_REVIEW_PROGRESS.md
+      - .github/workflows/regional_typed_review_progress_checks.yml
+
+permissions:
+  contents: read
+
+jobs:
+  offline-review-progress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve archive fingerprint
+        run: sha256sum pla_watch.db > "$RUNNER_TEMP/typed-review-db.sha"
+      - name: Install offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test unsigned checklist, forged pins and authority refusal
+        run: |
+          python -m unittest -v \
+            tests.test_regional_typed_review_progress \
+            tests.test_regional_typed_human_review_prep \
+            tests.test_regional_typed_research_holds
+      - name: Explicit no sign/model/send/publication code
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          a = Path("core/regional_typed_review_progress.py").read_text()
+          w = Path(".github/workflows/regional_typed_review_progress_checks.yml").read_text()
+          for fragment in ("smtplib", "send_packet(", "ANTHROPIC_API_KEY",
+                           "sign_private_review(", "sign_choice("):
+              assert fragment not in a
+          assert "model_input_authorized" in a
+          assert "human_source_review_signed" in a
+          assert "  " + "schedule:" not in w
+          assert "upload" + "-artifact" not in w
+          PY
+      - name: Prove no production database or published-output mutation
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/typed-review-db.sha" || {
+            sha256sum pla_watch.db
+            exit 1
+          }
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
