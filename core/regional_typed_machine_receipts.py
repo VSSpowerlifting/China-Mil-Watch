@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import hashlib
 import re
-from datetime import date
-from urllib.parse import urlsplit
 
 from scripts.prepare_vietnam_briefs_evidence import verified_queue
 
@@ -81,6 +79,8 @@ def reconcile_machine_receipts(holds, japan=None, vietnam_queues=None):
          "machine receipts must be bounded validated JSON objects")
     if japan is not None:
         need(japan.get("schema") == JAPAN
+             and japan.get("status") ==
+             "exact_versions_verified_not_editorial_approval"
              and japan.get("week_ending") == week
              and japan.get("as_of") == holds["source_as_of"]
              and japan.get("human_source_review_completed") is False
