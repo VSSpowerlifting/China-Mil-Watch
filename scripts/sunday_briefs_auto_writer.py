@@ -180,16 +180,16 @@ def writing_schema(allowed_ids, *, supplemental_ids=()):
 # instructions, or a counterfeit end-of-worksheet boundary.
 # Legitimate prose paragraphs and ordinary inline Markdown emphasis are fine.
 PACKET_MARKER = re.compile(
-    r"(?im)^\\s*(?:"
-    r"={3,}\\s*(?:SOURCE|MANUSCRIPT|EDITABLE|MODEL|VIETNAM|END|IPR)|"
-    r"#{1,6}\\s+|"
-    r"(?:SOURCE\\s+RECORD\\s+IDS|EXTERNAL\\s+SOURCE\\s+IDS)\\s*:|"
-    r"RECORD\\s+[0-9]+\\s*\\||"
-    r"EXTERNAL\\s+SOURCE\\s+[A-Z][A-Z0-9-]+\\s*\\||"
-    r"END\\s+OF\\s+(?:SOURCE|MODEL|MANUSCRIPT|UNAPPROVED|VIETNAM)\\b"
+    r"(?im)^\s*(?:"
+    r"={3,}\s*(?:SOURCE|MANUSCRIPT|EDITABLE|MODEL|VIETNAM|END|IPR)|"
+    r"#{1,6}\s+|"
+    r"(?:SOURCE\s+RECORD\s+IDS|EXTERNAL\s+SOURCE\s+IDS)\s*:|"
+    r"RECORD\s+[0-9]+\s*\||"
+    r"EXTERNAL\s+SOURCE\s+[A-Z][A-Z0-9-]+\s*\||"
+    r"END\s+OF\s+(?:SOURCE|MODEL|MANUSCRIPT|UNAPPROVED|VIETNAM)\b"
     r")"
 )
-CONTROL_MARKER = re.compile(r"[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]")
+CONTROL_MARKER = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 
 
 def validate_prose_boundaries(manuscript):
@@ -200,7 +200,7 @@ def validate_prose_boundaries(manuscript):
         value = manuscript[field]
         if not isinstance(value, str):
             raise ValueError("writer returned non-text prose: " + field)
-        if ("\\r" in value or CONTROL_MARKER.search(value)
+        if ("\r" in value or CONTROL_MARKER.search(value)
                 or PACKET_MARKER.search(value)):
             raise ValueError(
                 "writer attempted reserved worksheet structure in prose: " + field
