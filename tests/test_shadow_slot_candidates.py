@@ -101,6 +101,32 @@ class CandidateSlots(unittest.TestCase):
                   source=SOURCE_EXPLICIT)
         self.assertEqual(statuses([row])[0], "explicit_manual_recovery_candidate")
 
+    def test_explicit_manual_dispatch_before_nominal_slot_not_recovery(self):
+        early = run(run_id="37700000000-1",
+                    event="workflow_dispatch", source=SOURCE_EXPLICIT,
+                    started="2026-10-07T16:59:59Z")
+        report = assess([early])
+        self.assertEqual(report["slots"][0]["status"],
+                         "only_nonqualifying_attempts_observed")
+        self.assertEqual(report["counts"]["candidate_supported"], 0)
+
+    def test_manual_explicit_recovery_exact_slot_boundary(self):
+        boundary = run(run_id="37700000000-1",
+                       event="workflow_dispatch", source=SOURCE_EXPLICIT,
+                       started="2026-10-07T17:17:00Z")
+        self.assertEqual(statuses([boundary])[0],
+                         "explicit_manual_recovery_candidate")
+
+    def test_manual_explicit_future_slot_does_not_preempt_collection(self):
+        forged = run(run_id="37700000000-1", event="workflow_dispatch",
+                     target="2026-10-08", source=SOURCE_EXPLICIT,
+                     started="2026-10-07T21:58:19Z")
+        report = assess([forged])
+        self.assertEqual(report["slots"][0]["status"],
+                         "mature_slot_missing_from_supplied_evidence")
+        self.assertEqual(report["slots"][1]["status"],
+                         "only_nonqualifying_attempts_observed")
+
     def test_failed_scheduled_then_explicit_manual_recovery(self):
         failed = run(github_conclusion="failure", ledger_health="fail",
                      ledger_result="fail", new_records=0)
