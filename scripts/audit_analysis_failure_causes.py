@@ -30,6 +30,8 @@ DAILY = frozenset(("daily_unscored_live", "daily_unscored_archive",
                    "daily_unscored_undated", "daily_pending_analysis"))
 COUNTERS = ("daily_eligible", "daily_blank_body", "daily_prior_attempts",
             "daily_blank_and_prior_attempts", "daily_unknown_failure_reason",
+            "daily_blank_recent_scrapes", "daily_blank_archive_scrapes",
+            "daily_blank_undated_scrapes",
             "daily_missing_publication_date", "paused", "terminal",
             "state_inconsistency")
 SAMPLES = ("daily_blank_body", "daily_prior_attempts", "state_inconsistency",
@@ -106,6 +108,13 @@ def examine(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
             flags.add("daily_eligible")
             if not row["body_chars"]:
                 flags.add("daily_blank_body")
+                scraped = queue.recorded_date(row["scraped_at"])
+                if scraped is None:
+                    flags.add("daily_blank_undated_scrapes")
+                elif scraped >= cutoff:
+                    flags.add("daily_blank_recent_scrapes")
+                else:
+                    flags.add("daily_blank_archive_scrapes")
             if attempts and attempts > 0:
                 flags.add("daily_prior_attempts")
                 if reason not in state_rules.REASONS:
@@ -129,6 +138,7 @@ def examine(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
                     "processing_state": record_state or None,
                     "processing_reason": reason,
                     "processing_attempts": attempts,
+                    "scraped_at": row["scraped_at"],
                 })
     require(all(observed[b] == base["totals"][b] for b in queue.BUCKETS),
             "failure review disagrees with canonical queue classification")
@@ -139,6 +149,10 @@ def examine(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     require(totals["daily_blank_and_prior_attempts"] <=
             min(totals["daily_blank_body"], totals["daily_prior_attempts"]),
             "invalid overlap accounting")
+    require(sum(totals[k] for k in (
+                "daily_blank_recent_scrapes", "daily_blank_archive_scrapes",
+                "daily_blank_undated_scrapes")) == totals["daily_blank_body"],
+            "blank body scrape-age accounting does not reconcile")
     sources = []
     for (desk, slug), counts in sorted(source_stats.items()):
         if not any(counts.values()):
