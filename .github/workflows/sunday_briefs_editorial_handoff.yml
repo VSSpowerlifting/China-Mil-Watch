@@ -86,9 +86,9 @@ jobs:
               print("Owner-only preview not requested.")
           PY
 
-      # The Oct 10 first edition cannot go to Dylan unless the owner has
-      # explicitly confirmed review by setting the exact edition-specific var.
-      # No-send manuscript previews never need or set this variable.
+      # The October 10 first edition can reach Dylan only with exact-week
+      # owner acknowledgement plus the reviewed attachment's SHA-256.
+      # Owner-only unsent previews never require either variable.
       - name: Verify reporting Saturday and Sunday's successful database update
         env:
           IPR_EVENT: ${{ github.event_name }}
@@ -126,6 +126,18 @@ jobs:
               print(key + "=" + value)
           print("IPR_SUNDAY_DESKS=" + ",".join(desks))
           PY
+
+      # Promote the independent #240 corpus diagnostic to an enforceable
+      # no-LLM/no-email gate. This uses only a scratch SQLite read and
+      # source-availability counts. Current Sunday requires the exact same-day
+      # successful collection marker; historical replays are marked unattested.
+      - name: Require real production full-text readiness before model and email
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_before_model_gate \
+            --week-ending "$IPR_SUNDAY_WEEK_END" \
+            --as-of "$IPR_SUNDAY_AS_OF"
 
       - name: Verify bounded Japan/Vietnam editorial source packet offline
         run: |
