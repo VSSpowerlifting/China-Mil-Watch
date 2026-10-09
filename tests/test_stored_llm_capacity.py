@@ -40,7 +40,7 @@ def receipt(date="2026-10-06", cost=0.006):
         "analysis_model": "sonnet", "relevance_model": "haiku",
         "articles_queued": 3, "articles_fully_analyzed": 1,
         "calls": 6, "succeeded_calls": 6, "failed_calls": 0,
-        "input_tokens": 400, "output_tokens": 102,
+        "input_tokens": 400, "output_tokens": 92,
         "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
         "estimated_cost_usd": cost,
         "estimated_cost_per_analyzed_article_usd": cost,
