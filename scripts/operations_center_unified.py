@@ -3,7 +3,8 @@
 
 Uses the existing authoritative production source-health report, checked static
 shadow declarations and *optional* operator-supplied unauthenticated evidence.
-Never calls a collector, GitHub, publisher, model, mailer or writer.
+By default no network is used. An explicit --fetch-daily-utc-day opts into
+read-only GitHub Actions GET metadata only; no collectors, models or email.
 """
 from __future__ import annotations
 
@@ -21,6 +22,7 @@ if str(ROOT) not in sys.path:
 from core.desk_registry import load_registry
 from scripts import audit_daily_run_receipts as daily
 from scripts import audit_shadow_workflow_bindings as bindings
+from scripts import capture_daily_actions_receipts as capture
 from scripts import operations_center as ops
 from scripts import operations_center_shadow_overlay as shadow
 from scripts.source_health_report import build_report
@@ -109,8 +111,12 @@ def main(argv=None):
     p.add_argument("--as-of", default=date.today().isoformat(),
                    help="display date, not a historical database time machine")
     p.add_argument("--db", type=Path, default=Path(ops.DB_PATH))
-    p.add_argument("--daily-receipts", type=Path,
-                   help="optional raw JSON from the bounded Actions capture CLI")
+    evidence = p.add_mutually_exclusive_group()
+    evidence.add_argument("--daily-receipts", type=Path,
+                          help="operator-supplied raw Actions receipt JSON, no network")
+    evidence.add_argument("--fetch-daily-utc-day",
+                          help="explicit opt-in: GET Actions metadata for UTC YYYY-MM-DD; "
+                               "does not retrieve job logs, make collection claims or dispatch jobs")
     p.add_argument("--slot-report", type=Path, action="append", default=[],
                    help="optional unauthenticated source-scoped slot candidate report")
     p.add_argument("--html", required=True, type=Path,
@@ -124,6 +130,12 @@ def main(argv=None):
         output = ops.safe_destination(args.json)
         require(html.resolve() != output.resolve(),
                 "JSON and HTML output paths must be different")
+        # Network is strictly opt-in. No workflow is ever dispatched and the
+        # GitHub API metadata never fabricates missing guard/log evidence.
+        receipt = (shadow.read_json(args.daily_receipts)
+                   if args.daily_receipts else
+                   capture.capture(args.fetch_daily_utc_day)
+                   if args.fetch_daily_utc_day else None)
         # Validate declarations in the working checkout, not a guessed
         # authenticated source execution. No workflow is dispatched.
         binding_report = bindings.validate(ROOT)
@@ -132,8 +144,7 @@ def main(argv=None):
             ops.SHADOW_ROOT, ops.DAILY_MARKER, as_of,
             binding_report,
             [shadow.read_json(path) for path in args.slot_report],
-            (shadow.read_json(args.daily_receipts)
-             if args.daily_receipts else None),
+            receipt,
             root=ROOT,
         )
         json_text = json.dumps(report, ensure_ascii=False,
@@ -147,7 +158,8 @@ def main(argv=None):
             file.write(html_text)
         print("Read-only unified Operations Center: %s" % html)
     except (UnifiedError, daily.ReceiptError, bindings.BindingError,
-            shadow.OverlayError, ops.SnapshotError, OSError, KeyError,
+            capture.CaptureError, shadow.OverlayError, ops.SnapshotError,
+            OSError, KeyError,
             ValueError, TypeError) as exc:
         p.error(str(exc))
     return 0
