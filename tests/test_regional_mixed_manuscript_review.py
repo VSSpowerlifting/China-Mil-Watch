@@ -166,34 +166,30 @@ class MixedManuscriptReviewTests(unittest.TestCase):
         with self.assertRaises(PrivateMixedManuscriptError):
             audit(args, changed)
 
-    def test_no_cited_source_section_and_missing_bookkeeping_refused(self):
+    def test_missing_bookkeeping_and_uncited_fact_section_refused(self):
         args = scenario()
-        for mutation in (
-            lambda d: d["citations"].update(development=[]),
-            lambda d: d["supplemental_citations"].update(development=[]),
-            lambda d: d["citations"].pop("development"),
-            lambda d: d["supplemental_citations"].pop("what_was_routine"),
+        for lane, section in (
+            ("citations", "development"),
+            ("supplemental_citations", "what_was_routine"),
         ):
             changed = copy.deepcopy(args[-1])
-            mutation(changed)
-            if mutation.__code__.co_consts and not changed["citations"].get(
-                    "development", [1]) and changed.get(
-                        "supplemental_citations", {}).get("development", [JP]):
-                # Numeric-empty is permissible if typed-cited, unlike both empty.
-                continue
-            if (set(changed.get("citations", {})) == set(SECTIONS)
-                and set(changed.get("supplemental_citations", {})) == set(SECTIONS)
-                and (changed["citations"].get("development")
-                     or changed["supplemental_citations"].get("development"))):
-                # Only one valid lane is needed for a cited factual section.
-                continue
-            with self.assertRaises(PrivateMixedManuscriptError):
+            changed[lane].pop(section)
+            with self.subTest(lane=lane), self.assertRaises(
+                    PrivateMixedManuscriptError):
                 audit(args, changed)
         both = copy.deepcopy(args[-1])
         both["citations"]["development"] = []
         both["supplemental_citations"]["development"] = []
         with self.assertRaises(PrivateMixedManuscriptError):
             audit(args, both)
+
+    def test_research_only_citation_is_valid_with_no_numeric_source_in_section(self):
+        args = scenario()
+        changed = copy.deepcopy(args[-1])
+        changed["citations"]["development"] = []
+        result = audit(args, changed)
+        self.assertEqual(result["section_citations"]["development"]
+                         ["private_research_ids"], [JP])
 
     def test_forged_packet_delimiter_in_prose_refused(self):
         args = scenario()
