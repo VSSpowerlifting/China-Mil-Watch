@@ -77,6 +77,7 @@ class VisibleWords(HTMLParser):
             return
         if self.in_title:
             self.title.append(data)
+            return  # A metadata <title> alone does NOT prove body content.
         self.parts.append(data)
 
 
