@@ -7,7 +7,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, MagicMock, patch
 
 from core.japan_mod_html_observation import (
     MAX_BYTES, MODObservationError, TARGETS, attest_packet_scope,
@@ -141,7 +141,7 @@ class MODHTMLObservationTests(unittest.TestCase):
     def test_manual_http_fetch_has_exact_url_and_no_redirect_handler(self):
         ident = "JP-W41-01"
         page = body(ident)
-        response = Mock()
+        response = MagicMock()
         response.status = 200
         response.geturl.return_value = TARGETS[ident][0]
         response.headers = {"Content-Type": "text/html", "Content-Encoding": "identity"}
@@ -165,7 +165,7 @@ class MODHTMLObservationTests(unittest.TestCase):
 
     def test_http_redirect_and_oversized_body_refused_before_receipt(self):
         ident = "JP-W41-02"
-        response = Mock()
+        response = MagicMock()
         response.status = 200
         response.geturl.return_value = "https://other.mod.go.jp/"
         response.headers = {"Content-Type": "text/html"}
