@@ -8,6 +8,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -198,6 +200,25 @@ class StoredQueueAudit(unittest.TestCase):
         self.assertFalse(r["live_production_state_authenticated"])
         self.assertEqual(r["model_calls"], 0)
         self.assertEqual(r["writes"], 0)
+
+    def test_concurrent_input_change_refused_without_misattributing_hash(self):
+        self.insert(1)
+        self.con.commit()
+        original = audit.read_only
+
+        @contextmanager
+        def changed_during_copy(path):
+            with original(path) as copy:
+                # Simulate another actor modifying the *source* after we
+                # hashed it. The audit must not label the scratch snapshot
+                # with the old source hash if the source subsequently changes.
+                self.insert(2, passed=1)
+                yield copy
+
+        with patch.object(audit, "read_only", side_effect=changed_during_copy):
+            with self.assertRaisesRegex(audit.QueueAuditError,
+                                        "changed during analysis audit"):
+                audit.snapshot(self.file, at=NOW)
 
     def test_missing_db_refused_before_creating_it(self):
         p = self.temp / "missing.db"
