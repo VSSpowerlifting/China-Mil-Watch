@@ -3,16 +3,19 @@
 
 Uses the existing authoritative production source-health report, checked static
 shadow declarations and *optional* operator-supplied unauthenticated evidence.
-Never calls a collector, GitHub, publisher, model, mailer or writer.
+By default no network is used. An explicit --fetch-daily-utc-day opts into
+read-only GitHub Actions GET metadata only; no collectors, models or email.
 """
 from __future__ import annotations
 
 import argparse
 import copy
 import json
+import os
 import sys
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -21,11 +24,21 @@ if str(ROOT) not in sys.path:
 from core.desk_registry import load_registry
 from scripts import audit_daily_run_receipts as daily
 from scripts import audit_shadow_workflow_bindings as bindings
+from scripts import capture_daily_actions_receipts as capture
 from scripts import operations_center as ops
 from scripts import operations_center_shadow_overlay as shadow
 from scripts.source_health_report import build_report
 
 SCHEMA = "ipr-unified-daily-evidence/1"
+NY = ZoneInfo("America/New_York")
+
+
+def current_display_date(now=None):
+    """Use the Daily scheduling guard's New York date, never runner UTC."""
+    instant = datetime.now(timezone.utc) if now is None else now
+    require(instant.tzinfo is not None,
+            "explicit timezone required for Operations Center current date")
+    return instant.astimezone(NY).date().isoformat()
 
 
 class UnifiedError(ValueError):
@@ -104,13 +117,44 @@ def build_unified(registry, production_report, shadow_root, marker_path,
     return base
 
 
+
+def write_report_pair(json_path, json_text, html_path, html_text):
+    """Create only fresh external reports; roll back our own files on errors.
+
+    The files are not a transaction against concurrent readers. Rollback
+    prevents an ordinary I/O failure on the second report from leaving a
+    seemingly complete, unmatched first report behind.
+    """
+    created = []
+    try:
+        for path, content in ((json_path, json_text), (html_path, html_text)):
+            with path.open("x", encoding="utf-8") as stream:
+                info = os.fstat(stream.fileno())
+                created.append((path, info.st_dev, info.st_ino))
+                stream.write(content)
+    except OSError:
+        for path, device, inode in reversed(created):
+            try:
+                # Never unlink something another actor swapped into place.
+                info = path.lstat()
+                if not path.is_symlink() and (info.st_dev, info.st_ino) == (device, inode):
+                    path.unlink()
+            except OSError:
+                pass
+        raise
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--as-of", default=date.today().isoformat(),
-                   help="display date, not a historical database time machine")
+    p.add_argument("--as-of", default=current_display_date(),
+                   help="New York display date by default; not a historical DB time machine")
     p.add_argument("--db", type=Path, default=Path(ops.DB_PATH))
-    p.add_argument("--daily-receipts", type=Path,
-                   help="optional raw JSON from the bounded Actions capture CLI")
+    evidence = p.add_mutually_exclusive_group()
+    evidence.add_argument("--daily-receipts", type=Path,
+                          help="operator-supplied raw Actions receipt JSON, no network")
+    evidence.add_argument("--fetch-daily-utc-day",
+                          help="explicit opt-in: GET Actions metadata for UTC YYYY-MM-DD; "
+                               "does not retrieve job logs, make collection claims or dispatch jobs")
     p.add_argument("--slot-report", type=Path, action="append", default=[],
                    help="optional unauthenticated source-scoped slot candidate report")
     p.add_argument("--html", required=True, type=Path,
@@ -124,6 +168,12 @@ def main(argv=None):
         output = ops.safe_destination(args.json)
         require(html.resolve() != output.resolve(),
                 "JSON and HTML output paths must be different")
+        # Network is strictly opt-in. No workflow is ever dispatched and the
+        # GitHub API metadata never fabricates missing guard/log evidence.
+        receipt = (shadow.read_json(args.daily_receipts)
+                   if args.daily_receipts else
+                   capture.capture(args.fetch_daily_utc_day)
+                   if args.fetch_daily_utc_day else None)
         # Validate declarations in the working checkout, not a guessed
         # authenticated source execution. No workflow is dispatched.
         binding_report = bindings.validate(ROOT)
@@ -132,22 +182,19 @@ def main(argv=None):
             ops.SHADOW_ROOT, ops.DAILY_MARKER, as_of,
             binding_report,
             [shadow.read_json(path) for path in args.slot_report],
-            (shadow.read_json(args.daily_receipts)
-             if args.daily_receipts else None),
+            receipt,
             root=ROOT,
         )
         json_text = json.dumps(report, ensure_ascii=False,
                                indent=2, sort_keys=True) + "\n"
         html_text = ops.render_html(report)
-        # Both destinations already passed ops.safe_destination and are new.
-        # No file in the repository or any source state is ever written.
-        with output.open("x", encoding="utf-8") as file:
-            file.write(json_text)
-        with html.open("x", encoding="utf-8") as file:
-            file.write(html_text)
+        # Both destinations passed ops.safe_destination and are new.
+        # An I/O error must not strand a partial unmatched local report.
+        write_report_pair(output, json_text, html, html_text)
         print("Read-only unified Operations Center: %s" % html)
     except (UnifiedError, daily.ReceiptError, bindings.BindingError,
-            shadow.OverlayError, ops.SnapshotError, OSError, KeyError,
+            capture.CaptureError, shadow.OverlayError, ops.SnapshotError,
+            OSError, KeyError,
             ValueError, TypeError) as exc:
         p.error(str(exc))
     return 0

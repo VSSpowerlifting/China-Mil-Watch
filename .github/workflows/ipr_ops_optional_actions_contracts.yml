@@ -1,0 +1,47 @@
+name: Unified Ops explicit Daily Actions GET contracts
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/ipr-unified-operations-snapshot-20261009
+    paths:
+      - 'scripts/operations_center_unified.py'
+      - 'tests/test_operations_center_optional_capture.py'
+      - 'docs/IPR_UNIFIED_OPS_OPTIONAL_ACTIONS.md'
+      - '.github/workflows/ipr_ops_optional_actions_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked production database hash
+        id: baseline
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install project dependencies for local DB contracts
+        run: pip install -r requirements.txt
+      - name: Verify offline default, optional GET and all unified receipts
+        run: |
+          python -m unittest tests.test_operations_center_optional_capture -v
+          python -m unittest tests.test_operations_center_unified -v
+      - name: Prove production archive and public output are unchanged
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
