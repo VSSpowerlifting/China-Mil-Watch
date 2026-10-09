@@ -13,15 +13,39 @@ def utc(timestamp):
 
 
 def window(date_time, *, event="schedule", marker="2026-10-11",
-           send=True, target="", historical=False, friday=False):
+           send=True, target="", historical=False, friday=False,
+           pilot="2026-10-10"):
     return resolve_sunday_handoff(
         event=event, now=date_time, reporting_saturday=target,
         send_email=send, allow_historical_send=historical,
         sunday_daily_marker=marker, friday_delivery_enabled=friday,
+        pilot_owner_reviewed_week=pilot,
     )
 
 
 class SundayHandoffTests(unittest.TestCase):
+    def test_first_sunday_schedule_requires_owner_review_before_model(self):
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-11T19:17:00"), pilot="")
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-11T19:17:00"), pilot="2026-10-03")
+        r = window(utc("2026-10-11T19:17:00"), pilot="2026-10-10")
+        self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "true")
+
+    def test_first_sunday_no_send_preview_needs_no_signoff(self):
+        r = window(utc("2026-10-11T19:17:00"),
+                   event="workflow_dispatch", send=False, pilot="")
+        self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "false")
+
+    def test_first_sunday_historical_editor_send_still_requires_signoff(self):
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-15T16:00:00"), event="workflow_dispatch",
+                   send=True, historical=True, pilot="")
+        r = window(utc("2026-10-15T16:00:00"),
+                   event="workflow_dispatch", send=True, historical=True,
+                   pilot="2026-10-10")
+        self.assertEqual(r["IPR_SUNDAY_WEEK_END"], "2026-10-10")
+
     def test_sunday_complete_week_and_marker(self):
         r = window(utc("2026-10-11T19:17:00"))
         self.assertEqual(r, {
