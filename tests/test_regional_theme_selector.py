@@ -15,9 +15,21 @@ from tests.test_regional_reviewed_evidence import SECRET, docket
 from tests.test_regional_weekly_inventory import make, pending, row
 
 
+def china_docket(inventory):
+    # The full inventory is date/desk sorted; do not assume its first record
+    # is record 42. Pin the explicit Chinese example for stable tests.
+    review = docket(inventory)
+    target = next(x for x in inventory["production_evidence"] if x["id"] == 42)
+    review["decisions"][0].update(
+        id=42, desk=target["desk"], source_url=target["source_url"],
+        published_date=target["published_date"],
+        stored_text_sha256=target["stored_text_sha256"])
+    return review
+
+
 def signed(inventory=None):
     inventory = inventory or make()
-    return sign_private_review(docket(inventory), inventory, SECRET)
+    return sign_private_review(china_docket(inventory), inventory, SECRET)
 
 
 def candidate(ids=(42,), *, slug="regional-evidence-shift"):
@@ -91,7 +103,7 @@ class ThemeSelectorTests(unittest.TestCase):
 
     def test_two_desk_supported_theme_has_no_single_desk_exception_flag(self):
         inv = make()
-        d = docket(inv)
+        d = china_docket(inv)
         second = copy.deepcopy(d["decisions"][0])
         sg = next(x for x in inv["production_evidence"] if x["id"] == 47)
         second.update(id=47, desk="singapore", source_url=sg["source_url"],
