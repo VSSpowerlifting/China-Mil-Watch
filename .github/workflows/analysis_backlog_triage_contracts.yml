@@ -1,0 +1,77 @@
+name: Stored analysis backlog review-only triage
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_analysis_backlog_triage.py'
+      - 'tests/test_analysis_backlog_triage.py'
+      - 'docs/ANALYSIS_BACKLOG_TRIAGE.md'
+      - '.github/workflows/analysis_backlog_triage_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record immutable production archive baseline
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/original-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run review-only metadata triage and source queue contracts
+        run: |
+          python -m unittest tests.test_analysis_backlog_triage -v
+          python -m unittest tests.test_analysis_queue_source_audit -v
+      - name: Smoke triage on the real pinned tracked SQLite state
+        run: |
+          set -euo pipefail
+          python scripts/audit_analysis_backlog_triage.py \
+            --db pla_watch.db > "$RUNNER_TEMP/backlog-triage.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          p = Path(os.environ["RUNNER_TEMP"]) / "backlog-triage.json"
+          audit = json.loads(p.read_text())
+          lanes = audit["review_lanes"]
+          sums = sum(lanes[x] for x in (
+              "ready_recent_unscored", "ready_pending_analysis",
+              "ready_archive_unscored", "ready_undated_unscored",
+              "missing_body_daily"))
+          assert sums == audit["stored_daily_queue_eligible"]
+          assert lanes["held_desk_separate_review"] == audit["stored_held_out_of_daily"]
+          assert lanes["paused_manual_review"] == audit["stored_paused"]
+          assert sum(x["daily_eligible"] for x in audit["sources"]) == sums
+          assert audit["input_file_sha256"]["db"]
+          assert audit["editorial_significance_assessed"] is False
+          assert audit["model_spend_authorized"] is False
+          assert audit["publication_authorized"] is False
+          assert audit["writes"] == 0 and audit["model_calls"] == 0
+          assert all(len(rows) <= audit["review_sample_limit_per_lane"]
+                     for rows in audit["review_samples"].values())
+          print("Stored backlog review inventory: DB rows=%d eligible=%d held=%d "
+                "paused=%d empty_bodies=%d previous_failures=%d" % (
+                  audit["article_rows"], sums, audit["stored_held_out_of_daily"],
+                  audit["stored_paused"],
+                  audit["metadata_flags"]["daily_missing_body"],
+                  audit["metadata_flags"]["daily_has_previous_failures"]))
+          PY
+      - name: Assert no original DB, sidecar, or output was changed
+        run: |
+          sha256sum -c "$RUNNER_TEMP/original-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
