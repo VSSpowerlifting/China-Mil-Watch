@@ -13,6 +13,7 @@ from unittest.mock import patch
 from core.desk_registry import load_registry
 from scripts import audit_daily_run_receipts as daily
 from scripts import audit_analysis_queue_by_source as queue_audit
+from scripts import audit_analysis_backlog_triage as triage_audit
 from scripts import audit_shadow_workflow_bindings as bindings
 from scripts import operations_center as ops
 from scripts import operations_center_unified as unified
@@ -52,16 +53,18 @@ class UnifiedOperationsContracts(unittest.TestCase):
         return ops.assemble(self.registry, self.report(),
                             self.shadow_root, self.marker, self.day)
 
-    def build(self, *, receipts=None, shadow_bindings=False, queue_report=None):
+    def build(self, *, receipts=None, shadow_bindings=False, queue_report=None,
+              dispatch_report=None):
         if shadow_bindings:
             return unified.build_unified(
                 self.registry, self.report(), ops.SHADOW_ROOT,
                 self.marker, self.day, bindings.validate(unified.ROOT),
-                receipt=receipts, queue_report=queue_report, root=unified.ROOT)
+                receipt=receipts, queue_report=queue_report,
+                dispatch_report=dispatch_report, root=unified.ROOT)
         return unified.build_unified(
             self.registry, self.report(), self.shadow_root,
             self.marker, self.day, None, receipt=receipts,
-            queue_report=queue_report)
+            queue_report=queue_report, dispatch_report=dispatch_report)
 
     def test_raw_daily_receipt_is_classified_and_not_authenticated(self):
         result = self.build(receipts=envelope([complete(), guard_only()]))
@@ -419,6 +422,161 @@ class UnifiedOperationsContracts(unittest.TestCase):
                         "--json", str(output), "--html", str(html)])
         self.assertFalse(output.exists())
         self.assertFalse(html.exists())
+
+
+    def ready_queue_db(self):
+        """A throwaway SQLite fixture with real body and triage metadata."""
+        db = self.queue_db()
+        conn = sqlite3.connect(db)
+        try:
+            conn.execute("ALTER TABLE articles ADD COLUMN text_original TEXT")
+            conn.execute("ALTER TABLE articles ADD COLUMN published_date TEXT")
+            conn.execute("ALTER TABLE articles ADD COLUMN processing_attempts INTEGER")
+            conn.execute("UPDATE articles SET text_original='Verified source prose' WHERE id=1")
+            conn.execute("UPDATE articles SET text_original='  ' WHERE id=2")
+            conn.execute("UPDATE articles SET text_original='Held desk prose' WHERE id=4")
+            conn.execute("UPDATE articles SET text_original='Paused prose' WHERE id=5")
+            conn.commit()
+        finally:
+            conn.close()
+        return db
+
+    def queue_and_ready(self):
+        db = self.ready_queue_db()
+        stamp = datetime(2026, 10, 9, 12, tzinfo=timezone.utc)
+        return db, queue_audit.snapshot(db, at=stamp), triage_audit.snapshot(db, at=stamp)
+
+    def test_dispatch_readiness_is_opt_in_on_the_existing_queue_panel(self):
+        db, q, t = self.queue_and_ready()
+        base = self.build(queue_report=q)
+        self.assertNotIn("model_dispatch_body_readiness",
+                         base["stored_analysis_queue_evidence"])
+        joined = self.build(queue_report=q, dispatch_report=t)
+        obj = joined["stored_analysis_queue_evidence"]["model_dispatch_body_readiness"]
+        self.assertEqual(obj["body_ready"], 1)
+        self.assertEqual(obj["body_withheld_for_source_review"], 1)
+        self.assertEqual(obj["stored_daily_queue_eligible"], 2)
+        self.assertEqual(sum(v["body_ready"] for v in obj["sources"]), 1)
+        self.assertFalse(obj["model_spend_authorized"])
+        self.assertFalse(obj["future_workload_authenticated"])
+        self.assertFalse(joined["publication_authorized"])
+        html = ops.render_html(joined)
+        self.assertIn("Model-input body readiness", html)
+        self.assertIn("1 body-ready of 2 stored Daily-eligible", html)
+        self.assertIn("NOT the next Daily run", html)
+        self.assertNotIn("Verified source prose", html)
+        self.assertEqual(q["stored_daily_queue_eligible"], 2)
+
+    def test_dispatch_requires_canonical_queue(self):
+        _, _, t = self.queue_and_ready()
+        with self.assertRaisesRegex(unified.UnifiedError, "requires"):
+            unified.attach_dispatch_readiness(self.base(), t)
+
+    def test_dispatch_refuses_mismatched_digest(self):
+        _, q, t = self.queue_and_ready()
+        t = copy.deepcopy(t)
+        t["input_file_sha256"]["db"] = "0" * 64
+        with self.assertRaisesRegex(unified.UnifiedError, "different database bytes"):
+            self.build(queue_report=q, dispatch_report=t)
+
+    def test_dispatch_refuses_unknown_authority_and_work(self):
+        _, q, t = self.queue_and_ready()
+        for flag, bad in (("model_spend_authorized", True),
+                          ("publication_authorized", True),
+                          ("next_run_workload_known", True),
+                          ("writes", 1),
+                          ("model_calls", 1)):
+            changed = copy.deepcopy(t)
+            changed[flag] = bad
+            with self.subTest(flag=flag):
+                with self.assertRaises(unified.UnifiedError):
+                    self.build(queue_report=q, dispatch_report=changed)
+
+    def test_dispatch_refuses_inflated_source_counts_and_duplicate_sources(self):
+        _, q, t = self.queue_and_ready()
+        bad = copy.deepcopy(t)
+        bad["sources"][0]["daily_model_dispatch_body_ready"] += 1
+        with self.assertRaisesRegex(unified.UnifiedError, "per-source"):
+            self.build(queue_report=q, dispatch_report=bad)
+        bad = copy.deepcopy(t)
+        bad["sources"].append(copy.deepcopy(bad["sources"][0]))
+        with self.assertRaisesRegex(unified.UnifiedError, "duplicate"):
+            self.build(queue_report=q, dispatch_report=bad)
+
+    def test_dispatch_refuses_wrong_totals_and_unverified_strip(self):
+        _, q, t = self.queue_and_ready()
+        for key, change in (("stored_daily_model_dispatch_body_ready", 2),
+                            ("stored_daily_model_dispatch_body_withheld", 0),
+                            ("model_dispatch_body_test_matches_python_strip", False)):
+            bad = copy.deepcopy(t)
+            bad[key] = change
+            with self.subTest(key=key):
+                with self.assertRaises(unified.UnifiedError):
+                    self.build(queue_report=q, dispatch_report=bad)
+
+    def test_dispatch_cli_generates_private_pairs_without_database_mutation(self):
+        db = self.ready_queue_db()
+        original = db.read_bytes()
+        js = self.temp / "ready-ops.json"
+        html = self.temp / "ready-ops.html"
+        with patch.object(unified, "build_report", return_value=self.report()):
+            rc = unified.main([
+                "--db", str(db), "--as-of", "2026-10-09",
+                "--include-analysis-queue", "--include-dispatch-readiness",
+                "--json", str(js), "--html", str(html)])
+        self.assertEqual(rc, 0)
+        report = json.loads(js.read_text(encoding="utf-8"))
+        q = report["stored_analysis_queue_evidence"]
+        self.assertEqual(q["model_dispatch_body_readiness"]["body_ready"], 1)
+        self.assertEqual(q["model_dispatch_body_readiness"][
+            "body_withheld_for_source_review"], 1)
+        self.assertIn("Model-input body readiness", html.read_text(encoding="utf-8"))
+        self.assertEqual(original, db.read_bytes())
+        self.assertFalse(Path(str(db) + "-wal").exists())
+        self.assertFalse(Path(str(db) + "-shm").exists())
+
+    def test_dispatch_cli_requires_queue_opt_in_and_writes_no_partial_file(self):
+        js = self.temp / "bad-ready.json"
+        html = self.temp / "bad-ready.html"
+        with self.assertRaises(SystemExit):
+            unified.main(["--include-dispatch-readiness",
+                          "--json", str(js), "--html", str(html)])
+        self.assertFalse(js.exists())
+        self.assertFalse(html.exists())
+
+    def test_dispatch_join_does_not_mutate_canonical_input(self):
+        _, q, t = self.queue_and_ready()
+        original = copy.deepcopy(t)
+        qcopy = copy.deepcopy(q)
+        self.build(queue_report=q, dispatch_report=t)
+        self.assertEqual(t, original)
+        self.assertEqual(q, qcopy)
+
+
+    def test_complete_only_source_does_not_need_dispatch_triage_row(self):
+        db = self.ready_queue_db()
+        conn = sqlite3.connect(db)
+        try:
+            conn.execute("INSERT INTO sources VALUES (3, 'archive_only', 'china')")
+            conn.execute(
+                "INSERT INTO articles "
+                "(id, source_id, passed_relevance, analyzed_at, "
+                "processing_state, scraped_at, text_original) VALUES "
+                "(6, 3, 1, '2026-10-08 18:00:00', NULL, "
+                "'2026-10-08 16:00:00', 'Completed article')")
+            conn.commit()
+        finally:
+            conn.close()
+        stamp = datetime(2026, 10, 9, 12, tzinfo=timezone.utc)
+        q = queue_audit.snapshot(db, at=stamp)
+        t = triage_audit.snapshot(db, at=stamp)
+        self.assertTrue(any(x["source_slug"] == "archive_only"
+                            for x in q["sources"]))
+        self.assertFalse(any(x["source_slug"] == "archive_only"
+                             for x in t["sources"]))
+        result = self.build(queue_report=q, dispatch_report=t)
+        self.assertEqual(result["stored_analysis_queue_evidence"][
+            "model_dispatch_body_readiness"]["body_ready"], 1)
 
 
 if __name__ == "__main__":
