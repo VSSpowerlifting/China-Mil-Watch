@@ -54,8 +54,9 @@ def _records(queue):
 
 
 def _row_checks(row):
-    need(isinstance(row, dict)
-         and row.get("human_source_reviewed") is False
+    need(isinstance(row, dict),
+         "pinned historical MPS queue source row missing or malformed")
+    need(row.get("human_source_reviewed") is False
          and row.get("reuse_rights_reviewed") is False
          and row.get("production_publication_authorized") is False,
          "MPS queue cannot inherit human reuse or publishing approval")
