@@ -45,6 +45,10 @@ review signers. The private callback path \`propose_mixed_themes\` then
 requires both this HMAC-signed request AND a direct
 \`allow_model=True\` plus a separately injected callable.
 
+The caller re-verifies the signed run authorization, its exact prompt and
+reviewed source context **after** the injected callback as well, so a callback
+cannot silently mutate shared source or permission objects during execution.
+
 The injected callback receives exactly
 \`(private_prompt, strict_tool_schema, signed_model_id)\` and can be
 invoked only once **per function invocation**. No provider client or
