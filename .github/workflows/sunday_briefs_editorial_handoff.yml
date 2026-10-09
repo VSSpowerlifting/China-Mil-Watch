@@ -1,4 +1,4 @@
-name: Sunday IPR Briefs Full-Week Draft to Dylan
+name: Sunday IPR Briefs — Private Owner Preview or Approved Editor Handoff
 
 on:
   schedule:
@@ -37,11 +37,12 @@ concurrency:
 
 jobs:
   sunday-editor-handoff:
-    if: github.event_name == 'workflow_dispatch' || vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' || vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       SUNDAY_SEND: ${{ vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_email == true)) }}
+      SUNDAY_OWNER_PREVIEW: ${{ github.event_name == 'schedule' && vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true' }}
     steps:
       - name: Checkout production corpus on main (read-only)
         uses: actions/checkout@v4
@@ -58,8 +59,8 @@ jobs:
 
       - name: Preflight private owner preview and exclusive delivery intent
         env:
-          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
-          IPR_EDITOR_SEND_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.send_email == true }}
+          IPR_PREVIEW_REQUESTED: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' || (github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true) }}
+          IPR_EDITOR_SEND_REQUESTED: ${{ env.SUNDAY_SEND == 'true' }}
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
           IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
         shell: bash
@@ -95,6 +96,7 @@ jobs:
           IPR_MANUAL_SATURDAY: ${{ inputs.reporting_saturday || '' }}
           IPR_HISTORICAL_SEND: ${{ inputs.allow_historical_send == true }}
           IPR_OLD_FRIDAY_ACTIVE: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' }}
+          IPR_SCHEDULED_OWNER_PREVIEW: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' }}
           IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
           IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
         run: |
@@ -116,6 +118,7 @@ jobs:
               allow_historical_send=os.environ["IPR_HISTORICAL_SEND"] == "true",
               sunday_daily_marker=last_successful_update,
               friday_delivery_enabled=os.environ["IPR_OLD_FRIDAY_ACTIVE"] == "true",
+              scheduled_owner_preview=os.environ["IPR_SCHEDULED_OWNER_PREVIEW"] == "true",
               pilot_owner_reviewed_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
               pilot_owner_reviewed_sha256=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_SHA256", ""),
           )
@@ -297,7 +300,7 @@ jobs:
           IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
           IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
-          IPR_PREVIEW_REQUESTED: ${{ github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true }}
+          IPR_PREVIEW_REQUESTED: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' || (github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true) }}
           IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
           IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
           PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
@@ -321,6 +324,7 @@ jobs:
           fi
           python -m scripts.sunday_editorial_handoff "${args[@]}"
 
-      # Private owner's preview requires BOTH input preview_to_owner=true and
-      # a distinct configured IPR_PREVIEW_TO secret; cannot contact Dylan.
+      # Owner-only preview requires explicit manual input OR the opt-in
+      # scheduled owner-preview variable, plus distinct IPR_PREVIEW_TO secret.
+      # Neither mode can address Dylan or grant manuscript publication.
       # No public manuscript artifact; no push, approval, numbering or deploy.
