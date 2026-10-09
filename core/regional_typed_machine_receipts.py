@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import re
 
+from core.regional_typed_research_holds import canonical
 from scripts.prepare_vietnam_briefs_evidence import verified_queue
 
 SCHEMA = "ipr-regional-typed-source-machine-reconciliation/1"
@@ -40,6 +41,19 @@ def _hold_index(holds):
          "input is not a never-approved regional HOLD report")
     rows = holds.get("items")
     need(isinstance(rows, list) and len(rows) <= 8, "unsafe typed hold roster")
+    # The metadata-only HOLD report itself is a snapshot, not an authority.
+    # Detect altered or reordered source rows before comparing receipts.
+    expected = holds.get("typed_research_roster_sha256")
+    need(isinstance(expected, str) and re.fullmatch(r"[0-9a-f]{64}", expected)
+         and hashlib.sha256(canonical(rows)).hexdigest() == expected,
+         "regional typed HOLD roster checksum mismatch")
+    counts = holds.get("counts")
+    need(isinstance(counts, dict)
+         and counts.get("japan") ==
+         sum(row.get("desk") == "japan" for row in rows if isinstance(row, dict))
+         and counts.get("vietnam") ==
+         sum(row.get("desk") == "vietnam" for row in rows if isinstance(row, dict)),
+         "regional typed HOLD desk counts mismatch")
     by_id = {}
     for item in rows:
         need(isinstance(item, dict)
@@ -54,7 +68,10 @@ def _hold_index(holds):
              "invalid typed HOLD identity or authority")
         by_id[item["id"]] = item
     need(isinstance(holds.get("week_ending"), str)
-         and len(holds.get("source_metadata_digest_sha256", "")) == 64,
+         and isinstance(holds.get("source_as_of"), str)
+         and isinstance(holds.get("source_metadata_digest_sha256"), str)
+         and re.fullmatch(r"[0-9a-f]{64}",
+                          holds["source_metadata_digest_sha256"]),
          "missing exact week and inventory digest")
     return by_id
 
