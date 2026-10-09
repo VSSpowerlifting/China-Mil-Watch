@@ -13,7 +13,7 @@ from scripts.sunday_pilot_owner_review import (
     OwnerReviewRequired, PILOT_SATURDAY, require_owner_review,
 )
 from scripts.sunday_editorial_handoff import main, send_packet
-from scripts.weekly_briefs_sunday_window import resolve_sunday_handoff
+from scripts.weekly_briefs_sunday_window import SundayHandoffRefused, resolve_sunday_handoff
 from tests.test_briefs_editorial_evidence import scaffold
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,7 +51,7 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
 
     def test_scheduled_pilot_checks_owner_before_email(self):
         now = datetime(2026, 10, 11, 19, 17, tzinfo=timezone.utc)
-        with self.assertRaises(OwnerReviewRequired):
+        with self.assertRaises(SundayHandoffRefused):
             resolve_sunday_handoff(
                 event="schedule", now=now, send_email=True,
                 sunday_daily_marker="2026-10-11",
