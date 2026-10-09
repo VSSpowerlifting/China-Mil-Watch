@@ -3,10 +3,15 @@ from __future__ import annotations
 
 import copy
 import json
+import os
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from core.regional_reviewed_evidence import (
-    ReviewGateError, private_model_packet, sign_private_review,
+    ReviewGateError, make_manual_review_template, private_model_packet,
+    sign_private_review,
     verify_private_review,
 )
 from tests.test_regional_weekly_inventory import make, row
@@ -63,6 +68,51 @@ class SourceReviewGateTests(unittest.TestCase):
         self.assertNotIn("text_original", serial)
         self.assertNotIn("text_english", serial)
         self.assertNotIn(SECRET.decode(), serial)
+
+    def test_template_prefills_only_pins_and_zero_human_approvals(self):
+        inventory = make()
+        template = make_manual_review_template(
+            inventory, [42, 47], reviewer="Manual reviewer",
+            reviewed_on=SUN)
+        self.assertEqual([x["id"] for x in template["decisions"]], [42, 47])
+        for item in template["decisions"]:
+            self.assertEqual(item["disposition"], "awaiting_human_review")
+            self.assertFalse(item["original_language_checked"])
+            self.assertFalse(item["publisher_version_checked"])
+            self.assertFalse(item["not_a_quote_or_full_text"])
+            self.assertEqual(item["synopsis"], "")
+            self.assertEqual(item["limitations"], "")
+            self.assertEqual(len(item["stored_text_sha256"]), 64)
+        with self.assertRaises(ReviewGateError):
+            sign_private_review(template, inventory, SECRET)
+        with self.assertRaises(ReviewGateError):
+            make_manual_review_template(inventory, [42, 42],
+                                        reviewer="Manual reviewer",
+                                        reviewed_on=SUN)
+        with self.assertRaises(ReviewGateError):
+            make_manual_review_template(inventory, ["JP-W41-01"],
+                                        reviewer="Manual reviewer",
+                                        reviewed_on=SUN)
+
+    def test_noninteractive_template_command_is_private_and_unsigned(self):
+        from scripts.regional_reviewed_evidence import run
+        with tempfile.TemporaryDirectory() as root:
+            destination = Path(root) / "unsigned.json"
+            argv = ["template", "--week-ending", SAT, "--as-of", SAT,
+                    "--review-local-day", SUN, "--ids", "42,47",
+                    "--reviewer", "Human analyst", "--out", str(destination)]
+            with patch("scripts.regional_reviewed_evidence.inspect",
+                       return_value=make()), patch("sys.stdin.isatty",
+                       return_value=False):
+                self.assertEqual(run(argv), 0)
+            saved = json.loads(destination.read_text(encoding="utf-8"))
+            self.assertEqual(len(saved["decisions"]), 2)
+            self.assertTrue(all(not d["original_language_checked"]
+                                for d in saved["decisions"]))
+            self.assertEqual(os.stat(destination).st_mode & 0o777, 0o600)
+            with patch("scripts.regional_reviewed_evidence.inspect",
+                       return_value=make()), self.assertRaises(SystemExit):
+                run(argv)  # Cannot overwrite existing output.
 
     def test_no_auto_source_use_signoff_from_inventory(self):
         with self.assertRaises(ReviewGateError):
